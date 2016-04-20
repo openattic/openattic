@@ -11,9 +11,8 @@ describe('Should add an user', function(){
     email: 'herp.derp@openattic.org'
   }
   var user = element(by.cssContainingText('tr', testUser.username));
-  var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
-  var usersItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(0);
-  //systemItem = systemItem.all(by.css(' a')).first();
+  var systemItem = element(by.css('ul .tc_menuitem_system'));
+  var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
   var correctInput = element(by.css('.tc_correctInput'));
   var logout = element(by.css('.tc_logout a'));
   var addBtn = element(by.css('.tc_addUser'));

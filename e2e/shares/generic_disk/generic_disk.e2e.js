@@ -1,7 +1,6 @@
 var helpers = require('../../common.js');
 
 describe('should not allow sharing a disk via iscsi/fc in the volumes panel', function(){
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var disk = element.all(by.cssContainingText('tr', 'generic disk')).get(0);
 
   beforeAll(function(){
@@ -9,7 +8,7 @@ describe('should not allow sharing a disk via iscsi/fc in the volumes panel', fu
   });
 
   it('should display a generic disk', function(){
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
     expect(disk.isDisplayed()).toBe(true);
   });
 

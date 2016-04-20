@@ -1,0 +1,46 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Status of {{selection.item.name}}</h3>
+    </div>
+    <div class="panel-body">
+        <h2>Basic information:</h2>
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd ng-bind="selection.item.name"></dd>
+            <dt>Cluster:</dt>
+            <dd ng-bind="selection.item.cluster.title"></dd>
+            <dt>ID:</dt>
+            <dd ng-bind="selection.item.id"></dd>
+            <dt>Size:</dt>
+            <dd ng-bind="selection.item.max_avail | bytes"></dd>
+            <dt>Used:</dt>
+            <dd ng-bind="selection.item.num_bytes | bytes"></dd>
+            <dt>Placement Groups:</dt>
+            <dd ng-bind="selection.item.pg_num"></dd>
+            <dt>Replica Size:</dt>
+            <dd ng-bind="selection.item.size"></dd>
+            <dt>Erasure code profile:</dt>
+            <dd ng-bind="selection.item.erasure_code_profile"></dd>
+            <dt>Last change:</dt>
+            <dd ng-bind="selection.item.last_change"></dd>
+            <dt>Type:</dt>
+            <dd ng-bind="selection.item.type"></dd>
+            <dt>Crush ruleset:</dt>
+            <dd ng-bind="selection.item.crush_ruleset"></dd>
+        </dl>
+
+        <h2>Advanced information:</h2>
+        <dl class="dl-horizontal">
+            <dt>Cluster ID:</dt>
+            <dd ng-bind="selection.item.cluster.id"></dd>
+            <dt>pg_placement_num:</dt>
+            <dd ng-bind="selection.item.pgp_num"></dd>
+            <dt>stripe_width:</dt>
+            <dd ng-bind="selection.item.stripe_width"></dd>
+            <dt>quota_max_bytes:</dt>
+            <dd ng-bind="selection.item.quota_max_bytes"></dd>
+            <dt>quota_max_objects:</dt>
+            <dd ng-bind="selection.item.quota_max_objects"></dd>
+        </dl>
+    </div>
+</div>

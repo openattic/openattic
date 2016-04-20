@@ -4,11 +4,10 @@ var helpers = require('../common.js');
 describe('Should add a host and attributes', function(){
   var hostname = 'protractor_test_host';
   var host = element(by.cssContainingText('tr', hostname));
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   beforeAll(function(){
     helpers.login();
-    hostsItem.click();
+    element(by.css('ul .tc_menuitem_hosts > a')).click();
   });
 
   it('should create a test host', function(){

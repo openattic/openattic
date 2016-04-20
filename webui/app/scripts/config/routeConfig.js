@@ -486,7 +486,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       }
     })
     .state("crushmap", {
-      url: "/crushmap",
+      url: "/ceph/crushmap",
       views: {
         "main": {
           templateUrl: "templates/crushmap.html"
@@ -494,6 +494,44 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       },
       ncyBreadcrumb: {
         label: "CRUSH Map Editor"
+      }
+    })
+    .state("cephPools", {
+      url: "/ceph/pools",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-pools/templates/listing.html",
+          controller : "CephPoolsCtrl"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Ceph Pools"
+      }
+    })
+    .state("cephPools.detail", {
+      views: {
+        "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephPools.detail.status", {
+      url: "/status",
+      views: {
+        "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} status"
+      }
+    })
+    .state("cephPools.detail.cacheTier", {
+      url: "/status",
+      views: {
+        "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} cache tier"
       }
     });
 });
