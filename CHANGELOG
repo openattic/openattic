@@ -11,9 +11,12 @@ Version 2.0.10 (not released yet):
 * WebUI: New pagination template/layout (OP-1003)
 * WebUI: Accordion header is now clickalbe (OP-1064)
 * WebUI: Add d3, nvd3 and angular-nvd3 (OP-1074)
+* WebUI: Ceph pool data table (OP-867)
 * WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
+* WebUI/QA: Ceph menu related e2e tests (OP-945)
+* WebUI/QA: Added very basic test case for ceph pool overview (OP-1102)
 * Backend: The name of a netdevice allows a length of up to 15 characters now
   (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Added basic infrastructure to directly gather information from Ceph
