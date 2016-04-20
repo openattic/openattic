@@ -1181,7 +1181,8 @@ form .input-group-addon {
   color: #a2a2a2 !important;
   background-color: transparent;
 }
-uib-accordion .panel-title {
+uib-accordion .panel-title,
+.panel .accordion-title {
   font-size: 14px !important;
 }
 .panel-body h2:first-child {
@@ -1216,6 +1217,9 @@ uib-accordion .panel-title {
 }
 .disabled {
   pointer-events: none;
+}
+.clickable {
+  cursor: pointer;
 }
 
 /* If javascript is disabled. */

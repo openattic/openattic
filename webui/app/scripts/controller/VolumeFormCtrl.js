@@ -74,7 +74,7 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
           console.log("An error occured", error);
         });
     } else {
-      if ($scope.volumeForm) {
+      if ($scope.volumeForm.pool) {
         $scope.volumeForm.pool.$setValidity("usablesize", true);
       }
     }
