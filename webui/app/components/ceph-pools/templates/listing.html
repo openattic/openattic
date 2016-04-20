@@ -37,7 +37,7 @@
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
                 <td ng-show="columns['Cluster']" ng-bind="row.cluster.title"></td>
                 <td ng-show="columns['ID']" ng-bind="row.id"></td>
-                <td ng-show="columns['Size']"  ng-bind="row.max_avail | bytes"></td>
+                <td ng-show="columns['Size']" ng-bind="row.max_avail | bytes"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" data-toggle="tooltip" data-placement="right"
                             title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.free | bytes}}">
