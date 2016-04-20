@@ -17,10 +17,17 @@ Version 2.0.10 (not released yet):
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
 * WebUI/QA: Ceph menu related e2e tests (OP-945)
 * WebUI/QA: Added very basic test case for ceph pool overview (OP-1102)
-* Backend: The name of a netdevice allows a length of up to 15 characters now
-  (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
+* Backend: List all existing Pools and their characteristics (OP-751)
+* Backend: Fixed a bug with the CRUSH map which caused the server to loop
+  endlessly (OP-865)
+* Backend: Let the ceph module fail graciously (OP-1022)
+* Backend: Implement the pagination for Ceph pools (OP-1026) 
+* Backend: Added additional information to be retrieved about Ceph pools using
+  the RESTful API (OP-1053)
+* Backend: The name of a netdevice allows a length of up to 15 characters now
+  (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
 * Backend: Fixed bug - removing an Ext3/Ext4/XFS filesystem volume that exports
   an nfs share didn't work properly (OP-736)
