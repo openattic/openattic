@@ -10,6 +10,7 @@ Version 2.0.10 (not released yet):
 * WebUI: Disable resize for btrfs volumes (OP-911)
 * WebUI: New pagination template/layout (OP-1003)
 * WebUI: Accordion header is now clickalbe (OP-1064)
+* WebUI: Add d3, nvd3 and angular-nvd3 (OP-1074)
 * WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
@@ -18,6 +19,8 @@ Version 2.0.10 (not released yet):
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
 * Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
+* Backend: Fixed bug - removing an Ext3/Ext4/XFS filesystem volume that exports
+  an nfs share didn't work properly (OP-736)
 * Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: "oaconfig install" now skips all LVM volume groups tagged with
   "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
