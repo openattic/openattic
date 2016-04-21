@@ -23,8 +23,6 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from simplejson import JSONDecodeError
-
 from ifconfig.models import Host
 
 class RequestHandlers(object):
@@ -135,7 +133,7 @@ class RequestHandlers(object):
 
         try:
             response_data = response.json()
-        except JSONDecodeError:
+        except ValueError:
             # For example in case of DELETE requests the response might contain no data
             response_data = ""
 
