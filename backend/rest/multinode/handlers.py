@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-import requests, json
+import requests
+import json
 
 from collections import OrderedDict
 
@@ -24,6 +25,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 from ifconfig.models import Host
+
 
 class RequestHandlers(object):
 
@@ -63,15 +65,17 @@ class RequestHandlers(object):
         ip = current_host.get_primary_ip_address().host_part
 
         if queryset.has_next():
-            next_page = '%s?ordering=%s&page=%s&pageSize=%s' % (self._get_base_url(ip, self.api_prefix),
-                                                                 request.QUERY_PARAMS['ordering'],
-                                                                 queryset.next_page_number(),
-                                                                 request.QUERY_PARAMS['pageSize'])
+            next_page = '%s?ordering=%s&page=%s&pageSize=%s' % \
+                        (self._get_base_url(ip, self.api_prefix),
+                         request.QUERY_PARAMS['ordering'],
+                         queryset.next_page_number(),
+                         request.QUERY_PARAMS['pageSize'])
         if queryset.has_previous():
-            prev_page = '%s?ordering=%s&page=%s&pageSize=%s' % (self._get_base_url(ip, self.api_prefix),
-                                                                 request.QUERY_PARAMS['ordering'],
-                                                                 queryset.previous_page_number(),
-                                                                 request.QUERY_PARAMS['pageSize'])
+            prev_page = '%s?ordering=%s&page=%s&pageSize=%s' % \
+                        (self._get_base_url(ip, self.api_prefix),
+                         request.QUERY_PARAMS['ordering'],
+                         queryset.previous_page_number(),
+                         request.QUERY_PARAMS['pageSize'])
 
         return Response(OrderedDict([
             ('count',       queryset.paginator.count),
@@ -161,7 +165,8 @@ class RequestHandlers(object):
         try:
             return self.model.objects.get(id=data[host_filter[0]]['id']).host
         except:
-            target_model = self.model._meta.get_field_by_name(host_filter[0])[0].related.parent_model
+            target_model = self.model._meta.get_field_by_name(
+                host_filter[0])[0].related.parent_model
 
             if target_model == Host:
                 return Host.objects.get(id=data[host_filter[0]]['id'])
@@ -171,7 +176,8 @@ class RequestHandlers(object):
                 except target_model.DoesNotExist:
                     key = host_filter.pop(0)
 
-                    target_model = target_model._meta.get_field_by_name(host_filter[0])[0].related.parent_model
+                    target_model = target_model._meta.get_field_by_name(
+                        host_filter[0])[0].related.parent_model
                     host = target_model.all_objects.get(id=data[key]['id'])
 
                 for field in host_filter[1:]:
