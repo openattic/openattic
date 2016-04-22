@@ -318,7 +318,6 @@ EOF
 		kinit "$user"
 		
 		echo "Configuring Samba..."
-
 		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:$realm" "string:$workgroup"
 
 		if [ -e /etc/krb5.keytab ]; then
