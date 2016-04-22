@@ -211,10 +211,12 @@ After enabling the apt repository, run the following commands to install the
   # apt-get install openattic
 
 .. note::
-  For Ubuntu 14.04 LTS it is necessary to install ``linux-image-generic`` and
-  ``linux-image-extra-`uname -r``` in order to get the ``lio-utils`` package working
-  which is used by ``openattic-module-lio`` (included in the base openattic package).
-  A ``service target restart`` may be required.
+  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in order
+  to get the ``lio-utils`` package working which is used by ``openattic-module-lio``
+  (included in the base openattic package).
+  You may need to restart the target service as well::
+    # apt-get install linux-image-extra-`uname -r`
+    # service target restart
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.
