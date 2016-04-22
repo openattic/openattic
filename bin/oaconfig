@@ -318,8 +318,9 @@ EOF
 		kinit "$user"
 		
 		echo "Configuring Samba..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:$realm" "string:$workgroup"
-		
+
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:$realm" "string:$workgroup"
+
 		if [ -e /etc/krb5.keytab ]; then
 			echo "Removing old keytab..."
 			rm /etc/krb5.keytab
@@ -371,7 +372,7 @@ EOF
 		while ! oacli ping ; do
 			sleep 1
 		done
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:" "string:"
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:" "string:"
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart
 		done
