@@ -59,14 +59,14 @@ class CephCluster(NodbModel):
     def get_names():
         clusters = []
         for file in os.listdir('/etc/ceph'):
-            if file.endswith('.conf'):
+            if file.endswith('.conf') and os.access(file, os.R_OK):
                 clusters.append(os.path.splitext(file)[0])
         return clusters
 
     @staticmethod
     def get_name(fsid):
         for conf_file in os.listdir('/etc/ceph'):
-            if conf_file.endswith('.conf'):
+            if conf_file.endswith('.conf') and os.access(conf_file, os.R_OK):
                 config = ConfigParser.ConfigParser()
                 config.read(os.path.join('/etc/ceph/', conf_file))
 
@@ -78,7 +78,7 @@ class CephCluster(NodbModel):
     @staticmethod
     def get_fsid(cluster_name):
         f = '/etc/ceph/{name}.conf'.format(name=cluster_name)
-        if os.path.isfile(f):
+        if os.path.isfile(f) and os.access(f, os.R_OK):
             config = ConfigParser.ConfigParser()
             config.read(f)
             fsid = config.get('global', 'fsid')
