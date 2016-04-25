@@ -7,9 +7,30 @@
     </div>
 </div>
 
-<div ng-show="clusters">
-    <select ng-model="selectedCluster" ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters">
-    </select>
+<div class="panel panel-default" ng-show="clusters === null">
+    <div class="panel-heading">
+        <h3 class="panel-title">Loading...</h3>
+    </div>
+    <div class="panel-body">
+        Ceph cluster is loading...
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="clusters">
+    <div class="panel-heading">
+        <h3 class="panel-title">Select a Cluster</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="form-group no-margin">
+            <select id="cluster_selection"
+                    class="form-control"
+                    ng-model="selectedCluster"
+                    ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid">
+              <option class="tc_cephPoolOption" value="">-- Select a cluster --</option>
+            </select>
+        </div>
+    </div>
 </div>
 
 <oadatatable ng-show="selectedCluster" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
@@ -45,14 +66,14 @@
                 <td ng-show="columns['Size']" ng-bind="row.max_avail | bytes"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" data-toggle="tooltip" data-placement="right"
-                            title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.free | bytes}}">
+                            title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.oaFree | bytes}}">
                         <div class="progress-bar" role="progressbar"
-                                aria-valuenow="{{row.used | number: 2}}" aria-valuemin="0"
-                                aria-valuemax="100" style="width: {{row.used | number: 2}}%">
-                            <span>{{row.used | number: 2}}%</span>
+                                aria-valuenow="{{row.oaUsed | number: 2}}" aria-valuemin="0"
+                                aria-valuemax="100" style="width: {{row.oaUsed | number: 2}}%">
+                            <span>{{row.oaUsed | number: 2}}%</span>
                         </div>
                         <div class="progress-bar progress-bar-freespace" role="progressbar"
-                                aria-valuenow="{{row.unused}}" aria-valuemin="0"
+                                aria-valuenow="{{row.oaUnused}}" aria-valuemin="0"
                                 aria-valuemax="100" style="width: {{row.unused}}%">
                         </div>
                     </div>
