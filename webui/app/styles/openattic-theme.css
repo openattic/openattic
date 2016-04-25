@@ -61,7 +61,13 @@ background-color: #404040!important;
   background-color: #71843f!important;
 }
 .bg-color-red {
-background-color: #a90329!important;
+  background-color: #a90329!important;
+}
+.no-margin {
+  margin: 0;
+}
+.no-padding {
+  padding: 0;
 }
 
 /* Branding */
