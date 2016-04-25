@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 
-app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, cephClustersService, $timeout) {
+app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, cephClustersService) {
   $scope.clusters = null;
   $scope.pools = {};
 
