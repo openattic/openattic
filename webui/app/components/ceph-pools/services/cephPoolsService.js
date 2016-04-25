@@ -31,26 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.factory("Paginator", function ($resource) {
-  //return $resource("/openattic/api/ceph-cluster/:id", {
-  return $resource("/openattic/api/ceph/:id", {
+app.factory("cephPoolsService", function ($resource) {
+  return $resource("/openattic/api/ceph/:id/pools", {
     id: "@id"
-  }, {
-    update: {method: "PUT"},
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
-    },
-    clusters: {
-      method: "GET",
-      url: "/openattic/api/ceph"
-    },
-    pools: {
-      method: "GET",
-      url: "/openattic/api/ceph/:id/pools"
-    }
   });
 });
