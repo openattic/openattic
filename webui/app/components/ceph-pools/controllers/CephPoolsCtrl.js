@@ -32,73 +32,95 @@
 
 var app = angular.module("openattic.cephPools");
 
-app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
-  $scope.clusters = {};
+app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, cephClustersService) {
+  $scope.clusters = null;
   $scope.pools = {};
 
   $scope.filterConfig = {
-    page: 0,
-    entries: 10,
-    search: "",
+    page     : 0,
+    entries  : 10,
+    search   : "",
     sortfield: null,
     sortorder: null
   };
 
   $scope.selection = {};
+  $scope.selectedCluster = null;
 
-  var updateResults = function (res, clusterId) {
-    res.results.forEach(function (pool, index) {
-      pool.used = pool.num_bytes / pool.max_avail * 100;
-      pool.unused = 100 - pool.used;
-      pool.free = pool.max_avail - pool.num_bytes;
-      res.results[index] = pool;
-    });
-    if ($scope.pools.hasOwnProperty("results")) {
-      // Does the pool contains information about antother cluster?
-      var otherClusterPools = $scope.pools.results.filter(function (pool) {
-        return pool.cluster.id !== clusterId;
-      });
+  cephClustersService.get().$promise.then(function (res) {
+    $scope.clusters = res.results;
+  }).catch(function () {
+    $scope.clusters = false;
+  });
 
-      if (otherClusterPools.length === $scope.pools.results.length) {
-        //do a merge
-        res.count += $scope.pools.count;
-        $scope.pools.results.forEach(function (pool) {
-          res.results.push(pool);
-        });
-      }
+  //var updateResults = function (res, clusterId) {
+  //  res.results.forEach(function (pool, index) {
+  //    pool.used = pool.num_bytes / pool.max_avail * 100;
+  //    pool.unused = 100 - pool.used;
+  //    pool.free = pool.max_avail - pool.num_bytes;
+  //    res.results[index] = pool;
+  //  });
+  //  if ($scope.pools.hasOwnProperty("results")) {
+  //    // Does the pool contains information about antother cluster?
+  //    var otherClusterPools = $scope.pools.results.filter(function (pool) {
+  //      return pool.cluster.id !== clusterId;
+  //    });
+  //
+  //    if (otherClusterPools.length === $scope.pools.results.length) {
+  //      //do a merge
+  //      res.count += $scope.pools.count;
+  //      $scope.pools.results.forEach(function (pool) {
+  //        res.results.push(pool);
+  //      });
+  //    }
+  //  }
+  //  return res;
+  //};
+
+  $scope.$watch("selectedCluster", function () {
+    if ($scope.selectedCluster) {
+      cephPoolsService
+          .get(
+              {
+                id: $scope.selectedCluster.fsid
+              }
+          )
+          .$promise
+          .then(function (res) {
+            $scope.pools = res;
+          });
     }
-    return res;
-  };
+  });
 
   $scope.$watch("filterConfig", function () {
-    Paginator
-      .clusters()
-      .$promise
-      .then(function (res) {
-        $scope.clusters = res.results;
-        $scope.clusters.forEach(function (cluster) {
-          Paginator
-            .pools({
-              id: cluster.fsid,
-              page: $scope.filterConfig.page + 1,
-              pageSize: $scope.filterConfig.entries,
-              search: $scope.filterConfig.search,
-              ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
-              upper__isnull: "True"
-            })
-            .$promise
-            .then(function (res) {
-              $scope.pools = updateResults(res, cluster.fsid);
-            })
-            .catch(function (error) {
-              console.log("Ceph has no pools", error);
-            });
-        });
-      })
-      .catch(function () {
-        $scope.clusters = false;
-        console.log("Ceph not available.");
-      });
+    //Paginator
+    //  .clusters()
+    //  .$promise
+    //  .then(function (res) {
+    //    $scope.clusters = res.results;
+    //    $scope.clusters.forEach(function (cluster) {
+    //      Paginator
+    //        .pools({
+    //          id: cluster.fsid,
+    //          page: $scope.filterConfig.page + 1,
+    //          pageSize: $scope.filterConfig.entries,
+    //          search: $scope.filterConfig.search,
+    //          ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
+    //          upper__isnull: "True"
+    //        })
+    //        .$promise
+    //        .then(function (res) {
+    //          $scope.pools = updateResults(res, cluster.fsid);
+    //        })
+    //        .catch(function (error) {
+    //          console.log("Ceph has no pools", error);
+    //        });
+    //    });
+    //  })
+    //  .catch(function () {
+    //    $scope.clusters = false;
+    //    console.log("Ceph not available.");
+    //  });
   }, true);
 
   $scope.$watchCollection("selection", function (selection) {
@@ -116,7 +138,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
     if (item) {
       $state.go("cephPools.detail.status", {
         cephPool: item.id,
-        "#": "more"
+        "#"     : "more"
       });
     }
   });
