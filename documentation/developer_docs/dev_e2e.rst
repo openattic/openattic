@@ -210,7 +210,7 @@ In directory ``/srv/openattic/e2e/`` the following directories can be found::
   +-- auth
   +-- commandLogs
   +-- dashboard
-  |   `-- todoWidget
+  |   `-- dashboard
   +-- disks
   +-- general
   +-- hosts
@@ -316,8 +316,36 @@ should take place, you can make use of::
 
   });
 
-Tips to write tests that also support Firefox
----------------------------------------------
+Style Guide - General e2e.js file structure / architecture
+-----------------------------------------------------------
+
+  * ``describe`` should contain a general description of what is going to be tested in this spec file
+  * ``it`` - should describe, what exactly is going to be tested in this it-case
+  * Elements which are going to be used more than once should be defined in a variable on top of the file
+  * Put required files at the top of the file
+  * Do not make tests complex by using a lot of for loops, if statements or even nested functions
+  * If something has to be done frequently one can define those steps in a function defined in ``common.js`` and use this
+    function in specific spec files (for examples see ``create_volume``-/``delete_volume``-function)
+  * If possible use locators like ``by.model`` or ``by.binding``
+  * avoid using: ``by.linkText``, ``by.buttonText`` or ``by.cssContainingText``
+  * If ``by.model`` or ``by.binding`` is not available, try using ``by.id`` or ``by.css``
+  * In a bunch of openATTIC HTML files you'll find css classes which are especially set for tests (those test classes are
+    recognizable by the "tc_" term which stands for "test class".
+    This is very useful when protractor finds more than one element of something but you can specify the element by adding
+    or just using this tc_class of this element to the locator which makes it unique (for example datatable)
+  * Tests should be readable and understandable for someone who is not familiar in detail with tests in order to make
+    it easy to understand what exactly the test does and to make it simple writing tests for contributors
+  * Make test spec files independent from each other because it's not guaranteed that test files will be executed in a
+    specific order
+  * Always navigate to the page which should be tested to make sure that the page is in a "clean state"
+  * Locators and specs should apply to the Jasmine2 and Protractor version 3.x.x functionalities
+  * Make sure that written tests do work in Chrome (v. 49.x.x) and Firefox (v. 45.x)
+  * The name of folders/files should tell what the test is about (i.e. folder "user" contains "user_add.e2e.js"
+  * "Workflow"-files contain tests which do not emphasize any functionality (i.e. add, delete, edit) but validation
+    and user feedback in forms or dialogs
+
+Tips on how to write tests that also support Firefox
+----------------------------------------------------
 
 Let protractor only click on clickable elements, like ``a``, ``button`` or ``input``.
 
