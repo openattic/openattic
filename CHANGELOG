@@ -7,6 +7,8 @@ Version 2.0.11, (not released yet):
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
   close_connection()" RemovedInDjango18Warning (OP-809)
+* Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
+  to dbus-send Samba writeconf calls (OP-1113)
 
 Version 2.0.10, 20. Apr 2016:
 -----------------------------
