@@ -18,6 +18,7 @@ from __future__ import division
 import json
 import math
 import os
+import logging
 
 from django.db import models
 from django.utils.translation import ugettext_noop as _
@@ -33,6 +34,8 @@ from nodb.models import NodbModel
 
 from ceph import librados
 import ConfigParser
+
+logger = logging.getLogger(__name__)
 
 
 class RadosClientManager(object):
@@ -56,17 +59,41 @@ class CephCluster(NodbModel):
     name = models.CharField(max_length=100)
 
     @staticmethod
+    def has_valid_config_file():
+        conf_dir = '/etc/ceph'
+        # Check for existance of /etc/ceph.
+        if os.path.isdir(conf_dir):
+            # Look into that directory and check if at least one conf file exists and is readable.
+            for file_name in os.listdir(conf_dir):
+                file_path = os.path.join(conf_dir, file_name)
+                if file_name.endswith('.conf') and os.access(file_path, os.R_OK):
+                    return True
+
+        logger.error('No usable Ceph configuration file could be found')
+        return False
+
+    @staticmethod
     def get_names():
         clusters = []
+
+        if not CephCluster.has_valid_config_file():
+            print('quiting')
+            return clusters
+
         for file in os.listdir('/etc/ceph'):
-            if file.endswith('.conf') and os.access(file, os.R_OK):
-                clusters.append(os.path.splitext(file)[0])
+            if file.endswith('.conf'):
+                if os.access(os.path.join('/etc/ceph', file), os.R_OK):
+                    clusters.append(os.path.splitext(file)[0])
+                else:
+                    logger.warning('Could\'nt access {}'.format(file))
+
         return clusters
 
     @staticmethod
     def get_name(fsid):
         for conf_file in os.listdir('/etc/ceph'):
-            if conf_file.endswith('.conf') and os.access(conf_file, os.R_OK):
+            conf_file_path = os.path.join('/etc/ceph', conf_file)
+            if conf_file.endswith('.conf') and os.access(conf_file_path, os.R_OK):
                 config = ConfigParser.ConfigParser()
                 config.read(os.path.join('/etc/ceph/', conf_file))
 

@@ -7,6 +7,7 @@ import ConfigParser
 
 logger = logging.getLogger(__name__)
 
+
 class Keyring(object):
     """
     Returns usable keyring
@@ -59,7 +60,6 @@ class Keyring(object):
             raise RuntimeError(error_msg)
 
 
-
 class Client(object):
     """Represents the connection to a single ceph cluster."""
 
@@ -82,7 +82,8 @@ class Client(object):
 
     def connect(self, conf_file):
         if self._cluster is None:
-            self._cluster = rados.Rados(conffile=conf_file, name=self._name, conf={'keyring': self._keyring})
+            self._cluster = rados.Rados(conffile=conf_file, name=self._name,
+                                        conf={'keyring': self._keyring})
 
         if not self.connected():
             self._cluster.connect()
@@ -139,7 +140,7 @@ class Client(object):
                 '',
                 timeout=self._default_timeout)
         elif type(cmd) is dict:
-            (ret, out, err) =  self._cluster.mon_command(
+            (ret, out, err) = self._cluster.mon_command(
                 json.dumps(cmd),
                 '',
                 timeout=self._default_timeout)
@@ -152,4 +153,3 @@ class Client(object):
 
 class ExternalCommandError(Exception):
     pass
-
