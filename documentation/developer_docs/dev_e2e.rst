@@ -111,7 +111,7 @@ line to ``webui/protractor.conf.js``::
   ``},``
   }
 
-Use multiple browsers
+Use Multiple Browsers
 ---------------------
 
 When using Chrome and Firefox for the tests, you could append the following to your ``protractor.conf.js`` so the test will run
@@ -126,7 +126,7 @@ To prevent running both browsers at the same time you can add::
 
     exports.config.maxSessions = 1;
 
-Set up configs.js
+Set Up configs.js
 -----------------
 Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA| system as well as login data - see below::
 
@@ -155,7 +155,7 @@ If you do not have a zpool configured and you do not want to create one, you
 can of course skip those tests by removing the suite from
 ``protractor.conf.js`` or putting them in to the comment section.
 
-Start webdriver manager environment
+Start webdriver manager Environment
 -----------------------------------
 
 use a separate tab/window to run the following command:
@@ -209,12 +209,14 @@ In directory ``/srv/openattic/e2e/`` the following directories can be found::
 
   +-- auth
   +-- commandLogs
+  +-- ceph
   +-- dashboard
   |   `-- dashboard
   +-- disks
   +-- general
   +-- hosts
   +-- pools
+  +-- pagination
   +-- shares
   |   +-- cifs
   |   +-- http
@@ -316,8 +318,8 @@ should take place, you can make use of::
 
   });
 
-Style Guide - General e2e.js file structure / architecture
------------------------------------------------------------
+Style Guide - General e2e.js File Structure / Architecture
+----------------------------------------------------------
 
   * ``describe`` should contain a general description of what is going to be tested (functionality) in this spec file
     i.e. the site, menu entry (and its content), panel, wizard etc.
