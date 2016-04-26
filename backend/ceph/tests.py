@@ -14,11 +14,13 @@
 """
 
 import mock
+import tempfile
 
 from django.test import TestCase
 
 from ceph.models import Cluster
 
+from ceph.librados import Keyring
 
 class ClusterTestCase(TestCase):
     def test_get_recommended_pg_num(self):
@@ -38,3 +40,27 @@ class ClusterTestCase(TestCase):
             # the next power of two above it, but keeps it unaltered
             mock_osd_set.count.return_value = 8192
             self.assertEqual(c.get_recommended_pg_num(100), 8192)
+
+
+class KeyringTestCase(TestCase):
+    def test_keyring_succeeds(self):
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") as tmpfile:
+            tmpfile.write("[client.admin]")
+            tmpfile.flush()
+            keyring = Keyring('ceph', '/tmp')
+            self.assertEqual(keyring.username, 'client.admin')
+
+    def test_keyring_raises_runtime_error(self):
+        try:
+            keyring = Keyring('ceph', '/tmp')
+        except RuntimeError, e:
+            return True
+
+    def test_username_raises_runtime_error(self):
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") as tmpfile:
+            tmpfile.write("abcdef")
+            tmpfile.flush()
+            try:
+                keyring = Keyring('ceph', '/tmp')
+            except RuntimeError, e:
+                return True
