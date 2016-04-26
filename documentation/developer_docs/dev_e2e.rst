@@ -322,14 +322,14 @@ Style Guide - General e2e.js file structure / architecture
   * ``describe`` should contain a general description of what is going to be tested (functionality) in this spec file
     i.e. the site, menu entry (and its content), panel, wizard etc.
     example: "should test the user panel and its functionalities"
-  * ``it`` - should describe, what exactly is going to be tested in this it-case
-    i.e.(based on the described example): "should test validation of form field "Name""
+  * ``it`` - should describe, what exactly is going to be tested in this specific it-case
+    i.e.(based on the described example above): "should test validation of form field "Name""
   * Elements which are going to be used more than once should be defined in a variable
     on top of the file (under described)
   * Put required files at the top of the file
   * Do not make tests complex by using a lot of for loops, if statements or even nested functions
   * If something has to be done frequently one can define those steps in a function defined
-    in above mentioned``common.js`` and use this function in specific spec files
+    in above mentioned ``common.js`` and use this function in specific spec files
     (for examples see ``create_volume``-/``delete_volume``-function)
   * If possible use protracotr locators like ``by.model`` or ``by.binding`` (those are performant locators)
   * If ``by.model`` or ``by.binding`` is not available, try using locators like ``by.id`` or ``by.css`` (those are
@@ -352,8 +352,8 @@ Style Guide - General e2e.js file structure / architecture
   * Locators and specs should apply to the Jasmine2 and Protractor version 3.x.x functionalities
   * Make sure that written tests do work in Chrome (v. 49.x.x) and Firefox (v. 45.x)
   * The name of folders/files should tell what the test is about (i.e. folder "user" contains "user_add.e2e.js"
-  * "Workflow"-files contain tests which do not emphasize any functionality (i.e. add, delete, edit) but validation
-    and user feedback in forms or dialogs
+  * "Workflow"-files contain tests which do not emphasize any functionality (i.e. add, delete, edit) but check
+    validation and user feedback in forms or dialogs (like error messages)
 
 Tips on how to write tests that also support Firefox
 ----------------------------------------------------
