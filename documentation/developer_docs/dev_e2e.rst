@@ -325,7 +325,7 @@ Style Guide - General e2e.js File Structure / Architecture
     i.e. the site, menu entry (and its content), panel, wizard etc.
     example: "should test the user panel and its functionalities"
   * ``it`` - should describe, what exactly is going to be tested in this specific it-case
-    i.e.(based on the described example above): "should test validation of form field "Name""
+    i.e. (based on the described example above): "should test validation of form field "Name""
   * Elements which are going to be used more than once should be defined in a variable
     on top of the file (under described)
   * Put required files at the top of the file
@@ -333,14 +333,14 @@ Style Guide - General e2e.js File Structure / Architecture
   * If something has to be done frequently one can define those steps in a function defined
     in above mentioned ``common.js`` and use this function in specific spec files
     (for examples see ``create_volume``-/``delete_volume``-function)
-  * If possible use protracotr locators like ``by.model`` or ``by.binding`` (those are performant locators)
+  * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators)
   * If ``by.model`` or ``by.binding`` is not available, try using locators like ``by.id`` or ``by.css`` (those are
     also performant locators)
   * Avoid using text locators like ``by.linkText``, ``by.buttonText`` or ``by.cssContainingText`` at least for
     text which tend to change over time / often (like buttons, links and labels)
   * Try to avoid using ``xpath`` - it is a very slow locator. Xpath expressions are hard to read and to debug
   * In a bunch of openATTIC HTML files (see ``openattic/webui/app/templates``) you'll find css classes which
-    are especially set for tests (those test classes are recognizable by the "tc_" term which stands for "test class".
+    are especially set for tests (those test classes are recognizable by the "tc_" term which stands for "test class").
     This is very useful when protractor finds more than one element of something (i.e. "Add"-button) and you can specify
     the element by adding or just using this tc_class of the element you're looking for to the locator which makes it
     unique (i.e.: ``element(by.css('oadatatable .tc_add_btn')).click();``)
