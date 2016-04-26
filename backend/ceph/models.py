@@ -77,7 +77,6 @@ class CephCluster(NodbModel):
         clusters = []
 
         if not CephCluster.has_valid_config_file():
-            print('quiting')
             return clusters
 
         for file in os.listdir('/etc/ceph'):
