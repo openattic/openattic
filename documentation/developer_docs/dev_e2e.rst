@@ -354,8 +354,8 @@ Style Guide - General e2e.js File Structure / Architecture
   * Locators and specs should apply to the Jasmine2 and Protractor version 3.x.x functionalities
   * Make sure that written tests do work in Chrome (v. 49.x.x) and Firefox (v. 45.x)
   * The name of folders/files should tell what the test is about (i.e. folder "user" contains "user_add.e2e.js"
-  * "Workflow"-files contain tests which do not emphasize any functionality (i.e. add, delete, edit) but check
-    validation and user feedback in forms or dialogs (like error messages)
+  * "Workflow"-files contain tests which do not place value on functionalities itself (i.e. add, delete, edit something)
+    but check validation and user feedback in forms or dialogs (like error messages)
 
 Tips on how to write tests that also support Firefox
 ----------------------------------------------------
