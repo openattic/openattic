@@ -10,6 +10,7 @@ Version 2.0.11, (not released yet):
 * Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
   to dbus-send Samba writeconf calls (OP-1113)
 * Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
+* Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
 
 Version 2.0.10, 20. Apr 2016:
 -----------------------------
