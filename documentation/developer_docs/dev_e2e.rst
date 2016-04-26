@@ -319,22 +319,30 @@ should take place, you can make use of::
 Style Guide - General e2e.js file structure / architecture
 -----------------------------------------------------------
 
-  * ``describe`` should contain a general description of what is going to be tested in this spec file
+  * ``describe`` should contain a general description of what is going to be tested (functionality) in this spec file
+    i.e. the site, menu entry (and its content), panel, wizard etc.
+    example: "should test the user panel and its functionalities"
   * ``it`` - should describe, what exactly is going to be tested in this it-case
-  * Elements which are going to be used more than once should be defined in a variable on top of the file
+    i.e.(based on the described example): "should test validation of form field "Name""
+  * Elements which are going to be used more than once should be defined in a variable
+    on top of the file (under described)
   * Put required files at the top of the file
   * Do not make tests complex by using a lot of for loops, if statements or even nested functions
-  * If something has to be done frequently one can define those steps in a function defined in ``common.js`` and use this
-    function in specific spec files (for examples see ``create_volume``-/``delete_volume``-function)
+  * If something has to be done frequently one can define those steps in a function defined
+    in above mentioned``common.js`` and use this function in specific spec files
+    (for examples see ``create_volume``-/``delete_volume``-function)
   * If possible use locators like ``by.model`` or ``by.binding``
   * avoid using: ``by.linkText``, ``by.buttonText`` or ``by.cssContainingText``
   * If ``by.model`` or ``by.binding`` is not available, try using ``by.id`` or ``by.css``
-  * In a bunch of openATTIC HTML files you'll find css classes which are especially set for tests (those test classes are
-    recognizable by the "tc_" term which stands for "test class".
-    This is very useful when protractor finds more than one element of something but you can specify the element by adding
-    or just using this tc_class of this element to the locator which makes it unique (for example datatable)
+  * In a bunch of openATTIC HTML files (see ``openattic/webui/app/templates``) you'll find css classes which
+    are especially set for tests (those test classes are recognizable by the "tc_" term which stands for "test class".
+    This is very useful when protractor finds more than one element of something (i.e. "Add"-button) and you can specify
+    the element by adding or just using this tc_class of the element you're looking for to the locator which makes it
+    unique (i.e.: ``element(by.css('oadatatable .tc_add_btn')).click();``)
   * Tests should be readable and understandable for someone who is not familiar in detail with tests in order to make
-    it easy to understand what exactly the test does and to make it simple writing tests for contributors
+    it easy to see what exactly the test does and to make it simple writing tests for contributors.
+    Also, for someone who does not know what the software is capable of, having a look at the tests should help
+    understanding the behavior of the application
   * Make test spec files independent from each other because it's not guaranteed that test files will be executed in a
     specific order
   * Always navigate to the page which should be tested to make sure that the page is in a "clean state"
