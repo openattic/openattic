@@ -350,7 +350,13 @@ Style Guide - General e2e.js File Structure / Architecture
     In addition we decided to put an ``afterAll`` at the end of each test file which contains a
     ``console.log("<protractor suite name> -> <filename>.e2e.js")``. By doing so it is possible to track which test in
     which file is currently executed when running all tests.
-  * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators)
+  * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators).
+    Example::
+       <ul class = "example">
+          <li>{{volume.name}}</li>
+       </ul>
+    -> Avoid doing: ``var elementName = element.all(by.css('.example li')).get(0);``
+    -> Recommended: ``var elementName ) element(by.binding('volume.name'));``
   * If ``by.model`` or ``by.binding`` is not available, try using locators like ``by.id`` or ``by.css`` (those are
     also performant locators)
   * Avoid using text locators like ``by.linkText``, ``by.buttonText`` or ``by.cssContainingText`` at least for
@@ -367,7 +373,8 @@ Style Guide - General e2e.js File Structure / Architecture
     understanding the behavior of the application
   * Make test spec files independent from each other because it's not guaranteed that test files will be executed in a
     specific order
-  * Always navigate to the page which should be tested to make sure that the page is in a "clean state"
+  * Always navigate to the page which should be tested to make sure that the page is in a "clean state".
+    This can be done by putting the navigation part in a ``beforeEach``-function.
   * Locators and specs should apply to the Jasmine2 and Protractor version 3.x.x functionalities
   * Make sure that written tests do work in Chrome (v. 49.x.x) and Firefox (v. 45.x)
   * The name of folders/files should tell what the test is about (i.e. folder "user" contains "user_add.e2e.js"
