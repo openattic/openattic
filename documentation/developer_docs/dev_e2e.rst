@@ -352,7 +352,7 @@ Style Guide - General e2e.js File Structure / Architecture
     which file is currently executed when running all tests.
   * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators).
     Example::
-       <ul class = "example">
+       <ul class="example">
           <li>{{volume.name}}</li>
        </ul>
     -> Avoid doing: ``var elementName = element.all(by.css('.example li')).get(0);``
