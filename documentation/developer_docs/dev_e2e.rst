@@ -332,7 +332,24 @@ Style Guide - General e2e.js File Structure / Architecture
   * Do not make tests complex by using a lot of for loops, if statements or even nested functions
   * If something has to be done frequently one can define those steps in a function defined
     in above mentioned ``common.js`` and use this function in specific spec files
-    (for examples see ``create_volume``-/``delete_volume``-function)
+    i.e. if you always/often need a user before you can start the actual testing you can define a function ``create_user``
+    which contains the steps of creating a user and use the ``create_user``-function in the tests where it's required.
+    Therefore you just have to require the ``common.js`` file in the spec file and call the ``create_user``-function in
+    the beforeAll function. This procedure is a good way to prevent duplicated code.
+    (for examples see common.js -> ``create_volume-``/ ``delete_volume``-function)
+  * Make use of the beforeAll/afterAll-functions if possible (see the ``Install Protractor`` instructions).
+    Those functions allow you to do some steps (which are only required once) before anything else in the spec file
+    is going to be executed.
+    For example, if you need to login first before testing anything, you can put this step in a ``beforeAll``-function.
+    Also, using a beforeAll instead of a beforeEach saves a lot of time when executing tests. Furthermore, it's not
+    always necessary to repeat a specific step beforeEach ``ìt``-section.
+    The ``afterAll``-function is a good way to "clean up" things which are no longer needed after the test.
+    If you already have a function (i.e. ``create_user``) which creates something, you probably want to delete it after
+    the tests have been executed. So it makes sense having another function, which deletes the object
+    (in this case a ``delete_user``-function) that can simply be called in ``afterAll``.
+    In addition we decided to put an ``afterAll`` at the end of each test file which contains a
+    ``console.log("<protractor suite name> -> <filename>.e2e.js")``. By doing so it is possible to track which test in
+    which file is currently executed when running all tests.
   * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators)
   * If ``by.model`` or ``by.binding`` is not available, try using locators like ``by.id`` or ``by.css`` (those are
     also performant locators)
