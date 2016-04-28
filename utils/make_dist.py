@@ -13,8 +13,8 @@
 # *  GNU General Public License for more details.
 
 """Usage:
-    make_dist.py create <revision> [-v|-q|-s] [--disable-fe-building]
-    make_dist.py selftest [<revision>]
+    make_dist.py create <revision> [-v|-q|-s] [<source>] [--disable-fe-building]
+    make_dist.py selftest [<revision>] [<source>]
     make_dist.py cache push
     make_dist.py help
 
@@ -24,6 +24,8 @@ managers to create debs, rpms, etc.
 Arguments:
     revision    'stable', 'unstable' and a valid mercurial revision are allowed
                 to be used here.
+    source      Can be an URL or a local path with uncommitted changes.
+                [default: https://bitbucket.org/openattic/openattic]
 
 Options:
     -v          Enables the verbose mode.
@@ -47,6 +49,7 @@ from os import makedirs
 from datetime import datetime
 from hashlib import md5
 from docopt import docopt
+from urlparse import urlparse
 
 
 class ProcessResult(object):
@@ -140,19 +143,26 @@ class Process(object):
 
 class DistBuilder(object):
 
-    def __init__(self, source_dir, prodname, hg_base_url, args=None):
+    def __init__(self, source_dir, args=None):
         self._home_dir = os.environ['HOME']
         self._source_dir = source_dir
-        self._prodname = prodname
-        self._hg_base_url = hg_base_url
-        self._version_txt_path = os.path.join(self._source_dir, prodname, 'version.txt')
-        self._package_json_path = os.path.join(self._source_dir, prodname, 'webui', 'package.json')
-        self._bower_json_path = os.path.join(self._source_dir, prodname, 'webui', 'bower.json')
 
-        if args:
-            self._args = args
-        else:
-            self._args = docopt(__doc__)
+        if not args:
+            args = {}
+        self._args = docopt(__doc__)
+        self._args.update(args)
+
+        source = self._args['<source>'] or 'https://bitbucket.org/openattic/openattic'
+
+        self._isPath = urlparse(self._args['<source>']).netloc == ''
+        self._hg_base_url = os.path.dirname(source)
+        self._repo_name = os.path.basename(source)
+
+        self._version_txt_path = os.path.join(self._source_dir, self._repo_name, 'version.txt')
+        self._package_json_path = os.path.join(self._source_dir, self._repo_name, 'webui',
+                                               'package.json')
+        self._bower_json_path = os.path.join(self._source_dir, self._repo_name, 'webui',
+                                             'bower.json')
 
         self._verbosity = 1
         if self._args['-q']:
@@ -191,7 +201,7 @@ class DistBuilder(object):
 
         result = self._process.run(
             ['hg', 'parents', '--template', '{latesttag}'],
-            cwd=os.path.join(self._source_dir, 'openattic'))
+            cwd=os.path.join(self._source_dir, self._repo_name))
 
         return result.stdout
 
@@ -246,7 +256,7 @@ class DistBuilder(object):
         return sorted_tags
 
     def _get_latest_existing_tag(self):
-        source_dir = os.path.join(self._source_dir, 'openattic')
+        source_dir = os.path.join(self._source_dir, self._repo_name)
         tags = self.__get_all_tags(source_dir)
         tags.remove('tip')  # We're looking for the latest _labeled_ tag.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
@@ -258,7 +268,7 @@ class DistBuilder(object):
         """Determine the upcoming version for 'unstable' releases."""
         self._process.run(
             ['hg', 'pull', '-u'],
-            cwd=os.path.join(self._source_dir, 'openattic'))
+            cwd=os.path.join(self._source_dir, self._repo_name))
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -357,18 +367,24 @@ class DistBuilder(object):
         for repo_name in repo_names:
             result['repo_name'] = False
             if not isdir(source_dir + '/' + repo_name):
-                repo_url = self._hg_base_url + '/' + repo_name
-                repo_target_dir = os.path.join(source_dir + '/' + repo_name)
-                self._process.run(['hg', 'clone', repo_url, repo_target_dir])
-                result['repo_name'] = True
+                if repo_name == 'oa_cache':
+                    repo_url = 'https://bitbucket.org/openattic' + '/' + repo_name
+                else:
+                    repo_url = self._hg_base_url + '/' + repo_name
+                    if self._isPath:
+                        self._process.run(['cp', '-r', repo_url, source_dir])
+                    else:
+                        repo_target_dir = os.path.join(source_dir + '/' + repo_name)
+                        self._process.run(['hg', 'clone', repo_url, repo_target_dir])
+            result['repo_name'] = True
 
         return result
 
     def _prepare_sources(self, rev):
         repositories = {
             'oa_cache': [['hg', 'pull', '--update']],
-            'openattic': [['hg', 'update', '--clean', '-r', rev],
-                          ['hg', 'pull', '--update']],
+            self._repo_name: [['hg', 'update', '--clean', '-r', rev],
+                              ['hg', 'pull', '--update']],
         }
 
         for repo_name, commands in repositories.items():
@@ -393,13 +409,13 @@ class DistBuilder(object):
     def _is_existing_tag(self, tag):
         result = self._process.run(
             ['hg', 'tags'],
-            cwd=os.path.join(self._source_dir, self._prodname))
+            cwd=os.path.join(self._source_dir, self._repo_name))
         matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
         if matches:
             return tag in matches
         return False
 
-    def _get_build_basename(self, revision_argument):
+    def _get_build_basename(self, revision_argument, test=False):
         """
         Returns the base name for the given revision.
         E.g. openattic-2.0.4 or openattic-2.0.5~201512021037
@@ -407,7 +423,7 @@ class DistBuilder(object):
                                   valid mercurial revision.
         :return: the base name
         """
-        build_basename = self._prodname + '-'
+        build_basename = self._repo_name + '-'
         if revision_argument == 'stable':
             tag = self._get_latest_existing_tag()
             latest_stable_version = self._strip_mercurial_tag(tag)
@@ -421,6 +437,11 @@ class DistBuilder(object):
 
         return build_basename
 
+    def _delete_source_clone(self):
+        path = os.path.join(self._source_dir, self._repo_name)
+        rmtree(path)
+        return path
+
     def _create_source_tarball(self, build_basename):
         """
         Make some modifications and create the tarball.
@@ -428,13 +449,13 @@ class DistBuilder(object):
         Remove previous version of the current build directory, generate the frontend cache files,
         update the version.txt and create the compressed tar archive.
 
-        It does also contain a temporary workaround for changing the debian/rules file to not contain
-        the rules to build the frontend files.
+        It does also contain a temporary workaround for changing the debian/rules file to not
+        contain the rules to build the frontend files.
 
         :param build_basename:
         :return: The absolute file path of the created tarball
         """
-        openattic_repo_dir = os.path.join(self._source_dir, 'openattic')
+        openattic_repo_dir = os.path.join(self._source_dir, self._repo_name)
         abs_build_dir = os.path.join(self._source_dir, build_basename)
         abs_tarball_file_path = abs_build_dir + '.tar.bz2'
         bower_components_dir = os.path.join(
@@ -448,9 +469,10 @@ class DistBuilder(object):
         if isfile(abs_tarball_file_path):
             os.remove(abs_tarball_file_path)
 
-        self._process.run(
-            ['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
-            cwd=os.path.join(self._source_dir, self._prodname))
+        prodpath = os.path.join(self._source_dir, self._repo_name)
+
+        self._process.run(['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
+                          cwd=prodpath)
 
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
@@ -530,6 +552,7 @@ class DistBuilder(object):
             ['tar', options, abs_tarball_file_path, build_basename],
             cwd=self._source_dir)
 
+        self._delete_source_clone()  # Remove no longer required repository clone.
         rmtree(abs_build_dir)  # Remove no longer required temporary folder.
 
         return abs_tarball_file_path
@@ -558,16 +581,21 @@ class DistBuilder(object):
         """
         self._check_dependencies(['npm'])
         self._set_npmrc_prefix()
-        self._clone_sources(self._source_dir, ['oa_cache', 'openattic'])
+        self._clone_sources(self._source_dir, ['oa_cache', self._repo_name])
         user_rev = self._args['<revision>']
         hg_rev = self._resolve_user_rev_to_hg_rev(user_rev)
 
         # Prepare sources.
         repositories = {
-            'oa_cache': [['hg', 'pull', '--update']],
-            'openattic': [['hg', 'pull'],
-                          ['hg', 'update', '--clean', '-r', hg_rev]]
+            'oa_cache': [['hg', 'pull', '--update']]
         }
+        if self._isPath:
+            repositories[self._repo_name] = [['hg', 'commit', '-A', '-m', '"current"'],
+                                             ['hg', 'tag', '-f', self._args['<revision>']]]
+        else:
+            repositories[self._repo_name] = [['hg', 'pull'],
+                                             ['hg', 'update', '--clean', '-r', hg_rev]]
+
         for repo_name, commands in repositories.items():
             for command in commands:
                 self._process.run(command,
@@ -595,41 +623,44 @@ class DistBuilder(object):
                 print 'Tarball has been created: %s' % abs_tarball_file_path
 
     def _self_test(self):
-        self._clone_sources(self._source_dir, ['openattic'])
-        repo_dir = os.path.join(self._source_dir, 'openattic')
+        self._clone_sources(self._source_dir, [self._repo_name])
+        repo_dir = os.path.join(self._source_dir, self._repo_name)
         rev = self._args['<revision>'] or 'tip'
         rev = self._resolve_user_rev_to_hg_rev(rev)
-        self._process.run(['hg', 'update', rev], cwd=repo_dir)
-        self._process.run(['hg', 'pull', '--update'], cwd=repo_dir)
+        if not self._isPath:
+            self._process.run(['hg', 'update', rev], cwd=repo_dir)
+            self._process.run(['hg', 'pull', '--update'], cwd=repo_dir)
         unittest.main('make_dist', argv=[sys.argv[0]])
 
 
 class DistBuilderTest(unittest.TestCase):
 
-    def setUp(self):
-        self._dist_builder = DistBuilder(
+    @classmethod
+    def setUpClass(cls):
+        cls._dist_builder = DistBuilder(
             source_dir=os.path.join(os.environ['HOME'], 'src'),
-            prodname='openattic',
-            hg_base_url='https://bitbucket.org/openattic',
             args={'-q': True})
-        self.version_regexp = r'\d+\.\d+\.\d+'
-        self.timestamp_regexp = r'20\d{8}'
+        cls.version_regexp = r'\d+\.\d+\.\d+'
+        cls.timestamp_regexp = r'20\d{8}'
 
     def test_get_build_basename_stable(self):
         build_basename = self._dist_builder._get_build_basename('stable')
-        stable_build_regexp = self._dist_builder._prodname + r'-' + \
-            self.version_regexp
+        stable_build_regexp = self._dist_builder._repo_name + r'-' + \
+                              self.version_regexp
+        print build_basename
         self.assertRegexpMatches(build_basename, stable_build_regexp)
 
     def test_get_build_basename_unstable(self):
         build_name = self._dist_builder._get_build_basename('unstable')
-        unstable_build_regexp = self._dist_builder._prodname + r'-' + \
-            self.version_regexp + r'~' + self.timestamp_regexp
+        unstable_build_regexp = self._dist_builder._repo_name + r'-' + \
+                                self.version_regexp + r'~' + self.timestamp_regexp
         self.assertRegexpMatches(build_name, unstable_build_regexp)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._dist_builder._delete_source_clone()
 
 
 if __name__ == '__main__':
-    dist_builder = DistBuilder(source_dir=os.environ['HOME'] + '/src',
-                               prodname='openattic',
-                               hg_base_url='https://bitbucket.org/openattic')
+    dist_builder = DistBuilder(source_dir=os.environ['HOME'] + '/src')
     dist_builder.run()
