@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<div class="panel panel-default" ng-show="clusters">
+<div class="panel panel-default" ng-show="clusters && clusters.length > 1">
     <div class="panel-heading">
         <h3 class="panel-title">Select a Cluster</h3>
     </div>
@@ -25,15 +25,14 @@
         <div class="form-group no-margin">
             <select id="cluster-selection"
                     class="form-control"
-                    ng-model="selectedCluster"
+                    ng-model="selectedCluster.data"
                     ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid">
-              <option class="tc_cephPoolOption" value="">-- Select a cluster --</option>
             </select>
         </div>
     </div>
 </div>
 
-<oadatatable ng-show="selectedCluster" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="selectedCluster.data" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
             <tr>
