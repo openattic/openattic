@@ -13,6 +13,7 @@ Version 2.0.11, (not released yet):
 * Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
 * Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
 * Backend: Added licence headers for nodb files (OP-1125)
+* Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
 * Documentation: added note about extra package which needs to be installed 
   when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
 
