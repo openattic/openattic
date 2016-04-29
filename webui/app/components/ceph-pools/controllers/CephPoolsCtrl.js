@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 
-app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, cephClustersService) {
+app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, cephClustersService, registryService) {
   $scope.clusters = null;
   $scope.pools = {};
 
@@ -45,10 +45,13 @@ app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, ceph
   };
 
   $scope.selection = {};
-  $scope.selectedCluster = null;
+  $scope.registry = registryService;
 
   cephClustersService.get().$promise.then(function (res) {
     $scope.clusters = res.results;
+    if (typeof $scope.registry.selectedCluster === "undefined") {
+      $scope.registry.selectedCluster = res.results[0];
+    }
   }).catch(function () {
     $scope.clusters = false;
     console.log("No Ceph cluster available");
@@ -64,12 +67,12 @@ app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, ceph
     return res;
   };
 
-  $scope.$watch("selectedCluster", function () {
-    if ($scope.selectedCluster) {
+  $scope.$watch("registry.selectedCluster", function () {
+    if ($scope.registry.selectedCluster) {
       cephPoolsService
           .get(
               {
-                id: $scope.selectedCluster.fsid
+                id: $scope.registry.selectedCluster.fsid
               }
           )
           .$promise
@@ -80,10 +83,10 @@ app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, ceph
   });
 
   $scope.$watch("filterConfig", function () {
-    if ($scope.selectedCluster) {
+    if ($scope.registry.selectedCluster) {
       cephPoolsService
           .get({
-            id      : $scope.selectedCluster.fsid,
+            id      : $scope.registry.selectedCluster.fsid,
             page    : $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
             search  : $scope.filterConfig.search,
