@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephSelectedCluster");
-app.factory("selectedClusterService", function () {
+var app = angular.module("openattic.registry");
+app.factory("registryService", function () {
   return {};
 });
