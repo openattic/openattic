@@ -25,14 +25,14 @@
         <div class="form-group no-margin">
             <select id="cluster-selection"
                     class="form-control"
-                    ng-model="selectedCluster.data"
+                    ng-model="registry.selectedCluster"
                     ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid">
             </select>
         </div>
     </div>
 </div>
 
-<oadatatable ng-show="selectedCluster.data" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="registry.selectedCluster" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
             <tr>
