@@ -200,6 +200,30 @@ except NameError:
         except IOError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
+# Set logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/openattic/openattic.log'
+        }
+    },
+    'loggers': {
+        'nagios': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True
+        },
+        'ceph': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True
+        }
+    }
+}
 
 # Read domain.ini.
 __domconf__ = ConfigParser()
