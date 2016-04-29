@@ -425,7 +425,7 @@ class DistBuilder(object):
                                   valid mercurial revision.
         :return: the base name
         """
-        build_basename = self._repo_name + '-'
+        build_basename = 'openattic-'
         if revision_argument == 'stable':
             tag = self._get_latest_existing_tag()
             latest_stable_version = self._strip_mercurial_tag(tag)
