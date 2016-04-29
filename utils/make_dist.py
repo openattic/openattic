@@ -431,7 +431,7 @@ class DistBuilder(object):
             latest_stable_version = self._strip_mercurial_tag(tag)
             build_basename += latest_stable_version
         elif revision_argument == 'unstable' or \
-                not self._is_existing_tag(revision_argument):
+                not self._is_existing_tag(revision_argument) or self._isPath:
             future_version = self._get_upcoming_version()
             build_basename += future_version + '~' + self._datestring
         else:  # Must be existing mercurial tag.
