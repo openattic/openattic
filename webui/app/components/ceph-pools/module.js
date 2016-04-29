@@ -32,5 +32,5 @@
 
 angular.module("openattic.cephPools", [
   "openattic.cephClusters",
-  "openattic.cephSelectedCluster"
+  "openattic.registry"
 ]);
