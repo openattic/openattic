@@ -30,4 +30,4 @@
  */
 "use strict";
 
-angular.module("openattic.cephSelectedCluster", []);
+angular.module("openattic.registry", []);
