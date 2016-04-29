@@ -4,18 +4,20 @@ openATTIC Changelog
 Version 2.0.11, (not released yet):
 -----------------------------------
 
+* WebUI: Add dropdown menu to the ceph pool list to select a cluster (OP-1104)
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
   close_connection()" RemovedInDjango18Warning (OP-809)
 * Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
   to dbus-send Samba writeconf calls (OP-1113)
+* Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
+* Backend: Added licence headers for nodb files (OP-1125)
+* Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
 * Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
 * Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
-* Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
-* Backend: Added licence headers for nodb files (OP-1125)
-* Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
 * Documentation: added note about extra package which needs to be installed 
   when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
+* Documentation: added styleguide for E2E tests (OP-1015)
 
 Version 2.0.10, 20. Apr 2016:
 -----------------------------
