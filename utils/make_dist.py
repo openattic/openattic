@@ -154,7 +154,7 @@ class DistBuilder(object):
 
         source = self._args['<source>'] or 'https://bitbucket.org/openattic/openattic'
 
-        self._isPath = urlparse(self._args['<source>']).netloc == ''
+        self._isPath = urlparse(source).netloc == ''
         self._hg_base_url = os.path.dirname(source)
         self._repo_name = os.path.basename(source)
 
@@ -368,14 +368,16 @@ class DistBuilder(object):
             result['repo_name'] = False
             if not isdir(source_dir + '/' + repo_name):
                 if repo_name == 'oa_cache':
-                    repo_url = 'https://bitbucket.org/openattic' + '/' + repo_name
+                    repo_url = 'https://bitbucket.org/openattic/' + repo_name
                 else:
                     repo_url = self._hg_base_url + '/' + repo_name
-                    if self._isPath:
-                        self._process.run(['cp', '-r', repo_url, source_dir])
-                    else:
-                        repo_target_dir = os.path.join(source_dir + '/' + repo_name)
-                        self._process.run(['hg', 'clone', repo_url, repo_target_dir])
+
+                if repo_name != 'oa_cache' and self._isPath:
+                    self._process.run(['cp', '-r', repo_url, source_dir])
+                else:
+                    repo_target_dir = os.path.join(source_dir + '/' + repo_name)
+                    self._process.run(['hg', 'clone', repo_url, repo_target_dir])
+
             result['repo_name'] = True
 
         return result
