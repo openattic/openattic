@@ -41,7 +41,18 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
     mirrorPool: null,
     filesystem: ""
   };
+
   $scope.supported_filesystems = {};
+
+  $scope.filesystems = {
+    lun: "Create LUN",
+    xfs: "Create Virtualization Store -> XFS",
+    zfs: "Create ZFS Volume",
+    btrfs: "Create File Store -> BTRFS",
+    ext4: "Create EXT4",
+    ext3: "Create EXT3",
+    ext2: "Create EXT2"
+  };
   $scope.state = {
     created: false,
     mirrored: false,
@@ -69,6 +80,13 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
 
       new PoolService(sourcePool).$filesystems()
         .then(function (res) {
+          for (var index in res) {
+            if (res.hasOwnProperty(index) && typeof (res[index]) === "string") {
+              res[index] = res[index].match(/\((.*)\)/)[1];
+            }
+          }
+          $scope.data.filesystem = "lun";
+          res.lun = "can be shared via iSCSI or Fibre Channel";
           $scope.supported_filesystems = res;
         }, function (error) {
           console.log("An error occured", error);
