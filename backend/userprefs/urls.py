@@ -17,5 +17,5 @@
 from django.conf.urls import patterns
 
 urlpatterns = patterns('',
-    ( r'initprefs.js$',                 'userprefs.views.get_prefs' ),
+    ( r'^userprefs/initprefs.js$',                 'userprefs.views.get_prefs' ),
 )

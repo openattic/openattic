@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
@@ -13,11 +12,13 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls import patterns
+from django.conf.urls import patterns, url
+from ceph.restapi import CephPoolViewSet
+
+pool_detail = CephPoolViewSet.as_view({'get': 'retrieve'})
 
 urlpatterns = patterns(
     '',
-    (r'^nagios/v/(?P<storageobj_id>\d+)/(?P<graph_title>[\s\w_\.\-\(\)/]+)\.png',
-     'nagios.views.storageobj_graph'),
-    (r'^nagios/(?P<service_id>\d+)/(?P<srcidx>[\d\w_\.-]+)\.png',
-     'nagios.views.graph'), )
+    url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools/(?P<pool_id>[0-9]+)',
+        pool_detail,
+        name='pool-detail'), )

@@ -60,7 +60,7 @@ for app in settings.INSTALLED_MODULES:
         pass
     else:
         if hasattr(module.urls, "urlpatterns"):
-            urlpatterns.append( ('^%s/' % app, include(app + ".urls")) )
+            urlpatterns += module.urls.urlpatterns
 
 if "rosetta" in settings.INSTALLED_APPS:
     urlpatterns.append( ( r'rosetta/', include( 'rosetta.urls' ) ) )

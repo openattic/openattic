@@ -114,6 +114,25 @@ class CephPoolSerializer(NodbSerializer):
         model = CephPool
 
 
+class CephPoolViewSet(NodbViewSet):
+    """Represents a Ceph pool.
+
+    Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
+    a queryset. It needs a context which isn't available when this position is evaluated.
+    """
+
+    def retrieve(self, request, fsid, pool_id):
+        cluster = CephCluster.objects.all().get(fsid=fsid)
+        pools = CephPool.objects.all({'cluster': cluster})
+        pool = pools.get(id=int(pool_id))
+        serializer = CephPoolSerializer(pool, context={'request': request})
+
+        return Response(serializer.data)
+
+    def list(self, request, fsid):
+        pass
+
+
 class PaginatedCephPoolSerializer(PaginationSerializer):
 
     class Meta:
