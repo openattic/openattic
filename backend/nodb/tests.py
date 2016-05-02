@@ -48,7 +48,7 @@ class QuerySetTestCase(TestCase):
         self.assertEqual(actual_result, expected_result)
 
 
-class DictFieldSerializerTest (TestCase):
+class DictFieldSerializerTest(TestCase):
 
     def test_serializer(self):
 
