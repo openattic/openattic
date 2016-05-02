@@ -1,23 +1,29 @@
 var helpers = require('../common.js');
 
+ var volumename = "protractor_volume_date";
+var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
+
+var firstSnapName = "protractor_test_snap";
+var secSnapName = "second_ptor_snap";
+
+var snap1 = element.all(by.css('.tc_snapRowName')).get(0);
+var snap2 = element.all(by.css('.tc_snapRowName')).get(1);
+
+var created = element.all(by.cssContainingText('th', 'Created')).get(1);
+var columnListButton = element(by.css('.tc_columnBtn'));
+var protectionListItem = element(by.cssContainingText('.tc_columnItem', 'Protection'));
+var protectionColumn = element(by.cssContainingText('th', 'Protection'));
+var searchField = element.all(by.model('filterConfig.search')).get(0);
+var entriesDropDown = element(by.css('.tc_entries_dropdown'));
+var volumeRowElements = element.all(by.css('.tc_volumeRowName'));
+var snapshotTab = element(by.css('.tc_snapshotTab'));
+
 describe('Should test oadatatable and its options', function(){
-
-  var volumename = "protractor_volume_date";
-  var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-
-  var created = element.all(by.cssContainingText('th', 'Created')).get(1);
-  var columnListButton = element(by.css('.tc_columnBtn'));
-  var protectionListItem = element(by.cssContainingText('.tc_columnItem', 'Protection'));
-  var protectionColumn = element(by.cssContainingText('th', 'Protection'));
-
-  var snap1 = element.all(by.css('.tc_snapRowName')).get(0);
-  var snap2 = element.all(by.css('.tc_snapRowName')).get(1);
 
   beforeAll(function(){
     helpers.login();
     helpers.create_volume(volumename, "zfs");
     helpers.create_snapshot(volume);
-
   });
 
   beforeEach(function(){
@@ -85,7 +91,43 @@ describe('Should test oadatatable and its options', function(){
     expect(protectionColumn.isDisplayed()).toBe(true);
   });
 
-  //snapshot tab -> sort list
+  it('should filter for the volumename', function(){
+    searchField.click();
+    searchField.clear().sendKeys('protractor_volume_date');
+    expect(volumeRowElements.count()).toBe(1);
+  });
+
+  it('should clear the filter search field and display max. 10 elements', function(){
+    searchField.clear();
+    expect(volumeRowElements.count()).toBeGreaterThan(1);
+  });
+
+  it('should have "10" as default max. listed elements per page', function(){
+    expect(entriesDropDown.getText()).toEqual('10');
+  });
+
+  it('should display only two elements when this number of displayed elements is selected', function(){
+    entriesDropDown.click();
+    element(by.css('.tc_entries_2')).click();
+    expect(volumeRowElements.count()).toBe(2);
+  });
+
+  it('should go back to max. 10 elements per page', function(){
+    entriesDropDown.click();
+    element(by.css('.tc_entries_10')).click();
+    expect(volumeRowElements.count()).toBeGreaterThan(2);
+  });
+
+});
+
+describe('snapshot tab based datatable tests', function(){
+
+  beforeEach(function(){
+    volume.click();
+    snapshotTab.click();
+  });
+
+  //snapshot tab
   it('should have a "Created" column header which is clickable', function(){
     volume.click();
     element(by.css('.tc_snapshotTab')).click();
@@ -94,18 +136,15 @@ describe('Should test oadatatable and its options', function(){
     browser.sleep(400);
   });
 
-
   it('should add another snapshot in order to test the create-date sort function', function(){
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
     browser.sleep(400);
     element(by.css('.tc_snapshotAdd')).click();
     browser.sleep(400);
     element(by.id('snap.name')).clear();
     browser.sleep(400);
-    element(by.model('snap.name')).sendKeys("second_ptor_snap");
+    element(by.model('snap.name')).sendKeys(secSnapName);
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
@@ -115,19 +154,17 @@ describe('Should test oadatatable and its options', function(){
   it('should check the current sort order', function(){
     volume.click();
     browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
     //check the current sort order before clicking the sort button
     browser.sleep(400);
-    expect(snap1.getText()).toEqual('protractor_test_snap');
+    expect(snap1.getText()).toEqual(firstSnapName);
     browser.sleep(400);
-    expect(snap2.getText()).toEqual('second_ptor_snap');
+    expect(snap2.getText()).toEqual(secSnapName);
     browser.sleep(400);
   });
 
   it('should check the new sort order', function(){
     volume.click();
     browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
     created.click();
     //clicking the created table header twice is just a hacky hack.
     //the snapshot create dates are the same (there would be just a different in seconds
@@ -135,20 +172,19 @@ describe('Should test oadatatable and its options', function(){
     created.click();
     //order should be the other way around
     browser.sleep(400);
-    expect(snap1.getText()).toEqual('second_ptor_snap');
+    expect(snap1.getText()).toEqual(secSnapName);
     browser.sleep(400);
-    expect(snap2.getText()).toEqual('protractor_test_snap');
+    expect(snap2.getText()).toEqual(firstSnapName);
     browser.sleep(400);
   });
 
   it('should click the sort button again to get the original order', function(){
     volume.click();
     browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
     created.click();
     //should be in original state again
-    expect(snap1.getText()).toEqual('protractor_test_snap');
-    expect(snap2.getText()).toEqual('second_ptor_snap');
+    expect(snap1.getText()).toEqual(firstSnapName);
+    expect(snap2.getText()).toEqual(secSnapName);
   });
 
   afterAll(function(){
