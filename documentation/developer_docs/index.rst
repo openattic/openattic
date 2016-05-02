@@ -37,3 +37,4 @@ make sure your patches will be accepted.
    contributing_guidelines
    core
    dev_e2e
+   dev_gatling

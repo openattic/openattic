@@ -59,6 +59,6 @@ app.controller("VolumeNfsSharesFormCtrl", function ($scope, $state, $stateParams
   };
 
   var goToListView = function () {
-    $state.go("volumes.detail.nfs");
+    $state.go("volumes.detail.nfs", {"#": "more"});
   };
 });

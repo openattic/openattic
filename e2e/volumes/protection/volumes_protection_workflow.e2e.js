@@ -19,7 +19,7 @@ describe('Volume protection dialog', function(){
   beforeAll(function(){
     helpers.login();
 
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
     element(by.css('oadatatable .tc_add_btn')).click();
 
     helpers.create_volume(volumename, "lun");

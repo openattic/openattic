@@ -3,8 +3,8 @@
 (function(){
 
   var configs = require('./configs.js');
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -31,31 +31,26 @@
       browser.sleep(configs.sleep);
     },
 
-    create_volume: function(volumename, type, size){
-      var pool,
-          size = size == null ? "100MB" : size;
+    create_volume: function(volumename, type, size, poolName){
+      var pool;
+      var size = size == null ? "100MB" : size;
+
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
-      for(var key in configs.pools){
-        element(by.id('volumeName')).sendKeys(volumename);
-        pool = configs.pools[key];
-        var exact_poolname = pool.name;
-        volumePoolSelect.sendKeys(pool.name).then(function findMatch(pname){
-          if(pool.name === pname){
-            exact_poolname = pname;
-            return true;
-          }
-        });
-        if(exact_poolname){
-          //browser.actions().sendKeys( protractor.Key.ENTER ).perform();
-          // In order to update the pool selection under firefox.
-          element(by.id(type)).click();
-          element(by.model('data.megs')).sendKeys(size);
-          element(by.css('.tc_submitButton')).click();
-          browser.sleep(configs.sleep);
+
+      if(!poolName){
+        for(var key in configs.pools){
+          pool = configs.pools[key];
+          poolName = pool.name;
+          break;
         }
-        break;
       }
+      element(by.id('volumeName')).sendKeys(volumename);
+      volumePoolSelect.sendKeys(poolName);
+      element(by.id(type)).click();
+      element(by.model('data.megs')).sendKeys(size);
+      element(by.css('.tc_submitButton')).click();
+      browser.sleep(configs.sleep);
       return pool;
     },
 
@@ -153,7 +148,7 @@
     },
 
     create_host: function(){
-      element.all(by.css('ul .tc_menuitem > a')).get(4).click();
+      element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();

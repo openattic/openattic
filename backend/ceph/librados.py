@@ -1,5 +1,77 @@
-import rados  # TODO add this to the dependecy of the ceph deb/rpm package.
+# -*- coding: utf-8 -*-
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import rados
 import os
+import json
+import glob
+import logging
+import ConfigParser
+
+logger = logging.getLogger(__name__)
+
+
+class Keyring(object):
+    """
+    Returns usable keyring
+    """
+    def __init__(self, cluster_name='ceph', ceph_dir='/etc/ceph'):
+        """
+        Sets keyring filename and username
+        """
+        self.filename = None
+        self.username = None
+
+        keyrings = glob.glob("{}/{}.client.*.keyring".format(ceph_dir, cluster_name))
+        self._find(keyrings)
+
+        if self.filename:
+            logger.info("Selected keyring {}".format(self.filename))
+        else:
+            logger.error("No usable keyring")
+            raise RuntimeError("Check keyring permissions")
+
+        self._username()
+        logger.info("Connecting as {}".format(self.username))
+
+    def _find(self, keyrings):
+        """
+        Check permissions on keyrings, set last usable keyring
+        """
+        for keyring in keyrings:
+            if os.access(keyring, os.R_OK):
+                self.filename = keyring
+            else:
+                logger.info("Skipping {}, permission denied".format(keyring))
+
+    def _username(self):
+        """
+        Parse keyring for username
+        """
+        _config = ConfigParser.ConfigParser()
+        try:
+            _config.read(self.filename)
+        except ConfigParser.ParsingError:
+            # ConfigParser fails on leading whitespace for keys
+            pass
+
+        try:
+            self.username = _config.sections()[0]
+        except IndexError:
+            error_msg = "Corrupt keyring, check {}".format(self.filename)
+            logger.error(error_msg)
+            raise RuntimeError(error_msg)
 
 
 class Client(object):
@@ -7,9 +79,12 @@ class Client(object):
 
     def __init__(self, cluster_name='ceph'):
         self._conf_file = os.path.join('/etc/ceph/', cluster_name + '.conf')
-        self._keyring = os.path.join('/etc/ceph', cluster_name + '.client.admin.keyring')
+        keyring = Keyring(cluster_name)
+        self._keyring = keyring.filename
+        self._name = keyring.username
         self._pools = {}
         self._cluster = None
+        self._default_timeout = 30
         self.connect(self._conf_file)
 
     def _get_pool(self, pool_name):
@@ -21,7 +96,8 @@ class Client(object):
 
     def connect(self, conf_file):
         if self._cluster is None:
-            self._cluster = rados.Rados(conffile=conf_file, conf={'keyring': self._keyring})
+            self._cluster = rados.Rados(conffile=conf_file, name=self._name,
+                                        conf={'keyring': self._keyring})
 
         if not self.connected():
             self._cluster.connect()
@@ -62,3 +138,32 @@ class Client(object):
 
     def change_pool_owner(self, pool_name, auid):
         return self._get_pool(pool_name).change_auid(auid)
+
+    def mon_command(self, cmd):
+        """Calls a monitor command and returns the result as dict.
+
+        If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
+        otherwise, it'll be used directly as input for the mon_command and you'll have to specify
+        the 'prefix' argument yourself.
+        """
+
+        if type(cmd) is str:
+            (ret, out, err) = self._cluster.mon_command(json.dumps(
+                {'prefix': cmd,
+                 'format': 'json'}),
+                '',
+                timeout=self._default_timeout)
+        elif type(cmd) is dict:
+            (ret, out, err) = self._cluster.mon_command(
+                json.dumps(cmd),
+                '',
+                timeout=self._default_timeout)
+
+        if ret == 0:
+            return json.loads(out)
+        else:
+            raise ExternalCommandError()
+
+
+class ExternalCommandError(Exception):
+    pass

@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Volumes delete', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var volumeNameInput = element(by.model('volume.name'));
   var volumePoolSelect = element(by.model('data.sourcePool'));
   var submitButton = element(by.css('.tc_submitButton'));
@@ -57,7 +57,7 @@ describe('Volumes delete', function(){
   });
 
   it('should not show any tab', function(){
-    expect(element(by.id('more')).isDisplayed()).toBe(false);
+    expect(element(by.css('#more .nav')).isDisplayed()).toBe(false);
   });
 
   it('should display the delete button when selecting several volumes', function(){

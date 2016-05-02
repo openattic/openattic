@@ -1,3 +1,9 @@
+openattic (2.0.10-1) unstable; urgency=medium
+
+  * New upstream release 2.0.10-1, see CHANGELOG for details
+
+ -- Patrick Nawracay <patrick.nawracay@it-novum.com>  Wed, 20 Apr 2016 17:23:49 +0200
+
 openattic (2.0.9-1) unstable; urgency=medium
 
   * New upstream release 2.0.9-1, see CHANGELOG for details

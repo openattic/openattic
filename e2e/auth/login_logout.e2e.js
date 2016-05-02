@@ -20,7 +20,7 @@ describe('should test the login', function(){
   });
 
   it('should click any menu entry', function(){
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
     expect(browser.getCurrentUrl()).toContain('#/volumes');
   });
 

@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: hl python; space-indent on; indent-width 4; replace-tabs on;
-
 
 import os
 import sys
@@ -34,14 +32,10 @@ except AttributeError:
 # current_host = Host.objects.get_current()
 from volumes.models import PhysicalBlockDevice
 
-
 def application(environ, start_response):
     status = '200 OK'
 
     if not environ["PATH_INFO"].startswith('/stream'):
-        headers = [('Content-type', 'text/html; encoding=utf8')]
-        start_response(status, headers)
-        yield sse_data
         return
 
     else:
@@ -49,7 +43,7 @@ def application(environ, start_response):
         start_response(status, headers)
 
         # Set client-side auto-reconnect timeout, ms.
-        yield 'retry: 100\n\n'
+        #yield 'retry: 100\n\n'
 
         # Dict filled with system stats
         system_stats = {"cpu": {}, "disks": {}, "network": {}, "temperature": {}, "sys": {}, "timestamp": 0,
@@ -141,12 +135,11 @@ def application(environ, start_response):
                 data["network_stats_old"] = data["network_stats_now"]
 
                 last = now
-                yield "id: %i\n" % (start)
+                #yield "id: %i\n" % (start)
                 yield "event: serverstats\n"
                 yield "data: %s\n\n" % (json.dumps(system_stats))  # do not change this line
             time.sleep(1)
             now = time.time()
-
 
 def get_cpu_time():
     """
@@ -171,7 +164,6 @@ def get_cpu_time():
 
             cpu_info.update({cpu_id: {'total': total, 'idle': idle, 'non_idle': non_idle}})
         return cpu_info
-
 
 def get_disk_stats():
     """
@@ -224,7 +216,6 @@ def get_disk_stats():
 
     return disk_stats
 
-
 def get_network_stats():
     """
     @ return dict network stats for all your interfaces, excluding loop
@@ -269,7 +260,6 @@ def get_network_stats():
 
     return network_stats
 
-
 def get_uptime():
     """
     @return dict up and idletime of your server in seconds
@@ -283,7 +273,6 @@ def get_uptime():
         uptime.update({"uptime": up, "idle": idle})
 
     return uptime
-
 
 def wrapdiff(curr, last):
     """ Calculate the difference between last and curr.
@@ -302,70 +291,3 @@ def wrapdiff(curr, last):
     if boundary is None:
         raise ArithmeticError("Couldn't determine boundary")
     return 2 ** boundary - last + curr
-
-
-sse_data = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js "></script>
-        <script>
-            $(document).ready(function() {
-                var es = new EventSource("stream" + location.search);
-                es.addEventListener("serverstats", function (e) {
-                    var data = JSON.parse(e.data);
-                    console.log(e.data);
-                    var date = new Date(data.timestamp*1000);
-                    var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-                    var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-                    var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
-                    var time = "<td>" + hours + ':' + minutes + ':' + seconds + "</td>";
-                    var uptimeD = Math.floor(data.sys.uptime / 86400);
-                    var uptimeH = Math.floor((data.sys.uptime % 86400) / 3600);
-                    var uptimeM = Math.floor(((data.sys.uptime % 86400) % 3600) / 60);
-                    var uptime = "<td>" + uptimeD + 'D ' + uptimeH + 'H ' + uptimeM + 'M' + "</td>";
-                    var cpuLoad = "<td>" + data.cpu.loadPercent + "</td>";
-                    var disks = "<td>" + data.disks.countOaDisks + "</td>";
-                    var disksOnline = "<td>" + data.disks.countOnline + '/' + data.disks.count + "</td>";
-                    var diskLoad = "<td>" + data.disks.loadPercent + "</td>";
-                    var diskWrMb = "<td>" + data.disks.wrMb + "</td>";
-                    var disk_tb_per_day = "<td>" + data.disks.wrTbPerDay + "</td>";
-                    var nwAdapter = "<td>" + data.network.count + "</td>";
-                    var nwTrafficPercent = "<td>" + data.network.trafficPercent + "</td>";
-                    var nwTrafficRmb = "<td>" + data.network.totRbInMb + "</td>";
-                    var nwTrafficTmb = "<td>" + data.network.totTbInMb + "</td>";
-                    var nwTrafficMb = "<td>" + (data.network.totRbInMb+data.network.totTbInMb) + "</td>";
-                    $("tbody").prepend("<tr>" + time + uptime + cpuLoad + disks + disksOnline + diskLoad + diskWrMb + disk_tb_per_day + nwAdapter + nwTrafficPercent + nwTrafficRmb + nwTrafficTmb + nwTrafficMb + "</tr>");
-                });
-            })
-        </script>
-        <style>
-            body{font-family:'Courier New';font-size:12px}table{border-collapse:collapse;}table,td,th{border:1px solid black;padding:5px;}
-            th{background-color:#666;color:#fff}tr:nth-child(odd){background-color:#fff5dd;}
-        </style>
-    </head>
-    <body>
-        <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Uptime</th>
-                    <th>CPU-load in %</th>
-                    <th>Disk Count</th>
-                    <th>Disk Online</th>
-                    <th>Disk-load in %</th>
-                    <th>wr MB</th>
-                    <th>Expected wr TB per day</th>
-                    <th>Transceiver Count</th>
-                    <th>Traffic in %</th>
-                    <th>Data received in MB</th>
-                    <th>Data transmitted in MB</th>
-                    <th>Data r+t in MB</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </body>
-</html>
-"""

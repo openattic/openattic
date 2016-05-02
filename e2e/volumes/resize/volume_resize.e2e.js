@@ -5,6 +5,7 @@ describe('Volumes resize', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
+  var actionMenu = element(by.css('.tc_menudropdown'));
 
   var wrongSize = function(new_size){
     element(by.id('newsize')).sendKeys(new_size);
@@ -14,31 +15,21 @@ describe('Volumes resize', function(){
 
   beforeAll(function(){
     helpers.login();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
+    pool = helpers.create_volume(volumename, "lun", "200mb");
   });
 
   beforeEach(function(){
-
-    //--> volumesItem is not defined    
-    //var volumesItem = helpers.configs.menuitems.volumes;
-    //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
-
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
-    pool = helpers.create_volume(volumename, "lun", "200mb");
+    browser.refresh();
 
     volume.click();
-    browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_resize_btn')).click();
     browser.sleep(helpers.configs.sleep);
-  });
-
-  afterEach(function(){
-    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a resize and a cancel button', function(){
     expect(submit_button.isDisplayed()).toBe(true);
     expect(cancel_button.isDisplayed()).toBe(true);
-    cancel_button.click();
   });
 
   it('should show a message if the chosen size is smaller than 100mb', function(){
@@ -63,6 +54,7 @@ describe('Volumes resize', function(){
   });
 
   afterAll(function(){
+    helpers.delete_volume(volume, volumename);
     console.log('volumes_resize -> volume_resize.e2e.js');
   });
 });

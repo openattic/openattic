@@ -61,7 +61,13 @@ background-color: #404040!important;
   background-color: #71843f!important;
 }
 .bg-color-red {
-background-color: #a90329!important;
+  background-color: #a90329!important;
+}
+.no-margin {
+  margin: 0;
+}
+.no-padding {
+  padding: 0;
 }
 
 /* Branding */
@@ -720,7 +726,8 @@ h6{
   float: right;
   border-left: 1px solid rgba(0,0,0,.09);
   padding-left: 8px;
-  width: 40%
+  width: 40%;
+  max-width: 350px;
 }
 .dataTables_header .input-group .input-group-addon {
 }
@@ -1180,7 +1187,8 @@ form .input-group-addon {
   color: #a2a2a2 !important;
   background-color: transparent;
 }
-uib-accordion .panel-title {
+uib-accordion .panel-title,
+.panel .accordion-title {
   font-size: 14px !important;
 }
 .panel-body h2:first-child {
@@ -1212,4 +1220,18 @@ uib-accordion .panel-title {
 .formactions.well {
   overflow: auto;
   padding: 10px 20px;
+}
+.disabled {
+  pointer-events: none;
+}
+.clickable {
+  cursor: pointer;
+}
+
+/* If javascript is disabled. */
+.noscript {
+  padding-top: 5em;
+}
+.noscript p {
+  color: #777;
 }
