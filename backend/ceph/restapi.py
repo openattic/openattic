@@ -23,6 +23,7 @@ from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephPoo
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
+from nodb.models import DictField
 from rest import relations
 
 
@@ -98,16 +99,10 @@ class CephPoolTierSerializer(NodbSerializer):
         model = CephPoolTier
 
 
-class PoolHitSetParamsSerializer(NodbSerializer):
-
-    class Meta:
-        model = CephPoolHitSetParams
-
-
 class CephPoolSerializer(NodbSerializer):
 
     cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
-    hit_set_params = PoolHitSetParamsSerializer()
+    hit_set_params = DictField
     tiers = CephPoolTierSerializer(many=True)
 
     class Meta:
