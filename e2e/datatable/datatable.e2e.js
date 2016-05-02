@@ -1,6 +1,6 @@
 var helpers = require('../common.js');
 
- var volumename = "protractor_volume_date";
+var volumename = "protractor_volume_date";
 var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
 var firstSnapName = "protractor_test_snap";
