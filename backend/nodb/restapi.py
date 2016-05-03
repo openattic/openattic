@@ -25,7 +25,7 @@ class DictField(Field):
     def to_native(self, value):
         """
         Returns:
-            Returns the valus itself, not a string representation.
+            Returns the value itself, not a string representation.
 
         """
         return value
