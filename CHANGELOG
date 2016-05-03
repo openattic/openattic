@@ -15,6 +15,7 @@ Version 2.0.11, (not released yet):
 * Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
 * Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
 * Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
+* Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the `hit_set_params` field (OP-1130)
 * Installation: Enable logrotate for openattic.log (OP-1124)
 * Documentation: added note about extra package which needs to be installed 
   when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
