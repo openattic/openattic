@@ -14,3 +14,12 @@
   missingok
   notifempty
 }
+
+/var/log/openattic/openattic.log {
+  rotate 12
+  monthly
+  compress
+  copytruncate
+  missingok
+  notifempty
+}
