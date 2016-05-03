@@ -12,40 +12,56 @@
  *  GNU General Public License for more details.
 """
 
+import mock
+
 from django.test import TestCase
-from ceph.models import CephClusterCliModel
 
-from nodb.models import QuerySet, NodbModel, DictField
+from nodb.models import NodbQuerySet, NodbModel, DictField
 from nodb.restapi import NodbSerializer
-
-
-# TODO move the test to the right place
 
 
 class QuerySetTestCase(TestCase):
 
-    def setUp(self):
-        class DummyModel(object):
+    @classmethod
+    def setUpClass(cls):
+        class CephClusterMock(NodbModel):
+
             @staticmethod
-            def get_all_objects():
-                return [
-                    CephClusterCliModel(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd09', name='ceph'),
-                    CephClusterCliModel(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd08', name='additional'),
-                    CephClusterCliModel(fsid='b53a6c7a-6d99-4a48-a4f9-bf35945eae75', name='additional'),
-                ]
-        self.model = DummyModel
+            def get_all_objects(context):
+                cluster1 = mock.MagicMock()
+                cluster1.fsid = 'e79f3338-f9e4-4656-8af3-7af7357fcd09'
+                cluster1.name = 'ceph'
 
+                cluster2 = mock.MagicMock()
+                cluster2.fsid = 'e90a0c5a-5caa-405a-bc09-a7cfd1874243'
+                cluster2.name = 'vinara'
 
-    def test_filter(self):
+                cluster3 = mock.MagicMock()
+                cluster3.fsid = 'kd89g3lf-sed4-j986-asd3-akf84nchazeb'
+                cluster3.name = 'balkan'
 
-        qs = QuerySet(self.model)
+                return [cluster1, cluster2, cluster3]
 
-        actual_result = qs.filter(name='additional')
-        expected_result = [
-            CephClusterCliModel(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd08', name='additional'),
-            CephClusterCliModel(fsid='b53a6c7a-6d99-4a48-a4f9-bf35945eae75', name='additional'),
-        ]
-        self.assertEqual(actual_result, expected_result)
+        cls.qs = NodbQuerySet(CephClusterMock)
+
+    def test_kwargs_filter_by_name(self):
+        filter_result = self.qs.filter(name='balkan')
+
+        self.assertEqual(len(filter_result), 1)
+        self.assertEqual(filter_result[0].name, 'balkan')
+        self.assertEqual(filter_result[0].fsid, 'kd89g3lf-sed4-j986-asd3-akf84nchazeb')
+
+    def test_kwargs_filter_by_id(self):
+        filter_result = self.qs.filter(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd09')
+
+        self.assertEqual(len(filter_result), 1)
+        self.assertEqual(filter_result[0].name, 'ceph')
+        self.assertEqual(filter_result[0].fsid, 'e79f3338-f9e4-4656-8af3-7af7357fcd09')
+
+    def test_kwargs_filter_name_not_found(self):
+        filter_result = self.qs.filter(name='notfound')
+
+        self.assertEqual(len(filter_result), 0)
 
 
 class DictFieldSerializerTest(TestCase):
