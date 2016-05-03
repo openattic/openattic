@@ -19,10 +19,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephPoolHitSetParams
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
+from nodb.models import DictField
 from rest import relations
 
 
@@ -94,15 +95,9 @@ class CephPoolTierSerializer(NodbSerializer):
         model = CephPoolTier
 
 
-class PoolHitSetParamsSerializer(NodbSerializer):
-
-    class Meta:
-        model = CephPoolHitSetParams
-
-
 class CephPoolSerializer(NodbSerializer):
 
-    hit_set_params = PoolHitSetParamsSerializer()
+    hit_set_params = DictField
     tiers = CephPoolTierSerializer(many=True)
 
     class Meta:
