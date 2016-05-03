@@ -78,7 +78,8 @@ class CephClusterViewSet(NodbViewSet):
 
     def list(self, request):
         cluster = CephCluster.objects.all()
-        serializer = CephClusterSerializer(cluster, many=True, context={'request': request})
+        cluster = self.paginate(cluster, request)
+        serializer = PaginatedCephClusterSerializer(cluster, context={'request': request})
 
         return Response(serializer.data)
 
@@ -132,6 +133,12 @@ class PaginatedCephPoolSerializer(PaginationSerializer):
 
     class Meta:
         object_serializer_class = CephPoolSerializer
+
+
+class PaginatedCephClusterSerializer(PaginationSerializer):
+
+    class Meta:
+        object_serializer_class = CephClusterSerializer
 
 
 RESTAPI_VIEWSETS = [
