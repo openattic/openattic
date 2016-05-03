@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
@@ -13,6 +12,13 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls import patterns
+from django.conf.urls import patterns, url
+from ceph.restapi import CephPoolViewSet
 
-urlpatterns = patterns('', (r'^userprefs/initprefs.js$', 'userprefs.views.get_prefs'), )
+pool_detail = CephPoolViewSet.as_view({'get': 'retrieve'})
+
+urlpatterns = patterns(
+    '',
+    url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools/(?P<pool_id>[0-9]+)',
+        pool_detail,
+        name='pool-detail'), )
