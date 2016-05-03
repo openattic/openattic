@@ -57,32 +57,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, ceph
     console.log("No Ceph cluster available");
   });
 
-  var modifyResult = function (res) {
-    res.results.forEach(function (pool) {
-      pool.oaUsed = pool.num_bytes / pool.max_avail * 100;
-      pool.oaUnused = 100 - pool.oaUsed;
-      pool.oaFree = pool.max_avail - pool.num_bytes;
-    });
-
-    return res;
-  };
-
-  $scope.$watch("registry.selectedCluster", function () {
-    if ($scope.registry.selectedCluster) {
-      cephPoolsService
-          .get(
-              {
-                id: $scope.registry.selectedCluster.fsid
-              }
-          )
-          .$promise
-          .then(function (res) {
-            $scope.pools = modifyResult(res);
-          });
-    }
-  });
-
-  $scope.$watch("filterConfig", function () {
+  var getPools = function () {
     if ($scope.registry.selectedCluster) {
       cephPoolsService
           .get({
@@ -100,6 +75,24 @@ app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, ceph
             console.log("No Ceph pools available.", error);
           });
     }
+  };
+
+  var modifyResult = function (res) {
+    res.results.forEach(function (pool) {
+      pool.oaUsed = pool.num_bytes / pool.max_avail * 100;
+      pool.oaUnused = 100 - pool.oaUsed;
+      pool.oaFree = pool.max_avail - pool.num_bytes;
+    });
+
+    return res;
+  };
+
+  $scope.$watch("registry.selectedCluster", function () {
+    getPools();
+  });
+
+  $scope.$watch("filterConfig", function () {
+    getPools();
   }, true);
 
   $scope.$watchCollection("selection", function (selection) {
