@@ -31,7 +31,6 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-
 app.controller("CephPoolsCtrl", function ($scope, $state, cephPoolsService, cephClustersService, registryService) {
   $scope.clusters = null;
   $scope.pools = {};
