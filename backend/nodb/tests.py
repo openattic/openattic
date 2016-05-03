@@ -13,11 +13,15 @@
 """
 
 from django.test import TestCase
-from nodb.models import QuerySet
 from ceph.models import CephClusterCliModel
+
+from nodb.models import QuerySet, NodbModel, DictField
+from nodb.restapi import NodbSerializer
 
 
 # TODO move the test to the right place
+
+
 class QuerySetTestCase(TestCase):
 
     def setUp(self):
@@ -42,3 +46,26 @@ class QuerySetTestCase(TestCase):
             CephClusterCliModel(fsid='b53a6c7a-6d99-4a48-a4f9-bf35945eae75', name='additional'),
         ]
         self.assertEqual(actual_result, expected_result)
+
+
+class DictFieldSerializerTest(TestCase):
+
+    def test_serializer(self):
+
+        class DictFieldModel(NodbModel):
+
+            @staticmethod
+            def get_all_objects():
+                self.fail("should not be called")
+
+            my_dict = DictField(primary_key=True)
+
+        class DictFieldModelSerializer(NodbSerializer):
+            class Meta:
+                model = DictFieldModel
+
+        my_dict = {'foo': 'bar', 'baz': 'baaz'}
+
+        serializer = DictFieldModelSerializer(DictFieldModel(my_dict=my_dict))
+
+        self.assertEqual(serializer.data, {'my_dict': my_dict})
