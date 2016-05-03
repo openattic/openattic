@@ -13,7 +13,9 @@
 """
 
 import mock
+import operator
 
+from django.db.models import Q
 from django.test import TestCase
 
 from nodb.models import NodbQuerySet, NodbModel, DictField
@@ -60,6 +62,58 @@ class QuerySetTestCase(TestCase):
 
     def test_kwargs_filter_name_not_found(self):
         filter_result = self.qs.filter(name='notfound')
+
+        self.assertEqual(len(filter_result), 0)
+
+    def test_args_filter_by_name(self):
+        filter_list = [Q(name__icontains='vin'), ]
+        filter_params = reduce(operator.or_, filter_list)
+
+        filter_result = self.qs.filter(filter_params)
+
+        self.assertEqual(len(filter_result), 1)
+        self.assertEqual(filter_result[0].name, 'vinara')
+        self.assertEqual(filter_result[0].fsid, 'e90a0c5a-5caa-405a-bc09-a7cfd1874243')
+
+    def test_args_filter_by_id(self):
+        filter_list = [Q(fsid__icontains='kd89g3lf'), ]
+        filter_params = reduce(operator.or_, filter_list)
+
+        filter_result = self.qs.filter(filter_params)
+
+        self.assertEqual(len(filter_result), 1)
+        self.assertEqual(filter_result[0].name, 'balkan')
+        self.assertEqual(filter_result[0].fsid, 'kd89g3lf-sed4-j986-asd3-akf84nchazeb')
+
+    def test_args_filter_by_name_and_id(self):
+        filter_list = [Q(fsid__icontains='kd89g3lf'), Q(name__icontains='ce')]
+        filter_params = reduce(operator.or_, filter_list)
+
+        filter_result = self.qs.filter(filter_params)
+
+        self.assertEqual(len(filter_result), 2)
+
+    def test_args_filter_name_not_found(self):
+        filter_list = [Q(name__icontains='notfound')]
+        filter_params = reduce(operator.or_, filter_list)
+
+        filter_result = self.qs.filter(filter_params)
+
+        self.assertEqual(len(filter_result), 0)
+
+    def test_args_filter_id_not_found(self):
+        filter_list = [Q(fsid__icontains='notfound')]
+        filter_params = reduce(operator.or_, filter_list)
+
+        filter_result = self.qs.filter(filter_params)
+
+        self.assertEqual(len(filter_result), 0)
+
+    def test_args_filter_name_id_not_found(self):
+        filter_list = [Q(name__icontains='namenotfound'), Q(fsid__icontains='idnotfound')]
+        filter_params = reduce(operator.or_, filter_list)
+
+        filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 0)
 
