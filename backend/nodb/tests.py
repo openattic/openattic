@@ -13,7 +13,6 @@
 """
 
 import mock
-import operator
 
 from django.db.models import Q
 from django.test import TestCase
