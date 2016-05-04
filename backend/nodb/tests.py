@@ -82,9 +82,7 @@ class QuerySetTestCase(TestCase):
         self.assertEqual(filter_result[0].fsid, 'kd89g3lf-sed4-j986-asd3-akf84nchazeb')
 
     def test_args_filter_by_name_and_id(self):
-        filter_list = [Q(fsid__icontains='kd89g3lf'), Q(name__icontains='ce')]
-        filter_params = reduce(operator.or_, filter_list)
-
+        filter_params = Q(fsid__icontains='kd89g3lf') | Q(name__icontains='ce')
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 2)
@@ -102,9 +100,7 @@ class QuerySetTestCase(TestCase):
         self.assertEqual(len(filter_result), 0)
 
     def test_args_filter_name_id_not_found(self):
-        filter_list = [Q(name__icontains='namenotfound'), Q(fsid__icontains='idnotfound')]
-        filter_params = reduce(operator.or_, filter_list)
-
+        filter_params = Q(name__icontains='namenotfound') | Q(fsid__icontains='idnotfound')
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 0)
