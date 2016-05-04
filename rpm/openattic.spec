@@ -583,6 +583,7 @@ echo ""
 %{_datadir}/%{name}/userprefs/
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
+%{_datadir}/%{name}/.style.yapf
 
 %files module-btrfs
 %defattr(-,root,root,-)
