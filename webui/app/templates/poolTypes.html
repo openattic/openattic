@@ -1,0 +1,16 @@
+<div class="form-group">
+    <label ng-class="wizzard ? 'col-md-2' : 'col-sm-3'" class="control-label">Type</label>
+    <div ng-class="wizzard ? 'col-md-10' : 'col-sm-9'">
+        <div ng-repeat="(fs, text) in filesystems"
+                ng-show="supported_filesystems[fs]">
+            <div class="radio radio-primary">
+                <input type="radio" ng-model="$parent.filesystem"
+                    ng-value="fs" ng-disabled="state.formatted" id="{{fs}}">
+                <label for="{{fs}}">{{text}}
+                    <span class="text-info" ng-show="$parent.filesystem === fs">
+                        &nbsp;-&nbsp;{{supported_filesystems[fs]}}</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

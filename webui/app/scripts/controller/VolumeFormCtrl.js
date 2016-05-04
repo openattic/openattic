@@ -44,15 +44,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
 
   $scope.supported_filesystems = {};
 
-  $scope.filesystems = {
-    lun: "Create LUN",
-    xfs: "Create Virtualization Store -> XFS",
-    zfs: "Create ZFS Volume",
-    btrfs: "Create File Store -> BTRFS",
-    ext4: "Create EXT4",
-    ext3: "Create EXT3",
-    ext2: "Create EXT2"
-  };
   $scope.state = {
     created: false,
     mirrored: false,
@@ -62,52 +53,11 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
     properties: true,
     mirror: false
   };
-  $scope.selPoolUsedPercent = 0;
-
-  PoolService.query()
-      .$promise
-      .then(function (res) {
-        $scope.pools = res;
-      }, function (error) {
-        console.log("An error occurred", error);
-      });
-
-  $scope.$watch("data.sourcePool", function (sourcePool) {
-    if (sourcePool) {
-      $scope.volume.source_pool = { id: sourcePool.id };
-      $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used_pcnt).toFixed(2);
-      $scope.volumeForm.pool.$setValidity("usablesize", $scope.data.sourcePool.usage.free >= 100);
-
-      new PoolService(sourcePool).$filesystems()
-        .then(function (res) {
-          for (var index in res) {
-            if (res.hasOwnProperty(index) && typeof (res[index]) === "string") {
-              res[index] = res[index].match(/\((.*)\)/)[1];
-            }
-          }
-          $scope.data.filesystem = "lun";
-          res.lun = "can be shared via iSCSI or Fibre Channel";
-          $scope.supported_filesystems = res;
-        }, function (error) {
-          console.log("An error occured", error);
-        });
-    } else {
-      if ($scope.volumeForm.pool) {
-        $scope.volumeForm.pool.$setValidity("usablesize", true);
-      }
-    }
-  });
-  $scope.$watch("data.megs", function (megs) {
-    $scope.volume.megs = SizeParserService.parseInt(megs);
-  });
 
   $scope.submitAction = function (volumeForm) {
     $scope.submitted = true;
     if (volumeForm.$valid) {
       if (!$scope.state.created) {
-        if ($scope.data.filesystem !== "") {
-          $scope.volume.filesystem = $scope.data.filesystem;
-        }
         VolumeService.save($scope.volume)
             .$promise
             .then(function (res) {
