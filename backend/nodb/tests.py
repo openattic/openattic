@@ -66,9 +66,7 @@ class QuerySetTestCase(TestCase):
         self.assertEqual(len(filter_result), 0)
 
     def test_args_filter_by_name(self):
-        filter_list = [Q(name__icontains='vin'), ]
-        filter_params = reduce(operator.or_, filter_list)
-
+        filter_params = Q(name__icontains='vin')
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 1)
@@ -76,9 +74,7 @@ class QuerySetTestCase(TestCase):
         self.assertEqual(filter_result[0].fsid, 'e90a0c5a-5caa-405a-bc09-a7cfd1874243')
 
     def test_args_filter_by_id(self):
-        filter_list = [Q(fsid__icontains='kd89g3lf'), ]
-        filter_params = reduce(operator.or_, filter_list)
-
+        filter_params = Q(fsid__icontains='kd89g3lf')
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 1)
@@ -94,17 +90,13 @@ class QuerySetTestCase(TestCase):
         self.assertEqual(len(filter_result), 2)
 
     def test_args_filter_name_not_found(self):
-        filter_list = [Q(name__icontains='notfound')]
-        filter_params = reduce(operator.or_, filter_list)
-
+        filter_params = Q(name__icontains='notfound')
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 0)
 
     def test_args_filter_id_not_found(self):
-        filter_list = [Q(fsid__icontains='notfound')]
-        filter_params = reduce(operator.or_, filter_list)
-
+        filter_params = Q(fsid__icontains='notfound')
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 0)
