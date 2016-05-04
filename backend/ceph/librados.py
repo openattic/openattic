@@ -83,7 +83,9 @@ class Client(object):
         self._keyring = keyring.filename
         self._name = keyring.username
         self._pools = {}
+        """:type _pools: dict[str, rados.Ioctx]"""
         self._cluster = None
+        """:type _cluster: rados.Rados"""
         self._default_timeout = 30
         self.connect(self._conf_file)
 
@@ -139,30 +141,43 @@ class Client(object):
     def change_pool_owner(self, pool_name, auid):
         return self._get_pool(pool_name).change_auid(auid)
 
+    def list_osds(self, obj_type="osd"):
+        """
+        Args:
+            obj_type (str): Either "osd" or "host" or "root"
+
+        Returns:
+            list[dict]: Info about each osd, eg "up" or "down"
+        """
+        return [obj for obj in self.mon_command("osd tree")["nodes"]
+                        if "type" in obj and obj["type"] == obj_type]
+
     def mon_command(self, cmd):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
         otherwise, it'll be used directly as input for the mon_command and you'll have to specify
         the 'prefix' argument yourself.
+
+        Args:
+            cmd (str | dict): the command
         """
 
         if type(cmd) is str:
-            (ret, out, err) = self._cluster.mon_command(json.dumps(
+            return self.mon_command(
                 {'prefix': cmd,
-                 'format': 'json'}),
-                '',
-                timeout=self._default_timeout)
+                 'format': 'json'})
+
         elif type(cmd) is dict:
             (ret, out, err) = self._cluster.mon_command(
                 json.dumps(cmd),
                 '',
                 timeout=self._default_timeout)
 
-        if ret == 0:
-            return json.loads(out)
-        else:
-            raise ExternalCommandError()
+            if ret == 0:
+                return json.loads(out)
+            else:
+                raise ExternalCommandError(err)
 
 
 class ExternalCommandError(Exception):

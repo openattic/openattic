@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
@@ -75,6 +75,12 @@ class CephClusterSerializer(NodbSerializer):
 
 
 class CephClusterViewSet(NodbViewSet):
+    """
+    Ceph Cluster
+
+    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```
+    and ```/api/ceph/<fsid>/osds```.
+    """
 
     def list(self, request):
         cluster = CephCluster.objects.all()
@@ -98,7 +104,6 @@ class CephPoolTierSerializer(NodbSerializer):
 
 class CephPoolSerializer(NodbSerializer):
 
-    hit_set_params = DictField
     tiers = CephPoolTierSerializer(many=True)
 
     class Meta:
@@ -140,6 +145,37 @@ class PaginatedCephClusterSerializer(PaginationSerializer):
     class Meta:
         object_serializer_class = CephClusterSerializer
 
+
+class CephOsdSerializer(NodbSerializer):
+
+    class Meta:
+        model = CephOsd
+
+
+class CephOsdViewSet(NodbViewSet):
+    """Represents a Ceph osd.
+
+    The reply consists of the output of ```osd tree```.
+    """
+
+    def retrieve(self, request, fsid, osd_id):
+        cluster = CephCluster.objects.all().get(fsid=fsid)
+        osd = CephOsd.objects.all({'cluster': cluster}).get(id=int(osd_id))
+        serializer = CephOsdSerializer(osd, context={'request': request})
+
+        return Response(serializer.data)
+
+    def list(self, request, fsid):
+        cluster = CephCluster.objects.all().get(fsid=fsid)
+        osds = self.paginate(CephOsd.objects.all({'cluster': cluster}), request)
+        serializer = PaginatedCephOsdSerializer(osds, context={'request': request})
+        return Response(serializer.data)
+
+
+class PaginatedCephOsdSerializer(PaginationSerializer):
+
+    class Meta:
+        object_serializer_class = CephOsdSerializer
 
 RESTAPI_VIEWSETS = [
     ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map

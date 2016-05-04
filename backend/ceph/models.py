@@ -224,6 +224,24 @@ class CephPool(NodbModel):
 
         return result
 
+class CephOsd(NodbModel):
+    id = models.IntegerField(primary_key=True)
+    crush_weight = models.FloatField()
+    depth = models.IntegerField()
+    exists = models.IntegerField() # TODO: BooleanField() ??
+    name = models.CharField(max_length=100)
+    primary_affinity = models.FloatField()
+    reweight = models.FloatField()
+    status = models.CharField(max_length=100) # TODO: BooleanField() ??
+    type = models.CharField(max_length=100)
+    type_id = models.IntegerField()
+
+    @staticmethod
+    def get_all_objects(context):
+        cluster = context['cluster']
+        fsid = cluster.fsid
+        osds = rados[fsid].list_osds()
+        return [CephOsd(**osd) for osd in osds]
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (

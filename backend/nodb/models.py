@@ -136,6 +136,10 @@ class NodbManager(base_manager_class):
     use_for_related_fields = True
 
     def all(self, context=None):
+        """
+        Args:
+            context (dict): The context
+        """
         return self.get_queryset(context)
 
     def get_queryset(self, context=None):
