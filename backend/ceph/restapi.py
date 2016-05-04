@@ -145,6 +145,7 @@ class PaginatedCephClusterSerializer(PaginationSerializer):
     class Meta:
         object_serializer_class = CephClusterSerializer
 
+
 class CephOsdSerializer(NodbSerializer):
 
     class Meta:
