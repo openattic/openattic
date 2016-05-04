@@ -149,7 +149,8 @@ class Client(object):
         Returns:
             list[dict]: Info about each osd, eg "up" or "down"
         """
-        return [obj for obj in self.mon_command("osd tree")["nodes"] if "type" in obj and obj["type"] == obj_type]
+        return [obj for obj in self.mon_command("osd tree")["nodes"]
+                        if "type" in obj and obj["type"] == obj_type]
 
     def mon_command(self, cmd):
         """Calls a monitor command and returns the result as dict.
