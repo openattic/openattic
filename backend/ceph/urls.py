@@ -13,12 +13,18 @@
 """
 
 from django.conf.urls import patterns, url
-from ceph.restapi import CephPoolViewSet
+from ceph.restapi import CephPoolViewSet, CephClusterViewSet
 
-pool_detail = CephPoolViewSet.as_view({'get': 'retrieve'})
-
-urlpatterns = patterns(
-    '',
-    url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools/(?P<pool_id>[0-9]+)',
-        pool_detail,
-        name='pool-detail'), )
+urlpatterns = patterns('',
+                       url(r'^api/ceph$',
+                           CephClusterViewSet.as_view({'get': 'list'}),
+                           name='cluster-list'),
+                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)$',
+                           CephClusterViewSet.as_view({'get': 'retrieve'}),
+                           name='cluster-detail'),
+                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools$',
+                           CephPoolViewSet.as_view({'get': 'list'}),
+                           name='pool-list'),
+                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools/(?P<pool_id>[0-9]+)$',
+                           CephPoolViewSet.as_view({'get': 'retrieve'}),
+                           name='pool-detail'), )
