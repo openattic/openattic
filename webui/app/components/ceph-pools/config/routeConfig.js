@@ -38,7 +38,18 @@ app.config(function ($stateProvider) {
         views        : {
           "main": {
             templateUrl: "components/ceph-pools/templates/listing.html",
-            controller : "CephPoolsCtrl"
+            controller : "CephPoolsCtrl",
+            resolve    : {
+              clusterData: function ($q, cephClustersService) {
+                return cephClustersService.get().$promise
+                    .then(function (res) {
+                      return res.results;
+                    }).catch(function () {
+                      console.log("No Ceph cluster available");
+                      return false;
+                    });
+              }
+            }
           }
         },
         ncyBreadcrumb: {
