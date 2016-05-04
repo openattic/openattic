@@ -25,7 +25,7 @@ SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
 SYSD_LOGLEVEL="INFO"
 SYSD_OPTIONS="$OADIR/manage.py runsystemd"
 
-DEBUG_LOGFILE="/var/log/openattic/openattic.log"
+OPENATTIC_LOGFILE="/var/log/openattic/openattic.log"
 
 WEBSERVER_SERVICE="apache2"
 SAMBA_SERVICES="smbd nmbd"
