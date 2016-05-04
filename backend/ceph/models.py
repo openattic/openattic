@@ -30,7 +30,7 @@ from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-from nodb.models import NodbModel
+from nodb.models import NodbModel, DictField
 
 from ceph import librados
 import ConfigParser
@@ -128,11 +128,6 @@ class CephCluster(NodbModel):
         return self.name
 
 
-class CephPoolHitSetParams(NodbModel):
-
-    type = models.CharField(max_length=100)
-
-
 class CephPoolTier(NodbModel):
 
     pool_id = models.IntegerField()
@@ -169,7 +164,7 @@ class CephPool(NodbModel):
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
     hit_set_count = models.IntegerField()
-    hit_set_params = models.OneToOneField(CephPoolHitSetParams)
+    hit_set_params = DictField()
 
     @staticmethod
     def get_all_objects(context):
@@ -219,7 +214,7 @@ class CephPool(NodbModel):
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
                 'hit_set_count': pool_data['hit_set_count'],
-                'hit_set_params': CephPoolHitSetParams(**pool_data['hit_set_params']),
+                'hit_set_params': pool_data['hit_set_params'],
             }
 
             ceph_pool = CephPool(**object_data)

@@ -19,10 +19,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephPoolHitSetParams
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
+from nodb.models import DictField
 from rest import relations
 
 
@@ -69,27 +70,24 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 class CephClusterSerializer(NodbSerializer):
 
-    pools = relations.HyperlinkedIdentityField(view_name='ceph-pools')
-
     class Meta:
         model = CephCluster
 
 
 class CephClusterViewSet(NodbViewSet):
 
-    queryset = CephCluster.objects.all()
-    serializer_class = CephClusterSerializer
+    def list(self, request):
+        cluster = CephCluster.objects.all()
+        cluster = self.paginate(cluster, request)
+        serializer = PaginatedCephClusterSerializer(cluster, context={'request': request})
 
-    @detail_route()
-    def pools(self, request, *args, **kwargs):
-        cluster = self.get_object()
+        return Response(serializer.data)
 
-        pools = CephPool.objects.all({'cluster': cluster})
-        pools = self.paginate(pools, request)
+    def retrieve(self, request, fsid):
+        cluster = CephCluster.objects.all().get(fsid=fsid)
+        serializer = CephClusterSerializer(cluster, many=False, context={'request': request})
 
-        serializer_instance = PaginatedCephPoolSerializer(pools, context={'request': request})
-
-        return Response(serializer_instance.data)
+        return Response(serializer.data)
 
 
 class CephPoolTierSerializer(NodbSerializer):
@@ -98,20 +96,37 @@ class CephPoolTierSerializer(NodbSerializer):
         model = CephPoolTier
 
 
-class PoolHitSetParamsSerializer(NodbSerializer):
-
-    class Meta:
-        model = CephPoolHitSetParams
-
-
 class CephPoolSerializer(NodbSerializer):
 
-    cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
-    hit_set_params = PoolHitSetParamsSerializer()
+    hit_set_params = DictField
     tiers = CephPoolTierSerializer(many=True)
 
     class Meta:
         model = CephPool
+
+
+class CephPoolViewSet(NodbViewSet):
+    """Represents a Ceph pool.
+
+    Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
+    a queryset. It needs a context which isn't available when this position is evaluated.
+    """
+
+    def retrieve(self, request, fsid, pool_id):
+        cluster = CephCluster.objects.all().get(fsid=fsid)
+        pools = CephPool.objects.all({'cluster': cluster})
+        pool = pools.get(id=int(pool_id))
+        serializer = CephPoolSerializer(pool, context={'request': request})
+
+        return Response(serializer.data)
+
+    def list(self, request, fsid):
+        cluster = CephCluster.objects.all().get(fsid=fsid)
+        pools = CephPool.objects.all({'cluster': cluster})
+        pools = self.paginate(pools, request)
+        serializer = PaginatedCephPoolSerializer(pools, context={'request': request})
+
+        return Response(serializer.data)
 
 
 class PaginatedCephPoolSerializer(PaginationSerializer):
@@ -120,7 +135,12 @@ class PaginatedCephPoolSerializer(PaginationSerializer):
         object_serializer_class = CephPoolSerializer
 
 
+class PaginatedCephClusterSerializer(PaginationSerializer):
+
+    class Meta:
+        object_serializer_class = CephClusterSerializer
+
+
 RESTAPI_VIEWSETS = [
-    ('ceph', CephClusterViewSet, 'ceph'),
     ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
 ]
