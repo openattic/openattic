@@ -13,7 +13,7 @@
 """
 
 from django.conf.urls import patterns, url
-from ceph.restapi import CephPoolViewSet, CephClusterViewSet
+from ceph.restapi import CephPoolViewSet, CephOsdViewSet, CephClusterViewSet
 
 urlpatterns = patterns('',
                        url(r'^api/ceph$',
@@ -27,4 +27,11 @@ urlpatterns = patterns('',
                            name='pool-list'),
                        url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools/(?P<pool_id>[0-9]+)$',
                            CephPoolViewSet.as_view({'get': 'retrieve'}),
-                           name='pool-detail'), )
+                           name='pool-detail'),
+                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/osds$',
+                           CephOsdViewSet.as_view({'get': 'list'}),
+                           name='pool-list'),
+                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/osds/(?P<osd_id>[0-9]+)',
+                           CephOsdViewSet.as_view({'get': 'retrieve'}),
+                           name='osd-detail'),
+                       )
