@@ -31,19 +31,13 @@
 "use strict";
 
 var app = angular.module("openattic.cephClusters");
-app.directive("cephClusterDropdown", function ($filter, cephClustersService) {
+app.directive("cephClusterDropdown", function (cephClustersService) {
   function link(scope) {
     scope.$watch("registry.selectedCluster", function () {
       cephClustersService.get()
           .$promise
           .then(function (res) {
             scope.clusters = res.results;
-
-            var obj = $filter("filter")(scope.clusters, {fsid: scope.registry.selectedCluster.fsid}, true);
-            if (obj.length === 0) {
-              scope.registry.selectedCluster = scope.clusters[0];
-            }
-
             scope.getData();
           })
           .catch(function () {
