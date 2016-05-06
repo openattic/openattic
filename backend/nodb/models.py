@@ -67,10 +67,10 @@ class NodbQuerySet(QuerySet):
                 raise AttributeError('Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
             elif isinstance(attr, models.Model):
                 return filter_impl(keys[1:], value, attr)
-            elif attr is not None:
+            else:
                 modifier = keys[1] if len(keys) > 1 else "exact"
                 if modifier == "exact":
-                    return attr == value
+                    return attr == attr.__class__(value)
                 elif modifier == "istartswith":
                     return attr.startswith(value)
                 else:
