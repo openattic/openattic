@@ -32,6 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService) {
+  $scope.registry = registryService;
   $scope.clusters = clusterData;
   $scope.pools = false;
 
@@ -44,19 +45,30 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
   };
 
   $scope.selection = {};
-  $scope.registry = registryService;
 
-  if (clusterData && typeof $scope.registry.selectedCluster === "undefined") {
-    $scope.registry.selectedCluster = clusterData[0];
+  if ($scope.clusters) {
+    if (typeof $scope.registry.selectedCluster === "undefined") {
+      $scope.registry.selectedCluster = $scope.clusters[0];
+    } else {
+      // check if selected cluster is still available
+      var obj = $filter("filter")($scope.clusters, {fsid: $scope.registry.selectedCluster.fsid}, true);
+      if (obj.length === 0) {
+        $scope.registry.selectedCluster = $scope.clusters[0];
+      }
+    }
   }
 
-  // check if selected cluster is still available
-  var obj = $filter('filter')($scope.clusters, {fsid: $scope.registry.selectedCluster.fsid}, true);
-  if (obj.length === 0) {
-    $scope.registry.selectedCluster = $scope.clusters[0];
-  }
+  var modifyResult = function (res) {
+    res.results.forEach(function (pool) {
+      pool.oaUsed = pool.num_bytes / pool.max_avail * 100;
+      pool.oaUnused = 100 - pool.oaUsed;
+      pool.oaFree = pool.max_avail - pool.num_bytes;
+    });
 
-  var getPools = function () {
+    return res;
+  };
+
+  $scope.getData = function () {
     if ($scope.clusters && $scope.registry.selectedCluster) {
       cephPoolsService
           .get({
@@ -76,22 +88,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
   };
 
-  var modifyResult = function (res) {
-    res.results.forEach(function (pool) {
-      pool.oaUsed = pool.num_bytes / pool.max_avail * 100;
-      pool.oaUnused = 100 - pool.oaUsed;
-      pool.oaFree = pool.max_avail - pool.num_bytes;
-    });
-
-    return res;
-  };
-
-  $scope.$watch("registry.selectedCluster", function () {
-    getPools();
-  }, true);
-
   $scope.$watch("filterConfig", function () {
-    getPools();
+    $scope.getData();
   }, true);
 
   $scope.$watchCollection("selection", function (selection) {
