@@ -46,16 +46,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.selection = {};
 
-  if ($scope.clusters) {
-    if (typeof $scope.registry.selectedCluster === "undefined") {
-      $scope.registry.selectedCluster = $scope.clusters[0];
-    } else {
-      // check if selected cluster is still available
-      var obj = $filter("filter")($scope.clusters, {fsid: $scope.registry.selectedCluster.fsid}, true);
-      if (obj.length === 0) {
-        $scope.registry.selectedCluster = $scope.clusters[0];
-      }
-    }
+  if ($scope.clusters && typeof $scope.registry.selectedCluster === "undefined") {
+    $scope.registry.selectedCluster = $scope.clusters[0];
   }
 
   var modifyResult = function (res) {
@@ -70,6 +62,11 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.getData = function () {
     if ($scope.clusters && $scope.registry.selectedCluster) {
+      var obj = $filter("filter")($scope.clusters, {fsid: $scope.registry.selectedCluster.fsid}, true);
+      if (obj.length === 0) {
+        $scope.registry.selectedCluster = $scope.clusters[0];
+      }
+
       cephPoolsService
           .get({
             id      : $scope.registry.selectedCluster.fsid,
