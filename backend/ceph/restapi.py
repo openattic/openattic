@@ -13,18 +13,15 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+from django.utils.functional import cached_property
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
 from rest_framework.pagination import PaginationSerializer
 
 from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
-from nodb.models import DictField
-from rest import relations
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -82,18 +79,11 @@ class CephClusterViewSet(NodbViewSet):
     and ```/api/ceph/<fsid>/osds```.
     """
 
-    def list(self, request):
-        cluster = CephCluster.objects.all()
-        cluster = self.paginate(cluster, request)
-        serializer = PaginatedCephClusterSerializer(cluster, context={'request': request})
+    serializer_class = CephClusterSerializer
+    filter_fields = ("name",)
 
-        return Response(serializer.data)
-
-    def retrieve(self, request, fsid):
-        cluster = CephCluster.objects.all().get(fsid=fsid)
-        serializer = CephClusterSerializer(cluster, many=False, context={'request': request})
-
-        return Response(serializer.data)
+    def get_queryset(self):
+        return CephCluster.objects.all()
 
 
 class CephPoolTierSerializer(NodbSerializer):
@@ -110,28 +100,28 @@ class CephPoolSerializer(NodbSerializer):
         model = CephPool
 
 
-class CephPoolViewSet(NodbViewSet):
+class FsidMixin:
+
+    @cached_property
+    def fsid(self):
+        import re
+        m = re.match(r'^/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.request.path)
+        return m.groupdict()["fsid"]
+
+
+class CephPoolViewSet(NodbViewSet, FsidMixin):
     """Represents a Ceph pool.
 
     Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
     a queryset. It needs a context which isn't available when this position is evaluated.
     """
 
-    def retrieve(self, request, fsid, pool_id):
-        cluster = CephCluster.objects.all().get(fsid=fsid)
-        pools = CephPool.objects.all({'cluster': cluster})
-        pool = pools.get(id=int(pool_id))
-        serializer = CephPoolSerializer(pool, context={'request': request})
+    serializer_class = CephPoolSerializer
+    filter_fields = ("name",)
 
-        return Response(serializer.data)
-
-    def list(self, request, fsid):
-        cluster = CephCluster.objects.all().get(fsid=fsid)
-        pools = CephPool.objects.all({'cluster': cluster})
-        pools = self.paginate(pools, request)
-        serializer = PaginatedCephPoolSerializer(pools, context={'request': request})
-
-        return Response(serializer.data)
+    def get_queryset(self):
+        cluster = CephCluster.objects.all().get(fsid=self.fsid)
+        return CephPool.objects.all({'cluster': cluster})
 
 
 class PaginatedCephPoolSerializer(PaginationSerializer):
@@ -148,33 +138,26 @@ class PaginatedCephClusterSerializer(PaginationSerializer):
 
 class CephOsdSerializer(NodbSerializer):
 
-    class Meta:
+    class Meta(object):
         model = CephOsd
 
 
-class CephOsdViewSet(NodbViewSet):
+class CephOsdViewSet(NodbViewSet, FsidMixin):
     """Represents a Ceph osd.
 
     The reply consists of the output of ```osd tree```.
     """
+    filter_fields = ("name", "id")
+    serializer_class = CephOsdSerializer
 
-    def retrieve(self, request, fsid, osd_id):
-        cluster = CephCluster.objects.all().get(fsid=fsid)
-        osd = CephOsd.objects.all({'cluster': cluster}).get(id=int(osd_id))
-        serializer = CephOsdSerializer(osd, context={'request': request})
-
-        return Response(serializer.data)
-
-    def list(self, request, fsid):
-        cluster = CephCluster.objects.all().get(fsid=fsid)
-        osds = self.paginate(CephOsd.objects.all({'cluster': cluster}), request)
-        serializer = PaginatedCephOsdSerializer(osds, context={'request': request})
-        return Response(serializer.data)
+    def get_queryset(self):
+        cluster = CephCluster.objects.all().get(fsid=self.fsid)
+        return CephOsd.objects.all({'cluster': cluster})
 
 
 class PaginatedCephOsdSerializer(PaginationSerializer):
 
-    class Meta:
+    class Meta(object):
         object_serializer_class = CephOsdSerializer
 
 RESTAPI_VIEWSETS = [

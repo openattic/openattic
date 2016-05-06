@@ -12,12 +12,31 @@
  *  GNU General Public License for more details.
 """
 import json
+from itertools import ifilter
 
 import django
 from django.db import models
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
+from django.utils.functional import cached_property
+
+
+class NoDbQuery(object):
+    def __init__(self):
+        self._q = None
+
+    def can_filter(self):
+        return True
+
+    def add_q(self, q):
+        self._q = q if self._q is None else self._q | q
+
+    @property
+    def q(self):
+        return self._q
+
 
 
 class NodbQuerySet(QuerySet):
@@ -26,22 +45,69 @@ class NodbQuerySet(QuerySet):
         self.model = model
         self._context = context
         self._current = 0
-        self._data = None
-        self._data = self.model.get_all_objects(self._context)
         self._max = len(self._data) - 1
+        self._query = NoDbQuery()
+
+    @cached_property
+    def _data(self):
+        return self.model.get_all_objects(self._context)
+
+    @cached_property
+    def _filtered_data(self):
+        """
+        Each Q child consists of either another Q, `attr__iexact` or `model__attr__iexact` or `attr`
+        """
+        if not self._query.q:
+            return self._data
+
+        def filter_impl(keys, value, obj):
+            assert keys
+            attr = getattr(obj, keys[0])
+            if attr is None:
+                raise AttributeError('Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
+            elif isinstance(attr, models.Model):
+                return filter_impl(keys[1:], value, attr)
+            elif attr is not None:
+                modifier = keys[1] if len(keys) > 1 else "exact"
+                if modifier == "exact":
+                    return attr == value
+                elif modifier == "istartswith":
+                    return attr.startswith(value)
+                else:
+                    raise ValueError('Unsupported Modifier {}.'.format(modifier))
+
+        def filter_one_q(q, obj):
+            """
+            Args:
+                q (Q):
+                obj NodbModel:
+
+            """
+            if isinstance(q, tuple):
+                return filter_impl(q[0].split('__'), q[1], obj)
+            elif q.connector == "AND":
+                return reduce(lambda l, r: l and filter_one_q(r, obj), q.children, True)
+            else:
+                return reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False)
+
+        return [obj for obj in self._data
+                if filter_one_q(self._query.q, obj)]
 
     def __iter__(self):
         return self
+
+    def __len__(self):
+        return len(self._filtered_data)
 
     def next(self):
         if self._current > self._max:
             raise StopIteration
         else:
             self._current += 1
-            return self._data[self._current - 1]
+            return self._filtered_data[self._current - 1]
 
     def __getitem__(self, index):
-        return self._data[index]
+        return self._filtered_data[index]
 
     def __getattribute__(self, attr_name):
         try:  # Just return own attributes.
@@ -56,14 +122,16 @@ class NodbQuerySet(QuerySet):
             return attr
 
         msg = 'Call to an attribute `{}` of {} which isn\'t intended to be accessed directly.'
-        msg = msg.format(attr_name, NodbQuerySet)
+        msg = msg.format(attr_name, self.__class__)
         raise AttributeError(msg)
 
-    def _clone(self):
-        return NodbQuerySet(self.model)
+    def _clone(self, klass=None, setup=False, **kwargs):
+        my_clone = NodbQuerySet(self.model, context=self._context)
+        my_clone._query = self._query
+        return my_clone
 
     def count(self):
-        return len(self._data)
+        return len(self._filtered_data)
 
     def get(self, **kwargs):
         """Return a single object filtered by kwargs."""
@@ -85,42 +153,15 @@ class NodbQuerySet(QuerySet):
             )
         )
 
-    def filter(self, **kwargs):
+    @property
+    def query(self):
+        return self._query
 
-        def _filter(obj):
-            for key, value in kwargs.items():
-                keys = key.split('__')
+    def filter(self, *args, **kwargs):
+        return super(NodbQuerySet, self).filter(*args, **kwargs)
 
-                attr = obj
-                for i, k in enumerate(keys):
-                    attr = getattr(attr, k)
-                    is_model = isinstance(attr, models.Model)
-
-                    if i == len(keys) - 1 and is_model:
-                        # We're at the end of the iteration but we found an object
-                        # instead of a comparable type.
-                        msg = 'Attribute {} is an object'.format(k)
-                        raise AttributeError(msg)
-
-                    if not is_model and i < len(keys) - 1:
-                        # We're still iterating keys but found a non object where we expected an
-                        # object.
-                        msg = 'Attribute {} is not an object'.format(k)
-                        raise AttributeError(msg)
-
-                    if is_model:
-                        continue
-                    elif attr == value:
-                        return True
-                    else:
-                        return False
-
-            return False
-
-        return filter(_filter, self._data)
-
-    def all(self, context):
-        super(NodbQuerySet, self).all(context)
+    def all(self):
+        return super(NodbQuerySet, self).all()
 
 
 if django.VERSION[1] == 6:
