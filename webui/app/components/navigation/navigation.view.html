@@ -20,19 +20,28 @@
             <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_disks"><a data-ui-sref="disks" title="Disks">Disks</a></li>
             <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_pools"><a data-ui-sref="pools" title="Pools">Pools</a></li>
             <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_volumes"><a data-ui-sref="volumes" title="Volumes">Volumes</a></li>
+            <li class="dropdown tc_menuitem tc_menuitem_ceph">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown">Ceph <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <!--
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_osds"><a data-ui-sref="cephOSDs">OSDs</a></li>
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_mons"><a data-ui-sref="cephMONs">MONs</a></li>
+                    -->
+                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_pools"><a data-ui-sref="cephPools">Pools</a></li>
+                    <!--
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_rbd"><a data-ui-sref="cephRBD">Block Devices (RBD)</a></li>
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_rgw"><a data-ui-sref="cephRGW">Object Gateway (RGW)</a></li>
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_hosts"><a data-ui-sref="cephHosts">Hosts</a></li>
+                    -->
+                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_crushmap"><a data-ui-sref="crushmap">CRUSH Map</a></li>
+                </ul>
+            </li>
             <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_hosts"><a data-ui-sref="hosts" title="Hosts">Hosts</a></li>
-            <!--<li class="dropdown tc_menuitem tc_menuitem_system">-->
-            <!--<a href="" class="dropdown-toggle" data-toggle="dropdown">CEPH <span class="caret"></span></a>-->
-            <!--<ul class="dropdown-menu">-->
-            <!--<li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_pools"><a data-ui-sref="cephPools">Pools</a></li>-->
-            <!--</ul>-->
-            <!--</li>-->
             <li class="dropdown tc_menuitem tc_menuitem_system">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown">System <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_users"><a data-ui-sref="users">Users</a></li>
                     <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_cmdlogs"><a data-ui-sref="cmdlogs">Command Log</a></li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_crushmap"><a data-ui-sref="crushmap">CRUSH Map</a></li>
                 </ul>
             </li>
         </ul><!-- /.navbar-primary -->

@@ -12,11 +12,9 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
 
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
 
   beforeAll(function(){
     helpers.login();
-    volumesItem.click();
     helpers.create_volume(volumename, "lun");
     helpers.create_snapshot(volume);
     volume.click();

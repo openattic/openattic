@@ -5,7 +5,6 @@ describe('CIFS Share workflow', function(){
   var volumename = 'protractor_cifsWorkflow_volume';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var submitButton = element(by.css('.tc_submitButton'));
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var name = element(by.id('shareName'));
   var path = element(by.id('sharePath'));
   var pathRequired = element(by.css('.tc_cifsPathRequired'));
@@ -17,7 +16,7 @@ describe('CIFS Share workflow', function(){
   });
 
   beforeEach(function(){
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);

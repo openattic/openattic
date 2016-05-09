@@ -7,7 +7,7 @@ describe('Storage Tab Test based on filevol', function(){
 
   beforeAll(function(){
     helpers.login();
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    element.all(by.css('ul .tc_menuitem_volumes')).click();
     helpers.create_volume(volumename, "xfs");
 
   });
@@ -36,7 +36,6 @@ describe('Storage Tab Test based on filevol', function(){
 
     expect(element(by.css('.tc_snapshotTab')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_snapshotTab')).getText()).toEqual('Snapshots');
-
 
   });
 

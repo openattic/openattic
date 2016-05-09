@@ -53,7 +53,6 @@ describe('Volumes resize', function(){
     wrongSize('170mb');
   });
 
-
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
     console.log('volumes_resize -> volume_resize.e2e.js');

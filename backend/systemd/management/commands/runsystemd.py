@@ -134,7 +134,7 @@ class SystemD(dbus.service.Object):
         if sender not in self.jobs:
             return
         try:
-            from django.db import close_connection
+            from django.db import close_old_connections
             from multiprocessing import Process
             # Close database connections prior to forking.
             # Otherwise, child processes might inherit our connection and close
@@ -144,7 +144,7 @@ class SystemD(dbus.service.Object):
             #   https://code.djangoproject.com/ticket/15802
             # close_connection will go away in Django 1.6:
             #   https://code.djangoproject.com/ticket/17887
-            close_connection()
+            close_old_connections()
             pp = Process(target=self._run_queue, args=(sender,))
             self.procs.append(pp)
             pp.start()

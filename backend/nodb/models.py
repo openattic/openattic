@@ -1,6 +1,23 @@
+# -*- coding: utf-8 -*-
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+import json
+
 import django
 from django.db import models
 from django.db.models.query import QuerySet
+from django.core import exceptions
+from django.db.models.fields import Field
 
 
 class NodbQuerySet(QuerySet):
@@ -119,6 +136,10 @@ class NodbManager(base_manager_class):
     use_for_related_fields = True
 
     def all(self, context=None):
+        """
+        Args:
+            context (dict): The context
+        """
         return self.get_queryset(context)
 
     def get_queryset(self, context=None):
@@ -143,3 +164,30 @@ class NodbModel(models.Model):
     def get_all_objects():
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
+
+
+class DictField(Field):
+    empty_strings_allowed = False
+
+    def to_python(self, value):
+        if value is None:
+            return dict()
+        if isinstance(value, dict):
+            return value
+
+        try:
+            parsed = json.loads(value)
+            if parsed is not None:
+                return parsed
+        except ValueError:
+            raise exceptions.ValidationError(
+                "invalid JSON",
+                code='invalid',
+                params={'value': value},
+            )
+
+        raise exceptions.ValidationError(
+            "invalid JSON",
+            code='invalid',
+            params={'value': value},
+        )

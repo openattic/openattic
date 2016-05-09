@@ -2,7 +2,6 @@ var helpers = require('../../common.js');
 
 describe('Volumes add', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var volumeNameInput = element(by.model('volume.name'));
   var volumePoolSelect = element(by.model('data.sourcePool'));
   var volumeSizeInput = element(by.model('data.megs'));
@@ -36,7 +35,7 @@ describe('Volumes add', function(){
   });
 
   beforeEach(function(){
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
     browser.sleep(400);
     addBtn.click();
     browser.sleep(400);

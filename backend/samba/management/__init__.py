@@ -18,7 +18,8 @@ import sysutils.models
 
 from systemd import get_dbus_object
 
+
 def writeconf(**kwargs):
-    get_dbus_object("/samba").writeconf("", "")
+    get_dbus_object("/samba").writeconf("", "", False, 0)
 
 sysutils.models.post_install.connect(writeconf, sender=sysutils.models)

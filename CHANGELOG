@@ -1,8 +1,32 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.10 (not released yet):
-----------------------------------
+Version 2.0.11, (not released yet):
+-----------------------------------
+
+* WebUI: Add dropdown menu to the ceph pool list to select a cluster (OP-1104)
+* Backend: Removed simplejson dependency (OP-783)
+* Backend: Fixed "close_connection is superseded by close_old_connections.
+  close_connection()" RemovedInDjango18Warning (OP-809)
+* Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
+  to dbus-send Samba writeconf calls (OP-1113)
+* Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
+* Backend: Added licence headers for nodb files (OP-1125)
+* Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
+* Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
+* Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
+* Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the `hit_set_params` field (OP-1130)
+* Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
+* Backend: Revised the Ceph pool listing (OP-1135)
+* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds` (OP-1035)
+* Installation: Enabled logrotate configuration for openattic.log (OP-1124)
+* Installation: Added instructions to create `openattic.log` with correct permissions when installing packages (OP-1132)
+* Documentation: Added note about extra package which needs to be installed 
+  when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
+* Documentation: Added styleguide for E2E tests (OP-1015)
+
+Version 2.0.10, 20. Apr 2016:
+-----------------------------
 
 * WebUI: Show an error message if javascript is disabled (OP-580)
 * WebUI: Remove Smartadmin and added a new openATTIC theme (OP-585)
@@ -10,14 +34,27 @@ Version 2.0.10 (not released yet):
 * WebUI: Disable resize for btrfs volumes (OP-911)
 * WebUI: New pagination template/layout (OP-1003)
 * WebUI: Accordion header is now clickalbe (OP-1064)
+* WebUI: Add d3, nvd3 and angular-nvd3 (OP-1074)
+* WebUI: Ceph pool data table (OP-867)
 * WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
-* Backend: The name of a netdevice allows a length of up to 15 characters now
-  (OP-960) (thanks to Willi Fehler for reporting the issue)
+* WebUI/QA: Ceph menu related e2e tests (OP-945)
+* WebUI/QA: Added very basic test case for ceph pool overview (OP-1102)
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
+* Backend: List all existing Pools and their characteristics (OP-751)
+* Backend: Fixed a bug with the CRUSH map which caused the server to loop
+  endlessly (OP-865)
+* Backend: Let the ceph module fail graciously (OP-1022)
+* Backend: Implement the pagination for Ceph pools (OP-1026) 
+* Backend: Added additional information to be retrieved about Ceph pools using
+  the RESTful API (OP-1053)
+* Backend: The name of a netdevice allows a length of up to 15 characters now
+  (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
+* Backend: Fixed bug - removing an Ext3/Ext4/XFS filesystem volume that exports
+  an nfs share didn't work properly (OP-736)
 * Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: "oaconfig install" now skips all LVM volume groups tagged with
   "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig

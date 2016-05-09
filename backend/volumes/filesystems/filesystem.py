@@ -204,10 +204,10 @@ class FileSystem(object):
     def check_installed(cls):
         return os.path.exists("/sbin/mkfs.%s" % cls.name)
 
-    def write_fstab(self):
+    def write_fstab(self, delete=False, id=0):
         """ Update /etc/fstab. """
         dbus_object = get_dbus_object("/volumes")
-        return dbus_object.write_fstab()
+        return dbus_object.write_fstab(delete, id)
 
     def grow(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support grow" % self.name)

@@ -1,10 +1,39 @@
+# -*- coding: utf-8 -*-
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import serializers, viewsets
+from rest_framework.fields import Field
 
 from nodb.models import NodbModel
+import nodb.models
+
+
+class DictField(Field):
+
+    def to_native(self, value):
+        """
+        Returns:
+            Returns the value itself, not a string representation.
+
+        """
+        return value
 
 
 class NodbSerializer(serializers.ModelSerializer):
+    field_mapping = dict(serializers.ModelSerializer.field_mapping.items()
+                         + [(nodb.models.DictField, DictField)])
 
     class Meta:
         model = NodbModel

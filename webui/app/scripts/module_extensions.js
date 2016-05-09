@@ -31,12 +31,16 @@
 "use strict";
 
 angular.module("openattic.extensions", [
-  "ngResource",
-  "ui.router",
-  "ui.bootstrap",
-  "ui.tree",
-  "ngTagsInput",
+  "openattic.navigation",
+  "openattic.auth",
+  "openattic.apirecorder",
+  "openattic.cephPools",
   "openattic.datatable",
   "openattic.graph",
-  "openattic.sizeparser"
+  "openattic.sizeparser",
+  "openattic.todowidget",
+  "openattic.clusterstatuswidget",
+  "openattic.oaWizards",
+  "openattic.userinfo",
+  "openattic.required"
 ]);
