@@ -15,6 +15,7 @@ Version 2.0.11, (not released yet):
 * Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
 * Backend: Added licence headers for nodb files (OP-1125)
 * Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
+* Backend: Added searching and filtering to nested viewsets (OP-1129, OP-1142)
 * Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the `hit_set_params` field (OP-1130)
 * Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
 * Backend: Revised the Ceph pool listing (OP-1135)
