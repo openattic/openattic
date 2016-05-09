@@ -22,8 +22,8 @@ describe('Btrfs resize', function(){
 
   it('volume: should have a resize button instead of a clone button', function(){
     volume.click();
-    expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(false);
-    expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(false);
   });
 
   it('subvolume: should have a clone button instead of a resize button', function(){
