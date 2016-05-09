@@ -73,6 +73,8 @@ class NodbQuerySet(QuerySet):
                     return attr == attr.__class__(value)
                 elif modifier == "istartswith":
                     return attr.startswith(value)
+                elif modifier == "icontains":
+                    return value in attr
                 else:
                     raise ValueError('Unsupported Modifier {}.'.format(modifier))
 

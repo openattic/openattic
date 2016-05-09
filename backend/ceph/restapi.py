@@ -118,6 +118,7 @@ class CephPoolViewSet(NodbViewSet, FsidMixin):
 
     serializer_class = CephPoolSerializer
     filter_fields = ("name",)
+    search_fields = ("name",)
 
     def get_queryset(self):
         cluster = CephCluster.objects.all().get(fsid=self.fsid)
