@@ -3,7 +3,7 @@ describe('Btrfs resize', function(){
   var volumename = 'e2e_pool';
   var subvolumename = 'e2e_volume';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-  var subvolume = element.all(by.cssContainingText('tr', volumename)).get(1);
+  var subvolume = element.all(by.cssContainingText('tr', subvolumename)).get(0);
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
   var actionMenu = element(by.css('.tc_menudropdown'));
@@ -20,10 +20,10 @@ describe('Btrfs resize', function(){
     browser.refresh();
   });
 
-  it('volume: should have a resize button instead of a clone button', function(){
+  it('volume: should have a clone button instead of a resize button', function(){
     volume.click();
-    expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(true);
-    expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(false);
+    expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(false);
+    expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(true);
   });
 
   it('subvolume: should have a clone button instead of a resize button', function(){
@@ -32,10 +32,11 @@ describe('Btrfs resize', function(){
     expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(true);
   });
 
-  it('volume: should not have a disabled resize menu entry', function(){
+  it('volume: should have a disabled resize menu entry', function(){
     volume.click();
     actionMenu.click();
-    expect(element.all(by.css('.oa-dropdown-actions li.disabled a')).count()).toBe(0);
+    //expect(element.all(by.css('.oa-dropdown-actions li.disabled a')).count()).toBe(0);
+    expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe("Resize");
   });
 
   it('subvolume: should have a disabled resize menu entry', function(){
