@@ -105,7 +105,7 @@ class FsidMixin:
     @cached_property
     def fsid(self):
         import re
-        m = re.match(r'^/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.request.path)
+        m = re.match(r'^.*/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.request.path)
         return m.groupdict()["fsid"]
 
 
