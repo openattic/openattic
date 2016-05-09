@@ -77,10 +77,6 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
 
     if (item) {
       $scope.resizeable = item.is_blockvolume === true || item.type.name !== "btrfs subvolume";
-      // Until btrfs is resizeable:
-      if (item.type.name === "btrfs subvolume") {
-        $scope.resizeable = false;
-      }
       $scope.cloneable = item.type.name !== "zfs";
 
       if ($state.current.name === "volumes" ||
