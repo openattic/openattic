@@ -228,20 +228,29 @@ class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True)
     crush_weight = models.FloatField()
     depth = models.IntegerField()
-    exists = models.IntegerField() # TODO: BooleanField() ??
+    exists = models.IntegerField()
     name = models.CharField(max_length=100)
     primary_affinity = models.FloatField()
     reweight = models.FloatField()
     status = models.CharField(max_length=100) # TODO: BooleanField() ??
     type = models.CharField(max_length=100)
-    type_id = models.IntegerField()
+    hostname = models.CharField(max_length=256)
 
     @staticmethod
     def get_all_objects(context):
         cluster = context['cluster']
         fsid = cluster.fsid
         osds = rados[fsid].list_osds()
-        return [CephOsd(**osd) for osd in osds]
+        return [CephOsd(id=osd["id"],
+                        crush_weight=osd["crush_weight"],
+                        depth=osd["depth"],
+                        exists=osd["exists"],
+                        name=osd["name"],
+                        primary_affinity=osd["primary_affinity"],
+                        reweight=osd["reweight"],
+                        status=osd["status"],
+                        type=osd["type"],
+                        hostname=osd["hostname"],) for osd in osds]
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (
@@ -285,6 +294,9 @@ class Cluster(StorageObject):
 
     def get_mds_stat(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.name)))
+
+    def get_mds_dump(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_dump(self.name)))
 
     def get_mon_status(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.name)))
