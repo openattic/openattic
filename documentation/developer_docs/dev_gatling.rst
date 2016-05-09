@@ -17,14 +17,14 @@ during execution time.
 Quick start
 -----------
 
-To run Gatling, you need to have an |oA| host set up that has all the
-features installed (have a look at :ref:`install_guides_index`) which you
-intend to test. Then create a configuration file in the *conf* subdirectory
-(i.e., *conf/<yourhost>.conf*) as explained in section
+To run Gatling, you need to have an |oA| host set up that has all the features
+installed (have a look at :ref:`install_guides_index`) which you intend to
+test. Then create a configuration file in the ``conf`` subdirectory (i.e.,
+``conf/<yourhost>.conf``) as explained in section
 :ref:`developer_dev_gatling_configuration` and run Gatling with the following
 command::
 
-    python gatling.py -t yourhost
+  $ python gatling.py -t yourhost
 
 Gatling will adapt to your environment, automatically skipping tests that
 cannot be run on your installation, and run all tests that can run in your
@@ -37,7 +37,7 @@ Dependencies
 Gatling depends on the ``testtools`` and ``xmlrunner`` packages. To install
 them, type::
 
-    apt-get install python-testtools python-xmlrunner
+  # apt-get install python-testtools python-xmlrunner
 
 
 .. _developer_dev_gatling_configuration:
@@ -48,9 +48,9 @@ Configuration
 In order to get Gatling work well with your |oA| environment it needs some
 information about the system configuration. These information are organized in
 configuration files. For an example configuration, have a look at the
-*gatling.conf* file included in the distribution. These settings are suitable
-in most of the cases. However all the settings which do not match your |oA|
-installation need to be overridden in a separate configuration file.
+``gatling.conf`` file included in the distribution. These settings are
+suitable in most of the cases. However all the settings which do not match
+your |oA| installation need to be overridden in a separate configuration file.
 
 The first section of the configuration file is the ``options`` section. It
 holds general settings about how to connect to your |oA| host. Enter the
@@ -66,7 +66,7 @@ need to disable the related tests by::
     enabled = no
 
 For a complete overview of the configuration section and options please have a
-look at the *gatling.conf* file.
+look at the gatling.conf* file.
 All available tests of Gatling are enabled by default.
 
 CI integration
@@ -95,7 +95,7 @@ Gatling's own options from those passed on to ``unittest``, you need to add
 
 If the Gatling command line does not include ``--``, Gatling will by default
 activate test discovery and verbosity. If you want to run Gatling without
-*any* *unittest* arguments, pass ``--`` at the end of the command line.
+*any  unittest* arguments, pass ``--`` at the end of the command line.
 
 
 Source code layout

@@ -7,10 +7,12 @@ tests.
 
 By continuously writing E2E-tests, we want to make sure that our graphical
 user interface is stable and acts the way it is supposed to be - that offered
-functionalities really do what we expect them to do. We want to deliver a
-well-tested application, so that you - as users and community members - do not
-get bothered with a buggy user interface. Instead, you should be able to get
-started with the real deal - MANAGING storage with |oA|.
+functionalities really do what we expect them to do.
+
+We want to deliver a well-tested application, so that you - as users and
+community members - do not get bothered with a buggy user interface. Instead,
+you should be able to get started with the real deal - MANAGING storage with
+|oA|.
 
 About Protractor
 ----------------
@@ -36,7 +38,10 @@ Install Protractor
 ------------------
 
 * ``npm install -g protractor`` (version 3.1.1)
-.. note:: protractor version 3.x.x requires Node.js® version 4.x (you can check your installed version with ``node -v``).
+
+.. note::
+  Protractor version 3.x.x requires Node.js |reg| version 4.x (you can check
+  your installed version with ``node -v``).
 
 * ``apt-get install openjdk-7-jre-headless``
 
@@ -52,11 +57,12 @@ Install Protractor
 Protractor Configuration
 ------------------------
 
-Before starting the tests, you need to configure and adapt some files Here's
-what you have to do in ``protractor.conf.js``:
+Before starting the tests, you need to configure and adapt some files.
 
-Enable BeforeAll / AfterAll
----------------------------
+Here's what you have to do in ``protractor.conf.js``:
+
+Enable ``BeforeAll`` / ``AfterAll``
+-----------------------------------
 
 In order to use ``beforeAll`` and ``afterAll`` you need to tell protractor to use
 ``jasmine2`` as framework (protractor uses an older version by default, which
@@ -85,7 +91,7 @@ Add the following line to your protractor.conf::
 Maximize Browser Window
 -----------------------
 
-If the browser windows in which the tests will be executed is too small, it
+If the browser window in which the tests will be executed is too small, it
 occurs that protractor can't click an element and tests will fail. To prevent
 this, you can maximize your browser window by default by adding the following
 line to ``webui/protractor.conf.js``::
@@ -114,8 +120,8 @@ line to ``webui/protractor.conf.js``::
 Use multiple browsers
 ---------------------
 
-When using Chrome and Firefox for the tests, you could append the following to your ``protractor.conf.js`` so the test will run
-in both browsers::
+When using Chrome and Firefox for the tests, you could append the following to
+your ``protractor.conf.js`` so the test will run in both browsers::
 
     exports.config.multiCapabilities = [
         {'browserName': 'chrome'},
@@ -126,9 +132,11 @@ To prevent running both browsers at the same time you can add::
 
     exports.config.maxSessions = 1;
 
-Set up configs.js
------------------
-Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA| system as well as login data - see below::
+Set up ``configs.js``
+---------------------
+
+Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA|
+system as well as login data - see below::
 
   (function() {
     module.exports = {
@@ -142,25 +150,27 @@ Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA| syste
 In order to run our graphical user interface tests, please make sure that your
 |oA| system at least has:
 
-- one volume group
-- one zpool
+- One LVM volume group
+- One ZFS zpool
 
 and add them to ``e2e/configs.js``.
-.. note:: For more information have a look at ``e2e/example_config.js``.
 
-It is important that the first
-element in this config file is your volume group.
+.. note::
+  For more information have a look at ``e2e/example_config.js``.
 
-If you do not have a zpool configured and you do not want to create one, you
-can of course skip those tests by removing the suite from
+It is important that the first element in this config file is your volume
+group.
+
+If you do not have a ZFS zpool configured and you do not want to create one,
+you can of course skip those tests by removing the suite from
 ``protractor.conf.js`` or putting them in to the comment section.
 
 Start webdriver manager environment
 -----------------------------------
 
-use a separate tab/window to run the following command:
+Use a separate tab/window to run the following command::
 
-``webdriver-manager start``
+  $ webdriver-manager start
 
 Make Protractor Execute the Tests
 ---------------------------------
@@ -174,13 +184,13 @@ order to run the tests::
   Without a given suite protractor will execute all tests (and this will
   probably take a while!)
 
-Start Only a Specific Test Suite
---------------------------------
+Starting Only a Specific Test Suite
+-----------------------------------
 
 If you only want to test a specific action, you can run i.e.
-``protractor protractor.conf.js --suite snapshot_add``
-Available test cases can be looked up in protractor.conf.js,
-i.e.::
+``protractor protractor.conf.js --suite snapshot_add``.
+
+Available test cases can be looked up in ``protractor.conf.js``, i.e.::
 
   suites: {
     //suite name       : '/path/to/e2e-test/file.e2e.js'
@@ -189,9 +199,9 @@ i.e.::
 
 .. note::
   When running protractor.conf and the browser window directly closes and you
-  can see something like "user-data error" (i.e. when using chrome) in your
-  console just create a dir (i.e. in /home/) and do ``google-chrome
-  --user-data-dir=/path/to/created/dir``
+  can see something like "user-data error" (i.e. when using Chrome) in your
+  console just create a dir (i.e. in your home directory) and run
+  ``google-chrome --user-data-dir=/path/to/created/dir``
 
 How to Cancel the Tests
 -----------------------
@@ -274,7 +284,8 @@ to create a new volume::
 
   });
 
-You can also specify the size as a string as third argument, otherwise the volume will always be initiated with 100MB by default.
+You can also specify the size as a string as third argument, otherwise the
+volume will always be initiated with 100MB by default.
 
 Depending on which volume type you need, you can set the parameter to:
 
