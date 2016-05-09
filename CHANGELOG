@@ -5,25 +5,26 @@ Version 2.0.11, (not released yet):
 -----------------------------------
 
 * WebUI: Add dropdown menu to the ceph pool list to select a cluster (OP-1104)
+* WebUI: Save selected cluster between page changes (OP-1131)
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
   close_connection()" RemovedInDjango18Warning (OP-809)
+* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds` (OP-1035)
 * Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
   to dbus-send Samba writeconf calls (OP-1113)
 * Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
 * Backend: Added licence headers for nodb files (OP-1125)
 * Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
-* Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
-* Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
 * Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the `hit_set_params` field (OP-1130)
 * Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
 * Backend: Revised the Ceph pool listing (OP-1135)
-* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds` (OP-1035)
+* Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
+* Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
 * Installation: Enabled logrotate configuration for openattic.log (OP-1124)
 * Installation: Added instructions to create `openattic.log` with correct permissions when installing packages (OP-1132)
+* Documentation: Added styleguide for E2E tests (OP-1015)
 * Documentation: Added note about extra package which needs to be installed 
   when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
-* Documentation: Added styleguide for E2E tests (OP-1015)
 
 Version 2.0.10, 20. Apr 2016:
 -----------------------------
