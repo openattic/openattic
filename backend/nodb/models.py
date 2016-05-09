@@ -33,6 +33,11 @@ class NoDbQuery(object):
     def add_q(self, q):
         self._q = q if self._q is None else self._q | q
 
+    def clone(self):
+        tmp = NoDbQuery()
+        tmp._q = self._q.clone() if self._q is not None else None
+        return tmp
+
     @property
     def q(self):
         return self._q
@@ -129,7 +134,7 @@ class NodbQuerySet(QuerySet):
 
     def _clone(self, klass=None, setup=False, **kwargs):
         my_clone = NodbQuerySet(self.model, context=self._context)
-        my_clone._query = self._query
+        my_clone._query = self._query.clone()
         return my_clone
 
     def count(self):
