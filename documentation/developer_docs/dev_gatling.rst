@@ -66,8 +66,9 @@ need to disable the related tests by::
     enabled = no
 
 For a complete overview of the configuration section and options please have a
-look at the gatling.conf* file.
-All available tests of Gatling are enabled by default.
+look at the ``gatling.conf`` file.
+
+All available tests of Gatling are **enabled** by default.
 
 CI integration
 --------------
