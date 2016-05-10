@@ -184,7 +184,7 @@ fieldset[disabled] .btn-primary.active {
 
 /* Modal */
 .modal-dialog {
-  margin: 30px auto!important;
+  margin: 30px auto !important;
 }
 .modal .modal-content {
   background-color: #ececec;
