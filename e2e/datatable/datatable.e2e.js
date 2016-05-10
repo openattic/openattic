@@ -100,6 +100,15 @@ describe('Should test oadatatable and its options', function(){
     });
   });
 
+  it('should check if there are any checkboxes at all', function(){
+    expect(element.all(by.model('checked')).get(0).isDisplayed()).toBe(true);
+  });
+
+  it('should check the number of checkboxes (select all checkbox not included)', function(){
+    expect(element.all(by.css('.tc_volumeRowName')).count()).toEqual(element.all(by.css('.tc_checkboxes')).count());
+  });
+
+  //TODO: add test case for OP-800
   it('should display enabled/disabled columns when clicked', function(){
     columnListButton.click();
     browser.sleep(400);
