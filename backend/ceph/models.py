@@ -295,6 +295,9 @@ class Cluster(StorageObject):
     def get_mds_stat(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.name)))
 
+    def get_mds_dump(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_dump(self.name)))
+
     def get_mon_status(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.name)))
 
