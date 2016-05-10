@@ -32,17 +32,17 @@
 
 var app = angular.module("openattic.cephCluster");
 app.directive("cephClusterDropdown", function (cephClusterService) {
-  function link(scope) {
-    scope.$watch("registry.selectedCluster", function () {
+  function link($scope) {
+    $scope.$watch("registry.selectedCluster", function () {
       cephClusterService.get()
           .$promise
           .then(function (res) {
-            scope.cluster = res.results;
-            scope.getData();
+            $scope.cluster = res.results;
+            $scope.getData();
           })
           .catch(function () {
             console.log("No Ceph cluster available");
-            scope.cluster = false;
+            $scope.cluster = false;
           });
     });
   }
