@@ -26,6 +26,7 @@ from django.utils.functional import cached_property
 class NoDbQuery(object):
     def __init__(self):
         self._q = None
+        self._ordering = []
 
     def can_filter(self):
         return True
@@ -36,7 +37,18 @@ class NoDbQuery(object):
     def clone(self):
         tmp = NoDbQuery()
         tmp._q = self._q.clone() if self._q is not None else None
+        tmp._ordering = self._ordering[:]
         return tmp
+
+    def clear_ordering(self, force_empty):
+        self._ordering = []
+
+    def add_ordering(self, *keys):
+        self._ordering += keys
+
+    @property
+    def ordering(self):
+        return self._ordering
 
     @property
     def q(self):
@@ -62,8 +74,6 @@ class NodbQuerySet(QuerySet):
         """
         Each Q child consists of either another Q, `attr__iexact` or `model__attr__iexact` or `attr`
         """
-        if not self._query.q:
-            return self._data
 
         def filter_impl(keys, value, obj):
             assert keys
@@ -90,15 +100,26 @@ class NodbQuerySet(QuerySet):
                 obj NodbModel:
 
             """
-            if isinstance(q, tuple):
+            if q is None:
+                return True
+            elif isinstance(q, tuple):
                 return filter_impl(q[0].split('__'), q[1], obj)
             elif q.connector == "AND":
                 return reduce(lambda l, r: l and filter_one_q(r, obj), q.children, True)
             else:
                 return reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False)
 
-        return [obj for obj in self._data
+        filtered = [obj for obj in self._data
                 if filter_one_q(self._query.q, obj)]
+
+        for order_key in self.query.ordering[::-1]:
+            if order_key.startswith("-"):
+                order_key = order_key[1:]
+                filtered.sort(key=lambda obj: getattr(obj, order_key), reverse=True)
+            else:
+                filtered.sort(key=lambda obj: getattr(obj, order_key))
+
+        return filtered
 
     def __iter__(self):
         return self

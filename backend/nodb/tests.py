@@ -45,6 +45,25 @@ class QuerySetTestCase(TestCase):
 
         cls.qs = NodbQuerySet(CephClusterMock)
 
+        cls.ordering_a = mock.MagicMock()
+        cls.ordering_a.x = 1
+        cls.ordering_a.y = 1
+
+        cls.ordering_b = mock.MagicMock()
+        cls.ordering_b.x = 1
+        cls.ordering_b.y = 2
+
+        cls.ordering_c = mock.MagicMock()
+        cls.ordering_c.x = 2
+        cls.ordering_c.y = 2
+
+        class OrderTestModel(NodbModel):
+            @staticmethod
+            def get_all_objects(context):
+                return [cls.ordering_a, cls.ordering_b, cls.ordering_c]
+
+        cls.order_qs = NodbQuerySet(OrderTestModel)
+
     def test_kwargs_filter_by_name(self):
         filter_result = self.qs.filter(name='balkan')
 
@@ -103,6 +122,18 @@ class QuerySetTestCase(TestCase):
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 0)
+
+    def test_ordering(self):
+
+        def eq_order(expected, *order):
+            ordered = self.order_qs.order_by(*order)
+            self.assertEqual([(obj.x, obj.y) for obj in ordered], [(obj.x, obj.y) for obj in expected])
+
+        eq_order([self.ordering_a, self.ordering_b, self.ordering_c], "x", "y")
+        eq_order([self.ordering_b, self.ordering_a, self.ordering_c], "x", "-y")
+        eq_order([self.ordering_c, self.ordering_a, self.ordering_b], "-x", "y")
+        eq_order([self.ordering_c, self.ordering_b, self.ordering_a], "-x", "-y")
+
 
 
 class DictFieldSerializerTest(TestCase):
