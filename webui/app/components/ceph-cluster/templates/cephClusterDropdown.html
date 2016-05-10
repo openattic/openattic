@@ -1,4 +1,4 @@
-<div class="panel panel-default" ng-show="clusters && clusters.length > 1">
+<div class="panel panel-default" ng-show="cluster.length > 1">
   <div class="panel-heading">
     <h3 class="panel-title">Select a Cluster</h3>
   </div>
@@ -8,7 +8,7 @@
       <select id="cluster-selection"
               class="form-control"
               ng-model="registry.selectedCluster"
-              ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid">
+              ng-options="(c.name + ' (' + c.fsid + ')') for c in cluster track by c.fsid">
       </select>
     </div>
   </div>
