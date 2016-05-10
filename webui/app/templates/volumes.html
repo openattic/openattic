@@ -67,7 +67,7 @@
                 ng-class="{ info: isRowSelected(row) }"
                 ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available">
-                    <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
+                    <input class="tc_checkboxes" type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name" class="tc_volumeRowName"></td>
                 <td ng-show="columns['Size']" ng-bind="row.usage.size_text"></td>
