@@ -36,6 +36,22 @@ Version 2.0.11, (not released yet):
 * Documentation: Added styleguide for E2E tests (OP-1015)
 * Documentation: Added note about extra package which needs to be installed
   when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
+* Documentation: Created dedicated document "Post Installation" that explains
+  common tasks to be performed after installing oA, e.g. changing the openattic
+  user's default password (OP-1038).
+* Documentation: Moved Ceph configuration and how to install additional oA
+  modules from the Admin Guide into the post-installation document. Moved
+  "Getting started" into a separate document. Moved "Hardware Recommendations"
+  and "Storage Recommendations" into a separate document.
+* Documentation: Added chapter on how to configure a ZFS zpool to the
+  "Basic Storage Configuration" chapter (OP-711).
+* Documentation: Added basic instructions on how to install oA on SUSE Linux to
+  the Installation chapter (OP-986)
+* Documentation: Added documentation on how to enable alternative authentication
+  methods and how to perform a domain join to a new chapter "Configuring
+  Authentication and Single Sign-On" (OP-1044)
+* Documentation: Added chapter about how to work on the documentation to the
+  Developer Docs.
 
 Version 2.0.10, 20. Apr 2016:
 -----------------------------
