@@ -33,7 +33,7 @@
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService) {
   $scope.registry = registryService;
-  $scope.clusters = clusterData;
+  $scope.cluster = clusterData;
   $scope.pools = false;
 
   $scope.filterConfig = {
@@ -46,8 +46,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.selection = {};
 
-  if ($scope.clusters && typeof $scope.registry.selectedCluster === "undefined") {
-    $scope.registry.selectedCluster = $scope.clusters[0];
+  if ($scope.cluster && typeof $scope.registry.selectedCluster === "undefined") {
+    $scope.registry.selectedCluster = $scope.cluster[0];
   }
 
   var modifyResult = function (res) {
@@ -61,10 +61,10 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
   };
 
   $scope.getData = function () {
-    if ($scope.clusters && $scope.registry.selectedCluster) {
-      var obj = $filter("filter")($scope.clusters, {fsid: $scope.registry.selectedCluster.fsid}, true);
+    if ($scope.cluster && $scope.registry.selectedCluster) {
+      var obj = $filter("filter")($scope.cluster, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
-        $scope.registry.selectedCluster = $scope.clusters[0];
+        $scope.registry.selectedCluster = $scope.cluster[0];
       }
 
       cephPoolsService
