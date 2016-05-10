@@ -11,6 +11,7 @@ Version 2.0.11, (not released yet):
   close_connection()" RemovedInDjango18Warning (OP-809)
 * Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds` (OP-1035)
 * Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
+* BAckend: Fixed compatibility issue with Ceph Jewel when running `oaconfig install`(OP-1079)
   to dbus-send Samba writeconf calls (OP-1113)
 * Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
 * Backend: Added licence headers for nodb files (OP-1125)
