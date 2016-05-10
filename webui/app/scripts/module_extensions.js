@@ -34,6 +34,7 @@ angular.module("openattic.extensions", [
   "openattic.navigation",
   "openattic.auth",
   "openattic.apirecorder",
+  "openattic.cephOsds",
   "openattic.cephPools",
   "openattic.datatable",
   "openattic.graph",
