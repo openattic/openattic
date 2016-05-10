@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from itertools import product
 
 import rados
 import os
@@ -141,16 +142,17 @@ class Client(object):
     def change_pool_owner(self, pool_name, auid):
         return self._get_pool(pool_name).change_auid(auid)
 
-    def list_osds(self, obj_type="osd"):
+    def list_osds(self):
         """
         Args:
             obj_type (str): Either "osd" or "host" or "root"
 
         Returns:
-            list[dict]: Info about each osd, eg "up" or "down"
+            list[dict]: Info about each osd, eg "up" or "down". Also adding the `hostname`.
         """
-        return [obj for obj in self.mon_command("osd tree")["nodes"]
-                        if "type" in obj and obj["type"] == obj_type]
+        nodes = self.mon_command("osd tree")["nodes"]
+        return [dict(hostname=k["name"], **v) for (k, v) in product(nodes, nodes)
+                if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]
 
     def mon_command(self, cmd):
         """Calls a monitor command and returns the result as dict.

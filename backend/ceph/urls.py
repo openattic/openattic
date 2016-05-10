@@ -12,26 +12,19 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
+from rest_framework import routers
+
 from ceph.restapi import CephPoolViewSet, CephOsdViewSet, CephClusterViewSet
 
+router = routers.SimpleRouter(trailing_slash=False)
+router.register(r'osds', CephOsdViewSet, 'osd')
+router.register(r'pools', CephPoolViewSet, 'pool')
+
+cluster_router = routers.SimpleRouter(trailing_slash=False)
+cluster_router.register(r'ceph', CephClusterViewSet, 'ceph')
+
 urlpatterns = patterns('',
-                       url(r'^api/ceph$',
-                           CephClusterViewSet.as_view({'get': 'list'}),
-                           name='cluster-list'),
-                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)$',
-                           CephClusterViewSet.as_view({'get': 'retrieve'}),
-                           name='cluster-detail'),
-                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools$',
-                           CephPoolViewSet.as_view({'get': 'list'}),
-                           name='pool-list'),
-                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/pools/(?P<pool_id>[0-9]+)$',
-                           CephPoolViewSet.as_view({'get': 'retrieve'}),
-                           name='pool-detail'),
-                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/osds$',
-                           CephOsdViewSet.as_view({'get': 'list'}),
-                           name='pool-list'),
-                       url(r'^api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/osds/(?P<osd_id>[0-9]+)',
-                           CephOsdViewSet.as_view({'get': 'retrieve'}),
-                           name='osd-detail'),
+                       url(r'^api/', include(cluster_router.urls, namespace='api'), name='ceph'),
+                       url(r'^api/ceph/[a-zA-Z0-9-]+/', include(router.urls, namespace='api/ceph/'), name='details'),
                        )
