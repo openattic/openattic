@@ -231,6 +231,7 @@ class CephPool(NodbModel):
 
         return result
 
+
 class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True)
     crush_weight = models.FloatField()
@@ -239,7 +240,7 @@ class CephOsd(NodbModel):
     name = models.CharField(max_length=100)
     primary_affinity = models.FloatField()
     reweight = models.FloatField()
-    status = models.CharField(max_length=100) # TODO: BooleanField() ??
+    status = models.CharField(max_length=100)  # TODO: BooleanField() ??
     type = models.CharField(max_length=100)
     hostname = models.CharField(max_length=256)
 
@@ -258,6 +259,7 @@ class CephOsd(NodbModel):
                         status=osd["status"],
                         type=osd["type"],
                         hostname=osd["hostname"],) for osd in osds]
+
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (
