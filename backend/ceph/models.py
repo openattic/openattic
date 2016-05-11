@@ -57,6 +57,7 @@ class CephCluster(NodbModel):
 
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
+    health = models.CharField(max_length=11)
 
     @staticmethod
     def has_valid_config_file():
@@ -114,11 +115,17 @@ class CephCluster(NodbModel):
         raise LookupError()
 
     @staticmethod
+    def get_status(fsid, status_command='status'):
+        return rados[fsid].mon_command(status_command)
+
+    @staticmethod
     def get_all_objects(context=None):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-            cluster = CephCluster(fsid=fsid, name=cluster_name)
+            cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
+
+            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
             cluster.pools = CephPool.objects.all({'cluster': cluster})
             result.append(cluster)
 
