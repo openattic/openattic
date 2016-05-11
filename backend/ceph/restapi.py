@@ -76,8 +76,8 @@ class CephClusterViewSet(NodbViewSet):
     """
     Ceph Cluster
 
-    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```
-    and ```/api/ceph/<fsid>/osds```.
+    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
+    ```/api/ceph/<fsid>/osds``` and ```/api/ceph/<fsid>/status```.
     """
 
     serializer_class = CephClusterSerializer
