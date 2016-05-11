@@ -38,7 +38,7 @@ def update_disks(**kwargs):
 
     ctx = pyudev.Context()
 
-    for dev in ctx.list_devices(subsystem='block', DEVTYPE='disk'):
+    for dev in ctx.list_devices(subsystem="block", DEVTYPE="disk"):
 
         if (("MAJOR" not in dev or dev["MAJOR"] not in SCSIMAJORS)
                 and "virtio" not in dev.device_path):
