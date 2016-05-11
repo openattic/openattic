@@ -90,7 +90,7 @@ class CephClusterViewSet(NodbViewSet):
     def status(self, request, *args, **kwargs):
         fsid = kwargs['pk']
         cluster_status = CephCluster.get_status(fsid)
-        return Response(cluster_status, status=status.HTTP_201_CREATED)
+        return Response(cluster_status, status=status.HTTP_200_OK)
 
 
 class CephPoolTierSerializer(NodbSerializer):
