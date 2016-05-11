@@ -31,6 +31,6 @@
 "use strict";
 
 angular.module("openattic.cephPools", [
-  "openattic.cephClusters",
+  "openattic.cephCluster",
   "openattic.registry"
 ]);
