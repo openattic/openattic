@@ -18,6 +18,9 @@ var entriesDropDown = element(by.css('.tc_entries_dropdown'));
 var volumeRowElements = element.all(by.css('.tc_volumeRowName'));
 var snapshotTab = element(by.css('.tc_snapshotTab'));
 
+var checkboxes = element.all(by.css('.tc_checkboxes'));
+var oadatatablecheckbox = element(by.model('selection.checkAll'));
+
 describe('Should test oadatatable and its options', function(){
 
   beforeAll(function(){
@@ -106,6 +109,21 @@ describe('Should test oadatatable and its options', function(){
 
   it('should check the number of checkboxes (select all checkbox not included)', function(){
     expect(element.all(by.css('.tc_volumeRowName')).count()).toEqual(element.all(by.css('.tc_checkboxes')).count());
+  });
+
+  it('should have a "select all" checkbox', function(){
+    expect(oadatatablecheckbox.isDisplayed()).toBe(true);
+  });
+
+  it('should select all items', function(){
+    oadatatablecheckbox.click();
+    browser.sleep(600);
+    expect(oadatatablecheckbox.isSelected()).toBe(true);
+  });
+
+  it('should deselect the oadatatablecheckbox again', function(){
+    oadatatablecheckbox.click();
+    expect(oadatatablecheckbox.isSelected()).toBe(false);
   });
 
   //TODO: add test case for OP-800
