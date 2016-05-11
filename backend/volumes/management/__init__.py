@@ -24,6 +24,7 @@ from ifconfig.models import Host
 from volumes.models import StorageObject, DiskDevice, GenericDisk
 from systemd.helpers import get_dbus_object
 
+
 def update_disks(**kwargs):
 
     # According to the Linux kernel documentation, the following block major
@@ -92,8 +93,12 @@ def update_disks(**kwargs):
                 so_name = dev.device_node
 
             with StorageObject(name=so_name, megs=megs) as so:
-                diskdev = DiskDevice(storageobj=so, host=Host.objects.get_current(), serial=serial,
-                                    model=dev.get("ID_MODEL", "unknown"), type=dtype, rpm=drpm)
+                diskdev = DiskDevice(storageobj=so,
+                                     host=Host.objects.get_current(),
+                                     serial=serial,
+                                     model=dev.get("ID_MODEL", "unknown"),
+                                     type=dtype,
+                                     rpm=drpm)
                 diskdev.save()
 
         try:
