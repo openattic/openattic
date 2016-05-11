@@ -55,7 +55,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
   };
 
   $scope.submitAction = function (volumeForm) {
-    $scope.submitted = true;
     if (volumeForm.$valid) {
       if (!$scope.state.created) {
         VolumeService.save($scope.volume)

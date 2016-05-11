@@ -60,7 +60,14 @@ app.directive("volumeAddForm", function () {
         }
       });
       $scope.$watch("data.megs", function (megs) {
-        $scope.result.megs = SizeParserService.parseInt(megs);
+        if ($scope.data.megs) {
+          $scope.result.megs = SizeParserService.parseInt(megs);
+        }
+      });
+      $scope.$watch("data.filesystem", function (fs) {
+        if ($scope.data.filesystem) {
+          $scope.result.filesystem = fs === "lun" ? "" : fs;
+        }
       });
     }
   };

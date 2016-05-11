@@ -1,30 +1,30 @@
-<div class="form-group" ng-class="{'has-error': (submitted || validation.name.$dirty)
+<div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.name.$dirty)
     && validation.name.$invalid}">
     <label ng-class="wizzard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="volumeName">Name</label>
     <div ng-class="wizzard ? 'col-md-10' : 'col-sm-9'">
-        <input type="text" class="form-control" id="volumeName" placeholder="Name..."
+        <input type="text" class="form-control tc_volume_name" placeholder="Name..."
             ng-model="result.name" name="name" validname uniquename="volume" required autofocus>
-        <span class="help-block tc_nameRequired" ng-show="(submitted || validation.name.$dirty)
+        <span class="help-block tc_nameRequired" ng-show="(validation.$submitted || validation.name.$dirty)
             && validation.name.$error.required">This field is required!</span>
-        <span class="help-block" ng-show="validation.name.$error.validname">{{errortext}}</span>
+        <span class="help-block tc_noValidName" ng-show="validation.name.$error.validname">{{errortext}}</span>
         <span class="help-block tc_noUniqueName" ng-show="validation.name.$error.uniquename">
             The chosen volume name is already in use.
         </span>
     </div>
 </div>
 
-<pool-selection pool="data.pool" validation="validation.pool"
-    megs="data.megs" wizzard="wizzard"></pool-selection>
+<pool-selection pool="data.pool" validation="validation.pool" megs="data.megs"
+    wizzard="wizzard" submitted="validation.$submitted"></pool-selection>
 
-<div class="form-group" ng-class="{'has-error': (submitted || validation.megs.$dirty)
+<div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.megs.$dirty)
     && validation.megs.$invalid}">
     <label ng-class="wizzard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.megs">Size</label>
     <div ng-class="wizzard ? 'col-md-10' : 'col-sm-9'">
-        <input class="form-control" type="text" name="megs"
+        <input class="form-control tc_volume_megs" type="text" name="megs"
             ng-disabled="data.pool === null  || data.pool.usage.free < 100"
             volume-size-format volume-size-value max-value="{{data.pool.usage.free}}"
-            ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
-        <span class="help-block tc_sizeRequired" ng-show="(submitted || validation.megs.$dirty)
+            ng-model="data.megs" placeholder="e.g., 10GB" required>
+        <span class="help-block tc_sizeRequired" ng-show="(validation.$submitted || validation.megs.$dirty)
             && validation.megs.$error.required">
             This field is required!
         </span>
@@ -41,12 +41,12 @@
 </div>
 
 <pool-fs-support pool="data.pool" pool-validation="validation.pool"
-    filesystem="result.filesystem" wizzard="wizzard"></pool-fs-support>
+    filesystem="data.filesystem" wizzard="wizzard"></pool-fs-support>
 
 <div class="form-group">
     <div ng-class="wizzard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <div class="checkbox checkbox-primary">
-            <input type="checkbox" ng-model="result.is_protected" id="result.is_protected"
+            <input type="checkbox" ng-model="result.is_protected" class="tc_volume_is_protected"
                        name="deletionProtection">
             <label for="result.is_protected">Deletion protection</label>
         </div>

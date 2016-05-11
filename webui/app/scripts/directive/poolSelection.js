@@ -38,6 +38,7 @@ app.directive("poolSelection", function () {
       pool: "=",
       validation: "=",
       megs: "=",
+      submitted: "=",
       wizzard: "="
     },
     templateUrl: "templates/poolSelection.html",
