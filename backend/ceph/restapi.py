@@ -65,16 +65,8 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
         return Response(cluster_ser.data)
 
-    @detail_route(methods=['get'])
-    def status(self, request, *args, **kwargs):
-        fsid = kwargs['pk']
-        cluster_status = CephCluster.get_status(fsid)
-        return Response(cluster_status, status=status.HTTP_201_CREATED)
-
 
 class CephClusterSerializer(NodbSerializer):
-
-    #status = relations.HyperlinkedIdentityField(view_name='cluster-status')
 
     class Meta:
         model = CephCluster
@@ -93,6 +85,12 @@ class CephClusterViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephCluster.objects.all()
+
+    @detail_route(methods=['get'])
+    def status(self, request, *args, **kwargs):
+        fsid = kwargs['pk']
+        cluster_status = CephCluster.get_status(fsid)
+        return Response(cluster_status, status=status.HTTP_201_CREATED)
 
 
 class CephPoolTierSerializer(NodbSerializer):
