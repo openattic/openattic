@@ -14,9 +14,10 @@
  *  GNU General Public License for more details.
 """
 from django.utils.functional import cached_property
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
+from rest_framework.decorators import detail_route
 
 from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
 from ceph.models import CephPoolTier
@@ -64,8 +65,16 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
         return Response(cluster_ser.data)
 
+    @detail_route(methods=['get'])
+    def status(self, request, *args, **kwargs):
+        fsid = kwargs['pk']
+        cluster_status = CephCluster.get_status(fsid)
+        return Response(cluster_status, status=status.HTTP_201_CREATED)
+
 
 class CephClusterSerializer(NodbSerializer):
+
+    #status = relations.HyperlinkedIdentityField(view_name='cluster-status')
 
     class Meta:
         model = CephCluster
