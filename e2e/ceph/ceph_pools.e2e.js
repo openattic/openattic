@@ -4,7 +4,6 @@ describe('should test the ceph pools panel', function(){
 
   var cephMenu = element(by.css('.tc_menuitem_ceph > a'));
   var cephPool = element(by.css('.tc_submenuitem_ceph_pools'));
-  var selectCluster = element(by.css('#cluster-selection option:nth-child(2)'));
   var statusTab = element(by.css('.tc_statusTab'));
   var cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
 
@@ -13,7 +12,6 @@ describe('should test the ceph pools panel', function(){
     helpers.login();
     cephMenu.click();
     cephPool.click();
-    selectCluster.click();
   });
 
   var tableHeaders = [

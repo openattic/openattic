@@ -13,17 +13,15 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+from django.utils.functional import cached_property
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
 from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephPoolHitSetParams
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
-from rest import relations
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -69,27 +67,23 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 class CephClusterSerializer(NodbSerializer):
 
-    pools = relations.HyperlinkedIdentityField(view_name='ceph-pools')
-
     class Meta:
         model = CephCluster
 
 
 class CephClusterViewSet(NodbViewSet):
+    """
+    Ceph Cluster
 
-    queryset = CephCluster.objects.all()
+    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```
+    and ```/api/ceph/<fsid>/osds```.
+    """
+
     serializer_class = CephClusterSerializer
+    filter_fields = ("name",)
 
-    @detail_route()
-    def pools(self, request, *args, **kwargs):
-        cluster = self.get_object()
-
-        pools = CephPool.objects.all({'cluster': cluster})
-        pools = self.paginate(pools, request)
-
-        serializer_instance = PaginatedCephPoolSerializer(pools, context={'request': request})
-
-        return Response(serializer_instance.data)
+    def get_queryset(self):
+        return CephCluster.objects.all()
 
 
 class CephPoolTierSerializer(NodbSerializer):
@@ -98,20 +92,37 @@ class CephPoolTierSerializer(NodbSerializer):
         model = CephPoolTier
 
 
-class PoolHitSetParamsSerializer(NodbSerializer):
-
-    class Meta:
-        model = CephPoolHitSetParams
-
-
 class CephPoolSerializer(NodbSerializer):
 
-    cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
-    hit_set_params = PoolHitSetParamsSerializer()
     tiers = CephPoolTierSerializer(many=True)
 
     class Meta:
         model = CephPool
+
+
+class FsidMixin:
+
+    @cached_property
+    def fsid(self):
+        import re
+        m = re.match(r'^.*/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.request.path)
+        return m.groupdict()["fsid"]
+
+
+class CephPoolViewSet(NodbViewSet, FsidMixin):
+    """Represents a Ceph pool.
+
+    Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
+    a queryset. It needs a context which isn't available when this position is evaluated.
+    """
+
+    serializer_class = CephPoolSerializer
+    filter_fields = ("name",)
+    search_fields = ("name",)
+
+    def get_queryset(self):
+        cluster = CephCluster.objects.all().get(fsid=self.fsid)
+        return CephPool.objects.all({'cluster': cluster})
 
 
 class PaginatedCephPoolSerializer(PaginationSerializer):
@@ -120,7 +131,36 @@ class PaginatedCephPoolSerializer(PaginationSerializer):
         object_serializer_class = CephPoolSerializer
 
 
+class PaginatedCephClusterSerializer(PaginationSerializer):
+
+    class Meta:
+        object_serializer_class = CephClusterSerializer
+
+
+class CephOsdSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephOsd
+
+
+class CephOsdViewSet(NodbViewSet, FsidMixin):
+    """Represents a Ceph osd.
+
+    The reply consists of the output of ```osd tree```.
+    """
+    filter_fields = ("name", "id")
+    serializer_class = CephOsdSerializer
+
+    def get_queryset(self):
+        cluster = CephCluster.objects.all().get(fsid=self.fsid)
+        return CephOsd.objects.all({'cluster': cluster})
+
+
+class PaginatedCephOsdSerializer(PaginationSerializer):
+
+    class Meta(object):
+        object_serializer_class = CephOsdSerializer
+
 RESTAPI_VIEWSETS = [
-    ('ceph', CephClusterViewSet, 'ceph'),
     ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
 ]

@@ -30,9 +30,4 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephClusters");
-app.factory("cephClustersService", function ($resource) {
-  return $resource("/openattic/api/ceph/:id", {
-    id: "@id"
-  });
-});
+angular.module("openattic.registry", []);

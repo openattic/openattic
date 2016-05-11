@@ -30,7 +30,7 @@ from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-from nodb.models import NodbModel
+from nodb.models import NodbModel, DictField
 
 from ceph import librados
 import ConfigParser
@@ -128,11 +128,6 @@ class CephCluster(NodbModel):
         return self.name
 
 
-class CephPoolHitSetParams(NodbModel):
-
-    type = models.CharField(max_length=100)
-
-
 class CephPoolTier(NodbModel):
 
     pool_id = models.IntegerField()
@@ -169,7 +164,7 @@ class CephPool(NodbModel):
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
     hit_set_count = models.IntegerField()
-    hit_set_params = models.OneToOneField(CephPoolHitSetParams)
+    hit_set_params = DictField()
 
     @staticmethod
     def get_all_objects(context):
@@ -219,7 +214,7 @@ class CephPool(NodbModel):
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
                 'hit_set_count': pool_data['hit_set_count'],
-                'hit_set_params': CephPoolHitSetParams(**pool_data['hit_set_params']),
+                'hit_set_params': pool_data['hit_set_params'],
             }
 
             ceph_pool = CephPool(**object_data)
@@ -229,6 +224,33 @@ class CephPool(NodbModel):
 
         return result
 
+class CephOsd(NodbModel):
+    id = models.IntegerField(primary_key=True)
+    crush_weight = models.FloatField()
+    depth = models.IntegerField()
+    exists = models.IntegerField()
+    name = models.CharField(max_length=100)
+    primary_affinity = models.FloatField()
+    reweight = models.FloatField()
+    status = models.CharField(max_length=100) # TODO: BooleanField() ??
+    type = models.CharField(max_length=100)
+    hostname = models.CharField(max_length=256)
+
+    @staticmethod
+    def get_all_objects(context):
+        cluster = context['cluster']
+        fsid = cluster.fsid
+        osds = rados[fsid].list_osds()
+        return [CephOsd(id=osd["id"],
+                        crush_weight=osd["crush_weight"],
+                        depth=osd["depth"],
+                        exists=osd["exists"],
+                        name=osd["name"],
+                        primary_affinity=osd["primary_affinity"],
+                        reweight=osd["reweight"],
+                        status=osd["status"],
+                        type=osd["type"],
+                        hostname=osd["hostname"],) for osd in osds]
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (
@@ -272,6 +294,9 @@ class Cluster(StorageObject):
 
     def get_mds_stat(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.name)))
+
+    def get_mds_dump(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_dump(self.name)))
 
     def get_mon_status(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.name)))

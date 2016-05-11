@@ -14,18 +14,28 @@
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import serializers, viewsets
+from rest_framework.fields import Field
 
-from nodb.models import NodbModel
+import nodb.models
+
+
+class DictField(Field):
+
+    def to_native(self, value):
+        """
+        Returns:
+            Returns the value itself, not a string representation.
+
+        """
+        return value
 
 
 class NodbSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = NodbModel
+    field_mapping = dict(serializers.ModelSerializer.field_mapping.items()
+                         + [(nodb.models.DictField, DictField)])
 
 
 class NodbViewSet(viewsets.ModelViewSet):
-    serializer_class = NodbSerializer
 
     def paginate(self, iterable, request):
         """Automatically paginates the given set of items according to the given request."""
