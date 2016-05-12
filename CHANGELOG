@@ -26,10 +26,16 @@ Version 2.0.11, (not released yet):
   `hit_set_params` field (OP-1130)
 * Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
 * Backend: Revised the Ceph pool listing (OP-1135)
+* Backend: Added Ceph status values to Ceph cluster REST API resource (OP-1146)
+* Backend: Added Ceph Placement Groups to the REST API (OP-1148)
 * Backend: Enable logging for the Nagios and Ceph module by default (thanks to
   Eric Jackson)
 * Backend: Let the Ceph module check for keyring permissions and log permission
   problems (thanks to Eric Jackson)
+* Backend/Installation: Fixed update_disks() method that is called during
+  "oaconfig install", so that all hard disks attached to a system are being
+  found, and not just the first 16 disks (thanks to IRC user "SNMPGuy" for
+  reporting this) (OP-1136)
 * Installation: Enabled logrotate configuration for openattic.log (OP-1124)
 * Installation: Added instructions to create `openattic.log` with correct
   permissions when installing packages (OP-1132)

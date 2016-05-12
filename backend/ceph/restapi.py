@@ -14,11 +14,12 @@
  *  GNU General Public License for more details.
 """
 from django.utils.functional import cached_property
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
+from rest_framework.decorators import detail_route
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd, CephPg
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
@@ -75,8 +76,8 @@ class CephClusterViewSet(NodbViewSet):
     """
     Ceph Cluster
 
-    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```
-    and ```/api/ceph/<fsid>/osds```.
+    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
+    ```/api/ceph/<fsid>/osds``` and ```/api/ceph/<fsid>/status```.
     """
 
     serializer_class = CephClusterSerializer
@@ -84,6 +85,12 @@ class CephClusterViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephCluster.objects.all()
+
+    @detail_route(methods=['get'])
+    def status(self, request, *args, **kwargs):
+        fsid = kwargs['pk']
+        cluster_status = CephCluster.get_status(fsid)
+        return Response(cluster_status, status=status.HTTP_200_OK)
 
 
 class CephPoolTierSerializer(NodbSerializer):
@@ -100,7 +107,7 @@ class CephPoolSerializer(NodbSerializer):
         model = CephPool
 
 
-class FsidMixin:
+class FsidMixin(object):
 
     @cached_property
     def fsid(self):
@@ -160,6 +167,32 @@ class PaginatedCephOsdSerializer(PaginationSerializer):
 
     class Meta(object):
         object_serializer_class = CephOsdSerializer
+
+
+class CephPgSerializer(NodbSerializer):
+
+    lookup_field = "pgid"
+
+    class Meta(object):
+        model = CephPg
+
+
+class CephPgViewSet(NodbViewSet, FsidMixin):
+    """Represents a Ceph Placement Group.
+
+    Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the backend performance
+    considerably.
+
+    """
+    filter_fields = ("osd_id", "pool_name", "pgid")
+    serializer_class = CephPgSerializer
+    lookup_field = "pgid"
+    lookup_value_regex = r'[^/]+'
+
+    def get_queryset(self):
+        cluster = CephCluster.objects.all().get(fsid=self.fsid)
+        return CephPg.objects.all({'cluster': cluster})
+
 
 RESTAPI_VIEWSETS = [
     ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
