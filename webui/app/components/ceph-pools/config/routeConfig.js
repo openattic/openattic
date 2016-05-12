@@ -43,7 +43,7 @@ app.config(function ($stateProvider) {
               clusterData: function ($q, cephClusterService) {
                 return cephClusterService.get().$promise
                     .then(function (res) {
-                      return res.results;
+                      return res;
                     }).catch(function () {
                       console.log("No Ceph cluster available");
                       return false;
