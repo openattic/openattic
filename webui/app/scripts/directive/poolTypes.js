@@ -37,7 +37,8 @@ app.directive("poolFsSupport", function () {
     scope: {
       filesystem: "=",
       pool: "=",
-      wizzard: "=",
+      wizard: "=",
+      availTypes: "=",
       poolValidation: "="
     },
     templateUrl: "templates/poolTypes.html",
@@ -55,6 +56,17 @@ app.directive("poolFsSupport", function () {
         ext2: "Create EXT2"
       };
 
+      $scope.fsArray = ["lun", "xfs", "zfs", "btrfs", "ext4", "ext3", "ext2"];
+
+      if ($scope.availTypes) {
+        for (var key in $scope.filesystems) {
+          if ($scope.availTypes.indexOf(key) === -1) {
+            delete $scope.filesystems[key];
+            $scope.fsArray.splice($scope.fsArray.indexOf(key), 1);
+          }
+        }
+      }
+
       $scope.$watch("pool", function (pool) {
         if (pool) {
           $scope.poolValidation.$setValidity("usablesize", pool.usage.free >= 100);
@@ -66,9 +78,23 @@ app.directive("poolFsSupport", function () {
                   res[index] = res[index].match(/\((.*)\)/)[1];
                 }
               }
-              $scope.filesystem = "lun";
               res.lun = "can be shared via iSCSI or Fibre Channel";
               $scope.supported_filesystems = res;
+              var supportedFs = Object.keys(res);
+              for (var key in $scope.filesystems) {
+                if (supportedFs.indexOf(key) === -1) {
+                  delete $scope.supported_filesystems[key];
+                  var notAvail = $scope.fsArray.indexOf(key);
+                  if (notAvail !== -1) {
+                    $scope.fsArray.splice(notAvail, 1);
+                  }
+                }
+              }
+              if ($scope.fsArray.length > 0) {
+                $scope.filesystem = $scope.fsArray[0];
+              } else {
+                $scope.filesystem = "";
+              }
             }, function (error) {
               console.log("An error occured", error);
             });

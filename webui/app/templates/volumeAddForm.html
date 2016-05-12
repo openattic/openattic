@@ -1,7 +1,7 @@
 <div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.name.$dirty)
     && validation.name.$invalid}">
-    <label ng-class="wizzard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="volumeName">Name</label>
-    <div ng-class="wizzard ? 'col-md-10' : 'col-sm-9'">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="volumeName">Name</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <input type="text" class="form-control tc_volume_name" placeholder="Name..."
             ng-model="result.name" name="name" validname uniquename="volume" required autofocus>
         <span class="help-block tc_nameRequired" ng-show="(validation.$submitted || validation.name.$dirty)
@@ -14,14 +14,14 @@
 </div>
 
 <pool-selection pool="data.pool" validation="validation.pool" megs="data.megs"
-    wizzard="wizzard" submitted="validation.$submitted"></pool-selection>
+    wizard="wizard" submitted="validation.$submitted"></pool-selection>
 
 <div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.megs.$dirty)
     && validation.megs.$invalid}">
-    <label ng-class="wizzard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.megs">Size</label>
-    <div ng-class="wizzard ? 'col-md-10' : 'col-sm-9'">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.megs">Size</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <input class="form-control tc_volume_megs" type="text" name="megs"
-            ng-disabled="data.pool === null  || data.pool.usage.free < 100"
+            ng-disabled="data.pool == null  || data.pool.usage.free < 100"
             volume-size-format volume-size-value max-value="{{data.pool.usage.free}}"
             ng-model="data.megs" placeholder="e.g., 10GB" required>
         <span class="help-block tc_sizeRequired" ng-show="(validation.$submitted || validation.megs.$dirty)
@@ -41,10 +41,10 @@
 </div>
 
 <pool-fs-support pool="data.pool" pool-validation="validation.pool"
-    filesystem="data.filesystem" wizzard="wizzard"></pool-fs-support>
+    filesystem="data.filesystem" wizard="wizard" avail-types="availTypes"></pool-fs-support>
 
 <div class="form-group">
-    <div ng-class="wizzard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
+    <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <div class="checkbox checkbox-primary">
             <input type="checkbox" ng-model="result.is_protected" class="tc_volume_is_protected"
                        name="deletionProtection">

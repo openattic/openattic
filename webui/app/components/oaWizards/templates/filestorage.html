@@ -6,7 +6,7 @@
                 <div ng-class="{'active': isActiveTab(1)}" title="Create Volume" class="tab-pane">
                     <h3 class="tc_oawizard_h3"><strong>File Storage Step 1 </strong> - Create Volume</h3>
                     <form name="$parent.contentForm1" role="form" class="form-horizontal" novalidate>
-                        <volume-add-form volume-form="contentForm1" result="input.volume" wizzard="true"></volume-add-form>
+                        <volume-add-form volume-form="contentForm1" result="input.volume" wizard="true" avail-types="limitTypes"></volume-add-form>
                     </form>
                 </div>
                 <div ng-class="{'active': isActiveTab(2)}" title="Create Mirror" class="tab-pane">

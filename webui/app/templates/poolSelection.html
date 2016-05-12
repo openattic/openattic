@@ -1,8 +1,11 @@
 <div class="form-group" ng-class="{'has-error': (submitted || validation.$dirty)
     && validation.$invalid}">
-    <label ng-class="wizzard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
-    <div ng-class="wizzard ? 'col-md-10' : 'col-sm-9'">
-        <select class="form-control tc_pool_selection tc_source_pool" ng-model="pool"
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select ng-hide="pools" ng-disabled="!pools" class="form-control form-control-static">
+            <option>Retrieving pool list...</option>
+        </select>
+        <select ng-show="pools" class="form-control tc_pool_selection tc_source_pool" ng-model="pool"
                 ng-options="(pool.name + ' (' + pool.type.name + ', ' +
                 pool.host.title + ', ' + pool.usage.free_text + ' free)')
                 for pool in pools track by pool.id" name="pool" required>

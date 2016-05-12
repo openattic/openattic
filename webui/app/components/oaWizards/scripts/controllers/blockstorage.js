@@ -32,6 +32,8 @@
 
 var app = angular.module("openattic.oaWizards");
 app.controller("blockstorage", function ($scope, HostService, InitiatorService) {
+  $scope.limitTypes = ["lun"];
+
   HostService.query()
       .$promise
       .then(function (res) {
@@ -43,7 +45,8 @@ app.controller("blockstorage", function ($scope, HostService, InitiatorService) 
   $scope.input = {
     iscsi_fc: {
       lun_id: 0
-    }
+    },
+    volume: {}
   };
 
   $scope.$watch("input.iscsi_fc.host", function (host) {

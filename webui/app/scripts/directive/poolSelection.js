@@ -39,12 +39,10 @@ app.directive("poolSelection", function () {
       validation: "=",
       megs: "=",
       submitted: "=",
-      wizzard: "="
+      wizard: "="
     },
     templateUrl: "templates/poolSelection.html",
     controller: function ($scope, PoolService) {
-      $scope.pools = {};
-      $scope.selPoolUsedPercent = 0;
       PoolService.query()
         .$promise
         .then(function (res) {
@@ -52,6 +50,7 @@ app.directive("poolSelection", function () {
         }, function (error) {
           console.log("An error occurred", error);
         });
+      $scope.selPoolUsedPercent = 0;
       $scope.$watch("pool", function (pool) {
         if (pool) {
           $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);

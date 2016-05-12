@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.oaWizards");
 app.controller("vmstorage", function ($scope) {
-  //var vmstorageFSs = ["XFS", "ZFS", "BTRFS"];
+  $scope.limitTypes = ["xfs", "zfs", "btrfs"];
 
   $scope.input = {
     cifs: {

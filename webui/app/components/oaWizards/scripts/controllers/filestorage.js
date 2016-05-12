@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.oaWizards");
 app.controller("filestorage", function ($scope) {
-  var filestorageFSs = ["ZFS", "BTRFS", "Ext4", "Ext3"];
+  $scope.limitTypes = ["zfs", "btrfs", "ext4", "ext3"];
 
   $scope.input = {
     cifs: {
@@ -44,7 +44,8 @@ app.controller("filestorage", function ($scope) {
     nfs: {
       create: false,
       options: "rw,no_subtree_check,no_root_squash"
-    }
+    },
+    volume: {}
   };
 
   $scope.$watch("input.volume.name", function (volumename) {

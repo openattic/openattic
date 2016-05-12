@@ -37,7 +37,8 @@ app.directive("volumeAddForm", function () {
     scope: {
       volumeForm: "=",
       result: "=",
-      wizzard: "="
+      availTypes: "=",
+      wizard: "="
     },
     templateUrl: "templates/volumeAddForm.html",
     controller: function ($scope, SizeParserService) {
