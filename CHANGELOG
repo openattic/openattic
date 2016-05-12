@@ -31,6 +31,10 @@ Version 2.0.11, (not released yet):
   Eric Jackson)
 * Backend: Let the Ceph module check for keyring permissions and log permission
   problems (thanks to Eric Jackson)
+* Backend/Installation: Fixed update_disks() method that is called during
+  "oaconfig install", so that all hard disks attached to a system are being
+  found, and not just the first 16 disks (thanks to IRC user "SNMPGuy" for
+  reporting this) (OP-1136)
 * Installation: Enabled logrotate configuration for openattic.log (OP-1124)
 * Installation: Added instructions to create `openattic.log` with correct
   permissions when installing packages (OP-1132)
