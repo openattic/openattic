@@ -24,7 +24,7 @@ managers to create debs, rpms, etc.
 Arguments:
     revision    'stable', 'unstable' and a valid mercurial revision are allowed
                 to be used here.
-    source      Can be an URL or a local path with uncommitted changes.
+    source      Can either be an URL or a local path.
                 [default: https://bitbucket.org/openattic/openattic]
 
 Options:
@@ -154,7 +154,7 @@ class DistBuilder(object):
 
         source = self._args['<source>'] or 'https://bitbucket.org/openattic/openattic'
 
-        self._isPath = urlparse(source).netloc == ''
+        self._source_is_path = urlparse(source).netloc == ''
         self._hg_base_url = os.path.dirname(source)
         self._repo_name = os.path.basename(source)
 
@@ -372,7 +372,7 @@ class DistBuilder(object):
                 else:
                     repo_url = self._hg_base_url + '/' + repo_name
 
-                if repo_name != 'oa_cache' and self._isPath:
+                if repo_name != 'oa_cache' and self._source_is_path:
                     self._process.run(['cp', '-r', repo_url, source_dir])
                 else:
                     repo_target_dir = os.path.join(source_dir + '/' + repo_name)
@@ -431,7 +431,7 @@ class DistBuilder(object):
             latest_stable_version = self._strip_mercurial_tag(tag)
             build_basename += latest_stable_version
         elif revision_argument == 'unstable' or \
-                not self._is_existing_tag(revision_argument) or self._isPath:
+                not self._is_existing_tag(revision_argument) or self._source_is_path:
             future_version = self._get_upcoming_version()
             build_basename += future_version + '~' + self._datestring
         else:  # Must be existing mercurial tag.
@@ -591,7 +591,7 @@ class DistBuilder(object):
         repositories = {
             'oa_cache': [['hg', 'pull', '--update']]
         }
-        if self._isPath:
+        if self._source_is_path:
             repositories[self._repo_name] = [['hg', 'commit', '-A', '-m', '"current"'],
                                              ['hg', 'tag', '-f', self._args['<revision>']]]
         else:
@@ -629,7 +629,7 @@ class DistBuilder(object):
         repo_dir = os.path.join(self._source_dir, self._repo_name)
         rev = self._args['<revision>'] or 'tip'
         rev = self._resolve_user_rev_to_hg_rev(rev)
-        if not self._isPath:
+        if not self._source_is_path:
             self._process.run(['hg', 'update', rev], cwd=repo_dir)
             self._process.run(['hg', 'pull', '--update'], cwd=repo_dir)
         unittest.main('make_dist', argv=[sys.argv[0]])
