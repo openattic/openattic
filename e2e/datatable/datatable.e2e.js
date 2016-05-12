@@ -20,6 +20,8 @@ var snapshotTab = element(by.css('.tc_snapshotTab'));
 
 var checkboxes = element.all(by.css('.tc_checkboxes'));
 var oadatatablecheckbox = element(by.model('selection.checkAll'));
+var allSelected = element(by.css('.oadatatablecheckbox .ng-not-empty'));
+var noneSelected = element(by.css('.oadatatablecheckbox .ng-empty'));
 
 describe('Should test oadatatable and its options', function(){
 
@@ -115,15 +117,25 @@ describe('Should test oadatatable and its options', function(){
     expect(oadatatablecheckbox.isDisplayed()).toBe(true);
   });
 
-  it('should select all items', function(){
+  it('should select the oadatatablecheckbox (selects all elements)', function(){
     oadatatablecheckbox.click();
     browser.sleep(600);
     expect(oadatatablecheckbox.isSelected()).toBe(true);
   });
 
+  it('should have selected all elements', function(){
+    expect(allSelected.isDisplayed()).toBe(true);
+    expect(noneSelected.isPresent()).toBe(false);
+  });
+
   it('should deselect the oadatatablecheckbox again', function(){
     oadatatablecheckbox.click();
     expect(oadatatablecheckbox.isSelected()).toBe(false);
+  });
+
+  it('should have no elements selected anymore', function(){
+    expect(noneSelected.isDisplayed()).toBe(true);
+    expect(allSelected.isPresent()).toBe(false);
   });
 
   //TODO: add test case for OP-800
