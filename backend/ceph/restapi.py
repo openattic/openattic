@@ -171,6 +171,8 @@ class PaginatedCephOsdSerializer(PaginationSerializer):
 
 class CephPgSerializer(NodbSerializer):
 
+    lookup_field = "pgid"
+
     class Meta(object):
         model = CephPg
 
@@ -182,8 +184,10 @@ class CephPgViewSet(NodbViewSet, FsidMixin):
     considerably.
 
     """
-    filter_fields = ("osd_id", "pool_name")
+    filter_fields = ("osd_id", "pool_name", "pgid")
     serializer_class = CephPgSerializer
+    lookup_field = "pgid"
+    lookup_value_regex = r'[^/]+'
 
     def get_queryset(self):
         cluster = CephCluster.objects.all().get(fsid=self.fsid)

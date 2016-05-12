@@ -314,6 +314,8 @@ class CephPg(NodbModel):
                 return argdict
             if len(query.q.children) != 1:
                 return argdict
+            if query.q.children[0] not in mapping.keys():
+                return argdict
 
             return {mapping[query.q.children[0][0]]: str(query.q.children[0][1])}
 
@@ -324,6 +326,8 @@ class CephPg(NodbModel):
             }
 
             if query.q is None or len(query.q.children) != 1:
+                return 'pg ls'
+            if query.q.children[0] not in mapping.keys():
                 return 'pg ls'
 
             return mapping[query.q.children[0][0]]
