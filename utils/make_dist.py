@@ -417,7 +417,7 @@ class DistBuilder(object):
             return tag in matches
         return False
 
-    def _get_build_basename(self, revision_argument, test=False):
+    def _get_build_basename(self, revision_argument):
         """
         Returns the base name for the given revision.
         E.g. openattic-2.0.4 or openattic-2.0.5~201512021037
