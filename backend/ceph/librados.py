@@ -154,7 +154,7 @@ class Client(object):
         return [dict(hostname=k["name"], **v) for (k, v) in product(nodes, nodes)
                 if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]
 
-    def mon_command(self, cmd):
+    def mon_command(self, cmd, argdict=None):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
@@ -163,16 +163,17 @@ class Client(object):
 
         Args:
             cmd (str | dict): the command
+            argdict (dict): Additional Command-Parameters
         """
 
         if type(cmd) is str:
             return self.mon_command(
                 {'prefix': cmd,
-                 'format': 'json'})
+                 'format': 'json'}, argdict)
 
         elif type(cmd) is dict:
             (ret, out, err) = self._cluster.mon_command(
-                json.dumps(cmd),
+                json.dumps(dict(cmd, **argdict if argdict is not None else {})),
                 '',
                 timeout=self._default_timeout)
 

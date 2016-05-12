@@ -12,7 +12,6 @@
  *  GNU General Public License for more details.
 """
 import json
-from itertools import ifilter
 
 import django
 from django.db import models
@@ -24,9 +23,9 @@ from django.utils.functional import cached_property
 
 
 class NoDbQuery(object):
-    def __init__(self):
-        self._q = None
-        self._ordering = []
+    def __init__(self, q = None, ordering = None):
+        self._q = q
+        self._ordering = [] if ordering is None else ordering
 
     def can_filter(self):
         return True
@@ -40,7 +39,7 @@ class NoDbQuery(object):
         tmp._ordering = self._ordering[:]
         return tmp
 
-    def clear_ordering(self, force_empty):
+    def clear_ordering(self, force_empty=None):
         self._ordering = []
 
     def add_ordering(self, *keys):
@@ -52,9 +51,15 @@ class NoDbQuery(object):
 
     @property
     def q(self):
+        """:rtype: Q"""
         return self._q
 
+    def set_empty(self):
+        self.clear_ordering()
+        self._q = None
 
+    def __str__(self):
+        return "NoDbQuery<q={}, ordering={}>".format(self._q, self._ordering)
 
 class NodbQuerySet(QuerySet):
 
@@ -62,12 +67,16 @@ class NodbQuerySet(QuerySet):
         self.model = model
         self._context = context
         self._current = 0
-        self._max = len(self._data) - 1
         self._query = NoDbQuery()
+        self.oInstance = QuerySet()
+
+    @cached_property
+    def _max(self):
+        return len(self._filtered_data) - 1
 
     @cached_property
     def _data(self):
-        return self.model.get_all_objects(self._context)
+        return self.model.get_all_objects(self._context, query=self._query)
 
     @cached_property
     def _filtered_data(self):
@@ -191,6 +200,13 @@ class NodbQuerySet(QuerySet):
     def all(self):
         return super(NodbQuerySet, self).all()
 
+    def __str__(self):
+        return super(NodbQuerySet, self).__str__()
+
+    def __repr__(self):
+        return super(NodbQuerySet, self).__repr__()
+
+
 
 if django.VERSION[1] == 6:
     from django.db.models.manager import Manager
@@ -230,7 +246,7 @@ class NodbModel(models.Model):
         abstract = True
 
     @staticmethod
-    def get_all_objects():
+    def get_all_objects(context, query):
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
 
