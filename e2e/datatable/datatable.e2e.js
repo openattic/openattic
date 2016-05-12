@@ -19,7 +19,7 @@ var volumeRowElements = element.all(by.css('.tc_volumeRowName'));
 var snapshotTab = element(by.css('.tc_snapshotTab'));
 
 var checkboxes = element.all(by.css('.tc_checkboxes'));
-var oadatatablecheckbox = element(by.model('selection.checkAll'));
+var selectAllCheckbox = element(by.model('selection.checkAll'));
 var allSelected = element(by.css('.oadatatablecheckbox .ng-not-empty'));
 var noneSelected = element(by.css('.oadatatablecheckbox .ng-empty'));
 
@@ -32,7 +32,7 @@ describe('Should test oadatatable and its options', function(){
   });
 
   beforeEach(function(){
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
+    element(by.css('.tc_menuitem_volumes > a')).click();
   });
 
   var list = [
@@ -110,17 +110,17 @@ describe('Should test oadatatable and its options', function(){
   });
 
   it('should check the number of checkboxes (select all checkbox not included)', function(){
-    expect(element.all(by.css('.tc_volumeRowName')).count()).toEqual(element.all(by.css('.tc_checkboxes')).count());
+    expect(volumeRowElements.count()).toEqual(checkboxes.count());
   });
 
   it('should have a "select all" checkbox', function(){
-    expect(oadatatablecheckbox.isDisplayed()).toBe(true);
+    expect(selectAllCheckbox.isDisplayed()).toBe(true);
   });
 
   it('should select the oadatatablecheckbox (selects all elements)', function(){
-    oadatatablecheckbox.click();
+    selectAllCheckbox.click();
     browser.sleep(600);
-    expect(oadatatablecheckbox.isSelected()).toBe(true);
+    expect(selectAllCheckbox.isSelected()).toBe(true);
   });
 
   it('should have selected all elements', function(){
@@ -129,8 +129,8 @@ describe('Should test oadatatable and its options', function(){
   });
 
   it('should deselect the oadatatablecheckbox again', function(){
-    oadatatablecheckbox.click();
-    expect(oadatatablecheckbox.isSelected()).toBe(false);
+    selectAllCheckbox.click();
+    expect(selectAllCheckbox.isSelected()).toBe(false);
   });
 
   it('should have no elements selected anymore', function(){
