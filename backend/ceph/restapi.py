@@ -14,9 +14,10 @@
  *  GNU General Public License for more details.
 """
 from django.utils.functional import cached_property
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
+from rest_framework.decorators import detail_route
 
 from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
 from ceph.models import CephPoolTier
@@ -75,8 +76,8 @@ class CephClusterViewSet(NodbViewSet):
     """
     Ceph Cluster
 
-    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```
-    and ```/api/ceph/<fsid>/osds```.
+    This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
+    ```/api/ceph/<fsid>/osds``` and ```/api/ceph/<fsid>/status```.
     """
 
     serializer_class = CephClusterSerializer
@@ -84,6 +85,12 @@ class CephClusterViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephCluster.objects.all()
+
+    @detail_route(methods=['get'])
+    def status(self, request, *args, **kwargs):
+        fsid = kwargs['pk']
+        cluster_status = CephCluster.get_status(fsid)
+        return Response(cluster_status, status=status.HTTP_200_OK)
 
 
 class CephPoolTierSerializer(NodbSerializer):
