@@ -114,7 +114,7 @@ class CephCluster(NodbModel):
         raise LookupError()
 
     @staticmethod
-    def get_all_objects(context=None):
+    def get_all_objects(context, query):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
@@ -167,7 +167,7 @@ class CephPool(NodbModel):
     hit_set_params = DictField()
 
     @staticmethod
-    def get_all_objects(context):
+    def get_all_objects(context, query):
         result = []
         cluster = context['cluster']
         fsid = cluster.fsid
@@ -237,7 +237,7 @@ class CephOsd(NodbModel):
     hostname = models.CharField(max_length=256)
 
     @staticmethod
-    def get_all_objects(context):
+    def get_all_objects(context, query):
         cluster = context['cluster']
         fsid = cluster.fsid
         osds = rados[fsid].list_osds()

@@ -25,7 +25,7 @@ from django.utils.functional import cached_property
 class NoDbQuery(object):
     def __init__(self, q = None, ordering = None):
         self._q = q
-        self._ordering = [] if ordering is None else []
+        self._ordering = [] if ordering is None else ordering
 
     def can_filter(self):
         return True
