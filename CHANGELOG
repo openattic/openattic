@@ -27,6 +27,7 @@ Version 2.0.11, (not released yet):
 * Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
 * Backend: Revised the Ceph pool listing (OP-1135)
 * Backend: Added Ceph status values to Ceph cluster REST API resource (OP-1146)
+* Backend: Added Ceph Placement Groups to the REST API (OP-1148)
 * Backend: Enable logging for the Nagios and Ceph module by default (thanks to
   Eric Jackson)
 * Backend: Let the Ceph module check for keyring permissions and log permission
