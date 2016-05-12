@@ -9,23 +9,50 @@ Version 2.0.11, (not released yet):
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
   close_connection()" RemovedInDjango18Warning (OP-809)
-* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds` (OP-1035)
+* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds`
+  (OP-1035)
 * Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
   to dbus-send Samba writeconf calls (OP-1113)
-* Backend: Fixed warnings from the Ceph module when calling `oaconfig install` (OP-1121)
+* Backend: Fixed compatibility issue with Ceph Jewel when running `oaconfig
+  install` (OP-1079) (thanks to Abhishek Lekshmanan for the patch)
+* Backend: Fixed warnings from the Ceph module when calling `oaconfig install`
+  (OP-1121)
 * Backend: Added licence headers for nodb files (OP-1125)
-* Backend: Switched to Django logging functionality for enhanced logging quality (OP-1126)
-* Backend: Added searching and filtering to nested viewsets (OP-1129, OP-1142)
-* Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the `hit_set_params` field (OP-1130)
+* Backend: Switched to Django logging functionality for enhanced logging
+  quality (OP-1126)
+* Backend: Added searching, filtering and ordering to nested viewsets (OP-1090,
+  OP-1129, OP-1142)
+* Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the
+  `hit_set_params` field (OP-1130)
 * Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
 * Backend: Revised the Ceph pool listing (OP-1135)
-* Backend: Enable logging for the Nagios and Ceph module by default (thanks to Eric Jackson)
-* Backend: Let the Ceph module check for keyring permissions and log permission problems (thanks to Eric Jackson)
+* Backend: Added Ceph status values to Ceph cluster REST API resource (OP-1146)
+* Backend: Enable logging for the Nagios and Ceph module by default (thanks to
+  Eric Jackson)
+* Backend: Let the Ceph module check for keyring permissions and log permission
+  problems (thanks to Eric Jackson)
 * Installation: Enabled logrotate configuration for openattic.log (OP-1124)
-* Installation: Added instructions to create `openattic.log` with correct permissions when installing packages (OP-1132)
+* Installation: Added instructions to create `openattic.log` with correct
+  permissions when installing packages (OP-1132)
 * Documentation: Added styleguide for E2E tests (OP-1015)
-* Documentation: Added note about extra package which needs to be installed 
+* Documentation: Added note about extra package which needs to be installed
   when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
+* Documentation: Created dedicated document "Post Installation" that explains
+  common tasks to be performed after installing oA, e.g. changing the openattic
+  user's default password (OP-1038).
+* Documentation: Moved Ceph configuration and how to install additional oA
+  modules from the Admin Guide into the post-installation document. Moved
+  "Getting started" into a separate document. Moved "Hardware Recommendations"
+  and "Storage Recommendations" into a separate document.
+* Documentation: Added chapter on how to configure a ZFS zpool to the
+  "Basic Storage Configuration" chapter (OP-711).
+* Documentation: Added basic instructions on how to install oA on SUSE Linux to
+  the Installation chapter (OP-986)
+* Documentation: Added documentation on how to enable alternative authentication
+  methods and how to perform a domain join to a new chapter "Configuring
+  Authentication and Single Sign-On" (OP-1044)
+* Documentation: Added chapter about how to work on the documentation to the
+  Developer Docs.
 
 Version 2.0.10, 20. Apr 2016:
 -----------------------------
@@ -49,7 +76,7 @@ Version 2.0.10, 20. Apr 2016:
 * Backend: Fixed a bug with the CRUSH map which caused the server to loop
   endlessly (OP-865)
 * Backend: Let the ceph module fail graciously (OP-1022)
-* Backend: Implement the pagination for Ceph pools (OP-1026) 
+* Backend: Implement the pagination for Ceph pools (OP-1026)
 * Backend: Added additional information to be retrieved about Ceph pools using
   the RESTful API (OP-1053)
 * Backend: The name of a netdevice allows a length of up to 15 characters now
@@ -108,7 +135,7 @@ Version 2.0.9, 16. Mar 2016:
 * Installation: Added missing pnp4nagios config files to openattic-module-
   nagios RPM (OP-983)
 * Installation: Added /etc/openattic to the openattic-base RPM (OP-982)
-* Documentation: Improved the EL7 installation instructions, added note 
+* Documentation: Improved the EL7 installation instructions, added note
   about pnp4nagios configuration (OP-981)
 * Documentation: Restructured and refined the installation instructions
 * Documentation: Added trade mark notice
@@ -213,7 +240,7 @@ Version 2.0.5, 15. Dec 2015:
   RPM package dependencies (OP-787)
 * Installation: Make sure to start and enable Samba when installing the
   openattic-module-samba RPM on RHEL7 and derivatives (OP-788)
-* Installation: Updated the RPM package installation to no longer install all 
+* Installation: Updated the RPM package installation to no longer install all
   files as owned by the openattic user (OP-819)
 * Packaging: added openattic-module-lio to the openattic meta RPM package
   dependencies, moved dependency on python-rtslib from the openattic-base
@@ -232,11 +259,11 @@ Version 2.0.5, 15. Dec 2015:
   appear in the "Volumes" overview and can be shared via iSCSI);
   since the iscsi/fc storage tab is no longer visible when
   clicking a disk in volumes panel, the respective test should check this
-* WebUI/QA: added E2E test for scenario described in OP-588 
+* WebUI/QA: added E2E test for scenario described in OP-588
   ("When creating a new user, app should warn about existing user names.")
 * Web UI: Fixed checking for a name that has been already taken
   while editing users or hosts. (OP-796)
-* Web UI / QA: Test to verify unique names in user and host editing mode.  
+* Web UI / QA: Test to verify unique names in user and host editing mode.
 * Web UI: Checking for an unique name for a new user now. (OP-588)
 * Web UI: Restrict unauthorized access to the UI. (OP-748)
 * Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
@@ -244,7 +271,7 @@ Version 2.0.5, 15. Dec 2015:
 * Web UI: Changed Dashboard, Disks, Pools, Volumes, System and API-Recorder
   icons
 * WebUI/QA: fixed user e2e test which did not work properly in chromium anymore
-  (see OP-821)  
+  (see OP-821)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------

@@ -72,7 +72,7 @@ def update(**kwargs):
             known = False
 
         osdmap = cluster.get_osdmap()
-        mds_stat = cluster.get_mds_stat()
+        mds_dump = cluster.get_mds_dump()
         mon_stat = cluster.get_mon_status()
         auth_list = cluster.get_auth_list()
         df = cluster.df()
@@ -141,7 +141,7 @@ def update(**kwargs):
                 print "added"
 
         iprgx = re.compile(r"^(?P<ip>.+):(?P<port>\d+)/\d+$")
-        for cmds in mds_stat["mdsmap"]["info"].values():
+        for cmds in mds_dump["info"].values():
             print "Checking Ceph mds %s..." % cmds["name"],
 
             m = iprgx.match(cmds["addr"])
