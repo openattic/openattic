@@ -57,7 +57,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
       pool.oaUnused = 100 - pool.oaUsed;
       pool.oaFree = pool.max_avail - pool.num_bytes;
     });
-    
+
     return res;
   };
 
