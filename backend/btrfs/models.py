@@ -18,15 +18,15 @@
 from django.db import models
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import InvalidVolumeType, StorageObject, VolumePool, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, StorageObject, VolumePool, FileSystemVolume
 
 from btrfs import filesystems
 
 
 class Btrfs(VolumePool):
-    host        = models.ForeignKey(Host)
+    host = models.ForeignKey(Host)
 
-    objects     = HostDependentManager()
+    objects = HostDependentManager()
     all_objects = models.Manager()
 
     @property
@@ -73,26 +73,25 @@ class Btrfs(VolumePool):
     def get_volumepool_usage(self, stats):
         stats["vp_megs"] = self.storageobj.megs
         stats["vp_max_new_fsv"] = self.storageobj.megs
-        stats["vp_max_new_bv"]  = self.storageobj.megs
+        stats["vp_max_new_bv"] = self.storageobj.megs
         fs_stat = self.fs.stat
         if fs_stat["used"] is not None and fs_stat["free"] is not None:
             stats["vp_used"] = fs_stat["used"]
             stats["vp_free"] = fs_stat["free"]
 
-        stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
-        stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+        stats["used"] = max(stats.get("used", None), stats["vp_used"])
+        stats["free"] = min(stats.get("free", float("inf")), stats["vp_free"])
 
         return stats
 
 
-
 class BtrfsSubvolume(FileSystemVolume):
-    btrfs       = models.ForeignKey(Btrfs)
-    parent      = models.ForeignKey(StorageObject, blank=True, null=True)
+    btrfs = models.ForeignKey(Btrfs)
+    parent = models.ForeignKey(StorageObject, blank=True, null=True)
 
-    objects     = getHostDependentManagerClass("btrfs__host")()
+    objects = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
-    fstype      = "btrfs"
+    fstype = "btrfs"
 
     def save(self, database_only=False, *args, **kwargs):
         install = (self.id is None and not database_only)
@@ -172,7 +171,7 @@ class BtrfsSubvolume(FileSystemVolume):
             stats["fs_used"] = fs_stat["used"]
             stats["fs_free"] = fs_stat["free"]
 
-        stats["used"]  = max(stats.get("used", None),         stats["fs_used"])
-        stats["free"]  = min(stats.get("free", float("inf")), stats["fs_free"])
+        stats["used"] = max(stats.get("used", None), stats["fs_used"])
+        stats["free"] = min(stats.get("free", float("inf")), stats["fs_free"])
 
         return stats
