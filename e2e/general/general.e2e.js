@@ -26,7 +26,7 @@ describe('General', function(){
         }
       });
     });
-  }
+  };
 
   var subitemCheck = function(dropdown){
     var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
@@ -56,7 +56,7 @@ describe('General', function(){
         }
       });
     });
-  }
+  };
 
 
   beforeAll(function(){
