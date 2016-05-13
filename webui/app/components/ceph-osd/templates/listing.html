@@ -30,6 +30,7 @@
 </div>
 
 <oadatatable ng-show="!error && osd.results.length > 0" data="osd" class="oadatatable tc_cephOsdTable" filter-config="filterConfig" selection="selection">
+    {{data.results}}
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
             <tr>
@@ -37,7 +38,10 @@
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
+                <th ng-show="columns['Hostname']" sortfield="hostname" sortheaderclass>Hostname</th>
                 <th ng-show="columns['Status']">Status</th>
+                <th ng-show="columns['Crush Weight']">Crush Weight</th>
+                <th ng-show="columns['Type']">Type</th>
             </tr>
         </thead>
         <tbody>
@@ -48,10 +52,15 @@
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
+                <td ng-show="columns['Hostname']" ng-bind="row.hostname"></td>
                 <td ng-show="columns['Status']" ng-bind="row.status"></td>
+                <td ng-show="columns['Crush Weight']" ng-bind="row.crush_weight"></td>
+                <td ng-show="columns['Type']" ng-bind="row.type"></td>
             </tr>
         </tbody>
     </table>
 </oadatatable>
+<!--
 <div id="more" ui-view="tab">
 </div>
+-->
