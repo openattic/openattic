@@ -38,6 +38,7 @@ exports.config = {
 
   suites: {
    general              : '../e2e/general/**/*.e2e.js',
+   datatable            : '../e2e/datatable/**/*.e2e.js',
    pagination           : '../e2e/pagination/**/*.e2e.js',
    disks                : '../e2e/disks/**/*.e2e.js',
    pools                : '../e2e/pools/**/*.e2e.js',
