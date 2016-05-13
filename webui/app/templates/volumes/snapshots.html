@@ -41,7 +41,7 @@
                 <td ng-if="snapshotsSelection.available">
                     <input type="checkbox" checklist-model="snapshotsSelection.items" checklist-value="row"/>
                 </td>
-                <td ng-show="columns['Name']" ng-bind="row.name"></td>
+                <td ng-show="columns['Name']" ng-bind="row.name" class="tc_snapRowName"></td>
                 <td ng-show="!special && columns['Size']" ng-bind="row.usage.size_text"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
