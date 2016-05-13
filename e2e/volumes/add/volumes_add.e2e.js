@@ -123,9 +123,9 @@ describe('Volumes add', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
       browser.sleep(400);
-      element(by.css('.tc_pool_selection')).evaluate('pool.host.title').then(function(host){
+      volumePoolSelect.evaluate('pool.host.title').then(function(host){
         browser.sleep(400);
-        expect(element(by.css('.tc_pool_selection')).getText()).toContain(host);
+        expect(volumePoolSelect.getText()).toContain(host);
       });
     });
   });
