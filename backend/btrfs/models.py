@@ -84,6 +84,9 @@ class Btrfs(VolumePool):
 
         return stats
 
+    def grow(self, oldmegs, newmegs):
+        self.fs.grow(oldmegs, newmegs)
+
 
 class BtrfsSubvolume(FileSystemVolume):
     btrfs = models.ForeignKey(Btrfs)
@@ -175,3 +178,14 @@ class BtrfsSubvolume(FileSystemVolume):
         stats["free"] = min(stats.get("free", float("inf")), stats["fs_free"])
 
         return stats
+
+    def grow(self, oldmegs, newmegs):
+        # Check if the related StorageObject represents a BTRFS subvolume. If yes we want to raise
+        # an error.
+        # If the StorageObject represents a BTRFS pool, we don't want to raise an error because it
+        # would break the pool resize functionality of the volume abstraction layer (StorageObject
+        # def _resize in volumes/models.py). In order to grow a BTRFS pool, the abstraction layer
+        # tries to grow the blockvolume, volumepool and filesystemvolume. The resize of the
+        # filesystemvolume would raise the exception which isn't allowed here.
+        if not self.storageobj.volumepool_or_none:
+            raise NotImplementedError("The BTRFS subvolume does not support grow")

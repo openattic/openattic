@@ -131,6 +131,10 @@ class Btrfs(FileSystem):
         # self represents the snapshot to be deleted.
         self.dbus_object.delete_subvolume(self.path)
 
+    def grow(self, oldmegs, newmegs):
+        self.dbus_object.btrfs_resize(self.path, newmegs)
+
+
 class BtrfsDevice(capabilities.Device):
     requires = [
         capabilities.BlockbasedCapability,
