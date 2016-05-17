@@ -25,8 +25,6 @@ Options:
     --revision=<revision>   A valid mercurial revision. An existing mercurial tag for 'stable'.
     --source=<source>       The source to be used. Either an URL or a path.
                             [default: https://bitbucket.org/openattic/openattic]
-    --release-channel       The tarballs filename and information in version.txt will be adapted
-                            accordingly to the release channel.
     -v                      Enables the verbose mode.
     -q                      Enables the quiet mode.
     -s                      Enables the script mode which only prints the absolute path of the
@@ -81,8 +79,7 @@ class Process(object):
         self.use_bold = use_bold_font
 
     def run(self, args, cwd=None, verbosity=None, exit_on_error=None, env=None):
-        if verbosity is None:
-            verbosity = self.verbosity
+        verbosity = verbosity if verbosity else self.verbosity
         if verbosity > 0:
             self.log_command(args, cwd, self.use_bold)
 
@@ -94,13 +91,13 @@ class Process(object):
                                 env=env)
 
         process_communication = pipe.communicate()
-        result = ProcessResult(
-            process_communication[0],
-            process_communication[1],
-            pipe.returncode)
+        result = ProcessResult(process_communication[0],
+                               process_communication[1],
+                               pipe.returncode)
 
         if (verbosity > 1 and result.stdout) or not result.success():
             print result.stdout.strip()
+
         if not result.success():
             if result.stderr:
                 print result.stderr
@@ -130,14 +127,9 @@ class Process(object):
                 display_args[i] = '"%s"' % arg
 
         command = ' '.join(display_args)
+        command = '\033[1m' + command + '\033[0m' if use_bold else command
 
-        if use_bold:
-            command = '\033[1m' + command + '\033[0m'
-
-        if not cwd:
-            print '# %s' % command
-        else:
-            print '%s# %s' % (cwd, command)
+        print '# {}'.format(command) if not cwd else '{}# {}'.format(cwd, command)
 
 
 class DistBuilder(object):
@@ -145,23 +137,17 @@ class DistBuilder(object):
     def __init__(self, source_dir, args=None):
         self._home_dir = os.environ['HOME']
         self._source_dir = source_dir
-
-        if args:
-            self._args = args
-        else:
-            self._args = docopt(__doc__)
+        self._args = args if args else docopt(__doc__)
 
         source = self._args['--source']
-
         self._source_is_path = urlparse(source).netloc == ''
         self._hg_base_url = os.path.dirname(source)
         self._repo_name = os.path.basename(source)
 
-        self._version_txt_path = os.path.join(self._source_dir, self._repo_name, 'version.txt')
-        self._package_json_path = os.path.join(self._source_dir, self._repo_name, 'webui',
-                                               'package.json')
-        self._bower_json_path = os.path.join(self._source_dir, self._repo_name, 'webui',
-                                             'bower.json')
+        repo_path = os.path.join(self._source_dir, self._repo_name)
+        self._version_txt_path = os.path.join(repo_path, 'version.txt')
+        self._package_json_path = os.path.join(repo_path, 'webui', 'package.json')
+        self._bower_json_path = os.path.join(repo_path, 'webui', 'bower.json')
 
         self._verbosity = 1
         if self._args['-q']:
@@ -186,8 +172,7 @@ class DistBuilder(object):
         print '\033[7;49;93m' + message + '\033[0m'
 
     def _command_exists(self, command):
-        return self._process.run(
-            ['which', command], exit_on_error=False).success()
+        return self._process.run(['which', command], exit_on_error=False).success()
 
     def _check_dependencies(self, commands):
         """Check if the given commands can be found and exit if they couldn't be found."""
@@ -197,11 +182,8 @@ class DistBuilder(object):
 
     def _get_latest_tag_of_rev(self):
         """Returns the latest global tag of the currently activated revision."""
-
-        result = self._process.run(
-            ['hg', 'parents', '--template', '{latesttag}'],
-            cwd=os.path.join(self._source_dir, self._repo_name))
-
+        result = self._process.run(['hg', 'parents', '--template', '{latesttag}'],
+                                   cwd=os.path.join(self._source_dir, self._repo_name))
         return result.stdout
 
     def __get_all_tags(self, source_dir):
@@ -211,12 +193,9 @@ class DistBuilder(object):
         This function returns the latest tags independently from the currently activated revision
         of the `source_dir`.
         """
-
         self._process.run(['hg', 'pull'], cwd=source_dir)
-        entry_list = self._process.run(
-            ['hg', 'tags'],
-            cwd=source_dir).stdout.split('\n')
-        tags = map(lambda e: re.split(r'\s+', e)[0], entry_list)
+        tags = self._process.run(['hg', 'tags'], cwd=source_dir).stdout.split('\n')
+        tags = map(lambda e: re.split(r'\s+', e)[0], tags)
 
         return tags
 
@@ -228,9 +207,7 @@ class DistBuilder(object):
     def _sort_version_number_desc(iterable):
         def extract_version_numbers(entry):
             match = re.search(r'v?([\d]+)\.([\d]+)\.([\d]+).*', entry)
-            if match:
-                return map(int, match.groups())
-            return None
+            return map(int, match.groups()) if match else None
 
         def sort_version_number_desc(a, b):
             if a[0] > b[0]:
@@ -260,8 +237,7 @@ class DistBuilder(object):
         tags.remove('tip')  # We're looking for the latest _labeled_ tag.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
-        if strip_tag:
-            latest_tag = self._strip_mercurial_tag(latest_tag)
+        latest_tag = self._strip_mercurial_tag(latest_tag) if strip_tag else latest_tag
 
         return latest_tag
 
@@ -286,6 +262,7 @@ class DistBuilder(object):
                 f.write('[package]' + '\n' + content)
             config.read(self._version_txt_path)
             version = config.get('package', 'VERSION')
+
         return version
 
     def _resolve_release_channel(self, channel):
@@ -298,11 +275,7 @@ class DistBuilder(object):
         'unstable' resolves to the tip of the 'default' branch.
         """
         assert channel in ('stable', 'unstable')
-
-        if channel == 'stable':
-            return self._get_latest_existing_tag()
-        elif channel == 'unstable':
-            return 'default'
+        return self._get_latest_existing_tag() if channel == 'stable' else 'default'
 
     def _remove_npmrc_prefix(self):
         """Remotes the `prefix` variable from the `~/.npmrc` file."""
@@ -340,8 +313,7 @@ class DistBuilder(object):
                     self._log('File .npmrc has been extended.')
 
         # Extend PATH variable.
-        os.environ['PATH'] = os.environ['PATH'] + ':' + \
-            os.path.join(self._home_dir, '.node/bin')
+        os.environ['PATH'] = os.environ['PATH'] + ':' + os.path.join(self._home_dir, '.node/bin')
         self._process.run(['bash', '-c', 'hash -r'])
 
         # Check for the existence of grunt.
@@ -353,16 +325,14 @@ class DistBuilder(object):
         """
         Writes a message to stderr and exits.
         """
-
         sys.stderr.write(message + os.linesep)
         sys.exit(2)
 
     def _clone_sources(self, source_dir, repo_names):
         """Clones the sources to the specified directory.
 
-        source_dir -- The directory where the repositories should be
-                      cloned into.
-        repo_names -- An array of the repository names.
+        source_dir -- The directory where the repositories should be cloned to.
+        repo_names -- An array of repository names.
         """
         if not isdir(source_dir):
             makedirs(source_dir)
@@ -379,7 +349,7 @@ class DistBuilder(object):
                 if repo_name != 'oa_cache' and self._source_is_path:
                     self._process.run(['cp', '-r', repo_url, source_dir])
                 else:
-                    repo_target_dir = os.path.join(source_dir + '/' + repo_name)
+                    repo_target_dir = os.path.join(source_dir, repo_name)
                     self._process.run(['hg', 'clone', repo_url, repo_target_dir])
 
             result['repo_name'] = True
@@ -395,18 +365,14 @@ class DistBuilder(object):
         :return: `None` or the stripped tag
         """
         hits = re.findall(r'v?([^\-]+)(-\d)?', tag)
-        if hits:
-            return hits[0][0]  # Return first hit and first group.
-        return None
+        return hits[0][0] if hits else None  # Return first hit of first group or None.
 
     def _is_existing_tag(self, tag):
-        result = self._process.run(
-            ['hg', 'tags'],
-            cwd=os.path.join(self._source_dir, self._repo_name))
+        result = self._process.run(['hg', 'tags'],
+                                   cwd=os.path.join(self._source_dir, self._repo_name))
         matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
-        if matches:
-            return tag in matches
-        return False
+
+        return tag in matches if matches else False
 
     def _get_build_basename(self, channel, revision):
         """
@@ -441,7 +407,6 @@ class DistBuilder(object):
     def _delete_source_clone(self):
         path = os.path.join(self._source_dir, self._repo_name)
         rmtree(path)
-        return path
 
     def _create_source_tarball(self, build_basename):
         """
@@ -459,8 +424,7 @@ class DistBuilder(object):
         openattic_repo_dir = os.path.join(self._source_dir, self._repo_name)
         abs_build_dir = os.path.join(self._source_dir, build_basename)
         abs_tarball_file_path = abs_build_dir + '.tar.bz2'
-        bower_components_dir = os.path.join(
-            abs_build_dir, 'webui', 'app', 'bower_components')
+        bower_components_dir = os.path.join(abs_build_dir, 'webui', 'app', 'bower_components')
         node_modules_dir = os.path.join(abs_build_dir, 'webui', 'node_modules')
         webui_dir = os.path.join(abs_build_dir, 'webui')
 
@@ -472,22 +436,19 @@ class DistBuilder(object):
 
         self._process.run(['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
                           cwd=os.path.join(self._source_dir, self._repo_name))
-
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
-        cache = [
-            {
-                'name': 'npm',
-                'checksum_file': self._package_json_path,
-                'command': ['npm', 'install'],
-                'source_dir': node_modules_dir,
-            }, {
-                'name': 'bower',
-                'checksum_file': self._bower_json_path,
-                'command': ['bower', 'install', '--allow-root'],
-                'source_dir': bower_components_dir
-            }
-        ]
+        cache = [{
+            'name': 'npm',
+            'checksum_file': self._package_json_path,
+            'command': ['npm', 'install'],
+            'source_dir': node_modules_dir,
+        }, {
+            'name': 'bower',
+            'checksum_file': self._bower_json_path,
+            'command': ['bower', 'install', '--allow-root'],
+            'source_dir': bower_components_dir
+        }]
 
         cache_used = True
         for cache_entry in cache:
@@ -501,34 +462,32 @@ class DistBuilder(object):
             md5_sum = self._get_md5_of_file(cache_entry['checksum_file'])
             cache_dir = os.path.join(self._cache_dir, cache_entry['name'], md5_sum)
             if not isdir(cache_dir):
-                self._log('No cache found for %s' % os.path.basename(cache_entry['checksum_file']))
+                log_msg = 'No cache found for {}'
+                self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
                 self._process.run(cache_entry['command'], cwd=webui_dir)
-                copytree(cache_entry['source_dir'], cache_dir)
+                copytree(cache_entry['source_dir'], cache_dir)  # Update cache dir.
             else:
-                self._log('Cache found for %s. Copying files...' %
-                          os.path.basename(cache_entry['checksum_file']))
-                copytree(cache_dir, cache_entry['source_dir'])
+                log_msg = 'Cache found for {}. Copying files...'
+                self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
+                copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
 
         if cache_used:  # Build the frontend files.
             self._process.run(['grunt', 'build'], cwd=webui_dir)
 
-            # Remove no longer required packages.
+            # Remove no longer required dirs.
             rmtree(bower_components_dir)
             rmtree(node_modules_dir)
 
-        # version.txt update.
-        state = 'stable'
-        if self._args['--revision'] != 'stable':
-            state = 'snapshot'
+        # Update version.txt.
+        state = 'stable' if self._args['--revision'] == 'stable' else 'snapshot'
         data = {
             'BUILDDATE': self._datestring,
             'REV': self._get_current_revision_hash(openattic_repo_dir),
             'STATE': state
         }
-        version_txt_path = os.path.join(abs_build_dir, 'version.txt')
-        with file(version_txt_path, 'a') as f:
+        with file(os.path.join(abs_build_dir, 'version.txt'), 'a') as f:
             for key, value in data.items():
-                f.write('%s = %s%s' % (key, value, os.linesep))
+                f.write('{} = {}{}'.format(key, value, os.linesep))
 
         # Work around the debian/rules file building process for the frontend files.
         if self._args['--disable-fe-building']:
@@ -545,11 +504,9 @@ class DistBuilder(object):
 
         # Compress the directory into the tarball file.
         options = 'cjf'
-        if self._verbosity > 1:
-            options += 'v'
-        self._process.run(
-            ['tar', options, abs_tarball_file_path, build_basename],
-            cwd=self._source_dir)
+        options += 'v' if self._verbosity > 1 else ''
+        self._process.run(['tar', options, abs_tarball_file_path, build_basename],
+                          cwd=self._source_dir)
 
         self._delete_source_clone()  # Remove no longer required repository clone.
         rmtree(abs_build_dir)  # Remove no longer required temporary folder.
@@ -563,14 +520,12 @@ class DistBuilder(object):
         :param repo_dir: The directory of the repository.
         :return: The (long) hash of the changeset.
         """
-        result = self._process.run(['hg', '--debug', 'id', '-i'],
-                                   cwd=repo_dir)
+        result = self._process.run(['hg', '--debug', 'id', '-i'], cwd=repo_dir)
         return result.stdout.strip()
 
     def _push_remote_cache(self):
         self._process.run(['hg', 'addremove'], cwd=self._cache_dir)
-        self._process.run(['hg', 'ci',
-                          '-m"Cache updated."', '-u"make_dist.py"'],
+        self._process.run(['hg', 'ci', '-m', 'Cache updated.', '-u', 'make_dist.py'],
                           cwd=self._cache_dir, exit_on_error=False)
         self._process.system(['hg', 'push'], cwd=self._cache_dir)
 
