@@ -6,6 +6,7 @@ Version 2.0.11, (not released yet):
 
 * WebUI: Add dropdown menu to the ceph pool list to select a cluster (OP-1104)
 * WebUI: Save selected cluster between page changes (OP-1131)
+* WebUI: Add Ceph osd data table (OP-1144)
 * WebUI/QA: added test cases for datatable (OP-818)
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
