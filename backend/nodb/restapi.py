@@ -37,6 +37,13 @@ class NodbSerializer(serializers.ModelSerializer):
 
 class NodbViewSet(viewsets.ModelViewSet):
 
+    def __init__(self, **kwargs):
+        super(NodbViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(None)
+
+    def set_nodb_context(self, context):
+        nodb.models.NodbManager.set_nodb_context(context)
+
     def paginate(self, iterable, request):
         """Automatically paginates the given set of items according to the given request."""
 
