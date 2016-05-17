@@ -78,7 +78,7 @@ class BtrfsVolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size + 1000, "id": vol["response"]["id"]})
-        self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
+        self.assertEqual(str(err.exception), "500 Server Error: INTERNAL SERVER ERROR")
 
 
 class BtrfsPoolTests(object):
