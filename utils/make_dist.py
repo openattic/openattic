@@ -13,25 +13,24 @@
 # *  GNU General Public License for more details.
 
 """Usage:
-    make_dist.py create <revision> [-v|-q|-s] [<source>] [--disable-fe-building]
+    make_dist.py create (stable|unstable) [--revision=<revision>] [--source=<source>] [-v|-q|-s] [--disable-fe-building]
     make_dist.py selftest [<revision>] [<source>]
     make_dist.py cache push
     make_dist.py help
 
-Create a tarball out of a specific revision to be used as source for package
-managers to create debs, rpms, etc.
-
-Arguments:
-    revision    'stable', 'unstable' and a valid mercurial revision are allowed
-                to be used here.
-    source      Can either be an URL or a local path.
-                [default: https://bitbucket.org/openattic/openattic]
+Create a tarball out of a specific revision to be used as source for package managers to create
+debs, rpms, etc.
 
 Options:
-    -v          Enables the verbose mode.
-    -q          Enables the quiet mode.
-    -s          Enables the script mode which prints only the absolute file
-                path of the tarball (and output from stderr).
+    --revision=<revision>   A valid mercurial revision. An existing mercurial tag for 'stable'.
+    --source=<source>       The source to be used. Either an URL or a path.
+                            [default: https://bitbucket.org/openattic/openattic]
+    --release-channel       The tarballs filename and information in version.txt will be adapted
+                            accordingly to the release channel.
+    -v                      Enables the verbose mode.
+    -q                      Enables the quiet mode.
+    -s                      Enables the script mode which only prints the absolute path of the
+                            tarball in stdout and all the output from stderr.
 
     --disable-fe-building   Disables the build process for frontend files in the debian/rules file.
                             This is ment to be a temporary workaround.
@@ -147,12 +146,12 @@ class DistBuilder(object):
         self._home_dir = os.environ['HOME']
         self._source_dir = source_dir
 
-        if not args:
-            args = {}
-        self._args = docopt(__doc__)
-        self._args.update(args)
+        if args:
+            self._args = args
+        else:
+            self._args = docopt(__doc__)
 
-        source = self._args['<source>'] or 'https://bitbucket.org/openattic/openattic'
+        source = self._args['--source']
 
         self._source_is_path = urlparse(source).netloc == ''
         self._hg_base_url = os.path.dirname(source)
@@ -255,20 +254,26 @@ class DistBuilder(object):
 
         return sorted_tags
 
-    def _get_latest_existing_tag(self):
+    def _get_latest_existing_tag(self, strip_tag=False):
         source_dir = os.path.join(self._source_dir, self._repo_name)
         tags = self.__get_all_tags(source_dir)
         tags.remove('tip')  # We're looking for the latest _labeled_ tag.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
-        sorted_tags = self._sort_version_number_desc(tags)
+        latest_tag = self._sort_version_number_desc(tags)[0]
+        if strip_tag:
+            latest_tag = self._strip_mercurial_tag(latest_tag)
 
-        return sorted_tags[0]
+        return latest_tag
 
-    def _get_upcoming_version(self):
-        """Determine the upcoming version for 'unstable' releases."""
-        self._process.run(
-            ['hg', 'pull', '-u'],
-            cwd=os.path.join(self._source_dir, self._repo_name))
+    def _determine_upcoming_version(self, revision):
+        """Determine the upcoming version for 'unstable' releases.
+
+        It returns the VERSION of the version.txt file in the repository."""
+        repo_dir = os.path.join(self._source_dir, self._repo_name)
+
+        self._process.run(['hg', 'pull', '-u'], cwd=repo_dir)
+        # Update to the given revision before determining the upcoming version.
+        self._process.run(['hg', 'update', revision], cwd=repo_dir)
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -283,22 +288,21 @@ class DistBuilder(object):
             version = config.get('package', 'VERSION')
         return version
 
-    def _resolve_user_rev_to_hg_rev(self, rev):
+    def _resolve_release_channel(self, channel):
         """
-        Resolve the 'stable' and 'unstable' revision to a valid mercurial revision.
+        Resolve the release channel (stable|unstable) to a valid Mercurial revision. This function
+        provides the default revision for calls of this script which do NOT provide a revision
+        argument.
 
         'stable' resolves to the latest existing tag.
-        'unstable' resolves to the 'default' branch.
-
-        Any other revisions are passed trough.
+        'unstable' resolves to the tip of the 'default' branch.
         """
+        assert channel in ('stable', 'unstable')
 
-        if rev == 'stable':
-            rev = self._get_latest_existing_tag()
-        elif rev == 'unstable':
-            rev = 'default'
-
-        return rev
+        if channel == 'stable':
+            return self._get_latest_existing_tag()
+        elif channel == 'unstable':
+            return 'default'
 
     def _remove_npmrc_prefix(self):
         """Remotes the `prefix` variable from the `~/.npmrc` file."""
@@ -358,7 +362,7 @@ class DistBuilder(object):
 
         source_dir -- The directory where the repositories should be
                       cloned into.
-        repo_names -- An array of the names of the repositories.
+        repo_names -- An array of the repository names.
         """
         if not isdir(source_dir):
             makedirs(source_dir)
@@ -382,24 +386,11 @@ class DistBuilder(object):
 
         return result
 
-    def _prepare_sources(self, rev):
-        repositories = {
-            'oa_cache': [['hg', 'pull', '--update']],
-            self._repo_name: [['hg', 'update', '--clean', '-r', rev],
-                              ['hg', 'pull', '--update']],
-        }
-
-        for repo_name, commands in repositories.items():
-            for command in commands:
-                self._process.run(command,
-                                  os.path.join(self._source_dir, repo_name))
-
     @staticmethod
     def _strip_mercurial_tag(tag):
         """
-        Strips the tag to a version-only format. It omits the 'v' and
-        unnecessarily added '-1' suffix which is only used by packaging
-        systems.
+        Strips the tag to a version-only format. It omits the 'v' and unnecessarily added '-1'
+        suffix which is only used by packaging systems.
         :param tag:
         :return: `None` or the stripped tag
         """
@@ -417,25 +408,33 @@ class DistBuilder(object):
             return tag in matches
         return False
 
-    def _get_build_basename(self, revision_argument):
+    def _get_build_basename(self, channel, revision):
         """
         Returns the base name for the given revision.
         E.g. openattic-2.0.4 or openattic-2.0.5~201512021037
-        :param revision_argument: stable, unstable, valid mercurial tag or
-                                  valid mercurial revision.
+        :param channel: stable, unstable
         :return: the base name
         """
+        assert channel in ('stable', 'unstable')
+
         build_basename = 'openattic-'
-        if revision_argument == 'stable':
-            tag = self._get_latest_existing_tag()
-            latest_stable_version = self._strip_mercurial_tag(tag)
-            build_basename += latest_stable_version
-        elif revision_argument == 'unstable' or \
-                not self._is_existing_tag(revision_argument) or self._source_is_path:
-            future_version = self._get_upcoming_version()
-            build_basename += future_version + '~' + self._datestring
-        else:  # Must be existing mercurial tag.
-            build_basename += self._strip_mercurial_tag(revision_argument)
+        if channel == 'stable':
+            # revision needs to be a tag or we have to use something else here to create the
+            # basename
+            if revision is None:
+                build_basename += self._get_latest_existing_tag(strip_tag=True)
+            else:
+                if self._is_existing_tag(revision):
+                    build_basename += self._strip_mercurial_tag(revision)
+                else:
+                    # TODO Get the tag out of `version.txt` and increment it by one?
+                    raise NotImplementedError('Currently, this feature is unsupported')
+
+        elif channel == 'unstable':
+            if revision is None:
+                revision = self._resolve_release_channel(channel)
+            upcoming_version = self._determine_upcoming_version(revision)
+            build_basename += upcoming_version + '~' + self._datestring
 
         return build_basename
 
@@ -471,10 +470,8 @@ class DistBuilder(object):
         if isfile(abs_tarball_file_path):
             os.remove(abs_tarball_file_path)
 
-        prodpath = os.path.join(self._source_dir, self._repo_name)
-
         self._process.run(['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
-                          cwd=prodpath)
+                          cwd=os.path.join(self._source_dir, self._repo_name))
 
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
@@ -495,8 +492,8 @@ class DistBuilder(object):
         cache_used = True
         for cache_entry in cache:
             if not isfile(cache_entry['checksum_file']):
-                msg = "Couldn't find file %s for cache checksum. Skipping " + \
-                    "frontend build process!"
+                msg = "Couldn't find file %s for cache checksum. Skipping the frontend build " +\
+                        "process!"
                 self._warn(msg % cache_entry['checksum_file'])
                 cache_used = False
                 break
@@ -521,7 +518,7 @@ class DistBuilder(object):
 
         # version.txt update.
         state = 'stable'
-        if self._args['<revision>'] != 'stable':
+        if self._args['--revision'] != 'stable':
             state = 'snapshot'
         data = {
             'BUILDDATE': self._datestring,
@@ -577,6 +574,9 @@ class DistBuilder(object):
                           cwd=self._cache_dir, exit_on_error=False)
         self._process.system(['hg', 'push'], cwd=self._cache_dir)
 
+    def _get_release_channel(self):
+        return 'stable' if self._args['stable'] else 'unstable'
+
     def build(self):
         """
         :return: The absolute file path of the newly created tarball.
@@ -584,26 +584,24 @@ class DistBuilder(object):
         self._check_dependencies(['npm'])
         self._set_npmrc_prefix()
         self._clone_sources(self._source_dir, ['oa_cache', self._repo_name])
-        user_rev = self._args['<revision>']
-        hg_rev = self._resolve_user_rev_to_hg_rev(user_rev)
 
-        # Prepare sources.
-        repositories = {
-            'oa_cache': [['hg', 'pull', '--update']]
-        }
+        channel = self._get_release_channel()
+        revision = self._args['--revision'] or self._resolve_release_channel(channel)
+
+        self._process.run(['hg', 'pull', '--update'], os.path.join(self._source_dir, 'oa_cache'))
+
         if self._source_is_path:
-            repositories[self._repo_name] = [['hg', 'commit', '-A', '-m', '"current"'],
-                                             ['hg', 'tag', '-f', self._args['<revision>']]]
+            commands = [['hg', 'commit', '-A', '-m', 'Testbuild'],
+                        ['hg', 'tag', '-f', revision]]
         else:
-            repositories[self._repo_name] = [['hg', 'pull'],
-                                             ['hg', 'update', '--clean', '-r', hg_rev]]
+            commands = [['hg', 'pull'],
+                        ['hg', 'update', '--clean', '-r', revision]]
 
-        for repo_name, commands in repositories.items():
-            for command in commands:
-                self._process.run(command,
-                                  os.path.join(self._source_dir, repo_name))
+        oa_repo_path = os.path.join(self._source_dir, self._repo_name)
+        for command in commands:
+            self._process.run(command, oa_repo_path)
 
-        build_basename = self._get_build_basename(user_rev)
+        build_basename = self._get_build_basename(channel, revision)
         abs_tarball_file_path = self._create_source_tarball(build_basename)
         self._remove_npmrc_prefix()
 
@@ -617,7 +615,7 @@ class DistBuilder(object):
             self._self_test()
         elif self._args['cache'] and self._args['push']:
             self._push_remote_cache()
-        elif self._args['create'] and self._args['<revision>']:
+        elif self._args['create']:
             abs_tarball_file_path = self.build()
             if self._verbosity == -1:
                 print abs_tarball_file_path
@@ -627,8 +625,7 @@ class DistBuilder(object):
     def _self_test(self):
         self._clone_sources(self._source_dir, [self._repo_name])
         repo_dir = os.path.join(self._source_dir, self._repo_name)
-        rev = self._args['<revision>'] or 'tip'
-        rev = self._resolve_user_rev_to_hg_rev(rev)
+        rev = self._args['--revision'] or self._resolve_release_channel('stable')
         if not self._source_is_path:
             self._process.run(['hg', 'update', rev], cwd=repo_dir)
             self._process.run(['hg', 'pull', '--update'], cwd=repo_dir)
@@ -636,26 +633,26 @@ class DistBuilder(object):
 
 
 class DistBuilderTest(unittest.TestCase):
+    _dist_builder = None
+    version_regexp = r'\d+\.\d+\.\d+'
+    timestamp_regexp = r'20\d{8}'
 
     @classmethod
     def setUpClass(cls):
         cls._dist_builder = DistBuilder(
             source_dir=os.path.join(os.environ['HOME'], 'src'),
             args={'-q': True})
-        cls.version_regexp = r'\d+\.\d+\.\d+'
-        cls.timestamp_regexp = r'20\d{8}'
 
     def test_get_build_basename_stable(self):
-        build_basename = self._dist_builder._get_build_basename('stable')
-        stable_build_regexp = self._dist_builder._repo_name + r'-' + \
-                              self.version_regexp
+        build_basename = self._dist_builder._get_build_basename('stable', revision=None)
+        stable_build_regexp = self._dist_builder._repo_name + r'-' + self.version_regexp
         print build_basename
         self.assertRegexpMatches(build_basename, stable_build_regexp)
 
     def test_get_build_basename_unstable(self):
-        build_name = self._dist_builder._get_build_basename('unstable')
-        unstable_build_regexp = self._dist_builder._repo_name + r'-' + \
-                                self.version_regexp + r'~' + self.timestamp_regexp
+        build_name = self._dist_builder._get_build_basename('unstable', revision=None)
+        unstable_build_regexp = self._dist_builder._repo_name + r'-' + self.version_regexp + r'~' +\
+            self.timestamp_regexp
         self.assertRegexpMatches(build_name, unstable_build_regexp)
 
     @classmethod
