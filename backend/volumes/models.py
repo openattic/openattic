@@ -286,7 +286,6 @@ class StorageObject(models.Model):
         oldmegs = self.megs
         newmegs = megs
         self.megs = newmegs
-        self.save()
 
         objs = [self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none]
 
@@ -310,6 +309,8 @@ class StorageObject(models.Model):
                 obj.post_shrink(oldmegs, newmegs)
             else:
                 obj.post_grow(oldmegs, newmegs)
+
+        self.save()
 
     def create_volume(self, name, megs, options):
         """ If this is a Volume Pool, create a volume in it.
