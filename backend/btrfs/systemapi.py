@@ -44,3 +44,6 @@ class SystemD(BasePlugin):
     def delete_subvolume(self, path, sender):
         invoke(["btrfs", "subvolume", "delete", path])
 
+    @deferredmethod(in_signature='si')
+    def btrfs_resize(self, devpath, newmegs, sender):
+        invoke(['btrfs', 'filesystem', 'resize', ("%dM" % newmegs), devpath])
