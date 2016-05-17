@@ -32,22 +32,29 @@
 
 var app = angular.module("openattic.cephCluster");
 app.directive("cephClusterDropdown", function (cephClusterService) {
-  function link($scope) {
-    $scope.$watch("registry.selectedCluster", function () {
+  function link(scope) {
+    scope.$watch("registry.selectedCluster", function () {
+      scope.error = false;
+
       cephClusterService.get()
           .$promise
           .then(function (res) {
-            $scope.cluster = res.results;
-            $scope.getData();
+            scope.cluster = res;
+            scope.getData();
           })
-          .catch(function () {
+          .catch(function (error) {
+            scope.error = error;
             console.log("No Ceph cluster available");
-            $scope.cluster = false;
           });
     });
   }
   return {
     link: link,
+    scope: {
+      registry: "=",
+      cluster: "=",
+      getData: "&"
+    },
     restrict: "E",
     templateUrl: "components/ceph-cluster/templates/cephClusterDropdown.html"
   };

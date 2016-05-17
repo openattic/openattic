@@ -26,7 +26,7 @@ describe('General', function(){
         }
       });
     });
-  }
+  };
 
   var subitemCheck = function(dropdown){
     var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
@@ -56,7 +56,7 @@ describe('General', function(){
         }
       });
     });
-  }
+  };
 
 
   beforeAll(function(){
@@ -88,10 +88,12 @@ describe('General', function(){
     item: element(by.css('.tc_menuitem_ceph > a')),
     url: '/openattic/#/ceph/',
     subitems: {
+      osds: element(by.css('.tc_submenuitem_ceph_osds')),
       pools: element(by.css('.tc_submenuitem_ceph_pools')),
       crushmap: element(by.css('.tc_submenuitem_ceph_crushmap'))
     },
     order: [
+      'osds',
       'pools',
       'crushmap'
     ]

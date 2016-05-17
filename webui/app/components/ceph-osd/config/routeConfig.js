@@ -30,15 +30,15 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
+var app = angular.module("openattic.cephOsd");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("cephPools", {
-        url          : "/ceph/pools",
+      .state("cephOsds", {
+        url          : "/ceph/osds",
         views        : {
           "main": {
-            templateUrl: "components/ceph-pools/templates/listing.html",
-            controller : "CephPoolsCtrl",
+            templateUrl: "components/ceph-osd/templates/listing.html",
+            controller : "CephOsdCtrl",
             resolve    : {
               clusterData: function ($q, cephClusterService) {
                 return cephClusterService.get().$promise
@@ -46,40 +46,30 @@ app.config(function ($stateProvider) {
                       return res;
                     }).catch(function () {
                       console.log("No Ceph cluster available");
-                      return false;
                     });
               }
             }
           }
         },
         ncyBreadcrumb: {
-          label: "Ceph Pools"
+          label: "Ceph OSDs"
         }
       })
-      .state("cephPools.detail", {
+      .state("cephOsds.detail", {
         views        : {
-          "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
+          "tab": {templateUrl: "components/ceph-osd/templates/tab.html"}
         },
         ncyBreadcrumb: {
           skip: true
         }
       })
-      .state("cephPools.detail.status", {
+      .state("cephOsds.detail.status", {
         url          : "/status",
         views        : {
-          "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
+          "tab-content": {templateUrl: "components/ceph-osd/templates/status.html"}
         },
         ncyBreadcrumb: {
           label: "{{selection.item.name}} status"
-        }
-      })
-      .state("cephPools.detail.cacheTier", {
-        url          : "/status",
-        views        : {
-          "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} cache tier"
         }
       });
 });
