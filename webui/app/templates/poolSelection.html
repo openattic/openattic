@@ -19,7 +19,7 @@
                     {{pool.usage.used_text}} of
                     {{pool.usage.size_text}} used</span>
                 <span class="pull-right tc_poolAvailableSize">
-                    {{pool.usage.free_text}} free - <a ng-click="megs = pool.usage.free + 'MB'">use max</a>,
+                    {{pool.usage.free_text}} free - <a ng-click="megs = pool.usage.free + 'MB'">use max</a>
                 </span>
         </div>
         <span class="help-block tc_poolRequired" ng-show="(submitted || validation.$dirty)
