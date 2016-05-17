@@ -50,7 +50,6 @@ from urlparse import urlparse
 
 
 class ProcessResult(object):
-
     def __init__(self, stdout, stderr, returncode):
         self.stdout = stdout
         self.stderr = stderr
@@ -133,7 +132,6 @@ class Process(object):
 
 
 class DistBuilder(object):
-
     def __init__(self, source_dir, args=None):
         self._home_dir = os.environ['HOME']
         self._source_dir = source_dir
@@ -453,8 +451,8 @@ class DistBuilder(object):
         cache_used = True
         for cache_entry in cache:
             if not isfile(cache_entry['checksum_file']):
-                msg = "Couldn't find file %s for cache checksum. Skipping the frontend build " +\
-                        "process!"
+                msg = "Couldn't find file %s for cache checksum. Skipping the frontend build " + \
+                      "process!"
                 self._warn(msg % cache_entry['checksum_file'])
                 cache_used = False
                 break
@@ -594,9 +592,8 @@ class DistBuilderTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._dist_builder = DistBuilder(
-            source_dir=os.path.join(os.environ['HOME'], 'src'),
-            args={'-q': True})
+        cls._dist_builder = DistBuilder(source_dir=os.path.join(os.environ['HOME'], 'src'),
+                                        args={'-q': True})
 
     def test_get_build_basename_stable(self):
         build_basename = self._dist_builder._get_build_basename('stable', revision=None)
