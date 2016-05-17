@@ -15,11 +15,12 @@
 from django.conf.urls import patterns, url, include
 from rest_framework import routers
 
-from ceph.restapi import CephPoolViewSet, CephOsdViewSet, CephClusterViewSet
+from ceph.restapi import CephPoolViewSet, CephOsdViewSet, CephClusterViewSet, CephPgViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'osds', CephOsdViewSet, 'osd')
 router.register(r'pools', CephPoolViewSet, 'pool')
+router.register(r'pgs', CephPgViewSet, 'pg')
 
 cluster_router = routers.SimpleRouter(trailing_slash=False)
 cluster_router.register(r'ceph', CephClusterViewSet, 'ceph')

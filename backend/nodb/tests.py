@@ -28,7 +28,7 @@ class QuerySetTestCase(TestCase):
         class CephClusterMock(NodbModel):
 
             @staticmethod
-            def get_all_objects(context):
+            def get_all_objects(context, query):
                 cluster1 = mock.MagicMock()
                 cluster1.fsid = 'e79f3338-f9e4-4656-8af3-7af7357fcd09'
                 cluster1.name = 'ceph'
@@ -59,7 +59,7 @@ class QuerySetTestCase(TestCase):
 
         class OrderTestModel(NodbModel):
             @staticmethod
-            def get_all_objects(context):
+            def get_all_objects(context, query):
                 return [cls.ordering_a, cls.ordering_b, cls.ordering_c]
 
         cls.order_qs = NodbQuerySet(OrderTestModel)
@@ -143,7 +143,7 @@ class DictFieldSerializerTest(TestCase):
         class DictFieldModel(NodbModel):
 
             @staticmethod
-            def get_all_objects():
+            def get_all_objects(context, query):
                 self.fail("should not be called")
 
             my_dict = DictField(primary_key=True)

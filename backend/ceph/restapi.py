@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd, CephPg
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
@@ -107,7 +107,7 @@ class CephPoolSerializer(NodbSerializer):
         model = CephPool
 
 
-class FsidMixin:
+class FsidMixin(object):
 
     @cached_property
     def fsid(self):
@@ -167,6 +167,32 @@ class PaginatedCephOsdSerializer(PaginationSerializer):
 
     class Meta(object):
         object_serializer_class = CephOsdSerializer
+
+
+class CephPgSerializer(NodbSerializer):
+
+    lookup_field = "pgid"
+
+    class Meta(object):
+        model = CephPg
+
+
+class CephPgViewSet(NodbViewSet, FsidMixin):
+    """Represents a Ceph Placement Group.
+
+    Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the backend performance
+    considerably.
+
+    """
+    filter_fields = ("osd_id", "pool_name", "pgid")
+    serializer_class = CephPgSerializer
+    lookup_field = "pgid"
+    lookup_value_regex = r'[^/]+'
+
+    def get_queryset(self):
+        cluster = CephCluster.objects.all().get(fsid=self.fsid)
+        return CephPg.objects.all({'cluster': cluster})
+
 
 RESTAPI_VIEWSETS = [
     ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
