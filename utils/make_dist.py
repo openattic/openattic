@@ -13,7 +13,7 @@
 # *  GNU General Public License for more details.
 
 """Usage:
-    make_dist.py create (stable|unstable) [--revision=<revision>] [--source=<source>] [-v|-q|-s] [--disable-fe-building]
+    make_dist.py create (stable|unstable) [--revision=<revision>] [--source=<source>] [-v|-q|-s]
     make_dist.py selftest [<revision>] [<source>]
     make_dist.py cache push
     make_dist.py help
@@ -29,9 +29,6 @@ Options:
     -q                      Enables the quiet mode.
     -s                      Enables the script mode which only prints the absolute path of the
                             tarball in stdout and all the output from stderr.
-
-    --disable-fe-building   Disables the build process for frontend files in the debian/rules file.
-                            This is ment to be a temporary workaround.
 """
 
 import os
@@ -486,19 +483,6 @@ class DistBuilder(object):
         with file(os.path.join(abs_build_dir, 'version.txt'), 'a') as f:
             for key, value in data.items():
                 f.write('{} = {}{}'.format(key, value, os.linesep))
-
-        # Work around the debian/rules file building process for the frontend files.
-        if self._args['--disable-fe-building']:
-            self._warn('Disabling the frontend file build process...')
-            with open(os.path.join(abs_build_dir, 'debian', 'rules'), 'r+') as fh:
-                debian_rules = fh.read()
-                if 'npm install' in debian_rules or 'bower install' in debian_rules:
-                    debian_rules_re = r'[\t ]+which bower \|\| npm install -g bower.*' + \
-                                      r'cd webui ; grunt --no-color build\n\t?\n?'
-                    debian_rules = re.sub(debian_rules_re, '', debian_rules, 0, re.DOTALL)
-                    fh.seek(0)
-                    fh.truncate()
-                    fh.write(debian_rules)
 
         # Compress the directory into the tarball file.
         options = 'cjf'
