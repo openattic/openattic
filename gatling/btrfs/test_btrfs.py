@@ -64,6 +64,7 @@ class BtrfsVolumeTests(object):
 
     def test_volume_grow(self):
         """ Grow BTRFS volume """
+        # create new volume in btrfs pool
         size = self._get_pool()["usage"]["size"]
         data = {"filesystem": "btrfs",
                 "megs": size,
@@ -73,6 +74,7 @@ class BtrfsVolumeTests(object):
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
+        # try to grow the btrfs subvolume and check for error
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size + 1000, "id": vol["response"]["id"]})
