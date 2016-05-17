@@ -62,6 +62,47 @@ class BtrfsVolumeTests(object):
         self.addCleanup(requests.request, "DELETE", snap["cleanup_url"], headers=snap["headers"])
         self.check_snapshot_properties(snap, vol["response"]["id"], size)
 
+    def test_volume_grow(self):
+        """ Grow BTRFS volume """
+        size = self._get_pool()["usage"]["size"]
+        data = {"filesystem": "btrfs",
+                "megs": size,
+                "name": "gatling_volume",
+                "source_pool": {"id": self._get_pool()["id"]}}
+        vol = self.send_request("POST", data=data)
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
-class BtrfsLvmPoolTestCase(BtrfsLvmPoolTestScenario, BtrfsVolumeTests):
+        with self.assertRaises(requests.HTTPError) as err:
+            self.send_request("PUT", obj_id=vol["response"]["id"],
+                              data={"megs": size + 1000, "id": vol["response"]["id"]})
+        self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
+
+
+class BtrfsPoolTests(object):
+    fstype = "btrfs"
+    api_prefix = "volumes"
+    sleeptime = 8
+
+    """ Contains tests concerning BTRFS pools. """
+
+    def test_pool_grow(self):
+        """ Grow BTRFS pool """
+        # get pool information
+        pool = self._get_pool()
+        old_size = pool["usage"]["size"]
+        new_size = old_size + 1000
+
+        # resize the pool
+        self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size, "id": pool["id"]})
+        time.sleep(self.sleeptime)
+
+        # get pool and check properties
+        resized_pool = self.send_request("GET", obj_id=pool["id"])
+        self.assertGreaterEqual(resized_pool["response"]["usage"]["size"], old_size)
+        self.assertLessEqual(resized_pool["response"]["usage"]["size"], new_size)
+        self.assertIn(resized_pool["response"]["status"]["status"], ["good", "locked"])
+
+
+class BtrfsLvmPoolTestCase(BtrfsLvmPoolTestScenario, BtrfsVolumeTests, BtrfsPoolTests):
     pass
