@@ -202,6 +202,49 @@ class MonApi(object):
     def _args_to_argdict(**kwargs):
         return {k: v for (k,v) in kwargs.iteritems() if v is not None}
 
+    def osd_erasure_code_profile_set(self, name, profile=None):
+        """
+        COMMAND("osd erasure-code-profile set " \
+                "name=name,type=CephString,goodchars=[A-Za-z0-9-_.] " \
+                "name=profile,type=CephString,n=N,req=false", \
+                "create erasure code profile <name> with [<key[=value]> ...] pairs. Add a --force at the end to override an existing profile (VERY DANGEROUS)", \
+                "osd", "rw", "cli,rest")
+
+        .. example::
+            >>> MonApi().osd_erasure_code_profile_set('five-three', 'k=5 m=3')
+        """
+        return self.client.mon_command('osd erasure-code-profile set',
+                                       self._args_to_argdict(name=name, profile=profile),
+                                       output_format='string')
+
+    def osd_erasure_code_profile_get(self, name):
+        """
+        COMMAND("osd erasure-code-profile get " \
+                "name=name,type=CephString,goodchars=[A-Za-z0-9-_.]", \
+                "get erasure code profile <name>", \
+                "osd", "r", "cli,rest")
+        """
+        return self.client.mon_command('osd erasure-code-profile get', self._args_to_argdict(name=name))
+
+    def osd_erasure_code_profile_rm(self, name):
+        """
+        COMMAND("osd erasure-code-profile rm " \
+                "name=name,type=CephString,goodchars=[A-Za-z0-9-_.]", \
+                "remove erasure code profile <name>", \
+                "osd", "rw", "cli,rest")
+        """
+        return self.client.mon_command('osd erasure-code-profile rm',
+                                       self._args_to_argdict(name=name),
+                                       output_format='string')
+
+    def osd_erasure_code_profile_ls(self):
+        """
+        COMMAND("osd erasure-code-profile ls", \
+                "list all erasure code profiles", \
+                "osd", "r", "cli,rest")
+        """
+        return self.client.mon_command('osd erasure-code-profile ls')
+
     def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None, ruleset=None, expected_num_objects=None):
         """
         COMMAND("osd pool create " \

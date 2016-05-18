@@ -262,6 +262,25 @@ class NodbModel(models.Model):
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
 
+    @classmethod
+    def make_model_args(cls, json_result):
+
+        def validate_field(field, json_result):
+            if field.attname not in json_result:
+                return False
+            try:
+                field.to_python(json_result[field.attname])
+                return True
+            except ValidationError:
+                return False
+
+        return {
+            field.attname: field.to_python(json_result[field.attname])
+            for field
+            in cls._meta.fields
+            if validate_field(field, json_result)
+            }
+
 
 class DictField(Field):
     empty_strings_allowed = False
