@@ -4,10 +4,14 @@ openATTIC Changelog
 Version 2.0.11, (not released yet):
 -----------------------------------
 
+* WebUI: Extended the pool selection box by the hostname of the pool (OP-973)
+* WebUI: Extend the volume creation form by all supported filesystems with description (OP-988)
 * WebUI: Add dropdown menu to the ceph pool list to select a cluster (OP-1104)
 * WebUI: Save selected cluster between page changes (OP-1131)
 * WebUI: Add Ceph osd data table (OP-1144)
 * WebUI/QA: added test cases for datatable (OP-818)
+* WebUI/QA: Added test case for hostname in pool dropdown (OP-973)
+* WebUI/QA: Test for the hostnames of the pools in the volume form (OP-1059)
 * WebUI/QA: Added E2E test cases for Ceph OSDs Panel (OP-1176)
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
