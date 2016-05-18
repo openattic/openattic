@@ -79,7 +79,7 @@ class NodbQuerySet(QuerySet):
     def _data(self):
         objects = self.model.get_all_objects(self._context, query=self._query)
         for obj in objects:
-            #  Becuase we're calling the model constructors ourselves, django thinks that
+            #  Because we're calling the model constructors ourselves, django thinks that
             #  the objects are not in the database. We need to "hack" this.
             obj._state.adding = False
         return objects

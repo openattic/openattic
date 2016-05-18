@@ -214,16 +214,19 @@ class MonApi(object):
             "name=expected_num_objects,type=CephInt,req=false", \
             "create pool", "osd", "rw", "cli,rest")
 
-        Args:
-            pool(str): The pool name.
-            pg_num(int): Number of pgs. pgs per osd should be about 100, independent of the number of pools, as each osd
-                         can store pgs of multiple pools.
-            pgp_num(int): MUST equal pg_num
-            pool_type(str): replicated | erasure
-            erasure_code_profile(str): name of the erasure code profile. Created by :method:`ceph_osd_erasure_code_profile_set`.
-
-        Returns:
-            empty string.
+        :param pool: The pool name.
+        :type pool: str
+        :param pg_num: Number of pgs. pgs per osd should be about 100, independent of the number of pools, as each osd
+                       can store pgs of multiple pools.
+        :type pg_num: int
+        :param pgp_num: *MUST* equal pg_num
+        :type pgp_num: int
+        :param pool_type: replicated | erasure
+        :type pool_type: str
+        :param erasure_code_profile: name of the erasure code profile. Created by :method:`osd_erasure_code_profile_set`.
+        :type erasure_code_profile: str
+        :returns: empty string
+        :rtype: str
         """
         if pool_type == 'erasure' and not erasure_code_profile:
             raise ExternalCommandError('erasure_code_profile missing')
