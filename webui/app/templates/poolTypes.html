@@ -7,11 +7,17 @@
             <div class="radio radio-primary">
                 <input type="radio" ng-model="$parent.filesystem"
                     ng-value="fs" ng-disabled="state.formatted" id="{{fs}}">
-                <label for="{{fs}}">{{text}}
+                <label for="{{fs}}">{{text.btn}}
                     <span class="text-info" ng-show="$parent.filesystem === fs">
-                        &nbsp;-&nbsp;{{supported_filesystems[fs]}}</span>
+                        &nbsp;-&nbsp;{{text.desc}}</span>
                 </label>
             </div>
         </div>
+    </div>
+</div>
+<div class="form-group" ng-show="fsArray.length === 0">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label">Type</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <p class="form-control-static">Please choose another pool, the needed type is not supported by the current one.</p>
     </div>
 </div>

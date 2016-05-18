@@ -47,22 +47,43 @@ app.directive("poolFsSupport", function () {
       $scope.state = {formatted: false};
 
       $scope.filesystems = {
-        lun: "Create LUN",
-        xfs: "Create Virtualization Store -> XFS",
-        zfs: "Create ZFS Volume",
-        btrfs: "Create File Store -> BTRFS",
-        ext4: "Create EXT4",
-        ext3: "Create EXT3",
-        ext2: "Create EXT2"
+        lun: {
+          btn: "Create LUN",
+          desc: "iSCSI, Fibre Channel shares and volume mirroring"
+        },
+        xfs: {
+          btn: "XFS",
+          desc: "recommended for virtualization, optimized for parallel IO"
+        },
+        zfs: {
+          btn: "ZFS",
+          desc: "supports snapshots, deduplication and compression"
+        },
+        btrfs: {
+          btn: "Btrfs",
+          desc: "supports snapshots, compression - Experimental"
+        },
+        ext4: {
+          btn: "ext4",
+          desc: "max. 1 EiB - Linux default"
+        },
+        ext3: {
+          btn: "ext3",
+          desc: "max. 32TiB - old Linux default since 2010"
+        },
+        ext2: {
+          btn: "ext2",
+          desc: "deprecated"
+        }
       };
 
-      $scope.fsArray = ["lun", "xfs", "zfs", "btrfs", "ext4", "ext3", "ext2"];
+      $scope.fsStatic = ["lun", "xfs", "zfs", "btrfs", "ext4", "ext3", "ext2"];
 
       if ($scope.availTypes) {
         for (var key in $scope.filesystems) {
           if ($scope.availTypes.indexOf(key) === -1) {
             delete $scope.filesystems[key];
-            $scope.fsArray.splice($scope.fsArray.indexOf(key), 1);
+            $scope.fsStatic.splice($scope.fsStatic.indexOf(key), 1);
           }
         }
       }
@@ -70,15 +91,11 @@ app.directive("poolFsSupport", function () {
       $scope.$watch("pool", function (pool) {
         if (pool) {
           $scope.poolValidation.$setValidity("usablesize", pool.usage.free >= 100);
+          $scope.fsArray = $scope.fsStatic.slice();
 
           new PoolService(pool).$filesystems()
             .then(function (res) {
-              for (var index in res) {
-                if (res.hasOwnProperty(index) && typeof (res[index]) === "string") {
-                  res[index] = res[index].match(/\((.*)\)/)[1];
-                }
-              }
-              res.lun = "can be shared via iSCSI or Fibre Channel";
+              res.lun = "Sth";
               $scope.supported_filesystems = res;
               var supportedFs = Object.keys(res);
               for (var key in $scope.filesystems) {
