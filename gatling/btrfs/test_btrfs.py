@@ -78,7 +78,8 @@ class BtrfsVolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size + 1000, "id": vol["response"]["id"]})
-        self.assertEqual(str(err.exception), "500 Server Error: INTERNAL SERVER ERROR")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
     def test_volume_shrink(self):
         """ Shrink BTRFS volume"""
@@ -95,8 +96,8 @@ class BtrfsVolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size - 1000, "id": vol["response"]["id"]})
-        self.assertEqual(str(err.exception), "500 Server Error: INTERNAL SERVER ERROR")
-
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
 class BtrfsPoolTests(object):
     fstype = "btrfs"
@@ -132,7 +133,8 @@ class BtrfsPoolTests(object):
         # resize the pool
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size, "id": pool["id"]})
-        self.assertEqual(str(err.exception), "500 Server Error: INTERNAL SERVER ERROR")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
 
 class BtrfsLvmPoolTestCase(BtrfsLvmPoolTestScenario, BtrfsVolumeTests, BtrfsPoolTests):
