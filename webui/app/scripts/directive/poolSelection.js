@@ -30,29 +30,32 @@
  */
 "use strict";
 
-var app = angular.module("openattic.oaWizards");
-app.controller("vmstorage", function ($scope) {
-  $scope.limitTypes = ["xfs", "zfs", "btrfs"];
-
-  $scope.input = {
-    cifs: {
-      create: false,
-      available: true,
-      browseable: true,
-      writeable: true
+var app = angular.module("openattic");
+app.directive("poolSelection", function () {
+  return {
+    restrict: "E",
+    scope: {
+      pool: "=",
+      validation: "=",
+      megs: "=",
+      submitted: "=",
+      wizard: "="
     },
-    nfs: {
-      create: false,
-      options: "rw,no_subtree_check,no_root_squash"
-    },
-    volume: {}
-  };
-
-  $scope.$watch("input.volume.name", function (volumename) {
-    if (volumename) {
-      $scope.input.cifs.name = volumename;
-      $scope.input.cifs.path = "/media/" + volumename;
-      $scope.input.nfs.path = "/media/" + volumename;
+    templateUrl: "templates/poolSelection.html",
+    controller: function ($scope, PoolService) {
+      PoolService.query()
+        .$promise
+        .then(function (res) {
+          $scope.pools = res;
+        }, function (error) {
+          console.log("An error occurred", error);
+        });
+      $scope.selPoolUsedPercent = 0;
+      $scope.$watch("pool", function (pool) {
+        if (pool) {
+          $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);
+        }
+      });
     }
-  });
+  };
 });
