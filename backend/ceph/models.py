@@ -250,6 +250,10 @@ class CephErasureCodeProfile(NodbModel):
     m = models.IntegerField()
     plugin = models.CharField(max_length=100, editable=False)
     technique = models.CharField(max_length=100, editable=False)
+    jerasure_per_chunk_alignment = models.CharField(max_length=100, editable=False)
+    ruleset_failure_domain = models.CharField(max_length=100, blank=True, choices=[('rack', 'rack'), ('host', 'host')])
+    ruleset_root = models.CharField(max_length=100, editable=False)
+    w = models.IntegerField(editable=False)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -264,7 +268,9 @@ class CephErasureCodeProfile(NodbModel):
         context = self.__class__.objects.nodb_context
         if not force_insert:
             raise NotImplementedError('Updating is not supported.')
-        profile = 'k="{}" m="{}"'.format(self.k, self.m)
+        profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
+        if self.ruleset_failure_domain:
+            profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
         MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
 
     def delete(self, using=None):

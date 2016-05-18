@@ -211,7 +211,12 @@ class MonApi(object):
                 "osd", "rw", "cli,rest")
 
         .. example::
-            >>> MonApi().osd_erasure_code_profile_set('five-three', 'k=5 m=3')
+            >>> api = MonApi()
+            >>> api.osd_erasure_code_profile_set('five-three', ['k=5', 'm=3'])
+            >>> api.osd_erasure_code_profile_set('my-rack', ['k=3', 'm=2', 'ruleset-failure-domain=rack'])
+
+        :param profile: Reverse engineering revealed: this is in fact a list of strings.
+        :type profile: list[str]
         """
         return self.client.mon_command('osd erasure-code-profile set',
                                        self._args_to_argdict(name=name, profile=profile),
