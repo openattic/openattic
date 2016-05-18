@@ -2,8 +2,8 @@ var helpers = require('../../common.js');
 
 describe('Volumes add', function(){
 
-  var volumeNameInput = element(by.model('volume.name'));
-  var volumePoolSelect = element(by.model('data.sourcePool'));
+  var volumeNameInput = element(by.model('result.name'));
+  var volumePoolSelect = element(by.model('pool'));
   var volumeSizeInput = element(by.model('data.megs'));
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -67,11 +67,11 @@ describe('Volumes add', function(){
   });
 
   it('should have a volume pool select box', function(){
-    expect(element(by.id('data.sourcePool')).isDisplayed()).toBe(true);
+    expect(volumePoolSelect.isDisplayed()).toBe(true);
   });
 
   it('should have a volume size input field', function(){
-    expect(element(by.id('data.megs')).isDisplayed()).toBe(true);
+    expect(volumeSizeInput.isDisplayed()).toBe(true);
   });
 
   it('should stay on the create volume form if the submit button is clicked without editing anything', function(){
@@ -107,14 +107,25 @@ describe('Volumes add', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
       browser.sleep(400);
-      var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+      var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
           browser.sleep(400);
           expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
           expect(element(by.css('.tc_poolAvailableSize')).isDisplayed()).toBe(true);
         });
 
-      var pool_space = element(by.id('data.megs')).evaluate('data.sourcePool.usage.size_text').then(function(size){
+      var pool_space = volumeSizeInput.evaluate('data.pool.usage.size_text').then(function(size){
         expect(element(by.css('.tc_poolSize')).getText()).toContain(size + ' used');
+      });
+    });
+  });
+
+  it('should show the correct hostname of the selected pool', function(){
+    forEachPool(function(exact_poolname){
+      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+      browser.sleep(400);
+      volumePoolSelect.evaluate('pool.host.title').then(function(host){
+        browser.sleep(400);
+        expect(volumePoolSelect.getText()).toContain(host);
       });
     });
   });
@@ -150,7 +161,7 @@ describe('Volumes add', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
       browser.sleep(400);
-      var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+      var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
         //console.log(psize);
         browser.sleep(400);
         volumeSizeInput.clear().sendKeys(psize);
@@ -194,7 +205,7 @@ describe('Volumes add', function(){
   //       expect(element(by.linkText('use max')).isDisplayed()).toBe(true);
   //       element(by.linkText('use max')).click();
   //
-  //       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+  //       var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
   //         browser.sleep(400);
   //         expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
   //         volumeSizeInput.getAttribute('value').then(function(sizeMB){
@@ -222,7 +233,7 @@ describe('Volumes add', function(){
       //create a volume
       volumeNameInput.sendKeys(volumename);
       browser.sleep(400);
-      element(by.id('data.megs')).sendKeys('100mb');
+      volumeSizeInput.sendKeys('100mb');
       browser.sleep(400);
       submitButton.click();
       browser.sleep(helpers.configs.sleep);
@@ -255,7 +266,7 @@ describe('Volumes add', function(){
         //create a volume
         volumeNameInput.sendKeys(volumename);
         element(by.cssContainingText('label', volumeType)).click();
-        element(by.id('data.megs')).sendKeys('100mb');
+        volumeSizeInput.sendKeys('100mb');
         submitButton.click();
 
         //is it displayed on the volume overview?

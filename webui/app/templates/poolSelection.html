@@ -1,0 +1,34 @@
+<div class="form-group" ng-class="{'has-error': (submitted || validation.$dirty)
+    && validation.$invalid}">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select ng-hide="pools" ng-disabled="!pools" class="form-control form-control-static">
+            <option>Retrieving pool list...</option>
+        </select>
+        <select ng-show="pools" class="form-control tc_pool_selection tc_source_pool" ng-model="pool"
+                ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                pool.host.title + ', ' + pool.usage.free_text + ' free)')
+                for pool in pools track by pool.id" name="pool" required>
+            <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
+        </select>
+        <div ng-show="pool" class="progress-bar-outer clearfix">
+            <uib-progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
+                <span></span>
+            </uib-progressbar>
+                <span class="pull-left tc_poolSize">
+                    {{pool.usage.used_text}} of
+                    {{pool.usage.size_text}} used</span>
+                <span class="pull-right tc_poolAvailableSize">
+                    {{pool.usage.free_text}} free - <a ng-click="megs = pool.usage.free + 'MB'">use max</a>
+                </span>
+        </div>
+        <span class="help-block tc_poolRequired" ng-show="(submitted || validation.$dirty)
+            && validation.$error.required">
+            This field is required!
+        </span>
+        <span class="help-block" ng-show="validation.$error.usablesize">
+            The selected volumepool provides less than 100MB free space, so it's not usable for
+            the new volume.
+        </span>
+    </div>
+</div>
