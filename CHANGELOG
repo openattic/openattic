@@ -13,6 +13,8 @@ Version 2.0.11, (not released yet):
 * WebUI/QA: Added test case for hostname in pool dropdown (OP-973)
 * WebUI/QA: Test for the hostnames of the pools in the volume form (OP-1059)
 * WebUI/QA: Added E2E test cases for Ceph OSDs Panel (OP-1176)
+* Backend: Disks (falsely displayed) are removed from the volume
+  management (OP-597)
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
   close_connection()" RemovedInDjango18Warning (OP-809)
