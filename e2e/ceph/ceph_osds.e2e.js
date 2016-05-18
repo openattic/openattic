@@ -51,8 +51,7 @@ describe('should test the ceph osd panel', function(){
     cephMenu.click();
     cephOSDs.click();
     expect(browser.getCurrentUrl()).toContain('/ceph/osds');
-    expect(element(by.id('cluster-selection')).getText()).toContain('ceph');
-    console.log(element(by.id('cluster-selection')).getText());
+    expect(element(by.id('cluster-selection')).getText()).toContain('ceph (');
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });
 
