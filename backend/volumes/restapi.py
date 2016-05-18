@@ -32,10 +32,12 @@ from volumes import models
 
 
 # filter queryset by...
+# * is not a physical block device and
 # * (has an FSV or a BV) and
 # * is not a snapshot and is not named '.snapshots' and
 # * does not have an upper volume
 VOLUME_FILTER_Q = \
+    Q(physicalblockdevice__isnull=True) & \
     Q(Q(filesystemvolume__isnull=False) | Q(blockvolume__isnull=False)) & \
     Q(snapshot__isnull=True) & ~Q(name=".snapshots")
 
