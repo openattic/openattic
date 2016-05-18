@@ -48,7 +48,7 @@ app.directive("poolFsSupport", function () {
 
       $scope.filesystems = {
         lun: {
-          btn: "Create LUN",
+          btn: "LUN",
           desc: "iSCSI, Fibre Channel shares and volume mirroring"
         },
         xfs: {
