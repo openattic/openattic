@@ -99,6 +99,7 @@ class BtrfsVolumeTests(object):
         err_message = str(err.exception)
         self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
+
 class BtrfsPoolTests(object):
     fstype = "btrfs"
     api_prefix = "volumes"
