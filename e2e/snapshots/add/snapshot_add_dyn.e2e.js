@@ -10,8 +10,8 @@ describe('Should open the snapshot dialog of fs that create dynamic snapshots', 
   types.forEach(function(type){
     var volumename = 'protractor_testvol_' + type;
     var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
+
     it('should not show size input while creating a ' + type + ' snapshot', function(){
-      console.log(volumename);
       helpers.create_volume(volumename, type);
       volume.click();
       element(by.css('.tc_snapshotTab')).click();
