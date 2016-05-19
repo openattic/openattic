@@ -1,5 +1,5 @@
 <oadatatable data="snapshotsData" class="oadatatable tc_oadatatable_snapshots" filter-config="snapshotsFilter"
-             selection="snapshotsSelection" special="source.special">
+             selection="snapshotsSelection" special="dynSnap">
     <actions>
         <a class="btn btn-sm btn-primary tc_snapshotAdd" type="button"
            ng-click="addAction()" ng-hide="snapshotsSelection.item">
@@ -43,7 +43,7 @@
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name" class="tc_snapRowName"></td>
                 <td ng-show="!special && columns['Size']" ng-bind="row.usage.size_text"></td>
-                <td ng-show="columns['Used']">
+                <td ng-show="!special && columns['Used']">
                     <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
                         data-toggle="tooltip" data-placement="right"
                         title="Used: {{row.usage.used_text}} &mdash; Free: {{row.usage.free_text}} &mdash; Stolen: {{row.usage.steal_text}}">
