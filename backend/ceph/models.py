@@ -144,7 +144,6 @@ class CephPool(NodbModel):
     last_change = models.IntegerField(editable=False)
     quota_max_objects = models.IntegerField()
     quota_max_bytes = models.IntegerField()
-    hashpspool = models.BooleanField(default=None)
     full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField()
@@ -157,14 +156,16 @@ class CephPool(NodbModel):
     max_avail = models.IntegerField(editable=False)
     kb_used = models.IntegerField(editable=False)
     stripe_width = models.IntegerField()
-    tier_of = models.ForeignKey("CephPool", null=True, default=None, blank=True)
-    write_tier = models.IntegerField()
-    read_tier = models.IntegerField()
+    cache_mode = models.CharField(max_length=100, choices=[(c,c) for c in 'none|writeback|forward|readonly|readforward|readproxy'.split('|')])
+    tier_of = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_tier_of')
+    write_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_write_tier')
+    read_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_read_tier')
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
     hit_set_count = models.IntegerField()
     hit_set_params = JsonField(base_type=dict)
     tiers = JsonField(base_type=list)
+    flags = JsonField(base_type=list)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -191,7 +192,6 @@ class CephPool(NodbModel):
                 # https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
                 'erasure_code_profile': CephErasureCodeProfile(name=pool_data['erasure_code_profile']) if pool_data['erasure_code_profile'] else None,
                 'last_change': pool_data['last_change'],
-                'hashpspool': 'hashpspool' in pool_data['flags_names'],
                 'full': 'full' in pool_data['flags_names'],
                 'min_size': pool_data['min_size'],
                 'crash_replay_interval': pool_data['crash_replay_interval'],
@@ -208,15 +208,17 @@ class CephPool(NodbModel):
                 'quota_max_bytes': pool_data['quota_max_bytes'],
                 'quota_max_objects': pool_data['quota_max_objects'],
                 # Cache tiering related
+                'cache_mode': pool_data['cache_mode'],
                 'tier_of': CephPool(id=pool_data['tier_of']) if pool_data['tier_of'] > 0 else None,
-                'write_tier': pool_data['write_tier'],
-                'read_tier': pool_data['read_tier'],
+                'write_tier': CephPool(id=pool_data['write_tier']) if pool_data['write_tier'] > 0 else None,
+                'read_tier': CephPool(id=pool_data['read_tier']) if pool_data['read_tier'] > 0 else None,
                 # Attributes for cache tiering
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
                 'hit_set_count': pool_data['hit_set_count'],
                 'hit_set_params': pool_data['hit_set_params'],
-                'tiers': pool_data['tiers']
+                'tiers': pool_data['tiers'],
+                'flags': pool_data['flags_names'].split(','),
             }
 
             ceph_pool = CephPool(**object_data)
@@ -235,7 +237,7 @@ class CephPool(NodbModel):
                                                         self.type,
                                                         self.erasure_code_profile.name if self.erasure_code_profile else None)
         elif force_update:
-            diff = self.get_modified_fields()
+            diff, original = self.get_modified_fields()
             if 'pg_num' in diff != 'pgp_num' not in diff:
                 msg = 'pg_num modified but pgp_num unchanged. (or vice versa).'
                 raise ValidationError({'pg_num': msg, 'ppg_num': msg})
@@ -249,6 +251,27 @@ class CephPool(NodbModel):
                 except ExternalCommandError, e:
                     raise ValidationError({'pg_num': e.message, 'ppg_num': e.message})
                 return
+            if 'cache_mode' in diff:
+                MonApi(rados[context.fsid]).osd_tier_cache_mode(self.name, self.cache_mode)
+                return
+            if 'tier_of_id' in diff:
+                if self.tier_of is None:
+                    tier_of_target = CephPool.objects.get(id=original.tier_of.id)
+                    MonApi(rados[context.fsid]).osd_tier_remove(tier_of_target.name, self.name)
+                else:
+                    tier_of_target = CephPool.objects.get(id=self.tier_of.id)
+                    MonApi(rados[context.fsid]).osd_tier_add(tier_of_target.name, self.name)
+                return
+
+            if 'read_tier_id' in diff:
+                if self.read_tier is None:
+                    read_tier_target = CephPool.objects.get(id=original.read_tier.id)
+                    MonApi(rados[context.fsid]).osd_tier_remove_overlay(self.name)
+                else:
+                    read_tier_target = CephPool.objects.get(id=self.read_tier.id)
+                    MonApi(rados[context.fsid]).osd_tier_set_overlay(self.name, read_tier_target.name)
+                return
+
             raise ValueError('setting {} is not supported at the moment'.format(diff.keys()))
         else:
             raise ValueError('Expected force_insert=True or force_update=True')

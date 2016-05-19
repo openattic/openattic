@@ -269,6 +269,9 @@ class NodbModel(models.Model):
 
         1. There is a race between get_modified_fields and the call to this.save()
         2. A type change, e.g. str and unicode is not handled.
+
+        :rtype: tuple[dict[str, Any], T <= NodbModel]
+        :return: A tuple consisting of the diff and the original model instance
         """
         original = self.__class__.objects.get(pk=self.pk)
         return {
@@ -276,7 +279,7 @@ class NodbModel(models.Model):
             for field
             in self.__class__._meta.fields
             if getattr(self, field.attname) != getattr(original, field.attname)
-        }
+        }, original
 
     @classmethod
     def make_model_args(cls, json_result):

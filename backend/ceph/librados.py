@@ -335,3 +335,91 @@ class MonApi(object):
         """
         return self.client.mon_command('osd pool delete',
                                        self._args_to_argdict(pool=pool, pool2=pool2, sure=sure), output_format='string')
+
+    def osd_tier_add(self, pool, tierpool):
+        """
+        COMMAND("osd tier add " \
+        "name=pool,type=CephPoolname " \
+        "name=tierpool,type=CephPoolname " \
+        "name=force_nonempty,type=CephChoices,strings=--force-nonempty,req=false",
+        "add the tier <tierpool> (the second one) to base pool <pool> (the first one)", \
+        "osd", "rw", "cli,rest")
+
+        Modifies the 'tier_of' field of the cachepool
+
+        .. example::
+            >>> api = MonApi()
+            >>> api.osd_tier_add('storagepool', 'cachepool')
+            >>> api.osd_tier_cache_mode('cachepool', 'writeback')
+            >>> api.osd_tier_set_overlay('storagepool', 'cachepool')
+
+        .. note:: storagepool is typically of type replicated and cachepool is of type erasure
+        """
+        return self.client.mon_command('osd tier add',
+                                       self._args_to_argdict(pool=pool, tierpool=tierpool),
+                                       output_format='string')
+
+    def osd_tier_remove(self, pool, tierpool):
+        """
+        COMMAND("osd tier remove " \
+        "name=pool,type=CephPoolname " \
+        "name=tierpool,type=CephPoolname",
+        "remove the tier <tierpool> (the second one) from base pool <pool> (the first one)", \
+        "osd", "rw", "cli,rest")
+
+        .. example::
+            >>> api = MonApi()
+            >>> api.osd_tier_add('storagepool', 'cachepool')
+            >>> api.osd_tier_remove('storagepool', 'cachepool')
+        """
+        return self.client.mon_command('osd tier remove',
+                                       self._args_to_argdict(pool=pool, tierpool=tierpool),
+                                       output_format='string')
+
+    def osd_tier_cache_mode(self, pool, mode):
+        """
+        COMMAND("osd tier cache-mode " \
+        "name=pool,type=CephPoolname " \
+        "name=mode,type=CephChoices,strings=none|writeback|forward|readonly|readforward|proxy|readproxy " \
+        "name=sure,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "specify the caching mode for cache tier <pool>", "osd", "rw", "cli,rest")
+
+        Modifies the  'cache_mode' field  of `osd dump`.
+
+        .. seealso:: method:`osd_tier_add`
+        """
+        return self.client.mon_command('osd tier cache-mode',
+                                       self._args_to_argdict(pool=pool, mode=mode),
+                                       output_format='string')
+
+    def osd_tier_set_overlay(self, pool, overlaypool):
+        """
+        COMMAND("osd tier set-overlay " \
+        "name=pool,type=CephPoolname " \
+        "name=overlaypool,type=CephPoolname", \
+        "set the overlay pool for base pool <pool> to be <overlaypool>", "osd", "rw", "cli,rest")
+
+        .. seealso:: method:`osd_tier_add`
+
+        Modifies the `read_tier` field of the storagepool
+        """
+        return self.client.mon_command('osd tier set-overlay',
+                                       self._args_to_argdict(pool=pool, overlaypool=overlaypool),
+                                       output_format='string')
+
+
+    def osd_tier_remove_overlay(self, pool):
+        """
+        COMMAND("osd tier remove-overlay " \
+        "name=pool,type=CephPoolname ", \
+        "remove the overlay pool for base pool <pool>", "osd", "rw", "cli,rest")
+
+        .. seealso:: method:`osd_tier_set_overlay`
+
+        Modifies the `read_tier` field of the storagepool
+        """
+        return self.client.mon_command('osd tier remove-overlay',
+                                       self._args_to_argdict(pool=pool),
+                                       output_format='string')
+
+
