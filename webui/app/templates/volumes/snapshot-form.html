@@ -18,7 +18,7 @@
                                 </span>
                         </div>
                     </div>
-                    <div class="form-group" ng-show="!source.special" ng-class="{'has-error': (submitted || snapForm.megs.$dirty) && snapForm.megs.$invalid}">
+                    <div class="form-group" ng-show="!dynSnap" ng-class="{'has-error': (submitted || snapForm.megs.$dirty) && snapForm.megs.$invalid}">
                         <label class="col-sm-3 control-label" for="megs">Size</label>
                         <div class="col-sm-9">
                             <div class="input-group">
