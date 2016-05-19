@@ -252,33 +252,27 @@ describe('Volumes add', function(){
     });
   });
 
-  it('should create a volume of the configured volume types in the configured pools', function(){
-    for(var key in helpers.configs.pools){
-      var pool = helpers.configs.pools[key];
-      for(var i = 0; i < pool.volumeTypes.length; i++){
-        volumePoolSelect.sendKeys(pool.name);
-        browser.sleep(helpers.configs.sleep);
+  var testTypes = function(pool){
+    pool.volumeTypes.forEach(function(type){
+      var volumename = pool.name + '_' + type;
+      var volume = element(by.cssContainingText('tr', volumename));
 
-        var volumeType = pool.volumeTypes[i];
-        var volumename = 'protractor_volume_' + pool.name;
-        var volume = element(by.cssContainingText('tr', volumename));
-
-        //create a volume
-        volumeNameInput.sendKeys(volumename);
-        element(by.cssContainingText('label', volumeType)).click();
-        volumeSizeInput.sendKeys('100mb');
-        submitButton.click();
-
-        //is it displayed on the volume overview?
-        browser.sleep(helpers.configs.sleep);
+      it('should create a ' + type + ' on ' + pool.name , function(){
+        helpers.create_volume(volumename, type.toLowerCase(), '100MB', pool.name);
         expect(volume.isDisplayed()).toBe(true);
+      });
 
-        //delete the volume
+      it('should delete a ' + type + ' on ' + pool.name , function(){
         helpers.delete_volume(volume, volumename);
-        addBtn.click();
-      }
-    }
-  });
+        expect(volume.isPresent()).toBe(false);
+      });
+    });
+  };
+
+  //Create and delete every type on every pool (configs.js)
+  for(var key in helpers.configs.pools){
+    testTypes(helpers.configs.pools[key]);
+  }
 
   afterAll(function(){
     console.log('volumes_add -> volumes_add.e2e.js');
