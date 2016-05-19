@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-from ceph.librados import MonApi
+from ceph.librados import MonApi, ExternalCommandError
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from ifconfig.models import Host
@@ -127,7 +127,6 @@ class CephCluster(NodbModel):
             cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
             cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
-            #cluster.pools = CephPool.objects.all({'cluster': cluster})
             result.append(cluster)
 
         return result
@@ -233,15 +232,36 @@ class CephPool(NodbModel):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        context = CephPool.objects.nodb_context
         if force_insert:
-            context = CephPool.objects.nodb_context
             MonApi(rados[context.fsid]).osd_pool_create(self.name,
                                                         self.pg_num,
                                                         self.pgp_num,
                                                         'replicated' if self.replicated else 'erasure',
                                                         self.erasure_code_profile)
+        elif force_update:
+            diff = self.get_modified_fields()
+            if 'pg_num' in diff != 'pgp_num' not in diff:
+                msg = 'pg_num modified but pgp_num unchanged. (or vice versa).'
+                raise ValidationError({'pg_num': msg, 'ppg_num': msg})
+            if 'pg_num' in diff:
+                if diff['pg_num'] != diff['pgp_num']:
+                    msg = 'pg_num must match pgp_num.'
+                    raise ValidationError({'pg_num': msg, 'ppg_num': msg})
+                try:
+                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "pg_num", diff['pg_num'])
+                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "ppg_num", diff['ppg_num'])
+                except ExternalCommandError, e:
+                    raise ValidationError({'pg_num': e.message, 'ppg_num': e.message})
+                return
+            raise ValueError('setting {} is not supported at the moment'.format(diff.keys()))
         else:
-            raise ValueError('not implemented')
+            raise ValueError('Expected force_insert=True or force_update=True')
+
+    def delete(self, using=None):
+        context = CephPool.objects.nodb_context
+        MonApi(rados[context.fsid]).osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+
 
 
 class CephErasureCodeProfile(NodbModel):
@@ -293,7 +313,6 @@ class CephOsd(NodbModel):
 
     @staticmethod
     def get_all_objects(context, query):
-        """:type context: ceph.restapi.FsidContext"""
         assert context is not None
         osds = rados[context.fsid].list_osds()
         return [CephOsd(id=osd["id"],
