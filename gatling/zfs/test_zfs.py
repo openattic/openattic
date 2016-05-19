@@ -92,7 +92,8 @@ class ZfsVolumeTests(object):
             vol = self.send_request("POST", data=data)
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
-        self.assertTrue("500 Server Error: Internal Server Error" in err.exception)
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
 
 class ZfsNativePoolVolumeTestCase(ZfsNativePoolTestScenario, ZfsVolumeTests):
