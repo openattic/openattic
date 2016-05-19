@@ -7,11 +7,11 @@ describe('Raw Block Storage Wizard', function(){
   var previousBtn = element(by.css('.tc_previousBtn'));
 
   var volumename = 'protractor_wizard_zfs_blockvol';
-  var volumefield = element(by.id('volumename'));
   var volume = element(by.cssContainingText('tr', volumename));
-  var pool = element(by.id('source_pool'));
-  var size = element(by.id('volumemegs'));
-  var is_protected = element(by.id('volumeisprotected'));
+  var volumefield = element(by.model('result.name'));
+  var pool = element(by.model('pool'));
+  var size = element(by.model('data.megs'));
+  var is_protected = element(by.model('result.is_protected'));
 
   var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
@@ -66,7 +66,7 @@ describe('Raw Block Storage Wizard', function(){
     //in order to enter a size we need to choose a pool first
     for(var key in configs.pools){
       var pool = configs.pools[key];
-      var volumePoolSelect = element(by.id('source_pool'));
+      var volumePoolSelect = element(by.model('pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(zpool,')).get(0).click();
       //browser.actions().sendKeys( protractor.Key.ENTER ).perform();
