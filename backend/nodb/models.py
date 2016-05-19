@@ -300,18 +300,29 @@ class NodbModel(models.Model):
             }
 
 
-class DictField(Field):
+class JsonField(Field):
     empty_strings_allowed = False
 
+    def __init__(self, *args, **kwargs):
+        """
+        :param base_type: list | dict
+        :type base_type: type
+        :rtype: JsonField[T]
+        """
+        self.base_type = kwargs['base_type']
+        del kwargs['base_type']
+        super(JsonField, self).__init__(*args, **kwargs)
+
     def to_python(self, value):
+        """:rtype: T"""
         if value is None:
-            return dict()
-        if isinstance(value, dict):
+            return self.base_type()
+        if isinstance(value, self.base_type):
             return value
 
         try:
             parsed = json.loads(value)
-            if parsed is not None:
+            if isinstance(parsed, self.base_type):
                 return parsed
         except ValueError:
             raise exceptions.ValidationError(

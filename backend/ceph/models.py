@@ -31,7 +31,7 @@ from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-from nodb.models import NodbModel, DictField
+from nodb.models import NodbModel, JsonField
 
 from ceph import librados
 import ConfigParser
@@ -134,20 +134,13 @@ class CephCluster(NodbModel):
     def __str__(self):
         return self.name
 
-
-class CephPoolTier(NodbModel):
-
-    pool_id = models.IntegerField()
-
-
 class CephPool(NodbModel):
 
     id = models.IntegerField(primary_key=True, editable=False)
     cluster = models.ForeignKey(CephCluster)
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
-    # type is an undocumented dump of https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
-    erasure_code_profile = models.CharField(max_length=100, blank=True)
+    type = models.CharField(max_length=100, choices=[('replicated', 'replicated'), ('erasure', 'erasure')])
+    erasure_code_profile = models.ForeignKey("CephErasureCodeProfile", null=True, default=None, blank=True)
     last_change = models.IntegerField(editable=False)
     quota_max_objects = models.IntegerField()
     quota_max_bytes = models.IntegerField()
@@ -164,13 +157,14 @@ class CephPool(NodbModel):
     max_avail = models.IntegerField(editable=False)
     kb_used = models.IntegerField(editable=False)
     stripe_width = models.IntegerField()
-    tier_of = models.IntegerField()
+    tier_of = models.ForeignKey("CephPool", null=True, default=None, blank=True)
     write_tier = models.IntegerField()
     read_tier = models.IntegerField()
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
     hit_set_count = models.IntegerField()
-    hit_set_params = DictField()
+    hit_set_params = JsonField(base_type=dict)
+    tiers = JsonField(base_type=list)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -193,8 +187,9 @@ class CephPool(NodbModel):
                 'id': pool_id,
                 'cluster': cluster,
                 'name': pool_data['pool_name'],
-                'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],
-                'erasure_code_profile': pool_data['erasure_code_profile'],
+                'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],  # type is an undocumented dump of
+                # https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
+                'erasure_code_profile': CephErasureCodeProfile(name=pool_data['erasure_code_profile']) if pool_data['erasure_code_profile'] else None,
                 'last_change': pool_data['last_change'],
                 'hashpspool': 'hashpspool' in pool_data['flags_names'],
                 'full': 'full' in pool_data['flags_names'],
@@ -213,7 +208,7 @@ class CephPool(NodbModel):
                 'quota_max_bytes': pool_data['quota_max_bytes'],
                 'quota_max_objects': pool_data['quota_max_objects'],
                 # Cache tiering related
-                'tier_of': pool_data['tier_of'],
+                'tier_of': CephPool(id=pool_data['tier_of']) if pool_data['tier_of'] > 0 else None,
                 'write_tier': pool_data['write_tier'],
                 'read_tier': pool_data['read_tier'],
                 # Attributes for cache tiering
@@ -221,10 +216,10 @@ class CephPool(NodbModel):
                 'hit_set_period': pool_data['hit_set_period'],
                 'hit_set_count': pool_data['hit_set_count'],
                 'hit_set_params': pool_data['hit_set_params'],
+                'tiers': pool_data['tiers']
             }
 
             ceph_pool = CephPool(**object_data)
-            ceph_pool.tiers = [CephPoolTier(pool_id=id) for id in pool_data['tiers']]
 
             result.append(ceph_pool)
 
@@ -237,8 +232,8 @@ class CephPool(NodbModel):
             MonApi(rados[context.fsid]).osd_pool_create(self.name,
                                                         self.pg_num,
                                                         self.pgp_num,
-                                                        'replicated' if self.replicated else 'erasure',
-                                                        self.erasure_code_profile)
+                                                        self.type,
+                                                        self.erasure_code_profile.name if self.erasure_code_profile else None)
         elif force_update:
             diff = self.get_modified_fields()
             if 'pg_num' in diff != 'pgp_num' not in diff:
@@ -329,9 +324,9 @@ class CephOsd(NodbModel):
 
 class CephPg(NodbModel):
 
-    #  acting = ListField() ??
+    acting = JsonField(base_type=list)
     acting_primary = models.IntegerField()
-    #  blocked_by = ListField() ??
+    blocked_by = JsonField(base_type=list)
     created = models.IntegerField()
     last_active = models.DateTimeField(null=True)
     last_became_active = models.DateTimeField()
@@ -359,10 +354,10 @@ class CephPg(NodbModel):
     pgid = models.CharField(max_length=100, primary_key=True)
     reported_epoch = models.CharField(max_length=100)
     reported_seq = models.CharField(max_length=100)
-    stat_sum = DictField()
+    stat_sum = JsonField(base_type=dict)
     state = models.CharField(max_length=100)
     stats_invalid = models.CharField(max_length=100)
-    #  up = ListField?
+    up = JsonField(base_type=list)
     up_primary = models.IntegerField()
     version = models.CharField(max_length=100)
 
