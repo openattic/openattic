@@ -54,7 +54,6 @@ exports.config = {
    http_share           : '../e2e/shares/http/*.e2e.js',
    nfs_share            : '../e2e/shares/nfs/*.e2e.js',
    cifs_share           : '../e2e/shares/cifs/*.e2e.js',
-   disk_share           : '../e2e/shares/generic_disk/*.e2e.js',
    lun                  : '../e2e/shares/lun/*.e2e.js',
    hosts                : '../e2e/hosts/**/*.e2e.js',
    users                : '../e2e/users/**/*.e2e.js',
