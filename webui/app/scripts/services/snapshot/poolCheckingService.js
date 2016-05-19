@@ -49,11 +49,6 @@ app.factory("poolCheckingService", function (PoolService) {
     new PoolService.get(source).$promise.then(function (res) {
       saved.source = source;
       saved.pool = res.type;
-      if (!saved.pool) {
-        return;
-      }
-      var pool = saved.pool.app_label;
-      saved.special = pool === "zfs" || pool === "btrfs";
     });
     return saved;
   }
