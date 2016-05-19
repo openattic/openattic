@@ -3,8 +3,8 @@ var helpers = require('../../common.js');
 describe('Volumes delete', function(){
 
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
-  var volumeNameInput = element(by.model('volume.name'));
-  var volumePoolSelect = element(by.model('data.sourcePool'));
+  var volumeNameInput = element(by.model('result.name'));
+  var volumePoolSelect = element(by.model('pool'));
   var submitButton = element(by.css('.tc_submitButton'));
   var addBtn = element(by.css('.tc_add_btn'));
   var actionMenu = element(by.css('.tc_menudropdown'));
@@ -35,7 +35,7 @@ describe('Volumes delete', function(){
           browser.sleep(400);
           element(by.cssContainingText('label', volumeType)).click();
           browser.sleep(400);
-          element(by.id('data.megs')).sendKeys('100mb');
+          element(by.model('data.megs')).sendKeys('100mb');
           browser.sleep(400);
           submitButton.click();
           browser.sleep(400);

@@ -30,29 +30,46 @@
  */
 "use strict";
 
-var app = angular.module("openattic.oaWizards");
-app.controller("vmstorage", function ($scope) {
-  $scope.limitTypes = ["xfs", "zfs", "btrfs"];
-
-  $scope.input = {
-    cifs: {
-      create: false,
-      available: true,
-      browseable: true,
-      writeable: true
+var app = angular.module("openattic");
+app.directive("volumeAddForm", function () {
+  return {
+    restrict: "E",
+    scope: {
+      volumeForm: "=",
+      result: "=",
+      availTypes: "=",
+      wizard: "="
     },
-    nfs: {
-      create: false,
-      options: "rw,no_subtree_check,no_root_squash"
-    },
-    volume: {}
-  };
-
-  $scope.$watch("input.volume.name", function (volumename) {
-    if (volumename) {
-      $scope.input.cifs.name = volumename;
-      $scope.input.cifs.path = "/media/" + volumename;
-      $scope.input.nfs.path = "/media/" + volumename;
+    templateUrl: "templates/volumeAddForm.html",
+    controller: function ($scope, SizeParserService) {
+      $scope.data = {};
+      $scope.validation = $scope.volumeForm;
+      /* The result has to look like the following:
+      $scope.result = {
+        filesystem: "",
+        is_protected: false,
+        megs: 0,
+        name: "",
+        source_pool: {
+          id: 0
+        }
+      };
+      */
+      $scope.$watch("data.pool", function () {
+        if ($scope.data.pool) {
+          $scope.result.source_pool = {id: $scope.data.pool.id};
+        }
+      });
+      $scope.$watch("data.megs", function (megs) {
+        if ($scope.data.megs) {
+          $scope.result.megs = SizeParserService.parseInt(megs);
+        }
+      });
+      $scope.$watch("data.filesystem", function (fs) {
+        if ($scope.data.filesystem) {
+          $scope.result.filesystem = fs === "lun" ? "" : fs;
+        }
+      });
     }
-  });
+  };
 });

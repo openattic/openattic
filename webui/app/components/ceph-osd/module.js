@@ -30,29 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.oaWizards");
-app.controller("vmstorage", function ($scope) {
-  $scope.limitTypes = ["xfs", "zfs", "btrfs"];
-
-  $scope.input = {
-    cifs: {
-      create: false,
-      available: true,
-      browseable: true,
-      writeable: true
-    },
-    nfs: {
-      create: false,
-      options: "rw,no_subtree_check,no_root_squash"
-    },
-    volume: {}
-  };
-
-  $scope.$watch("input.volume.name", function (volumename) {
-    if (volumename) {
-      $scope.input.cifs.name = volumename;
-      $scope.input.cifs.path = "/media/" + volumename;
-      $scope.input.nfs.path = "/media/" + volumename;
-    }
-  });
-});
+angular.module("openattic.cephOsd", [
+  "openattic.cephCluster",
+  "openattic.registry"
+]);

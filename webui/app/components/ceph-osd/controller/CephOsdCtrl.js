@@ -30,11 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService) {
+var app = angular.module("openattic.cephOsd");
+app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService, clusterData, registryService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
-  $scope.pools = {};
+  $scope.osd = {};
   $scope.error = false;
 
   $scope.filterConfig = {
@@ -51,27 +51,17 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
-  var modifyResult = function (res) {
-    res.results.forEach(function (pool) {
-      pool.oaUsed = pool.num_bytes / pool.max_avail * 100;
-      pool.oaUnused = 100 - pool.oaUsed;
-      pool.oaFree = pool.max_avail - pool.num_bytes;
-    });
-
-    return res;
-  };
-
-  $scope.getPoolList = function () {
+  $scope.getOsdList = function () {
     if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];
       }
 
-      $scope.pools = {};
+      $scope.osd = {};
       $scope.error = false;
 
-      cephPoolsService
+      cephOsdService
           .get({
             id      : $scope.registry.selectedCluster.fsid,
             page    : $scope.filterConfig.page + 1,
@@ -81,11 +71,11 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
           })
           .$promise
           .then(function (res) {
-            $scope.pools = modifyResult(res);
+            $scope.osd = res;
           })
           .catch(function (error) {
             $scope.error = error;
-            console.log("An error occurred while loading the ceph pools.", error);
+            console.log("An error occurred while loading the ceph osds.", error);
           });
     }
   };
@@ -95,7 +85,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
       return;
     }
 
-    $scope.getPoolList();
+    $scope.getOsdList();
   }, true);
 
   $scope.$watchCollection("selection", function (selection) {
@@ -106,14 +96,14 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {
-      $state.go("cephPools");
+      $state.go("cephOsds");
       return;
     }
 
     if (item) {
-      $state.go("cephPools.detail.status", {
-        cephPool: item.id,
-        "#"     : "more"
+      $state.go("cephOsds.detail.status", {
+        cephOsd: item.id,
+        "#"    : "more"
       });
     }
   });
