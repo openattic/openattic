@@ -3,6 +3,12 @@ var helpers = require('../common.js');
 var volumename = "protractor_volume_datatable";
 var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
+var secondVolumeName = "protractor_secondVol";
+var secondVolume = element.all(by.cssContainingText('tr', secondVolumeName)).get(0);
+
+var thirdVolumeName = "protractor_thirdVol";
+var thirdVolume = element.all(by.cssContainingText('tr', thirdVolumeName)).get(0);
+
 var firstSnapName = "protractor_test_snap";
 var secSnapName = "second_ptor_snap";
 
@@ -28,6 +34,9 @@ describe('Should test oadatatable and its options', function(){
   beforeAll(function(){
     helpers.login();
     helpers.create_volume(volumename, "zfs");
+    helpers.create_volume(secondVolumeName, "xfs");
+    helpers.create_volume(thirdVolumeName, "ext4");
+
     helpers.create_snapshot(volume);
   });
 
@@ -262,6 +271,8 @@ describe('snapshot tab based datatable tests', function(){
   afterAll(function(){
     browser.sleep(400);
     helpers.delete_volume(volume, volumename);
+    helpers.delete_volume(secondVolume, secondVolumeName);
+    helpers.delete_volume(thirdVolume, thirdVolumeName);
     console.log("datatable -> datatable.e2e.js");
   });
 });
