@@ -154,7 +154,7 @@ class Client(object):
         return [dict(hostname=k["name"], **v) for (k, v) in product(nodes, nodes)
                 if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]
 
-    def mon_command(self, cmd, argdict=None):
+    def mon_command(self, cmd, argdict=None, output_format='json'):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
@@ -164,24 +164,78 @@ class Client(object):
         Args:
             cmd (str | dict): the command
             argdict (dict): Additional Command-Parameters
+
+        Returns:
+            Return type is json (aka dict) if output_format == 'json' else str.
         """
 
         if type(cmd) is str:
             return self.mon_command(
-                {'prefix': cmd,
-                 'format': 'json'}, argdict)
+                {'prefix': cmd}, argdict, output_format)
 
         elif type(cmd) is dict:
             (ret, out, err) = self._cluster.mon_command(
-                json.dumps(dict(cmd, **argdict if argdict is not None else {})),
+                json.dumps(dict(cmd, format=output_format, **argdict if argdict is not None else {})),
                 '',
                 timeout=self._default_timeout)
 
             if ret == 0:
-                return json.loads(out)
+                return json.loads(out) if output_format == "json" else out
             else:
                 raise ExternalCommandError(err)
 
 
 class ExternalCommandError(Exception):
     pass
+
+
+class MonApi(object):
+    """
+    API source: https://github.com/ceph/ceph/blob/master/src/mon/MonCommands.h
+
+    """
+
+    def __init__(self, client):
+        self.client = client
+
+    @staticmethod
+    def _args_to_argdict(**kwargs):
+        return {k: v for (k,v) in kwargs.iteritems() if v is not None}
+
+    def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None, ruleset=None, expected_num_objects=None):
+        """
+        COMMAND("osd pool create " \
+            "name=pool,type=CephPoolname " \
+            "name=pg_num,type=CephInt,range=0 " \
+            "name=pgp_num,type=CephInt,range=0,req=false " \
+            "name=pool_type,type=CephChoices,strings=replicated|erasure,req=false " \
+            "name=erasure_code_profile,type=CephString,req=false,goodchars=[A-Za-z0-9-_.] " \
+            "name=ruleset,type=CephString,req=false " \
+            "name=expected_num_objects,type=CephInt,req=false", \
+            "create pool", "osd", "rw", "cli,rest")
+
+        :param pool: The pool name.
+        :type pool: str
+        :param pg_num: Number of pgs. pgs per osd should be about 100, independent of the number of pools, as each osd
+                       can store pgs of multiple pools.
+        :type pg_num: int
+        :param pgp_num: *MUST* equal pg_num
+        :type pgp_num: int
+        :param pool_type: replicated | erasure
+        :type pool_type: str
+        :param erasure_code_profile: name of the erasure code profile. Created by :method:`osd_erasure_code_profile_set`.
+        :type erasure_code_profile: str
+        :returns: empty string
+        :rtype: str
+        """
+        if pool_type == 'erasure' and not erasure_code_profile:
+            raise ExternalCommandError('erasure_code_profile missing')
+        return self.client.mon_command('osd pool create',
+                                       self._args_to_argdict(pool=pool,
+                                                             pg_num=pg_num,
+                                                             pgp_num=pgp_num,
+                                                             pool_type=pool_type,
+                                                             erasure_code_profile=erasure_code_profile,
+                                                             ruleset=ruleset,
+                                                             expected_num_objects=expected_num_objects),
+                                       output_format='string')
