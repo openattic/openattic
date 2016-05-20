@@ -13,9 +13,12 @@ Version 2.0.11, (not released yet):
 * WebUI: Save selected cluster between page changes (OP-1131)
 * WebUI: Add Ceph osd data table (OP-1144)
 * WebUI: Hide snapshot columns with wrong data on a zfs or btrfs (OP-1162)
+* WebUI: Link the type description with an wikipedia article (OP-1189)
 * WebUI/QA: added test cases for datatable (OP-818)
 * WebUI/QA: Added test case for hostname in pool dropdown (OP-973)
 * WebUI/QA: Test for the hostnames of the pools in the volume form (OP-1059)
+* WebUI/QA: Added tests which check the correct description
+  for each volume type (OP-1159)
 * WebUI/QA: Test to verify that snapshot size is hidden while creating a snapshot
   on a zfs or btrfs (OP-1162)
 * WebUI/QA: Added E2E test cases for Ceph OSDs Panel (OP-1176)
@@ -24,7 +27,6 @@ Version 2.0.11, (not released yet):
 * WebUI/QA: Speed up multiple volume deletion test (OP-1187)
 * WebUI/QA: Refactors the multiple sequential volume creation
   and deletion test (OP-1190)
-
 * Backend: Disks (falsely displayed) are removed from the volume
   management (OP-597)
 * Backend: Removed simplejson dependency (OP-783)

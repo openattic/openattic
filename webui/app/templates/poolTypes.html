@@ -8,8 +8,8 @@
                 <input type="radio" ng-model="$parent.filesystem"
                     ng-value="fs" ng-disabled="state.formatted" id="{{fs}}">
                 <label for="{{fs}}">{{text.btn}}
-                    <span class="text-info" ng-show="$parent.filesystem === fs">
-                        &nbsp;-&nbsp;{{text.desc}}</span>
+                    <a class="text-info" target="_blank" href="{{text.link}}" ng-show="$parent.filesystem === fs">
+                        &nbsp;-&nbsp;{{text.desc}}</a>
                 </label>
             </div>
         </div>
