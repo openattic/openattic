@@ -23,7 +23,7 @@ from django.utils.functional import cached_property
 
 
 class NoDbQuery(object):
-    def __init__(self, q = None, ordering = None):
+    def __init__(self, q=None, ordering=None):
         self._q = q
         self._ordering = [] if ordering is None else ordering
 
@@ -31,7 +31,7 @@ class NoDbQuery(object):
         return True
 
     def add_q(self, q):
-        self._q = q if self._q is None else self._q | q
+        self._q = q if self._q is None else self._q & q
 
     def clone(self):
         tmp = NoDbQuery()
@@ -59,7 +59,8 @@ class NoDbQuery(object):
         self._q = None
 
     def __str__(self):
-        return "NoDbQuery<q={}, ordering={}>".format(self._q, self._ordering)
+        return "<NoDbQuery q={}, ordering={}>".format(self._q, self._ordering)
+
 
 class NodbQuerySet(QuerySet):
 
@@ -68,7 +69,7 @@ class NodbQuerySet(QuerySet):
         self._context = context
         self._current = 0
         self._query = NoDbQuery()
-        self.oInstance = QuerySet()
+#        self.oInstance = QuerySet()
 
     @cached_property
     def _max(self):
@@ -76,7 +77,12 @@ class NodbQuerySet(QuerySet):
 
     @cached_property
     def _data(self):
-        return self.model.get_all_objects(self._context, query=self._query)
+        objects = self.model.get_all_objects(self._context, query=self._query)
+        for obj in objects:
+            #  Because we're calling the model constructors ourselves, django thinks that
+            #  the objects are not in the database. We need to "hack" this.
+            obj._state.adding = False
+        return objects
 
     @cached_property
     def _filtered_data(self):
@@ -109,17 +115,20 @@ class NodbQuerySet(QuerySet):
                 obj NodbModel:
 
             """
+            def negate(res):
+                return not res if q.negated else res
+
             if q is None:
                 return True
             elif isinstance(q, tuple):
                 return filter_impl(q[0].split('__'), q[1], obj)
             elif q.connector == "AND":
-                return reduce(lambda l, r: l and filter_one_q(r, obj), q.children, True)
+                return negate(reduce(lambda l, r: l and filter_one_q(r, obj), q.children, True))
             else:
-                return reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False)
+                return negate(reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False))
 
         filtered = [obj for obj in self._data
-                if filter_one_q(self._query.q, obj)]
+                    if filter_one_q(self._query.q, obj)]
 
         for order_key in self.query.ordering[::-1]:
             if order_key.startswith("-"):
@@ -190,6 +199,9 @@ class NodbQuerySet(QuerySet):
             )
         )
 
+    def exists(self):
+        return bool(self._filtered_data)
+
     @property
     def query(self):
         return self._query
@@ -219,20 +231,20 @@ else:
 class NodbManager(base_manager_class):
 
     use_for_related_fields = True
+    nodb_context = None
 
-    def all(self, context=None):
-        """
-        Args:
-            context (dict): The context
-        """
-        return self.get_queryset(context)
+    @classmethod
+    def set_nodb_context(cls, context):
+        cls.nodb_context = context
 
-    def get_queryset(self, context=None):
+    def get_queryset(self):
         if django.VERSION[1] == 6:
-            return NodbQuerySet(self.model, using=self._db, context=context)
+            return NodbQuerySet(self.model, using=self._db, context=NodbManager.nodb_context)
         else:
             return self._queryset_class(self.model, using=self._db, hints=self._hints,
-                                        context=context)
+                                        context=NodbManager.nodb_context)
+
+
 
 
 class NodbModel(models.Model):
