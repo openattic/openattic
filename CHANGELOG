@@ -1,8 +1,8 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.11, (not released yet):
------------------------------------
+Version 2.0.11, 20. May 2016:
+-----------------------------
 
 * WebUI: Extended the pool selection box by the hostname of the pool (OP-973)
 * WebUI: Extend the volume creation form by all supported filesystems
