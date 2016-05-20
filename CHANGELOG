@@ -25,10 +25,8 @@ Version 2.0.11, (not released yet):
 * WebUI/QA: Removed obsolete E2E tests due to OP-597 (OP-1185)
 * WebUI/QA: Adapted datatable tests due to OP-597 (OP-1186)
 * WebUI/QA: Speed up multiple volume deletion test (OP-1187)
-
 * WebUI/QA: Refactors the multiple sequential volume creation
   and deletion test (OP-1190)
-
 * Backend: Disks (falsely displayed) are removed from the volume
   management (OP-597)
 * Backend: Removed simplejson dependency (OP-783)
