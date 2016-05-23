@@ -101,35 +101,64 @@ class CephPoolTierSerializer(NodbSerializer):
 
 class CephPoolSerializer(NodbSerializer):
 
-    tiers = CephPoolTierSerializer(many=True)
+    tiers = CephPoolTierSerializer(many=True, read_only=True)
 
     class Meta:
         model = CephPool
 
+    def create(self, validated_data):
+        return CephPool.objects.create(**validated_data)
 
-class FsidMixin(object):
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.replicated = validated_data.get('replicated', instance.replicated)
+        instance.type = validated_data.get('type', instance.type)
+        instance.erasure_coded = validated_data.get('erasure_coded', instance.erasure_coded)
+        instance.erasure_code_profile = validated_data.get('erasure_code_profile', instance.erasure_code_profile)
+        instance.quota_max_objects = validated_data.get('quota_max_objects', instance.quota_max_objects)
+        instance.quota_max_bytes = validated_data.get('quota_max_bytes', instance.quota_max_bytes)
+        instance.pg_num = validated_data.get('pg_num', instance.pg_num)
+        instance.pgp_num = validated_data.get('pgp_num', instance.pgp_num)
+        instance.crush_ruleset = validated_data.get('crush_ruleset', instance.crush_ruleset)
+        instance.hit_set_params = validated_data.get('hit_set_params', instance.hit_set_params)
+        instance.save()
+        return instance
+
+class FsidContext(object):
+
+    def __init__(self, viewset):
+        self.viewset = viewset
 
     @cached_property
     def fsid(self):
         import re
-        m = re.match(r'^.*/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.request.path)
+        m = re.match(r'^.*/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.viewset.request.path)
         return m.groupdict()["fsid"]
 
+    @cached_property
+    def cluster(self):
+        return CephCluster.objects.all().get(fsid=self.fsid)
 
-class CephPoolViewSet(NodbViewSet, FsidMixin):
+
+class CephPoolViewSet(NodbViewSet):
     """Represents a Ceph pool.
 
     Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
     a queryset. It needs a context which isn't available when this position is evaluated.
+
+    .. warning:: Calling DELETE will *PERMANENTLY DESTROY* all data stored in this pool.
     """
 
     serializer_class = CephPoolSerializer
     filter_fields = ("name",)
     search_fields = ("name",)
 
+    def __init__(self, **kwargs):
+        super(CephPoolViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
     def get_queryset(self):
-        cluster = CephCluster.objects.all().get(fsid=self.fsid)
-        return CephPool.objects.all({'cluster': cluster})
+        return CephPool.objects.all()
 
 
 class PaginatedCephPoolSerializer(PaginationSerializer):
@@ -150,7 +179,7 @@ class CephOsdSerializer(NodbSerializer):
         model = CephOsd
 
 
-class CephOsdViewSet(NodbViewSet, FsidMixin):
+class CephOsdViewSet(NodbViewSet):
     """Represents a Ceph osd.
 
     The reply consists of the output of ```osd tree```.
@@ -158,9 +187,12 @@ class CephOsdViewSet(NodbViewSet, FsidMixin):
     filter_fields = ("name", "id")
     serializer_class = CephOsdSerializer
 
+    def __init__(self, **kwargs):
+        super(CephOsdViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
     def get_queryset(self):
-        cluster = CephCluster.objects.all().get(fsid=self.fsid)
-        return CephOsd.objects.all({'cluster': cluster})
+        return CephOsd.objects.all()
 
 
 class PaginatedCephOsdSerializer(PaginationSerializer):
@@ -177,7 +209,7 @@ class CephPgSerializer(NodbSerializer):
         model = CephPg
 
 
-class CephPgViewSet(NodbViewSet, FsidMixin):
+class CephPgViewSet(NodbViewSet):
     """Represents a Ceph Placement Group.
 
     Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the backend performance
@@ -189,9 +221,12 @@ class CephPgViewSet(NodbViewSet, FsidMixin):
     lookup_field = "pgid"
     lookup_value_regex = r'[^/]+'
 
+    def __init__(self, **kwargs):
+        super(CephPgViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
     def get_queryset(self):
-        cluster = CephCluster.objects.all().get(fsid=self.fsid)
-        return CephPg.objects.all({'cluster': cluster})
+        return CephPg.objects.all()
 
 
 RESTAPI_VIEWSETS = [

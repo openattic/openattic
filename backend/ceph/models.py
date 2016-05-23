@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
+from ceph.librados import MonApi, ExternalCommandError
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from ifconfig.models import Host
@@ -126,7 +127,6 @@ class CephCluster(NodbModel):
             cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
             cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
-            cluster.pools = CephPool.objects.all({'cluster': cluster})
             result.append(cluster)
 
         return result
@@ -142,28 +142,27 @@ class CephPoolTier(NodbModel):
 
 class CephPool(NodbModel):
 
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=False)
     cluster = models.ForeignKey(CephCluster)
     name = models.CharField(max_length=100)
-    replicated = models.BooleanField(default=None)
-    type = models.IntegerField()
-    erasure_coded = models.BooleanField(default=None)
-    erasure_code_profile = models.CharField(max_length=100)
-    last_change = models.IntegerField()
+    type = models.CharField(max_length=100)
+    # type is an undocumented dump of https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
+    erasure_code_profile = models.CharField(max_length=100, blank=True)
+    last_change = models.IntegerField(editable=False)
     quota_max_objects = models.IntegerField()
     quota_max_bytes = models.IntegerField()
     hashpspool = models.BooleanField(default=None)
-    full = models.BooleanField(default=None)
+    full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField()
     size = models.IntegerField()
     min_size = models.IntegerField()
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
-    num_bytes = models.IntegerField()
-    num_objects = models.IntegerField()
-    max_avail = models.IntegerField()
-    kb_used = models.IntegerField()
+    num_bytes = models.IntegerField(editable=False)
+    num_objects = models.IntegerField(editable=False)
+    max_avail = models.IntegerField(editable=False)
+    kb_used = models.IntegerField(editable=False)
     stripe_width = models.IntegerField()
     tier_of = models.IntegerField()
     write_tier = models.IntegerField()
@@ -175,8 +174,10 @@ class CephPool(NodbModel):
 
     @staticmethod
     def get_all_objects(context, query):
+        """:type context: ceph.restapi.FsidContext"""
+        assert context is not None
         result = []
-        cluster = context['cluster']
+        cluster = context.cluster
         fsid = cluster.fsid
 
         osd_dump_data = rados[fsid].mon_command('osd dump')
@@ -192,9 +193,7 @@ class CephPool(NodbModel):
                 'id': pool_id,
                 'cluster': cluster,
                 'name': pool_data['pool_name'],
-                'replicated': pool_data['erasure_code_profile'] == '',
-                'type': pool_data['type'],
-                'erasure_coded': pool_data['erasure_code_profile'] != '',
+                'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],
                 'erasure_code_profile': pool_data['erasure_code_profile'],
                 'last_change': pool_data['last_change'],
                 'hashpspool': 'hashpspool' in pool_data['flags_names'],
@@ -231,6 +230,39 @@ class CephPool(NodbModel):
 
         return result
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        context = CephPool.objects.nodb_context
+        if force_insert:
+            MonApi(rados[context.fsid]).osd_pool_create(self.name,
+                                                        self.pg_num,
+                                                        self.pgp_num,
+                                                        'replicated' if self.replicated else 'erasure',
+                                                        self.erasure_code_profile)
+        elif force_update:
+            diff = self.get_modified_fields()
+            if 'pg_num' in diff != 'pgp_num' not in diff:
+                msg = 'pg_num modified but pgp_num unchanged. (or vice versa).'
+                raise ValidationError({'pg_num': msg, 'ppg_num': msg})
+            if 'pg_num' in diff:
+                if diff['pg_num'] != diff['pgp_num']:
+                    msg = 'pg_num must match pgp_num.'
+                    raise ValidationError({'pg_num': msg, 'ppg_num': msg})
+                try:
+                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "pg_num", diff['pg_num'])
+                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "ppg_num", diff['ppg_num'])
+                except ExternalCommandError, e:
+                    raise ValidationError({'pg_num': e.message, 'ppg_num': e.message})
+                return
+            raise ValueError('setting {} is not supported at the moment'.format(diff.keys()))
+        else:
+            raise ValueError('Expected force_insert=True or force_update=True')
+
+    def delete(self, using=None):
+        context = CephPool.objects.nodb_context
+        MonApi(rados[context.fsid]).osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+
+
 class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True)
     crush_weight = models.FloatField()
@@ -245,9 +277,8 @@ class CephOsd(NodbModel):
 
     @staticmethod
     def get_all_objects(context, query):
-        cluster = context['cluster']
-        fsid = cluster.fsid
-        osds = rados[fsid].list_osds()
+        assert context is not None
+        osds = rados[context.fsid].list_osds()
         return [CephOsd(id=osd["id"],
                         crush_weight=osd["crush_weight"],
                         depth=osd["depth"],
@@ -361,11 +392,11 @@ class CephPg(NodbModel):
 
     @staticmethod
     def get_all_objects(context, query):
-        cluster = context['cluster']
-        fsid = cluster.fsid
+        """:type context: ceph.restapi.FsidContext"""
+        assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = rados[fsid].mon_command(cmd, argdict)
+            pgs = rados[context.fsid].mon_command(cmd, argdict)
         except librados.ExternalCommandError, e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []

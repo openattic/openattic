@@ -40,7 +40,7 @@ var wizardDefinitions = [{
   page: "vmstorage.html",
   stackedIcon: true
 }, {
-  title: "Raw Block Storage",
+  title: "iSCSI/Fibre Channel target",
   icon: "fa fa-cube fa-4x",
   page: "blockstorage.html"
 }/*, {

@@ -13,6 +13,7 @@
 """
 
 import mock
+from django.db import models
 
 from django.db.models import Q
 from django.test import TestCase
@@ -45,22 +46,18 @@ class QuerySetTestCase(TestCase):
 
         cls.qs = NodbQuerySet(CephClusterMock)
 
-        cls.ordering_a = mock.MagicMock()
-        cls.ordering_a.x = 1
-        cls.ordering_a.y = 1
-
-        cls.ordering_b = mock.MagicMock()
-        cls.ordering_b.x = 1
-        cls.ordering_b.y = 2
-
-        cls.ordering_c = mock.MagicMock()
-        cls.ordering_c.x = 2
-        cls.ordering_c.y = 2
-
         class OrderTestModel(NodbModel):
+            x = models.IntegerField(primary_key=True)
+            y = models.IntegerField()
+
             @staticmethod
             def get_all_objects(context, query):
                 return [cls.ordering_a, cls.ordering_b, cls.ordering_c]
+
+        cls.ordering_a = OrderTestModel(x=1, y=1)
+        cls.ordering_b = OrderTestModel(x=1, y=2)
+        cls.ordering_c = OrderTestModel(x=2, y=2)
+
 
         cls.order_qs = NodbQuerySet(OrderTestModel)
 
@@ -122,6 +119,23 @@ class QuerySetTestCase(TestCase):
         filter_result = self.qs.filter(filter_params)
 
         self.assertEqual(len(filter_result), 0)
+
+    def test_exclude(self):
+        filter_result = self.qs.exclude(name="balkan")
+        self.assertEqual(len(filter_result), 2)
+
+        filter_result = self.qs.filter(Q(name="balkan")).filter(~Q(name="balkan"))
+        self.assertEqual(len(filter_result), 0)
+
+    def test_exclude_pk(self):
+        filter_result = self.order_qs.filter(pk=1).exclude(pk=1)
+        self.assertEqual(len(filter_result), 0)
+
+        filter_result = self.order_qs.filter(x=1).exclude(pk=1)
+        self.assertEqual(len(filter_result), 0)
+
+        filter_result = self.order_qs.filter(pk=1)
+        self.assertEqual(len(filter_result), 2)
 
     def test_ordering(self):
 

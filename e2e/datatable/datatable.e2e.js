@@ -241,6 +241,8 @@ describe('snapshot tab based datatable tests', function(){
     element(by.css('.tc_snapshotAdd')).click();
     browser.sleep(400);
     element(by.id('snap.name')).clear();
+    //we need a 60 sec sleep here in order to get a new create date when testing the sort functionality
+    console.log("wait 60 sec i.o. to get a different create date");
     browser.sleep(60000);
     element(by.model('snap.name')).sendKeys(secSnapName);
     browser.sleep(400);
