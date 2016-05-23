@@ -40,8 +40,7 @@ app.directive("oadatatable", function () {
       selection: "=",
       data: "=",
       filterConfig: "=",
-      special: "=",
-      tableName: "@"
+      special: "="
     },
     link: function (scope, element, attr, controller, transclude) {
       transclude(scope, function (clone, scope) {
@@ -55,7 +54,18 @@ app.directive("oadatatable", function () {
         });
       });
     },
-    controller: function ($scope, $localStorage, $http) {
+    controller: function ($scope, $localStorage, $http, $state) {
+      var tableName = $state.current.name;
+      var firstColCall = true;
+      var firstFilterCall = true;
+      if (!$localStorage.datatables) {
+        $localStorage.datatables = {};
+      }
+      if (!$localStorage.datatables[tableName]) {
+        $localStorage.datatables[tableName] = {};
+      }
+      $scope.store = $localStorage.datatables[tableName];
+
       $scope.$watch(function () {
         return $http.pendingRequests.length > 0;
       }, function (value) {
@@ -73,32 +83,19 @@ app.directive("oadatatable", function () {
         available: true
       };
 
-      if ($scope.tableName) {  // Save the table config to local storage.
-        var firstColCall = true;
-        var firstFilterCall = true;
-        if (!$localStorage.datatables) {
-          $localStorage.datatables = {};
-        }
-        if (!$localStorage.datatables[$scope.tableName]) {
-          $localStorage.datatables[$scope.tableName] = {};
-        }
-        $scope.store = $localStorage.datatables[$scope.tableName];
-        if ($scope.store.entries) {
-          $scope.filterConfig.entries = $scope.store.entries;
-        }
+      $scope.filterConfig.entries = $scope.store.entries || 10;
 
-        $scope.$watchCollection("columns", function (cols) {
-          if (firstColCall) {
-            firstColCall = false;
-            if (!$scope.store.columns) {
-              $scope.store.columns = cols;
-            }
-          } else {
+      $scope.$watchCollection("columns", function (cols) {
+        if (firstColCall) {
+          firstColCall = false;
+          if (!$scope.store.columns) {
             $scope.store.columns = cols;
           }
-          $scope.columns = $scope.store.columns;
-        });
-      }
+        } else {
+          $scope.store.columns = cols;
+        }
+        $scope.columns = $scope.store.columns;
+      });
 
       $scope.$watch("selection.checkAll", function (newVal) {
         if (!$scope.data.results) {
@@ -191,17 +188,13 @@ app.directive("oadatatable", function () {
             "DESC": "ASC"
           }[$scope.filterConfig.sortorder];
         }
-        if ($scope.store) {
-          $scope.store.sortfield = $scope.filterConfig.sortfield;
-          $scope.store.sortorder = $scope.filterConfig.sortorder;
-        }
+        $scope.store.sortfield = $scope.filterConfig.sortfield;
+        $scope.store.sortorder = $scope.filterConfig.sortorder;
       };
 
       $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
         $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
-        if ($scope.store) {
-          $scope.store.entries = newVal;
-        }
+        $scope.store.entries = newVal;
       });
 
       $scope.searchModelOptions = {
