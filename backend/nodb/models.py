@@ -262,6 +262,21 @@ class NodbModel(models.Model):
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
 
+    def get_modified_fields(self):
+        """
+        Returns a dict of fields, which have changed. There are two known problems:
+
+        1. There is a race between get_modified_fields and the call to this.save()
+        2. A type change, e.g. str and unicode is not handled.
+        """
+        original = self.__class__.objects.get(pk=self.pk)
+        return {
+            field.attname: getattr(self, field.attname)
+            for field
+            in self.__class__._meta.fields
+            if getattr(self, field.attname) != getattr(original, field.attname)
+        }
+
 
 class DictField(Field):
     empty_strings_allowed = False
