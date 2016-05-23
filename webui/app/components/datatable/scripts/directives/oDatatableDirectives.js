@@ -40,7 +40,8 @@ app.directive("oadatatable", function () {
       selection: "=",
       data: "=",
       filterConfig: "=",
-      special: "="
+      special: "=",
+      tableName: "@"
     },
     link: function (scope, element, attr, controller, transclude) {
       transclude(scope, function (clone, scope) {
@@ -54,7 +55,7 @@ app.directive("oadatatable", function () {
         });
       });
     },
-    controller: function ($scope, $timeout, $http) {
+    controller: function ($scope, $localStorage, $http) {
       $scope.$watch(function () {
         return $http.pendingRequests.length > 0;
       }, function (value) {
@@ -71,6 +72,34 @@ app.directive("oadatatable", function () {
         checkAll: false,
         available: true
       };
+
+      if ($scope.tableName) {  // Save the table config to local storage.
+        var firstColCall = true;
+        var firstFilterCall = true;
+        if (!$localStorage.datatables) {
+          $localStorage.datatables = {};
+        }
+        if (!$localStorage.datatables[$scope.tableName]) {
+          $localStorage.datatables[$scope.tableName] = {};
+        }
+        $scope.store = $localStorage.datatables[$scope.tableName];
+        if ($scope.store.entries) {
+          $scope.filterConfig.entries = $scope.store.entries;
+        }
+
+        $scope.$watchCollection("columns", function (cols) {
+          if (firstColCall) {
+            firstColCall = false;
+            if (!$scope.store.columns) {
+              $scope.store.columns = cols;
+            }
+          } else {
+            $scope.store.columns = cols;
+          }
+          $scope.columns = $scope.store.columns;
+        });
+      }
+
       $scope.$watch("selection.checkAll", function (newVal) {
         if (!$scope.data.results) {
           return;
@@ -81,6 +110,7 @@ app.directive("oadatatable", function () {
           $scope.selection.items = [];
         }
       });
+
       $scope.toggleSelection = function (row, $event) {
         var idx;
         var add;
@@ -145,6 +175,13 @@ app.directive("oadatatable", function () {
       });
 
       $scope.sortByField = function (field, direction) {
+        if (firstFilterCall) {
+          firstFilterCall = false;
+          if ($scope.store.sortfield && $scope.store.sortorder) {
+            field = $scope.store.sortfield;
+            direction = $scope.store.sortorder;
+          }
+        }
         if ($scope.filterConfig.sortfield !== field) {
           $scope.filterConfig.sortfield = field;
           $scope.filterConfig.sortorder = direction || "ASC";
@@ -154,10 +191,17 @@ app.directive("oadatatable", function () {
             "DESC": "ASC"
           }[$scope.filterConfig.sortorder];
         }
+        if ($scope.store) {
+          $scope.store.sortfield = $scope.filterConfig.sortfield;
+          $scope.store.sortorder = $scope.filterConfig.sortorder;
+        }
       };
 
       $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
         $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
+        if ($scope.store) {
+          $scope.store.entries = newVal;
+        }
       });
 
       $scope.searchModelOptions = {
