@@ -161,12 +161,14 @@ class Client(object):
         otherwise, it'll be used directly as input for the mon_command and you'll have to specify
         the 'prefix' argument yourself.
 
-        Args:
-            cmd (str | dict): the command
-            argdict (dict): Additional Command-Parameters
+        :param cmd: the command
+        :type cmd: str | dict[str, Any]
+        :param argdict: Additional Command-Parameters
+        :type argdict: dict[str, Any]
+        :return: Return type is json (aka dict) if output_format == 'json' else str.
+        :rtype: str | dict[str, Any]
 
-        Returns:
-            Return type is json (aka dict) if output_format == 'json' else str.
+        :raises ExternalCommandError: The command failed.
         """
 
         if type(cmd) is str:
@@ -197,6 +199,7 @@ class MonApi(object):
 
     def __init__(self, client):
         self.client = client
+        """:type client: Client"""
 
     @staticmethod
     def _args_to_argdict(**kwargs):
@@ -287,3 +290,48 @@ class MonApi(object):
                                                              ruleset=ruleset,
                                                              expected_num_objects=expected_num_objects),
                                        output_format='string')
+
+    def osd_pool_set(self, pool, var, val, force=None):
+        """
+        COMMAND("osd pool set " \
+        "name=pool,type=CephPoolname " \
+        "name=var,type=CephChoices,strings=size|min_size|crash_replay_interval|pg_num|pgp_num|crush_ruleset|hashpspool|
+            nodelete|nopgchange|nosizechange|write_fadvise_dontneed|noscrub|nodeep-scrub|hit_set_type|hit_set_period|
+            hit_set_count|hit_set_fpp|use_gmt_hitset|debug_fake_ec_pool|target_max_bytes|target_max_objects|
+            cache_target_dirty_ratio|cache_target_dirty_high_ratio|cache_target_full_ratio|cache_min_flush_age|
+            cache_min_evict_age|auid|min_read_recency_for_promote|min_write_recency_for_promote|fast_read|
+            hit_set_grade_decay_rate|hit_set_search_last_n|scrub_min_interval|scrub_max_interval|deep_scrub_interval|
+            recovery_priority|recovery_op_priority|scrub_priority " \
+        "name=val,type=CephString " \
+        "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "set pool parameter <var> to <val>", "osd", "rw", "cli,rest")
+
+        :param pool: Pool name.
+        :type pool: str
+        :param var: The key
+        :type var: Any
+        :return: empty string.
+        """
+        return self.client.mon_command('osd pool set',
+                                       self._args_to_argdict(pool=pool, var=var, val=val, force=force),
+                                       output_format='string')
+
+    def osd_pool_delete(self, pool, pool2=None, sure=None):
+        """
+        COMMAND("osd pool delete " \
+        "name=pool,type=CephPoolname " \
+        "name=pool2,type=CephPoolname,req=false " \
+        "name=sure,type=CephChoices,strings=--yes-i-really-really-mean-it,req=false", \
+        "delete pool", \
+        "osd", "rw", "cli,rest")
+
+        :param pool: Pool name
+        :type pool: str
+        :param pool2: Second pool name
+        :type pool2: str
+        :param sure: should be "--yes-i-really-really-mean-it"
+        :type sure: str
+        :return: empty string
+        """
+        return self.client.mon_command('osd pool delete',
+                                       self._args_to_argdict(pool=pool, pool2=pool2, sure=sure), output_format='string')

@@ -145,6 +145,8 @@ class CephPoolViewSet(NodbViewSet):
 
     Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
     a queryset. It needs a context which isn't available when this position is evaluated.
+
+    .. warning:: Calling DELETE will *PERMANENTLY DESTROY* all data stored in this pool.
     """
 
     serializer_class = CephPoolSerializer
