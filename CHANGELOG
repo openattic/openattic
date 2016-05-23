@@ -4,7 +4,8 @@ openATTIC Changelog
 Version 2.0.12, (not released yet):
 -----------------------------------
 
-Backend: Added API call for creating new Ceph pools
+* Backend: Added API call for creating new Ceph pools (OP-1024)
+* Backend: Added field 'host' to Disks REST API resource (OP-1195)
 
 Version 2.0.11, 20. May 2016:
 -----------------------------
