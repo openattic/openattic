@@ -6,6 +6,9 @@ Version 2.0.12, (not released yet):
 
 * Backend: Added API call for creating new Ceph pools (OP-1024)
 * Backend: Added field 'host' to Disks REST API resource (OP-1195)
+* WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
+* WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
+* WebUI/QA: adapted wizard test cases to new wizard title (OP-1151, OP-1197)
 
 Version 2.0.11, 20. May 2016:
 -----------------------------
