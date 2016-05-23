@@ -1,7 +1,7 @@
 var helpers = require('../../common.js');
 var configs = require('../../configs.js');
 
-describe('Raw Block Storage Wizard', function(){
+describe('iSCSI/Fibre Channel target', function(){
 
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
@@ -39,10 +39,10 @@ describe('Raw Block Storage Wizard', function(){
     var dashboard = menu.get(0);
     dashboard.click();
   });
-  //<-- Raw Block Storage Wizard --->
-  it('should have a button "Raw Block Storage"; navigate through the wizard', function(){
+  //<-- iSCSI/Fibre Channel target Wizard --->
+  it('should have a button "iSCSI/Fibre Channel target"; navigate through the wizard', function(){
     var wizards = element.all(by.repeater('wizard in wizards')).then(function(wizards){
-      var block_wizard = wizards[2].element(by.cssContainingText('span', 'Raw Block Storage'));
+      var block_wizard = wizards[2].element(by.cssContainingText('span', 'iSCSI/Fibre Channel target'));
       expect(block_wizard.isDisplayed()).toBe(true);
       block_wizard.click();
 
@@ -55,7 +55,7 @@ describe('Raw Block Storage Wizard', function(){
     //check if angular expression contains 'Next' or 'Done
     var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
     expect(nextBtn.getText()).toEqual('Next');
-    expect(element(by.css('.tc_oawizard_h3')).getText()).toEqual('Raw Block Storage Step 1 - Create Volume');
+    expect(element(by.css('.tc_oawizard_h3')).getText()).toEqual('iSCSI/Fibre Channel target Step 1 - Create Volume');
     expect(volumefield.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);
     //expect(is_protected.Present()).toBe(true);
@@ -78,7 +78,7 @@ describe('Raw Block Storage Wizard', function(){
     nextBtn.click();
 
     //Step 2 - check at least the title then skip and available buttons
-    expect(element(by.css('.tc_step2')).getText()).toEqual('Raw Block Storage Step 2 - Create Mirror - Coming Soon...');
+    expect(element(by.css('.tc_step2')).getText()).toEqual('iSCSI/Fibre Channel target Step 2 - Create Mirror - Coming Soon...');
     expect(wizardOverviewBtn.isDisplayed()).toBe(true);
     expect(previousBtn.isDisplayed()).toBe(true);
     expect(nextBtn.getText()).toEqual('Next');
@@ -87,7 +87,7 @@ describe('Raw Block Storage Wizard', function(){
 
     //Step 3 - create LUN
 
-    expect(element(by.css('.tc_step3')).getText()).toEqual('Raw Block Storage Step 3 - Create a iSCSI/FC Share');
+    expect(element(by.css('.tc_step3')).getText()).toEqual('iSCSI/Fibre Channel target Step 3 - Create a Share');
 
     expect(wizardOverviewBtn.isDisplayed()).toBe(true);
     expect(previousBtn.isDisplayed()).toBe(true);
@@ -99,7 +99,7 @@ describe('Raw Block Storage Wizard', function(){
     nextBtn.click();
 
     //Finish
-    expect(element(by.css('.tc_wizardDone')).getText()).toEqual('Raw Block Storage Step 4 - Save configuration');
+    expect(element(by.css('.tc_wizardDone')).getText()).toEqual('iSCSI/Fibre Channel target Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
 
