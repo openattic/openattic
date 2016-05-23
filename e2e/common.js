@@ -190,7 +190,7 @@
           });
 
           wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
-            expect(block_title).toEqual('Raw Block Storage');
+            expect(block_title).toEqual('iSCSI/Fibre Channel target');
             //console.log(block_title);
           });
       });
