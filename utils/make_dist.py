@@ -14,7 +14,6 @@
 
 """Usage:
     make_dist.py create (stable|unstable) [--revision=<revision>] [--source=<source>] [-v|-q|-s]
-    make_dist.py selftest [<revision>] [<source>]
     make_dist.py cache push
     make_dist.py help
 
@@ -23,6 +22,10 @@ debs, rpms, etc.
 
 Options:
     --revision=<revision>   A valid mercurial revision. An existing mercurial tag for 'stable'.
+                            The revision is unsupported if a path is used as source. Uncommited
+                            changes of a path will be automatically committed and used to create the
+                            tarball. The source path is never touched, only a copy of it will be
+                            altered.
     --source=<source>       The source to be used. Either an URL or a path.
                             [default: https://bitbucket.org/openattic/openattic]
     -v                      Enables the verbose mode.
@@ -45,6 +48,11 @@ from hashlib import md5
 from docopt import docopt
 from urlparse import urlparse
 
+VERBOSITY_SCRIPT = -1
+VERBOSITY_QUIET = 0
+VERBOSITY_NORMAL = 1
+VERBOSITY_VERBOSE = 2
+
 
 class ProcessResult(object):
     def __init__(self, stdout, stderr, returncode):
@@ -62,21 +70,14 @@ class ProcessResult(object):
 class Process(object):
     """Convenient wrapper for `subprocess.Popen()`."""
 
-    def __init__(self, verbosity=1, exit_on_error=True, use_bold_font=True):
-        """
-        0 - Don't print anything.
-        1 - Print the executed command.
-        2 - Print the executed command with its output.
-
-        STDERR is always printed.
-        """
+    def __init__(self, verbosity=VERBOSITY_NORMAL, exit_on_error=True, use_bold_font=True):
         self.verbosity = verbosity
         self.exit_on_error = exit_on_error
         self.use_bold = use_bold_font
 
     def run(self, args, cwd=None, verbosity=None, exit_on_error=None, env=None):
         verbosity = verbosity if verbosity else self.verbosity
-        if verbosity > 0:
+        if verbosity > VERBOSITY_QUIET:
             self.log_command(args, cwd, self.use_bold)
 
         pipe = subprocess.Popen(args,
@@ -84,15 +85,29 @@ class Process(object):
                                 stdout=subprocess.PIPE,
                                 stdin=subprocess.PIPE,
                                 cwd=cwd,
-                                env=env)
+                                env=env,
 
-        process_communication = pipe.communicate()
-        result = ProcessResult(process_communication[0],
-                               process_communication[1],
-                               pipe.returncode)
+                                bufsize=1,
+                                close_fds=True
+                                )
 
-        if (verbosity > 1 and result.stdout) or not result.success():
-            print result.stdout.strip()
+        tmp_result = {'stdout': [], 'stderr': []}
+
+        for line in iter(pipe.stdout.readline, b''):
+            tmp_result['stdout'].append(line.strip())
+            if verbosity > VERBOSITY_NORMAL:
+                sys.stdout.write(line)
+                sys.stdout.flush()
+
+        if pipe.stderr:
+            for line in iter(pipe.stderr.readline, b''):
+                tmp_result['stderr'].append(line.strip())
+                sys.stderr.write(line)
+                sys.stderr.flush()
+
+        result = ProcessResult(os.linesep.join(tmp_result['stdout']),
+                               os.linesep.join(tmp_result['stderr']),
+                               returncode=pipe.wait())
 
         if not result.success():
             if result.stderr:
@@ -125,32 +140,33 @@ class Process(object):
         command = ' '.join(display_args)
         command = '\033[1m' + command + '\033[0m' if use_bold else command
 
-        print '# {}'.format(command) if not cwd else '{}# {}'.format(cwd, command)
+        sys.stdout.write('# {}\n'.format(command) if not cwd else '{}# {}\n'.format(cwd, command))
+        sys.stdout.flush()
 
 
 class DistBuilder(object):
+    OA_CACHE_REPO_URL = 'https://bitbucket.org/openattic/oa_cache'
+
     def __init__(self, source_dir, args=None):
         self._home_dir = os.environ['HOME']
         self._source_dir = source_dir
         self._args = args if args else docopt(__doc__)
 
-        source = self._args['--source']
-        self._source_is_path = urlparse(source).netloc == ''
-        self._hg_base_url = os.path.dirname(source)
-        self._repo_name = os.path.basename(source)
+        self._source = self._args['--source']
+        self._source_is_path = not DistBuilder.is_url(self._source)
+        self._source_basename = DistBuilder.get_basename(self._source)
+        self._oa_temp_build_dir = os.path.join(self._source_dir, self._source_basename)
+        self._version_txt_path = os.path.join(self._oa_temp_build_dir, 'version.txt')
+        self._package_json_path = os.path.join(self._oa_temp_build_dir, 'webui', 'package.json')
+        self._bower_json_path = os.path.join(self._oa_temp_build_dir, 'webui', 'bower.json')
 
-        repo_path = os.path.join(self._source_dir, self._repo_name)
-        self._version_txt_path = os.path.join(repo_path, 'version.txt')
-        self._package_json_path = os.path.join(repo_path, 'webui', 'package.json')
-        self._bower_json_path = os.path.join(repo_path, 'webui', 'bower.json')
-
-        self._verbosity = 1
+        self._verbosity = VERBOSITY_NORMAL
         if self._args['-q']:
-            self._verbosity = 0
+            self._verbosity = VERBOSITY_QUIET
         elif self._args['-v']:
-            self._verbosity = 2
+            self._verbosity = VERBOSITY_VERBOSE
         elif self._args['-s']:
-            self._verbosity = -1
+            self._verbosity = VERBOSITY_SCRIPT
 
         self._npmrc_file_path = os.path.join(self._home_dir, '.npmrc')
         self._npm_prefix_row = 'prefix = ~/.node'
@@ -161,6 +177,11 @@ class DistBuilder(object):
     def _log(self, message):
         if self._verbosity > 0:
             print message
+
+    @staticmethod
+    def is_url(string):
+        assert type(string) is str
+        return urlparse(string).netloc != ''
 
     @staticmethod
     def _warn(message):
@@ -178,7 +199,7 @@ class DistBuilder(object):
     def _get_latest_tag_of_rev(self):
         """Returns the latest global tag of the currently activated revision."""
         result = self._process.run(['hg', 'parents', '--template', '{latesttag}'],
-                                   cwd=os.path.join(self._source_dir, self._repo_name))
+                                   cwd=self._oa_temp_build_dir)
         return result.stdout
 
     def __get_all_tags(self, source_dir):
@@ -205,30 +226,19 @@ class DistBuilder(object):
             return map(int, match.groups()) if match else None
 
         def sort_version_number_desc(a, b):
-            if a[0] > b[0]:
+            if a > b:
                 return -1
-            elif a[0] < b[0]:
+            elif a < b:
                 return 1
             else:
-                if a[1] > b[1]:
-                    return -1
-                elif a[1] < b[1]:
-                    return 1
-                else:
-                    if a[2] > b[2]:
-                        return -1
-                    elif a[2] < b[2]:
-                        return 1
-                    else:
-                        return 0
+                return 0
 
         sorted_tags = sorted(iterable, key=extract_version_numbers, cmp=sort_version_number_desc)
 
         return sorted_tags
 
     def _get_latest_existing_tag(self, strip_tag=False):
-        source_dir = os.path.join(self._source_dir, self._repo_name)
-        tags = self.__get_all_tags(source_dir)
+        tags = self.__get_all_tags(self._oa_temp_build_dir)
         tags.remove('tip')  # We're looking for the latest _labeled_ tag.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
@@ -240,11 +250,13 @@ class DistBuilder(object):
         """Determine the upcoming version for 'unstable' releases.
 
         It returns the VERSION of the version.txt file in the repository."""
-        repo_dir = os.path.join(self._source_dir, self._repo_name)
+        self._process.run(['hg', 'pull', '-u'], cwd=self._oa_temp_build_dir)
 
-        self._process.run(['hg', 'pull', '-u'], cwd=repo_dir)
-        # Update to the given revision before determining the upcoming version.
-        self._process.run(['hg', 'update', revision], cwd=repo_dir)
+        if not self._source_is_path:
+            # Update to the given revision before determining the upcoming version. Don't do this if
+            # the source is a path, because that one is for creating tarballs to be tested before
+            # releasing them.
+            self._process.run(['hg', 'update', revision], cwd=self._oa_temp_build_dir)
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -323,33 +335,28 @@ class DistBuilder(object):
         sys.stderr.write(message + os.linesep)
         sys.exit(2)
 
-    def _clone_sources(self, source_dir, repo_names):
-        """Clones the sources to the specified directory.
+    def _retrieve_source(self, target_dir, source, skip_if_exists=False):
+        """Clones or copies the sources to the specified directory.
 
-        source_dir -- The directory where the repositories should be cloned to.
-        repo_names -- An array of repository names.
+        Skips the process if the target directory already exists. The target directory is determined
+        using the target_dir argument and the basename of the source.
+
+        :param target_dir: The directory where the sources should be cloned/copied to.
+        :param source: An array of sources. These may be paths or URLs.
+        :return:
         """
-        if not isdir(source_dir):
-            makedirs(source_dir)
+        if not isdir(target_dir):
+            makedirs(target_dir)
 
-        result = {}
-        for repo_name in repo_names:
-            result['repo_name'] = False
-            if not isdir(source_dir + '/' + repo_name):
-                if repo_name == 'oa_cache':
-                    repo_url = 'https://bitbucket.org/openattic/' + repo_name
-                else:
-                    repo_url = self._hg_base_url + '/' + repo_name
+        abs_source_dir = os.path.join(target_dir, DistBuilder.get_basename(source))
+        if isdir(abs_source_dir) and skip_if_exists:
+            self._log('Skipping retrieval of {} because it already exists'.format(source))
+            return
 
-                if repo_name != 'oa_cache' and self._source_is_path:
-                    self._process.run(['cp', '-r', repo_url, source_dir])
-                else:
-                    repo_target_dir = os.path.join(source_dir, repo_name)
-                    self._process.run(['hg', 'clone', repo_url, repo_target_dir])
-
-            result['repo_name'] = True
-
-        return result
+        if DistBuilder.is_url(source):
+            self._process.run(['hg', 'clone', source, abs_source_dir])
+        else:
+            self._process.run(['cp', '-r', source, abs_source_dir])
 
     @staticmethod
     def _strip_mercurial_tag(tag):
@@ -363,8 +370,7 @@ class DistBuilder(object):
         return hits[0][0] if hits else None  # Return first hit of first group or None.
 
     def _is_existing_tag(self, tag):
-        result = self._process.run(['hg', 'tags'],
-                                   cwd=os.path.join(self._source_dir, self._repo_name))
+        result = self._process.run(['hg', 'tags'], cwd=self._oa_temp_build_dir)
         matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
 
         return tag in matches if matches else False
@@ -388,7 +394,7 @@ class DistBuilder(object):
                 if self._is_existing_tag(revision):
                     build_basename += self._strip_mercurial_tag(revision)
                 else:
-                    # TODO Get the tag out of `version.txt` and increment it by one?
+                    # TODO Fetch the tag of `version.txt` and increment it by one?
                     raise NotImplementedError('Currently, this feature is unsupported')
 
         elif channel == 'unstable':
@@ -400,8 +406,7 @@ class DistBuilder(object):
         return build_basename
 
     def _delete_source_clone(self):
-        path = os.path.join(self._source_dir, self._repo_name)
-        rmtree(path)
+        rmtree(self._oa_temp_build_dir)
 
     def _create_source_tarball(self, build_basename):
         """
@@ -410,13 +415,9 @@ class DistBuilder(object):
         Remove previous version of the current build directory, generate the frontend cache files,
         update the version.txt and create the compressed tar archive.
 
-        It does also contain a temporary workaround for changing the debian/rules file to not
-        contain the rules to build the frontend files.
-
         :param build_basename:
         :return: The absolute file path of the created tarball
         """
-        openattic_repo_dir = os.path.join(self._source_dir, self._repo_name)
         abs_build_dir = os.path.join(self._source_dir, build_basename)
         abs_tarball_file_path = abs_build_dir + '.tar.bz2'
         bower_components_dir = os.path.join(abs_build_dir, 'webui', 'app', 'bower_components')
@@ -430,7 +431,7 @@ class DistBuilder(object):
             os.remove(abs_tarball_file_path)
 
         self._process.run(['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
-                          cwd=os.path.join(self._source_dir, self._repo_name))
+                          cwd=self._oa_temp_build_dir)
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
         cache = [{
@@ -474,10 +475,15 @@ class DistBuilder(object):
             rmtree(node_modules_dir)
 
         # Update version.txt.
-        state = 'stable' if self._args['--revision'] == 'stable' else 'snapshot'
+
+        if self._get_release_channel() == 'stable':
+            state = 'stable'
+        else:
+            state = 'snapshot'
+
         data = {
             'BUILDDATE': self._datestring,
-            'REV': self._get_current_revision_hash(openattic_repo_dir),
+            'REV': self._get_current_revision_hash(self._oa_temp_build_dir),
             'STATE': state
         }
         with file(os.path.join(abs_build_dir, 'version.txt'), 'a') as f:
@@ -520,23 +526,27 @@ class DistBuilder(object):
         """
         self._check_dependencies(['npm'])
         self._set_npmrc_prefix()
-        self._clone_sources(self._source_dir, ['oa_cache', self._repo_name])
+
+        # Delete any previous sources before retrieval but do not delete the oa_cache.
+        if isdir(self._oa_temp_build_dir):
+            rmtree(self._oa_temp_build_dir)
+
+        self._retrieve_source(self._source_dir, DistBuilder.OA_CACHE_REPO_URL, skip_if_exists=True)
+        self._retrieve_source(self._source_dir, self._source)
 
         channel = self._get_release_channel()
         revision = self._args['--revision'] or self._resolve_release_channel(channel)
 
-        self._process.run(['hg', 'pull', '--update'], os.path.join(self._source_dir, 'oa_cache'))
+        self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
         if self._source_is_path:
-            commands = [['hg', 'commit', '-A', '-m', 'Testbuild'],
-                        ['hg', 'tag', '-f', revision]]
+            commands = [['hg', 'commit', '-A', '-m', 'Testbuild']]
         else:
             commands = [['hg', 'pull'],
                         ['hg', 'update', '--clean', '-r', revision]]
 
-        oa_repo_path = os.path.join(self._source_dir, self._repo_name)
         for command in commands:
-            self._process.run(command, oa_repo_path)
+            self._process.run(command, cwd=self._oa_temp_build_dir)
 
         build_basename = self._get_build_basename(channel, revision)
         abs_tarball_file_path = self._create_source_tarball(build_basename)
@@ -548,52 +558,78 @@ class DistBuilder(object):
         if self._args['help']:
             print __doc__
             sys.exit(0)
-        elif self._args['selftest']:
-            self._self_test()
         elif self._args['cache'] and self._args['push']:
             self._push_remote_cache()
         elif self._args['create']:
+            if self._args['--revision'] and self._args['--source'] and self._source_is_path:
+                msg = 'Using a revision and a path as source is currently unsupported.'
+                raise NotImplementedError(msg)
             abs_tarball_file_path = self.build()
             if self._verbosity == -1:
                 print abs_tarball_file_path
             else:
                 print 'Tarball has been created: %s' % abs_tarball_file_path
 
-    def _self_test(self):
-        self._clone_sources(self._source_dir, [self._repo_name])
-        repo_dir = os.path.join(self._source_dir, self._repo_name)
-        rev = self._args['--revision'] or self._resolve_release_channel('stable')
-        if not self._source_is_path:
-            self._process.run(['hg', 'update', rev], cwd=repo_dir)
-            self._process.run(['hg', 'pull', '--update'], cwd=repo_dir)
-        unittest.main('make_dist', argv=[sys.argv[0]])
+    @staticmethod
+    def get_basename(source):
+        return os.path.basename(os.path.normpath(source))
 
 
-class DistBuilderTest(unittest.TestCase):
-    _dist_builder = None
-    version_regexp = r'\d+\.\d+\.\d+'
-    timestamp_regexp = r'20\d{8}'
+class DistBuilderTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls._dist_builder = DistBuilder(source_dir=os.path.join(os.environ['HOME'], 'src'),
-                                        args={'-q': True})
+    def test_get_basename(self):
+        sources = [
+            'http://bitbucket.org/openattic/openattic',
+            'http://bitbucket.org/openattic/openattic/',
+            '/root/src/openattic',
+            '/root/src/openattic/',
+        ]
+        self.assertEqual([DistBuilder.get_basename(source) for source in sources],
+                         ['openattic'] * len(sources))
 
-    def test_get_build_basename_stable(self):
-        build_basename = self._dist_builder._get_build_basename('stable', revision=None)
-        stable_build_regexp = self._dist_builder._repo_name + r'-' + self.version_regexp
-        print build_basename
-        self.assertRegexpMatches(build_basename, stable_build_regexp)
-
-    def test_get_build_basename_unstable(self):
-        build_name = self._dist_builder._get_build_basename('unstable', revision=None)
-        unstable_build_regexp = self._dist_builder._repo_name + r'-' + self.version_regexp + r'~' +\
-            self.timestamp_regexp
-        self.assertRegexpMatches(build_name, unstable_build_regexp)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls._dist_builder._delete_source_clone()
+    def test_sort_version_numbers(self):
+        version_numbers = [
+            'v1.2.0-2',
+            'v1.2.0-1',
+            'v1.1.1-1',
+            'v1.0.7-1',
+            'v0.7.4-2',
+            'v0.7.4-1',
+            'v2.0.1-gui',
+            'v2.0.0-gui',
+            'v2.0.1',
+            'v2.0.0',
+            'v1.2.1',
+            'v1.2.0',
+            'v1.1.1',
+            'v1.1.0',
+            'v1.0.7',
+            'v0.7.4',
+            'v2.0.2-1',
+            'v0.7.3',
+        ]
+        expected = [
+            'v2.0.2-1',
+            'v2.0.1-gui',
+            'v2.0.1',
+            'v2.0.0-gui',
+            'v2.0.0',
+            'v1.2.1',
+            'v1.2.0-2',
+            'v1.2.0-1',
+            'v1.2.0',
+            'v1.1.1-1',
+            'v1.1.1',
+            'v1.1.0',
+            'v1.0.7-1',
+            'v1.0.7',
+            'v0.7.4-2',
+            'v0.7.4-1',
+            'v0.7.4',
+            'v0.7.3'
+        ]
+        self.assertNotEqual(version_numbers, expected)
+        self.assertEqual(DistBuilder._sort_version_number_desc(version_numbers), expected)
 
 
 if __name__ == '__main__':
