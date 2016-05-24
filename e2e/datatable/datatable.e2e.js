@@ -219,7 +219,7 @@ describe('Should test oadatatable and its options', function(){
   });
 
   afterAll(function(){
-    console.log("datatable -> datatable.e2e.js -> 1st describe");
+    console.log("datatable -> datatable.e2e.js -> volume based");
   });
 });
 
@@ -298,6 +298,6 @@ describe('snapshot tab based datatable tests', function(){
     helpers.delete_volume(volume, volumename);
     helpers.delete_volume(secondVolume, secondVolumeName);
     helpers.delete_volume(thirdVolume, thirdVolumeName);
-    console.log("datatable -> datatable.e2e.js -> 2nd describe");
+    console.log("datatable -> datatable.e2e.js -> snapshot based");
   });
 });
