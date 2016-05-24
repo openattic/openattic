@@ -38,13 +38,9 @@ import re
 import unittest
 import shutil
 import docopt
-from make_dist import Process, ProcessResult
+from make_dist import Process
 from ConfigParser import SafeConfigParser
 from datetime import datetime
-
-
-class UnknownReleaseChannelError(Exception):
-    pass
 
 
 class FileNotFoundError(Exception):
@@ -119,7 +115,7 @@ class DebPackageBuilder(object):
         if name:
             match = re.search(r'.*?([\d\.]+)~?(\d+)?.*\.tar.*', name)
             if match:
-                return (match.group(1), match.group(2))
+                return match.group(1), match.group(2)
 
         raise ParsingError
 
@@ -152,12 +148,12 @@ class DebPackageBuilder(object):
     def build(self, release_channel, tarball_file_path):
         """Build the debian packages.
 
-        release_channel -- Either 'stable' or 'nightly'.
-        tarball_file_path -- The path of the tarball.
+        :param release_channel: Either 'stable' or 'nightly'
+        :type release_channel: str
+        :param tarball_file_path: The path of the tarball
+        :type tarball_file_path: str
         """
-
-        if release_channel not in ('stable', 'nightly'):
-            raise UnknownReleaseChannelError()
+        assert release_channel in ('stable', 'nightly')
 
         build_dir = os.path.join(os.environ['HOME'], 'src', 'deb_builds')
 
@@ -177,34 +173,36 @@ class DebPackageBuilder(object):
         new_tarball_file_path = os.path.join(build_dir, os.path.basename(tarball_file_path))
         self._process.run(['tar', 'xf', tarball_file_path, '-C', build_dir], cwd=build_dir)
 
+        config = SafeConfigParser()
+        config.read(os.path.join(source_dir, 'version.txt'))
+        version = config.get('package', 'VERSION') + '-1'
+        env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
+
         if release_channel == 'stable':
-            # Debchange has already been called at this point. Otherwise the script would'nt be able
-            # to create the stable deb files out of the tarball file, but also the checked out
-            # repository.
-            pass
-        elif release_channel == 'nightly' or release_channel == 'unstable':
-            config = SafeConfigParser()
-            config.read(os.path.join(source_dir, 'version.txt'))
-            version = config.get('package', 'VERSION') + '-1'
+            newversion = version
+            msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
+            distribution = 'unstable'
+        else:
+            distribution = 'nightly'
             pkgdate = config.get('package', 'BUILDDATE')
             hg_id = config.get('package', 'REV')
+            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
+            newversion = version + '~' + pkgdate
 
-            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate,
-                                                                                     hg_id)
-            env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon', }
-            # Adapt the file 'debian/changelog' to build nightly.
-            self._process.run(
-                [
-                    'debchange',
-                    '--distribution',
-                    'nightly',
-                    '--force-distribution',
-                    '-v',
-                    version + '~' + pkgdate,
-                    msg,
-                ],
-                cwd=source_dir,
-                env=env)
+        # Adapt the `debian/changelog` file.
+        self._process.run(
+            [
+                'debchange',
+                '--distribution',
+                distribution,
+                '--force-distribution',
+                '--force-bad-version',  # Allows the version to be lower than the current one.
+                '--newversion',
+                newversion,
+                msg,
+            ],
+            cwd=source_dir,
+            env=env)
 
         # Move/rename file to the necessary path for `debuild`.
         dst = os.path.join(build_dir, self.determine_deb_tarball_filename(new_tarball_file_path))
@@ -227,13 +225,13 @@ class DebPackageBuilder(object):
         # Sign the packages with changes file.
         self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
 
-        print
         print 'The packages have been created in %s' % build_dir
 
         if self._args['--publish']:
             self._publish_packages(build_dir, release_channel, version, changes_filename)
             print 'The packages have been published'
             # TODO Show the user what was uploaded optionally.. somehow..
+
 
 class DebPackageBuilderTest(unittest.TestCase):
     def test_detect_release_by_filename(self):
