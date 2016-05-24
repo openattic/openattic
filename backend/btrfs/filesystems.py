@@ -22,6 +22,7 @@ from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
 
+
 class Btrfs(FileSystem):
     name = "btrfs"
     desc = "BTRFS (Experimental)"
@@ -98,7 +99,7 @@ class Btrfs(FileSystem):
         return get_dbus_object("/btrfs")
 
     def format(self):
-        self.dbus_object.format( self.btrfs.storageobj.blockvolume.volume.path )
+        self.dbus_object.format(self.btrfs.storageobj.blockvolume.volume.path)
         self.write_fstab()
         self.mount()
         self.chown()
@@ -113,7 +114,8 @@ class Btrfs(FileSystem):
         if self.volume.storageobj.snapshot is None:
             return os.path.join(volumes_settings.MOUNT_PREFIX, self.btrfs.storageobj.name, subpath)
         else:
-            return os.path.join(volumes_settings.MOUNT_PREFIX, self.btrfs.storageobj.name, ".snapshots", subpath)
+            return os.path.join(volumes_settings.MOUNT_PREFIX, self.btrfs.storageobj.name,
+                                ".snapshots", subpath)
 
     @classmethod
     def check_type(cls, typestring):
@@ -130,6 +132,10 @@ class Btrfs(FileSystem):
     def delete_subvolume(self):
         # self represents the snapshot to be deleted.
         self.dbus_object.delete_subvolume(self.path)
+
+    def grow(self, oldmegs, newmegs):
+        self.dbus_object.btrfs_resize(self.path, newmegs)
+
 
 class BtrfsDevice(capabilities.Device):
     requires = [
@@ -149,13 +155,11 @@ class BtrfsDevice(capabilities.Device):
         capabilities.PosixACLCapability,
         capabilities.FileIOCapability,
         ]
-    removes  = [
+    removes = [
         capabilities.BlockbasedCapability,
         capabilities.BlockIOCapability,
         ]
 
+
 class BtrfsSubvolumeDevice(capabilities.Device):
     requires = BtrfsDevice
-
-
-

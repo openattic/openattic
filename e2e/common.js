@@ -18,7 +18,7 @@
   var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
 
-  var volumePoolSelect = element(by.id('data.sourcePool'));
+  var volumePoolSelect = element(by.model('pool'));
 
   module.exports = {
     configs: configs,
@@ -45,7 +45,7 @@
           break;
         }
       }
-      element(by.id('volumeName')).sendKeys(volumename);
+      element(by.model('result.name')).sendKeys(volumename);
       volumePoolSelect.sendKeys(poolName);
       element(by.id(type)).click();
       element(by.model('data.megs')).sendKeys(size);
@@ -190,7 +190,7 @@
           });
 
           wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
-            expect(block_title).toEqual('Raw Block Storage');
+            expect(block_title).toEqual('iSCSI/Fibre Channel target');
             //console.log(block_title);
           });
       });

@@ -25,12 +25,13 @@ from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
+from ceph.librados import MonApi, ExternalCommandError
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-from nodb.models import NodbModel
+from nodb.models import NodbModel, DictField
 
 from ceph import librados
 import ConfigParser
@@ -57,6 +58,7 @@ class CephCluster(NodbModel):
 
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
+    health = models.CharField(max_length=11)
 
     @staticmethod
     def has_valid_config_file():
@@ -114,23 +116,23 @@ class CephCluster(NodbModel):
         raise LookupError()
 
     @staticmethod
-    def get_all_objects(context=None):
+    def get_status(fsid, status_command='status'):
+        return rados[fsid].mon_command(status_command)
+
+    @staticmethod
+    def get_all_objects(context, query):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-            cluster = CephCluster(fsid=fsid, name=cluster_name)
-            cluster.pools = CephPool.objects.all({'cluster': cluster})
+            cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
+
+            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
             result.append(cluster)
 
         return result
 
     def __str__(self):
         return self.name
-
-
-class CephPoolHitSetParams(NodbModel):
-
-    type = models.CharField(max_length=100)
 
 
 class CephPoolTier(NodbModel):
@@ -140,28 +142,27 @@ class CephPoolTier(NodbModel):
 
 class CephPool(NodbModel):
 
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=False)
     cluster = models.ForeignKey(CephCluster)
     name = models.CharField(max_length=100)
-    replicated = models.BooleanField(default=None)
-    type = models.IntegerField()
-    erasure_coded = models.BooleanField(default=None)
-    erasure_code_profile = models.CharField(max_length=100)
-    last_change = models.IntegerField()
+    type = models.CharField(max_length=100)
+    # type is an undocumented dump of https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
+    erasure_code_profile = models.CharField(max_length=100, blank=True)
+    last_change = models.IntegerField(editable=False)
     quota_max_objects = models.IntegerField()
     quota_max_bytes = models.IntegerField()
     hashpspool = models.BooleanField(default=None)
-    full = models.BooleanField(default=None)
+    full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField()
     size = models.IntegerField()
     min_size = models.IntegerField()
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
-    num_bytes = models.IntegerField()
-    num_objects = models.IntegerField()
-    max_avail = models.IntegerField()
-    kb_used = models.IntegerField()
+    num_bytes = models.IntegerField(editable=False)
+    num_objects = models.IntegerField(editable=False)
+    max_avail = models.IntegerField(editable=False)
+    kb_used = models.IntegerField(editable=False)
     stripe_width = models.IntegerField()
     tier_of = models.IntegerField()
     write_tier = models.IntegerField()
@@ -169,12 +170,14 @@ class CephPool(NodbModel):
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
     hit_set_count = models.IntegerField()
-    hit_set_params = models.OneToOneField(CephPoolHitSetParams)
+    hit_set_params = DictField()
 
     @staticmethod
-    def get_all_objects(context):
+    def get_all_objects(context, query):
+        """:type context: ceph.restapi.FsidContext"""
+        assert context is not None
         result = []
-        cluster = context['cluster']
+        cluster = context.cluster
         fsid = cluster.fsid
 
         osd_dump_data = rados[fsid].mon_command('osd dump')
@@ -190,9 +193,7 @@ class CephPool(NodbModel):
                 'id': pool_id,
                 'cluster': cluster,
                 'name': pool_data['pool_name'],
-                'replicated': pool_data['erasure_code_profile'] == '',
-                'type': pool_data['type'],
-                'erasure_coded': pool_data['erasure_code_profile'] != '',
+                'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],
                 'erasure_code_profile': pool_data['erasure_code_profile'],
                 'last_change': pool_data['last_change'],
                 'hashpspool': 'hashpspool' in pool_data['flags_names'],
@@ -219,7 +220,7 @@ class CephPool(NodbModel):
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
                 'hit_set_count': pool_data['hit_set_count'],
-                'hit_set_params': CephPoolHitSetParams(**pool_data['hit_set_params']),
+                'hit_set_params': pool_data['hit_set_params'],
             }
 
             ceph_pool = CephPool(**object_data)
@@ -228,6 +229,187 @@ class CephPool(NodbModel):
             result.append(ceph_pool)
 
         return result
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        context = CephPool.objects.nodb_context
+        if force_insert:
+            MonApi(rados[context.fsid]).osd_pool_create(self.name,
+                                                        self.pg_num,
+                                                        self.pgp_num,
+                                                        'replicated' if self.replicated else 'erasure',
+                                                        self.erasure_code_profile)
+        elif force_update:
+            diff = self.get_modified_fields()
+            if 'pg_num' in diff != 'pgp_num' not in diff:
+                msg = 'pg_num modified but pgp_num unchanged. (or vice versa).'
+                raise ValidationError({'pg_num': msg, 'ppg_num': msg})
+            if 'pg_num' in diff:
+                if diff['pg_num'] != diff['pgp_num']:
+                    msg = 'pg_num must match pgp_num.'
+                    raise ValidationError({'pg_num': msg, 'ppg_num': msg})
+                try:
+                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "pg_num", diff['pg_num'])
+                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "ppg_num", diff['ppg_num'])
+                except ExternalCommandError, e:
+                    raise ValidationError({'pg_num': e.message, 'ppg_num': e.message})
+                return
+            raise ValueError('setting {} is not supported at the moment'.format(diff.keys()))
+        else:
+            raise ValueError('Expected force_insert=True or force_update=True')
+
+    def delete(self, using=None):
+        context = CephPool.objects.nodb_context
+        MonApi(rados[context.fsid]).osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+
+
+class CephOsd(NodbModel):
+    id = models.IntegerField(primary_key=True)
+    crush_weight = models.FloatField()
+    depth = models.IntegerField()
+    exists = models.IntegerField()
+    name = models.CharField(max_length=100)
+    primary_affinity = models.FloatField()
+    reweight = models.FloatField()
+    status = models.CharField(max_length=100)  # TODO: BooleanField() ??
+    type = models.CharField(max_length=100)
+    hostname = models.CharField(max_length=256)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        assert context is not None
+        osds = rados[context.fsid].list_osds()
+        return [CephOsd(id=osd["id"],
+                        crush_weight=osd["crush_weight"],
+                        depth=osd["depth"],
+                        exists=osd["exists"],
+                        name=osd["name"],
+                        primary_affinity=osd["primary_affinity"],
+                        reweight=osd["reweight"],
+                        status=osd["status"],
+                        type=osd["type"],
+                        hostname=osd["hostname"],) for osd in osds]
+
+
+class CephPg(NodbModel):
+
+    #  acting = ListField() ??
+    acting_primary = models.IntegerField()
+    #  blocked_by = ListField() ??
+    created = models.IntegerField()
+    last_active = models.DateTimeField(null=True)
+    last_became_active = models.DateTimeField()
+    last_became_peered = models.DateTimeField()
+    last_change = models.DateTimeField()
+    last_clean = models.DateTimeField()
+    last_clean_scrub_stamp = models.DateTimeField()
+    last_deep_scrub = models.DateTimeField()
+    last_deep_scrub_stamp = models.DateTimeField()
+    last_epoch_clean = models.IntegerField()
+    last_fresh = models.DateTimeField()
+    last_fullsized = models.DateTimeField()
+    last_peered = models.DateTimeField()
+    last_scrub = models.DateTimeField()
+    last_scrub_stamp = models.DateTimeField()
+    last_undegraded = models.DateTimeField()
+    last_unstale = models.DateTimeField()
+    log_size = models.IntegerField()
+    log_start = models.CharField(max_length=100)
+    mapping_epoch = models.IntegerField()
+    ondisk_log_size = models.IntegerField()
+    ondisk_log_start = models.CharField(max_length=100)
+    parent = models.CharField(max_length=100)
+    parent_split_bits = models.IntegerField()
+    pgid = models.CharField(max_length=100, primary_key=True)
+    reported_epoch = models.CharField(max_length=100)
+    reported_seq = models.CharField(max_length=100)
+    stat_sum = DictField()
+    state = models.CharField(max_length=100)
+    stats_invalid = models.CharField(max_length=100)
+    #  up = ListField?
+    up_primary = models.IntegerField()
+    version = models.CharField(max_length=100)
+
+    #  dummy fields for filtering
+    osd_id = models.IntegerField()
+    pool_name = models.CharField(max_length=100)
+
+    @staticmethod
+    def get_mon_command_by_query(query):
+        """
+        :type query: nodb.models.NoDbQuery
+
+        """
+        logger.debug('pg query = %s', query)
+
+        def get_argdict():
+            mapping = {
+                'osd_id__exact': 'osd',
+                'pool_name__exact': 'poolstr'
+            }
+            argdict = {}
+            if query.q is None:
+                return argdict
+            if len(query.q.children) != 1:
+                return argdict
+            if query.q.children[0] not in mapping.keys():
+                return argdict
+
+            return {mapping[query.q.children[0][0]]: str(query.q.children[0][1])}
+
+        def get_command():
+            mapping = {
+                'osd_id__exact': 'pg ls-by-osd',
+                'pool_name__exact': 'pg ls-by-pool'
+            }
+
+            if query.q is None or len(query.q.children) != 1:
+                return 'pg ls'
+            if query.q.children[0] not in mapping.keys():
+                return 'pg ls'
+
+            return mapping[query.q.children[0][0]]
+        return get_command(), get_argdict()
+
+    @classmethod
+    def make_model_args(cls, json_result):
+
+        def validate_field(field, json_result):
+            if field.attname not in json_result:
+                return False
+            try:
+                field.to_python(json_result[field.attname])
+                return True
+            except ValidationError:
+                return False
+
+        return {
+            field.attname: field.to_python(json_result[field.attname])
+            for field
+            in cls._meta.fields
+            if validate_field(field, json_result)
+        }
+
+    @staticmethod
+    def get_all_objects(context, query):
+        """:type context: ceph.restapi.FsidContext"""
+        assert context is not None
+        cmd, argdict = CephPg.get_mon_command_by_query(query)
+        try:
+            pgs = rados[context.fsid].mon_command(cmd, argdict)
+        except librados.ExternalCommandError, e:
+            logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
+            return []
+
+        ret = []
+        for pg in pgs:
+            model_args = CephPg.make_model_args(pg)
+            if 'osd' in argdict:
+                model_args['osd_id'] = argdict['osd']
+            if 'poolstr' in argdict:
+                model_args['pool_name'] = argdict['poolstr']
+            ret.append(CephPg(**model_args))
+        return ret
 
 
 class Cluster(StorageObject):
@@ -272,6 +454,9 @@ class Cluster(StorageObject):
 
     def get_mds_stat(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.name)))
+
+    def get_mds_dump(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_dump(self.name)))
 
     def get_mon_status(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.name)))

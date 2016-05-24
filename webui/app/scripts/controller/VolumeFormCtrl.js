@@ -41,7 +41,9 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
     mirrorPool: null,
     filesystem: ""
   };
+
   $scope.supported_filesystems = {};
+
   $scope.state = {
     created: false,
     mirrored: false,
@@ -51,45 +53,10 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
     properties: true,
     mirror: false
   };
-  $scope.selPoolUsedPercent = 0;
-
-  PoolService.query()
-      .$promise
-      .then(function (res) {
-        $scope.pools = res;
-      }, function (error) {
-        console.log("An error occurred", error);
-      });
-
-  $scope.$watch("data.sourcePool", function (sourcePool) {
-    if (sourcePool) {
-      $scope.volume.source_pool = { id: sourcePool.id };
-      $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used_pcnt).toFixed(2);
-      $scope.volumeForm.pool.$setValidity("usablesize", $scope.data.sourcePool.usage.free >= 100);
-
-      new PoolService(sourcePool).$filesystems()
-        .then(function (res) {
-          $scope.supported_filesystems = res;
-        }, function (error) {
-          console.log("An error occured", error);
-        });
-    } else {
-      if ($scope.volumeForm.pool) {
-        $scope.volumeForm.pool.$setValidity("usablesize", true);
-      }
-    }
-  });
-  $scope.$watch("data.megs", function (megs) {
-    $scope.volume.megs = SizeParserService.parseInt(megs);
-  });
 
   $scope.submitAction = function (volumeForm) {
-    $scope.submitted = true;
     if (volumeForm.$valid) {
       if (!$scope.state.created) {
-        if ($scope.data.filesystem !== "") {
-          $scope.volume.filesystem = $scope.data.filesystem;
-        }
         VolumeService.save($scope.volume)
             .$promise
             .then(function (res) {

@@ -30,27 +30,32 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.factory("Paginator", function ($resource) {
-  //return $resource("/openattic/api/ceph-cluster/:id", {
-  return $resource("/openattic/api/ceph/:id", {
-    id: "@id"
-  }, {
-    update: {method: "PUT"},
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
+var app = angular.module("openattic");
+app.directive("poolSelection", function () {
+  return {
+    restrict: "E",
+    scope: {
+      pool: "=",
+      validation: "=",
+      megs: "=",
+      submitted: "=",
+      wizard: "="
     },
-    clusters: {
-      method: "GET",
-      url: "/openattic/api/ceph"
-    },
-    pools: {
-      method: "GET",
-      url: "/openattic/api/ceph/:id/pools"
+    templateUrl: "templates/poolSelection.html",
+    controller: function ($scope, PoolService) {
+      PoolService.query()
+        .$promise
+        .then(function (res) {
+          $scope.pools = res;
+        }, function (error) {
+          console.log("An error occurred", error);
+        });
+      $scope.selPoolUsedPercent = 0;
+      $scope.$watch("pool", function (pool) {
+        if (pool) {
+          $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);
+        }
+      });
     }
-  });
+  };
 });

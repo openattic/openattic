@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
-
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
@@ -16,7 +15,9 @@
 
 from django.conf.urls import patterns
 
-urlpatterns = patterns('',
-    ( r'v/(?P<storageobj_id>\d+)/(?P<graph_title>[\s\w_\.\-\(\)/]+)\.png', 'nagios.views.storageobj_graph' ),
-    ( r'(?P<service_id>\d+)/(?P<srcidx>[\d\w_\.-]+)\.png', 'nagios.views.graph' ),
-    )
+urlpatterns = patterns(
+    '',
+    (r'^nagios/v/(?P<storageobj_id>\d+)/(?P<graph_title>[\s\w_\.\-\(\)/]+)\.png',
+     'nagios.views.storageobj_graph'),
+    (r'^nagios/(?P<service_id>\d+)/(?P<srcidx>[\d\w_\.-]+)\.png',
+     'nagios.views.graph'), )

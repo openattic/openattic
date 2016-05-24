@@ -7,7 +7,7 @@
             <i class="fa fa-fw fa-upload"></i>Resize
         </a>
         <a class="btn btn-sm btn-primary tc_clone_btn" type="button" ng-click="cloneAction()" ng-show="hasSelection && !multiSelection && !resizeable">
-            <i class="fa fa-fw fa-files-o"></i> Clone
+            <i class="fa fa-fw fa-files-o"></i>Clone
         </a>
         <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="multiSelection">
             <i class="fa fa-fw fa-trash-o"></i>Delete
@@ -67,9 +67,9 @@
                 ng-class="{ info: isRowSelected(row) }"
                 ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available">
-                    <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
+                    <input class="tc_checkboxes" type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
-                <td ng-show="columns['Name']" ng-bind="row.name"></td>
+                <td ng-show="columns['Name']" ng-bind="row.name" class="tc_volumeRowName"></td>
                 <td ng-show="columns['Size']" ng-bind="row.usage.size_text"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
