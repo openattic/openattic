@@ -49,31 +49,38 @@ app.directive("poolFsSupport", function () {
       $scope.filesystems = {
         lun: {
           btn: "LUN",
-          desc: "iSCSI, Fibre Channel shares and volume mirroring"
+          desc: "iSCSI, Fibre Channel shares and volume mirroring",
+          link: "https://en.wikipedia.org/wiki/Logical_unit_number"
         },
         xfs: {
           btn: "XFS",
-          desc: "recommended for virtualization, optimized for parallel IO"
+          desc: "recommended for virtualization, optimized for parallel IO",
+          link: "https://en.wikipedia.org/wiki/XFS"
         },
         zfs: {
           btn: "ZFS",
-          desc: "supports snapshots, deduplication and compression"
+          desc: "supports snapshots, deduplication and compression",
+          link: "https://en.wikipedia.org/wiki/ZFS"
         },
         btrfs: {
           btn: "Btrfs",
-          desc: "supports snapshots, compression - Experimental"
+          desc: "supports snapshots, compression - Experimental",
+          link: "https://en.wikipedia.org/wiki/Btrfs"
         },
         ext4: {
           btn: "ext4",
-          desc: "max. 1 EiB - Linux default"
+          desc: "max. 1 EiB - Linux default",
+          link: "https://en.wikipedia.org/wiki/Ext4"
         },
         ext3: {
           btn: "ext3",
-          desc: "max. 32TiB - old Linux default since 2010"
+          desc: "max. 32TiB - old Linux default since 2010",
+          link: "https://en.wikipedia.org/wiki/Ext3"
         },
         ext2: {
           btn: "ext2",
-          desc: "deprecated"
+          desc: "deprecated",
+          link: "https://en.wikipedia.org/wiki/Ext2"
         }
       };
 

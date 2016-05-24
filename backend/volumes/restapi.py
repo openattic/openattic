@@ -55,6 +55,7 @@ class PhysicalDiskSerializer(serializers.Serializer):
     serial = serializers.CharField()
     type = serializers.CharField()
     rpm = serializers.IntegerField()
+    host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
 class DiskSerializer(serializers.HyperlinkedModelSerializer):
