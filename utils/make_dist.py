@@ -216,7 +216,7 @@ class DistBuilder(object):
         return self._process.run(['which', command], exit_on_error=False).success()
 
     def _check_dependencies(self, commands):
-        """Check the existance of the given commands.
+        """Check the existence of the given commands.
 
         Fails if any command does not exist.
 
