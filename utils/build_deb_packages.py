@@ -63,6 +63,12 @@ class DebPackageBuilder(object):
 
     @staticmethod
     def detect_release_with_filename(tarball_filename):
+        """Detect the type of the release by the filename of the tarball.
+
+        :param tarball_filename:
+        :type tarball_filename: str
+        :return: nightly | stable
+        """
         stable_re = r'\w+[_-]\d+\.\d+(\.\d+)?[\w+\.]+'
         unstable_re = r'\w+[_-]\d+\.\d+\.\d+(\.\d+)?\~\d{12}[\w+\.]+'
 
@@ -80,26 +86,36 @@ class DebPackageBuilder(object):
         raise ParsingError
 
     @staticmethod
-    def determine_dirname_by_filename(fname):
-        """Determine the directory name of the tarball using the file name of the tarball."""
-        if not fname or not isinstance(fname, str):
+    def determine_dirname_by_filename(tarball_filename):
+        """Determine the directory name of the tarball using the file name of the tarball.
+
+        :param tarball_filename: The filename of the tarball
+        :type tarball_filename: str
+        :return: The name of the directory
+        """
+        if not tarball_filename or not isinstance(tarball_filename, str):
             raise ArgumentError
 
-        fname = os.path.basename(fname)
+        tarball_filename = os.path.basename(tarball_filename)
 
         regex = r'\.tar\.(bz2|gz|lxma|xz)$'
-        if re.search(regex, fname):
-            fname = re.sub(regex, '', fname)
+        if re.search(regex, tarball_filename):
+            tarball_filename = re.sub(regex, '', tarball_filename)
         else:
             raise ParsingError
 
-        fname = re.sub(r'\.orig$', '', fname)
+        dirname = re.sub(r'\.orig$', '', tarball_filename)
 
-        return fname
+        return dirname
 
     @staticmethod
     def determine_deb_tarball_filename(filepath):
-        """Determines the deb tarball filename for debian."""
+        """Determines the deb tarball filename for debian.
+
+        :param filepath: The path of the tarball
+        :type filepath: str
+        :return: The filename of the tarball
+        """
         basename = os.path.basename(filepath)
         regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)[\w~-]*(\.tar\.(bz2|gz|lxma|xz))$'
 
@@ -111,17 +127,32 @@ class DebPackageBuilder(object):
         raise ParsingError
 
     @staticmethod
-    def extract_version(name):
-        if name:
-            match = re.search(r'.*?([\d\.]+)~?(\d+)?.*\.tar.*', name)
+    def extract_version(filename):
+        """Extract the version of the given tarball filename.
+
+        :param filename:
+        :type filename: str
+        :return: A tuple with the version as first element and the datestring as second if it exists
+        """
+        if filename:
+            match = re.search(r'.*?([\d\.]+)~?(\d+)?.*\.tar.*', filename)
             if match:
                 return match.group(1), match.group(2)
 
         raise ParsingError
 
     def _publish_packages(self, pkgdir, release_channel, version, changes_filename):
-        """Publish a package using the `reprepro` command."""
+        """Publish a package using the `reprepro` command.
 
+        :param pkgdir:
+        :type pkgdir: str
+        :param release_channel:
+        :type release_channel: str
+        :param version: The version as first element and the datestring as second, if it exists
+        :type version: tuple
+        :param changes_filename:
+        :type changes_filename: str
+        """
         small_version = version[0]
         if version[1]:
             small_version += '~' + version[1]
@@ -322,9 +353,9 @@ class DebPackageBuilderTest(unittest.TestCase):
             '2.0.5': ParsingError,
         }
 
-        for name, expected_state in target_states.items():
+        for filename, expected_state in target_states.items():
             if isinstance(expected_state, tuple):
-                actual_state = DebPackageBuilder.extract_version(name)
+                actual_state = DebPackageBuilder.extract_version(filename)
                 msg = "Expected %s but found %s" % (repr(expected_state), repr(actual_state))
                 self.assertEqual(expected_state, actual_state, msg)
 

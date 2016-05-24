@@ -56,6 +56,14 @@ VERBOSITY_VERBOSE = 2
 
 class ProcessResult(object):
     def __init__(self, stdout, stderr, returncode):
+        """
+        :param stdout:
+        :type stdout: str
+        :param stderr:
+        :type stderr: str
+        :param returncode:
+        :type returncode: int
+        """
         self.stdout = stdout
         self.stderr = stderr
         self.returncode = returncode
@@ -64,6 +72,9 @@ class ProcessResult(object):
         return self.stdout
 
     def success(self):
+        """
+        :return: True | False
+        """
         return self.returncode == 0
 
 
@@ -119,11 +130,16 @@ class Process(object):
         return result
 
     def system(self, args, cwd):
-        """
-        Make a system call.
+        """Make a system call.
 
         The args aren't escaped automatically. Either don't pass user input to this function or
         escape it properly by using shlex.quote(s).
+
+        :param args: A list of arguments
+        :type args: list[str]
+        :param cwd: Current working directory
+        :type cwd: str
+        :return:
         """
         self.log_command(args, cwd, self.use_bold)
         os.chdir(cwd)
@@ -131,6 +147,15 @@ class Process(object):
 
     @staticmethod
     def log_command(args, cwd='', use_bold=True):
+        """Log a command call.
+
+        :param args: List of arguments
+        :type args: list[str]
+        :param cwd: Current working directory
+        :type cwd: str
+        :param use_bold:
+        :type use_bold: bool
+        """
         # Enquote args with more than one word.
         display_args = args[:]
         for i, arg in enumerate(display_args):
@@ -191,23 +216,32 @@ class DistBuilder(object):
         return self._process.run(['which', command], exit_on_error=False).success()
 
     def _check_dependencies(self, commands):
-        """Check if the given commands can be found and exit if they couldn't be found."""
+        """Check the existance of the given commands.
+
+        Fails if any command does not exist.
+
+        :param commands: A list of commands
+        :type commands: list[str]
+        """
         for command in commands:
             if not self._command_exists(command):
                 self._fail('Command %s not found!' % command)
 
     def _get_latest_tag_of_rev(self):
-        """Returns the latest global tag of the currently activated revision."""
+        """Return the latest global tag of the currently activated revision."""
         result = self._process.run(['hg', 'parents', '--template', '{latesttag}'],
                                    cwd=self._oa_temp_build_dir)
         return result.stdout
 
     def __get_all_tags(self, source_dir):
-        """
-        Returns a list of tags.
+        """Retrieve all tags of the specified mercurial source directory.
 
-        This function returns the latest tags independently from the currently activated revision
-        of the `source_dir`.
+        This function returns the latest tags independent from the currently activated revision
+        of the given `source_dir`.
+
+        :param source_dir: A path to a mercurial source directory
+        :type source_dir: str
+        :return: A list of tags
         """
         self._process.run(['hg', 'pull'], cwd=source_dir)
         tags = self._process.run(['hg', 'tags'], cwd=source_dir).stdout.split('\n')
@@ -247,9 +281,14 @@ class DistBuilder(object):
         return latest_tag
 
     def _determine_upcoming_version(self, revision):
-        """Determine the upcoming version for 'unstable' releases.
+        """Determine the version using the `version.txt`.
 
-        It returns the VERSION of the version.txt file in the repository."""
+        It returns the VERSION of the version.txt file in the repository. The version returned
+        depends on the given revision.
+
+        :param revision: A valid mercurial revision
+        :return: The version of the `version.txt`
+        """
         self._process.run(['hg', 'pull', '-u'], cwd=self._oa_temp_build_dir)
 
         if not self._source_is_path:
@@ -273,19 +312,22 @@ class DistBuilder(object):
         return version
 
     def _resolve_release_channel(self, channel):
-        """
-        Resolve the release channel (stable|unstable) to a valid Mercurial revision. This function
-        provides the default revision for calls of this script which do NOT provide a revision
-        argument.
+        """Resolve the release channel to a valid Mercurial revision.
 
-        'stable' resolves to the latest existing tag.
-        'unstable' resolves to the tip of the 'default' branch.
+        This function provides the default revision for calls of this script which do NOT provide a
+        revision argument, so that the revision has to be determined automatically. If the channel
+        is 'stable', the revision will resolve to the latest existing tag. If it's 'unstable' it'll
+        resolve to the tip of the default branch.
+
+        :param channel: 'stable' | 'unstable'
+        :type channel: str
+        :return: A valid mercurial revision
         """
         assert channel in ('stable', 'unstable')
         return self._get_latest_existing_tag() if channel == 'stable' else 'default'
 
     def _remove_npmrc_prefix(self):
-        """Remotes the `prefix` variable from the `~/.npmrc` file."""
+        """Remove the `prefix` variable from the `~/.npmrc` file."""
 
         with open(self._npmrc_file_path, 'r+') as npmrc:
             content = npmrc.read().split(os.linesep)
@@ -298,8 +340,7 @@ class DistBuilder(object):
             npmrc.write(os.linesep.join(result))
 
     def _set_npmrc_prefix(self):
-        """
-        Allows 'npm -g install' to be used without root privileges.
+        """Enable 'npm -g install' to be used without root privileges.
 
         Sets the 'prefix' variable in the ~/.npmrc. Creates the file if it
         doesn't exist. It will be extended if the file does already exist.
@@ -329,21 +370,24 @@ class DistBuilder(object):
 
     @staticmethod
     def _fail(message):
-        """
-        Writes a message to stderr and exits.
+        """Write a message to stderr and exit.
+
+        :param message: The message to print
+        :type message: str
         """
         sys.stderr.write(message + os.linesep)
         sys.exit(2)
 
     def _retrieve_source(self, target_dir, source, skip_if_exists=False):
-        """Clones or copies the sources to the specified directory.
+        """Clone or copy the sources to the specified directory.
 
         Skips the process if the target directory already exists. The target directory is determined
         using the target_dir argument and the basename of the source.
 
         :param target_dir: The directory where the sources should be cloned/copied to.
-        :param source: An array of sources. These may be paths or URLs.
-        :return:
+        :type target_dir: str
+        :param source: A list of sources. These may be paths or URLs.
+        :type source: list[str]
         """
         if not isdir(target_dir):
             makedirs(target_dir)
@@ -360,11 +404,14 @@ class DistBuilder(object):
 
     @staticmethod
     def _strip_mercurial_tag(tag):
-        """
-        Strips the tag to a version-only format. It omits the 'v' and unnecessarily added '-1'
-        suffix which is only used by packaging systems.
+        """Strip the given tag to a version-only format.
+
+        It omits the 'v' and unnecessarily added '-1' suffix which is only used by packaging
+        systems.
+
         :param tag:
-        :return: `None` or the stripped tag
+        :type tag: str
+        :return: `None` or the stripped mercurial tag
         """
         hits = re.findall(r'v?([^\-]+)(-\d)?', tag)
         return hits[0][0] if hits else None  # Return first hit of first group or None.
@@ -376,11 +423,14 @@ class DistBuilder(object):
         return tag in matches if matches else False
 
     def _get_build_basename(self, channel, revision):
-        """
-        Returns the base name for the given revision.
-        E.g. openattic-2.0.4 or openattic-2.0.5~201512021037
-        :param channel: stable, unstable
-        :return: the base name
+        """Return the base name for the given revision.
+
+        Depending on the channel, this may either like `openattic-2.0.4` or
+        `openattic-2.0.5~201512021037`.
+
+        :param channel: stable | unstable
+        :type channel: str
+        :return: The base name
         """
         assert channel in ('stable', 'unstable')
 
@@ -409,13 +459,13 @@ class DistBuilder(object):
         rmtree(self._oa_temp_build_dir)
 
     def _create_source_tarball(self, build_basename):
-        """
-        Make some modifications and create the tarball.
+        """Make some necessary modifications and create the tarball.
 
-        Remove previous version of the current build directory, generate the frontend cache files,
-        update the version.txt and create the compressed tar archive.
+        Remove the previous version of the current build directory, generate the frontend cache
+        files if necessary, update the version.txt and create the compressed tar archive.
 
         :param build_basename:
+        :type build_basename: str
         :return: The absolute file path of the created tarball
         """
         abs_build_dir = os.path.join(self._source_dir, build_basename)
@@ -502,11 +552,13 @@ class DistBuilder(object):
         return abs_tarball_file_path
 
     def _get_current_revision_hash(self, repo_dir):
-        """
-        Returns the long hash of the currently chosen revision of the given
-        repository directory.
-        :param repo_dir: The directory of the repository.
-        :return: The (long) hash of the changeset.
+        """Retrieve the hash of the current revision.
+
+        Returns the long hash of the currently active revision of the given repository directory.
+
+        :param repo_dir: The directory of the repository
+        :type repo_dir: str
+        :return: The long hash of the current changeset
         """
         result = self._process.run(['hg', '--debug', 'id', '-i'], cwd=repo_dir)
         return result.stdout.strip()
