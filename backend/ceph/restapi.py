@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd, CephPg
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd, CephPg, CephErasureCodeProfile
 from ceph.models import CephPoolTier
 
 from nodb.restapi import NodbSerializer, NodbViewSet
@@ -171,6 +171,26 @@ class PaginatedCephClusterSerializer(PaginationSerializer):
 
     class Meta:
         object_serializer_class = CephClusterSerializer
+
+
+class CephErasureCodeProfileSerializer(NodbSerializer):
+
+    class Meta:
+        model = CephErasureCodeProfile
+
+
+class CephErasureCodeProfileViewSet(NodbViewSet):
+    """Represents a Ceph erasure-code-profile."""
+
+    serializer_class = CephErasureCodeProfileSerializer
+    lookup_field = "name"
+
+    def __init__(self, **kwargs):
+        super(CephErasureCodeProfileViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
+    def get_queryset(self):
+        return CephErasureCodeProfile.objects.all()
 
 
 class CephOsdSerializer(NodbSerializer):

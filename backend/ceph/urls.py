@@ -15,12 +15,14 @@
 from django.conf.urls import patterns, url, include
 from rest_framework import routers
 
-from ceph.restapi import CephPoolViewSet, CephOsdViewSet, CephClusterViewSet, CephPgViewSet
+from ceph.restapi import CephPoolViewSet, CephOsdViewSet, CephClusterViewSet, CephPgViewSet, \
+    CephErasureCodeProfileViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'osds', CephOsdViewSet, 'osd')
 router.register(r'pools', CephPoolViewSet, 'pool')
 router.register(r'pgs', CephPgViewSet, 'pg')
+router.register(r'erasure-code-profiles', CephErasureCodeProfileViewSet, 'erasure-code-profile')
 
 cluster_router = routers.SimpleRouter(trailing_slash=False)
 cluster_router.register(r'ceph', CephClusterViewSet, 'ceph')

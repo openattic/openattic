@@ -14,6 +14,7 @@
 import json
 
 import django
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
@@ -276,6 +277,27 @@ class NodbModel(models.Model):
             in self.__class__._meta.fields
             if getattr(self, field.attname) != getattr(original, field.attname)
         }
+
+    @classmethod
+    def make_model_args(cls, json_result):
+
+        def validate_field(field, json_result):
+            # '-' is not supported for field names, but used by ceph.
+            json_key = field.attname.replace('_', '-')
+            if json_key not in json_result:
+                return False
+            try:
+                field.to_python(json_result[json_key])
+                return True
+            except ValidationError:
+                return False
+
+        return {
+            field.attname: field.to_python(json_result[field.attname.replace('_', '-')])
+            for field
+            in cls._meta.fields
+            if validate_field(field, json_result)
+            }
 
 
 class DictField(Field):
