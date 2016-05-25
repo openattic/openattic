@@ -263,6 +263,42 @@ class CephPool(NodbModel):
         MonApi(rados[context.fsid]).osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
 
 
+
+class CephErasureCodeProfile(NodbModel):
+    name = models.CharField(max_length=100, primary_key=True)
+    k = models.IntegerField()
+    m = models.IntegerField()
+    plugin = models.CharField(max_length=100, editable=False)
+    technique = models.CharField(max_length=100, editable=False)
+    jerasure_per_chunk_alignment = models.CharField(max_length=100, editable=False)
+    ruleset_failure_domain = models.CharField(max_length=100, blank=True,
+                                              choices=[('rack', 'rack'), ('host', 'host'), ('osd', 'osd')])
+    ruleset_root = models.CharField(max_length=100, editable=False)
+    w = models.IntegerField(editable=False)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        assert context is not None
+        return [CephErasureCodeProfile(name=profile,
+                                       **CephErasureCodeProfile.make_model_args(
+                                           MonApi(rados[context.fsid]).osd_erasure_code_profile_get(profile)
+                                       ))
+                for profile in MonApi(rados[context.fsid]).osd_erasure_code_profile_ls()]
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        context = self.__class__.objects.nodb_context
+        if not force_insert:
+            raise NotImplementedError('Updating is not supported.')
+        profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
+        if self.ruleset_failure_domain:
+            profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
+        MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
+
+    def delete(self, using=None):
+        context = self.__class__.objects.nodb_context
+        MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+
+
 class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True)
     crush_weight = models.FloatField()
@@ -370,25 +406,6 @@ class CephPg(NodbModel):
 
             return mapping[query.q.children[0][0]]
         return get_command(), get_argdict()
-
-    @classmethod
-    def make_model_args(cls, json_result):
-
-        def validate_field(field, json_result):
-            if field.attname not in json_result:
-                return False
-            try:
-                field.to_python(json_result[field.attname])
-                return True
-            except ValidationError:
-                return False
-
-        return {
-            field.attname: field.to_python(json_result[field.attname])
-            for field
-            in cls._meta.fields
-            if validate_field(field, json_result)
-        }
 
     @staticmethod
     def get_all_objects(context, query):
