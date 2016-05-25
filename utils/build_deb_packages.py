@@ -265,9 +265,11 @@ class DebPackageBuilder(object):
     def get_config_txt_values(tarball_source_dir):
         config = SafeConfigParser()
         config.read(os.path.join(tarball_source_dir, 'version.txt'))
+
         version = config.get('package', 'VERSION') + '-1'
         pkgdate = config.get('package', 'BUILDDATE')
         hg_id = config.get('package', 'REV')
+
         return version, pkgdate, hg_id
 
     def build(self, release_channel, tarball_file_path):
@@ -291,15 +293,7 @@ class DebPackageBuilder(object):
 
         self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
 
-        name = os.path.basename(tarball_file_path)
-        # Get the version.
-        version = self.extract_version(name)
-        small_version = version[0]
-        full_version = small_version + '-1'
-        if version[1]:
-            full_version += '~' + version[1]
-        changes_filename = 'openattic_%s_amd64.changes' % full_version
-
+        changes_filename = basename(glob.glob(os.path.join(build_dir, '*.changes'))[0])
         # Sign the packages with changes file.
         self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
 
@@ -308,7 +302,8 @@ class DebPackageBuilder(object):
         if self._args['--publish']:
             self._publish_packages(build_dir, release_channel, version, changes_filename)
             print 'The packages have been published'
-            # TODO Show the user what was uploaded optionally.. somehow..
+            # TODO Maybe ask the user to show what was uploaded?
+            #      Only if an interactive terminal is used.
 
 
 class DebPackageBuilderTest(unittest.TestCase):
