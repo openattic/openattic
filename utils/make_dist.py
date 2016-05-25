@@ -122,7 +122,7 @@ class Process(object):
             if result.stderr:
                 print result.stderr
             if self.exit_on_error is True and exit_on_error is not False:
-                print "Process exited with non-zero exit code. Exiting..."
+                print 'Process exited with exit code {}.'.format(result.returncode)
                 sys.exit(result.returncode)
 
         return result

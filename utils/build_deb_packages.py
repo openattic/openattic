@@ -31,13 +31,15 @@ Options:
 More sophisticated example:
     ./make_dist.py create stable -s | ./build_deb_packages.py -
 """
-
+import glob
 import os
 import sys
 import re
+import tempfile
 import unittest
 import shutil
 import docopt
+from os.path import isdir, isfile, basename
 from make_dist import Process
 from ConfigParser import SafeConfigParser
 from datetime import datetime
@@ -75,7 +77,7 @@ class DebPackageBuilder(object):
         if not tarball_filename or not isinstance(tarball_filename, str):
             raise ArgumentError
 
-        tarball_filename = os.path.basename(tarball_filename)
+        tarball_filename = basename(tarball_filename)
 
         # Test for unstable first, because the re it more exact.
         if re.match(unstable_re, tarball_filename):
@@ -96,7 +98,7 @@ class DebPackageBuilder(object):
         if not tarball_filename or not isinstance(tarball_filename, str):
             raise ArgumentError
 
-        tarball_filename = os.path.basename(tarball_filename)
+        tarball_filename = basename(tarball_filename)
 
         regex = r'\.tar\.(bz2|gz|lxma|xz)$'
         if re.search(regex, tarball_filename):
@@ -116,10 +118,10 @@ class DebPackageBuilder(object):
         :type filepath: str
         :return: The filename of the tarball
         """
-        basename = os.path.basename(filepath)
+        filename = basename(filepath)
         regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)[\w~-]*(\.tar\.(bz2|gz|lxma|xz))$'
 
-        match = re.search(regex, basename)
+        match = re.search(regex, filename)
         if match:
             filename = match.group(1) + '_' + match.group(2) + '.orig' + match.group(4)
             return filename
@@ -173,51 +175,78 @@ class DebPackageBuilder(object):
                changes_filename]
         self._process.run(cmd, cwd=pkgdir)
 
-    def build(self, release_channel, tarball_file_path):
-        """Build the debian packages.
+    def extract_tarball(self, tarball_file_path, destination):
+        """Extract a tarball and return the path to it's files.
 
-        :param release_channel: Either 'stable' or 'nightly'
-        :type release_channel: str
-        :param tarball_file_path: The path of the tarball
+        The path may not be `destination` but `destination` plus the folder of the tarball, if the
+        files are in that toplevel folder of the tarball. This method does the same as dpkg-source
+        to determine the directory structure of the tarball. The strategy is mentioned in the
+        best practices for .orig.tar.{gz,bz2,xz} files in section 6.7.8 and 6.7.81 of the following
+        document.
+
+        https://www.debian.org/doc/manuals/developers-reference/best-pkging-practices.html#pristinesource
+
         :type tarball_file_path: str
+        :param destination: The desired destination directory
+        :type destination: str
+        :rtype: str
+        :return: The path to the directory of the extracted content of the tarball
         """
-        assert release_channel in ('stable', 'nightly')
+        if not os.path.isfile(tarball_file_path):
+            raise FileNotFoundError()
 
+        # Extract the tarball to a temporary folder.
+        tmpdir = tempfile.mkdtemp()
+        self._process.run(['tar', 'xf', tarball_file_path, '-C', tmpdir])
+
+        dir_content = filter(isdir, glob.glob(os.path.join(tmpdir, '*')))
+        files = filter(isfile, dir_content)
+        directories = filter(isdir, dir_content)
+
+        # Check if the tarball contains only one directory.
+        if len(directories) == 1 and len(files) == 0:
+            source = directories[0]
+            destination = os.path.join(destination, basename(source))
+        else:
+            msg = 'Tarballs not containing a single directory aren\'t supported so far'
+            raise NotImplementedError(msg)
+
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
+
+        shutil.move(source, destination)
+        self._process.log_command(['mv', source, destination])
+
+        shutil.rmtree(tmpdir)
+        self._process.log_command(['rm', '-r', tmpdir])
+
+        return destination
+
+    @staticmethod
+    def get_empty_build_dir():
+        """Return an empty build directory.
+        :rtype: str
+        """
         build_dir = os.path.join(os.environ['HOME'], 'src', 'deb_builds')
-
         if os.path.isdir(build_dir):
             shutil.rmtree(build_dir)
         os.makedirs(build_dir)
 
-        if not os.path.isfile(tarball_file_path):
-            raise FileNotFoundError()
+        return build_dir
 
-        source_dir = os.path.join(build_dir, self.determine_dirname_by_filename(tarball_file_path))
-        if os.path.isdir(source_dir):
-            shutil.rmtree(source_dir)
-
-        # Extract the tarball.
-        shutil.copy(tarball_file_path, build_dir)
-        new_tarball_file_path = os.path.join(build_dir, os.path.basename(tarball_file_path))
-        self._process.run(['tar', 'xf', tarball_file_path, '-C', build_dir], cwd=build_dir)
-
-        config = SafeConfigParser()
-        config.read(os.path.join(source_dir, 'version.txt'))
-        version = config.get('package', 'VERSION') + '-1'
+    def adapt_debian_changelog(self, release_channel, version, pkgdate, hg_id, tarball_source_dir):
+        # Provide necessary information.
         env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
-
         if release_channel == 'stable':
             newversion = version
             msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
             distribution = 'unstable'
         else:
             distribution = 'nightly'
-            pkgdate = config.get('package', 'BUILDDATE')
-            hg_id = config.get('package', 'REV')
             msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
             newversion = version + '~' + pkgdate
 
-        # Adapt the `debian/changelog` file.
+        # Adapt the `debian/changelog` file via `debchange`.
         self._process.run(
             [
                 'debchange',
@@ -229,19 +258,40 @@ class DebPackageBuilder(object):
                 newversion,
                 msg,
             ],
-            cwd=source_dir,
+            cwd=tarball_source_dir,
             env=env)
 
-        # Move/rename file to the necessary path for `debuild`.
-        dst = os.path.join(build_dir, self.determine_deb_tarball_filename(new_tarball_file_path))
-        self._process.log_command(['mv', new_tarball_file_path, dst])
-        os.rename(new_tarball_file_path, dst)
+    @staticmethod
+    def get_config_txt_values(tarball_source_dir):
+        config = SafeConfigParser()
+        config.read(os.path.join(tarball_source_dir, 'version.txt'))
+        version = config.get('package', 'VERSION') + '-1'
+        pkgdate = config.get('package', 'BUILDDATE')
+        hg_id = config.get('package', 'REV')
+        return version, pkgdate, hg_id
 
-        self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=source_dir)
+    def build(self, release_channel, tarball_file_path):
+        """Build the debian packages.
 
-        # Sign the changes file.
-        name = os.path.basename(new_tarball_file_path)
+        :param release_channel: Either 'stable' or 'nightly'
+        :type release_channel: str
+        :param tarball_file_path: The path of the tarball
+        :type tarball_file_path: str
+        """
+        assert release_channel in ('stable', 'nightly')
 
+        build_dir = DebPackageBuilder.get_empty_build_dir()
+        tarball_source_dir = self.extract_tarball(tarball_file_path, build_dir)
+        self._process.log_command(['cp', tarball_file_path, build_dir])
+        shutil.copy(tarball_file_path, build_dir)
+        shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
+                    os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
+        version, pkgdate, hg_id = self.get_config_txt_values(tarball_source_dir)
+        self.adapt_debian_changelog(release_channel, version, pkgdate, hg_id, tarball_source_dir)
+
+        self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
+
+        name = os.path.basename(tarball_file_path)
         # Get the version.
         version = self.extract_version(name)
         small_version = version[0]
