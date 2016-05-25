@@ -144,13 +144,10 @@ class DebPackageBuilder(object):
     def _publish_packages(self, pkgdir, release_channel, version, changes_filename):
         """Publish a package using the `reprepro` command.
 
-        :param pkgdir:
         :type pkgdir: str
-        :param release_channel:
         :type release_channel: str
         :param version: The version as first element and the datestring as second, if it exists
         :type version: tuple
-        :param changes_filename:
         :type changes_filename: str
         """
         small_version = version[0]

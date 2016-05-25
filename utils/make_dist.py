@@ -26,7 +26,8 @@ Options:
                             changes of a path will be automatically committed and used to create the
                             tarball. The source path is never touched, only a copy of it will be
                             altered.
-    --source=<source>       The source to be used. Either an URL or a path.
+    --source=<source>       The source to be used. Either an URL to a Mercurial repository or local
+                            path to a Mercurial repository.
                             [default: https://bitbucket.org/openattic/openattic]
     -v                      Enables the verbose mode.
     -q                      Enables the quiet mode.
@@ -57,11 +58,8 @@ VERBOSITY_VERBOSE = 2
 class ProcessResult(object):
     def __init__(self, stdout, stderr, returncode):
         """
-        :param stdout:
         :type stdout: str
-        :param stderr:
         :type stderr: str
-        :param returncode:
         :type returncode: int
         """
         self.stdout = stdout
@@ -73,7 +71,7 @@ class ProcessResult(object):
 
     def success(self):
         """
-        :return: True | False
+        :rtype: bool
         """
         return self.returncode == 0
 
@@ -259,17 +257,7 @@ class DistBuilder(object):
             match = re.search(r'v?([\d]+)\.([\d]+)\.([\d]+).*', entry)
             return map(int, match.groups()) if match else None
 
-        def sort_version_number_desc(a, b):
-            if a > b:
-                return -1
-            elif a < b:
-                return 1
-            else:
-                return 0
-
-        sorted_tags = sorted(iterable, key=extract_version_numbers, cmp=sort_version_number_desc)
-
-        return sorted_tags
+        return sorted(iterable, key=extract_version_numbers, reverse=True)
 
     def _get_latest_existing_tag(self, strip_tag=False):
         tags = self.__get_all_tags(self._oa_temp_build_dir)
@@ -372,7 +360,6 @@ class DistBuilder(object):
     def _fail(message):
         """Write a message to stderr and exit.
 
-        :param message: The message to print
         :type message: str
         """
         sys.stderr.write(message + os.linesep)
@@ -386,8 +373,8 @@ class DistBuilder(object):
 
         :param target_dir: The directory where the sources should be cloned/copied to.
         :type target_dir: str
-        :param source: A list of sources. These may be paths or URLs.
-        :type source: list[str]
+        :param source: The source. These may be a path or a URL.
+        :type source: str
         """
         if not isdir(target_dir):
             makedirs(target_dir)
