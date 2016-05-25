@@ -11,6 +11,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from collections import deque
+from contextlib import contextmanager
 from itertools import product
 
 import rados
@@ -189,7 +191,7 @@ class Client(object):
                 json.dumps(dict(cmd, format=output_format, **argdict if argdict is not None else {})),
                 '',
                 timeout=self._default_timeout)
-
+            logger.debug('mod command {}, {}, {}'.format(cmd, argdict, err))
             if ret == 0:
                 return json.loads(out) if output_format == "json" else out
             else:
@@ -198,6 +200,48 @@ class Client(object):
 
 class ExternalCommandError(Exception):
     pass
+
+
+def undoable(func):
+    """decorator for undoable actions. See `undo_transaction` for starting a transaction
+
+    Inspired by http://undo.readthedocs.io/
+    """
+    def undo(runner):
+        try:
+            next(runner)
+        except StopIteration:
+            pass
+
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        runner = func(*args, **kwargs)
+        ret = next(runner)
+        stack = getattr(self, '_undo_stack', None)
+        if stack is not None:
+            stack.append(lambda: undo(runner))
+        return ret
+    return wrapper
+
+@contextmanager
+def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise_exception=False):
+    """Context manager for starting a transaction. Use `undoable` decorator for undoable actions.
+    :type undo_context: T <= object
+    :rtype: T
+    """
+    if getattr(undo_context, '_undo_stack', None) is not None:
+        raise ValueError('nested transations are not supported.')
+    try:
+        undo_context._undo_stack = deque()
+        yield undo_context
+        delattr(undo_context, '_undo_stack')
+    except exception_type:
+        stack = getattr(undo_context, '_undo_stack')
+        delattr(undo_context, '_undo_stack')
+        for undo_closure in reversed(stack):
+            undo_closure()
+        if re_raise_exception:
+            raise
 
 
 class MonApi(object):
@@ -214,6 +258,7 @@ class MonApi(object):
     def _args_to_argdict(**kwargs):
         return {k: v for (k,v) in kwargs.iteritems() if v is not None}
 
+    @undoable
     def osd_erasure_code_profile_set(self, name, profile=None):
         """
         COMMAND("osd erasure-code-profile set " \
@@ -230,9 +275,10 @@ class MonApi(object):
         :param profile: Reverse engineering revealed: this is in fact a list of strings.
         :type profile: list[str]
         """
-        return self.client.mon_command('osd erasure-code-profile set',
+        yield self.client.mon_command('osd erasure-code-profile set',
                                        self._args_to_argdict(name=name, profile=profile),
                                        output_format='string')
+        self.osd_erasure_code_profile_rm(name)
 
     def osd_erasure_code_profile_get(self, name):
         """
@@ -262,6 +308,7 @@ class MonApi(object):
         """
         return self.client.mon_command('osd erasure-code-profile ls')
 
+    @undoable
     def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None, ruleset=None, expected_num_objects=None):
         """
         COMMAND("osd pool create " \
@@ -290,7 +337,7 @@ class MonApi(object):
         """
         if pool_type == 'erasure' and not erasure_code_profile:
             raise ExternalCommandError('erasure_code_profile missing')
-        return self.client.mon_command('osd pool create',
+        yield self.client.mon_command('osd pool create',
                                        self._args_to_argdict(pool=pool,
                                                              pg_num=pg_num,
                                                              pgp_num=pgp_num,
@@ -299,8 +346,10 @@ class MonApi(object):
                                                              ruleset=ruleset,
                                                              expected_num_objects=expected_num_objects),
                                        output_format='string')
+        self.osd_pool_delete(pool, pool, "--yes-i-really-really-mean-it")
 
-    def osd_pool_set(self, pool, var, val, force=None):
+    @undoable
+    def osd_pool_set(self, pool, var, val, force=None, undo_previous_value=None):
         """
         COMMAND("osd pool set " \
         "name=pool,type=CephPoolname " \
@@ -321,9 +370,10 @@ class MonApi(object):
         :type var: Any
         :return: empty string.
         """
-        return self.client.mon_command('osd pool set',
+        yield self.client.mon_command('osd pool set',
                                        self._args_to_argdict(pool=pool, var=var, val=val, force=force),
                                        output_format='string')
+        self.osd_pool_set(pool, var, undo_previous_value)
 
     def osd_pool_delete(self, pool, pool2=None, sure=None):
         """
@@ -345,6 +395,7 @@ class MonApi(object):
         return self.client.mon_command('osd pool delete',
                                        self._args_to_argdict(pool=pool, pool2=pool2, sure=sure), output_format='string')
 
+    @undoable
     def osd_tier_add(self, pool, tierpool):
         """
         COMMAND("osd tier add " \
@@ -364,10 +415,12 @@ class MonApi(object):
 
         .. note:: storagepool is typically of type replicated and cachepool is of type erasure
         """
-        return self.client.mon_command('osd tier add',
+        yield self.client.mon_command('osd tier add',
                                        self._args_to_argdict(pool=pool, tierpool=tierpool),
                                        output_format='string')
+        self.osd_tier_remove(pool, tierpool)
 
+    @undoable
     def osd_tier_remove(self, pool, tierpool):
         """
         COMMAND("osd tier remove " \
@@ -381,11 +434,13 @@ class MonApi(object):
             >>> api.osd_tier_add('storagepool', 'cachepool')
             >>> api.osd_tier_remove('storagepool', 'cachepool')
         """
-        return self.client.mon_command('osd tier remove',
+        yield self.client.mon_command('osd tier remove',
                                        self._args_to_argdict(pool=pool, tierpool=tierpool),
                                        output_format='string')
+        self.osd_tier_add(pool, tierpool)
 
-    def osd_tier_cache_mode(self, pool, mode):
+    @undoable
+    def osd_tier_cache_mode(self, pool, mode, undo_previous_mode=None):
         """
         COMMAND("osd tier cache-mode " \
         "name=pool,type=CephPoolname " \
@@ -397,10 +452,12 @@ class MonApi(object):
 
         .. seealso:: method:`osd_tier_add`
         """
-        return self.client.mon_command('osd tier cache-mode',
+        yield self.client.mon_command('osd tier cache-mode',
                                        self._args_to_argdict(pool=pool, mode=mode),
                                        output_format='string')
+        self.osd_tier_cache_mode(pool, undo_previous_mode)
 
+    @undoable
     def osd_tier_set_overlay(self, pool, overlaypool):
         """
         COMMAND("osd tier set-overlay " \
@@ -412,11 +469,13 @@ class MonApi(object):
 
         Modifies the `read_tier` field of the storagepool
         """
-        return self.client.mon_command('osd tier set-overlay',
+        yield self.client.mon_command('osd tier set-overlay',
                                        self._args_to_argdict(pool=pool, overlaypool=overlaypool),
                                        output_format='string')
+        self.osd_tier_remove_overlay(pool)
 
-    def osd_tier_remove_overlay(self, pool):
+    @undoable
+    def osd_tier_remove_overlay(self, pool, undo_previous_overlay):
         """
         COMMAND("osd tier remove-overlay " \
         "name=pool,type=CephPoolname ", \
@@ -426,8 +485,9 @@ class MonApi(object):
 
         Modifies the `read_tier` field of the storagepool
         """
-        return self.client.mon_command('osd tier remove-overlay',
+        yield self.client.mon_command('osd tier remove-overlay',
                                        self._args_to_argdict(pool=pool),
                                        output_format='string')
+        self.osd_tier_set_overlay(pool, undo_previous_overlay)
 
 

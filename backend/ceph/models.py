@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-from ceph.librados import MonApi
+from ceph.librados import MonApi, undo_transaction
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from ifconfig.models import Host
@@ -238,60 +238,59 @@ class CephPool(NodbModel):
         """
         context = CephPool.objects.nodb_context
         insert = self.id is None
-        api = MonApi(rados[context.fsid])
-        if insert:
-            api.osd_pool_create(self.name,
-                                self.pg_num,
-                                self.pg_num,
-                                # second pg_num is in fact pgp_num, but we don't want to allow different values here.
-                                self.type,
-                                self.erasure_code_profile.name if self.erasure_code_profile else None)
+        with undo_transaction(MonApi(rados[context.fsid]), re_raise_exception=True) as api:
+            if insert:
+                api.osd_pool_create(self.name,
+                                    self.pg_num,
+                                    self.pg_num,
+                                    # second pg_num is in fact pgp_num, but we don't want to allow different values here.
+                                    self.type,
+                                    self.erasure_code_profile.name if self.erasure_code_profile else None)
 
-        diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
-        if not insert:
-            self.set_read_only_fields(original)
+            diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
+            if not insert:
+                self.set_read_only_fields(original)
 
-        def schwartzian_transform(obj):
-            key, val = obj
-            if key == 'tier_of_id':
-                return (1 if val is None else -1), obj  # move to start or end.
-            return 0, obj
+            def schwartzian_transform(obj):
+                key, val = obj
+                if key == 'tier_of_id':
+                    return (1 if val is None else -1), obj  # move to start or end.
+                return 0, obj
 
-        for key, value in sorted(diff.items(), key=schwartzian_transform):
-            if key == 'pg_num':
-                if not insert:
-                    api.osd_pool_set(self.name, "pg_num", value)
-                    api.osd_pool_set(self.name, "pgp_num", value)
-            elif key == 'cache_mode':
-                api.osd_tier_cache_mode(self.name, value)
-            elif key == 'tier_of_id':
-                if self.tier_of is None:
-                    tier_of_target = CephPool.objects.get(id=original.tier_of.id)
-                    api.osd_tier_remove(tier_of_target.name, self.name)
+            for key, value in sorted(diff.items(), key=schwartzian_transform):
+                if key == 'pg_num':
+                    if not insert:
+                        api.osd_pool_set(self.name, "pg_num", value, undo_previous_value=original.pg_num)
+                        api.osd_pool_set(self.name, "pgp_num", value, undo_previous_value=original.pg_num)
+                elif key == 'cache_mode':
+                    api.osd_tier_cache_mode(self.name, value, undo_previous_mode=original.cache_mode)
+                elif key == 'tier_of_id':
+                    if self.tier_of is None:
+                        tier_of_target = CephPool.objects.get(id=original.tier_of.id)
+                        api.osd_tier_remove(tier_of_target.name, self.name)
+                    else:
+                        tier_of_target = CephPool.objects.get(id=self.tier_of.id)
+                        api.osd_tier_add(tier_of_target.name, self.name)
+                elif key == 'read_tier_id':
+                    if self.read_tier is None:
+                        read_tier_target = CephPool.objects.get(id=original.read_tier.id)
+                        api.osd_tier_remove_overlay(self.name, undo_previous_overlay=read_tier_target.name)
+                    else:
+                        read_tier_target = CephPool.objects.get(id=self.read_tier.id)
+                        api.osd_tier_set_overlay(self.name, read_tier_target.name)
+                elif self.type == 'replicated' and key not in ['name']:
+                    api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
+                elif self.type == 'erasure' and key not in ['name', 'size']:
+                    api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
                 else:
-                    tier_of_target = CephPool.objects.get(id=self.tier_of.id)
-                    api.osd_tier_add(tier_of_target.name, self.name)
-            elif key == 'read_tier_id':
-                if self.read_tier is None:
-                    read_tier_target = CephPool.objects.get(id=original.read_tier.id)
-                    api.osd_tier_remove_overlay(self.name)
-                else:
-                    read_tier_target = CephPool.objects.get(id=self.read_tier.id)
-                    api.osd_tier_set_overlay(self.name, read_tier_target.name)
-            elif self.type == 'replicated' and key not in ['name']:
-                api.osd_pool_set(self.name, key, value)
-            elif self.type == 'erasure' and key not in ['name', 'size']:
-                api.osd_pool_set(self.name, key, value)
-            else:
-                logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not supported'.format(key, value, self.id, self.name))
-            
-        super(CephPool, self).save(*args, **kwargs)
+                    logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not supported'.format(key, value, self.id, self.name))
+
+            super(CephPool, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = MonApi(rados[context.fsid])
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
-
 
 
 class CephErasureCodeProfile(NodbModel):

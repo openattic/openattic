@@ -20,7 +20,8 @@ from django.test import TestCase
 
 import ceph.models
 
-from ceph.librados import Keyring
+from ceph.librados import Keyring, undoable, undo_transaction
+
 
 class ClusterTestCase(TestCase):
     def test_get_recommended_pg_num(self):
@@ -70,14 +71,14 @@ class CephPoolTestCase(TestCase):
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_insert(self, MonApi_mock, rados_mock, cephpool_objects_mock):
+    def test_insert(self, monApi_mock, rados_mock, cephpool_objects_mock):
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
         cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated')
 
         # Inserting new pool.
         pool = ceph.models.CephPool(name='test', pg_num=0, type='replicated')
         pool.save()
-        MonApi_mock.return_value.osd_pool_create.assert_called_with(pool='test', pg_num=0, pgp_num=0,
+        monApi_mock.return_value.osd_pool_create.assert_called_with(pool='test', pg_num=0, pgp_num=0,
                                                                     pool_type='replicated', erasure_code_profile=None)
         cephpool_objects_mock.get.assert_called_with(name='test')
         self.assertFalse(pool._state.adding)
@@ -87,20 +88,20 @@ class CephPoolTestCase(TestCase):
         pool.save()
         calls = [mock.call(pool='test', var='pg_num', val=1),
                  mock.call(pool='test', var='pgp_num', val=1)]
-        MonApi_mock.return_value.osd_pool_set.assert_has_calls(calls)
+        monApi_mock.return_value.osd_pool_set.assert_has_calls(calls)
 
         # Creating a pool tier.
         # FIXME: as get() returns pool with id=0, we cannot really use a different pool here.
-        MonApi_mock.return_value.osd_pool_set.reset_mock()
+        monApi_mock.return_value.osd_pool_set.reset_mock()
         pool = ceph.models.CephPool(id=0, name='test1', pg_num=0, type='replicated',
                                     tier_of=ceph.models.CephPool(id=999))
         pool.save()
-        MonApi_mock.return_value.osd_tier_add.assert_called_with(pool='test', tierpool='test1')
+        monApi_mock.return_value.osd_tier_add.assert_called_with(pool='test', tierpool='test1')
 
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_order(self, MonApi_mock, rados_mock, cephpool_objects_mock):
+    def test_call_order(self, monApi_mock, rados_mock, cephpool_objects_mock):
         """
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
@@ -116,7 +117,7 @@ class CephPoolTestCase(TestCase):
             mock.call.osd_tier_add('test', 'test1'),
             mock.call.osd_tier_cache_mode('test1', 'writeback')
         ]
-        MonApi_mock.return_value.assert_has_calls(calls)
+        monApi_mock.return_value.assert_has_calls(calls)
 
         # Checking the reverse order.
         # FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of, resulting
@@ -126,11 +127,120 @@ class CephPoolTestCase(TestCase):
                                                                       tier_of=ceph.models.CephPool(id=0, name='test',
                                                                                                    pg_num=0,
                                                                                                    type='replicated'))
-        MonApi_mock.return_value.reset_mock()
+        monApi_mock.return_value.reset_mock()
         pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated', cache_mode='none', tier_of=None)
         pool.save()
         calls = [
             mock.call.osd_tier_cache_mode('test', 'none'),
             mock.call.osd_tier_remove('test', 'test'),
         ]
-        MonApi_mock.return_value.assert_has_calls(calls)
+        monApi_mock.return_value.assert_has_calls(calls)
+
+
+class UndoFrameworkTest(TestCase):
+    class Foo(object):
+        def __init__(self):
+            self.val = 0
+
+        @undoable
+        def add(self, x):
+            self.val += x
+            yield self.val
+            self.val -= x
+
+        @undoable
+        def multi(self, x):
+            self.val *= x
+            yield self.val
+            self.val /= x
+
+        @undoable
+        def minus(self, x):
+            self.val -= x
+            yield self.val
+            self.add(x)
+
+        @undoable
+        def div(self):
+            self.val /= 0
+            yield self.val
+            assert False
+
+    def test_exception(self):
+        foo = UndoFrameworkTest.Foo()
+        foo.add(100)
+        with undo_transaction(foo, NotImplementedError):
+            self.assertEqual(foo.val, 100)
+            foo.add(4)
+            self.assertEqual(foo.val, 104)
+            foo.add(2)
+            self.assertEqual(foo.val, 106)
+            raise NotImplementedError()
+        self.assertEqual(foo.val, 100)
+
+    def test_success(self):
+        foo = UndoFrameworkTest.Foo()
+        foo.add(100)
+        self.assertEqual(foo.val, 100)
+        with undo_transaction(foo, NotImplementedError):
+            self.assertEqual(foo.val, 100)
+            self.assertEqual(foo.add(4), 104)
+            self.assertEqual(foo.val, 104)
+            foo.add(2)
+            self.assertEqual(foo.val, 106)
+        self.assertEqual(foo.val, 106)
+
+    def test_unknown_exception(self):
+        foo = UndoFrameworkTest.Foo()
+        try:
+            with undo_transaction(foo, NotImplementedError):
+                self.assertEqual(foo.val, 0)
+                foo.add(4)
+                self.assertEqual(foo.val, 4)
+                raise ValueError()
+        except ValueError:
+            self.assertEqual(foo.val, 4)
+            return
+        self.fail('no exception')
+
+    def test_broken_undo(self):
+        foo = UndoFrameworkTest.Foo()
+        try:
+            with undo_transaction(foo, NotImplementedError):
+                foo.add(4)
+                self.assertEqual(foo.val, 4)
+                foo.multi(0)
+                self.assertEqual(foo.val, 0)
+                raise NotImplementedError()
+        except NotImplementedError:
+            self.fail('wrong type')
+        except ZeroDivisionError:
+            return
+        self.fail('no exception')
+
+    def test_undoable_undo(self):
+        with undo_transaction(UndoFrameworkTest.Foo(), NotImplementedError) as foo:
+            self.assertEqual(foo.val, 0)
+            foo.add(4)
+            self.assertEqual(foo.val, 4)
+            self.assertEqual(foo.minus(1), 3)
+            self.assertEqual(foo.val, 3)
+            raise NotImplementedError()
+        self.assertEqual(foo.val, 0)
+
+    def test_excption_in_func(self):
+        foo = UndoFrameworkTest.Foo()
+        foo.add(100)
+        with undo_transaction(foo, ZeroDivisionError):
+            foo.add(4)
+            foo.div()
+            self.fail('div by 0')
+        self.assertEqual(foo.val, 100)
+
+    def test_re_raise(self):
+        try:
+            with undo_transaction(UndoFrameworkTest.Foo(), ValueError, re_raise_exception=True):
+                raise ValueError()
+        except ValueError:
+            return
+        self.fail('no exception')
