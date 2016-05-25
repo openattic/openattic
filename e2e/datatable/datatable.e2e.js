@@ -33,6 +33,7 @@ describe('Should test oadatatable and its options', function(){
 
   beforeAll(function(){
     helpers.login();
+    browser.executeScript('window.localStorage.clear();');
     helpers.create_volume(volumename, "zfs");
     helpers.create_volume(secondVolumeName, "xfs");
     helpers.create_volume(thirdVolumeName, "ext4");
@@ -170,6 +171,11 @@ describe('Should test oadatatable and its options', function(){
     expect(protectionColumn.isDisplayed()).toBe(false);
   });
 
+  it('should no longer display a column when deselected after reloading the page', function(){
+    browser.refresh();
+    expect(protectionColumn.isDisplayed()).toBe(false);
+  });
+
   it('should put the protection column back in', function(){
     columnListButton.click();
     protectionListItem.click();
@@ -197,6 +203,11 @@ describe('Should test oadatatable and its options', function(){
     expect(volumeRowElements.count()).toBe(2);
   });
 
+  it('should still display only two elements after reloading the page', function(){
+    browser.refresh();
+    expect(volumeRowElements.count()).toBe(2);
+  });
+
   it('should adapt table information of listed entries', function(){
     expect(element(by.css('.dataTables_info')).getText()).toContain('Showing 1 to 2 of');
   });
@@ -205,6 +216,10 @@ describe('Should test oadatatable and its options', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_10')).click();
     expect(volumeRowElements.count()).toBeGreaterThan(2);
+  });
+
+  afterAll(function(){
+    console.log("datatable -> datatable.e2e.js -> volume based");
   });
 });
 
@@ -261,6 +276,14 @@ describe('snapshot tab based datatable tests', function(){
     expect(snap2.getText()).toEqual(firstSnapName);
   });
 
+  it('should still have the new sort order after reloading the page', function(){
+    browser.refresh();
+    volume.click();
+    snapshotTab.click();
+    expect(snap1.getText()).toEqual(secSnapName);
+    expect(snap2.getText()).toEqual(firstSnapName);
+  });
+
   it('should put the oldest snapshot first', function(){
     created.click();
     browser.sleep(400);
@@ -275,6 +298,6 @@ describe('snapshot tab based datatable tests', function(){
     helpers.delete_volume(volume, volumename);
     helpers.delete_volume(secondVolume, secondVolumeName);
     helpers.delete_volume(thirdVolume, thirdVolumeName);
-    console.log("datatable -> datatable.e2e.js");
+    console.log("datatable -> datatable.e2e.js -> snapshot based");
   });
 });
