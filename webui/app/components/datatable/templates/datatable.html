@@ -57,8 +57,14 @@
         </div>
         <!-- end refresh -->
     </div>
-    <div class="table-responsive dataTables_content"></div>
-    <div class="dataTables_footer">
+
+    <!-- No records found -->
+    <div class="dataTables_no-match bg-warning" ng-show="data.count == 0 && data.$resolved">
+        No matching records found
+    </div>
+    <!-- end No records found -->
+    <div class="table-responsive dataTables_content" ng-show="data.count > 0"></div>
+    <div class="dataTables_footer" ng-show="data.count > 0">
         <!-- number of items -->
         <div class="dataTables_info">
             Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong>
