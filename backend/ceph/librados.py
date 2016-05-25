@@ -230,7 +230,7 @@ def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise
     :rtype: T
     """
     if getattr(undo_context, '_undo_stack', None) is not None:
-        raise ValueError('nested transations are not supported.')
+        raise ValueError('nested transaction are not supported.')
     try:
         undo_context._undo_stack = deque()
         yield undo_context
