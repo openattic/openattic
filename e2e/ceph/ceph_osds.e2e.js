@@ -55,5 +55,9 @@ describe('should test the ceph osd panel', function(){
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });
 
+  afterAll(function(){
+    console.log('OSDs -> ceph_osds.e2e.js');
+  });
+
 });
 
