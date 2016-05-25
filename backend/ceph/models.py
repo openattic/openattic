@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-from ceph.librados import MonApi, ExternalCommandError
+from ceph.librados import MonApi
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from ifconfig.models import Host
@@ -134,10 +134,11 @@ class CephCluster(NodbModel):
     def __str__(self):
         return self.name
 
+
 class CephPool(NodbModel):
 
     id = models.IntegerField(primary_key=True, editable=False)
-    cluster = models.ForeignKey(CephCluster)
+    cluster = models.ForeignKey(CephCluster, editable=False, null=True, blank=True)
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=100, choices=[('replicated', 'replicated'), ('erasure', 'erasure')])
     erasure_code_profile = models.ForeignKey("CephErasureCodeProfile", null=True, default=None, blank=True)
@@ -146,16 +147,16 @@ class CephPool(NodbModel):
     quota_max_bytes = models.IntegerField()
     full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
-    pgp_num = models.IntegerField()
+    pgp_num = models.IntegerField(editable=False)
     size = models.IntegerField()
-    min_size = models.IntegerField()
+    min_size = models.IntegerField(default=lambda: 1, null=True, editable=True)
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
     num_bytes = models.IntegerField(editable=False)
     num_objects = models.IntegerField(editable=False)
     max_avail = models.IntegerField(editable=False)
     kb_used = models.IntegerField(editable=False)
-    stripe_width = models.IntegerField()
+    stripe_width = models.IntegerField(editable=False)
     cache_mode = models.CharField(max_length=100, choices=[(c,c) for c in 'none|writeback|forward|readonly|readforward|readproxy'.split('|')])
     tier_of = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_tier_of')
     write_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_write_tier')
@@ -163,9 +164,9 @@ class CephPool(NodbModel):
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
     hit_set_count = models.IntegerField()
-    hit_set_params = JsonField(base_type=dict)
-    tiers = JsonField(base_type=list)
-    flags = JsonField(base_type=list)
+    hit_set_params = JsonField(base_type=dict, editable=False)
+    tiers = JsonField(base_type=list, editable=False)
+    flags = JsonField(base_type=list, editable=False)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -227,58 +228,67 @@ class CephPool(NodbModel):
 
         return result
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(self, *args, **kwargs):
+        """
+        This method implements three purposes.
+
+        1. Implements the functionaility originaly done by django (e.g. setting id on self)
+        2. Modify the Ceph state-machine in a sane way.
+        3. Providing a RESTful API.
+        """
         context = CephPool.objects.nodb_context
-        if force_insert:
-            MonApi(rados[context.fsid]).osd_pool_create(self.name,
-                                                        self.pg_num,
-                                                        self.pgp_num,
-                                                        self.type,
-                                                        self.erasure_code_profile.name if self.erasure_code_profile else None)
-        elif force_update:
-            diff, original = self.get_modified_fields()
-            if 'pg_num' in diff != 'pgp_num' not in diff:
-                msg = 'pg_num modified but pgp_num unchanged. (or vice versa).'
-                raise ValidationError({'pg_num': msg, 'ppg_num': msg})
-            if 'pg_num' in diff:
-                if diff['pg_num'] != diff['pgp_num']:
-                    msg = 'pg_num must match pgp_num.'
-                    raise ValidationError({'pg_num': msg, 'ppg_num': msg})
-                try:
-                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "pg_num", diff['pg_num'])
-                    MonApi(rados[context.fsid]).osd_pool_set(self.name, "ppg_num", diff['ppg_num'])
-                except ExternalCommandError, e:
-                    raise ValidationError({'pg_num': e.message, 'ppg_num': e.message})
-                return
-            if 'cache_mode' in diff:
-                MonApi(rados[context.fsid]).osd_tier_cache_mode(self.name, self.cache_mode)
-                return
-            if 'tier_of_id' in diff:
+        insert = self.id is None
+        api = MonApi(rados[context.fsid])
+        if insert:
+            api.osd_pool_create(self.name,
+                                self.pg_num,
+                                self.pg_num,
+                                # second pg_num is in fact pgp_num, but we don't want to allow different values here.
+                                self.type,
+                                self.erasure_code_profile.name if self.erasure_code_profile else None)
+
+        diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
+        if not insert:
+            self.set_read_only_fields(original)
+
+        def schwartzian_transform(obj):
+            key, val = obj
+            if key == 'tier_of_id':
+                return (1 if val is None else -1), obj  # move to start or end.
+            return 0, obj
+
+        for key, value in sorted(diff.items(), key=schwartzian_transform):
+            if key == 'pg_num':
+                if not insert:
+                    api.osd_pool_set(self.name, "pg_num", value)
+                    api.osd_pool_set(self.name, "pgp_num", value)
+            elif key == 'cache_mode':
+                api.osd_tier_cache_mode(self.name, value)
+            elif key == 'tier_of_id':
                 if self.tier_of is None:
                     tier_of_target = CephPool.objects.get(id=original.tier_of.id)
-                    MonApi(rados[context.fsid]).osd_tier_remove(tier_of_target.name, self.name)
+                    api.osd_tier_remove(tier_of_target.name, self.name)
                 else:
                     tier_of_target = CephPool.objects.get(id=self.tier_of.id)
-                    MonApi(rados[context.fsid]).osd_tier_add(tier_of_target.name, self.name)
-                return
-
-            if 'read_tier_id' in diff:
+                    api.osd_tier_add(tier_of_target.name, self.name)
+            elif key == 'read_tier_id':
                 if self.read_tier is None:
                     read_tier_target = CephPool.objects.get(id=original.read_tier.id)
-                    MonApi(rados[context.fsid]).osd_tier_remove_overlay(self.name)
+                    api.osd_tier_remove_overlay(self.name)
                 else:
                     read_tier_target = CephPool.objects.get(id=self.read_tier.id)
-                    MonApi(rados[context.fsid]).osd_tier_set_overlay(self.name, read_tier_target.name)
-                return
-
-            raise ValueError('setting {} is not supported at the moment'.format(diff.keys()))
-        else:
-            raise ValueError('Expected force_insert=True or force_update=True')
+                    api.osd_tier_set_overlay(self.name, read_tier_target.name)
+            elif key not in ['name']:
+                api.osd_pool_set(self.name, key, value)
+            else:
+                logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not supported'.format(key, value, self.id, self.name))
+            
+        super(CephPool, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
-        MonApi(rados[context.fsid]).osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+        api = MonApi(rados[context.fsid])
+        api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
 
 
 
@@ -347,9 +357,9 @@ class CephOsd(NodbModel):
 
 class CephPg(NodbModel):
 
-    acting = JsonField(base_type=list)
+    acting = JsonField(base_type=list, editable=False)
     acting_primary = models.IntegerField()
-    blocked_by = JsonField(base_type=list)
+    blocked_by = JsonField(base_type=list, editable=False)
     created = models.IntegerField()
     last_active = models.DateTimeField(null=True)
     last_became_active = models.DateTimeField()
@@ -377,10 +387,10 @@ class CephPg(NodbModel):
     pgid = models.CharField(max_length=100, primary_key=True)
     reported_epoch = models.CharField(max_length=100)
     reported_seq = models.CharField(max_length=100)
-    stat_sum = JsonField(base_type=dict)
+    stat_sum = JsonField(base_type=dict, editable=False)
     state = models.CharField(max_length=100)
     stats_invalid = models.CharField(max_length=100)
-    up = JsonField(base_type=list)
+    up = JsonField(base_type=list, editable=False)
     up_primary = models.IntegerField()
     version = models.CharField(max_length=100)
 

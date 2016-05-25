@@ -14,12 +14,12 @@
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import serializers, viewsets
-from rest_framework.fields import Field
+from rest_framework.fields import WritableField
 
 import nodb.models
 
 
-class JsonField(Field):
+class JsonField(WritableField):
 
     def to_native(self, value):
         """

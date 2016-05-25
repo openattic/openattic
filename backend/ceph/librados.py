@@ -168,7 +168,16 @@ class Client(object):
         :return: Return type is json (aka dict) if output_format == 'json' else str.
         :rtype: str | dict[str, Any]
 
-        :raises ExternalCommandError: The command failed.
+        :raises ExternalCommandError: The command failed with an error code instead of an exception.
+        :raises PermissionError: See rados.make_ex
+        :raises ObjectNotFound: See rados.make_ex
+        :raises IOError: See rados.make_ex
+        :raises NoSpace: See rados.make_ex
+        :raises ObjectExists: See rados.make_ex
+        :raises ObjectBusy: See rados.make_ex
+        :raises NoData: See rados.make_ex
+        :raises InterruptedOrTimeoutError: See rados.make_ex
+        :raises TimedOut: See rados.make_ex
         """
 
         if type(cmd) is str:
@@ -406,7 +415,6 @@ class MonApi(object):
         return self.client.mon_command('osd tier set-overlay',
                                        self._args_to_argdict(pool=pool, overlaypool=overlaypool),
                                        output_format='string')
-
 
     def osd_tier_remove_overlay(self, pool):
         """
