@@ -24,6 +24,30 @@
                             </span>
                         </div>
                     </div>
+                    <div class="form-group" ng-class="{'has-error': (submitted || iscsi.name.$dirty)
+                    && iscsi.name.$invalid}">
+                        <label class="col-sm-3 control-label" for="iscsi">iSCSI IQN</label>
+                        <div class="col-sm-9">
+                            <tags-input class="tags-input-home" placeholder="Add an IQN"
+                                        ng-model="data.iscsiInis"
+                                        on-tag-adding="validShareName($tag)"
+                                        on-tag-added="addShare($tag, 'iscsi')"
+                                        on-tag-removed="iniRemoved($tag)">
+                            </tags-input>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error': (submitted || wwn.name.$dirty)
+                    && wwn.name.$invalid}">
+                        <label class="col-sm-3 control-label" for="wwn">FC WWN</label>
+                        <div class="col-sm-9">
+                            <tags-input class="tags-input-home" placeholder="Add a WWN"
+                                        ng-model="data.fcInis"
+                                        on-tag-adding="validShareName($tag)"
+                                        on-tag-added="addShare($tag, 'qla2xxx')"
+                                        on-tag-removed="iniRemoved($tag)">
+                            </tags-input>
+                        </div>
+                    </div>
                 </fieldset>
             </div>
             <div class="panel-footer">
