@@ -278,7 +278,9 @@ class CephPool(NodbModel):
                 else:
                     read_tier_target = CephPool.objects.get(id=self.read_tier.id)
                     api.osd_tier_set_overlay(self.name, read_tier_target.name)
-            elif key not in ['name']:
+            elif self.type == 'replicated' and key not in ['name']:
+                api.osd_pool_set(self.name, key, value)
+            elif self.type == 'erasure' and key not in ['name', 'size']:
                 api.osd_pool_set(self.name, key, value)
             else:
                 logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not supported'.format(key, value, self.id, self.name))
