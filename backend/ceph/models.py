@@ -343,16 +343,8 @@ class CephOsd(NodbModel):
     def get_all_objects(context, query):
         assert context is not None
         osds = rados[context.fsid].list_osds()
-        return [CephOsd(id=osd["id"],
-                        crush_weight=osd["crush_weight"],
-                        depth=osd["depth"],
-                        exists=osd["exists"],
-                        name=osd["name"],
-                        primary_affinity=osd["primary_affinity"],
-                        reweight=osd["reweight"],
-                        status=osd["status"],
-                        type=osd["type"],
-                        hostname=osd["hostname"],) for osd in osds]
+
+        return [CephOsd(**CephOsd.make_model_args(osd)) for osd in osds]
 
 
 class CephPg(NodbModel):
