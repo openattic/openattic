@@ -232,7 +232,7 @@ class CephPool(NodbModel):
         """
         This method implements three purposes.
 
-        1. Implements the functionaility originaly done by django (e.g. setting id on self)
+        1. Implements the functionality originally done by django (e.g. setting id on self)
         2. Modify the Ceph state-machine in a sane way.
         3. Providing a RESTful API.
         """
@@ -243,7 +243,8 @@ class CephPool(NodbModel):
                 api.osd_pool_create(self.name,
                                     self.pg_num,
                                     self.pg_num,
-                                    # second pg_num is in fact pgp_num, but we don't want to allow different values here.
+                                    # second pg_num is in fact pgp_num, but we don't want to allow
+                                    # different values here.
                                     self.type,
                                     self.erasure_code_profile.name if self.erasure_code_profile else None)
 
