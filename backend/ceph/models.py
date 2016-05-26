@@ -157,7 +157,8 @@ class CephPool(NodbModel):
     max_avail = models.IntegerField(editable=False)
     kb_used = models.IntegerField(editable=False)
     stripe_width = models.IntegerField(editable=False)
-    cache_mode = models.CharField(max_length=100, choices=[(c,c) for c in 'none|writeback|forward|readonly|readforward|readproxy'.split('|')])
+    cache_mode = models.CharField(max_length=100, choices=[(c, c) for c in 'none|writeback|forward|readonly|'
+                                                                           'readforward|readproxy'.split('|')])
     tier_of = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_tier_of')
     write_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_write_tier')
     read_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True, related_name='related_read_tier')
@@ -176,7 +177,7 @@ class CephPool(NodbModel):
         cluster = context.cluster
         fsid = cluster.fsid
 
-        osd_dump_data = MonApi(rados).osd_dump()
+        osd_dump_data = MonApi(rados[fsid]).osd_dump()
         df_data = rados[fsid].mon_command('df')
 
         for pool_data in osd_dump_data['pools']:
@@ -191,7 +192,8 @@ class CephPool(NodbModel):
                 'name': pool_data['pool_name'],
                 'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],  # type is an undocumented dump of
                 # https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
-                'erasure_code_profile': CephErasureCodeProfile(name=pool_data['erasure_code_profile']) if pool_data['erasure_code_profile'] else None,
+                'erasure_code_profile': CephErasureCodeProfile(name=pool_data['erasure_code_profile']
+                                                               ) if pool_data['erasure_code_profile'] else None,
                 'last_change': pool_data['last_change'],
                 'full': 'full' in pool_data['flags_names'],
                 'min_size': pool_data['min_size'],
@@ -284,7 +286,8 @@ class CephPool(NodbModel):
                 elif self.type == 'erasure' and key not in ['name', 'size']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
                 else:
-                    logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not supported'.format(key, value, self.id, self.name))
+                    logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not '
+                                   'supported'.format(key, value, self.id, self.name))
 
             super(CephPool, self).save(*args, **kwargs)
 
@@ -374,9 +377,11 @@ class CephOsd(NodbModel):
                 elif key == 'reweight':
                     api.osd_crush_reweight(self.name, value, original.reweight)
                 else:
-                    logger.warning('Tried to set "{}" to "{}" on osd "{}", which is not supported'.format(key, value, self.name))
+                    logger.warning('Tried to set "{}" to "{}" on osd "{}", which is not '
+                                   'supported'.format(key, value, self.name))
 
             super(CephOsd, self).save(*args, **kwargs)
+
 
 class CephPg(NodbModel):
 

@@ -247,12 +247,13 @@ def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise
 class MonApi(object):
     """
     API source: https://github.com/ceph/ceph/blob/master/src/mon/MonCommands.h
-
     """
 
     def __init__(self, client):
+        """
+        :type client: Client
+        """
         self.client = client
-        """:type client: Client"""
 
     @staticmethod
     def _args_to_argdict(**kwargs):
