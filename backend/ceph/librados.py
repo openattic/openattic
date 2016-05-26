@@ -22,6 +22,8 @@ import glob
 import logging
 import ConfigParser
 
+import rbd
+
 logger = logging.getLogger(__name__)
 
 
@@ -527,3 +529,53 @@ class MonApi(object):
 
     def osd_dump(self):
         return self.client.mon_command('osd dump')
+
+
+class RbdApi(object):
+    """
+    http://docs.ceph.com/docs/master/rbd/librbdpy/
+    """
+
+    def __init__(self, client):
+        """
+        :type client: Client
+        """
+        self.cluster = client
+
+    def create(self, pool_name, image_name, size):
+        """
+        .. example::
+                >>> RbdApi().create('mypool', 'myimage',  4 * 1024 ** 3) # 4 GiB
+        """
+        ioctx = self.cluster._get_pool(pool_name)
+        rbd_inst = rbd.RBD()
+        rbd_inst.create(ioctx, image_name, size)
+
+    def remove(self, pool_name, image_name):
+        ioctx = self.cluster._get_pool(pool_name)
+        rbd_inst = rbd.RBD()
+        rbd_inst.remove(ioctx, image_name)
+
+    def list(self, pool_name):
+        """
+        :returns: list -- a list of image names
+        """
+        ioctx = self.cluster._get_pool(pool_name)
+        rbd_inst = rbd.RBD()
+        return rbd_inst.list(ioctx)
+
+    def image_stat(self, pool_name, name, snapshot=None):
+        """
+        :param name: the name of the image
+        :type name: str
+        :param snapshot: which snapshot to read from
+        :type snapshot: str
+        """
+        ioctx = self.cluster._get_pool(pool_name)
+        with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
+            return image.stat()
+
+    def image_resize(self, pool_name, name, size):
+        ioctx = self.cluster._get_pool(pool_name)
+        with rbd.Image(ioctx, name=name) as image:
+            return image.resize(size)

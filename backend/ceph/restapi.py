@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephOsd, CephPg, CephErasureCodeProfile
+from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
 
@@ -221,6 +221,26 @@ class CephPgViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephPg.objects.all()
+
+
+class CephRbdSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephRbd
+
+
+class CephRbdViewSet(NodbViewSet):
+    """Represents a Ceph RADOS block device aka RBD."""
+
+    filter_fields = ("name",)
+    serializer_class = CephRbdSerializer
+
+    def __init__(self, **kwargs):
+        super(CephRbdViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
+    def get_queryset(self):
+        return CephRbd.objects.all()
 
 
 RESTAPI_VIEWSETS = [

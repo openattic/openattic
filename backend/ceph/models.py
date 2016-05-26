@@ -15,26 +15,25 @@
 
 from __future__ import division
 
+import ConfigParser
+import itertools
 import json
+import logging
 import math
 import os
-import logging
 
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_noop as _
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
-
-from ceph.librados import MonApi, undo_transaction
-from systemd import get_dbus_object, dbus_to_python
-from systemd.helpers import Transaction
-from ifconfig.models import Host
-from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
-
-from nodb.models import NodbModel, JsonField
 
 from ceph import librados
-import ConfigParser
+from ceph.librados import MonApi, undo_transaction, RbdApi
+from ifconfig.models import Host
+from nodb.models import NodbModel, JsonField
+from systemd import get_dbus_object, dbus_to_python
+from systemd.helpers import Transaction
+from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
 
@@ -229,6 +228,9 @@ class CephPool(NodbModel):
             result.append(ceph_pool)
 
         return result
+
+    def __unicode__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         """
@@ -483,6 +485,65 @@ class CephPg(NodbModel):
                 model_args['pool_name'] = argdict['poolstr']
             ret.append(CephPg(**model_args))
         return ret
+
+
+class CephRbd(NodbModel):  # aka RADOS block device
+    name = models.CharField(max_length=100, primary_key=True)
+    pool = models.ForeignKey(CephPool)
+    size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
+    obj_size = models.IntegerField(editable=False)
+    num_objs = models.IntegerField(editable=False)
+    order = models.IntegerField(editable=False)
+    block_name_prefix = models.CharField(max_length=100, editable=False)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        assert context is not None
+        api = RbdApi(rados[context.fsid])
+
+        pools = CephPool.objects.all()
+        rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
+                                                         for pool in pools)))
+        rbds = ((dict(name=image_name, **api.image_stat(pool.name, image_name)), pool)
+                for (image_name, pool)
+                in rbd_name_pools)
+
+        return [CephRbd(pool=pool, **CephRbd.make_model_args(rbd))
+                for (rbd, pool)
+                in rbds]
+
+    def save(self, *args, **kwargs):
+        """
+        This method implements three purposes.
+
+        1. Implements the functionality originally done by django (e.g. setting id on self)
+        2. Modify the Ceph state-machine in a sane way.
+        3. Providing a RESTful API.
+        """
+        context = CephPool.objects.nodb_context
+        api = RbdApi(rados[context.fsid])
+        insert = self._state.adding  # there seems to be no id field.
+        if insert:
+            api.create(self.pool.name, self.name, self.size)
+
+        diff, original = self.get_modified_fields()
+        if not insert:
+            self.set_read_only_fields(original)
+
+        for key, value in diff.items():
+            if key == 'size':
+                assert not insert
+                api.image_resize(self.pool.name, self.name, value)
+            else:
+                logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
+                               'supported'.format(key, value, self.name))
+
+        super(CephRbd, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        context = CephPool.objects.nodb_context
+        api = RbdApi(rados[context.fsid])
+        api.remove(self.pool.name, self.name)
 
 
 class Cluster(StorageObject):
