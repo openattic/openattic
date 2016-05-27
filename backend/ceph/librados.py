@@ -536,20 +536,65 @@ class RbdApi(object):
     http://docs.ceph.com/docs/master/rbd/librbdpy/
     """
 
+    # https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
+    feature_mapping = {
+        rbd.RBD_FEATURE_LAYERING: 'layering',
+        rbd.RBD_FEATURE_STRIPINGV2: 'striping',
+        rbd.RBD_FEATURE_EXCLUSIVE_LOCK: 'exclusive-lock',
+        rbd.RBD_FEATURE_OBJECT_MAP: 'object-map',
+        rbd.RBD_FEATURE_FAST_DIFF: 'fast-diff',
+        rbd.RBD_FEATURE_DEEP_FLATTEN: 'deep-flatten',
+        rbd.RBD_FEATURE_JOURNALING: 'journaling',
+    }
+
+    @classmethod
+    def _bitmask_to_list(cls, features):
+        """
+        :type features: int
+        :rtype: list[str]
+        """
+        return [
+            cls.feature_mapping[key]
+            for key
+            in cls.feature_mapping.keys()
+            if key & features == key
+        ]
+
+    @classmethod
+    def _list_to_bitmask(cls, features):
+        """
+        :type features: list[str]
+        :rtype: int
+        """
+        return reduce(lambda l, r: l | r,
+                      [
+                          cls.feature_mapping.keys()[cls.feature_mapping.values().index(value)]
+                          for value
+                          in cls.feature_mapping.values()
+                          if value in features
+                      ],
+                      0)
+
     def __init__(self, client):
         """
         :type client: Client
         """
         self.cluster = client
 
-    def create(self, pool_name, image_name, size):
+    @undoable
+    def create(self, pool_name, image_name, size, features=None):
         """
         .. example::
-                >>> RbdApi().create('mypool', 'myimage',  4 * 1024 ** 3) # 4 GiB
+                >>> appi = RbdApi()
+                >>> api.create('mypool', 'myimage',  4 * 1024 ** 3) # 4 GiB
+                >>> api.remove('mypool', 'myimage')
+
+        :param: see :method:`image_features`
         """
         ioctx = self.cluster._get_pool(pool_name)
         rbd_inst = rbd.RBD()
-        rbd_inst.create(ioctx, image_name, size)
+        yield rbd_inst.create(ioctx, image_name, size, features=(RbdApi._list_to_bitmask(features) if features is not None else 0))
+        self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
         ioctx = self.cluster._get_pool(pool_name)
@@ -575,7 +620,28 @@ class RbdApi(object):
         with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
             return image.stat()
 
+    @undoable
     def image_resize(self, pool_name, name, size):
+        """This is marked as 'undoable' but as resizing an image is inherently destructive,
+        we cannot magically restore lost data."""
         ioctx = self.cluster._get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
-            return image.resize(size)
+            original_size = image.size()
+            yield image.resize(size)
+            image.resize(original_size)
+
+    def image_features(self, pool_name, name):
+        ioctx = self.cluster._get_pool(pool_name)
+        with rbd.Image(ioctx, name=name) as image:
+            return RbdApi._bitmask_to_list(image.features())
+
+    @undoable
+    def image_set_feature(self, pool_name, name, feature, enabled):
+        """:type enabled: bool"""
+        ioctx = self.cluster._get_pool(pool_name)
+        with rbd.Image(ioctx, name=name) as image:
+            bitmask = RbdApi._list_to_bitmask([feature])
+            if bitmask not in RbdApi.feature_mapping.keys():
+                raise ValueError(u'Feature "{}" is unknown.'.format(feature))
+            yield image.update_features(bitmask, enabled)
+            self.image_set_feature(pool_name, name, feature, not enabled)

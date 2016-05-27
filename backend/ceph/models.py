@@ -488,6 +488,9 @@ class CephPg(NodbModel):
 
 
 class CephRbd(NodbModel):  # aka RADOS block device
+    """
+    See http://tracker.ceph.com/issues/15448
+    """
     name = models.CharField(max_length=100, primary_key=True)
     pool = models.ForeignKey(CephPool)
     size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
@@ -495,6 +498,10 @@ class CephRbd(NodbModel):  # aka RADOS block device
     num_objs = models.IntegerField(editable=False)
     order = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
+    features = JsonField(base_type=list, null=True, blank=True,
+                         help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
+                                                                         for v
+                                                                         in RbdApi.feature_mapping.values()])))
 
     @staticmethod
     def get_all_objects(context, query):
@@ -504,7 +511,9 @@ class CephRbd(NodbModel):  # aka RADOS block device
         pools = CephPool.objects.all()
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
                                                          for pool in pools)))
-        rbds = ((dict(name=image_name, **api.image_stat(pool.name, image_name)), pool)
+        rbds = ((dict(name=image_name,
+                      features=api.image_features(pool.name, image_name),
+                      **api.image_stat(pool.name, image_name)), pool)
                 for (image_name, pool)
                 in rbd_name_pools)
 
@@ -521,24 +530,31 @@ class CephRbd(NodbModel):  # aka RADOS block device
         3. Providing a RESTful API.
         """
         context = CephPool.objects.nodb_context
-        api = RbdApi(rados[context.fsid])
         insert = self._state.adding  # there seems to be no id field.
-        if insert:
-            api.create(self.pool.name, self.name, self.size)
 
-        diff, original = self.get_modified_fields()
-        if not insert:
+        with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True) as api:
+
+            if insert:
+                api.create(self.pool.name, self.name, self.size, features=self.features)
+
+            diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
 
-        for key, value in diff.items():
-            if key == 'size':
-                assert not insert
-                api.image_resize(self.pool.name, self.name, value)
-            else:
-                logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
-                               'supported'.format(key, value, self.name))
+            for key, value in diff.items():
+                if key == 'size':
+                    assert not insert
+                    api.image_resize(self.pool.name, self.name, value)
+                if key == 'features':
+                    assert not insert
+                    for feature in set(original.features).difference(set(value)):
+                        api.image_set_feature(self.pool.name, self.name, feature, False)
+                    for feature in set(value).difference(set(original.features)):
+                        api.image_set_feature(self.pool.name, self.name, feature, True)
+                else:
+                    logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
+                                   'supported'.format(key, value, self.name))
 
-        super(CephRbd, self).save(*args, **kwargs)
+            super(CephRbd, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
