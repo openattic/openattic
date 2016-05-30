@@ -205,9 +205,10 @@ class ExternalCommandError(Exception):
 
 
 def undoable(func):
-    """decorator for undoable actions. See `undo_transaction` for starting a transaction
+    """decorator for undoable actions. See `undo_transaction` for starting a transaction.
 
-    Inspired by http://undo.readthedocs.io/
+    Inspired by http://undo.readthedocs.io/. The decorated method should use the side effect of the first value as
+    the "do" step and the side effect after the first element as the "undo" step.
     """
     def undo(runner):
         try:

@@ -36,7 +36,7 @@ app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesServi
 
   $scope.cifsFilter = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null,
@@ -49,7 +49,10 @@ app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesServi
     $scope.cifsFilter.volume = selitem;
   });
 
-  $scope.$watch("cifsFilter", function () {
+  $scope.$watch("cifsFilter", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     if (!$scope.cifsFilter.volume) {
       return;
     }
