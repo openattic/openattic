@@ -36,7 +36,7 @@ app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesServi
 
   $scope.httpFilter = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null,
@@ -49,7 +49,10 @@ app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesServi
     $scope.httpFilter.volume = selitem;
   });
 
-  $scope.$watch("httpFilter", function () {
+  $scope.$watch("httpFilter", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     if (!$scope.httpFilter.volume) {
       return;
     }

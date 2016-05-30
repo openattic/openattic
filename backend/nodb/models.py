@@ -12,8 +12,10 @@
  *  GNU General Public License for more details.
 """
 import json
+from itertools import product
 
 import django
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
@@ -262,34 +264,94 @@ class NodbModel(models.Model):
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
 
-    def get_modified_fields(self):
+    def get_modified_fields(self, **kwargs):
         """
         Returns a dict of fields, which have changed. There are two known problems:
 
         1. There is a race between get_modified_fields and the call to this.save()
         2. A type change, e.g. str and unicode is not handled.
+
+        :param kwargs: used to retrieve the original. default: `pk`
+        :rtype: tuple[dict[str, Any], T <= NodbModel]
+        :return: A tuple consisting of the diff and the original model instance
         """
-        original = self.__class__.objects.get(pk=self.pk)
+        if not kwargs:
+            kwargs['pk'] = self.pk
+
+        original = self.__class__.objects.get(**kwargs)
         return {
             field.attname: getattr(self, field.attname)
             for field
             in self.__class__._meta.fields
-            if getattr(self, field.attname) != getattr(original, field.attname)
-        }
+            if field.editable and getattr(self, field.attname) != getattr(original, field.attname)
+        }, original
+
+    def set_read_only_fields(self, obj, include_pk=True):
+        """
+        .. example::
+            >>> insert = self.id is None
+            >>> diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
+            >>> if not insert:
+            >>>     self.set_read_only_fields()
+        """
+        if include_pk:
+            self.pk = obj.pk
+
+        for field in self.__class__._meta.fields:
+            if not field.editable and getattr(self, field.attname) != getattr(obj, field.attname):
+                setattr(self, field.attname, getattr(obj, field.attname))
+
+    @classmethod
+    def make_model_args(cls, json_result):
+
+        def validate_field(field, json_result, score_or_underscore):
+            # '-' is not supported for field names, but used by ceph.
+            json_key = field.attname.replace('_', score_or_underscore)
+            if json_key not in json_result:
+                return False
+            try:
+                field.to_python(json_result[json_key])
+                return True
+            except ValidationError:
+                return False
+
+        return {
+            field.attname: field.to_python(json_result[field.attname.replace('_', score_or_underscore)])
+            for (field, score_or_underscore)
+            in product(cls._meta.fields, '_-')
+            if validate_field(field, json_result, score_or_underscore)
+            }
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        """This base implementation does nothing, except telling django that self is now successfully inserted."""
+        self._state.adding = False
 
 
-class DictField(Field):
+
+class JsonField(Field):
     empty_strings_allowed = False
 
+    def __init__(self, *args, **kwargs):
+        """
+        :param base_type: list | dict
+        :type base_type: type
+        :rtype: JsonField[T]
+        """
+        self.base_type = kwargs['base_type']
+        del kwargs['base_type']
+        super(JsonField, self).__init__(*args, **kwargs)
+
     def to_python(self, value):
+        """:rtype: T"""
         if value is None:
-            return dict()
-        if isinstance(value, dict):
+            return self.base_type()
+        if isinstance(value, self.base_type):
             return value
 
         try:
             parsed = json.loads(value)
-            if parsed is not None:
+            if isinstance(parsed, self.base_type):
                 return parsed
         except ValueError:
             raise exceptions.ValidationError(
@@ -303,3 +365,9 @@ class DictField(Field):
             code='invalid',
             params={'value': value},
         )
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(JsonField, self).deconstruct()
+        kwargs['base_type'] = self.base_type
+        return name, path, args, kwargs
+

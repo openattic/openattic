@@ -38,7 +38,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
 
   $scope.snapshotsFilter = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null,
@@ -66,7 +66,10 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
     $scope.dynSnap = volume || source;
   });
 
-  $scope.$watch("snapshotsFilter", function () {
+  $scope.$watch("snapshotsFilter", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     if (!$scope.snapshotsFilter.volume) {
       return;
     }

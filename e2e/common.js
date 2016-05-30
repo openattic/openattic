@@ -54,22 +54,6 @@
       return pool;
     },
 
-    //     create_zvol: function(type){
-    //       volumesItem.click();
-    //       element(by.css('oadatatable .tc_add_btn')).click();
-    //       for(var key in configs.pools){
-    //         element(by.id('volume.name')).sendKeys(volumename);
-    //         volumePoolSelect.click();
-    //         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
-    //         element(by.id(type)).click();
-    //         element(by.model('data.megs')).sendKeys('100MB');
-    //         element(by.css('.tc_submitButton')).click();
-    //         browser.sleep(configs.sleep);
-    //         break;
-    //       }
-    //     },
-
-
     delete_volume: function(volume, volumename){
       volumesItem.click();
       browser.sleep(400);
@@ -164,16 +148,6 @@
       element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
-    },
-
-    selectDropdownByIndex: function(dropdown, index){
-      dropdown.click();
-      if(index){
-        dropdown.all(by.tagName('option'))
-          .then(function(options){
-            options[index].click();
-          });
-      }
     },
 
     check_wizard_titles: function(){
