@@ -14,25 +14,23 @@
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import serializers, viewsets
-from rest_framework.fields import Field
+from rest_framework.fields import WritableField
 
 import nodb.models
 
 
-class DictField(Field):
+class JsonField(WritableField):
 
     def to_native(self, value):
         """
-        Returns:
-            Returns the value itself, not a string representation.
-
+        :return:Returns the value itself, not a string representation.
         """
         return value
 
 
 class NodbSerializer(serializers.ModelSerializer):
     field_mapping = dict(serializers.ModelSerializer.field_mapping.items()
-                         + [(nodb.models.DictField, DictField)])
+                         + [(nodb.models.JsonField, JsonField)])
 
 
 class NodbViewSet(viewsets.ModelViewSet):

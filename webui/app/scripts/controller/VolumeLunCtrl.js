@@ -36,7 +36,7 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal)
 
   $scope.lunFilter = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null,
@@ -49,7 +49,10 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal)
     $scope.lunFilter.volume = selitem;
   });
 
-  $scope.$watch("lunFilter", function () {
+  $scope.$watch("lunFilter", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     if (!$scope.lunFilter.volume) {
       return;
     }
