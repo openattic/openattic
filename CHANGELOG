@@ -14,6 +14,7 @@ Version 2.0.12, (not released yet):
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: adapted wizard test cases to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: Test the local storage capabilities of data tables (OP-1202)
+* Packaging: Adapted the build scripts to be able to create tarballs from different sources and revisions (OP-1118)
 
 Version 2.0.11, 20. May 2016:
 -----------------------------
