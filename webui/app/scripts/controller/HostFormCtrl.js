@@ -70,6 +70,12 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
             });
           }
         }
+        if ($scope.data.fcInis.length > 0) {
+          $scope.fc = {check: true};
+        }
+        if ($scope.data.iscsiInis.length > 0) {
+          $scope.iscsi = {check: true};
+        }
       }, function (error) {
         console.log("An error occurred", error);
       });
@@ -116,6 +122,17 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
         return;
       }
       var requests = [];
+      if ($scope.iscsi.check === false) {
+        $scope.data.iscsiInis.forEach(function (wwn) {
+          $scope.rmIni(wwn);
+        });
+      }
+      if ($scope.fc.check === false) {
+        $scope.data.fcInis.forEach(function (wwn) {
+          $scope.rmIni(wwn);
+        });
+      }
+
       var deletes = $scope.changes.filter(function (change) {
         return change.type === "delete";
       });
@@ -169,7 +186,7 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
     return $scope.wwns.indexOf(tag.text) === -1;
   };
 
-  $scope.addShare = function (tag, type) {
+  $scope.addIni = function (tag, type) {
     $scope.wwns.push(tag.text);
     $scope.changes.push({
       tag: tag,
@@ -177,7 +194,7 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
     });
   };
 
-  $scope.iniRemoved = function (tag) {
+  $scope.rmIni = function (tag) {
     $scope.wwns.splice($scope.wwns.indexOf(tag.text), 1);
     if (!tag.id) {
       $scope.changes.forEach(function (change, index) {

@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal) {
+app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -41,6 +41,14 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal) {
     sortfield: null,
     sortorder: null
   };
+
+  InitiatorService.get()
+    .$promise
+    .then(function (res) {
+      $scope.shares = res.results;
+    }, function (error) {
+      console.log("An error occurred", error);
+    });
 
   $scope.selection = {};
 
@@ -53,6 +61,26 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal) {
     })
         .$promise
         .then(function (res) {
+          res.results.forEach(function (host) {
+            host.iscsiIqn = [];
+            host.fcWwn = [];
+            var shares = $scope.shares.filter(function (share) {
+              return host.id === share.host.id;
+            });
+            shares.forEach(function (share) {
+              if (share.type === "iscsi") {
+                host.iscsiIqn.push({
+                  "text": share.wwn,
+                  "id": share.id
+                });
+              } else {
+                host.fcWwn.push({
+                  "text": share.wwn,
+                  "id": share.id
+                });
+              }
+            });
+          });
           $scope.data = res;
         })
         .catch(function (error) {
@@ -63,7 +91,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal) {
   $scope.$watch("selection.item", function (selitem) {
     $scope.hasSelection = Boolean(selitem);
     if (selitem) {
-      $state.go("hosts.attributes", {
+      $state.go("hosts.detail.status", {
         host: selitem.id,
         "#": "more"
       });

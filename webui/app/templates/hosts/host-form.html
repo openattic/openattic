@@ -2,7 +2,7 @@
     <form name="hostForm" role="form" class="form-horizontal" novalidate>
         <div class="panel panel-default">
             <div class="panel-heading tc_formHeadline">
-                <h3 ng-hide="editing" class="panel-title tc_hostAddTitle">Create Host: {{host.name}}</h3>
+                <h3 ng-hide="editing" class="panel-title tc_hostAddTitle">Add Host: {{host.name}}</h3>
                 <h3 ng-show="editing" class="panel-title tc_hostEditTitle">Edit Host: {{host.name}}</h3>
             </div>
             <div class="panel-body">
@@ -24,27 +24,41 @@
                             </span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox" ng-model="iscsi.check">
+                                <label ng-click="iscsi.check = !iscsi.check">Use ISCSI for sharing</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox" ng-model="fc.check">
+                                <label ng-click="fc.check = !fc.check">Use Fibre Channel for sharing</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group" ng-class="{'has-error': (submitted || iscsi.name.$dirty)
-                    && iscsi.name.$invalid}">
+                    && iscsi.name.$invalid}" ng-show="iscsi.check">
                         <label class="col-sm-3 control-label" for="iscsi">iSCSI IQN</label>
                         <div class="col-sm-9">
                             <tags-input class="tags-input-home" placeholder="Add an IQN"
                                         ng-model="data.iscsiInis"
                                         on-tag-adding="validShareName($tag)"
-                                        on-tag-added="addShare($tag, 'iscsi')"
-                                        on-tag-removed="iniRemoved($tag)">
+                                        on-tag-added="addIni($tag, 'iscsi')"
+                                        on-tag-removed="rmIni($tag)">
                             </tags-input>
                         </div>
                     </div>
                     <div class="form-group" ng-class="{'has-error': (submitted || wwn.name.$dirty)
-                    && wwn.name.$invalid}">
+                    && wwn.name.$invalid}" ng-show="fc.check">
                         <label class="col-sm-3 control-label" for="wwn">FC WWN</label>
                         <div class="col-sm-9">
                             <tags-input class="tags-input-home" placeholder="Add a WWN"
                                         ng-model="data.fcInis"
                                         on-tag-adding="validShareName($tag)"
-                                        on-tag-added="addShare($tag, 'qla2xxx')"
-                                        on-tag-removed="iniRemoved($tag)">
+                                        on-tag-added="addIni($tag, 'qla2xxx')"
+                                        on-tag-removed="rmIni($tag)">
                             </tags-input>
                         </div>
                     </div>
