@@ -149,7 +149,7 @@ class CephPool(NodbModel):
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField(editable=False)
     size = models.IntegerField()
-    min_size = models.IntegerField(default=lambda: 1, null=True, editable=True)
+    min_size = models.IntegerField(default=1, null=True, editable=True)
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
     num_bytes = models.IntegerField(editable=False)
