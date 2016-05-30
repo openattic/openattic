@@ -36,7 +36,7 @@ app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService
 
   $scope.nfsFilter = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null,
@@ -49,7 +49,10 @@ app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService
     $scope.nfsFilter.volume = selitem;
   });
 
-  $scope.$watch("nfsFilter", function () {
+  $scope.$watch("nfsFilter", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     if (!$scope.nfsFilter.volume) {
       return;
     }

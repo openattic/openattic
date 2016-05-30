@@ -9,8 +9,6 @@ describe('Volumes add', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var submitButton = element(by.css('.tc_submitButton'));
   var addBtn = element(by.css('.tc_add_btn'));
-  var volumePoolSelect = element(by.model('pool'));
-
 
   var usePool = function(pool, callback){
     volumePoolSelect.sendKeys(pool.name);
