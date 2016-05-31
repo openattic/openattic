@@ -248,12 +248,13 @@ def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise
 class MonApi(object):
     """
     API source: https://github.com/ceph/ceph/blob/master/src/mon/MonCommands.h
-
     """
 
     def __init__(self, client):
+        """
+        :type client: Client
+        """
         self.client = client
-        """:type client: Client"""
 
     @staticmethod
     def _args_to_argdict(**kwargs):
@@ -491,4 +492,39 @@ class MonApi(object):
                                        output_format='string')
         self.osd_tier_set_overlay(pool, undo_previous_overlay)
 
+    @undoable
+    def osd_out(self, name):
+        """
+        COMMAND("osd out " \
+        "name=ids,type=CephString,n=N", \
+        "set osd(s) <id> [<id>...] out", "osd", "rw", "cli,rest")
+        """
+        yield self.client.mon_command('osd out', self._args_to_argdict(name=name), output_format='string')
+        self.osd_in(name)
 
+    @undoable
+    def osd_in(self, name):
+        """
+        COMMAND("osd in " \
+        "name=ids,type=CephString,n=N", \
+        "set osd(s) <id> [<id>...] in", "osd", "rw", "cli,rest")
+        """
+        yield self.client.mon_command('osd in', self._args_to_argdict(name=name), output_format='string')
+        self.osd_out(name)
+
+    @undoable
+    def osd_crush_reweight(self, name, weight, undo_previous_weight=None):
+        """
+        COMMAND("osd crush reweight " \
+        "name=name,type=CephString,goodchars=[A-Za-z0-9-_.] " \
+        "name=weight,type=CephFloat,range=0.0", \
+        "change <name>'s weight to <weight> in crush map", \
+        "osd", "rw", "cli,rest")
+        """
+        yield self.client.mon_command('osd crush reweight',
+                                      self._args_to_argdict(name=name, weight=weight),
+                                      output_format='string')
+        self.osd_crush_reweight(name, undo_previous_weight)
+
+    def osd_dump(self):
+        return self.client.mon_command('osd dump')

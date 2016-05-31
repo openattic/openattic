@@ -97,6 +97,7 @@ class CephPoolSerializer(NodbSerializer):
     class Meta:
         model = CephPool
 
+
 class FsidContext(object):
 
     def __init__(self, viewset):
