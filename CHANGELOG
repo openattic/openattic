@@ -4,11 +4,12 @@ openATTIC Changelog
 Version 2.0.12, (not released yet):
 -----------------------------------
 
+* Backend: Added possiblility to create erasure-coded Ceph pools in the REST API (OP-546)
 * Backend: Added API call for creating new Ceph pools (OP-1024)
 * Backend: Added modifying requests to Ceph pools (OP-1170, OP-1172)
 * Backend: Added support for Ceph cache tiering (OP-1184)
 * Backend: Added field 'host' to Disks REST API resource (OP-1195)
-* Backend: Added possiblility to create erasure-coded Ceph pools in the REST API (OP-546)
+* Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
 * WebUI: Save personal settings of each data table (OP-1134)
 * WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
