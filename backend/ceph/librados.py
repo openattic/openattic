@@ -586,7 +586,7 @@ class RbdApi(object):
     def create(self, pool_name, image_name, size, features=None):
         """
         .. example::
-                >>> appi = RbdApi()
+                >>> api = RbdApi()
                 >>> api.create('mypool', 'myimage',  4 * 1024 ** 3) # 4 GiB
                 >>> api.remove('mypool', 'myimage')
 
