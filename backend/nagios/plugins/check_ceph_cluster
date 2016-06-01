@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import os
+import sys
+
+from optparse import OptionParser
+
+from configobj import ConfigObj
+
+distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
+for config_file in distro_config:
+    if os.path.isfile(config_file):
+        config = ConfigObj(config_file)
+        break
+
+sys.path.append(config["OADIR"])
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+
+class ClusterStatus(dict):
+    """
+    Thankfully taken from https://github.com/Crapworks/check_ceph_dash
+    """
+
+    def __init__(self, status):
+        dict.__init__(self)
+
+        try:
+            self.update(status)
+        except Exception as err:
+            print "UNKNOWN: %s" % (str(err), )
+            sys.exit(3)
+
+    def _map_health_status(self):
+        status = self['health']['overall_status']
+        status_map = {
+            'HEALTH_OK': ('OK', 0),
+            'HEALTH_WARN': ('WARNING', 1),
+            'HEALTH_ERR': ('CRITICAL', 2),
+        }
+        if status in status_map:
+            return status_map[status]
+        else:
+            return 'UNKNOWN', 3
+
+    def get_perf_data(self):
+        nagios_str, nagios_exit = self._map_health_status()
+        if nagios_exit == 3:
+            return ""
+
+        # perfdata to fetch
+        perf_values = {
+            'pgmap': ['bytes_used', 'bytes_total', 'bytes_avail', 'data_bytes', 'num_pgs',
+                      'op_per_sec', 'read_bytes_sec', 'write_bytes_sec'],
+            'osdmap': ['num_osds', 'num_up_osds', 'num_in_osds']
+        }
+
+        perfdata = dict()
+        for map_type, values in perf_values.iteritems():
+            for value in values:
+                # the json structure is horrible...
+                if map_type == 'osdmap':
+                    perfdata[value] = self['osdmap'][map_type].get(value, 0)
+                else:
+                    perfdata[value] = self[map_type].get(value, 0)
+
+        perfdata = ' '.join(['%s=%s' % (key, val) for key, val in perfdata.iteritems()])
+
+        return perfdata
+
+    def get_exit_code(self):
+        nagios_str, nagios_exit = self._map_health_status()
+        return int(nagios_exit)
+
+    def get_nagios_string(self):
+        nagios_str, nagios_exit = self._map_health_status()
+        if nagios_exit == 0:
+            summary = 'ceph cluster operates with no problems'
+        else:
+            summary = '\n'.join(["{severity}: {summary}".format(**problems)
+                                 for problems in self['health']['summary']])
+
+        return "%s: %s" % (nagios_str, summary)
+
+
+def main():
+    from ceph.models import CephCluster
+
+    parser = OptionParser(usage="%prog <cluster FSID>")
+    _, args = parser.parse_args()
+
+    if len(args) != 1:
+        parser.print_usage()
+        sys.exit(4)
+
+    status = ClusterStatus(CephCluster.get_status(args[0]))
+    print "%s|%s" % (status.get_nagios_string(), status.get_perf_data())
+
+    sys.exit(status.get_exit_code())
+
+if __name__ == '__main__':
+    main()
