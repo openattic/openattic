@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import ast
 import json
 from itertools import product
 
@@ -344,6 +345,15 @@ class JsonField(Field):
 
     def to_python(self, value):
         """:rtype: T"""
+        def check_base_type(val):
+            if not isinstance(val, self.base_type):
+                raise exceptions.ValidationError(
+                    "invalid JSON type. Got {}, expected {}".format(type(parsed), self.base_type),
+                    code='invalid',
+                    params={'value': value},
+                )
+            return val
+
         if value is None:
             return self.base_type()
         if isinstance(value, self.base_type):
@@ -351,20 +361,20 @@ class JsonField(Field):
 
         try:
             parsed = json.loads(value)
-            if isinstance(parsed, self.base_type):
-                return parsed
+            return check_base_type(parsed)
         except ValueError:
-            raise exceptions.ValidationError(
-                "invalid JSON",
-                code='invalid',
-                params={'value': value},
-            )
-
-        raise exceptions.ValidationError(
-            "invalid JSON",
-            code='invalid',
-            params={'value': value},
-        )
+            try:
+                # Evil hack to support PUT requests to the Browsable API of the django-rest-framework
+                # as we cannot determine if restapi.JsonField.tonative() is called for json or for rendering the
+                # form.
+                obj = ast.literal_eval(value)
+                return check_base_type(obj)
+            except ValueError:
+                raise exceptions.ValidationError(
+                    "invalid JSON",
+                    code='invalid',
+                    params={'value': value},
+                )
 
     def deconstruct(self):
         name, path, args, kwargs = super(JsonField, self).deconstruct()
