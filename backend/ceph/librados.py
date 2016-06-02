@@ -555,7 +555,8 @@ class RbdApi(object):
                 rbd.RBD_FEATURE_JOURNALING: 'journaling',
             }
         except AttributeError:
-            logger.error('Please check the version of your local Ceph installation.')
+            logger.error('You Ceph version is too old: some expected RBD features are missing. Please update to a more'
+                         'recent Ceph version.')
             raise
 
     @classmethod
