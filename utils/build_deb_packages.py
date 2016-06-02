@@ -143,19 +143,19 @@ class DebPackageBuilder(object):
 
         raise ParsingError
 
-    def _publish_packages(self, pkgdir, release_channel, version, changes_filename):
+    def _publish_packages(self, pkgdir, release_channel, changes_filename):
         """Publish a package using the `reprepro` command.
 
         :type pkgdir: str
         :type release_channel: str
-        :param version: The version as first element and the datestring as second, if it exists
-        :type version: tuple
         :type changes_filename: str
         """
-        small_version = version[0]
-        if version[1]:
-            small_version += '~' + version[1]
-        control_file = os.path.join(pkgdir, 'openattic-' + small_version, 'debian', 'control')
+        dirs = filter(isdir, glob.glob(os.path.join(pkgdir, '*')))
+        if len(dirs) != 1:
+            msg = 'The package directory has to contain exactly one directory "{}"'
+            raise FileNotFoundError(msg.format(pkgdir))
+        control_file = os.path.join(pkgdir, dirs[0], 'debian', 'control')
+
         obsolete_packages = []
         with open(control_file) as fcontrol:
             for line in fcontrol:
@@ -300,7 +300,7 @@ class DebPackageBuilder(object):
         print 'The packages have been created in %s' % build_dir
 
         if self._args['--publish']:
-            self._publish_packages(build_dir, release_channel, version, changes_filename)
+            self._publish_packages(build_dir, release_channel, changes_filename)
             print 'The packages have been published'
             # TODO Maybe ask the user to show what was uploaded?
             #      Only if an interactive terminal is used.
