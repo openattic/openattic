@@ -7,13 +7,13 @@ describe('Wizard panel', function(){
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
   var volumename = 'protractor_wizard_zVol02';
   var volume = element(by.cssContainingText('tr', volumename));
-  var volumefield = element(by.id('volumename'));
   var cifs_share = element(by.cssContainingText('tr', 'protractor_wizard_cifsShare'));
   var nfs_share = element(by.cssContainingText('td', 'oahost.domain.here'));
 
-  var pool = element(by.id('source_pool'));
-  var size = element(by.id('volumemegs'));
-  var is_protected = element(by.id('volumeisprotected'));
+  var volumefield = element(by.model('result.name'));
+  var pool = element(by.model('pool'));
+  var size = element(by.model('data.megs'));
+  var is_protected = element(by.model('result.is_protected'));
 
   var size_exceeded = element(by.css('.tc_wrongVolumeSize'));
   var noUniqueName = element(by.css('.tc_noUniqueName'));
@@ -26,7 +26,8 @@ describe('Wizard panel', function(){
   var nfs_path = element(by.id('nfspath'));
   var options = element(by.id('nfsoptions'));
 
-  var menu = element.all(by.css('ul .tc_menuitem > a'));
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   beforeAll(function(){
     helpers.login();
@@ -69,11 +70,11 @@ describe('Wizard panel', function(){
     //in order to enter a size we need to choose a pool first
     for(var key in configs.pools){
       var pool = configs.pools[key];
-      var volumePoolSelect = element(by.id('source_pool'));
+      var volumePoolSelect = element(by.model('pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(zpool,')).get(0).click();
       browser.sleep(600);
-      element(by.id('source_pool')).$('option:checked').getText().then(function(pname){
+      volumePoolSelect.$('option:checked').getText().then(function(pname){
         //browser.actions().sendKeys(protractor.Key.ENTER).perform();
         //console.log(pname);
         pname = pname.substring(0, pname.indexOf(' '));
@@ -164,16 +165,16 @@ describe('Wizard panel', function(){
     helpers.check_wizard_titles();
 
     browser.sleep(400);
-    menu.get(3).click();
+    volumesItem.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     /*	next line -> workaround (when checking if the volume is visible,
 		    protractor SOMETIMES throws 'element not visible error', but when
 		    protractor is about to delete the volume, it's visible and protractor is able to delete it
 		    couldn't reproduce this strange behavior and browser.sleep won't help)
     */
-    menu.get(4).click();
+    hostsItem.click();
     browser.sleep(400);
-    menu.get(3).click();
+    volumesItem.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     expect(volume.isDisplayed()).toBe(true);
     browser.sleep(400);

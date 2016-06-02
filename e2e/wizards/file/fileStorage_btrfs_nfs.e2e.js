@@ -9,10 +9,10 @@ describe('Wizard panel', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var share = element(by.cssContainingText('td', 'oadev.domain.here'));
 
-  var volumefield = element(by.id('volumename'));
-  var pool = element(by.id('source_pool'));
-  var size = element(by.id('volumemegs'));
-  var is_protected = element(by.id('volumeisprotected'));
+  var volumefield = element(by.model('result.name'));
+  var pool = element(by.model('pool'));
+  var size = element(by.model('data.megs'));
+  var is_protected = element(by.model('result.is_protected'));
 
   var volume_required = element(by.css('.tc_nameRequired'));
   var pool_required = element(by.css('.tc_poolRequired'));
@@ -22,7 +22,8 @@ describe('Wizard panel', function(){
   var noUniqueName = element(by.css('.tc_noUniqueName'));
   var noValidNumber = element(by.css('.tc_noValidNumber'));
 
-  var menu = element.all(by.css('ul .tc_menuitem > a'));
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   beforeAll(function(){
     helpers.login();
@@ -73,8 +74,8 @@ describe('Wizard panel', function(){
 
     //in order to enter a size we need to choose a pool first
     for(var key in configs.pools){
+      var volumePoolSelect = element(by.model('pool'));
       var pool = configs.pools[key];
-      var volumePoolSelect = element(by.id('source_pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
       //browser.actions().sendKeys( protractor.Key.ENTER ).perform();
@@ -149,16 +150,17 @@ describe('Wizard panel', function(){
 
     //console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
-    menu.get(3).click();
+    volumesItem.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     /*	next line -> workaround (when checking if the volume is visible,
 		    protractor SOMETIMES throws 'element not visible error', but when
 		    protractor is about to delete the volume, it's visible and protractor is able to delete it
 		    couldn't reproduce this strange behavior and browser.sleep won't help)
     */
-    menu.get(4).click();
+    hostsItem.click();
     browser.sleep(400);
-    menu.get(3).click();
+    volumesItem.click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
     browser.sleep(800);

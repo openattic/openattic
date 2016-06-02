@@ -1,8 +1,107 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.10 (not released yet):
-----------------------------------
+Version 2.0.12, (not released yet):
+-----------------------------------
+
+* Backend: Added possiblility to create erasure-coded Ceph pools in the REST API (OP-546)
+* Backend: Added API call for creating new Ceph pools (OP-1024)
+* Backend: Added modifying requests to Ceph pools (OP-1170, OP-1172)
+* Backend: Added support for Ceph cache tiering (OP-1184)
+* Backend: Added field 'host' to Disks REST API resource (OP-1195)
+* Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
+* Backend: Added Ceph RBD REST Collection (OP-1214)
+* WebUI: Save personal settings of each data table (OP-1134)
+* WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
+* WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
+* WebUI/QA: adapted wizard test cases to new wizard title (OP-1151, OP-1197)
+* WebUI/QA: Test the local storage capabilities of data tables (OP-1202)
+* Packaging: Adapted the build scripts to be able to create tarballs from different sources and revisions (OP-1118)
+
+Version 2.0.11, 20. May 2016:
+-----------------------------
+
+* WebUI: Extended the pool selection box by the hostname of the pool (OP-973)
+* WebUI: Extend the volume creation form by all supported filesystems
+  with description (OP-988)
+* WebUI: Add dropdown menu to the ceph pool list to select a cluster (OP-1104)
+* WebUI: Snapshot size isn't asked for if creating a snapshot
+  on a zfs or btrfs (OP-1088)
+* WebUI: Save selected cluster between page changes (OP-1131)
+* WebUI: Add Ceph osd data table (OP-1144)
+* WebUI: Hide snapshot columns with wrong data on a zfs or btrfs (OP-1162)
+* WebUI: Link the type description with an wikipedia article (OP-1189)
+* WebUI/QA: added test cases for datatable (OP-818)
+* WebUI/QA: Added test case for hostname in pool dropdown (OP-973)
+* WebUI/QA: Test for the hostnames of the pools in the volume form (OP-1059)
+* WebUI/QA: Added tests which check the correct description
+  for each volume type (OP-1159)
+* WebUI/QA: Test to verify that snapshot size is hidden while creating a snapshot
+  on a zfs or btrfs (OP-1162)
+* WebUI/QA: Added E2E test cases for Ceph OSDs Panel (OP-1176)
+* WebUI/QA: Removed obsolete E2E tests due to OP-597 (OP-1185)
+* WebUI/QA: Adapted datatable tests due to OP-597 (OP-1186)
+* WebUI/QA: Speed up multiple volume deletion test (OP-1187)
+* WebUI/QA: Refactors the multiple sequential volume creation
+  and deletion test (OP-1190)
+* Backend: Disks (falsely displayed) are removed from the volume
+  management (OP-597)
+* Backend: Removed simplejson dependency (OP-783)
+* Backend: Fixed "close_connection is superseded by close_old_connections.
+  close_connection()" RemovedInDjango18Warning (OP-809)
+* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds`
+  (OP-1035)
+* Backend: Added BTRFS grow functionality (OP-1093)
+* Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
+  to dbus-send Samba writeconf calls (OP-1113)
+* Backend: Fixed compatibility issue with Ceph Jewel when running `oaconfig
+  install` (OP-1079) (thanks to Abhishek Lekshmanan for the patch)
+* Backend: Fixed warnings from the Ceph module when calling `oaconfig install`
+  (OP-1121)
+* Backend: Added licence headers for nodb files (OP-1125)
+* Backend: Switched to Django logging functionality for enhanced logging
+  quality (OP-1126)
+* Backend: Added searching, filtering and ordering to nested viewsets (OP-1090,
+  OP-1129, OP-1142)
+* Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the
+  `hit_set_params` field (OP-1130)
+* Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
+* Backend: Revised the Ceph pool listing (OP-1135)
+* Backend: Added Ceph status values to Ceph cluster REST API resource (OP-1146)
+* Backend: Added Ceph Placement Groups to the REST API (OP-1148)
+* Backend: Enable logging for the Nagios and Ceph module by default (thanks to
+  Eric Jackson)
+* Backend: Let the Ceph module check for keyring permissions and log permission
+  problems (thanks to Eric Jackson)
+* Backend/Installation: Fixed update_disks() method that is called during
+  "oaconfig install", so that all hard disks attached to a system are being
+  found, and not just the first 16 disks (thanks to IRC user "SNMPGuy" for
+  reporting this) (OP-1136)
+* Installation: Enabled logrotate configuration for openattic.log (OP-1124)
+* Installation: Added instructions to create `openattic.log` with correct
+  permissions when installing packages (OP-1132)
+* Documentation: Added styleguide for E2E tests (OP-1015)
+* Documentation: Added note about extra package which needs to be installed
+  when using Ubuntu 14.04 LTS in order to get lio-utils working (OP-1105)
+* Documentation: Created dedicated document "Post Installation" that explains
+  common tasks to be performed after installing oA, e.g. changing the openattic
+  user's default password (OP-1038).
+* Documentation: Moved Ceph configuration and how to install additional oA
+  modules from the Admin Guide into the post-installation document. Moved
+  "Getting started" into a separate document. Moved "Hardware Recommendations"
+  and "Storage Recommendations" into a separate document.
+* Documentation: Added chapter on how to configure a ZFS zpool to the
+  "Basic Storage Configuration" chapter (OP-711).
+* Documentation: Added basic instructions on how to install oA on SUSE Linux to
+  the Installation chapter (OP-986)
+* Documentation: Added documentation on how to enable alternative authentication
+  methods and how to perform a domain join to a new chapter "Configuring
+  Authentication and Single Sign-On" (OP-1044)
+* Documentation: Added chapter about how to work on the documentation to the
+  Developer Docs.
+
+Version 2.0.10, 20. Apr 2016:
+-----------------------------
 
 * WebUI: Show an error message if javascript is disabled (OP-580)
 * WebUI: Remove Smartadmin and added a new openATTIC theme (OP-585)
@@ -10,14 +109,27 @@ Version 2.0.10 (not released yet):
 * WebUI: Disable resize for btrfs volumes (OP-911)
 * WebUI: New pagination template/layout (OP-1003)
 * WebUI: Accordion header is now clickalbe (OP-1064)
+* WebUI: Add d3, nvd3 and angular-nvd3 (OP-1074)
+* WebUI: Ceph pool data table (OP-867)
 * WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
-* Backend: The name of a netdevice allows a length of up to 15 characters now
-  (OP-960) (thanks to Willi Fehler for reporting the issue)
+* WebUI/QA: Ceph menu related e2e tests (OP-945)
+* WebUI/QA: Added very basic test case for ceph pool overview (OP-1102)
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
+* Backend: List all existing Pools and their characteristics (OP-751)
+* Backend: Fixed a bug with the CRUSH map which caused the server to loop
+  endlessly (OP-865)
+* Backend: Let the ceph module fail graciously (OP-1022)
+* Backend: Implement the pagination for Ceph pools (OP-1026)
+* Backend: Added additional information to be retrieved about Ceph pools using
+  the RESTful API (OP-1053)
+* Backend: The name of a netdevice allows a length of up to 15 characters now
+  (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
+* Backend: Fixed bug - removing an Ext3/Ext4/XFS filesystem volume that exports
+  an nfs share didn't work properly (OP-736)
 * Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: "oaconfig install" now skips all LVM volume groups tagged with
   "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
@@ -69,7 +181,7 @@ Version 2.0.9, 16. Mar 2016:
 * Installation: Added missing pnp4nagios config files to openattic-module-
   nagios RPM (OP-983)
 * Installation: Added /etc/openattic to the openattic-base RPM (OP-982)
-* Documentation: Improved the EL7 installation instructions, added note 
+* Documentation: Improved the EL7 installation instructions, added note
   about pnp4nagios configuration (OP-981)
 * Documentation: Restructured and refined the installation instructions
 * Documentation: Added trade mark notice
@@ -174,7 +286,7 @@ Version 2.0.5, 15. Dec 2015:
   RPM package dependencies (OP-787)
 * Installation: Make sure to start and enable Samba when installing the
   openattic-module-samba RPM on RHEL7 and derivatives (OP-788)
-* Installation: Updated the RPM package installation to no longer install all 
+* Installation: Updated the RPM package installation to no longer install all
   files as owned by the openattic user (OP-819)
 * Packaging: added openattic-module-lio to the openattic meta RPM package
   dependencies, moved dependency on python-rtslib from the openattic-base
@@ -193,11 +305,11 @@ Version 2.0.5, 15. Dec 2015:
   appear in the "Volumes" overview and can be shared via iSCSI);
   since the iscsi/fc storage tab is no longer visible when
   clicking a disk in volumes panel, the respective test should check this
-* WebUI/QA: added E2E test for scenario described in OP-588 
+* WebUI/QA: added E2E test for scenario described in OP-588
   ("When creating a new user, app should warn about existing user names.")
 * Web UI: Fixed checking for a name that has been already taken
   while editing users or hosts. (OP-796)
-* Web UI / QA: Test to verify unique names in user and host editing mode.  
+* Web UI / QA: Test to verify unique names in user and host editing mode.
 * Web UI: Checking for an unique name for a new user now. (OP-588)
 * Web UI: Restrict unauthorized access to the UI. (OP-748)
 * Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
@@ -205,7 +317,7 @@ Version 2.0.5, 15. Dec 2015:
 * Web UI: Changed Dashboard, Disks, Pools, Volumes, System and API-Recorder
   icons
 * WebUI/QA: fixed user e2e test which did not work properly in chromium anymore
-  (see OP-821)  
+  (see OP-821)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------

@@ -3,8 +3,8 @@
 (function(){
 
   var configs = require('./configs.js');
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -18,7 +18,7 @@
   var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
 
-  var volumePoolSelect = element(by.id('data.sourcePool'));
+  var volumePoolSelect = element(by.model('pool'));
 
   module.exports = {
     configs: configs,
@@ -45,7 +45,7 @@
           break;
         }
       }
-      element(by.id('volumeName')).sendKeys(volumename);
+      element(by.model('result.name')).sendKeys(volumename);
       volumePoolSelect.sendKeys(poolName);
       element(by.id(type)).click();
       element(by.model('data.megs')).sendKeys(size);
@@ -53,22 +53,6 @@
       browser.sleep(configs.sleep);
       return pool;
     },
-
-    //     create_zvol: function(type){
-    //       volumesItem.click();
-    //       element(by.css('oadatatable .tc_add_btn')).click();
-    //       for(var key in configs.pools){
-    //         element(by.id('volume.name')).sendKeys(volumename);
-    //         volumePoolSelect.click();
-    //         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
-    //         element(by.id(type)).click();
-    //         element(by.model('data.megs')).sendKeys('100MB');
-    //         element(by.css('.tc_submitButton')).click();
-    //         browser.sleep(configs.sleep);
-    //         break;
-    //       }
-    //     },
-
 
     delete_volume: function(volume, volumename){
       volumesItem.click();
@@ -148,7 +132,7 @@
     },
 
     create_host: function(){
-      element.all(by.css('ul .tc_menuitem > a')).get(4).click();
+      element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();
@@ -166,16 +150,6 @@
       element(by.id('bot2-Msg1')).click();
     },
 
-    selectDropdownByIndex: function(dropdown, index){
-      dropdown.click();
-      if(index){
-        dropdown.all(by.tagName('option'))
-          .then(function(options){
-            options[index].click();
-          });
-      }
-    },
-
     check_wizard_titles: function(){
       var wizards = element.all(by.repeater('wizard in wizards'))
         .then(function(wizards){
@@ -190,7 +164,7 @@
           });
 
           wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
-            expect(block_title).toEqual('Raw Block Storage');
+            expect(block_title).toEqual('iSCSI/Fibre Channel target');
             //console.log(block_title);
           });
       });

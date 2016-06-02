@@ -38,7 +38,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
 
   $scope.snapshotsFilter = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null,
@@ -51,7 +51,25 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
     $scope.snapshotsFilter.volume = selitem;
   });
 
-  $scope.$watch("snapshotsFilter", function () {
+  $scope.$watchGroup(["source", "selection.item"], function (newVal) {
+    var source = newVal[0];
+    var volume = newVal[1];
+    var type;
+    if (source && source.pool) {
+      type = source.pool.app_label;
+      source = type === "zfs" || type === "btrfs";
+    }
+    if (volume) {
+      type = volume.type.app_label;
+      volume = type === "zfs" || type === "btrfs";
+    }
+    $scope.dynSnap = volume || source;
+  });
+
+  $scope.$watch("snapshotsFilter", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     if (!$scope.snapshotsFilter.volume) {
       return;
     }

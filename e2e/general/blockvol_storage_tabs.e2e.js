@@ -6,8 +6,8 @@ describe('Storage Tab Test based on blockvol', function(){
 
   beforeAll(function(){
     helpers.login();
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
-    helpers.create_volume(volumename, "lun");
+    element.all(by.css('ul .tc_menuitem_volumes > a')).click();
+    helpers.create_volume(volumename, 'lun');
   });
 
   it('should only display storage tabs / options which make sense for a block volume', function(){

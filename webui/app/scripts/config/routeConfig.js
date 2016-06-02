@@ -486,7 +486,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       }
     })
     .state("crushmap", {
-      url: "/crushmap",
+      url: "/ceph/crushmap",
       views: {
         "main": {
           templateUrl: "templates/crushmap.html"

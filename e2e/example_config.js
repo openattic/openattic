@@ -8,25 +8,33 @@
     password: 'openattic',
     sleep   : 2000,
     pools   :{
-// Please make sure that the first item in pools is a VG.
+    //Please make sure that the first item in pools is a VG.
       vg:{
         name        : '<name>',
         size        : <size>,
         unit        : 'GB',
-        volumeTypes : [ //What you can do with your pool
-          'Create LUN',
-          'Create Virtualization Store -> XFS',
-          'Create File Store -> BTRFS'
+        volumeTypes : [ //supported volume types of a specific pool
+          'LUN',
+          'XFS',
+          'Btrfs',
+          'ZFS',
+          'ext4',
+          'ext3',
+          'ext2'
         ]
       },
       vg2:{
         name        : '<name>',
         size        : <size>,
         unit        : 'GB',
-        volumeTypes : [ //What you can do with your pool
-          'Create LUN',
-          'Create Virtualization Store -> XFS',
-          'Create File Store -> BTRFS'
+        volumeTypes : [ //supported volume types of a specific pool
+          'LUN',
+          'XFS',
+          'Btrfs',
+          'ZFS',
+          'ext4',
+          'ext3',
+          'ext2'
         ]
       }
     }

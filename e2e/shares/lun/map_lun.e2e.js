@@ -2,8 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Should map a LUN to an host', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   var hostSelect = element(by.model('share.host'));
   var hostname = "protractor_test_host";
@@ -12,7 +11,17 @@ describe('Should map a LUN to an host', function(){
   var volumename = "protractor_iscsiMap_vol";
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
-  var iscsiShareTab = element(by.css('.tc_iscsi_fcTab'));
+  var iscsiShareTab = function(){
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
+    browser.sleep(400);
+    //     element(by.css('.tc_entries_dropdown')).click();
+    //     element(by.css('.tc_entries_100')).click();
+    expect(volume.isPresent()).toBe(true);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_iscsi_fcTab')).click();
+    browser.sleep(400);
+  };
 
   beforeAll(function(){
     helpers.login();
@@ -34,46 +43,19 @@ describe('Should map a LUN to an host', function(){
   });
 
   it('should configure the lun', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
+    iscsiShareTab();
     element(by.css('.tc_lunAdd')).click();
     hostSelect.element(by.cssContainingText('option', hostname)).click();
     element(by.css('.tc_submitButton')).click();
   });
 
   it('should display the lun', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
+    iscsiShareTab();
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(true);
   });
 
   it('should remove the lun', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
+    iscsiShareTab();
     element(by.cssContainingText('tr', hostname)).click();
     element(by.css('.tc_lunDelete')).click();
     browser.sleep(400);
@@ -84,16 +66,7 @@ describe('Should map a LUN to an host', function(){
   });
 
   it('should not display the lun anymore', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
+    iscsiShareTab();
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
   });
 

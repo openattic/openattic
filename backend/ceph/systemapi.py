@@ -57,6 +57,11 @@ class SystemD(BasePlugin):
         return out
 
     @method(in_signature="s", out_signature="s")
+    def mds_dump(self, cluster):
+        ret, out, err = self.invoke_ceph(cluster, ["mds", "dump"], log=False)
+        return out
+
+    @method(in_signature="s", out_signature="s")
     def mon_status(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["mon_status"], log=False)
         return out

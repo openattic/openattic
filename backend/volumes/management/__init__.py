@@ -24,21 +24,25 @@ from ifconfig.models import Host
 from volumes.models import StorageObject, DiskDevice, GenericDisk
 from systemd.helpers import get_dbus_object
 
+
 def update_disks(**kwargs):
+
+    # According to the Linux kernel documentation, the following block major
+    # numbers are reserved for SCSI disk devices and should be scanned:
+    #   8 (SCSI disk devices 0-15)
+    #  65 (SCSI disk devices 16-31) - 71 (SCSI disk devices 112-127)
+    # 128 (SCSI disk devices 128-143) - 135 (SCSI disk devices 240-255)
+
+    SCSIMAJORS = ["8", "65", "66", "67", "68", "69", "70", "71"]
+    SCSIMAJORS += ["128", "129", "130", "131", "132", "133", "134", "134"]
+
     ctx = pyudev.Context()
 
-    for dev in ctx.list_devices():
-        if dev.subsystem != "block":
-            continue
+    for dev in ctx.list_devices(subsystem="block", DEVTYPE="disk"):
 
-        if ("MAJOR" not in dev or int(dev["MAJOR"].strip("\0")) != 8) and "virtio" not in dev.device_path:
-            continue
-
-        if "MINOR" not in dev or int(dev["MINOR"].strip("\0")) % 16 != 0:
-            continue
-
-        if "ID_TYPE" in dev and dev["ID_TYPE"].strip("\0") != "disk":
-            continue
+        if (("MAJOR" not in dev or dev["MAJOR"] not in SCSIMAJORS)
+                and "virtio" not in dev.device_path):
+                continue
 
         if "ID_VENDOR" in dev and dev["ID_VENDOR"].strip("\0") in ("LSI", "IBM", "AMI"):
             # skip disks created by LSI hardware raid adapters or AMI IPMI (SuperMicro)
@@ -89,8 +93,12 @@ def update_disks(**kwargs):
                 so_name = dev.device_node
 
             with StorageObject(name=so_name, megs=megs) as so:
-                diskdev = DiskDevice(storageobj=so, host=Host.objects.get_current(), serial=serial,
-                                    model=dev.get("ID_MODEL", "unknown"), type=dtype, rpm=drpm)
+                diskdev = DiskDevice(storageobj=so,
+                                     host=Host.objects.get_current(),
+                                     serial=serial,
+                                     model=dev.get("ID_MODEL", "unknown"),
+                                     type=dtype,
+                                     rpm=drpm)
                 diskdev.save()
 
         try:

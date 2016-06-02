@@ -42,7 +42,14 @@ def update(**kwargs):
 
         displayname = m.group("displayname")
 
-        conf = ConfigParser()
+        cluster_defaults = {
+            "auth_cluster_required" : "cephx",
+            "auth_service_required" : "cephx",
+            "auth_client_required"  : "cephx"
+        }
+
+        conf = ConfigParser(cluster_defaults)
+
         if not conf.read("/etc/ceph/%s.conf" % displayname):
             print "%s.conf doesn't seem to be a valid config file, skipping" % displayname
             continue
@@ -53,16 +60,19 @@ def update(**kwargs):
             known = True
             print "known"
         except ceph_models.Cluster.DoesNotExist:
+            # since conf.items ensures that defaults come first and overrides later
+            # the dict is expected to do the right thing when it encounters the overrriden key
+            global_conf={k.replace(' ','_'):v for k,v in conf.items('global')}
             cluster = ceph_models.Cluster(
                 uuid=conf.get("global", "fsid"), name=displayname,
-                auth_cluster_required=conf.get("global", "auth_cluster_required"),
-                auth_service_required=conf.get("global", "auth_service_required"),
-                auth_client_required=conf.get("global", "auth_client_required"),
+                auth_cluster_required=global_conf["auth_cluster_required"],
+                auth_service_required=global_conf["auth_service_required"],
+                auth_client_required=global_conf["auth_client_required"],
             )
             known = False
 
         osdmap = cluster.get_osdmap()
-        mds_stat = cluster.get_mds_stat()
+        mds_dump = cluster.get_mds_dump()
         mon_stat = cluster.get_mon_status()
         auth_list = cluster.get_auth_list()
         df = cluster.df()
@@ -131,7 +141,7 @@ def update(**kwargs):
                 print "added"
 
         iprgx = re.compile(r"^(?P<ip>.+):(?P<port>\d+)/\d+$")
-        for cmds in mds_stat["mdsmap"]["info"].values():
+        for cmds in mds_dump["info"].values():
             print "Checking Ceph mds %s..." % cmds["name"],
 
             m = iprgx.match(cmds["addr"])

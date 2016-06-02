@@ -31,28 +31,19 @@
 "use strict";
 
 angular.module("openattic", [
-  "ngResource",
-  "ngSanitize",
-  "ui.router",
-  "ui.bootstrap",
-  "ui.sortable",
-  "ui.dashboard",
-  "ngTagsInput",
-  "ncy-angular-breadcrumb",
   "angular-md5",
   "angular-toasty",
-  "openattic.navigation",
-  "openattic.auth",
-  "openattic.apirecorder",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.sizeparser",
-  "openattic.extensions",
-  "openattic.todowidget",
-  "openattic.clusterstatuswidget",
-  "openattic.oaWizards",
-  "openattic.userinfo",
-  "openattic.required"
+  "ncy-angular-breadcrumb",
+  "ngResource",
+  "ngSanitize",
+  "ngTagsInput",
+  "ui.bootstrap",
+  "ui.dashboard",
+  "ui.router",
+  "ui.sortable",
+  "ui.tree",
+  "ngStorage",
+  "openattic.extensions"
 ]);
 
 var app = angular.module("openattic");
