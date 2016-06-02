@@ -13,8 +13,8 @@ describe('Host form workflow', function(){
     browser.sleep(400);
   });
 
-  it('should have a "Create Host" title', function(){
-    expect(element(by.css('.tc_hostAddTitle')).getText()).toEqual('Create Host:');
+  it('should have a "Add Host" title', function(){
+    expect(element(by.css('.tc_hostAddTitle')).getText()).toEqual('Add Host:');
   });
 
   it('Should have a host name input field', function(){

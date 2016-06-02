@@ -131,10 +131,20 @@
       element(by.id('bot2-Msg1')).click();
     },
 
-    create_host: function(){
+    create_host: function(iqn, fc){
       element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
+      if(iqn){
+        element(by.model('iscsi.check')).click();
+        element(by.model('data.iscsiInis')).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
+      }
+      if(fc){
+        element(by.model('fc.check')).click();
+        element(by.model('data.fcInis')).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(fc);
+      }
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
     },

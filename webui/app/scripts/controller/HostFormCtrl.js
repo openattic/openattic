@@ -122,12 +122,12 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
         return;
       }
       var requests = [];
-      if ($scope.iscsi.check === false) {
+      if ($scope.iscsi && $scope.iscsi.check === false) {
         $scope.data.iscsiInis.forEach(function (wwn) {
           $scope.rmIni(wwn);
         });
       }
-      if ($scope.fc.check === false) {
+      if ($scope.fc && $scope.fc.check === false) {
         $scope.data.fcInis.forEach(function (wwn) {
           $scope.rmIni(wwn);
         });

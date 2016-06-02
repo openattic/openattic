@@ -31,7 +31,7 @@ describe('Should add a host and attributes', function(){
   });
 
   it('should edit the created host', function(){
-    var firstName = element.all(by.css('tr.ng-scope')).first().all(by.css('a')).getInnerHtml();
+    var firstName = element.all(by.css('tr.ng-scope')).first().element(by.binding('row.name')).getInnerHtml();
     expect(host.isDisplayed()).toBe(true);
     host.click();
     element(by.css('.tc_editHost')).click();
@@ -48,7 +48,6 @@ describe('Should add a host and attributes', function(){
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     hostName.clear();
     hostName.sendKeys('renamed_protractor_test_host');
-    browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     var edited_host = element(by.cssContainingText('tr', 'renamed_protractor_test_host'));
     expect(edited_host.isDisplayed()).toBe(true);

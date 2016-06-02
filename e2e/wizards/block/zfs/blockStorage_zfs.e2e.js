@@ -22,17 +22,12 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_host();
+    helpers.create_host(iqn);
+
   });
 
-  it('should add an iqn to created host', function(){
-    browser.sleep(400);
+  it('should verify the created host', function(){
     expect(host.isPresent()).toBe(true);
-    host.click();
-    browser.sleep(400);
-    element(by.model('data.iscsiInis')).click();
-    element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
-    browser.sleep(400);
   });
 
   it('should navigate back to the dashboard after creating a host', function(){
