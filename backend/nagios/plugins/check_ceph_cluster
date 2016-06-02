@@ -35,7 +35,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 class ClusterStatus(dict):
     """
-    Thankfully taken from https://github.com/Crapworks/check_ceph_dash
+    This implementation is derived from the check-ceph-dash.py Nagios plugin with explicit
+    permission by the original author (Christian Eichelmann):
+    https://github.com/Crapworks/check_ceph_dash
     """
 
     def __init__(self, status):
