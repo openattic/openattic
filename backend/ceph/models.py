@@ -501,7 +501,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
     features = JsonField(base_type=list, null=True, blank=True,
                          help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
                                                                          for v
-                                                                         in RbdApi.feature_mapping.values()])))
+                                                                         in RbdApi.get_feature_mapping().values()])))
 
     @staticmethod
     def get_all_objects(context, query):
