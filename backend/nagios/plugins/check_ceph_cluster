@@ -26,9 +26,8 @@ distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
 for config_file in distro_config:
     if os.path.isfile(config_file):
         config = ConfigObj(config_file)
+        sys.path.append(config["OADIR"])
         break
-
-sys.path.append(config["OADIR"])
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
