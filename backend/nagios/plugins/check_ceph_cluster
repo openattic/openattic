@@ -29,6 +29,10 @@ for config_file in distro_config:
         sys.path.append(config["OADIR"])
         break
 
+    raise IOError("Can't find the needed configuration file 'openattic' containing the OADIR "
+                  "setting. Please reinstall the openattic-base package to get the missing "
+                  "configuration file.")
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 
