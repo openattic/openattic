@@ -1,6 +1,10 @@
 var helpers = require('../common.js');
 
 describe('Host form workflow', function(){
+  var iscsiCheckbox = element(by.model('iscsi.check'));
+  var fcCheckbox = element(by.model('fc.check'));
+  var iscsiInput = element(by.model('data.iscsiInis'));
+  var fcInput = element(by.model('data.fcInis'));
 
   beforeAll(function(){
     helpers.login();
@@ -19,6 +23,41 @@ describe('Host form workflow', function(){
 
   it('Should have a host name input field', function(){
     expect(element(by.id('hostName')).isDisplayed()).toBe(true);
+  });
+
+  it('should have a checkbox for iscsi', function(){
+    expect(iscsiCheckbox.isPresent()).toBe(true);
+  });
+
+  it('should have a checkbox for fibre channel', function(){
+    expect(fcCheckbox.isPresent()).toBe(true);
+  });
+
+  it('should have two checkboxes in total', function(){
+    expect(element.all(by.css('.form-group input[type=checkbox]')).count()).toEqual(2);
+  });
+
+
+  it('should have a iscsi checkbox label', function(){
+    expect(element(by.css('.tc_iscsiText')).isDisplayed()).toBe(true);
+  });
+
+  it('should have a fibre channel checkbox label', function(){
+    expect(element(by.css('.tc_fcText')).isDisplayed()).toBe(true);
+  });
+
+  it('should have an input field for an initiator', function(){
+    iscsiCheckbox.click();
+    expect(iscsiInput.isDisplayed()).toBe(true);
+    expect(fcInput.isDisplayed()).toBe(false);
+    iscsiCheckbox.click();
+  });
+
+  it('should have an input field for a wwn', function(){
+    fcCheckbox.click();
+    expect(fcInput.isDisplayed()).toBe(true);
+    expect(iscsiInput.isDisplayed()).toBe(false);
+
   });
 
   it('should have a submit button', function(){
