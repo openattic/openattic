@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("NfsSharesService", function ($resource, API) {
-  return $resource(API.URL + "nfsshares/:id", {
+app.factory("NfsSharesService", function ($resource, $sessionStorage) {
+  return $resource($sessionStorage.config.API.URL + "nfsshares/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,7 +45,7 @@ app.factory("NfsSharesService", function ($resource, API) {
     },
     filter: {
       method: "GET",
-      url: API.URL + "nfsshares"
+      url: $sessionStorage.config.API.URL + "nfsshares"
     }
   });
 });

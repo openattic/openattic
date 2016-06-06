@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("HttpSharesService", function ($resource, API) {
-  return $resource(API.URL + "httpshares/:id", {
+app.factory("HttpSharesService", function ($resource, $sessionStorage) {
+  return $resource($sessionStorage.config.API.URL + "httpshares/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,7 +45,7 @@ app.factory("HttpSharesService", function ($resource, API) {
     },
     filter: {
       method: "GET",
-      url: API.URL + "httpshares"
+      url: $sessionStorage.config.API.URL + "httpshares"
     }
   });
 });

@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("UserService", function ($resource, API) {
-  return $resource(API.URL + "users/:id", {
+app.factory("UserService", function ($resource, $sessionStorage) {
+  return $resource($sessionStorage.config.API.URL + "users/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -48,7 +48,7 @@ app.factory("UserService", function ($resource, API) {
     },
     current: {
       method: "GET",
-      url: API.URL + "users/current"
+      url: $sessionStorage.config.API.URL + "users/current"
     }
   });
 });

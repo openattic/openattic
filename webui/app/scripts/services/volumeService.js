@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("VolumeService", function ($resource, API) {
-  return $resource(API.URL + "volumes/:id", {
+app.factory("VolumeService", function ($resource, $sessionStorage) {
+  return $resource($sessionStorage.config.API.URL + "volumes/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,28 +45,28 @@ app.factory("VolumeService", function ($resource, API) {
     },
     storage: {
       method: "GET",
-      url: API.URL + "volumes/:id/storage"
+      url: $sessionStorage.config.API.URL + "volumes/:id/storage"
     },
     snapshots: {
       method: "GET",
-      url: API.URL + "volumes/:id/snapshots"
+      url: $sessionStorage.config.API.URL + "volumes/:id/snapshots"
     },
     createSnapshot: {
       method: "POST",
-      url: API.URL + "volumes/:id/snapshots"
+      url: $sessionStorage.config.API.URL + "volumes/:id/snapshots"
     },
     filter: {
       method: "GET",
-      url: API.URL + "volumes"
+      url: $sessionStorage.config.API.URL + "volumes"
     },
     clone: {
       method: "POST",
-      url: API.URL + "volumes/:id/clone"
+      url: $sessionStorage.config.API.URL + "volumes/:id/clone"
     }
   });
 });
-app.factory("VolumeSnapshotService", function ($resource, API) {
-  return $resource(API.URL + "volumes/:volumeId/snapshots", {
+app.factory("VolumeSnapshotService", function ($resource, $sessionStorage) {
+  return $resource($sessionStorage.config.API.URL + "volumes/:volumeId/snapshots", {
     volumeId: "@volumeId"
   }, {
   });

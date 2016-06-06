@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("InitiatorService", function ($resource, API) {
-  return $resource(API.URL + "initiators/:id", {
+app.factory("InitiatorService", function ($resource, $sessionStorage) {
+  return $resource($sessionStorage.config.API.URL + "initiators/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
