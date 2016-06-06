@@ -19,7 +19,11 @@ import os.path
 import json
 
 from django.core.cache import get_cache
+from django.template.loader import render_to_string
 
+from ceph.conf import settings
+from ceph.models import CephCluster
+from ifconfig.models import Host
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
 
@@ -180,3 +184,34 @@ class SystemD(BasePlugin):
     def ceph_fsid(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["fsid"])
         return out
+
+    @deferredmethod(in_signature="")
+    def write_nagios_configs(self, sender):
+
+        class _CephService(object):
+
+            def __init__(self, desc, command_name, args):
+                self.description = desc
+                self.arguments = args
+                self.active = True
+
+                command = self._CephCommand(command_name)
+                self.command = command
+
+            class _CephCommand(object):
+                def __init__(self, name):
+                    self.name = name
+
+        services = {cluster.fsid: [_CephService("Check Ceph Cluster {}".format(cluster.fsid),
+                                                "check_ceph_cluster", cluster.fsid)]
+                    for cluster in CephCluster.objects.all()}
+
+        for fsid, service in services.iteritems():
+            file_name = "{}/Ceph_Cluster_{}.cfg".format(settings.CEPH_SERVICES_CFG_PATH, fsid)
+
+            with open(file_name, "wb") as config_file:
+                config_file.write(render_to_string("nagios/services.cfg", {
+                    "IncludeHost": False,
+                    "Host": Host.objects.get_current(),
+                    "Services": service
+                }))
