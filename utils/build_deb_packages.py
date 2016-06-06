@@ -64,7 +64,7 @@ class DebPackageBuilder(object):
         self._args = args
 
     @staticmethod
-    def detect_release_with_filename(tarball_filename):
+    def detect_release_by_filename(tarball_filename):
         """Detect the type of the release by the filename of the tarball.
 
         :param tarball_filename:
@@ -331,11 +331,11 @@ class DebPackageBuilderTest(unittest.TestCase):
 
         for fname, target_state in target_states.items():
             if isinstance(target_state, str):
-                actual_state = DebPackageBuilder.detect_release_with_filename(fname)
+                actual_state = DebPackageBuilder.detect_release_by_filename(fname)
                 msg = '%s is supposed to be %s but is %s' % (fname, target_state, actual_state)
                 self.assertEqual(actual_state, target_state, msg)
             else:
-                self.assertRaises(target_state, DebPackageBuilder.detect_release_with_filename,
+                self.assertRaises(target_state, DebPackageBuilder.detect_release_by_filename,
                                   fname)
 
     def test_determine_dirname_by_filename(self):
@@ -408,7 +408,7 @@ def main():
     if path_to_tarball == '-':
         path_to_tarball = sys.stdin.readline().strip()
     deb_pkg_builder = DebPackageBuilder(args)
-    release_channel = DebPackageBuilder.detect_release_with_filename(path_to_tarball)
+    release_channel = DebPackageBuilder.detect_release_by_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
 
 
