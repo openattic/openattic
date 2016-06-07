@@ -188,6 +188,20 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
 
+        for cluster in CephCluster.objects.all():
+            file_name = "{}/cephcluster_{}.cfg".format(settings.CEPH_SERVICES_CFG_PATH,
+                                                       cluster.fsid)
+
+            services = [self.gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+
+            with open(file_name, "wb") as config_file:
+                config_file.write(render_to_string("nagios/services.cfg", {
+                    "IncludeHost": False,
+                    "Host": Host.objects.get_current(),
+                    "Services": services
+                }))
+
+    def gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):
 
             def __init__(self, desc, command_name, args):
@@ -202,16 +216,8 @@ class SystemD(BasePlugin):
                 def __init__(self, name):
                     self.name = name
 
-        for cluster in CephCluster.objects.all():
-            file_name = "{}/Ceph_Cluster_{}.cfg".format(settings.CEPH_SERVICES_CFG_PATH,
-                                                        cluster.fsid)
+        service_desc = "Check {} {}".format(service_instance_name, service_arguments)
+        service_command = "check_{}".format(str.lower(service_instance_name))
 
-            services = [_CephService("Check CephCluster {}".format(cluster.fsid),
-                                     "check_ceph_cluster", cluster.fsid)]
+        return _CephService(service_desc, service_command, service_arguments)
 
-            with open(file_name, "wb") as config_file:
-                config_file.write(render_to_string("nagios/services.cfg", {
-                    "IncludeHost": False,
-                    "Host": Host.objects.get_current(),
-                    "Services": services
-                }))
