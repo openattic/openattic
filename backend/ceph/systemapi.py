@@ -220,4 +220,3 @@ class SystemD(BasePlugin):
         service_command = "check_{}".format(str.lower(service_instance_name))
 
         return _CephService(service_desc, service_command, service_arguments)
-
