@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService) {
+app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService, NetdeviceService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -46,6 +46,14 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     .$promise
     .then(function (res) {
       $scope.shares = res.results;
+    }, function (error) {
+      console.log("An error occurred", error);
+    });
+
+  NetdeviceService.get()
+    .$promise
+    .then(function (res) {
+      $scope.devices = res.results;
     }, function (error) {
       console.log("An error occurred", error);
     });
@@ -83,14 +91,23 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
                 });
               }
             });
+            host.netdevice_set.forEach(function (device, index) {
+              host.netdevice_set[index] = $scope.devices.filter(function (netDev) {
+                return netDev.url === device.url;
+              })[0];
+              if (host.primary_ip_address && host.primary_ip_address.device.url === host.netdevice_set[index].url) {
+                host.netdevice_set[index].primary = host.primary_ip_address;
+              }
+            });
           });
           $scope.data = res;
+          console.log(res.results);
         })
         .catch(function (error) {
           console.log("An error occurred", error);
         });
   }, true);
-
+  
   $scope.$watch("selection.item", function (selitem) {
     $scope.hasSelection = Boolean(selitem);
     if (selitem) {

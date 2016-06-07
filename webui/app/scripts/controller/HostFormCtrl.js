@@ -182,11 +182,37 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
     goToListView();
   };
 
-  $scope.validShareName = function (tag) {
-    return $scope.wwns.indexOf(tag.text) === -1;
+  $scope.validShareName = function (tag, type) {
+    return Boolean($scope.validWwn(tag, type));
+  };
+
+  $scope.validWwn = function (tag, type) {
+    var wwn = tag.text;
+    if (wwn.match(/^[a-fA-F0-9:]*$/)) {
+      wwn = wwn.replace(/:/g, "");
+      if (wwn.length !== 16) {
+        return;
+      }
+      tag.text = tag.text.match(/.{2}/g).join(":");
+      return tag;
+    } else if (wwn.indexOf("iqn") === 0 && type === "iscsi") {
+      if (wwn.match(/^iqn\.\d{4}-\d{2}\.\D{2,3}(\.\w+)+(:[A-Za-z0-9-\.]+)*$/)) {
+        return tag;
+      }
+    } else if (wwn.indexOf("eui") === 0) {
+      if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
+        return tag;
+      }
+    } else if (wwn.indexOf("naa.") === 0) {
+      var ident = wwn.split(4);
+      if (ident.match(/^[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
+        return tag;
+      }
+    }
   };
 
   $scope.addIni = function (tag, type) {
+    tag = $scope.validWwn(tag, type);
     $scope.wwns.push(tag.text);
     $scope.changes.push({
       tag: tag,
@@ -196,11 +222,11 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
 
   $scope.rmIni = function (tag) {
     $scope.wwns.splice($scope.wwns.indexOf(tag.text), 1);
-    if (!tag.id) {
-      $scope.changes.forEach(function (change, index) {
+    if (!tag.id) { // New Tag - Can't be deleted by the backend.
+      $scope.changes.some(function (change, index) {
         if (change.tag.text === tag.text) {
           $scope.changes.splice(index, 1);
-          return;
+          return true;
         }
       });
       return;

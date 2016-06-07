@@ -423,7 +423,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
     .state("hosts.detail.status", {
       url: "/status",
       views: {
-        "tab-content": {templateUrl: "templates/hosts/status.html"}
+        "tab-content": {templateUrl: "templates/hosts/details.html"}
       },
       ncyBreadcrumb: {
         label: "{{selection.item.name}} Status"

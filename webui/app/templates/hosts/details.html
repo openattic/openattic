@@ -1,0 +1,40 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Details of {{selection.item.name}}</h3>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd ng-bind="selection.item.name"></dd>
+        </dl>
+        <dl class="dl-horizontal" ng-if="selection.item.netdevice_set.length">
+            <dt>Network devices:</dt>
+            <div ng-repeat="netdev in selection.item.netdevice_set">
+                <dd><b>{{netdev.devname}}</b>
+                    <span ng-repeat="ip in netdev.ipaddress_set">
+                        {{ $first ? "(" : ""}}{{ip.title}}{{ $last ? ")" : ","}}
+                    </span>
+                </dd>
+                <div ng-if="netdev.primary">
+                    <div ng-if="netdev.primary.device.domain">
+                        <dd ng-bind="netdev.primary.device.domain"></dd>
+                    </div>
+                    <div ng-if="netdev.primary.device.gateway">
+                        <dd ng-bind="netdev.primary.device.gateway"></dd>
+                    </div>
+                    <div ng-if="netdev.primary.device.nameservers">
+                        <dd ng-bind="netdev.primary.device.nameservers"></dd>
+                    </div>
+                </div>
+            </div>
+        </dl>
+        <dl class="dl-horizontal" ng-if="selection.item.fcWwn.length">
+            <dt>FC WWNs:</dt>
+            <dd ng-repeat="fcWwn in selection.item.fcWwn" ng-bind="fcWwn.text"></dd>
+        </dl>
+        <dl class="dl-horizontal" ng-if="selection.item.iscsiIqn.length">
+            <dt>iSCSI IQNs:</dt>
+            <dd ng-repeat="iscsiIqn in selection.item.iscsiIqn" ng-bind="iscsiIqn.text"></dd>
+        </dl>
+    </div>
+</div>

@@ -28,13 +28,13 @@
                         <div class="col-sm-offset-3 col-sm-9">
                             <div class="checkbox checkbox-primary">
                                 <input type="checkbox" ng-model="iscsi.check">
-                                <label ng-click="iscsi.check = !iscsi.check">Use ISCSI for sharing</label>
+                                <label class="tc_iscsiText" ng-click="iscsi.check = !iscsi.check">Use iSCSI for sharing</label>
                             </div>
                         </div>
                         <div class="col-sm-offset-3 col-sm-9">
                             <div class="checkbox checkbox-primary">
                                 <input type="checkbox" ng-model="fc.check">
-                                <label ng-click="fc.check = !fc.check">Use Fibre Channel for sharing</label>
+                                <label class="tc_fcText" ng-click="fc.check = !fc.check">Use Fibre Channel for sharing</label>
                             </div>
                         </div>
                     </div>
@@ -44,7 +44,8 @@
                         <div class="col-sm-9">
                             <tags-input class="tags-input-home" placeholder="Add an IQN"
                                         ng-model="data.iscsiInis"
-                                        on-tag-adding="validShareName($tag)"
+                                        add-on-space="true"
+                                        on-tag-adding="validShareName($tag, 'iscsi')"
                                         on-tag-added="addIni($tag, 'iscsi')"
                                         on-tag-removed="rmIni($tag)">
                             </tags-input>
@@ -56,6 +57,7 @@
                         <div class="col-sm-9">
                             <tags-input class="tags-input-home" placeholder="Add a WWN"
                                         ng-model="data.fcInis"
+                                        add-on-space="true"
                                         on-tag-adding="validShareName($tag)"
                                         on-tag-added="addIni($tag, 'qla2xxx')"
                                         on-tag-removed="rmIni($tag)">
