@@ -202,16 +202,16 @@ class SystemD(BasePlugin):
                 def __init__(self, name):
                     self.name = name
 
-        services = {cluster.fsid: [_CephService("Check Ceph Cluster {}".format(cluster.fsid),
-                                                "check_ceph_cluster", cluster.fsid)]
-                    for cluster in CephCluster.objects.all()}
+        for cluster in CephCluster.objects.all():
+            file_name = "{}/Ceph_Cluster_{}.cfg".format(settings.CEPH_SERVICES_CFG_PATH,
+                                                        cluster.fsid)
 
-        for fsid, service in services.iteritems():
-            file_name = "{}/Ceph_Cluster_{}.cfg".format(settings.CEPH_SERVICES_CFG_PATH, fsid)
+            services = [_CephService("Check CephCluster {}".format(cluster.fsid),
+                                     "check_ceph_cluster", cluster.fsid)]
 
             with open(file_name, "wb") as config_file:
                 config_file.write(render_to_string("nagios/services.cfg", {
                     "IncludeHost": False,
                     "Host": Host.objects.get_current(),
-                    "Services": service
+                    "Services": services
                 }))
