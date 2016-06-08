@@ -40,11 +40,11 @@ class Test(object):
 
 
 arguments = [
-    'create stable',
-    'create stable --revision=v2.0.7-1',
-    'create stable --source=/srv/openattic',
-    'create unstable',
-    'create unstable --revision=v2.0.7-1',
+    'create release',
+    'create release --revision=v2.0.7-1',
+    'create release --source=/srv/openattic',
+    'create snapshot',
+    'create snapshot --revision=v2.0.7-1',
 ]
 
 for argument in arguments:
