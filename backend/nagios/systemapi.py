@@ -41,7 +41,7 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="", once_last=True)
     def writeconf(self, sender):
         # Services
-        fd = open( nagios_settings.SERVICES_CFG_PATH, "wb" )
+        fd = open(nagios_settings.NAGIOS_SERVICES_CFG_PATH + "/openattic.cfg", "wb" )
         try:
             fd.write( render_to_string( "nagios/services.cfg", {
                 "IncludeHost": nagios_settings.INCLUDE_HOST_IN_CFG,
