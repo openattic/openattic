@@ -36,7 +36,7 @@ NAGIOS_CFG="/etc/icinga/icinga.cfg"
 NAGIOS_CONTACTS_CFG_PATH="/etc/icinga/conf.d/openattic_contacts.cfg"
 
 ## Type: string
-## Default: "/etc/icinga/conf.d/openattic.cfg"
+## Default: "/etc/icinga/conf.d"
 #
 # Defines additional services
 NAGIOS_SERVICES_CFG_PATH="/etc/icinga/conf.d"

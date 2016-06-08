@@ -56,7 +56,7 @@ NAGIOS_CFG="/etc/nagios/nagios.cfg"
 NAGIOS_CONTACTS_CFG_PATH="/etc/nagios/conf.d/openattic_contacts.cfg"
 
 ## Type: string
-## Default: "/etc/nagios/conf.d/openattic.cfg"
+## Default: "/etc/nagios/conf.d"
 #
 # Defines additional services
 NAGIOS_SERVICES_CFG_PATH="/etc/nagios/conf.d"
