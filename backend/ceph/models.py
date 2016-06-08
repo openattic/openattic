@@ -582,6 +582,19 @@ class CephFs(NodbModel):
 
         return ret
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        context = self.__class__.objects.nodb_context
+        insert = self._state.adding
+        if not insert:
+            raise NotImplementedError('Updating is not supported.')
+        data_pool = CephPool.objects.get(id=self.data_pools[0])
+        MonApi(rados[context.fsid]).fs_new(self.name, self.metadata_pool.name, data_pool.name)
+
+    def delete(self, using=None):
+        context = self.__class__.objects.nodb_context
+        MonApi(rados[context.fsid]).fs_rm(self.name, '--yes-i-really-mean-it')
+
+
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (

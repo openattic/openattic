@@ -250,7 +250,11 @@ class CephFsSerializer(NodbSerializer):
 
 
 class CephFsViewSet(NodbViewSet):
-    """Ceph filesystem (CephFS)"""
+    """
+    Ceph filesystem (CephFS)
+
+    .. warning:: Calling DELETE will *PERMANENTLY DESTROY* all data stored in this fs.
+    """
 
     serializer_class = CephFsSerializer
 
