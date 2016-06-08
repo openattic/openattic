@@ -243,6 +243,25 @@ class CephRbdViewSet(NodbViewSet):
         return CephRbd.objects.all()
 
 
+class CephFsSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephFs
+
+
+class CephFsViewSet(NodbViewSet):
+    """Ceph filesystem (CephFS)"""
+
+    serializer_class = CephFsSerializer
+
+    def __init__(self, **kwargs):
+        super(CephFsViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
+    def get_queryset(self):
+        return CephFs.objects.all()
+
+
 RESTAPI_VIEWSETS = [
     ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
 ]

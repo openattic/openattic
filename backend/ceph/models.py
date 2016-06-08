@@ -562,6 +562,27 @@ class CephRbd(NodbModel):  # aka RADOS block device
         api.remove(self.pool.name, self.name)
 
 
+class CephFs(NodbModel):
+    name = models.CharField(max_length=100, primary_key=True)
+    metadata_pool = models.ForeignKey(CephPool, related_name='metadata_of_ceph_fs')
+    data_pools = JsonField(base_type=list)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        """:type context: ceph.restapi.FsidContext"""
+        assert context is not None
+        api = MonApi(rados[context.fsid])
+
+        ret = []
+        for fs in api.fs_ls():
+            args = CephFs.make_model_args(fs)
+            args['data_pools'] = fs['data_pool_ids']
+            args['metadata_pool'] = CephPool.objects.get(id=fs['metadata_pool_id'])
+            ret.append(CephFs(**args))
+
+        return ret
+
+
 class Cluster(StorageObject):
     AUTH_CHOICES = (
         ('none',  _('Authentication disabled')),

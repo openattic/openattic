@@ -535,6 +535,8 @@ class MonApi(object):
     def osd_dump(self):
         return self.client.mon_command('osd dump')
 
+    def fs_ls(self):
+        return self.client.mon_command('fs ls')
 
 class RbdApi(object):
     """
