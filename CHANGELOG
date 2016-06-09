@@ -11,6 +11,9 @@ Version 2.0.12, (not released yet):
 * Backend: Added field 'host' to Disks REST API resource (OP-1195)
 * Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
 * Backend: Added Ceph RBD REST Collection (OP-1214)
+* Backend: Added a Nagios plugin to monitor basic performance data of a Ceph
+  cluster (OP-1222) (thanks to Christian Eichelmann for giving us the permission
+  to integrate a part of his check-ceph-dash implementation)
 * WebUI: Save personal settings of each data table (OP-1134)
 * WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
