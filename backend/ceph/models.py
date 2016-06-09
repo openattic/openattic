@@ -168,6 +168,8 @@ class CephPool(NodbModel):
     tiers = JsonField(base_type=list, editable=False)
     flags = JsonField(base_type=list, editable=False)
 
+    pool_snaps = JsonField(base_type=list, editable=False)
+
     @staticmethod
     def get_all_objects(context, query):
         """:type context: ceph.restapi.FsidContext"""
@@ -221,6 +223,7 @@ class CephPool(NodbModel):
                 'hit_set_params': pool_data['hit_set_params'],
                 'tiers': pool_data['tiers'],
                 'flags': pool_data['flags_names'].split(','),
+                'pool_snaps': pool_data['pool_snaps'],
             }
 
             ceph_pool = CephPool(**object_data)
@@ -297,6 +300,16 @@ class CephPool(NodbModel):
         context = CephPool.objects.nodb_context
         api = MonApi(rados[context.fsid])
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+
+    def create_snapshot(self, name):
+        context = CephPool.objects.nodb_context
+        api = MonApi(rados[context.fsid])
+        api.osd_pool_mksnap(self.name, name)
+
+    def delete_snapshot(self, name):
+        context = CephPool.objects.nodb_context
+        api = MonApi(rados[context.fsid])
+        api.osd_pool_rmsnap(self.name, name)
 
 
 class CephErasureCodeProfile(NodbModel):
@@ -560,6 +573,40 @@ class CephRbd(NodbModel):  # aka RADOS block device
         context = CephPool.objects.nodb_context
         api = RbdApi(rados[context.fsid])
         api.remove(self.pool.name, self.name)
+
+
+class CephFs(NodbModel):
+    name = models.CharField(max_length=100, primary_key=True)
+    metadata_pool = models.ForeignKey(CephPool, related_name='metadata_of_ceph_fs')
+    data_pools = JsonField(base_type=list)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        """:type context: ceph.restapi.FsidContext"""
+        assert context is not None
+        api = MonApi(rados[context.fsid])
+
+        ret = []
+        for fs in api.fs_ls():
+            args = CephFs.make_model_args(fs)
+            args['data_pools'] = fs['data_pool_ids']
+            args['metadata_pool'] = CephPool.objects.get(id=fs['metadata_pool_id'])
+            ret.append(CephFs(**args))
+
+        return ret
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        context = self.__class__.objects.nodb_context
+        insert = self._state.adding
+        if not insert:
+            raise NotImplementedError('Updating is not supported.')
+        data_pool = CephPool.objects.get(id=self.data_pools[0])
+        MonApi(rados[context.fsid]).fs_new(self.name, self.metadata_pool.name, data_pool.name)
+
+    def delete(self, using=None):
+        context = self.__class__.objects.nodb_context
+        MonApi(rados[context.fsid]).fs_rm(self.name, '--yes-i-really-mean-it')
+
 
 
 class Cluster(StorageObject):

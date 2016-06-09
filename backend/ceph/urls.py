@@ -23,6 +23,7 @@ router.register(r'pools', CephPoolViewSet, 'pool')
 router.register(r'pgs', CephPgViewSet, 'pg')
 router.register(r'erasure-code-profiles', CephErasureCodeProfileViewSet, 'erasure-code-profile')
 router.register(r'rbds', CephRbdViewSet, 'rbd')
+router.register(r'fs', CephFsViewSet, 'fs')
 
 cluster_router = routers.SimpleRouter(trailing_slash=False)
 cluster_router.register(r'ceph', CephClusterViewSet, 'ceph')
