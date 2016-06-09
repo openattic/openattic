@@ -404,6 +404,28 @@ class MonApi(object):
                                        self._args_to_argdict(pool=pool, pool2=pool2, sure=sure), output_format='string')
 
     @undoable
+    def osd_pool_mksnap(self, pool, snap):
+        """
+        COMMAND("osd pool mksnap " \
+        "name=pool,type=CephPoolname " \
+        "name=snap,type=CephString", \
+        "make snapshot <snap> in <pool>", "osd", "rw", "cli,rest")
+        """
+        yield self.client.mon_command('osd pool mksnap',
+                                      self._args_to_argdict(pool=pool, snap=snap), output_format='string')
+        self.osd_pool_rmsnap(pool, snap)
+
+    def osd_pool_rmsnap(self, pool, snap):
+        """
+        COMMAND("osd pool rmsnap " \
+        "name=pool,type=CephPoolname " \
+        "name=snap,type=CephString", \
+        "remove snapshot <snap> from <pool>", "osd", "rw", "cli,rest")
+        """
+        return self.client.mon_command('osd pool rmsnap',
+                                       self._args_to_argdict(pool=pool, snap=snap), output_format='string')
+
+    @undoable
     def osd_tier_add(self, pool, tierpool):
         """
         COMMAND("osd tier add " \
@@ -535,6 +557,36 @@ class MonApi(object):
     def osd_dump(self):
         return self.client.mon_command('osd dump')
 
+    def fs_ls(self):
+        return self.client.mon_command('fs ls')
+
+    @undoable
+    def fs_new(self, fs_name, metadata, data):
+        """
+        COMMAND("fs new " \
+        "name=fs_name,type=CephString " \
+        "name=metadata,type=CephString " \
+        "name=data,type=CephString ", \
+        "make new filesystem using named pools <metadata> and <data>", \
+        "fs", "rw", "cli,rest")
+        """
+        yield self.client.mon_command('fs new',
+                                      self._args_to_argdict(fs_name=fs_name, metadata=metadata, data=data),
+                                      output_format='string')
+        self.fs_rm(fs_name, '--yes-i-really-mean-it')
+
+    def fs_rm(self, fs_name, sure):
+        """
+        COMMAND("fs rm " \
+        "name=fs_name,type=CephString " \
+        "name=sure,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "disable the named filesystem", \
+        "fs", "rw", "cli,rest")
+        """
+        return self.client.mon_command('fs rm',
+                                       self._args_to_argdict(fs_name=fs_name, sure=sure),
+                                       output_format='string')
+
 
 class RbdApi(object):
     """
@@ -555,7 +607,7 @@ class RbdApi(object):
                 rbd.RBD_FEATURE_JOURNALING: 'journaling',
             }
         except AttributeError:
-            logger.error('You Ceph version is too old: some expected RBD features are missing. Please update to a more'
+            logger.error('Your Ceph version is too old: some expected RBD features are missing. Please update to a more'
                          'recent Ceph version.')
             raise
 
