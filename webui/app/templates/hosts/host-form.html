@@ -25,43 +25,36 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
+                        <div class="col-sm-offset-3 col-sm-9" ng-repeat="(key, type) in wwn">
                             <div class="checkbox checkbox-primary">
-                                <input type="checkbox" ng-model="iscsi.check">
-                                <label class="tc_iscsiText" ng-click="iscsi.check = !iscsi.check">Use iSCSI for sharing</label>
-                            </div>
-                        </div>
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox" ng-model="fc.check">
-                                <label class="tc_fcText" ng-click="fc.check = !fc.check">Use Fibre Channel for sharing</label>
+                                <input type="checkbox" ng-model="type.check">
+                                <label class="tc_{{key}}Text" ng-click="type.check = !type.check" ng-bind="type.desc"></label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group" ng-class="{'has-error': (submitted || iscsi.name.$dirty)
-                    && iscsi.name.$invalid}" ng-show="iscsi.check">
-                        <label class="col-sm-3 control-label" for="iscsi">iSCSI IQN</label>
+                    <div class="form-group" ng-repeat="(key, type) in wwn"
+                         ng-class="{'has-error': hostForm[key].$invalid}" ng-show="type.check">
+                        <label class="col-sm-3 control-label" for="data[key]" ng-bind="type.label"></label>
                         <div class="col-sm-9">
-                            <tags-input class="tags-input-home" placeholder="Add an IQN"
-                                        ng-model="data.iscsiInis"
-                                        add-on-space="true"
-                                        on-tag-adding="validShareName($tag, 'iscsi')"
-                                        on-tag-added="addIni($tag, 'iscsi')"
-                                        on-tag-removed="rmIni($tag)">
+                            <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid WWN"
+                                ng-model="data[key]"
+                                add-on-space="true"
+                                on-tag-adding="validShareName($tag, key)"
+                                on-tag-added="addIni($tag, key)"
+                                on-tag-removed="rmIni($tag)"
+                                text="type.text"
+                                current-tag-wwn-validation>
                             </tags-input>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-class="{'has-error': (submitted || wwn.name.$dirty)
-                    && wwn.name.$invalid}" ng-show="fc.check">
-                        <label class="col-sm-3 control-label" for="wwn">FC WWN</label>
-                        <div class="col-sm-9">
-                            <tags-input class="tags-input-home" placeholder="Add a WWN"
-                                        ng-model="data.fcInis"
-                                        add-on-space="true"
-                                        on-tag-adding="validShareName($tag)"
-                                        on-tag-added="addIni($tag, 'qla2xxx')"
-                                        on-tag-removed="rmIni($tag)">
-                            </tags-input>
+                            <div class="help-block" ng-show="hostForm[key].$error.validTag">
+                                <p ng-repeat="(format, details) in validationText.format"
+                                   ng-show="wwn[key].current === format ||
+                                    wwn[key].current === 'all' && (format !== 'iqn' || key === 'iscsi')">
+                                    {{details.desc}}<br>
+                                    For example: {{details.example}}<br>
+                                    <a target="_blank" href="{{details.link}}">More information</a>
+                                </p>
+                                <p ng-show="wwn[key].current === 'exists'" ng-bind="validationText.exists"></p>
+                            </div>
                         </div>
                     </div>
                 </fieldset>

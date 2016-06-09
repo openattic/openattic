@@ -137,12 +137,12 @@
       element(by.model('host.name')).sendKeys(hostname);
       if(iqn){
         element(by.model('iscsi.check')).click();
-        element(by.model('data.iscsiInis')).click();
+        element(by.model('data.iscsi')).click();
         element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
       }
       if(fc){
         element(by.model('fc.check')).click();
-        element(by.model('data.fcInis')).click();
+        element(by.model('data.qla2xxx')).click();
         element.all(by.model('newTag.text')).get(0).sendKeys(fc);
       }
       element(by.css('.tc_submitButton')).click();
@@ -151,12 +151,11 @@
 
     delete_host: function(){
       hostsItem.click();
+      browser.sleep(configs.sleep);
       host.click();
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
-      browser.sleep(400);
       element(by.css('.tc_deleteHost > a')).click();
-      browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
     },
 

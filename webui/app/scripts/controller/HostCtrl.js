@@ -101,13 +101,12 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
             });
           });
           $scope.data = res;
-          console.log(res.results);
         })
         .catch(function (error) {
           console.log("An error occurred", error);
         });
   }, true);
-  
+
   $scope.$watch("selection.item", function (selitem) {
     $scope.hasSelection = Boolean(selitem);
     if (selitem) {

@@ -35,6 +35,48 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
 
   $scope.changes = [];
   $scope.data = {};
+  $scope.wwn = {
+    iscsi: {
+      current: {},
+      valid: true,
+      label: "iSCSI IQN",
+      desc: "Use iSCSI for sharing",
+      text: ""
+    },
+    qla2xxx: {
+      current: {},
+      valid: true,
+      label: "FC WWN",
+      desc: "Use Fibre Channel for sharing",
+      text: ""
+    }
+  };
+  $scope.validationText = {
+    format: {
+      iqn: {
+        desc: "An IQN has the following format 'iqn.$year-$month.$reversedAddress:$definedName'",
+        example: "iqn.2016-06.org.openattic:storage:disk.sn-a8675309",
+        link: "https://en.wikipedia.org/wiki/ISCSI#Addressing'>More information"
+      },
+      mac: {
+        desc: "A MAC is a 64bit long hexadecimal number this means it is 16 characters long. " +
+          "You can just type the number and it will be LIO formatted for you or you can type it LIO formatted.",
+        example: "1234567890abcdef equal to 12:34:56:78:90:ab:cd:ef",
+        link: "https://en.wikipedia.org/wiki/MAC_address#Notational_conventions"
+      },
+      eui: {
+        desc: "The Extended Unique Identifier (EUI) looks like this 'eui-${64bit hexadecimal number}'.",
+        example: "eui.1234567890abcdef",
+        link: "https://en.wikipedia.org/wiki/MAC_address#Notational_conventions"
+      },
+      naa: {
+        desc: "The T11 Network Address Authority (NAA) looks like this 'eui-${64bit or 128bit hexadecimal number}'",
+        example: "naa.1234567890abcdef or naa.1234567890abcdef1234567890abcdef",
+        link: "https://en.wikipedia.org/wiki/ISCSI#Addressing'>More information"
+      }
+    },
+    exists: "The WWN already exists, choose another one."
+  };
 
   var goToListView = function () {
     $state.go("hosts");
@@ -52,29 +94,29 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
     });
 
   $scope.loadInitiators = function () {
-    $scope.data.iscsiInis = [];
-    $scope.data.fcInis = [];
+    $scope.data.iscsi = [];
+    $scope.data.qla2xxx = [];
     InitiatorService.get({host: $stateParams.host})
       .$promise
       .then(function (res) {
         for (var i = 0; i < res.results.length; i++) {
           if (res.results[i].type === "iscsi") {
-            $scope.data.iscsiInis.push({
+            $scope.data.iscsi.push({
               "text": res.results[i].wwn,
               "id": res.results[i].id
             });
           } else {
-            $scope.data.fcInis.push({
+            $scope.data.qla2xxx.push({
               "text": res.results[i].wwn,
               "id": res.results[i].id
             });
           }
         }
-        if ($scope.data.fcInis.length > 0) {
-          $scope.fc = {check: true};
+        if ($scope.data.qla2xxx.length > 0) {
+          $scope.wwn.qla2xxx.check = true;
         }
-        if ($scope.data.iscsiInis.length > 0) {
-          $scope.iscsi = {check: true};
+        if ($scope.data.iscsi.length > 0) {
+          $scope.wwn.iscsi.check = true;
         }
       }, function (error) {
         console.log("An error occurred", error);
@@ -123,12 +165,12 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
       }
       var requests = [];
       if ($scope.iscsi && $scope.iscsi.check === false) {
-        $scope.data.iscsiInis.forEach(function (wwn) {
+        $scope.data.iscsi.forEach(function (wwn) {
           $scope.rmIni(wwn);
         });
       }
       if ($scope.fc && $scope.fc.check === false) {
-        $scope.data.fcInis.forEach(function (wwn) {
+        $scope.data.qla2xxx.forEach(function (wwn) {
           $scope.rmIni(wwn);
         });
       }
@@ -155,6 +197,14 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
       });
     };
   }
+
+  Object.keys($scope.wwn).forEach(function(type){
+    $scope.$watchCollection("wwn." + type + ".text", function (text) {
+      if (text.length === 0) {
+        $scope.wwn[type].valid = true;
+      }
+    });
+  });
 
   $scope.saveShares = function () {
     var requests = [];
@@ -183,36 +233,46 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
   };
 
   $scope.validShareName = function (tag, type) {
-    return Boolean($scope.validWwn(tag, type));
+    $scope.wwn[type].current = $scope.validWwn(tag, type);
+    $scope.wwn[type].valid = typeof $scope.wwn[type].current !== "string";
+    if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) !== -1) {
+      $scope.wwn[type].current = "exists";
+      $scope.wwn[type].valid = false;
+    }
+    return $scope.wwn[type].valid;
   };
 
   $scope.validWwn = function (tag, type) {
     var wwn = tag.text;
     if (wwn.match(/^[a-fA-F0-9:]*$/)) {
       wwn = wwn.replace(/:/g, "");
-      if (wwn.length !== 16) {
-        return;
-      }
-      tag.text = tag.text.match(/.{2}/g).join(":");
-      return tag;
-    } else if (wwn.indexOf("iqn") === 0 && type === "iscsi") {
-      if (wwn.match(/^iqn\.\d{4}-\d{2}\.\D{2,3}(\.\w+)+(:[A-Za-z0-9-\.]+)*$/)) {
+      if (wwn.length === 16) {
+        tag.text = wwn.match(/.{2}/g).join(":");
         return tag;
       }
+      return "mac";
+    } else if (wwn.indexOf("iqn") === 0 && type === "iscsi") {
+      if (wwn.match(/^iqn\.\d{4}-\d{2}\.\D{2,3}(\.\w+)+(:[A-Za-z0-9-_\.]+)*$/)) {
+        return tag;
+      }
+      return "iqn";
     } else if (wwn.indexOf("eui") === 0) {
       if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
         return tag;
       }
+      return "eui";
     } else if (wwn.indexOf("naa.") === 0) {
-      var ident = wwn.split(4);
+      var ident = wwn.substr(4);
       if (ident.match(/^[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
         return tag;
       }
+      return "naa";
     }
+    return "all";
   };
 
   $scope.addIni = function (tag, type) {
-    tag = $scope.validWwn(tag, type);
+    tag = $scope.wwn[type].current ;
     $scope.wwns.push(tag.text);
     $scope.changes.push({
       tag: tag,

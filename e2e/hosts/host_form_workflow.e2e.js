@@ -1,10 +1,10 @@
 var helpers = require('../common.js');
 
 describe('Host form workflow', function(){
-  var iscsiCheckbox = element(by.model('iscsi.check'));
-  var fcCheckbox = element(by.model('fc.check'));
-  var iscsiInput = element(by.model('data.iscsiInis'));
-  var fcInput = element(by.model('data.fcInis'));
+  var iscsiCheckbox = element(by.model('wwn.iscsi.check'));
+  var fcCheckbox = element(by.model('wwn.qla2xxx.check'));
+  var iscsiInput = element(by.model('data.iscsi'));
+  var fcInput = element(by.model('data.qla2xxx'));
 
   beforeAll(function(){
     helpers.login();
