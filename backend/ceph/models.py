@@ -168,6 +168,8 @@ class CephPool(NodbModel):
     tiers = JsonField(base_type=list, editable=False)
     flags = JsonField(base_type=list, editable=False)
 
+    pool_snaps = JsonField(base_type=list, editable=False)
+
     @staticmethod
     def get_all_objects(context, query):
         """:type context: ceph.restapi.FsidContext"""
@@ -221,6 +223,7 @@ class CephPool(NodbModel):
                 'hit_set_params': pool_data['hit_set_params'],
                 'tiers': pool_data['tiers'],
                 'flags': pool_data['flags_names'].split(','),
+                'pool_snaps': pool_data['pool_snaps'],
             }
 
             ceph_pool = CephPool(**object_data)
@@ -297,6 +300,16 @@ class CephPool(NodbModel):
         context = CephPool.objects.nodb_context
         api = MonApi(rados[context.fsid])
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+
+    def create_snapshot(self, name):
+        context = CephPool.objects.nodb_context
+        api = MonApi(rados[context.fsid])
+        api.osd_pool_mksnap(self.name, name)
+
+    def delete_snapshot(self, name):
+        context = CephPool.objects.nodb_context
+        api = MonApi(rados[context.fsid])
+        api.osd_pool_rmsnap(self.name, name)
 
 
 class CephErasureCodeProfile(NodbModel):

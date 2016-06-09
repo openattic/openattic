@@ -404,6 +404,28 @@ class MonApi(object):
                                        self._args_to_argdict(pool=pool, pool2=pool2, sure=sure), output_format='string')
 
     @undoable
+    def osd_pool_mksnap(self, pool, snap):
+        """
+        COMMAND("osd pool mksnap " \
+        "name=pool,type=CephPoolname " \
+        "name=snap,type=CephString", \
+        "make snapshot <snap> in <pool>", "osd", "rw", "cli,rest")
+        """
+        yield self.client.mon_command('osd pool mksnap',
+                                      self._args_to_argdict(pool=pool, snap=snap), output_format='string')
+        self.osd_pool_rmsnap(pool, snap)
+
+    def osd_pool_rmsnap(self, pool, snap):
+        """
+        COMMAND("osd pool rmsnap " \
+        "name=pool,type=CephPoolname " \
+        "name=snap,type=CephString", \
+        "remove snapshot <snap> from <pool>", "osd", "rw", "cli,rest")
+        """
+        return self.client.mon_command('osd pool rmsnap',
+                                       self._args_to_argdict(pool=pool, snap=snap), output_format='string')
+
+    @undoable
     def osd_tier_add(self, pool, tierpool):
         """
         COMMAND("osd tier add " \
@@ -585,7 +607,7 @@ class RbdApi(object):
                 rbd.RBD_FEATURE_JOURNALING: 'journaling',
             }
         except AttributeError:
-            logger.error('You Ceph version is too old: some expected RBD features are missing. Please update to a more'
+            logger.error('Your Ceph version is too old: some expected RBD features are missing. Please update to a more'
                          'recent Ceph version.')
             raise
 
