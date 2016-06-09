@@ -7,6 +7,7 @@ Version 2.0.12, (not released yet):
 * Backend: Added possiblility to create erasure-coded Ceph pools in the REST API (OP-546)
 * Backend: Added API call for creating new Ceph pools (OP-1024)
 * Backend: Added modifying requests to Ceph pools (OP-1170, OP-1172)
+* Backend: Added Ceph Pool snapshots to the REST API (OP-1242)
 * Backend: Added support for Ceph cache tiering (OP-1184)
 * Backend: Added field 'host' to Disks REST API resource (OP-1195)
 * Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
