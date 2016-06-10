@@ -15,6 +15,7 @@
 """
 from django.utils.functional import cached_property
 from rest_framework import serializers, viewsets, status
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route
@@ -134,6 +135,27 @@ class CephPoolViewSet(NodbViewSet):
     def get_queryset(self):
         return CephPool.objects.all()
 
+    @detail_route(methods=['get', 'post', 'delete'])
+    def snapshots(self, request, *args, **kwargs):
+        """
+        If you are wondering, why you don't get an error, if a snapshot already exists:
+        http://tracker.ceph.com/projects/ceph/repository/revisions/43d62c00c99f1cd311d44b0b0c272e6d67685256/diff/src/m
+           on/OSDMonitor.cc
+
+        :type request: Request
+        """
+        pool = CephPool.objects.get(pk=kwargs['pk'])
+        if request.method == 'GET':
+            return Response(pool.pool_snaps, status=status.HTTP_200_OK)
+        elif request.method == 'POST':
+            pool.create_snapshot(request.DATA['name'])
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_201_CREATED)
+        elif request.method == 'DELETE':
+            pool.delete_snapshot(request.DATA['name'])
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_200_OK)
+        else:
+            raise ValueError('{}. Method not allowed.'.format(request.method))
+
 
 class PaginatedCephPoolSerializer(PaginationSerializer):
 
@@ -241,6 +263,29 @@ class CephRbdViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephRbd.objects.all()
+
+
+class CephFsSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephFs
+
+
+class CephFsViewSet(NodbViewSet):
+    """
+    Ceph filesystem (CephFS)
+
+    .. warning:: Calling DELETE will *PERMANENTLY DESTROY* all data stored in this fs.
+    """
+
+    serializer_class = CephFsSerializer
+
+    def __init__(self, **kwargs):
+        super(CephFsViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self))
+
+    def get_queryset(self):
+        return CephFs.objects.all()
 
 
 RESTAPI_VIEWSETS = [
