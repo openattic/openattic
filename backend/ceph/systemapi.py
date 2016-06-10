@@ -21,7 +21,6 @@ import json
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
 
-from ceph.conf import settings
 from ceph.models import CephCluster
 from ifconfig.models import Host
 from systemd.procutils import invoke
@@ -187,9 +186,10 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
+        from nagios.conf import settings
 
         for cluster in CephCluster.objects.all():
-            file_name = "{}/cephcluster_{}.cfg".format(settings.CEPH_SERVICES_CFG_PATH,
+            file_name = "{}/cephcluster_{}.cfg".format(settings.NAGIOS_SERVICES_CFG_PATH,
                                                        cluster.fsid)
 
             services = [self.gen_service_data(cluster.__class__.__name__, cluster.fsid)]
