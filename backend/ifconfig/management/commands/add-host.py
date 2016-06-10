@@ -26,6 +26,5 @@ class Command( BaseCommand ):
     def handle(self, **options):
         try:
             host = Host.objects.get_current()
-            return host
         except Host.DoesNotExist:
             Host.insert_current_host()
