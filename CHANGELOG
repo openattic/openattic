@@ -16,6 +16,9 @@ Version 2.0.12, (not released yet):
   cluster (OP-1222) (thanks to Christian Eichelmann for giving us the permission
   to integrate a part of his check-ceph-dash implementation)
 * Backend: Added CephFS REST Collection (OP-1245)
+* Backend: Cleaned up 'NAGIOS_SERVICES_CFG_PATH' backend setting. This setting
+  will now be defined in the correct config files (openattic, openattic.RedHat,
+  openattic.SUSE) only - no other duplicates or default values (OP-1247)
 * WebUI: Save personal settings of each data table (OP-1134)
 * WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
