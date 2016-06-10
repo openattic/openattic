@@ -27,8 +27,9 @@ Options:
     --source=<source>       The source to be used. Either an URL to a Mercurial repository or local
                             path to a Mercurial repository.
                             If a local path is used, uncommited changes will be automatically
-                            committed and used to create the tarball. The source path is never
-                            altered, only a copy of it.
+                            If a local path is used, uncommited changes will be automatically
+                            committed and used to create the tarball. The source path won't be
+                            altered, only the copy of it.
                             [default: https://bitbucket.org/openattic/openattic]
     -v                      Enables the verbose mode.
     -q                      Enables the quiet mode.
@@ -300,13 +301,13 @@ class DistBuilder(object):
         return version
 
     def _get_revision_by_channel(self, channel):
-        """Return the revision corresponding the given release channel.
+        """Return the revision corresponding to the given release channel.
 
         This function provides the default revision for calls of this script which do NOT provide a
         revision argument, so that the revision has to be determined automatically.
 
         If the channel is 'release', the revision will resolve to the latest existing mercurial tag.
-        If it's 'snapshot' it'll resolve to the tip of the default branch.
+        If it's 'snapshot' it will resolve to the tip of the default branch.
 
         :param channel: 'release' | 'snapshot'
         :type channel: str
