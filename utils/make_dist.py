@@ -27,7 +27,6 @@ Options:
     --source=<source>       The source to be used. Either an URL to a Mercurial repository or local
                             path to a Mercurial repository.
                             If a local path is used, uncommited changes will be automatically
-                            If a local path is used, uncommited changes will be automatically
                             committed and used to create the tarball. The source path won't be
                             altered, only the copy of it.
                             [default: https://bitbucket.org/openattic/openattic]
