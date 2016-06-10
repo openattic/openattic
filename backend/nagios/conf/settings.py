@@ -44,7 +44,7 @@ STATUS_DAT_PATH          = getattr( settings, "NAGIOS_STATUS_DAT_PATH",   "/var/
 
 NAGIOS_CFG_PATH          = getattr( settings, "NAGIOS_CFG_PATH",            "/etc/nagios3/nagios.cfg" )
 CONTACTS_CFG_PATH        = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/conf.d/openattic_contacts.cfg" )
-SERVICES_CFG_PATH        = getattr( settings, "NAGIOS_SERVICES_CFG_PATH",   "/etc/nagios3/conf.d/openattic.cfg" )
+NAGIOS_SERVICES_CFG_PATH = getattr( settings, "NAGIOS_SERVICES_CFG_PATH")
 INCLUDE_HOST_IN_CFG      = getattr( settings, "NAGIOS_INCLUDE_HOST_IN_CFG", True )
 
 BINARY_NAME              = getattr( settings, "NAGIOS_BINARY_NAME",         "nagios3" )
