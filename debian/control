@@ -102,13 +102,13 @@ Description: Basic requirements for openATTIC
 
 Package: openattic-gui
 Architecture: all
-Depends: ${misc:Depends}, apache2
+Depends: ${misc:Depends}, apache2, openattic
 Description: Web GUI for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
  .
- This package provides the web graphical user interface.
+ This package provides the web-based graphical user interface.
 
 Package: openattic-module-lvm
 Architecture: all
