@@ -34,6 +34,8 @@ Version 2.0.12, (not released yet):
   anymore (OP-1234)
 * Packaging: Changed dependency of the 'openattic-gui' package from 'openattic-
   base' to 'openattic' (OP-1137)
+* Packaging: Updated the dependencies on `ceph-common` to be of version 10.0.0
+  (aka "Jewel") or higher (OP-1268)
 
 Version 2.0.11, 20. May 2016:
 -----------------------------
