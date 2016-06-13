@@ -30,6 +30,8 @@ Version 2.0.12, (not released yet):
   different sources and revisions (OP-1118)
 * Packaging: Amended the create arguments of make_dist.py from 'stable' and
   'unstable' to 'release' and 'snapshot' (OP-1233)
+* Packaging: Amended the build scripts to not require existing mercurial tags
+  anymore (OP-1234)
 
 
 Version 2.0.11, 20. May 2016:
