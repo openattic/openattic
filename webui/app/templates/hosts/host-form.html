@@ -47,11 +47,17 @@
                             </tags-input>
                             <div class="help-block" ng-show="hostForm[key].$error.validTag">
                                 <p ng-repeat="(format, details) in validationText.format"
-                                   ng-show="wwn[key].current === format ||
-                                    wwn[key].current === 'all' && (format !== 'iqn' || key === 'iscsi')">
+                                   ng-show="wwn[key].current === format">
                                     {{details.desc}}<br>
                                     For example: {{details.example}}<br>
                                     <a target="_blank" href="{{details.link}}">More information</a>
+                                </p>
+                                <p ng-show="wwn[key].current === 'all'">
+                                    You can use the following formats:
+                                    <span ng-repeat="(format, details) in validationText.format"
+                                          ng-show="(format !== 'iqn' || key === 'iscsi')">
+                                        <br> {{format|uppercase}}: {{details.notation}}
+                                    </span>
                                 </p>
                                 <p ng-show="wwn[key].current === 'exists'" ng-bind="validationText.exists"></p>
                             </div>

@@ -1,10 +1,10 @@
 var helpers = require('../common.js');
 
 describe('Host form workflow', function(){
-  var iscsiCheckbox = element(by.model('wwn.iscsi.check'));
-  var fcCheckbox = element(by.model('wwn.qla2xxx.check'));
-  var iscsiInput = element(by.model('data.iscsi'));
-  var fcInput = element(by.model('data.qla2xxx'));
+  var iscsiCheckbox = element.all(by.model('type.check')).get(0);
+  var fcCheckbox = element.all(by.model('type.check')).get(1);
+  var iscsiInput = element.all(by.model('newTag.text')).get(0);
+  var fcInput = element.all(by.model('newTag.text')).get(1);
 
   beforeAll(function(){
     helpers.login();
@@ -37,13 +37,12 @@ describe('Host form workflow', function(){
     expect(element.all(by.css('.form-group input[type=checkbox]')).count()).toEqual(2);
   });
 
-
   it('should have a iscsi checkbox label', function(){
     expect(element(by.css('.tc_iscsiText')).isDisplayed()).toBe(true);
   });
 
   it('should have a fibre channel checkbox label', function(){
-    expect(element(by.css('.tc_fcText')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_qla2xxxText')).isDisplayed()).toBe(true);
   });
 
   it('should have an input field for an initiator', function(){

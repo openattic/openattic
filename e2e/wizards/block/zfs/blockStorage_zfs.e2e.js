@@ -23,7 +23,6 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
   beforeAll(function(){
     helpers.login();
     helpers.create_host(iqn);
-
   });
 
   it('should verify the created host', function(){
