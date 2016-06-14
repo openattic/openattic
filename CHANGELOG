@@ -23,6 +23,7 @@ Version 2.0.12, (not released yet):
   openattic.SUSE) only - no other duplicates or default values (OP-1247)
 * WebUI: Save personal settings of each data table (OP-1134)
 * WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
+* WebUI: Datatable shows a message if it is empty (OP-1193)
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: adapted wizard test cases to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: Test the local storage capabilities of data tables (OP-1202)
