@@ -21,6 +21,7 @@ import sysutils.models
 
 from ConfigParser import ConfigParser
 
+from django.conf import settings
 from django.contrib.auth.models import User
 
 from ifconfig.models import IPAddress
@@ -191,6 +192,15 @@ def update(**kwargs):
                 mdlentity.full_clean()
                 mdlentity.save(database_only=True)
                 print "added"
+
+    if "nagios" in settings.INSTALLED_APPS:
+        print "Updating Nagios configs: adding detected Ceph clusters"
+        from systemd import get_dbus_object
+        ceph = get_dbus_object("/ceph")
+        ceph.write_nagios_configs()
+    else:
+        print "Nagios does not appear to be installed, skipping adding Ceph clusters"
+
 
 
 sysutils.models.post_install.connect(update, sender=sysutils.models)
