@@ -44,9 +44,9 @@ def update(**kwargs):
         displayname = m.group("displayname")
 
         cluster_defaults = {
-            "auth_cluster_required" : "cephx",
-            "auth_service_required" : "cephx",
-            "auth_client_required"  : "cephx"
+            "auth_cluster_required": "cephx",
+            "auth_service_required": "cephx",
+            "auth_client_required": "cephx"
         }
 
         conf = ConfigParser(cluster_defaults)
@@ -63,7 +63,7 @@ def update(**kwargs):
         except ceph_models.Cluster.DoesNotExist:
             # since conf.items ensures that defaults come first and overrides later
             # the dict is expected to do the right thing when it encounters the overrriden key
-            global_conf={k.replace(' ','_'):v for k,v in conf.items('global')}
+            global_conf = {k.replace(' ', '_'): v for k, v in conf.items('global')}
             cluster = ceph_models.Cluster(
                 uuid=conf.get("global", "fsid"), name=displayname,
                 auth_cluster_required=global_conf["auth_cluster_required"],
@@ -200,7 +200,6 @@ def update(**kwargs):
         ceph.write_nagios_configs()
     else:
         print "Nagios does not appear to be installed, skipping adding Ceph clusters"
-
 
 
 sysutils.models.post_install.connect(update, sender=sysutils.models)
