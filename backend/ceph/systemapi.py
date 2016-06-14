@@ -17,6 +17,7 @@
 import os
 import os.path
 import json
+import re
 
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
@@ -183,6 +184,17 @@ class SystemD(BasePlugin):
     def ceph_fsid(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["fsid"])
         return out
+
+    @deferredmethod(in_signature="")
+    def remove_nagios_configs(self, sender):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+
+        def _remove_file(file):
+            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
+            os.remove(path)
+
+        [_remove_file(f) for f in os.listdir(NAGIOS_SERVICES_CFG_PATH)
+         if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", f)]
 
     @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
