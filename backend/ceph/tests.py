@@ -13,8 +13,10 @@
  *  GNU General Public License for more details.
 """
 
+import os
 import mock
 import tempfile
+import json
 
 from django.test import TestCase
 
@@ -22,6 +24,10 @@ import ceph.models
 import ceph.librados
 
 from ceph.librados import Keyring, undoable, undo_transaction
+
+
+def open_testdata(name):
+    return open(os.path.join(os.path.dirname(__file__), name))
 
 
 class ClusterTestCase(TestCase):
@@ -251,7 +257,7 @@ class LibradosTest(TestCase):
     @mock.patch.object(ceph.librados.Client, 'connect')
     @mock.patch('ceph.librados.MonApi', autospec=True)
     def test_osd_tree(self, monApi_mock, connect_mock):
-        tree = [ceph.librados.json.loads("""{
+        tree = [json.loads("""{
             "id": 12,
             "name": "osd.12",
             "type": "osd",
@@ -263,21 +269,21 @@ class LibradosTest(TestCase):
             "reweight": 1,
             "primary_affinity": 1
         }""")] * 3
-        tree += [ceph.librados.json.loads("""{
+        tree += [json.loads("""{
             "id": -10,
             "name": "z2-dfs06",
             "type": "host",
             "type_id": 1,
             "children": [12]
         }""")] * 3
-        tree += [ceph.librados.json.loads("""  {
+        tree += [json.loads("""  {
         "id": -17,
             "name": "z1-dfs",
             "type": "zone",
             "type_id": 2,
             "children": [-10]
         }""")] * 2
-        tree += [ceph.librados.json.loads("""  {
+        tree += [json.loads("""  {
             "id": -19,
             "name": "sata_raid_bucket",
             "type": "pool",
@@ -293,7 +299,6 @@ class LibradosTest(TestCase):
                 "type": "osd",
                 "type_id": 0,
                 "crush_weight": 0.229996,
-                "depth": 2,
                 "exists": 1,
                 "status": "up",
                 "reweight": 1,
@@ -301,3 +306,24 @@ class LibradosTest(TestCase):
                 "hostname": "z2-dfs06"
             }
         ])
+
+    @mock.patch('ceph.models.rados', autospec=True)
+    @mock.patch.object(ceph.models.librados.Client, 'connect')
+    @mock.patch('ceph.models.MonApi', autospec=True)
+    @mock.patch('ceph.models.librados.MonApi', autospec=True)
+    def test_ceph_osd_list(self, librados_monApi_mock, monApi_mock, connect_mock, rados):
+        rados.__getitem__ = mock.MagicMock(return_value=ceph.models.librados.Client())
+        with open_testdata("tests/ceph-osd-dump.json") as f:
+            osd_dump = json.load(f)
+            monApi_mock.return_value.osd_dump.return_value = osd_dump
+            librados_monApi_mock.return_value.osd_dump.return_value = osd_dump
+        with open_testdata("tests/ceph-osd-tree.json") as f:
+            osd_tree = json.load(f)
+            monApi_mock.return_value.osd_tree.return_value = osd_tree
+            librados_monApi_mock.return_value.osd_tree.return_value = osd_tree
+        class Ctx:
+            fsid = ''
+        osds = ceph.models.CephOsd.get_all_objects(Ctx(), None)
+        names = [osd.name for osd in osds]
+        self.assertEqual(names, [u'osd.0', u'osd.1', u'osd.2', u'osd.4', u'osd.5', u'osd.6', u'osd.7', u'osd.8',
+                                 u'osd.9', u'osd.11', u'osd.12', u'osd.13', u'osd.14', u'osd.15'])
