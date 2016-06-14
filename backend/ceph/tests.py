@@ -19,6 +19,7 @@ import tempfile
 from django.test import TestCase
 
 import ceph.models
+import ceph.librados
 
 from ceph.librados import Keyring, undoable, undo_transaction
 
@@ -244,3 +245,59 @@ class UndoFrameworkTest(TestCase):
         except ValueError:
             return
         self.fail('no exception')
+
+
+class LibradosTest(TestCase):
+    @mock.patch.object(ceph.librados.Client, 'connect')
+    @mock.patch('ceph.librados.MonApi', autospec=True)
+    def test_osd_tree(self, monApi_mock, connect_mock):
+        tree = [ceph.librados.json.loads("""{
+            "id": 12,
+            "name": "osd.12",
+            "type": "osd",
+            "type_id": 0,
+            "crush_weight": 0.229996,
+            "depth": 2,
+            "exists": 1,
+            "status": "up",
+            "reweight": 1,
+            "primary_affinity": 1
+        }""")] * 3
+        tree += [ceph.librados.json.loads("""{
+            "id": -10,
+            "name": "z2-dfs06",
+            "type": "host",
+            "type_id": 1,
+            "children": [12]
+        }""")] * 3
+        tree += [ceph.librados.json.loads("""  {
+        "id": -17,
+            "name": "z1-dfs",
+            "type": "zone",
+            "type_id": 2,
+            "children": [-10]
+        }""")] * 2
+        tree += [ceph.librados.json.loads("""  {
+            "id": -19,
+            "name": "sata_raid_bucket",
+            "type": "pool",
+            "type_id": 3,
+            "children": [-17]
+        }""")] * 2
+        monApi_mock.return_value.osd_tree.return_value = {'nodes': tree}
+        res = ceph.librados.Client().list_osds()
+        self.assertEqual(res, [
+            {
+                "id": 12,
+                "name": "osd.12",
+                "type": "osd",
+                "type_id": 0,
+                "crush_weight": 0.229996,
+                "depth": 2,
+                "exists": 1,
+                "status": "up",
+                "reweight": 1,
+                "primary_affinity": 1,
+                "hostname": "z2-dfs06"
+            }
+        ])
