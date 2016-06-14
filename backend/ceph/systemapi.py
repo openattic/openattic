@@ -192,7 +192,7 @@ class SystemD(BasePlugin):
             file_name = "{}/cephcluster_{}.cfg".format(settings.NAGIOS_SERVICES_CFG_PATH,
                                                        cluster.fsid)
 
-            services = [self.gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+            services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
 
             with open(file_name, "wb") as config_file:
                 config_file.write(render_to_string("nagios/services.cfg", {
@@ -201,7 +201,7 @@ class SystemD(BasePlugin):
                     "Services": services
                 }))
 
-    def gen_service_data(self, service_instance_name, service_arguments):
+    def _gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):
 
             def __init__(self, desc, command_name, args):
