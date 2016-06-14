@@ -198,15 +198,15 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
-        from nagios.conf import settings
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
         for cluster in CephCluster.objects.all():
-            file_name = "{}/cephcluster_{}.cfg".format(settings.NAGIOS_SERVICES_CFG_PATH,
-                                                       cluster.fsid)
+            file_name = "cephcluster_{}.cfg".format(cluster.fsid)
 
             services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
 
-            with open(file_name, "wb") as config_file:
+            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
+            with open(path, "wb") as config_file:
                 config_file.write(render_to_string("nagios/services.cfg", {
                     "IncludeHost": False,
                     "Host": Host.objects.get_current(),
