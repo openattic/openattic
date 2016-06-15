@@ -148,15 +148,20 @@ class Client(object):
 
     def list_osds(self):
         """
-        Args:
-            obj_type (str): Either "osd" or "host" or "root"
+        Info about each osd, eg "up" or "down". Also adding the `hostname`.
 
-        Returns:
-            list[dict]: Info about each osd, eg "up" or "down". Also adding the `hostname`.
+        :rtype: list[dict[str, Any]]
         """
-        nodes = self.mon_command("osd tree")["nodes"]
-        return [dict(hostname=k["name"], **v) for (k, v) in product(nodes, nodes)
-                if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]
+        def unique_list_of_dicts(l):
+            return reduce(lambda x, y: x if y in x else x + [y], l, [])
+
+        nodes = MonApi(self).osd_tree()["nodes"]
+        for node in nodes:
+            if u'depth' in node:
+                del node[u'depth']
+        nodes = unique_list_of_dicts(nodes)
+        return list(unique_list_of_dicts([dict(hostname=k["name"], **v) for (k, v) in product(nodes, nodes)
+                    if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]))
 
     def mon_command(self, cmd, argdict=None, output_format='json'):
         """Calls a monitor command and returns the result as dict.
@@ -556,6 +561,15 @@ class MonApi(object):
 
     def osd_dump(self):
         return self.client.mon_command('osd dump')
+
+    def osd_tree(self):
+        """Does not return a tree, but a directed graph with multiple roots.
+
+        Possible node types are: pool. zone, root, host, osd
+
+        Note, OSDs may be duplicated in the list, although the u'depth' attribute may differ between them.
+        """
+        return self.client.mon_command('osd tree')
 
     def fs_ls(self):
         return self.client.mon_command('fs ls')
