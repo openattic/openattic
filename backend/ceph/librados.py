@@ -587,6 +587,9 @@ class MonApi(object):
                                        self._args_to_argdict(fs_name=fs_name, sure=sure),
                                        output_format='string')
 
+    def pg_dump(self):
+        """Also contains OSD statistics"""
+        return self.client.mon_command('pg dump')
 
 class RbdApi(object):
     """
