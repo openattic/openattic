@@ -189,12 +189,10 @@ class SystemD(BasePlugin):
     def remove_nagios_configs(self, sender):
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
-        def _remove_file(file):
-            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
-            os.remove(path)
-
-        [_remove_file(f) for f in os.listdir(NAGIOS_SERVICES_CFG_PATH)
-         if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", f)]
+        for file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
+            if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", file):
+                path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
+                os.remove(path)
 
     @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
