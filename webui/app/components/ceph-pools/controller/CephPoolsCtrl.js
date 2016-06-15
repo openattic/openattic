@@ -33,8 +33,9 @@
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService) {
   $scope.registry = registryService;
-  $scope.clusters = clusterData;
-  $scope.pools = false;
+  $scope.cluster = clusterData;
+  $scope.pools = {};
+  $scope.error = false;
 
   $scope.filterConfig = {
     page     : 0,
@@ -46,8 +47,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.selection = {};
 
-  if ($scope.clusters && typeof $scope.registry.selectedCluster === "undefined") {
-    $scope.registry.selectedCluster = $scope.clusters[0];
+  if ($scope.cluster.results.length > 0 && typeof $scope.registry.selectedCluster === "undefined") {
+    $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
   var modifyResult = function (res) {
@@ -60,12 +61,15 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     return res;
   };
 
-  $scope.getData = function () {
-    if ($scope.clusters && $scope.registry.selectedCluster) {
-      var obj = $filter("filter")($scope.clusters, {fsid: $scope.registry.selectedCluster.fsid}, true);
+  $scope.getPoolList = function () {
+    if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
+      var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
-        $scope.registry.selectedCluster = $scope.clusters[0];
+        $scope.registry.selectedCluster = $scope.cluster.results[0];
       }
+
+      $scope.pools = {};
+      $scope.error = false;
 
       cephPoolsService
           .get({
@@ -80,13 +84,18 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
             $scope.pools = modifyResult(res);
           })
           .catch(function (error) {
-            console.log("No Ceph pools available.", error);
+            $scope.error = error;
+            console.log("An error occurred while loading the ceph pools.", error);
           });
     }
   };
 
-  $scope.$watch("filterConfig", function () {
-    $scope.getData();
+  $scope.$watch("filterConfig", function (newValue, oldValue) {
+    if (angular.equals(newValue, oldValue)) {
+      return;
+    }
+
+    $scope.getPoolList();
   }, true);
 
   $scope.$watchCollection("selection", function (selection) {

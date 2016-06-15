@@ -11,13 +11,58 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import ast
 import json
+from itertools import product
 
 import django
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
+from django.utils.functional import cached_property
+
+
+class NoDbQuery(object):
+    def __init__(self, q=None, ordering=None):
+        self._q = q
+        self._ordering = [] if ordering is None else ordering
+
+    def can_filter(self):
+        return True
+
+    def add_q(self, q):
+        self._q = q if self._q is None else self._q & q
+
+    def clone(self):
+        tmp = NoDbQuery()
+        tmp._q = self._q.clone() if self._q is not None else None
+        tmp._ordering = self._ordering[:]
+        return tmp
+
+    def clear_ordering(self, force_empty=None):
+        self._ordering = []
+
+    def add_ordering(self, *keys):
+        self._ordering += keys
+
+    @property
+    def ordering(self):
+        return self._ordering
+
+    @property
+    def q(self):
+        """:rtype: Q"""
+        return self._q
+
+    def set_empty(self):
+        self.clear_ordering()
+        self._q = None
+
+    def __str__(self):
+        return "<NoDbQuery q={}, ordering={}>".format(self._q, self._ordering)
 
 
 class NodbQuerySet(QuerySet):
@@ -26,22 +71,92 @@ class NodbQuerySet(QuerySet):
         self.model = model
         self._context = context
         self._current = 0
-        self._data = None
-        self._data = self.model.get_all_objects(self._context)
-        self._max = len(self._data) - 1
+        self._query = NoDbQuery()
+#        self.oInstance = QuerySet()
+
+    @cached_property
+    def _max(self):
+        return len(self._filtered_data) - 1
+
+    @cached_property
+    def _data(self):
+        objects = self.model.get_all_objects(self._context, query=self._query)
+        for obj in objects:
+            #  Because we're calling the model constructors ourselves, django thinks that
+            #  the objects are not in the database. We need to "hack" this.
+            obj._state.adding = False
+        return objects
+
+    @cached_property
+    def _filtered_data(self):
+        """
+        Each Q child consists of either another Q, `attr__iexact` or `model__attr__iexact` or `attr`
+        """
+
+        def filter_impl(keys, value, obj):
+            assert keys
+            attr = getattr(obj, keys[0])
+            if attr is None:
+                raise AttributeError('Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
+            elif isinstance(attr, models.Model):
+                return filter_impl(keys[1:], value, attr)
+            else:
+                modifier = keys[1] if len(keys) > 1 else "exact"
+                if modifier == "exact":
+                    return attr == attr.__class__(value)
+                elif modifier == "istartswith":
+                    return attr.startswith(value)
+                elif modifier == "icontains":
+                    return value in attr
+                else:
+                    raise ValueError('Unsupported Modifier {}.'.format(modifier))
+
+        def filter_one_q(q, obj):
+            """
+            Args:
+                q (Q):
+                obj NodbModel:
+
+            """
+            def negate(res):
+                return not res if q.negated else res
+
+            if q is None:
+                return True
+            elif isinstance(q, tuple):
+                return filter_impl(q[0].split('__'), q[1], obj)
+            elif q.connector == "AND":
+                return negate(reduce(lambda l, r: l and filter_one_q(r, obj), q.children, True))
+            else:
+                return negate(reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False))
+
+        filtered = [obj for obj in self._data
+                    if filter_one_q(self._query.q, obj)]
+
+        for order_key in self.query.ordering[::-1]:
+            if order_key.startswith("-"):
+                order_key = order_key[1:]
+                filtered.sort(key=lambda obj: getattr(obj, order_key), reverse=True)
+            else:
+                filtered.sort(key=lambda obj: getattr(obj, order_key))
+
+        return filtered
 
     def __iter__(self):
         return self
+
+    def __len__(self):
+        return len(self._filtered_data)
 
     def next(self):
         if self._current > self._max:
             raise StopIteration
         else:
             self._current += 1
-            return self._data[self._current - 1]
+            return self._filtered_data[self._current - 1]
 
     def __getitem__(self, index):
-        return self._data[index]
+        return self._filtered_data[index]
 
     def __getattribute__(self, attr_name):
         try:  # Just return own attributes.
@@ -56,14 +171,16 @@ class NodbQuerySet(QuerySet):
             return attr
 
         msg = 'Call to an attribute `{}` of {} which isn\'t intended to be accessed directly.'
-        msg = msg.format(attr_name, NodbQuerySet)
+        msg = msg.format(attr_name, self.__class__)
         raise AttributeError(msg)
 
-    def _clone(self):
-        return NodbQuerySet(self.model)
+    def _clone(self, klass=None, setup=False, **kwargs):
+        my_clone = NodbQuerySet(self.model, context=self._context)
+        my_clone._query = self._query.clone()
+        return my_clone
 
     def count(self):
-        return len(self._data)
+        return len(self._filtered_data)
 
     def get(self, **kwargs):
         """Return a single object filtered by kwargs."""
@@ -85,42 +202,25 @@ class NodbQuerySet(QuerySet):
             )
         )
 
-    def filter(self, **kwargs):
+    def exists(self):
+        return bool(self._filtered_data)
 
-        def _filter(obj):
-            for key, value in kwargs.items():
-                keys = key.split('__')
+    @property
+    def query(self):
+        return self._query
 
-                attr = obj
-                for i, k in enumerate(keys):
-                    attr = getattr(attr, k)
-                    is_model = isinstance(attr, models.Model)
+    def filter(self, *args, **kwargs):
+        return super(NodbQuerySet, self).filter(*args, **kwargs)
 
-                    if i == len(keys) - 1 and is_model:
-                        # We're at the end of the iteration but we found an object
-                        # instead of a comparable type.
-                        msg = 'Attribute {} is an object'.format(k)
-                        raise AttributeError(msg)
+    def all(self):
+        return super(NodbQuerySet, self).all()
 
-                    if not is_model and i < len(keys) - 1:
-                        # We're still iterating keys but found a non object where we expected an
-                        # object.
-                        msg = 'Attribute {} is not an object'.format(k)
-                        raise AttributeError(msg)
+    def __str__(self):
+        return super(NodbQuerySet, self).__str__()
 
-                    if is_model:
-                        continue
-                    elif attr == value:
-                        return True
-                    else:
-                        return False
+    def __repr__(self):
+        return super(NodbQuerySet, self).__repr__()
 
-            return False
-
-        return filter(_filter, self._data)
-
-    def all(self, context):
-        super(NodbQuerySet, self).all(context)
 
 
 if django.VERSION[1] == 6:
@@ -134,20 +234,20 @@ else:
 class NodbManager(base_manager_class):
 
     use_for_related_fields = True
+    nodb_context = None
 
-    def all(self, context=None):
-        """
-        Args:
-            context (dict): The context
-        """
-        return self.get_queryset(context)
+    @classmethod
+    def set_nodb_context(cls, context):
+        cls.nodb_context = context
 
-    def get_queryset(self, context=None):
+    def get_queryset(self):
         if django.VERSION[1] == 6:
-            return NodbQuerySet(self.model, using=self._db, context=context)
+            return NodbQuerySet(self.model, using=self._db, context=NodbManager.nodb_context)
         else:
             return self._queryset_class(self.model, using=self._db, hints=self._hints,
-                                        context=context)
+                                        context=NodbManager.nodb_context)
+
+
 
 
 class NodbModel(models.Model):
@@ -161,33 +261,123 @@ class NodbModel(models.Model):
         abstract = True
 
     @staticmethod
-    def get_all_objects():
+    def get_all_objects(context, query):
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
 
+    def get_modified_fields(self, **kwargs):
+        """
+        Returns a dict of fields, which have changed. There are two known problems:
 
-class DictField(Field):
+        1. There is a race between get_modified_fields and the call to this.save()
+        2. A type change, e.g. str and unicode is not handled.
+
+        :param kwargs: used to retrieve the original. default: `pk`
+        :rtype: tuple[dict[str, Any], T <= NodbModel]
+        :return: A tuple consisting of the diff and the original model instance
+        """
+        if not kwargs:
+            kwargs['pk'] = self.pk
+
+        original = self.__class__.objects.get(**kwargs)
+        return {
+            field.attname: getattr(self, field.attname)
+            for field
+            in self.__class__._meta.fields
+            if field.editable and getattr(self, field.attname) != getattr(original, field.attname)
+        }, original
+
+    def set_read_only_fields(self, obj, include_pk=True):
+        """
+        .. example::
+            >>> insert = self.id is None
+            >>> diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
+            >>> if not insert:
+            >>>     self.set_read_only_fields()
+        """
+        if include_pk:
+            self.pk = obj.pk
+
+        for field in self.__class__._meta.fields:
+            if not field.editable and getattr(self, field.attname) != getattr(obj, field.attname):
+                setattr(self, field.attname, getattr(obj, field.attname))
+
+    @classmethod
+    def make_model_args(cls, json_result):
+
+        def validate_field(field, json_result, score_or_underscore):
+            # '-' is not supported for field names, but used by ceph.
+            json_key = field.attname.replace('_', score_or_underscore)
+            if json_key not in json_result:
+                return False
+            try:
+                field.to_python(json_result[json_key])
+                return True
+            except ValidationError:
+                return False
+
+        return {
+            field.attname: field.to_python(json_result[field.attname.replace('_', score_or_underscore)])
+            for (field, score_or_underscore)
+            in product(cls._meta.fields, '_-')
+            if validate_field(field, json_result, score_or_underscore)
+            }
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        """This base implementation does nothing, except telling django that self is now successfully inserted."""
+        self._state.adding = False
+
+
+
+class JsonField(Field):
     empty_strings_allowed = False
 
+    def __init__(self, *args, **kwargs):
+        """
+        :param base_type: list | dict
+        :type base_type: type
+        :rtype: JsonField[T]
+        """
+        self.base_type = kwargs['base_type']
+        del kwargs['base_type']
+        super(JsonField, self).__init__(*args, **kwargs)
+
     def to_python(self, value):
+        """:rtype: T"""
+        def check_base_type(val):
+            if not isinstance(val, self.base_type):
+                raise exceptions.ValidationError(
+                    "invalid JSON type. Got {}, expected {}".format(type(parsed), self.base_type),
+                    code='invalid',
+                    params={'value': value},
+                )
+            return val
+
         if value is None:
-            return dict()
-        if isinstance(value, dict):
+            return self.base_type()
+        if isinstance(value, self.base_type):
             return value
 
         try:
             parsed = json.loads(value)
-            if parsed is not None:
-                return parsed
+            return check_base_type(parsed)
         except ValueError:
-            raise exceptions.ValidationError(
-                "invalid JSON",
-                code='invalid',
-                params={'value': value},
-            )
+            try:
+                # Evil hack to support PUT requests to the Browsable API of the django-rest-framework
+                # as we cannot determine if restapi.JsonField.tonative() is called for json or for rendering the
+                # form.
+                obj = ast.literal_eval(value)
+                return check_base_type(obj)
+            except ValueError:
+                raise exceptions.ValidationError(
+                    "invalid JSON",
+                    code='invalid',
+                    params={'value': value},
+                )
 
-        raise exceptions.ValidationError(
-            "invalid JSON",
-            code='invalid',
-            params={'value': value},
-        )
+    def deconstruct(self):
+        name, path, args, kwargs = super(JsonField, self).deconstruct()
+        kwargs['base_type'] = self.base_type
+        return name, path, args, kwargs
+

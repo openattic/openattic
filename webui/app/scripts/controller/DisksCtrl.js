@@ -36,7 +36,7 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService) {
 
   $scope.filterConfig = {
     page: 0,
-    entries: 10,
+    entries: null,
     search: "",
     sortfield: null,
     sortorder: null
@@ -44,7 +44,10 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService) {
 
   $scope.selection = {};
 
-  $scope.$watch("filterConfig", function () {
+  $scope.$watch("filterConfig", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
     DiskService.filter({
       page: $scope.filterConfig.page + 1,
       pageSize: $scope.filterConfig.entries,

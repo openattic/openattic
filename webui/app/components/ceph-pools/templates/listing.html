@@ -1,15 +1,36 @@
-<div class="panel panel-default" ng-show="clusters === false">
-    <div class="panel-heading">
-        <h3 class="panel-title">Sorry folks...</h3>
+<ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getPoolList()"></ceph-cluster-dropdown>
+
+<div ng-show="cluster.results.length > 0">
+    <div class="panel panel-default" ng-show="error">
+        <div class="panel-heading">
+            <h3 class="panel-title">Sorry folks...</h3>
+        </div>
+        <div class="panel-body">
+            Ceph pool resource could not be loaded. Make sure that the ceph module is installed.
+        </div>
     </div>
-    <div class="panel-body">
-        No Ceph cluster available.
+
+    <div class="panel panel-default" ng-show="!error && !pools.$resolved">
+        <div class="panel-heading">
+            <h3 class="panel-title">Sorry folks...</h3>
+        </div>
+        <div class="panel-body">
+            Ceph OSDs are loading...
+        </div>
+    </div>
+
+    <div class="panel panel-default" ng-show="!error && pools.results.length === 0">
+        <div class="panel-heading">
+            <h3 class="panel-title">Sorry folks...</h3>
+        </div>
+        <div class="panel-body">
+            No OSD available.
+        </div>
     </div>
 </div>
 
-<ceph-cluster-dropdown></ceph-cluster-dropdown>
-
-<oadatatable ng-show="pools" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="!error && pools.results.length > 0" data="pools"
+        class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
             <tr>

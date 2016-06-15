@@ -31,20 +31,18 @@ Options:
 More sophisticated example:
     ./make_dist.py create stable -s | ./build_deb_packages.py -
 """
-
+import glob
 import os
 import sys
 import re
+import tempfile
 import unittest
 import shutil
 import docopt
-from make_dist import Process, ProcessResult
+from os.path import isdir, isfile, basename
+from make_dist import Process
 from ConfigParser import SafeConfigParser
 from datetime import datetime
-
-
-class UnknownReleaseChannelError(Exception):
-    pass
 
 
 class FileNotFoundError(Exception):
@@ -66,14 +64,20 @@ class DebPackageBuilder(object):
         self._args = args
 
     @staticmethod
-    def detect_release_with_filename(tarball_filename):
+    def detect_release_by_filename(tarball_filename):
+        """Detect the type of the release by the filename of the tarball.
+
+        :param tarball_filename:
+        :type tarball_filename: str
+        :return: nightly | stable
+        """
         stable_re = r'\w+[_-]\d+\.\d+(\.\d+)?[\w+\.]+'
         unstable_re = r'\w+[_-]\d+\.\d+\.\d+(\.\d+)?\~\d{12}[\w+\.]+'
 
         if not tarball_filename or not isinstance(tarball_filename, str):
             raise ArgumentError
 
-        tarball_filename = os.path.basename(tarball_filename)
+        tarball_filename = basename(tarball_filename)
 
         # Test for unstable first, because the re it more exact.
         if re.match(unstable_re, tarball_filename):
@@ -84,30 +88,40 @@ class DebPackageBuilder(object):
         raise ParsingError
 
     @staticmethod
-    def determine_dirname_by_filename(fname):
-        """Determine the directory name of the tarball using the file name of the tarball."""
-        if not fname or not isinstance(fname, str):
+    def determine_dirname_by_filename(tarball_filename):
+        """Determine the directory name of the tarball using the file name of the tarball.
+
+        :param tarball_filename: The filename of the tarball
+        :type tarball_filename: str
+        :return: The name of the directory
+        """
+        if not tarball_filename or not isinstance(tarball_filename, str):
             raise ArgumentError
 
-        fname = os.path.basename(fname)
+        tarball_filename = basename(tarball_filename)
 
         regex = r'\.tar\.(bz2|gz|lxma|xz)$'
-        if re.search(regex, fname):
-            fname = re.sub(regex, '', fname)
+        if re.search(regex, tarball_filename):
+            tarball_filename = re.sub(regex, '', tarball_filename)
         else:
             raise ParsingError
 
-        fname = re.sub(r'\.orig$', '', fname)
+        dirname = re.sub(r'\.orig$', '', tarball_filename)
 
-        return fname
+        return dirname
 
     @staticmethod
     def determine_deb_tarball_filename(filepath):
-        """Determines the deb tarball filename for debian."""
-        basename = os.path.basename(filepath)
+        """Determines the deb tarball filename for debian.
+
+        :param filepath: The path of the tarball
+        :type filepath: str
+        :return: The filename of the tarball
+        """
+        filename = basename(filepath)
         regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)[\w~-]*(\.tar\.(bz2|gz|lxma|xz))$'
 
-        match = re.search(regex, basename)
+        match = re.search(regex, filename)
         if match:
             filename = match.group(1) + '_' + match.group(2) + '.orig' + match.group(4)
             return filename
@@ -115,21 +129,33 @@ class DebPackageBuilder(object):
         raise ParsingError
 
     @staticmethod
-    def extract_version(name):
-        if name:
-            match = re.search(r'.*?([\d\.]+)~?(\d+)?.*\.tar.*', name)
+    def extract_version(filename):
+        """Extract the version of the given tarball filename.
+
+        :param filename:
+        :type filename: str
+        :return: A tuple with the version as first element and the datestring as second if it exists
+        """
+        if filename:
+            match = re.search(r'.*?([\d\.]+)~?(\d+)?.*\.tar.*', filename)
             if match:
-                return (match.group(1), match.group(2))
+                return match.group(1), match.group(2)
 
         raise ParsingError
 
-    def _publish_packages(self, pkgdir, release_channel, version, changes_filename):
-        """Publish a package using the `reprepro` command."""
+    def _publish_packages(self, pkgdir, release_channel, changes_filename):
+        """Publish a package using the `reprepro` command.
 
-        small_version = version[0]
-        if version[1]:
-            small_version += '~' + version[1]
-        control_file = os.path.join(pkgdir, 'openattic-' + small_version, 'debian', 'control')
+        :type pkgdir: str
+        :type release_channel: str
+        :type changes_filename: str
+        """
+        dirs = filter(isdir, glob.glob(os.path.join(pkgdir, '*')))
+        if len(dirs) != 1:
+            msg = 'The package directory has to contain exactly one directory "{}"'
+            raise FileNotFoundError(msg.format(pkgdir))
+        control_file = os.path.join(pkgdir, dirs[0], 'debian', 'control')
+
         obsolete_packages = []
         with open(control_file) as fcontrol:
             for line in fcontrol:
@@ -149,91 +175,136 @@ class DebPackageBuilder(object):
                changes_filename]
         self._process.run(cmd, cwd=pkgdir)
 
-    def build(self, release_channel, tarball_file_path):
-        """Build the debian packages.
+    def extract_tarball(self, tarball_file_path, destination):
+        """Extract a tarball and return the path to it's files.
 
-        release_channel -- Either 'stable' or 'nightly'.
-        tarball_file_path -- The path of the tarball.
+        The path may not be `destination` but `destination` plus the folder of the tarball, if the
+        files are in that toplevel folder of the tarball. This method does the same as dpkg-source
+        to determine the directory structure of the tarball. The strategy is mentioned in the
+        best practices for .orig.tar.{gz,bz2,xz} files in section 6.7.8 and 6.7.81 of the following
+        document.
+
+        https://www.debian.org/doc/manuals/developers-reference/best-pkging-practices.html#pristinesource
+
+        :type tarball_file_path: str
+        :param destination: The desired destination directory
+        :type destination: str
+        :rtype: str
+        :return: The path to the directory of the extracted content of the tarball
         """
+        if not os.path.isfile(tarball_file_path):
+            raise FileNotFoundError()
 
-        if release_channel not in ('stable', 'nightly'):
-            raise UnknownReleaseChannelError()
+        # Extract the tarball to a temporary folder.
+        tmpdir = tempfile.mkdtemp()
+        self._process.run(['tar', 'xf', tarball_file_path, '-C', tmpdir])
 
+        dir_content = filter(isdir, glob.glob(os.path.join(tmpdir, '*')))
+        files = filter(isfile, dir_content)
+        directories = filter(isdir, dir_content)
+
+        # Check if the tarball contains only one directory.
+        if len(directories) == 1 and len(files) == 0:
+            source = directories[0]
+            destination = os.path.join(destination, basename(source))
+        else:
+            msg = 'Tarballs not containing a single directory aren\'t supported so far'
+            raise NotImplementedError(msg)
+
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
+
+        shutil.move(source, destination)
+        self._process.log_command(['mv', source, destination])
+
+        shutil.rmtree(tmpdir)
+        self._process.log_command(['rm', '-r', tmpdir])
+
+        return destination
+
+    @staticmethod
+    def get_empty_build_dir():
+        """Return an empty build directory.
+        :rtype: str
+        """
         build_dir = os.path.join(os.environ['HOME'], 'src', 'deb_builds')
-
         if os.path.isdir(build_dir):
             shutil.rmtree(build_dir)
         os.makedirs(build_dir)
 
-        if not os.path.isfile(tarball_file_path):
-            raise FileNotFoundError()
+        return build_dir
 
-        source_dir = os.path.join(build_dir, self.determine_dirname_by_filename(tarball_file_path))
-        if os.path.isdir(source_dir):
-            shutil.rmtree(source_dir)
-
-        # Extract the tarball.
-        shutil.copy(tarball_file_path, build_dir)
-        new_tarball_file_path = os.path.join(build_dir, os.path.basename(tarball_file_path))
-        self._process.run(['tar', 'xf', tarball_file_path, '-C', build_dir], cwd=build_dir)
-
+    def adapt_debian_changelog(self, release_channel, version, pkgdate, hg_id, tarball_source_dir):
+        # Provide necessary information.
+        env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
         if release_channel == 'stable':
-            # Debchange has already been called at this point. Otherwise the script would'nt be able
-            # to create the stable deb files out of the tarball file, but also the checked out
-            # repository.
-            pass
-        elif release_channel == 'nightly' or release_channel == 'unstable':
-            config = SafeConfigParser()
-            config.read(os.path.join(source_dir, 'version.txt'))
-            version = config.get('package', 'VERSION') + '-1'
-            pkgdate = config.get('package', 'BUILDDATE')
-            hg_id = config.get('package', 'REV')
+            newversion = version
+            msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
+            distribution = 'unstable'
+        else:
+            distribution = 'nightly'
+            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
+            newversion = version + '~' + pkgdate
 
-            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate,
-                                                                                     hg_id)
-            env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon', }
-            # Adapt the file 'debian/changelog' to build nightly.
-            self._process.run(
-                [
-                    'debchange',
-                    '--distribution',
-                    'nightly',
-                    '--force-distribution',
-                    '-v',
-                    version + '~' + pkgdate,
-                    msg,
-                ],
-                cwd=source_dir,
-                env=env)
+        # Adapt the `debian/changelog` file via `debchange`.
+        self._process.run(
+            [
+                'debchange',
+                '--distribution',
+                distribution,
+                '--force-distribution',
+                '--force-bad-version',  # Allows the version to be lower than the current one.
+                '--newversion',
+                newversion,
+                msg,
+            ],
+            cwd=tarball_source_dir,
+            env=env)
 
-        # Move/rename file to the necessary path for `debuild`.
-        dst = os.path.join(build_dir, self.determine_deb_tarball_filename(new_tarball_file_path))
-        self._process.log_command(['mv', new_tarball_file_path, dst])
-        os.rename(new_tarball_file_path, dst)
+    @staticmethod
+    def get_config_txt_values(tarball_source_dir):
+        config = SafeConfigParser()
+        config.read(os.path.join(tarball_source_dir, 'version.txt'))
 
-        self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=source_dir)
+        version = config.get('package', 'VERSION') + '-1'
+        pkgdate = config.get('package', 'BUILDDATE')
+        hg_id = config.get('package', 'REV')
 
-        # Sign the changes file.
-        name = os.path.basename(new_tarball_file_path)
+        return version, pkgdate, hg_id
 
-        # Get the version.
-        version = self.extract_version(name)
-        small_version = version[0]
-        full_version = small_version + '-1'
-        if version[1]:
-            full_version += '~' + version[1]
-        changes_filename = 'openattic_%s_amd64.changes' % full_version
+    def build(self, release_channel, tarball_file_path):
+        """Build the debian packages.
 
+        :param release_channel: Either 'stable' or 'nightly'
+        :type release_channel: str
+        :param tarball_file_path: The path of the tarball
+        :type tarball_file_path: str
+        """
+        assert release_channel in ('stable', 'nightly')
+
+        build_dir = DebPackageBuilder.get_empty_build_dir()
+        tarball_source_dir = self.extract_tarball(tarball_file_path, build_dir)
+        self._process.log_command(['cp', tarball_file_path, build_dir])
+        shutil.copy(tarball_file_path, build_dir)
+        shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
+                    os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
+        version, pkgdate, hg_id = self.get_config_txt_values(tarball_source_dir)
+        self.adapt_debian_changelog(release_channel, version, pkgdate, hg_id, tarball_source_dir)
+
+        self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
+
+        changes_filename = basename(glob.glob(os.path.join(build_dir, '*.changes'))[0])
         # Sign the packages with changes file.
         self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
 
-        print
         print 'The packages have been created in %s' % build_dir
 
         if self._args['--publish']:
-            self._publish_packages(build_dir, release_channel, version, changes_filename)
+            self._publish_packages(build_dir, release_channel, changes_filename)
             print 'The packages have been published'
-            # TODO Show the user what was uploaded optionally.. somehow..
+            # TODO Maybe ask the user to show what was uploaded?
+            #      Only if an interactive terminal is used.
+
 
 class DebPackageBuilderTest(unittest.TestCase):
     def test_detect_release_by_filename(self):
@@ -260,11 +331,11 @@ class DebPackageBuilderTest(unittest.TestCase):
 
         for fname, target_state in target_states.items():
             if isinstance(target_state, str):
-                actual_state = DebPackageBuilder.detect_release_with_filename(fname)
+                actual_state = DebPackageBuilder.detect_release_by_filename(fname)
                 msg = '%s is supposed to be %s but is %s' % (fname, target_state, actual_state)
                 self.assertEqual(actual_state, target_state, msg)
             else:
-                self.assertRaises(target_state, DebPackageBuilder.detect_release_with_filename,
+                self.assertRaises(target_state, DebPackageBuilder.detect_release_by_filename,
                                   fname)
 
     def test_determine_dirname_by_filename(self):
@@ -324,9 +395,9 @@ class DebPackageBuilderTest(unittest.TestCase):
             '2.0.5': ParsingError,
         }
 
-        for name, expected_state in target_states.items():
+        for filename, expected_state in target_states.items():
             if isinstance(expected_state, tuple):
-                actual_state = DebPackageBuilder.extract_version(name)
+                actual_state = DebPackageBuilder.extract_version(filename)
                 msg = "Expected %s but found %s" % (repr(expected_state), repr(actual_state))
                 self.assertEqual(expected_state, actual_state, msg)
 
@@ -337,7 +408,7 @@ def main():
     if path_to_tarball == '-':
         path_to_tarball = sys.stdin.readline().strip()
     deb_pkg_builder = DebPackageBuilder(args)
-    release_channel = DebPackageBuilder.detect_release_with_filename(path_to_tarball)
+    release_channel = DebPackageBuilder.detect_release_by_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
 
 

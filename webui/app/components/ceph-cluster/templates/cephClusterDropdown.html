@@ -1,0 +1,42 @@
+<div class="panel panel-default" ng-show="error">
+    <div class="panel-heading">
+        <h3 class="panel-title">Sorry folks...</h3>
+    </div>
+    <div class="panel-body">
+        Ceph resource could not be loaded. Make sure that the ceph module is installed.
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="!error && !cluster.$resolved">
+    <div class="panel-heading">
+      <h3 class="panel-title">Sorry folks...</h3>
+    </div>
+    <div class="panel-body">
+        Ceph cluster is loading...
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="!error && cluster.results.length === 0">
+    <div class="panel-heading">
+        <h3 class="panel-title">Sorry folks...</h3>
+    </div>
+    <div class="panel-body">
+        No Ceph cluster available.
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="!error && cluster.results.length > 1">
+    <div class="panel-heading">
+        <h3 class="panel-title">Select a Cluster</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="form-group no-margin">
+            <select id="cluster-selection"
+                    class="form-control"
+                    ng-model="registry.selectedCluster"
+                    ng-options="(c.name + ' (' + c.fsid + ')') for c in cluster.results track by c.fsid">
+            </select>
+        </div>
+    </div>
+</div>

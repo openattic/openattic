@@ -16,7 +16,8 @@
 
 import os
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method, deferredmethod
+from systemd.plugins import logged, BasePlugin, deferredmethod
+
 
 @logged
 class SystemD(BasePlugin):
@@ -44,3 +45,6 @@ class SystemD(BasePlugin):
     def delete_subvolume(self, path, sender):
         invoke(["btrfs", "subvolume", "delete", path])
 
+    @deferredmethod(in_signature='si')
+    def btrfs_resize(self, devpath, newmegs, sender):
+        invoke(['btrfs', 'filesystem', 'resize', ("%dM" % newmegs), devpath])

@@ -30,25 +30,32 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephClusters");
-app.directive("cephClusterDropdown", function (cephClustersService) {
+var app = angular.module("openattic.cephCluster");
+app.directive("cephClusterDropdown", function (cephClusterService) {
   function link(scope) {
     scope.$watch("registry.selectedCluster", function () {
-      cephClustersService.get()
+      scope.error = false;
+
+      cephClusterService.get()
           .$promise
           .then(function (res) {
-            scope.clusters = res.results;
+            scope.cluster = res;
             scope.getData();
           })
-          .catch(function () {
+          .catch(function (error) {
+            scope.error = error;
             console.log("No Ceph cluster available");
-            scope.clusters = false;
           });
     });
   }
   return {
     link: link,
+    scope: {
+      registry: "=",
+      cluster: "=",
+      getData: "&"
+    },
     restrict: "E",
-    templateUrl: "components/ceph-clusters/templates/cephClusterDropdown.html"
+    templateUrl: "components/ceph-cluster/templates/cephClusterDropdown.html"
   };
 });

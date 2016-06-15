@@ -40,10 +40,10 @@ app.config(function ($stateProvider) {
             templateUrl: "components/ceph-pools/templates/listing.html",
             controller : "CephPoolsCtrl",
             resolve    : {
-              clusterData: function ($q, cephClustersService) {
-                return cephClustersService.get().$promise
+              clusterData: function ($q, cephClusterService) {
+                return cephClusterService.get().$promise
                     .then(function (res) {
-                      return res.results;
+                      return res;
                     }).catch(function () {
                       console.log("No Ceph cluster available");
                       return false;

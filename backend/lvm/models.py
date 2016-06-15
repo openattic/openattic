@@ -501,7 +501,7 @@ class LogicalVolume(BlockVolume):
             # Are we a snapshot? If so, add block device usage info.
             try:
                 stats["bd_used"] = self.storageobj.megs * float(self.lvm_info["LVM2_DATA_PERCENT"]) / 100.
-            except KeyError:
+            except (KeyError, ValueError) as _:
                 pass
             else:
                 stats["bd_free"] = stats["bd_megs"] - stats["bd_used"]
