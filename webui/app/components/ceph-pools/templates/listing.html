@@ -37,11 +37,11 @@
                 <th class="oadatatablecheckbox" ng-if="selection.available">
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
-                <th ng-show="columns['Name']">Name</th>
+                <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
                 <th ng-show="columns['Cluster']">Cluster</th>
-                <th ng-show="columns['ID']">ID</th>
+                <th ng-show="columns['ID']" sortfield="id" sortheaderclass>ID</th>
                 <th ng-show="columns['Size']">Size</th>
-                <th ng-show="columns['Used']">Used</th>
+                <th ng-show="columns['Used']" sortfield="used" sortheaderclass>Used</th>
                 <th ng-show="columns['Placement groups']">Placement groups</th>
                 <th ng-show="columns['Replica size']">Replica size</th>
                 <th ng-show="columns['Erasure code profile']">Erasure code profile</th>
