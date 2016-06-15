@@ -11,9 +11,9 @@
 
         <!-- search -->
         <div class="input-group">
-                    <span class="input-group-addon">
-                        <i class="glyphicon glyphicon-search"></i>
-                    </span>
+            <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+            </span>
             <input class="form-control" type="search" ng-model="filterConfig.search" ng-model-options="searchModelOptions" />
         </div>
         <!-- end search -->
@@ -57,8 +57,14 @@
         </div>
         <!-- end refresh -->
     </div>
-    <div class="table-responsive dataTables_content"></div>
-    <div class="dataTables_footer">
+
+    <!-- No records found -->
+    <div class="dataTables_no-match bg-warning tc_datableNoMatch" ng-show="data.count == 0 && data.$resolved">
+        No matching records found
+    </div>
+    <!-- end No records found -->
+    <div class="table-responsive dataTables_content" ng-show="data.count > 0"></div>
+    <div class="dataTables_footer tc_datatableFooter" ng-show="data.count > 0">
         <!-- number of items -->
         <div class="dataTables_info">
             Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong>
