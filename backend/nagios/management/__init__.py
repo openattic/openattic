@@ -19,6 +19,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import signals
 
 from systemd import get_dbus_object
+from systemd.helpers import Transaction
 from nagios.conf import settings as nagios_settings
 from ifconfig.models import Host, IPAddress
 from volumes.models import BlockVolume, FileSystemVolume
@@ -73,7 +74,10 @@ def create_nagios(**kwargs):
             )
         serv.save()
 
-    get_dbus_object("/nagios").writeconf()
+    nagios = get_dbus_object("/nagios")
+    with Transaction(background=False):
+        nagios.writeconf()
+        nagios.restart_service()
 
     cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
     for bv in BlockVolume.objects.all():
