@@ -108,6 +108,17 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 
     return args
 
+def _call_rrdtool(args):
+    rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in args],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               cwd=nagios_settings.RRD_BASEDIR)
+    out, err = rrdtool.communicate()
+    if err:
+        logging.error('"' + '" "'.join(args).encode("utf-8") + '"')
+        logging.error(err)
+
+    return out
+
 
 class Symbol(object):
     lbp = 0
@@ -689,14 +700,8 @@ class RRD(object):
             "rrdtool", "fetch", "--start", str(int(start)), "--end", str(int(end)),
             self.rrdpaths[srcname], "AVERAGE"
         ]
-        # print '"' + '" "'.join(args).encode("utf-8") + '"'
-        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in args],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   cwd=nagios_settings.RRD_BASEDIR, env={"LANG": "C"})
-        out, err = rrdtool.communicate()
-        if err:
-            logging.error('"' + '" "'.join(self.args).encode("utf-8") + '"')
-            logging.error(err)
+
+        out = _call_rrdtool(args)
 
         # RRDtool will now dump all data in the given rrd, regardless of source.
         # So maybe we get only the source we asked for or maybe we get everything,
@@ -852,14 +857,7 @@ class Graph(object):
             mkdate(_("End time"), self.end),
         ])
 
-        # print '"' + '" "'.join(self.args).encode("utf-8") + '"'
-        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   cwd=nagios_settings.RRD_BASEDIR)
-        out, err = rrdtool.communicate()
-        if err:
-            logging.error('"' + '" "'.join(self.args).encode("utf-8") + '"')
-            logging.error(err)
+        out = _call_rrdtool(self.args)
 
         if self.bgcol:
             # User wants a background color, so we made the image transparent
