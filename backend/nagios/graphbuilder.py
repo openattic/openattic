@@ -908,4 +908,4 @@ class Graph(object):
             src.define()
             src.xport()
 
-        return = _call_rrdtool(self.args)
+        return _call_rrdtool(self.args)
