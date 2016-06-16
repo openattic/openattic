@@ -891,3 +891,21 @@ class Graph(object):
                 out = buf.getvalue()
 
         return out
+
+    def get_json(self):
+        """
+        Returns the performance data of a rrd file in JSON format.
+
+        :return: performance data in JSON format
+        :rtype: dict
+        """
+        self.args = [
+            "rrdtool", "xport", "--start", str(int(self.start)), "--end", str(int(self.end)),
+            "--json"]
+
+        for src in self.sources:
+            src.args = self.args
+            src.define()
+            src.xport()
+
+        return = _call_rrdtool(self.args)
