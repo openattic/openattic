@@ -7,16 +7,38 @@ Version 2.0.12, (not released yet):
 * Backend: Added possiblility to create erasure-coded Ceph pools in the REST API (OP-546)
 * Backend: Added API call for creating new Ceph pools (OP-1024)
 * Backend: Added modifying requests to Ceph pools (OP-1170, OP-1172)
+* Backend: Added Ceph Pool snapshots to the REST API (OP-1242)
 * Backend: Added support for Ceph cache tiering (OP-1184)
 * Backend: Added field 'host' to Disks REST API resource (OP-1195)
 * Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
 * Backend: Added Ceph RBD REST Collection (OP-1214)
+* Backend: Added a Nagios plugin to monitor basic performance data of a Ceph
+  cluster (OP-1222) (thanks to Christian Eichelmann for giving us the permission
+  to integrate a part of his check-ceph-dash implementation)
+* Backend: Added a basic infrastructure to create Nagios service definitions for
+  known Ceph clusters (OP-1235)
+* Backend: Added CephFS REST Collection (OP-1245)
+* Backend: Cleaned up 'NAGIOS_SERVICES_CFG_PATH' backend setting. This setting
+  will now be defined in the correct config files (openattic, openattic.RedHat,
+  openattic.SUSE) only - no other duplicates or default values (OP-1247)
+* Backend: Fixed listing of OSDs. Thanks to Luke Jing Yuan (OP-1266)
+* Backend: Fixed internal server error in `/api/volumes`, if an `lvm` snapshot doesn't have a usage in percent (OP-1111)
 * WebUI: Save personal settings of each data table (OP-1134)
 * WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
+* WebUI: Datatable shows a message if it is empty (OP-1193)
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: adapted wizard test cases to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: Test the local storage capabilities of data tables (OP-1202)
-* Packaging: Adapted the build scripts to be able to create tarballs from different sources and revisions (OP-1118)
+* Packaging: Adapted the build scripts to be able to create tarballs from
+  different sources and revisions (OP-1118)
+* Packaging: Amended the create arguments of make_dist.py from 'stable' and
+  'unstable' to 'release' and 'snapshot' (OP-1233)
+* Packaging: Amended the build scripts to not require existing mercurial tags
+  anymore (OP-1234)
+* Packaging: Changed dependency of the 'openattic-gui' package from 'openattic-
+  base' to 'openattic' (OP-1137)
+* Packaging: Updated the dependencies on `ceph-common` to be of version 10.0.0
+  (aka "Jewel") or higher (OP-1268)
 
 Version 2.0.11, 20. May 2016:
 -----------------------------

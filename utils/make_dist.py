@@ -13,7 +13,7 @@
 # *  GNU General Public License for more details.
 
 """Usage:
-    make_dist.py create (stable|unstable) [--revision=<revision>] [--source=<source>] [-v|-q|-s]
+    make_dist.py create (release|snapshot) [--revision=<revision>] [--source=<source>] [-v|-q|-s]
     make_dist.py cache push
     make_dist.py help
 
@@ -21,13 +21,14 @@ Create a tarball out of a specific revision to be used as source for package man
 debs, rpms, etc.
 
 Options:
-    --revision=<revision>   A valid mercurial revision. An existing mercurial tag for 'stable'.
-                            The revision is unsupported if a path is used as source. Uncommited
-                            changes of a path will be automatically committed and used to create the
-                            tarball. The source path is never touched, only a copy of it will be
-                            altered.
+    --revision=<revision>   A valid mercurial revision. An existing mercurial tag for 'release'.
+                            The revision argument is unsupported if a path is used as argument for
+                            --source.
     --source=<source>       The source to be used. Either an URL to a Mercurial repository or local
                             path to a Mercurial repository.
+                            If a local path is used, uncommited changes will be automatically
+                            committed and used to create the tarball. The source path won't be
+                            altered, only the copy of it.
                             [default: https://bitbucket.org/openattic/openattic]
     -v                      Enables the verbose mode.
     -q                      Enables the quiet mode.
@@ -122,7 +123,6 @@ class Process(object):
             if result.stderr:
                 print result.stderr
             if self.exit_on_error is True and exit_on_error is not False:
-                print 'Process exited with exit code {}.'.format(result.returncode)
                 sys.exit(result.returncode)
 
         return result
@@ -268,8 +268,8 @@ class DistBuilder(object):
 
         return latest_tag
 
-    def _determine_upcoming_version(self, revision):
-        """Determine the version using the `version.txt`.
+    def _get_version_of_revision(self, revision):
+        """Return the version of `version.txt` using the given revision.
 
         It returns the VERSION of the version.txt file in the repository. The version returned
         depends on the given revision.
@@ -299,20 +299,21 @@ class DistBuilder(object):
 
         return version
 
-    def _resolve_release_channel(self, channel):
-        """Resolve the release channel to a valid Mercurial revision.
+    def _get_revision_by_channel(self, channel):
+        """Return the revision corresponding to the given release channel.
 
         This function provides the default revision for calls of this script which do NOT provide a
-        revision argument, so that the revision has to be determined automatically. If the channel
-        is 'stable', the revision will resolve to the latest existing tag. If it's 'unstable' it'll
-        resolve to the tip of the default branch.
+        revision argument, so that the revision has to be determined automatically.
 
-        :param channel: 'stable' | 'unstable'
+        If the channel is 'release', the revision will resolve to the latest existing mercurial tag.
+        If it's 'snapshot' it will resolve to the tip of the default branch.
+
+        :param channel: 'release' | 'snapshot'
         :type channel: str
         :return: A valid mercurial revision
         """
-        assert channel in ('stable', 'unstable')
-        return self._get_latest_existing_tag() if channel == 'stable' else 'default'
+        assert channel in ('release', 'snapshot')
+        return self._get_latest_existing_tag() if channel == 'release' else 'default'
 
     def _remove_npmrc_prefix(self):
         """Remove the `prefix` variable from the `~/.npmrc` file."""
@@ -409,36 +410,20 @@ class DistBuilder(object):
 
         return tag in matches if matches else False
 
-    def _get_build_basename(self, channel, revision):
+    def _get_build_basename(self, channel, version):
         """Return the base name for the given revision.
 
         Depending on the channel, this may either like `openattic-2.0.4` or
         `openattic-2.0.5~201512021037`.
 
-        :param channel: stable | unstable
+        :param channel: release | snapshot
         :type channel: str
         :return: The base name
         """
-        assert channel in ('stable', 'unstable')
+        assert channel in ('release', 'snapshot')
 
-        build_basename = 'openattic-'
-        if channel == 'stable':
-            # revision needs to be a tag or we have to use something else here to create the
-            # basename
-            if revision is None:
-                build_basename += self._get_latest_existing_tag(strip_tag=True)
-            else:
-                if self._is_existing_tag(revision):
-                    build_basename += self._strip_mercurial_tag(revision)
-                else:
-                    # TODO Fetch the tag of `version.txt` and increment it by one?
-                    raise NotImplementedError('Currently, this feature is unsupported')
-
-        elif channel == 'unstable':
-            if revision is None:
-                revision = self._resolve_release_channel(channel)
-            upcoming_version = self._determine_upcoming_version(revision)
-            build_basename += upcoming_version + '~' + self._datestring
+        build_basename = 'openattic-{}'.format(version)
+        build_basename += '~' + self._datestring if channel == 'snapshot' else ''
 
         return build_basename
 
@@ -513,15 +498,10 @@ class DistBuilder(object):
 
         # Update version.txt.
 
-        if self._get_release_channel() == 'stable':
-            state = 'stable'
-        else:
-            state = 'snapshot'
-
         data = {
             'BUILDDATE': self._datestring,
             'REV': self._get_current_revision_hash(self._oa_temp_build_dir),
-            'STATE': state
+            'STATE': self._get_release_channel()
         }
         with file(os.path.join(abs_build_dir, 'version.txt'), 'a') as f:
             for key, value in data.items():
@@ -557,7 +537,7 @@ class DistBuilder(object):
         self._process.system(['hg', 'push'], cwd=self._cache_dir)
 
     def _get_release_channel(self):
-        return 'stable' if self._args['stable'] else 'unstable'
+        return 'release' if self._args['release'] else 'snapshot'
 
     def build(self):
         """
@@ -566,15 +546,13 @@ class DistBuilder(object):
         self._check_dependencies(['npm'])
         self._set_npmrc_prefix()
 
-        # Delete any previous sources before retrieval but do not delete the oa_cache.
-        if isdir(self._oa_temp_build_dir):
-            rmtree(self._oa_temp_build_dir)
-
         self._retrieve_source(self._source_dir, DistBuilder.OA_CACHE_REPO_URL, skip_if_exists=True)
-        self._retrieve_source(self._source_dir, self._source)
+        if self._source_is_path and isdir(self._oa_temp_build_dir):
+            rmtree(self._oa_temp_build_dir)
+        self._retrieve_source(self._source_dir, self._source, skip_if_exists=True)
 
         channel = self._get_release_channel()
-        revision = self._args['--revision'] or self._resolve_release_channel(channel)
+        revision = self._args['--revision'] or self._get_revision_by_channel(channel)
 
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
@@ -587,7 +565,8 @@ class DistBuilder(object):
         for command in commands:
             self._process.run(command, cwd=self._oa_temp_build_dir)
 
-        build_basename = self._get_build_basename(channel, revision)
+        version = self._get_version_of_revision(revision)
+        build_basename = self._get_build_basename(channel, version)
         abs_tarball_file_path = self._create_source_tarball(build_basename)
         self._remove_npmrc_prefix()
 
