@@ -631,6 +631,15 @@ class Source(Node):
                                                    self.rrd.get_source_varname(self.name)))
         return varname
 
+    def xport(self):
+        """
+        Adds the XPORT parameter for the current source to the arguments list
+
+        :return: empty string
+        """
+        line = "XPORT:{}:{} in {}".format(self.name, self.name, self.unit)
+        self.args.append(line)
+
 
 class RRD(object):
     def __init__(self, xmlpath):
