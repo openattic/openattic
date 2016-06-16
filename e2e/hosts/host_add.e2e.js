@@ -5,6 +5,7 @@ describe('Should add a host and attributes:', function(){
   var hostname = 'protractor_test_host';
   var hostname2 = 'e2e_test_host';
   var host = element(by.cssContainingText('tr', hostname));
+  var iqn = 'iqn.2016-12.org.openattic:storage:disk.sn-a8675309';
 
   beforeAll(function(){
     helpers.login();
@@ -16,7 +17,7 @@ describe('Should add a host and attributes:', function(){
   });
 
   it('should create the test hosts', function(){
-    helpers.create_host();
+    helpers.create_host(iqn);
     helpers.create_host(null,null,hostname2);
   });
 
@@ -47,6 +48,7 @@ describe('Should add a host and attributes:', function(){
     var hostName = element(by.model('host.name'));
     expect(hostName.getAttribute('value')).toEqual('protractor_test_host');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);
+    expect(element.all(by.model('data[key]')).get(0).isDisplayed()).toBe(true);
     element(by.css('.tc_submitButton')).click();
   });
 
@@ -62,6 +64,23 @@ describe('Should add a host and attributes:', function(){
     element(by.css('.tc_backButton')).click();
   });
 
+  it('should show Name and IQN', function(){
+    host.click();
+    expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostname);
+    expect(element(by.binding('iscsiIqn.text')).getText()).toEqual(iqn);
+  });
+
+  it('should remove all IQN if you uncheck the iSCSI checkbox', function(){
+    host.click();
+    element(by.css('.tc_editHost')).click();
+    browser.sleep(400);
+    element.all(by.model('type.check')).get(0).click();
+    element(by.css('.tc_submitButton')).click();
+    host.click();
+    expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostname);
+    expect(element(by.binding('iscsiIqn.text')).isPresent()).toBe(false);
+  });
+
   it('should be allowed to rename a host', function(){
     host.click();
     element(by.css('.tc_editHost')).click();
@@ -74,6 +93,7 @@ describe('Should add a host and attributes:', function(){
     var edited_host = element(by.cssContainingText('tr', 'renamed_protractor_test_host'));
     expect(edited_host.isDisplayed()).toBe(true);
   });
+
 
   it('should delete the test hosts', function(){
     helpers.delete_host('renamed_protractor_test_host');
