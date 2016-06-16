@@ -45,16 +45,16 @@
                                 text="type.text"
                                 current-tag-wwn-validation>
                             </tags-input>
-                            <div class="help-block" ng-show="hostForm[key].$error.validTag">
-                                <p ng-repeat="(format, details) in validationText.format"
+                            <div class="help-block tc_wwn_invalid" ng-show="hostForm[key].$error.validTag">
+                                <p class="tc_err_{{format}}" ng-repeat="(format, details) in validationText.format"
                                    ng-show="wwn[key].current === format">
                                     {{details.desc}}<br>
                                     For example: {{details.example}}<br>
                                     <a target="_blank" href="{{details.link}}">More information</a>
                                 </p>
-                                <p ng-show="wwn[key].current === 'all'">
+                                <p class="tc_err_all" ng-show="wwn[key].current === 'all'">
                                     You can use the following formats:
-                                    <span ng-repeat="(format, details) in validationText.format"
+                                    <span class="tc_all_{{format}}" ng-repeat="(format, details) in validationText.format"
                                           ng-show="(format !== 'iqn' || key === 'iscsi')">
                                         <br> {{format|uppercase}}: {{details.notation}}
                                     </span>

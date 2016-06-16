@@ -56,7 +56,7 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
       iqn: {
         desc: "An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'",
         example: "iqn.2016-06.org.openattic:storage:disk.sn-a8675309",
-        link: "https://en.wikipedia.org/wiki/ISCSI#Addressing'>More information",
+        link: "https://en.wikipedia.org/wiki/ISCSI#Addressing",
         notation: "iqn.$year-$month.$reversedAddress:$definedName"
       },
       mac: {
@@ -75,7 +75,7 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
       naa: {
         desc: "The T11 Network Address Authority (NAA) looks like this 'eui-${64bit or 128bit hexadecimal number}'",
         example: "naa.1234567890abcdef or naa.1234567890abcdef1234567890abcdef",
-        link: "https://en.wikipedia.org/wiki/ISCSI#Addressing'>More information",
+        link: "https://en.wikipedia.org/wiki/ISCSI#Addressing",
         notation: "naa.${16 or 32 characters long hexadecimal number}"
       }
     },
@@ -168,12 +168,12 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
         return;
       }
       var requests = [];
-      if ($scope.iscsi && $scope.iscsi.check === false) {
+      if ($scope.wwn.iscsi && $scope.wwn.iscsi.check === false) {
         $scope.data.iscsi.forEach(function (wwn) {
           $scope.rmIni(wwn);
         });
       }
-      if ($scope.fc && $scope.fc.check === false) {
+      if ($scope.wwn.qla2xxx && $scope.wwn.qla2xxx.check === false) {
         $scope.data.qla2xxx.forEach(function (wwn) {
           $scope.rmIni(wwn);
         });
@@ -248,15 +248,17 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
 
   $scope.validWwn = function (tag, type) {
     var wwn = tag.text;
-    if (wwn.match(/^[a-fA-F0-9:]*$/)) {
-      wwn = wwn.replace(/:/g, "");
-      if (wwn.length === 16) {
-        tag.text = wwn.match(/.{2}/g).join(":");
-        return tag;
+    if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
+      if (wwn.match(/^[a-fA-F0-9:]*$/)) {
+        wwn = wwn.replace(/:/g, "");
+        if (wwn.length === 16) {
+          tag.text = wwn.match(/.{2}/g).join(":");
+          return tag;
+        }
       }
       return "mac";
     } else if (wwn.indexOf("iqn") === 0 && type === "iscsi") {
-      if (wwn.match(/^iqn\.\d{4}-\d{2}\.\D{2,3}(\.\w+)+(:[A-Za-z0-9-_\.]+)*$/)) {
+      if (wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/)) {
         return tag;
       }
       return "iqn";
@@ -265,9 +267,9 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
         return tag;
       }
       return "eui";
-    } else if (wwn.indexOf("naa.") === 0) {
+    } else if (wwn.indexOf("naa") === 0) {
       var ident = wwn.substr(4);
-      if (ident.match(/^[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
+      if (wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
         return tag;
       }
       return "naa";
