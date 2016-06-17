@@ -18,7 +18,7 @@ from rest_framework import serializers, viewsets, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 
 from ceph.models import *
 
@@ -209,6 +209,21 @@ class CephOsdViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephOsd.objects.all()
+
+    @list_route()
+    def balance_histogram(self, request, *args, **kwargs):
+        """Generates a NVD3.js compatible json for displaying the osd balance histogram of a cluster."""
+        values = [{'label': osd.name, 'value': osd.utilization}
+                  for osd in CephOsd.objects.all().order_by('utilization')]
+
+        json_data = [
+            {
+                'key': 'OSD utilization histogram',
+                'values': values
+            }
+        ]
+
+        return Response(json_data, status=status.HTTP_200_OK)
 
 
 class PaginatedCephOsdSerializer(PaginationSerializer):
