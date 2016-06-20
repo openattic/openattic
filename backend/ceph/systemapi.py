@@ -17,6 +17,7 @@
 import os
 import os.path
 import json
+import re
 
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
@@ -185,23 +186,32 @@ class SystemD(BasePlugin):
         return out
 
     @deferredmethod(in_signature="")
+    def remove_nagios_configs(self, sender):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+
+        for file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
+            if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", file):
+                path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
+                os.remove(path)
+
+    @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
-        from nagios.conf import settings
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
         for cluster in CephCluster.objects.all():
-            file_name = "{}/cephcluster_{}.cfg".format(settings.NAGIOS_SERVICES_CFG_PATH,
-                                                       cluster.fsid)
+            file_name = "cephcluster_{}.cfg".format(cluster.fsid)
 
-            services = [self.gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+            services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
 
-            with open(file_name, "wb") as config_file:
+            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
+            with open(path, "wb") as config_file:
                 config_file.write(render_to_string("nagios/services.cfg", {
                     "IncludeHost": False,
                     "Host": Host.objects.get_current(),
                     "Services": services
                 }))
 
-    def gen_service_data(self, service_instance_name, service_arguments):
+    def _gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):
 
             def __init__(self, desc, command_name, args):
