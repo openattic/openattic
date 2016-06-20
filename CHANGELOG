@@ -27,6 +27,8 @@ Version 2.0.12, (not released yet):
 * Backend: Fixed listing of OSDs. Thanks to Luke Jing Yuan (OP-1266)
 * Backend: Add functionality to remove existing Ceph cluster Nagios configuration
   files (OP-1276)
+* Backend: Restarting the Nagios service is separated from the configuration
+  creation now (OP-1280)
 * Backend: Fixed internal server error in `/api/volumes`, if an `lvm` snapshot
   doesn't have a usage in percent (OP-1111)
 * WebUI: Save personal settings of each data table (OP-1134)
