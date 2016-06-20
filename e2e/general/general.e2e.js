@@ -89,11 +89,13 @@ describe('General', function(){
     url: '/openattic/#/ceph/',
     subitems: {
       osds: element(by.css('.tc_submenuitem_ceph_osds')),
+      rbds: element(by.css('.tc_submenuitem_ceph_rbds')),
       pools: element(by.css('.tc_submenuitem_ceph_pools')),
       crushmap: element(by.css('.tc_submenuitem_ceph_crushmap'))
     },
     order: [
       'osds',
+      'rbds',
       'pools',
       'crushmap'
     ]
