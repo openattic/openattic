@@ -1,7 +1,7 @@
 'use strict';
 var helpers = require('../common.js');
 
-describe('Should add a host and attributes:', function(){
+describe('Should add a host and attributes', function(){
   var invalidWwns = {
     iqn: [
       'iqn',
