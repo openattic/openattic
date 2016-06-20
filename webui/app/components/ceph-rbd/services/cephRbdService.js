@@ -30,19 +30,9 @@
  */
 "use strict";
 
-angular.module("openattic.extensions", [
-  "openattic.navigation",
-  "openattic.auth",
-  "openattic.apirecorder",
-  "openattic.cephRbd",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.sizeparser",
-  "openattic.todowidget",
-  "openattic.clusterstatuswidget",
-  "openattic.oaWizards",
-  "openattic.userinfo",
-  "openattic.required"
-]);
+var app = angular.module("openattic.cephRbd");
+app.factory("cephRbdService", function ($resource) {
+  return $resource("/openattic/api/ceph/:id/rbds", {
+    id: "@id"
+  });
+});
