@@ -42,7 +42,7 @@ describe('should test the ceph rbd panel', function(){
     expect(element(by.css('.tc_cephRbdTable')).isDisplayed()).toBe(true);
   });
 
-  tableHeaders.forEach(function (tableHeader) {
+  tableHeaders.forEach(function(tableHeader){
     it('should display the following table header: ' + tableHeader, function(){
       expect(element(by.cssContainingText('th', tableHeader)).isDisplayed()).toBe(true);
     });
