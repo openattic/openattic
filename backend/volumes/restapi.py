@@ -225,6 +225,10 @@ class PoolProxyViewSet(RequestHandlers, PoolViewSet):
     def storage(self, request, *args, **kwargs):
         return self.retrieve(request, 'storage', *args, **kwargs)
 
+    @staticmethod
+    def get_host_by_data(data):
+        return models.StorageObject.objects.get(id=data["disks"][0]).host
+
 
 ##################################
 #            Volume              #

@@ -15,7 +15,7 @@
             <h3 class="panel-title">Sorry folks...</h3>
         </div>
         <div class="panel-body">
-            Ceph OSDs are loading...
+            Ceph pools are loading...
         </div>
     </div>
 
@@ -24,7 +24,7 @@
             <h3 class="panel-title">Sorry folks...</h3>
         </div>
         <div class="panel-body">
-            No OSD available.
+            No pools available.
         </div>
     </div>
 </div>
@@ -37,11 +37,9 @@
                 <th class="oadatatablecheckbox" ng-if="selection.available">
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
-                <th ng-show="columns['Name']">Name</th>
-                <th ng-show="columns['Cluster']">Cluster</th>
-                <th ng-show="columns['ID']">ID</th>
-                <th ng-show="columns['Size']">Size</th>
-                <th ng-show="columns['Used']">Used</th>
+                <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
+                <th ng-show="columns['ID']" sortfield="id" sortheaderclass>ID</th>
+                <th ng-show="columns['Used']" sortfield="kb_used" sortheaderclass>Used</th>
                 <th ng-show="columns['Placement groups']">Placement groups</th>
                 <th ng-show="columns['Replica size']">Replica size</th>
                 <th ng-show="columns['Erasure code profile']">Erasure code profile</th>
@@ -58,9 +56,7 @@
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
-                <td ng-show="columns['Cluster']" ng-bind="row.cluster.title"></td>
                 <td ng-show="columns['ID']" ng-bind="row.id"></td>
-                <td ng-show="columns['Size']" ng-bind="row.max_avail | bytes"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" data-toggle="tooltip" data-placement="right"
                             title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.oaFree | bytes}}">
