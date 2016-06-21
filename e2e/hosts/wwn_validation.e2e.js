@@ -149,7 +149,9 @@ describe('Should add a host and attributes', function(){
           wwn = wwn.replace(/:/g, "").match(/.{2}/g).join(":");
         }
         expect(element(by.binding('$getDisplayText()')).getInnerHtml()).toBe(wwn);
-        element(by.binding('::$$removeTagSymbol')).click();
+        element.all(by.model('data[key]')).get(field).click();
+        element.all(by.model('newTag.text')).get(field).sendKeys('\b\b');
+        //element(by.binding('::$$removeTagSymbol')).click();
         clearField(field);
       });
     })
