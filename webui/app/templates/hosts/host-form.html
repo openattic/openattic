@@ -2,7 +2,7 @@
     <form name="hostForm" role="form" class="form-horizontal" novalidate>
         <div class="panel panel-default">
             <div class="panel-heading tc_formHeadline">
-                <h3 ng-hide="editing" class="panel-title tc_hostAddTitle">Create Host: {{host.name}}</h3>
+                <h3 ng-hide="editing" class="panel-title tc_hostAddTitle">Add Host: {{host.name}}</h3>
                 <h3 ng-show="editing" class="panel-title tc_hostEditTitle">Edit Host: {{host.name}}</h3>
             </div>
             <div class="panel-body">
@@ -22,6 +22,45 @@
                             <span class="help-block tc_noUniqueName" ng-show="hostForm.name.$error.uniquename">
                                 The chosen host name is already in use.
                             </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9" ng-repeat="(key, type) in wwn">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox" ng-model="type.check">
+                                <label class="tc_{{key}}Text" ng-click="type.check = !type.check" ng-bind="type.desc"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-repeat="(key, type) in wwn"
+                         ng-class="{'has-error': hostForm[key].$invalid}" ng-show="type.check">
+                        <label class="col-sm-3 control-label" for="data[key]" ng-bind="type.label"></label>
+                        <div class="col-sm-9">
+                            <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid WWN"
+                                ng-model="data[key]"
+                                add-on-space="true"
+                                on-tag-adding="validShareName($tag, key)"
+                                on-tag-added="addIni($tag, key)"
+                                on-tag-removed="rmIni($tag)"
+                                text="type.text"
+                                current-tag-wwn-validation>
+                            </tags-input>
+                            <div class="help-block tc_wwn_invalid" ng-show="hostForm[key].$error.validTag">
+                                <p class="tc_err_{{format}}" ng-repeat="(format, details) in validationText.format"
+                                   ng-show="wwn[key].current === format">
+                                    {{details.desc}}<br>
+                                    For example: {{details.example}}<br>
+                                    <a target="_blank" href="{{details.link}}">More information</a>
+                                </p>
+                                <p class="tc_err_all" ng-show="wwn[key].current === 'all'">
+                                    You can use the following formats:
+                                    <span class="tc_all_{{format}}" ng-repeat="(format, details) in validationText.format"
+                                          ng-show="(format !== 'iqn' || key === 'iscsi')">
+                                        <br> {{format|uppercase}}: {{details.notation}}
+                                    </span>
+                                </p>
+                                <p ng-show="wwn[key].current === 'exists'" ng-bind="validationText.exists"></p>
+                            </div>
                         </div>
                     </div>
                 </fieldset>
