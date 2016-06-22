@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("HostService", function ($resource, $sessionStorage) {
-  return $resource($sessionStorage.config.API.URL + "hosts/:id", {
+app.factory("HostService", function ($resource) {
+  return $resource(globalConfig.API.URL + "hosts/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},

@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("CmdlogService", function ($resource, $sessionStorage) {
-  return $resource($sessionStorage.config.API.URL + "cmdlogs/:id", {
+app.factory("CmdlogService", function ($resource) {
+  return $resource(globalConfig.API.URL + "cmdlogs/:id", {
     id: "@id"
   }, {
     query: {
@@ -44,7 +44,7 @@ app.factory("CmdlogService", function ($resource, $sessionStorage) {
     },
     filter: {
       method: "GET",
-      url: $sessionStorage.config.API.URL + "cmdlogs"
+      url: globalConfig.API.URL + "cmdlogs"
     }
   });
 });

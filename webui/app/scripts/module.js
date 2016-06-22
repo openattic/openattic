@@ -65,31 +65,24 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, $state, $http, $sessionStorage) {
-  $http.get("config.json").then(function (res) {
-    // Overwrite the API and GUI settings on every full reload.
-    $sessionStorage.config = res.data;
-  }).then(
-    app.run(function (UserService) {
-      $rootScope.$on("$stateChangeSuccess", function () {
-        UserService.current().$promise.then(function () {
-          $rootScope.loggedIn = true;
-        }).catch(function () {
-          $rootScope.loggedIn = false;
-        });
-      });
-      $rootScope.loginActive = function () {
-        return !$rootScope.loggedIn;
-      };
-      var hostname = window.location.host.split(".")[0];
-      // check if the hostname looks like the first octet of an IP address
-      // and only change pageTitle if it does not
-      //if (parseInt(hostname, 10) !== hostname) {
-      if (hostname.search(/^\d{1,3}$/) === -1) {
-        $rootScope.pageTitle = hostname + " - openATTIC";
-      } else {
-        $rootScope.pageTitle = "openATTIC";
-      }
-    })
-  );
+app.run(function ($rootScope, UserService, $sessionStorage) {
+  $rootScope.$on("$stateChangeSuccess", function () {
+    UserService.current().$promise.then(function () {
+      $rootScope.loggedIn = true;
+    }).catch(function () {
+      $rootScope.loggedIn = false;
+    });
+  });
+  $rootScope.loginActive = function () {
+    return !$rootScope.loggedIn;
+  };
+  var hostname = window.location.host.split(".")[0];
+  // check if the hostname looks like the first octet of an IP address
+  // and only change pageTitle if it does not
+  //if (parseInt(hostname, 10) !== hostname) {
+  if (hostname.search(/^\d{1,3}$/) === -1) {
+    $rootScope.pageTitle = hostname + " - openATTIC";
+  } else {
+    $rootScope.pageTitle = "openATTIC";
+  }
 });

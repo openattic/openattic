@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("DiskService", function ($resource, $sessionStorage) {
-  return $resource($sessionStorage.config.API.URL + "disks/:id", {
+app.factory("DiskService", function ($resource) {
+  return $resource(globalConfig.API.URL + "disks/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},

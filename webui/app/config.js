@@ -1,4 +1,4 @@
-{
+globalConfig = {
   "API": {
     "URL": "/openattic/api/"
   },
@@ -21,4 +21,4 @@
       "zfs": true
     }
   }
-}
+};
