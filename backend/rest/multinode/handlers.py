@@ -160,30 +160,33 @@ class RequestHandlers(object):
                     return host
 
     def _get_reqdata_host(self, data):
-        host_filter = self.host_filter.split('__')
-
         try:
-            return self.model.objects.get(id=data[host_filter[0]]['id']).host
+            return self.get_host_by_data(data)
         except:
-            target_model = self.model._meta.get_field_by_name(
-                host_filter[0])[0].related.parent_model
+            host_filter = self.host_filter.split('__')
 
-            if target_model == Host:
-                return Host.objects.get(id=data[host_filter[0]]['id'])
-            else:
-                try:
-                    host = target_model.all_objects.get(id=data[host_filter[0]]['id'])
-                except target_model.DoesNotExist:
-                    key = host_filter.pop(0)
+            try:
+                return self.model.objects.get(id=data[host_filter[0]]['id']).host
+            except:
+                target_model = self.model._meta.get_field_by_name(
+                    host_filter[0])[0].related.parent_model
 
-                    target_model = target_model._meta.get_field_by_name(
-                        host_filter[0])[0].related.parent_model
-                    host = target_model.all_objects.get(id=data[key]['id'])
+                if target_model == Host:
+                    return Host.objects.get(id=data[host_filter[0]]['id'])
+                else:
+                    try:
+                        host = target_model.all_objects.get(id=data[host_filter[0]]['id'])
+                    except target_model.DoesNotExist:
+                        key = host_filter.pop(0)
 
-                for field in host_filter[1:]:
-                    host = getattr(host, field)
-                    if isinstance(host, Host):
-                        return host
+                        target_model = target_model._meta.get_field_by_name(
+                            host_filter[0])[0].related.parent_model
+                        host = target_model.all_objects.get(id=data[key]['id'])
+
+                    for field in host_filter[1:]:
+                        host = getattr(host, field)
+                        if isinstance(host, Host):
+                            return host
 
     def _get_auth_header(self, request):
         auth_token = request.user.auth_token.key

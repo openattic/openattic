@@ -1,0 +1,9 @@
+<div ng-show="selection.item">
+    <ul class="nav nav-tabs">
+        <li ui-sref-active="active">
+            <a ui-sref="hosts.detail.status({host: selection.item.id, '#': 'more'})"
+               class="tc_statusTab" data-toggle="tab" data-target="#tab-content">Status</a>
+        </li>
+    </ul>
+    <div class="tab-content" ui-view="tab-content"></div>
+</div>
