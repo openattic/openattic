@@ -411,17 +411,22 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         parent: "hosts"
       }
     })
-    .state("hosts.attributes", {
+    .state("hosts.detail", {
       url: "/:host",
       views: {
-        "detail": {
-          templateUrl: "templates/hosts/attributes.html",
-          controller : "HostAttributesCtrl"
-        }
+        "tab": {templateUrl: "templates/hosts/tab.html"}
       },
       ncyBreadcrumb: {
-        label: "{{host.name}} Attributes",
-        parent: "hosts"
+        skip: true
+      }
+    })
+    .state("hosts.detail.status", {
+      url: "/status",
+      views: {
+        "tab-content": {templateUrl: "templates/hosts/details.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} Status"
       }
     })
     .state("users", {
