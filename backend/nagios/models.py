@@ -28,7 +28,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from systemd import get_dbus_object
-from systemd.helpers import Transaction
 from ifconfig.models import Host, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
@@ -170,16 +169,14 @@ def update_conf_for_user(instance, **kwargs):
         old_user = None
     if old_user is None or instance.email != old_user.email:
         nagios = get_dbus_object("/nagios")
-        with Transaction(background=False):
-            nagios.writeconf()
-            nagios.restart_service()
+        nagios.writeconf()
+        nagios.restart_service()
 
 
 def update_conf(**kwargs):
     nagios = get_dbus_object("/nagios")
-    with Transaction(background=False):
-        nagios.writeconf()
-        nagios.restart_service()
+    nagios.writeconf()
+    nagios.restart_service()
 
 
 signals.pre_save.connect(update_conf_for_user, sender=User)
