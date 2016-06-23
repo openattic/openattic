@@ -48,11 +48,12 @@ app.controller("vmstorage", function ($scope) {
     volume: {}
   };
 
-  $scope.$watch("input.volume.name", function (volumename) {
-    if (volumename) {
-      $scope.input.cifs.name = volumename;
-      $scope.input.cifs.path = "/media/" + volumename;
-      $scope.input.nfs.path = "/media/" + volumename;
+  $scope.$watchCollection("input.volume", function (volume) {
+    if (volume.name && volume.source_pool && volume.source_pool.name) {
+      var path = "/media/" + volume.source_pool.name + "/" + volume.name;
+      $scope.input.cifs.name = volume.name;
+      $scope.input.cifs.path = path;
+      $scope.input.nfs.path = path;
     }
   });
 });
