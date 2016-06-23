@@ -23,6 +23,7 @@ import subprocess
 import tokenize
 import hashlib
 import logging
+import json
 
 from time import time
 from xml.dom import minidom
@@ -909,3 +910,35 @@ class Graph(object):
             src.xport()
 
         return _call_rrdtool(self.args)
+
+    def _convert_rrdtool_json_to_nvd3(self, data):
+        """
+        Returns the performnce data of 'rrdtool xport' in NVD3 compatible JSON format
+
+        :param data: 'rrdtool xport' performance data in JSON format
+        :rtype: dict
+
+        :return: performance data in NVD3 compatible JSON format
+        :rtype: dict
+        """
+
+        # fix broken JSON format:
+        # http://stackoverflow.com/questions/24009145/converting-str-to-dict-in-python
+        data = re.sub(r'(?:^|(?<={))\s*(\w+)(?=:)', r' "\1"', data, flags=re.M)
+        data = re.sub(r"'", r'"', data)
+        data = json.loads(data)
+
+        step = data["meta"]["step"]
+        out = []
+
+        for index, graph_desc in enumerate(data["meta"]["legend"]):
+            timestemp = data["meta"]["start"]
+
+            conv_perf_data = []
+
+            for perf_data in data["data"]:
+                conv_perf_data.append([timestemp, perf_data[index]])
+                timestemp = timestemp + step
+            out.append({"key": graph_desc, "values": conv_perf_data})
+
+        return out
