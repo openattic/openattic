@@ -36,11 +36,13 @@ Version 2.0.12, (not released yet):
 * WebUI: Save personal settings of each data table (OP-1134)
 * WebUI: Renamed wizard "Raw Block Storage" to "iSCSI/FC target" (OP-1151)
 * WebUI: Datatable shows a message if it is empty (OP-1193)
+* WebUI: Create the ceph rbd module (OP-1230)
 * WebUI: The Ceph Pool list is sortable now. Furthermore the columns cluster and
   size have been removed (OP-1237)
 * WebUI/QA: adapted helper function to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: adapted wizard test cases to new wizard title (OP-1151, OP-1197)
 * WebUI/QA: Test the local storage capabilities of data tables (OP-1202)
+* WebUI/QA: Test suite for the new ceph rbd module (OP-1230)
 * WebUI/QA: Amend host tests for OP-479 (OP-1232)
 * WebUI/QA: Added WWN validation tests (OP-1278)
 * Packaging: Adapted the build scripts to be able to create tarballs from
