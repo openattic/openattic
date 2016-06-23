@@ -48,10 +48,6 @@ angular.module("openattic", [
 
 var app = angular.module("openattic");
 // Start configuration
-app.constant("API", {
-  URL: "/openattic/api/"
-});
-
 app.constant("RESPONSIVE", {
   xs: 0,
   sm: 768,
@@ -65,7 +61,7 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, UserService, $sessionStorage) {
+app.run(function ($rootScope, UserService) {
   $rootScope.$on("$stateChangeSuccess", function () {
     UserService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
