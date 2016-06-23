@@ -14,23 +14,21 @@
  *  GNU General Public License for more details.
 """
 
-import os
 import re
 
 from datetime import datetime
 from os.path import exists
 
-from django.db        import models
+from django.db import models
 from django.db.models import signals
-from django.db.models import Q
-from django.utils.translation   import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import make_aware, get_default_timezone
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from systemd import get_dbus_object
-from ifconfig.models import Host, IPAddress, HostDependentManager
+from ifconfig.models import Host, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
 from nagios.readstatus import NagiosState
@@ -38,34 +36,37 @@ from nagios.graphbuilder import RRD
 
 
 class Command(models.Model):
-    name        = models.CharField(max_length=250, unique=True)
-    query_only  = models.BooleanField(default=False, help_text=_("Check this if openATTIC should not configure services with this command, only query those that exist."))
+    name = models.CharField(max_length=250, unique=True)
+    query_only = models.BooleanField(default=False,
+                                     help_text=_("Check this if openATTIC should not configure "
+                                                 "services with this command, only query those "
+                                                 "that exist."))
 
     def __unicode__(self):
         return self.name
 
 
 class Graph(models.Model):
-    command     = models.ForeignKey(Command)
-    title       = models.CharField(max_length=250, unique=True)
-    verttitle   = models.CharField(max_length=250, blank=True)
-    fields      = models.CharField(max_length=500)
+    command = models.ForeignKey(Command)
+    title = models.CharField(max_length=250, unique=True)
+    verttitle = models.CharField(max_length=250, blank=True)
+    fields = models.CharField(max_length=500)
 
     def __unicode__(self):
         return "%s: %s" % (self.command.name, self.title)
 
 
 class Service(models.Model):
-    host        = models.ForeignKey(Host, blank=True, null=True)
+    host = models.ForeignKey(Host, blank=True, null=True)
     target_type = models.ForeignKey(ContentType, blank=True, null=True)
-    target_id   = models.PositiveIntegerField(blank=True, null=True)
-    target      = generic.GenericForeignKey("target_type", "target_id")
+    target_id = models.PositiveIntegerField(blank=True, null=True)
+    target = generic.GenericForeignKey("target_type", "target_id")
     description = models.CharField(max_length=250)
-    command     = models.ForeignKey(Command)
-    arguments   = models.CharField(max_length=500, blank=True, default='')
+    command = models.ForeignKey(Command)
+    arguments = models.CharField(max_length=500, blank=True, default='')
 
-    nagstate    = NagiosState(nagios_settings.STATUS_DAT_PATH)
-    objects     = HostDependentManager()
+    nagstate = NagiosState(nagios_settings.STATUS_DAT_PATH)
+    objects = HostDependentManager()
     all_objects = models.Manager()
 
     class Meta:
@@ -77,7 +78,8 @@ class Service(models.Model):
         # are, let's at least make sure this works.
         striphost = self.hostname.strip()
         stripdesc = self.description.strip()
-        if striphost in Service.nagstate.servicemap and stripdesc in Service.nagstate.servicemap[striphost]:
+        if striphost in Service.nagstate.servicemap and \
+           stripdesc in Service.nagstate.servicemap[striphost]:
             return Service.nagstate.servicemap[striphost][stripdesc]
         raise KeyError("The status for this service could not be found in Nagios's status cache.")
 
@@ -98,7 +100,7 @@ class Service(models.Model):
             data[key] = dict(zip(
                 ["curr", "warn", "crit", "min", "max"],
                 [v for v in values.split(";") if v]))
-            m = re.match( '^(?P<value>\d*(?:\.\d+)?)(?P<unit>[^\d]*)$', data[key]["curr"] )
+            m = re.match('^(?P<value>\d*(?:\.\d+)?)(?P<unit>[^\d]*)$', data[key]["curr"])
             if m:
                 data[key]["curr"] = float(m.group("value"))
                 data[key]["unit"] = m.group("unit")
@@ -159,20 +161,26 @@ class Service(models.Model):
         except KeyError:
             return "Unknown"
 
+
 def update_conf_for_user(instance, **kwargs):
     try:
         old_user = User.objects.get(id=instance.id)
     except User.DoesNotExist:
         old_user = None
     if old_user is None or instance.email != old_user.email:
-        get_dbus_object("/nagios").writeconf()
+        nagios = get_dbus_object("/nagios")
+        nagios.writeconf()
+        nagios.restart_service()
+
 
 def update_conf(**kwargs):
-    get_dbus_object("/nagios").writeconf()
+    nagios = get_dbus_object("/nagios")
+    nagios.writeconf()
+    nagios.restart_service()
 
 
-signals.pre_save.connect(    update_conf_for_user, sender=User )
-signals.post_delete.connect( update_conf, sender=User )
+signals.pre_save.connect(update_conf_for_user, sender=User)
+signals.post_delete.connect(update_conf, sender=User)
 
-signals.post_save.connect(   update_conf, sender=Service )
-signals.post_delete.connect( update_conf, sender=Service )
+signals.post_save.connect(update_conf, sender=Service)
+signals.post_delete.connect(update_conf, sender=Service)

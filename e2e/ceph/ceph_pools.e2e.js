@@ -16,9 +16,7 @@ describe('should test the ceph pools panel', function(){
 
   var tableHeaders = [
     'Name',
-    'Cluster',
     'ID',
-    'Size',
     'Used',
     'Placement groups',
     'Replica size',

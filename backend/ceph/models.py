@@ -360,14 +360,20 @@ class CephOsd(NodbModel):
     hostname = models.CharField(max_length=256, editable=False)
     in_state = models.IntegerField()
 
+    # from pg dump
+    kb = models.IntegerField(editable=False)
+    kb_used = models.IntegerField(editable=False)
+    kb_avail = models.IntegerField(editable=False)
+
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
         osds = sorted(rados[context.fsid].list_osds(), key=lambda osd: osd['id'])
         osd_dump_data = sorted(MonApi(rados[context.fsid]).osd_dump()['osds'], key=lambda osd: osd['osd'])
-        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **osd)))
-                for (osd, dump)
-                in zip(osds, osd_dump_data)]
+        pg_dump_data = sorted(MonApi(rados[context.fsid]).pg_dump()['osd_stats'], key=lambda osd: osd['osd'])
+        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **dict(osd, **pg_dump))))
+                for (osd, dump, pg_dump)
+                in zip(osds, osd_dump_data, pg_dump_data)]
 
     def save(self, *args, **kwargs):
         """
@@ -396,6 +402,10 @@ class CephOsd(NodbModel):
                                    'supported'.format(key, value, self.name))
 
             super(CephOsd, self).save(*args, **kwargs)
+
+    @property
+    def utilization(self):
+        return float(self.kb_used) / float(self.kb_avail)
 
 
 class CephPg(NodbModel):
