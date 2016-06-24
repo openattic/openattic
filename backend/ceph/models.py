@@ -22,6 +22,9 @@ import logging
 import math
 import os
 
+from os.path import exists
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -129,6 +132,43 @@ class CephCluster(NodbModel):
             result.append(cluster)
 
         return result
+
+    @staticmethod
+    def get_performance_data(fsid, filter=None):
+        if "nagios" in settings.INSTALLED_APPS:
+            from nagios.conf import settings as nagios_settings
+            from nagios.graphbuilder import RRD, Graph
+
+            curr_host = Host.objects.get_current()
+
+            xmlpath = nagios_settings.XML_PATH % {
+                "host": curr_host,
+                "serv": "Check_CephCluster_{}".format(fsid)
+            }
+
+            if not exists(xmlpath):
+                raise SystemError("XML file '{}' could not be found for the cluster with FSID "
+                                  "'{}'. There are two possible reasons: a) The Ceph cluster was "
+                                  "just added to openATTIC and 'oaconfig install' was executed. -> "
+                                  "Please wait some time until Nagios runs again and creates the "
+                                  "file. b) You haven't run 'oaconfig install' after adding the "
+                                  "Ceph cluster to openATTIC -> Please run 'oaconfig install' to "
+                                  "create all needed configuration files for Nagios."
+                                  .format(xmlpath, fsid))
+
+            rrd = RRD(xmlpath)
+            graph = Graph()
+
+            sources = filter if filter else rrd.sources
+            for source in sources:
+                source_obj = rrd.get_source(source)
+                graph.add_source(source_obj)
+
+            perf_data = graph.get_json()
+            return graph._convert_rrdtool_json_to_nvd3(perf_data)
+        else:
+            return "Nagios does not appear to be installed, no performance data could be returned."
+
 
     def __str__(self):
         return self.name
