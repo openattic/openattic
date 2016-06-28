@@ -16,9 +16,8 @@
   var clone = element(by.cssContainingText('tr', clonename));
 
   var hostname = "protractor_test_host";
-  var host = element(by.cssContainingText('tr', hostname));
 
-  var volumePoolSelect = element(by.id('data.sourcePool'));
+  var volumePoolSelect = element(by.model('pool'));
 
   module.exports = {
     configs: configs,
@@ -45,30 +44,15 @@
           break;
         }
       }
-      element(by.id('volumeName')).sendKeys(volumename);
+      element(by.model('result.name')).sendKeys(volumename);
       volumePoolSelect.sendKeys(poolName);
       element(by.id(type)).click();
       element(by.model('data.megs')).sendKeys(size);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(configs.sleep);
+      expect(element(by.cssContainingText('tr', volumename)).isDisplayed()).toBe(true);
       return pool;
     },
-
-    //     create_zvol: function(type){
-    //       volumesItem.click();
-    //       element(by.css('oadatatable .tc_add_btn')).click();
-    //       for(var key in configs.pools){
-    //         element(by.id('volume.name')).sendKeys(volumename);
-    //         volumePoolSelect.click();
-    //         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
-    //         element(by.id(type)).click();
-    //         element(by.model('data.megs')).sendKeys('100MB');
-    //         element(by.css('.tc_submitButton')).click();
-    //         browser.sleep(configs.sleep);
-    //         break;
-    //       }
-    //     },
-
 
     delete_volume: function(volume, volumename){
       volumesItem.click();
@@ -147,33 +131,38 @@
       element(by.id('bot2-Msg1')).click();
     },
 
-    create_host: function(){
+    create_host: function(iqn, fc, $hostname){
       element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
-      element(by.model('host.name')).sendKeys(hostname);
+      var name = $hostname ? $hostname : hostname;
+      element(by.model('host.name')).sendKeys(name);
+      if(iqn){
+        element.all(by.model('type.check')).get(0).click();
+        element.all(by.model('data[key]')).get(0).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
+      }
+      if(fc){
+        element.all(by.model('type.check')).get(1).click();
+        element.all(by.model('data[key]')).get(1).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(fc);
+      }
+      browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
+      expect(element(by.cssContainingText('tr', name)).isDisplayed()).toBe(true);
     },
 
-    delete_host: function(){
+    delete_host: function($hostname){
       hostsItem.click();
+      var name = $hostname ? $hostname : hostname;
+      var host = element(by.cssContainingText('tr', name));
       host.click();
-      browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
-      browser.sleep(400);
       element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
-    },
-
-    selectDropdownByIndex: function(dropdown, index){
-      dropdown.click();
-      if(index){
-        dropdown.all(by.tagName('option'))
-          .then(function(options){
-            options[index].click();
-          });
-      }
+      browser.sleep(400);
+      expect(host.isPresent()).toBe(false);
     },
 
     check_wizard_titles: function(){
@@ -190,7 +179,7 @@
           });
 
           wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
-            expect(block_title).toEqual('Raw Block Storage');
+            expect(block_title).toEqual('iSCSI/Fibre Channel target');
             //console.log(block_title);
           });
       });

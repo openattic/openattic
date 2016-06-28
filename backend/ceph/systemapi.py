@@ -17,9 +17,13 @@
 import os
 import os.path
 import json
+import re
 
 from django.core.cache import get_cache
+from django.template.loader import render_to_string
 
+from ceph.models import CephCluster
+from ifconfig.models import Host
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
 
@@ -54,6 +58,11 @@ class SystemD(BasePlugin):
     @method(in_signature="s", out_signature="s")
     def mds_stat(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["mds", "stat"], log=False)
+        return out
+
+    @method(in_signature="s", out_signature="s")
+    def mds_dump(self, cluster):
+        ret, out, err = self.invoke_ceph(cluster, ["mds", "dump"], log=False)
         return out
 
     @method(in_signature="s", out_signature="s")
@@ -175,3 +184,49 @@ class SystemD(BasePlugin):
     def ceph_fsid(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["fsid"])
         return out
+
+    @deferredmethod(in_signature="")
+    def remove_nagios_configs(self, sender):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+
+        for file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
+            if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", file):
+                path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
+                os.remove(path)
+
+    @deferredmethod(in_signature="")
+    def write_nagios_configs(self, sender):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+
+        for cluster in CephCluster.objects.all():
+            file_name = "cephcluster_{}.cfg".format(cluster.fsid)
+
+            services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+
+            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
+            with open(path, "wb") as config_file:
+                config_file.write(render_to_string("nagios/services.cfg", {
+                    "IncludeHost": False,
+                    "Host": Host.objects.get_current(),
+                    "Services": services
+                }))
+
+    def _gen_service_data(self, service_instance_name, service_arguments):
+        class _CephService(object):
+
+            def __init__(self, desc, command_name, args):
+                self.description = desc
+                self.arguments = args
+                self.active = True
+
+                command = self._CephCommand(command_name)
+                self.command = command
+
+            class _CephCommand(object):
+                def __init__(self, name):
+                    self.name = name
+
+        service_desc = "Check {} {}".format(service_instance_name, service_arguments)
+        service_command = "check_{}".format(str.lower(service_instance_name))
+
+        return _CephService(service_desc, service_command, service_arguments)

@@ -9,10 +9,10 @@ describe('Wizard panel', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var share = element(by.cssContainingText('td', 'oadev.domain.here'));
 
-  var volumefield = element(by.id('volumename'));
-  var pool = element(by.id('source_pool'));
-  var size = element(by.id('volumemegs'));
-  var is_protected = element(by.id('volumeisprotected'));
+  var volumefield = element(by.model('result.name'));
+  var pool = element(by.model('pool'));
+  var size = element(by.model('data.megs'));
+  var is_protected = element(by.model('result.is_protected'));
 
   var volume_required = element(by.css('.tc_nameRequired'));
   var pool_required = element(by.css('.tc_poolRequired'));
@@ -74,8 +74,8 @@ describe('Wizard panel', function(){
 
     //in order to enter a size we need to choose a pool first
     for(var key in configs.pools){
+      var volumePoolSelect = element(by.model('pool'));
       var pool = configs.pools[key];
-      var volumePoolSelect = element(by.id('source_pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
       //browser.actions().sendKeys( protractor.Key.ENTER ).perform();

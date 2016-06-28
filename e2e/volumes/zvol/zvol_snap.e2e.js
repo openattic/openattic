@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 
 describe('Zvol tests', function(){
 
-  var volumePoolSelect = element(by.model('data.sourcePool'));
+  var volumePoolSelect = element(by.model('pool'));
   var addBtn = element(by.css('.tc_add_btn'));
   var volumename = 'protractor_test_zvol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
@@ -35,7 +35,7 @@ describe('Zvol tests', function(){
   it('should create a zvol', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
     for(var key in helpers.configs.pools){
-      element(by.id('volumeName')).sendKeys(volumename);
+      element(by.model('result.name')).sendKeys(volumename);
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', 'zpool')).get(0).click();
       element(by.id('zfs')).click();

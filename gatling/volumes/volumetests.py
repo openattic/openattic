@@ -259,7 +259,8 @@ class VolumeTests(object):
             vol = self.send_request("POST", data=data)
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
-        self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
     def test_create_0mb(self):
         """ Create a volume with 0 MB size. """
@@ -269,7 +270,8 @@ class VolumeTests(object):
             vol = self.send_request("POST", data=data)
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
-        self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
     def test_resize_0mb(self):
         """ Resize a volume to 0 MB. """
@@ -281,7 +283,8 @@ class VolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": 0, "id": vol["response"]["id"]})
-        self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")
 
 
 class Ext4VolumeTests(VolumeTests):
@@ -302,4 +305,5 @@ class XfsVolumeTests(VolumeTests):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": 0, "id": vol["response"]["id"]})
-        self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "500 server error: internal server error")

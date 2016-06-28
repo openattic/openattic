@@ -32,16 +32,19 @@ exports.config = {
 
   seleniumAddress: 'http://localhost:4444/wd/hub',
   jasmineNodeOpts: {
-    defaultTimeoutInterval: 360000,
+    defaultTimeoutInterval: 360000
   },
   framework: 'jasmine2',
 
   suites: {
    general              : '../e2e/general/**/*.e2e.js',
+   datatable            : '../e2e/datatable/**/*.e2e.js',
    pagination           : '../e2e/pagination/**/*.e2e.js',
    disks                : '../e2e/disks/**/*.e2e.js',
    pools                : '../e2e/pools/**/*.e2e.js',
-   ceph_pools           : '../e2e/ceph/**/*.e2e.js',
+   ceph_pools           : '../e2e/ceph/ceph_pools.e2e.js',
+   ceph_osds            : '../e2e/ceph/ceph_osds.e2e.js',
+   ceph_rbds            : '../e2e/ceph/ceph_rbds.e2e.js',
    volumes              : '../e2e/volumes/volumes.e2e.js',
    volumes_add          : '../e2e/volumes/add/**/*.e2e.js',
    volumes_protection   : '../e2e/volumes/protection/**/*.e2e.js',
@@ -52,7 +55,6 @@ exports.config = {
    http_share           : '../e2e/shares/http/*.e2e.js',
    nfs_share            : '../e2e/shares/nfs/*.e2e.js',
    cifs_share           : '../e2e/shares/cifs/*.e2e.js',
-   disk_share           : '../e2e/shares/generic_disk/*.e2e.js',
    lun                  : '../e2e/shares/lun/*.e2e.js',
    hosts                : '../e2e/hosts/**/*.e2e.js',
    users                : '../e2e/users/**/*.e2e.js',
@@ -73,5 +75,5 @@ exports.config = {
 
   onPrepare: function(){
     browser.driver.manage().window().maximize();
-  },
+  }
 };

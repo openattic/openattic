@@ -61,7 +61,13 @@ background-color: #404040!important;
   background-color: #71843f!important;
 }
 .bg-color-red {
-background-color: #a90329!important;
+  background-color: #a90329!important;
+}
+.no-margin {
+  margin: 0;
+}
+.no-padding {
+  padding: 0;
 }
 
 /* Branding */
@@ -177,6 +183,9 @@ fieldset[disabled] .btn-primary.active {
 }
 
 /* Modal */
+.modal-dialog {
+  margin: 30px auto !important;
+}
 .modal .modal-content {
   background-color: #ececec;
   -webkit-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.20);
@@ -727,6 +736,13 @@ h6{
 }
 .dataTables_header .input-group .form-control {
   height: 30px;
+}
+.dataTables_no-match {
+  border: 1px solid #d1d1d1;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: bold;
+  font-style: italic;
 }
 .dataTables_content .progress {
   max-height: 16px;

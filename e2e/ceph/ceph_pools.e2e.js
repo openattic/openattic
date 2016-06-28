@@ -7,6 +7,7 @@ describe('should test the ceph pools panel', function(){
   var statusTab = element(by.css('.tc_statusTab'));
   var cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
 
+
   beforeAll(function(){
     helpers.login();
     cephMenu.click();
@@ -15,9 +16,7 @@ describe('should test the ceph pools panel', function(){
 
   var tableHeaders = [
     'Name',
-    'Cluster',
     'ID',
-    'Size',
     'Used',
     'Placement groups',
     'Replica size',

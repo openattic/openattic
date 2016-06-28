@@ -55,6 +55,21 @@ app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $sta
 
   $scope.pool = new PoolService.get($scope.selection.item.source_pool);
 
+  $scope.$watchGroup(["source", "selection.item"], function (newVal) {
+    var source = newVal[0];
+    var volume = newVal[1];
+    var type;
+    if (source && source.pool) {
+      type = source.pool.app_label;
+      source = type === "zfs" || type === "btrfs";
+    }
+    if (volume) {
+      type = volume.type.app_label;
+      volume = type === "zfs" || type === "btrfs";
+    }
+    $scope.dynSnap = volume || source;
+  });
+
   $scope.$watch("megs", function (megs) {
     $scope.snap.megs = SizeParserService.parseInt(megs);
   });

@@ -42,6 +42,7 @@ angular.module("openattic", [
   "ui.router",
   "ui.sortable",
   "ui.tree",
+  "ngStorage",
   "openattic.extensions"
 ]);
 

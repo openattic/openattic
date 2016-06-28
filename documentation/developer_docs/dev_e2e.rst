@@ -7,10 +7,12 @@ tests.
 
 By continuously writing E2E-tests, we want to make sure that our graphical
 user interface is stable and acts the way it is supposed to be - that offered
-functionalities really do what we expect them to do. We want to deliver a
-well-tested application, so that you - as users and community members - do not
-get bothered with a buggy user interface. Instead, you should be able to get
-started with the real deal - MANAGING storage with |oA|.
+functionalities really do what we expect them to do.
+
+We want to deliver a well-tested application, so that you - as users and
+community members - do not get bothered with a buggy user interface. Instead,
+you should be able to get started with the real deal - MANAGING storage with
+|oA|.
 
 About Protractor
 ----------------
@@ -36,7 +38,10 @@ Install Protractor
 ------------------
 
 * ``npm install -g protractor`` (version 3.1.1)
-.. note:: protractor version 3.x.x requires Node.js® version 4.x (you can check your installed version with ``node -v``).
+
+.. note::
+  Protractor version 3.x.x requires Node.js |reg| version 4.x (you can check
+  your installed version with ``node -v``).
 
 * ``apt-get install openjdk-7-jre-headless``
 
@@ -52,11 +57,12 @@ Install Protractor
 Protractor Configuration
 ------------------------
 
-Before starting the tests, you need to configure and adapt some files Here's
-what you have to do in ``protractor.conf.js``:
+Before starting the tests, you need to configure and adapt some files.
 
-Enable BeforeAll / AfterAll
----------------------------
+Here's what you have to do in ``protractor.conf.js``:
+
+Enable ``BeforeAll`` / ``AfterAll``
+-----------------------------------
 
 In order to use ``beforeAll`` and ``afterAll`` you need to tell protractor to use
 ``jasmine2`` as framework (protractor uses an older version by default, which
@@ -85,7 +91,7 @@ Add the following line to your protractor.conf::
 Maximize Browser Window
 -----------------------
 
-If the browser windows in which the tests will be executed is too small, it
+If the browser window in which the tests will be executed is too small, it
 occurs that protractor can't click an element and tests will fail. To prevent
 this, you can maximize your browser window by default by adding the following
 line to ``webui/protractor.conf.js``::
@@ -111,11 +117,11 @@ line to ``webui/protractor.conf.js``::
   ``},``
   }
 
-Use multiple browsers
+Use Multiple Browsers
 ---------------------
 
-When using Chrome and Firefox for the tests, you could append the following to your ``protractor.conf.js`` so the test will run
-in both browsers::
+When using Chrome and Firefox for the tests, you could append the following to
+your ``protractor.conf.js`` so the test will run in both browsers::
 
     exports.config.multiCapabilities = [
         {'browserName': 'chrome'},
@@ -126,9 +132,11 @@ To prevent running both browsers at the same time you can add::
 
     exports.config.maxSessions = 1;
 
-Set up configs.js
------------------
-Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA| system as well as login data - see below::
+Set up ``configs.js``
+---------------------
+
+Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA|
+system as well as login data - see below::
 
   (function() {
     module.exports = {
@@ -142,25 +150,27 @@ Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA| syste
 In order to run our graphical user interface tests, please make sure that your
 |oA| system at least has:
 
-- one volume group
-- one zpool
+- One LVM volume group
+- One ZFS zpool
 
 and add them to ``e2e/configs.js``.
-.. note:: For more information have a look at ``e2e/example_config.js``.
 
-It is important that the first
-element in this config file is your volume group.
+.. note::
+  For more information have a look at ``e2e/example_config.js``.
 
-If you do not have a zpool configured and you do not want to create one, you
-can of course skip those tests by removing the suite from
+It is important that the first element in this config file is your volume
+group.
+
+If you do not have a ZFS zpool configured and you do not want to create one,
+you can of course skip those tests by removing the suite from
 ``protractor.conf.js`` or putting them in to the comment section.
 
-Start webdriver manager environment
+Start webdriver manager Environment
 -----------------------------------
 
-use a separate tab/window to run the following command:
+Use a separate tab/window to run the following command::
 
-``webdriver-manager start``
+  $ webdriver-manager start
 
 Make Protractor Execute the Tests
 ---------------------------------
@@ -174,13 +184,13 @@ order to run the tests::
   Without a given suite protractor will execute all tests (and this will
   probably take a while!)
 
-Start Only a Specific Test Suite
---------------------------------
+Starting Only a Specific Test Suite
+-----------------------------------
 
 If you only want to test a specific action, you can run i.e.
-``protractor protractor.conf.js --suite snapshot_add``
-Available test cases can be looked up in protractor.conf.js,
-i.e.::
+``protractor protractor.conf.js --suite snapshot_add``.
+
+Available test cases can be looked up in ``protractor.conf.js``, i.e.::
 
   suites: {
     //suite name       : '/path/to/e2e-test/file.e2e.js'
@@ -189,9 +199,9 @@ i.e.::
 
 .. note::
   When running protractor.conf and the browser window directly closes and you
-  can see something like "user-data error" (i.e. when using chrome) in your
-  console just create a dir (i.e. in /home/) and do ``google-chrome
-  --user-data-dir=/path/to/created/dir``
+  can see something like "user-data error" (i.e. when using Chrome) in your
+  console just create a dir (i.e. in your home directory) and run
+  ``google-chrome --user-data-dir=/path/to/created/dir``
 
 How to Cancel the Tests
 -----------------------
@@ -209,12 +219,14 @@ In directory ``/srv/openattic/e2e/`` the following directories can be found::
 
   +-- auth
   +-- commandLogs
+  +-- ceph
   +-- dashboard
-  |   `-- todoWidget
+  |   `-- dashboard
   +-- disks
   +-- general
   +-- hosts
   +-- pools
+  +-- pagination
   +-- shares
   |   +-- cifs
   |   +-- http
@@ -274,7 +286,8 @@ to create a new volume::
 
   });
 
-You can also specify the size as a string as third argument, otherwise the volume will always be initiated with 100MB by default.
+You can also specify the size as a string as third argument, otherwise the
+volume will always be initiated with 100MB by default.
 
 Depending on which volume type you need, you can set the parameter to:
 
@@ -316,8 +329,72 @@ should take place, you can make use of::
 
   });
 
-Tips to write tests that also support Firefox
----------------------------------------------
+Style Guide - General e2e.js File Structure / Architecture
+----------------------------------------------------------
+
+  * ``describe`` should contain a general description of what is going to be tested (functionality) in this spec file
+    i.e. the site, menu entry (and its content), panel, wizard etc.
+    example: "should test the user panel and its functionalities"
+  * ``it`` - should describe, what exactly is going to be tested in this specific it-case
+    i.e. (based on the described example above): "should test validation of form field "Name""
+  * Elements which are going to be used more than once should be defined in a variable
+    on top of the file (under described)
+  * Put required files at the top of the file
+  * Do not make tests complex by using a lot of for loops, if statements or even nested functions
+  * If something has to be done frequently one can define those steps in a function defined
+    in above mentioned ``common.js`` and use this function in specific spec files
+    i.e. if you always/often need a user before you can start the actual testing you can define a function ``create_user``
+    which contains the steps of creating a user and use the ``create_user``-function in the tests where it's required.
+    Therefore you just have to require the ``common.js`` file in the spec file and call the ``create_user``-function in
+    the beforeAll function. This procedure is a good way to prevent duplicated code.
+    (for examples see common.js -> ``create_volume-``/ ``delete_volume``-function)
+  * Make use of the beforeAll/afterAll-functions if possible (see the ``Install Protractor`` instructions).
+    Those functions allow you to do some steps (which are only required once) before anything else in the spec file
+    is going to be executed.
+    For example, if you need to login first before testing anything, you can put this step in a ``beforeAll``-function.
+    Also, using a beforeAll instead of a beforeEach saves a lot of time when executing tests. Furthermore, it's not
+    always necessary to repeat a specific step beforeEach ``ìt``-section.
+    The ``afterAll``-function is a good way to "clean up" things which are no longer needed after the test.
+    If you already have a function (i.e. ``create_user``) which creates something, you probably want to delete it after
+    the tests have been executed. So it makes sense having another function, which deletes the object
+    (in this case a ``delete_user``-function) that can simply be called in ``afterAll``.
+    In addition we decided to put an ``afterAll`` at the end of each test file which contains a
+    ``console.log("<protractor suite name> -> <filename>.e2e.js")``. By doing so it is possible to track which test in
+    which file is currently executed when running all tests.
+  * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators).
+    Example::
+       <ul class="example">
+          <li>{{volume.name}}</li>
+       </ul>
+    -> Avoid doing: ``var elementName = element.all(by.css('.example li')).get(0);``
+    -> Recommended: ``var elementName = element(by.binding('volume.name'));``
+  * If ``by.model`` or ``by.binding`` is not available, try using locators like ``by.id`` or ``by.css`` (those are
+    also performant locators)
+  * Avoid using text locators like ``by.linkText``, ``by.buttonText`` or ``by.cssContainingText`` at least for
+    text which tend to change over time / often (like buttons, links and labels)
+  * Try to avoid using ``xpath`` - it is a very slow locator. Xpath expressions are hard to read and to debug
+  * In a bunch of openATTIC HTML files (see ``openattic/webui/app/templates``) you'll find css classes which
+    are especially set for tests (those test classes are recognizable by the "tc_"-term which stands for "test class").
+    This is very useful when protractor finds more than one element of something (i.e. "Add"-button) and you can specify
+    the element by adding or just using this tc_class of the element you're looking for to the locator. This makes
+    the needed element unique (i.e.: ``element(by.css('oadatatable .tc_add_btn')).click();``)
+  * Tests should be readable and understandable for someone who is not familiar in detail with tests in order to make
+    it easy to see what exactly the test does and to make it simple writing tests for contributors.
+    Also, for someone who does not know what the software is capable of, having a look at the tests should help
+    understanding the behavior of the application
+  * Make test spec files independent from each other because it's not guaranteed that test files will be executed in a
+    specific order
+  * Always navigate to the page which should be tested before each test to make sure that the page is in a "clean state".
+    This can be done by putting the navigation part in a ``beforeEach``-function - which ensures that ``it``-sections
+    do not depend on each other as well.
+  * Locators and specs should apply to the Jasmine2 and Protractor version 3.x.x functionalities
+  * Make sure that written tests do work in Chrome (v. 49.x.x) and Firefox (v. 45.x)
+  * The name of folders/files should tell what the test is about (i.e. folder "user" contains "user_add.e2e.js")
+  * "Workflow"-files contain tests which do not place value on functionalities itself (i.e. add, delete, edit something)
+    but check validation and user feedback in forms or dialogs (like error messages)
+
+Tips on how to write tests that also support Firefox
+----------------------------------------------------
 
 Let protractor only click on clickable elements, like ``a``, ``button`` or ``input``.
 

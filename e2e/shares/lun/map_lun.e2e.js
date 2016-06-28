@@ -2,8 +2,6 @@ var helpers = require('../../common.js');
 
 describe('Should map a LUN to an host', function(){
 
-  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
-
   var hostSelect = element(by.model('share.host'));
   var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
@@ -25,21 +23,13 @@ describe('Should map a LUN to an host', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_host();
     helpers.create_volume(volumename, "lun");
   });
 
-  it('should add the iqn as attribute of the host', function(){
-    hostsItem.click();
+  it('should add the host with iqn as attribute', function(){
+    helpers.create_host(iqn);
     browser.sleep(400);
     expect(host.isPresent()).toBe(true);
-    host.click();
-    browser.sleep(400);
-    element(by.model('data.iscsiInis')).click();
-    element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
-    browser.sleep(400);
-    //get out of the iqn input field in order to save entered iqn
-    host.click();
   });
 
   it('should configure the lun', function(){
