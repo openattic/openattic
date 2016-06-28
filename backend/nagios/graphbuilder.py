@@ -638,7 +638,7 @@ class Source(Node):
 
         :return: empty string
         """
-        line = "XPORT:{}:{} in {}".format(self.name, self.name, self.unit)
+        line = "XPORT:{}:{}".format(self.name, self.name)
         self.args.append(line)
 
 
