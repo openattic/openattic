@@ -171,7 +171,7 @@ class CephCluster(NodbModel):
                 graph.add_source(source_obj)
 
             perf_data = graph.get_json()
-            return graph._convert_rrdtool_json_to_nvd3(perf_data)
+            return graph.convert_rrdtool_json_to_nvd3(perf_data)
         else:
             return "Nagios does not appear to be installed, no performance data could be returned."
 
