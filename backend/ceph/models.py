@@ -147,7 +147,7 @@ class CephPool(NodbModel):
     full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField(editable=False)
-    size = models.IntegerField()
+    size = models.IntegerField(help_text='Replica size')
     min_size = models.IntegerField(default=1, null=True, editable=True)
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
@@ -525,6 +525,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                          help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
                                                                          for v
                                                                          in RbdApi.get_feature_mapping().values()])))
+    old_format = models.BooleanField(default=False)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -535,6 +536,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
                                                          for pool in pools)))
         rbds = ((dict(name=image_name,
+                      old_format=api.image_old_format(pool.name, image_name),
                       features=api.image_features(pool.name, image_name),
                       **api.image_stat(pool.name, image_name)), pool)
                 for (image_name, pool)
@@ -558,7 +560,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
         with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True) as api:
 
             if insert:
-                api.create(self.pool.name, self.name, self.size, features=self.features)
+                api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format)
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)

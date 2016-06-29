@@ -568,6 +568,9 @@ class MonApi(object):
         Possible node types are: pool. zone, root, host, osd
 
         Note, OSDs may be duplicated in the list, although the u'depth' attribute may differ between them.
+
+        ..warning:: does not return the physical structure, but the crushmap, which will differ on some clusters. An
+            osd may be physically located on a different host, than it is returned by osd tree.
         """
         return self.client.mon_command('osd tree')
 
@@ -697,6 +700,8 @@ class RbdApi(object):
 
     def image_stat(self, pool_name, name, snapshot=None):
         """
+
+        obj_size is similar to the block size of ordinary hard drives.
         :param name: the name of the image
         :type name: str
         :param snapshot: which snapshot to read from
