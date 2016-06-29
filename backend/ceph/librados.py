@@ -569,7 +569,7 @@ class MonApi(object):
 
         Note, OSDs may be duplicated in the list, although the u'depth' attribute may differ between them.
 
-        ..warning:: does not return the phicial structure, but the crushmap, which will differ on some clusters. An
+        ..warning:: does not return the physical structure, but the crushmap, which will differ on some clusters. An
             osd may be physically located on a different host, than it is returned by osd tree.
         """
         return self.client.mon_command('osd tree')
