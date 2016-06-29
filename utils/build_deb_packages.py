@@ -289,7 +289,7 @@ class DebPackageBuilder(object):
         shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
                     os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
         version, pkgdate, hg_id = self.get_config_txt_values(tarball_source_dir)
-        # self.adapt_debian_changelog(release_channel, version, pkgdate, hg_id, tarball_source_dir)
+        self.adapt_debian_changelog(release_channel, version, pkgdate, hg_id, tarball_source_dir)
 
         self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
 
