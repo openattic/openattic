@@ -61,6 +61,7 @@ class CephCluster(NodbModel):
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
     health = models.CharField(max_length=11)
+    performance_data_options = JsonField(base_type=list, editable=False)
 
     @staticmethod
     def has_valid_config_file():
@@ -128,7 +129,17 @@ class CephCluster(NodbModel):
             fsid = CephCluster.get_fsid(cluster_name)
             cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
-            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
+            sources = []
+
+            if "nagios" in settings.INSTALLED_APPS:
+                try:
+                    cluster_rrd = CephCluster._get_cluster_rrd(fsid)
+                    sources = [source for source in cluster_rrd.sources]
+                except SystemError:
+                    pass
+
+            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health,
+                                  performance_data_options=sources)
             result.append(cluster)
 
         return result
