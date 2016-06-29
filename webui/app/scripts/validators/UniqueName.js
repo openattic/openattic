@@ -31,12 +31,13 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.directive("uniquename", function (VolumeService, HostService, UserService, $timeout) {
+app.directive("uniquename", function (VolumeService, HostService, UserService, cephRbdService, $timeout) {
   return {
     restrict: "A",
     require: "ngModel",
     link: function (scope, elem, attrs, ctrl) {
       var stopTimeout;
+      var res = null;
       ctrl.model = attrs.uniquename;
       ctrl.field = attrs.name;
 
@@ -65,23 +66,28 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, $
             model = UserService;
             current = scope.user.id;
             break;
+          case "rbd":
+            model = cephRbdService;
+            query.id = scope.data.cluster;
+            break;
           default:
             console.log("Error: Service not implemented yet.");
             return;
           }
-          query[ctrl.field] = modelValue;
-          model.query(query)
-          .$promise
-          .then(function (res) {
+          var resCheck = function (res) {
             if (res.length !== 0 && current) {
-              ctrl.$setValidity("uniquename", res[0].id === current);
+              ctrl.$setValidity("uniquename", res[0].name === current);
             } else {
               ctrl.$setValidity("uniquename", res.length === 0);
             }
-          })
-          .catch(function (error) {
-            console.log("An error occurred", error);
-          });
+          };
+          query[ctrl.field] = modelValue;
+          model.query(query)
+            .$promise
+            .then(resCheck)
+            .catch(function (error) {
+              console.log("An error occurred", error);
+            });
         }, 300);
       });
     }

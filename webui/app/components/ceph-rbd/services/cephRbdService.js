@@ -33,6 +33,19 @@
 var app = angular.module("openattic.cephRbd");
 app.factory("cephRbdService", function ($resource) {
   return $resource("/openattic/api/ceph/:id/rbds", {
-    id: "@id"
+    id: "@id",
+    name: "@name"
+  }, {
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    delete: {
+      method: "DELETE",
+      url: "/openattic/api/ceph/:id/rbds/:name"
+    }
   });
 });

@@ -32,9 +32,13 @@
 
 var app = angular.module("openattic.sizeparser", []);
 app.factory("SizeParserService", function () {
-  var mult = ["m", "g", "t", "p", "e"];
+  var mult = ["b", "k", "m", "g", "t", "p", "e"];
 
-  var _parseInt = function (value) {
+  var _parseInt = function (value, outputSize) {
+    if (outputSize === null) {
+      outputSize = "m";
+    }
+    mult = mult.slice(mult.indexOf(outputSize));
     // If it's a plain number, just parseInt() it
     if (!value) {
       return null;

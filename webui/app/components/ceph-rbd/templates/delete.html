@@ -1,0 +1,62 @@
+<div class="openattic-modal-header">
+    <span ng-if="rbd">Delete RBD</span>
+    <span ng-if="!rbd && rbds">Delete RBDs</span>
+</div>
+<div class="openattic-modal-content">
+    <!-- single rbd -->
+    <p ng-if="rbd">
+        You are about to delete the RBD <strong>{{rbd.name}}</strong>.
+    </p>
+    <p ng-if="rbd">
+        Be aware that you will <strong>lose all data that is not replicated</strong>
+        in that RBD and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <p ng-if="rbd">
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
+    <!-- end single rbd -->
+
+    <!-- multiple rbds -->
+    <p ng-if="!rbd && rbds">
+        You are about to delete multiple RBDs.
+    </p>
+    <p ng-if="!rbd && rbds">
+        Be aware that you will <strong>lose all non replicated data</strong>
+        in the RBDs and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <span class="text-danger" ng-if="!rbd && rbds">The following RBDs will be deleted:</span>
+    <ul class="text-danger" ng-if="!rbd && rbds">
+        <li ng-repeat="rad in rbds">
+            {{rad.name}} ({{rad.size | bytes}})
+        </li>
+    </ul>
+    <p ng-if="!rbd && rbds">
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
+    <!-- end multiple rbds -->
+
+    <form name="deleteForm" role="form" novalidate>
+        <div class="form-group"
+             ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
+            <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
+                   ng-model="input.enteredName" ng-pattern="input.pattern" required autofocus>
+
+            <!-- Error -->
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
+                This field is required.
+            </span>
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
+                The input value does not match 'yes'.
+            </span>
+            <!-- end Error -->
+        </div>
+
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="delete()" ng-disabled="deleteForm.$invalid">
+                Delete
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>

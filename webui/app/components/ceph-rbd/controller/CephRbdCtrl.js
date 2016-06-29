@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRbd");
-app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService, clusterData, registryService,
-    cephPoolsService) {
+app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
+    registryService, cephPoolsService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.rbd = {};
@@ -82,9 +82,6 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService,
                     return true;
                   }
                 });
-                rbd.oaUsed = rbd.obj_size / rbd.size * 100;
-                rbd.oaUnused = 100 - rbd.oaUsed;
-                rbd.oaFree = rbd.size - rbd.obj_size;
               });
               $scope.rbd = res;
             });
@@ -123,4 +120,44 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService,
       });
     }
   });
+  $scope.addAction = function () {
+    $state.go("rbds-add", {
+      clusterId: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.addAction = function () {
+    $state.go("rbds-add", {
+      clusterId: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.deleteAction = function () {
+    if (!$scope.hasSelection && !$scope.multiSelection) {
+      return;
+    }
+    var item = $scope.selection.item;
+    var items = $scope.selection.items;
+    $scope.deletionDialog(item ? item : items);
+  };
+
+  $scope.deletionDialog = function (selection) {
+    var modalInstance = $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "components/ceph-rbd/templates/delete.html",
+      controller: "RbdDelete",
+      resolve: {
+        rbdSelection: function () {
+          return selection;
+        },
+        clusterId: function () {
+          return $scope.registry.selectedCluster.fsid;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
+    });
+  };
 });
