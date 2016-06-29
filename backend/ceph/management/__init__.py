@@ -21,6 +21,7 @@ import sysutils.models
 
 from ConfigParser import ConfigParser
 
+from django.conf import settings
 from django.contrib.auth.models import User
 
 from ifconfig.models import IPAddress
@@ -43,9 +44,9 @@ def update(**kwargs):
         displayname = m.group("displayname")
 
         cluster_defaults = {
-            "auth_cluster_required" : "cephx",
-            "auth_service_required" : "cephx",
-            "auth_client_required"  : "cephx"
+            "auth_cluster_required": "cephx",
+            "auth_service_required": "cephx",
+            "auth_client_required": "cephx"
         }
 
         conf = ConfigParser(cluster_defaults)
@@ -62,7 +63,7 @@ def update(**kwargs):
         except ceph_models.Cluster.DoesNotExist:
             # since conf.items ensures that defaults come first and overrides later
             # the dict is expected to do the right thing when it encounters the overrriden key
-            global_conf={k.replace(' ','_'):v for k,v in conf.items('global')}
+            global_conf = {k.replace(' ', '_'): v for k, v in conf.items('global')}
             cluster = ceph_models.Cluster(
                 uuid=conf.get("global", "fsid"), name=displayname,
                 auth_cluster_required=global_conf["auth_cluster_required"],
@@ -72,7 +73,7 @@ def update(**kwargs):
             known = False
 
         osdmap = cluster.get_osdmap()
-        mds_stat = cluster.get_mds_stat()
+        mds_dump = cluster.get_mds_dump()
         mon_stat = cluster.get_mon_status()
         auth_list = cluster.get_auth_list()
         df = cluster.df()
@@ -141,7 +142,7 @@ def update(**kwargs):
                 print "added"
 
         iprgx = re.compile(r"^(?P<ip>.+):(?P<port>\d+)/\d+$")
-        for cmds in mds_stat["mdsmap"]["info"].values():
+        for cmds in mds_dump["info"].values():
             print "Checking Ceph mds %s..." % cmds["name"],
 
             m = iprgx.match(cmds["addr"])
@@ -191,6 +192,20 @@ def update(**kwargs):
                 mdlentity.full_clean()
                 mdlentity.save(database_only=True)
                 print "added"
+
+    if "nagios" in settings.INSTALLED_APPS:
+        from systemd import get_dbus_object
+
+        print "Updating Nagios configs: adding detected Ceph clusters"
+
+        ceph = get_dbus_object("/ceph")
+        nagios = get_dbus_object("/nagios")
+
+        ceph.remove_nagios_configs()
+        ceph.write_nagios_configs()
+        nagios.restart_service()
+    else:
+        print "Nagios does not appear to be installed, skipping adding Ceph clusters"
 
 
 sysutils.models.post_install.connect(update, sender=sysutils.models)

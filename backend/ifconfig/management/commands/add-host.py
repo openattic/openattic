@@ -27,6 +27,4 @@ class Command( BaseCommand ):
         try:
             host = Host.objects.get_current()
         except Host.DoesNotExist:
-            fqdn = socket.getfqdn()
-            host = Host(name=fqdn)
-            host.save()
+            Host.insert_current_host()

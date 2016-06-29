@@ -30,9 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephClusters");
-app.factory("cephClustersService", function ($resource) {
-  return $resource("/openattic/api/ceph/:id", {
-    id: "@id"
-  });
+var app = angular.module("openattic");
+app.directive("currentTagWwnValidation", function () {
+  return {
+    restrict: "A",
+    require: "ngModel",
+    link: function (scope, elem, attrs, ctrl) {
+      return scope.$watch(function () {
+        return scope.wwn[attrs.name].valid
+      }, function (valid) {
+        ctrl.$setValidity("validTag", valid);
+      });
+    }
+  };
 });

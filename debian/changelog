@@ -1,3 +1,15 @@
+openattic (2.0.12-1) unstable; urgency=medium
+
+  * New upstream release 2.0.12-1, see CHANGELOG for details
+
+ -- Kai Wagner <kai.wagner@it-novum.com>  Thu, 23 Jun 2016 17:10:54 +0200
+
+openattic (2.0.11-1) unstable; urgency=medium
+
+  * New upstream release 2.0.11-1, see CHANGELOG for details
+
+ -- Stephan Müller <stephan@openattic.org>  Fri, 20 May 2016 12:14:05 +0200
+
 openattic (2.0.10-1) unstable; urgency=medium
 
   * New upstream release 2.0.10-1, see CHANGELOG for details

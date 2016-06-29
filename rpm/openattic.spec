@@ -8,15 +8,15 @@ License: GPLv2
 URL: http://www.openattic.org
 BuildArch: noarch
 Source:	%{name}-%{version}.tar.bz2
-Requires:	openattic-module-cron
-Requires:	openattic-module-http
-Requires:	openattic-module-lio
-Requires:	openattic-module-lvm
-Requires:	openattic-module-mailaliases
-Requires:	openattic-module-nagios
-Requires:	openattic-module-nfs
-Requires:	openattic-module-samba
-Requires:	openattic-pgsql
+Requires:	%{name}-module-cron
+Requires:	%{name}-module-http
+Requires:	%{name}-module-lio
+Requires:	%{name}-module-lvm
+Requires:	%{name}-module-mailaliases
+Requires:	%{name}-module-nagios
+Requires:	%{name}-module-nfs
+Requires:	%{name}-module-samba
+Requires:	%{name}-pgsql
 
 %description
 openATTIC is a storage management system based upon Open Source tools with
@@ -66,7 +66,6 @@ Requires:	python-pam
 Requires:	python-psycopg2
 Requires:	python-pyudev
 Requires:	python-requests
-Requires:	python-simplejson
 Requires:	udisks2
 Requires:	vconfig
 Requires:	wget
@@ -85,7 +84,7 @@ using *just* this package, but the other packages require this one to be
 available.
 
 %package gui
-Requires: openattic-base
+Requires: %{name}
 Requires: policycoreutils-python
 Summary: openATTIC User Interface
 
@@ -97,8 +96,8 @@ storage space on demand.
 This package includes the Web UI based on AngularJS/Bootstrap.
 
 %package module-ceph
-Requires: ceph-common
-Requires: openattic-base
+Requires: ceph-common >= 10.0.0
+Requires: %{name}-base
 Requires: python-rados
 Summary: Ceph module for openATTIC
 
@@ -112,7 +111,7 @@ designed to provide excellent performance, reliability, and scalability.
 
 %package module-btrfs
 Requires:	btrfs-progs
-Requires: openattic-base
+Requires: %{name}-base
 Summary: BTRFS module for openATTIC
 
 %description module-btrfs
@@ -126,7 +125,7 @@ tolerance, repair and easy administration.
 
 %package module-cron
 Requires: cronie
-Requires: openattic-base
+Requires: %{name}-base
 Summary: Cron module for openATTIC
 
 %description module-cron
@@ -140,7 +139,7 @@ provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
 %package module-drbd
 Requires:	drbd84-utils
 Requires:	kmod-drbd84
-Requires: openattic-base
+Requires: %{name}-base
 Summary: DRBD module for openATTIC
 
 %description module-drbd
@@ -157,7 +156,7 @@ using openATTIC.
 
 %package module-http
 Requires:	httpd
-Requires: openattic-base
+Requires: %{name}-base
 Summary: HTTP module for openATTIC
 
 %description module-http
@@ -173,7 +172,7 @@ This package installs a module which allows you to share volumes or
 subdirectories using Apache2.
 
 %package module-ipmi
-Requires: openattic-base
+Requires: %{name}-base
 #require freeipmi oder OpenIPMI ??
 Summary:  IPMI module for openATTIC
 
@@ -186,7 +185,7 @@ IPMI can be used to query a set of sensors installed in the system. This
 module displays the current state of these sensors in the openATTIC GUI.
 
 %package module-lio
-Requires: openattic-base
+Requires: %{name}-base
 Requires:	python-rtslib
 # Welche Pakte werden hierfür benötigt
 Summary:  LIO module for openATTIC
@@ -202,7 +201,7 @@ user interface.
 
 %package module-lvm
 Requires:	lvm2
-Requires: openattic-base
+Requires: %{name}-base
 Summary: LVM module for openATTIC
 
 %description module-lvm
@@ -217,7 +216,7 @@ total capacity of volume groups can be allocated to logical volumes, which
 are accessed as regular block devices.
 
 %package module-mailaliases
-Requires: openattic-base
+Requires: %{name}-base
 Requires:	server(smtp)
 Summary: MailAliases module for openATTIC
 
@@ -233,7 +232,7 @@ openATTIC database.
 
 %package module-mdraid
 Requires: mdadm
-Requires: openattic-base
+Requires: %{name}-base
 Summary: MDRAID module for openATTIC
 
 %description module-mdraid
@@ -247,7 +246,7 @@ This package includes support for MD-RAID, the common Linux software RAID.
 Requires: bc
 Requires:	nagios
 Requires:	nagios-common
-Requires: openattic-base
+Requires: %{name}-base
 Requires:	pnp4nagios
 Requires: nagios-plugins-http
 Requires: nagios-plugins-swap
@@ -280,7 +279,7 @@ This package also contains the Nagios check plugins for openATTIC, namely:
 
 %package module-nfs
 Requires:	nfs-utils
-Requires: openattic-base
+Requires: %{name}-base
 Summary: NFS module for openATTIC
 
 %description module-nfs
@@ -294,7 +293,7 @@ be shared using NFS, which is the recommended way not only for UNIXes, but
 also for VMware ESX virtualization hosts.
 
 %package module-samba
-Requires: openattic-base
+Requires: %{name}-base
 Requires:	samba
 Summary: Samba module for openATTIC
 
@@ -308,7 +307,7 @@ that run the Microsoft Windows family of operating systems. This package
 provides configuration facilities for Samba Shares.
 
 %package module-twraid
-Requires: openattic-base
+Requires: %{name}-base
 Requires: cron
 # TODO: List Requirements
 Summary: 3ware RAID module for openATTIC
@@ -324,7 +323,7 @@ controllers through openATTIC.
 %package module-zfs
 Requires:	zfs
 Requires:	kernel-devel
-Requires: openattic-base
+Requires: %{name}-base
 Summary: ZFS module for openATTIC
 
 %description module-zfs
@@ -339,7 +338,7 @@ checksums. It depends on zfsonlinux, the native Linux port of ZFS.
 %package pgsql
 Requires: postgresql
 Requires:	postgresql-server
-Requires:	openattic-base
+Requires:	%{name}-base
 Summary: PGSQL database for openATTIC
 
 %description pgsql
@@ -659,6 +658,7 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
+%{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd

@@ -1,6 +1,6 @@
 var helpers = require('../../common.js');
 describe('Volumes resize', function(){
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_resize_volume';
   var pool;
   var volume = element(by.cssContainingText('tr', volumename));
   var submit_button = element(by.id('bot2-Msg1'));

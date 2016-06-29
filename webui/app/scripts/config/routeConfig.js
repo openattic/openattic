@@ -411,17 +411,22 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         parent: "hosts"
       }
     })
-    .state("hosts.attributes", {
+    .state("hosts.detail", {
       url: "/:host",
       views: {
-        "detail": {
-          templateUrl: "templates/hosts/attributes.html",
-          controller : "HostAttributesCtrl"
-        }
+        "tab": {templateUrl: "templates/hosts/tab.html"}
       },
       ncyBreadcrumb: {
-        label: "{{host.name}} Attributes",
-        parent: "hosts"
+        skip: true
+      }
+    })
+    .state("hosts.detail.status", {
+      url: "/status",
+      views: {
+        "tab-content": {templateUrl: "templates/hosts/details.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} Status"
       }
     })
     .state("users", {
@@ -494,44 +499,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       },
       ncyBreadcrumb: {
         label: "CRUSH Map Editor"
-      }
-    })
-    .state("cephPools", {
-      url: "/ceph/pools",
-      views: {
-        "main": {
-          templateUrl: "components/ceph-pools/templates/listing.html",
-          controller : "CephPoolsCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Ceph Pools"
-      }
-    })
-    .state("cephPools.detail", {
-      views: {
-        "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("cephPools.detail.status", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} status"
-      }
-    })
-    .state("cephPools.detail.cacheTier", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} cache tier"
       }
     });
 });
