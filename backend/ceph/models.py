@@ -134,7 +134,8 @@ class CephCluster(NodbModel):
             if "nagios" in settings.INSTALLED_APPS:
                 try:
                     cluster_rrd = CephCluster._get_cluster_rrd(fsid)
-                    sources = [source for source in cluster_rrd.sources]
+                    sources = list(cluster_rrd.sources)
+                    print sources
                 except SystemError:
                     pass
 
