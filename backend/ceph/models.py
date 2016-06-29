@@ -135,7 +135,6 @@ class CephCluster(NodbModel):
                 try:
                     cluster_rrd = CephCluster._get_cluster_rrd(fsid)
                     sources = list(cluster_rrd.sources)
-                    print sources
                 except SystemError:
                     pass
 
