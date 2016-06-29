@@ -135,6 +135,19 @@ class CephCluster(NodbModel):
 
     @staticmethod
     def get_performance_data(fsid, filter=None):
+        """
+        Returns the performance data by the clusters FSID and consideration of the filter parameters
+        if given.
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file)
+        :rtype: list[str]
+        :return: Returns a list of performance data or the message that the Nagios module isn't
+            installed.
+        :rtype: list[dict] or str
+        """
         if "nagios" in settings.INSTALLED_APPS:
             from nagios.conf import settings as nagios_settings
             from nagios.graphbuilder import RRD, Graph
