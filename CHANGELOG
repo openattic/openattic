@@ -6,6 +6,8 @@ Version 2.0.13, (not released yet):
 
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
+* Packaging: Remove backend/.style.yapf from the RPM buildroot instead of packaging
+  it (OP-1141)
 
 Version 2.0.12, 23. June 2016:
 ------------------------------
