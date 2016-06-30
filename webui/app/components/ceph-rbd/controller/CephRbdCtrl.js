@@ -105,7 +105,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     var item = selection.item;
     var items = selection.items;
 
-    $scope.multiSelection = Boolean(items);
+    $scope.multiSelection = Boolean(items) && items.length > 1;
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {

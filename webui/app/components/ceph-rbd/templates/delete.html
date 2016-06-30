@@ -8,7 +8,7 @@
         You are about to delete the RBD <strong>{{rbd.name}}</strong>.
     </p>
     <p ng-if="rbd">
-        Be aware that you will <strong>lose all data that is not replicated</strong>
+        Be aware that you will <strong>lose all data</strong>
         in that RBD and that this operation <strong>cannot be undone</strong>.
     </p>
     <p ng-if="rbd">
@@ -21,7 +21,7 @@
         You are about to delete multiple RBDs.
     </p>
     <p ng-if="!rbd && rbds">
-        Be aware that you will <strong>lose all non replicated data</strong>
+        Be aware that you will <strong>lose all data</strong>
         in the RBDs and that this operation <strong>cannot be undone</strong>.
     </p>
     <span class="text-danger" ng-if="!rbd && rbds">The following RBDs will be deleted:</span>

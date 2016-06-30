@@ -32,15 +32,16 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
-    SizeParserService) {
+    SizeParserService, $filter) {
   $scope.rbd = {
     name: "",
     size: 0,
     pool: -1,
-    features: []
+    old_format: false
   };
   $scope.accordionOpen = {
-    properties: true
+    properties: true,
+    expert: false
   };
 
   $scope.data = {
@@ -57,22 +58,25 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     cluster: $stateParams.clusterId
   };
 
-  /*
-   * Output should be:
-            "name": "foo",
-            "pool": 0,
-            "size": 4294967296,  //bytes
-            "features": []
-  //["deep-flatten", "layering", "striping", "exclusive-lock", "object-map", "journaling", "fast-diff"]
-   * */
+  $scope.$watch("data.features.layering", function (option) {
+    if (option && $scope.data.features.striping) {
+      $scope.data.features.layering = false;
+    }
+  });
+
+  $scope.$watch("data.features.striping", function (option) {
+    if (option && $scope.data.features.layering) {
+      $scope.data.features.striping = false;
+    }
+  });
 
   $scope.pools = {};
   $scope.features = {
     "deep-flatten": {
-      desc: "Deepflatten"
+      desc: "Deep flatten"
     },
     "layering": {
-      desc: "Layerd",
+      desc: "Layering",
       helpText: ""
     },
     "striping": {
@@ -80,11 +84,11 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       helpText: ""
     },
     "exclusive-lock": {
-      desc: "Exclusive locked",
+      desc: "Exclusive lock",
       helpText: ""
     },
     "object-map": {
-      desc: "Object mapping",
+      desc: "Object map",
       helpText: ""
     },
     "journaling": {
@@ -110,6 +114,14 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       })
       .$promise
       .then(function (res) {
+        console.log(res);
+        res.results.forEach(function (pool) {
+          console.log(pool);
+          pool.oaUsed = $filter("number")(pool.num_bytes / pool.max_avail * 100, 2);
+          pool.oaUnused = 100 - pool.oaUsed;
+          pool.oaFree = pool.max_avail - pool.num_bytes;
+          pool.oaFreeText = $filter("bytes")(pool.oaFree);
+        });
         $scope.pools = res.results;
       }, function (error) {
         console.log("An error occurred", error);
@@ -118,15 +130,15 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
 
   $scope.submitAction = function (rbdForm) {
     if (rbdForm.$valid) {
-      var features = [];
-      for (var feature in $scope.data.features) {
-        if ($scope.data.features[feature]) {
-          features.push(feature);
+      if ($scope.data.expert) {
+        var features = [];
+        for (var feature in $scope.data.features) {
+          if ($scope.data.features[feature]) {
+            features.push(feature);
+          }
         }
+        $scope.rbd.features = features;
       }
-      //$scope.rbd.name = "test" + Math.random().toString().substr(10);
-      //$scope.rbd.size = parseInt(Math.random() * 4096 * 1024 * 16)
-      $scope.rbd.features = features;
       $scope.rbd.pool = $scope.data.pool.id;
       $scope.rbd.id = $stateParams.clusterId;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");

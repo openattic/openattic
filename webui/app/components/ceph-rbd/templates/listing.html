@@ -36,10 +36,10 @@
 
 <oadatatable ng-show="!error && rbd.results.length > 0" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig" selection="selection">
     <actions>
-        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection">
+        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="hasSelection">
+        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="hasSelection || multiSelection">
             <i class="fa fa-fw fa-trash-o"></i>Delete
         </a>
         <li>
@@ -60,10 +60,10 @@
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
-                <th ng-show="columns['Poolname']">Poolname</th>
-                <th ng-show="columns['Size']">Size</th>
-                <th ng-show="columns['Object size']">Object size</th>
-                <th ng-show="columns['Number of objects']">Number of objects</th>
+                <th sortfield="pool" sortdir="asc" sortheaderclass ng-show="columns['Poolname']">Poolname</th>
+                <th sortfield="size" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
+                <th sortfield="obj_size" sortdir="asc" sortheaderclass ng-show="columns['Object size']">Object size</th>
+                <th sortfield="num_objs" sortdir="asc" sortheaderclass ng-show="columns['Number of objects']">Number of objects</th>
             </tr>
         </thead>
         <tbody>

@@ -37,7 +37,6 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, c
     require: "ngModel",
     link: function (scope, elem, attrs, ctrl) {
       var stopTimeout;
-      var res = null;
       ctrl.model = attrs.uniquename;
       ctrl.field = attrs.name;
 
