@@ -3,9 +3,16 @@ openATTIC Changelog
 
 Version 2.0.13, (not released yet):
 -----------------------------------
-
+* Backend: Added the performance data (in JSON) of a Ceph cluster to the REST
+  API (OP-1279)
+* Backend: General Ceph RBD improvements (OP-1309, OP-1302, OP-1305 and OP-1133)
+* WebUI: Added a welcome message to the login screen (OP-1310)
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
+* Packaging: Remove backend/.style.yapf from the RPM buildroot instead of
+  packaging it (OP-1141)
+* Packaging: Added version.txt to the openattic-base RPM and DEB files
+  (OP-1267)
 
 Version 2.0.12, 23. June 2016:
 ------------------------------
@@ -20,10 +27,10 @@ Version 2.0.12, 23. June 2016:
 * Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
 * Backend: Added Ceph RBD REST Collection (OP-1214)
 * Backend: Added a Nagios plugin to monitor basic performance data of a Ceph
-  cluster (OP-1222) (thanks to Christian Eichelmann for giving us the permission
-  to integrate a part of his check-ceph-dash implementation)
-* Backend: Added a basic infrastructure to create Nagios service definitions for
-  known Ceph clusters (OP-1235)
+  cluster (OP-1222) (thanks to Christian Eichelmann for giving us the
+  permission to integrate a part of his check-ceph-dash implementation)
+* Backend: Added a basic infrastructure to create Nagios service definitions
+  for known Ceph clusters (OP-1235)
 * Backend: Added CephFS REST Collection (OP-1245)
 * Backend: Cleaned up 'NAGIOS_SERVICES_CFG_PATH' backend setting. This setting
   will now be defined in the correct config files (openattic, openattic.RedHat,
@@ -31,8 +38,8 @@ Version 2.0.12, 23. June 2016:
 * Backend: Nagios services for Ceph clusters could now be created by
   'oaconfig install' (OP-1261)
 * Backend: Fixed listing of OSDs. Thanks to Luke Jing Yuan (OP-1266)
-* Backend: Add functionality to remove existing Ceph cluster Nagios configuration
-  files (OP-1276)
+* Backend: Add functionality to remove existing Ceph cluster Nagios
+* configuration files (OP-1276)
 * Backend: Restarting the Nagios service is separated from the configuration
   creation now (OP-1280)
 * Backend: Fixed internal server error in `/api/volumes`, if an `lvm` snapshot

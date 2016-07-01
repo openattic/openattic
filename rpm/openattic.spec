@@ -389,6 +389,8 @@ mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
+install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
+rm -f  %{buildroot}%{_datadir}/%{name}/backend/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
 rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
@@ -580,9 +582,9 @@ echo ""
 %{_datadir}/%{name}/templates/
 %{_datadir}/%{name}/urls.py*
 %{_datadir}/%{name}/userprefs/
+%{_datadir}/%{name}/version.txt
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
-%{_datadir}/%{name}/.style.yapf
 
 %files module-btrfs
 %defattr(-,root,root,-)

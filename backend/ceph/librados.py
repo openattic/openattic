@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import subprocess
 from collections import deque
 from contextlib import contextmanager
 from itertools import product
@@ -666,7 +667,7 @@ class RbdApi(object):
         self.cluster = client
 
     @undoable
-    def create(self, pool_name, image_name, size, old_format=True, features=None):
+    def create(self, pool_name, image_name, size, old_format=True, features=None, order=None):
         """
         .. example::
                 >>> api = RbdApi()
@@ -675,6 +676,7 @@ class RbdApi(object):
 
         :param pool_name: RBDs are typically created in a pool named `rbd`.
         :param features: see :method:`image_features`. The Linux kernel module doesn't support all features.
+        :param order: obj_size will be 2**order
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
         """
@@ -710,6 +712,12 @@ class RbdApi(object):
         ioctx = self.cluster._get_pool(pool_name)
         with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
             return image.stat()
+
+    def image_disk_usage(self, pool_name, name):
+        """The "rbd du" command is not exposed in python, as it is directly implemented in the rbd tool."""
+        out = subprocess.check_output(['rbd', 'du', name, '--format', 'json'])
+        return json.loads(out)['images'][0]
+
 
     @undoable
     def image_resize(self, pool_name, name, size):
