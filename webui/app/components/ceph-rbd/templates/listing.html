@@ -1,40 +1,17 @@
 <ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getRbdList()"></ceph-cluster-dropdown>
 
 <div ng-show="cluster.results.length > 0">
-    <div class="panel panel-default" ng-show="error">
-        <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
-        </div>
-        <div class="panel-body">
-            Ceph RBD resource could not be loaded. Make sure that the ceph module is installed.
-        </div>
-    </div>
-
     <div class="panel panel-default" ng-show="!error && !rbd.$resolved">
         <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
+            <h3 class="panel-title">Loading...</h3>
         </div>
         <div class="panel-body">
             Ceph RBDs are loading...
         </div>
     </div>
-
-    <div class="panel panel-default" ng-show="!error && rbd.results.length === 0">
-        <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
-        </div>
-        <div class="panel-body">
-            <p>
-            No RBD available.
-            </p>
-            <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection">
-                <i class="fa fa-fw fa-plus"></i>Add
-            </a>
-        </div>
-    </div>
 </div>
 
-<oadatatable ng-show="!error && rbd.results.length > 0" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="!error && rbd.results" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig" selection="selection">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
@@ -62,8 +39,8 @@
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
                 <th sortfield="pool" sortdir="asc" sortheaderclass ng-show="columns['Poolname']">Poolname</th>
                 <th sortfield="size" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
-                <th sortfield="obj_size" sortdir="asc" sortheaderclass ng-show="columns['Object size']">Object size</th>
-                <th sortfield="num_objs" sortdir="asc" sortheaderclass ng-show="columns['Number of objects']">Number of objects</th>
+                <th sortfield="obj_size" sortdir="asc" sortheaderclass disabled ng-show="columns['Object size']">Object size</th>
+                <th sortfield="num_objs" sortdir="asc" sortheaderclass disabled ng-show="columns['Number of objects']">Number of objects</th>
             </tr>
         </thead>
         <tbody>

@@ -34,9 +34,12 @@ var app = angular.module("openattic.sizeparser", []);
 app.factory("SizeParserService", function () {
   var mult = ["b", "k", "m", "g", "t", "p", "e"];
 
-  var _parseInt = function (value, outputSize) {
-    if (outputSize === null) {
+  var _parseInt = function (value, outputSize, inputSize) {
+    if (outputSize === undefined) {
       outputSize = "m";
+    }
+    if (inputSize === undefined) {
+      inputSize = "m";
     }
     mult = mult.slice(mult.indexOf(outputSize));
     // If it's a plain number, just parseInt() it
@@ -45,7 +48,7 @@ app.factory("SizeParserService", function () {
     }
 
     if (/^[\d.]+$/.test(value)) {
-      return parseInt(parseFloat(value), 10);
+      value += inputSize;
     }
 
     value = value.toLowerCase().replace(/\s/g, "");

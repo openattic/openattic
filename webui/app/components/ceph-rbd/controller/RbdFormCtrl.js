@@ -55,6 +55,8 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       "journaling": false,
       "fast-diff": false
     },
+    obj_num: 1,
+    obj_size: 4194304, // Temp value == 4 MB
     cluster: $stateParams.clusterId
   };
 
@@ -67,6 +69,16 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   $scope.$watch("data.features.striping", function (option) {
     if (option && $scope.data.features.layering) {
       $scope.data.features.striping = false;
+    }
+  });
+
+  $scope.$watch("data.size", function (size) {
+    size = SizeParserService.parseInt(size, "b");
+    var objNum = parseInt(size / $scope.data.obj_size, 10);
+    if (objNum < 1) {
+      $scope.data.size = $filter("bytes")($scope.data.obj_size);
+    } else {
+      $scope.data.size = $filter("bytes")(size);
     }
   });
 
