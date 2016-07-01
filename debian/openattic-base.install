@@ -30,14 +30,14 @@ etc/init.d/openattic-rpcd           /etc/init.d
 etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
 etc/pam.d/openattic                 /etc/pam.d
 
-# Volume initializaition scripts
+# Volume initialization scripts
 etc/openattic/volume_init.d/*       /etc/openattic/volume_init.d
 
 # System Configs
 etc/apache2/conf-available/openattic.conf /etc/apache2/conf-available
 etc/dbus-1/system.d/openattic.conf        /etc/dbus-1/system.d
 etc/logrotate.d/openattic                 /etc/logrotate.d
-
+version.txt                               /usr/share/openattic
 debian/default/openattic            /etc/default
 
 # Pacemaker resource agents
