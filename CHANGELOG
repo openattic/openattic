@@ -9,6 +9,8 @@ Version 2.0.13, (not released yet):
   (OP-1106)
 * Packaging: Remove backend/.style.yapf from the RPM buildroot instead of
   packaging it (OP-1141)
+* Packaging: Added version.txt to the openattic-base RPM and DEB files
+  (OP-1267)
 
 Version 2.0.12, 23. June 2016:
 ------------------------------
