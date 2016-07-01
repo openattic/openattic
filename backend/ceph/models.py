@@ -22,6 +22,9 @@ import logging
 import math
 import os
 
+from os.path import exists
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -58,6 +61,7 @@ class CephCluster(NodbModel):
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
     health = models.CharField(max_length=11)
+    performance_data_options = JsonField(base_type=list, editable=False)
 
     @staticmethod
     def has_valid_config_file():
@@ -125,10 +129,84 @@ class CephCluster(NodbModel):
             fsid = CephCluster.get_fsid(cluster_name)
             cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
-            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
+            sources = []
+
+            if "nagios" in settings.INSTALLED_APPS:
+                try:
+                    cluster_rrd = CephCluster._get_cluster_rrd(fsid)
+                    sources = list(cluster_rrd.sources)
+                except SystemError:
+                    pass
+
+            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health,
+                                  performance_data_options=sources)
             result.append(cluster)
 
         return result
+
+    @staticmethod
+    def get_performance_data(fsid, filter=None):
+        """
+        Returns the performance data by the clusters FSID and consideration of the filter parameters
+        if given.
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file)
+        :rtype: list[str]
+        :return: Returns a list of performance data or the message that the Nagios module isn't
+            installed.
+        :rtype: list[dict] or str
+        """
+        if "nagios" in settings.INSTALLED_APPS:
+            from nagios.graphbuilder import Graph
+
+            graph = Graph()
+            rrd = CephCluster._get_cluster_rrd(fsid)
+
+            sources = filter if filter else rrd.sources
+            for source in sources:
+                source_obj = rrd.get_source(source)
+                graph.add_source(source_obj)
+
+            perf_data = graph.get_json()
+            return graph.convert_rrdtool_json_to_nvd3(perf_data)
+        else:
+            return "Nagios does not appear to be installed, no performance data could be returned."
+
+    @staticmethod
+    def _get_cluster_rrd(fsid):
+        """
+        Returns the RRD file by the clusters FSID.
+        Note: Make sure the Nagios module is installed before calling this method!
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :return: RRD file of the cluster
+        :rtype: nagios.graphbuilder.RRD
+        """
+
+        from nagios.conf import settings as nagios_settings
+        from nagios.graphbuilder import RRD
+
+        curr_host = Host.objects.get_current()
+
+        xmlpath = nagios_settings.XML_PATH % {
+            "host": curr_host,
+            "serv": "Check_CephCluster_{}".format(fsid)
+        }
+
+        if not exists(xmlpath):
+            raise SystemError("XML file '{}' could not be found for the cluster with FSID "
+                              "'{}'. There are two possible reasons: a) The Ceph cluster was "
+                              "just added to openATTIC and 'oaconfig install' was executed. -> "
+                              "Please wait some time until Nagios runs again and creates the "
+                              "file. b) You haven't run 'oaconfig install' after adding the "
+                              "Ceph cluster to openATTIC -> Please run 'oaconfig install' to "
+                              "create all needed configuration files for Nagios."
+                              .format(xmlpath, fsid))
+        return RRD(xmlpath)
 
     def __str__(self):
         return self.name
