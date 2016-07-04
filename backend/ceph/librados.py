@@ -609,28 +609,25 @@ class MonApi(object):
         """Also contains OSD statistics"""
         return self.client.mon_command('pg dump')
 
+
 class RbdApi(object):
     """
     http://docs.ceph.com/docs/master/rbd/librbdpy/
-    """
 
-    # https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
+    Exported features are defined here: https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
+    """
     @staticmethod
     def get_feature_mapping():
-        try:
-            return {
-                rbd.RBD_FEATURE_LAYERING: 'layering',
-                rbd.RBD_FEATURE_STRIPINGV2: 'striping',
-                rbd.RBD_FEATURE_EXCLUSIVE_LOCK: 'exclusive-lock',
-                rbd.RBD_FEATURE_OBJECT_MAP: 'object-map',
-                rbd.RBD_FEATURE_FAST_DIFF: 'fast-diff',
-                rbd.RBD_FEATURE_DEEP_FLATTEN: 'deep-flatten',
-                rbd.RBD_FEATURE_JOURNALING: 'journaling',
-            }
-        except AttributeError:
-            logger.error('Your Ceph version is too old: some expected RBD features are missing. Please update to a more'
-                         'recent Ceph version.')
-            raise
+        ret = {
+            getattr(rbd, feature): feature[12:].lower().replace('_', '-')
+            for feature
+            in dir(rbd)
+            if feature.startswith('RBD_FEATURE_')
+        }
+        if not ret:
+            raise ImportError('Your Ceph version is too old: RBD features are missing. Please update to a more recent '
+                              'Ceph version.')
+        return ret
 
     @classmethod
     def _bitmask_to_list(cls, features):
