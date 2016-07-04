@@ -715,8 +715,9 @@ class RbdApi(object):
 
     def image_disk_usage(self, pool_name, name):
         """The "rbd du" command is not exposed in python, as it is directly implemented in the rbd tool."""
-        out = subprocess.check_output(['rbd', 'du', name, '--format', 'json'])
-        return json.loads(out)['images'][0]
+        out = subprocess.check_output(['rbd', 'disk-usage', '--pool', pool_name, '--image', name, '--format', 'json'])
+        du = json.loads(out)['images']
+        return du[0] if du else {}
 
 
     @undoable
