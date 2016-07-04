@@ -120,9 +120,14 @@ class Process(object):
                                returncode=pipe.wait())
 
         if not result.success():
+            # Print stdout on failure too. Some tools like Grunt print errors to stdout!
+            if result.stdout and verbosity <= VERBOSITY_NORMAL:  # Do not print if already printed.
+                print result.stdout
             if result.stderr:
                 print result.stderr
             if self.exit_on_error is True and exit_on_error is not False:
+                # Print message on exit for the sake of debugging.
+                print('Error occurred, exiting')
                 sys.exit(result.returncode)
 
         return result
@@ -261,7 +266,7 @@ class DistBuilder(object):
 
     def _get_latest_existing_tag(self, strip_tag=False):
         tags = self.__get_all_tags(self._oa_temp_build_dir)
-        tags.remove('tip')  # We're looking for the latest _labeled_ tag.
+        tags.remove('tip')  # We're looking for the latest _labeled_ tag. So we exclude 'tip'.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
         latest_tag = self._strip_mercurial_tag(latest_tag) if strip_tag else latest_tag
@@ -277,8 +282,6 @@ class DistBuilder(object):
         :param revision: A valid mercurial revision
         :return: The version of the `version.txt`
         """
-        self._process.run(['hg', 'pull', '-u'], cwd=self._oa_temp_build_dir)
-
         if not self._source_is_path:
             # Update to the given revision before determining the upcoming version. Don't do this if
             # the source is a path, because that one is for creating tarballs to be tested before
@@ -494,7 +497,9 @@ class DistBuilder(object):
 
             # Remove no longer required dirs.
             rmtree(bower_components_dir)
+            self._process.log_command(['rm -r', bower_components_dir])
             rmtree(node_modules_dir)
+            self._process.log_command(['rm -r', node_modules_dir])
 
         # Update version.txt.
 
