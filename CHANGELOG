@@ -3,12 +3,16 @@ openATTIC Changelog
 
 Version 2.0.13, (not released yet):
 -----------------------------------
-
+* Backend: Added the performance data (in JSON) of a Ceph cluster to the REST
+  API (OP-1279)
+* Backend: General Ceph RBD improvements (OP-1309, OP-1302, OP-1305 and OP-1133)
 * WebUI: Added a welcome message to the login screen (OP-1310)
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
 * Packaging: Remove backend/.style.yapf from the RPM buildroot instead of
   packaging it (OP-1141)
+* Packaging: Added version.txt to the openattic-base RPM and DEB files
+  (OP-1267)
 
 Version 2.0.12, 23. June 2016:
 ------------------------------

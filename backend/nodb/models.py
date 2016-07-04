@@ -193,11 +193,10 @@ class NodbQuerySet(QuerySet):
             return filtered_data[0]
         if not num:
             raise self.model.DoesNotExist(
-                "%s matching query does not exist." %
-                self.model._meta.object_name)
+                '{} matching query "{}" does not exist.'.format(self.model._meta.object_name, kwargs))
         raise self.model.MultipleObjectsReturned(
             "get() returned more than one %s -- it returned %s!" % (
-                self.mode_._meta.object_name,
+                self.model._meta.object_name,
                 num
             )
         )

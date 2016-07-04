@@ -22,6 +22,9 @@ import logging
 import math
 import os
 
+from os.path import exists
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -58,6 +61,7 @@ class CephCluster(NodbModel):
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
     health = models.CharField(max_length=11)
+    performance_data_options = JsonField(base_type=list, editable=False)
 
     @staticmethod
     def has_valid_config_file():
@@ -125,10 +129,84 @@ class CephCluster(NodbModel):
             fsid = CephCluster.get_fsid(cluster_name)
             cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
-            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
+            sources = []
+
+            if "nagios" in settings.INSTALLED_APPS:
+                try:
+                    cluster_rrd = CephCluster._get_cluster_rrd(fsid)
+                    sources = list(cluster_rrd.sources)
+                except SystemError:
+                    pass
+
+            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health,
+                                  performance_data_options=sources)
             result.append(cluster)
 
         return result
+
+    @staticmethod
+    def get_performance_data(fsid, filter=None):
+        """
+        Returns the performance data by the clusters FSID and consideration of the filter parameters
+        if given.
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file)
+        :rtype: list[str]
+        :return: Returns a list of performance data or the message that the Nagios module isn't
+            installed.
+        :rtype: list[dict] or str
+        """
+        if "nagios" in settings.INSTALLED_APPS:
+            from nagios.graphbuilder import Graph
+
+            graph = Graph()
+            rrd = CephCluster._get_cluster_rrd(fsid)
+
+            sources = filter if filter else rrd.sources
+            for source in sources:
+                source_obj = rrd.get_source(source)
+                graph.add_source(source_obj)
+
+            perf_data = graph.get_json()
+            return graph.convert_rrdtool_json_to_nvd3(perf_data)
+        else:
+            return "Nagios does not appear to be installed, no performance data could be returned."
+
+    @staticmethod
+    def _get_cluster_rrd(fsid):
+        """
+        Returns the RRD file by the clusters FSID.
+        Note: Make sure the Nagios module is installed before calling this method!
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :return: RRD file of the cluster
+        :rtype: nagios.graphbuilder.RRD
+        """
+
+        from nagios.conf import settings as nagios_settings
+        from nagios.graphbuilder import RRD
+
+        curr_host = Host.objects.get_current()
+
+        xmlpath = nagios_settings.XML_PATH % {
+            "host": curr_host,
+            "serv": "Check_CephCluster_{}".format(fsid)
+        }
+
+        if not exists(xmlpath):
+            raise SystemError("XML file '{}' could not be found for the cluster with FSID "
+                              "'{}'. There are two possible reasons: a) The Ceph cluster was "
+                              "just added to openATTIC and 'oaconfig install' was executed. -> "
+                              "Please wait some time until Nagios runs again and creates the "
+                              "file. b) You haven't run 'oaconfig install' after adding the "
+                              "Ceph cluster to openATTIC -> Please run 'oaconfig install' to "
+                              "create all needed configuration files for Nagios."
+                              .format(xmlpath, fsid))
+        return RRD(xmlpath)
 
     def __str__(self):
         return self.name
@@ -510,6 +588,14 @@ class CephPg(NodbModel):
         return ret
 
 
+def aggregate_dict(*args, **kwargs):
+    ret = {}
+    for arg in args:
+        ret.update(arg)
+    ret.update(**kwargs)
+    return ret
+
+
 class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
@@ -517,15 +603,15 @@ class CephRbd(NodbModel):  # aka RADOS block device
     name = models.CharField(max_length=100, primary_key=True)
     pool = models.ForeignKey(CephPool)
     size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
-    obj_size = models.IntegerField(editable=False)
+    obj_size = models.IntegerField(null=True, blank=True)
     num_objs = models.IntegerField(editable=False)
-    order = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
     features = JsonField(base_type=list, null=True, blank=True,
                          help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
                                                                          for v
                                                                          in RbdApi.get_feature_mapping().values()])))
     old_format = models.BooleanField(default=False)
+    used_size = models.IntegerField(editable=False)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -535,10 +621,13 @@ class CephRbd(NodbModel):  # aka RADOS block device
         pools = CephPool.objects.all()
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
                                                          for pool in pools)))
-        rbds = ((dict(name=image_name,
-                      old_format=api.image_old_format(pool.name, image_name),
-                      features=api.image_features(pool.name, image_name),
-                      **api.image_stat(pool.name, image_name)), pool)
+        rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
+                                api.image_disk_usage(pool.name, image_name),  # This is really expensive. You should
+                                # first try to only call "rbd du" for rbds that will be serialized.
+                                old_format=api.image_old_format(pool.name, image_name),
+                                features=api.image_features(pool.name, image_name),
+                                name=image_name),
+                 pool)
                 for (image_name, pool)
                 in rbd_name_pools)
 
@@ -557,10 +646,13 @@ class CephRbd(NodbModel):  # aka RADOS block device
         context = CephPool.objects.nodb_context
         insert = self._state.adding  # there seems to be no id field.
 
-        with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True) as api:
+        with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True, exception_type=CephRbd.DoesNotExist) as api:
 
             if insert:
-                api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format)
+                order = None
+                if self.obj_size is not None and self.obj_size > 0:
+                    order = int(round(math.log(float(self.obj_size), 2)))
+                api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format, order=order)
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
@@ -570,11 +662,13 @@ class CephRbd(NodbModel):  # aka RADOS block device
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
                 if key == 'features':
-                    assert not insert
-                    for feature in set(original.features).difference(set(value)):
-                        api.image_set_feature(self.pool.name, self.name, feature, False)
-                    for feature in set(value).difference(set(original.features)):
-                        api.image_set_feature(self.pool.name, self.name, feature, True)
+                    if not insert:
+                        for feature in set(original.features).difference(set(value)):
+                            api.image_set_feature(self.pool.name, self.name, feature, False)
+                        for feature in set(value).difference(set(original.features)):
+                            api.image_set_feature(self.pool.name, self.name, feature, True)
+                    else:
+                        logger.warning('Tried to set features, but they should already match. {} != {}'.format(original.features, value))
                 else:
                     logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
                                    'supported'.format(key, value, self.name))
