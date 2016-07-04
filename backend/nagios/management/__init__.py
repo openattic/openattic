@@ -31,6 +31,9 @@ def create_nagios(**kwargs):
     signals.post_save.disconnect(update_conf, sender=Service)
 
     for servstate in Service.nagstate["servicestatus"]:
+        if servstate["service_description"].startswith("Check Ceph"):
+            continue
+
         cmdargs = servstate["check_command"].split('!')
         cmdname = cmdargs[0]
         cmdargs = cmdargs[1:]
