@@ -625,7 +625,8 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                 api.image_disk_usage(pool.name, image_name),  # This is really expensive. You should
                                 # first try to only call "rbd du" for rbds that will be serialized.
                                 old_format=api.image_old_format(pool.name, image_name),
-                                features=api.image_features(pool.name, image_name)),
+                                features=api.image_features(pool.name, image_name),
+                                name=image_name),
                  pool)
                 for (image_name, pool)
                 in rbd_name_pools)
