@@ -259,11 +259,13 @@ class CephPool(NodbModel):
         osd_dump_data = MonApi(rados[fsid]).osd_dump()
         df_data = rados[fsid].mon_command('df')
 
+        dummy_df = [{'stats': {'max_avail': None, 'kb_used': 0}}]
+
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
             stats = rados[fsid].get_stats(str(pool_data['pool_name']))
-            disk_free_data = [elem for elem in df_data['pools'] if elem['id'] == pool_id][0]
+            disk_free_data = ([elem for elem in df_data['pools'] if elem['id'] == pool_id] or dummy_df)[0]
 
             object_data = {
                 'id': pool_id,
