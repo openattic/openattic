@@ -600,7 +600,8 @@ class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
-    name = models.CharField(max_length=100, primary_key=True)
+    id = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool)
     size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
     obj_size = models.IntegerField(null=True, blank=True)
@@ -612,6 +613,10 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                                                          in RbdApi.get_feature_mapping().values()])))
     old_format = models.BooleanField(default=False)
     used_size = models.IntegerField(editable=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CephRbd, self).__init__(*args, **kwargs)
+        self.id = '{}.{}'.format(self.pool.id, self.name)
 
     @staticmethod
     def get_all_objects(context, query):
