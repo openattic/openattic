@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import subprocess
 from collections import deque
 from contextlib import contextmanager
 from itertools import product
@@ -568,6 +569,9 @@ class MonApi(object):
         Possible node types are: pool. zone, root, host, osd
 
         Note, OSDs may be duplicated in the list, although the u'depth' attribute may differ between them.
+
+        ..warning:: does not return the physical structure, but the crushmap, which will differ on some clusters. An
+            osd may be physically located on a different host, than it is returned by osd tree.
         """
         return self.client.mon_command('osd tree')
 
@@ -663,7 +667,7 @@ class RbdApi(object):
         self.cluster = client
 
     @undoable
-    def create(self, pool_name, image_name, size, old_format=True, features=None):
+    def create(self, pool_name, image_name, size, old_format=True, features=None, order=None):
         """
         .. example::
                 >>> api = RbdApi()
@@ -672,6 +676,7 @@ class RbdApi(object):
 
         :param pool_name: RBDs are typically created in a pool named `rbd`.
         :param features: see :method:`image_features`. The Linux kernel module doesn't support all features.
+        :param order: obj_size will be 2**order
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
         """
@@ -697,6 +702,8 @@ class RbdApi(object):
 
     def image_stat(self, pool_name, name, snapshot=None):
         """
+
+        obj_size is similar to the block size of ordinary hard drives.
         :param name: the name of the image
         :type name: str
         :param snapshot: which snapshot to read from
@@ -705,6 +712,13 @@ class RbdApi(object):
         ioctx = self.cluster._get_pool(pool_name)
         with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
             return image.stat()
+
+    def image_disk_usage(self, pool_name, name):
+        """The "rbd du" command is not exposed in python, as it is directly implemented in the rbd tool."""
+        out = subprocess.check_output(['rbd', 'disk-usage', '--pool', pool_name, '--image', name, '--format', 'json'])
+        du = json.loads(out)['images']
+        return du[0] if du else {}
+
 
     @undoable
     def image_resize(self, pool_name, name, size):
