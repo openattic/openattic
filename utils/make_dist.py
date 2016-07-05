@@ -496,10 +496,9 @@ class DistBuilder(object):
             self._process.run(['grunt', 'build'], cwd=webui_dir)
 
             # Remove no longer required dirs.
-            rmtree(bower_components_dir)
-            self._process.log_command(['rm -r', bower_components_dir])
+            self._process.log_command(['rm', '-r', bower_components_dir])
             rmtree(node_modules_dir)
-            self._process.log_command(['rm -r', node_modules_dir])
+            self._process.log_command(['rm', '-r', node_modules_dir])
 
         # Update version.txt.
 
