@@ -7,6 +7,7 @@ Version 2.0.13, (not released yet):
   API (OP-1279)
 * Backend: General Ceph RBD improvements (OP-1309, OP-1302, OP-1305 and OP-1133)
 * Backend: Improved compatibility with Ceph Hammer (OP-1303)
+* Backend: Fixed RBDs with same name in multiple pools (OP-1313)
 * WebUI: Added a welcome message to the login screen (OP-1310)
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
@@ -14,6 +15,8 @@ Version 2.0.13, (not released yet):
   packaging it (OP-1141)
 * Packaging: Added version.txt to the openattic-base RPM and DEB files
   (OP-1267)
+* Packaging: Fixed the ability to build tar archives from a local hg repository
+  (OP-1312).
 
 Version 2.0.12, 23. June 2016:
 ------------------------------
