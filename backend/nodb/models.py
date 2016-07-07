@@ -19,6 +19,7 @@ import django
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.db.models.base import ModelState
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
@@ -85,6 +86,11 @@ class NodbQuerySet(QuerySet):
             #  Because we're calling the model constructors ourselves, django thinks that
             #  the objects are not in the database. We need to "hack" this.
             obj._state.adding = False
+
+            for field in obj.__class__._meta.fields:
+                if field.name not in obj.__dict__:
+                    obj.__dict__[field.name] = LazyProperty(self, field.name, obj.get_populate_func(field.name))
+
         return objects
 
     @cached_property
@@ -247,6 +253,30 @@ class NodbManager(base_manager_class):
                                         context=NodbManager.nodb_context)
 
 
+class LazyProperty(object):
+    """
+    See also: django.db.models.query_utils.DeferredAttribute
+    """
+    def __init__(self, query_set, field_name, eval_func):
+        self.query_set = query_set
+        self.field_name = field_name
+        self.eval_func = eval_func
+
+    def __get__(self, instance, owner):
+        """
+        runs eval_func which fills some lazy properties.
+        """
+        assert instance.__dict__[self.field_name] is self
+        self.eval_func(instance, self.query_set)
+        assert instance.__dict__[self.field_name] is not self
+        return instance.__dict__[self.field_name]
+
+    def __set__(self, instance, value):
+        """
+        Deferred loading attributes can be set normally (which means there will
+        never be a database lookup involved.
+        """
+        instance.__dict__[self.field_name] = value
 
 
 class NodbModel(models.Model):
@@ -321,6 +351,12 @@ class NodbModel(models.Model):
             in product(cls._meta.fields, '_-')
             if validate_field(field, json_result, score_or_underscore)
             }
+
+    def __init__(self, *args, **kwargs):
+        # super(NodbModel, self).__init__(*args, **kwargs)
+        self._state = ModelState()
+
+        self.__dict__.update(kwargs)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

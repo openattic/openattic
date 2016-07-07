@@ -18,7 +18,7 @@ from django.db import models
 from django.db.models import Q
 from django.test import TestCase
 
-from nodb.models import NodbQuerySet, NodbModel, DictField
+from nodb.models import NodbQuerySet, NodbModel, JsonField, LazyProperty
 from nodb.restapi import NodbSerializer
 
 
@@ -149,7 +149,6 @@ class QuerySetTestCase(TestCase):
         eq_order([self.ordering_c, self.ordering_b, self.ordering_a], "-x", "-y")
 
 
-
 class DictFieldSerializerTest(TestCase):
 
     def test_serializer(self):
@@ -160,7 +159,7 @@ class DictFieldSerializerTest(TestCase):
             def get_all_objects(context, query):
                 self.fail("should not be called")
 
-            my_dict = DictField(primary_key=True)
+            my_dict = JsonField(primary_key=True)
 
         class DictFieldModelSerializer(NodbSerializer):
             class Meta:
@@ -171,3 +170,35 @@ class DictFieldSerializerTest(TestCase):
         serializer = DictFieldModelSerializer(DictFieldModel(my_dict=my_dict))
 
         self.assertEqual(serializer.data, {'my_dict': my_dict})
+
+
+class LazyPropertyTest(TestCase):
+
+    def test_simple(self):
+        class TestModel(NodbModel):
+            a = models.IntegerField()
+            b = models.IntegerField()
+
+            @staticmethod
+            def get_all_objects(context, query):
+                return [
+                    TestModel(a=1),
+                    TestModel(a=2)
+                ]
+
+            @staticmethod
+            def get_populate_func(field_name):
+
+                def populate_b(self, objects):
+                    for (o, i) in zip(objects, range(2)):
+                        o.b = i
+
+                return populate_b
+
+        os = TestModel.objects.all()
+        for o in os:
+            self.assertIsInstance(o.__dict__['a'], int)
+            self.assertIsInstance(o.__dict__['b'], LazyProperty)
+        for (o, i) in zip(os, range(2)):
+            self.assertEqual(o.b, i)
+
