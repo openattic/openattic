@@ -50,38 +50,52 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, c
           return;
         }
         stopTimeout = $timeout(function () {
-          var model;
+          var obj;
           var current;
           var query = {};
           switch (ctrl.model) {
           case "host":
-            model = HostService;
-            current = scope.host.id;
+            obj = {
+              model: HostService,
+              current: scope.host.id,
+              attribute: "id"
+            };
             break;
           case "volume":
-            model = VolumeService;
+            obj = {
+              model: VolumeService,
+              current: null, // Has no renaming feature.
+              attribute: "id"
+            };
             break;
           case "user":
-            model = UserService;
-            current = scope.user.id;
+            obj = {
+              model: UserService,
+              current: scope.user.id,
+              attribute: "id"
+            };
             break;
           case "rbd":
-            model = cephRbdService;
             query.id = scope.data.cluster;
+            obj = {
+              model: cephRbdService,
+              current: null, // Has no renaming feature.
+              attribute: "name"
+            };
             break;
           default:
             console.log("Error: Service not implemented yet.");
             return;
           }
           var resCheck = function (res) {
-            if (res.length !== 0 && current) {
-              ctrl.$setValidity("uniquename", res[0].name === current);
+            if (res.length !== 0 && obj.current) {
+              ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
             } else {
               ctrl.$setValidity("uniquename", res.length === 0);
             }
           };
           query[ctrl.field] = modelValue;
-          model.query(query)
+          obj.model.query(query)
             .$promise
             .then(resCheck)
             .catch(function (error) {

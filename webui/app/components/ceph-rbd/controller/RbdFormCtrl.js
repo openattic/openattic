@@ -33,46 +33,184 @@
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
     SizeParserService, $filter) {
+
   $scope.rbd = {
     name: "",
     size: 0,
     pool: -1,
-    old_format: false
-  };
-  $scope.accordionOpen = {
-    properties: true,
-    expert: false
+    old_format: true,
+    obj_size: 4194304
   };
 
   $scope.data = {
     pool: null,
     features: {
-      "deep-flatten": false,
-      "layering": false,
-      "striping": false,
-      "exclusive-lock": false,
-      "object-map": false,
-      "journaling": false,
-      "fast-diff": false
+      "deep-flatten": {
+        checked: true,
+        disabled: false
+      },
+      "layering": {
+        checked: true,
+        disabled: false
+      },
+      "striping": {
+        checked: false,
+        disabled: true
+      },
+      "exclusive-lock": {
+        checked: true,
+        disabled: false
+      },
+      "object-map": {
+        checked: true,
+        disabled: false
+      },
+      "journaling": {
+        checked: false,
+        disabled: false
+      },
+      "fast-diff": {
+        checked: true,
+        disabled: false
+      }
     },
     obj_num: 1,
-    obj_size: 4194304, // Temp value == 4 MB
+    obj_size: "4 MB",
+    size: "",
+    expert: false,
     cluster: $stateParams.clusterId
   };
 
-  $scope.$watch("data.features.layering", function (option) {
-    if (option && $scope.data.features.striping) {
-      $scope.data.features.layering = false;
-    }
-  });
+  $scope.pools = {};
 
-  $scope.$watch("data.features.striping", function (option) {
-    if (option && $scope.data.features.layering) {
-      $scope.data.features.striping = false;
+  $scope.features = {
+    "deep-flatten": {
+      desc: "Deep flatten",
+      helpText: "",
+      requires: null,
+      excludes: null
+    },
+    "layering": {
+      desc: "Layering",
+      helpText: "",
+      requires: null,
+      excludes: "striping"
+    },
+    "striping": {
+      desc: "Striping",
+      helpText: "",
+      requires: null,
+      excludes: "layering"
+    },
+    "exclusive-lock": {
+      desc: "Exclusive lock",
+      helpText: "",
+      requires: null,
+      excludes: null
+    },
+    "object-map": {
+      desc: "Object map",
+      helpText: "",
+      requires: "exclusive-lock",
+      excludes: null
+    },
+    "journaling": {
+      desc: "Journaling",
+      helpText: "",
+      requires: "exclusive-lock",
+      excludes: null
+    },
+    "fast-diff": {
+      desc: "Fast diff",
+      helpText: "",
+      requires: "object-map",
+      excludes: null
     }
-  });
+  };
+
+  $scope.defaultFeatureValues = {};
+  angular.copy($scope.data.features, $scope.defaultFeatureValues);
+
+  $scope.$watch("data.features", function (newSet, oldSet) {
+    var key = false;
+    var hits = 0;
+    for (var feature in newSet){
+      if (newSet[feature].checked != oldSet[feature].checked) {
+        hits++;
+        if (!key) {
+          key = feature;
+        }
+      }
+    }
+    if (!key || hits != 1) {
+      return;
+    }
+    var checked = newSet[key].checked;
+    if (checked) {
+      var required = $scope.features[key].requires;
+      var excluded = $scope.features[key].excludes;
+      if (excluded && newSet[excluded].checked || required && !newSet[required].checked) {
+        $scope.data.features[key].checked = false;
+        return;
+      }
+    }
+
+    angular.forEach($scope.features, function (details, feature) {
+      if (details.requires === key) {
+        $scope.data.features[feature].checked = false; // Always.
+        $scope.data.features[feature].disabled = !checked;
+      }
+      if (details.excludes === key) {
+        $scope.data.features[feature].disabled = checked;
+      }
+    });
+  }, true);
+
+  $scope.defaultFeatures = function () {
+    angular.copy($scope.defaultFeatureValues, $scope.data.features);
+  };
+
+  $scope.updateObjSize = function (size, old, jump) {
+    size = size.replace(/[+-]+/, "");
+    if (size === old) {
+      $scope.data.obj_size = size;
+      return;
+    }
+    size = SizeParserService.parseInt(size, "b", "k"); //default input size is KB
+    var power = 0;
+    if (size !== null) {
+      power =  Math.round(Math.log(size) / Math.log(2));
+      if (typeof jump === "number") {
+        power += jump;
+      }
+    }
+    if (power < 12) {
+      size = 1 << 12; // Set size to minimum of 4 KB.
+    } else if (power > 25) {
+      size = 1 << 25; // Set size to maximum of 32 MB.
+    } else {
+      size = 1 << power; // Set size the nearest accurate size.
+    }
+    if ($scope.rbd.obj_size !== size) {
+      $scope.rbd.obj_size = size;
+      $scope.data.obj_size = $filter("bytes")(size);
+    }
+  };
+
+  $scope.objSizeChange = function (event) {
+    if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
+      $scope.updateObjSize($scope.data.obj_size, null, 39 - event.keyCode);
+    } else if (event.keyCode === 187 || event.keyCode === 189) {
+      $scope.updateObjSize($scope.data.obj_size, null, 188 - event.keyCode);
+    }
+  };
+
+  $scope.$watch("data.obj_size", $scope.updateObjSize);
 
   $scope.$watch("data.size", function (size) {
+    if (size === "") {
+      return;
+    }
     size = SizeParserService.parseInt(size, "b");
     var objNum = parseInt(size / $scope.data.obj_size, 10);
     if (objNum < 1) {
@@ -82,37 +220,11 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     }
   });
 
-  $scope.pools = {};
-  $scope.features = {
-    "deep-flatten": {
-      desc: "Deep flatten"
-    },
-    "layering": {
-      desc: "Layering",
-      helpText: ""
-    },
-    "striping": {
-      desc: "Striping",
-      helpText: ""
-    },
-    "exclusive-lock": {
-      desc: "Exclusive lock",
-      helpText: ""
-    },
-    "object-map": {
-      desc: "Object map",
-      helpText: ""
-    },
-    "journaling": {
-      desc: "Journaling",
-      helpText: ""
-    },
-    "fast-diff": {
-      desc: "Fast diff",
-      helpText: ""
+  $scope.$watch("data.pool", function (pool) {
+    if (!pool) {
+      $scope.data.expert = false;
     }
-  };
-  console.log($stateParams);
+  });
 
   var goToListView = function () {
     $state.go("cephRbds");
@@ -126,13 +238,16 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       })
       .$promise
       .then(function (res) {
-        console.log(res);
         res.results.forEach(function (pool) {
-          console.log(pool);
           pool.oaUsed = $filter("number")(pool.num_bytes / pool.max_avail * 100, 2);
           pool.oaUnused = 100 - pool.oaUsed;
           pool.oaFree = pool.max_avail - pool.num_bytes;
+          //pool.oaMaxFree = (pool.max_avail - pool.num_bytes) >> 20; // Did not work, don't know why.
+          pool.oaMaxFree = parseInt((pool.max_avail - pool.num_bytes) / (1 << 20), 10);
           pool.oaFreeText = $filter("bytes")(pool.oaFree);
+          if (pool.name === "rbd"){
+            $scope.data.pool = pool;
+          }
         });
         $scope.pools = res.results;
       }, function (error) {
@@ -143,9 +258,10 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   $scope.submitAction = function (rbdForm) {
     if (rbdForm.$valid) {
       if ($scope.data.expert) {
+        $scope.rbd.old_format = false;
         var features = [];
         for (var feature in $scope.data.features) {
-          if ($scope.data.features[feature]) {
+          if ($scope.data.features[feature].checked) {
             features.push(feature);
           }
         }
@@ -159,11 +275,9 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         .$promise
         .then(function (res) {
           $scope.rbd = res;
-          console.log(res);
           goToListView();
         }, function (error) {
           console.log("An error occured", error);
-          goToListView();
         });
     }
   };

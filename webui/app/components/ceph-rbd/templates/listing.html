@@ -39,6 +39,7 @@
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
                 <th sortfield="pool" sortdir="asc" sortheaderclass ng-show="columns['Poolname']">Poolname</th>
                 <th sortfield="size" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
+                <th sortfield="used_size" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
                 <th sortfield="obj_size" sortdir="asc" sortheaderclass disabled ng-show="columns['Object size']">Object size</th>
                 <th sortfield="num_objs" sortdir="asc" sortheaderclass disabled ng-show="columns['Number of objects']">Number of objects</th>
             </tr>
@@ -53,6 +54,21 @@
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
                 <td ng-show="columns['Poolname']" ng-bind="row.pool.name"></td>
                 <td ng-show="columns['Size']" ng-bind="row.size | bytes"></td>
+                <td ng-show="columns['Used']">
+                    <div class="progress oaprogress" ng-show="row.used_size !== undefined"
+                         data-toggle="tooltip" data-placement="right" title="Used: {{row.usage_size | bytes}} &mdash;
+                            Free: {{row.free | bytes}}">
+                        <div class="progress-bar" role="progressbar"
+                             aria-valuenow="{{row.usedPercent}}" aria-valuemin="0"
+                             aria-valuemax="100" style="width: {{row.usedPercent}}}%">
+                            <span>{{row.usedPercent | number:2}}%</span>
+                        </div>
+                        <div class="progress-bar progress-bar-freespace" role="progressbar"
+                             aria-valuenow="{{row.freePercent}}" aria-valuemin="0"
+                             aria-valuemax="100" style="width: {{row.freePercent}}%">
+                        </div>
+                    </div>
+                </td>
                 <td ng-show="columns['Object size']" ng-bind="row.obj_size | bytes"></td>
                 <td ng-show="columns['Number of objects']" ng-bind="row.num_objs"></td>
             </tr>

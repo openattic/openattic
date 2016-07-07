@@ -37,7 +37,7 @@
             </uib-progressbar>
                 <span class="pull-left tc_poolSize">{{data.pool.num_bytes | bytes}} of {{data.pool.oaFreeText}} used</span>
                 <span class="pull-right tc_poolAvailableSize">
-                    {{data.pool.oaFreeText}} free - <a ng-click="data.size = data.pool.oaFree">use max</a>
+                    {{data.pool.oaFreeText}} free - <a ng-click="data.size = data.pool.oaMaxFree">use max</a>
                 </span>
         </div>
         <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
@@ -64,8 +64,8 @@
     <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <br>
         <div class="checkbox checkbox-primary">
-            <input type="checkbox" ng-model="data.expert" class="tc_rbd_is_expert" ng-name="expert">
-            <label for="data.expert" ng-click="data.expert = !data.expert">Expert settings</label>
+            <input type="checkbox" ng-disabled="data.pool == null" ng-model="data.expert" class="tc_rbd_is_expert" ng-name="expert">
+            <label for="data.expert" ng-click="data.pool != null ? data.expert = !data.expert : ''">Expert settings</label>
         </div>
     </div>
 </div>
@@ -75,19 +75,29 @@
         <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="data.obj_size">Object size</label>
         <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
             <input class="form-control tc_rbd_obj_size" type="text" name="obj_size"
-                ng-disabled="true" max-ng-value="data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
-                placeholder="{{data.obj_size | bytes}}">
+                ng-disabled="data.pool == null" max-ng-value="data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
+                ng-keydown="objSizeChange($event)"
+                ng-model="data.obj_size" placeholder="4 KB up to 32 MB" required>
+            <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
+                && rbdForm.size.$error.required">
+                This field is required!
+            </span>
         </div>
     </div>
     <div class="form-group">
-        <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="data.obj_size">Features</label>
+        <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="features">Features</label>
         <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
             <div class="checkbox checkbox-primary" ng-repeat="(key, feature) in features" >
-                <input type="checkbox" ng-model="data.features[key]"
-                    ng-disabled="key == 'striping' && data.features.layering || key == 'layering' && data.features.striping"
+                <input type="checkbox" ng-model="data.features[key].checked"
+                    ng-disabled="data.features[key].disabled"
                     class="tc_rbd_is_{{key}}" ng-name="key">
-                <label for="data.features[key]" ng-click="data.features[key] = !data.features[key]" ng-bind="feature.desc"></label>
+                <label for="data.features[key].checked" ng-bind="feature.desc"
+                    ng-click="data.features[key].disabled ? '' : data.features[key].checked = !data.features[key].checked"></label>
             </div>
+            <br>
+            <button type="button" class="btn btn-sm btn-default tc_featureDefaults" ng-click="defaultFeatures()">
+                Reset features
+            </button>
         </div>
     </div>
 </div>

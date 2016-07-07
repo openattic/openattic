@@ -10,10 +10,8 @@ describe('should test the ceph rbd panel', function(){
     'Block name prefix',
     'Pool',
     'Size',
-    'Used',
-    'Free',
-    'Number of objects',
-    'Order'
+    'Object size',
+    'Number of objects'
   ];
 
   beforeAll(function(){
@@ -23,11 +21,26 @@ describe('should test the ceph rbd panel', function(){
   });
 
   var tableHeaders = [
-    'Name',
-    'Poolname',
-    'Size',
-    'Used',
-    'Number of objects'
+    {
+      name: 'Name',
+      displayed: true
+    },
+    {
+      name: 'Poolname',
+      displayed: true
+    },
+    {
+      name: 'Size',
+      displayed: true
+    },
+    {
+      name: 'Object size',
+      displayed: false
+    },
+    {
+      name: 'Number of objects',
+      displayed: false
+    }
   ];
 
   it('should check the ceph RBDs url', function(){
@@ -42,9 +55,9 @@ describe('should test the ceph rbd panel', function(){
     expect(element(by.css('.tc_cephRbdTable')).isDisplayed()).toBe(true);
   });
 
-  tableHeaders.forEach(function(tableHeader){
-    it('should display the following table header: ' + tableHeader, function(){
-      expect(element(by.cssContainingText('th', tableHeader)).isDisplayed()).toBe(true);
+  tableHeaders.forEach(function(header){
+    it('should ' + !header.displayed ? 'not ' : '' + 'display the following table header: ' + header.name, function(){
+      expect(element(by.cssContainingText('th', header.name)).isDisplayed()).toBe(header.displayed);
     });
   });
 

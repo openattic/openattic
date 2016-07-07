@@ -82,6 +82,9 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                     return true;
                   }
                 });
+                rbd.free = rbd.size - rbd.used_size;
+                rbd.usedPercent = rbd.used_size / rbd.size * 100;
+                rbd.freePercent = rbd.free / rbd.size * 100;
               });
               $scope.rbd = res;
             });
