@@ -24,6 +24,8 @@ import os
 
 from os.path import exists
 
+from contextlib import contextmanager
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -33,7 +35,7 @@ from django.utils.translation import ugettext_noop as _
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
 from ifconfig.models import Host
-from nodb.models import NodbModel, JsonField
+from nodb.models import NodbModel, JsonField, NodbManager
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
@@ -210,6 +212,18 @@ class CephCluster(NodbModel):
 
     def __str__(self):
         return self.name
+
+
+@contextmanager
+def fsid_context(fsid):
+    class CTX(object):
+        def __init__(self, fsid):
+            self.cluster = CephCluster.objects.get(fsid=fsid)
+            self.fsid = fsid
+
+    ctx = CTX(fsid)
+    NodbManager.set_nodb_context(ctx)
+    yield ctx
 
 
 class CephPool(NodbModel):
