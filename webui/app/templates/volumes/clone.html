@@ -1,15 +1,16 @@
 <div class="openattic-modal-header">
     <span>Clone {{type}}</span>
 </div>
-<div class="openattic-modal-content">
-    <p>
-        You are about to create a clone of the {{type}} <strong>{{volume.name}}</strong>.
-    </p>
-    <p>
-        To confirm, please enter the name of the clone and click <kbd>Clone {{type}}</kbd>, or cancel and return to the page.
-    </p>
 
-    <form name="cloneForm" role="form" novalidate>
+<form name="cloneForm" role="form" novalidate>
+    <div class="openattic-modal-content">
+        <p>
+            You are about to create a clone of the {{type}} <strong>{{volume.name}}</strong>.
+        </p>
+        <p>
+            To confirm, please enter the name of the clone and click <kbd>Clone {{type}}</kbd>, or cancel and return to the page.
+        </p>
+
         <div class="form-group"
              ng-class="{'has-error': (submitted || cloneForm.name.$dirty) && cloneForm.name.$invalid}">
             <input type="text" class="form-control" name="name" placeholder="Name..." autocomplete="off"
@@ -26,7 +27,9 @@
             </span>
             <!-- end Error -->
         </div>
+    </div>
 
+    <div class="openattic-modal-footer">
         <div class="button-group text-right">
             <button id="bot2-Msg1" class="btn btn-primary btn-sm"
                     ng-click="clone()" ng-disabled="cloneForm.$invalid">
@@ -34,5 +37,5 @@
             </button>
             <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
