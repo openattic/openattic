@@ -174,31 +174,45 @@ class DictFieldSerializerTest(TestCase):
 
 class LazyPropertyTest(TestCase):
 
+    class TestModel(NodbModel):
+        a = models.IntegerField(primary_key=True)
+        b = models.IntegerField()
+
+        @staticmethod
+        def get_all_objects(context, query):
+            return [
+                LazyPropertyTest.TestModel(a=1),
+                LazyPropertyTest.TestModel(a=2)
+            ]
+
+        @staticmethod
+        def get_populate_func(field_name):
+            print 'field_name={}'.format(field_name)
+            def populate_b(self, objects):
+                print 'self={}, objects={}'.format(self, objects)
+                assert self in object
+                for (o, i) in zip(objects, range(2)):
+                    o.b = i
+
+            return populate_b
+    
+        def __init__(self, **kwargs):
+            super(LazyPropertyTest.TestModel, self).__init__(**kwargs)
+
     def test_simple(self):
-        class TestModel(NodbModel):
-            a = models.IntegerField()
-            b = models.IntegerField()
-
-            @staticmethod
-            def get_all_objects(context, query):
-                return [
-                    TestModel(a=1),
-                    TestModel(a=2)
-                ]
-
-            @staticmethod
-            def get_populate_func(field_name):
-
-                def populate_b(self, objects):
-                    for (o, i) in zip(objects, range(2)):
-                        o.b = i
-
-                return populate_b
-
-        os = TestModel.objects.all()
+        os = list(LazyPropertyTest.TestModel.objects.all())
         for o in os:
             self.assertIsInstance(o.__dict__['a'], int)
             self.assertIsInstance(o.__dict__['b'], LazyProperty)
         for (o, i) in zip(os, range(2)):
+            print '{} == {}'.format(i, o.b)
             self.assertEqual(o.b, i)
+            self.assertIsInstance(o.__dict__['b'], int)
 
+    # def test_filter(self):
+    #     o = LazyPropertyTest.TestModel.objects.all().get(a=2)
+    #     self.assertIsInstance(o.__dict__['a'], int)
+    #     self.assertIsInstance(o.__dict__['b'], LazyProperty)
+    #     self.assertEqual(o.a, 2)
+    #     self.assertEqual(o.b, 2)
+    #     self.assertIsInstance(o.__dict__['b'], int)

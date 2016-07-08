@@ -79,9 +79,9 @@ class NodbQuerySet(QuerySet):
     def _max(self):
         return len(self._filtered_data) - 1
 
-    @cached_property
     def _data(self):
         objects = self.model.get_all_objects(self._context, query=self._query)
+        self_pointer = LazyProperty.EvilPointer(objects)
         for obj in objects:
             #  Because we're calling the model constructors ourselves, django thinks that
             #  the objects are not in the database. We need to "hack" this.
@@ -89,7 +89,7 @@ class NodbQuerySet(QuerySet):
 
             for field in obj.__class__._meta.fields:
                 if field.name not in obj.__dict__:
-                    obj.__dict__[field.name] = LazyProperty(self, field.name, obj.get_populate_func(field.name))
+                    obj.__dict__[field.name] = LazyProperty(self_pointer, field.name, obj.get_populate_func(field.name))
 
         return objects
 
@@ -136,7 +136,7 @@ class NodbQuerySet(QuerySet):
             else:
                 return negate(reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False))
 
-        filtered = [obj for obj in self._data
+        filtered = [obj for obj in self._data()
                     if filter_one_q(self._query.q, obj)]
 
         for order_key in self.query.ordering[::-1]:
@@ -257,17 +257,24 @@ class LazyProperty(object):
     """
     See also: django.db.models.query_utils.DeferredAttribute
     """
-    def __init__(self, query_set, field_name, eval_func):
-        self.query_set = query_set
+    class EvilPointer(object):
+        def __init__(self, target):
+            self.target = target
+
+    def __init__(self, query_set_pointer, field_name, eval_func):
+        """
+        :type query_set_pointer: LazyProperty.EvilPointer
+        """
+        self.query_set_pointer = query_set_pointer
         self.field_name = field_name
         self.eval_func = eval_func
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner=None):
         """
         runs eval_func which fills some lazy properties.
         """
         assert instance.__dict__[self.field_name] is self
-        self.eval_func(instance, self.query_set)
+        self.eval_func(instance, self.query_set_pointer.target)
         assert instance.__dict__[self.field_name] is not self
         return instance.__dict__[self.field_name]
 
