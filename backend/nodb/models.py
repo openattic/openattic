@@ -81,15 +81,12 @@ class NodbQuerySet(QuerySet):
 
     def _data(self):
         objects = self.model.get_all_objects(self._context, query=self._query)
-        self_pointer = LazyProperty.EvilPointer(objects)
+        self_pointer = LazyProperty.QuerySetPointer(objects)
         for obj in objects:
             #  Because we're calling the model constructors ourselves, django thinks that
             #  the objects are not in the database. We need to "hack" this.
             obj._state.adding = False
-
-            for field in obj.__class__._meta.fields:
-                if field.name not in obj.__dict__:
-                    obj.__dict__[field.name] = LazyProperty(self_pointer, field.name, obj.get_populate_func(field.name))
+            obj._query_set_pointer = self_pointer
 
         return objects
 
@@ -257,15 +254,11 @@ class LazyProperty(object):
     """
     See also: django.db.models.query_utils.DeferredAttribute
     """
-    class EvilPointer(object):
+    class QuerySetPointer(object):
         def __init__(self, target):
             self.target = target
 
-    def __init__(self, query_set_pointer, field_name, eval_func):
-        """
-        :type query_set_pointer: LazyProperty.EvilPointer
-        """
-        self.query_set_pointer = query_set_pointer
+    def __init__(self, field_name, eval_func):
         self.field_name = field_name
         self.eval_func = eval_func
 
@@ -273,9 +266,11 @@ class LazyProperty(object):
         """
         runs eval_func which fills some lazy properties.
         """
-        assert instance.__dict__[self.field_name] is self
-        self.eval_func(instance, self.query_set_pointer.target)
-        assert instance.__dict__[self.field_name] is not self
+        query_set = instance._query_set_pointer.target
+        if self.field_name in instance.__dict__:
+            return instance.__dict__[self.field_name]
+
+        self.eval_func(instance, query_set)
         return instance.__dict__[self.field_name]
 
     def __set__(self, instance, value):
@@ -284,6 +279,23 @@ class LazyProperty(object):
         never be a database lookup involved.
         """
         instance.__dict__[self.field_name] = value
+
+
+def bulk_attribute_setter(*filed_names):
+
+    class LazyPropertyContributor(object):
+        def __init__(self, field_names, func):
+            self.field_names = field_names
+            self.func = func
+
+        def contribute_to_class(self, cls, name, virtual_only=False):
+            for name in self.field_names:
+                setattr(cls, name, LazyProperty(name, self.func))
+
+    def decorator(func):
+        return LazyPropertyContributor(filed_names, func)
+
+    return  decorator
 
 
 class NodbModel(models.Model):

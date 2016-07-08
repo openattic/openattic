@@ -18,7 +18,7 @@ from django.db import models
 from django.db.models import Q
 from django.test import TestCase
 
-from nodb.models import NodbQuerySet, NodbModel, JsonField, LazyProperty
+from nodb.models import NodbQuerySet, NodbModel, JsonField, bulk_attribute_setter
 from nodb.restapi import NodbSerializer
 
 
@@ -177,6 +177,18 @@ class LazyPropertyTest(TestCase):
     class TestModel(NodbModel):
         a = models.IntegerField(primary_key=True)
         b = models.IntegerField()
+        c = models.IntegerField()
+
+        @bulk_attribute_setter('b')
+        def set_b(self, objects):
+            assert self in objects
+            for o in objects:
+                o.b = o.a
+
+        @bulk_attribute_setter('c')
+        def set_c(self, objects):
+            for o in objects:
+                o.c = self.a
 
         @staticmethod
         def get_all_objects(context, query):
@@ -185,34 +197,26 @@ class LazyPropertyTest(TestCase):
                 LazyPropertyTest.TestModel(a=2)
             ]
 
-        @staticmethod
-        def get_populate_func(field_name):
-            print 'field_name={}'.format(field_name)
-            def populate_b(self, objects):
-                print 'self={}, objects={}'.format(self, objects)
-                assert self in object
-                for (o, i) in zip(objects, range(2)):
-                    o.b = i
-
-            return populate_b
-    
-        def __init__(self, **kwargs):
-            super(LazyPropertyTest.TestModel, self).__init__(**kwargs)
+        def __unicode__(self):
+            return u'<TestModel {}>'.format(self.a)
 
     def test_simple(self):
         os = list(LazyPropertyTest.TestModel.objects.all())
         for o in os:
             self.assertIsInstance(o.__dict__['a'], int)
-            self.assertIsInstance(o.__dict__['b'], LazyProperty)
-        for (o, i) in zip(os, range(2)):
-            print '{} == {}'.format(i, o.b)
-            self.assertEqual(o.b, i)
+        for o in os:
+            self.assertEqual(o.b, o.a)
             self.assertIsInstance(o.__dict__['b'], int)
 
-    # def test_filter(self):
-    #     o = LazyPropertyTest.TestModel.objects.all().get(a=2)
-    #     self.assertIsInstance(o.__dict__['a'], int)
-    #     self.assertIsInstance(o.__dict__['b'], LazyProperty)
-    #     self.assertEqual(o.a, 2)
-    #     self.assertEqual(o.b, 2)
-    #     self.assertIsInstance(o.__dict__['b'], int)
+    def test_filter(self):
+        o = LazyPropertyTest.TestModel.objects.all().get(a=2)
+        self.assertIsInstance(o.__dict__['a'], int)
+        self.assertEqual(o.a, 2)
+        self.assertEqual(o.b, 2)
+        self.assertIsInstance(o.__dict__['b'], int)
+
+    def test_non_deterministic(self):
+        o1, o2 = LazyPropertyTest.TestModel.objects.all()
+        self.assertEqual(o2.c, o2.a)
+        self.assertEqual(o1.c, o2.a)
+
