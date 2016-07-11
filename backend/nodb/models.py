@@ -253,6 +253,8 @@ class NodbManager(base_manager_class):
 class LazyProperty(object):
     """
     See also: django.db.models.query_utils.DeferredAttribute
+
+    Internally used by @bulk_attribute_setter().
     """
     class QuerySetPointer(object):
         def __init__(self, target):
@@ -271,6 +273,8 @@ class LazyProperty(object):
             return instance.__dict__[self.field_name]
 
         self.eval_func(instance, query_set)
+        if self.field_name not in instance.__dict__:
+            raise KeyError('LazyProperty: {} did not set {} of {}'.format(self.eval_func, self.field_name, instance))
         return instance.__dict__[self.field_name]
 
     def __set__(self, instance, value):
@@ -282,6 +286,59 @@ class LazyProperty(object):
 
 
 def bulk_attribute_setter(*filed_names):
+    """
+    The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone really needs
+    the information gathered in this call. If the attribute is never used, the call will never be executed. In general,
+    this is called lazy execution.
+
+    Before, NodbQuerySet called self.model.get_all_objects to generate a list of objects.
+    The implementations of get_all_objects were calling the librados commands to fill all attributes, even if they were
+    never accessed.
+
+    Because a field may never be accessed, this can generate better performance than caching, especially if the cache is
+    cold.
+
+    The bulk_attribute_setter decorator can be used like so:
+    >>> class MyModel(NodbModel):
+    >>>     my_filed = models.IntegerField()
+    >>>
+    >>>     @bulk_attribute_setter('my_filed')
+    >>>     def set_my_filed(self, objs):
+    >>>         self.my_filed = 42
+
+    Keep in mind, that you can set the my_field attribute on all objects, not just self.
+
+    The decorator modifies the model to look like this:
+    >>> def set_my_filed(self, objs):
+    >>>     self.my_filed = 42
+    >>>
+    >>> class MyModel(NodbModel):
+    >>>     my_filed = models.IntegerField()
+    >>>     set_my_filed = LazyPropertyContributor(['my_filed'], set_my_filed)
+
+    A LazyPropertyContributor property implements the contribute_to_class method, which modifies the model itself
+    to look like so:
+    >>> class MyModel(NodbModel):
+    >>>     my_filed = LazyProperty('my_filed', set_my_filed)
+
+    The my_filed filed is not overwritten, because the fields are already moved into the _meta class at this point. If
+    someone then accesses the my_field attribute, LazyProperty.__get__ is called, which then calls set_my_field to set
+    the field, as if one had written:
+    >>> instances = MyModel.objects.all()
+    >>> instances[0].my_field = set_my_filed(instances[0], instances)
+
+    For example, get_all_objects generates a QuerySet like this:
+
+    id	name	  disk_usage
+    0	'foo'     LazyProperty('disk_usage')
+    1	'bar'	  LazyProperty('disk_usage')
+
+    When accessing bar.disk_usage, LazyProperty calls `ceph df` and fills the queryset like so:
+
+    id	name	disk_usage
+    0	'foo'   1MB
+    1	'bar'  	2MB
+    """
 
     class LazyPropertyContributor(object):
         def __init__(self, field_names, func):
@@ -295,7 +352,7 @@ def bulk_attribute_setter(*filed_names):
     def decorator(func):
         return LazyPropertyContributor(filed_names, func)
 
-    return  decorator
+    return decorator
 
 
 class NodbModel(models.Model):
