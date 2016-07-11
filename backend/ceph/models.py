@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_noop as _
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
 from ifconfig.models import Host
-from nodb.models import NodbModel, JsonField
+from nodb.models import NodbModel, JsonField, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
@@ -127,7 +127,6 @@ class CephCluster(NodbModel):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-            cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
             sources = []
 
@@ -138,11 +137,15 @@ class CephCluster(NodbModel):
                 except SystemError:
                     pass
 
-            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health,
+            cluster = CephCluster(fsid=fsid, name=cluster_name,
                                   performance_data_options=sources)
             result.append(cluster)
 
         return result
+
+    @bulk_attribute_setter('health')
+    def set_cluster_health(self, objects):
+        self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
 
     @staticmethod
     def get_performance_data(fsid, filter=None):
@@ -257,13 +260,11 @@ class CephPool(NodbModel):
         fsid = cluster.fsid
 
         osd_dump_data = MonApi(rados[fsid]).osd_dump()
-        df_data = rados[fsid].mon_command('df')
 
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
             stats = rados[fsid].get_stats(str(pool_data['pool_name']))
-            disk_free_data = [elem for elem in df_data['pools'] if elem['id'] == pool_id][0]
 
             object_data = {
                 'id': pool_id,
@@ -282,8 +283,6 @@ class CephPool(NodbModel):
                 'crush_ruleset': pool_data['crush_ruleset'],
                 'num_bytes': stats['num_bytes'],
                 'num_objects': stats['num_objects'],
-                'max_avail': disk_free_data['stats']['max_avail'],
-                'kb_used': disk_free_data['stats']['kb_used'],
                 # Considered advanced options
                 'pgp_num': pool_data['pg_placement_num'],
                 'stripe_width': pool_data['stripe_width'],
@@ -309,6 +308,25 @@ class CephPool(NodbModel):
             result.append(ceph_pool)
 
         return result
+
+    @bulk_attribute_setter('max_avail', 'kb_used')
+    def ceph_df(self, pools):
+        fsid = self.cluster.fsid
+        df_data = rados[fsid].mon_command('df')
+        df_per_pool = {
+            elem['id']: elem['stats']
+            for elem
+            in df_data['pools']
+            if 'stats' in elem and 'id' in elem
+        }
+
+        for pool in pools:
+            if pool.id in df_per_pool:
+                pool.max_avail = df_per_pool[pool.id]['max_avail']
+                pool.kb_used = df_per_pool[pool.id]['kb_used']
+            else:
+                pool.max_avail = None
+                pool.kb_used = None
 
     def __unicode__(self):
         return self.name
@@ -405,11 +423,22 @@ class CephErasureCodeProfile(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        return [CephErasureCodeProfile(name=profile,
-                                       **CephErasureCodeProfile.make_model_args(
-                                           MonApi(rados[context.fsid]).osd_erasure_code_profile_get(profile)
-                                       ))
+        profiles = [CephErasureCodeProfile(name=profile)
                 for profile in MonApi(rados[context.fsid]).osd_erasure_code_profile_ls()]
+        for profile in profiles:
+            setattr(profile, '_context', context)
+        return profiles
+
+    @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment', 'ruleset_failure_domain',
+                           'ruleset_root', 'w')
+    def set_data(self, objects):
+        for field_name, value in CephErasureCodeProfile.make_model_args(
+                MonApi(rados[self._context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+            setattr(self, field_name, value)
+        for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment', 'ruleset_failure_domain',
+                           'ruleset_root', 'w']:
+            if field_name not in self.__dict__:
+                setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         context = self.__class__.objects.nodb_context
