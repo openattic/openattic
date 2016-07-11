@@ -178,6 +178,8 @@ class LazyPropertyTest(TestCase):
         a = models.IntegerField(primary_key=True)
         b = models.IntegerField()
         c = models.IntegerField()
+        d = models.IntegerField()
+        e = models.IntegerField()
 
         @bulk_attribute_setter('b')
         def set_b(self, objects):
@@ -189,6 +191,11 @@ class LazyPropertyTest(TestCase):
         def set_c(self, objects):
             for o in objects:
                 o.c = self.a
+
+        @bulk_attribute_setter('d', 'e')
+        def set_d_e(self, objects):
+            self.d = self.a
+            self.e = self.a
 
         @staticmethod
         def get_all_objects(context, query):
@@ -219,4 +226,19 @@ class LazyPropertyTest(TestCase):
         o1, o2 = LazyPropertyTest.TestModel.objects.all()
         self.assertEqual(o2.c, o2.a)
         self.assertEqual(o1.c, o2.a)
+
+    def test_single_row(self):
+        o1, o2 = LazyPropertyTest.TestModel.objects.all()
+        self.assertNotIn('d', o2.__dict__)
+        self.assertEqual(o2.d, o2.a)
+        self.assertIn('e', o2.__dict__)
+        self.assertNotIn('d', o1.__dict__)
+        self.assertNotIn('e', o1.__dict__)
+
+    def test_filter_order_by(self):
+        o1 = LazyPropertyTest.TestModel.objects.filter(d=1).order_by('a')[0]
+        self.assertEqual(o1.a, 1)
+        self.assertIn('d', o1.__dict__)
+        self.assertIn('e', o1.__dict__)
+
 
