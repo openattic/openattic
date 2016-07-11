@@ -629,7 +629,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
-    id = models.CharField(max_length=100, primary_key=True)
+    id = models.CharField(max_length=100, primary_key=True, editable=False)
     name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool)
     size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
@@ -645,7 +645,6 @@ class CephRbd(NodbModel):  # aka RADOS block device
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
-        self.id = '{}.{}'.format(self.pool.id, self.name)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -665,7 +664,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 for (image_name, pool)
                 in rbd_name_pools)
 
-        return [CephRbd(pool=pool, **CephRbd.make_model_args(rbd))
+        return [CephRbd(id=('{}.{}'.format(pool.id, rbd['name'])), pool=pool, **CephRbd.make_model_args(rbd))
                 for (rbd, pool)
                 in rbds]
 
@@ -687,6 +686,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format, order=order)
+                self.id = '{}.{}'.format(self.pool.id, self.name)
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
