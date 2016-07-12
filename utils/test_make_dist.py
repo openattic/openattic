@@ -41,11 +41,13 @@ class Test(object):
 
 arguments = [
     'create release',
+    'create release -s',
     'create release --revision=v2.0.7-1',
     'create release --revision=default',
     'create release --revision=development',
     'create release --source=/srv/openattic',
     'create snapshot',
+    'create snapshot -s',
     'create snapshot --revision=v2.0.7-1',
     'create snapshot --revision=default',
     'create snapshot --revision=development',

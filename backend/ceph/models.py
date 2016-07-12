@@ -259,11 +259,13 @@ class CephPool(NodbModel):
         osd_dump_data = MonApi(rados[fsid]).osd_dump()
         df_data = rados[fsid].mon_command('df')
 
+        dummy_df = [{'stats': {'max_avail': None, 'kb_used': 0}}]
+
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
             stats = rados[fsid].get_stats(str(pool_data['pool_name']))
-            disk_free_data = [elem for elem in df_data['pools'] if elem['id'] == pool_id][0]
+            disk_free_data = ([elem for elem in df_data['pools'] if elem['id'] == pool_id] or dummy_df)[0]
 
             object_data = {
                 'id': pool_id,
@@ -600,7 +602,8 @@ class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
-    name = models.CharField(max_length=100, primary_key=True)
+    id = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool)
     size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
     obj_size = models.IntegerField(null=True, blank=True)
@@ -612,6 +615,10 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                                                          in RbdApi.get_feature_mapping().values()])))
     old_format = models.BooleanField(default=False)
     used_size = models.IntegerField(editable=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CephRbd, self).__init__(*args, **kwargs)
+        self.id = '{}.{}'.format(self.pool.id, self.name)
 
     @staticmethod
     def get_all_objects(context, query):
