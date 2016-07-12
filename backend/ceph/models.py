@@ -303,7 +303,7 @@ class CephPool(NodbModel):
                 'pool_snaps': pool_data['pool_snaps'],
             }
 
-            ceph_pool = CephPool(**object_data)
+            ceph_pool = CephPool(**CephPool.make_model_args(object_data))
 
             result.append(ceph_pool)
 
@@ -664,7 +664,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 for (image_name, pool)
                 in rbd_name_pools)
 
-        return [CephRbd(id=('{}.{}'.format(pool.id, rbd['name'])), pool=pool, **CephRbd.make_model_args(rbd))
+        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=('{}.{}'.format(pool.id, rbd['name'])))))
                 for (rbd, pool)
                 in rbds]
 
@@ -730,7 +730,7 @@ class CephFs(NodbModel):
         for fs in api.fs_ls():
             args = CephFs.make_model_args(fs)
             args['data_pools'] = fs['data_pool_ids']
-            args['metadata_pool'] = CephPool.objects.get(id=fs['metadata_pool_id'])
+            args['metadata_pool_id'] = fs['metadata_pool_id']
             ret.append(CephFs(**args))
 
         return ret

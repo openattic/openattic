@@ -16,6 +16,7 @@ import json
 from itertools import product
 
 import django
+import itertools
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -409,24 +410,39 @@ class NodbModel(models.Model):
 
     @classmethod
     def make_model_args(cls, json_result):
+        def get_val_from_json(key):
+            if key in json_result:
+                return json_result[key]
+            elif key.replace('_', '-') in json_result:
+                # '-' is not supported for field names, but used by ceph.
+                return json_result[key.replace('_', '-')]
+            return None
 
-        def validate_field(field, json_result, score_or_underscore):
-            # '-' is not supported for field names, but used by ceph.
-            json_key = field.attname.replace('_', score_or_underscore)
-            if json_key not in json_result:
-                return False
+        def handle_field(field):
+            val = get_val_from_json(field.attname)
+            if isinstance(field, models.ForeignKey):
+                if isinstance(val, int) or isinstance(val, basestring):
+                    return [(field.attname, val)]
+                val = get_val_from_json(field.attname[:-3])
+                if hasattr(val, 'pk'):
+                    return [
+#                        ('_{}_cache'.format(field.attname[:-3]), val),
+                        (field.attname, val.pk)
+                    ]
+                else:
+                    return []
+            if val is None:
+                return []
             try:
-                field.to_python(json_result[json_key])
-                return True
-            except ValidationError:
-                return False
+                python_val = field.to_python(val)
+            except ValidationError as e:
+                return []
 
-        return {
-            field.attname: field.to_python(json_result[field.attname.replace('_', score_or_underscore)])
-            for (field, score_or_underscore)
-            in product(cls._meta.fields, '_-')
-            if validate_field(field, json_result, score_or_underscore)
-            }
+            return [(field.attname, python_val)]
+
+        return dict(
+            itertools.chain.from_iterable([handle_field(field) for field in cls._meta.fields])
+        )
 
     def __init__(self, *args, **kwargs):
         # super(NodbModel, self).__init__(*args, **kwargs)
