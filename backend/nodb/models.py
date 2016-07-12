@@ -326,7 +326,8 @@ def bulk_attribute_setter(*filed_names):
     someone then accesses the my_field attribute, LazyProperty.__get__ is called, which then calls set_my_field to set
     the field, as if one had written:
     >>> instances = MyModel.objects.all()
-    >>> instances[0].my_field = set_my_filed(instances[0], instances)
+    >>> set_my_filed(instances[0], instances)
+    >>> assert instances[0].my_field == 42
 
     For example, get_all_objects generates a QuerySet like this:
 
