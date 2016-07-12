@@ -457,7 +457,6 @@ class CephErasureCodeProfile(NodbModel):
 class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True, editable=False)
     crush_weight = models.FloatField()
-    depth = models.IntegerField()
     exists = models.IntegerField(editable=False)
     name = models.CharField(max_length=100, editable=False)
     primary_affinity = models.FloatField()
@@ -655,8 +654,6 @@ class CephRbd(NodbModel):  # aka RADOS block device
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
                                                          for pool in pools)))
         rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
-                                api.image_disk_usage(pool.name, image_name),  # This is really expensive. You should
-                                # first try to only call "rbd du" for rbds that will be serialized.
                                 old_format=api.image_old_format(pool.name, image_name),
                                 features=api.image_features(pool.name, image_name),
                                 name=image_name),
@@ -664,9 +661,16 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 for (image_name, pool)
                 in rbd_name_pools)
 
-        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=('{}.{}'.format(pool.id, rbd['name'])))))
+        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=('{}/{}'.format(pool.name, rbd['name'])))))
                 for (rbd, pool)
                 in rbds]
+
+    @bulk_attribute_setter('used_size')
+    def set_disk_usage(self, objects):
+        """This can be really expensive, thus we're calling "rbd du" only for rbds that will be serialized."""
+        api = RbdApi(rados[self.pool.cluster.fsid])  # TODO: self.pool.cluster calls "ceph osd dump"
+        val = api.image_disk_usage(self.pool.name, self.name)
+        self.used_size = val['used_size'] if 'used_size' in val else 0
 
     def save(self, *args, **kwargs):
         """
