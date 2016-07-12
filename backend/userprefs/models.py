@@ -80,4 +80,4 @@ class UserPreference(models.Model):
         unique_together = ("profile", "setting")
 
     def __unicode__(self):
-        return "<UserPreference %s>" % self.setting
+        return self.setting
