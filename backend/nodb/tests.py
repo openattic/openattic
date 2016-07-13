@@ -18,7 +18,7 @@ from django.db import models
 from django.db.models import Q
 from django.test import TestCase
 
-from nodb.models import NodbQuerySet, NodbModel, DictField
+from nodb.models import NodbQuerySet, NodbModel, JsonField, bulk_attribute_setter
 from nodb.restapi import NodbSerializer
 
 
@@ -149,7 +149,6 @@ class QuerySetTestCase(TestCase):
         eq_order([self.ordering_c, self.ordering_b, self.ordering_a], "-x", "-y")
 
 
-
 class DictFieldSerializerTest(TestCase):
 
     def test_serializer(self):
@@ -160,7 +159,7 @@ class DictFieldSerializerTest(TestCase):
             def get_all_objects(context, query):
                 self.fail("should not be called")
 
-            my_dict = DictField(primary_key=True)
+            my_dict = JsonField(primary_key=True)
 
         class DictFieldModelSerializer(NodbSerializer):
             class Meta:
@@ -171,3 +170,75 @@ class DictFieldSerializerTest(TestCase):
         serializer = DictFieldModelSerializer(DictFieldModel(my_dict=my_dict))
 
         self.assertEqual(serializer.data, {'my_dict': my_dict})
+
+
+class LazyPropertyTest(TestCase):
+
+    class TestModel(NodbModel):
+        a = models.IntegerField(primary_key=True)
+        b = models.IntegerField()
+        c = models.IntegerField()
+        d = models.IntegerField()
+        e = models.IntegerField()
+
+        @bulk_attribute_setter('b')
+        def set_b(self, objects):
+            assert self in objects
+            for o in objects:
+                o.b = o.a
+
+        @bulk_attribute_setter('c')
+        def set_c(self, objects):
+            for o in objects:
+                o.c = self.a
+
+        @bulk_attribute_setter('d', 'e')
+        def set_d_e(self, objects):
+            self.d = self.a
+            self.e = self.a
+
+        @staticmethod
+        def get_all_objects(context, query):
+            return [
+                LazyPropertyTest.TestModel(a=1),
+                LazyPropertyTest.TestModel(a=2)
+            ]
+
+        def __unicode__(self):
+            return u'<TestModel {}>'.format(self.a)
+
+    def test_simple(self):
+        os = list(LazyPropertyTest.TestModel.objects.all())
+        for o in os:
+            self.assertIsInstance(o.__dict__['a'], int)
+        for o in os:
+            self.assertEqual(o.b, o.a)
+            self.assertIsInstance(o.__dict__['b'], int)
+
+    def test_filter(self):
+        o = LazyPropertyTest.TestModel.objects.all().get(a=2)
+        self.assertIsInstance(o.__dict__['a'], int)
+        self.assertEqual(o.a, 2)
+        self.assertEqual(o.b, 2)
+        self.assertIsInstance(o.__dict__['b'], int)
+
+    def test_non_deterministic(self):
+        o1, o2 = LazyPropertyTest.TestModel.objects.all()
+        self.assertEqual(o2.c, o2.a)
+        self.assertEqual(o1.c, o2.a)
+
+    def test_single_row(self):
+        o1, o2 = LazyPropertyTest.TestModel.objects.all()
+        self.assertNotIn('d', o2.__dict__)
+        self.assertEqual(o2.d, o2.a)
+        self.assertIn('e', o2.__dict__)
+        self.assertNotIn('d', o1.__dict__)
+        self.assertNotIn('e', o1.__dict__)
+
+    def test_filter_order_by(self):
+        o1 = LazyPropertyTest.TestModel.objects.filter(d=1).order_by('a')[0]
+        self.assertEqual(o1.a, 1)
+        self.assertIn('d', o1.__dict__)
+        self.assertIn('e', o1.__dict__)
+
+
