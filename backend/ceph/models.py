@@ -611,6 +611,12 @@ class CephPg(NodbModel):
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
+            for name in ['last_became_active', 'last_became_peered',
+                         'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
+                         'osd_id', 'pool_name']:
+                if name not in model_args:
+                    model_args[name] = None
+
             ret.append(CephPg(**model_args))
         return ret
 
