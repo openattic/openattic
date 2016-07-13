@@ -70,6 +70,15 @@ class UserProfile(models.Model):
     def __iter__(self):
         return iter(self.userpreference_set.all())
 
+    def filter_prefs(self, pref_filter):
+        filtered_prefs = []
+
+        for preference in self.userpreference_set.all():
+            if any(filter_value in preference.setting for filter_value in pref_filter):
+                filtered_prefs.append(preference)
+
+        return filtered_prefs
+
 
 class UserPreference(models.Model):
     profile = models.ForeignKey(UserProfile)
