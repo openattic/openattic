@@ -340,7 +340,7 @@ class CephPool(NodbModel):
         3. Providing a RESTful API.
         """
         context = CephPool.objects.nodb_context
-        insert = self.id is None
+        insert = getattr(self, 'id', None) is None
         with undo_transaction(MonApi(rados[context.fsid]), re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
@@ -352,8 +352,7 @@ class CephPool(NodbModel):
                                     self.erasure_code_profile.name if self.erasure_code_profile else None)
 
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
-            if not insert:
-                self.set_read_only_fields(original)
+            self.set_read_only_fields(original)
 
             def schwartzian_transform(obj):
                 key, val = obj
