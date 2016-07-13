@@ -25,6 +25,9 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
         model = UserPreference
         fields = ("setting", "value")
 
+    def to_native(self, obj):
+        return dict([(obj.setting, json.loads(obj.value))])
+
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 
