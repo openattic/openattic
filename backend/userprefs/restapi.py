@@ -35,8 +35,7 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("url", "id", "host", "user", "preferences")
 
     def get_preferences(self, profile):
-        user_pref_ser = UserPreferenceSerializer(profile.userpreference_set.all(),
-                                                 context=self.context, many=True)
+        user_pref_ser = UserPreferenceSerializer(profile, context=self.context, many=True)
         return user_pref_ser.data
 
 
