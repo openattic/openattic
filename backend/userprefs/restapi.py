@@ -14,8 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-from rest_framework import serializers, viewsets
+import json
 
+from rest_framework import serializers, status, viewsets, mixins
+from rest_framework.response import Response
+
+from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
 
@@ -42,9 +46,31 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         return user_pref_ser.data
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
+                         mixins.DestroyModelMixin):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+
+    def create(self, request, *args, **kwargs):
+        host = Host.objects.get_current()
+        profile, _ = UserProfile.objects.get_or_create(user=request.user, host=host)
+
+        for key, value in request.DATA.items():
+            profile[key] = value
+
+        return Response(status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        profile = self.get_object()
+        settings = request.DATA["settings"]
+
+        for setting in settings:
+            try:
+                del profile[setting]
+            except:
+                pass
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 RESTAPI_VIEWSETS = [
