@@ -67,6 +67,11 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
 
     def destroy(self, request, *args, **kwargs):
         profile = self.get_object()
+
+        if profile.user != request.user:
+            return Response("You are not allowed to delete preferences of other users",
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         settings = request.DATA["settings"]
 
         for setting in settings:
