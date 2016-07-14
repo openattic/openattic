@@ -488,10 +488,11 @@ class JsonField(Field):
             return val
 
         if value is None:
-            return self.base_type()
+            return None
         if isinstance(value, self.base_type):
             return value
-
+        if not value and self.null:
+            return None
         try:
             parsed = json.loads(value)
             return check_base_type(parsed)
@@ -514,3 +515,6 @@ class JsonField(Field):
         kwargs['base_type'] = self.base_type
         return name, path, args, kwargs
 
+    @property
+    def empty_values(self):
+        return [u'', [], {}]

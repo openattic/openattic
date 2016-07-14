@@ -13,6 +13,7 @@
 """
 
 import mock
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from django.db.models import Q
@@ -159,7 +160,7 @@ class DictFieldSerializerTest(TestCase):
             def get_all_objects(context, query):
                 self.fail("should not be called")
 
-            my_dict = JsonField(primary_key=True)
+            my_dict = JsonField(base_type=list, primary_key=True)
 
         class DictFieldModelSerializer(NodbSerializer):
             class Meta:
@@ -170,6 +171,41 @@ class DictFieldSerializerTest(TestCase):
         serializer = DictFieldModelSerializer(DictFieldModel(my_dict=my_dict))
 
         self.assertEqual(serializer.data, {'my_dict': my_dict})
+
+    def test_nullable(self):
+        class DictFieldModel2(NodbModel):
+            non_nullable = JsonField(base_type=list, primary_key=True)
+            nullable = JsonField(base_type=dict, primary_key=True, blank=True, null=True)
+            blank = JsonField(base_type=list, blank=True)
+
+            @staticmethod
+            def get_all_objects(context, query):
+                return []
+
+        m = DictFieldModel2(non_nullable=[1], nullable=None, blank=[])
+        m.full_clean()
+        self.assertIsNone(m.nullable)
+        self.assertEqual(m.blank, [])
+        self.assertEqual(m.non_nullable, [1])
+
+        m = DictFieldModel2(non_nullable=[1], nullable='', blank=[])
+        m.full_clean()
+        self.assertIsNone(m.nullable)
+
+
+        try:
+            m2 = DictFieldModel2(non_nullable=[], nullable=None, blank=[])
+            m2.full_clean()
+            self.fail()
+        except ValidationError:
+            pass
+
+        try:
+            m2 = DictFieldModel2(non_nullable=[1], nullable=None, blank=None)
+            m2.full_clean()
+            self.fail()
+        except ValidationError:
+            pass
 
 
 class LazyPropertyTest(TestCase):

@@ -633,22 +633,31 @@ class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
-    id = models.CharField(max_length=100, primary_key=True, editable=False)
+    id = models.CharField(max_length=100, primary_key=True, editable=False, help_text='pool-name/image-name')
     name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool)
-    size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
-    obj_size = models.IntegerField(null=True, blank=True)
+    size = models.IntegerField(help_text='Bytes, where size modulo obj_size === 0', default=4 * 1024 ** 3)
+    obj_size = models.IntegerField(null=True, blank=True, help_text='obj_size === 2^n', default=2 ** 22)
     num_objs = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
     features = JsonField(base_type=list, null=True, blank=True,
                          help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
                                                                          for v
                                                                          in RbdApi.get_feature_mapping().values()])))
-    old_format = models.BooleanField(default=False)
+    old_format = models.BooleanField(default=False, help_text='should always be false')
     used_size = models.IntegerField(editable=False)
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def make_key(pool, image_name):
+        """
+        :type pool: CephPool
+        :type image_name: str | unicode
+        :rtype: unicode
+        """
+        return u'{}/{}'.format(pool.name, image_name)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -666,7 +675,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 for (image_name, pool)
                 in rbd_name_pools)
 
-        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=('{}/{}'.format(pool.name, rbd['name'])))))
+        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name']))))
                 for (rbd, pool)
                 in rbds]
 
@@ -687,6 +696,8 @@ class CephRbd(NodbModel):  # aka RADOS block device
         """
         context = CephPool.objects.nodb_context
         insert = self._state.adding  # there seems to be no id field.
+        if not hasattr(self, 'features') or self.features == u'':
+            self.features = None
 
         with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True, exception_type=CephRbd.DoesNotExist) as api:
 
@@ -695,7 +706,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format, order=order)
-                self.id = '{}.{}'.format(self.pool.id, self.name)
+                self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
