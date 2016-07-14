@@ -206,6 +206,11 @@ module.exports = function (grunt) {
     "dev"
   ]);
 
+  grunt.registerTask("inspect", [
+    "jshint",
+    "jscs"
+  ]);
+
   grunt.registerTask("build", [
     "clean",
     "htmlbuild",
