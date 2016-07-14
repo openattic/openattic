@@ -77,6 +77,28 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def list(self, request, *args, **kwargs):
+        host = Host.objects.get_current()
+        queryset = self.get_queryset()
+        result_profiles = []
+
+        for profile in queryset:
+            if profile.user == request.user and profile.host == host:
+                result_profiles.append(profile)
+
+        profile_ser = UserProfileSerializer(result_profiles, context={"request": request},
+                                            many=True)
+        return Response(profile_ser.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        profile = self.get_object()
+
+        if profile.user != request.user:
+            return Response("You are not allowed to access other users profiles",
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        profile_ser = UserProfileSerializer(profile, context={"request": request}, many=False)
+        return Response(profile_ser.data, status=status.HTTP_200_OK)
 
 RESTAPI_VIEWSETS = [
     ("userprofiles", UserProfileViewSet, "userprofile"),
