@@ -34,7 +34,9 @@ tracking them:
   perform automated syntax and style checks of the JavaScript code. The
   configuration files for these WebUI tests can be found in file
   ``webui/.jshintrc`` and ``webui/.jscsrc``, please consult them for more
-  details on the coding style and conventions.
+  details on the coding style and conventions. By running ``grunt inspect
+  --force`` on the command line, you can check the quality of your JavaScript
+  code.
 * Every bug fix or notable change made to a release branch must be accompanied
   by a bug report (JIRA issue).
 * New features and other larger changes also require a related JIRA issue that
