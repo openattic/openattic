@@ -63,7 +63,8 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
         for key, value in request.DATA.items():
             profile[key] = value
 
-        return Response(status=status.HTTP_201_CREATED)
+        profile_ser = UserProfileSerializer(profile, context={"request": request}, many=False)
+        return Response(profile_ser.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         profile = self.get_object()
