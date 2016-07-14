@@ -3,8 +3,11 @@
 |oA| Contributing Guidelines
 ============================
 
-The following recommendations should be considered when working on the
-|oA| Code Base.
+Please see :ref:`developer_contribute` for details on the process of how to
+contribute code changes.
+
+The following recommendations should be considered when working on the |oA|
+Code Base.
 
 While adhering to these guidelines may sound more work in the first place,
 following them has multiple benefits:
@@ -16,8 +19,22 @@ following them has multiple benefits:
 * It makes it more transparent to the user what changes went into a build or
   release.
 
-Some general recommendations for documenting/tracking your changes:
+Some general recommendations for making changes and for documenting and
+tracking them:
 
+* New Python code should adhere to the `Style Guide for Python Code
+  <https://www.python.org/dev/peps/pep-0008/>`_ (PEP 8). Use the ``flake8``
+  tool to verify that your changes don't violate this style before comitting
+  your modifications.
+* Existing code can be refactored to adhere to PEP 8, if you feel like it.
+  However, such style changes must be committed separately from other code
+  modifications, to ease the reviewing of such pull requests.
+* For JavaScript code, we use `grunt-jscs <grunt-tasks.com/grunt-jscs/>`_  and
+  `grunt-contrib-jshint <https://github.com/gruntjs/grunt-contrib-jshint>`_ to
+  perform automated syntax and style checks of the JavaScript code. The
+  configuration files for these WebUI tests can be found in file
+  `webui/.jshintrc` and `webui/.jscsrc`, please consult them for more details
+  on the coding style and conventions.
 * Every bug fix or notable change made to a release branch must be accompanied
   by a bug report (JIRA issue).
 * New features and other larger changes also require a related JIRA issue that
@@ -36,49 +53,6 @@ Some general recommendations for documenting/tracking your changes:
   Set Revision ID or add a link to the ChangeSet or related pull request on
   BitBucket for reference. This makes it easier to review the code changes
   that resulted from a bug report or feature request.
-
-.. _developer_patchsign:
-
-Signing Your Patch Contribution
--------------------------------
-
-To improve tracking of who did what, we use the "sign-off" procedure
-`introduced by the Linux kernel
-<http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/SubmittingPatches>`_.
-The sign-off is a simple line at the end of the explanation for the patch,
-which certifies that you wrote it or otherwise have the right to pass it on as
-an open-source patch.
-
-The rules are pretty simple: if you can certify the following:
-
-.. literalinclude:: developer-certificate-of-origin.txt
-
-then you just add the following line below your commit message and pull
-request saying::
-
-  Signed-off-by: Random J Developer <random@developer.example.org>
-
-using your **real name and email address**  (sorry, no pseudonyms or anonymous
-contributions).
-
-If you want to automate the task of adding that tag line, consider installing
-the `signoff.py Mercurial hook
-<https://bitbucket.org/snippets/LenzGr/aygXb/signoffpy-a-mercurial-hook-to>`_.
-
-If you like, you can put extra tags at the end:
-
-#.  ``Reported-by:`` is used to credit someone who found the bug that
-    the patch attempts to fix.
-#.  ``Acked-by:`` says that the person who is more familiar with the
-    area the patch attempts to modify liked the patch.
-#.  ``Reviewed-by:``, unlike the other tags, can only be offered by the
-    reviewer and means that she is completely satisfied that the patch is
-    ready for application. It is usually offered only after a detailed review.
-#.  ``Tested-by:`` is used to indicate that the person applied the patch
-    and found it to have the desired effect.
-
-You can also create your own tag or use one that's in common usage
-such as ``Thanks-to:``, ``Based-on-patch-by:``, or ``Mentored-by:``.
 
 .. _documenting_changes:
 
@@ -127,6 +101,49 @@ Release Notes will be reviewed and improved before a final release build
 anyway. It's much more important that we keep track of all notable changes
 without someone having to trawl JIRA or the commit messages prior to a
 release.
+
+.. _developer_patchsign:
+
+Signing Your Patch Contribution
+-------------------------------
+
+To improve tracking of who did what, we use the "sign-off" procedure
+`introduced by the Linux kernel
+<http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/SubmittingPatches>`_.
+The sign-off is a simple line at the end of the explanation for the patch,
+which certifies that you wrote it or otherwise have the right to pass it on as
+an open-source patch.
+
+The rules are pretty simple: if you can certify the following:
+
+.. literalinclude:: developer-certificate-of-origin.txt
+
+then you just add the following line below your commit message and pull
+request saying::
+
+  Signed-off-by: Random J Developer <random@developer.example.org>
+
+using your **real name and email address**  (sorry, no pseudonyms or anonymous
+contributions).
+
+If you want to automate the task of adding that tag line, consider installing
+the `signoff.py Mercurial hook
+<https://bitbucket.org/snippets/LenzGr/aygXb/signoffpy-a-mercurial-hook-to>`_.
+
+If you like, you can put extra tags at the end:
+
+#.  ``Reported-by:`` is used to credit someone who found the bug that
+    the patch attempts to fix.
+#.  ``Acked-by:`` says that the person who is more familiar with the
+    area the patch attempts to modify liked the patch.
+#.  ``Reviewed-by:``, unlike the other tags, can only be offered by the
+    reviewer and means that she is completely satisfied that the patch is
+    ready for application. It is usually offered only after a detailed review.
+#.  ``Tested-by:`` is used to indicate that the person applied the patch
+    and found it to have the desired effect.
+
+You can also create your own tag or use one that's in common usage
+such as ``Thanks-to:``, ``Based-on-patch-by:``, or ``Mentored-by:``.
 
 .. _merging_pull_requests:
 
