@@ -33,8 +33,8 @@ tracking them:
   `grunt-contrib-jshint <https://github.com/gruntjs/grunt-contrib-jshint>`_ to
   perform automated syntax and style checks of the JavaScript code. The
   configuration files for these WebUI tests can be found in file
-  `webui/.jshintrc` and `webui/.jscsrc`, please consult them for more details
-  on the coding style and conventions.
+  ``webui/.jshintrc`` and ``webui/.jscsrc``, please consult them for more
+  details on the coding style and conventions.
 * Every bug fix or notable change made to a release branch must be accompanied
   by a bug report (JIRA issue).
 * New features and other larger changes also require a related JIRA issue that

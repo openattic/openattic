@@ -188,7 +188,7 @@ http://apt.openattic.org .
   :ref:`basic storage configuration`.
 
 Importing the |oA| Keyfile
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 The |oA| packages are signed using a cryptographic key. You can import the
 public GPG key from the download site using the following command:
@@ -250,10 +250,11 @@ After enabling the apt repository, run the following commands to install the
   # apt-get install openattic
 
 .. note::
-  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in order
-  to get the ``lio-utils`` package working which is used by ``openattic-module-lio``
-  (included in the base openattic package).
-  You may need to restart the target service as well::
+  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in
+  order to get the ``lio-utils`` package working which is used by
+  ``openattic-module-lio`` (installed by the base openattic package). You may
+  need to restart the target service as well::
+
     # apt-get install linux-image-extra-`uname -r`
     # service target restart
 
