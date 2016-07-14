@@ -188,11 +188,6 @@ class DictFieldSerializerTest(TestCase):
         self.assertEqual(m.blank, [])
         self.assertEqual(m.non_nullable, [1])
 
-        m = DictFieldModel2(non_nullable=[1], nullable='', blank=[])
-        m.full_clean()
-        self.assertIsNone(m.nullable)
-
-
         try:
             m2 = DictFieldModel2(non_nullable=[], nullable=None, blank=[])
             m2.full_clean()

@@ -691,7 +691,8 @@ class RbdApi(object):
         """
         ioctx = self.cluster._get_pool(pool_name)
         rbd_inst = rbd.RBD()
-        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else 61)  # FIXME: hardcoded int
+        default_features = 0 if old_format else 61  # FIXME: hardcoded int
+        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else default_features)
         yield rbd_inst.create(ioctx, image_name, size, old_format=old_format, features=feature_bitmask, order=order)
         self.remove(pool_name, image_name)
 
