@@ -9,6 +9,7 @@ Version 2.0.13, (not released yet):
 * Backend: Improved compatibility with Ceph Hammer (OP-1303)
 * Backend: Fixed RBDs with same name in multiple pools (OP-1313)
 * Backend: Fixed `ceph df` missing a newly created pool (OP-1282)
+* Backend: Optimized calls to librados (OP-1321)
 * WebUI: Make the oA API URL configurable (OP-989)
 * WebUI: Added a welcome message to the login screen (OP-1310)
 * WebUI: Added grunt task "grunt inspect --force" to check the quality of your JavaScript code (OP-1332)
