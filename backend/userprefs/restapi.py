@@ -30,7 +30,7 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("setting", "value")
 
     def to_native(self, obj):
-        return dict([(obj.setting, json.loads(obj.value))])
+        return (obj.setting, json.loads(obj.value))
 
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -48,7 +48,7 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
             profile = profile.filter_prefs(filter_values)
 
         user_pref_ser = UserPreferenceSerializer(profile, context=self.context, many=True)
-        return user_pref_ser.data
+        return dict(user_pref_ser.data)
 
 
 class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
