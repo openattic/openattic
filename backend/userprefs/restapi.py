@@ -63,7 +63,7 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
         for key, value in request.DATA.items():
             profile[key] = value
 
-        profile_ser = UserProfileSerializer(profile, context={"request": request}, many=False)
+        profile_ser = self.get_serializer(profile, many=False)
         return Response(profile_ser.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
@@ -107,7 +107,7 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
             return Response("You are not allowed to access other users profiles",
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        profile_ser = UserProfileSerializer(profile, context={"request": request}, many=False)
+        profile_ser = self.get_serializer(profile, many=False)
         return Response(profile_ser.data, status=status.HTTP_200_OK)
 
 RESTAPI_VIEWSETS = [
