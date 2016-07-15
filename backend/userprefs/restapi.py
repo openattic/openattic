@@ -30,7 +30,7 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("setting", "value")
 
     def to_native(self, obj):
-        return dict([(obj.setting, json.loads(obj.value))])
+        return (obj.setting, json.loads(obj.value))
 
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -42,13 +42,13 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("url", "id", "host", "user", "preferences")
 
     def get_preferences(self, profile):
-        filter_values = self.context["request"].QUERY_PARAMS.get("preferences")
+        filter_values = self.context["request"].QUERY_PARAMS.get("search")
         if filter_values:
             filter_values = filter_values.split(",")
             profile = profile.filter_prefs(filter_values)
 
         user_pref_ser = UserPreferenceSerializer(profile, context=self.context, many=True)
-        return user_pref_ser.data
+        return dict(user_pref_ser.data)
 
 
 class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
@@ -63,10 +63,16 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
         for key, value in request.DATA.items():
             profile[key] = value
 
-        return Response(status=status.HTTP_201_CREATED)
+        profile_ser = self.get_serializer(profile, many=False)
+        return Response(profile_ser.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         profile = self.get_object()
+
+        if profile.user != request.user:
+            return Response("You are not allowed to delete preferences of other users",
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         settings = request.DATA["settings"]
 
         for setting in settings:
@@ -77,6 +83,32 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def list(self, request, *args, **kwargs):
+        host = Host.objects.get_current()
+        queryset = self.get_queryset()
+        result_profiles = []
+
+        for profile in queryset:
+            if profile.user == request.user and profile.host == host:
+                result_profiles.append(profile)
+
+        page = self.paginate_queryset(result_profiles)
+        if page is not None:
+            profile_ser = self.get_pagination_serializer(page)
+        else:
+            profile_ser = self.get_serializer(result_profiles, many=True)
+
+        return Response(profile_ser.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        profile = self.get_object()
+
+        if profile.user != request.user:
+            return Response("You are not allowed to access other users profiles",
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        profile_ser = self.get_serializer(profile, many=False)
+        return Response(profile_ser.data, status=status.HTTP_200_OK)
 
 RESTAPI_VIEWSETS = [
     ("userprofiles", UserProfileViewSet, "userprofile"),
