@@ -92,8 +92,12 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
             if profile.user == request.user and profile.host == host:
                 result_profiles.append(profile)
 
-        profile_ser = UserProfileSerializer(result_profiles, context={"request": request},
-                                            many=True)
+        page = self.paginate_queryset(result_profiles)
+        if page is not None:
+            profile_ser = self.get_pagination_serializer(page)
+        else:
+            profile_ser = self.get_serializer(result_profiles, many=True)
+
         return Response(profile_ser.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
