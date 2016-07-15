@@ -153,6 +153,12 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.src,
+              src: ["config.js"],
+              dest: buildConfig.dist
+            },
+            {
+              expand: true,
+              cwd: buildConfig.src,
               src: ["bower_components/**", "fonts/**", "images/**"],
               dest: buildConfig.dist
             },
@@ -204,6 +210,11 @@ module.exports = function (grunt) {
 
   grunt.registerTask("default", [
     "dev"
+  ]);
+
+  grunt.registerTask("inspect", [
+    "jshint",
+    "jscs"
   ]);
 
   grunt.registerTask("build", [
