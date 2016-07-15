@@ -233,6 +233,16 @@ def undoable(func):
     return wrapper
 
 
+def logged(func):
+    def wrapper(*args, **kwargs):
+        retval = None
+        try:
+            retval = func(*args, **kwargs)
+        finally:
+            logger.debug('{}, {}, {} -> {}'.format(func.__name__, args, kwargs, retval))
+        return retval
+    return wrapper
+
 @contextmanager
 def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise_exception=False):
     """Context manager for starting a transaction. Use `undoable` decorator for undoable actions.
@@ -245,7 +255,8 @@ def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise
         undo_context._undo_stack = deque()
         yield undo_context
         delattr(undo_context, '_undo_stack')
-    except exception_type:
+    except exception_type as e:
+        logger.exception('Will now undo steps performed.')
         stack = getattr(undo_context, '_undo_stack')
         delattr(undo_context, '_undo_stack')
         for undo_closure in reversed(stack):
@@ -663,6 +674,7 @@ class RbdApi(object):
         """
         self.cluster = client
 
+    @logged
     @undoable
     def create(self, pool_name, image_name, size, old_format=True, features=None, order=None):
         """
@@ -679,8 +691,9 @@ class RbdApi(object):
         """
         ioctx = self.cluster._get_pool(pool_name)
         rbd_inst = rbd.RBD()
-        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else 0)
-        yield rbd_inst.create(ioctx, image_name, size, old_format=old_format, features=feature_bitmask)
+        default_features = 0 if old_format else 61  # FIXME: hardcoded int
+        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else default_features)
+        yield rbd_inst.create(ioctx, image_name, size, old_format=old_format, features=feature_bitmask, order=order)
         self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
