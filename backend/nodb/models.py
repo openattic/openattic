@@ -269,7 +269,11 @@ class LazyProperty(object):
         """
         runs eval_func which fills some lazy properties.
         """
-        query_set = instance._query_set_pointer.target
+        if hasattr(instance, '_query_set_pointer'):
+            query_set = instance._query_set_pointer.target
+        else:
+            # Fallback. Needed for objects without a queryset.
+            query_set = [instance]
         if self.field_name in instance.__dict__:
             return instance.__dict__[self.field_name]
 
@@ -391,7 +395,8 @@ class NodbModel(models.Model):
             field.attname: getattr(self, field.attname)
             for field
             in self.__class__._meta.fields
-            if field.editable and getattr(self, field.attname) != getattr(original, field.attname)
+            if field.editable and hasattr(self, field.attname) and hasattr(original, field.attname) and
+                getattr(self, field.attname) != getattr(original, field.attname)
         }, original
 
     def set_read_only_fields(self, obj, include_pk=True):
@@ -406,7 +411,7 @@ class NodbModel(models.Model):
             self.pk = obj.pk
 
         for field in self.__class__._meta.fields:
-            if not field.editable and getattr(self, field.attname) != getattr(obj, field.attname):
+            if not field.editable and getattr(self, field.attname, None) != getattr(obj, field.attname):
                 setattr(self, field.attname, getattr(obj, field.attname))
 
     @classmethod
@@ -483,10 +488,11 @@ class JsonField(Field):
             return val
 
         if value is None:
-            return self.base_type()
+            return None
         if isinstance(value, self.base_type):
             return value
-
+        if not value and self.null:
+            return None
         try:
             parsed = json.loads(value)
             return check_base_type(parsed)
@@ -509,3 +515,6 @@ class JsonField(Field):
         kwargs['base_type'] = self.base_type
         return name, path, args, kwargs
 
+    @property
+    def empty_values(self):
+        return [u'', [], {}]
