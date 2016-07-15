@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("UserService", function ($resource) {
-  return $resource("/openattic/api/users/:id", {
+  return $resource(globalConfig.API.URL + "users/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -48,7 +48,7 @@ app.factory("UserService", function ($resource) {
     },
     current: {
       method: "GET",
-      url: "/openattic/api/users/current"
+      url: globalConfig.API.URL + "users/current"
     }
   });
 });

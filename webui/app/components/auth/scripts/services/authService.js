@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.auth");
 app.factory("authService", function ($resource) {
-  return $resource("/openattic/api/auth", {}, {
+  return $resource(globalConfig.API.URL + "auth", {}, {
     login: {method: "POST"},
     logout: {method: "DELETE"},
     kerberos: {

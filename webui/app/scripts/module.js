@@ -47,19 +47,21 @@ angular.module("openattic", [
 ]);
 
 var app = angular.module("openattic");
-app.config(function ($httpProvider) {
-  $httpProvider.defaults.xsrfCookieName = "csrftoken";
-  $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
-});
-
+// Start configuration
 app.constant("RESPONSIVE", {
   xs: 0,
   sm: 768,
   md: 992,
   lg: 1200
 });
+// End configuration
 
-app.run(function ($rootScope, $state, UserService) {
+app.config(function ($httpProvider) {
+  $httpProvider.defaults.xsrfCookieName = "csrftoken";
+  $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
+});
+
+app.run(function ($rootScope, UserService) {
   $rootScope.$on("$stateChangeSuccess", function () {
     UserService.current().$promise.then(function () {
       $rootScope.loggedIn = true;

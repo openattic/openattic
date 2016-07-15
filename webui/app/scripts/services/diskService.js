@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("DiskService", function ($resource) {
-  return $resource("/openattic/api/disks/:id", {
+  return $resource(globalConfig.API.URL + "disks/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
