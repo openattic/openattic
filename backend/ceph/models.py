@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_noop as _
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
 from ifconfig.models import Host
-from nodb.models import NodbModel, JsonField
+from nodb.models import NodbModel, JsonField, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
@@ -127,7 +127,6 @@ class CephCluster(NodbModel):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-            cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
             sources = []
 
@@ -138,11 +137,15 @@ class CephCluster(NodbModel):
                 except SystemError:
                     pass
 
-            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health,
+            cluster = CephCluster(fsid=fsid, name=cluster_name,
                                   performance_data_options=sources)
             result.append(cluster)
 
         return result
+
+    @bulk_attribute_setter('health')
+    def set_cluster_health(self, objects):
+        self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
 
     @staticmethod
     def get_performance_data(fsid, filter=None):
@@ -257,15 +260,11 @@ class CephPool(NodbModel):
         fsid = cluster.fsid
 
         osd_dump_data = MonApi(rados[fsid]).osd_dump()
-        df_data = rados[fsid].mon_command('df')
-
-        dummy_df = [{'stats': {'max_avail': None, 'kb_used': 0}}]
 
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
             stats = rados[fsid].get_stats(str(pool_data['pool_name']))
-            disk_free_data = ([elem for elem in df_data['pools'] if elem['id'] == pool_id] or dummy_df)[0]
 
             object_data = {
                 'id': pool_id,
@@ -284,8 +283,6 @@ class CephPool(NodbModel):
                 'crush_ruleset': pool_data['crush_ruleset'],
                 'num_bytes': stats['num_bytes'],
                 'num_objects': stats['num_objects'],
-                'max_avail': disk_free_data['stats']['max_avail'],
-                'kb_used': disk_free_data['stats']['kb_used'],
                 # Considered advanced options
                 'pgp_num': pool_data['pg_placement_num'],
                 'stripe_width': pool_data['stripe_width'],
@@ -306,11 +303,30 @@ class CephPool(NodbModel):
                 'pool_snaps': pool_data['pool_snaps'],
             }
 
-            ceph_pool = CephPool(**object_data)
+            ceph_pool = CephPool(**CephPool.make_model_args(object_data))
 
             result.append(ceph_pool)
 
         return result
+
+    @bulk_attribute_setter('max_avail', 'kb_used')
+    def ceph_df(self, pools):
+        fsid = self.cluster.fsid
+        df_data = rados[fsid].mon_command('df')
+        df_per_pool = {
+            elem['id']: elem['stats']
+            for elem
+            in df_data['pools']
+            if 'stats' in elem and 'id' in elem
+        }
+
+        for pool in pools:
+            if pool.id in df_per_pool:
+                pool.max_avail = df_per_pool[pool.id]['max_avail']
+                pool.kb_used = df_per_pool[pool.id]['kb_used']
+            else:
+                pool.max_avail = None
+                pool.kb_used = None
 
     def __unicode__(self):
         return self.name
@@ -324,7 +340,7 @@ class CephPool(NodbModel):
         3. Providing a RESTful API.
         """
         context = CephPool.objects.nodb_context
-        insert = self.id is None
+        insert = getattr(self, 'id', None) is None
         with undo_transaction(MonApi(rados[context.fsid]), re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
@@ -336,8 +352,7 @@ class CephPool(NodbModel):
                                     self.erasure_code_profile.name if self.erasure_code_profile else None)
 
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
-            if not insert:
-                self.set_read_only_fields(original)
+            self.set_read_only_fields(original)
 
             def schwartzian_transform(obj):
                 key, val = obj
@@ -407,11 +422,22 @@ class CephErasureCodeProfile(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        return [CephErasureCodeProfile(name=profile,
-                                       **CephErasureCodeProfile.make_model_args(
-                                           MonApi(rados[context.fsid]).osd_erasure_code_profile_get(profile)
-                                       ))
+        profiles = [CephErasureCodeProfile(name=profile)
                 for profile in MonApi(rados[context.fsid]).osd_erasure_code_profile_ls()]
+        for profile in profiles:
+            setattr(profile, '_context', context)
+        return profiles
+
+    @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment', 'ruleset_failure_domain',
+                           'ruleset_root', 'w')
+    def set_data(self, objects):
+        for field_name, value in CephErasureCodeProfile.make_model_args(
+                MonApi(rados[self._context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+            setattr(self, field_name, value)
+        for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment', 'ruleset_failure_domain',
+                           'ruleset_root', 'w']:
+            if field_name not in self.__dict__:
+                setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         context = self.__class__.objects.nodb_context
@@ -430,7 +456,6 @@ class CephErasureCodeProfile(NodbModel):
 class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True, editable=False)
     crush_weight = models.FloatField()
-    depth = models.IntegerField()
     exists = models.IntegerField(editable=False)
     name = models.CharField(max_length=100, editable=False)
     primary_affinity = models.FloatField()
@@ -586,6 +611,12 @@ class CephPg(NodbModel):
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
+            for name in ['last_became_active', 'last_became_peered',
+                         'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
+                         'osd_id', 'pool_name']:
+                if name not in model_args:
+                    model_args[name] = None
+
             ret.append(CephPg(**model_args))
         return ret
 
@@ -602,23 +633,31 @@ class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
-    id = models.CharField(max_length=100, primary_key=True)
+    id = models.CharField(max_length=100, primary_key=True, editable=False, help_text='pool-name/image-name')
     name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool)
-    size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
-    obj_size = models.IntegerField(null=True, blank=True)
+    size = models.IntegerField(help_text='Bytes, where size modulo obj_size === 0', default=4 * 1024 ** 3)
+    obj_size = models.IntegerField(null=True, blank=True, help_text='obj_size === 2^n', default=2 ** 22)
     num_objs = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
     features = JsonField(base_type=list, null=True, blank=True,
                          help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
                                                                          for v
                                                                          in RbdApi.get_feature_mapping().values()])))
-    old_format = models.BooleanField(default=False)
+    old_format = models.BooleanField(default=False, help_text='should always be false')
     used_size = models.IntegerField(editable=False)
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
-        self.id = '{}.{}'.format(self.pool.id, self.name)
+
+    @staticmethod
+    def make_key(pool, image_name):
+        """
+        :type pool: CephPool
+        :type image_name: str | unicode
+        :rtype: unicode
+        """
+        return u'{}/{}'.format(pool.name, image_name)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -629,8 +668,6 @@ class CephRbd(NodbModel):  # aka RADOS block device
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
                                                          for pool in pools)))
         rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
-                                api.image_disk_usage(pool.name, image_name),  # This is really expensive. You should
-                                # first try to only call "rbd du" for rbds that will be serialized.
                                 old_format=api.image_old_format(pool.name, image_name),
                                 features=api.image_features(pool.name, image_name),
                                 name=image_name),
@@ -638,9 +675,16 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 for (image_name, pool)
                 in rbd_name_pools)
 
-        return [CephRbd(pool=pool, **CephRbd.make_model_args(rbd))
+        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name']))))
                 for (rbd, pool)
                 in rbds]
+
+    @bulk_attribute_setter('used_size')
+    def set_disk_usage(self, objects):
+        """This can be really expensive, thus we're calling "rbd du" only for rbds that will be serialized."""
+        api = RbdApi(rados[self.pool.cluster.fsid])  # TODO: self.pool.cluster calls "ceph osd dump"
+        val = api.image_disk_usage(self.pool.name, self.name)
+        self.used_size = val['used_size'] if 'used_size' in val else 0
 
     def save(self, *args, **kwargs):
         """
@@ -652,6 +696,8 @@ class CephRbd(NodbModel):  # aka RADOS block device
         """
         context = CephPool.objects.nodb_context
         insert = self._state.adding  # there seems to be no id field.
+        if not hasattr(self, 'features') or self.features == u'':
+            self.features = None
 
         with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True, exception_type=CephRbd.DoesNotExist) as api:
 
@@ -660,6 +706,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format, order=order)
+                self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
@@ -703,7 +750,7 @@ class CephFs(NodbModel):
         for fs in api.fs_ls():
             args = CephFs.make_model_args(fs)
             args['data_pools'] = fs['data_pool_ids']
-            args['metadata_pool'] = CephPool.objects.get(id=fs['metadata_pool_id'])
+            args['metadata_pool_id'] = fs['metadata_pool_id']
             ret.append(CephFs(**args))
 
         return ret
