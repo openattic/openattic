@@ -363,9 +363,11 @@ Style Guide - General e2e.js File Structure / Architecture
     which file is currently executed when running all tests.
   * If possible use protractor locators like ``by.model`` or ``by.binding`` (those are performant locators).
     Example::
+
        <ul class="example">
           <li>{{volume.name}}</li>
        </ul>
+
     -> Avoid doing: ``var elementName = element.all(by.css('.example li')).get(0);``
     -> Recommended: ``var elementName = element(by.binding('volume.name'));``
   * If ``by.model`` or ``by.binding`` is not available, try using locators like ``by.id`` or ``by.css`` (those are
@@ -373,11 +375,14 @@ Style Guide - General e2e.js File Structure / Architecture
   * Avoid using text locators like ``by.linkText``, ``by.buttonText`` or ``by.cssContainingText`` at least for
     text which tend to change over time / often (like buttons, links and labels)
   * Try to avoid using ``xpath`` - it is a very slow locator. Xpath expressions are hard to read and to debug
-  * In a bunch of openATTIC HTML files (see ``openattic/webui/app/templates``) you'll find css classes which
-    are especially set for tests (those test classes are recognizable by the "tc_"-term which stands for "test class").
-    This is very useful when protractor finds more than one element of something (i.e. "Add"-button) and you can specify
-    the element by adding or just using this tc_class of the element you're looking for to the locator. This makes
-    the needed element unique (i.e.: ``element(by.css('oadatatable .tc_add_btn')).click();``)
+  * In a bunch of openATTIC HTML files (see ``openattic/webui/app/templates``)
+    you'll find css classes which are especially set for tests (those test
+    classes are recognizable by the ``tc_``-term which stands for "test
+    class"). This is very useful when protractor finds more than one element
+    of something (i.e. "Add"-button) and you can specify the element by adding
+    or just using this tc_class of the element you're looking for to the
+    locator. This makes the needed element unique (i.e.:
+    ``element(by.css('oadatatable .tc_add_btn')).click();``)
   * Tests should be readable and understandable for someone who is not familiar in detail with tests in order to make
     it easy to see what exactly the test does and to make it simple writing tests for contributors.
     Also, for someone who does not know what the software is capable of, having a look at the tests should help

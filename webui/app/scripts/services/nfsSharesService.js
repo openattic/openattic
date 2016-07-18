@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("NfsSharesService", function ($resource) {
-  return $resource("/openattic/api/nfsshares/:id", {
+  return $resource(globalConfig.API.URL + "nfsshares/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,7 +45,7 @@ app.factory("NfsSharesService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/nfsshares"
+      url: globalConfig.API.URL + "nfsshares"
     }
   });
 });
