@@ -129,7 +129,6 @@ class CephCluster(NodbModel):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-            cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
             sources = []
 
