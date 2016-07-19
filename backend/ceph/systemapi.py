@@ -196,20 +196,11 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="")
     def write_nagios_configs(self, sender):
-        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
-
         for cluster in CephCluster.objects.all():
-            file_name = "cephcluster_{}.cfg".format(cluster.fsid)
-
-            services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
-
-            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
-            with open(path, "wb") as config_file:
-                config_file.write(render_to_string("nagios/services.cfg", {
-                    "IncludeHost": False,
-                    "Host": Host.objects.get_current(),
-                    "Services": services
-                }))
+            # write Nagios config file for Ceph cluster
+            cluster_file_name = "cephcluster_{}.cfg".format(cluster.fsid)
+            cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+            self._write_services_to_file(cluster_file_name, cluster_services)
 
     def _gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):
@@ -230,3 +221,14 @@ class SystemD(BasePlugin):
         service_command = "check_{}".format(str.lower(service_instance_name))
 
         return _CephService(service_desc, service_command, service_arguments)
+
+    def _write_services_to_file(self, file_name, services):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+        path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
+
+        with open(path, "wb") as config_file:
+            config_file.write(render_to_string("nagios/services.cfg", {
+                "IncludeHost": False,
+                "Host": Host.objects.get_current(),
+                "Services": services
+            }))
