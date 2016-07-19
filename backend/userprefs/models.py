@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 
 from ifconfig.models import Host, HostDependentManager
 
+
 class UserProfile(models.Model):
     user = models.ForeignKey(User)
     host = models.ForeignKey(Host)
@@ -34,7 +35,7 @@ class UserProfile(models.Model):
         try:
             pref = self.userpreference_set.get(setting=item)
         except UserPreference.DoesNotExist:
-            raise KeyError( item )
+            raise KeyError(item)
         else:
             return json.loads(pref.value)
 
@@ -51,7 +52,7 @@ class UserProfile(models.Model):
         try:
             pref = self.userpreference_set.get(setting=item)
         except UserPreference.DoesNotExist:
-            raise KeyError( item )
+            raise KeyError(item)
         else:
             pref.delete()
 
@@ -69,13 +70,23 @@ class UserProfile(models.Model):
     def __iter__(self):
         return iter(self.userpreference_set.all())
 
+    def filter_prefs(self, pref_filter):
+        filtered_prefs = []
+
+        for preference in self.userpreference_set.all():
+            if preference.setting in pref_filter:
+                filtered_prefs.append(preference)
+
+        return filtered_prefs
+
+
 class UserPreference(models.Model):
     profile = models.ForeignKey(UserProfile)
     setting = models.CharField(max_length=50)
-    value   = models.TextField()
+    value = models.TextField()
 
     class Meta:
         unique_together = ("profile", "setting")
 
     def __unicode__(self):
-        return "<UserPreference %s>" % self.setting
+        return self.setting

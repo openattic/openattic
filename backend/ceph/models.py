@@ -213,6 +213,11 @@ class CephCluster(NodbModel):
                               .format(xmlpath, fsid))
         return RRD(xmlpath)
 
+    @property
+    def rados_client(self):
+        """Mainly for django shell by simplifying the access to librados."""
+        return rados[self.fsid]
+
     def __str__(self):
         return self.name
 
@@ -383,17 +388,17 @@ class CephPool(NodbModel):
                     api.osd_tier_cache_mode(self.name, value, undo_previous_mode=original.cache_mode)
                 elif key == 'tier_of_id':
                     if self.tier_of is None:
-                        tier_of_target = CephPool.objects.get(id=original.tier_of.id)
+                        tier_of_target = original.tier_of
                         api.osd_tier_remove(tier_of_target.name, self.name)
                     else:
-                        tier_of_target = CephPool.objects.get(id=self.tier_of.id)
+                        tier_of_target = self.tier_of
                         api.osd_tier_add(tier_of_target.name, self.name)
                 elif key == 'read_tier_id':
                     if self.read_tier is None:
-                        read_tier_target = CephPool.objects.get(id=original.read_tier.id)
+                        read_tier_target = original.read_tier
                         api.osd_tier_remove_overlay(self.name, undo_previous_overlay=read_tier_target.name)
                     else:
-                        read_tier_target = CephPool.objects.get(id=self.read_tier.id)
+                        read_tier_target = self.read_tier
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
                 elif self.type == 'replicated' and key not in ['name']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
@@ -584,11 +589,9 @@ class CephPg(NodbModel):
                 'pool_name__exact': 'poolstr'
             }
             argdict = {}
-            if query.q is None:
+            if query.q is None or len(query.q.children) != 1 or len(query.q.children[0]) != 2:
                 return argdict
-            if len(query.q.children) != 1:
-                return argdict
-            if query.q.children[0] not in mapping.keys():
+            if query.q.children[0][0] not in mapping.keys():
                 return argdict
 
             return {mapping[query.q.children[0][0]]: str(query.q.children[0][1])}
@@ -599,9 +602,9 @@ class CephPg(NodbModel):
                 'pool_name__exact': 'pg ls-by-pool'
             }
 
-            if query.q is None or len(query.q.children) != 1:
+            if query.q is None or len(query.q.children) != 1 or len(query.q.children[0]) != 2:
                 return 'pg ls'
-            if query.q.children[0] not in mapping.keys():
+            if query.q.children[0][0] not in mapping.keys():
                 return 'pg ls'
 
             return mapping[query.q.children[0][0]]
