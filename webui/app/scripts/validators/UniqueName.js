@@ -51,7 +51,6 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, c
         }
         stopTimeout = $timeout(function () {
           var obj;
-          var current;
           var query = {};
           switch (ctrl.model) {
           case "host":

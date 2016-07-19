@@ -157,7 +157,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         }
       }
     }
-    if (!key || hits != 1) {
+    if (!key || hits !== 1) {
       return;
     }
     var checked = newSet[key].checked;
@@ -254,7 +254,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           //pool.oaMaxFree = (pool.max_avail - pool.num_bytes) >> 20; // Did not work, don't know why.
           pool.oaMaxFree = parseInt((pool.max_avail - pool.num_bytes) / (1 << 20), 10);
           pool.oaFreeText = $filter("bytes")(pool.oaFree);
-          if (pool.name === "rbd"){
+          if (pool.name === "rbd") {
             $scope.data.pool = pool;
           }
         });
