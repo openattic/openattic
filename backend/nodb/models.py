@@ -470,7 +470,7 @@ class NodbModel(models.Model):
 
         self.__dict__.update(kwargs)
 
-        # We need to trigger the __set__ methon of related fields
+        # We need to trigger the __set__ method of related fields
         for (key, value) in kwargs.iteritems():
             if key in self.__class__.__dict__ and \
                     isinstance(self.__class__.__dict__[key], ReverseSingleRelatedObjectDescriptor):
