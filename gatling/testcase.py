@@ -98,14 +98,13 @@ class GatlingTestCase(unittest.TestCase):
         if "obj_id" in kwargs:
             url = "%s/%s" % (url, str(kwargs["obj_id"]))
 
+        header["content-type"] = "application/json"
+        data = kwargs.get("data", None)
+
         # POST, PUT
         if method in ["POST", "PUT"]:
             if prefixes["detail_route"]:
                 url = "%s/%s" % (url, prefixes["detail_route"])
-
-            header["content-type"] = "application/json"
-
-            data = kwargs.get("data", None)
 
             res = requests.request(method, url, data=json.dumps(data), headers=header)
             res.raise_for_status()
@@ -119,7 +118,7 @@ class GatlingTestCase(unittest.TestCase):
         elif method in ["GET", "DELETE"]:
             if "search_param" in kwargs:
                 url = "%s?%s" % (url, kwargs["search_param"])
-            res = requests.request(method, url, headers=header)
+            res = requests.request(method, url, data=json.dumps(data), headers=header)
             res.raise_for_status()
 
             # For method DELETE no json object could be decoded, so just return the response
