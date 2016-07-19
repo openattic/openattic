@@ -144,7 +144,7 @@ class CephPoolTestCase(TestCase):
         """
         Checking the reverse order.
         FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of,
-               resulting in wired parameters to osd_tier_remove.
+               resulting in weird parameters to osd_tier_remove.
         """
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
