@@ -22,7 +22,7 @@ import re
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
 
-from ceph.models import CephCluster
+from ceph.models import CephCluster, CephPool, fsid_context
 from ifconfig.models import Host
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
@@ -190,7 +190,9 @@ class SystemD(BasePlugin):
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
         for file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
-            if re.match(r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$", file):
+            if re.match(r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$", file) or \
+                    re.match(r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+.cfg$",
+                             file):
                 path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
                 os.remove(path)
 
@@ -201,6 +203,15 @@ class SystemD(BasePlugin):
             cluster_file_name = "cephcluster_{}.cfg".format(cluster.fsid)
             cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
             self._write_services_to_file(cluster_file_name, cluster_services)
+
+            # write Nagios config files for pools in Ceph cluster
+            with fsid_context(cluster.fsid):
+                for pool in CephPool.objects.all():
+                    pool_file_name = "cephpool_{}_{}.cfg".format(cluster.fsid, pool.name)
+                    pool_services = [self._gen_service_data(
+                        pool.__class__.__name__,
+                        "{} {}".format(cluster.fsid, pool.name))]
+                    self._write_services_to_file(pool_file_name, pool_services)
 
     def _gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):
