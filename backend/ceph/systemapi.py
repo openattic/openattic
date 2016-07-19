@@ -190,7 +190,7 @@ class SystemD(BasePlugin):
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
         for file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
-            if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", file):
+            if re.match(r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$", file):
                 path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
                 os.remove(path)
 
