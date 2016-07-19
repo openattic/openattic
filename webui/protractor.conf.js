@@ -44,7 +44,7 @@ exports.config = {
    pools                : '../e2e/pools/**/*.e2e.js',
    ceph_pools           : '../e2e/ceph/ceph_pools.e2e.js',
    ceph_osds            : '../e2e/ceph/ceph_osds.e2e.js',
-   ceph_rbds            : '../e2e/ceph/ceph_rbds.e2e.js',
+   ceph_rbds            : '../e2e/ceph/rbds/**/*.e2e.js',
    volumes              : '../e2e/volumes/volumes.e2e.js',
    volumes_add          : '../e2e/volumes/add/**/*.e2e.js',
    volumes_protection   : '../e2e/volumes/protection/**/*.e2e.js',

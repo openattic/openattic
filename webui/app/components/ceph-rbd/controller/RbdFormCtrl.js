@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
-    SizeParserService, $filter) {
+    SizeParserService, $filter, toasty) {
 
   $scope.rbd = {
     name: "",
@@ -53,7 +53,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         checked: true,
         disabled: false
       },
-      "striping": {
+      "stripingv2": {
         checked: false,
         disabled: true
       },
@@ -94,9 +94,9 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       desc: "Layering",
       helpText: "",
       requires: null,
-      excludes: "striping"
+      excludes: "stripingv2"
     },
-    "striping": {
+    "stripingv2": {
       desc: "Striping",
       helpText: "",
       requires: null,
@@ -131,11 +131,26 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   $scope.defaultFeatureValues = {};
   angular.copy($scope.data.features, $scope.defaultFeatureValues);
 
+  var deepBoxCheck = function (key, checked) {
+    angular.forEach($scope.features, function (details, feature) {
+      if (details.requires === key) {
+        $scope.data.features[feature].disabled = !checked;
+        if (!checked) {
+          $scope.data.features[feature].checked = checked; // Always.
+          deepBoxCheck(feature, checked);
+        }
+      }
+      if (details.excludes === key) {
+        $scope.data.features[feature].disabled = checked;
+      }
+    });
+  };
+
   $scope.$watch("data.features", function (newSet, oldSet) {
     var key = false;
     var hits = 0;
-    for (var feature in newSet){
-      if (newSet[feature].checked != oldSet[feature].checked) {
+    for (var feature in newSet) {
+      if (newSet[feature].checked !== oldSet[feature].checked) {
         hits++;
         if (!key) {
           key = feature;
@@ -155,15 +170,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       }
     }
 
-    angular.forEach($scope.features, function (details, feature) {
-      if (details.requires === key) {
-        $scope.data.features[feature].checked = false; // Always.
-        $scope.data.features[feature].disabled = !checked;
-      }
-      if (details.excludes === key) {
-        $scope.data.features[feature].disabled = checked;
-      }
-    });
+    deepBoxCheck(key, checked);
   }, true);
 
   $scope.defaultFeatures = function () {
@@ -171,14 +178,16 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   };
 
   $scope.updateObjSize = function (size, old, jump) {
-    size = size.replace(/[+-]+/, "");
+    if (size.match(/[+-]+/)) {
+      size = size.replace(/[+-]+/, "");
+    }
     if (size === old) {
       $scope.data.obj_size = size;
       return;
     }
     size = SizeParserService.parseInt(size, "b", "k"); //default input size is KB
     var power = 0;
-    if (size !== null) {
+    if (size !== null && size !== 0) {
       power =  Math.round(Math.log(size) / Math.log(2));
       if (typeof jump === "number") {
         power += jump;
@@ -193,8 +202,8 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     }
     if ($scope.rbd.obj_size !== size) {
       $scope.rbd.obj_size = size;
-      $scope.data.obj_size = $filter("bytes")(size);
     }
+    $scope.data.obj_size = $filter("bytes")(size);
   };
 
   $scope.objSizeChange = function (event) {
@@ -270,13 +279,26 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       $scope.rbd.pool = $scope.data.pool.id;
       $scope.rbd.id = $stateParams.clusterId;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");
-      console.log($scope.rbd);
       cephRbdService.save($scope.rbd)
         .$promise
         .then(function (res) {
           $scope.rbd = res;
           goToListView();
         }, function (error) {
+          var toastMsg = "Could not create the RBD through a server failure.";
+          if (error.status === 400) {
+            if (error.data.size) {
+              var size = error.data.size[0].match(/[0-9]+/)[0];
+              toastMsg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
+            } else {
+              toastMsg = "Could not create the RBD because of " + $filter("json")(error.data);
+            }
+          }
+          toasty.error({
+            title: "Can't create RBD",
+            msg: toastMsg,
+            timeout: 10000
+          });
           console.log("An error occured", error);
         });
     }

@@ -1,61 +1,28 @@
-var helpers = require('../common.js');
+var helpers = require('../../common.js');
+var rbdCommons = require('./cephRbdCommons.js');
 
 describe('should test the ceph rbd panel', function(){
-
-  var cephMenu = element(by.css('.tc_menuitem_ceph > a'));
-  var cephRBDs = element(by.css('.tc_submenuitem_ceph_rbds'));
-  var selectCluster = element(by.css('#cluster-selection option:nth-child(2)'));
-  var attributes = [
-    'Name',
-    'Block name prefix',
-    'Pool',
-    'Size',
-    'Object size',
-    'Number of objects'
-  ];
+  var rbdProperties = new rbdCommons();
 
   beforeAll(function(){
     helpers.login();
-    cephMenu.click();
-    cephRBDs.click();
+    rbdProperties.cephMenu.click();
+    rbdProperties.cephRBDs.click();
   });
-
-  var tableHeaders = [
-    {
-      name: 'Name',
-      displayed: true
-    },
-    {
-      name: 'Poolname',
-      displayed: true
-    },
-    {
-      name: 'Size',
-      displayed: true
-    },
-    {
-      name: 'Object size',
-      displayed: false
-    },
-    {
-      name: 'Number of objects',
-      displayed: false
-    }
-  ];
 
   it('should check the ceph RBDs url', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
   });
 
   it('should select a cluster', function(){
-    selectCluster.click();
+    rbdProperties.selectCluster.click();
   });
 
   it('should display the ceph RBD table after selecting a cluster', function(){
     expect(element(by.css('.tc_cephRbdTable')).isDisplayed()).toBe(true);
   });
 
-  tableHeaders.forEach(function(header){
+  rbdProperties.tableHeaders.forEach(function(header){
     it('should ' + !header.displayed ? 'not ' : '' + 'display the following table header: ' + header.name, function(){
       expect(element(by.cssContainingText('th', header.name)).isDisplayed()).toBe(header.displayed);
     });
@@ -68,8 +35,8 @@ describe('should test the ceph rbd panel', function(){
   it('should still have the cluster selected and display RBDs when switching between panels', function(){
     element(by.css('ul .tc_menuitem_pools > a')).click();
     expect(browser.getCurrentUrl()).toContain('/#/pools');
-    cephMenu.click();
-    cephRBDs.click();
+    rbdProperties.cephMenu.click();
+    rbdProperties.cephRBDs.click();
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
     expect(element(by.id('cluster-selection')).getText()).toContain('ceph (');
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
@@ -81,7 +48,7 @@ describe('should test the ceph rbd panel', function(){
     expect(element(by.css('.tc_detailsTab')).isDisplayed()).toBe(true);
   });
 
-  attributes.forEach(function(attribute){
+  rbdProperties.detailAttributes.forEach(function(attribute){
     it('should check the content attribute "' + attribute + '" in the details tab when selecting a rbd', function(){
       element.all(by.binding('row.name')).get(0).click();
       expect(element(by.cssContainingText('dt', attribute + ':')).isDisplayed()).toBe(true);

@@ -57,9 +57,9 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     var requests = [];
     $scope.rbds.forEach(function (rbd) {
       var deferred = $q.defer();
-      console.log(rbd);
       cephRbdService.delete({
         id: clusterId,
+        pool: rbd.pool.name,
         name: rbd.name
       }, deferred.resolve, deferred.reject);
       requests.push(deferred.promise);

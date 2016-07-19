@@ -34,6 +34,7 @@ var app = angular.module("openattic.cephRbd");
 app.factory("cephRbdService", function ($resource) {
   return $resource("/openattic/api/ceph/:id/rbds", {
     id: "@id",
+    pool: "@pool",
     name: "@name"
   }, {
     query: {
@@ -45,7 +46,7 @@ app.factory("cephRbdService", function ($resource) {
     },
     delete: {
       method: "DELETE",
-      url: "/openattic/api/ceph/:id/rbds/:name"
+      url: "/openattic/api/ceph/:id/rbds/:pool/:name"
     }
   });
 });
