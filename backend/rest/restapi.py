@@ -40,11 +40,13 @@ class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
     auth_token = serializers.SerializerMethodField("get_auth_token")
+    profile = relations.HyperlinkedIdentityField(view_name='userprofile-detail')
 
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'is_active',
-                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token')
+                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token',
+                  'profile')
 
     def get_auth_token(self, obj):
         current_user = self.context["request"].user

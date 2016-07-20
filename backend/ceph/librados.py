@@ -254,7 +254,10 @@ def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise
     try:
         undo_context._undo_stack = deque()
         yield undo_context
-        delattr(undo_context, '_undo_stack')
+        try:
+            delattr(undo_context, '_undo_stack')
+        except AttributeError:
+            logger.exception('Ignoring Attribute error here.')
     except exception_type as e:
         logger.exception('Will now undo steps performed.')
         stack = getattr(undo_context, '_undo_stack')

@@ -16,10 +16,10 @@
 import requests
 
 from auth.scenarios import TokenAuthTestScenario
-from user.scenarios import AuthTokenTestScenario
+from user.scenarios import UserTestScenario
 
 
-class AuthTokenTestCase(AuthTokenTestScenario, TokenAuthTestScenario):
+class AuthTokenTestCase(UserTestScenario, TokenAuthTestScenario):
 
     token_not_set_message = "Not set yet!"
 
