@@ -148,7 +148,7 @@ var rbdCommons = function(){
           clones.push(clone);
         });
       } else {
-        clones.push(clone)
+        clones.push(clone);
       }
     });
     return clones;
