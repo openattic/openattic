@@ -40,7 +40,7 @@ class UserPrefsTestCase(UserTestScenario):
         """ Try to create a user preference and check if it's stored in the database and returned by
         the REST API. """
         profile = self.send_request("GET")
-        pre_length = len(profile["response"][0]["preferences"])
+        pre_length = len(profile["response"][0]["preferences"]) if profile["response"] else 0
 
         # Create a preference
         res = self.send_request("POST", data=self.test_preference)
@@ -54,7 +54,7 @@ class UserPrefsTestCase(UserTestScenario):
     def test_create_delete_userpreference(self):
         """ Try to create a user preference and check if it is deleted correctly. """
         profile = self.send_request("GET")
-        pre_length = len(profile["response"][0]["preferences"])
+        pre_length = len(profile["response"][0]["preferences"]) if profile["response"] else 0
 
         # Create and delete a preference
         res = self.send_request("POST", data=self.test_preference)
@@ -98,8 +98,8 @@ class UserPrefsTestCase(UserTestScenario):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("GET", obj_id=profile["response"][0]["id"],
                               auth_token=testuser_auth_token)
-
-        self.assertEqual(str(err.exception), "401 Client Error: UNAUTHORIZED")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "401 client error: unauthorized")
         self.assertEqual(err.exception.response.status_code, 401)
         self.assertEqual(str(err.exception.response.json()), "You are not allowed to access other "
                                                              "users profiles")
@@ -120,7 +120,8 @@ class UserPrefsTestCase(UserTestScenario):
             self.send_request("DELETE", obj_id=res["response"]["id"],
                               auth_token=testuser_auth_token,
                               data={"settings": [self.test_preference.keys()[0]]})
-        self.assertEqual(str(err.exception), "401 Client Error: UNAUTHORIZED")
+        err_message = str(err.exception)
+        self.assertEqual(err_message.lower(), "401 client error: unauthorized")
         self.assertEqual(err.exception.response.status_code, 401)
         self.assertEqual(str(err.exception.response.json()), "You are not allowed to delete "
                                                              "preferences of other users")
