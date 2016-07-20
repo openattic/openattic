@@ -201,7 +201,7 @@ def update(**kwargs):
         ceph = get_dbus_object("/ceph")
         nagios = get_dbus_object("/nagios")
 
-        ceph.remove_nagios_configs()
+        ceph.remove_nagios_configs(["all"])
         ceph.write_all_nagios_configs()
         nagios.restart_service()
     else:
