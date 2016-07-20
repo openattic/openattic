@@ -174,7 +174,7 @@ var rbdCommons = function(){
   this.featureCases.forEach(function(featureCase) {
     self.expandFeatureCases(featureCase).forEach(function(testCase){
       self.expandedFeatureCases.push(testCase);
-    })
+    });
   });
 };
 
