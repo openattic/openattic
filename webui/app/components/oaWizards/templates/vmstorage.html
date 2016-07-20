@@ -66,22 +66,6 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
-                                    contentForm3.cifspath.$dirty) && contentForm3.cifspath.$invalid}">
-                                    <label class="col-md-2 control-label" for="cifspath">Path</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                            <input type="text" class="form-control" id="cifspath"
-                                                   placeholder="Path..." ng-model="input.cifs.path" name="cifspath"
-                                                   ng-required="input.cifs.create">
-                                        </div>
-                                        <span class="help-block tc_cifsPathRequired" ng-show="(contentForm3.submitted ||
-                                            contentForm3.cifspath.$dirty) && contentForm3.cifspath.$error.required">
-                                            This field is required!
-                                        </span>
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="cifscomment">Comment</label>
                                     <div class="col-md-10">
@@ -144,24 +128,6 @@
                                     <i class="pull-right" ng-class="{'fa fa-angle-up': input.nfs.create,
                                     'fa fa-angle-down': !input.nfs.create}"></i>
                                 </uib-accordion-heading>
-                                <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
-                                    contentForm3.nfspath.$dirty) && contentForm3.nfspath.$invalid}">
-                                    <label class="col-md-2 control-label" for="nfspath">Path</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="icon-prepend fa fa-share"></i>
-                                            </span>
-                                            <input class="form-control" type="text" placeholder="Path..."
-                                                   ng-model="input.nfs.path" name="nfspath" id="nfspath"
-                                                   ng-required="input.nfs.create">
-                                        </div>
-                                        <span class="help-block tc_nfsPathRequired" ng-show="(contentForm3.submitted ||
-                                            contentForm3.nfspath.$dirty) && contentForm3.nfspath.$error.required">
-                                            The path is required.
-                                        </span>
-                                    </div>
-                                </div>
                                 <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
                                     contentForm3.nfsaddress.$dirty) && contentForm3.nfsaddress.$invalid}">
                                     <label class="col-md-2 control-label" for="nfsaddress">Address</label>
