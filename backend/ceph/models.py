@@ -409,11 +409,13 @@ class CephPool(NodbModel):
                                    'supported'.format(key, value, self.id, self.name))
 
             super(CephPool, self).save(*args, **kwargs)
+            self._update_nagios_configs()
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = MonApi(rados[context.fsid])
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
+        self._update_nagios_configs()
 
     def create_snapshot(self, name):
         context = CephPool.objects.nodb_context
@@ -424,6 +426,15 @@ class CephPool(NodbModel):
         context = CephPool.objects.nodb_context
         api = MonApi(rados[context.fsid])
         api.osd_pool_rmsnap(self.name, name)
+
+    def _update_nagios_configs(self):
+        if "nagios" in settings.INSTALLED_APPS:
+            ceph = get_dbus_object("/ceph")
+            nagios = get_dbus_object("/nagios")
+
+            ceph.remove_nagios_configs(["pool"])
+            ceph.write_pool_nagios_configs()
+            nagios.restart_service()
 
 
 class CephErasureCodeProfile(NodbModel):
