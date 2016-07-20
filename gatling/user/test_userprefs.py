@@ -40,7 +40,7 @@ class UserPrefsTestCase(UserTestScenario):
         """ Try to create a user preference and check if it's stored in the database and returned by
         the REST API. """
         profile = self.send_request("GET")
-        pre_length = len(profile["response"][0]["preferences"])
+        pre_length = len(profile["response"][0]["preferences"]) if profile["response"] else 0
 
         # Create a preference
         res = self.send_request("POST", data=self.test_preference)
@@ -54,7 +54,7 @@ class UserPrefsTestCase(UserTestScenario):
     def test_create_delete_userpreference(self):
         """ Try to create a user preference and check if it is deleted correctly. """
         profile = self.send_request("GET")
-        pre_length = len(profile["response"][0]["preferences"])
+        pre_length = len(profile["response"][0]["preferences"]) if profile["response"] else 0
 
         # Create and delete a preference
         res = self.send_request("POST", data=self.test_preference)
