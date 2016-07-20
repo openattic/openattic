@@ -118,7 +118,11 @@ class GatlingTestCase(unittest.TestCase):
         elif method in ["GET", "DELETE"]:
             if "search_param" in kwargs:
                 url = "%s?%s" % (url, kwargs["search_param"])
-            res = requests.request(method, url, data=json.dumps(data), headers=header)
+
+            if data:
+                res = requests.request(method, url, data=json.dumps(data), headers=header)
+            else:
+                res = requests.request(method, url, headers=header)
             res.raise_for_status()
 
             # For method DELETE no json object could be decoded, so just return the response
