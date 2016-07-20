@@ -212,25 +212,22 @@ class SystemD(BasePlugin):
                     os.remove(path)
 
     @deferredmethod(in_signature="")
-    def write_all_nagios_configs(self, sender):
+    def write_cluster_nagios_configs(self, sender):
         for cluster in CephCluster.objects.all():
-            # write Nagios config file for Ceph cluster
             cluster_file_name = "cephcluster_{}.cfg".format(cluster.fsid)
             cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
             self._write_services_to_file(cluster_file_name, cluster_services)
 
-            # write Nagios config files for pools in Ceph cluster
-            self.write_pool_nagios_configs(cluster.fsid, sender=sender)
-
-    @deferredmethod(in_signature="s")
-    def write_pool_nagios_configs(self, fsid, sender):
-        with fsid_context(fsid):
-            for pool in CephPool.objects.all():
-                pool_file_name = "cephpool_{}_{}.cfg".format(fsid, pool.name)
-                pool_services = [self._gen_service_data(
-                    pool.__class__.__name__,
-                    "{} {}".format(fsid, pool.name))]
-                self._write_services_to_file(pool_file_name, pool_services)
+    @deferredmethod(in_signature="")
+    def write_pool_nagios_configs(self, sender):
+        for cluster in CephCluster.objects.all():
+            with fsid_context(cluster.fsid):
+                for pool in CephPool.objects.all():
+                    pool_file_name = "cephpool_{}_{}.cfg".format(cluster.fsid, pool.name)
+                    pool_services = [self._gen_service_data(
+                        pool.__class__.__name__,
+                        "{} {}".format(cluster.fsid, pool.name))]
+                    self._write_services_to_file(pool_file_name, pool_services)
 
     def _gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):

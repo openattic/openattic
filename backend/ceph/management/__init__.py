@@ -202,7 +202,8 @@ def update(**kwargs):
         nagios = get_dbus_object("/nagios")
 
         ceph.remove_nagios_configs(["all"])
-        ceph.write_all_nagios_configs()
+        ceph.write_cluster_nagios_configs()
+        ceph.write_pool_nagios_configs()
         nagios.restart_service()
     else:
         print "Nagios does not appear to be installed, skipping adding Ceph clusters"
