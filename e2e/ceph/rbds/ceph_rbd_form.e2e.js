@@ -1,5 +1,5 @@
 var helpers = require('../../common.js');
-var rbdCommons = require('./cephRbdCommons.js');
+var rbdCommons = require('./cephRbdCommon.js');
 
 describe('should test the ceph rbd creation form', function(){
   var rbdProperties = new rbdCommons();
