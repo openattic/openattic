@@ -5,6 +5,9 @@
                 <h3 class="panel-title">Create RBD: {{rbd.name}}</h3>
             </div>
             <div class="panel-body">
+                <!-- The following panel body needs to be encapsulated into the template of a directive in order to
+                     create a RBD wizard or use the form somewhere else. Therefor it's not intended as expected at the
+                     moment and it already includes class adjustments in case it's a template. -->
 <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.name.$dirty)
     && rbdForm.name.$invalid}">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="rbdName">Name</label>
