@@ -85,10 +85,8 @@ class Process(object):
         self.exit_on_error = exit_on_error
         self.use_bold = use_bold_font
 
-    def run(self, args, cwd=None, verbosity=None, exit_on_error=None, env=None):
-        verbosity = verbosity if verbosity else self.verbosity
-        if verbosity > VERBOSITY_QUIET:
-            self.log_command(args, cwd, self.use_bold)
+    def run(self, args, cwd=None, exit_on_error=None, env=None):
+        self.log_command(args, cwd, self.use_bold)
 
         pipe = subprocess.Popen(args,
                                 # stderr=subprocess.PIPE,
@@ -105,7 +103,7 @@ class Process(object):
 
         for line in iter(pipe.stdout.readline, b''):
             tmp_result['stdout'].append(line.strip())
-            if verbosity > VERBOSITY_NORMAL:
+            if self.verbosity > VERBOSITY_NORMAL:
                 sys.stdout.write(line)
                 sys.stdout.flush()
 
@@ -120,9 +118,14 @@ class Process(object):
                                returncode=pipe.wait())
 
         if not result.success():
+            # Print stdout on failure too. Some tools like Grunt print errors to stdout!
+            if result.stdout and self.verbosity <= VERBOSITY_NORMAL:  # Do not print if already printed.
+                print result.stdout
             if result.stderr:
                 print result.stderr
             if self.exit_on_error is True and exit_on_error is not False:
+                # Print message on exit for the sake of debugging.
+                print('Error occurred, exiting')
                 sys.exit(result.returncode)
 
         return result
@@ -143,8 +146,7 @@ class Process(object):
         os.chdir(cwd)
         return os.system(' '.join(args))
 
-    @staticmethod
-    def log_command(args, cwd='', use_bold=True):
+    def log_command(self, args, cwd='', use_bold=True):
         """Log a command call.
 
         :param args: List of arguments
@@ -154,6 +156,9 @@ class Process(object):
         :param use_bold:
         :type use_bold: bool
         """
+        if self.verbosity < VERBOSITY_NORMAL:
+            return
+
         # Enquote args with more than one word.
         display_args = args[:]
         for i, arg in enumerate(display_args):
@@ -261,7 +266,7 @@ class DistBuilder(object):
 
     def _get_latest_existing_tag(self, strip_tag=False):
         tags = self.__get_all_tags(self._oa_temp_build_dir)
-        tags.remove('tip')  # We're looking for the latest _labeled_ tag.
+        tags.remove('tip')  # We're looking for the latest _labeled_ tag. So we exclude 'tip'.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
         latest_tag = self._strip_mercurial_tag(latest_tag) if strip_tag else latest_tag
@@ -277,8 +282,6 @@ class DistBuilder(object):
         :param revision: A valid mercurial revision
         :return: The version of the `version.txt`
         """
-        self._process.run(['hg', 'pull', '-u'], cwd=self._oa_temp_build_dir)
-
         if not self._source_is_path:
             # Update to the given revision before determining the upcoming version. Don't do this if
             # the source is a path, because that one is for creating tarballs to be tested before
@@ -493,7 +496,9 @@ class DistBuilder(object):
             self._process.run(['grunt', 'build'], cwd=webui_dir)
 
             # Remove no longer required dirs.
+            self._process.log_command(['rm', '-r', bower_components_dir])
             rmtree(bower_components_dir)
+            self._process.log_command(['rm', '-r', node_modules_dir])
             rmtree(node_modules_dir)
 
         # Update version.txt.

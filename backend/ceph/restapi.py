@@ -77,7 +77,8 @@ class CephClusterViewSet(NodbViewSet):
     Ceph Cluster
 
     This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
-    ```/api/ceph/<fsid>/osds``` and ```/api/ceph/<fsid>/status```.
+    ```/api/ceph/<fsid>/osds```, ```/api/ceph/<fsid>/status``` and
+    ```/api/ceph/<fsid>/performancedata```.
     """
 
     serializer_class = CephClusterSerializer
@@ -91,6 +92,17 @@ class CephClusterViewSet(NodbViewSet):
         fsid = kwargs['pk']
         cluster_status = CephCluster.get_status(fsid)
         return Response(cluster_status, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def performancedata(self, request, *args, **kwargs):
+        fsid = kwargs['pk']
+        filter_data = self.request.QUERY_PARAMS.get('filter', None)
+
+        if filter_data:
+            filter_data = filter_data.split(',')
+
+        performance_data = CephCluster.get_performance_data(fsid, filter_data)
+        return Response(performance_data, status=status.HTTP_200_OK)
 
 
 class CephPoolSerializer(NodbSerializer):
@@ -271,6 +283,7 @@ class CephRbdViewSet(NodbViewSet):
 
     filter_fields = ("name",)
     serializer_class = CephRbdSerializer
+    lookup_value_regex = r'[^/@]+/[^/]+'
 
     def __init__(self, **kwargs):
         super(CephRbdViewSet, self).__init__(**kwargs)

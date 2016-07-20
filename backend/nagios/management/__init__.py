@@ -18,7 +18,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import signals
 
 from systemd import get_dbus_object
-from systemd.helpers import Transaction
 from nagios.conf import settings as nagios_settings
 from ifconfig.models import Host
 from volumes.models import BlockVolume, FileSystemVolume
@@ -32,6 +31,9 @@ def create_nagios(**kwargs):
     signals.post_save.disconnect(update_conf, sender=Service)
 
     for servstate in Service.nagstate["servicestatus"]:
+        if servstate["service_description"].startswith("Check Ceph"):
+            continue
+
         cmdargs = servstate["check_command"].split('!')
         cmdname = cmdargs[0]
         cmdargs = cmdargs[1:]
@@ -67,9 +69,8 @@ def create_nagios(**kwargs):
         serv.save()
 
     nagios = get_dbus_object("/nagios")
-    with Transaction(background=False):
-        nagios.writeconf()
-        nagios.restart_service()
+    nagios.writeconf()
+    nagios.restart_service()
 
     cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
     for bv in BlockVolume.objects.all():

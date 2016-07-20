@@ -30,21 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.factory("CmdlogService", function ($resource) {
-  return $resource(globalConfig.API.URL + "cmdlogs/:id", {
+var app = angular.module("openattic.cephRbd");
+app.factory("cephRbdService", function ($resource) {
+  return $resource("/openattic/api/ceph/:id/rbds", {
     id: "@id"
-  }, {
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
-    },
-    filter: {
-      method: "GET",
-      url: globalConfig.API.URL + "cmdlogs"
-    }
   });
 });

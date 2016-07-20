@@ -22,6 +22,9 @@ import logging
 import math
 import os
 
+from os.path import exists
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -30,7 +33,7 @@ from django.utils.translation import ugettext_noop as _
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
 from ifconfig.models import Host
-from nodb.models import NodbModel, JsonField
+from nodb.models import NodbModel, JsonField, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
@@ -58,6 +61,7 @@ class CephCluster(NodbModel):
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
     health = models.CharField(max_length=11)
+    performance_data_options = JsonField(base_type=list, editable=False)
 
     @staticmethod
     def has_valid_config_file():
@@ -123,12 +127,94 @@ class CephCluster(NodbModel):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-            cluster_health = CephCluster.get_status(fsid, 'health')['overall_status']
 
-            cluster = CephCluster(fsid=fsid, name=cluster_name, health=cluster_health)
+            sources = []
+
+            if "nagios" in settings.INSTALLED_APPS:
+                try:
+                    cluster_rrd = CephCluster._get_cluster_rrd(fsid)
+                    sources = list(cluster_rrd.sources)
+                except SystemError:
+                    pass
+
+            cluster = CephCluster(fsid=fsid, name=cluster_name,
+                                  performance_data_options=sources)
             result.append(cluster)
 
         return result
+
+    @bulk_attribute_setter('health')
+    def set_cluster_health(self, objects):
+        self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
+
+    @staticmethod
+    def get_performance_data(fsid, filter=None):
+        """
+        Returns the performance data by the clusters FSID and consideration of the filter parameters
+        if given.
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file)
+        :rtype: list[str]
+        :return: Returns a list of performance data or the message that the Nagios module isn't
+            installed.
+        :rtype: list[dict] or str
+        """
+        if "nagios" in settings.INSTALLED_APPS:
+            from nagios.graphbuilder import Graph
+
+            graph = Graph()
+            rrd = CephCluster._get_cluster_rrd(fsid)
+
+            sources = filter if filter else rrd.sources
+            for source in sources:
+                source_obj = rrd.get_source(source)
+                graph.add_source(source_obj)
+
+            perf_data = graph.get_json()
+            return graph.convert_rrdtool_json_to_nvd3(perf_data)
+        else:
+            return "Nagios does not appear to be installed, no performance data could be returned."
+
+    @staticmethod
+    def _get_cluster_rrd(fsid):
+        """
+        Returns the RRD file by the clusters FSID.
+        Note: Make sure the Nagios module is installed before calling this method!
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :return: RRD file of the cluster
+        :rtype: nagios.graphbuilder.RRD
+        """
+
+        from nagios.conf import settings as nagios_settings
+        from nagios.graphbuilder import RRD
+
+        curr_host = Host.objects.get_current()
+
+        xmlpath = nagios_settings.XML_PATH % {
+            "host": curr_host,
+            "serv": "Check_CephCluster_{}".format(fsid)
+        }
+
+        if not exists(xmlpath):
+            raise SystemError("XML file '{}' could not be found for the cluster with FSID "
+                              "'{}'. There are two possible reasons: a) The Ceph cluster was "
+                              "just added to openATTIC and 'oaconfig install' was executed. -> "
+                              "Please wait some time until Nagios runs again and creates the "
+                              "file. b) You haven't run 'oaconfig install' after adding the "
+                              "Ceph cluster to openATTIC -> Please run 'oaconfig install' to "
+                              "create all needed configuration files for Nagios."
+                              .format(xmlpath, fsid))
+        return RRD(xmlpath)
+
+    @property
+    def rados_client(self):
+        """Mainly for django shell by simplifying the access to librados."""
+        return rados[self.fsid]
 
     def __str__(self):
         return self.name
@@ -147,7 +233,7 @@ class CephPool(NodbModel):
     full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField(editable=False)
-    size = models.IntegerField()
+    size = models.IntegerField(help_text='Replica size')
     min_size = models.IntegerField(default=1, null=True, editable=True)
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
@@ -179,13 +265,11 @@ class CephPool(NodbModel):
         fsid = cluster.fsid
 
         osd_dump_data = MonApi(rados[fsid]).osd_dump()
-        df_data = rados[fsid].mon_command('df')
 
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
             stats = rados[fsid].get_stats(str(pool_data['pool_name']))
-            disk_free_data = [elem for elem in df_data['pools'] if elem['id'] == pool_id][0]
 
             object_data = {
                 'id': pool_id,
@@ -204,8 +288,6 @@ class CephPool(NodbModel):
                 'crush_ruleset': pool_data['crush_ruleset'],
                 'num_bytes': stats['num_bytes'],
                 'num_objects': stats['num_objects'],
-                'max_avail': disk_free_data['stats']['max_avail'],
-                'kb_used': disk_free_data['stats']['kb_used'],
                 # Considered advanced options
                 'pgp_num': pool_data['pg_placement_num'],
                 'stripe_width': pool_data['stripe_width'],
@@ -226,11 +308,30 @@ class CephPool(NodbModel):
                 'pool_snaps': pool_data['pool_snaps'],
             }
 
-            ceph_pool = CephPool(**object_data)
+            ceph_pool = CephPool(**CephPool.make_model_args(object_data))
 
             result.append(ceph_pool)
 
         return result
+
+    @bulk_attribute_setter('max_avail', 'kb_used')
+    def ceph_df(self, pools):
+        fsid = self.cluster.fsid
+        df_data = rados[fsid].mon_command('df')
+        df_per_pool = {
+            elem['id']: elem['stats']
+            for elem
+            in df_data['pools']
+            if 'stats' in elem and 'id' in elem
+        }
+
+        for pool in pools:
+            if pool.id in df_per_pool:
+                pool.max_avail = df_per_pool[pool.id]['max_avail']
+                pool.kb_used = df_per_pool[pool.id]['kb_used']
+            else:
+                pool.max_avail = None
+                pool.kb_used = None
 
     def __unicode__(self):
         return self.name
@@ -244,7 +345,7 @@ class CephPool(NodbModel):
         3. Providing a RESTful API.
         """
         context = CephPool.objects.nodb_context
-        insert = self.id is None
+        insert = getattr(self, 'id', None) is None
         with undo_transaction(MonApi(rados[context.fsid]), re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
@@ -256,8 +357,7 @@ class CephPool(NodbModel):
                                     self.erasure_code_profile.name if self.erasure_code_profile else None)
 
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
-            if not insert:
-                self.set_read_only_fields(original)
+            self.set_read_only_fields(original)
 
             def schwartzian_transform(obj):
                 key, val = obj
@@ -274,17 +374,17 @@ class CephPool(NodbModel):
                     api.osd_tier_cache_mode(self.name, value, undo_previous_mode=original.cache_mode)
                 elif key == 'tier_of_id':
                     if self.tier_of is None:
-                        tier_of_target = CephPool.objects.get(id=original.tier_of.id)
+                        tier_of_target = original.tier_of
                         api.osd_tier_remove(tier_of_target.name, self.name)
                     else:
-                        tier_of_target = CephPool.objects.get(id=self.tier_of.id)
+                        tier_of_target = self.tier_of
                         api.osd_tier_add(tier_of_target.name, self.name)
                 elif key == 'read_tier_id':
                     if self.read_tier is None:
-                        read_tier_target = CephPool.objects.get(id=original.read_tier.id)
+                        read_tier_target = original.read_tier
                         api.osd_tier_remove_overlay(self.name, undo_previous_overlay=read_tier_target.name)
                     else:
-                        read_tier_target = CephPool.objects.get(id=self.read_tier.id)
+                        read_tier_target = self.read_tier
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
                 elif self.type == 'replicated' and key not in ['name']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
@@ -327,11 +427,22 @@ class CephErasureCodeProfile(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        return [CephErasureCodeProfile(name=profile,
-                                       **CephErasureCodeProfile.make_model_args(
-                                           MonApi(rados[context.fsid]).osd_erasure_code_profile_get(profile)
-                                       ))
+        profiles = [CephErasureCodeProfile(name=profile)
                 for profile in MonApi(rados[context.fsid]).osd_erasure_code_profile_ls()]
+        for profile in profiles:
+            setattr(profile, '_context', context)
+        return profiles
+
+    @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment', 'ruleset_failure_domain',
+                           'ruleset_root', 'w')
+    def set_data(self, objects):
+        for field_name, value in CephErasureCodeProfile.make_model_args(
+                MonApi(rados[self._context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+            setattr(self, field_name, value)
+        for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment', 'ruleset_failure_domain',
+                           'ruleset_root', 'w']:
+            if field_name not in self.__dict__:
+                setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         context = self.__class__.objects.nodb_context
@@ -350,7 +461,6 @@ class CephErasureCodeProfile(NodbModel):
 class CephOsd(NodbModel):
     id = models.IntegerField(primary_key=True, editable=False)
     crush_weight = models.FloatField()
-    depth = models.IntegerField()
     exists = models.IntegerField(editable=False)
     name = models.CharField(max_length=100, editable=False)
     primary_affinity = models.FloatField()
@@ -465,11 +575,9 @@ class CephPg(NodbModel):
                 'pool_name__exact': 'poolstr'
             }
             argdict = {}
-            if query.q is None:
+            if query.q is None or len(query.q.children) != 1 or len(query.q.children[0]) != 2:
                 return argdict
-            if len(query.q.children) != 1:
-                return argdict
-            if query.q.children[0] not in mapping.keys():
+            if query.q.children[0][0] not in mapping.keys():
                 return argdict
 
             return {mapping[query.q.children[0][0]]: str(query.q.children[0][1])}
@@ -480,9 +588,9 @@ class CephPg(NodbModel):
                 'pool_name__exact': 'pg ls-by-pool'
             }
 
-            if query.q is None or len(query.q.children) != 1:
+            if query.q is None or len(query.q.children) != 1 or len(query.q.children[0]) != 2:
                 return 'pg ls'
-            if query.q.children[0] not in mapping.keys():
+            if query.q.children[0][0] not in mapping.keys():
                 return 'pg ls'
 
             return mapping[query.q.children[0][0]]
@@ -506,25 +614,53 @@ class CephPg(NodbModel):
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
+            for name in ['last_became_active', 'last_became_peered',
+                         'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
+                         'osd_id', 'pool_name']:
+                if name not in model_args:
+                    model_args[name] = None
+
             ret.append(CephPg(**model_args))
         return ret
+
+
+def aggregate_dict(*args, **kwargs):
+    ret = {}
+    for arg in args:
+        ret.update(arg)
+    ret.update(**kwargs)
+    return ret
 
 
 class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
-    name = models.CharField(max_length=100, primary_key=True)
+    id = models.CharField(max_length=100, primary_key=True, editable=False, help_text='pool-name/image-name')
+    name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool)
-    size = models.IntegerField(help_text='Bytes', default=4 * 1024 ** 3)
-    obj_size = models.IntegerField(editable=False)
+    size = models.IntegerField(help_text='Bytes, where size modulo obj_size === 0', default=4 * 1024 ** 3)
+    obj_size = models.IntegerField(null=True, blank=True, help_text='obj_size === 2^n', default=2 ** 22)
     num_objs = models.IntegerField(editable=False)
-    order = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
     features = JsonField(base_type=list, null=True, blank=True,
                          help_text='For example: [{}]'.format(', '.join(['"{}"'.format(v)
                                                                          for v
                                                                          in RbdApi.get_feature_mapping().values()])))
+    old_format = models.BooleanField(default=False, help_text='should always be false')
+    used_size = models.IntegerField(editable=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CephRbd, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def make_key(pool, image_name):
+        """
+        :type pool: CephPool
+        :type image_name: str | unicode
+        :rtype: unicode
+        """
+        return u'{}/{}'.format(pool.name, image_name)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -534,15 +670,24 @@ class CephRbd(NodbModel):  # aka RADOS block device
         pools = CephPool.objects.all()
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool) for image in api.list(pool.name))
                                                          for pool in pools)))
-        rbds = ((dict(name=image_name,
-                      features=api.image_features(pool.name, image_name),
-                      **api.image_stat(pool.name, image_name)), pool)
+        rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
+                                old_format=api.image_old_format(pool.name, image_name),
+                                features=api.image_features(pool.name, image_name),
+                                name=image_name),
+                 pool)
                 for (image_name, pool)
                 in rbd_name_pools)
 
-        return [CephRbd(pool=pool, **CephRbd.make_model_args(rbd))
+        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name']))))
                 for (rbd, pool)
                 in rbds]
+
+    @bulk_attribute_setter('used_size')
+    def set_disk_usage(self, objects):
+        """This can be really expensive, thus we're calling "rbd du" only for rbds that will be serialized."""
+        api = RbdApi(rados[self.pool.cluster.fsid])  # TODO: self.pool.cluster calls "ceph osd dump"
+        val = api.image_disk_usage(self.pool.name, self.name)
+        self.used_size = val['used_size'] if 'used_size' in val else 0
 
     def save(self, *args, **kwargs):
         """
@@ -554,11 +699,17 @@ class CephRbd(NodbModel):  # aka RADOS block device
         """
         context = CephPool.objects.nodb_context
         insert = self._state.adding  # there seems to be no id field.
+        if not hasattr(self, 'features') or self.features == u'':
+            self.features = None
 
-        with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True) as api:
+        with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True, exception_type=CephRbd.DoesNotExist) as api:
 
             if insert:
-                api.create(self.pool.name, self.name, self.size, features=self.features)
+                order = None
+                if self.obj_size is not None and self.obj_size > 0:
+                    order = int(round(math.log(float(self.obj_size), 2)))
+                api.create(self.pool.name, self.name, self.size, features=self.features, old_format=self.old_format, order=order)
+                self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
@@ -568,11 +719,13 @@ class CephRbd(NodbModel):  # aka RADOS block device
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
                 if key == 'features':
-                    assert not insert
-                    for feature in set(original.features).difference(set(value)):
-                        api.image_set_feature(self.pool.name, self.name, feature, False)
-                    for feature in set(value).difference(set(original.features)):
-                        api.image_set_feature(self.pool.name, self.name, feature, True)
+                    if not insert:
+                        for feature in set(original.features).difference(set(value)):
+                            api.image_set_feature(self.pool.name, self.name, feature, False)
+                        for feature in set(value).difference(set(original.features)):
+                            api.image_set_feature(self.pool.name, self.name, feature, True)
+                    else:
+                        logger.warning('Tried to set features, but they should already match. {} != {}'.format(original.features, value))
                 else:
                     logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
                                    'supported'.format(key, value, self.name))
@@ -600,7 +753,7 @@ class CephFs(NodbModel):
         for fs in api.fs_ls():
             args = CephFs.make_model_args(fs)
             args['data_pools'] = fs['data_pool_ids']
-            args['metadata_pool'] = CephPool.objects.get(id=fs['metadata_pool_id'])
+            args['metadata_pool_id'] = fs['metadata_pool_id']
             ret.append(CephFs(**args))
 
         return ret
