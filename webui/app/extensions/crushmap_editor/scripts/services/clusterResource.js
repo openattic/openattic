@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("ClusterResource", function ($resource) {
-  return $resource("/openattic/api/cephclusters/:id", {
+  return $resource(globalConfig.API.URL + "cephclusters/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},

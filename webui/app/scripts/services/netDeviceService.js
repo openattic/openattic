@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("NetdeviceService", function ($resource) {
-  return $resource("/openattic/api/netdevices/:id", {
+  return $resource(globalConfig.API.URL + "netdevices/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},

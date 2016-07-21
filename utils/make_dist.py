@@ -85,10 +85,8 @@ class Process(object):
         self.exit_on_error = exit_on_error
         self.use_bold = use_bold_font
 
-    def run(self, args, cwd=None, verbosity=None, exit_on_error=None, env=None):
-        verbosity = verbosity if verbosity else self.verbosity
-        if verbosity > VERBOSITY_QUIET:
-            self.log_command(args, cwd, self.use_bold)
+    def run(self, args, cwd=None, exit_on_error=None, env=None):
+        self.log_command(args, cwd, self.use_bold)
 
         pipe = subprocess.Popen(args,
                                 # stderr=subprocess.PIPE,
@@ -105,7 +103,7 @@ class Process(object):
 
         for line in iter(pipe.stdout.readline, b''):
             tmp_result['stdout'].append(line.strip())
-            if verbosity > VERBOSITY_NORMAL:
+            if self.verbosity > VERBOSITY_NORMAL:
                 sys.stdout.write(line)
                 sys.stdout.flush()
 
@@ -121,7 +119,7 @@ class Process(object):
 
         if not result.success():
             # Print stdout on failure too. Some tools like Grunt print errors to stdout!
-            if result.stdout and verbosity <= VERBOSITY_NORMAL:  # Do not print if already printed.
+            if result.stdout and self.verbosity <= VERBOSITY_NORMAL:  # Do not print if already printed.
                 print result.stdout
             if result.stderr:
                 print result.stderr
@@ -148,8 +146,7 @@ class Process(object):
         os.chdir(cwd)
         return os.system(' '.join(args))
 
-    @staticmethod
-    def log_command(args, cwd='', use_bold=True):
+    def log_command(self, args, cwd='', use_bold=True):
         """Log a command call.
 
         :param args: List of arguments
@@ -159,6 +156,9 @@ class Process(object):
         :param use_bold:
         :type use_bold: bool
         """
+        if self.verbosity < VERBOSITY_NORMAL:
+            return
+
         # Enquote args with more than one word.
         display_args = args[:]
         for i, arg in enumerate(display_args):

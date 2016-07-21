@@ -78,6 +78,11 @@ make these changes.
 Basic Storage Configuration
 ===========================
 
+.. note::
+  If you only want to use |oA| for managing and monitoring a Ceph cluster, you
+  can skip the storage configuration. No additional local disks or storage
+  pools are required for performing this functionality.
+
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
 group or a ZFS zpool) for creating storage volumes. In the following chapters,
 we'll explain how create an LVM volume group or, alternatively, a ZFS zpool.
@@ -182,6 +187,24 @@ http://apt.openattic.org .
   followed the steps outlined in :ref:`base operating system installation` and
   :ref:`basic storage configuration`.
 
+Importing the |oA| Keyfile
+--------------------------
+
+The |oA| packages are signed using a cryptographic key. You can import the
+public GPG key from the download site using the following command:
+
+::
+
+  # wget http://apt.openattic.org/A7D3EAFA.txt -q -O - | apt-key add -
+
+The GPG key's fingerprint can be verified with ``apt-key finger`` and should
+look as follows::
+
+  pub   2048R/A7D3EAFA 2012-03-05
+        Key fingerprint = 9A91 1EDD 45A2 4B25 9C39  E7D4 1D5C D44D A7D3 EAFA
+  uid                  Business Critical Computing <is-bcc@it-novum.com>
+  sub   2048R/A99076EE 2012-03-05
+
 Enabling the |oA| Apt package repository
 ----------------------------------------
 
@@ -217,23 +240,6 @@ file::
   deb     http://apt.openattic.org/ nightly  main
   deb-src http://apt.openattic.org/ nightly  main
 
-Importing the |oA| Keyfile
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The |oA| packages are signed using a cryptographic key. You can import the
-public GPG key from the download site using the following command:
-
-::
-
-  # wget http://apt.openattic.org/A7D3EAFA.txt -q -O - | apt-key add -
-
-The GPG key's fingerprint should look as follows::
-
-  pub   2048R/A7D3EAFA 2012-03-05
-        Key fingerprint = 9A91 1EDD 45A2 4B25 9C39  E7D4 1D5C D44D A7D3 EAFA
-  uid                  Business Critical Computing <is-bcc@it-novum.com>
-  sub   2048R/A99076EE 2012-03-05
-
 Package Installation
 --------------------
 
@@ -244,10 +250,11 @@ After enabling the apt repository, run the following commands to install the
   # apt-get install openattic
 
 .. note::
-  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in order
-  to get the ``lio-utils`` package working which is used by ``openattic-module-lio``
-  (included in the base openattic package).
-  You may need to restart the target service as well::
+  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in
+  order to get the ``lio-utils`` package working which is used by
+  ``openattic-module-lio`` (installed by the base openattic package). You may
+  need to restart the target service as well::
+
     # apt-get install linux-image-extra-`uname -r`
     # service target restart
 
