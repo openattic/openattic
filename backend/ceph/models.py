@@ -191,7 +191,6 @@ class CephCluster(NodbModel):
                 with fsid_context(fsid):
                     if filter["filter_pools"]:
                         for filter_pool in filter["filter_pools"]:
-                            print filter_pool
                             pools.append(CephPool.objects.get(name=filter_pool))
                     else:
                         pools = CephPool.objects.all()
