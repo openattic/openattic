@@ -12,51 +12,60 @@
 # *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # *  GNU General Public License for more details.
 
+"""Usage:
+    test_make_dist.py [--oa-dir=<oa_dir>]
+
+Options:
+    --oa-dir=<oa_dir>  The directory to be used for the test creation of the tarball
+                       [default: /srv/openattic].
+
+"""
 import os
 import tempfile
+import docopt
 from make_dist import Process, VERBOSITY_VERBOSE
 
 process = Process(verbosity=VERBOSITY_VERBOSE)
+args = docopt.docopt(__doc__)
+args['--oa-dir'] = os.path.abspath(args['--oa-dir'])
 
 
-class Test(object):
+def get_abs_script_path():
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_path, 'make_dist.py')
 
-    __abs_script_path = None
 
-    @staticmethod
-    def get_abs_script_path():
-        if not Test.__abs_script_path:
-            script_path = os.path.dirname(os.path.abspath(__file__))
-            # utils_path = os.path.split(script_path)[0]
-            Test.__abs_script_path = os.path.join(script_path, 'make_dist.py')
-        return Test.__abs_script_path
+def extract_tar(tarball):
+    tmpdir = tempfile.gettempdir()
+    process.run(['tar', 'xf', tarball, '-C', tmpdir])
+    normalized_path = os.path.normpath(tarball)
+    basename = os.path.splitext(os.path.splitext(os.path.basename(normalized_path))[0])[0]
+    return os.path.join(tmpdir, basename)
 
-    @staticmethod
-    def extract(path):
-        tmpdir = tempfile.gettempdir()
-        process.run(['tar', 'xf', path, '-C', tmpdir])
-        basename = os.path.splitext(os.path.splitext(os.path.basename(os.path.normpath(path)))[0])[0]
-        return os.path.join(tmpdir, basename)
 
+def test(arguments):
+    for elem in arguments:
+        argument, hint = elem
+        if hint:
+            print('Hint: {}'.format(hint))
+        result = process.run(['/usr/bin/python', get_abs_script_path()] + argument.split(' '))
+        last_line = result.stdout.strip().split('\n')[-1]
+        tarball_path = last_line.split(' ')[-1].strip()
+        tempdir = extract_tar(tarball_path)
+        with open(os.path.join(tempdir, 'version.txt'), 'r') as fh:
+            print(''.join(fh.readlines()))
 
 arguments = [
-    'create release',
-    'create release --revision=v2.0.7-1',
-    'create release --revision=default',
-    'create release --revision=development',
-    'create release --source=/srv/openattic',
-    'create snapshot',
-    'create snapshot --revision=v2.0.7-1',
-    'create snapshot --revision=default',
-    'create snapshot --revision=development',
-    'create snapshot --source=/srv/openattic',
+    ('create release', 'The revision is supposed to be the latest existing tag, not the tip!'),
+    ('create release --revision=v2.0.7-1', ''),
+    ('create release --revision=default', ''),
+    ('create release --revision=development', ''),
+    ('create release --source={}'.format(args['--oa-dir']), ''),
+    ('create snapshot', ''),
+    ('create snapshot --revision=v2.0.7-1', ''),
+    ('create snapshot --revision=default', ''),
+    ('create snapshot --revision=development', ''),
+    ('create snapshot --source={}'.format(args['--oa-dir']), ''),
 ]
 
-for argument in arguments:
-    result = process.run(['/usr/bin/python', Test.get_abs_script_path()] + argument.split(' '))
-    last_line = result.stdout.strip().split('\n')[-1]
-    tarball_path = last_line.split(' ')[-1].strip()
-
-    tempdir = Test.extract(tarball_path)
-    with open(os.path.join(tempdir, 'version.txt'), 'r') as fh:
-        print(''.join(fh.readlines()))
+test(arguments)
