@@ -129,18 +129,7 @@ class CephCluster(NodbModel):
         result = []
         for cluster_name in CephCluster.get_names():
             fsid = CephCluster.get_fsid(cluster_name)
-
-            sources = []
-
-            if "nagios" in settings.INSTALLED_APPS:
-                try:
-                    cluster_rrd = CephCluster._get_cluster_rrd(fsid)
-                    sources = list(cluster_rrd.sources)
-                except SystemError:
-                    pass
-
-            cluster = CephCluster(fsid=fsid, name=cluster_name,
-                                  performance_data_options=sources)
+            cluster = CephCluster(fsid=fsid, name=cluster_name)
             result.append(cluster)
 
         return result
@@ -148,6 +137,27 @@ class CephCluster(NodbModel):
     @bulk_attribute_setter('health')
     def set_cluster_health(self, objects):
         self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
+
+    @bulk_attribute_setter('performance_data_options')
+    def set_performance_data_options(self, objects):
+        if "nagios" in settings.INSTALLED_APPS:
+            try:
+                sources = dict()
+
+                cluster_rrd = CephCluster._get_cluster_rrd(self.fsid)
+                sources["cluster"] = list(cluster_rrd.sources)
+
+                with fsid_context(self.fsid):
+                    pool_rrds = CephCluster._get_cluster_rrd(self.fsid,
+                                                             ("pools", CephPool.objects.all()))
+
+                    first_pool_rrd = pool_rrds.items()[0]
+                    sources["pools"] = list(first_pool_rrd[1].sources)
+
+                self.performance_data_options = sources
+
+            except SystemError:
+                pass
 
     @staticmethod
     def get_performance_data(fsid, obj_type, filter=None):
