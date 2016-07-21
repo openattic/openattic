@@ -13,8 +13,14 @@ Version 2.0.13, (not released yet):
 * Backend: Fixed `ceph df` missing a newly created pool (OP-1282)
 * Backend: Optimized calls to librados (OP-1321)
 * WebUI: Make the oA API URL configurable (OP-989)
+* WebUI: Deletion of a RBD or multiple RBDs (OP-1032)
+* WebUI: Creation of RBDs (OP-753 & OP-1290)
+* WebUI: Sortable RBD table and a cleaned up details view (OP-1309)
 * WebUI: Added a welcome message to the login screen (OP-1310)
-* WebUI: Added grunt task "grunt inspect --force" to check the quality of your JavaScript code (OP-1332)
+* WebUI: Added grunt task "grunt inspect --force" to check the quality of your
+  JavaScript code (OP-1332)
+* WebUI: Replacing the "Sorry folks" messages with loading messages (OP-1333)
+* WebUI/QA: RBD form, table, details, creation and deletion tests (OP-1338)
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
 * Packaging: Remove backend/.style.yapf from the RPM buildroot instead of

@@ -63,6 +63,22 @@ app.config(function ($stateProvider) {
           skip: true
         }
       })
+      .state("rbds-add", {
+        url: "/rbds/add",
+        views: {
+          "main": {
+            templateUrl: "components/ceph-rbd/templates/add-form.html",
+            controller : "RbdFormCtrl"
+          }
+        },
+        params: {
+          clusterId: null
+        },
+        ncyBreadcrumb: {
+          parent: "cephRbds",
+          label: "Add"
+        }
+      })
       .state("cephRbds.detail.details", {
         url          : "/details",
         views        : {
