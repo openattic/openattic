@@ -50,12 +50,15 @@ describe('should test the ceph pools panel', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/pools/status#more');
 
     expect(statusTab.isDisplayed()).toBe(true);
-    statusTab.click();
-    browser.sleep(400);
+
     //check for tab content
     expect(element(by.cssContainingText('dt', 'Placement Groups:')).isDisplayed()).toBe(true);
-    expect(element(by.cssContainingText('dt', 'Cluster ID:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Size:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Type:')).isDisplayed()).toBe(true);
   });
+
+  /*
+  Only if cache tiering is available by the pool. Can't be tested yet.
 
   it('should have a cache tiering tab when selecting a pool', function(){
     expect(cacheTieringTab.isDisplayed()).toBe(true);
@@ -65,6 +68,7 @@ describe('should test the ceph pools panel', function(){
     expect(element(by.cssContainingText('dt', 'tier_of:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'target_max_bytes:')).isDisplayed()).toBe(true);
   });
+  */
 
   afterAll(function(){
     console.log("ceph_pools -> ceph_pools.e2e.js");

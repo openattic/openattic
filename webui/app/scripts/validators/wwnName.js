@@ -37,7 +37,7 @@ app.directive("currentTagWwnValidation", function () {
     require: "ngModel",
     link: function (scope, elem, attrs, ctrl) {
       return scope.$watch(function () {
-        return scope.wwn[attrs.name].valid
+        return scope.wwn[attrs.name].valid;
       }, function (valid) {
         ctrl.$setValidity("validTag", valid);
       });

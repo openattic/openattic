@@ -5,10 +5,6 @@
     <div class="panel-body">
         <h2>Basic information:</h2>
         <dl class="dl-horizontal">
-            <dt>Name:</dt>
-            <dd ng-bind="selection.item.name"></dd>
-            <dt>Cluster:</dt>
-            <dd ng-bind="selection.item.cluster.title"></dd>
             <dt>ID:</dt>
             <dd ng-bind="selection.item.id"></dd>
             <dt>Size:</dt>
@@ -17,30 +13,44 @@
             <dd ng-bind="selection.item.num_bytes | bytes"></dd>
             <dt>Placement Groups:</dt>
             <dd ng-bind="selection.item.pg_num"></dd>
-            <dt>Replica Size:</dt>
-            <dd ng-bind="selection.item.size"></dd>
-            <dt>Erasure code profile:</dt>
-            <dd ng-bind="selection.item.erasure_code_profile"></dd>
-            <dt>Last change:</dt>
-            <dd ng-bind="selection.item.last_change"></dd>
+            <div ng-show="selection.item.size">
+                <dt>Number of replicas:</dt>
+                <dd ng-bind="selection.item.size"></dd>
+            </div>
+            <div ng-show="selection.item.erasure_code_profile">
+                <dt>Erasure code profile:</dt>
+                <dd ng-bind="selection.item.erasure_code_profile"></dd>
+            </div>
             <dt>Type:</dt>
             <dd ng-bind="selection.item.type"></dd>
-            <dt>Crush ruleset:</dt>
-            <dd ng-bind="selection.item.crush_ruleset"></dd>
+            <div ng-show="selection.item.crush_ruleset !== 0">
+                <dt>Crush ruleset:</dt>
+                <dd ng-bind="selection.item.crush_ruleset"></dd>
+            </div>
         </dl>
 
-        <h2>Advanced information:</h2>
+        <h2>Expert information:</h2>
         <dl class="dl-horizontal">
-            <dt>Cluster ID:</dt>
-            <dd ng-bind="selection.item.cluster.id"></dd>
+            <div ng-show="selection.item.cluster.id">
+                <dt>Cluster ID:</dt>
+                <dd ng-bind="selection.item.cluster.id"></dd>
+            </div>
+            <dt>Last change:</dt>
+            <dd ng-bind="selection.item.last_change"></dd>
             <dt>pg_placement_num:</dt>
             <dd ng-bind="selection.item.pgp_num"></dd>
-            <dt>stripe_width:</dt>
-            <dd ng-bind="selection.item.stripe_width"></dd>
-            <dt>quota_max_bytes:</dt>
-            <dd ng-bind="selection.item.quota_max_bytes"></dd>
-            <dt>quota_max_objects:</dt>
-            <dd ng-bind="selection.item.quota_max_objects"></dd>
+            <div ng-show="selection.item.stripe_width !== 0">
+                <dt>stripe_width:</dt>
+                <dd ng-bind="selection.item.stripe_width"></dd>
+            </div>
+            <div ng-show="selection.item.quota_max_bytes !== 0">
+                <dt>quota_max_bytes:</dt>
+                <dd ng-bind="selection.item.quota_max_bytes"></dd>
+            </div>
+            <div ng-show="selection.item.quota_max_objects !== 0">
+                <dt>quota_max_objects:</dt>
+                <dd ng-bind="selection.item.quota_max_objects"></dd>
+            </div>
         </dl>
     </div>
 </div>
