@@ -150,33 +150,62 @@ class CephCluster(NodbModel):
         self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
 
     @staticmethod
-    def get_performance_data(fsid, filter=None):
+    def get_performance_data(fsid, obj_type, filter=None):
         """
-        Returns the performance data by the clusters FSID and consideration of the filter parameters
-        if given.
+        Returns the performance data by the clusters FSID, the type of the object in the Ceph
+        cluster (e.g. cluster, pools) and consideration of the filter parameters if given.
 
         :param fsid: FSID of the cluster
         :rtype: str
+        :param obj_type: The type of the object in the Ceph cluster where the performance data
+            should be returned for. Valid objects are "cluster" and "pools" at the moment.
+        :rtype: str
         :param filter: The performance data will be filtered by these sources (based on the RRD
-            file)
-        :rtype: list[str]
+            file).
+        :rtype: str | list[str]
         :return: Returns a list of performance data or the message that the Nagios module isn't
             installed.
-        :rtype: list[dict] or str
+        :rtype: dict or str
         """
+
         if "nagios" in settings.INSTALLED_APPS:
             from nagios.graphbuilder import Graph
 
-            graph = Graph()
-            rrd = CephCluster._get_cluster_rrd(fsid)
+            def get_graph(rrd, source_filter=None):
+                graph = Graph()
 
-            sources = filter if filter else rrd.sources
-            for source in sources:
-                source_obj = rrd.get_source(source)
-                graph.add_source(source_obj)
+                sources = source_filter if source_filter else rrd.sources
+                for source in sources:
+                    source_obj = rrd.get_source(source)
+                    graph.add_source(source_obj)
 
-            perf_data = graph.get_json()
-            return graph.convert_rrdtool_json_to_nvd3(perf_data)
+                return graph
+
+            if obj_type == "cluster":
+                rrd = CephCluster._get_cluster_rrd(fsid)
+                graph = get_graph(rrd, filter)
+                return graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+
+            elif obj_type == "pools":
+                pools = []
+                with fsid_context(fsid):
+                    if filter["filter_pools"]:
+                        for filter_pool in filter["filter_pools"]:
+                            print filter_pool
+                            pools.append(CephPool.objects.get(name=filter_pool))
+                    else:
+                        pools = CephPool.objects.all()
+
+                rrds = CephCluster._get_cluster_rrd(fsid, ("pools", pools))
+
+                perf_data_results = dict()
+
+                for pool_name, rrd in rrds.items():
+                    graph = get_graph(rrd, filter["filter_sources"])
+                    perf_data_results[pool_name] = graph.convert_rrdtool_json_to_nvd3(
+                        graph.get_json())
+
+                return perf_data_results
         else:
             return "Nagios does not appear to be installed, no performance data could be returned."
 
