@@ -1,8 +1,17 @@
 var helpers = require('../../../common.js');
-var configs = require('../../../configs.js');
+var wizardsCommon = require('../../wizardsCommon.js');
 
 describe('iSCSI/Fibre Channel target Wizard', function(){
+  var wizardProperties = new wizardsCommon();
+  var volumeName = 'protractor_wizard_zfs_blockvol';
+  var volume = element(by.cssContainingText('tr', volumeName));
+  var hostname = "protractor_test_host";
+  var host = element(by.cssContainingText('tr', hostname));
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
+  var menu = element.all(by.css('ul .tc_menuitem > a'));
 
+  /*
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
 
@@ -19,6 +28,7 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
 
   var menu = element.all(by.css('ul .tc_menuitem > a'));
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  */
 
   beforeAll(function(){
     helpers.login();
@@ -33,103 +43,52 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
     var dashboard = menu.get(0);
     dashboard.click();
   });
-  //<-- iSCSI/Fibre Channel target Wizard --->
-  it('should have a button "iSCSI/Fibre Channel target"; navigate through the wizard', function(){
-    var wizards = element.all(by.repeater('wizard in wizards')).then(function(wizards){
-      var block_wizard = wizards[2].element(by.cssContainingText('span', 'iSCSI/Fibre Channel target'));
-      expect(block_wizard.isDisplayed()).toBe(true);
-      block_wizard.click();
 
-      //first site
+  //<-- begin wizard --->
+  it('should open the "iSCSI/Fibre Channel target" wizard', function(){
+    wizardProperties.openWizard('iSCSI/Fibre Channel target');
+  });
 
-      //check available buttons
-      expect(wizardOverviewBtn.isDisplayed()).toBe(true);
-      expect(previousBtn.isDisplayed()).toBe(true);
-    });
-    //check if angular expression contains 'Next' or 'Done
-    var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
-    expect(nextBtn.getText()).toEqual('Next');
-    expect(element(by.css('.tc_oawizard_h3')).getText()).toEqual('iSCSI/Fibre Channel target Step 1 - Create Volume');
-    expect(volumefield.isDisplayed()).toBe(true);
-    expect(size.isDisplayed()).toBe(true);
-    //expect(is_protected.Present()).toBe(true);
+  it('should test step 1 and fill it out and go to the next step', function(){
+    wizardProperties.creationPageElementCheck('iSCSI/Fibre Channel target Step 1 - Create Volume');
+    wizardProperties.creationPageValidationTests();
+    wizardProperties.creationPagePoolSelection('zpool');
+    wizardProperties.creationPageInputTests();
+    wizardProperties.creationFromFill(volumeName, '100MB');
+  });
 
-    //enter volume data
-    volumefield.sendKeys(volumename);
+  it('should test step 2 and go to the next step', function(){
+    wizardProperties.mirrorCreationJumpOver('iSCSI/Fibre Channel target Step 2 - Create Mirror - Coming Soon...');
+  });
 
-    //in order to enter a size we need to choose a pool first
-    for(var key in configs.pools){
-      var pool = configs.pools[key];
-      var volumePoolSelect = element(by.model('pool'));
-      volumePoolSelect.click();
-      element.all(by.cssContainingText('option', '(zpool,')).get(0).click();
-      //browser.actions().sendKeys( protractor.Key.ENTER ).perform();
-      break;
-    }
+  it('should test step 3 and fill it out and go to the last step', function(){
+    wizardProperties.shareCreationElementCheck('iSCSI/Fibre Channel target Step 3 - Create a Share');
+    wizardProperties.shareCreateFc(hostname);
+    wizardProperties.nextBtn.click();
+  });
 
-    //enter some data to get to the next site
-    size.sendKeys('100MB');
-    nextBtn.click();
-
-    //Step 2 - check at least the title then skip and available buttons
-    expect(element(by.css('.tc_step2')).getText()).toEqual('iSCSI/Fibre Channel target Step 2 - Create Mirror - Coming Soon...');
-    expect(wizardOverviewBtn.isDisplayed()).toBe(true);
-    expect(previousBtn.isDisplayed()).toBe(true);
-    expect(nextBtn.getText()).toEqual('Next');
-    browser.sleep(400);
-    nextBtn.click();
-
-    //Step 3 - create LUN
-
-    expect(element(by.css('.tc_step3')).getText()).toEqual('iSCSI/Fibre Channel target Step 3 - Create a Share');
-
-    expect(wizardOverviewBtn.isDisplayed()).toBe(true);
-    expect(previousBtn.isDisplayed()).toBe(true);
-    expect(nextBtn.getText()).toEqual('Next');
-    //select host
-    var hostSelect = element(by.model('input.iscsi_fc.host'));
-    hostSelect.element(by.cssContainingText('option', hostname)).click();
-
-    nextBtn.click();
-
-    //Finish
-    expect(element(by.css('.tc_wizardDone')).getText()).toEqual('iSCSI/Fibre Channel target Step 4 - Save configuration');
-    expect(nextBtn.getText()).toEqual('Done');
-    nextBtn.click();
+  it('should test step 4 and hit done to create everything set so far and close the wizard', function(){
+    wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 4 - Save configuration');
 
     helpers.check_wizard_titles();
+  });
+  //<-- end wizard --->
 
-    volumesItem.click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
-
+  it('should have created a lun with a fc share', function() {
     //check if lun exists
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_iscsi_fcTab')).click();
-    browser.sleep(400);
-    expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
-
-    //remove the lun map
     volumesItem.click();
-    browser.sleep(400);
-    browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();
-    browser.sleep(400);
     element(by.css('.tc_iscsi_fcTab')).click();
-    browser.sleep(400);
-    element(by.cssContainingText('tr', hostname)).click();
-    element(by.css('.tc_lunDelete')).click();
-    browser.sleep(400);
-    element(by.id('bot2-Msg1')).click();
-    browser.sleep(800);
-    expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
+    expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
+  });
+
+  it('should remove the fc share', function() {
+    helpers.delete_fc_share(volumeName, hostname)
   });
 
   afterAll(function(){
-    helpers.delete_volume(volume, volumename);
+    helpers.delete_volume(volume, volumeName);
     helpers.delete_host();
     console.log('blockStorage_zfs -> blockStorage_zfs.e2e.js');
   });
