@@ -181,15 +181,19 @@ class CephCluster(NodbModel):
             return "Nagios does not appear to be installed, no performance data could be returned."
 
     @staticmethod
-    def _get_cluster_rrd(fsid):
+    def _get_cluster_rrd(fsid, other_obj=None):
         """
-        Returns the RRD file by the clusters FSID.
+        Returns the RRD file by the clusters FSID and information about other object (e.g. pools)
+        within the cluster.
         Note: Make sure the Nagios module is installed before calling this method!
 
         :param fsid: FSID of the cluster
         :rtype: str
+        :param other_obj: Should the RRD file of other objects (e.g. for pools) than the Cluster
+            itself be returned.
+        :rtype: tuple(str, T)
         :return: RRD file of the cluster
-        :rtype: nagios.graphbuilder.RRD
+        :rtype: nagios.graphbuilder.RRD | dict(str, nagios.graphbuilder.RRD)
         """
 
         from nagios.conf import settings as nagios_settings
@@ -197,21 +201,34 @@ class CephCluster(NodbModel):
 
         curr_host = Host.objects.get_current()
 
-        xmlpath = nagios_settings.XML_PATH % {
-            "host": curr_host,
-            "serv": "Check_CephCluster_{}".format(fsid)
-        }
+        def get_xml_path(fsid, serv):
+            xmlpath = nagios_settings.XML_PATH % {
+                "host": curr_host,
+                "serv": serv
+            }
 
-        if not exists(xmlpath):
-            raise SystemError("XML file '{}' could not be found for the cluster with FSID "
-                              "'{}'. There are two possible reasons: a) The Ceph cluster was "
-                              "just added to openATTIC and 'oaconfig install' was executed. -> "
-                              "Please wait some time until Nagios runs again and creates the "
-                              "file. b) You haven't run 'oaconfig install' after adding the "
-                              "Ceph cluster to openATTIC -> Please run 'oaconfig install' to "
-                              "create all needed configuration files for Nagios."
-                              .format(xmlpath, fsid))
-        return RRD(xmlpath)
+            if not exists(xmlpath):
+                raise SystemError("XML file '{}' could not be found for the cluster with FSID "
+                                  "'{}'. There are two possible reasons: a) The Ceph cluster was "
+                                  "just added to openATTIC and 'oaconfig install' was executed. -> "
+                                  "Please wait some time until Nagios runs again and creates the "
+                                  "file. b) You haven't run 'oaconfig install' after adding the "
+                                  "Ceph cluster to openATTIC -> Please run 'oaconfig install' to "
+                                  "create all needed configuration files for Nagios."
+                                  .format(xmlpath, fsid))
+
+            return xmlpath
+
+        if other_obj and other_obj[0] == "pools":
+            rrds = {}
+
+            for pool in other_obj[1]:
+                xmlpath = get_xml_path(fsid, "Check_CephPool_{}_{}".format(fsid, pool.name))
+                rrds[pool.name] = RRD(xmlpath)
+            return rrds
+        else:
+            xmlpath = get_xml_path(fsid, "Check_CephCluster_{}".format(fsid))
+            return RRD(xmlpath)
 
     @property
     def rados_client(self):
