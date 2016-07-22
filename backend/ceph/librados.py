@@ -84,6 +84,7 @@ class Client(object):
     """Represents the connection to a single ceph cluster."""
 
     def __init__(self, cluster_name='ceph'):
+        self.cluster_name = cluster_name
         self._conf_file = os.path.join('/etc/ceph/', cluster_name + '.conf')
         keyring = Keyring(cluster_name)
         self._keyring = keyring.filename
@@ -727,8 +728,10 @@ class RbdApi(object):
             return image.stat()
 
     def image_disk_usage(self, pool_name, name):
-        """The "rbd du" command is not exposed in python, as it is directly implemented in the rbd tool."""
-        out = subprocess.check_output(['rbd', 'disk-usage', '--pool', pool_name, '--image', name, '--format', 'json'])
+        """The "rbd du" command is not exposed in python, as it
+        is directly implemented in the rbd tool."""
+        out = subprocess.check_output(['rbd', 'disk-usage', '--cluster', self.cluster.cluster_name,
+                                       '--pool', pool_name, '--image', name, '--format', 'json'])
         du = json.loads(out)['images']
         return du[0] if du else {}
 
