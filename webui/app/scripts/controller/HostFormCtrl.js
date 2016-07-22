@@ -202,7 +202,7 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
     };
   }
 
-  Object.keys($scope.wwn).forEach(function(type){
+  Object.keys($scope.wwn).forEach(function (type) {
     $scope.$watchCollection("wwn." + type + ".text", function (text) {
       if (text.length === 0) {
         $scope.wwn[type].valid = true;
@@ -278,7 +278,7 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
   };
 
   $scope.addIni = function (tag, type) {
-    tag = $scope.wwn[type].current ;
+    tag = $scope.wwn[type].current;
     $scope.wwns.push(tag.text);
     $scope.changes.push({
       tag: tag,

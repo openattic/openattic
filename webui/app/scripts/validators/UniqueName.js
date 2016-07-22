@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.directive("uniquename", function (VolumeService, HostService, UserService, $timeout) {
+app.directive("uniquename", function (VolumeService, HostService, UserService, cephRbdService, $timeout) {
   return {
     restrict: "A",
     require: "ngModel",
@@ -50,38 +50,56 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, $
           return;
         }
         stopTimeout = $timeout(function () {
-          var model;
-          var current;
+          var obj;
           var query = {};
           switch (ctrl.model) {
           case "host":
-            model = HostService;
-            current = scope.host.id;
+            obj = {
+              model: HostService,
+              current: scope.host.id,
+              attribute: "id"
+            };
             break;
           case "volume":
-            model = VolumeService;
+            obj = {
+              model: VolumeService,
+              current: null, // Has no renaming feature.
+              attribute: "id"
+            };
             break;
           case "user":
-            model = UserService;
-            current = scope.user.id;
+            obj = {
+              model: UserService,
+              current: scope.user.id,
+              attribute: "id"
+            };
+            break;
+          case "rbd":
+            query.id = scope.data.cluster;
+            obj = {
+              model: cephRbdService,
+              current: null, // Has no renaming feature.
+              attribute: "name"
+            };
             break;
           default:
             console.log("Error: Service not implemented yet.");
             return;
           }
-          query[ctrl.field] = modelValue;
-          model.query(query)
-          .$promise
-          .then(function (res) {
-            if (res.length !== 0 && current) {
-              ctrl.$setValidity("uniquename", res[0].id === current);
+          var resCheck = function (res) {
+            if (res.length !== 0 && obj.current) {
+              ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
             } else {
               ctrl.$setValidity("uniquename", res.length === 0);
             }
-          })
-          .catch(function (error) {
-            console.log("An error occurred", error);
-          });
+          };
+          query[ctrl.field] = modelValue;
+          obj.model.query(query)
+            .$promise
+            .then(resCheck)
+            .catch(function (error) {
+              console.log("An error occurred", error);
+            });
         }, 300);
       });
     }
