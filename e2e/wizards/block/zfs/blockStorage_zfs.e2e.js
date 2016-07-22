@@ -11,25 +11,6 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
   var menu = element.all(by.css('ul .tc_menuitem > a'));
 
-  /*
-  var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
-  var previousBtn = element(by.css('.tc_previousBtn'));
-
-  var volumename = 'protractor_wizard_zfs_blockvol';
-  var volume = element(by.cssContainingText('tr', volumename));
-  var volumefield = element(by.model('result.name'));
-  var pool = element(by.model('pool'));
-  var size = element(by.model('data.megs'));
-  var is_protected = element(by.model('result.is_protected'));
-
-  var hostname = "protractor_test_host";
-  var host = element(by.cssContainingText('tr', hostname));
-  var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
-
-  var menu = element.all(by.css('ul .tc_menuitem > a'));
-  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
-  */
-
   beforeAll(function(){
     helpers.login();
     helpers.create_host(iqn);
@@ -57,18 +38,14 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
     wizardProperties.creationFromFill(volumeName, '100MB');
   });
 
-  it('should test step 2 and go to the next step', function(){
-    wizardProperties.mirrorCreationJumpOver('iSCSI/Fibre Channel target Step 2 - Create Mirror - Coming Soon...');
-  });
-
-  it('should test step 3 and fill it out and go to the last step', function(){
-    wizardProperties.shareCreationElementCheck('iSCSI/Fibre Channel target Step 3 - Create a Share');
+  it('should test step 2 and fill it out and go to the last step', function(){
+    wizardProperties.shareCreationElementCheck('iSCSI/Fibre Channel target Step 2 - Create a Share');
     wizardProperties.shareCreateFc(hostname);
     wizardProperties.nextBtn.click();
   });
 
-  it('should test step 4 and hit done to create everything set so far and close the wizard', function(){
-    wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 4 - Save configuration');
+  it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
+    wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
 
     helpers.check_wizard_titles();
   });

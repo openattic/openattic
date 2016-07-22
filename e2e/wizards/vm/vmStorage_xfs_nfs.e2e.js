@@ -27,19 +27,15 @@ describe('VM Storage Wizard', function(){
     wizardProperties.creationPageInputTests();
     wizardProperties.creationFromFill(volumeName, '100MB', 'xfs');
   });
- 
-  it('should test step 2 and go to the next step', function(){
-    wizardProperties.mirrorCreationJumpOver('VM Storage Step 2 - Create Mirror');
-  });
 
-  it('should test step 3 and fill it out and go to the last step', function(){
-    wizardProperties.shareCreationElementCheck('VM Storage Step 3 - Create Shares');
+  it('should test step 2 and fill it out and go to the last step', function(){
+    wizardProperties.shareCreationElementCheck('VM Storage Step 2 - Create Shares');
     wizardProperties.shareCreateNfs(shareName);
     wizardProperties.nextBtn.click();
   });
 
-  it('should test step 4 and hit done to create everything set so far and close the wizard', function(){
-    wizardProperties.configurationExecution('VM Storage Step 4 - Save configuration');
+  it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
+    wizardProperties.configurationExecution('VM Storage Step 3 - Save configuration');
 
     helpers.check_wizard_titles();
   });

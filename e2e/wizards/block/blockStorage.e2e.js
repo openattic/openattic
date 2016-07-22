@@ -39,19 +39,15 @@ describe('iSCSI/Fibre Channel target', function(){
     wizardProperties.creationFromFill(volumeName, '100MB');
   });
 
-  it('should test step 2 and go to the next step', function(){
-    wizardProperties.mirrorCreationJumpOver('iSCSI/Fibre Channel target Step 2 - Create Mirror - Coming Soon...');
-  });
-
-  it('should test step 3 and fill it out and go to the last step', function(){
-    wizardProperties.shareCreationElementCheck('iSCSI/Fibre Channel target Step 3 - Create a Share');
+  it('should test step 2 and fill it out and go to the last step', function(){
+    wizardProperties.shareCreationElementCheck('iSCSI/Fibre Channel target Step 2 - Create a Share');
     wizardProperties.shareCreateFc(hostname);
     wizardProperties.nextBtn.click();
   });
   //<-- end wizard --->
 
-  it('should test step 4 and hit done to create everything set so far and close the wizard', function(){
-    wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 4 - Save configuration');
+  it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
+    wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
 
     helpers.check_wizard_titles();
   });

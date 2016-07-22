@@ -2,7 +2,7 @@
 
 var wizardCommon = function(){
   var self = this;
-  
+
   this.wizardOverviewBtn = element(by.className('tc_wizardOverview'));
   this.previousBtn = element(by.className('tc_previousBtn'));
   this.nextBtn = element(by.id('nextBtn'));
@@ -52,7 +52,7 @@ var wizardCommon = function(){
       break;
     }
   };
-  
+
   this.creationPageInputTests = function(){
     self.size.sendKeys('asdffffweee');
     expect(self.noValidNumber.isDisplayed()).toBe(true);
@@ -60,7 +60,7 @@ var wizardCommon = function(){
     self.size.sendKeys('10000000000000000000000000000000');
     expect(self.size_exceeded.isDisplayed()).toBe(true);
   };
-  
+
   this.creationPageValidationTests = function(){
     //check what happens if next button has been clicked without entering any data
     self.nextBtn.click();
@@ -96,21 +96,11 @@ var wizardCommon = function(){
     expect(self.volume_unique.isDisplayed()).toBe(false);
     self.nextBtn.click();
   };
-  
-  this.mirrorCreationJumpOver = function(pageTitle){
-    //Step 2 - check at least the title then skip and available buttons
-    expect(element(by.css('.tc_step2')).getText()).toEqual(pageTitle);
-    expect(self.wizardOverviewBtn.isDisplayed()).toBe(true);
-    expect(self.previousBtn.isDisplayed()).toBe(true);
-    expect(self.nextBtn.getText()).toEqual('Next');
-    browser.sleep(400);
-    self.nextBtn.click();
-  };
-  
-  this.shareCreationElementCheck = function(pageTitle){
-    //Step 3 - create share
 
-    expect(element(by.css('.tc_step3')).getText()).toEqual(pageTitle);
+  this.shareCreationElementCheck = function(pageTitle){
+    //Step 2 - create share
+
+    expect(element(by.css('.tc_step2')).getText()).toEqual(pageTitle);
 
     expect(self.wizardOverviewBtn.isDisplayed()).toBe(true);
     expect(self.previousBtn.isDisplayed()).toBe(true);
@@ -153,7 +143,7 @@ var wizardCommon = function(){
 
     self.cifsName.sendKeys(shareName);
   };
-  
+
   this.shareCreateFc = function(hostname){
     //select host
     var hostSelect = element(by.model('input.iscsi_fc.host'));
@@ -161,7 +151,7 @@ var wizardCommon = function(){
   };
 
   this.configurationExecution = function(pageTitle){
-    //Step 4 - Done
+    //Step 3 - Done
 
     browser.sleep(400);
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual(pageTitle);

@@ -34,19 +34,15 @@ describe('Wizard panel', function(){
     wizardProperties.creationFromFill(volumeName, '100MB');
   });
 
-  it('should test step 2 and go to the next step', function(){
-    wizardProperties.mirrorCreationJumpOver('File Storage Step 2 - Create Mirror - Coming Soon...');
-  });
-
-  it('should test step 3 and fill it out and go to the last step', function(){
-    wizardProperties.shareCreationElementCheck('File Storage Step 3 - Which Shares do you need?');
+  it('should test step 2 and fill it out and go to the last step', function(){
+    wizardProperties.shareCreationElementCheck('File Storage Step 2 - Which Shares do you need?');
     wizardProperties.shareCreateCifs(volumeName, cifsName);
     wizardProperties.shareCreateNfs(shareName);
     wizardProperties.nextBtn.click();
   });
 
-  it('should test step 4 and hit done to create everything set so far and close the wizard', function(){
-    wizardProperties.configurationExecution('File Storage Step 4 - Save configuration');
+  it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
+    wizardProperties.configurationExecution('File Storage Step 3 - Save configuration');
 
     helpers.check_wizard_titles();
   });
