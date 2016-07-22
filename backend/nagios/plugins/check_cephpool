@@ -18,6 +18,7 @@
 import os
 import sys
 import django
+import time
 
 from optparse import OptionParser
 
@@ -48,12 +49,15 @@ def main():
         parser.print_usage()
         sys.exit(4)
 
+    start_time = time.time()
     with fsid_context(args[0]):
         pool = CephPool.objects.get(name=args[1])
+    exec_time = time.time() - start_time
 
     used_per_cent = pool.num_bytes / pool.max_avail * 100
-    perfdata = "Used: {} M ({}%) |num_bytes={} max_avail={} num_objects={}".format(
-        pool.num_bytes, used_per_cent, pool.num_bytes, pool.max_avail, pool.num_objects)
+    perfdata = "Used: {} M ({}%)|num_bytes={} max_avail={} num_objects={} exec_time={}ms".format(
+        pool.num_bytes, used_per_cent, pool.num_bytes, pool.max_avail, pool.num_objects,
+        round(exec_time * 1000, 2))
 
     print perfdata
     sys.exit(0)
