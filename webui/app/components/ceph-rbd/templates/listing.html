@@ -1,12 +1,23 @@
 <ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getRbdList()"></ceph-cluster-dropdown>
 
-<div ng-show="cluster.results.length > 0">
+<div ng-show="cluster.results.length > 0 && !rbdFailure && !poolFailure">
     <div class="panel panel-default" ng-show="!error && !rbd.$resolved">
         <div class="panel-heading">
             <h3 class="panel-title">Loading...</h3>
         </div>
         <div class="panel-body">
             Ceph RBDs are loading...
+        </div>
+    </div>
+</div>
+
+<div ng-show="rbdFailure">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" ng-bind="rbdFailureTitle"></h3>
+        </div>
+        <div class="panel-body">
+            Please contact your administrator for further help.
         </div>
     </div>
 </div>
