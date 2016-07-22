@@ -35,7 +35,7 @@
             && rbdForm.cluster.$error.required">
             This field is required!
         </span>
-        <span class="help-block" ng-show="validation.$error.clusterLoading">
+        <span class="help-block tc_clusterLoading" ng-show="rbdForm.$error.clusterLoading">
             Couldn't load any cluster, please contact your administrator for details.
         </span>
     </div>
@@ -58,12 +58,12 @@
                     {{data.pool.oaFreeText}} free - <a ng-click="data.size = data.pool.oaMaxFree">use max</a>
                 </span>
         </div>
-        <span class="help-block" ng-show="rbdForm.$error.poolLoading">
-            Couldn't load any pool, please contact your administrator for details.
-        </span>
         <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
             && rbdForm.pool.$error.required">
             This field is required!
+        </span>
+        <span class="help-block tc_poolLoading" ng-show="rbdForm.$error.poolLoading">
+            Couldn't load any pool, please contact your administrator for details.
         </span>
     </div>
 </div>
