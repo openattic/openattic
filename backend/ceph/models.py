@@ -232,6 +232,7 @@ class CephCluster(NodbModel):
         :rtype: tuple(str, T)
         :return: RRD file of the cluster
         :rtype: nagios.graphbuilder.RRD | dict(str, nagios.graphbuilder.RRD)
+        :raises SystemError: If the RRD related XML file can't be found.
         """
 
         from nagios.conf import settings as nagios_settings
