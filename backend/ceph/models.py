@@ -145,14 +145,14 @@ class CephCluster(NodbModel):
                 sources = dict()
 
                 cluster_rrd = CephCluster._get_cluster_rrd(self.fsid)
-                sources["cluster"] = list(cluster_rrd.sources)
+                sources["performancedata"] = list(cluster_rrd.sources)
 
                 with fsid_context(self.fsid):
                     pool_rrds = CephCluster._get_cluster_rrd(self.fsid,
                                                              ("pools", CephPool.objects.all()))
 
                     first_pool_rrd = pool_rrds.items()[0]
-                    sources["pools"] = list(first_pool_rrd[1].sources)
+                    sources["performancedata_pools"] = list(first_pool_rrd[1].sources)
 
                 self.performance_data_options = sources
 
