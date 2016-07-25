@@ -17,6 +17,7 @@
 
 import os
 import sys
+import time
 
 from optparse import OptionParser
 
@@ -114,8 +115,12 @@ def main():
         parser.print_usage()
         sys.exit(4)
 
+    start_time = time.time()
     status = ClusterStatus(CephCluster.get_status(args[0]))
-    print "%s|%s" % (status.get_nagios_string(), status.get_perf_data())
+    exec_time = time.time() - start_time
+
+    print "{}|{} exec_time={}ms".format(status.get_nagios_string(), status.get_perf_data(),
+                                        round(exec_time * 1000, 2))
 
     sys.exit(status.get_exit_code())
 
