@@ -3,6 +3,12 @@ openATTIC Changelog
 
 Version 2.0.13, (not released yet):
 -----------------------------------
+
+Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, you
+  need to delete existing perfomance data by running 
+  `rm /var/lib/pnp4nagios/perfdata/<host_name>/Check_CephCluster_*`. Keep in mind
+  that collected performance data for your Ceph clusters will be lost.
+
 * Backend: Added a REST API (userprofiles) to store user preferences
   (key/value pairs) (OP-756)
 * Backend: Added the performance data (in JSON) of a Ceph cluster to the REST
@@ -12,6 +18,9 @@ Version 2.0.13, (not released yet):
 * Backend: Fixed RBDs with same name in multiple pools (OP-1313)
 * Backend: Fixed `ceph df` missing a newly created pool (OP-1282)
 * Backend: Optimized calls to librados (OP-1321)
+* Backend: Added Ceph pool Nagios monitoring (OP-1292)
+* Backend: The check_cephcluster Nagios plugin contains another value 
+  'exec_time'. It represents the run time of the cluster check. (OP-1307)
 * WebUI: Make the oA API URL configurable (OP-989)
 * WebUI: Deletion of a RBD or multiple RBDs (OP-1032)
 * WebUI: Creation of RBDs (OP-753 & OP-1290)
