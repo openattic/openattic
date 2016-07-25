@@ -253,15 +253,18 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.data.cluster = cluster;
         }
       });
-      if (res.count === 1) {
-        $scope.data.cluster = res.results[0];
-      } else if (res.count === 0) {
-        $scope.waitingClusterMsg = "No cluster avialable.";
-        toasty.warning({
-          title: $scope.waitingClusterMsg,
-          msg: "You can't create any RBDs with your configuration."
-        });
+      if (!$scope.data.cluster) {
+        if (res.count > 0) {
+          $scope.data.cluster = res.results[0];
+        } else {
+          $scope.waitingClusterMsg = "No cluster avialable.";
+          toasty.warning({
+            title: $scope.waitingClusterMsg,
+            msg: "You can't create any RBDs with your configuration."
+          });
+        }
       }
+      $scope.data.pools = null;
     })
     .catch(function (clusterError) {
       console.log("An error occurred while loading the ceph clusters.", clusterError);
@@ -302,14 +305,16 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         });
         $scope.pools = res.results;
         $scope.waitingPoolMsg = "-- Select a pool --";
-        if (res.count === 1) {
-          $scope.data.pool = res.results[0];
-        } else if (res.count === 0) {
-          $scope.waitingPoolMsg = "No pool aviable.";
-          toasty.warning({
-            title: $scope.waitingPoolMsg,
-            msg: "You can't create any RBDs in the selected cluster."
-          });
+        if (!$scope.data.pool) {
+          if (res.count > 0 && !$scope.data.pool) {
+            $scope.data.pool = res.results[0];
+          } else {
+            $scope.waitingPoolMsg = "No pool aviable.";
+            toasty.warning({
+              title: $scope.waitingPoolMsg,
+              msg: "You can't create any RBDs in the selected cluster."
+            });
+          }
         }
       })
       .catch(function (poolError) {
