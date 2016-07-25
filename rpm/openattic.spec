@@ -661,6 +661,7 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cephcluster
+%{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd

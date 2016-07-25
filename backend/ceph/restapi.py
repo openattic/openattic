@@ -77,8 +77,8 @@ class CephClusterViewSet(NodbViewSet):
     Ceph Cluster
 
     This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
-    ```/api/ceph/<fsid>/osds```, ```/api/ceph/<fsid>/status``` and
-    ```/api/ceph/<fsid>/performancedata```.
+    ```/api/ceph/<fsid>/osds```, ```/api/ceph/<fsid>/status```,
+    ```/api/ceph/<fsid>/performancedata``` and ```/api/ceph/<fsid>/performancedata_pools```.
     """
 
     serializer_class = CephClusterSerializer
@@ -96,13 +96,28 @@ class CephClusterViewSet(NodbViewSet):
     @detail_route(methods=['get'])
     def performancedata(self, request, *args, **kwargs):
         fsid = kwargs['pk']
-        filter_data = self.request.QUERY_PARAMS.get('filter', None)
+        filter_data = self._get_filter("filter")
+        performance_data = CephCluster.get_performance_data(fsid, "cluster", filter_data)
+        return Response(performance_data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=["get"])
+    def performancedata_pools(self, request, *args, **kwargs):
+        fsid = kwargs['pk']
+
+        filter_data = dict()
+        for filter_key in ["filter_pools", "filter_sources"]:
+            filter_data[filter_key] = self._get_filter(filter_key)
+
+        performance_data = CephCluster.get_performance_data(fsid, "pools", filter_data)
+        return Response(performance_data, status=status.HTTP_200_OK)
+
+    def _get_filter(self, filter_key):
+        filter_data = self.request.QUERY_PARAMS.get(filter_key, None)
 
         if filter_data:
             filter_data = filter_data.split(',')
 
-        performance_data = CephCluster.get_performance_data(fsid, filter_data)
-        return Response(performance_data, status=status.HTTP_200_OK)
+        return filter_data
 
 
 class CephPoolSerializer(NodbSerializer):
