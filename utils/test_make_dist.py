@@ -59,12 +59,13 @@ arguments = [
     ('create release', 'The revision is supposed to be the latest existing tag, not the tip!'),
     ('create release --revision=v2.0.7-1', ''),
     ('create release --revision=default', ''),
-    ('create release --revision=development', ''),
+    ('create release --revision=development --adapt-debian-changelog', ''),
     ('create release --source={}'.format(args['--oa-dir']), ''),
+    ('create release --source={} --revision=development'.format(args['--oa-dir']), ''),
     ('create snapshot', ''),
     ('create snapshot --revision=v2.0.7-1', ''),
     ('create snapshot --revision=default', ''),
-    ('create snapshot --revision=development', ''),
+    ('create snapshot --revision=development --adapt-debian-changelog', ''),
     ('create snapshot --source={}'.format(args['--oa-dir']), ''),
 ]
 
