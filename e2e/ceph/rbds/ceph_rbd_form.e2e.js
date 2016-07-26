@@ -104,6 +104,14 @@ describe('should test the ceph rbd creation form', function(){
     isFormElementAvailable(rbdProperties.formElements[formElement]);
   }
 
+  ['cluster', 'pool'].forEach(function(name){
+    it('should offer a list of ' + name + 's', function(){
+      rbdProperties.isListInSelectBox(name);
+    });
+  });
+
+  // After OP-1339 create a more detailed test for cluster and pool names.
+
   objSizeInput.forEach(function(io){
     changeSize(rbdProperties.objSize, io, "Object size")
   });
