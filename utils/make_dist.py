@@ -13,27 +13,74 @@
 # *  GNU General Public License for more details.
 
 """Usage:
-    make_dist.py create (release|snapshot) [--revision=<revision>] [--source=<source>] [-v|-q|-s]
+    make_dist.py create (release|snapshot) [--revision=<revision>]
+        [--source=<source>] [--adapt-debian-changelog] [--push-changes]
+        [-v|-q|-s]
     make_dist.py cache push
-    make_dist.py help
+    make_dist.py (help|-h|--help)
 
-Create a tarball out of a specific revision to be used as source for package managers to create
-debs, rpms, etc.
+Create a tarball out of a specific revision to be used as source for package
+managers to create debs, rpms, etc.
+
+This script always prints errors to STDERR. This behaviour can't be turned
+of by any switch provided.
 
 Options:
-    --revision=<revision>   A valid mercurial revision. An existing mercurial tag for 'release'.
-                            The revision argument is unsupported if a path is used as argument for
-                            --source.
-    --source=<source>       The source to be used. Either an URL to a Mercurial repository or local
-                            path to a Mercurial repository.
-                            If a local path is used, uncommited changes will be automatically
-                            committed and used to create the tarball. The source path won't be
-                            altered, only the copy of it.
-                            [default: https://bitbucket.org/openattic/openattic]
-    -v                      Enables the verbose mode.
-    -q                      Enables the quiet mode.
-    -s                      Enables the script mode which only prints the absolute path of the
-                            tarball in stdout and all the output from stderr.
+
+    --revision=<revision>
+
+        A valid mercurial revision. An existing mercurial tag for 'release'.
+        The revision argument is unsupported if a path is used as argument for
+        --source.
+
+        If no revision is provided, the defaults are used. The default for
+        'release' is the latest existing mercurial tag. The default for
+        'snapshot' is the development branch, which actually results in the tip
+        of the development branch being used.
+
+    --source=<source>   [default: https://bitbucket.org/openattic/openattic]
+
+        The source to be used. Either an URL to a Mercurial repository or local
+        path to a Mercurial repository.
+
+        If a local path is used, uncommited changes will be automatically
+        committed and used to create the tarball. Because of that the
+        --push-changes switch is ignored if a local path is given to --source.
+        The local repository is never altered, only a temporary copy of it will
+        be adapted.
+
+    --adapt-debian-changelog
+
+        If enabled, the `debian/changelog` is updated using `debchange`.
+        Because `debchange` is not available on every system, this switch is
+        optional and the functionality is disabled by default.
+
+    --push-changes
+
+        Pushes the changes made to the repository. This switch is ment to be
+        used on a release to push the changes made back to the repository.
+        Those changes include the adaption of the `debian/changelog` file as
+        well as the creation of Mercurial tags. The latter is not yet
+        implemented. This switch will be ignored if the argument to --source is
+        a local path and changes have been commited to create a tar archive for
+        testing purposes. If there weren't changes to the repository, the
+        switch won't be ignored. If the push creates a new head on the remote
+        repository, the changes won't be pushed and the execution of the script
+        will be aborted.
+
+    -v
+
+        Enables the verbose mode. Prints the output of every command called to stdout.
+
+    -q
+
+        Enables the quiet mode. No output except for the success message and path to the created
+        tar archive.
+
+    -s
+
+        Enables the script mode which prints the absolute path of the tarball
+        at the end of the tarball creation to stdout.
 """
 
 import os
@@ -89,15 +136,12 @@ class Process(object):
         self.log_command(args, cwd, self.use_bold)
 
         pipe = subprocess.Popen(args,
-                                # stderr=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
                                 stdin=subprocess.PIPE,
                                 cwd=cwd,
                                 env=env,
-
                                 bufsize=1,
-                                close_fds=True
-                                )
+                                close_fds=True)
 
         tmp_result = {'stdout': [], 'stderr': []}
 
@@ -119,7 +163,10 @@ class Process(object):
 
         if not result.success():
             # Print stdout on failure too. Some tools like Grunt print errors to stdout!
-            if result.stdout and self.verbosity <= VERBOSITY_NORMAL:  # Do not print if already printed.
+            if result.stdout and self.verbosity <= VERBOSITY_NORMAL and exit_on_error:
+                # Only print stdout if already printed and exit_on_error is True, otherwise we
+                # want to ignore the output for being able to silence the script. Sadly some tools
+                # are inconsistent with their error printing, so we need to do that here.
                 print result.stdout
             if result.stderr:
                 print result.stderr
@@ -168,7 +215,8 @@ class Process(object):
         command = ' '.join(display_args)
         command = '\033[1m' + command + '\033[0m' if use_bold else command
 
-        sys.stdout.write('# {}\n'.format(command) if not cwd else '{}# {}\n'.format(cwd, command))
+        sys.stdout.write('(cwd)# {}\n'.format(command) if not cwd else
+                         '{}# {}\n'.format(cwd, command))
         sys.stdout.flush()
 
 
@@ -185,10 +233,10 @@ class DistBuilder(object):
         if self._source_is_path:
             self._source = os.path.abspath(self._source)
         self._source_basename = DistBuilder.get_basename(self._source)
-        self._oa_temp_build_dir = os.path.join(self._source_dir, self._source_basename)
-        self._version_txt_path = os.path.join(self._oa_temp_build_dir, 'version.txt')
-        self._package_json_path = os.path.join(self._oa_temp_build_dir, 'webui', 'package.json')
-        self._bower_json_path = os.path.join(self._oa_temp_build_dir, 'webui', 'bower.json')
+        self._tmp_build_dir = os.path.join(self._source_dir, self._source_basename)
+        self._version_txt_path = os.path.join(self._tmp_build_dir, 'version.txt')
+        self._package_json_path = os.path.join(self._tmp_build_dir, 'webui', 'package.json')
+        self._bower_json_path = os.path.join(self._tmp_build_dir, 'webui', 'bower.json')
 
         self._verbosity = VERBOSITY_NORMAL
         if self._args['-q']:
@@ -215,7 +263,7 @@ class DistBuilder(object):
 
     @staticmethod
     def _warn(message):
-        print '\033[7;49;93m' + message + '\033[0m'
+        sys.stderr.write('\033[103;30m{}\033[0m{}'.format(message, os.linesep))
 
     def _command_exists(self, command):
         return self._process.run(['which', command], exit_on_error=False).success()
@@ -235,7 +283,7 @@ class DistBuilder(object):
     def _get_latest_tag_of_rev(self):
         """Return the latest global tag of the currently activated revision."""
         result = self._process.run(['hg', 'parents', '--template', '{latesttag}'],
-                                   cwd=self._oa_temp_build_dir)
+                                   cwd=self._tmp_build_dir)
         return result.stdout
 
     def __get_all_tags(self, source_dir):
@@ -267,7 +315,7 @@ class DistBuilder(object):
         return sorted(iterable, key=extract_version_numbers, reverse=True)
 
     def _get_latest_existing_tag(self, strip_tag=False):
-        tags = self.__get_all_tags(self._oa_temp_build_dir)
+        tags = self.__get_all_tags(self._tmp_build_dir)
         tags.remove('tip')  # We're looking for the latest _labeled_ tag. So we exclude 'tip'.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
@@ -275,20 +323,23 @@ class DistBuilder(object):
 
         return latest_tag
 
-    def _get_version_of_revision(self, revision):
+    def _get_version_of_revision(self, revision, update_allowed):
         """Return the version of `version.txt` using the given revision.
 
         It returns the VERSION of the version.txt file in the repository. The version returned
         depends on the given revision.
 
         :param revision: A valid mercurial revision
+        :type revision: str
+        :type update_allowed: bool
         :return: The version of the `version.txt`
+        :rtype: str
         """
-        if not self._source_is_path:
+        if update_allowed:
             # Update to the given revision before determining the upcoming version. Don't do this if
             # the source is a path, because that one is for creating tarballs to be tested before
             # releasing them.
-            self._process.run(['hg', 'update', revision], cwd=self._oa_temp_build_dir)
+            self._process.run(['hg', 'update', revision], cwd=self._tmp_build_dir)
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -410,7 +461,7 @@ class DistBuilder(object):
         return hits[0][0] if hits else None  # Return first hit of first group or None.
 
     def _is_existing_tag(self, tag):
-        result = self._process.run(['hg', 'tags'], cwd=self._oa_temp_build_dir)
+        result = self._process.run(['hg', 'tags'], cwd=self._tmp_build_dir)
         matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
 
         return tag in matches if matches else False
@@ -431,9 +482,6 @@ class DistBuilder(object):
         build_basename += '~' + self._datestring if channel == 'snapshot' else ''
 
         return build_basename
-
-    def _delete_source_clone(self):
-        rmtree(self._oa_temp_build_dir)
 
     def _create_source_tarball(self, build_basename):
         """Make some necessary modifications and create the tarball.
@@ -458,7 +506,7 @@ class DistBuilder(object):
             os.remove(abs_tarball_file_path)
 
         self._process.run(['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
-                          cwd=self._oa_temp_build_dir)
+                          cwd=self._tmp_build_dir)
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
         cache = [{
@@ -504,11 +552,10 @@ class DistBuilder(object):
             rmtree(node_modules_dir)
 
         # Update version.txt.
-
         data = {
             'BUILDDATE': self._datestring,
-            'REV': self._get_current_revision_hash(self._oa_temp_build_dir),
-            'STATE': self._get_release_channel()
+            'REV': self._get_current_revision_hash(self._tmp_build_dir),
+            'STATE': self._get_release_channel(),
         }
         with file(os.path.join(abs_build_dir, 'version.txt'), 'a') as f:
             for key, value in data.items():
@@ -520,7 +567,6 @@ class DistBuilder(object):
         self._process.run(['tar', options, abs_tarball_file_path, build_basename],
                           cwd=self._source_dir)
 
-        self._delete_source_clone()  # Remove no longer required repository clone.
         rmtree(abs_build_dir)  # Remove no longer required temporary folder.
 
         return abs_tarball_file_path
@@ -537,11 +583,20 @@ class DistBuilder(object):
         result = self._process.run(['hg', '--debug', 'id', '-i'], cwd=repo_dir)
         return result.stdout.strip()
 
-    def _push_remote_cache(self):
-        self._process.run(['hg', 'addremove'], cwd=self._cache_dir)
-        self._process.run(['hg', 'ci', '-m', 'Cache updated.', '-u', 'make_dist.py'],
-                          cwd=self._cache_dir, exit_on_error=False)
-        self._process.system(['hg', 'push'], cwd=self._cache_dir)
+    def _commit_changes(self, commit_msg, repo_dir, user='Build Scripts', exit_on_error=False):
+        """
+        :type commit_msg: str
+        :type repo_dir: str
+        :type user: str
+        :type exit_on_error: bool
+        :rtype: ProcessResult
+        """
+        return self._process.run(['hg', 'ci', '-A', '-m', commit_msg, '-u', user],
+                                 cwd=repo_dir,
+                                 exit_on_error=exit_on_error)
+
+    def _push_changes(self, repo_dir):
+        return self._process.run(['hg', 'push'], cwd=repo_dir)
 
     def _get_release_channel(self):
         return 'release' if self._args['release'] else 'snapshot'
@@ -554,8 +609,8 @@ class DistBuilder(object):
         self._set_npmrc_prefix()
 
         self._retrieve_source(self._source_dir, DistBuilder.OA_CACHE_REPO_URL, skip_if_exists=True)
-        if self._source_is_path and isdir(self._oa_temp_build_dir):
-            rmtree(self._oa_temp_build_dir)
+        if self._source_is_path and isdir(self._tmp_build_dir):
+            rmtree(self._tmp_build_dir)
         self._retrieve_source(self._source_dir, self._source, skip_if_exists=True)
 
         channel = self._get_release_channel()
@@ -563,18 +618,49 @@ class DistBuilder(object):
 
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
+        tmp_files_commited = False
+        repo_updated = False
         if self._source_is_path:
-            commands = [['hg', 'commit', '-A', '-m', 'Testbuild']]
+            tmp_files_commited = self._commit_changes('Testbuild', self._tmp_build_dir).success()
+
+            if self._args['--revision']:
+                if tmp_files_commited:
+                    self._warn('Ignoring the --revision switch because you have uncommitted files '
+                               'in your local repository that have been used to create the tarball.'
+                               ' If I update to the given revision, these changes won\'t be '
+                               'included in the tar archive anymore.')
+                else:
+                    for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
+                        self._process.run(cmd, cwd=self._tmp_build_dir)
+                    repo_updated = True
         else:
-            commands = [['hg', 'pull'],
-                        ['hg', 'update', '--clean', '-r', revision]]
+            for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
+                self._process.run(cmd, cwd=self._tmp_build_dir)
+            repo_updated = True
 
-        for command in commands:
-            self._process.run(command, cwd=self._oa_temp_build_dir)
-
-        version = self._get_version_of_revision(revision)
+        version = self._get_version_of_revision(revision, update_allowed=repo_updated)
         build_basename = self._get_build_basename(channel, version)
+
+        if self._args['--adapt-debian-changelog']:
+            debian_channel = 'stable' if channel == 'release' else 'nightly'
+            self.adapt_debian_changelog(debian_channel,
+                                        version,
+                                        self._datestring,
+                                        self._get_current_revision_hash(self._tmp_build_dir),
+                                        self._tmp_build_dir)
+            self._commit_changes('Update `debian/changelog` for release', self._tmp_build_dir)
+
         abs_tarball_file_path = self._create_source_tarball(build_basename)
+
+        if self._args['--push-changes']:
+            # Push the changes after the tarball has successfully been created.
+            if not tmp_files_commited:
+                self._push_changes(self._tmp_build_dir)
+            else:
+                self._warn('Ignoring the --push-changes switch because temporary files of the given'
+                           ' source have been comitted.')
+
+        rmtree(self._tmp_build_dir)
         self._remove_npmrc_prefix()
 
         return abs_tarball_file_path
@@ -584,11 +670,9 @@ class DistBuilder(object):
             print __doc__
             sys.exit(0)
         elif self._args['cache'] and self._args['push']:
-            self._push_remote_cache()
+            self._commit_changes('Update cache', self._cache_dir)
+            self._push_changes(self._cache_dir)
         elif self._args['create']:
-            if self._args['--revision'] and self._args['--source'] and self._source_is_path:
-                msg = 'Using a revision and a path as source is currently unsupported.'
-                raise NotImplementedError(msg)
             abs_tarball_file_path = self.build()
             if self._verbosity == -1:
                 print abs_tarball_file_path
@@ -598,6 +682,33 @@ class DistBuilder(object):
     @staticmethod
     def get_basename(source):
         return os.path.basename(os.path.normpath(source))
+
+    def adapt_debian_changelog(self, release_channel, version, pkgdate, hg_id, tarball_source_dir):
+        # Provide necessary information.
+        env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
+        if release_channel == 'stable':
+            newversion = version
+            msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
+            distribution = 'unstable'
+        else:
+            distribution = 'nightly'
+            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
+            newversion = version + '~' + pkgdate
+
+        # Adapt the `debian/changelog` file via `debchange`.
+        self._process.run(
+            [
+                'debchange',
+                '--distribution',
+                distribution,
+                '--force-distribution',
+                '--force-bad-version',  # Allows the version to be lower than the current one.
+                '--newversion',
+                newversion,
+                msg,
+            ],
+            cwd=tarball_source_dir,
+            env=env)
 
 
 class DistBuilderTestCase(unittest.TestCase):
