@@ -70,12 +70,13 @@ Options:
 
     -v
 
-        Enables the verbose mode. Prints the output of every command called to stdout.
+        Enables the verbose mode. Prints the output of every command called to
+        stdout.
 
     -q
 
-        Enables the quiet mode. No output except for the success message and path to the created
-        tar archive.
+        Enables the quiet mode. No output except for the success message and
+        path to the created tar archive.
 
     -s
 
