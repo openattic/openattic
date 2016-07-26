@@ -16,8 +16,8 @@
     test_make_dist.py [--oa-dir=<oa_dir>]
 
 Options:
-    --oa-dir=<oa_dir>  The directory to be used for the test creation of the tarball
-                       [default: /srv/openattic].
+    --oa-dir=<oa_dir>  The directory to be used for the test creation of the
+                       tarball [default: /srv/openattic].
 
 """
 import os
@@ -26,8 +26,8 @@ import docopt
 from make_dist import Process, VERBOSITY_VERBOSE
 
 process = Process(verbosity=VERBOSITY_VERBOSE)
-args = docopt.docopt(__doc__)
-args['--oa-dir'] = os.path.abspath(args['--oa-dir'])
+cli_args = docopt.docopt(__doc__)
+cli_args['--oa-dir'] = os.path.abspath(cli_args['--oa-dir'])
 
 
 def get_abs_script_path():
@@ -55,18 +55,18 @@ def test(arguments):
         with open(os.path.join(tempdir, 'version.txt'), 'r') as fh:
             print(''.join(fh.readlines()))
 
-arguments = [
+test_arguments = [
     ('create release', 'The revision is supposed to be the latest existing tag, not the tip!'),
     ('create release --revision=v2.0.7-1', ''),
     ('create release --revision=default', ''),
     ('create release --revision=development --adapt-debian-changelog', ''),
-    ('create release --source={}'.format(args['--oa-dir']), ''),
-    ('create release --source={} --revision=development'.format(args['--oa-dir']), ''),
+    ('create release --source={}'.format(cli_args['--oa-dir']), ''),
+    ('create release --source={} --revision=development'.format(cli_args['--oa-dir']), ''),
     ('create snapshot', ''),
     ('create snapshot --revision=v2.0.7-1', ''),
     ('create snapshot --revision=default', ''),
     ('create snapshot --revision=development --adapt-debian-changelog', ''),
-    ('create snapshot --source={}'.format(args['--oa-dir']), ''),
+    ('create snapshot --source={}'.format(cli_args['--oa-dir']), ''),
 ]
 
-test(arguments)
+test(test_arguments)
