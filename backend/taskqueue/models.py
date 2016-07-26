@@ -35,7 +35,7 @@ class TaskQueue(Model):
             self.finish_task('Failed to execute task')
             return
         try:
-            task = deserialize_task_chain(task_val)
+            task = deserialize_task(task_val)
         except ValueError as e:
             logger.exception('Failed to deserialize "{}" created "{}"'.format(self.task, self.created))
             self.finish_task('Failed to execute task')
@@ -94,7 +94,18 @@ class Task(object):
         return None
 
     def serialize(self):
-        return [self.func, self.args, self.kwargs]
+        def deep_serialize(arg):
+            if isinstance(arg, Task):
+                return arg.serialize()
+            if isinstance(arg, list):
+                return [deep_serialize(elem) for elem in arg]
+            if isinstance(arg, dict):
+                return {key: deep_serialize(val) for key, val in arg.iteritems()}
+            return arg
+
+        args = [deep_serialize(arg) for arg in self.args]
+        kwargs = {key: deep_serialize(val) for key, val in self.kwargs.iteritems()}
+        return [self.func, args, kwargs]
 
     def run_once(self):
         module_name, func_name = self.func.rsplit('.', 1)
@@ -110,7 +121,7 @@ class Task(object):
     def __str__(self):
         return '{} with {}, {}'.format(self.func, self.args, self.kwargs)
 
-def deserialize_task_chain(value):
+def deserialize_task(value):
     """
     :rtype: Task
     :raises ValueError: Error occurred.
@@ -150,32 +161,11 @@ def task(func):
 
 
 @task
-def add(x,y):
-    return x + y
-
-
-@task
-def wait(times):
-    print times
-    if times > 0:
-        return wait(times - 1)
-    else:
-        return True
-
-@task
-def wait_add(times, x, y):
-    return chain([wait(times), add(x, y)])
-
-
-def chain(tasks):
-    return chain_tasks([t.serialize() for t in tasks])
-
-@task
-def chain_tasks(values):
+def chain(values):
     assert len(values) >= 1
 
     def to_task(value):
-        return value if isinstance(value, Task) else deserialize_task_chain(value)
+        return value if isinstance(value, Task) else deserialize_task(value)
 
     tasks = [to_task(v) for v in values]
 
