@@ -36,8 +36,9 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   packaging it (OP-1141)
 * Packaging: Added version.txt to the openattic-base RPM and DEB files
   (OP-1267)
-* Packaging: Fixed the ability to build tar archives from a local hg repository
-  (OP-1312).
+* Packaging: Fixed building tar archives from a local hg repository (OP-1312)
+* Packaging: Enabled relative paths for make_dist.py (OP-1324)
+
 
 Version 2.0.12, 23. June 2016:
 ------------------------------
