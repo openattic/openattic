@@ -626,9 +626,9 @@ class DistBuilder(object):
             if self._args['--revision']:
                 if tmp_files_commited:
                     self._warn('Ignoring the --revision switch because you have uncommitted files '
-                               'in your local repository that have been used to create the tarball.'
-                               ' If I update to the given revision, these changes won\'t be '
-                               'included in the tar archive anymore.')
+                               'in your local repository which are about to be used to create the '
+                               'tarball. If I updated to the given revision, these changes '
+                               'wouldn\'t be included in the tar archive anymore.')
                 else:
                     for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
                         self._process.run(cmd, cwd=self._tmp_build_dir)
