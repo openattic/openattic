@@ -140,6 +140,7 @@ class CephCluster(NodbModel):
 
     @bulk_attribute_setter('performance_data_options')
     def set_performance_data_options(self, objects):
+        self.performance_data_options = {}
         if "nagios" in settings.INSTALLED_APPS:
             try:
                 sources = dict()
@@ -157,6 +158,7 @@ class CephCluster(NodbModel):
                 self.performance_data_options = sources
 
             except SystemError:
+                logger.exception('set_performance_data_options failed')
                 pass
 
     @staticmethod
