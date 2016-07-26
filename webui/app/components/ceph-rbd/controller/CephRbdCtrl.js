@@ -94,11 +94,11 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 $scope.poolFailure = true;
                 $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
                 $scope.poolFailureError = poolError;
-                console.log("An error occurred while loading the ceph pools.", poolError);
                 toasty.error({
                   title: $scope.poolFailureTitle,
                   msg: "Pool list couldn't be loaded."
                 });
+                throw poolError;
               }
             });
           })
@@ -112,7 +112,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 msg: "Rbd list couldn't be loaded."
               });
             }
-            console.log("An error occurred while loading the ceph rbds.", rbdError);
+            throw rbdError
           });
     }
   };

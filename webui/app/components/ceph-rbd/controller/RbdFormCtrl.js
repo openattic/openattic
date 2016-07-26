@@ -267,7 +267,6 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       $scope.data.pools = null;
     })
     .catch(function (clusterError) {
-      console.log("An error occurred while loading the ceph clusters.", clusterError);
       if (!$scope.clusterFailure) {
         $scope.clusterFailure = true;
         $scope.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
@@ -279,6 +278,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           msg: "Cluster list couldn't be loaded."
         });
       }
+      throw clusterError;
     });
 
   $scope.waitingPoolMsg = "Select a cluster first";
@@ -318,7 +318,6 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         }
       })
       .catch(function (poolError) {
-        console.log("An error occurred while loading the ceph pools.", poolError);
         if (!$scope.poolFailure) {
           $scope.poolFailure = true;
           $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
@@ -330,6 +329,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           });
           $scope.waitingPoolMsg = "Error: List couldn't be loaded!";
         }
+        throw poolError;
       });
   };
 
@@ -375,7 +375,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
             msg: toastMsg,
             timeout: 10000
           });
-          console.log("An error occured", error);
+          throw error;
         });
     }
   };
