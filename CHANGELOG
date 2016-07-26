@@ -21,15 +21,22 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Backend: Added Ceph pool Nagios monitoring (OP-1292)
 * Backend: The check_cephcluster Nagios plugin contains another value 
   'exec_time'. It represents the run time of the cluster check. (OP-1307)
+* WebUI: Wizards automatically setting the share path (OP-590)
 * WebUI: Make the oA API URL configurable (OP-989)
 * WebUI: Deletion of a RBD or multiple RBDs (OP-1032)
 * WebUI: Creation of RBDs (OP-753 & OP-1290)
 * WebUI: Sortable RBD table and a cleaned up details view (OP-1309)
 * WebUI: Added a welcome message to the login screen (OP-1310)
+* WebUI: Enable cluster selection in the RBD creation form (OP-1314)
 * WebUI: Added grunt task "grunt inspect --force" to check the quality of your
   JavaScript code (OP-1332)
 * WebUI: Replacing the "Sorry folks" messages with loading messages (OP-1333)
+* WebUI: Add form throws toasty error message in case of a pool list loading
+  failure. (OP-1357)
 * WebUI/QA: RBD form, table, details, creation and deletion tests (OP-1338)
+* WebUI/QA: Restructured wizard tests with help of a page object (OP-1356)
+* WebUI/QA: Includes cluster selection tests in the RBD creation form tests
+  (OP-1367)
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
 * Packaging: Remove backend/.style.yapf from the RPM buildroot instead of
