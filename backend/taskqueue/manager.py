@@ -24,16 +24,21 @@ class TaskQueueManager(gobject.GObject):
         gobject.GObject.__init__(self)
         self.timeout_id = gobject.timeout_add_seconds(5, self.on_timeout, None)
 
+        # TODO: Actually, I don't know if this is a good idea, but let's delete all finished
+        #       Tasks here.
+        TaskQueue.objects.filter(finished__isnull=False).delete()
+
     def on_timeout(self, user_data):
         actives = TaskQueue.objects.filter(finished=None)
         logger.debug('Running tasks: {}'.format(actives))
-        for task in actives:
+        for task_queue in actives:
             try:
-                task.on_map()
+                task_queue.run_once()
             except Exception as e:  # Don't let one exception stop kill this timer.
                 logger.exception(
                     'Exception when running "{}". Dont throw exceptions into this '
-                    'event handler.'.format(task))
+                    'event handler.'.format(task_queue))
+                task_queue.delete()
 
         return True
 
