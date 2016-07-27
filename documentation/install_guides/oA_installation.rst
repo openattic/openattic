@@ -63,12 +63,14 @@ the following configuration changes should be performed:
 #. Install and configure an NTP daemon on every host, so the clocks on all
    these nodes are in sync.
 
-#. HTTP access to the Web UI might be blocked by the default firewall
-   configuration. For example, in order to allow external HTTP requests on an
-   EL7 system, execute the following commands::
+#. HTTP access and other things might be blocked by the default firewall
+   configuration. For example on EL7 system, execute the following commands::
 
-     # firewall-cmd --zone=public --add-port=80/tcp --permanent
-     # systemctl restart firewalld
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=http
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=samba
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=nfs
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=iscsi-target
+     # firewall-cmd --reload
 
 Consult your Linux distribution's documentation for further details on how to
 make these changes.
