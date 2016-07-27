@@ -4,10 +4,9 @@ describe('Pools panel', function(){
 
   beforeAll(function(){
     helpers.login();
-  });
-
-  beforeEach(function(){
     element(by.css('ul .tc_menuitem_pools > a')).click();
+    element(by.css('.tc_entries_dropdown')).click();
+    element(by.css('.tc_entries_100')).click();
   });
 
   it('should show the oadatatable', function(){

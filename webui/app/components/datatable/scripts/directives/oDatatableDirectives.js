@@ -47,7 +47,7 @@ app.directive("oadatatable", function () {
         element.find(".oadatatableactions").append(clone.filter("actions"));
         element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
-          scope.columns[$(item).text()] = true;
+          scope.columns[$(item).text()] = $(item).attr("disabled") === undefined;
           if (item.attributes.sortfield !== undefined) {
             scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
           }

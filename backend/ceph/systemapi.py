@@ -22,7 +22,7 @@ import re
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
 
-from ceph.models import CephCluster
+from ceph.models import CephCluster, CephPool, fsid_context
 from ifconfig.models import Host
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
@@ -185,31 +185,49 @@ class SystemD(BasePlugin):
         ret, out, err = self.invoke_ceph(cluster, ["fsid"])
         return out
 
-    @deferredmethod(in_signature="")
-    def remove_nagios_configs(self, sender):
+    @deferredmethod(in_signature="(s)")
+    def remove_nagios_configs(self, objects_to_delete, sender):
+        """
+        Deletes existing Nagios config files for Ceph cluster objects by object list.
+        :param objects_to_delete: Which objects should the config be deleted for? - Possible values
+               are: "cluster", "pool" and "all". If you choose "all" the configs of all known
+               objects are deleted.
+        :rtype: list[str]
+        :param sender: Unique ID of DBUS sender object.
+        :rtype: str
+        :return: None
+        """
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
-        for file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
-            if re.match(r"cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg", file):
-                path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file)
-                os.remove(path)
+        rgx = {"cluster": r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$",
+               "pool": r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+.cfg$"}
+
+        if len(objects_to_delete) == 1 and objects_to_delete[0] == "all":
+            objects_to_delete = rgx.keys()
+
+        for conf_file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
+            for delete in objects_to_delete:
+                if re.match(rgx[delete], conf_file):
+                    path = os.path.join(NAGIOS_SERVICES_CFG_PATH, conf_file)
+                    os.remove(path)
 
     @deferredmethod(in_signature="")
-    def write_nagios_configs(self, sender):
-        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
-
+    def write_cluster_nagios_configs(self, sender):
         for cluster in CephCluster.objects.all():
-            file_name = "cephcluster_{}.cfg".format(cluster.fsid)
+            cluster_file_name = "cephcluster_{}.cfg".format(cluster.fsid)
+            cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+            self._write_services_to_file(cluster_file_name, cluster_services)
 
-            services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
-
-            path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
-            with open(path, "wb") as config_file:
-                config_file.write(render_to_string("nagios/services.cfg", {
-                    "IncludeHost": False,
-                    "Host": Host.objects.get_current(),
-                    "Services": services
-                }))
+    @deferredmethod(in_signature="")
+    def write_pool_nagios_configs(self, sender):
+        for cluster in CephCluster.objects.all():
+            with fsid_context(cluster.fsid):
+                for pool in CephPool.objects.all():
+                    pool_file_name = "cephpool_{}_{}.cfg".format(cluster.fsid, pool.name)
+                    pool_services = [self._gen_service_data(
+                        pool.__class__.__name__,
+                        "{} {}".format(cluster.fsid, pool.name))]
+                    self._write_services_to_file(pool_file_name, pool_services)
 
     def _gen_service_data(self, service_instance_name, service_arguments):
         class _CephService(object):
@@ -230,3 +248,14 @@ class SystemD(BasePlugin):
         service_command = "check_{}".format(str.lower(service_instance_name))
 
         return _CephService(service_desc, service_command, service_arguments)
+
+    def _write_services_to_file(self, file_name, services):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+        path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
+
+        with open(path, "wb") as config_file:
+            config_file.write(render_to_string("nagios/services.cfg", {
+                "IncludeHost": False,
+                "Host": Host.objects.get_current(),
+                "Services": services
+            }))

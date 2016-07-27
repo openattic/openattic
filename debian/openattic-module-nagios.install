@@ -13,6 +13,7 @@ etc/nagios3/conf.d/openattic_contacts.cfg  /etc/nagios3/conf.d
 etc/nagios-plugins/config/openattic.cfg    /etc/nagios-plugins/config
 
 backend/nagios/plugins/check_cephcluster        /usr/lib/nagios/plugins
+backend/nagios/plugins/check_cephpool           /usr/lib/nagios/plugins
 backend/nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
 backend/nagios/plugins/check_oa_utilization     /usr/lib/nagios/plugins
 backend/nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins

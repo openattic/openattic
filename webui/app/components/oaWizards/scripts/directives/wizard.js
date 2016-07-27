@@ -77,6 +77,7 @@ app.directive("wizard", function () {
                   if ("cifs" in $scope.input && "nfs" in $scope.input) {
                     if ($scope.input.cifs.create) {
                       $scope.input.cifs.volume = {"id": res.id};
+                      $scope.input.cifs.path = res.path;
                       CifsSharesService.save($scope.input.cifs)
                           .$promise
                           .then(function () {
@@ -87,6 +88,7 @@ app.directive("wizard", function () {
 
                     if ($scope.input.nfs.create) {
                       $scope.input.nfs.volume = {"id": res.id};
+                      $scope.input.nfs.path = res.path;
                       NfsSharesService.save($scope.input.nfs)
                           .$promise
                           .then(function () {

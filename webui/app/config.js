@@ -1,4 +1,4 @@
-globalConfig = {
+var globalConfig = {
   "API": {
     "URL": "/openattic/api/"
   },

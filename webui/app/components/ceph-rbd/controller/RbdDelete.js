@@ -31,39 +31,53 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.directive("poolSelection", function () {
-  return {
-    restrict: "E",
-    scope: {
-      pool: "=",
-      validation: "=",
-      megs: "=",
-      submitted: "=",
-      wizard: "="
-    },
-    templateUrl: "templates/poolSelection.html",
-    controller: function ($scope, PoolService, toasty) {
-      $scope.waitingMsg = "Retrieving pool list...";
-      PoolService.query()
-        .$promise
-        .then(function (res) {
-          $scope.pools = res;
-          $scope.waitingMsg = "-- Select a pool --";
-        }, function (error) {
-          console.log("An error occurred", error);
-          toasty.error({
-            title: "Pool list couldn't be loaded",
-            msg: "Server failure."
-          });
-          $scope.waitingMsg = "Error: List couldn't be loaded!";
-          $scope.validation.$setValidity("loading", false);
-        });
-      $scope.selPoolUsedPercent = 0;
-      $scope.$watch("pool", function (pool) {
-        if (pool) {
-          $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);
-        }
-      });
+app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, clusterId, $q,
+    toasty) {
+  if ($.isArray(rbdSelection)) {
+    $scope.rbds = rbdSelection;
+  } else {
+    $scope.rbd = rbdSelection;
+  }
+
+  $scope.input = {
+    enteredName: "",
+    pattern: "yes"
+  };
+
+  $scope.delete = function () {
+    if ($scope.rbd) {
+      $scope.rbds = [ $scope.rbd ];
     }
+    if ($scope.rbds) {
+      $scope.deleteRbds();
+    }
+  };
+
+  $scope.deleteRbds = function () {
+    var requests = [];
+    $scope.rbds.forEach(function (rbd) {
+      var deferred = $q.defer();
+      cephRbdService.delete({
+        id: clusterId,
+        pool: rbd.pool.name,
+        name: rbd.name
+      }, deferred.resolve, deferred.reject);
+      requests.push(deferred.promise);
+    });
+    $q.all(requests).then(function () {
+      $uibModalInstance.close("deleted");
+    }, function (error) {
+      console.log("An error occured", error);
+      $uibModalInstance.close("deleted");
+    });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+
+    toasty.warning({
+      title: "Delete RBD",
+      msg: "Cancelled"
+    });
   };
 });

@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRbd");
-app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService, clusterData, registryService,
-    cephPoolsService) {
+app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
+    registryService, cephPoolsService, toasty) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.rbd = {};
@@ -72,9 +72,11 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService,
           })
           .$promise
           .then(function (res) {
+            $scope.rbdFailure = false;
             cephPoolsService.get({
               id: $scope.registry.selectedCluster.fsid
             }).$promise.then(function (pools) {
+              $scope.poolFailure = false;
               res.results.forEach(function (rbd) {
                 pools.results.some(function (pool) {
                   if (pool.id === rbd.pool) {
@@ -82,16 +84,35 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService,
                     return true;
                   }
                 });
-                rbd.oaUsed = rbd.obj_size / rbd.size * 100;
-                rbd.oaUnused = 100 - rbd.oaUsed;
-                rbd.oaFree = rbd.size - rbd.obj_size;
+                rbd.free = rbd.size - rbd.used_size;
+                rbd.usedPercent = rbd.used_size / rbd.size * 100;
+                rbd.freePercent = rbd.free / rbd.size * 100;
               });
               $scope.rbd = res;
+            }).catch(function (poolError) {
+              if (!$scope.poolFailure) {
+                $scope.poolFailure = true;
+                $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
+                $scope.poolFailureError = poolError;
+                toasty.error({
+                  title: $scope.poolFailureTitle,
+                  msg: "Pool list couldn't be loaded."
+                });
+                throw poolError;
+              }
             });
           })
-          .catch(function (error) {
-            $scope.error = error;
-            console.log("An error occurred while loading the ceph rbds.", error);
+          .catch(function (rbdError) {
+            if (!$scope.rbdFailure) {
+              $scope.rbdFailure = true;
+              $scope.rbdFailureTitle = rbdError.status + ": " + rbdError.statusText.toLowerCase();
+              $scope.rbdFailureError = rbdError;
+              toasty.error({
+                title: $scope.rbdFailureTitle,
+                msg: "Rbd list couldn't be loaded."
+              });
+            }
+            throw rbdError
           });
     }
   };
@@ -108,7 +129,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService,
     var item = selection.item;
     var items = selection.items;
 
-    $scope.multiSelection = Boolean(items);
+    $scope.multiSelection = Boolean(items) && items.length > 1;
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {
@@ -123,4 +144,44 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, cephRbdService,
       });
     }
   });
+  $scope.addAction = function () {
+    $state.go("rbds-add", {
+      clusterId: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.addAction = function () {
+    $state.go("rbds-add", {
+      clusterId: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.deleteAction = function () {
+    if (!$scope.hasSelection && !$scope.multiSelection) {
+      return;
+    }
+    var item = $scope.selection.item;
+    var items = $scope.selection.items;
+    $scope.deletionDialog(item ? item : items);
+  };
+
+  $scope.deletionDialog = function (selection) {
+    var modalInstance = $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "components/ceph-rbd/templates/delete.html",
+      controller: "RbdDelete",
+      resolve: {
+        rbdSelection: function () {
+          return selection;
+        },
+        clusterId: function () {
+          return $scope.registry.selectedCluster.fsid;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
+    });
+  };
 });

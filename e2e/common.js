@@ -184,5 +184,49 @@
           });
       });
     },
+
+    delete_nfs_share: function(volName, nfsName){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      element(by.css('.tc_nfsShareTab')).click();
+      var share = element(by.cssContainingText('td', nfsName));
+      expect(share.isDisplayed()).toBe(true);
+      share.click();
+      element(by.css('.tc_nfsShareDelete')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
+
+    delete_cifs_share: function(volName, cifsName){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      element(by.css('.tc_cifsShareTab')).click();
+      var share = element(by.cssContainingText('tr', cifsName));
+      expect(share.isDisplayed()).toBe(true);
+      share.click();
+      element.all(by.css('.tc_menudropdown')).get(1).click();
+      element(by.css('.tc_cifsShareDelete > a')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
+
+    delete_fc_share: function(volName, hostname){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(volume.isPresent()).toBe(true);
+      volume.click();
+      element(by.css('.tc_iscsi_fcTab')).click();
+      var share = element(by.cssContainingText('tr', hostname))
+      share.click();
+      element(by.css('.tc_lunDelete')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
   };
 }());
