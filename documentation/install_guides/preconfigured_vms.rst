@@ -50,7 +50,7 @@ How to use those images:
 	    <emulator>/usr/bin/kvm</emulator>
 	    <disk type='file' device='disk'>
 	      <driver name='qemu' type='qcow2' cache='none' io='native'/>
-	      <source file='/var/lib/libvirt/images/oa-vm-debian-2.0.13.qcow2'/>
+	      <source file='/var/lib/libvirt/images/|VERSION|.qcow2'/>
 	      <target dev='sda' bus='scsi'/>
 	    </disk>
 	    <disk type='file' device='cdrom'>
