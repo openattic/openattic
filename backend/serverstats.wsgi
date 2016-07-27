@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: hl python; space-indent on; indent-width 4; replace-tabs on;
-
 
 import os
 import sys
@@ -34,14 +32,10 @@ except AttributeError:
 # current_host = Host.objects.get_current()
 from volumes.models import PhysicalBlockDevice
 
-
 def application(environ, start_response):
     status = '200 OK'
 
     if not environ["PATH_INFO"].startswith('/stream'):
-        headers = [('Content-type', 'text/html; encoding=utf8')]
-        start_response(status, headers)
-        yield sse_data
         return
 
     else:
@@ -49,7 +43,7 @@ def application(environ, start_response):
         start_response(status, headers)
 
         # Set client-side auto-reconnect timeout, ms.
-        yield 'retry: 100\n\n'
+        #yield 'retry: 100\n\n'
 
         # Dict filled with system stats
         system_stats = {"cpu": {}, "disks": {}, "network": {}, "temperature": {}, "sys": {}, "timestamp": 0,
@@ -86,7 +80,7 @@ def application(environ, start_response):
                 # CPU stats
                 total = wrapdiff(data["cpu_stats_now"]["cpu"]["total"], data["cpu_stats_old"]["cpu"]["total"])
                 idle = wrapdiff(data["cpu_stats_now"]["cpu"]["idle"], data["cpu_stats_old"]["cpu"]["idle"])
-                system_stats["cpu"].update({"load_percent": (total - idle) / total * 100})
+                system_stats["cpu"].update({"loadPercent": (total - idle) / total * 100})
 
                 # disk stats
                 bytes_per_sector = 512
@@ -103,13 +97,13 @@ def application(environ, start_response):
                     util_percent = "NaN"
 
                 system_stats["disks"].update({"count": data["disk_stats_now"]["disks"]["count"],
-                                              "count_online": data["disk_stats_now"]["disks"]["count_online"],
-                                              "count_oa_disks": data["disk_stats_now"]["disks"]["count_oa_disks"],
-                                              "load_percent": util_percent, "size_byte": disks_size,
-                                              "wr_b": tot_wr_b,
-                                              "wr_mb": tot_wr_bps / float(1024 ** 2),
-                                              "wr_b_per_day": tot_wr_bps * 86400,
-                                              "wr_tb_per_day": (tot_wr_bps / float(1024 ** 4)) * 86400})
+                                              "countOnline": data["disk_stats_now"]["disks"]["countOnline"],
+                                              "countOaDisks": data["disk_stats_now"]["disks"]["countOaDisks"],
+                                              "loadPercent": util_percent, "sizeByte": disks_size,
+                                              "wrB": tot_wr_b,
+                                              "wrMb": tot_wr_bps / float(1024 ** 2),
+                                              "wrBPerDay": tot_wr_bps * 86400,
+                                              "wrTbPerDay": (tot_wr_bps / float(1024 ** 4)) * 86400})
 
                 # network
                 tot_bytes_received = wrapdiff(data["network_stats_now"]["interfaces"]["received"]["bytes"],
@@ -124,10 +118,10 @@ def application(environ, start_response):
                     traffic_percent = "NaN"
 
                 system_stats["network"].update({"count": data["network_stats_now"]["interfaces"]["count"],
-                                                "tot_rb_in_mb": tot_bytes_received / (1024 ** 2),
-                                                "tot_tb_in_mb": tot_bytes_transmitted / (1024 ** 2),
-                                                "tot_in_mb": tot_bytes / (1024 ** 2),
-                                                "traffic_percent": traffic_percent})
+                                                "totRbInMb": tot_bytes_received / (1024 ** 2),
+                                                "totTbInMb": tot_bytes_transmitted / (1024 ** 2),
+                                                "totInMb": tot_bytes / (1024 ** 2),
+                                                "trafficPercent": traffic_percent})
 
                 # sys
                 system_stats["sys"].update({"uptime": uptime['uptime']})
@@ -141,12 +135,11 @@ def application(environ, start_response):
                 data["network_stats_old"] = data["network_stats_now"]
 
                 last = now
-                yield "id: %i\n" % (start)
+                #yield "id: %i\n" % (start)
                 yield "event: serverstats\n"
                 yield "data: %s\n\n" % (json.dumps(system_stats))  # do not change this line
             time.sleep(1)
             now = time.time()
-
 
 def get_cpu_time():
     """
@@ -171,7 +164,6 @@ def get_cpu_time():
 
             cpu_info.update({cpu_id: {'total': total, 'idle': idle, 'non_idle': non_idle}})
         return cpu_info
-
 
 def get_disk_stats():
     """
@@ -220,10 +212,9 @@ def get_disk_stats():
             sys_disks_online += 1
 
     disk_stats.update({u"disks": dict(disk_sum)})
-    disk_stats["disks"].update({"count": sys_disks, "count_online": sys_disks_online, "count_oa_disks": disk_count})
+    disk_stats["disks"].update({"count": sys_disks, "countOnline": sys_disks_online, "countOaDisks": disk_count})
 
     return disk_stats
-
 
 def get_network_stats():
     """
@@ -269,7 +260,6 @@ def get_network_stats():
 
     return network_stats
 
-
 def get_uptime():
     """
     @return dict up and idletime of your server in seconds
@@ -283,7 +273,6 @@ def get_uptime():
         uptime.update({"uptime": up, "idle": idle})
 
     return uptime
-
 
 def wrapdiff(curr, last):
     """ Calculate the difference between last and curr.
@@ -302,70 +291,3 @@ def wrapdiff(curr, last):
     if boundary is None:
         raise ArithmeticError("Couldn't determine boundary")
     return 2 ** boundary - last + curr
-
-
-sse_data = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js "></script>
-        <script>
-            $(document).ready(function() {
-                var es = new EventSource("stream" + location.search);
-                es.addEventListener("serverstats", function (e) {
-                    var data = JSON.parse(e.data);
-                    console.log(e.data);
-                    var date = new Date(data.timestamp*1000);
-                    var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-                    var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-                    var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
-                    var time = "<td>" + hours + ':' + minutes + ':' + seconds + "</td>";
-                    var uptime_d = Math.floor(data.sys.uptime / 86400);
-                    var uptime_h = Math.floor((data.sys.uptime % 86400) / 3600);
-                    var uptime_m = Math.floor(((data.sys.uptime % 86400) % 3600) / 60);
-                    var uptime = "<td>" + uptime_d + 'D ' + uptime_h + 'H ' + uptime_m + 'M' + "</td>";
-                    var cpu_load = "<td>" + data.cpu.load_percent + "</td>";
-                    var disks = "<td>" + data.disks.count_oa_disks + "</td>";
-                    var disks_online = "<td>" + data.disks.count_online + '/' + data.disks.count + "</td>";
-                    var disk_load = "<td>" + data.disks.load_percent + "</td>";
-                    var disk_wr_mb = "<td>" + data.disks.wr_mb + "</td>";
-                    var disk_tb_per_day = "<td>" + data.disks.wr_tb_per_day + "</td>";
-                    var nw_adapter = "<td>" + data.network.count + "</td>";
-                    var nw_traffic_percent = "<td>" + data.network.traffic_percent + "</td>";
-                    var nw_traffic_rmb = "<td>" + data.network.tot_rb_in_mb + "</td>";
-                    var nw_traffic_tmb = "<td>" + data.network.tot_tb_in_mb + "</td>";
-                    var nw_traffic_mb = "<td>" + (data.network.tot_rb_in_mb+data.network.tot_tb_in_mb) + "</td>";
-                    $("tbody").prepend("<tr>" + time + uptime + cpu_load + disks + disks_online + disk_load + disk_wr_mb + disk_tb_per_day + nw_adapter + nw_traffic_percent + nw_traffic_rmb + nw_traffic_tmb + nw_traffic_mb + "</tr>");
-                });
-            })
-        </script>
-        <style>
-            body{font-family:'Courier New';font-size:12px}table{border-collapse:collapse;}table,td,th{border:1px solid black;padding:5px;}
-            th{background-color:#666;color:#fff}tr:nth-child(odd){background-color:#fff5dd;}
-        </style>
-    </head>
-    <body>
-        <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Uptime</th>
-                    <th>CPU-load in %</th>
-                    <th>Disk Count</th>
-                    <th>Disk Online</th>
-                    <th>Disk-load in %</th>
-                    <th>wr MB</th>
-                    <th>Expected wr TB per day</th>
-                    <th>Transceiver Count</th>
-                    <th>Traffic in %</th>
-                    <th>Data received in MB</th>
-                    <th>Data transmitted in MB</th>
-                    <th>Data r+t in MB</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </body>
-</html>
-"""

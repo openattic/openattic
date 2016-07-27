@@ -3,7 +3,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -15,12 +15,24 @@
  *  GNU General Public License for more details.
 """
 
-import sys
+import os, sys
 import dbus
 from time import time
 from os.path import exists, join
 from optparse import OptionParser
 from ConfigParser import ConfigParser
+from configobj import ConfigObj
+
+distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
+for filename in distro_config:
+    if os.path.isfile(filename):
+        config = ConfigObj(filename)
+        break
+
+sys.path.append(config['OADIR'])
+from nagios.conf.distro import distro_settings
+
+settings = distro_settings()
 
 parser = OptionParser()
 
@@ -48,7 +60,8 @@ protocols = {
     }
 
 savedstate = ConfigParser()
-havestate  = bool( savedstate.read("/var/lib/nagios3/protocol_traffic.%s" % options.interface.lower()) and savedstate.has_section("state") )
+protocol_traffic = "{}/protocol_traffic.{}".format(settings["NAGIOS_STATE_DIR"], options.interface.lower())
+havestate  = bool( savedstate.read(protocol_traffic) and savedstate.has_section("state") )
 
 if not exists( join( "/sys/class/net", options.interface, "statistics" ) ):
     print "Interface %s does not exist!" % options.interface
@@ -198,6 +211,6 @@ for direction in ("in", "out"):
     for field in ("bytes", "pkgs"):
         savedstate.set("state", direction + '_' + field, kernelstats[direction][field])
 
-savedstate.write( open( "/var/lib/nagios3/protocol_traffic.%s" % options.interface, "wb" ) )
+savedstate.write( open( protocol_traffic, "wb" ) )
 
 sys.exit(exit)

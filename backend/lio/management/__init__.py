@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 import re
 import os
 import os.path
-import rtslib
+try:
+    import rtslib_fb as rtslib
+except ImportError:
+    import rtslib
 
 from django.db.models import signals
 

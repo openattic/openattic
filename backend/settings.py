@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ if exists(join(PROJECT_ROOT, "..", "webui", "app")):
 else:
     GUI_ROOT = "/usr/share/openattic-gui"
 
+API_ROOT = "/openattic/api"
+
 from ConfigParser import ConfigParser
 
 DEBUG = True
@@ -58,7 +60,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'PAGINATE_BY':        50,
-    'PAGINATE_BY_PARAM': 'page_size',
+    'PAGINATE_BY_PARAM': 'pageSize',
     'MAX_PAGINATE_BY':   100,
     'URL_FIELD_NAME':    'url',
 }
@@ -115,7 +117,6 @@ else:
     if distro in ('Red Hat Enterprise Linux Server', 'CentOS Linux'):
         NAGIOS_CFG_PATH = "/etc/nagios/nagios.cfg"
         NAGIOS_CONTACTS_CFG_PATH = "/etc/nagios/conf.d/openattic_contacts.cfg"
-        NAGIOS_SERVICES_CFG_PATH = "/etc/nagios/conf.d/openattic.cfg"
         NAGIOS_RRD_BASEDIR = "/var/lib/pnp4nagios"
         NAGIOS_RRD_PATH = "/var/lib/pnp4nagios/%(host)s/%(serv)s.rrd"
         NAGIOS_XML_PATH = "/var/lib/pnp4nagios/%(host)s/%(serv)s.xml"
@@ -198,6 +199,30 @@ except NameError:
         except IOError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
+# Set logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/openattic/openattic.log'
+        }
+    },
+    'loggers': {
+        'nagios': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True
+        },
+        'ceph': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True
+        }
+    }
+}
 
 # Read domain.ini.
 __domconf__ = ConfigParser()

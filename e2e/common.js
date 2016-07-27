@@ -1,28 +1,27 @@
 'use strict';
 
-(function() {
+(function(){
 
   var configs = require('./configs.js');
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
-  var volumename = 'protractor_test_volume';
+  var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
 
   var snapshotname = 'protractor_test_snap';
   var snapshot = element(by.cssContainingText('tr', snapshotname));
 
-  var clonename ="protractor_test_clone";
+  var clonename = "protractor_test_clone";
   var clone = element(by.cssContainingText('tr', clonename));
 
-  var hostname ="protractor_test_host";
-  var host = element(by.cssContainingText('tr', hostname));
+  var hostname = "protractor_test_host";
 
-  var volumePoolSelect = element(by.id('data.sourcePool'));
+  var volumePoolSelect = element(by.model('pool'));
 
   module.exports = {
     configs: configs,
-    login: function() {
+    login: function(){
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
       element.all(by.model('password')).sendKeys(configs.password);
@@ -31,63 +30,51 @@
       browser.sleep(configs.sleep);
     },
 
-    create_volume: function(type){
+    create_volume: function(volumename, type, size, poolName){
+      var pool;
+      var size = size == null ? "100MB" : size;
+
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
-      for(var key in configs.pools) {
-        element(by.id('volume.name')).sendKeys(volumename);
-        var pool = configs.pools[key];
-        var exact_poolname = pool.name;
-        volumePoolSelect.click();
-            element.all(by.cssContainingText('option', pool.name))
-            .then(function findMatch(pname){
-            if (pool.name === pname){
-                exact_poolname = pname;
-                return true;
-            }
-        });
-        if(exact_poolname){
-          element.all(by.cssContainingText('option',exact_poolname)).get(0).click();
-          element(by.id(type)).click();
-          element(by.model('data.megs')).sendKeys('100MB');
-          element(by.css('.tc_submitButton')).click();
-          browser.sleep(configs.sleep);
+
+      if(!poolName){
+        for(var key in configs.pools){
+          pool = configs.pools[key];
+          poolName = pool.name;
+          break;
         }
-        break;
       }
+      element(by.model('result.name')).sendKeys(volumename);
+      volumePoolSelect.sendKeys(poolName);
+      element(by.id(type)).click();
+      element(by.model('data.megs')).sendKeys(size);
+      element(by.css('.tc_submitButton')).click();
+      browser.sleep(configs.sleep);
+      expect(element(by.cssContainingText('tr', volumename)).isDisplayed()).toBe(true);
+      return pool;
     },
 
-//     create_zvol: function(type){
-//       volumesItem.click();
-//       element(by.css('oadatatable .tc_add_btn')).click();
-//       for(var key in configs.pools) {
-//         element(by.id('volume.name')).sendKeys(volumename);
-//         volumePoolSelect.click();
-//         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
-//         element(by.id(type)).click();
-//         element(by.model('data.megs')).sendKeys('100MB');
-//         element(by.css('.tc_submitButton')).click();
-//         browser.sleep(configs.sleep);
-//         break;
-//       }
-//     },
-
-
-    delete_volume: function(){
+    delete_volume: function(volume, volumename){
       volumesItem.click();
+      browser.sleep(400);
+      element(by.css('.tc_entries_dropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_entries_100')).click();
       browser.sleep(400);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
-      element(by.model('input.enteredName')).sendKeys(volumename);
+      element(by.model('input.enteredName')).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
+      browser.sleep(600);
+      volume = element(by.cssContainingText('tr', volumename));
       expect(volume.isPresent()).toBe(false);
     },
 
-    create_snapshot: function(){
+    create_snapshot: function(volume){
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
@@ -102,7 +89,7 @@
       element(by.css('.tc_submitButton')).click();
     },
 
-    delete_snapshot: function(){
+    delete_snapshot: function(volume){
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
@@ -116,7 +103,7 @@
       browser.sleep(400);
     },
 
-    create_snap_clone: function(){
+    create_snap_clone: function(volume){
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
@@ -135,42 +122,111 @@
     delete_snap_clone: function(){
       clone.click();
       browser.sleep(400);
-      element(by.css('.tc_menudropdown')).click();
+      element.all(by.css('.tc_menudropdown')).get(0).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
 
-      element(by.model('input.enteredName')).sendKeys(clonename);
+      element(by.model('input.enteredName')).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
     },
 
-    create_host: function(){
-      element.all(by.css('ul .tc_menuitem')).get(4).click();
+    create_host: function(iqn, fc, $hostname){
+      element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
-      element(by.model('host.name')).sendKeys(hostname);
+      var name = $hostname ? $hostname : hostname;
+      element(by.model('host.name')).sendKeys(name);
+      if(iqn){
+        element.all(by.model('type.check')).get(0).click();
+        element.all(by.model('data[key]')).get(0).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
+      }
+      if(fc){
+        element.all(by.model('type.check')).get(1).click();
+        element.all(by.model('data[key]')).get(1).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(fc);
+      }
+      browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
+      expect(element(by.cssContainingText('tr', name)).isDisplayed()).toBe(true);
     },
 
-    delete_host: function(){
+    delete_host: function($hostname){
       hostsItem.click();
+      var name = $hostname ? $hostname : hostname;
+      var host = element(by.cssContainingText('tr', name));
       host.click();
-      browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
-      browser.sleep(400);
-      element(by.css('.tc_deleteHost')).click();
+      element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
+      browser.sleep(400);
+      expect(host.isPresent()).toBe(false);
     },
 
-    selectDropdownByIndex: function (dropdown, index) {
-      dropdown.click();
-      if (index) {
-        dropdown.all(by.tagName('option'))
-          .then(function (options) {
-            options[index].click();
+    check_wizard_titles: function(){
+      var wizards = element.all(by.repeater('wizard in wizards'))
+        .then(function(wizards){
+          wizards[0].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(title){
+            expect(title).toEqual('File Storage');
+            //console.log(title);
           });
-      }
-    }
+
+          wizards[1].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(vm_title){
+            expect(vm_title).toEqual('VM Storage');
+            //console.log(vm_title);
+          });
+
+          wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
+            expect(block_title).toEqual('iSCSI/Fibre Channel target');
+            //console.log(block_title);
+          });
+      });
+    },
+
+    delete_nfs_share: function(volName, nfsName){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      element(by.css('.tc_nfsShareTab')).click();
+      var share = element(by.cssContainingText('td', nfsName));
+      expect(share.isDisplayed()).toBe(true);
+      share.click();
+      element(by.css('.tc_nfsShareDelete')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
+
+    delete_cifs_share: function(volName, cifsName){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      element(by.css('.tc_cifsShareTab')).click();
+      var share = element(by.cssContainingText('tr', cifsName));
+      expect(share.isDisplayed()).toBe(true);
+      share.click();
+      element.all(by.css('.tc_menudropdown')).get(1).click();
+      element(by.css('.tc_cifsShareDelete > a')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
+
+    delete_fc_share: function(volName, hostname){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(volume.isPresent()).toBe(true);
+      volume.click();
+      element(by.css('.tc_iscsi_fcTab')).click();
+      var share = element(by.cssContainingText('tr', hostname))
+      share.click();
+      element(by.css('.tc_lunDelete')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
   };
 }());

@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -204,10 +204,10 @@ class FileSystem(object):
     def check_installed(cls):
         return os.path.exists("/sbin/mkfs.%s" % cls.name)
 
-    def write_fstab(self):
+    def write_fstab(self, delete=False, id=0):
         """ Update /etc/fstab. """
         dbus_object = get_dbus_object("/volumes")
-        return dbus_object.write_fstab()
+        return dbus_object.write_fstab(delete, id)
 
     def grow(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support grow" % self.name)

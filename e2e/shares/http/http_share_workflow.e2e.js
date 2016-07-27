@@ -2,17 +2,15 @@ var helpers = require('../../common.js');
 
 describe('HTTP Share workflow', function(){
 
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_httpWorkflow_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  
+
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume("btrfs");    
+    helpers.create_volume(volumename, "btrfs");
   });
 
   beforeEach(function(){
-    volumesItem.click();
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);
@@ -23,7 +21,7 @@ describe('HTTP Share workflow', function(){
   });
 
   it('should have a "Create HTTP Share" title', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create HTTP Share');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create HTTP Share');
   });
 
   it('should have one input field', function(){
@@ -50,10 +48,10 @@ describe('HTTP Share workflow', function(){
 
     expect(element(by.css('.tc_oadatatable_http_shares')).isPresent()).toBe(true);
   });
-  
+
   afterAll(function(){
-    console.log('http_share_workflow');
-    helpers.delete_volume();    
+    helpers.delete_volume(volume, volumename);
+    console.log('http_share -> http_share_workflow.e2e.js');
   });
-  
+
 });

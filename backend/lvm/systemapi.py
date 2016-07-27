@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ def lvm_pvs():
     return info
 
 def lvm_vgs():
-    info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
+    info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs", '-o', '+vg_tags']) ] )
     for field in ("LVM2_VG_SIZE", "LVM2_VG_FREE"):
         for vg in info:
             info[vg][field] = info[vg][field][:-1] # cut off the m from 13.37m

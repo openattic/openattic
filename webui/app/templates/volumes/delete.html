@@ -1,19 +1,62 @@
-<span class="MsgTitle">Delete Volume</span>
-<p class="pText">You are about to delete the volume "{{volume.name}}". Be aware that you will
-    <b>lose all data</b> in that volume and that this operation <b>cannot be undone</b>. To confirm,
-    please enter the volume name and click Accept.</p>
-<form name="deleteForm" role="form" novalidate>
-    <p class="input-group col-md-4">
-        <input type="text" class="form-control" name="enteredName" placeholder="{{volume.name}}"
-               ng-model="input.enteredName" ng-pattern="volume.name" required/>
-        <div class="MessageBoxButtonSection">
-            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
-            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="delete()"
-                    ng-disabled="deleteForm.$invalid"> Delete</button>
-            <span ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
-                    This field is required.</span>
-            <span ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
-                    The entered volume name does not match.</span>
-        </div>
+<div class="openattic-modal-header">
+    <span ng-if="volume">Delete volume</span>
+    <span ng-if="!volume && volumes">Delete volumes</span>
+</div>
+<div class="openattic-modal-content">
+    <!-- single volume -->
+    <p ng-if="volume">
+        You are about to delete the volume <strong>{{volume.name}}</strong>.
     </p>
-</form>
+    <p ng-if="volume">
+        Be aware that you will <strong>lose all data</strong>
+        in that volume and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <p ng-if="volume">
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
+    <!-- end single volume -->
+
+    <!-- multiple volumes -->
+    <p ng-if="!volume && volumes">
+        You are about to delete multiple volumes.
+    </p>
+    <p ng-if="!volume && volumes">
+        Be aware that you will <strong>lose all data</strong>
+        in the volumes and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <span class="text-danger" ng-if="!volume && volumes">The following volumes will be deleted:</span>
+    <ul class="text-danger" ng-if="!volume && volumes">
+        <li ng-repeat="vol in volumes">
+            {{vol.name}} ({{vol.type.app_label}}, {{vol.usage.size_text}})
+        </li>
+    </ul>
+    <p ng-if="!volume && volumes">
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
+    <!-- end multiple volumes -->
+
+    <form name="deleteForm" role="form" novalidate>
+        <div class="form-group"
+             ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
+            <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
+                   ng-model="input.enteredName" ng-pattern="input.pattern" required autofocus>
+
+            <!-- Error -->
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
+                This field is required.
+            </span>
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
+                The input value does not match 'yes'.
+            </span>
+            <!-- end Error -->
+        </div>
+
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="delete()" ng-disabled="deleteForm.$invalid">
+                Delete
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>

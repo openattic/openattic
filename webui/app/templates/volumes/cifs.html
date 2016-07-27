@@ -1,14 +1,31 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <oadatatable data="cifsData" class="oadatatable tc_oadatatable_cifs_shares" filter-config="cifsFilter" selection="cifsSelection">
     <actions>
-        <a class="btn btn-lg btn-primary tc_cifsShareAdd" type="button" ng-click="addCifsAction()" ng-hide="cifsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
-        <a class="btn btn-lg btn-primary tc_cifsShareEdit" type="button" ng-click="editCifsAction()" ng-show="cifsSelection.item"><i class="fa fa-fw fa-pencil"></i> Edit</a>
-        <li><a ng-click="addCifsAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
-        <li ng-class="{disabled: !cifsSelection.item}"><a ng-click="editCifsAction()"><i class="fa fa-fw fa-pencil"></i> Edit</a></li>
+        <a class="btn btn-sm btn-primary tc_cifsShareAdd" type="button"
+           ng-click="addCifsAction()" ng-hide="cifsSelection.item">
+            <i class="fa fa-fw fa-plus"></i>Add
+        </a>
+        <a class="btn btn-sm btn-primary tc_cifsShareEdit" type="button"
+           ng-click="editCifsAction()" ng-show="cifsSelection.item">
+            <i class="fa fa-fw fa-pencil"></i>Edit
+        </a>
+        <li>
+            <a ng-click="addCifsAction()">
+                <i class="fa fa-fw fa-plus"></i>Add
+            </a>
+        </li>
+        <li ng-class="{disabled: !cifsSelection.item}">
+            <a ng-click="editCifsAction()">
+                <i class="fa fa-fw fa-pencil"></i>Edit
+            </a>
+        </li>
         <li class="divider"></li>
-        <li ng-class="{disabled: !cifsSelection.item}" class="tc_cifsShareDelete" max-selected=1><a ng-click="deleteCifsAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+        <li ng-class="{disabled: !cifsSelection.item}" class="tc_cifsShareDelete" max-selected=1>
+            <a ng-click="deleteCifsAction()">
+                <i class="fa fa-fw fa-trash-o"></i>Delete
+            </a>
+        </li>
     </actions>
-    <table class="table table-striped table-bordered table-hover">
+    <table class="datatable table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
                 <th class="oadatatablecheckbox" ng-if="cifsSelection.available"><input type="checkbox" ng-model="cifsSelection.checkAll"/></th>

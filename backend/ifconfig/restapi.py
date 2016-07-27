@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -33,12 +33,14 @@ class NetDeviceSerializer(serializers.HyperlinkedModelSerializer):
         model = models.NetDevice
 
 class HostSerializer(serializers.ModelSerializer):
+    url                 = serializers.HyperlinkedIdentityField(view_name='host-detail')
     netdevice_set       = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
     hostgroup_set       = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
     primary_ip_address  = serializers.SerializerMethodField("serialize_primaryip")
 
     class Meta:
         model = models.Host
+        fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address')
 
     def serialize_primaryip(self, obj):
         host = models.Host.objects.get(id=obj.id)

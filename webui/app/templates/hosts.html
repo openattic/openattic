@@ -1,17 +1,28 @@
 <oadatatable class="oadatatable tc_oadatatable_hosts" data="data" filter-config="filterConfig" selection="selection">
     <actions>
-        <a class="btn btn-lg btn-primary tc_addHost" type="button" ng-click="addAction()" ng-hide="hasSelection"><i class="fa fa-fw fa-plus"></i> Add</a>
-        <a class="btn btn-lg btn-primary tc_editHost" type="button" ng-click="editAction()" ng-show="hasSelection"><i class="fa fa-fw fa-pencil"></i> Edit</a>
-        <li><a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
+        <a class="btn btn-sm btn-primary tc_addHost" type="button" ng-click="addAction()" ng-hide="hasSelection">
+            <i class="fa fa-fw fa-plus"></i>Add
+        </a>
+        <a class="btn btn-sm btn-primary tc_editHost" type="button" ng-click="editAction()" ng-show="hasSelection">
+            <i class="fa fa-fw fa-pencil"></i>Edit
+        </a>
+        <li>
+            <a ng-click="addAction()">
+                <i class="fa fa-fw fa-plus"></i>Add</a>
+        </li>
         <li class="divider"></li>
-        <li class="tc_deleteHost" ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+        <li class="tc_deleteHost" ng-class="{disabled: !hasSelection}" max-selected=1>
+            <a ng-click="deleteAction()">
+                <i class="fa fa-fw fa-trash-o"></i>Delete
+            </a>
+        </li>
     </actions>
-    <table class="table table-striped table-bordered table-hover dataTable">
+    <table class="datatable table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
                 <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
                 <th sortfield="name" sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
-                <th sortfield="group"              sortheaderclass ng-show="columns['Group']">Group</th>
+                <th ng-show="columns['Primary IP']">Primary IP</th>
             </tr>
         </thead>
         <tbody>
@@ -19,13 +30,11 @@
                 ng-class="{ info: isRowSelected(row) }"
                 ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
-                <td ng-show="columns['Name']">
-                    <a ui-sref="hosts-edit({host:row.id})" ng-bind="row.name"></a>
-                </td>
-                <td ng-show="columns['Group']"></td>
+                <td ng-show="columns['Name']" ng-bind="row.name"></td>
+                <td ng-show="columns['Primary IP']" ng-bind="row.primary_ip_address && row.primary_ip_address.address || ''"></td>
             </tr>
         </tbody>
     </table>
 </oadatatable>
-<div ui-view="detail">
+<div id="more" ui-view="tab">
 </div>

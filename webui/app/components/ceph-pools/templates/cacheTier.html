@@ -1,0 +1,42 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Cache tier of {{selection.item.name}}</h3>
+    </div>
+    <div class="panel-body">
+        <h2>Basic information:</h2>
+        <dl class="dl-horizontal">
+            <div ng-show="selection.item.tier_of">
+                <dt>tier_of:</dt>
+                <dd ng-bind="selection.item.tier_of"></dd>
+            </div>
+            <div ng-show="selection.item.write_tier">
+                <dt>write_tier:</dt>
+                <dd ng-bind="selection.item.write_tier"></dd>
+            </div>
+            <dt>tiers:</dt>
+            <dd ng-bind="selection.item.tiers | json"></dd>
+        </dl>
+
+        <div ng-show="selection.item.target_max_bytes !== 0 || selection.item.hit_set_period !== 0 || selection.item.hit_set_count !== 0 || selection.item.hit_set_param.type !== none">
+        <h2>Advanced information:</h2>
+        <dl class="dl-horizontal">
+            <div ng-show="selection.item.target_max_bytes !== 0">
+                <dt>target_max_bytes:</dt>
+                <dd ng-bind="selection.item.target_max_bytes"></dd>
+            </div>
+            <div ng-show="selection.item.hit_set_period !== 0">
+                <dt>hit_set_period:</dt>
+                <dd ng-bind="selection.item.hit_set_period"></dd>
+            </div>
+            <div ng-show="selection.item.hit_set_count !== 0">
+                <dt>hit_set_count:</dt>
+                <dd ng-bind="selection.item.hit_set_count"></dd>
+            </div>
+            <div ng-show="selection.item.hit_set_param.type !== none">
+                <dt>hit_set_params:</dt>
+                <dd ng-bind="selection.item.hit_set_params | json"></dd>
+            </div>
+        </dl>
+        </div>
+    </div>
+</div>

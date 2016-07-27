@@ -3,7 +3,7 @@
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -501,7 +501,7 @@ class LogicalVolume(BlockVolume):
             # Are we a snapshot? If so, add block device usage info.
             try:
                 stats["bd_used"] = self.storageobj.megs * float(self.lvm_info["LVM2_DATA_PERCENT"]) / 100.
-            except KeyError:
+            except (KeyError, ValueError) as _:
                 pass
             else:
                 stats["bd_free"] = stats["bd_megs"] - stats["bd_used"]

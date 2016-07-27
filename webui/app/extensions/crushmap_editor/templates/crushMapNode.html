@@ -1,0 +1,22 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<span ng-class="{
+    'bg-primary': data.isRootNode,
+    'bg-info':    data.isBelowRootNode && !data.isSelectorNode,
+    'bg-success': data.isSelectorNode
+}" ui-tree-handle>
+    <div style="display: inline" ng-hide="data.$editing">{{ data.name }}</div>
+    <div style="display: inline" ng-show="data.$editing">
+        <input type="text" ng-model="data.name" style="color: black" focus-me="data.$editing" ng-enter="data.$editing=false" />
+    </div>
+</span>
+<em>
+    <i class="fa fa-pencil" ng-if="data.type_id > 1" ng-click="data.$editing = !data.$editing"></i>
+    <i class="fa fa-times"  ng-if="data.type_id > 1" ng-click="deleteBucket(data)"></i>
+    &mdash; {{ data.type_name }}
+</em>
+<ul ui-tree-nodes="" ng-model="data.items">
+    <li ui-tree-node
+        ng-repeat="data in data.items"
+        ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"
+        ></li>
+</ul>

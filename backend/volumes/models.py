@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -101,6 +101,8 @@ STORAGEOBJECT_STATUS_CHOICES = (
 
 STORAGEOBJECT_STATUS_FLAGS = {
     "unknown":       {"severity": -1, "desc": ugettext_noop("The status cannot be checked and is therefore unknown.")},
+    "locked":        {"severity": -1, "desc": ugettext_noop("The volume is currently locked. Its status cannot be "
+                                                            "checked.")},
     "online":        {"severity":  0, "desc": ugettext_noop("The volume is accessible.")},
     "readonly":      {"severity":  0, "desc": ugettext_noop("The volume cannot be written to.")},
     "offline":       {"severity":  0, "desc": ugettext_noop("The volume is inaccessible.")},
@@ -284,7 +286,6 @@ class StorageObject(models.Model):
         oldmegs = self.megs
         newmegs = megs
         self.megs = newmegs
-        self.save()
 
         objs = [self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none]
 
@@ -308,6 +309,8 @@ class StorageObject(models.Model):
                 obj.post_shrink(oldmegs, newmegs)
             else:
                 obj.post_grow(oldmegs, newmegs)
+
+        self.save()
 
     def create_volume(self, name, megs, options):
         """ If this is a Volume Pool, create a volume in it.
@@ -452,7 +455,8 @@ class StorageObject(models.Model):
         flags = set()
 
         for obj in self.base_set.all():
-            flags = flags.union(obj._get_status())
+            if obj.host == Host.objects.get_current():
+                flags = flags.union(obj._get_status())
 
         for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none, self.physicalblockdevice_or_none):
             if obj is not None:
@@ -1121,11 +1125,16 @@ class FileSystemProvider(FileSystemVolume):
 
         return stats
 
+
 def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
-    instance.fs.write_fstab()
+
+
+def __delete_filesystemprovider_post(instance, **kwargs):
+    instance.fs.write_fstab(True, instance.storageobj.id)
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
+signals.post_delete.connect(__delete_filesystemprovider_post, sender=FileSystemProvider)
 
 
 class DiskDevice(PhysicalBlockDevice):
@@ -1226,8 +1235,13 @@ class GenericDisk(BlockVolume):
 
 def get_storage_tree(top_obj):
     def serialize_obj(obj):
+        try:
+            status = obj.get_status()
+        except KeyError:
+            status = ["unknown"]
+
         return {
-            "status":  obj.get_status(),
+            "status":  status,
             "title":   unicode(obj)
             }
 

@@ -1,0 +1,91 @@
+#  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+#
+#  openATTIC is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2.
+#
+#  This package is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+## Type: string
+## Default: "/run/icinga/icinga.cmd"
+#
+# Path for processing commands submitted by other applications
+NAGIOS_CMD_PATH="/run/icinga/icinga.cmd"
+
+## Type: string
+## Default: "/var/spool/icinga/status.dat"
+#
+# The file that stores the current status, comment, and downtime information.
+NAGIOS_STATUS_DAT_PATH="/var/spool/icinga/status.dat"
+NAGIOS_STATUS_DAT="/var/spool/icinga/status.dat"
+
+## Type: string
+## Default: "/etc/icinga/icinga.cfg"
+#
+# The main configuration file
+NAGIOS_CFG_PATH="/etc/icinga/icinga.cfg"
+NAGIOS_CFG="/etc/icinga/icinga.cfg"
+
+## Type: string
+## Default: "/etc/icinga/conf.d/openattic_contacts.cfg"
+#
+# Defines default contact groups
+NAGIOS_CONTACTS_CFG_PATH="/etc/icinga/conf.d/openattic_contacts.cfg"
+
+## Type: string
+## Default: "/etc/icinga/conf.d"
+#
+# Defines additional services
+NAGIOS_SERVICES_CFG_PATH="/etc/icinga/conf.d"
+
+## Type: boolean
+## Default: True
+#
+#
+NAGIOS_INCLUDE_HOST_IN_CFG=True
+
+## Type: string
+## Default: "icinga"
+#
+# Name of monitoring executable
+NAGIOS_BINARY_NAME="icinga"
+
+## Type: string
+## Default: "icinga"
+#
+# Name of systemd service
+NAGIOS_SERVICE_NAME="icinga"
+NAGIOS_SERVICE="icinga"
+
+## Type: string
+## Default: "/usr/lib64/npcdmod.o"
+#
+# Path to the npcd module
+NPCD_MOD="/usr/lib64/npcdmod.o"
+
+## Type: string
+## Default: "/etc/pnp4nagios/npcd.cfg"
+#
+# Configuration for npcd
+NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
+
+## Type: string
+## Default: "npcd"
+#
+# Name of systemd service
+NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/icinga"
+#
+# Directory in which to save states
+NAGIOS_STATE_DIR="/var/lib/icinga"
+
+## Type: string
+## Default: "/usr/lib/nagios/plugins"
+#
+# Location of the Nagios plugin directory
+NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"

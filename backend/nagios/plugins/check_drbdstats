@@ -3,7 +3,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -25,6 +25,19 @@ import subprocess
 
 from time import time
 from optparse import OptionParser
+from configobj import ConfigObj
+
+distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
+for filename in distro_config:
+    if os.path.isfile(filename):
+        config = ConfigObj(filename)
+        break
+
+sys.path.append(config['OADIR'])
+from nagios.conf.distro import distro_settings
+
+settings = distro_settings()
+
 
 def get_sh_status():
     proc = subprocess.Popen(["/sbin/drbdadm", "sh-status"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -182,7 +195,7 @@ def main():
     for minor, info in status.items():
         if info["_res_name"] == resname:
             info["__timestamp__"] = time()
-            statfile = "/var/lib/nagios3/drbdstats.%s.json" % resname
+            statfile = "{}/drbdstats.{}.json".format(settings["NAGIOS_STATE_DIR"], resname)
             try:
                 if not os.path.exists(statfile):
                     print "Need state info, please wait until Nagios checks again."

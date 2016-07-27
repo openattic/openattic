@@ -2,23 +2,21 @@ var helpers = require('../../common.js');
 
 describe('should create a clone volume of a snapshot (base: blockvolume)', function(){
 
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_blockvol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
   var snapshotname = 'protractor_test_snap';
   var snapshot = element.all(by.cssContainingText('tr', snapshotname)).get(0);
 
-  var clonename ="protractor_test_clone";
+  var clonename = "protractor_block_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
 
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
 
   beforeAll(function(){
     helpers.login();
-    volumesItem.click();
-    helpers.create_volume("lun");
-    helpers.create_snapshot();
+    helpers.create_volume(volumename, "lun");
+    helpers.create_snapshot(volume);
     volume.click();
     element(by.css('.tc_snapshotTab')).click();
 
@@ -61,21 +59,12 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
 
   it('should delete the clone volume', function(){
     expect(clone.isDisplayed()).toBe(true);
-    clone.click();
-    browser.sleep(400);
-    element.all(by.css('.tc_menudropdown')).get(0).click();
-    browser.sleep(400);
-    element(by.css('.tc_deleteItem')).click();
-    browser.sleep(400);
-
-    element(by.model('input.enteredName')).sendKeys(clonename);
-    element(by.id('bot2-Msg1')).click();
+    helpers.delete_volume(clone, clonename);
   });
 
   afterAll(function(){
-    console.log('block_vol_snapshot_clone');
-    helpers.delete_snapshot();
-    helpers.delete_volume();
-
+    helpers.delete_snapshot(volume);
+    helpers.delete_volume(volume, volumename);
+    console.log('snapshot_clone -> block_vol_snapshot_clone.e2e.js');
   });
 });

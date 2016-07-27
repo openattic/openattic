@@ -1,26 +1,113 @@
+#  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+#
+#  openATTIC is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2.
+#
+#  This package is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
 PYTHON="/usr/bin/python"
 OADIR="/usr/share/openattic"
 
 RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
 RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic_rpcd"
+RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
 RPCD_LOGLEVEL="INFO"
 RPCD_OPTIONS="$OADIR/manage.py runrpcd"
-RPCD_CERTFILE=""
-RPCD_KEYFILE=""
+RPCD_CERTFILE="" #"$OADIR/certs/ssl-cert-snakeoil.pem"
+RPCD_KEYFILE="" #"$OADIR/certs/ssl-cert-snakeoil.key"
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic_systemd"
+SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
 SYSD_LOGLEVEL="INFO"
 SYSD_OPTIONS="$OADIR/manage.py runsystemd"
+
+OPENATTIC_LOGFILE="/var/log/openattic/openattic.log"
 
 WEBSERVER_SERVICE="apache2"
 SAMBA_SERVICES="smbd nmbd"
 WINBIND_SERVICE="winbind"
 
-NAGIOS_CFG="/etc/nagios3/nagios.cfg"
+## Type: string
+## Default: "/var/lib/nagios3/rw/nagios.cmd"
+#
+# Path for processing commands submitted by other applications
+NAGIOS_CMD_PATH="/var/lib/nagios3/rw/nagios.cmd"
+
+## Type: string
+## Default: "/var/log/cache/nagios3/status.dat"
+#
+# The file that stores the current status, comment, and downtime information.
+NAGIOS_STATUS_DAT_PATH="/var/cache/nagios3/status.dat"
 NAGIOS_STATUS_DAT="/var/cache/nagios3/status.dat"
+
+## Type: string
+## Default: "/etc/nagios3/nagios.cfg"
+#
+# The main configuration file
+NAGIOS_CFG_PATH="/etc/nagios3/nagios.cfg"
+NAGIOS_CFG="/etc/nagios3/nagios.cfg"
+
+## Type: string
+## Default: "/etc/nagios3/conf.d/openattic_contacts.cfg"
+#
+# Defines default contact groups
+NAGIOS_CONTACTS_CFG_PATH="/etc/nagios3/conf.d/openattic_contacts.cfg"
+
+## Type: string
+## Default: "/etc/nagios3/conf.d"
+#
+# Defines additional services
+NAGIOS_SERVICES_CFG_PATH="/etc/nagios3/conf.d"
+
+## Type: boolean
+## Default: True
+#
+#
+NAGIOS_INCLUDE_HOST_IN_CFG=True
+
+## Type: string
+## Default: "nagios"
+#
+# Name of monitoring executable
+NAGIOS_BINARY_NAME="nagios3"
+
+## Type: string
+## Default: "nagios"
+#
+# Name of systemd service
+NAGIOS_SERVICE_NAME="nagios3"
 NAGIOS_SERVICE="nagios3"
+
+## Type: string
+## Default: "/usr/lib/pnp4nagios/npcdmod.o"
+#
+# Path to the npcd module
 NPCD_MOD="/usr/lib/pnp4nagios/npcdmod.o"
+
+## Type: string
+## Default: "/etc/pnp4nagios/npcd.cfg"
+#
+# Configuration for npcd
 NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
+
+## Type: string
+## Default: "npcd"
+#
+# Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/nagios3"
+#
+# Name of systemd service
+NAGIOS_STATE_DIR="/var/lib/nagios3"
+
+## Type: string
+## Default: "/usr/lib/nagios/plugins"
+#
+# Location of the Nagios plugin directory
+NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"

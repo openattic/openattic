@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+#  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
 #
 #  openATTIC is free software; you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License as published by
@@ -19,9 +19,14 @@ if [ "$#" == "0" ] ; then
 	exit 1
 fi
 
+for settings in "/etc/default/openattic" "/etc/sysconfig/openattic"
+do
+        [ -f $settings ] && . $settings
+done
+
 IFACE=$1
 SYSFS="/sys/class/net/$IFACE"
-IFSTATS="/var/lib/nagios3/ifstats_$IFACE"
+IFSTATS="$NAGIOS_STATE_DIR/ifstats_$IFACE"
 
 if [ ! -d "$SYSFS" ] ; then
 	echo "Cannot access device information at $SYSFS" >&2

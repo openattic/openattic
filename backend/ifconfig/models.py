@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -64,11 +64,17 @@ def statfile(devname, fname):
 
 class HostManager(models.Manager):
     def get_current(self):
-        fqdn = socket.getfqdn()
         try:
-            return self.get(name=fqdn)
+            return self.get(name=socket.getfqdn())
         except Host.DoesNotExist:
-            return self.get(name=socket.gethostname())
+            try:
+                return self.get(name=socket.gethostname())
+            except Host.DoesNotExist:
+                if not self.exists():  # The Hosts model is empty.
+                    Host.insert_current_host()
+                else:
+                    raise
+
 
 class Host(models.Model):
     name        = models.CharField(max_length=63, unique=True)
@@ -91,9 +97,16 @@ class Host(models.Model):
         return IPAddress.all_objects.get(primary_address=True, device__host=self)
 
 
+    @staticmethod
+    def insert_current_host():
+        fqdn = socket.getfqdn()
+        host = Host(name=fqdn)
+        host.save()
+
+
 class HostDependentQuerySet(models.query.QuerySet):
     def iterator(self):
-        currhost = Host.objects.get_current();
+        currhost = Host.objects.get_current()
         for obj in super(HostDependentQuerySet, self).iterator():
             curr = obj
             for field in self.model.objects.hostfilter.split('__'):
@@ -130,7 +143,7 @@ class HostGroup(models.Model):
 
 class NetDevice(models.Model):
     host        = models.ForeignKey(Host)
-    devname     = models.CharField(max_length=10)
+    devname     = models.CharField(max_length=15)
     dhcp        = models.BooleanField(default=False, blank=True)
     auto        = models.BooleanField(default=True,  blank=True)
     jumbo       = models.BooleanField(default=False, blank=True)

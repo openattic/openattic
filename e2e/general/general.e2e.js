@@ -1,10 +1,65 @@
 var helpers = require('../common.js');
 
-describe('General', function() {
+describe('General', function(){
 
-  var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
-  
-  beforeAll(function() {
+  var oaLogo = element(by.css('.tc_logo_component a'));
+
+  var menuCheck = function(menu){
+    var menuCount = 0;
+    var menuItems = element.all(by.css('.tc_menuitem > a'));
+
+    menu.forEach(function(name){
+      var item = element(by.css('.tc_menuitem_' + name + ' > a'));
+      it('should have ' + name + ' into the right order', function(){
+        if(item.isDisplayed()){
+          expect(item.getText()).toEqual(menuItems.get(menuCount).getText());
+          menuCount++;
+        }
+      });
+      it('should click ' + item + ' and check the url', function(){
+        if(item.isDisplayed()){
+          if(name != 'system' && name != 'ceph'){
+            item.click();
+            browser.sleep(400);
+            expect(browser.getCurrentUrl()).toContain('/openattic/#/' + name);
+          }
+        }
+      });
+    });
+  };
+
+  var subitemCheck = function(dropdown){
+    var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
+    var menuCount = 0;
+
+    it('should have subitems under the ' + dropdown.name + ' menu item', function(){
+      if(dropdown.item.isDisplayed()){
+        dropdown.item.click();
+        expect(subitems.count()).toBeGreaterThan(0);
+      }
+    });
+
+    dropdown.order.forEach(function(item){
+      it('should have ' + dropdown.name + ' subitem ' + item + ' in the right order', function(){
+        if(dropdown.item.isDisplayed()){
+          dropdown.item.click();
+          expect(dropdown.subitems[item].getText()).toEqual(subitems.get(menuCount).getText());
+          menuCount++;
+        }
+      });
+      it('should click ' + dropdown.name + ' subitem ' + item + ' and check the url', function(){
+        if(dropdown.item.isDisplayed()){
+          browser.refresh();
+          dropdown.item.click();
+          dropdown.subitems[item].click();
+          expect(browser.getCurrentUrl()).toContain(dropdown.url + item);
+        }
+      });
+    });
+  };
+
+
+  beforeAll(function(){
     helpers.login();
   });
 
@@ -13,42 +68,67 @@ describe('General', function() {
   });
 
   it('should show the name of the current user', function(){
-    expect(element(by.css('span .tc_usernameinfo')).getText()).toEqual('Openattic');
+    expect(element(by.css('.tc_usernameinfo')).getText()).toEqual('openattic');
   });
 
-  it('should have dashboard as first nav item', function(){
-    expect(element.all(by.css('ul .tc_menuitem')).get(0).getText()).toEqual('Dashboard');
+  /* Menuitems */
+  menuCheck([ //Put here the final menu order
+    'dashboard', //has to be there
+    'disks',
+    'pools',
+    'volumes',
+    'ceph',
+    'hosts',
+    'system' //has to be there
+  ]);
+
+  /* Ceph and its subitems */
+  subitemCheck({
+    name: 'ceph',
+    item: element(by.css('.tc_menuitem_ceph > a')),
+    url: '/openattic/#/ceph/',
+    subitems: {
+      osds: element(by.css('.tc_submenuitem_ceph_osds')),
+      rbds: element(by.css('.tc_submenuitem_ceph_rbds')),
+      pools: element(by.css('.tc_submenuitem_ceph_pools')),
+      crushmap: element(by.css('.tc_submenuitem_ceph_crushmap'))
+    },
+    order: [
+      'osds',
+      'rbds',
+      'pools',
+      'crushmap'
+    ]
   });
 
-  it('should have disks as second nav item', function(){
-    expect(element.all(by.css('ul .tc_menuitem')).get(1).getText()).toEqual('Disks');
+  /* System and its subitems */
+  subitemCheck({
+    name: 'system',
+    item: element(by.css('.tc_menuitem_system > a')),
+    url: '/openattic/#/',
+    subitems: {
+      users: element(by.css('.tc_submenuitem_system_users')),
+      cmdlogs: element(by.css('.tc_submenuitem_system_cmdlogs'))
+    },
+    order: [
+      'users',
+      'cmdlogs'
+    ]
   });
 
-  it('should have pools as third nav item', function(){
-    expect(element.all(by.css('ul .tc_menuitem')).get(2).getText()).toEqual('Pools');
+  it('should check if the openATTIC logo is visible', function(){
+    expect(oaLogo.isDisplayed()).toBe(true);
   });
 
-  it('should have volumes as fourth nav item', function(){
-    expect(element.all(by.css('ul .tc_menuitem')).get(3).getText()).toEqual('Volumes');
+  it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
+    //click somewhere else to change the url
+    element(by.css('.tc_menuitem_pools > a')).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
+    oaLogo.click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
   });
 
-  it('should have hosts as fifth nav item', function(){
-    expect(element.all(by.css('ul .tc_menuitem')).get(4).getText()).toEqual('Hosts');
-  });
-
-  it('should have system as sixth nav item', function(){
-    expect(element.all(by.css('ul .tc_menuitem')).get(5).getText()).toEqual('System');
-  });
-
-  it('should have subitems under the system menu item', function(){
-    systemItem.click();
-
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
-  });
-
-  it('system should have "User", "Command Logs" and "CRUSH Map" as submenu items', function(){
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(0).getText()).toEqual('Users');
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(1).getText()).toEqual('Command Logs');
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(2).getText()).toEqual('CRUSH Map');    
+  afterAll(function(){
+    console.log('general -> general.e2e.js');
   });
 });

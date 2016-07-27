@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
 
 import unittest
 import requests
 import json
+
 
 class GatlingTestCase(unittest.TestCase):
 
@@ -17,7 +30,8 @@ class GatlingTestCase(unittest.TestCase):
             raise unittest.SkipTest("missing config section %s" % section)
         for option in options:
             if not cls.conf.has_option(section, option):
-                raise unittest.SkipTest("missing config option %s in section %s" % (option, section))
+                raise unittest.SkipTest("missing config option %s in section %s" %
+                                        (option, section))
 
     @classmethod
     def require_enabled(cls, section):
@@ -30,46 +44,42 @@ class GatlingTestCase(unittest.TestCase):
             raise unittest.SkipTest("%s tests disabled in configuration" % section)
 
     @classmethod
-    def setUpClass(cls):
-        try:
-            res = requests.request("GET", "%s/users?username=openattic" % cls.conf.get("options", "connect"),
-                                   headers={"Authorization": "Token %s" % cls.conf.get("options", "auth_token")})
-        except requests.HTTPError:
-            raise unittest.SkipTest("openATTIC REST api login failed. Check api url and authentication token")
-        else:
-            json_res = json.loads(res.text)
-            if json_res["count"] == 0:
-                raise unittest.SkipTest("admin user not found")
-            cls.userid = json_res["results"][0]["id"]
-
-    @classmethod
-    def send_request(cls, method, prefixes=None, *args, **kwargs):
+    def send_request(cls, method, prefixes=None, auth_token=None, *args, **kwargs):
         """
         Sends a request to openATTICs REST API and returns the response
 
         :param method (str): HTTP-method: POST, PUT, GET, DELETE
-        :param prefixes (array of str): Optional parameter. Defaults to None. If prefixes is None, the class
-            must define a api_prefix class-variable otherwise the test will be skipped.
-            Must contain at least 1 and at most 3 REST API navigation prefixes. The first string is the first navigation
-            parameter. The second string is the subnavigation parameter in case of detail routes. The last parameter is
-            the navigation parameter used by the cleanup_url.
+        :param prefixes (array of str): Optional parameter. Defaults to None. If prefixes is None,
+            the class must define a api_prefix class-variable otherwise the test will be skipped.
+            Must contain at least 1 and at most 3 REST API navigation prefixes. The first string is
+            the first navigation parameter. The second string is the subnavigation parameter in
+            case of detail routes. The last parameter is the navigation parameter used by the
+            cleanup_url.
 
             If the array contains only one prefix, this prefix is used in all three cases.
             If the array contains two prefixes, the second prefix is also used by the cleanup_url.
 
             Examples:
-                ["volumes"]                         ->  http://host/openattic/api/volumes and returns
+                ["volumes"]                         ->  http://host/openattic/api/volumes
+                                                        and returns
                                                         http://host/openattic/api/volumes/vol_id
-                ["volumes", "snapshots"]            ->  http://host/openattic/api/volumes/vol_id/snapshots
+                ["volumes", "snapshots"]            ->  http://host/openattic/api/volumes/vol_id/
+                                                                                          snapshots
                                                         and returns
                                                         http://host/openattic/api/snapshots/snap_id
-                ["snapshots", "clone", "volumes"]   ->  http://host/openattic/api/snapshots/snap_id/clone
+                ["snapshots", "clone", "volumes"]   ->  http://host/openattic/api/snapshots/snap_id
+                                                                                             /clone
                                                         and returns
                                                         http://host/openattic/api/volumes/vol_id
+        :param auth_token (str): Optional parameter. For other needed authentication tokens than
+                                 the defined one in the config. The request will be send with
+                                 with this authentication token instead of the token defined in
+                                 the config.
         :param args: None
         :param kwargs:  obj_id (int)      -> Object id to get a specific object by GET request.
                         data (dict)       -> Data for creating a new object by POST request.
-                        search_param (str)-> Search param, e.g.: "name=vol_name" to search for a specific volume.
+                        search_param (str)-> Search param, e.g.: "name=vol_name" to search for a
+                                             specific volume.
                                              It generates the following url:
                                              http://host/openattic/api/volumes?name=vol_name
         :return: In case of:
@@ -77,41 +87,45 @@ class GatlingTestCase(unittest.TestCase):
                 "cleanup_url": cleanup_url, "headers": creation headers}
             -   DELETE requests: A dictionary {"response": api_response, "count": 1,
                 "cleanup_url": cleanup_url, "headers": creation headers}
-            -   GET requests: For a specific objects a dictionary {"response": api_response, "count": 1,
-                "cleanup_url": cleanup_url, "headers": creation headers}. For a list of objects a
-                dictionary {"response": api_response, "count": sum of returned objects}
+            -   GET requests: For a specific objects a dictionary {"response": api_response,
+                "count": 1, "cleanup_url": cleanup_url, "headers": creation headers}. For a list of
+                objects a dictionary {"response": api_response, "count": sum of returned objects}
         """
         prefixes = cls._get_sturctured_prefixes(prefixes)
-        header = cls.get_auth_header()
-        base_url = cls.conf.get("options", "connect")
-        url = "%s%s" % (base_url, prefixes["api_prefix"])
+        header = cls.get_auth_header(auth_token)
+        url = "%s%s" % (cls.base_url, prefixes["api_prefix"])
 
         if "obj_id" in kwargs:
             url = "%s/%s" % (url, str(kwargs["obj_id"]))
 
+        header["content-type"] = "application/json"
+        data = kwargs.get("data", None)
+
         # POST, PUT
-        if "data" in kwargs:
+        if method in ["POST", "PUT"]:
             if prefixes["detail_route"]:
                 url = "%s/%s" % (url, prefixes["detail_route"])
 
-            header["content-type"] = "application/json"
-
-            res = requests.request(method, url, data=json.dumps(kwargs["data"]), headers=header)
+            res = requests.request(method, url, data=json.dumps(data), headers=header)
             res.raise_for_status()
             res = json.loads(res.text)
 
-            return {"response"      : res,
-                    "count"         : 1,
-                    "cleanup_url"   : cls._get_cleanup_url(res["id"], prefixes),
-                    "headers"       : header}
+            return {"response": res,
+                    "count": 1,
+                    "cleanup_url": cls._get_cleanup_url(res["id"], prefixes),
+                    "headers": header}
         # GET, DELETE
-        else:
+        elif method in ["GET", "DELETE"]:
             if "search_param" in kwargs:
                 url = "%s?%s" % (url, kwargs["search_param"])
-            res = requests.request(method, url, headers=header)
+
+            if data:
+                res = requests.request(method, url, data=json.dumps(data), headers=header)
+            else:
+                res = requests.request(method, url, headers=header)
             res.raise_for_status()
 
-            # For method DELETE no json object could be decoded, so just return the response otherwise
+            # For method DELETE no json object could be decoded, so just return the response
             # otherwise return the result dict
             try:
                 res = json.loads(res.text)
@@ -120,30 +134,55 @@ class GatlingTestCase(unittest.TestCase):
             else:
                 if "obj_id" in kwargs:
                     header["content-type"] = "application/json"
-                    return {"response"      : res,
-                            "count"         : 1,
-                            "cleanup_url"   : url,
-                            "headers"       : header}
+                    return {"response": res,
+                            "count": 1,
+                            "cleanup_url": url,
+                            "headers": header}
                 else:
-                    return {"response"  : res["results"],
-                            "count"     : res["count"]}
+                    return {"response": res["results"],
+                            "count": res["count"]}
+        else:
+            print "Unknown request method '%s'" % method
+            raise unittest.SkipTest("Unknown request method '%s'" % method)
 
     @classmethod
-    def get_auth_header(cls):
+    def get_auth_header(cls, auth_token=None):
         """
-        Returns the needed authorization header for POST and PUT requests. The authorization header includes the auth
-        token generated by django.
+        Returns the needed authorization header for requests. The authorization header includes the
+        auth token generated by django.
 
+        :param auth_token (str): Optional parameter. For other needed authentication tokens than the
+                                 defined one in the config.
         :return: Dictionary containing the authorization header
         """
-        cls.require_config("options", "auth_token")
-        return {"Authorization": "Token %s" % cls.conf.get("options", "auth_token")}
+
+        if not auth_token:
+            auth_token = cls.get_auth_token()
+        return {"Authorization": "Token %s" % auth_token}
+
+    @classmethod
+    def get_auth_token(cls, **kwargs):
+        """
+        Returns the auth token for a given user by username and password. If username and/or
+        password are not included in kwargs, Gatling tries to get them from the configuration file.
+
+        :param kwargs:  username(str)   -> Name of the user
+                        password(str)   -> Password of the user
+        :return: Auth token for the given user
+        """
+        request_url = cls.base_url + "api-token-auth"
+        username = kwargs.get("username", cls.conf.get("options", "admin"))
+        password = kwargs.get("password", cls.conf.get("options", "password"))
+
+        res = requests.post(request_url, data={"username": username, "password": password})
+        res.raise_for_status()
+        return res.json()["token"]
 
     @classmethod
     def delete_old_existing_gatling_volumes(cls):
         """
-        Searches for old existing gatling volumes that were not deleted correctly by the last test case and removes
-        them.
+        Searches for old existing gatling volumes that were not deleted correctly by the last test
+        case and removes them.
 
         :return: None
         """
@@ -158,7 +197,8 @@ class GatlingTestCase(unittest.TestCase):
         Checks the volume specific properties.
 
         :param vol (dict): Response dictionary given by the REST api.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the volume.
+        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the
+                               volume.
         :return:  None
         """
         vol_res = self._check_base_properties(vol, max_size)
@@ -167,12 +207,14 @@ class GatlingTestCase(unittest.TestCase):
 
         if self.fstype is None:
             self.assertIn(vol_res["path"], ["/dev/%s/gatling_volume" % self._get_pool()["name"],
-                                            "/dev/zvol/%s/gatling_volume" % self._get_pool()["name"]])
+                                            "/dev/zvol/%s/gatling_volume" %
+                                            self._get_pool()["name"]])
         else:
             if self.fstype == "btrfs":
                 self.assertEqual(vol_res["path"], "/media/gatling_btrfs/gatling_volume")
             elif self.fstype == "zfs":
-                self.assertEqual(vol_res["path"], "/media/%s/gatling_volume" % self._get_pool()["name"])
+                self.assertEqual(vol_res["path"], "/media/%s/gatling_volume" %
+                                 self._get_pool()["name"])
             else:
                 self.assertEqual(vol_res["path"], "/media/gatling_volume")
 
@@ -182,7 +224,8 @@ class GatlingTestCase(unittest.TestCase):
 
         :param snap (dict): Response dictionary given by the REST api.
         :param vol_id (int): ID of the related volume.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the snapshot.
+        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the
+                               snapshot.
         :return: None
         """
         snap_res = self._check_base_properties(snap, max_size)
@@ -195,20 +238,25 @@ class GatlingTestCase(unittest.TestCase):
         self.assertEqual(snap_res["snapshot"]["id"], vol_id)
 
         if self.fstype is None:
-            self.assertIn(snap_res["path"], ["/dev/%s/volume_snapshot_made_by_gatling" % self._get_pool()["name"],
-                                             "/dev/zvol/%s/gatling_volume@volume_snapshot_made_by_gatling" %
-                                             self._get_pool()["name"]])
+            self.assertIn(snap_res["path"],
+                          ["/dev/%s/volume_snapshot_made_by_gatling" %
+                           self._get_pool()["name"],
+                           "/dev/zvol/%s/gatling_volume@volume_snapshot_made_by_gatling" %
+                           self._get_pool()["name"]])
         else:
-            self.assertIn(snap_res["path"], ["/media/volume_snapshot_made_by_gatling",
-                                             "/media/gatling_volume/.snapshots/volume_snapshot_made_by_gatling",
-                                             ("/media/%s/.snapshots/volume_snapshot_made_by_gatling" % self._get_pool()["name"])])
+            self.assertIn(snap_res["path"],
+                          ["/media/volume_snapshot_made_by_gatling",
+                           "/media/gatling_volume/.snapshots/volume_snapshot_made_by_gatling",
+                           ("/media/%s/.snapshots/volume_snapshot_made_by_gatling" %
+                            self._get_pool()["name"])])
 
     def check_clone_properties(self, clone, max_size=None):
         """
         Checks the clone specific properties.
 
         :param clone (dict): Response dictionary given by the REST api.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the clone.
+        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the
+                               clone.
         :return: None
         """
         clone_res = self._check_base_properties(clone, max_size)
@@ -222,16 +270,19 @@ class GatlingTestCase(unittest.TestCase):
 
         if self.fstype is None:
             self.assertIn(clone_res["path"], ["/dev/%s/gatling_clone" % self._get_pool()["name"],
-                                              "/dev/zvol/%s/gatling_clone" % self._get_pool()["name"]])
+                                              "/dev/zvol/%s/gatling_clone" %
+                                              self._get_pool()["name"]])
         else:
             self.assertEqual(clone_res["path"], "/media/gatling_clone")
 
     def _check_base_properties(self, vol, max_size):
         """
-        Checks the general properties belonging to a volume, snapshot or clone like size, status or is_volumepool.
+        Checks the general properties belonging to a volume, snapshot or clone like size, status or
+        is_volumepool.
 
         :param vol (dict): Response dictionary given by the REST api.
-        :param max_size (int): Allowed maximum size of the volume. If max_size is None the smallsize is taken instead.
+        :param max_size (int): Allowed maximum size of the volume. If max_size is None the
+                               smallsize is taken instead.
         :return: The "response" key value of the given dictionary.
         """
         if not max_size:
@@ -271,16 +322,17 @@ class GatlingTestCase(unittest.TestCase):
     @classmethod
     def _get_sturctured_prefixes(cls, prefixes):
         """
-        Helper function to transfer the array of prefixes into a dictionary that contains the keys api_prefix,
-        detail_route and cleanup_route and the related values if given.
+        Helper function to transfer the array of prefixes into a dictionary that contains the keys
+        api_prefix, detail_route and cleanup_route and the related values if given.
 
         :param prefixes (array of str): Array containing the needed prefixes.
-        :return: Dictionary containing the keys api_prefix, detail_route and cleanup_route and their values if given.
+        :return: Dictionary containing the keys api_prefix, detail_route and cleanup_route and
+                 their values if given.
         """
         structured_prefixes = {
-            "api_prefix"    : None,
-            "detail_route"  : None,
-            "cleanup_route" : None
+            "api_prefix": None,
+            "detail_route": None,
+            "cleanup_route": None
         }
 
         if not prefixes:
@@ -311,13 +363,11 @@ class GatlingTestCase(unittest.TestCase):
         :param prefixes (array of str): Array containing the available prefixes.
         :return: The correct cleanup_url.
         """
-        base_url = cls.conf.get("options", "connect")
 
         if prefixes["detail_route"]:
             if prefixes["cleanup_route"]:
-                return "%s%s/%s" % (base_url, prefixes["cleanup_route"], str(obj_id))
+                return "%s%s/%s" % (cls.base_url, prefixes["cleanup_route"], str(obj_id))
             else:
-                return "%s%s/%s" % (base_url, prefixes["detail_route"], str(obj_id))
+                return "%s%s/%s" % (cls.base_url, prefixes["detail_route"], str(obj_id))
         else:
-            return "%s%s/%s" % (base_url, prefixes["api_prefix"], str(obj_id))
-
+            return "%s%s/%s" % (cls.base_url, prefixes["api_prefix"], str(obj_id))

@@ -1,33 +1,31 @@
-<article class="col-sm-12 col-md-12 col-lg-6">
-    <div class="jarviswidget" id="wid-id-0">
-        <header>
-            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
-            <h2>Create Snapshot</h2>
-        </header>
-        <div>
-            <div class="widget-body">
-                <form name="snapForm" role="form" class="form-horizontal" novalidate>
-                    <fieldset>
-                        <div class="form-group" ng-class="{'has-error': (submitted || snapForm.name.$dirty) && snapForm.name.$invalid}">
-                            <label class="col-md-2 control-label tc_snapname" for="snap.name">Name</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                    <input class="form-control" type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snap.name" required>
-                                </div>
+<div class="col-sm-12 col-lg-6">
+    <form name="snapForm" role="form" class="form-horizontal" novalidate>
+        <div class="panel panel-default">
+            <div class="panel-heading tc_formHeadline">
+                <h3 class="panel-title">Create Snapshot</h3>
+            </div>
+            <div class="panel-body">
+                <fieldset>
+                    <div class="form-group" ng-class="{'has-error': (submitted || snapForm.name.$dirty) && snapForm.name.$invalid}">
+                        <label class="col-sm-3 control-label tc_snapname" for="snap.name">Name</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                <input class="form-control" type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snap.name" required>
+                            </div>
                                 <span class="help-block tc_nameRequired" ng-show="(submitted || snapForm.name.$dirty) && snapForm.name.$invalid">
                                     The name is required.
                                 </span>
-                            </div>
                         </div>
-                        <div class="form-group" ng-class="{'has-error': (submitted || snapForm.megs.$dirty) && snapForm.megs.$invalid}">
-                            <label class="col-md-2 control-label" for="megs">Size</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                    <input class="form-control" name="megs" ng-model="megs" id="megs" required
-                                        volume-size-format volume-size-value max-value="{{pool.usage.max_new_fsv}}">
-                                </div>
+                    </div>
+                    <div class="form-group" ng-show="!dynSnap" ng-class="{'has-error': (submitted || snapForm.megs.$dirty) && snapForm.megs.$invalid}">
+                        <label class="col-sm-3 control-label" for="megs">Size</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                <input class="form-control" name="megs" ng-model="megs" id="megs" required
+                                       volume-size-format volume-size-value max-value="{{pool.usage.max_new_fsv}}">
+                            </div>
                                 <span class="help-block tc_sizeRequired" ng-show="(submitted || snapForm.megs.$dirty)
                                 && snapForm.megs.$error.required">This field is required.</span>
                                 <span class="help-block" ng-show="snapForm.megs.$error.volumeSizeFormat">
@@ -36,21 +34,20 @@
                                 <span class="help-block tc_sizeExceeded" ng-show="snapForm.megs.$error.volumeSizeValue">
                                     The size should be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
                                 </span>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <div class="form-group">
-                        <div class="pull-right" style="padding: 6px 16px">
-                            <button type="submit" class="btn btn-primary tc_submitButton" ng-click="submitAction(snapForm)">
-                                Submit
-                            </button>
-                            <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
-                                Back
-                            </button>
                         </div>
                     </div>
-                </form>
+                </fieldset>
+            </div>
+            <div class="panel-footer">
+                <div class="button-group text-right">
+                    <button type="submit" class="btn btn-sm btn-primary tc_submitButton" ng-click="submitAction(snapForm)">
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
+                        Back
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</article>
+    </form>
+</div>

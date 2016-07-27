@@ -2,8 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Zvol tests', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var volumePoolSelect = element(by.model('data.sourcePool'));
+  var volumePoolSelect = element(by.model('pool'));
   var addBtn = element(by.css('.tc_add_btn'));
   var volumename = 'protractor_test_zvol';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -13,12 +12,12 @@ describe('Zvol tests', function(){
   });
 
   beforeEach(function(){
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
   });
 
   it('should have a zpool', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       volumePoolSelect.click();
       var zpool = element.all(by.cssContainingText('option', 'zpool')).get(0);
       expect(zpool.isDisplayed()).toBe(true);
@@ -29,8 +28,8 @@ describe('Zvol tests', function(){
 
   it('should create a zvol', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
-    for(var key in helpers.configs.pools) {
-      element(by.id('volume.name')).sendKeys(volumename);
+    for(var key in helpers.configs.pools){
+      element(by.model('result.name')).sendKeys(volumename);
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', 'zpool')).get(0).click();
       element(by.id('zfs')).click();
@@ -39,7 +38,7 @@ describe('Zvol tests', function(){
       browser.sleep(helpers.configs.sleep);
 
       break;
-     }
+    }
   });
 
   it('should display the zvol in volumeslist', function(){
@@ -53,10 +52,13 @@ describe('Zvol tests', function(){
     browser.sleep(400);
     element(by.css('.tc_deleteItem')).click();
     browser.sleep(400);
-    element(by.model('input.enteredName')).sendKeys(volumename);
+    element(by.model('input.enteredName')).sendKeys('yes');
     element(by.id('bot2-Msg1')).click();
 
     expect(volume.isPresent()).toBe(false);
   });
 
+  afterAll(function(){
+    console.log('zvol_add -> zvol.e2e.js');
+  });
 });

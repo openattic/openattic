@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
 
 import os
 import os.path
@@ -9,14 +21,12 @@ import unittest
 import xmlrunner
 import datetime
 import requests
-import json
+import ConfigParser
 
-from functools    import partial
-from ConfigParser import ConfigParser
-from optparse     import OptionParser
+from functools import partial
+from optparse import OptionParser
 from testtools.run import TestProgram
 
-from colorizer    import NovaTestResult
 
 def main():
     basedir = os.path.dirname(os.path.abspath(__file__))
@@ -55,12 +65,13 @@ def main():
     parser.add_option("--config", action="append", default=[],
                       help="Location of gatling.conf. Can be used multiple times.")
     parser.add_option("-t", "--target", default="",
-                      help="Target node. Alias for '--config gatling.conf --config conf/<target>.conf'. "
-                           "If --target is specified, --config options are ignored.")
+                      help="Target node. Alias for '--config gatling.conf --config "
+                           "conf/<target>.conf'. If --target is specified, --config options are "
+                           "ignored.")
 
     options, posargs = parser.parse_args()
 
-    conf = ConfigParser()
+    conf = ConfigParser.ConfigParser()
 
     if options.target:
         conf.read([
@@ -72,6 +83,33 @@ def main():
     else:
         conf.read(os.path.join(basedir, "gatling.conf"))
 
+    try:
+        host_name = conf.get("options", "host_name")
+        username = conf.get("options", "admin")
+        password = conf.get("options", "password")
+    except ConfigParser.NoOptionError, e:
+        print "Option '{}' not found in config files. This option is mandatory. Please define it " \
+              "in your Gatling config file.".format(e.option)
+        return 1
+
+    base_url = "http://" + host_name + "/openattic/api/"
+
+    user = requests.request("GET", "{}users?username={}".format(base_url, username),
+                            auth=(username, password))
+    try:
+        user.raise_for_status()
+    except requests.HTTPError:
+        if user.status_code == 401:
+            print "The given login credentials ('admin' and 'password') are not correct. Please " \
+                  "check your configuration or define 'admin' and 'password' in you config file " \
+                  "if you are not using the default credentials."
+        else:
+            print "The given name of the openATTIC host '{}' might be wrong. Please " \
+                  "check your configuration or define 'host_name' in your config " \
+                  "file.".format(host_name)
+        return 1
+    else:
+        userid = user.json()["results"][0]["id"]
 
     class GatlingTestSuite(unittest.TestSuite):
         """ TestSuite that monkeypatches loaded tests with config objects. """
@@ -79,6 +117,12 @@ def main():
             unittest.TestSuite.addTest(self, test)
             test.__class__.conf = conf
             test.conf = conf
+
+            test.__class__.base_url = base_url
+            test.base_url = base_url
+
+            test.__class__.userid = userid
+            test.userid = userid
 
     class GatlingTestLoader(unittest.TestLoader):
         """ TestLoader that uses GatlingTestSuite to load tests. """
@@ -94,7 +138,7 @@ def main():
     if options.xml:
         runner = partial(xmlrunner.XMLTestRunner, output=options.xml_reports, verbosity=2)
     else:
-        runner = partial(unittest.TextTestRunner, resultclass=NovaTestResult)
+        runner = partial(unittest.TextTestRunner)
 
     # If we don't have any arguments for TestProgram and this doesn't seem to be
     # intentional, discover tests and print individual results.
@@ -105,18 +149,19 @@ def main():
     loader = GatlingTestLoader()
 
     starttime = datetime.datetime.now()
-    prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner, testLoader=loader, exit=False)
+    prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner,
+                              testLoader=loader, exit=False)
     endtime = datetime.datetime.now()
 
-    header = {"Authorization": "Token %s" % conf.get("options", "auth_token")}
-    base_url = conf.get("options", "connect")
     cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)
 
-    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter), headers=header)
-    failedcmds = json.loads(failedcmds.text)
+    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter),
+                                  auth=(username, password))
+    failedcmds = failedcmds.json()
 
     if failedcmds['count'] > 0:
-        print "openATTIC's command log recorded %d failed commands during the test period:" % failedcmds['count']
+        print "openATTIC's command log recorded %d failed commands during the test period:" % \
+              failedcmds['count']
         template = ("%(command)s (%(starttime)s - %(endtime)s):\n"
                     "%(text)s\n")
         for failedcmd in failedcmds['results']:
@@ -130,5 +175,4 @@ def main():
         return 1
 
 if __name__ == '__main__':
-        sys.exit(main())
-
+    sys.exit(main())

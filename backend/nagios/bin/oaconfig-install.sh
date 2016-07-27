@@ -7,10 +7,12 @@ if grep process_performance_data $NAGIOS_CFG | cut -d= -f2 | grep -q 0; then
 	NAGIOS_RESTART_REQ="true"
 fi
 
-# Enable NPCD broker module
-if ! grep broker_module $NAGIOS_CFG | grep -v '#' | grep -q npcdmod.o; then
-	echo "broker_module=$NPCD_MOD config_file=$NPCD_CFG" >> $NAGIOS_CFG
-	NAGIOS_RESTART_REQ="true"
+# Enable NPCD broker module (except for Nagios 4 - see OP-820 for details)
+if ! $NAGIOS_BINARY_NAME -V | grep "^Nagios Core" | cut -d" " -f3 | grep "^4" ; then
+  if ! grep broker_module $NAGIOS_CFG | grep -v '#' | grep -q npcdmod.o; then
+    echo "broker_module=$NPCD_MOD config_file=$NPCD_CFG" >> $NAGIOS_CFG
+    NAGIOS_RESTART_REQ="true"
+  fi
 fi
 
 if [ -e /etc/default/npcd ] && grep -q 'RUN="no"' /etc/default/npcd; then
@@ -21,9 +23,19 @@ service $NPCD_SERVICE start
 
 if [ $NAGIOS_RESTART_REQ = "true" ]; then
 	service $NAGIOS_SERVICE restart
-	echo -n "Waiting for status.dat to appear... "
-	while [ ! -e $NAGIOS_STATUS_DAT ]; do
-		sleep 0.1
-	done
-	echo "done."
+  WAITTIME="15"
+  echo -n "Waiting for $NAGIOS_STATUS_DAT to appear"
+  for i in $(seq 1 $WAITTIME); do
+    if [ -e $NAGIOS_STATUS_DAT ]; then
+      echo " OK";
+      break;
+    fi
+    sleep 1
+    echo -n "."
+  done
+  if [ ! -e $NAGIOS_STATUS_DAT ]; then
+    echo ""
+    echo "Error: $NAGIOS_STATUS_DAT did not appear after $WAITTIME seconds!"
+    exit 1
+  fi
 fi

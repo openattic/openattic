@@ -5,7 +5,7 @@ syntax: glob
 *.kate-swp
 *.pyc
 *.swo
-*.png
+# *.png
 *.iml
 *~
 e2e/configs.js
@@ -35,14 +35,13 @@ nagios/_readstatus.so
 installed_apps.d
 
 # From openattic-gui
+webui/.tmp
 webui/node_modules
 webui/dist
 webui/app/bower_components
 webui/app/index.html
-webui/app/login.html
 webui/coverage
 webui/npm-debug.log
-webui/test/e2e/configs.js
 
 # From gatling-rest
 gatling/conf/

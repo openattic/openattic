@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+#  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
 #
 #  openATTIC is free software; you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License as published by
@@ -14,13 +14,16 @@
 
 export OACONFIG="True"
 
-. /etc/default/openattic
+for settings in "/etc/default/openattic" "/etc/sysconfig/openattic"
+do
+	[ -f $settings ] && . $settings
+done
 
 cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump"
+	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -51,10 +54,10 @@ usage () {
 	echo "Valid commands are:"
 	echo
 	echo "    install      Run this command after you installed new openATTIC modules."
-	echo "                 Any arguments to this command will be passed to apt-get install."
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
 	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
 	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
+	echo "    domainjoin   Join a Windows Active Directory Domain."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
@@ -78,13 +81,39 @@ case $1 in
 		;;
 
 	install)
+		if [ "$#" -gt 1 ] && [ "$2" = "--allow-broken-hostname" ]; then
+			shift
+		else
+			if [[ "`hostname --fqdn`" != *.* ]]; then
+				echo "'`hostname --fqdn`' is not a fully-qualified domain name."
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+			
+			if grep -qP '^\d+$' <<<"$HOSTNAME" ; then
+				echo "Your hostname is invalid because it consists of numbers only. (Consider adding a - somewhere.)"
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+			
+			if grep -qP '^[\w\d\-]{16,}$' <<<"$HOSTNAME" ; then
+				echo "Your hostname is too long for a Windows domain (must be max. 15 characters)."
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+		fi
+		
 		su "$OAUSER" -c 'python manage.py pre_install'
 		
 		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
 		
 		if [ "$#" -gt 1 ]; then
 			shift
-			apt-get install $@
+			echo "Please use your operating system's package manager"
+			echo "(e.g. apt-get or yum) to install package $@."
 		fi
 		
 		if service openattic-systemd status >/dev/null; then
@@ -137,7 +166,17 @@ case $1 in
 			exit 1
 		fi
 		HOSTID=`oacli 'ifconfig.Host.current' | grep '^id' | cut -d\' -f2`
-		eval `LANG=C vgs --units M -o vg_size,vg_uuid --noheadings --nameprefixes --nosuffix "$2"`
+
+		# Check if VG actually exists
+		vgs "$2" > /dev/null || exit 1
+		eval $(LANG=C vgs --units M -o vg_size,vg_uuid,vg_tags --noheadings --nameprefixes --nosuffix "$2")
+		for tag in $(echo "$LVM2_VG_TAGS"|sed s/,/\\n/g)
+		do
+			if [ $tag == "sys" ]; then
+				echo "Volume Group $2 is tagged as sys, aborting."
+				exit 1
+			fi
+		done
 		ROUNDEDMEGS=`awk '{printf "%.0f\n", $1}' <<< $LVM2_VG_SIZE`
 		STOROBJID=`oacli volumes.StorageObject.create 'json:{"name": "'$2'", "megs": "'$ROUNDEDMEGS'", "uuid": "'$LVM2_VG_UUID'", "is_origin": true }' | grep '^id' | cut -d\' -f2`
 		oacli lvm.VolumeGroup.create 'json:{"storageobj": {"app": "volumes", "obj": "StorageObject", "id": '$STOROBJID'}, "host": {"app":"ifconfig", "obj":"Host", "id":'$HOSTID'} }'
@@ -279,8 +318,8 @@ EOF
 		kinit "$user"
 		
 		echo "Configuring Samba..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:$realm" "string:$workgroup"
-		
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:$realm" "string:$workgroup"
+
 		if [ -e /etc/krb5.keytab ]; then
 			echo "Removing old keytab..."
 			rm /etc/krb5.keytab
@@ -332,7 +371,7 @@ EOF
 		while ! oacli ping ; do
 			sleep 1
 		done
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:" "string:"
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:" "string:"
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart
 		done

@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -13,6 +13,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+
+from os.path import exists
 
 from django.contrib.auth.models import User
 
@@ -26,11 +28,14 @@ class SystemD(BasePlugin):
     @method(in_signature="", out_signature="")
     def write_aliases(self):
         # read current aliases
-        fd = open( "/etc/aliases", "rb" )
-        try:
-            aliases = fd.read()
-        finally:
-            fd.close()
+        if exists("/etc/aliases"):
+            fd = open( "/etc/aliases", "rb" )
+            try:
+                aliases = fd.read()
+            finally:
+                fd.close()
+        else:
+            aliases = ""
 
         aliases = dict([
             [part.strip() for part in line.split(":")]

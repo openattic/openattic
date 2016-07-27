@@ -2,17 +2,15 @@ var helpers = require('../../common.js');
 
 describe('HTTP Share add', function(){
 
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_httpShare_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var share = element(by.css('.tc_http_share'));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   var httpShareTab = element(by.css('.tc_httpShareTab'));
 
 
   beforeAll(function(){
     helpers.login();
-    volumesItem.click();
-    helpers.create_volume("xfs");
+    helpers.create_volume(volumename, "xfs");
     volume.click();
     httpShareTab.click();
   });
@@ -41,6 +39,8 @@ describe('HTTP Share add', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/http');
+    browser.sleep(400);
   });
 
   it('should not display the share anymore', function(){
@@ -49,7 +49,7 @@ describe('HTTP Share add', function(){
   });
 
   afterAll(function(){
-    console.log('http_share');
-    helpers.delete_volume();
+    helpers.delete_volume(volume, volumename);
+    console.log('http_share -> http_share.e2e.js');
   });
 });

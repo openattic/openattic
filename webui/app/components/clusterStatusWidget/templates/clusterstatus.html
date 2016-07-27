@@ -1,61 +1,63 @@
-<div ng-controller="chartCtrl" class="cluster-status container-fluid padding-10">
-
-    <div class="row no-space">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="graph-form">
-                <div class="inline-group">
-                    <div class="checkbox checkbox-primary" ng-repeat="checkBox in checkBoxes">
-                        <input type="checkbox" ng-model="checkBox.isChecked" name="active" id="csw-{{checkBox.id}}">
-                        <label for="csw-{{checkBox.id}}">
-                            {{checkBox.label}}
-                        </label>
+<div ng-controller="chartCtrl" class="cluster-status">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Live Stats</h3>
+            </div>
+            <div class="panel-body">
+                <div class="graph-form">
+                    <div class="inline-group">
+                        <ul class="checkbox checkbox-primary" ng-repeat="checkBox in checkBoxes">
+                            <li>
+                                <input type="checkbox" ng-model="checkBox.isChecked" name="active" id="csw-{{checkBox.id}}">
+                                <label for="csw-{{checkBox.id}}">
+                                    {{checkBox.label}}
+                                </label>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
+
+                <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"
+                      ng-dblclick="dblClick()" ng-right-click="rightClick()" ng-mousedown="mouseDown()"
+                      ng-plotselected="selected($event, $ranges)">
+                </flot>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Hosts</h3>
+            </div>
+            <div class="panel-body">
+                <uib-progressbar value="hostsPercent" type="{{hostsType}}">{{hosts}}</uib-progressbar>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Disks</h3>
+            </div>
+            <div class="panel-body">
+                <uib-progressbar value="disksOnlinePercent" type="{{disksOnlineType}}">{{disksOnline}}</uib-progressbar>
             </div>
         </div>
     </div>
 
-    <div class="row no-space">
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-            <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"
-                  ng-dblclick="dblClick()" ng-right-click="rightClick()" ng-mousedown="mouseDown()"
-                  ng-plotselected="selected($event, $ranges)"></flot>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 show-stats">
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                    <span class="text"> Hosts <span class="pull-right">{{hosts}}</span> </span>
-                    <progressbar value="hosts_p" type="{{hosts_t}}"></progressbar>
-                </div>
-
-                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                    <span class="text"> Disks <span class="pull-right">{{disks_online}}</span> </span>
-                    <progressbar value="disks_online_p" type="{{disks_online_t}}"></progressbar>
-                </div>
-<!--
-                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                    <span class="text"> Disk Usage <span class="pull-right">{{disks_usage}}</span> </span>
-                    <progressbar value="disks_usage_p" type="{{disks_usage_t}}"></progressbar>
-                </div>
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">CPU Load</h3>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                    <div class="alert alert-info alert-block">
-                        Server-Uptime: {{sys_uptime}}
-                    </div>
-                </div>-->
-            </div>
-        </div>
-    </div>
-
-    <div class="row show-stat-microcharts">
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="easy-pie-chart" easypiechart percent="percentCpuLoad" options="defaultOptions">
-                <span class="percent percent-sign" ng-bind="percentCpuLoad"></span>
-            </div>
-            <span class="easy-pie-title"> CPU Load </span>
-            <ul class="smaller-stat pull-right">
-                <li>
+            <div class="panel-body">
+                <div class="easy-pie-chart" easypiechart percent="percentCpuLoad" options="defaultOptions">
+                    <span class="percent percent-sign" ng-bind="percentCpuLoad"></span>
+                </div>
+                <ul class="smaller-stat pull-right">
+                    <li>
                     <span class="label" ng-class="
                                             {'bg-color-darken': percentCpuLoadTrend=='stable',
                                              'bg-color-greenLight': percentCpuLoadTrend=='down',
@@ -66,17 +68,23 @@
                                          'fa-caret-down': percentCpuLoadTrend=='down'}">
                         </i> {{percentCpuLoadDiff}}%
                     </span>
-                </li>
-            </ul>
-        </div>
-
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="easy-pie-chart" easypiechart percent="percentDiscUsage" options="defaultOptions">
-                <span class="percent percent-sign" ng-bind="percentDiscUsage"></span>
+                    </li>
+                </ul>
             </div>
-            <span class="easy-pie-title"> Disk Load </span>
-            <ul class="smaller-stat pull-right">
-                <li>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Disk Load</h3>
+            </div>
+            <div class="panel-body">
+                <div class="easy-pie-chart" easypiechart percent="percentDiscUsage" options="defaultOptions">
+                    <span class="percent percent-sign" ng-bind="percentDiscUsage"></span>
+                </div>
+                <ul class="smaller-stat pull-right">
+                    <li>
                     <span class="label" ng-class="
                                             {'bg-color-darken': percentDiscUsageTrend=='stable',
                                              'bg-color-greenLight': percentDiscUsageTrend=='down',
@@ -87,9 +95,9 @@
                                          'fa-caret-down': percentDiscUsageTrend=='down'}">
                         </i> {{percentDiscUsageDiff}}%
                     </span>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-

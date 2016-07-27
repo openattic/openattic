@@ -1,7 +1,22 @@
+# -*- coding: utf-8 -*-
 
-import unittest, requests, json
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import unittest
 
 from testcase import GatlingTestCase
+
 
 class LunTestScenario(GatlingTestCase):
     @classmethod
@@ -11,7 +26,6 @@ class LunTestScenario(GatlingTestCase):
         cls.require_enabled("lio")
         cls.require_config("lio:initiator",   "host", "iqn", "type")
         cls.require_config("lio:initiator:2", "host", "iqn", "type")
-        cls.require_config("options", "host_name")
 
         host_name = cls.conf.get("options", "host_name")
         res_host = cls.send_request("GET", "hosts", search_param=("name=%s" % host_name))
@@ -24,20 +38,24 @@ class LunTestScenario(GatlingTestCase):
 
         initiator_host_name = cls.conf.get("lio:initiator", "host")
         cls.initiator_host = cls._get_or_create_object("hosts", ("name=%s" % initiator_host_name),
-                                                       {"name": initiator_host_name}, "Initiator host")
+                                                       {"name": initiator_host_name},
+                                                       "Initiator host")
         initiator_data = {"wwn": cls.conf.get("lio:initiator", "iqn"),
                           "type": cls.conf.get("lio:initiator", "type"),
                           "host": {"id": cls.initiator_host["id"]}}
-        cls.initiator = cls._get_or_create_object("initiators", ("host=%s" % cls.initiator_host["id"]), initiator_data,
-                                                  "Initiator")
+        cls.initiator = cls._get_or_create_object("initiators",
+                                                  ("host=%s" % cls.initiator_host["id"]),
+                                                  initiator_data, "Initiator")
 
         initiator_host_name2 = cls.conf.get("lio:initiator:2", "host")
         cls.initiator_host2 = cls._get_or_create_object("hosts", ("name=%s" % initiator_host_name2),
-                                                        {"name": initiator_host_name2}, "Initiator host 2")
+                                                        {"name": initiator_host_name2},
+                                                        "Initiator host 2")
         initiator_data2 = {"wwn": cls.conf.get("lio:initiator:2", "iqn"),
                            "type": cls.conf.get("lio:initiator:2", "type"),
                            "host": {"id": cls.initiator_host2["id"]}}
-        cls.initiator2 = cls._get_or_create_object("initiators", ("host=%s" % cls.initiator_host2["id"]),
+        cls.initiator2 = cls._get_or_create_object("initiators",
+                                                   ("host=%s" % cls.initiator_host2["id"]),
                                                    initiator_data2, "Initiator 2")
 
     @classmethod
@@ -55,5 +73,3 @@ class LunTestScenario(GatlingTestCase):
             return obj["response"][0]
         else:
             raise unittest.SkipTest("%s could not be found or created." % err_str)
-
-

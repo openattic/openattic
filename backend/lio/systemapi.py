@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2013, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ from ifconfig.models import Host
 from systemd         import dbus_to_python
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
 from systemd.lockutils import Lockfile
+from systemd.procutils import invoke
 
 from lio             import models
 
@@ -29,6 +30,13 @@ from lio             import models
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/lio"
+
+    @deferredmethod(in_signature="")
+    def modprobe(self, sender):
+        invoke(["modprobe", "target_core_mod"]),
+        invoke(["modprobe", "iscsi_target_mod"])
+        invoke(["modprobe", "target_core_iblock"])
+        invoke(["modprobe", "target_core_pscsi"])
 
     @deferredmethod(in_signature="i")
     def install_hostacl(self, id, sender):

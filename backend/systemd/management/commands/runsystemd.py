@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ class SystemD(dbus.service.Object):
         if sender not in self.jobs:
             return
         try:
-            from django.db import close_connection
+            from django.db import close_old_connections
             from multiprocessing import Process
             # Close database connections prior to forking.
             # Otherwise, child processes might inherit our connection and close
@@ -144,7 +144,7 @@ class SystemD(dbus.service.Object):
             #   https://code.djangoproject.com/ticket/15802
             # close_connection will go away in Django 1.6:
             #   https://code.djangoproject.com/ticket/17887
-            close_connection()
+            close_old_connections()
             pp = Process(target=self._run_queue, args=(sender,))
             self.procs.append(pp)
             pp.start()

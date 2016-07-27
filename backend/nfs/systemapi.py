@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -15,20 +15,48 @@
 """
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, deferredmethod
-from nfs.models    import Export
-from nfs.conf      import settings as nfs_settings
+from systemd.plugins import logged, BasePlugin, deferredmethod
+from nfs.models import Export
+from nfs.conf import settings as nfs_settings
+
 
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/nfs"
 
-    @deferredmethod(in_signature="")
-    def writeconf(self, sender):
-        fd = open( nfs_settings.EXPORTS, "wb" )
+    @deferredmethod(in_signature="bi")
+    def writeconf(self, delete, id, sender):
+        """
+        Writes all known exports of into /etc/exports. The deletion of exports is handled by this
+        method as well because it just refreshes the whole /etc/exports file.
+
+        The parameters 'delete' and 'id' are needed if the method is called by a post_delete signal
+        (see Jira issue OP-736 for more information).
+        The Export object still exists during this signal but isn't allowed to be added to
+        /etc/exports again.
+        Handling this situation by one Parameter only is not possible because the DBUS protocol
+        doesn't accept optional parameters or None.
+
+        :param delete (bool): Does the current call delete an export? In the case of a delete-
+            call there might be an object that should be skipped.
+        :param id (int): Delete-calls: ID of the object that should be skipped and not be added to
+            /etc/exports again.
+            Save-calls: Any other Integer value (because the DBUS protocol doesn't accept optional
+            parameters or None) - you could choose for example 0.
+        :param sender: Unique ID of DBUS sender object
+
+        :return: None
+        """
+        fd = open(nfs_settings.EXPORTS, "wb")
+
+        if delete:
+            exports = Export.objects.exclude(id=id)
+        else:
+            exports = Export.objects.all()
+
         try:
-            for export in Export.objects.all():
-                fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
+            for export in exports:
+                fd.write("%-50s %s(%s)\n" % (export.path, export.address, export.options))
         finally:
             fd.close()
 

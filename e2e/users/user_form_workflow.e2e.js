@@ -2,8 +2,8 @@ var helpers = require('../common.js');
 
 describe('should test the user form', function(){
 
-  var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
-  var usersItem = systemItem.all(by.css('ul .tc_submenuitem')).get(0);
+  var systemItem = element(by.css('ul .tc_menuitem_system'));
+  var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
 
   var name = element(by.model('user.username'));
   var passwd = element(by.model('user.email'));
@@ -56,6 +56,13 @@ describe('should test the user form', function(){
     expect(element(by.id('userActive')).isPresent()).toBe(true);
   });
 
+  it('should not have a checkbox title "Is active", while editing the own profile', function(){
+    systemItem.click();
+    usersItem.click();
+    element(by.cssContainingText('tr', 'openattic')).element(by.css('a')).click();
+    expect(element(by.id('userActive')).isPresent()).toBe(false);
+  });
+
   it('should have a chexkbox title "Is administrator"', function(){
     expect(element(by.id('userStaff')).isPresent()).toBe(true);
   });
@@ -76,12 +83,12 @@ describe('should test the user form', function(){
     submitButton.click();
     expect(element(by.css('.tc_passwdRequired')).isDisplayed()).toBe(true);
   });
-  
+
   it('should show an error message when data for field "username" does not match', function(){
     element(by.model('user.username')).sendKeys('öäüfasd  sadof');
     expect(element(by.css('.tc_userNameNotValid')).isDisplayed()).toBe(true);
   });
-  
+
   it('should show an error message when input for field "Email Address" is not valid', function(){
     element(by.model('user.email')).sendKeys('äü adsfo vfoe');
     expect(element(by.css('.tc_emailNotValid')).isDisplayed()).toBe(true);
@@ -110,4 +117,7 @@ describe('should test the user form', function(){
     expect(element(by.css('.tc_oadatatable_users')).isDisplayed()).toBe(true);
   });
 
+  afterAll(function(){
+    console.log('users -> user_form_workflow.e2e.js');
+  });
 });

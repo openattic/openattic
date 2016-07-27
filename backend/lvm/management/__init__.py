@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -45,13 +45,17 @@ def create_vgs(**kwargs):
         try:
             vg = VolumeGroup.objects.get(storageobj__name=vgname)
         except VolumeGroup.DoesNotExist:
-            print "Adding Volume Group", vgname
+            if "sys" in vgs[vgname]["LVM2_VG_TAGS"].split(','):
+                print "Volume Group %s is tagged as sys, ignored." % vgname
+                continue
+
+            print "Adding Volume Group %s" % vgname
             so = StorageObject(name=vgname, megs=float(vgs[vgname]["LVM2_VG_SIZE"]), is_origin=True)
             so.save()
             vg = VolumeGroup(host=Host.objects.get_current(), storageobj=so)
             vg.save()
         else:
-            print "Volume Group", vgname, "already exists in the database"
+            print "Volume Group %s already exists in the database" % vgname
             vg.host = Host.objects.get_current()
             so = vg.storageobj
             so.megs = float(vgs[vgname]["LVM2_VG_SIZE"])
@@ -67,14 +71,19 @@ def create_vgs(**kwargs):
         admin = User.objects.filter( is_superuser=True )[0]
 
     for lvname in lvs:
+        # Skip LV if entire VG is tagged as sys
+        if "sys" in vgs[lvs[lvname]["LVM2_VG_NAME"]]["LVM2_VG_TAGS"].split(','):
+            continue
+
         vg = VolumeGroup.objects.get(storageobj__name=lvs[lvname]["LVM2_VG_NAME"])
         try:
             lv = LogicalVolume.objects.get(vg=vg, storageobj__name=lvname)
         except LogicalVolume.DoesNotExist:
             if "sys" in lvs[lvname]["LVM2_LV_TAGS"].split(','):
-                print "Logical Volume %s is tagged as @sys, ignored." % lvname
+                print "Logical Volume %s is tagged as sys, ignored." % lvname
                 continue
 
+            print "Adding Logical Volume %s" % lvname
             so = StorageObject(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), uuid=lvs[lvname]["LVM2_LV_UUID"], source_pool=vg)
             so.save()
             lv = LogicalVolume(storageobj=so, vg=vg)

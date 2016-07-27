@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 
 import os
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method, deferredmethod
+from systemd.plugins import logged, BasePlugin, deferredmethod
+
 
 @logged
 class SystemD(BasePlugin):
@@ -44,3 +45,6 @@ class SystemD(BasePlugin):
     def delete_subvolume(self, path, sender):
         invoke(["btrfs", "subvolume", "delete", path])
 
+    @deferredmethod(in_signature='si')
+    def btrfs_resize(self, devpath, newmegs, sender):
+        invoke(['btrfs', 'filesystem', 'resize', ("%dM" % newmegs), devpath])
