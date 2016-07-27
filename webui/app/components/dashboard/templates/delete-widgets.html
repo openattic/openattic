@@ -1,0 +1,26 @@
+<div class="openattic-modal-header">
+  <span>Clear dashboard</span>
+</div>
+
+<div class="openattic-modal-content">
+  <p>
+    You are about to delete all widgets of the dashboard <strong>{{data.name}}</strong>.
+  </p>
+
+  <p>
+    To confirm, please click <kbd>Clear dashboard</kbd>, or cancel and return to the page.
+  </p>
+</div>
+
+<div class="openattic-modal-footer">
+  <form name="deleteForm" role="form">
+    <div class="button-group text-right">
+      <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+              ng-click="clearDashboard()" autofocus>
+        Clear dashboard
+      </button>
+      <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel
+      </button>
+    </div>
+  </form>
+</div>
