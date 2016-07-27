@@ -23,6 +23,7 @@
   EasyPieChart
   FlexElement
   Graph
+  Gridster
   Progressbar
   SmallerStat
   TagForm
@@ -42,6 +43,14 @@ body {
   height: 100%;
   font-size: 12px;
 }
+optgroup {
+  font-weight: bold;
+  font-style: italic;
+}
+option {
+  font-weight: normal;
+  font-style: normal;
+}
 .full-height {
   height: 100%;
 }
@@ -55,7 +64,7 @@ body {
   left: 50%;
 }
 .bg-color-darken {
-background-color: #404040!important;
+  background-color: #404040!important;
 }
 .bg-color-greenLight {
   background-color: #71843f!important;
@@ -426,6 +435,26 @@ fieldset[disabled] .btn-primary.active {
 .panel .panel-toolbar>a,
 .panel .panel-toolbar>.dropdown>a {
   padding-left: 5px;
+}
+.panel-dashboard {
+  height: 100%;
+  padding-top: 60px;
+}
+.panel-dashboard>.panel-heading {
+  cursor: move;
+  position: relative;
+  margin-top: -60px;
+  /*position: absolute;*/
+  /*top: 0;*/
+  /*left: 0;*/
+  width: 100%;
+}
+.panel-dashboard>.panel-heading>.toolbar a {
+  text-decoration: none;
+}
+.panel-dashboard>.panel-body {
+  height: 100%;
+  overflow: hidden;
 }
 .panel-openattic {
   border: 1px solid #d1d1d1;
@@ -879,6 +908,20 @@ h6{
   text-align: center;
 }
 
+/* Gridster */
+.gridster {
+  margin: 0 -15px;
+}
+.gridster-loaded .gridster-preview-holder {
+  opacity: 0.4;
+}
+.gridster .toolbar {
+  top: 23px;
+  right: 15px;
+  cursor: pointer;
+  position: absolute;
+}
+
 /* Progressbar */
 .progress-bar {
   background-image: none !important;
@@ -913,8 +956,8 @@ h6{
   top: -3px;
 }
 .oaprogress {
-position: relative;
-margin-bottom: 0;
+  position: relative;
+  margin-bottom: 0;
 }
 .oaprogress div.progress-bar {
   position: static;
@@ -1068,13 +1111,13 @@ margin-bottom: 0;
   padding: 13px 14px 15px;
   background: rgba(249,249,249,.9);
   margin: 25px -30px -25px;
- }
+}
 #wizard .form-actions,
 #wizard .no-padding .form .form-actions {
   border-top: 1px solid rgba(0,0,0,.1);
   display: block;
   text-align: right;
- }
+}
 #wizard .wizard-nav-items-4 {
   left: 0;
 }
@@ -1242,6 +1285,9 @@ uib-accordion .panel-title,
 }
 .clickable {
   cursor: pointer;
+}
+.locked {
+  cursor: default!important;
 }
 
 /* If javascript is disabled. */
