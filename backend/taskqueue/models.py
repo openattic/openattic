@@ -13,39 +13,59 @@
 """
 import json
 import logging
-import datetime
 
 from django.db import models
 from django.db.models import Model
+from django.db.models.query_utils import Q
 
 logger = logging.getLogger(__name__)
 
+
 class TaskQueue(Model):
+    STATUS_NOT_STARTED = 1
+    STATUS_RUNNING = 2
+    STATUS_FINISHED = 3
+    STATUS_EXCEPTION = 4
+
+    STATUS_CHOICES = (
+        (STATUS_NOT_STARTED, 'Not Started'),
+        (STATUS_RUNNING, 'Running'),
+        (STATUS_FINISHED, 'Finished'),
+        (STATUS_EXCEPTION, 'Exception')
+    )
+
     task = models.CharField(max_length=1024)
     result = models.CharField(max_length=1024, editable=False)
-    created = models.DateTimeField(auto_now=True)
-    finished = models.DateTimeField(blank=True, null=True, editable=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True, null=True, blank=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_NOT_STARTED, editable=False)
 
     def run_once(self):
-        assert self.finished is None
+        """
+        You can think of run_once as a trampoline that stores is intermediate result into the db.
+        """
+        if self.status == TaskQueue.STATUS_NOT_STARTED:
+            self.transition(TaskQueue.STATUS_RUNNING)
         try:
             task_val = json.loads(self.task)
         except ValueError as e:
-            logger.exception('Failed to decode JSON "{}" created "{}"'.format(self.task, self.created))
-            self.finish_task('Failed to execute task')
+            logger.exception(
+                'Failed to decode JSON "{}" created "{}"'.format(self.task, self.created))
+            self.finish_with_exception(e)
             return
         try:
             task = deserialize_task(task_val)
         except ValueError as e:
-            logger.exception('Failed to deserialize "{}" created "{}"'.format(self.task, self.created))
-            self.finish_task('Failed to execute task')
+            logger.exception(
+                'Failed to deserialize "{}" created "{}"'.format(self.task, self.created))
+            self.finish_with_exception(e)
             return
         logger.info(u'Running {}: {}'.format(self.pk, task))
         try:
             res = task.run_once()
         except Exception as e:
             logger.exception('Failed to run "{}" created "{}"'.format(task, self.created))
-            self.finish_task('Failed to execute task')
+            self.finish_with_exception(e)
             return
         if isinstance(res, Task):
             self.task = json.dumps(res.serialize())
@@ -53,12 +73,24 @@ class TaskQueue(Model):
         else:
             self.finish_task(res)
 
+    @property
+    def status_name(self):
+        return TaskQueue.STATUS_CHOICES[self.status - 1][1]
 
-    def finish_task(self, result):
-        assert TaskQueue.objects.get(pk=self.pk).finished is None
+    def finish_with_exception(self, e):
+        """:type e: Exception"""
+        self.finish_task(e.message, TaskQueue.STATUS_EXCEPTION)
+
+    def finish_task(self, result, status=STATUS_FINISHED):
+        assert TaskQueue.objects.get(pk=self.pk).status not in [TaskQueue.STATUS_FINISHED,
+                                                                TaskQueue.STATUS_EXCEPTION]
         logger.info(u'Task finished: {}'.format(result))
         self.result = json.dumps(result)
-        self.finished = datetime.datetime.now()
+        self.transition(status)
+
+    def transition(self, new_status):
+        logger.info(u'Task Transition: {} -> {}'.format(self.status_name, TaskQueue.STATUS_CHOICES[new_status - 1][1]))
+        self.status = new_status
         self.save_or_delete()
 
     def save_or_delete(self):
@@ -68,6 +100,13 @@ class TaskQueue(Model):
             logger.exception('Failed to save "{}"'.format(task))
             self.delete()
 
+    @staticmethod
+    def cleanup():
+        TaskQueue.objects.filter(TaskQueue.in_status_q([TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])).delete()
+
+    @staticmethod
+    def in_status_q(states):
+        return reduce(lambda l, status: l | Q(status=status), states[1:], Q(status=states[0]))
 
     def __unicode__(self):
         return str(self.pk)

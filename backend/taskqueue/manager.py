@@ -18,6 +18,7 @@ from taskqueue.models import TaskQueue
 
 logger = logging.getLogger(__name__)
 
+
 class TaskQueueManager(gobject.GObject):
 
     def __init__(self):
@@ -26,21 +27,22 @@ class TaskQueueManager(gobject.GObject):
 
         # TODO: Actually, I don't know if this is a good idea, but let's delete all finished
         #       Tasks here.
-        TaskQueue.objects.filter(finished__isnull=False).delete()
+        TaskQueue.cleanup()
 
     def on_timeout(self, user_data):
-        actives = TaskQueue.objects.filter(finished=None)
+        self.run_once()
+        return True
+
+    @staticmethod
+    def run_once():
+        actives = TaskQueue.objects.filter(
+            TaskQueue.in_status_q([TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING]))
         logger.debug('Running tasks: {}'.format(actives))
         for task_queue in actives:
             try:
                 task_queue.run_once()
-            except Exception as e:  # Don't let one exception stop kill this timer.
+            except Exception:  # Don't let one exception stop kill this timer.
                 logger.exception(
                     'Exception when running "{}". Dont throw exceptions into this '
                     'event handler.'.format(task_queue))
                 task_queue.delete()
-
-        return True
-
-
-

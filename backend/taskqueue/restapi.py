@@ -18,7 +18,7 @@ from taskqueue.models import TaskQueue
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
-
+    status = serializers.CharField(source='status_name')
     class Meta(object):
         model = TaskQueue
 
@@ -27,8 +27,6 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     serializer_class = TaskQueueSerializer
     queryset = TaskQueue.objects.all()
 
-    def post_save(self, obj, created=False):
-        self.headers['Taskqueue-Location'] = 'foobar'
 
 
 class TaskQueueLocationMixin(object):
