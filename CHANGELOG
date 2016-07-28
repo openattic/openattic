@@ -45,6 +45,8 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   (OP-1267)
 * Packaging: Fixed building tar archives from a local hg repository (OP-1312)
 * Packaging: Enabled relative paths for make_dist.py (OP-1324)
+* Packaging: Fixed automatic debian changelog adaption (OP-1288)
+
 
 
 Version 2.0.12, 23. June 2016:
