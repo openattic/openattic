@@ -375,7 +375,7 @@ class DebPackageBuilderTest(unittest.TestCase):
 
 def main():
     args = docopt.docopt(__doc__)
-`    path_to_tarball = os.path.abspath(args['<tarball>'])
+    path_to_tarball = os.path.abspath(args['<tarball>'])
     if path_to_tarball == '-':
         path_to_tarball = sys.stdin.readline().strip()
     deb_pkg_builder = DebPackageBuilder(args)
