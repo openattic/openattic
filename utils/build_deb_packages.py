@@ -119,11 +119,11 @@ class DebPackageBuilder(object):
         :return: The filename of the tarball
         """
         filename = basename(filepath)
-        regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)[\w~-]*(\.tar\.(bz2|gz|lxma|xz))$'
+        regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)([-_]orig)?([\w~-]*)(\.tar\.(bz2|gz|lxma|xz))$'
 
         match = re.search(regex, filename)
         if match:
-            filename = match.group(1) + '_' + match.group(2) + '.orig' + match.group(4)
+            filename = match.group(1) + '_' + match.group(2) + match.group(5) + '.orig' + match.group(6)
             return filename
 
         raise ParsingError
@@ -338,7 +338,7 @@ class DebPackageBuilderTest(unittest.TestCase):
 
     def test_determine_deb_tarball_filename(self):
         target_states = {
-            '~/path/to/file/openattic-2.0.5~201512141039.tar.bz2': 'openattic_2.0.5.orig.tar.bz2',
+            '~/path/to/file/openattic-2.0.5~201512141039.tar.bz2': 'openattic_2.0.5~201512141039.orig.tar.bz2',
             '~/path/to/file/openattic-2.0.5-orig.tar.bz2': 'openattic_2.0.5.orig.tar.bz2',
             '~/path/to/file/openattic-2.0.5_orig.tar.bz2': 'openattic_2.0.5.orig.tar.bz2',
             'oitc-2.0.5_orig.tar.bz2': 'oitc_2.0.5.orig.tar.bz2',
