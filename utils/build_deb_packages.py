@@ -234,33 +234,6 @@ class DebPackageBuilder(object):
 
         return build_dir
 
-    def adapt_debian_changelog(self, release_channel, version, pkgdate, hg_id, tarball_source_dir):
-        # Provide necessary information.
-        env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
-        if release_channel == 'stable':
-            newversion = version
-            msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
-            distribution = 'unstable'
-        else:
-            distribution = 'nightly'
-            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
-            newversion = version + '~' + pkgdate
-
-        # Adapt the `debian/changelog` file via `debchange`.
-        self._process.run(
-            [
-                'debchange',
-                '--distribution',
-                distribution,
-                '--force-distribution',
-                '--force-bad-version',  # Allows the version to be lower than the current one.
-                '--newversion',
-                newversion,
-                msg,
-            ],
-            cwd=tarball_source_dir,
-            env=env)
-
     @staticmethod
     def get_config_txt_values(tarball_source_dir):
         config = SafeConfigParser()
@@ -288,8 +261,6 @@ class DebPackageBuilder(object):
         shutil.copy(tarball_file_path, build_dir)
         shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
                     os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
-        version, pkgdate, hg_id = self.get_config_txt_values(tarball_source_dir)
-        self.adapt_debian_changelog(release_channel, version, pkgdate, hg_id, tarball_source_dir)
 
         self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
 
@@ -404,7 +375,7 @@ class DebPackageBuilderTest(unittest.TestCase):
 
 def main():
     args = docopt.docopt(__doc__)
-    path_to_tarball = args['<tarball>']
+    path_to_tarball = os.path.abspath(args['<tarball>'])
     if path_to_tarball == '-':
         path_to_tarball = sys.stdin.readline().strip()
     deb_pkg_builder = DebPackageBuilder(args)
