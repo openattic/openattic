@@ -135,8 +135,10 @@ class Process(object):
 
     def run(self, args, cwd=None, exit_on_error=None, env=None):
         self.log_command(args, cwd, self.use_bold)
+        exit_on_error = self.exit_on_error is True and exit_on_error is not False
 
         pipe = subprocess.Popen(args,
+                                stderr=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
                                 stdin=subprocess.PIPE,
                                 cwd=cwd,
@@ -169,9 +171,8 @@ class Process(object):
                 # want to ignore the output for being able to silence the script. Sadly some tools
                 # are inconsistent with their error printing, so we need to do that here.
                 print result.stdout
-            if result.stderr:
-                print result.stderr
-            if self.exit_on_error is True and exit_on_error is not False:
+
+            if exit_on_error:
                 # Print message on exit for the sake of debugging.
                 print('Error occurred, exiting')
                 sys.exit(result.returncode)
