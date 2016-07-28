@@ -32,6 +32,7 @@ from django.utils.translation import ugettext_noop as _
 
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
+import ceph.tasks
 from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
@@ -358,6 +359,9 @@ class CephPool(NodbModel):
 
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
             self.set_read_only_fields(original)
+            if insert:
+                self._task_queue = ceph.tasks.track_pg_creation.delay(context.fsid, self.id, 0,
+                                                                self.pg_num)
 
             def schwartzian_transform(obj):
                 key, val = obj

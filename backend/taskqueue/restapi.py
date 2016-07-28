@@ -12,6 +12,7 @@
  *  GNU General Public License for more details.
 """
 from rest_framework import serializers, viewsets
+from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 
@@ -25,6 +26,19 @@ class TaskQueueSerializer(serializers.ModelSerializer):
 class TaskQueueViewSet(viewsets.ModelViewSet):
     serializer_class = TaskQueueSerializer
     queryset = TaskQueue.objects.all()
+
+    def post_save(self, obj, created=False):
+        self.headers['Taskqueue-Location'] = 'foobar'
+
+
+class TaskQueueLocationMixin(object):
+
+    def post_save(self, obj, created=False):
+        task_queue = getattr(obj, '_task_queue', None)
+        if isinstance(task_queue, TaskQueue):
+            self.headers['Taskqueue-Location'] = reverse('taskqueue-detail',
+                                                         kwargs={'pk': task_queue.pk},
+                                                         request=self.request)
 
 
 RESTAPI_VIEWSETS = [

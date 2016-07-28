@@ -37,6 +37,12 @@ def set_pgs(fsid, pool_id, pgs):
 
 @task
 def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after):
+    """
+    :type fsid: str
+    :type pool_id: int
+    :type pg_count_before: int
+    :type pg_count_after: int
+    """
     from ceph.models import CephCluster, CephPg, CephPool
 
     cluster = CephCluster.objects.get(fsid=fsid)
@@ -51,8 +57,9 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after):
     active = pg_in_state('active')
     creating = pg_in_state('creating')
 
-    logger.info('before={} after={} all={} active={} creating={}'.format(pg_count_after, pg_count_after,
-                len(pgs), active, creating))
+    logger.info(
+        'before={} after={} all={} active={} creating={}'.format(pg_count_before, pg_count_after,
+                                                                 len(pgs), active, creating))
 
     if active >= pg_count_after:
         return
