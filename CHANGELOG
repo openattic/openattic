@@ -1,8 +1,12 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.13, (not released yet):
+Version 2.0.14, (not released yet):
 -----------------------------------
+
+
+Version 2.0.13, 28. July 2016:
+------------------------------
 
 Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, you
   need to delete existing perfomance data by running 
