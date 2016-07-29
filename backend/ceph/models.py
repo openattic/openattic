@@ -555,7 +555,7 @@ class CephPg(NodbModel):
     reported_epoch = models.CharField(max_length=100)
     reported_seq = models.CharField(max_length=100)
     stat_sum = JsonField(base_type=dict, editable=False)
-    state = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, help_text='http://docs.ceph.com/docs/master/rados/operations/pg-states/')
     stats_invalid = models.CharField(max_length=100)
     up = JsonField(base_type=list, editable=False)
     up_primary = models.IntegerField()
@@ -618,8 +618,10 @@ class CephPg(NodbModel):
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
-            for name in ['last_became_active', 'last_became_peered',
+            for name in ['last_became_active', 'last_became_peered', 'last_active', 'last_change',
                          'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
+                         'last_fresh', 'last_fullsized', 'last_peered', 'last_undegraded',
+                         'last_unstale',
                          'osd_id', 'pool_name']:
                 if name not in model_args:
                     model_args[name] = None

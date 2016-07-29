@@ -23,10 +23,15 @@ def add(x, y):
     return x + y
 
 
-@task
-def wait(times):
-    if times > 0:
-        return wait(times - 1)
+def wait_percent(current, total=None):
+    total = total if total else current
+    return float(total - current) / float(total) * 100
+
+
+@task(percent=wait_percent)
+def wait(current_times, total_times=None):
+    if current_times > 1:
+        return wait(current_times - 1, total_times if total_times else current_times)
     else:
         return True
 
@@ -86,3 +91,21 @@ class TaskTestCase(TestCase):
             self.fail()
         except DataError:
             pass
+
+    def test_percent(self):
+        chains = \
+            [
+                chain([add(1, 2), add(1, 2), add(1, 2), add(1, 2)]),
+                chain([chain([add(1, 2), add(1, 2), add(1, 2), add(1, 2)])]),
+                wait(4)
+            ]
+        for my_chain in chains:
+            self.assertEquals(my_chain.percent(), 0)
+            my_chain = my_chain.run_once()
+            self.assertEquals(my_chain.percent(), 25)
+            my_chain = my_chain.run_once()
+            self.assertEquals(my_chain.percent(), 50)
+            my_chain = my_chain.run_once()
+            self.assertEquals(my_chain.percent(), 75)
+            result = my_chain.run_once()
+            self.assertIn(result, [3, True])

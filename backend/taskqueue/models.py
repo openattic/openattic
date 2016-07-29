@@ -17,6 +17,7 @@ import logging
 from django.db import models
 from django.db.models import Model
 from django.db.models.query_utils import Q
+from django.utils.functional import cached_property
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class TaskQueue(Model):
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True, null=True, blank=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_NOT_STARTED, editable=False)
+    percent = models.IntegerField(default=0)
 
     def run_once(self):
         """
@@ -69,6 +71,7 @@ class TaskQueue(Model):
             return
         if isinstance(res, Task):
             self.task = json.dumps(res.serialize())
+            self.percent = task.percent()
             self.save_or_delete()
         else:
             self.finish_task(res)
@@ -86,10 +89,13 @@ class TaskQueue(Model):
                                                                 TaskQueue.STATUS_EXCEPTION]
         logger.info(u'Task finished: {}'.format(result))
         self.result = json.dumps(result)
+        self.percent = 100
         self.transition(status)
 
     def transition(self, new_status):
-        logger.info(u'Task Transition: {} -> {}'.format(self.status_name, TaskQueue.STATUS_CHOICES[new_status - 1][1]))
+        logger.info(u'Task Transition: {} -> {}'.format(self.status_name,
+                                                        TaskQueue.STATUS_CHOICES[new_status - 1][
+                                                            1]))
         self.status = new_status
         self.save_or_delete()
 
@@ -102,7 +108,8 @@ class TaskQueue(Model):
 
     @staticmethod
     def cleanup():
-        TaskQueue.objects.filter(TaskQueue.in_status_q([TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])).delete()
+        TaskQueue.objects.filter(
+            TaskQueue.in_status_q([TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])).delete()
 
     @staticmethod
     def in_status_q(states):
@@ -146,13 +153,20 @@ class Task(object):
         kwargs = {key: deep_serialize(val) for key, val in self.kwargs.iteritems()}
         return [self.func, args, kwargs]
 
-    def run_once(self):
+    @cached_property
+    def wrapper(self):
+        """:rtype: TaskWrapper"""
         module_name, func_name = self.func.rsplit('.', 1)
-        print module_name, func_name
         m = __import__(module_name, fromlist=[func_name], level=0)
-        func = getattr(m, func_name)
-        res = func.call_now(*self.args, **self.kwargs)
+        return getattr(m, func_name)
+
+    def run_once(self):
+        """:returns: Either a new Task or a final result."""
+        res = self.wrapper.call_now(*self.args, **self.kwargs)
         return res
+
+    def percent(self):
+        return self.wrapper.percent(*self.args, **self.kwargs)
 
     def __unicode__(self):
         return u'{} with {}, {}'.format(self.func, self.args, self.kwargs)
@@ -160,20 +174,25 @@ class Task(object):
     def __str__(self):
         return '{} with {}, {}'.format(self.func, self.args, self.kwargs)
 
+
 def deserialize_task(value):
     """
     :rtype: Task
     :raises ValueError: Error occurred.
     """
+    if isinstance(value, Task):
+        return value
     obj = Task.deserialize(value)
     if obj is None:
         raise ValueError('Unable to deserialize {}'.format(value))
     return obj
 
+
 class TaskWrapper(object):
-    def __init__(self, func):
+    def __init__(self, func, percent=None):
         """This instance is kind of static. Don't store anything volatile."""
         self._orig_func = func
+        self._percent = percent
 
     def __call__(self, *args, **kwargs):
         return self.mk_task(args, kwargs)
@@ -191,29 +210,49 @@ class TaskWrapper(object):
         return obj
 
     def call_now(self, *args, **kwargs):
-        """:type task: TaskQueue"""
         return self._orig_func(*args, **kwargs)
 
+    def percent(self, *args, **kwargs):
+        value = self._percent(*args, **kwargs) if self._percent else 0
+        if value < 0 or value > 100:
+            logger.warning('percent={} is value wrong. {}'.format(value, self._orig_func))
+        return max(min(value, 100), 0)
 
-def task(func):
-    return TaskWrapper(func)
+
+def task(*args, **kwargs):
+    def inner(func):
+        return TaskWrapper(func, *args, **kwargs)
+    if kwargs:
+        return inner
+    else:
+        return TaskWrapper(args[0])
 
 
-@task
-def chain(values):
+def chain_percent(values, total_count=None):
     assert len(values) >= 1
+    total_count = total_count if total_count else len(values)
 
-    def to_task(value):
-        return value if isinstance(value, Task) else deserialize_task(value)
+    current_tasks_percent = float(total_count - len(values)) / float(total_count)
 
-    tasks = [to_task(v) for v in values]
+    first = deserialize_task(values[0])
+    first_percent = first.percent() / float(100)
+
+    return (current_tasks_percent + first_percent / float(total_count)) * 100
+
+
+@task(percent=chain_percent)
+def chain(values, total_count=None):
+    assert len(values) >= 1
+    total_count = total_count if total_count is not None else len(values)
+
+    tasks = [deserialize_task(v) for v in values]
 
     first, rest = tasks[0], tasks[1:]
     res = first.run_once()
     if isinstance(res, Task):
-        return chain([res] + rest)
+        return chain([res] + rest, total_count)
     elif not rest:
         return res
     else:
         # Ignoring res here.
-        return chain(rest)
+        return chain(rest, total_count)

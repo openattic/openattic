@@ -20,6 +20,7 @@ from ceph import librados
 
 logger = logging.getLogger(__name__)
 
+
 @task
 def set_pgs(fsid, pool_id, pgs):
     from ceph.models import CephCluster, CephPool
@@ -35,13 +36,15 @@ def set_pgs(fsid, pool_id, pgs):
     return track_pg_creation(fsid, pool_id, pool.pg_num, pgs)
 
 
-@task
-def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after):
+@task(percent=lambda fsid, poolid, before, after, current=None: float(
+    (current or 0) - before) / float(after - before) * 100)
+def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_current_active=None):
     """
     :type fsid: str
     :type pool_id: int
     :type pg_count_before: int
     :type pg_count_after: int
+    :type pgs_current_active: int | None
     """
     from ceph.models import CephCluster, CephPg, CephPool
 
@@ -49,7 +52,7 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after):
     cluster.cluster = cluster
     NodbManager.set_nodb_context(cluster)
     pool = CephPool.objects.get(id=pool_id)
-    pgs = CephPg.objects.filter(pool_name__exact=pool.name)
+    pgs = list(CephPg.objects.filter(pool_name__exact=pool.name))
 
     def pg_in_state(state):
         return len([pg for pg in pgs if state in pg.state])
@@ -64,5 +67,4 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after):
     if active >= pg_count_after:
         return
     else:
-        return track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after)
-
+        return track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, active)
