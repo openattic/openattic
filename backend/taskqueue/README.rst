@@ -76,7 +76,7 @@ parameter. For example, you can use this to chain tasks into one task:
 
 When calling ``wait_and_print.delay(3, 'Sebastian')``, Task Queue will run a state machine like this:
 
-.. image:: http://g.gravizo.com/g?digraph G {rankdir="LR"; chain1 -> wait1 -> wait2 -> wait3 -> chain2 -> hello;}
+.. image:: http://g.gravizo.com/g?digraph%20G%20{rankdir=%22LR%22;%20chain1%20-%3E%20wait1%20-%3E%20wait2%20-%3E%20wait3%20-%3E%20chain2%20-%3E%20hello;}
 
 A ready-to-use chain task is available by importing ``taskqueue.models.chain``.
 
