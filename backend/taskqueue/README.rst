@@ -74,7 +74,31 @@ parameter. For example, you can use this to chain tasks into one task:
     def wait_and_print(times, name):
         return chain([wait(times), hello(name)])
 
-A chain task is available by importing ``taskqueue.models.chain``.
+When calling ``wait_and_print.delay(3, 'Sebastian')``, Task Queue will run a state machine like this:
+
+.. image:: http://g.gravizo.com/g?digraph G {rankdir="LR"; chain1 -> wait1 -> wait2 -> wait3 -> chain2 -> hello;}
+
+A ready-to-use chain task is available by importing ``taskqueue.models.chain``.
+
+Progress Percentage
+-------------------
+
+A task also has an attached progress percentage value. I case you have a long running task where a
+progress may be usefull to a user, you can provide a ``percent`` argument to ``@task`` like so:
+
+.. code-block:: Python
+
+    @task(percent=lambda total, remaining: 100 * remaining / total)
+    def wait(total, remaining):
+        if remaining:
+            return wait(total, remaining - 1)
+        else:
+            print 'finished'
+
+The percent parameter will be called with the same parameters as your task.
+
+.. note:: The function is expected not to have any side effects, as it may be called multiple times
+   or never.
 
 Background
 ----------
@@ -86,7 +110,7 @@ I've tried to make a task definition similar to the API of
 Task Queue ist also similar to a Haskell package called `Workflow <https://hackage.haskell.org/package/Workflow>`_,
 quote:
 
-    Transparent support for interruptible computations. A workflow can be seen as a persistent
+    Transparent support for interruptable computations. A workflow can be seen as a persistent
     thread that executes a `monadic <https://en.wikipedia.org/wiki/Monad_(functional_programming)>`_
     computation. Therefore, it can be used in very time consuming
     computations such are CPU intensive calculations or procedures that are most of the time
