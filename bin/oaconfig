@@ -23,7 +23,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin"
+	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin version"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -62,6 +62,7 @@ usage () {
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
 	echo "    dbdump       Create a database dump on stdout."
+	echo "    version      Returns version information."
 	echo
 	echo "Any other command will be passed as-is to the openATTIC management system,"
 	echo "which supports the commands and options listed below."
@@ -398,6 +399,11 @@ EOF
 			echo "Please install sudo for this command to work."
 		fi
 		;;
+
+    version|--version)
+        echo "openATTIC version: $(grep VERSION /usr/share/openattic/version.txt |awk '{print $3}')"
+        echo "   Django version: $(python manage.py --version)"
+        ;;
 
 	*)
 		# Big thanks to DireFog and pcgod for the following line
