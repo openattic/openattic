@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.factory("cephRbdService", function ($resource) {
-  return $resource("/openattic/api/ceph/:id/rbds", {
+  return $resource(globalConfig.API.URL + "ceph/:id/rbds", {
     id: "@id"
   });
 });
