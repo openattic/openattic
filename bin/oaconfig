@@ -401,7 +401,12 @@ EOF
 		;;
 
         version|--version)
-                echo "openATTIC version: $(grep VERSION /usr/share/openattic/version.txt |awk '{print $3}')"
+                # Check version.txt for version
+                if [ -f "version.txt" ]; then
+                        echo "openATTIC version: $(grep VERSION version.txt |awk '{print $3}')"
+                elif [ -f "../version.txt" ]; then
+                        echo "    openATTIC DEV: $(grep VERSION ../version.txt |awk '{print $3}')"
+                fi
                 echo "   Django version: $(python manage.py --version)"
                 ;;
 
