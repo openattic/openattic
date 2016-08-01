@@ -21,6 +21,7 @@ class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
     class Meta(object):
         model = TaskQueue
+        exclude = ('task',)
 
 
 class TaskQueueViewSet(viewsets.ModelViewSet):
