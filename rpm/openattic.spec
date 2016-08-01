@@ -559,12 +559,10 @@ echo ""
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
-%{_datadir}/%{name}/clustering/
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
 %{_datadir}/%{name}/installed_apps.d/20_volumes
-%{_datadir}/%{name}/installed_apps.d/70_clustering
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
 %{_datadir}/%{name}/nodb/
