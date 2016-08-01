@@ -400,10 +400,10 @@ EOF
 		fi
 		;;
 
-    version|--version)
-        echo "openATTIC version: $(grep VERSION /usr/share/openattic/version.txt |awk '{print $3}')"
-        echo "   Django version: $(python manage.py --version)"
-        ;;
+        version|--version)
+                echo "openATTIC version: $(grep VERSION /usr/share/openattic/version.txt |awk '{print $3}')"
+                echo "   Django version: $(python manage.py --version)"
+                ;;
 
 	*)
 		# Big thanks to DireFog and pcgod for the following line
