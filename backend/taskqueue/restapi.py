@@ -19,6 +19,7 @@ from taskqueue.models import TaskQueue
 
 class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
+
     class Meta(object):
         model = TaskQueue
         exclude = ('task',)
@@ -27,7 +28,6 @@ class TaskQueueSerializer(serializers.ModelSerializer):
 class TaskQueueViewSet(viewsets.ModelViewSet):
     serializer_class = TaskQueueSerializer
     queryset = TaskQueue.objects.all()
-
 
 
 class TaskQueueLocationMixin(object):
