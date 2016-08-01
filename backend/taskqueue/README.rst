@@ -100,6 +100,22 @@ The percent parameter will be called with the same parameters as your task.
 .. note:: The function is expected not to have any side effects, as it may be called multiple times
    or never.
 
+Revision Upgrades
+-----------------
+
+.. warning:: Keep in mind, that we're serializing the tasks into the database.
+
+If you modify code, keep these restrictions in mind:
+
+#. A task, including all parameters are serialized into the db,
+#. thus be prepared to be called with a **outdated and ancient** function arguments.
+#. Deleting the Python source of a task will eventually throw an exception.
+#. Rule of thumb, **only** add optional parameters at the end to existing tasks.
+#. If something goes wrong, a task may be aborted between function calls.
+#. Try not to run important modifying commands later on.
+#. Validate your function parameters.
+#. As long as you only modify the implementation, everything is fine.
+
 Background
 ----------
 
