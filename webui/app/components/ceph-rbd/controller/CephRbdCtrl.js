@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
-    registryService, cephPoolsService) {
+    registryService, cephPoolsService, toasty) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.rbd = {};
@@ -72,9 +72,11 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
           })
           .$promise
           .then(function (res) {
+            $scope.rbdFailure = false;
             cephPoolsService.get({
               id: $scope.registry.selectedCluster.fsid
             }).$promise.then(function (pools) {
+              $scope.poolFailure = false;
               res.results.forEach(function (rbd) {
                 pools.results.some(function (pool) {
                   if (pool.id === rbd.pool) {
@@ -87,11 +89,30 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 rbd.freePercent = rbd.free / rbd.size * 100;
               });
               $scope.rbd = res;
+            }).catch(function (poolError) {
+              if (!$scope.poolFailure) {
+                $scope.poolFailure = true;
+                $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
+                $scope.poolFailureError = poolError;
+                toasty.error({
+                  title: $scope.poolFailureTitle,
+                  msg: "Pool list couldn't be loaded."
+                });
+                throw poolError;
+              }
             });
           })
-          .catch(function (error) {
-            $scope.error = error;
-            console.log("An error occurred while loading the ceph rbds.", error);
+          .catch(function (rbdError) {
+            if (!$scope.rbdFailure) {
+              $scope.rbdFailure = true;
+              $scope.rbdFailureTitle = rbdError.status + ": " + rbdError.statusText.toLowerCase();
+              $scope.rbdFailureError = rbdError;
+              toasty.error({
+                title: $scope.rbdFailureTitle,
+                msg: "Rbd list couldn't be loaded."
+              });
+            }
+            throw rbdError
           });
     }
   };

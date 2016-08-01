@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
-    SizeParserService, $filter, toasty) {
+    SizeParserService, $filter, toasty, cephClusterService) {
 
   $scope.rbd = {
     name: "",
@@ -43,6 +43,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   };
 
   $scope.data = {
+    cluster: null,
     pool: null,
     features: {
       "deep-flatten": {
@@ -77,11 +78,11 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     obj_num: 1,
     obj_size: "4 MB",
     size: "",
-    expert: false,
-    cluster: $stateParams.clusterId
+    expert: false
   };
 
   $scope.pools = {};
+  $scope.clusters = {};
 
   $scope.features = {
     "deep-flatten": {
@@ -239,15 +240,59 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     $state.go("cephRbds");
   };
 
-  if ($stateParams.clusterId === null) {
-    goToListView();
-  } else {
+  $scope.clusterId = $stateParams.clusterId;
+
+  $scope.waitingClusterMsg = "Retrieving cluster list...";
+  cephClusterService.get()
+    .$promise
+    .then(function (res) {
+      $scope.clusters = res.results;
+      $scope.waitingClusterMsg = "-- Select a cluster --";
+      $scope.clusters.forEach(function (cluster) {
+        if (cluster.fsid === $scope.clusterId) {
+          $scope.data.cluster = cluster;
+        }
+      });
+      if (!$scope.data.cluster) {
+        if (res.count > 0) {
+          $scope.data.cluster = res.results[0];
+        } else {
+          $scope.waitingClusterMsg = "No cluster avialable.";
+          toasty.warning({
+            title: $scope.waitingClusterMsg,
+            msg: "You can't create any RBDs with your configuration."
+          });
+        }
+      }
+      $scope.data.pools = null;
+    })
+    .catch(function (clusterError) {
+      if (!$scope.clusterFailure) {
+        $scope.clusterFailure = true;
+        $scope.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
+        $scope.clusterFailureError = clusterError;
+        $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
+        $scope.rbdForm.$setValidity("clusterLoading", false);
+        toasty.error({
+          title: $scope.clusterFailureTitle,
+          msg: "Cluster list couldn't be loaded."
+        });
+      }
+      throw clusterError;
+    });
+
+  $scope.waitingPoolMsg = "Select a cluster first";
+  $scope.getCephPools = function () {
+    $scope.waitingPoolMsg = "Retrieving pool list...";
     cephPoolsService.get({
-        id: $stateParams.clusterId
+        id: $scope.clusterId
       })
       .$promise
       .then(function (res) {
+        $scope.poolFailure = false;
+        $scope.rbdForm.$setValidity("poolLoading", true);
         res.results.forEach(function (pool) {
+          $scope.poolFailure = false;
           pool.oaUsed = $filter("number")(pool.num_bytes / pool.max_avail * 100, 2);
           pool.oaUnused = 100 - pool.oaUsed;
           pool.oaFree = pool.max_avail - pool.num_bytes;
@@ -259,10 +304,41 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           }
         });
         $scope.pools = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
+        $scope.waitingPoolMsg = "-- Select a pool --";
+        if (!$scope.data.pool) {
+          if (res.count > 0 && !$scope.data.pool) {
+            $scope.data.pool = res.results[0];
+          } else {
+            $scope.waitingPoolMsg = "No pool aviable.";
+            toasty.warning({
+              title: $scope.waitingPoolMsg,
+              msg: "You can't create any RBDs in the selected cluster."
+            });
+          }
+        }
+      })
+      .catch(function (poolError) {
+        if (!$scope.poolFailure) {
+          $scope.poolFailure = true;
+          $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
+          $scope.poolFailureError = poolError;
+          $scope.rbdForm.$setValidity("poolLoading", false);
+          toasty.error({
+            title: $scope.poolFailureTitle,
+            msg: "Pool list couldn't be loaded."
+          });
+          $scope.waitingPoolMsg = "Error: List couldn't be loaded!";
+        }
+        throw poolError;
       });
-  }
+  };
+
+  $scope.$watch("data.cluster", function (cluster) {
+    if (cluster) {
+      $scope.clusterId = cluster.fsid;
+      $scope.getCephPools();
+    }
+  });
 
   $scope.submitAction = function (rbdForm) {
     if (rbdForm.$valid) {
@@ -299,7 +375,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
             msg: toastMsg,
             timeout: 10000
           });
-          console.log("An error occured", error);
+          throw error;
         });
     }
   };

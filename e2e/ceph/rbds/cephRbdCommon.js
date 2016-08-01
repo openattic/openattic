@@ -5,7 +5,7 @@ var rbdCommons = function(){
   this.cephRBDs = element(by.css('.tc_submenuitem_ceph_rbds'));
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.selectCluster = element(by.css('#cluster-selection option:nth-child(2)'));
-  
+
   this.detailAttributes = [
     'Name',
     'Block name prefix',
@@ -49,6 +49,17 @@ var rbdCommons = function(){
       model: "rbd.name",
       displayed: true
     },
+    cluster: {
+      name: 'Cluster',
+      testClass: 'tc_cluster_selection',
+      model: "data.cluster",
+      displayed: true,
+      items: {
+        clusterSelection: 'tc_rbdClusterOption',
+        helpCluster: 'tc_clusterRequired',
+        helpLoad: 'tc_clusterLoading'
+      }
+    },
     pool: {
       name: 'Poolname',
       testClass: 'tc_pool_selection',
@@ -58,7 +69,8 @@ var rbdCommons = function(){
         poolSelection: 'tc_rbdPoolOption',
         poolSize: 'tc_poolSize',
         poolSizeAvailable: 'tc_poolAvailableSize',
-        helpPool: 'tc_poolRequired'
+        helpPool: 'tc_poolRequired',
+        helpLoad: 'tc_poolLoading'
       }
     },
     size: {
@@ -107,6 +119,8 @@ var rbdCommons = function(){
   this.objSize = element(by.model(this.formElements.objectSize.model));
   this.size = element(by.model(this.formElements.size.model));
   this.name = element(by.model(this.formElements.name.model));
+  this.pools = element(by.model(this.formElements.pool.model));
+  this.clusters = element(by.model(this.formElements.cluster.model));
 
   this.featureCases = [ // 0 = unchecked; 1 = checked; -1= disabled; 2=true or false should not matter
     //all cases without layering and striping
@@ -122,6 +136,14 @@ var rbdCommons = function(){
     [2, -1, 1, 1, 0, 2, -1],
     [2, -1, 1, 1, 1, 2, 2]
   ];
+
+  this.isListInSelectBox = function(itemName){
+    var item = element(by.model(self.formElements[itemName].model));
+    item.click();
+    var listEntries = item.all(by.css("." + self.formElements[itemName].testClass + " option"));
+
+    expect(listEntries.count()).toBeGreaterThan(1);
+  }
 
   this.checkCheckboxToBe = function(e, bool){
     e.getAttribute('checked').then(function(value){

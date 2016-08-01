@@ -23,16 +23,31 @@
     </div>
 </div>
 
+<div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.cluster.$dirty)
+    && rbdForm.cluster.$invalid}">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="cluster">Cluster</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select ng-disabled="!clusters" class="form-control tc_cluster_selection" ng-model="data.cluster"
+                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid" name="cluster" required>
+            <option class="tc_rbdClusterOption" value="" ng-bind="waitingClusterMsg"></option>
+        </select>
+        <span class="help-block tc_clusterRequired" ng-show="(rbdForm.$submitted || rbdForm.cluster.$dirty)
+            && rbdForm.cluster.$error.required">
+            This field is required!
+        </span>
+        <span class="help-block tc_clusterLoading" ng-show="rbdForm.$error.clusterLoading">
+            Couldn't load any cluster, please contact your administrator for details.
+        </span>
+    </div>
+</div>
+
 <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.pool.$dirty)
     && rbdForm.pool.$invalid}">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select ng-hide="pools" ng-disabled="!pools" class="form-control form-control-static">
-            <option>Retrieving pool list...</option>
-        </select>
-        <select ng-show="pools" class="form-control tc_pool_selection" ng-model="data.pool"
+        <select ng-disabled="!pools" class="form-control tc_pool_selection" ng-model="data.pool"
                 ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in pools track by pool.id" name="pool" required>
-            <option class="tc_rbdPoolOption" value="">-- Select a pool --</option>
+            <option class="tc_rbdPoolOption" value="" ng-bind="waitingPoolMsg"></option>
         </select>
         <div ng-show="data.pool" class="progress-bar-outer clearfix">
             <uib-progressbar max="100" class="progress-striped" value="data.pool.oaUsed">
@@ -46,6 +61,9 @@
         <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
             && rbdForm.pool.$error.required">
             This field is required!
+        </span>
+        <span class="help-block tc_poolLoading" ng-show="rbdForm.$error.poolLoading">
+            Couldn't load any pool, please contact your administrator for details.
         </span>
     </div>
 </div>

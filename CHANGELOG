@@ -1,8 +1,18 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.13, (not released yet):
+Version 2.0.14, (not released yet):
 -----------------------------------
+
+
+Version 2.0.13, 28. July 2016:
+------------------------------
+
+Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, you
+  need to delete existing perfomance data by running 
+  `rm /var/lib/pnp4nagios/perfdata/<host_name>/Check_CephCluster_*`. Keep in mind
+  that collected performance data for your Ceph clusters will be lost.
+
 * Backend: Added a REST API (userprofiles) to store user preferences
   (key/value pairs) (OP-756)
 * Backend: Added the performance data (in JSON) of a Ceph cluster to the REST
@@ -12,23 +22,36 @@ Version 2.0.13, (not released yet):
 * Backend: Fixed RBDs with same name in multiple pools (OP-1313)
 * Backend: Fixed `ceph df` missing a newly created pool (OP-1282)
 * Backend: Optimized calls to librados (OP-1321)
+* Backend: Added Ceph pool Nagios monitoring (OP-1292)
+* Backend: The check_cephcluster Nagios plugin contains another value 
+  'exec_time'. It represents the run time of the cluster check. (OP-1307)
+* WebUI: Wizards automatically setting the share path (OP-590)
 * WebUI: Make the oA API URL configurable (OP-989)
 * WebUI: Deletion of a RBD or multiple RBDs (OP-1032)
 * WebUI: Creation of RBDs (OP-753 & OP-1290)
 * WebUI: Sortable RBD table and a cleaned up details view (OP-1309)
 * WebUI: Added a welcome message to the login screen (OP-1310)
+* WebUI: Enable cluster selection in the RBD creation form (OP-1314)
 * WebUI: Added grunt task "grunt inspect --force" to check the quality of your
   JavaScript code (OP-1332)
 * WebUI: Replacing the "Sorry folks" messages with loading messages (OP-1333)
+* WebUI: Add form throws toasty error message in case of a pool list loading
+  failure. (OP-1357)
 * WebUI/QA: RBD form, table, details, creation and deletion tests (OP-1338)
+* WebUI/QA: Restructured wizard tests with help of a page object (OP-1356)
+* WebUI/QA: Includes cluster selection tests in the RBD creation form tests
+  (OP-1367)
 * Packaging: Removed dependency on python-simplejson from RPM and DEB packages
   (OP-1106)
 * Packaging: Remove backend/.style.yapf from the RPM buildroot instead of
   packaging it (OP-1141)
 * Packaging: Added version.txt to the openattic-base RPM and DEB files
   (OP-1267)
-* Packaging: Fixed the ability to build tar archives from a local hg repository
-  (OP-1312).
+* Packaging: Fixed building tar archives from a local hg repository (OP-1312)
+* Packaging: Enabled relative paths for make_dist.py (OP-1324)
+* Packaging: Fixed automatic debian changelog adaption (OP-1288)
+* Packaging: Fix building debian snapshot packages on Ubuntu 16.04 (OP-1372)
+
 
 Version 2.0.12, 23. June 2016:
 ------------------------------
