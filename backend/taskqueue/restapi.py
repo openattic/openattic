@@ -26,13 +26,19 @@ class TaskQueueSerializer(serializers.ModelSerializer):
 
 
 class TaskQueueViewSet(viewsets.ModelViewSet):
+    """This API provides access to long running tasks."""
     serializer_class = TaskQueueSerializer
     queryset = TaskQueue.objects.all()
 
 
 class TaskQueueLocationMixin(object):
+    """
+    This mixin adds a "Taskqueue-Location" HTTP-header pointing to the `_task_queue` attribute of
+    saved model instances.
+    """
 
     def post_save(self, obj, created=False):
+        super(TaskQueueLocationMixin, self).post_save(obj, created)
         task_queue = getattr(obj, '_task_queue', None)
         if isinstance(task_queue, TaskQueue):
             self.headers['Taskqueue-Location'] = reverse('taskqueue-detail',

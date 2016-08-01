@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 
 class TaskQueue(Model):
+    """
+    Each instance of this model is a Job that will be executed.
+    """
     STATUS_NOT_STARTED = 1
     STATUS_RUNNING = 2
     STATUS_FINISHED = 3
@@ -35,11 +38,14 @@ class TaskQueue(Model):
         (STATUS_EXCEPTION, 'Exception')
     )
 
-    task = models.CharField(max_length=1024)
-    result = models.CharField(max_length=1024, editable=False)
+    task = models.CharField(max_length=1024, help_text="The JSON-serialized task to run.")
+    result = models.CharField(max_length=1024, editable=False,
+                              help_text="The return value of the task queue.")
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True, null=True, blank=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_NOT_STARTED, editable=False)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_NOT_STARTED, editable=False,
+                                 help_text="A state-machine: not-started -> running -> finished | "
+                                           "exception")
     percent = models.IntegerField(default=0)
 
     def run_once(self):
@@ -120,6 +126,9 @@ class TaskQueue(Model):
 
 
 class Task(object):
+    """
+    A task is a JSON-serializable closure without any non-applied arguments.
+    """
     def __init__(self, func, args, kwargs):
         """
         :type func: str | unicode
@@ -132,6 +141,10 @@ class Task(object):
 
     @staticmethod
     def deserialize(value):
+        """
+        :type value: list | dict
+        :rtype: Task | None
+        """
         if not isinstance(value, list) or len(value) != 3:
             return None
         func, args, kwargs = value
@@ -189,6 +202,9 @@ def deserialize_task(value):
 
 
 class TaskWrapper(object):
+    """
+    A task wrapper is a reference to a function. It can generate Tasks or TaskQueues.
+    """
     def __init__(self, func, percent=None):
         """This instance is kind of static. Don't store anything volatile."""
         self._orig_func = func
@@ -220,6 +236,12 @@ class TaskWrapper(object):
 
 
 def task(*args, **kwargs):
+    """
+    Decorator for defining TaskWrappers.
+
+    :param percent: a function called with the same arguments as the decorated function.
+    :return: inner or a TaskWrapper.
+    """
     def inner(func):
         return TaskWrapper(func, *args, **kwargs)
     if kwargs:
@@ -242,6 +264,12 @@ def chain_percent(values, total_count=None):
 
 @task(percent=chain_percent)
 def chain(values, total_count=None):
+    """
+    Created a new task that executes all given tasks, one after another.
+
+    :type values: list[Task]
+    :returns: the result of the last task. Previous results will be ignored.
+    """
     assert len(values) >= 1
     total_count = total_count if total_count is not None else len(values)
 
