@@ -116,6 +116,25 @@ If you modify code, keep these restrictions in mind:
 #. Validate your function parameters.
 #. As long as you only modify the implementation, everything is fine.
 
+Integration with openATTIC-systemD
+----------------------------------
+
+Tasks are executed in our openATTIC-systemD process, thus they are independent of Apache worker
+processes and can run without being interrupted.
+
+On the other hand, openATTIC-systemD runs in glibs MainLoop. In order to integrate with it, we need
+to create a GObject with a periodic timer event. Here is the code to start the timer of
+``TaskQueueManager``:
+
+.. code-block:: Python
+
+     try:
+         import taskqueue.manager
+         taskqueue_manager = taskqueue.manager.TaskQueueManager()
+     except ImportError:
+         pass
+
+
 Background
 ----------
 
