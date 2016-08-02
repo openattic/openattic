@@ -18,11 +18,11 @@ from rest import relations
 
 from requests.exceptions import HTTPError
 
-from rest_framework import serializers, viewsets, status
+from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 from rest_framework import status
 
-from drbd.models import Connection, Endpoint
+from drbd.models import Connection
 from ifconfig.models import Host
 from volumes.models import StorageObject
 
@@ -32,10 +32,10 @@ from rest.multinode.handlers import RequestHandlers
 class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for DRBD connection """
 
-    volume  = relations.HyperlinkedRelatedField(view_name="volume-detail", source="storageobj",
-                                                queryset=StorageObject.objects.all())
-    url     = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
-    status  = serializers.SerializerMethodField("get_status")
+    volume = relations.HyperlinkedRelatedField(view_name="volume-detail", source="storageobj",
+                                               queryset=StorageObject.objects.all())
+    url = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
+    status = serializers.SerializerMethodField("get_status")
 
     class Meta:
         model = Connection
@@ -64,13 +64,15 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
             syncer_rate = request.DATA.get("syncer_rate", syncer_rate_default)
 
             try:
-                connection = Connection.objects.create_connection(protocol, syncer_rate, source_volume["id"])
+                connection = Connection.objects.create_connection(protocol, syncer_rate,
+                                                                  source_volume["id"])
             except Exception, err:
                 return Response(err.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
         else:
             # CREATE VOLUME
             connection_id = request.DATA["connection_id"]
-            connection = Connection.objects.install_connection(connection_id, source_volume["id"], remote_pool["id"])
+            connection = Connection.objects.install_connection(connection_id, source_volume["id"],
+                                                               remote_pool["id"])
 
         ser = DrbdConnectionSerializer(connection, context={"request": request})
         return Response(ser.data, status=status.HTTP_201_CREATED)
@@ -109,9 +111,9 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
 
     def _create_filesystem(self, request, connection_id, filesystem):
         # called in the primary only, not part of the REST API
-        options = {"owner"      : request.user,
-                   "fswarning"  : 75,
-                   "fscritical" : 85}
+        options = {"owner": request.user,
+                   "fswarning": 75,
+                   "fscritical": 85}
         connection = Connection.objects.get(id=connection_id)
         connection.volume.create_filesystem(filesystem, options)
 
@@ -130,15 +132,15 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             source_volume = request.DATA["source_volume"]
             remote_pool = request.DATA["remote_pool"]
         except KeyError:
-            return Response("The mandatory parameter(s) 'source_volume' and/or 'remote_pool' are missing.",
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response("The mandatory parameter(s) 'source_volume' and/or 'remote_pool' are "
+                            "missing.", status=status.HTTP_400_BAD_REQUEST)
 
         try:
             source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
             remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
         except Host.DoesNotExist:
-            return Response("Can't find the related host object of the volume that should be mirrored",
-                            status=status.HTTP_404_NOT_FOUND)
+            return Response("Can't find the related host object of the volume that should be "
+                            "mirrored", status=status.HTTP_404_NOT_FOUND)
 
         # First find out whether we're supposed to be primary or secondary.
         if "connection_id" not in request.DATA:
@@ -147,14 +149,15 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             if source_volume_host == Host.objects.get_current():
                 # source volume is a local volume
                 # Step 1: Create the connection
-                connection_resp = super(DrbdConnectionProxyViewSet, self).create(request, args, kwargs)
+                connection_resp = super(DrbdConnectionProxyViewSet, self).create(request, args,
+                                                                                 kwargs)
                 if connection_resp.exception:
                     return connection_resp
                 connection_data = connection_resp.data
 
                 # Step 2: Call the secondary to create theirs
-                request = self._clone_request_with_new_data(request,
-                                                            dict(request.DATA, connection_id=connection_data["id"]))
+                request = self._clone_request_with_new_data(
+                    request, dict(request.DATA, connection_id=connection_data["id"]))
                 self._remote_request(request, remote_pool_host)
 
                 # Step 3: Install our local endpoint
@@ -185,7 +188,8 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                 return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             if host == Host.objects.get_current():
-                # Step 1: Call second host to grow his endpoint, if the request was not forwarded by sencondary host
+                # Step 1: Call second host to grow his endpoint, if the request was not forwarded by
+                # sencondary host
                 if "proxy_host_id" not in request.DATA:
                     try:
                         self._remote_request(request, connection.peerhost, obj=connection)
@@ -201,8 +205,8 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                 except HTTPError, e:
                     return Response(e.response.json(), status=e.response.status_code)
 
-                # Step 2: Call primary host to grow his endpoint and connection, if this was called by a client and not
-                # by the primary host.
+                # Step 2: Call primary host to grow his endpoint and connection, if this was called
+                # by a client and not by the primary host.
                 if "proxy_host_id" not in request.DATA:
                     try:
                         res = self._remote_request(request, host, obj=connection)
@@ -220,7 +224,8 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         if host == Host.objects.get_current():
-            # Step 1: Call second host to delete his endpoint, if the request was not forwarded by secondary host
+            # Step 1: Call second host to delete his endpoint, if the request was not forwarded by
+            # secondary host
             if len(connection.get_storage_devices()) > 1:
                 self._remote_request(request, connection.peerhost, obj=connection)
 
@@ -228,12 +233,14 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             return super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
         else:
             # Step 1: Remove local endpoint
-            # Store the connection host. After deleting the local endpoint the host property would return None
-            # because the current host gets a 'no resources defined!' by executing 'drbdadm role <connection_name>'
+            # Store the connection host. After deleting the local endpoint the host property would
+            # return None because the current host gets a 'no resources defined!' by executing
+            # 'drbdadm role <connection_name>'
             connection_host = host
             super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
 
-            # Step 2: Call Primary host, if this host was called by a client and not by the primary host
+            # Step 2: Call Primary host, if this host was called by a client and not by the primary
+            # host
             if "proxy_host_id" not in request.DATA:
                 self._remote_request(request, connection_host, obj=connection)
 
