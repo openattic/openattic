@@ -47,6 +47,7 @@ class TaskQueue(Model):
                                  help_text="A state-machine: not-started -> running -> finished | "
                                            "exception")
     percent = models.IntegerField(default=0)
+    description = models.CharField(max_length=128)
 
     def run_once(self):
         """
@@ -85,6 +86,13 @@ class TaskQueue(Model):
     @property
     def status_name(self):
         return TaskQueue.STATUS_CHOICES[self.status - 1][1]
+
+    @property
+    def json_result(self):
+        try:
+            return json.loads(self.result)
+        except ValueError as e:
+            return None
 
     def finish_with_exception(self, e):
         """:type e: Exception"""
@@ -205,10 +213,14 @@ class TaskWrapper(object):
     """
     A task wrapper is a reference to a function. It can generate Tasks or TaskQueues.
     """
-    def __init__(self, func, percent=None):
-        """This instance is kind of static. Don't store anything volatile."""
+    def __init__(self, func, percent=None, description=None):
+        """
+        This instance is kind of static. Don't store anything volatile.
+        :type description: str | unicode | None
+        """
         self._orig_func = func
         self._percent = percent
+        self._description = description
 
     def __call__(self, *args, **kwargs):
         return self.mk_task(args, kwargs)
@@ -218,10 +230,18 @@ class TaskWrapper(object):
         func = self._orig_func.__module__ + '.' + self._orig_func.__name__
         return Task(func, list(args), kwargs)
 
+    def get_description(self, args, kwargs):
+        if self._description:
+            return self._description.format(*args, **kwargs)
+        else:
+            name = self._orig_func.__name__.replace('_', ' ')
+            return name
+
     def delay(self, *args, **kwargs):
         """:rtype: TaskQueue"""
         obj = TaskQueue()
         obj.task = json.dumps(self.mk_task(args, kwargs).serialize())
+        obj.description = self.get_description(args, kwargs)
         obj.save()
         return obj
 

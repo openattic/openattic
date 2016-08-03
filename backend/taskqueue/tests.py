@@ -18,7 +18,7 @@ from django.test import TestCase
 from taskqueue.models import Task, task, chain
 
 
-@task
+@task(description='Adding {0} and {1}')
 def add(x, y):
     return x + y
 
@@ -109,3 +109,7 @@ class TaskTestCase(TestCase):
             self.assertEquals(my_chain.percent(), 75)
             result = my_chain.run_once()
             self.assertIn(result, [3, True])
+
+    def test_description(self):
+        tq = add.delay(1,2)
+        self.assertEqual(tq.description, 'Adding 1 and 2')

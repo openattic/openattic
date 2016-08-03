@@ -15,10 +15,12 @@ from rest_framework import serializers, viewsets
 from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
+from nodb.restapi import JsonField
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
+    result = JsonField(source='json_result')
 
     class Meta(object):
         model = TaskQueue

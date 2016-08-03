@@ -20,7 +20,7 @@ from ceph import librados
 logger = logging.getLogger(__name__)
 
 
-@task
+@task(description='Setting number of PGs to {2}')
 def set_pgs(fsid, pool_id, pgs):
     from ceph.models import CephPool, fsid_context
 
@@ -33,7 +33,8 @@ def set_pgs(fsid, pool_id, pgs):
         return track_pg_creation(fsid, pool_id, pool.pg_num, pgs)
 
 
-@task(percent=lambda fsid, poolid, before, after, current=None: float(
+@task(description='Setting number of PGs to {3}',
+      percent=lambda fsid, poolid, before, after, current=None: float(
     (current or 0) - before) / float(after - before) * 100)
 def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_current_active=None):
     """
