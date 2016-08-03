@@ -400,19 +400,19 @@ EOF
 		fi
 		;;
 
-        version|--version)
-                # Check version.txt for version
-                REL_VER_FILE="/usr/share/openattic/version.txt"
-                DEV_VER_FILE="/srv/openattic/bin/version.txt"
-                if [ -f "$REL_VER_FILE" ]; then
-                        echo "openATTIC version: $(grep VERSION $REL_VER_FILE |awk '{print $3}')"
-                elif [ -f "$DEV_VER_FILE" ]; then
-                        echo "    openATTIC DEV: $(grep VERSION $DEV_VER_FILE |awk '{print $3}')"
-                else
-                        echo "No openATTIC version file found."
-                fi
-                echo "   Django version: $(python manage.py --version)"
-                ;;
+	version|--version)
+ 		# Check version.txt for version
+		REL_VER_FILE="/usr/share/openattic/version.txt"
+		DEV_VER_FILE="/srv/openattic/bin/version.txt"
+		if [ -f "$REL_VER_FILE" ]; then
+			echo "openATTIC version: $(grep VERSION $REL_VER_FILE |awk '{print $3}')"
+		elif [ -f "$DEV_VER_FILE" ]; then
+			echo "openATTIC DEV: $(grep VERSION $DEV_VER_FILE |awk '{print $3}')"
+		else
+			echo "No openATTIC version file found."
+		fi
+		echo "Django version: $(python manage.py --version)"
+		;;
 
 	*)
 		# Big thanks to DireFog and pcgod for the following line
