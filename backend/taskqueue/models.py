@@ -38,8 +38,8 @@ class TaskQueue(Model):
         (STATUS_EXCEPTION, 'Exception')
     )
 
-    task = models.CharField(max_length=1024, help_text="The JSON-serialized task to run.")
-    result = models.CharField(max_length=1024, editable=False,
+    task = models.TextField(help_text="The JSON-serialized task to run.", blank=False)
+    result = models.CharField(max_length=1024, editable=False, blank=True, null=True,
                               help_text="The return value of the task queue.")
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -47,7 +47,7 @@ class TaskQueue(Model):
                                  help_text="A state-machine: not-started -> running -> finished | "
                                            "exception")
     percent = models.IntegerField(default=0)
-    description = models.CharField(max_length=128)
+    description = models.CharField(max_length=128, blank=False)
 
     def run_once(self):
         """
@@ -89,6 +89,7 @@ class TaskQueue(Model):
 
     @property
     def json_result(self):
+        """:rtype: list | dict | None"""
         try:
             return json.loads(self.result)
         except ValueError as e:

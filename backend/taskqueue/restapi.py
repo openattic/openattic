@@ -29,6 +29,7 @@ class TaskQueueSerializer(serializers.ModelSerializer):
 
 class TaskQueueViewSet(viewsets.ModelViewSet):
     """This API provides access to long running tasks."""
+
     serializer_class = TaskQueueSerializer
     queryset = TaskQueue.objects.all()
 
