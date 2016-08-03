@@ -112,7 +112,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 msg: "Rbd list couldn't be loaded."
               });
             }
-            throw rbdError
+            throw rbdError;
           });
     }
   };
