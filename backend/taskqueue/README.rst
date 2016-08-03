@@ -46,8 +46,8 @@ Let's wait for a long running task:
         else:
             print 'finished'
 
-This tasks schedules itself similar to a recursive function. As we're using a
-`trampoline <https://en.wikipedia.org/wiki/Trampoline_(computing)>`_, we will grow the stack. This
+This tasks schedules itself, similar to a recursive function. As we're using a
+`trampoline <https://en.wikipedia.org/wiki/Trampoline_(computing)>`_, this will not grow the stack. This
 also means that you cannot synchronously wait for a task to finish, thus if you want to run
 multiple iterations, you can only use end-recursion. This is similar to
 `continuation passing style <https://de.wikipedia.org/wiki/Continuation-passing_style>`_, where
@@ -110,7 +110,7 @@ Revision Upgrades
 
 If you modify code, keep these restrictions in mind:
 
-#. A task, including all parameters are serialized into the db,
+#. A task, including all parameters are serialized into the database,
 #. thus be prepared to be called with a **outdated and ancient** function arguments.
 #. Deleting the Python source of a task will eventually throw an exception.
 #. Rule of thumb, **only** add optional parameters at the end to existing tasks.
@@ -125,9 +125,10 @@ Integration with openATTIC-systemD
 Tasks are executed in our openATTIC-systemD process, thus they are independent of Apache worker
 processes and can run without being interrupted.
 
-On the other hand, openATTIC-systemD runs in glibs MainLoop. In order to integrate with it, we need
-to create a GObject with a periodic timer event. Here is the code to start the timer of
-``TaskQueueManager``:
+On the other hand, openATTIC-systemD runs in
+`glibs MainLoop <https://lazka.github.io/pgi-docs/GLib-2.0/structs/MainLoop.html>`_. In order to
+integrate with it, we need to create a GObject with a periodic timer event. Here is the code to
+start the timer of ``TaskQueueManager``:
 
 .. code-block:: Python
 
@@ -143,7 +144,8 @@ Background
 
 As the architecture is similar to other `task queues <https://www.fullstackpython.com/task-queues.html>`_,
 I've tried to make a task definition similar to the API of
-`Celery <http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#application>`_.
+`Celery <http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#application>`_,
+which also uses a task decorator.
 
 Task Queue is also similar to a Haskell package called `Workflow <https://hackage.haskell.org/package/Workflow>`_,
 quote:
