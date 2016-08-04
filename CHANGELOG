@@ -4,6 +4,8 @@ openATTIC Changelog
 Version 2.0.14, (not released yet):
 -----------------------------------
 
+* Backend: Removed unused module 'Clustering' (OP-1251)
+
 
 Version 2.0.13, 28. July 2016:
 ------------------------------
