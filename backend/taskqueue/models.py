@@ -177,7 +177,7 @@ class Task(object):
 
     @cached_property
     def wrapper(self):
-        """:rtype: TaskWrapper"""
+        """:rtype: TaskFactory"""
         module_name, func_name = self.func.rsplit('.', 1)
         m = __import__(module_name, fromlist=[func_name], level=0)
         return getattr(m, func_name)
@@ -210,9 +210,18 @@ def deserialize_task(value):
     return obj
 
 
-class TaskWrapper(object):
+class TaskFactory(object):
     """
-    A task wrapper is a reference to a function. It can generate Tasks or TaskQueues.
+    A TaskFactory holds a reference to a function. It can generate Tasks or TaskQueues.
+
+    >>> @task
+    >>> def inc(x)
+    >>>     return x + 1
+    >>>
+    >>> assert isinstance(inc, TaskFactory)
+    >>> assert isinstance(inc(42), Task)
+    >>> assert isinstance(inc.delay(42), TaskQueue)
+    >>> assert isinstance(inc.call_now(42), 43)
     """
     def __init__(self, func, percent=None, description=None):
         """
@@ -239,7 +248,12 @@ class TaskWrapper(object):
             return name
 
     def delay(self, *args, **kwargs):
-        """:rtype: TaskQueue"""
+        """
+        Schedules the task. It will be executed soon.
+
+        :returns: already scheduled TaskQueue object.
+        :rtype: TaskQueue
+        """
         obj = TaskQueue()
         obj.task = json.dumps(self.mk_task(args, kwargs).serialize())
         obj.description = self.get_description(args, kwargs)
@@ -258,17 +272,17 @@ class TaskWrapper(object):
 
 def task(*args, **kwargs):
     """
-    Decorator for defining TaskWrappers.
+    Decorator for creating a TaskFactory.
 
     :param percent: a function called with the same arguments as the decorated function.
-    :return: inner or a TaskWrapper.
+    :return: inner or a TaskFactory.
     """
     def inner(func):
-        return TaskWrapper(func, *args, **kwargs)
+        return TaskFactory(func, *args, **kwargs)
     if kwargs:
         return inner
     else:
-        return TaskWrapper(args[0])
+        return TaskFactory(args[0])
 
 
 def chain_percent(values, total_count=None):

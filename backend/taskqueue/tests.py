@@ -85,13 +85,6 @@ class TaskTestCase(TestCase):
             t = Task.deserialize(t.serialize())
             self.assertEqual(run_task_till_result(t), res)
 
-    def test_too_huge(self):
-        try:
-            chain.delay([add(3, 4)] * 1000).delay()
-            self.fail()
-        except DataError:
-            pass
-
     def test_percent(self):
         chains = \
             [

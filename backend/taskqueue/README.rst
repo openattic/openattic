@@ -3,9 +3,10 @@ Task Queue Module
 
 This module is intended to track long running tasks in the background.
 
-Please read this mailing_ first, before continuing.
+Please read this `mailing <https://groups.google.com/forum/#!topic/openattic-users/1-MTS9B60rI>`_
+first, before continuing.
 
-Tasks are functions which are scheduled from our django backend and are executed in our
+Tasks are functions which are scheduled from our Django backend and are executed in our
 openATTIC-systemD daemon.
 
 Hello World
@@ -31,6 +32,9 @@ To schedule this task, restart our openattic-systemd and run
 Now, our daemon should print `hello world!` into the console. Keep in mind that our daemon needs to
 import our hello task, thus if you see ``AttributeError: 'module' object has no attribute 'hello'``
 in your log file, make the task importable by putting it into a python file.
+
+.. note:: There is no guarantee that a task will not be executed multiple times. Although, multiple
+   executions of one task will not happen concurrently.
 
 Recursion
 ---------
@@ -167,5 +171,3 @@ as other Languages, like C#.
 
 You can even think of a task as being a `green thread <https://en.wikipedia.org/wiki/Green_threads>`_,
 because you can schedule multiple tasks at once. Each of them will be executed interleaved.
-
-.. _mailing: https://groups.google.com/forum/#!topic/openattic-users/1-MTS9B60rI
