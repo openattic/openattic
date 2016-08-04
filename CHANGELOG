@@ -5,6 +5,8 @@ Version 2.0.14, (not released yet):
 -----------------------------------
 
 * Backend: Removed unused module 'Clustering' (OP-1251)
+* Installation: `oaconfig version` now displays both the openATTIC and Django
+  version numbers. Thanks to Brandon Keep. (OP-516)
 
 
 Version 2.0.13, 28. July 2016:
