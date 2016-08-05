@@ -89,7 +89,7 @@ exports.config = {
         callback();
       });
     };
-    console.log('If any errors appear they will be saved in "' + savePath + '".');
+    console.log('If any errors appear they will be logged in "' + savePath + '".');
     jasmine.getEnv().addReporter(new function(){
       this.specDone = function(result){
         if(result.failedExpectations.length > 0){
