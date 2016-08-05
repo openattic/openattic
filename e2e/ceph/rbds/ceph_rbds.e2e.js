@@ -14,10 +14,6 @@ describe('should test the ceph rbd panel', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
   });
 
-  it('should select a cluster', function(){
-    rbdProperties.selectCluster.click();
-  });
-
   it('should display the ceph RBD table after selecting a cluster', function(){
     expect(element(by.css('.tc_cephRbdTable')).isDisplayed()).toBe(true);
   });
@@ -30,6 +26,11 @@ describe('should test the ceph rbd panel', function(){
 
   it('should have at least one ceph rbd table entry', function(){
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
+  });
+
+  /* TODO: Update the tests to use the configuration
+  it('should select a cluster', function(){
+    rbdProperties.selectCluster.click();
   });
 
   it('should still have the cluster selected and display RBDs when switching between panels', function(){
@@ -47,6 +48,7 @@ describe('should test the ceph rbd panel', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds/details#more');
     expect(element(by.css('.tc_detailsTab')).isDisplayed()).toBe(true);
   });
+  */
 
   rbdProperties.detailAttributes.forEach(function(attribute){
     it('should check the content attribute "' + attribute + '" in the details tab when selecting a rbd', function(){
