@@ -47,13 +47,13 @@ apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 pyt
 
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 
--u postgres psql << EOF
+sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
 create user pyfiler createdb createuser password 'pyf!l0r';
 create database pyfiler owner pyfiler;
 EOF
 
--i -u vagrant bash -e << EOF
+sudo -i -u vagrant bash -e << EOF
 virtualenv env
 . env/bin/activate
 pip install -r openattic/requirements.txt
@@ -75,9 +75,35 @@ cp -r /usr/lib/python2.7/dist-packages/psycopg2 env/lib/python2.7/site-packages/
 
 # oaconfig install
 
-python openattic/backend/manage.py pre_install
-python openattic/backend/manage.py syncdb
-python openattic/backend/manage.py createcachetable status_cache
-python openattic/backend/manage.py add-host
+pushd openattic/backend/
+
+cat << 'EOF2' > initial_data.json
+{
+  "fields": {
+    "username": "openattic",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2016-07-14T10:04:49.818",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$15000$7hAx73SJTK7o$vf39Q7e6hzhSWRPC+AZ73TolMjPUelP31Iiuh0O7m9s=",
+    "email": "root@localhost",
+    "date_joined": "2016-06-02T15:12:04.670"
+  },
+  "model": "auth.user",
+  "pk": 1
+}
+EOF2
+
+python manage.py pre_install
+python manage.py syncdb
+python manage.py createcachetable status_cache
+python manage.py add-host
+
+popd
+
 EOF
 
