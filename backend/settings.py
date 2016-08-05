@@ -70,6 +70,10 @@ DATABASES = {}
 
 __conf__ = ConfigParser()
 __conf__.read("/etc/openattic/database.ini")
+
+if not len(__conf__.sections()):
+    raise IOError("databse.ini not found")
+
 for sec in __conf__.sections():
     DATABASES[sec] = {
         "ENGINE":   __conf__.get(sec, "engine"),
