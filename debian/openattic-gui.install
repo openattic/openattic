@@ -1,1 +1,4 @@
 webui/dist/*			/usr/share/openattic-gui
+
+# HTML redirect
+webui/redirect.html /www/html/index.html
