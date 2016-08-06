@@ -406,6 +406,9 @@ sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/
 # TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
+# Install HTML redirect
+install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.html
+
 # database config
 ## TODO: generate random password
 
