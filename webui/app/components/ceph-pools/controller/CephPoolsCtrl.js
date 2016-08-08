@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService) {
+app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService,
+    $uibModal) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.pools = {};
@@ -102,7 +103,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     var item = selection.item;
     var items = selection.items;
 
-    $scope.multiSelection = Boolean(items);
+    $scope.multiSelection = Boolean(items) && items.length > 1;
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {
@@ -117,4 +118,36 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
       });
     }
   });
+
+  $scope.addAction = function () {
+    $state.go("ceph-pools-add", {
+      clusterId: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.deleteAction = function () {
+    if (!$scope.hasSelection && !$scope.multiSelection) {
+      return;
+    }
+    var item = $scope.selection.item;
+    var items = $scope.selection.items;
+    $scope.deletionDialog(item ? item : items);
+  };
+
+  $scope.deletionDialog = function (selection) {
+    var modalInstance = $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "components/ceph-pools/templates/delete.html",
+      controller: "CephPoolsDelete",
+      resolve: {
+        cephPoolSelection: function () {
+          return selection;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
+    });
+  };
 });

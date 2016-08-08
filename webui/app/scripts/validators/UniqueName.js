@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.directive("uniquename", function (VolumeService, HostService, UserService, cephRbdService, $timeout) {
+app.directive("uniquename", function (VolumeService, HostService, UserService, cephPoolsService, cephRbdService,
+    $timeout) {
   return {
     restrict: "A",
     require: "ngModel",
@@ -75,9 +76,17 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, c
             };
             break;
           case "rbd":
-            query.id = scope.data.cluster;
+            query.id = scope.data.cluster.fsid;
             obj = {
               model: cephRbdService,
+              current: null, // Has no renaming feature.
+              attribute: "name"
+            };
+            break;
+          case "ceph-pool":
+            query.id = scope.data.cluster.fsid;
+            obj = {
+              model: cephPoolsService,
               current: null, // Has no renaming feature.
               attribute: "name"
             };

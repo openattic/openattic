@@ -37,6 +37,7 @@ angular.module("openattic.extensions", [
   "openattic.cephRbd",
   "openattic.cephOsd",
   "openattic.cephPools",
+  "openattic.cephErasureCodeProfiles",
   "openattic.datatable",
   "openattic.graph",
   "openattic.sizeparser",

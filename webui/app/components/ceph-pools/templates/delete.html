@@ -1,0 +1,62 @@
+<div class="openattic-modal-header">
+    <span ng-if="cephPool">Delete Ceph pool</span>
+    <span ng-if="!cephPool && cephPools">Delete Ceph pools</span>
+</div>
+<div class="openattic-modal-content">
+    <!-- single cephPool -->
+    <p ng-if="cephPool">
+        You are about to delete the Ceph pool <strong>{{cephPool.name}}</strong>.
+    </p>
+    <p ng-if="cephPool">
+        Be aware that you will <strong>lose all data</strong>
+        in that Ceph pool and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <p ng-if="cephPool">
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
+    <!-- end single cephPool -->
+
+    <!-- multiple cephPools -->
+    <p ng-if="!cephPool && cephPools">
+        You are about to delete multiple Ceph pools.
+    </p>
+    <p ng-if="!cephPool && cephPools">
+        Be aware that you will <strong>lose all data</strong>
+        in the Ceph pools and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <span class="text-danger" ng-if="!cephPool && cephPools">The following Ceph pools will be deleted:</span>
+    <ul class="text-danger" ng-if="!cephPool && cephPools">
+        <li ng-repeat="cephPool in cephPools">
+            {{cephPool.name}} ({{cephPool.num_bytes | bytes}})
+        </li>
+    </ul>
+    <p ng-if="!cephPool && cephPools">
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
+    <!-- end multiple cephPools -->
+
+    <form name="deleteForm" role="form" novalidate>
+        <div class="form-group"
+             ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
+            <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
+                   ng-model="input.enteredName" ng-pattern="input.pattern" required autofocus>
+
+            <!-- Error -->
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
+                This field is required.
+            </span>
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
+                The input value does not match 'yes'.
+            </span>
+            <!-- end Error -->
+        </div>
+
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="delete()" ng-disabled="deleteForm.$invalid">
+                Delete
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>
