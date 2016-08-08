@@ -1,0 +1,67 @@
+diff -r c59dd300bc4d backend/nagios/readstatus.py
+--- a/backend/nagios/readstatus.py	Fri Aug 05 16:57:42 2016 +0200
++++ b/backend/nagios/readstatus.py	Fri Aug 05 16:58:13 2016 +0200
+@@ -38,8 +38,11 @@
+         self.lock        = Lock()
+ 
+     def __getitem__(self, name):
+-        self.update()
+-        return self.nagstate[name]
++        try:
++            self.update()
++            return self.nagstate[name]
++        except SystemError:
++            return []
+ 
+     def __len__(self):
+         self.update()
+diff -r c59dd300bc4d backend/peering/models.py
+--- a/backend/peering/models.py	Fri Aug 05 16:57:42 2016 +0200
++++ b/backend/peering/models.py	Fri Aug 05 16:58:13 2016 +0200
+@@ -108,8 +108,8 @@
+                  active=True)
+     key.full_clean()
+     key.save()
+-    peer = PeerHost(host=localhost, base_url=("http://__:%s@%s:31234/" % (key.apikey, localhost.name)))
+-    peer.full_clean()
+-    peer.save()
++    #peer = PeerHost(host=localhost, base_url=("http://__:%s@%s:31234/" % (key.apikey, localhost.name)))
++    #peer.full_clean()
++    #peer.save()
+ 
+ sysutils.models.post_install.connect(__install_hostkeys, sender=sysutils.models)
+diff -r c59dd300bc4d backend/settings.py
+--- a/backend/settings.py	Fri Aug 05 16:57:42 2016 +0200
++++ b/backend/settings.py	Fri Aug 05 16:58:13 2016 +0200
+@@ -211,7 +211,7 @@
+         'file': {
+             'level': 'INFO',
+             'class': 'logging.FileHandler',
+-            'filename': '/var/log/openattic/openattic.log'
++            'filename': '/dev/stdout'
+         }
+     },
+     'loggers': {
+diff -r c59dd300bc4d etc/dbus-1/system.d/openattic.conf
+--- a/etc/dbus-1/system.d/openattic.conf	Fri Aug 05 16:57:42 2016 +0200
++++ b/etc/dbus-1/system.d/openattic.conf	Fri Aug 05 16:58:13 2016 +0200
+@@ -7,7 +7,7 @@
+             <allow send_destination="org.openattic.systemd" />
+             <allow receive_sender="org.openattic.systemd"   />
+     </policy>
+-    <policy user="openattic">
++    <policy user="vagrant">
+             <allow send_destination="org.openattic.systemd" />
+             <allow receive_sender="org.openattic.systemd"   />
+     </policy>
+diff -r c59dd300bc4d webui/app/config.js
+--- a/webui/app/config.js	Fri Aug 05 16:57:42 2016 +0200
++++ b/webui/app/config.js	Fri Aug 05 16:58:13 2016 +0200
+@@ -1,6 +1,6 @@
+ var globalConfig = {
+   "API": {
+-    "URL": "/openattic/api/"
++    "URL": "/api/"
+   },
+   "GUI": {
+     "activeModules": {

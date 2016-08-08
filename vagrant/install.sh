@@ -52,8 +52,13 @@ alter user postgres password 'postgres';
 create user pyfiler createdb createuser password 'pyf!l0r';
 create database pyfiler owner pyfiler;
 EOF
-
 sudo -i -u vagrant bash -e << EOF
+pushd openattic
+
+hg import vagrant/required-changes.patch --no-commit
+
+popd
+
 virtualenv env
 . env/bin/activate
 pip install -r openattic/requirements.txt
