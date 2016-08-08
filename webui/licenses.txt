@@ -10,7 +10,7 @@ angular-flot                      0.0.16              MIT
 angular-gridster                  0.13.9              MIT
 angular-md5                       0.1.10              MIT
 angular-mocks                     1.5.3               MIT
-angular-nvd3                      1.0.6               MIT
+angular-nvd3                      1.0.8               MIT
 angular-resource                  1.5.3               MIT
 angular-sanitize                  1.5.3               MIT
 angular-toasty                    1.0.5               MIT
@@ -18,7 +18,7 @@ angular-ui-router                 0.2.18              MIT
 angular-ui-sortable               0.14.0              MIT
 angular-ui-tree                   2.15.0              MIT
 bootstrap                         3.3.6               MIT
-d3                                3.5.16              BSD-3-Clause
+d3                                3.5.17              BSD-3-Clause
 fontawesome                       4.5.0               MIT, OFL-1.1, CC-BY-3.0
 javascript-detect-element-resize  0.5.3               MIT
 jquery                            2.2.3               MIT
@@ -27,7 +27,7 @@ jquery-flot                       0.8.3               MIT
 jquery-ui                         1.11.4              MIT
 lodash                            4.11.0              MIT
 ng-tags-input                     3.0.0               MIT
-nvd3                              1.8.2               Apache-2.0
+nvd3                              1.8.4               Apache-2.0
 requirejs                         2.2.0               MIT, BSD-3-Clause
 
 npm packages
