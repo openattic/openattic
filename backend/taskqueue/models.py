@@ -138,13 +138,13 @@ class Task(object):
     """
     A task is a JSON-serializable closure without any non-applied arguments.
     """
-    def __init__(self, func, args, kwargs):
+    def __init__(self, func_reference, args, kwargs):
         """
-        :type func: str | unicode
+        :type func_reference: str | unicode
         :type args: list
         :type kwargs: dict[str, Any]
         """
-        self.func = func
+        self.func_reference = func_reference
         self.args = args
         self.kwargs = kwargs
 
@@ -156,9 +156,10 @@ class Task(object):
         """
         if not isinstance(value, list) or len(value) != 3:
             return None
-        func, args, kwargs = value
-        if isinstance(func, basestring) and isinstance(args, list) and isinstance(kwargs, dict):
-            return Task(func, args, kwargs)
+        func_reference, args, kwargs = value
+        if isinstance(func_reference, basestring) and isinstance(args, list) and isinstance(kwargs,
+                                                                                            dict):
+            return Task(func_reference, args, kwargs)
         return None
 
     def serialize(self):
@@ -173,12 +174,12 @@ class Task(object):
 
         args = [deep_serialize(arg) for arg in self.args]
         kwargs = {key: deep_serialize(val) for key, val in self.kwargs.iteritems()}
-        return [self.func, args, kwargs]
+        return [self.func_reference, args, kwargs]
 
     @cached_property
     def wrapper(self):
         """:rtype: TaskFactory"""
-        module_name, func_name = self.func.rsplit('.', 1)
+        module_name, func_name = self.func_reference.rsplit('.', 1)
         m = __import__(module_name, fromlist=[func_name], level=0)
         return getattr(m, func_name)
 
@@ -191,10 +192,10 @@ class Task(object):
         return self.wrapper.percent(*self.args, **self.kwargs)
 
     def __unicode__(self):
-        return u'{} with {}, {}'.format(self.func, self.args, self.kwargs)
+        return u'{} with {}, {}'.format(self.func_reference, self.args, self.kwargs)
 
     def __str__(self):
-        return '{} with {}, {}'.format(self.func, self.args, self.kwargs)
+        return '{} with {}, {}'.format(self.func_reference, self.args, self.kwargs)
 
 
 def deserialize_task(value):
@@ -275,6 +276,7 @@ def task(*args, **kwargs):
     Decorator for creating a TaskFactory.
 
     :param percent: a function called with the same arguments as the decorated function.
+    :param description: A string describing the task.
     :return: inner or a TaskFactory.
     """
     def inner(func):

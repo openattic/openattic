@@ -36,6 +36,9 @@ in your log file, make the task importable by putting it into a python file.
 .. note:: There is no guarantee that a task will not be executed multiple times. Although, multiple
    executions of one task will not happen concurrently.
 
+.. note:: A task is expected to be a top-level function of a module. Class methods or inner
+   functions may not work as expected.
+
 Recursion
 ---------
 
@@ -107,6 +110,9 @@ The percent parameter will be called with the same parameters as your task.
 .. note:: The function is expected not to have any side effects, as it may be called multiple times
    or never.
 
+.. note:: Always use keyword arguments for the task decorator, as positional arguments may not work
+   as expected.
+
 Revision Upgrades
 -----------------
 
@@ -122,6 +128,31 @@ If you modify code, keep these restrictions in mind:
 #. Try not to run important modifying commands later on.
 #. Validate your function parameters.
 #. As long as you only modify the implementation, everything is fine.
+
+Referencing a newly created TaskQueue object
+--------------------------------------------
+
+The ``taskqueue`` module provides a Python mixin for referencing a ``TaskQueue`` object in a
+HTTP header from another REST API. First, add the ``TaskQueueMixin`` to your ViewSet class like so:
+
+.. code-block:: Python
+
+   from taskqueue.restapi import TaskQueueLocationMixin
+
+   class MyModelViewSet(TaskQueueLocationMixin, ViewSet):
+      pass
+
+Second, create a ``_task_queue`` attribute of your saved model instance in your ``save`` method:
+
+.. code-block:: Python
+
+    class MyModel(Model):
+       def save(self, *args, **kwargs):
+           # ...
+           self._task_queue = app.tasks.my_task.delay()
+
+Now, if a ``MyModel`` instance is saved, a ``Taskqueue-Location`` HTTP header pointing to the
+``TaskQueue`` object is added to your response.
 
 Integration with openATTIC-systemD
 ----------------------------------
@@ -141,7 +172,6 @@ start the timer of ``TaskQueueManager``:
          taskqueue_manager = taskqueue.manager.TaskQueueManager()
      except ImportError:
          pass
-
 
 Background
 ----------
