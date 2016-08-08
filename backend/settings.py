@@ -72,7 +72,7 @@ __conf__ = ConfigParser()
 __conf__.read("/etc/openattic/database.ini")
 
 if not len(__conf__.sections()):
-    raise IOError("databse.ini not found")
+    raise IOError("database.ini not found")
 
 for sec in __conf__.sections():
     DATABASES[sec] = {
