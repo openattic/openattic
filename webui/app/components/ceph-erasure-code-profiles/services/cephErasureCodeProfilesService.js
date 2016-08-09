@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephCluster");
 app.factory("cephErasureCodeProfilesService", function ($resource) {
-  return $resource("/openattic/api/ceph/:id/erasure-code-profiles", {
+  return $resource(globalConfig.API.URL + "ceph/:id/erasure-code-profiles", {
     id: "@id",
     isArray: true
   });
