@@ -34,15 +34,33 @@ var app = angular.module("openattic.dashboard");
 app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardService) {
   // Basic configuration
   var dashboardKey = "oa_dashboard";
-  $scope.data = globalConfig.GUI.defaultDashboard;
+
+  if (angular.isDefined(globalConfig.GUI.defaultDashboard)) {
+    $scope.data = globalConfig.GUI.defaultDashboard;
+  } else {
+    $scope.data = {
+      "boards"  : [{
+        "id"     : 0,
+        "name"   : "Default",
+        "widgets": []
+      }],
+      "settings": {
+        "activeBoard": 0,
+        "locked"     : false,
+        "orderBy"    : "name"
+      }
+    };
+  }
   $scope.preventSaving = false;
 
   $scope.gridsterOptions = {
     columns         : 6,
     swapping        : true,
     margins         : [15, 15],
-    mobileBreakPoint: 768,
+    mobileBreakPoint: 1200,
     minRows         : 1,
+    defaultSizeX    : 1,
+    defaultSizeY    : 1,
     draggable       : {
       enabled: true,
       handle : ".panel-heading",
@@ -58,7 +76,19 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
     }
   };
 
-  $scope.manager = [];
+  $scope.manager = [{
+    "name"   : "Ceph Cluster Health",
+    "manager": "ceph-cluster-health",
+    "group"  : "ceph"
+  }, {
+    "name"   : "Ceph Cluster Status",
+    "manager": "ceph-cluster-status-widget",
+    "group"  : "ceph"
+  }, {
+    "name"   : "Dummie",
+    "manager": "dashboard-example-widget",
+    "group"  : "traditional"
+  }];
 
   // functions
   $scope.addDashboard = function () {
@@ -191,9 +221,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
         "id"      : idx,
         "name"    : data.name,
         "manager" : data.manager,
-        "settings": {},
-        "sizeX"   : "1",
-        "sizeY"   : "1"
+        "settings": {}
       });
 
       $scope.saveDashboard();
@@ -221,8 +249,12 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
 
     modalInstance.result.then(function (data) {
       $scope.dashboard.widgets[idx].name = data.name;
-      $scope.dashboard.widgets[idx].manager = data.manager;
-      $scope.dashboard.widgets[idx].settings = {};
+
+      // Check if manager has changed
+      if ($scope.dashboard.widgets[idx].manager !== data.manager) {
+        $scope.dashboard.widgets[idx].manager = data.manager;
+        $scope.dashboard.widgets[idx].settings = {};
+      }
 
       $scope.saveDashboard();
       toasty.success({
@@ -335,4 +367,5 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
 
   // init dashboard
   init();
-});
+})
+;
