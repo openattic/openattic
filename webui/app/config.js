@@ -3,10 +3,6 @@ var globalConfig = {
     "URL": "/openattic/api/"
   },
   "GUI": {
-    "quickLogin": {
-      "username": "",
-      "password": ""
-    },
     "activeModules": {
       "apt": true,
       "btrfs": true,
@@ -23,6 +19,10 @@ var globalConfig = {
       "samba": true,
       "twraid": true,
       "zfs": true
+    },
+    "quickLogin": {
+      "username": "",
+      "password": ""
     }
   }
 };
