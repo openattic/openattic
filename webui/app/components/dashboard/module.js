@@ -31,5 +31,7 @@
 "use strict";
 
 angular.module("openattic.dashboard", [
-  "gridster"
+  "gridster",
+  "nvd3",
+  "openattic.dashboardWidgets"
 ]);
