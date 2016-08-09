@@ -23,6 +23,7 @@ from rest_framework.decorators import detail_route, list_route
 from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
+from taskqueue.restapi import TaskQueueLocationMixin
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -142,7 +143,7 @@ class FsidContext(object):
         return CephCluster.objects.all().get(fsid=self.fsid)
 
 
-class CephPoolViewSet(NodbViewSet):
+class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
     """Represents a Ceph pool.
 
     Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with

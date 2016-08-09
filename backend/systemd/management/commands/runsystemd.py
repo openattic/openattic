@@ -267,4 +267,11 @@ class Command( BaseCommand ):
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
         loop = gobject.MainLoop()
         master = SystemD(sysdplugins)
+
+        try:
+            import taskqueue.manager
+            taskqueue_manager = taskqueue.manager.TaskQueueManager()
+        except ImportError:
+            pass
+
         loop.run()
