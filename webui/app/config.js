@@ -25,6 +25,19 @@ globalConfig = {
         "id"     : 0,
         "name"   : "Default",
         "widgets": []
+      }, {
+        "id"     : 1,
+        "name"   : "Ceph",
+        "widgets": [{
+          "id"      : 0,
+          "name"    : "Ceph Status",
+          "manager" : {
+            "name"   : "Ceph Cluster Status",
+            "manager": "ceph-cluster-status",
+            "group"  : "ceph"
+          },
+          "settings": {}
+        }]
       }],
       "settings": {
         "activeBoard": 0,
