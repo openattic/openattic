@@ -380,7 +380,7 @@ def __loadmods__():
                 return cmp(a, b)
 
     import os
-    mods = os.listdir( join( PROJECT_ROOT, "installed_apps.d") )
+    mods = [dir for dir in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ) if not dir.startswith('.')]
     mods.sort(cmp=modnamecmp)
     for name in mods:
         m = rgx.match(name)
