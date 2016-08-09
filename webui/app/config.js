@@ -3,7 +3,7 @@ var globalConfig = {
     "URL": "/openattic/api/"
   },
   "GUI": {
-    "debug": false,
+    "quickLogin": false,
     "activeModules": {
       "apt": true,
       "btrfs": true,
