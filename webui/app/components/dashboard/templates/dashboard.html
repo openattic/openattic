@@ -58,7 +58,7 @@
     <div id="widget_{{widget.id}}"
          class="panel panel-dashboard panel-openattic">
       <div class="panel-heading" ng-class="{locked: data.settings.locked}">
-        <h3 class="panel-title">
+        <h3 class="panel-title" title="{{widget.name}}">
           {{widget.name}}
         </h3>
 
@@ -72,7 +72,8 @@
         </div>
       </div>
       <div class="panel-body">
-        <dashboard-example-widget widget="widget" ng-if="widget.manager.manager == 'dashboard-example-widget'"></dashboard-example-widget>
+        <ceph-cluster-status widget="widget" ng-if="widget.manager.manager == 'ceph-cluster-status'">
+        </ceph-cluster-status>
       </div>
     </div>
   </div>
