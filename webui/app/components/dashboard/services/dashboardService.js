@@ -32,5 +32,5 @@
 
 var app = angular.module("openattic.dashboard");
 app.factory("dashboardService", function ($resource) {
-  return $resource("/openattic/api/userprofiles");
+  return $resource(globalConfig.API.URL + "userprofiles");
 });
