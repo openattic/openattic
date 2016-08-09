@@ -19,6 +19,10 @@ var globalConfig = {
       "samba": true,
       "twraid": true,
       "zfs": true
+    },
+    "quickLogin": {
+      "username": "",
+      "password": ""
     }
   }
 };
