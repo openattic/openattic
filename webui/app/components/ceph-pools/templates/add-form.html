@@ -28,7 +28,8 @@
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="cluster">Cluster</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <select ng-disabled="!clusters" class="form-control tc_cluster_selection" ng-model="data.cluster"
-                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid" name="cluster" required>
+                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid"
+                name="cluster" required>
             <option class="tc_poolClusterOption" value="" ng-bind="waitingClusterMsg"></option>
         </select>
         <span class="help-block tc_clusterRequired" ng-show="(poolForm.$submitted || poolForm.cluster.$dirty)
@@ -73,7 +74,8 @@
         && poolForm.size.$invalid}">
         <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.size">Replica size</label>
         <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-            <input class="form-control tc_pool_size" min="1" max="{{data.osdCount}}" type="number" name="size" ng-model="pool.replicated.size" ng-required="pool.type === 'replicated'">
+            <input class="form-control tc_pool_size" min="1" max="{{data.osdCount}}" type="number" name="size"
+                ng-model="pool.replicated.size" ng-required="pool.type === 'replicated'">
             <span class="help-block tc_sizeRequired" ng-show="(poolForm.$submitted || poolForm.size.$dirty)
                 && poolForm.size.$error.required">
                 This field is required!
@@ -84,22 +86,29 @@
         <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
             <br>
             <div class="checkbox checkbox-primary">
-                <input type="checkbox" ng-model="data.expert" ng-name="expert">
-                <label class="tc_expertSettings" for="data.expert" ng-click="data.expert = !data.expert">Expert settings</label>
+                <input type="checkbox" ng-model="data.expert" ng-name="expert"
+                    ng-disabled="poolForm.crushSet.$error.sizeError">
+                <label class="tc_expertSettings" for="data.expert"
+                    ng-click="data.expert = poolForm.crushSet.$error.sizeError ||!data.expert">Expert settings</label>
             </div>
         </div>
     </div>
-    <div ng-show="data.expert">
-        <div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.crushset.$dirty)
-            && poolForm.crushset.$invalid}">
-            <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.crushset">Crush ruleset</label>
+    <div ng-show="data.expert || poolForm.crushSet.$error.sizeError">
+        <div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty)
+            && poolForm.crushSet.$invalid}">
+            <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="crushSet">Crush ruleset</label>
             <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-                <input class="form-control tc_pool_crushset" min="0" type="number" name="crushset" ng-required="data.expert"
-                    ng-model="pool.replicated.expert.crush_ruleset" ng-required="pool.type === 'replicated'">
-                <span class="help-block tc_crushsetRequired" ng-show="(poolForm.$submitted || poolForm.crushset.$dirty)
-                    && poolForm.crushset.$error.required">
+                <select class="form-control tc_crushSet_selection" name="crushSet" ng-required="data.expert"
+                    ng-enabled="data.cluster" ng-model="data.ruleset"
+                    ng-options="rule.rule_name for rule in data.cluster.rules">
+                    <option class="tc_crushSetOption" value=""> -- Select a erasure code profile -- </option>
+                </select>
+                <span class="help-block tc_poolRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
+                    && poolForm.crushSet.$error.required">
                     This field is required!
                 </span>
+                <span class="help-block tc_poolRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
+                    && poolForm.crushSet.$error.sizeError" ng-bind="replicaSizeError"></span>
             </div>
         </div>
     </div>

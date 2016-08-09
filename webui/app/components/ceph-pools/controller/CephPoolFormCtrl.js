@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filter, toasty,
+app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filter, toasty, ClusterResource,
     cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
@@ -62,6 +62,7 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
     ],
     profiles: [],
     expert: false,
+    ruleset: null,
     osdCount: 1
   };
 
@@ -76,37 +77,51 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
   $scope.waitingClusterMsg = "Retrieving cluster list...";
   cephClusterService.get()
     .$promise
-    .then(function (res) {
-      $scope.clusters = res.results;
-      $scope.waitingClusterMsg = "-- Select a cluster --";
-      $scope.clusters.forEach(function (cluster) {
-        if (cluster.fsid === $scope.clusterId) {
-          $scope.data.cluster = cluster;
-        }
-      });
-      if (!$scope.data.cluster) {
-        if (res.count > 0) {
-          $scope.data.cluster = res.results[0];
-        } else {
-          $scope.waitingClusterMsg = "No cluster avialable.";
-          toasty.warning({
-            title: $scope.waitingClusterMsg,
-            msg: "You can't create any RBDs with your configuration."
+    .then(function (clusters) {
+      ClusterResource.get()
+        .$promise
+        .then(function (crushmaps) {
+          $scope.clusters = clusters.results;
+          $scope.clusters.forEach(function (cluster) {
+            var crushmap = crushmaps.results.filter(function (crush) {
+              return crush.name === cluster.name;
+            });
+            if (crushmap.length > 0) {
+              cluster.rules = crushmap[0].crushmap.crushmap.rules;
+            }
           });
-        }
-      }
+          $scope.waitingClusterMsg = "-- Select a cluster --";
+          $scope.clusters.forEach(function (cluster) {
+            if (cluster.fsid === $scope.clusterId) {
+              $scope.data.cluster = cluster;
+            }
+          });
+          if (!$scope.data.cluster) {
+            if (clusters.count > 0) {
+              $scope.data.cluster = $scope.clusters[0];
+            } else {
+              $scope.waitingClusterMsg = "No cluster avialable.";
+              toasty.warning({
+                title: $scope.waitingClusterMsg,
+                msg: "You can't create any RBDs with your configuration."
+              });
+            }
+          }
+        })
+        .catch(function (error) {
+          toasty.error({
+            title: "Loading failure",
+            msg: "Crushmap couldn't be loaded."
+          });
+          throw clusterError;
+        });
     })
     .catch(function (clusterError) {
-      if (!$scope.clusterFailure) {
-        $scope.clusterFailure = true;
-        $scope.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
-        $scope.clusterFailureError = clusterError;
-        $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
-        toasty.error({
-          title: $scope.clusterFailureTitle,
-          msg: "Cluster list couldn't be loaded."
-        });
-      }
+      $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
+      toasty.error({
+        title: "Loading failure",
+        msg: "Cluster list couldn't be loaded."
+      });
       throw clusterError;
     });
 
@@ -137,6 +152,48 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
           });
           throw osdError;
         });
+      $scope.data.ruleset = $scope.data.cluster.rules[0];
+    }
+  });
+
+  $scope.setReplicaSizeError = function (min, max, isValid) {
+    isValid = Boolean(isValid);
+    $scope.poolForm.crushSet.$setValidity("sizeError", isValid);
+    if (!isValid) {
+      $scope.poolForm.crushSet.$setDirty();
+      $scope.data.expert = true;
+    }
+    if (min) {
+      $scope.replicaSizeError = "Your replica size is to small. To use this rule a replica size of at least " + min +
+        " is needed.";
+    } else if (max) {
+      $scope.replicaSizeError = "Your replica size is to big. To use this rule a replica size of at most " + max +
+        " is needed.";
+    }
+  };
+
+  $scope.rulesetValidation = function () {
+    var ruleset = $scope.data.ruleset;
+    var size = $scope.pool.replicated.size;
+    if (size < ruleset.min_size) {
+      $scope.setReplicaSizeError(ruleset.min_size);
+    } else if (size > ruleset.max_size) {
+      $scope.setReplicaSizeError(null, ruleset.max_size);
+    } else {
+      $scope.setReplicaSizeError(null, null, true);
+    }
+  };
+
+  $scope.$watch("data.ruleset", function (ruleset) {
+    if (ruleset && $scope.data.cluster) {
+      $scope.pool.replicated.expert.crush_ruleset = ruleset.rule_id;
+      $scope.rulesetValidation();
+    }
+  });
+
+  $scope.$watch("pool.replicated.size", function (ruleset) {
+    if ($scope.data.cluster) {
+      $scope.rulesetValidation();
     }
   });
 
@@ -167,11 +224,7 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
       if (pool.type === "replicated") {
         pool.min_size = 1; // No need for this here - API update needed.
         pool.size = $scope.pool[pool.type].size;
-        if ($scope.data.expert) {
-          pool.crush_ruleset = $scope.pool[pool.type].expert.crush_ruleset;
-        } /* else {
-          pool.crush_ruleset = 0;
-        }*/
+        pool.crush_ruleset = $scope.pool[pool.type].expert.crush_ruleset;
       } else if (pool.type === "erasure") {
         pool.min_size = 2; // No need for this here - API update needed.
         pool.erasure_code_profile = $scope.pool[pool.type].profile;
