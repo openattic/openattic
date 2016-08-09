@@ -452,8 +452,8 @@ class DistBuilder(object):
     def _strip_mercurial_tag(tag):
         """Strip the given tag to a version-only format.
 
-        It omits the 'v' and unnecessarily added '-1' suffix which is only used by packaging
-        systems.
+        It omits the 'v' prefix and '-1' suffix. The latter is only used by packaging systems and
+        unecessary in this context.
 
         :param tag:
         :type tag: str
