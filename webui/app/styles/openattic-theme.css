@@ -448,13 +448,21 @@ fieldset[disabled] .btn-primary.active {
   /*top: 0;*/
   /*left: 0;*/
   width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .panel-dashboard>.panel-heading>.toolbar a {
   text-decoration: none;
 }
 .panel-dashboard>.panel-body {
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
+}
+.panel-dashboard .overlay {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  z-index: 10;
 }
 .panel-openattic {
   border: 1px solid #d1d1d1;
@@ -883,15 +891,36 @@ h6{
 }
 
 /* FlexElement */
+/* Container */
 .flex-container {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+}
+.flex-wrap {
   -webkit-flex-wrap: wrap;
-  -moz-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  padding: 20px 0;
+}
+.flex-nowrap {
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+}
+.flex-row {
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+.flex-column {
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+/* Items */
+.flex-item {
+  margin-bottom: 10px;
+  padding: 15px;
 }
 .flex-item-1 { -webkit-flex: 1; -moz-flex: 1; -ms-flex: 1; flex: 1; padding: 0 10px; }
 .flex-item-2 { -webkit-flex: 2; -moz-flex: 2; -ms-flex: 2; flex: 2; padding: 0 10px; }
@@ -916,7 +945,7 @@ h6{
   opacity: 0.4;
 }
 .gridster .toolbar {
-  top: 23px;
+  top: 21px;
   right: 15px;
   cursor: pointer;
   position: absolute;
@@ -1288,6 +1317,9 @@ uib-accordion .panel-title,
 }
 .locked {
   cursor: default!important;
+}
+.list-nomargin {
+  margin: 0;
 }
 
 /* If javascript is disabled. */
