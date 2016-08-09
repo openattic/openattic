@@ -559,12 +559,10 @@ echo ""
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
-%{_datadir}/%{name}/clustering/
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
 %{_datadir}/%{name}/installed_apps.d/20_volumes
-%{_datadir}/%{name}/installed_apps.d/70_clustering
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
 %{_datadir}/%{name}/nodb/
@@ -661,6 +659,7 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cephcluster
+%{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd

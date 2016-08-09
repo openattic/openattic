@@ -48,11 +48,9 @@ app.controller("filestorage", function ($scope) {
     volume: {}
   };
 
-  $scope.$watch("input.volume.name", function (volumename) {
-    if (volumename) {
-      $scope.input.cifs.name = volumename;
-      $scope.input.cifs.path = "/media/" + volumename;
-      $scope.input.nfs.path = "/media/" + volumename;
+  $scope.$watch("input.volume.name", function (volName) {
+    if (volName) {
+      $scope.input.cifs.name = volName;
     }
   });
 });

@@ -24,6 +24,7 @@ import ceph.models
 import ceph.librados
 
 from ceph.librados import Keyring, undoable, undo_transaction
+from ceph.tasks import track_pg_creation
 
 
 def open_testdata(name):
@@ -52,7 +53,8 @@ class ClusterTestCase(TestCase):
 
 class KeyringTestCase(TestCase):
     def test_keyring_succeeds(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") as tmpfile:
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
+                as tmpfile:
             tmpfile.write("[client.admin]")
             tmpfile.flush()
             keyring = Keyring('ceph', '/tmp')
@@ -60,17 +62,18 @@ class KeyringTestCase(TestCase):
 
     def test_keyring_raises_runtime_error(self):
         try:
-            keyring = Keyring('ceph', '/tmp')
-        except RuntimeError, e:
+            Keyring('ceph', '/tmp')
+        except RuntimeError:
             return True
 
     def test_username_raises_runtime_error(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") as tmpfile:
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
+                as tmpfile:
             tmpfile.write("abcdef")
             tmpfile.flush()
             try:
-                keyring = Keyring('ceph', '/tmp')
-            except RuntimeError, e:
+                Keyring('ceph', '/tmp')
+            except RuntimeError:
                 return True
 
 
@@ -80,65 +83,84 @@ class CephPoolTestCase(TestCase):
     @mock.patch('ceph.models.MonApi', autospec=True)
     def test_insert(self, monApi_mock, rados_mock, cephpool_objects_mock):
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
-        cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated')
+        cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0,
+                                                                      type='replicated')
 
         # Inserting new pool.
-        pool = ceph.models.CephPool(name='test', pg_num=0, type='replicated')
+        pool = ceph.models.CephPool(name='test', pg_num=0, type='replicated',
+                                    erasure_code_profile_id=None)
         pool.save()
-        monApi_mock.return_value.osd_pool_create.assert_called_with(pool='test', pg_num=0, pgp_num=0,
-                                                                    pool_type='replicated', erasure_code_profile=None)
+        monApi_mock.return_value.osd_pool_create.assert_called_with('test', 0, 0, 'replicated',
+                                                                    None)
         cephpool_objects_mock.get.assert_called_with(name='test')
         self.assertFalse(pool._state.adding)
 
         # Modifying existing pool.
         pool = ceph.models.CephPool(id=0, name='test', pg_num=1, type='replicated')
         pool.save()
-        calls = [mock.call(pool='test', var='pg_num', val=1),
-                 mock.call(pool='test', var='pgp_num', val=1)]
+        calls = [mock.call('test', 'pg_num', 1, undo_previous_value=0),
+                 mock.call('test', 'pgp_num', 1, undo_previous_value=0)]
         monApi_mock.return_value.osd_pool_set.assert_has_calls(calls)
 
         # Creating a pool tier.
         # FIXME: as get() returns pool with id=0, we cannot really use a different pool here.
         monApi_mock.return_value.osd_pool_set.reset_mock()
         pool = ceph.models.CephPool(id=0, name='test1', pg_num=0, type='replicated',
-                                    tier_of=ceph.models.CephPool(id=999))
+                                    tier_of=ceph.models.CephPool(id=999, name='test1'))
         pool.save()
-        monApi_mock.return_value.osd_tier_add.assert_called_with(pool='test', tierpool='test1')
+        monApi_mock.return_value.osd_tier_add.assert_called_with('test1', 'test1')
 
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_order(self, monApi_mock, rados_mock, cephpool_objects_mock):
+    def test_call_cache_tier(self, monApi_mock, rados_mock, cephpool_objects_mock):
         """
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
-        cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated')
+        existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
+                                                  erasure_code_profile_id=None, cluster_id='0',
+                                                  cluster=ceph.models.CephCluster(fsid='0',
+                                                                                  name=''),
+                                                  tier_of_id=None, cache_mode=None)
+        cephpool_objects_mock.get.return_value = existing_test_pool
 
         # Checking the order of different calls.
-        pool = ceph.models.CephPool(name='test1', pg_num=0, type='replicated', cache_mode='writeback',
-                                    tier_of=ceph.models.CephPool(id=1))
+        pool = ceph.models.CephPool(name='test1', pg_num=0, type='replicated', tier_of_id=1,
+                                    tier_of=ceph.models.CephPool(id=1, name="test"),
+                                    cache_mode='writeback', cluster_id=0,
+                                    erasure_code_profile_id=None)
         pool.save()
         calls = [
             mock.call.osd_pool_create('test1', 0, 0, 'replicated', None),
             mock.call.osd_tier_add('test', 'test1'),
-            mock.call.osd_tier_cache_mode('test1', 'writeback')
+            mock.call.osd_tier_cache_mode('test1', 'writeback', undo_previous_mode=None)
         ]
         monApi_mock.return_value.assert_has_calls(calls)
 
-        # Checking the reverse order.
-        # FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of, resulting
-        #        in wired parameters to osd_tier_remove.
-        cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
-                                                                      cache_mode='writeback',
-                                                                      tier_of=ceph.models.CephPool(id=0, name='test',
-                                                                                                   pg_num=0,
-                                                                                                   type='replicated'))
+    @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.rados')
+    @mock.patch('ceph.models.MonApi', autospec=True)
+    def test_call_tier_remove(self, monApi_mock, rados_mock, cephpool_objects_mock):
+        """
+        Checking the reverse order.
+        FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of,
+               resulting in weird parameters to osd_tier_remove.
+        """
+        cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
+        existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
+                                                  cache_mode='writeback', tier_of_id=0,
+                                                  tier_of=ceph.models.CephPool(id=0, name='test',
+                                                                               pg_num=0,
+                                                                               type='replicated'))
+
+        cephpool_objects_mock.get.return_value = existing_test_pool
         monApi_mock.return_value.reset_mock()
-        pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated', cache_mode='none', tier_of=None)
+        pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
+                                    cache_mode='none', tier_of=None, tier_of_id=None)
         pool.save()
         calls = [
-            mock.call.osd_tier_cache_mode('test', 'none'),
+            mock.call.osd_tier_cache_mode('test', 'none', undo_previous_mode='writeback'),
             mock.call.osd_tier_remove('test', 'test'),
         ]
         monApi_mock.return_value.assert_has_calls(calls)
@@ -321,9 +343,45 @@ class LibradosTest(TestCase):
             osd_tree = json.load(f)
             monApi_mock.return_value.osd_tree.return_value = osd_tree
             librados_monApi_mock.return_value.osd_tree.return_value = osd_tree
+        monApi_mock.return_value.pg_dump.return_value = {
+            'osd_stats': [{'osd': 'osd.{}'.format(i)} for i in range(100)]
+        }
+
         class Ctx:
             fsid = ''
         osds = ceph.models.CephOsd.get_all_objects(Ctx(), None)
         names = [osd.name for osd in osds]
-        self.assertEqual(names, [u'osd.0', u'osd.1', u'osd.2', u'osd.4', u'osd.5', u'osd.6', u'osd.7', u'osd.8',
-                                 u'osd.9', u'osd.11', u'osd.12', u'osd.13', u'osd.14', u'osd.15'])
+        self.assertEqual(names, [u'osd.0', u'osd.1', u'osd.2', u'osd.4', u'osd.5', u'osd.6',
+                                 u'osd.7', u'osd.8', u'osd.9', u'osd.11', u'osd.12', u'osd.13',
+                                 u'osd.14', u'osd.15'])
+
+
+class CephPgTest(TestCase):
+
+    def test_pool_name(self):
+        query = ceph.models.CephPg.objects.filter(pool_name__exact='poolname').query
+        cmd = ceph.models.CephPg.get_mon_command_by_query(query)
+        self.assertEqual(cmd, ('pg ls-by-pool', {'poolstr': 'poolname'}))
+
+    def test_osd_id(self):
+        query = ceph.models.CephPg.objects.filter(osd_id__exact=42).query
+        cmd = ceph.models.CephPg.get_mon_command_by_query(query)
+        self.assertEqual(cmd,  ('pg ls-by-osd', {'osd': '42'}))
+
+
+class TrackPgCreationTest(TestCase):
+    def test_percent(self):
+        data = \
+            [
+                (0, 10, 5, 50),
+                (0, 10, 0, 0),
+                (0, 10, 10, 100),
+                (10, 20, 10, 0),
+                (10, 20, 15, 50),
+                (10, 20, 20, 100),
+                (10, 20, 0, 0),
+                (10, 20, 30, 100),
+            ]
+        for before, after, current, percent in data:
+            result = track_pg_creation.percent('', 0, before, after, current)
+            self.assertEqual(result, percent)

@@ -14,11 +14,13 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler
+from django.core.management.base import BaseCommand
 
-from clustering.models import ServiceIP4
+from taskqueue.manager import TaskQueueManager
 
-class ServiceIP4Handler(ModelHandler):
-    model = ServiceIP4
 
-RPCD_HANDLERS = [ServiceIP4Handler]
+class Command(BaseCommand):
+    help = "Run all stored tasks once. Mainly for development purposes."
+
+    def handle(self, **options):
+        TaskQueueManager.run_once()

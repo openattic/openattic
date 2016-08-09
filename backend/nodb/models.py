@@ -21,6 +21,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ModelState
+from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
@@ -99,9 +100,11 @@ class NodbQuerySet(QuerySet):
 
         def filter_impl(keys, value, obj):
             assert keys
-            attr = getattr(obj, keys[0])
-            if attr is None:
+            if not hasattr(obj, keys[0]):
                 raise AttributeError('Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
+            attr = getattr(obj, keys[0], None)
+            if attr is None:
+                return value is None
             elif isinstance(attr, models.Model):
                 return filter_impl(keys[1:], value, attr)
             else:
@@ -197,7 +200,7 @@ class NodbQuerySet(QuerySet):
             return filtered_data[0]
         if not num:
             raise self.model.DoesNotExist(
-                '{} matching query "{}" does not exist.'.format(self.model._meta.object_name, kwargs))
+                '{} matching query "{}" does not exist.'.format(self.model._meta.object_name, filtered_data.query))
         raise self.model.MultipleObjectsReturned(
             "get() returned more than one %s -- it returned %s!" % (
                 self.model._meta.object_name,
@@ -392,12 +395,22 @@ class NodbModel(models.Model):
 
         original = self.__class__.objects.get(**kwargs)
         return {
-            field.attname: getattr(self, field.attname)
+            field.attname: getattr(self, field.attname, None)
             for field
             in self.__class__._meta.fields
-            if field.editable and hasattr(self, field.attname) and hasattr(original, field.attname) and
-                getattr(self, field.attname) != getattr(original, field.attname)
+            if field.editable and getattr(self, field.attname, None) != getattr(original, field.attname, None)
         }, original
+
+    def attribute_is_unevaluated_lazy_property(self, attr):
+        """
+        :rtype: bool
+        """
+        if attr not in self.__class__.__dict__:
+            return False
+        prop = self.__class__.__dict__[attr]
+        if not isinstance(prop, LazyProperty):
+            return False
+        return attr not in self.__dict__
 
     def set_read_only_fields(self, obj, include_pk=True):
         """
@@ -411,7 +424,8 @@ class NodbModel(models.Model):
             self.pk = obj.pk
 
         for field in self.__class__._meta.fields:
-            if not field.editable and getattr(self, field.attname, None) != getattr(obj, field.attname):
+            if not field.editable and not self.attribute_is_unevaluated_lazy_property(field.attname) and \
+                    hasattr(obj, field.attname) and getattr(self, field.attname, None) != getattr(obj, field.attname):
                 setattr(self, field.attname, getattr(obj, field.attname))
 
     @classmethod
@@ -456,11 +470,16 @@ class NodbModel(models.Model):
 
         self.__dict__.update(kwargs)
 
+        # We need to trigger the __set__ method of related fields
+        for (key, value) in kwargs.iteritems():
+            if key in self.__class__.__dict__ and \
+                    isinstance(self.__class__.__dict__[key], ReverseSingleRelatedObjectDescriptor):
+                setattr(self, key, value)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         """This base implementation does nothing, except telling django that self is now successfully inserted."""
         self._state.adding = False
-
 
 
 class JsonField(Field):

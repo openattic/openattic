@@ -16,7 +16,10 @@
 
 import logging
 
-from rtslib          import target
+try:
+    from rtslib_fb import target
+except ImportError:
+    from rtslib import target
 
 from ifconfig.models import Host
 from systemd         import dbus_to_python

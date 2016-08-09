@@ -11,7 +11,8 @@
     "_": false,
     "angular": false,
     "d3": false,
-    "EventSource": false
+    "EventSource": false,
+    "globalConfig": false
   },
   "latedef": false,
   "maxerr": false,

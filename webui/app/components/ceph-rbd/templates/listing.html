@@ -1,36 +1,46 @@
 <ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getRbdList()"></ceph-cluster-dropdown>
 
-<div ng-show="cluster.results.length > 0">
-    <div class="panel panel-default" ng-show="error">
-        <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
-        </div>
-        <div class="panel-body">
-            Ceph RBD resource could not be loaded. Make sure that the ceph module is installed.
-        </div>
-    </div>
-
+<div ng-show="cluster.results.length > 0 && !rbdFailure && !poolFailure">
     <div class="panel panel-default" ng-show="!error && !rbd.$resolved">
         <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
+            <h3 class="panel-title">Loading...</h3>
         </div>
         <div class="panel-body">
             Ceph RBDs are loading...
         </div>
     </div>
+</div>
 
-    <div class="panel panel-default" ng-show="!error && rbd.results.length === 0">
+<div ng-show="rbdFailure">
+    <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
+            <h3 class="panel-title" ng-bind="rbdFailureTitle"></h3>
         </div>
         <div class="panel-body">
-            No RBD available.
+            Please contact your administrator for further help.
         </div>
     </div>
 </div>
 
-<oadatatable ng-show="!error && rbd.results.length > 0" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig" selection="selection">
-    {{data.results}}
+<oadatatable ng-show="!error && rbd.results" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig" selection="selection">
+    <actions>
+        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
+            <i class="fa fa-fw fa-plus"></i>Add
+        </a>
+        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="hasSelection || multiSelection">
+            <i class="fa fa-fw fa-trash-o"></i>Delete
+        </a>
+        <li>
+            <a ng-click="addAction()">
+                <i class="fa fa-fw fa-plus"></i>Add
+            </a>
+        </li>
+        <li class="tc_deleteItem" ng-click="deleteAction()" ng-class="{disabled: !hasSelection && !multiSelection}">
+            <a>
+                <i class="fa fa-fw fa-trash-o"></i>Delete
+            </a>
+        </li>
+    </actions>
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
             <tr>
@@ -38,10 +48,11 @@
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
-                <th ng-show="columns['Poolname']">Poolname</th>
-                <th ng-show="columns['Size']">Size</th>
-                <th ng-show="columns['Used']">Used</th>
-                <th ng-show="columns['Number of objects']">Number of objects</th>
+                <th sortfield="id" sortdir="asc" sortheaderclass ng-show="columns['Poolname']">Poolname</th>
+                <th sortfield="size" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
+                <th sortfield="used_size" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
+                <th sortfield="obj_size" sortdir="asc" sortheaderclass disabled ng-show="columns['Object size']">Object size</th>
+                <th sortfield="num_objs" sortdir="asc" sortheaderclass disabled ng-show="columns['Number of objects']">Number of objects</th>
             </tr>
         </thead>
         <tbody>
@@ -55,19 +66,21 @@
                 <td ng-show="columns['Poolname']" ng-bind="row.pool.name"></td>
                 <td ng-show="columns['Size']" ng-bind="row.size | bytes"></td>
                 <td ng-show="columns['Used']">
-                    <div class="progress oaprogress" data-toggle="tooltip" data-placement="right"
-                         title="Used: {{row.obj_size | bytes}} &mdash; Free: {{row.oaFree | bytes}}">
+                    <div class="progress oaprogress" ng-show="row.used_size !== undefined"
+                         data-toggle="tooltip" data-placement="right" title="Used: {{row.usage_size | bytes}} &mdash;
+                            Free: {{row.free | bytes}}">
                         <div class="progress-bar" role="progressbar"
-                             aria-valuenow="{{row.oaUsed | number: 2}}" aria-valuemin="0"
-                             aria-valuemax="100" style="width: {{row.oaUsed | number: 2}}%">
-                            <span>{{row.oaUsed | number: 2}}%</span>
+                             aria-valuenow="{{row.usedPercent}}" aria-valuemin="0"
+                             aria-valuemax="100" style="width: {{row.usedPercent}}}%">
+                            <span>{{row.usedPercent | number:2}}%</span>
                         </div>
                         <div class="progress-bar progress-bar-freespace" role="progressbar"
-                             aria-valuenow="{{row.oaUnused}}" aria-valuemin="0"
-                             aria-valuemax="100" style="width: {{row.unused}}%">
+                             aria-valuenow="{{row.freePercent}}" aria-valuemin="0"
+                             aria-valuemax="100" style="width: {{row.freePercent}}%">
                         </div>
                     </div>
                 </td>
+                <td ng-show="columns['Object size']" ng-bind="row.obj_size | bytes"></td>
                 <td ng-show="columns['Number of objects']" ng-bind="row.num_objs"></td>
             </tr>
         </tbody>

@@ -12,18 +12,14 @@
             <dd ng-bind="selection.item.pool.name"></dd>
             <dt>Size:</dt>
             <dd ng-bind="selection.item.size | bytes"></dd>
-            <dt>Used:</dt>
+            <dt>Object size:</dt>
             <dd ng-bind="selection.item.obj_size | bytes"></dd>
-            <dt>Free:</dt>
-            <dd ng-bind="selection.item.oaFree | bytes"></dd>
+            <dt>Number of objects:</dt>
+            <dd ng-bind="selection.item.num_objs"></dd>
             <div ng-if="selection.item.features.length > 0">
                 <dt>Features:</dt>
                 <dd ng-repeat="feature in selection.item.features" ng-bind="feature"></dd>
             </div>
-            <dt>Number of objects:</dt>
-            <dd ng-bind="selection.item.num_objs"></dd>
-            <dt>Order:</dt>
-            <dd ng-bind="selection.item.order"></dd>
         </dl>
     </div>
 </div>

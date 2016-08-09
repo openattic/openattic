@@ -3,7 +3,7 @@
 </div>
 <div class="openattic-modal-content">
     <p>
-        You are about to {{dialogSet}} the volume delete protection of <strong>{{volume.name}}</strong>.
+        You are about to {{dialogSet|lowercase}} the volume delete protection of <strong>{{volume.name}}</strong>.
     </p>
     <p ng-if="!volume.is_protected">If set the volume can't be deleted, until you unset the protection.</p>
     <p ng-if="volume.is_protected">If unset, you can delete the volume.</p>
