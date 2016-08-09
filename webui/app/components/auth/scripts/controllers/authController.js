@@ -36,7 +36,7 @@ app.controller("authController", function ($scope, $rootScope, $state, authServi
   $scope.correctInput = "The given credentials are not correct.";
 
   if (angular.isDefined(globalConfig.GUI.quickLogin.username) && globalConfig.GUI.quickLogin.username !== "" &&
-      angular.isDefined(globalConfig.GUI.quickLogin.password) && globalConfig.GUI.quickLogin.password) {
+      angular.isDefined(globalConfig.GUI.quickLogin.password) && globalConfig.GUI.quickLogin.password !== "") {
     $scope.username = globalConfig.GUI.quickLogin.username;
     $scope.password = globalConfig.GUI.quickLogin.password;
   }
