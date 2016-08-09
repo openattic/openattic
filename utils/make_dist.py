@@ -242,7 +242,7 @@ class DistBuilder(object):
         self._source_is_path = not DistBuilder.is_url(self._source)
         if self._source_is_path:
             self._source = os.path.abspath(self._source)
-        self._tmp_dir = tempfile.gettempdir()
+        self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
         self._source_basename = DistBuilder.get_basename(self._source)
         self._tmp_build_dir = os.path.join(self._tmp_dir, self._source_basename)
         self._version_txt_path = os.path.join(self._tmp_build_dir, 'version.txt')
