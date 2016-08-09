@@ -452,10 +452,7 @@ class DistBuilder(object):
             self._log('Skipping retrieval of {} because it already exists'.format(source))
             return
 
-        if DistBuilder.is_url(source):
-            self._process.run(['hg', 'clone', source, abs_source_dir])
-        else:
-            self._process.run(['cp', '-r', source, abs_source_dir])
+        self._process.run(['hg', 'clone', source, abs_source_dir])
 
     @staticmethod
     def _strip_mercurial_tag(tag):
