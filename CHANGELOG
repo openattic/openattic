@@ -6,6 +6,8 @@ Version 2.0.14, (not released yet):
 
 * Backend: Removed unused module 'Clustering' (OP-1251)
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
+* WebUI: If quicklogin is defined in config.js, the username and password will
+  be predefined (OP-1386)
 * Installation: `oaconfig version` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
 

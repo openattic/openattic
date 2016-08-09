@@ -24,6 +24,7 @@ import ceph.models
 import ceph.librados
 
 from ceph.librados import Keyring, undoable, undo_transaction
+from ceph.tasks import track_pg_creation
 
 
 def open_testdata(name):
@@ -366,3 +367,21 @@ class CephPgTest(TestCase):
         query = ceph.models.CephPg.objects.filter(osd_id__exact=42).query
         cmd = ceph.models.CephPg.get_mon_command_by_query(query)
         self.assertEqual(cmd,  ('pg ls-by-osd', {'osd': '42'}))
+
+
+class TrackPgCreationTest(TestCase):
+    def test_percent(self):
+        data = \
+            [
+                (0, 10, 5, 50),
+                (0, 10, 0, 0),
+                (0, 10, 10, 100),
+                (10, 20, 10, 0),
+                (10, 20, 15, 50),
+                (10, 20, 20, 100),
+                (10, 20, 0, 0),
+                (10, 20, 30, 100),
+            ]
+        for before, after, current, percent in data:
+            result = track_pg_creation.percent('', 0, before, after, current)
+            self.assertEqual(result, percent)

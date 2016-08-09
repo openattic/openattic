@@ -34,6 +34,7 @@ from django.utils.translation import ugettext_noop as _
 
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
+import ceph.tasks
 from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
@@ -430,6 +431,9 @@ class CephPool(NodbModel):
 
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
             self.set_read_only_fields(original)
+            if insert:
+                self._task_queue = ceph.tasks.track_pg_creation.delay(context.fsid, self.id, 0,
+                                                                self.pg_num)
 
             def schwartzian_transform(obj):
                 key, val = obj
@@ -634,7 +638,7 @@ class CephPg(NodbModel):
     reported_epoch = models.CharField(max_length=100)
     reported_seq = models.CharField(max_length=100)
     stat_sum = JsonField(base_type=dict, editable=False)
-    state = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, help_text='http://docs.ceph.com/docs/master/rados/operations/pg-states/')
     stats_invalid = models.CharField(max_length=100)
     up = JsonField(base_type=list, editable=False)
     up_primary = models.IntegerField()
@@ -697,8 +701,10 @@ class CephPg(NodbModel):
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
-            for name in ['last_became_active', 'last_became_peered',
+            for name in ['last_became_active', 'last_became_peered', 'last_active', 'last_change',
                          'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
+                         'last_fresh', 'last_fullsized', 'last_peered', 'last_undegraded',
+                         'last_unstale',
                          'osd_id', 'pool_name']:
                 if name not in model_args:
                     model_args[name] = None
