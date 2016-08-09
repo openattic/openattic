@@ -228,8 +228,7 @@ class NodbQuerySet(QuerySet):
         return super(NodbQuerySet, self).__repr__()
 
 
-
-if django.VERSION[1] == 6:
+if django.VERSION[:2] == (1, 6):
     from django.db.models.manager import Manager
     base_manager_class = Manager
 else:
@@ -247,7 +246,7 @@ class NodbManager(base_manager_class):
         cls.nodb_context = context
 
     def get_queryset(self):
-        if django.VERSION[1] == 6:
+        if django.VERSION[:2] == (1, 6):
             return NodbQuerySet(self.model, using=self._db, context=NodbManager.nodb_context)
         else:
             return self._queryset_class(self.model, using=self._db, hints=self._hints,
