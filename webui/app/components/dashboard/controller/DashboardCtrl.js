@@ -77,17 +77,13 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
   };
 
   $scope.manager = [{
-    "name"   : "Ceph Cluster Health",
-    "manager": "ceph-cluster-health",
-    "group"  : "ceph"
-  }, {
     "name"   : "Ceph Cluster Status",
-    "manager": "ceph-cluster-status-widget",
+    "manager": "ceph-cluster-status",
     "group"  : "ceph"
   }, {
-    "name"   : "Dummie",
-    "manager": "dashboard-example-widget",
-    "group"  : "traditional"
+    "name"   : "Ceph Cluster Performance",
+    "manager": "ceph-cluster-performance",
+    "group"  : "ceph"
   }];
 
   // functions
