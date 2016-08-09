@@ -35,9 +35,10 @@ app.controller("authController", function ($scope, $rootScope, $state, authServi
   $scope.fieldRequired = "This field is required.";
   $scope.correctInput = "The given credentials are not correct.";
 
-  if (angular.isDefined(globalConfig.GUI.quickLogin) && globalConfig.GUI.quickLogin) {
-    $scope.username = "openattic";
-    $scope.password = "openattic";
+  if (angular.isDefined(globalConfig.GUI.quickLogin.username) && globalConfig.GUI.quickLogin.username !== "" &&
+      angular.isDefined(globalConfig.GUI.quickLogin.password) && globalConfig.GUI.quickLogin.password) {
+    $scope.username = globalConfig.GUI.quickLogin.username;
+    $scope.password = globalConfig.GUI.quickLogin.password;
   }
 
   $scope.$watchGroup(["username", "password"], function () {
