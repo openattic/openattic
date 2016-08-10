@@ -1,6 +1,6 @@
-diff -r c59dd300bc4d backend/nagios/readstatus.py
---- a/backend/nagios/readstatus.py	Fri Aug 05 16:57:42 2016 +0200
-+++ b/backend/nagios/readstatus.py	Fri Aug 05 16:58:13 2016 +0200
+diff -r 6c276d24d4ba backend/nagios/readstatus.py
+--- a/backend/nagios/readstatus.py	Wed Aug 10 13:19:25 2016 +0200
++++ b/backend/nagios/readstatus.py	Wed Aug 10 13:20:23 2016 +0200
 @@ -38,8 +38,11 @@
          self.lock        = Lock()
  
@@ -15,9 +15,9 @@ diff -r c59dd300bc4d backend/nagios/readstatus.py
  
      def __len__(self):
          self.update()
-diff -r c59dd300bc4d backend/peering/models.py
---- a/backend/peering/models.py	Fri Aug 05 16:57:42 2016 +0200
-+++ b/backend/peering/models.py	Fri Aug 05 16:58:13 2016 +0200
+diff -r 6c276d24d4ba backend/peering/models.py
+--- a/backend/peering/models.py	Wed Aug 10 13:19:25 2016 +0200
++++ b/backend/peering/models.py	Wed Aug 10 13:20:23 2016 +0200
 @@ -108,8 +108,8 @@
                   active=True)
      key.full_clean()
@@ -30,9 +30,9 @@ diff -r c59dd300bc4d backend/peering/models.py
 +    #peer.save()
  
  sysutils.models.post_install.connect(__install_hostkeys, sender=sysutils.models)
-diff -r c59dd300bc4d backend/settings.py
---- a/backend/settings.py	Fri Aug 05 16:57:42 2016 +0200
-+++ b/backend/settings.py	Fri Aug 05 16:58:13 2016 +0200
+diff -r 6c276d24d4ba backend/settings.py
+--- a/backend/settings.py	Wed Aug 10 13:19:25 2016 +0200
++++ b/backend/settings.py	Wed Aug 10 13:20:23 2016 +0200
 @@ -211,7 +211,7 @@
          'file': {
              'level': 'INFO',
@@ -42,9 +42,9 @@ diff -r c59dd300bc4d backend/settings.py
          }
      },
      'loggers': {
-diff -r c59dd300bc4d etc/dbus-1/system.d/openattic.conf
---- a/etc/dbus-1/system.d/openattic.conf	Fri Aug 05 16:57:42 2016 +0200
-+++ b/etc/dbus-1/system.d/openattic.conf	Fri Aug 05 16:58:13 2016 +0200
+diff -r 6c276d24d4ba etc/dbus-1/system.d/openattic.conf
+--- a/etc/dbus-1/system.d/openattic.conf	Wed Aug 10 13:19:25 2016 +0200
++++ b/etc/dbus-1/system.d/openattic.conf	Wed Aug 10 13:20:23 2016 +0200
 @@ -7,7 +7,7 @@
              <allow send_destination="org.openattic.systemd" />
              <allow receive_sender="org.openattic.systemd"   />
@@ -54,9 +54,15 @@ diff -r c59dd300bc4d etc/dbus-1/system.d/openattic.conf
              <allow send_destination="org.openattic.systemd" />
              <allow receive_sender="org.openattic.systemd"   />
      </policy>
-diff -r c59dd300bc4d webui/app/config.js
---- a/webui/app/config.js	Fri Aug 05 16:57:42 2016 +0200
-+++ b/webui/app/config.js	Fri Aug 05 16:58:13 2016 +0200
+diff -r 6c276d24d4ba etc/tmpfiles.d/openattic.conf
+--- a/etc/tmpfiles.d/openattic.conf	Wed Aug 10 13:19:25 2016 +0200
++++ b/etc/tmpfiles.d/openattic.conf	Wed Aug 10 13:20:23 2016 +0200
+@@ -1,1 +1,1 @@
+-d /run/lock/openattic 0755 openattic openattic -
++d /run/lock/openattic 0755 vagrant users -
+diff -r 6c276d24d4ba webui/app/config.js
+--- a/webui/app/config.js	Wed Aug 10 13:19:25 2016 +0200
++++ b/webui/app/config.js	Wed Aug 10 13:20:23 2016 +0200
 @@ -1,6 +1,6 @@
  var globalConfig = {
    "API": {
