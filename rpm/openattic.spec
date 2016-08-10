@@ -372,6 +372,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
+mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
@@ -401,6 +402,9 @@ install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 # Install Web UI
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
+
+# Install HTML redirect
+install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.html
 
 # Install /etc/default/openattic
 # TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
@@ -599,6 +603,7 @@ echo ""
 %files gui
 %defattr(-,root,root,-)
 %{_datadir}/%{name}-gui
+%{_localstatedir}/www/html/index.html
 
 %files module-cron
 %defattr(-,root,root,-)
