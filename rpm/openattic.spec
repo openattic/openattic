@@ -567,6 +567,7 @@ echo ""
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
 %{_datadir}/%{name}/installed_apps.d/20_volumes
+%{_datadir}/%{name}/installed_apps.d/60_taskqueue
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
 %{_datadir}/%{name}/nodb/
@@ -581,6 +582,7 @@ echo ""
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
+%{_datadir}/%{name}/taskqueue/
 %{_datadir}/%{name}/templates/
 %{_datadir}/%{name}/urls.py*
 %{_datadir}/%{name}/userprefs/
