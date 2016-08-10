@@ -40,5 +40,33 @@ SUSE vs Debian
 Per default, the VM is based on OpenSUSE, but running openATTIC based on ``debian/jessie64`` is
 also a supported Vagrant box.
 
+Debugging openATTIC with PyCharm
+--------------------------------
+
+Now, with a working Vagrant VM, we can now use PyCharm to debug the openATTIC backend.
+
+First, configure ``/home/vagrant/env/bin/python`` as a `Vagrant Remote Interpreter <https://www.jetbrains.com/help/pycharm/2016.2/configuring-remote-interpreters-via-vagrant.html>`_.
+Then, add ``/home/vagrant/openattic/backend`` to the interpreter paths. I was asked to activate
+a few PyCharm extensions, like a Django support. Usually, you can activate them.
+
+Then, add the openATTIC django Server as a `Django server` in the `Run Configurations` using your
+configured remote interpreter.
 
 
+Troubleshooting
+---------------
+
+To start the openATTIC-systemD, run::
+
+    sudo env/bin/python openattic/backend/manage.py runsystemd
+
+in your VM.
+
+
+To fix::
+
+    dbus.exceptions.DBusException: org.freedesktop.DBus.Error.AccessDenied: Connection ":1.6" is not allowed to own the service "org.openattic.systemd" due to security policies in the configuration file
+
+restart your dbus service::
+
+    sudo service dbus restart

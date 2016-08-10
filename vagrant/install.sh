@@ -136,11 +136,13 @@ module-icinga"
     systemctl restart postgresql.service
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
+
+    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 fi
 
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
-ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
+
 
 service dbus restart
 
