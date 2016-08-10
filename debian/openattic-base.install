@@ -7,10 +7,12 @@ backend/rest      /usr/share/openattic
 backend/rpcd      /usr/share/openattic
 backend/systemd   /usr/share/openattic
 backend/sysutils  /usr/share/openattic
+backend/taskqueue /usr/share/openattic
 backend/userprefs /usr/share/openattic
 backend/volumes   /usr/share/openattic
 
 backend/installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
+backend/installed_apps.d/60_taskqueue /usr/share/openattic/installed_apps.d
 
 # Python files
 backend/__init__.py    /usr/share/openattic
