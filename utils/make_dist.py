@@ -30,13 +30,16 @@ Options:
     --revision=<revision>
 
         A valid mercurial revision. An existing mercurial tag for 'release'.
-        The revision argument is unsupported if a path is used as argument for
-        --source.
 
         If no revision is provided, the defaults are used. The default for
         'release' is the latest existing mercurial tag. The default for
         'snapshot' is the development branch, which actually results in the tip
         of the development branch being used.
+
+        The revision argument will be ignored if a path to a local repository
+        is used as argument for --source and if that repo contains uncommitted
+        changes. In that case these uncommited changes are committed in a
+        temporary directory to be able include them in the tar archive.
 
     --source=<source>  [default: https://bitbucket.org/openattic/openattic]
 
@@ -70,8 +73,8 @@ Options:
         a local path and changes have been commited to create a tar archive for
         testing purposes. If there weren't changes to the repository, the
         switch won't be ignored. If the push creates a new head on the remote
-        repository, the changes won't be pushed and the execution of the script
-        will be aborted.
+        repository, the changes won't be pushed and the execution of the
+        script will be aborted.
 
     -v
 
@@ -259,7 +262,7 @@ class DistBuilder(object):
 
         self._npmrc_file_path = os.path.join(self._home_dir, '.npmrc')
         self._npm_prefix_row = 'prefix = ~/.node'
-        self._cache_dir = os.path.join(self._home_dir, '.openattic', 'oa_cache')
+        self._cache_dir = os.path.join(self._home_dir, '.cache', 'openattic-build')
         self._process = Process(self._verbosity)
         self._datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
 
