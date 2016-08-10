@@ -33,19 +33,6 @@ fi
 set -e
 set -u
 
-create_indexpage () {
-<<EOF cat >/var/www/html/index.html
-<html>
-  <head>
-    <meta http-equiv="refresh" content="1;url=/openattic" ></meta>
-  </head>
-  <body>
-    Redirecting...
-  </body>
-</html>
-EOF
-}
-
 usage () {
 	echo "Usage: $0 <command> [<args>]"
 	echo
@@ -140,11 +127,6 @@ case $1 in
 		for hook in $OADIR/*/bin/oaconfig-install.sh; do
 			source $hook
 		done
-		
-		INDEXHTML="`md5sum /var/www/html/index.html | cut -d' ' -f1`"
-		if [ "$INDEXHTML" = '74cec59a19e5d16f7cc6a2445e35fa3b' ] || [ "$INDEXHTML" = 'c32ad802df5abca941d784abf642e7fd' ]; then
-			create_indexpage
-		fi
 		
 		su "$OAUSER" -c 'python manage.py post_install'
 		

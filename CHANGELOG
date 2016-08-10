@@ -6,10 +6,17 @@ Version 2.0.14, (not released yet):
 
 * Backend: Removed unused module 'Clustering' (OP-1251)
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
+* Backend: Added a task queue module to track long-running commands (OP-1360)
 * WebUI: If quicklogin is defined in config.js, the username and password will
   be predefined (OP-1386)
 * Installation: `oaconfig version` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
+* Installation: The `openattic-gui` RPM and DEB packages now take care of
+  installing an `index.html` file in the Apache document root directory that
+  performs a redirect to the WebUI. Previously, this task was performed by
+  `oaconfig install`. Thanks to Brandon Keep. (OP-959)
+* Development: Add Vagrantfile to easily set up a development environment
+  (OP-1423)
 
 
 Version 2.0.13, 28. July 2016:
