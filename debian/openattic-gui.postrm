@@ -2,10 +2,10 @@
 
 set -e
 
-$INDEX_FILE='/var/www/html/index.html'
+INDEX_FILE="/var/www/html/index.html"
 if [ -f "$INDEX_FILE" ]; then
     INDEXHTML=$(md5sum $INDEX_FILE |awk '{print $1}')
-    if [ "$INDEXHTML" = 'b445cc8abb9b160de52862f2ea4ce4c3' ]; then
+    if [ "$INDEXHTML" = "b445cc8abb9b160de52862f2ea4ce4c3" ]; then
 	    rm -f "$INDEX_FILE"
     fi
 fi

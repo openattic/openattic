@@ -372,6 +372,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
+mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
@@ -600,6 +601,7 @@ echo ""
 %files gui
 %defattr(-,root,root,-)
 %{_datadir}/%{name}-gui
+%{_localstatedir}/www/html/index.html
 
 %files module-cron
 %defattr(-,root,root,-)

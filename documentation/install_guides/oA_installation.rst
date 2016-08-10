@@ -252,8 +252,9 @@ After enabling the apt repository, run the following commands to install the
   # apt-get install openattic
 
 .. note::
-  Installation of the openattic-gui package will replace the default index page
-  in the Apache web server's document root.
+  Installation of the ``openattic-gui`` package will replace the
+  distribution's default ``index.html`` page in the Apache web server's
+  document root with a redirect page to the |oA| web interface.
 
 .. note::
   For **Ubuntu 14.04 LTS** it is necessary to install some extra package in
@@ -355,8 +356,9 @@ It can be installed with the following command::
   # yum install openattic-gui
 
 .. note::
-  Installing the openattic-gui package will replace the default index page
-  in the Apache web server's document root.
+  Installation of the ``openattic-gui`` package will install an ``index.html``
+  page in the Apache web server's document root that will redirect requests to
+  the |oA| web interface.
 
 Configure pnp4nagios
 --------------------
@@ -478,10 +480,6 @@ openattic``, as it might not be required on each node of an |oA| cluster.
 It can be installed with the following command::
 
   # yum install openattic-gui
-
-.. note::
-  Installing the openattic-gui package will replace the default index page
-  in the Apache web server's document root.
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.

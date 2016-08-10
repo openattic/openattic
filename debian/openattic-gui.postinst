@@ -15,10 +15,10 @@ create_indexpage () {
 EOF
 }
 
-$INDEX_FILE='/var/www/html/index.html'
+INDEX_FILE="/var/www/html/index.html"
 if [ -f "$INDEX_FILE" ]; then
     INDEXHTML=$(md5sum $INDEX_FILE |awk '{print $1}')
-    if [ "$INDEXHTML" = '74cec59a19e5d16f7cc6a2445e35fa3b' ] || [ "$INDEXHTML" = 'c32ad802df5abca941d784abf642e7fd' ]; then
+    if [ "$INDEXHTML" = "74cec59a19e5d16f7cc6a2445e35fa3b" ] || [ "$INDEXHTML" = "c32ad802df5abca941d784abf642e7fd" ]; then
 	    create_indexpage
     fi
 fi
