@@ -11,6 +11,7 @@ Version 2.0.14, (not released yet):
   be predefined (OP-1386)
 * Installation: `oaconfig version` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
+* Developemnt: Add Vagrantfile to easily set up a development environment (OP-1423)
 
 
 Version 2.0.13, 28. July 2016:
