@@ -14,8 +14,8 @@
 
 """Usage:
     make_dist.py create (release|snapshot) [--revision=<revision>]
-        [--source=<source>] [--adapt-debian-changelog] [--push-changes]
-        [-v|-q|-s]
+        [--source=<source>] [--destination=<destination>]
+        [--adapt-debian-changelog] [--push-changes] [-v|-q|-s]
     make_dist.py cache push
     make_dist.py (help|-h|--help)
 
@@ -30,15 +30,18 @@ Options:
     --revision=<revision>
 
         A valid mercurial revision. An existing mercurial tag for 'release'.
-        The revision argument is unsupported if a path is used as argument for
-        --source.
 
         If no revision is provided, the defaults are used. The default for
         'release' is the latest existing mercurial tag. The default for
         'snapshot' is the development branch, which actually results in the tip
         of the development branch being used.
 
-    --source=<source>   [default: https://bitbucket.org/openattic/openattic]
+        The revision argument will be ignored if a path to a local repository
+        is used as argument for --source and if that repo contains uncommitted
+        changes. In that case these uncommited changes are committed in a
+        temporary directory to be able include them in the tar archive.
+
+    --source=<source>  [default: https://bitbucket.org/openattic/openattic]
 
         The source to be used. Either an URL to a Mercurial repository or local
         path to a Mercurial repository.
@@ -48,6 +51,11 @@ Options:
         --push-changes switch is ignored if a local path is given to --source.
         The local repository is never altered, only a temporary copy of it will
         be adapted.
+
+    --destination=<destination>  [default: ~/src]
+
+        The destination for the tar archive to be created in. If the given
+        directory or subdirectories don't exist, they will be created.
 
     --adapt-debian-changelog
 
@@ -68,8 +76,8 @@ Options:
         a local path and changes have been commited to create a tar archive for
         testing purposes. If there weren't changes to the repository, the
         switch won't be ignored. If the push creates a new head on the remote
-        repository, the changes won't be pushed and the execution of the script
-        will be aborted.
+        repository, the changes won't be pushed and the execution of the
+        script will be aborted.
 
     -v
 
@@ -91,6 +99,7 @@ import os
 import sys
 import subprocess
 import re
+import tempfile
 import unittest
 import ConfigParser
 import platform
@@ -229,17 +238,20 @@ class Process(object):
 class DistBuilder(object):
     OA_CACHE_REPO_URL = 'https://bitbucket.org/openattic/oa_cache'
 
-    def __init__(self, source_dir, args=None):
+    def __init__(self, args=None):
         self._home_dir = os.environ['HOME']
-        self._source_dir = source_dir
         self._args = args if args else docopt(__doc__)
 
+        if self._args['--destination']:
+            destination = os.path.expanduser(self._args['--destination'])
+            self._destination_dir = os.path.abspath(destination)
         self._source = self._args['--source']
         self._source_is_path = not DistBuilder.is_url(self._source)
         if self._source_is_path:
             self._source = os.path.abspath(self._source)
+        self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
         self._source_basename = DistBuilder.get_basename(self._source)
-        self._tmp_build_dir = os.path.join(self._source_dir, self._source_basename)
+        self._tmp_build_dir = os.path.join(self._tmp_dir, self._source_basename)
         self._version_txt_path = os.path.join(self._tmp_build_dir, 'version.txt')
         self._package_json_path = os.path.join(self._tmp_build_dir, 'webui', 'package.json')
         self._bower_json_path = os.path.join(self._tmp_build_dir, 'webui', 'bower.json')
@@ -254,7 +266,7 @@ class DistBuilder(object):
 
         self._npmrc_file_path = os.path.join(self._home_dir, '.npmrc')
         self._npm_prefix_row = 'prefix = ~/.node'
-        self._cache_dir = os.path.join(self._source_dir, 'oa_cache')
+        self._cache_dir = os.path.join(self._home_dir, '.cache', 'openattic-build')
         self._process = Process(self._verbosity)
         self._datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
 
@@ -428,36 +440,33 @@ class DistBuilder(object):
         sys.stderr.write(message + os.linesep)
         sys.exit(2)
 
-    def _retrieve_source(self, target_dir, source, skip_if_exists=False):
+    def _retrieve_source(self, destination_dir, source, skip_if_exists=False):
         """Clone or copy the sources to the specified directory.
 
         Skips the process if the target directory already exists. The target directory is determined
         using the target_dir argument and the basename of the source.
 
-        :param target_dir: The directory where the sources should be cloned/copied to.
-        :type target_dir: str
+        :param destination_dir: The directory where the sources should be cloned/copied to.
+        :type destination_dir: str
         :param source: The source. These may be a path or a URL.
         :type source: str
         """
-        if not isdir(target_dir):
-            makedirs(target_dir)
+        if not isdir(destination_dir):
+            makedirs(destination_dir)
 
-        abs_source_dir = os.path.join(target_dir, DistBuilder.get_basename(source))
+        abs_source_dir = os.path.join(destination_dir, DistBuilder.get_basename(source))
         if isdir(abs_source_dir) and skip_if_exists:
             self._log('Skipping retrieval of {} because it already exists'.format(source))
             return
 
-        if DistBuilder.is_url(source):
-            self._process.run(['hg', 'clone', source, abs_source_dir])
-        else:
-            self._process.run(['cp', '-r', source, abs_source_dir])
+        self._process.run(['hg', 'clone', source, abs_source_dir])
 
     @staticmethod
     def _strip_mercurial_tag(tag):
         """Strip the given tag to a version-only format.
 
-        It omits the 'v' and unnecessarily added '-1' suffix which is only used by packaging
-        systems.
+        It omits the 'v' prefix and '-1' suffix. The latter is only used by packaging systems and
+        unecessary in this context.
 
         :param tag:
         :type tag: str
@@ -499,19 +508,22 @@ class DistBuilder(object):
         :type build_basename: str
         :return: The absolute file path of the created tarball
         """
-        abs_build_dir = os.path.join(self._source_dir, build_basename)
-        abs_tarball_file_path = abs_build_dir + '.tar.bz2'
-        bower_components_dir = os.path.join(abs_build_dir, 'webui', 'app', 'bower_components')
-        node_modules_dir = os.path.join(abs_build_dir, 'webui', 'node_modules')
-        webui_dir = os.path.join(abs_build_dir, 'webui')
+        tmp_abs_build_dir = os.path.join(self._tmp_dir, build_basename)
+        abs_tarball_dest_file = os.path.join(self._destination_dir, build_basename + '.tar.bz2')
+
+        bower_components_dir = os.path.join(tmp_abs_build_dir, 'webui', 'app', 'bower_components')
+        node_modules_dir = os.path.join(tmp_abs_build_dir, 'webui', 'node_modules')
+        webui_dir = os.path.join(tmp_abs_build_dir, 'webui')
 
         # Clean up previous versions.
-        if isdir(abs_build_dir):
-            rmtree(abs_build_dir)
-        if isfile(abs_tarball_file_path):
-            os.remove(abs_tarball_file_path)
+        if isdir(tmp_abs_build_dir):
+            self._process.log_command(['rm', '-r', tmp_abs_build_dir])
+            rmtree(tmp_abs_build_dir)
+        if isfile(abs_tarball_dest_file):
+            self._process.log_command(['rm', abs_tarball_dest_file])
+            os.remove(abs_tarball_dest_file)
 
-        self._process.run(['hg', 'archive', '-t', 'files', abs_build_dir, '-X', '.hg*'],
+        self._process.run(['hg', 'archive', '-t', 'files', tmp_abs_build_dir, '-X', '.hg*'],
                           cwd=self._tmp_build_dir)
         self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
@@ -563,19 +575,26 @@ class DistBuilder(object):
             'REV': self._get_current_revision_hash(self._tmp_build_dir),
             'STATE': self._get_release_channel(),
         }
-        with file(os.path.join(abs_build_dir, 'version.txt'), 'a') as f:
+        with file(os.path.join(tmp_abs_build_dir, 'version.txt'), 'a') as f:
             for key, value in data.items():
                 f.write('{} = {}{}'.format(key, value, os.linesep))
 
         # Compress the directory into the tarball file.
         options = 'cjf'
         options += 'v' if self._verbosity > 1 else ''
-        self._process.run(['tar', options, abs_tarball_file_path, build_basename],
-                          cwd=self._source_dir)
 
-        rmtree(abs_build_dir)  # Remove no longer required temporary folder.
+        # Make sure the directory exists where the tarball should be placed into.
+        abs_tarball_dest_path = os.path.split(abs_tarball_dest_file)[0]
+        if not os.path.isdir(abs_tarball_dest_path):
+            self._process.log_command(['mkdir', '-p', abs_tarball_dest_path])
+            makedirs(abs_tarball_dest_path)
 
-        return abs_tarball_file_path
+        self._process.run(['tar', options, abs_tarball_dest_file, build_basename],
+                          cwd=self._tmp_dir)
+
+        rmtree(tmp_abs_build_dir)  # Remove no longer required temporary folder.
+
+        return abs_tarball_dest_file
 
     def _get_current_revision_hash(self, repo_dir):
         """Retrieve the hash of the current revision.
@@ -602,7 +621,7 @@ class DistBuilder(object):
                                  exit_on_error=exit_on_error)
 
     def _push_changes(self, repo_dir):
-        return self._process.run(['hg', 'push'], cwd=repo_dir)
+        return self._process.system(['hg', 'push'], cwd=repo_dir)
 
     def _get_release_channel(self):
         return 'release' if self._args['release'] else 'snapshot'
@@ -618,15 +637,17 @@ class DistBuilder(object):
         self._check_dependencies(['npm'])
         self._set_npmrc_prefix()
 
-        self._retrieve_source(self._source_dir, DistBuilder.OA_CACHE_REPO_URL, skip_if_exists=True)
+        self._retrieve_source(os.path.split(self._cache_dir)[0], DistBuilder.OA_CACHE_REPO_URL,
+                              skip_if_exists=True)
+        self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
+
         if self._source_is_path and isdir(self._tmp_build_dir):
+            self._process.log_command(['rm', '-r', self._tmp_build_dir])
             rmtree(self._tmp_build_dir)
-        self._retrieve_source(self._source_dir, self._source, skip_if_exists=True)
+        self._retrieve_source(self._tmp_dir, self._source, skip_if_exists=True)
 
         channel = self._get_release_channel()
         revision = self._args['--revision'] or self._get_revision_by_channel(channel)
-
-        self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
 
         tmp_files_commited = False
         repo_updated = False
@@ -701,9 +722,9 @@ class DistBuilder(object):
             msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
             distribution = 'unstable'
         else:
-            distribution = 'nightly'
-            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
             newversion = version + '~' + pkgdate
+            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
+            distribution = 'nightly'
 
         # Adapt the `debian/changelog` file via `debchange`.
         self._process.run(
@@ -779,5 +800,5 @@ class DistBuilderTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    dist_builder = DistBuilder(source_dir=os.environ['HOME'] + '/src')
+    dist_builder = DistBuilder()
     dist_builder.run()

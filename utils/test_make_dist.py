@@ -58,7 +58,7 @@ def test(arguments):
 test_arguments = [
     ('create release', 'The revision is supposed to be the latest existing tag, not the tip!'),
     ('create release --revision=v2.0.7-1', ''),
-    ('create release --revision=default', ''),
+    ('create release --revision=default --destination=/tmp/some/dir', ''),
     ('create release --revision=development --adapt-debian-changelog', ''),
     ('create release --source={}'.format(cli_args['--oa-dir']), ''),
     ('create release --source={} --revision=development'.format(cli_args['--oa-dir']), ''),

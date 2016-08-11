@@ -17,6 +17,8 @@ Version 2.0.14, (not released yet):
   `oaconfig install`. Thanks to Brandon Keep. (OP-959)
 * Development: Add Vagrantfile to easily set up a development environment
   (OP-1423)
+* Packaging: make_dist.py doesn't delete anything in the home directory
+  anymore (OP-1371)
 
 
 Version 2.0.13, 28. July 2016:
