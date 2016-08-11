@@ -673,6 +673,10 @@ class DistBuilder(object):
         build_basename = self._get_build_basename(channel, version)
 
         if self._args['--adapt-debian-changelog'] or self._is_debian_or_derivative():
+            if not self._args['--adapt-debian-changelog'] and self._is_debian_or_derivative():
+                self._warn('The --adapt-debian-changelog has been enabled for you because you '
+                           'are using Debian or a derivative.')
+
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
                                         version,
