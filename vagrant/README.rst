@@ -67,14 +67,6 @@ in your VM.
 
 To fix::
 
-    dbus.exceptions.DBusException: org.freedesktop.DBus.Error.AccessDenied: Connection ":1.6" is not allowed to own the service "org.openattic.systemd" due to security policies in the configuration file
-
-restart your dbus service::
-
-    sudo service dbus restart
-
-To fix::
-
     /home//.vagrant.d/gems/gems/fog-libvirt-0.0.3/lib/fog/libvirt/requests/compute/volume_action.rb:6:in `delete': Call to virStorageVolDelete failed: Kann Verknüpfung mit Datei '/var/lib/libvirt/images/vagrant_default.img' nicht revidieren: Keine Berechtigung (Libvirt::Error)
 
 Run::
