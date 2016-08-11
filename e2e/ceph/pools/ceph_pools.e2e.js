@@ -1,29 +1,14 @@
-var helpers = require('../common.js');
+var helpers = require('../../common.js');
+var cephPoolCommon = require('./cephPoolCommon.js');
 
 describe('should test the ceph pools panel', function(){
-
-  var cephMenu = element(by.css('.tc_menuitem_ceph > a'));
-  var cephPool = element(by.css('.tc_submenuitem_ceph_pools'));
-  var statusTab = element(by.css('.tc_statusTab'));
-  var cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
-
+  var cephPoolProperties = new cephPoolCommon();
 
   beforeAll(function(){
     helpers.login();
-    cephMenu.click();
-    cephPool.click();
+    cephPoolProperties.cephMenu.click();
+    cephPoolProperties.cephPools.click();
   });
-
-  var tableHeaders = [
-    'Name',
-    'ID',
-    'Used',
-    'Placement groups',
-    'Replica size',
-    'Erasure code profile',
-    'Type',
-    'Crush ruleset'
-  ];
 
   it('should check the ceph pool url', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/pools');
@@ -33,11 +18,14 @@ describe('should test the ceph pools panel', function(){
     expect(element(by.css('.tc_cephPoolTable')).isDisplayed()).toBe(true);
   });
 
-  it('should display the following table headers', function(){
-    for(tableHeader in tableHeaders){
-      expect(element(by.cssContainingText('th', tableHeaders[tableHeader])).isDisplayed()).toBe(true);
-      //check: console.log(tableHeaders[tableHeader]);
-    }
+  it('should have an add button', function(){
+    expect(cephPoolProperties.addButton.isDisplayed()).toBe(true);
+  });
+
+  cephPoolProperties.tableHeaders.forEach(function(header){
+    it('should ' + !header.displayed ? 'not ' : '' + 'display the following table header: ' + header.name, function(){
+      expect(element(by.cssContainingText('th', header.name)).isDisplayed()).toBe(header.displayed);
+    });
   });
 
   it('should have at least one ceph pools table entry', function(){
@@ -48,23 +36,22 @@ describe('should test the ceph pools panel', function(){
     //choose first element in ceph pools list
     element.all(by.binding('row.name')).get(0).click();
     expect(browser.getCurrentUrl()).toContain('/ceph/pools/status#more');
-
-    expect(statusTab.isDisplayed()).toBe(true);
-
-    //check for tab content
-    expect(element(by.cssContainingText('dt', 'Placement Groups:')).isDisplayed()).toBe(true);
-    expect(element(by.cssContainingText('dt', 'Size:')).isDisplayed()).toBe(true);
-    expect(element(by.cssContainingText('dt', 'Type:')).isDisplayed()).toBe(true);
+    expect(cephPoolProperties.statusTab.isDisplayed()).toBe(true);
   });
 
-  var cephCluster = helpers.configs.cephCluster;
-  var cephClusterCount = Object.keys(cephCluster).length;
-  Object.keys(cephCluster).forEach(function(clusterName){
-    var cluster = cephCluster[clusterName];
+  cephPoolProperties.detailAttributes.forEach(function(attribute){
+    it('should check the content attribute "' + attribute + '" in the details tab when selecting a pool', function(){
+      element.all(by.binding('row.name')).get(0).click();
+      expect(element.all(by.cssContainingText('dt', attribute + ':')).first().isDisplayed()).toBe(true);
+    });
+  });
+
+  Object.keys(cephPoolProperties.clusters).forEach(function(clusterName){
+    var cluster = cephPoolProperties.clusters[clusterName];
     Object.keys(cluster.pools).forEach(function(poolName){
       var pool = cluster.pools[poolName];
       it('should have the configured pool "' + pool.name + '" in the pool list of cluster "' + cluster.name + '"', function(){
-        if(cephClusterCount > 1){
+        if(cephPoolProperties.clusterCount > 1){
           var clusterSelect = element(by.model('registry.selectedCluster'));
           clusterSelect.sendKeys(cluster.name);
           expect(clusterSelect.getText()).toContain(cluster.name);
