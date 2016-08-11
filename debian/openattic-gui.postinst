@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+create_indexpage () {
+<<EOF cat >/var/www/html/index.html
+<html>
+  <head>
+    <meta http-equiv="refresh" content="1;url=/openattic" ></meta>
+  </head>
+  <body>
+    Redirecting...
+  </body>
+</html>
+EOF
+}
+
+INDEX_FILE="/var/www/html/index.html"
+if [ -f "$INDEX_FILE" ]; then
+    INDEXHTML=$(md5sum $INDEX_FILE |awk '{print $1}')
+    if [ "$INDEXHTML" = "74cec59a19e5d16f7cc6a2445e35fa3b" ] || [ "$INDEXHTML" = "c32ad802df5abca941d784abf642e7fd" ]; then
+	    create_indexpage
+    fi
+fi

@@ -23,6 +23,7 @@ from rest_framework.decorators import detail_route, list_route
 from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
+from taskqueue.restapi import TaskQueueLocationMixin
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -125,6 +126,40 @@ class CephPoolSerializer(NodbSerializer):
     class Meta:
         model = CephPool
 
+    erasure_code_profile = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    quota_max_objects = serializers.IntegerField(default=0)
+    quota_max_bytes = serializers.IntegerField(default=0)
+#    crush_ruleset = serializers.IntegerField() # TODO OP-1415
+    size = serializers.IntegerField(default=None, required=False)
+    min_size = serializers.IntegerField(default=None, required=False)
+    crash_replay_interval = serializers.IntegerField(default=0)
+    cache_mode = serializers.CharField(default='none')
+    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    target_max_bytes = serializers.IntegerField(default=0)
+    hit_set_period = serializers.IntegerField(default=0)
+    hit_set_count = serializers.IntegerField(default=0)
+
+    def validate(self, data):
+        if data['type'] == 'replicated':
+            errors = {
+                field: ['Replicated pools need ' + field]
+                for field
+                in ['size', 'min_size']
+                if field not in data or data[field] is None
+            }
+        else:
+            errors = {
+                field: ['Erasure coded pools need ' + field]
+                for field
+                in ['erasure_code_profile']
+                if not field in data or data[field] is None
+            }
+        if errors:
+            raise serializers.ValidationError(errors)
+        return data
+
 
 class FsidContext(object):
 
@@ -142,7 +177,7 @@ class FsidContext(object):
         return CephCluster.objects.all().get(fsid=self.fsid)
 
 
-class CephPoolViewSet(NodbViewSet):
+class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
     """Represents a Ceph pool.
 
     Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with

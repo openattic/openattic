@@ -34,6 +34,7 @@ from django.utils.translation import ugettext_noop as _
 
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
+import ceph.tasks
 from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
@@ -273,7 +274,9 @@ class CephCluster(NodbModel):
 
     @property
     def rados_client(self):
-        """Mainly for django shell by simplifying the access to librados."""
+        """Mainly for django shell by simplifying the access to librados.
+        :rtype: librados.Client
+        """
         return rados[self.fsid]
 
     def __str__(self):
@@ -305,8 +308,8 @@ class CephPool(NodbModel):
     full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField(editable=False)
-    size = models.IntegerField(help_text='Replica size')
-    min_size = models.IntegerField(default=1, null=True, editable=True)
+    size = models.IntegerField(help_text='Replica size', blank=True, null=True, editable=True)
+    min_size = models.IntegerField(help_text='Replica size', blank=True, null=True, editable=True)
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
     num_bytes = models.IntegerField(editable=False)
@@ -430,6 +433,12 @@ class CephPool(NodbModel):
 
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
             self.set_read_only_fields(original)
+            if insert:
+                for attr, value in diff.items():
+                    if not hasattr(self, attr):
+                        setattr(self, attr, value)
+                self._task_queue = ceph.tasks.track_pg_creation.delay(context.fsid, self.id, 0,
+                                                                self.pg_num)
 
             def schwartzian_transform(obj):
                 key, val = obj
@@ -460,7 +469,7 @@ class CephPool(NodbModel):
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
                 elif self.type == 'replicated' and key not in ['name']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
-                elif self.type == 'erasure' and key not in ['name', 'size']:
+                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
                 else:
                     logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not '
@@ -634,7 +643,7 @@ class CephPg(NodbModel):
     reported_epoch = models.CharField(max_length=100)
     reported_seq = models.CharField(max_length=100)
     stat_sum = JsonField(base_type=dict, editable=False)
-    state = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, help_text='http://docs.ceph.com/docs/master/rados/operations/pg-states/')
     stats_invalid = models.CharField(max_length=100)
     up = JsonField(base_type=list, editable=False)
     up_primary = models.IntegerField()
@@ -697,8 +706,10 @@ class CephPg(NodbModel):
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
-            for name in ['last_became_active', 'last_became_peered',
+            for name in ['last_became_active', 'last_became_peered', 'last_active', 'last_change',
                          'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
+                         'last_fresh', 'last_fullsized', 'last_peered', 'last_undegraded',
+                         'last_unstale',
                          'osd_id', 'pool_name']:
                 if name not in model_args:
                     model_args[name] = None
