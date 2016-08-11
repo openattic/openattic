@@ -52,8 +52,11 @@ Options:
     --adapt-debian-changelog
 
         If enabled, the `debian/changelog` is updated using `debchange`.
+
         Because `debchange` is not available on every system, this switch is
-        optional and the functionality is disabled by default.
+        optional and the functionality is disabled by default.  But if the
+        script is run on Debian or Ubuntu, the switch will automatically be
+        enabled for you.
 
     --push-changes
 
@@ -90,6 +93,7 @@ import subprocess
 import re
 import unittest
 import ConfigParser
+import platform
 from shutil import rmtree, copytree
 from os.path import isfile, isdir
 from os import makedirs
@@ -603,6 +607,10 @@ class DistBuilder(object):
     def _get_release_channel(self):
         return 'release' if self._args['release'] else 'snapshot'
 
+    @staticmethod
+    def _is_debian_or_derivative():
+        return platform.linux_distribution()[0].lower() in ('ubuntu', 'debian')
+
     def build(self):
         """
         :return: The absolute file path of the newly created tarball.
@@ -643,7 +651,7 @@ class DistBuilder(object):
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
         build_basename = self._get_build_basename(channel, version)
 
-        if self._args['--adapt-debian-changelog']:
+        if self._args['--adapt-debian-changelog'] or self._is_debian_or_derivative():
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
                                         version,
