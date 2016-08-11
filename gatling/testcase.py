@@ -192,6 +192,16 @@ class GatlingTestCase(unittest.TestCase):
                 for vol in res["response"]:
                     cls.send_request("DELETE", "volumes", obj_id=vol["id"])
 
+    def check_field_validation_messages(self, err_response, expected_message, field=None):
+        self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
+        self.assertEqual(err_response.exception.response.status_code, 400)
+
+        detailed_err = err_response.exception.response.json()
+        if field:
+            self.assertEqual(str(detailed_err["detail"][field][0]), expected_message)
+        else:
+            self.assertEqual(str(detailed_err), expected_message)
+
     def check_volume_properties(self, vol, max_size=None):
         """
         Checks the volume specific properties.

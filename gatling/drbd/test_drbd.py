@@ -200,7 +200,7 @@ class DrbdTests(object):
         # check status code and error message
         expected_err_message = "The size of a DRBD connection can only be increased but the new " \
                                "size (500.00MB) is smaller than the current size (1,000.00MB)."
-        self._check_field_validation_messages(err, expected_err_message)
+        self.check_field_validation_messages(err, expected_err_message)
 
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
@@ -221,7 +221,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "Value u'F' is not a valid choice."
-        self._check_field_validation_messages(err, expected_err_message, "protocol")
+        self.check_field_validation_messages(err, expected_err_message, "protocol")
 
     def test_create_0m(self):
         """ Try to create a Connection with syncer rate set to 0M. """
@@ -241,7 +241,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be between 500K and 100M"
-        self._check_field_validation_messages(err, expected_err_message, "syncer_rate")
+        self.check_field_validation_messages(err, expected_err_message, "syncer_rate")
 
     def test_create_10g(self):
         """ Try to create a Connection with syncer rate set to 10G. """
@@ -261,7 +261,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
-        self._check_field_validation_messages(err, expected_err_message, "syncer_rate")
+        self.check_field_validation_messages(err, expected_err_message, "syncer_rate")
 
     def test_create_1t(self):
         """ Try to create a Connection with syncer rate set to 1T (invalid unit). """
@@ -281,7 +281,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
-        self._check_field_validation_messages(err, expected_err_message, "syncer_rate")
+        self.check_field_validation_messages(err, expected_err_message, "syncer_rate")
 
     def test_create_rate_with_space(self):
         """ Try to create a Connection with syncer rate set to 10 M (space char is invalid). """
@@ -301,17 +301,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
-        self._check_field_validation_messages(err, expected_err_message, "syncer_rate")
-
-    def _check_field_validation_messages(self, err_response, expected_message, field=None):
-        self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
-        self.assertEqual(err_response.exception.response.status_code, 400)
-
-        detailed_err = err_response.exception.response.json()
-        if field:
-            self.assertEqual(str(detailed_err["detail"][field][0]), expected_message)
-        else:
-            self.assertEqual(str(detailed_err), expected_message)
+        self.check_field_validation_messages(err, expected_err_message, "syncer_rate")
 
     def _get_mirror_volume(self, source_pool_id):
         vol_data = {"megs": self.volumesize,
