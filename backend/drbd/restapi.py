@@ -63,11 +63,8 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
             protocol = request.DATA.get("protocol", protocol_default)
             syncer_rate = request.DATA.get("syncer_rate", syncer_rate_default)
 
-            try:
-                connection = Connection.objects.create_connection(protocol, syncer_rate,
-                                                                  source_volume["id"])
-            except Exception, err:
-                return Response(err.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
+            connection = Connection.objects.create_connection(protocol, syncer_rate,
+                                                              source_volume["id"])
         else:
             # CREATE VOLUME
             connection_id = request.DATA["connection_id"]
