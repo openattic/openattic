@@ -274,7 +274,9 @@ class CephCluster(NodbModel):
 
     @property
     def rados_client(self):
-        """Mainly for django shell by simplifying the access to librados."""
+        """Mainly for django shell by simplifying the access to librados.
+        :rtype: librados.Client
+        """
         return rados[self.fsid]
 
     def __str__(self):
@@ -306,8 +308,8 @@ class CephPool(NodbModel):
     full = models.BooleanField(default=None, editable=False)
     pg_num = models.IntegerField()
     pgp_num = models.IntegerField(editable=False)
-    size = models.IntegerField(help_text='Replica size')
-    min_size = models.IntegerField(default=1, null=True, editable=True)
+    size = models.IntegerField(help_text='Replica size', blank=True, null=True, editable=True)
+    min_size = models.IntegerField(help_text='Replica size', blank=True, null=True, editable=True)
     crush_ruleset = models.IntegerField()
     crash_replay_interval = models.IntegerField()
     num_bytes = models.IntegerField(editable=False)
@@ -432,6 +434,9 @@ class CephPool(NodbModel):
             diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
             self.set_read_only_fields(original)
             if insert:
+                for attr, value in diff.items():
+                    if not hasattr(self, attr):
+                        setattr(self, attr, value)
                 self._task_queue = ceph.tasks.track_pg_creation.delay(context.fsid, self.id, 0,
                                                                 self.pg_num)
 
@@ -464,7 +469,7 @@ class CephPool(NodbModel):
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
                 elif self.type == 'replicated' and key not in ['name']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
-                elif self.type == 'erasure' and key not in ['name', 'size']:
+                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size']:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original, key))
                 else:
                     logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not '
