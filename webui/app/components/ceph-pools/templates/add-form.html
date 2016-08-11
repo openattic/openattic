@@ -30,7 +30,7 @@
         <select ng-disabled="!clusters" class="form-control tc_cluster_selection" ng-model="data.cluster"
                 ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid"
                 name="cluster" required>
-            <option class="tc_poolClusterOption" value="" ng-bind="waitingClusterMsg"></option>
+            <option class="tc_clusterOption" value="" ng-bind="waitingClusterMsg"></option>
         </select>
         <span class="help-block tc_clusterRequired" ng-show="(poolForm.$submitted || poolForm.cluster.$dirty)
             && poolForm.cluster.$error.required">
@@ -50,7 +50,7 @@
             ng-options="poolType.name as poolType.description for poolType in data.poolTypes" ng-model="pool.type">
             <option class="tc_poolTypesOption" value=""> -- Select a pool type -- </option>
         </select>
-        <span class="help-block tc_poolRequired" ng-show="(poolForm.$submitted || poolForm.poolTypes.$dirty)
+        <span class="help-block tc_typeRequired" ng-show="(poolForm.$submitted || poolForm.poolTypes.$dirty)
             && poolForm.poolTypes.$error.required">
             This field is required!
         </span>
@@ -103,11 +103,11 @@
                     ng-options="rule.rule_name for rule in data.cluster.rules">
                     <option class="tc_crushSetOption" value=""> -- Select a erasure code profile -- </option>
                 </select>
-                <span class="help-block tc_poolRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
+                <span class="help-block tc_crushSetRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
                     && poolForm.crushSet.$error.required">
                     This field is required!
                 </span>
-                <span class="help-block tc_poolRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
+                <span class="help-block tc_crushSetFailure" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
                     && poolForm.crushSet.$error.sizeError" ng-bind="replicaSizeError"></span>
             </div>
         </div>
@@ -123,7 +123,7 @@
                 ng-model="pool.erasure.profile">
                 <option class="tc_erasureProfilesOption" value=""> -- Select a erasure code profile -- </option>
             </select>
-            <span class="help-block tc_poolRequired" ng-show="(poolForm.$submitted || poolForm.erasureProfiles.$dirty)
+            <span class="help-block tc_erasureRequired" ng-show="(poolForm.$submitted || poolForm.erasureProfiles.$dirty)
                 && poolForm.erasureProfiles.$error.required">
                 This field is required!
             </span>

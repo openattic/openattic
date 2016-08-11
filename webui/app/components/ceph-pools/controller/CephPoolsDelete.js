@@ -65,21 +65,6 @@ app.controller("CephPoolsDelete", function ($scope, cephPoolsService, $uibModalI
     });
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
-      var toastTitle = "Deleted ";
-      if ($scope.cephPools.length > 1) {
-        toastTitle += $scope.cephPools.length + " pools";
-      } else {
-        toastTitle += $scope.cephPool.name;
-      }
-      var toastMsg = "";
-      $scope.cephPools.forEach(function (cephPool) {
-        toastMsg += "<li>" + cephPool.name + "</li>";
-      });
-      toasty.success({
-        title: toastTitle,
-        msg: "Deleted: <ul>" + toastMsg + "</ul>",
-        timeout: 5000
-      });
     }, function (error) {
       $uibModalInstance.close("deleted");
       toasty.error({

@@ -108,19 +108,22 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
             }
           }
         })
-        .catch(function (error) {
+        .catch(function (crushError) {
+          $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
           toasty.error({
             title: "Loading failure",
-            msg: "Crushmap couldn't be loaded."
+            msg: "Crushmap couldn't be loaded.",
+            timeout: 10000
           });
-          throw clusterError;
+          throw crushError;
         });
     })
     .catch(function (clusterError) {
       $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
       toasty.error({
         title: "Loading failure",
-        msg: "Cluster list couldn't be loaded."
+        msg: "Cluster list couldn't be loaded.",
+        timeout: 10000
       });
       throw clusterError;
     });
@@ -136,7 +139,8 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
         .catch(function (osdError) {
           toasty.error({
             title: "Loading error",
-            msg: "OSD's couldn't be loaded."
+            msg: "OSD's couldn't be loaded.",
+            timeout: 10000
           });
           throw osdError;
         });
@@ -144,11 +148,13 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function (res) {
           $scope.data.profiles = res.results;
+          $scope.pool.erasure.profile = $scope.data.profiles[0].name;
         })
         .catch(function (osdError) {
           toasty.error({
             title: "Loading error",
-            msg: "Erasure code profiles couldn't be loaded."
+            msg: "Erasure code profiles couldn't be loaded.",
+            timeout: 10000
           });
           throw osdError;
         });
@@ -220,7 +226,7 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
         hit_set_count: 0,
         // Cluster Definition
         id: $scope.clusterId
-      }
+      };
       if (pool.type === "replicated") {
         pool.min_size = 1; // No need for this here - API update needed.
         pool.size = $scope.pool[pool.type].size;
