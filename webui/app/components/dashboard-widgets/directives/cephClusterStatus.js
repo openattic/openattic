@@ -124,7 +124,6 @@ app.directive("cephClusterStatus", function () {
 
       // Event-Handler
       $scope.$on("$destroy", function () {
-        console.log("Stop ceph Cluster Health");
         $scope.stopInterval();
       });
 
