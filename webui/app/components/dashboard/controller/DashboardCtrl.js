@@ -282,12 +282,6 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
     dashboardService
         .save(obj)
         .$promise
-        .then(function () {
-          toasty.success({
-            title: "Dashboard saved",
-            msg  : "Changes have been saved successfully."
-          });
-        })
         .catch(function (err) {
           throw err;
         });
