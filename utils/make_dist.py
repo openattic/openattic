@@ -61,10 +61,13 @@ Options:
 
         If enabled, the `debian/changelog` is updated using `debchange`.
 
+        The `debian/changelog` has to be updated if you want to be able to
+        create deb packages out of the resulting tar archive.
+
         Because `debchange` is not available on every system, this switch is
         optional and the functionality is disabled by default.  But if the
         script is run on Debian or Ubuntu, the switch will automatically be
-        enabled for you.
+        enabled for your convenience. A proper warning is displayed.
 
     --push-changes
 
