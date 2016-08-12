@@ -3,7 +3,7 @@
     <div class="form-group">
       <select id="selectDashboard" class="form-control"
               ng-model="data.settings.activeBoard"
-              ng-options="board.id as board.name for board in data.boards | orderBy: data.settings.orderBy">
+              ng-options="board.id as board.name for board in data.boards | orderBy: 'name'">
       </select>
     </div>
 
@@ -74,6 +74,10 @@
       <div class="panel-body">
         <ceph-cluster-status widget="widget" ng-if="widget.manager.manager == 'ceph-cluster-status'">
         </ceph-cluster-status>
+        <openattic-cluster-status widget="widget" ng-if="widget.manager.manager == 'openattic-cluster-status'">
+        </openattic-cluster-status>
+        <openattic-wizards widget="widget" ng-if="widget.manager.manager == 'openattic-wizards'">
+        </openattic-wizards>
       </div>
     </div>
   </div>
