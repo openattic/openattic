@@ -35,7 +35,7 @@ app.directive("openatticClusterStatus", function () {
   return {
     restrict   : "E",
     scope      : true,
-    controller : function ($scope) {
+    controller : function () {
     },
     templateUrl: "components/dashboard-widgets/templates/openattic-cluster-status.html"
   };
