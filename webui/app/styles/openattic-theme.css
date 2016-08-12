@@ -459,6 +459,10 @@ fieldset[disabled] .btn-primary.active {
   height: 100%;
   overflow: auto;
 }
+.panel-dashboard>.panel-body .indent {
+  margin-top: 10px;
+  margin-left: 10px;
+}
 .panel-dashboard .overlay {
   position: absolute;
   bottom: 5px;
