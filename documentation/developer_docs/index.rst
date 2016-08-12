@@ -24,7 +24,7 @@ application), wants to perform an action, the following happens:
 
 * The |oA| `systemd` executes commands on the system and delivers the results.
 
-First of all, start off by :ref:`developer_setup_howto`. Then code away,
+First of all, start off by :ref:`developer_vagrant_howto` or :ref:`developer_setup_howto`. Then code away,
 implementing whatever changes you want to make.
 
 See :ref:`developer_contribute` for details on how to submit your changes to
@@ -39,6 +39,7 @@ documentation.
 .. toctree::
   :maxdepth: 2
 
+  vagrant
   setup_howto
   contribute
   contributing_guidelines
