@@ -22,14 +22,31 @@ var globalConfig = {
     },
     "defaultDashboard": {
       "boards"  : [{
-        "id"     : 0,
         "name"   : "Default",
-        "widgets": []
+        "widgets": [{
+          "name"    : "openATTIC cluster status",
+          "manager" : {
+            "name"   : "openATTIC cluster status",
+            "manager": "openattic-cluster-status",
+            "group"  : "Local storage"
+          },
+          "settings": {},
+          "minSizeX": 3,
+          "minSizeY": 2
+        }, {
+          "name"    : "openATTIC wizards",
+          "manager" : {
+            "name"   : "openATTIC wizards",
+            "manager": "openattic-wizards",
+            "group"  : "Local storage"
+          },
+          "settings": {},
+          "minSizeX": 2,
+          "minSizeY": 2
+        }]
       }, {
-        "id"     : 1,
         "name"   : "Ceph",
         "widgets": [{
-          "id"      : 0,
           "name"    : "Ceph Status",
           "manager" : {
             "name"   : "Ceph Cluster Status",
@@ -41,11 +58,10 @@ var globalConfig = {
       }],
       "settings": {
         "activeBoard": 0,
-        "locked"     : false,
-        "orderBy"    : "name"
+        "locked"     : false
       }
     },
-    "quickLogin": {
+    "quickLogin"      : {
       "username": "",
       "password": ""
     }
