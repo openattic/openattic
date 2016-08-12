@@ -311,14 +311,14 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
     }
 
     // verify board and widget objects
-    if (!angular.isDefined(globalConfig.GUI.defaultDashboard.boards) &&
-        !angular.isArray(globalConfig.GUI.defaultDashboard.boards) &&
-        !globalConfig.GUI.defaultDashboard.boards.length < 1) {
+    if (!angular.isDefined(globalConfig.GUI.defaultDashboard.boards) ||
+        !angular.isArray(globalConfig.GUI.defaultDashboard.boards) ||
+        globalConfig.GUI.defaultDashboard.boards.length < 1) {
       throw "InvalidDashboardConfiguration";
     }
 
     angular.forEach(globalConfig.GUI.defaultDashboard.boards, function (board) {
-      if (!angular.isDefined(board.widgets) && !angular.isArray(board.widgets)) {
+      if (!angular.isDefined(board.widgets) || !angular.isArray(board.widgets)) {
         throw "InvalidWidgetConfiguration";
       }
 
@@ -372,11 +372,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
               $scope.data.settings.activeBoard = 0;
             }
             $scope.dashboard = $scope.data.boards[$scope.data.settings.activeBoard];
-
-            $scope.saveDashboard();
           } catch (error) {
             $scope.data = {
               "boards"  : [{
+                "id"     : 0,
                 "name"   : "Default",
                 "widgets": []
               }],
@@ -385,6 +384,8 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
                 "locked"     : false
               }
             };
+          } finally {
+            $scope.saveDashboard();
           }
         })
         .catch(function (error) {
