@@ -34,5 +34,10 @@ var app = angular.module("openattic.cephCluster");
 app.factory("cephClusterService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid", {
     fsid: "@fsid"
+  }, {
+    status: {
+      url   : globalConfig.API.URL + "ceph/:fsid/status",
+      method: "GET"
+    }
   });
 });
