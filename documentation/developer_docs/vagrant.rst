@@ -118,7 +118,7 @@ pointing to ``/home/vagrant/env/bin/python`` on your VM. Then, add
 ``/home/vagrant/openattic/backend`` to the Python interpreter paths. You will be asked to activate
 a few PyCharm extensions, like a Django support or the remote interpreter tools.
 
-Finally, add the |oA| django Server as a Pycharm `Django server` in the `Run Configurations` using
+Finally, add the |oA| Django Server as a Pycharm `Django server` in the `Run Configurations` using
 your configured remote interpreter.
 
 Debugging |oA| with PyCharm Community
@@ -130,7 +130,7 @@ Please follow the instructions from the `official documentation <https://www.jet
 Troubleshooting
 ---------------
 
-**|oA| `systemd`**
+**openATTIC systemd**
 
 If the |oA| `systemd` is not running on your VM, you can start it by executing::
 
@@ -138,7 +138,7 @@ If the |oA| `systemd` is not running on your VM, you can start it by executing::
 
 in your VM.
 
-**`vagrant destroy` failes**
+**vagrant destroy failes**
 
 To fix this error::
 
