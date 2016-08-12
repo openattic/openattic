@@ -51,6 +51,15 @@ class ZfsNativePoolTestScenario(GatlingTestCase):
     def _get_pool(self):
         return self.zpool
 
+    @property
+    def error_messages(self):
+        return {
+            "test_create_not_enough_space": "ZPool {} has insufficient space"
+                .format(self.zpool["name"]),
+            "test_create_0mb": "Volumes need to be at least 100MB in size.",
+            "test_resize_0mb": "Volumes need to be at least 100MB in size."
+        }
+
 
 class ZfsLvmPoolTestScenario(LvTestScenario):
 
@@ -87,3 +96,12 @@ class ZfsLvmPoolTestScenario(LvTestScenario):
     def _get_pool(self):
         zpool = self.send_request("GET", "volumes", obj_id=self.zpool["id"])
         return zpool["response"]
+
+    @property
+    def error_messages(self):
+        return {
+            "test_create_not_enough_space": "ZPool {} has insufficient space"
+                .format(self.zpool["name"]),
+            "test_create_0mb": "Volumes need to be at least 100MB in size.",
+            "test_resize_0mb": "Volumes need to be at least 100MB in size."
+        }
