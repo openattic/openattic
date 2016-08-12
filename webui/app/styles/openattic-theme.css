@@ -444,12 +444,13 @@ fieldset[disabled] .btn-primary.active {
   cursor: move;
   position: relative;
   margin-top: -60px;
-  /*position: absolute;*/
-  /*top: 0;*/
-  /*left: 0;*/
   width: 100%;
+}
+.panel-dashboard>.panel-heading>.panel-title {
   overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
 }
 .panel-dashboard>.panel-heading>.toolbar a {
   text-decoration: none;
