@@ -95,15 +95,15 @@ app.directive("cephClusterStatus", function () {
 
         if ($scope.data.warn.length > 0 || $scope.data.err.length > 0) {
           angular.forEach($scope.data.warn.concat($scope.data.err), function (cluster) {
-              cephClusterService
-                  .status({fsid: cluster.fsid})
-                  .$promise
-                  .then(function (res) {
-                    cluster.summary = res.health.summary;
-                  })
-                  .catch(function (error) {
-                    throw error;
-                  });
+            cephClusterService
+                .status({fsid: cluster.fsid})
+                .$promise
+                .then(function (res) {
+                  cluster.summary = res.health.summary;
+                })
+                .catch(function (error) {
+                  throw error;
+                });
           });
         }
       };
