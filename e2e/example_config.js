@@ -7,6 +7,7 @@
     username: 'openattic',
     password: 'openattic',
     sleep   : 2000,
+    outDir: '<existing_path>', // Path in which the errors can be stored in as screenshot and error log pair.
     pools   :{
     //Please make sure that the first item in pools is a VG.
       vg:{
