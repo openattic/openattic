@@ -36,7 +36,9 @@ else:
                   "configuration file.")
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
-django.setup()
+
+if django.VERSION[:2] == (1, 7):
+    django.setup()
 
 
 def main():
