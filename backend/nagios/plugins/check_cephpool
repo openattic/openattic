@@ -21,8 +21,8 @@ import django
 import time
 
 from optparse import OptionParser
-
 from configobj import ConfigObj
+from distutils.version import StrictVersion
 
 distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
 for config_file in distro_config:
@@ -37,7 +37,7 @@ else:
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
-if django.VERSION[:2] == (1, 7):
+if StrictVersion(django.get_version()) >= StrictVersion("1.7"):
     django.setup()
 
 
