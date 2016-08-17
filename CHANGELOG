@@ -23,6 +23,8 @@ Version 2.0.14, (not released yet):
   anymore (OP-1371)
 * Packaging: Simplified the usage of make_dist.py and prevented
   `build_deb_packages.py` from hanging indefinitely (OP-1431)
+* Packaging: Fixed a bug where folder names had to be `openattic` to be
+  correctly packaged using `make_dist.py` (OP-1447 and OP-1449)
 
 
 Version 2.0.13, 28. July 2016:
