@@ -17,9 +17,10 @@ The |oA| source code repository is publicly hosted in a `Mercurial Repository
 on BitBucket <https://bitbucket.org/openattic/openattic/>`_.
 
 A "fork" is a remote Mercurial clone of a repository. Every |oA| developer
-makes code modifications on a local |oA| fork before they are merged into
-the main repository. See :ref:`developer_contribute` for instructions on how
-to get your code contributions included in the |oA| main repository.
+makes code modifications on a local copy (clone) of his fork before they are
+merged into the main repository. See :ref:`developer_contribute` for
+instructions on how to get your code contributions included in the |oA| main
+repository.
 
 It is possible to create a local clone of the |oA| repository by simply
 running ``hg clone https://bitbucket.org/openattic/openattic``.
