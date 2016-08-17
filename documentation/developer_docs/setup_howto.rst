@@ -8,6 +8,11 @@ performing the following steps. The instructions below assume a Debian
 "Jessie" or Ubuntu "Trusty" Linux environment. The package names and path
 names likely differ on other Linux distributions.
 
+If you don't want to bother with performing the following steps manually,
+take a look at :ref:`developer_vagrant_howto`, which automates the process
+of setting up a development environment in a virtual machine to keep it
+separated from your local system.
+
 Installing the Development Tools
 --------------------------------
 
