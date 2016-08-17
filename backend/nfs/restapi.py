@@ -16,7 +16,7 @@
 
 import django_filters
 
-from rest_framework import serializers, viewsets, status
+from rest_framework import serializers, viewsets
 
 from rest import relations
 
@@ -25,10 +25,13 @@ from nfs.models import Export
 
 from rest.multinode.handlers import RequestHandlers
 
+
 class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for an NFS Export. """
-    url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
-    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
+    url = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
+                                               source="volume.storageobj",
+                                               queryset=StorageObject.objects.all())
 
     class Meta:
         model = Export
@@ -39,24 +42,26 @@ class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
         del attrs["volume.storageobj"]
         return super(NfsShareSerializer, self).restore_object(attrs, instance)
 
+
 class NfsShareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
 
     class Meta:
-        model  = Export
+        model = Export
         fields = ['volume']
 
+
 class NfsShareViewSet(viewsets.ModelViewSet):
-    queryset         = Export.objects.all()
+    queryset = Export.objects.all()
     serializer_class = NfsShareSerializer
-    filter_class     = NfsShareFilter
+    filter_class = NfsShareFilter
 
 
 class NfsShareProxyViewSet(RequestHandlers, NfsShareViewSet):
-    queryset    = Export.all_objects.all()
-    api_prefix  = 'nfsshares'
+    queryset = Export.all_objects.all()
+    api_prefix = 'nfsshares'
     host_filter = 'volume__storageobj__host'
-    model       = Export
+    model = Export
 
 
 RESTAPI_VIEWSETS = [
