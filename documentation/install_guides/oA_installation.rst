@@ -83,7 +83,9 @@ Basic Storage Configuration
 .. note::
   If you only want to use |oA| for managing and monitoring a Ceph cluster, you
   can skip the storage configuration. No additional local disks or storage
-  pools are required for performing this functionality.
+  pools are required for performing this functionality. After performing the
+  basic |oA| software installation, follow the steps outlined in
+  :ref:`enabling_ceph_support` to make your Ceph cluster known to |oA|.
 
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
 group or a ZFS zpool) for creating storage volumes. In the following chapters,
@@ -360,7 +362,7 @@ It can be installed with the following command::
   page in the Apache web server's document root that will redirect requests to
   the |oA| web interface.
 
-Configure pnp4nagios
+Configure PNP4Nagios
 --------------------
 
 |oA| uses `Nagios <https://www.nagios.org/>`_ and the `PNP4Nagios

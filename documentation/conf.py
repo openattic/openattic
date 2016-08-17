@@ -18,6 +18,7 @@ from datetime import datetime
 config = SafeConfigParser()
 config.read('../version.txt')
 datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
+year = datetime.now().year
 config_version = config.get('package', 'VERSION')
 read_out_version = config_version + '-' + datestring
 
@@ -49,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'openATTIC'
-copyright = u'2014-2015, it-novum GmbH'
+copyright=u'2014-{year}, it-novum GmbH'.format(year=year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

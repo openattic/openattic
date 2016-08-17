@@ -5,56 +5,17 @@ Setting up a Development System with Vagrant
 
 Setting up a development system using `Vagrant <https://www.vagrantup.com/>`_ is by far the easiest
 way to start developing on |oa|. However, we also provide instructions for setting up a classical
-development environment in :ref:`developer_setup_howto`. Our Vagrant setup uses either a
-VirtualBox or a KVM/libvirt VM as base image. You will need to install at least one of them.
+development environment in :ref:`developer_setup_howto`.
+
+Vagrant Installation
+--------------------
+
+Our Vagrant setup uses either a VirtualBox or a KVM/libvirt VM as base image.
+You will need to install at least one of them.
 
 For example, KVM/libvirt can be installed on Ubuntu by running::
 
     sudo apt-get install qemu-kvm
-
-.. _developer_hg_howto:
-
-Create Your own |oA| Fork
--------------------------
-
-The |oA| source code is managed using the `Mercurial
-<https://www.mercurial-scm.org/>`_ distributed source control management tool.
-Mercurial offers you a full-fledged version control, where you can commit and
-manage your source code locally and also exchange your modifications with
-other developers by pushing and pulling change sets across repositories.
-
-If you're new to Mercurial, take a look at the `Learn Mercurial
-<https://www.mercurial-scm.org/learn>`_ web site. This will teach you the
-basics of how to get started.
-
-The |oA| source code repository is publicly hosted in a `Mercurial Repository
-on BitBucket <https://bitbucket.org/openattic/openattic/>`_.
-
-A "fork" is a remote Mercurial clone of a repository. Every |oA| developer
-makes code modifications on a local |oA| fork before they are merged into
-the main repository. See :ref:`developer_contribute` for instructions on how
-to get your code contributions included in the |oA| main repository.
-
-It is possible to create a local clone of the |oA| repository by simply
-running ``hg clone https://bitbucket.org/openattic/openattic``.
-
-However, if you would like to collaborate with the |oA| developers, you should
-consider creating a user account on BitBucket and create a "Fork".
-
-Take a look at the `BitBucket Documentation
-<https://confluence.atlassian.com/bitbucket/bitbucket-cloud-documentation-home-221448814.html>`_
-for instructions on how to create a free BitBucket account. We require real
-user names over pseudonyms when working with contributors.
-
-Once you are logged into BitBucket, go to `the openATTIC main repository
-<https://bitbucket.org/openattic/openattic>`_ and click **Fork** on the left
-side under **ACTIONS**. Now you should have your own |oA| fork, which will
-be used to create a local copy (clone). You can find your repository's SSH or
-HTTPS URL in the top right corner of the repository overview page.
-
-
-Installation
-------------
 
 Please follow the official documentation for
 `installing Vagrant <https://www.vagrantup.com/docs/installation/>`_. After installing Vagrant,
@@ -70,6 +31,11 @@ The ``vagrant-libvirt`` plugin is required when using KVM on Linux::
 
 Starting the Virtual Machine
 ----------------------------
+
+The |oA| source code repository contains a Vagrant configuration file that
+performs the necessary steps to get you started. Follow the instructions
+outlined in :ref:`developer_hg_howto` on how to create your own fork and
+local Mercurial repository.
 
 Navigate to the ``vagrant`` subdirectory of your local Mercurial clone and run this command to
 start your VM::
@@ -138,7 +104,7 @@ If the |oA| `systemd` is not running on your VM, you can start it by executing::
 
 in your VM.
 
-**vagrant destroy failes**
+**vagrant destroy fails**
 
 To fix this error::
 
