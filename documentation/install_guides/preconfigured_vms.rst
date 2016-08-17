@@ -7,16 +7,15 @@ Download Preconfigured Virtual Machine
 
 At the moment you can download |oA| installed on Debian and Ubuntu. More coming soon...
 
-You can choose between two different image files - ``qcow2 for KVM and vdi for VirtualBox``.
+You can choose between two different image files - ``qcow2`` for KVM and ``vdi`` for VirtualBox.
 
 The default login username for the VMs is **root** and the password is **openattic**. 
 
 The default login username for the |oA| WebUI is **openattic** and the password is **openattic**.
 
-	.. note::
-
-	Please run ``oaconfig install`` the first time you've started the virtual machine. 
-	Otherwise the WebUI will be empty.
+.. note::
+   Please run ``oaconfig install`` the first time you've started the virtual machine.
+   Otherwise the WebUI will be empty.
 
 How to use those images:
 
