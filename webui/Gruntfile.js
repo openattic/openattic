@@ -175,7 +175,7 @@ module.exports = function (grunt) {
       // add revision numbers to js and css files to avoid caching problems
       rev: {
         files: {
-          src: ["<%= buildConfig.dist %>*.{js,css}"]
+          src: ["<%= buildConfig.dist %>oa-app.css", "<%= buildConfig.dist %>oa-app.js"]
         }
       },
 
