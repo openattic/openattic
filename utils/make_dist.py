@@ -253,11 +253,10 @@ class DistBuilder(object):
         if self._source_is_path:
             self._source = os.path.abspath(self._source)
         self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
-        self._source_basename = DistBuilder.get_basename(self._source)
-        self._tmp_build_dir = os.path.join(self._tmp_dir, self._source_basename)
-        self._version_txt_path = os.path.join(self._tmp_build_dir, 'version.txt')
-        self._package_json_path = os.path.join(self._tmp_build_dir, 'webui', 'package.json')
-        self._bower_json_path = os.path.join(self._tmp_build_dir, 'webui', 'bower.json')
+        self._tmp_oa_clone_dir = os.path.join(self._tmp_dir, 'openattic')
+        self._version_txt_path = os.path.join(self._tmp_oa_clone_dir, 'version.txt')
+        self._package_json_path = os.path.join(self._tmp_oa_clone_dir, 'webui', 'package.json')
+        self._bower_json_path = os.path.join(self._tmp_oa_clone_dir, 'webui', 'bower.json')
 
         self._verbosity = VERBOSITY_NORMAL
         if self._args['-q']:
@@ -269,7 +268,7 @@ class DistBuilder(object):
 
         self._npmrc_file_path = os.path.join(self._home_dir, '.npmrc')
         self._npm_prefix_row = 'prefix = ~/.node'
-        self._cache_dir = os.path.join(self._home_dir, '.cache', 'openattic-build')
+        self._fe_cache_dir = os.path.join(self._home_dir, '.cache', 'openattic-build', 'oa_cache')
         self._process = Process(self._verbosity)
         self._datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
 
@@ -304,7 +303,7 @@ class DistBuilder(object):
     def _get_latest_tag_of_rev(self):
         """Return the latest global tag of the currently activated revision."""
         result = self._process.run(['hg', 'parents', '--template', '{latesttag}'],
-                                   cwd=self._tmp_build_dir)
+                                   cwd=self._tmp_oa_clone_dir)
         return result.stdout
 
     def __get_all_tags(self, source_dir):
@@ -336,7 +335,7 @@ class DistBuilder(object):
         return sorted(iterable, key=extract_version_numbers, reverse=True)
 
     def _get_latest_existing_tag(self, strip_tag=False):
-        tags = self.__get_all_tags(self._tmp_build_dir)
+        tags = self.__get_all_tags(self._tmp_oa_clone_dir)
         tags.remove('tip')  # We're looking for the latest _labeled_ tag. So we exclude 'tip'.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
@@ -360,7 +359,7 @@ class DistBuilder(object):
             # Update to the given revision before determining the upcoming version. Don't do this if
             # the source is a path, because that one is for creating tarballs to be tested before
             # releasing them.
-            self._process.run(['hg', 'update', revision], cwd=self._tmp_build_dir)
+            self._process.run(['hg', 'update', revision], cwd=self._tmp_oa_clone_dir)
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -443,26 +442,27 @@ class DistBuilder(object):
         sys.stderr.write(message + os.linesep)
         sys.exit(2)
 
-    def _retrieve_source(self, destination_dir, source, skip_if_exists=False):
+    def _retrieve_source(self, source, destination_dir, skip_if_exists=False):
         """Clone or copy the sources to the specified directory.
 
         Skips the process if the target directory already exists. The target directory is determined
         using the target_dir argument and the basename of the source.
 
-        :param destination_dir: The directory where the sources should be cloned/copied to.
-        :type destination_dir: str
         :param source: The source. These may be a path or a URL.
         :type source: str
+        :param destination_dir: The directory where the sources should be cloned/copied to.
+        :type destination_dir: str
         """
-        if not isdir(destination_dir):
-            makedirs(destination_dir)
+        basedir = os.path.split(destination_dir)[0]
+        if not isdir(basedir):
+            makedirs(basedir)
 
-        abs_source_dir = os.path.join(destination_dir, DistBuilder.get_basename(source))
-        if isdir(abs_source_dir) and skip_if_exists:
-            self._log('Skipping retrieval of {} because it already exists'.format(source))
+        if isdir(destination_dir) and skip_if_exists:
+            msg = 'Skipping retrieval of {} because it already exists in {}'
+            self._log(msg.format(source, destination_dir))
             return
 
-        self._process.run(['hg', 'clone', source, abs_source_dir])
+        self._process.run(['hg', 'clone', source, destination_dir])
 
     @staticmethod
     def _strip_mercurial_tag(tag):
@@ -479,7 +479,7 @@ class DistBuilder(object):
         return hits[0][0] if hits else None  # Return first hit of first group or None.
 
     def _is_existing_tag(self, tag):
-        result = self._process.run(['hg', 'tags'], cwd=self._tmp_build_dir)
+        result = self._process.run(['hg', 'tags'], cwd=self._tmp_oa_clone_dir)
         matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
 
         return tag in matches if matches else False
@@ -527,8 +527,8 @@ class DistBuilder(object):
             os.remove(abs_tarball_dest_file)
 
         self._process.run(['hg', 'archive', '-t', 'files', tmp_abs_build_dir, '-X', '.hg*'],
-                          cwd=self._tmp_build_dir)
-        self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
+                          cwd=self._tmp_oa_clone_dir)
+        self._process.run(['hg', 'pull', '--update'], cwd=self._fe_cache_dir)
 
         cache = [{
             'name': 'npm',
@@ -552,7 +552,7 @@ class DistBuilder(object):
                 break
 
             md5_sum = self._get_md5_of_file(cache_entry['checksum_file'])
-            cache_dir = os.path.join(self._cache_dir, cache_entry['name'], md5_sum)
+            cache_dir = os.path.join(self._fe_cache_dir, cache_entry['name'], md5_sum)
             if not isdir(cache_dir):
                 log_msg = 'No cache found for {}'
                 self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
@@ -575,7 +575,7 @@ class DistBuilder(object):
         # Update version.txt.
         data = {
             'BUILDDATE': self._datestring,
-            'REV': self._get_current_revision_hash(self._tmp_build_dir),
+            'REV': self._get_current_revision_hash(self._tmp_oa_clone_dir),
             'STATE': self._get_release_channel(),
         }
         with file(os.path.join(tmp_abs_build_dir, 'version.txt'), 'a') as f:
@@ -640,14 +640,13 @@ class DistBuilder(object):
         self._check_dependencies(['npm'])
         self._set_npmrc_prefix()
 
-        self._retrieve_source(os.path.split(self._cache_dir)[0], DistBuilder.OA_CACHE_REPO_URL,
-                              skip_if_exists=True)
-        self._process.run(['hg', 'pull', '--update'], cwd=self._cache_dir)
+        self._retrieve_source(DistBuilder.OA_CACHE_REPO_URL, self._fe_cache_dir, skip_if_exists=True)
+        self._process.run(['hg', 'pull', '--update'], cwd=self._fe_cache_dir)
 
-        if self._source_is_path and isdir(self._tmp_build_dir):
-            self._process.log_command(['rm', '-r', self._tmp_build_dir])
-            rmtree(self._tmp_build_dir)
-        self._retrieve_source(self._tmp_dir, self._source, skip_if_exists=True)
+        if self._source_is_path and isdir(self._tmp_oa_clone_dir):
+            self._process.log_command(['rm', '-r', self._tmp_oa_clone_dir])
+            rmtree(self._tmp_oa_clone_dir)
+        self._retrieve_source(self._source, self._tmp_oa_clone_dir, skip_if_exists=True)
 
         channel = self._get_release_channel()
         revision = self._args['--revision'] or self._get_revision_by_channel(channel)
@@ -655,7 +654,7 @@ class DistBuilder(object):
         tmp_files_commited = False
         repo_updated = False
         if self._source_is_path:
-            tmp_files_commited = self._commit_changes('Testbuild', self._tmp_build_dir).success()
+            tmp_files_commited = self._commit_changes('Testbuild', self._tmp_oa_clone_dir).success()
 
             if self._args['--revision']:
                 if tmp_files_commited:
@@ -665,40 +664,40 @@ class DistBuilder(object):
                                'wouldn\'t be included in the tar archive anymore.')
                 else:
                     for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
-                        self._process.run(cmd, cwd=self._tmp_build_dir)
+                        self._process.run(cmd, cwd=self._tmp_oa_clone_dir)
                     repo_updated = True
         else:
             for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
-                self._process.run(cmd, cwd=self._tmp_build_dir)
+                self._process.run(cmd, cwd=self._tmp_oa_clone_dir)
             repo_updated = True
 
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
         build_basename = self._get_build_basename(channel, version)
 
-        if self._args['--adapt-debian-changelog'] or self._is_debian_or_derivative():
+        if (self._args['--adapt-debian-changelog'] or self._is_debian_or_derivative()):
             if not self._args['--adapt-debian-changelog'] and self._is_debian_or_derivative():
-                self._warn('The --adapt-debian-changelog has been enabled for you because you '
-                           'are using Debian or a derivative.')
+                self._warn('The --adapt-debian-changelog switch has automatically been enabled for '
+                           'you because you are using Debian or a derivative of it.')
 
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
                                         version,
                                         self._datestring,
-                                        self._get_current_revision_hash(self._tmp_build_dir),
-                                        self._tmp_build_dir)
-            self._commit_changes('Update `debian/changelog` for release', self._tmp_build_dir)
+                                        self._get_current_revision_hash(self._tmp_oa_clone_dir),
+                                        self._tmp_oa_clone_dir)
+            self._commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
         abs_tarball_file_path = self._create_source_tarball(build_basename)
 
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
             if not tmp_files_commited:
-                self._push_changes(self._tmp_build_dir)
+                self._push_changes(self._tmp_oa_clone_dir)
             else:
                 self._warn('Ignoring the --push-changes switch because temporary files of the given'
                            ' source have been comitted.')
 
-        rmtree(self._tmp_build_dir)
+        rmtree(self._tmp_oa_clone_dir)
         self._remove_npmrc_prefix()
 
         return abs_tarball_file_path
@@ -708,8 +707,8 @@ class DistBuilder(object):
             print __doc__
             sys.exit(0)
         elif self._args['cache'] and self._args['push']:
-            self._commit_changes('Update cache', self._cache_dir)
-            self._push_changes(self._cache_dir)
+            self._commit_changes('Update cache', self._fe_cache_dir)
+            self._push_changes(self._fe_cache_dir)
         elif self._args['create']:
             abs_tarball_file_path = self.build()
             if self._verbosity == -1:

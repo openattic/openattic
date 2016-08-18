@@ -11,7 +11,7 @@ consider the guidelines outlined in chapter
 Keeping Your Local Repository in Sync
 -------------------------------------
 
-If you have followed the instructions in :ref:`developer_setup_howto`, you
+If you have followed the instructions in :ref:`developer_hg_howto`, you
 should already have a local |oA| instance that is based on the current
 development branch.
 
