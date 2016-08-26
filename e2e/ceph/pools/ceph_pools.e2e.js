@@ -61,6 +61,23 @@ describe('should test the ceph pools panel', function(){
     });
   });
 
+  var cephCluster = helpers.configs.cephCluster;
+  var cephClusterCount = Object.keys(cephCluster).length;
+  Object.keys(cephCluster).forEach(function(clusterName){
+    var cluster = cephCluster[clusterName];
+    Object.keys(cluster.pools).forEach(function(poolName){
+      var pool = cluster.pools[poolName];
+      it('should have the configured pool "' + pool.name + '" in the pool list of cluster "' + cluster.name + '"', function(){
+        if(cephClusterCount > 1){
+          var clusterSelect = element(by.model('registry.selectedCluster'));
+          clusterSelect.sendKeys(cluster.name);
+          expect(clusterSelect.getText()).toContain(cluster.name);
+        }
+        expect(element(by.cssContainingText('tr', pool.name)).isDisplayed()).toBe(true);
+      });
+    });
+  });
+
   /*
   Only if cache tiering is available by the pool. Can't be tested yet.
 

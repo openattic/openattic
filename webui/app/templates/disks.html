@@ -24,6 +24,7 @@
                 <th ng-show="columns['RPM']" disable-column="xs">RPM</th>
                 <th ng-show="columns['Model']" disable-column="sm,xs">Model</th>
                 <th ng-show="columns['Serial']" disable-column="xs">Serial</th>
+                <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
             </tr>
         </thead>
         <tbody>
@@ -48,6 +49,7 @@
                 <td ng-show="columns['RPM']"    ng-bind="row.rpm"></td>
                 <td ng-show="columns['Model']"  ng-bind="row.model"></td>
                 <td ng-show="columns['Serial']" ng-bind="row.serial"></td>
+                <td ng-show="columns['Host']"   ng-bind="row.host.title"></td>
             </tr>
         </tbody>
     </table>

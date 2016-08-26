@@ -5,6 +5,7 @@
     username: '<log_in_name>', // Name of the user protractor uses.
     password: '<user_password>', // Password for the $log_in_name user.
     sleep   : 2000, // Default browser test sleep time.
+    outDir: '<existing_path>', // Path in which the errors can be stored in as screenshot and error log pair.
     pools   : { // Contains all normal pool definitions
       // Please make sure that the first item in pools is a VG.
       vg: { // Defines a pool
