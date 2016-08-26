@@ -137,8 +137,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
   $scope.deletionDialog = function (selection) {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/ceph-pools/templates/delete.html",
-      controller: "CephPoolsDelete",
+      templateUrl: "components/ceph-pools/templates/delete-pool.html",
+      controller: "CephPoolsDeleteCtrl",
       resolve: {
         cephPoolSelection: function () {
           return selection;

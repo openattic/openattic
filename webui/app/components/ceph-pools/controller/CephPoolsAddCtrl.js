@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filter, toasty, ClusterResource,
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, toasty, ClusterResource,
     cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
@@ -237,17 +237,16 @@ app.controller("CephPoolFormCtrl", function ($scope, $state, $stateParams, $filt
       }
       cephPoolsService.save(pool)
         .$promise
-        .then(function (res) {
+        .then(function () {
           goToListView();
         }, function (error) {
-          var toastMsg = "Could not create the Ceph pool through a server failure.";
           toasty.error({
             title: "Creation failure",
             msg: "Couldn't create Ceph pool.",
             timeout: 10000
           });
           throw error;
-        })
+        });
     }
   };
 

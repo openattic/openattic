@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsDelete", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection,
+app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection,
     $q, toasty) {
   if ($.isArray(cephPoolSelection)) {
     $scope.cephPools = cephPoolSelection;

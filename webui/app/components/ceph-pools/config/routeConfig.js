@@ -68,8 +68,8 @@ app.config(function ($stateProvider) {
         url: "/ceph/pools/add",
         views: {
           "main": {
-            templateUrl: "components/ceph-pools/templates/add-form.html",
-            controller : "CephPoolFormCtrl"
+            templateUrl: "components/ceph-pools/templates/add-pool.html",
+            controller : "CephPoolsAddCtrl"
           }
         },
         params: {
