@@ -210,7 +210,7 @@ EOF
 
 if [ "$IS_SUSE" ]
 then
-    # TODO: looks weird, but is required.
+    # TODO: looks weird, but it's required.
     echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
     systemctl start icinga.service
 fi
