@@ -140,6 +140,6 @@ describe('should test the ceph rbd creation form', function(){
   });
 
   afterAll(function(){
-    console.log('ceph_rbds -> ceph_rbds_form.e2e.js');
+    console.log('ceph_rbds -> ceph_rbd_form.e2e.js');
   });
 });
