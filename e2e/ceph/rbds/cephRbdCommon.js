@@ -231,6 +231,42 @@ var rbdCommons = function(){
       self.expandedFeatureCases.push(testCase);
     });
   });
+
+  this.deleteRbd = function(rbdName){
+    var rbd = element(by.cssContainingText('tr', rbdName));
+    expect(rbd.isDisplayed()).toBe(true);
+    rbd.click();
+    element(by.css('.tc_menudropdown')).click();
+    element(by.css('.tc_deleteItem > a')).click();
+    element(by.model('input.enteredName')).sendKeys('yes');
+    element(by.id('bot2-Msg1')).click();
+    expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
+  };
+
+  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
+    rbdObjSize = rbdObjSize || "32.00 MB";
+    self.name.clear();
+    self.name.sendKeys(rbdName);
+    self.size.clear();
+    self.size.sendKeys(65);
+    self.objSize.clear();
+    self.objSize.sendKeys(rbdObjSize);
+    element(by.className('tc_submitButton')).click();
+    var rbd = element(by.cssContainingText('tr', rbdName));
+    expect(rbd.isDisplayed()).toBe(true);
+
+    rbd.click();
+    expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
+    if(rbdFeatureCase){
+      var keys = Object.keys(self.formElements.features.items);
+      rbdFeatureCase.forEach(function(state, index){ // check the features
+        if(state === 1){
+          expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
+        }
+      });
+    }
+  };
+
 };
 
 module.exports = rbdCommons;
