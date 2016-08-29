@@ -163,12 +163,8 @@ create database pyfiler owner pyfiler;
 EOF
 
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.
-if [ ! -d "/var/log/openattic" ] ; then
-    mkdir "/var/log/openattic"
-fi
-if [ ! -f "/var/log/openattic/openattic.log" ] ; then
-    touch "/var/log/openattic/openattic.log"
-fi
+mkdir -p "/var/log/openattic"
+touch "/var/log/openattic/openattic.log"
 chmod 777 "/var/log/openattic/openattic.log"
 
 sudo -i -u vagrant bash -e << EOF
