@@ -52,21 +52,29 @@ def test(arguments):
         last_line = result.stdout.strip().split('\n')[-1]
         tarball_path = last_line.split(' ')[-1].strip()
         tempdir = extract_tar(tarball_path)
-        with open(os.path.join(tempdir, 'version.txt'), 'r') as fh:
-            print(''.join(fh.readlines()))
 
-test_arguments = [
+        print '-- Content of version.txt:'
+        with open(os.path.join(tempdir, 'version.txt'), 'r') as fh:
+            print(''.join(fh.readlines()).strip())
+
+        print '-- First row of debian/changelog:'
+        with open(os.path.join(tempdir, 'debian/changelog'), 'r') as fh:
+            print fh.readline().strip()
+
+        print
+
+test_arguments = (
     ('create release', 'The revision is supposed to be the latest existing tag, not the tip!'),
     ('create release --revision=v2.0.7-1', ''),
-    ('create release --revision=default', ''),
+    ('create release --revision=default --destination=/tmp/some/dir', ''),
     ('create release --revision=development --adapt-debian-changelog', ''),
     ('create release --source={}'.format(cli_args['--oa-dir']), ''),
     ('create release --source={} --revision=development'.format(cli_args['--oa-dir']), ''),
-    ('create snapshot', ''),
+    ('create snapshot', 'The snapshot is created out of the tip of development branch.'),
     ('create snapshot --revision=v2.0.7-1', ''),
     ('create snapshot --revision=default', ''),
     ('create snapshot --revision=development --adapt-debian-changelog', ''),
     ('create snapshot --source={}'.format(cli_args['--oa-dir']), ''),
-]
+)
 
 test(test_arguments)

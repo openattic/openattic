@@ -8,11 +8,6 @@ describe('should test the ceph rbd creation and deletion', function(){
     helpers.login();
     rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
-    rbdProperties.selectCluster.click();
-  });
-
-  beforeEach(function(){
-    rbdProperties.addButton.click();
   });
 
   var objSizeTests = [
@@ -52,7 +47,7 @@ describe('should test the ceph rbd creation and deletion', function(){
     element(by.className('tc_submitButton')).click();
     var rbd = element(by.cssContainingText('tr', rbdName));
     expect(rbd.isDisplayed()).toBe(true);
- 
+
     rbd.click();
     expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
     if(rbdFeatureCase){
@@ -65,32 +60,36 @@ describe('should test the ceph rbd creation and deletion', function(){
     }
   };
 
-  objSizeTests.forEach(function(objSize, index){
-    it("should create a rbd with this object size: " + objSize, function(){
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
-      var rbdName = "e2eObjectSize" + index;
-      createRbd(rbdName, objSize);
-      deleteRbd(rbdName);
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    objSizeTests.forEach(function(objSize, index){
+      it('should create a rbd with this object size: ' + objSize + ' on ' + pool.name + ' in cluster ' + cluster.name, function(){
+        rbdProperties.selectClusterAndPool(cluster, pool);
+        var rbdName = "e2eObjectSize" + index;
+        createRbd(rbdName, objSize);
+        deleteRbd(rbdName);
+      });
     });
   });
 
-  rbdProperties.expandedFeatureCases.forEach(function(testCase){
-    var keys = Object.keys(rbdProperties.formElements.features.items);
-    var values = rbdProperties.formElements.features.items;
-    it('should test the following case: [' + testCase + ']',function(){
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
-      for (var i=0; i<7; i++){ // uncheck all boxes
-        rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
-      }
-      testCase.forEach(function(state, index){ // check the features
-        rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
-      });
-      createRbd("e2eFeatures", null, testCase);
-      deleteRbd("e2eFeatures");
-    })
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    rbdProperties.expandedFeatureCases.forEach(function(testCase){
+      var keys = Object.keys(rbdProperties.formElements.features.items);
+      var values = rbdProperties.formElements.features.items;
+      it('should test the following case: [' + testCase + '] on ' + pool.name + ' in cluster ' + cluster.name,function(){
+        rbdProperties.selectClusterAndPool(cluster, pool);
+        for (var i=0; i<7; i++){ // uncheck all boxes
+          rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
+        }
+        testCase.forEach(function(state, index){ // check the features
+          rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
+        });
+        createRbd("e2eFeatures", null, testCase);
+        deleteRbd("e2eFeatures");
+      })
+    });
   });
 
   afterAll(function(){
-    console.log('ceph_rbds -> ceph_rbds_form.e2e.js');
+    console.log('ceph_rbds -> ceph_rbd_creation.e2e.js');
   });
 });

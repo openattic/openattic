@@ -6,10 +6,34 @@ Version 2.0.14, (not released yet):
 
 * Backend: Removed unused module 'Clustering' (OP-1251)
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
+* Backend: Added a task queue module to track long-running commands (OP-1360)
+* Backend: Properly handle optional attributes of Ceph pools (OP-1416)
+* WebUI: Create and delete ceph pools (OP-1299)
 * WebUI: If quicklogin is defined in config.js, the username and password will
   be predefined (OP-1386)
+* WebUI/QA: Extended E2E test configuration by ceph pools and suite path
+  filter (OP-1339)
+* WebUI/QA: Added screenshot and error log functionality (OP-1375)
+* WebUI/QA: Create and delete ceph pool tests (OP-1417)
 * Installation: `oaconfig version` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
+* Installation: The `openattic-gui` RPM and DEB packages now take care of
+  installing an `index.html` file in the Apache document root directory that
+  performs a redirect to the WebUI. Previously, this task was performed by
+  `oaconfig install`. Thanks to Brandon Keep. (OP-959)
+* Development: Add Vagrantfile to easily set up a development environment
+  (OP-1423)
+* Documentation: Added instructions on how to set up a development system
+  with Vagrant (OP-1439)
+* Packaging: make_dist.py doesn't delete anything in the home directory
+  anymore (OP-1371)
+* Packaging: Simplified the usage of make_dist.py and prevented
+  `build_deb_packages.py` from hanging indefinitely (OP-1431)
+* Packaging: Fixed a bug where folder names had to be `openattic` to be
+  correctly packaged using `make_dist.py` (OP-1447 and OP-1449)
+* Packaging: Added a script `utils/build_rpm.sh` to the repository that
+  converts a source tar archive created by `make_dist.py` into installable
+  RPM packages (using `rpm/openattic.spec`) (OP-1117)
 
 
 Version 2.0.13, 28. July 2016:

@@ -33,6 +33,7 @@
 angular.module("openattic.extensions", [
   "openattic.apirecorder",
   "openattic.auth",
+  "openattic.cephErasureCodeProfiles",
   "openattic.cephOsd",
   "openattic.cephPools",
   "openattic.cephRbd",

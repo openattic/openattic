@@ -29,6 +29,7 @@
             <th ng-show="columns['Used']">Used</th>
             <th ng-show="columns['Status']">Status</th>
             <th ng-show="columns['Type']">Type</th>
+            <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
         </tr>
         </thead>
         <tbody>
@@ -72,6 +73,7 @@
                             'fa-lock':                 row.status.status == 'locked'
                             }"></i></td>
             <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
+            <td ng-show="columns['Host']" ng-bind="row.host.title"></td>
         </tr>
         </tbody>
     </table>

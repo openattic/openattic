@@ -4,7 +4,6 @@ describe('should test the ceph osd panel', function(){
 
   var cephMenu = element(by.css('.tc_menuitem_ceph > a'));
   var cephOSDs = element(by.css('.tc_submenuitem_ceph_osds'));
-  var selectCluster = element(by.css('#cluster-selection option:nth-child(2)'));
 
 
 
@@ -19,15 +18,11 @@ describe('should test the ceph osd panel', function(){
     'Hostname',
     'Status',
     'Crush Weight',
-    'Type',
+    'Type'
   ];
 
   it('should check the ceph OSDs url', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/osds');
-  });
-
-  it('should select a cluster', function(){
-    selectCluster.click();
   });
 
   it('should display the ceph OSD table after selecting a cluster', function(){
@@ -45,6 +40,11 @@ describe('should test the ceph osd panel', function(){
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });
 
+  /* TODO: Update the tests to use the configuration
+   it('should select a cluster', function(){
+   selectCluster.click();
+   });
+
   it('should still have the cluster selected and display OSDs when switching between panels', function(){
     element(by.css('ul .tc_menuitem_pools > a')).click();
     expect(browser.getCurrentUrl()).toContain('/#/pools');
@@ -54,9 +54,10 @@ describe('should test the ceph osd panel', function(){
     expect(element(by.id('cluster-selection')).getText()).toContain('ceph (');
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });
+  */
 
   afterAll(function(){
-    console.log('OSDs -> ceph_osds.e2e.js');
+    console.log('ceph_osds -> ceph_osds.e2e.js');
   });
 
 });

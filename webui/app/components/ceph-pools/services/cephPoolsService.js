@@ -33,6 +33,19 @@
 var app = angular.module("openattic.cephPools");
 app.factory("cephPoolsService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:id/pools", {
-    id: "@id"
+    id: "@id",
+    poolId: "@poolId"
+  }, {
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    delete: {
+      method: "DELETE",
+      url: globalConfig.API.URL + "ceph/:id/pools/:poolId"
+    }
   });
 });
