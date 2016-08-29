@@ -12,15 +12,10 @@ Vagrant.configure(2) do |config|
 
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://atlas.hashicorp.com/search.
-    config.vm.provider "virtualbox" do |vb|
-        config.vm.box = "virtualbox.box"
-    end
-    config.vm.provider :libvirt do |libvirt|
-        if ENV['DISTRO'] == "debian"
-            config.vm.box = "debian/jessie64" # should work, too!
-        else
-            config.vm.box = "opensuse/openSUSE-42.1-x86_64"
-        end
+    if ENV['DISTRO'] == "debian"
+        config.vm.box = "debian/jessie64" # should work, too!
+    else
+        config.vm.box = "opensuse/openSUSE-42.1-x86_64"
     end
 
     # Disable automatic box update checking. If you disable this, then
