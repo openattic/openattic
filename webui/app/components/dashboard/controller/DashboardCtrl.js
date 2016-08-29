@@ -70,6 +70,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
     "name"   : "Ceph cluster status",
     "manager": "ceph-cluster-status",
     "group"  : "ceph"
+  }, {
+    "name"   : "Ceph cluster performance",
+    "manager": "ceph-cluster-performance",
+    "group"  : "ceph"
   }];
 
   // functions
