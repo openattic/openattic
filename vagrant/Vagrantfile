@@ -23,9 +23,10 @@ Vagrant.configure(2) do |config|
     end
 
     config.vm.provider :libvirt do |lv|
-        # May be necessary on some mainboards where 'kvm' doesn't work through a bug. 'kvm' seems to
-        # work on all machines. It may be a libvirt issue. See OP-1455 for more information.
-        lv.driver = 'qemu'
+        # May be necessary to use 'qemu' here on some mainboards where 'kvm' doesn't work through a bug. 'qemu' seems to
+        # work on all machines, but it looks like it's slower than 'kvm'.
+        # See OP-1455 (https://tracker.openattic.org/browse/OP-1455) for more information.
+        lv.driver = 'kvm'
     end
 
     # Disable automatic box update checking. If you disable this, then
