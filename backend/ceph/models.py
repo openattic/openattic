@@ -285,14 +285,23 @@ class CephCluster(NodbModel):
 
 @contextmanager
 def fsid_context(fsid):
+    """
+    .. example:
+        >>> with fsid_context('baad-food-baadfood') as ctx:
+        >>>     print ctx.cluster.name
+    """
     class CTX(object):
         def __init__(self, fsid):
             self.cluster = CephCluster.objects.get(fsid=fsid)
             self.fsid = fsid
 
     ctx = CTX(fsid)
-    NodbManager.set_nodb_context(ctx)
-    yield ctx
+    previous_context = NodbManager.nodb_context
+    try:
+        NodbManager.set_nodb_context(ctx)
+        yield ctx
+    finally:
+        NodbManager.set_nodb_context(previous_context)
 
 
 class CephPool(NodbModel):
