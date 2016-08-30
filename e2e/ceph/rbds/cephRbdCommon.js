@@ -252,6 +252,7 @@ var rbdCommons = function(){
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
     element(by.className('tc_submitButton')).click();
+    browser.sleep(800);
     var rbd = element(by.cssContainingText('tr', rbdName));
     expect(rbd.isDisplayed()).toBe(true);
 
