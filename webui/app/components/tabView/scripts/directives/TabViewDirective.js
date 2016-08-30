@@ -30,21 +30,38 @@
  */
 "use strict";
 
-angular.module("openattic.extensions", [
-  "openattic.navigation",
-  "openattic.auth",
-  "openattic.apirecorder",
-  "openattic.cephRbd",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.sizeparser",
-  "openattic.todowidget",
-  "openattic.clusterstatuswidget",
-  "openattic.oaWizards",
-  "openattic.userinfo",
-  "openattic.tabView",
-  "openattic.required"
-]);
+var app = angular.module("openattic.tabView");
+/**
+ * In order to use the directive correctly and well, you first have to set up your controller as explained in the
+ * tabViewService. To use it in the template you just have to add the following:
+ *
+ *   <tab-view tab-data="tabData" tab-config="tabConfig" selection="selection"></tab-view>
+ */
+app.directive("tabView", function () {
+  return {
+    restrict: "E",
+    scope: {
+      tabData: "=",
+      tabConfig: "=",
+      selection: "="
+    },
+    templateUrl: "components/tabView/templates/tab.view.html",
+    controller: function ($scope, TabViewService) {
+      Object.keys($scope.tabData.tabs).forEach(function (tabName) {
+        var tab = $scope.tabData.tabs[tabName];
+        if (!tab.show) {
+          tab.show = "true";
+        }
+        if (!tab.class) {
+          tab.class = "";
+        }
+        if (!tab.state || !tab.name) {
+          throw "Error wrong tab format in " + tabName;
+          throw tab;
+        }
+      });
+      TabViewService.setScope($scope);
+      $scope.changeTab = TabViewService.changeTab;
+    }
+  };
+});

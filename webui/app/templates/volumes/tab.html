@@ -1,7 +1,1 @@
-<div ng-show="selection.item">
-    <uib-tabset active="active">
-        <uib-tab ng-repeat="(key, tab) in tabs" ng-click="$parent.changeTab(tab.state, $index)" class="{{tab.class}}" heading="{{tab.name}}"
-                 ng-show="{{tab.show}}" index="$index"></uib-tab>
-    </uib-tabset>
-    <div class="tab-content" ui-view="tab-content"></div>
-</div>
+<tab-view tab-data="tabData" tab-config="tabConfig" selection="selection"></tab-view>

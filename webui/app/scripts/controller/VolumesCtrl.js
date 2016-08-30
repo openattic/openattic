@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, toasty) {
+app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, toasty,
+    TabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -42,76 +43,72 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     sortorder: null
   };
 
-  $scope.changeTab = function (goHere, index) {
-    if (index === undefined) {
-      Object.keys($scope.tabs).some(function (tabName, i) {
-        index = i;
-        return $scope.tabs[tabName].state === goHere;
-      });
-    }
-    $scope.active = index;
-    $state.go(goHere, {
-      volume: $scope.selection.item.id,
-      "#": "more"
-    });
-  };
-
-  $scope.tabs = {
-    status: {
-      show: "selection.item",
-      state: "volumes.detail.status",
-      class: "tc_statusTab",
-      name: "Status"
-    },
-    statisticsFsVol: {
-      show: "selection.item.is_filesystemvolume",
-      state: "volumes.detail.statistics.utilgraphs",
-      class:"tc_fsStatisticsTab",
-      name: "Statistics"
-    },
-    statisticsBlockVol: {
-      show: "selection.item.is_blockvolume && !selection.item.is_filesystemvolume",
-      state: "volumes.detail.statistics.perfgraphs",
-      class: "tc_blockStatisticsTab",
-      name: "Statistics"
-    },
-    cifs: {
-      show: "selection.item.is_filesystemvolume",
-      state: "volumes.detail.cifs",
-      class: "tc_cifsShareTab",
-      name: "CIFS"
-    },
-    nfs: {
-      show: "selection.item.is_filesystemvolume",
-      state: "volumes.detail.nfs",
-      class: "tc_nfsShareTab",
-      name: "NFS"
-    },
-    http: {
-      show: "selection.item.is_filesystemvolume",
-      state: "volumes.detail.http",
-      class: "tc_httpShareTab",
-      name: "HTTP"
-    },
-    iscsi: {
-      show: "selection.item.source_pool && selection.item.is_blockvolume && !selection.item.is_filesystemvolume",
-      state: "volumes.detail.luns",
-      class: "tc_iscsi_fcTab",
-      name: "iSCSI/FC"
-    },
-    storage: {
-      show: "selection.item",
-      state: "volumes.detail.storage",
-      class: "tc_storageTab",
-      name: "Storage"
-    },
-    snapshots: {
-      show: "selection.item",
-      state: "volumes.detail.snapshots",
-      class: "tc_snapshotTab",
-      name: "Snapshots"
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "volumes.detail.status",
+        class: "tc_statusTab",
+        name: "Status"
+      },
+      statisticsFsVol: {
+        show: "selection.item.is_filesystemvolume",
+        state: "volumes.detail.statistics.utilgraphs",
+        class:"tc_fsStatisticsTab",
+        name: "Statistics"
+      },
+      statisticsBlockVol: {
+        show: "selection.item.is_blockvolume && !selection.item.is_filesystemvolume",
+        state: "volumes.detail.statistics.perfgraphs",
+        class: "tc_blockStatisticsTab",
+        name: "Statistics"
+      },
+      cifs: {
+        show: "selection.item.is_filesystemvolume",
+        state: "volumes.detail.cifs",
+        class: "tc_cifsShareTab",
+        name: "CIFS"
+      },
+      nfs: {
+        show: "selection.item.is_filesystemvolume",
+        state: "volumes.detail.nfs",
+        class: "tc_nfsShareTab",
+        name: "NFS"
+      },
+      http: {
+        show: "selection.item.is_filesystemvolume",
+        state: "volumes.detail.http",
+        class: "tc_httpShareTab",
+        name: "HTTP"
+      },
+      iscsi: {
+        show: "selection.item.source_pool && selection.item.is_blockvolume && !selection.item.is_filesystemvolume",
+        state: "volumes.detail.luns",
+        class: "tc_iscsi_fcTab",
+        name: "iSCSI/FC"
+      },
+      storage: {
+        show: "selection.item",
+        state: "volumes.detail.storage",
+        class: "tc_storageTab",
+        name: "Storage"
+      },
+      snapshots: {
+        show: "selection.item",
+        state: "volumes.detail.snapshots",
+        class: "tc_snapshotTab",
+        name: "Snapshots"
+      }
     }
   };
+  $scope.tabConfig = {
+    type: "volume",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  TabViewService.setScope($scope);
+  $scope.changeTab = TabViewService.changeTab;
 
   $scope.selection = {};
 
