@@ -101,7 +101,8 @@ class NodbQuerySet(QuerySet):
         def filter_impl(keys, value, obj):
             assert keys
             if not hasattr(obj, keys[0]):
-                raise AttributeError('Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
+                raise AttributeError(
+                    'Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
             attr = getattr(obj, keys[0], None)
             if attr is None:
                 return value is None
@@ -200,7 +201,8 @@ class NodbQuerySet(QuerySet):
             return filtered_data[0]
         if not num:
             raise self.model.DoesNotExist(
-                '{} matching query "{}" does not exist.'.format(self.model._meta.object_name, filtered_data.query))
+                '{} matching query "{}" does not exist.'.format(self.model._meta.object_name,
+                                                                filtered_data.query))
         raise self.model.MultipleObjectsReturned(
             "get() returned more than one %s -- it returned %s!" % (
                 self.model._meta.object_name,
@@ -281,7 +283,9 @@ class LazyProperty(object):
 
         self.eval_func(instance, query_set)
         if self.field_name not in instance.__dict__:
-            raise KeyError('LazyProperty: {} did not set {} of {}'.format(self.eval_func, self.field_name, instance))
+            raise KeyError(
+                'LazyProperty: {} did not set {} of {}'.format(self.eval_func, self.field_name,
+                                                               instance))
         return instance.__dict__[self.field_name]
 
     def __set__(self, instance, value):
@@ -294,16 +298,16 @@ class LazyProperty(object):
 
 def bulk_attribute_setter(*filed_names):
     """
-    The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone really needs
-    the information gathered in this call. If the attribute is never used, the call will never be executed. In general,
-    this is called lazy execution.
+    The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone
+    really needs the information gathered in this call. If the attribute is never used, the call
+    will never be executed. In general, this is called lazy execution.
 
-    Before, NodbQuerySet called self.model.get_all_objects to generate a list of objects.
-    The implementations of get_all_objects were calling the librados commands to fill all attributes, even if they were
-    never accessed.
+    Before, NodbQuerySet called self.model.get_all_objects to generate a list of objects. The
+    implementations of get_all_objects were calling the librados commands to fill all attributes,
+    even if they were never accessed.
 
-    Because a field may never be accessed, this can generate better performance than caching, especially if the cache is
-    cold.
+    Because a field may never be accessed, this can generate better performance than caching,
+    especially if the cache is cold.
 
     The bulk_attribute_setter decorator can be used like so:
     >>> class MyModel(NodbModel):
@@ -323,14 +327,14 @@ def bulk_attribute_setter(*filed_names):
     >>>     my_filed = models.IntegerField()
     >>>     set_my_filed = LazyPropertyContributor(['my_filed'], set_my_filed)
 
-    A LazyPropertyContributor property implements the contribute_to_class method, which modifies the model itself
-    to look like so:
+    A LazyPropertyContributor property implements the contribute_to_class method, which modifies
+    the model itself to look like so:
     >>> class MyModel(NodbModel):
     >>>     my_filed = LazyProperty('my_filed', set_my_filed)
 
-    The my_filed filed is not overwritten, because the fields are already moved into the _meta class at this point. If
-    someone then accesses the my_field attribute, LazyProperty.__get__ is called, which then calls set_my_field to set
-    the field, as if one had written:
+    The my_filed filed is not overwritten, because the fields are already moved into the _meta class
+    at this point. If someone then accesses the my_field attribute, LazyProperty.__get__ is called,
+    which then calls set_my_field to set the field, as if one had written:
     >>> instances = MyModel.objects.all()
     >>> set_my_filed(instances[0], instances)
     >>> assert instances[0].my_field == 42
@@ -397,7 +401,8 @@ class NodbModel(models.Model):
             field.attname: getattr(self, field.attname, None)
             for field
             in self.__class__._meta.fields
-            if field.editable and getattr(self, field.attname, None) != getattr(original, field.attname, None)
+            if field.editable and getattr(self, field.attname, None) != getattr(original,
+                                                                                field.attname, None)
         }, original
 
     def attribute_is_unevaluated_lazy_property(self, attr):
@@ -415,7 +420,8 @@ class NodbModel(models.Model):
         """
         .. example::
             >>> insert = self.id is None
-            >>> diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
+            >>> diff, original = self.get_modified_fields(name=self.name) if insert
+            >>>     else self.get_modified_fields()
             >>> if not insert:
             >>>     self.set_read_only_fields()
         """
@@ -423,8 +429,10 @@ class NodbModel(models.Model):
             self.pk = obj.pk
 
         for field in self.__class__._meta.fields:
-            if not field.editable and not self.attribute_is_unevaluated_lazy_property(field.attname) and \
-                    hasattr(obj, field.attname) and getattr(self, field.attname, None) != getattr(obj, field.attname):
+            if (not field.editable
+               and not self.attribute_is_unevaluated_lazy_property(field.attname)
+               and hasattr(obj, field.attname)
+               and getattr(self, field.attname, None) != getattr(obj, field.attname)):
                 setattr(self, field.attname, getattr(obj, field.attname))
 
     @classmethod
@@ -486,7 +494,10 @@ class NodbModel(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        """This base implementation does nothing, except telling django that self is now successfully inserted."""
+        """
+        This base implementation does nothing, except telling django that self is now successfully
+        inserted.
+        """
         self._state.adding = False
 
 
@@ -525,9 +536,9 @@ class JsonField(Field):
             return check_base_type(parsed)
         except ValueError:
             try:
-                # Evil hack to support PUT requests to the Browsable API of the django-rest-framework
-                # as we cannot determine if restapi.JsonField.tonative() is called for json or for rendering the
-                # form.
+                # Evil hack to support PUT requests to the Browsable API of the
+                # django-rest-framework as we cannot determine if restapi.JsonField.tonative() is
+                # called for json or for rendering the form.
                 obj = ast.literal_eval(value)
                 return check_base_type(obj)
             except ValueError:
