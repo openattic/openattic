@@ -162,6 +162,11 @@ create user pyfiler createdb createuser password 'pyf!l0r';
 create database pyfiler owner pyfiler;
 EOF
 
+# Using virtualbox, the log file may not be there at this point, so we have to create it manually.
+mkdir -p "/var/log/openattic"
+touch "/var/log/openattic/openattic.log"
+chmod 777 "/var/log/openattic/openattic.log"
+
 sudo -i -u vagrant bash -e << EOF
 
 virtualenv env
@@ -201,7 +206,7 @@ EOF
 
 if [ "$IS_SUSE" ]
 then
-    # TODO: looks wired, but required.
+    # TODO: looks weird, but it's required.
     echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
     systemctl start icinga.service
 fi
