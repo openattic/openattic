@@ -251,12 +251,15 @@ var rbdCommons = function(){
     self.size.sendKeys(65);
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
+    browser.sleep(helpers.configs.sleep);
     element(by.className('tc_submitButton')).click();
-    browser.sleep(800);
+
+    browser.sleep(helpers.configs.sleep);
     var rbd = element(by.cssContainingText('tr', rbdName));
     expect(rbd.isDisplayed()).toBe(true);
-
     rbd.click();
+
+    browser.sleep(helpers.configs.sleep);
     expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
     if(rbdFeatureCase){
       var keys = Object.keys(self.formElements.features.items);
