@@ -101,7 +101,7 @@ class NodbQuerySet(QuerySet):
             assert keys
             if not hasattr(obj, keys[0]):
                 raise AttributeError(
-                    'Attribute {} does not exists for {}'.format(keys[0], obj.__class__))
+                    'Attribute {} does not exist for {}'.format(keys[0], obj.__class__))
             attr = getattr(obj, keys[0], None)
             if attr is None:
                 return value is None
