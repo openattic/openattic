@@ -62,7 +62,9 @@ var allSuites = {
   ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',
   ceph_pool_creation   : '../e2e/ceph/pools/ceph_pool_creation.e2e.js',
   ceph_osds            : '../e2e/ceph/ceph_osds.e2e.js',
-  ceph_rbds            : '../e2e/ceph/rbds/**/*.e2e.js',
+  ceph_rbds            : '../e2e/ceph/rbds/ceph_rbds.e2e.js',
+  ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
+  ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js',
   // zfs suites - They only run if a zpool is configured.
   fs_wiz_zfs           : '../e2e/zfs/wizards/file/*.e2e.js',
   zvol_add             : '../e2e/zfs/volumes/zvol.e2e.js',

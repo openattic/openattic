@@ -10,6 +10,14 @@ describe('should test the ceph rbd panel', function(){
     rbdProperties.cephRBDs.click();
   });
 
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    it('should create an default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
+      rbdProperties.selectClusterAndPool(cluster, pool);
+      var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
+      rbdProperties.createRbd(rbdName);
+    });
+  });
+
   it('should check the ceph RBDs url', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
   });
@@ -54,6 +62,14 @@ describe('should test the ceph rbd panel', function(){
     it('should check the content attribute "' + attribute + '" in the details tab when selecting a rbd', function(){
       element.all(by.binding('row.name')).get(0).click();
       expect(element(by.cssContainingText('dt', attribute + ':')).isDisplayed()).toBe(true);
+    });
+  });
+
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    it('should delete the default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
+      rbdProperties.selectCluster(cluster);
+      var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
+      rbdProperties.deleteRbd(rbdName);
     });
   });
 
