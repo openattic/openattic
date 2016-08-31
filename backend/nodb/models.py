@@ -75,7 +75,6 @@ class NodbQuerySet(QuerySet):
         self._context = context
         self._current = 0
         self._query = NoDbQuery()
-#        self.oInstance = QuerySet()
 
     @cached_property
     def _max(self):
@@ -102,7 +101,7 @@ class NodbQuerySet(QuerySet):
             assert keys
             if not hasattr(obj, keys[0]):
                 raise AttributeError(
-                    'Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
+                    'Attribute {} does not exists for {}'.format(keys[0], obj.__class__))
             attr = getattr(obj, keys[0], None)
             if attr is None:
                 return value is None
@@ -121,10 +120,9 @@ class NodbQuerySet(QuerySet):
 
         def filter_one_q(q, obj):
             """
-            Args:
-                q (Q):
-                obj NodbModel:
-
+            :type q: Q
+            :type obj: NodbModel
+            :rtype: bool
             """
             def negate(res):
                 return not res if q.negated else res
