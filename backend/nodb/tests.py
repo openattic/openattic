@@ -273,3 +273,18 @@ class LazyPropertyTest(TestCase):
         self.assertIn('e', o1.__dict__)
 
 
+class NodbModelTest(TestCase):
+
+    class SimpleModel(NodbModel):
+        a = models.IntegerField(primary_key=True)
+        b = models.IntegerField()
+
+        @staticmethod
+        def get_all_objects(context, query):
+            raise NotImplementedError()
+
+    def test_make_model_args(self):
+        args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3))
+        self.assertEqual(args, dict(a=1))
+        args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3), fields_force_none=['b'])
+        self.assertEqual(args, dict(a=1, b=None))
