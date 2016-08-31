@@ -109,7 +109,7 @@ If the |oA| `systemd` is not running on your VM, you can start it by executing::
 
 in your VM.
 
-**`vagrant destroy` fails through permission problem**
+**`vagrant destroy` fails due to a permission problem**
 
 To fix this error::
 
@@ -119,7 +119,7 @@ Run this command or change the owner of ``/var/lib/libvirt/images``::
 
     chmod 777 /var/lib/libvirt/images
 
-**`vagrant destroy` fails through wrong provider**
+**`vagrant destroy` due to wrong provider**
 
 You may also encounter the error that Vagrant tells you to `vagrant destroy`, but it doesn't seem to work. In that case
 you may have `this <https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561>`_ issue.
