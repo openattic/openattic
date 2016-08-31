@@ -8,6 +8,7 @@ Version 2.0.14, (not released yet):
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
 * Backend: Added a task queue module to track long-running commands (OP-1360)
 * Backend: Properly handle optional attributes of Ceph pools (OP-1416)
+* Backend: Fixed broken call to `ceph/<fsid>/osds on http://demo.openattic.org (OP-1453)
 * Monitoring: Fixed compatibility of the Ceph pool plugin with Django 1.6 (OP-1393)
 * WebUI: Create and delete ceph pools (OP-1299)
 * WebUI: If quicklogin is defined in config.js, the username and password will
