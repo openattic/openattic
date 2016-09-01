@@ -13,7 +13,12 @@
 """
 
 import ast
+import os
 import subprocess
+
+import yaml
+
+cluster_dir = "/srv/pillar/ceph/cluster"
 
 
 def get_config():
@@ -41,11 +46,31 @@ def get_config():
     return [fixup_minion_config(ast.literal_eval(l)) for l in lines]
 
 
-def add_role(hostname, role):
+def add_role(minion, role):
     """
     Adds a role to a given host. E.g. "storage", "mon", "mds", "rgw"
+    Ceph cluster already set up. Afterwards, also edit the stack file.
+
+    :type minion: str
+    :type role: str
     """
-    pass
+    filename = "{}/{}.sls".format(cluster_dir, minion)
+    contents = {}
+    if os.path.isfile(filename):
+        with open(filename) as yml:
+            contents = yaml.safe_load(yml)
+
+    if 'role' not in contents:
+        contents['role'] = [role]
+    elif role not in contents['role']:
+        contents['role'].append(role)
+    else:
+        return # already present
+
+    dumper = yaml.SafeDumper
+    dumper.ignore_aliases = lambda self, data: True
+    with open(filename, "w") as yml:
+        yml.write(yaml.dump(contents, Dumper=dumper, default_flow_style=False))
 
 
 def set_storage_configuration(hostname, storage_configuration):
