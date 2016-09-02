@@ -243,23 +243,23 @@ var rbdCommons = function(){
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
   };
 
-  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
+  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase, rbdSize){
     rbdObjSize = rbdObjSize || "32.00 MB";
     self.name.clear();
     self.name.sendKeys(rbdName);
     self.size.clear();
-    self.size.sendKeys(65);
+    if (!rbdSize){
+      rbdSize = 65;
+    }
+    self.size.sendKeys(rbdSize);
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
-    browser.sleep(helpers.configs.sleep);
     element(by.className('tc_submitButton')).click();
 
-    browser.sleep(helpers.configs.sleep);
     var rbd = element(by.cssContainingText('tr', rbdName));
     expect(rbd.isDisplayed()).toBe(true);
     rbd.click();
 
-    browser.sleep(helpers.configs.sleep);
     expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
     if(rbdFeatureCase){
       var keys = Object.keys(self.formElements.features.items);

@@ -11,28 +11,30 @@ describe('should test the ceph rbd creation and deletion', function(){
   });
 
   var objSizeTests = [
-    '4.00 kB',
-    '8.00 kB',
-    '16.00 kB',
-    '32.00 kB',
-    '64.00 kB',
-    '128.00 kB',
-    '256.00 kB',
-    '512.00 kB',
-    '1.00 MB',
-    '2.00 MB',
-    '4.00 MB',
-    '8.00 MB',
-    '16.00 MB',
-    '32.00 MB'
+    [4, "kB"],
+    [8, 'kB'],
+    [16, 'kB'],
+    [32, 'kB'],
+    [64, 'kB'],
+    [128, 'kB'],
+    [256, 'kB'],
+    [512, 'kB'],
+    [1, 'MB'],
+    [2, 'MB'],
+    [4, 'MB'],
+    [8, 'MB'],
+    [16, 'MB'],
+    [32, 'MB']
   ];
 
   rbdProperties.useWriteablePools(function(cluster, pool){
-    objSizeTests.forEach(function(objSize, index){
-      it('should create a rbd with this object size: ' + objSize + ' on ' + pool.name + ' in cluster ' + cluster.name, function(){
+    objSizeTests.forEach(function(sizeArr, index){
+      var objSize = sizeArr[0] + '.00 ' + sizeArr[1];
+      var rbdSize = sizeArr[0]*2 + '.00 ' + sizeArr[1]; // The rbd will always consist of 2 objects.
+      it('should create a rbd with ' + objSize + ' object size and ' + rbdSize + ' rbd size on ' + pool.name + ' in cluster ' + cluster.name, function(){
         rbdProperties.selectClusterAndPool(cluster, pool);
         var rbdName = "e2eObjectSize" + index;
-        rbdProperties.createRbd(rbdName, objSize);
+        rbdProperties.createRbd(rbdName, objSize, null, rbdSize);
         rbdProperties.deleteRbd(rbdName);
       });
     });
