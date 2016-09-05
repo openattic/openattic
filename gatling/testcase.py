@@ -194,7 +194,6 @@ class GatlingTestCase(unittest.TestCase):
 
     def check_field_validation_messages(self, err_response, expected_message, field=None,
                                         fuzzy=False):
-        print "#### check_field_validation_messages ####"
         self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
         self.assertEqual(err_response.exception.response.status_code, 400)
 
