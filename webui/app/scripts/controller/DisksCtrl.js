@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("DiskCtrl", function ($scope, $state, DiskService) {
+app.controller("DiskCtrl", function ($scope, $state, DiskService, TabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -43,6 +43,25 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService) {
   };
 
   $scope.selection = {};
+
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "disks.detail.status",
+        class: "tc_statusTab",
+        name: "Status"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "disk",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  TabViewService.setScope($scope);
+  $scope.changeTab = TabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {
@@ -65,10 +84,7 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService) {
 
   $scope.$watch("selection.item", function (selitem) {
     if (selitem) {
-      $state.go("disks.detail.status", {
-        disk: selitem.id,
-        "#": "more"
-      });
+      $scope.changeTab("disks.detail.status");
     } else {
       $state.go("disks");
     }
