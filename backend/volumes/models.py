@@ -644,11 +644,11 @@ class VolumePool(models.Model):
 
     def grow(self, oldmegs, newmegs):
         raise ValidationError({"megs":
-                                   ["{} does not support grow".format(self.__class__.__name__)]})
+                              ["{} does not support grow".format(self.__class__.__name__)]})
 
     def shrink(self, oldmegs, newmegs):
         raise ValidationError({"megs":
-                                   ["{} does not support shrink".format(self.__class__.__name__)]})
+                              ["{} does not support shrink".format(self.__class__.__name__)]})
 
     def post_grow(self, oldmegs, newmegs):
         pass
