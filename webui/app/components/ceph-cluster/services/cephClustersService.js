@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephCluster");
 app.factory("cephClusterService", function ($resource) {
-  return $resource("/openattic/api/ceph/:id", {
+  return $resource(globalConfig.API.URL + "ceph/:id", {
     id: "@id"
   });
 });

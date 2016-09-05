@@ -12,15 +12,10 @@ Vagrant.configure(2) do |config|
 
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://atlas.hashicorp.com/search.
-    config.vm.provider "virtualbox" do |vb|
-        config.vm.box = "virtualbox.box"
-    end
-    config.vm.provider :libvirt do |libvirt|
-        if ENV['DISTRO'] == "debian"
-            config.vm.box = "debian/jessie64" # should work, too!
-        else
-            config.vm.box = "opensuse/openSUSE-42.1-x86_64"
-        end
+    if ENV['DISTRO'] == "debian"
+        config.vm.box = "debian/jessie64" # should work, too!
+    else
+        config.vm.box = "opensuse/openSUSE-42.1-x86_64"
     end
 
     # Disable automatic box update checking. If you disable this, then
@@ -35,34 +30,33 @@ Vagrant.configure(2) do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    # config.vm.network "private_network", ip: "192.168.10.101"
+    # Needs to be enabled for VirtualBox to be able to use NFS
+    config.vm.network "private_network", ip: "192.168.10.101"
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
     # your network.
-    # config.vm.network "public_network" # needed for ceph.
+    # config.vm.network "public_network"
 
     # Share an additional folder to the guest VM. The first argument is
     # the path on the host to the actual folder. The second argument is
     # the path on the guest to mount the folder. And the optional third
     # argument is a set of non-required options.
-    config.vm.synced_folder "..", "/home/vagrant/openattic", type: "nfs", :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1']
+    config.vm.synced_folder "..", "/home/vagrant/openattic", type: "nfs",
+                            :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1']
     config.vm.synced_folder '.', '/vagrant', disabled: true # Disable default
 
     # Provider-specific configuration so you can fine-tune various
     # backing providers for Vagrant. These expose provider-specific options.
     # Example for VirtualBox:
     #
-    config.vm.provider "virtualbox" do |vb|
+    config.vm.provider :virtualbox do |vb|
         #   # Display the VirtualBox GUI when booting the machine
         #   vb.gui = true
-        #
-        #   # Customize the amount of memory on the VM:
         vb.memory = "2048"
     end
-    config.vm.provider :libvirt do |libvirt|
-
-        libvirt.memory = "2048"
+    config.vm.provider :libvirt do |lv|
+        lv.memory = "2048"
     end
     #
     # View the documentation for the provider you are using for more
@@ -95,7 +89,7 @@ Vagrant.configure(2) do |config|
     #     v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', disk2]
     #  end
 
-    config.vm.provider "virtualbox" do |vb|
+    config.vm.provider :virtualbox do |vb|
         # note 1 would mean 2 disks
         disk_num = 1
         disk_size = 50 * 1024
@@ -105,7 +99,8 @@ Vagrant.configure(2) do |config|
                 vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
             end
             # comment this out after provision -> find solution for this
-            vb.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', i + 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+            vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', i + 1,
+                          '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
         end
     end
 
@@ -117,20 +112,20 @@ Vagrant.configure(2) do |config|
     config.vm.provision :shell, :path => "install.sh"
     
     if Vagrant.has_plugin?("vagrant-cachier")
-    # Configure cached packages to be shared between instances of the same base box.
-    # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
-    config.cache.scope = :box
+        # Configure cached packages to be shared between instances of the same base box.
+        # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
+        config.cache.scope = :box
 
-    # OPTIONAL: If you are using VirtualBox, you might want to use that to enable
-    # NFS for shared folders. This is also very useful for vagrant-libvirt if you
-    # want bi-directional sync
-    config.cache.synced_folder_opts = {
-        type: :nfs,
-        # The nolock option can be useful for an NFSv3 client that wants to avoid the
-        # NLM sideband protocol. Without this option, apt-get might hang if it tries
-        # to lock files needed for /var/cache/* operations. All of this can be avoided
-        # by using NFSv4 everywhere. Please note that the tcp option is not the default.
-        mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+        # OPTIONAL: If you are using VirtualBox, you might want to use that to enable
+        # NFS for shared folders. This is also very useful for vagrant-libvirt if you
+        # want bi-directional sync
+        config.cache.synced_folder_opts = {
+            type: :nfs,
+            # The nolock option can be useful for an NFSv3 client that wants to avoid the
+            # NLM sideband protocol. Without this option, apt-get might hang if it tries
+            # to lock files needed for /var/cache/* operations. All of this can be avoided
+            # by using NFSv4 everywhere. Please note that the tcp option is not the default.
+            mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
         }
         # For more information please check http://docs.vagrantup.com/v2/synced-folders/basic_usage.html
     end
