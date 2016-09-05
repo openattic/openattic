@@ -184,7 +184,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     });
 
     modalInstance.result.then(function () {
-      $scope.filterConfig.refresh = new Date();
+      $scope.refreshList();
     }, function () {});
   };
 
@@ -204,9 +204,9 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     });
 
     modalInstance.result.then(function () {
-      $scope.filterConfig.refresh = new Date();
+      $scope.refreshList();
     }, function () {
-      $scope.filterConfig.refresh = new Date();
+      $scope.refreshList();
     });
   };
 
@@ -235,7 +235,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     });
 
     modalInstance.result.then(function () {
-      $scope.filterConfig.refresh = new Date();
+      $scope.refreshList();
     });
   };
 
@@ -263,6 +263,10 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     }
   };
 
+  $scope.refreshList = function () {
+    $scope.filterConfig.refresh = new Date();
+  };
+
   $scope.cloneAction = function () {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
@@ -276,7 +280,9 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     });
 
     modalInstance.result.then(function () {
-      $scope.filterConfig.refresh = new Date();
+      $scope.refreshList();
     });
   };
+
+  $scope.self = $scope;
 });

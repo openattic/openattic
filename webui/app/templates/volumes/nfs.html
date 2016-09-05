@@ -23,7 +23,7 @@
     <table class="datatable table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
-                <th class="oadatatablecheckbox" ng-if="nfsSelection.available"><input type="checkbox" ng-model="nfsSelection.checkAll"/></th>
+                <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
                 <th sortfield="address"  sortdir="asc" sortheaderclass sortdefault ng-show="columns['Address']">Address</th>
                 <th sortfield="path"     sortdir="asc" sortheaderclass ng-show="columns['Path']">Path</th>
                 <th sortfield="options"  sortdir="asc" sortheaderclass ng-show="columns['Options']">Options</th>
@@ -31,7 +31,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
-                <td ng-if="nfsSelection.available"><input type="checkbox" checklist-model="nfsSelection.items" checklist-value="row"/></td>
+                <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
                 <td ng-show="columns['Address']" ng-bind="row.address"></td>
                 <td class="tc_nfs_share" ng-show="columns['Path']"    ng-bind="row.path"></td>
                 <td ng-show="columns['Options']" ng-bind="row.options"></td>

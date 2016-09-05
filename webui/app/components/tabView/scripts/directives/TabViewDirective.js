@@ -43,7 +43,8 @@ app.directive("tabView", function () {
     scope: {
       tabData: "=",
       tabConfig: "=",
-      selection: "="
+      selection: "=",
+      super: "="
     },
     templateUrl: "components/tabView/templates/tab.view.html",
     controller: function ($scope, TabViewService) {
@@ -56,8 +57,7 @@ app.directive("tabView", function () {
           tab.class = "";
         }
         if (!tab.state || !tab.name) {
-          throw "Error wrong tab format in " + tabName;
-          throw tab;
+          throw "Error wrong tab format in " + tab;
         }
       });
       TabViewService.setScope($scope);

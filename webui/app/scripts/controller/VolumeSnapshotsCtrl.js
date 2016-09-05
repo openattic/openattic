@@ -122,7 +122,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
     });
 
     modalInstance.result.then(function () {
-      $scope.filterConfig.refresh = new Date();
+      $scope.super.refreshList();
     });
   };
 });
