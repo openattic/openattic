@@ -643,10 +643,12 @@ class VolumePool(models.Model):
             return self._create_volume(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.__class__)
+        raise ValidationError({"megs":
+                                   ["{} does not support grow".format(self.__class__.__name__)]})
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.__class__)
+        raise ValidationError({"megs":
+                                   ["{} does not support shrink".format(self.__class__.__name__)]})
 
     def post_grow(self, oldmegs, newmegs):
         pass
@@ -729,11 +731,12 @@ class AbstractVolume(models.Model):
             return self._create_snapshot(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.__class__)
+        raise ValidationError({"megs":
+                                   ["{} does not support grow".format(self.__class__.__name__)]})
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.__class__)
-
+        raise ValidationError({"megs":
+                                   ["{} does not support shrink".format(self.__class__.__name__)]})
     def post_grow(self, oldmegs, newmegs):
         pass
 

@@ -18,6 +18,8 @@ import dbus
 import os
 import os.path
 
+from django.core.exceptions import ValidationError
+
 from systemd import get_dbus_object, dbus_to_python
 from volumes.conf import settings as volumes_settings
 
@@ -210,10 +212,10 @@ class FileSystem(object):
         return dbus_object.write_fstab(delete, id)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.name)
+        raise ValidationError({"megs": ["{} does not support grow".format(self.name)]})
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.name)
+        raise ValidationError({"megs": ["{} does not support shrink".format(self.name)]})
 
     def post_grow(self, oldmegs, newmegs):
         pass
