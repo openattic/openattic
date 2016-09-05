@@ -262,10 +262,13 @@ class DebPackageBuilder(object):
         shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
                     os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
 
-        self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
+        # It's possible that debuild asks for user input. It seems that this behaviour cannot be
+        # disabled, so the system call seems to be necessary at this point, to show the user that
+        # debuild asks for input.
+        self._process.system(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
 
         changes_filename = basename(glob.glob(os.path.join(build_dir, '*.changes'))[0])
-        # Sign the packages with changes file.
+        # Sign the changes file.
         self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
 
         print 'The packages have been created in %s' % build_dir

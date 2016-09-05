@@ -42,9 +42,6 @@ etc/logrotate.d/openattic                 /etc/logrotate.d
 version.txt                               /usr/share/openattic
 debian/default/openattic            /etc/default
 
-# Pacemaker resource agents
-bin/resource_agents/* /usr/lib/ocf/resource.d/openattic/
-
 bin/oaconfig    /usr/sbin
 bin/oacli       /usr/bin
 bin/oavgmanager /usr/sbin

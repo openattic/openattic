@@ -21,7 +21,6 @@ import django
 import time
 
 from optparse import OptionParser
-
 from configobj import ConfigObj
 
 distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
@@ -36,7 +35,9 @@ else:
                   "configuration file.")
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
-django.setup()
+
+if django.VERSION[:2] >= (1, 7):
+    django.setup()
 
 
 def main():

@@ -64,6 +64,22 @@ app.config(function ($stateProvider) {
           skip: true
         }
       })
+      .state("ceph-pools-add", {
+        url: "/ceph/pools/add",
+        views: {
+          "main": {
+            templateUrl: "components/ceph-pools/templates/add-pool.html",
+            controller : "CephPoolsAddCtrl"
+          }
+        },
+        params: {
+          clusterId: null
+        },
+        ncyBreadcrumb: {
+          parent: "cephPools",
+          label: "Add"
+        }
+      })
       .state("cephPools.detail.status", {
         url          : "/status",
         views        : {
