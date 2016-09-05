@@ -23,13 +23,15 @@ from django.core.exceptions import ValidationError
 from systemd import get_dbus_object, dbus_to_python
 from volumes.conf import settings as volumes_settings
 
+
 class FileSystemMeta(type):
     filesystems = []
 
-    def __init__( cls, name, bases, attrs ):
-        type.__init__( cls, name, bases, attrs )
+    def __init__(cls, name, bases, attrs):
+        type.__init__(cls, name, bases, attrs)
         if name != "FileSystem" and cls.check_installed():
             FileSystemMeta.filesystems.append(cls)
+
 
 class FileSystem(object):
     """ Base class from which filesystem objects should be derived.
@@ -60,8 +62,9 @@ class FileSystem(object):
     @classmethod
     def format_blockvolume(cls, volume, options):
         from volumes.models import FileSystemProvider
-        vol = FileSystemProvider(storageobj=volume.storageobj, owner=options["owner"], fstype=cls.name,
-                                 fswarning=options["fswarning"], fscritical=options["fscritical"])
+        vol = FileSystemProvider(storageobj=volume.storageobj, owner=options["owner"],
+                                 fstype=cls.name, fswarning=options["fswarning"],
+                                 fscritical=options["fscritical"])
         vol.full_clean()
         vol.save()
         return vol
@@ -82,7 +85,8 @@ class FileSystem(object):
         return vol
 
     class WrongFS(Exception):
-        """ Raised when a filesystem handler detects that the volume is formatted with a different fs. """
+        """ Raised when a filesystem handler detects that the volume is formatted with a different
+        fs. """
         pass
 
     def __init__(self, volume):
@@ -108,13 +112,14 @@ class FileSystem(object):
     @property
     def path(self):
         if self.virtual:
-            raise NotImplementedError("FileSystem::path needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::path needs to be overridden for virtual FS "
+                                      "handlers")
         if self.volume.storageobj.snapshot is None:
             # not a snapshot -> mount under /media/
             mountdir = volumes_settings.MOUNT_PREFIX
         else:
             # snapshot -> mount under /media/origin/.snapshots/
-            origin   = self.volume.storageobj.snapshot.filesystemvolume.volume.fs
+            origin = self.volume.storageobj.snapshot.filesystemvolume.volume.fs
             mountdir = os.path.join(origin.path, '.snapshots')
         return os.path.join(mountdir, self.volume.storageobj.name)
 
@@ -122,19 +127,21 @@ class FileSystem(object):
         """ Mount the file system.
         """
         if self.virtual:
-            raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS "
+                                      "handlers")
         dbus_object = get_dbus_object("/volumes")
         if self.volume.storageobj.snapshot is not None:
-            # snapshot -> ensure origin is mounted, ensure tmpfs is mounted to .snapshots, then proceed to
-            # mounting as usual
+            # snapshot -> ensure origin is mounted, ensure tmpfs is mounted to .snapshots, then
+            # proceed to mounting as usual
             origin = self.volume.storageobj.snapshot.filesystemvolume.volume.fs
             if not origin.mounted:
                 origin.mount()
             dbus_object = get_dbus_object("/volumes")
             snapdir = os.path.join(origin.path, ".snapshots")
             if not os.path.exists(snapdir) or not os.path.ismount(snapdir):
-                dbus_object.fs_mount( "tmpfs", "tmpfs", snapdir, dbus.Array([], signature="as") )
-        dbus_object.fs_mount( self.name, self.volume.storageobj.blockvolume.volume.path, self.path, self.get_mount_options() )
+                dbus_object.fs_mount("tmpfs", "tmpfs", snapdir, dbus.Array([], signature="as"))
+        dbus_object.fs_mount(self.name, self.volume.storageobj.blockvolume.volume.path, self.path,
+                             self.get_mount_options())
 
     def get_mount_options(self):
         return dbus.Array([], signature="as")
@@ -143,21 +150,23 @@ class FileSystem(object):
     def mounted(self):
         """ True if the volume is currently mounted. """
         if self.virtual:
-            raise NotImplementedError("FileSystem::mounted needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::mounted needs to be overridden for virtual FS "
+                                      "handlers")
         return os.path.ismount(self.path)
 
     def unmount(self):
         """ Unmount the volume. """
         if self.virtual:
-            raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS "
+                                      "handlers")
         dbus_object = get_dbus_object("/volumes")
-        dbus_object.fs_unmount( self.volume.storageobj.blockvolume.volume.path, self.path )
+        dbus_object.fs_unmount(self.volume.storageobj.blockvolume.volume.path, self.path)
         if self.volume.storageobj.snapshot is not None:
             # snapshot -> if no other snapshots exist, unmount the tmpfs
             origin = self.volume.storageobj.snapshot
             if origin.snapshot_storageobject_set.count() <= 1:
                 snapdir = os.path.join(origin.filesystemvolume.volume.path, ".snapshots")
-                dbus_object.fs_unmount( "tmpfs", snapdir )
+                dbus_object.fs_unmount("tmpfs", snapdir)
 
     def format(self):
         """ Format the volume. """
@@ -174,9 +183,11 @@ class FileSystem(object):
     def chown(self):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
-            raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS "
+                                      "handlers")
         dbus_object = get_dbus_object("/volumes")
-        return dbus_object.fs_chown( self.path, self.volume.owner.username, volumes_settings.CHOWN_GROUP )
+        return dbus_object.fs_chown(self.path, self.volume.owner.username,
+                                    volumes_settings.CHOWN_GROUP)
 
     def destroy(self):
         """ Destroy the file system. """
@@ -191,7 +202,8 @@ class FileSystem(object):
     def stat(self):
         """ stat() the file system and return usage statistics. """
         if self.virtual:
-            raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS "
+                                      "handlers")
         dbus_object = get_dbus_object("/volumes")
         try:
             return dbus_to_python(dbus_object.fs_stat(self.path))
@@ -222,4 +234,3 @@ class FileSystem(object):
 
     def post_shrink(self, oldmegs, newmegs):
         pass
-
