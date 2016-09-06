@@ -16,8 +16,8 @@
 
 
 from django.db import models
-from django.core.exceptions import ValidationError
 
+from exception import NotSupportedError
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes.models import InvalidVolumeType, StorageObject, VolumePool, FileSystemVolume
 
@@ -189,5 +189,4 @@ class BtrfsSubvolume(FileSystemVolume):
         # tries to grow the blockvolume, volumepool and filesystemvolume. The resize of the
         # filesystemvolume would raise the exception which isn't allowed here.
         if not self.storageobj.volumepool_or_none:
-            raise ValidationError({"megs":
-                                  ["{} does not support grow".format(self.__class__.__name__)]})
+            raise NotSupportedError("{} does not support grow".format(self.__class__.__name__))
