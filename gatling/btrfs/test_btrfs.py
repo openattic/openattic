@@ -78,7 +78,7 @@ class BtrfsVolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size + 1000, "id": vol["response"]["id"]})
-        self.check_field_validation_messages(err, self.error_messages["test_volume_grow"], "megs")
+        self.check_exception_messages(err, self.error_messages["test_volume_grow"])
 
     def test_volume_shrink(self):
         """ Shrink BTRFS volume"""
@@ -95,7 +95,7 @@ class BtrfsVolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size - 1000, "id": vol["response"]["id"]})
-        self.check_field_validation_messages(err, self.error_messages["test_volume_shrink"], "megs")
+        self.check_exception_messages(err, self.error_messages["test_volume_shrink"])
 
 
 class BtrfsPoolTests(object):
@@ -132,7 +132,7 @@ class BtrfsPoolTests(object):
         # resize the pool
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size, "id": pool["id"]})
-        self.check_field_validation_messages(err, self.error_messages["test_pool_shrink"], "megs")
+        self.check_exception_messages(err, self.error_messages["test_pool_shrink"])
 
 
 class BtrfsLvmPoolTestCase(BtrfsLvmPoolTestScenario, BtrfsVolumeTests, BtrfsPoolTests):

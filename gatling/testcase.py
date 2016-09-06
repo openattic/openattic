@@ -192,19 +192,20 @@ class GatlingTestCase(unittest.TestCase):
                 for vol in res["response"]:
                     cls.send_request("DELETE", "volumes", obj_id=vol["id"])
 
-    def check_field_validation_messages(self, err_response, expected_message, field=None,
-                                        fuzzy=False):
+    def check_exception_messages(self, err_response, expected_message, field="detail", fuzzy=False):
         self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
         self.assertEqual(err_response.exception.response.status_code, 400)
 
-        detailed_err = err_response.exception.response.json()
-        if field:
-            if fuzzy:
-                self.assertIn(expected_message, str(detailed_err["detail"][field][0]))
-            else:
-                self.assertEqual(expected_message, str(detailed_err["detail"][field][0]))
+        detailed_err = err_response.exception.response.json()[field]
+        if type(detailed_err) == list:
+            message = str(detailed_err[0])
         else:
-            self.assertEqual(expected_message, str(detailed_err))
+            message = detailed_err
+
+        if fuzzy:
+            self.assertIn(expected_message, message)
+        else:
+            self.assertEqual(expected_message, message)
 
     def check_volume_properties(self, vol, max_size=None):
         """

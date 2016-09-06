@@ -93,9 +93,8 @@ class ZfsVolumeTests(object):
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
-        self.check_field_validation_messages(err,
-                                             self.error_messages["test_create_not_enough_space"],
-                                             "megs", True)
+        self.check_exception_messages(err, self.error_messages["test_create_not_enough_space"],
+                                      "megs", True)
 
 
 class ZfsNativePoolVolumeTestCase(ZfsNativePoolTestScenario, ZfsVolumeTests):
