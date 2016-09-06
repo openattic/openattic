@@ -141,7 +141,7 @@ class Zfs(FileSystemVolume):
         # real size limit
         if float(self.zpool.storageobj.megs) < int(self.storageobj.megs):
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": ["ZPool %s has insufficient space (%f < %d)." % (
+            raise ValidationError({"megs": ["ZPool %s has insufficient free space (%f < %d)." % (
                 self.zpool.storageobj.name, self.zpool.storageobj.megs, self.storageobj.megs)]})
 
     @property
