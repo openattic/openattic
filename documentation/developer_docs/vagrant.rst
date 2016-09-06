@@ -28,6 +28,11 @@ The ``vagrant-libvirt`` plugin is required when using KVM on Linux::
 
     vagrant plugin install vagrant-libvirt
 
+.. note::
+
+	If you experience an error while trying to install ``vagrant-libvirt``, you might need to
+	install the ``libvirt-dev`` package.
+
 
 Starting the Virtual Machine
 ----------------------------

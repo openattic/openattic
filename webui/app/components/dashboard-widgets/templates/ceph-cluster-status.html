@@ -14,7 +14,7 @@
                   }">
     </ng-pluralize>
     <ul class="list-nomargin">
-      <li ng-repeat="cluster in data.unknown">{{cluster.health}}</li>
+      <li ng-repeat="cluster in data.unknown" ng-bind="cluster.health"></li>
     </ul>
   </div>
 
@@ -40,9 +40,9 @@
     </strong>
 
     <div class="indent" ng-if="!warnCollapsed" ng-repeat="cluster in data.warn">
-      {{cluster.name}} ({{cluster.fsid}})
+      <span ng-bind="cluster.name"></span> (<span ng-bind="cluster.fsid"></span>)
       <ul>
-        <li ng-repeat="warn in cluster.summary | filter:{severity: 'HEALTH_WARN'}">{{warn.summary}}</li>
+        <li ng-repeat="warn in cluster.summary | filter:{severity: 'HEALTH_WARN'}" ng-bind="warn.summary"></li>
       </ul>
     </div>
   </div>
@@ -59,9 +59,9 @@
     </strong>
 
     <div class="indent" ng-if="!errCollapsed" ng-repeat="cluster in data.err">
-      {{cluster.name}} ({{cluster.fsid}})
+      <span ng-bind="cluster.name"></span> (<span ng-bind="cluster.fsid"></span>)
       <ul>
-        <li ng-repeat="err in cluster.summary | filter:{severity: 'HEALTH_ERR'}">{{err.summary}}</li>
+        <li ng-repeat="err in cluster.summary | filter:{severity: 'HEALTH_ERR'}" ng-bind="err.summary"></li>
       </ul>
     </div>
   </div>

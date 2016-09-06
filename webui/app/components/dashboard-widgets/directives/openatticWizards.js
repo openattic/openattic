@@ -35,8 +35,7 @@ app.directive("openatticWizards", function () {
   return {
     restrict   : "E",
     scope      : true,
-    controller : function ($scope) {
-      $scope.test = "IHI";
+    controller : function () {
     },
     templateUrl: "components/dashboard-widgets/templates/openattic-wizards.html"
   };

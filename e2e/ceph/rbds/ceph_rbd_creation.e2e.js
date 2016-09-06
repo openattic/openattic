@@ -11,62 +11,31 @@ describe('should test the ceph rbd creation and deletion', function(){
   });
 
   var objSizeTests = [
-    '4.00 kB',
-    '8.00 kB',
-    '16.00 kB',
-    '32.00 kB',
-    '64.00 kB',
-    '128.00 kB',
-    '256.00 kB',
-    '512.00 kB',
-    '1.00 MB',
-    '2.00 MB',
-    '4.00 MB',
-    '8.00 MB',
-    '16.00 MB',
-    '32.00 MB'
+    [4, "kB"],
+    [8, 'kB'],
+    [16, 'kB'],
+    [32, 'kB'],
+    [64, 'kB'],
+    [128, 'kB'],
+    [256, 'kB'],
+    [512, 'kB'],
+    [1, 'MB'],
+    [2, 'MB'],
+    [4, 'MB'],
+    [8, 'MB'],
+    [16, 'MB'],
+    [32, 'MB']
   ];
 
-  var deleteRbd = function(rbdName){
-    element(by.css('.tc_menudropdown')).click();
-    element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('input.enteredName')).sendKeys('yes');
-    element(by.id('bot2-Msg1')).click();
-    rbd = element(by.cssContainingText('tr', rbdName));
-    expect(rbd.isPresent()).toBe(false);
-  };
-
-  var createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
-    rbdObjSize = rbdObjSize || "32.00 MB";
-    rbdProperties.name.clear();
-    rbdProperties.name.sendKeys(rbdName);
-    rbdProperties.size.clear();
-    rbdProperties.size.sendKeys(65);
-    rbdProperties.objSize.clear();
-    rbdProperties.objSize.sendKeys(rbdObjSize);
-    element(by.className('tc_submitButton')).click();
-    var rbd = element(by.cssContainingText('tr', rbdName));
-    expect(rbd.isDisplayed()).toBe(true);
-
-    rbd.click();
-    expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
-    if(rbdFeatureCase){
-      var keys = Object.keys(rbdProperties.formElements.features.items);
-      rbdFeatureCase.forEach(function(state, index){ // check the features
-        if(state === 1){
-          expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
-        }
-      });
-    }
-  };
-
   rbdProperties.useWriteablePools(function(cluster, pool){
-    objSizeTests.forEach(function(objSize, index){
-      it('should create a rbd with this object size: ' + objSize + ' on ' + pool.name + ' in cluster ' + cluster.name, function(){
+    objSizeTests.forEach(function(sizeArr, index){
+      var objSize = sizeArr[0] + '.00 ' + sizeArr[1];
+      var rbdSize = sizeArr[0]*2 + '.00 ' + sizeArr[1]; // The rbd will always consist of 2 objects.
+      it('should create a rbd with ' + objSize + ' object size and ' + rbdSize + ' rbd size on ' + pool.name + ' in cluster ' + cluster.name, function(){
         rbdProperties.selectClusterAndPool(cluster, pool);
         var rbdName = "e2eObjectSize" + index;
-        createRbd(rbdName, objSize);
-        deleteRbd(rbdName);
+        rbdProperties.createRbd(rbdName, objSize, null, rbdSize);
+        rbdProperties.deleteRbd(rbdName);
       });
     });
   });
@@ -83,13 +52,13 @@ describe('should test the ceph rbd creation and deletion', function(){
         testCase.forEach(function(state, index){ // check the features
           rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
         });
-        createRbd("e2eFeatures", null, testCase);
-        deleteRbd("e2eFeatures");
+        rbdProperties.createRbd("e2eFeatures", null, testCase);
+        rbdProperties.deleteRbd("e2eFeatures");
       })
     });
   });
 
   afterAll(function(){
-    console.log('ceph_rbds -> ceph_rbd_creation.e2e.js');
+    console.log('ceph_rbd_creation -> ceph_rbd_creation.e2e.js');
   });
 });
