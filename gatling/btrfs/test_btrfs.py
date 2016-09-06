@@ -123,7 +123,7 @@ class BtrfsPoolTests(object):
         self.assertIn(resized_pool["response"]["status"]["status"], ["good", "locked"])
 
     def test_pool_shrink(self):
-        """ Grow BTRFS pool """
+        """ Shrink BTRFS pool """
         # get pool information
         pool = self._get_pool()
         old_size = pool["usage"]["size"]
