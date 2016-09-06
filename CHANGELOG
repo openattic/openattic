@@ -21,6 +21,7 @@ Version 2.0.14, (not released yet):
 * WebUI/QA: Create and delete ceph pool tests (OP-1417)
 * WebUI/QA: Fix a timing problem and create needed RBDs (OP-1461)
 * WebUI/QA: Fix the timing problems with in the RBD creation test (OP-1471)
+* WebUI/QA: Make e2e outDir and cephCluster attribute optional (OP-1474)
 * Installation: `oaconfig version` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
 * Installation: The `openattic-gui` RPM and DEB packages now take care of
