@@ -573,7 +573,9 @@ class CephOsd(NodbModel):
         osds = sorted(rados[context.fsid].list_osds(), key=lambda osd: osd['id'])
         osd_dump_data = sorted(MonApi(rados[context.fsid]).osd_dump()['osds'], key=lambda osd: osd['osd'])
         pg_dump_data = sorted(MonApi(rados[context.fsid]).pg_dump()['osd_stats'], key=lambda osd: osd['osd'])
-        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **dict(osd, **pg_dump))))
+        fields_to_force = ['primary_affinity']
+        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **dict(osd, **pg_dump)),
+                                                  fields_force_none=fields_to_force))
                 for (osd, dump, pg_dump)
                 in zip(osds, osd_dump_data, pg_dump_data)]
 
@@ -701,18 +703,16 @@ class CephPg(NodbModel):
 
         ret = []
         for pg in pgs:
-            model_args = CephPg.make_model_args(pg)
+            fields_to_force = ['last_became_active', 'last_became_peered', 'last_active',
+                               'last_change', 'last_deep_scrub', 'last_scrub',
+                               'last_clean_scrub_stamp', 'last_clean', 'last_fresh',
+                               'last_fullsized', 'last_peered', 'last_undegraded', 'last_unstale',
+                               'osd_id', 'pool_name']
+            model_args = CephPg.make_model_args(pg, fields_force_none=fields_to_force)
             if 'osd' in argdict:
                 model_args['osd_id'] = argdict['osd']
             if 'poolstr' in argdict:
                 model_args['pool_name'] = argdict['poolstr']
-            for name in ['last_became_active', 'last_became_peered', 'last_active', 'last_change',
-                         'last_deep_scrub', 'last_scrub', 'last_clean_scrub_stamp', 'last_clean',
-                         'last_fresh', 'last_fullsized', 'last_peered', 'last_undegraded',
-                         'last_unstale',
-                         'osd_id', 'pool_name']:
-                if name not in model_args:
-                    model_args[name] = None
 
             ret.append(CephPg(**model_args))
         return ret

@@ -16,17 +16,21 @@ describe('Volumes add', function(){
     callback(pool.name, pool);
   };
 
-  var forEachPool = function(callback){
-    for(var key in helpers.configs.pools){
-      usePool(helpers.configs.pools[key], callback);
-    }
+  var forEachPool = function(itmsg, callback){
+    Object.keys(helpers.configs.pools).forEach(function(key){
+      var pool = helpers.configs.pools[key];
+      it(itmsg + " -->  " + pool.name + " (" + pool.poolType + ")", function(){
+        usePool(pool, callback);
+        volumePoolSelect.sendKeys(pool.name);
+        browser.sleep(helpers.configs.sleep);
+        callback(pool.name, pool);
+      });
+    });
   };
 
   var withFirstPool = function(callback){
-    for(var key in helpers.configs.pools){
-      usePool(helpers.configs.pools[key], callback);
-      break;
-    }
+    var pool = helpers.configs.pools[Object.keys(helpers.configs.pools)[0]];
+    usePool(pool, callback);
   };
 
   beforeAll(function(){
@@ -96,36 +100,30 @@ describe('Volumes add', function(){
   });
 
 
-  it('should have the configured pools', function(){
-    forEachPool(function(exact_poolname){
-      expect(element.all(by.cssContainingText('option', exact_poolname)).get(0).isDisplayed()).toBe(true);
+  forEachPool('should hold the configured pools in the selecect box', function(exact_poolname){
+    expect(element.all(by.cssContainingText('option', exact_poolname)).get(0).isDisplayed()).toBe(true);
+  });
+
+  forEachPool('should show the correct size of the selected pool', function(exact_poolname){
+    element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+    browser.sleep(400);
+    var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
+      browser.sleep(400);
+      expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
+      expect(element(by.css('.tc_poolAvailableSize')).isDisplayed()).toBe(true);
+    });
+
+    var pool_space = volumeSizeInput.evaluate('data.pool.usage.size_text').then(function(size){
+      expect(element(by.css('.tc_poolSize')).getText()).toContain(size + ' used');
     });
   });
 
-  it('should show the correct size of the selected pool', function(){
-    forEachPool(function(exact_poolname){
-      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+  forEachPool('should show the correct hostname of the selected pool', function(exact_poolname){
+    element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+    browser.sleep(400);
+    volumePoolSelect.evaluate('pool.host.title').then(function(host){
       browser.sleep(400);
-      var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
-          browser.sleep(400);
-          expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
-          expect(element(by.css('.tc_poolAvailableSize')).isDisplayed()).toBe(true);
-        });
-
-      var pool_space = volumeSizeInput.evaluate('data.pool.usage.size_text').then(function(size){
-        expect(element(by.css('.tc_poolSize')).getText()).toContain(size + ' used');
-      });
-    });
-  });
-
-  it('should show the correct hostname of the selected pool', function(){
-    forEachPool(function(exact_poolname){
-      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
-      browser.sleep(400);
-      volumePoolSelect.evaluate('pool.host.title').then(function(host){
-        browser.sleep(400);
-        expect(volumePoolSelect.getText()).toContain(host);
-      });
+      expect(volumePoolSelect.getText()).toContain(host);
     });
   });
 
@@ -145,38 +143,32 @@ describe('Volumes add', function(){
   //     }
   //   });
 
-  it('should not allow a volume size that is higher than the selected pool capacity', function(){
-    forEachPool(function(exact_poolname, pool){
-      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+  forEachPool('should not allow a volume size that is higher than the selected pool capacity', function(exact_poolname, pool){
+    element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+    browser.sleep(400);
+    var volumeSize = (pool.size + 0.1).toFixed(2);
+    volumeSizeInput.clear().sendKeys(volumeSize + pool.unit);
+    browser.sleep(400);
+    expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(true);
+  });
+
+  forEachPool('should allow a volume size that is as high as the selected pool capacity', function(exact_poolname){
+    element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+    browser.sleep(400);
+    var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
+      //console.log(psize);
       browser.sleep(400);
-      var volumeSize = (pool.size + 0.1).toFixed(2);
-      volumeSizeInput.clear().sendKeys(volumeSize + pool.unit);
-      browser.sleep(400);
-      expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(true);
+      volumeSizeInput.clear().sendKeys(psize);
+      expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(false);
     });
   });
 
-  it('should allow a volume size that is as high as the selected pool capacity', function(){
-    forEachPool(function(exact_poolname){
-      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
-      browser.sleep(400);
-      var pool_size = volumeSizeInput.evaluate('data.pool.usage.free_text').then(function(psize){
-        //console.log(psize);
-        browser.sleep(400);
-        volumeSizeInput.clear().sendKeys(psize);
-        expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(false);
-      });
-    });
-  });
-
-  it('should show the predefined volume types for each pool', function(){
-    forEachPool(function(exact_poolname, pool){
-      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
-      browser.sleep(400);
-      for(var i = 0; i < pool.volumeTypes.length; i++){
-        expect(element(by.cssContainingText('label', pool.volumeTypes[i])).isDisplayed()).toBe(true);
-      }
-    });
+  forEachPool('should show the predefined volume types for each pool', function(exact_poolname, pool){
+    element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+    browser.sleep(400);
+    for(var i = 0; i < pool.volumeTypes.length; i++){
+      expect(element(by.cssContainingText('label', pool.volumeTypes[i])).isDisplayed()).toBe(true);
+    }
   });
 
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
