@@ -30,7 +30,15 @@ def custom_handler(exc):
 
     # If the default handler can't find a suitable exception response try the custom ones
     if isinstance(exc, ValidationError):
-        return Response({"detail": exc}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(exc, status=status.HTTP_400_BAD_REQUEST)
+
+    if isinstance(exc, NotSupportedError):
+        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     # If there is no suitable exception at all just return nothing to generate a '500 - Internal
     # Server Error' exception
+
+
+class NotSupportedError(Exception):
+    def __init__(self, *args, **kwargs):
+        super(NotSupportedError, self).__init__(*args, **kwargs)
