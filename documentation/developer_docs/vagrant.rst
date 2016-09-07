@@ -122,7 +122,7 @@ Run this command or change the owner of ``/var/lib/libvirt/images``::
 **`vagrant destroy` due to wrong provider**
 
 You may also encounter the error that Vagrant tells you to `vagrant destroy`, but it doesn't seem to work. In that case
-you may have `this <https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561>`_ issue.
+you may be experiencing `this <https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561>`_ issue.
 
 A workaround for this is to specify your provider as default provider in the Vagrantfile like so::
 
