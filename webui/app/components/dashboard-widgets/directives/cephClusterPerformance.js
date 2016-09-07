@@ -198,12 +198,12 @@ app.directive("cephClusterPerformance", function () {
               $scope.graph.data = [];
 
               angular.forEach(res, function (e) {
-                // Filter null
+                // Filter null TODO remove if fixed in BE
                 var len = e.values.length;
-                if (e.values[len-2][1] === null) {
-                  e.values.splice(len-2, 2);
+                if (e.values[len - 2][1] === null) {
+                  e.values.splice(len - 2, 2);
                 } else {
-                  e.values.splice(len-1, 1);
+                  e.values.splice(len - 1, 1);
                 }
 
                 // Customize graphs
