@@ -35,6 +35,13 @@ def custom_handler(exc):
     if isinstance(exc, NotSupportedError):
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
+    if isinstance(exc, KeyError):
+        return Response({"detail": "Parameter {} is missing.".format(str(exc))},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    if exc is not None:
+        return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     # If there is no suitable exception at all just return nothing to generate a '500 - Internal
     # Server Error' exception
 
