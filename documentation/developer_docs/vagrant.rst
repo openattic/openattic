@@ -109,7 +109,7 @@ If the |oA| `systemd` is not running on your VM, you can start it by executing::
 
 in your VM.
 
-**vagrant destroy fails**
+**`vagrant destroy` fails due to a permission problem**
 
 To fix this error::
 
@@ -119,3 +119,34 @@ Run this command or change the owner of ``/var/lib/libvirt/images``::
 
     chmod 777 /var/lib/libvirt/images
 
+**`vagrant destroy` fails due to wrong provider**
+
+You may also encounter the error that Vagrant tells you to `vagrant destroy`, but it doesn't seem to work. In that case
+you may be experiencing `this <https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561>`_ issue.
+
+A workaround for this is to specify your provider as default provider in the Vagrantfile like so:
+
+.. code-block:: ruby
+
+    ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
+**`vagrant up` fails on "Waiting for domain to get an IP address..."**
+
+It looks like this problem has something to do with the libvirt library and specific mainboards. We
+haven't found the cause of this problem, but using a different libvirt driver at least works around
+it.
+
+Using ``qemu`` instead of ``kvm`` as driver does the trick. But kvm is and will be enabled by
+default, because qemu runs slower than kvm. You have to adapt the driver yourself in the
+``Vagrantfile`` like so:
+
+.. code-block:: ruby
+
+    Vagrant.configure(2) do |config|
+        config.vm.provider :libvirt do |lv|
+            lv.driver = 'qemu'
+        end
+    end
+
+If you want to know more about this problem or even want to contribute to it, visit our bug tracker
+on issue `OP-1455 <https://tracker.openattic.org/browse/OP-1455>`_.
