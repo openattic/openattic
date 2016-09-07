@@ -195,7 +195,8 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       windowTemplateUrl: "templates/messagebox.html",
       resolve          : {
         data: {
-          "manager": $scope.manager
+          "manager" : $scope.manager,
+          "settings": {}
         }
       }
     });
@@ -207,7 +208,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
         "id"      : idx,
         "name"    : data.name,
         "manager" : data.manager,
-        "settings": {}
+        "settings": data.settings
       });
 
       $scope.saveDashboard();
