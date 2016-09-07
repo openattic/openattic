@@ -100,12 +100,7 @@ app.directive("cephClusterPerformance", function () {
 
       // Functions
       var init = function () {
-        // Check if settings have been made
-        if (angular.equals({}, $scope.widget.settings)) {
-          $scope.getCluster();
-        } else {
-          $scope.startInterval();
-        }
+        $scope.startInterval();
       };
 
       var formatBytes = function (bytes, decimals) {
@@ -132,33 +127,6 @@ app.directive("cephClusterPerformance", function () {
         }
 
         return [value, units[i], i, round, units[k], k, factor];
-      };
-
-      $scope.saveSettings = function () {
-        $scope.saveDashboard();
-        $scope.startInterval();
-
-        $scope.widget.settings.saved = true;
-      };
-
-      $scope.resetSettings = function () {
-        $scope.getCluster();
-        $scope.saveDashboard();
-        $scope.stopInterval();
-
-        $scope.widget.settings = {};
-      };
-
-      $scope.getCluster = function () {
-        cephClusterService
-            .get()
-            .$promise
-            .then(function (res) {
-              $scope.cluster = res.results;
-            })
-            .catch(function (error) {
-              throw error;
-            });
       };
 
       $scope.getData = function () {
