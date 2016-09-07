@@ -221,7 +221,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "Value u'F' is not a valid choice."
-        self.check_exception_messages(err, expected_err_message, "protocol")
+        self.check_exception_messages(err, expected_err_message, field="protocol")
 
     def test_create_0m(self):
         """ Try to create a Connection with syncer rate set to 0M. """
@@ -241,7 +241,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be between 500K and 100M"
-        self.check_exception_messages(err, expected_err_message, "syncer_rate")
+        self.check_exception_messages(err, expected_err_message, field="syncer_rate")
 
     def test_create_10g(self):
         """ Try to create a Connection with syncer rate set to 10G. """
@@ -261,7 +261,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
-        self.check_exception_messages(err, expected_err_message, "syncer_rate")
+        self.check_exception_messages(err, expected_err_message, field="syncer_rate")
 
     def test_create_1t(self):
         """ Try to create a Connection with syncer rate set to 1T (invalid unit). """
@@ -281,7 +281,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
-        self.check_exception_messages(err, expected_err_message, "syncer_rate")
+        self.check_exception_messages(err, expected_err_message, field="syncer_rate")
 
     def test_create_rate_with_space(self):
         """ Try to create a Connection with syncer rate set to 10 M (space char is invalid). """
@@ -301,7 +301,7 @@ class DrbdTests(object):
 
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
-        self.check_exception_messages(err, expected_err_message, "syncer_rate")
+        self.check_exception_messages(err, expected_err_message, field="syncer_rate")
 
     def _get_mirror_volume(self, source_pool_id):
         vol_data = {"megs": self.volumesize,

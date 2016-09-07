@@ -261,7 +261,7 @@ class VolumeTests(object):
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         self.check_exception_messages(err, self.error_messages["test_create_not_enough_space"],
-                                      "megs", True)
+                                      field="megs", fuzzy=True)
 
     def test_create_0mb(self):
         """ Create a volume with 0 MB size. """
@@ -272,7 +272,7 @@ class VolumeTests(object):
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
-        self.check_exception_messages(err, self.error_messages["test_create_0mb"], "megs")
+        self.check_exception_messages(err, self.error_messages["test_create_0mb"], field="megs")
 
     def test_resize_0mb(self):
         """ Resize a volume to 0 MB. """
@@ -285,7 +285,7 @@ class VolumeTests(object):
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": 0, "id": vol["response"]["id"]})
 
-        self.check_exception_messages(err, self.error_messages["test_resize_0mb"], "megs")
+        self.check_exception_messages(err, self.error_messages["test_resize_0mb"], field="megs")
 
 
 class Ext4VolumeTests(VolumeTests):
@@ -307,4 +307,4 @@ class XfsVolumeTests(VolumeTests):
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": 0, "id": vol["response"]["id"]})
 
-        self.check_exception_messages(err, self.error_messages["test_shrink"], "megs")
+        self.check_exception_messages(err, self.error_messages["test_shrink"], field="megs")

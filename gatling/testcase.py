@@ -192,9 +192,17 @@ class GatlingTestCase(unittest.TestCase):
                 for vol in res["response"]:
                     cls.send_request("DELETE", "volumes", obj_id=vol["id"])
 
-    def check_exception_messages(self, err_response, expected_message, field="detail", fuzzy=False):
-        self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
-        self.assertEqual(err_response.exception.response.status_code, 400)
+    def check_exception_messages(self, err_response, expected_message, **kwargs):
+        field = kwargs.get("field", "detail")
+        fuzzy = kwargs.get("fuzzy", False)
+        status_code = kwargs.get("status_code", 400)
+
+        if status_code == 400:
+            self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
+        else:
+            self.assertEqual(str(err_response.exception), "500 Server Error: Internal Server Error")
+
+        self.assertEqual(err_response.exception.response.status_code, status_code)
 
         detailed_err = err_response.exception.response.json()[field]
         if type(detailed_err) == list:
