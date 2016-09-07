@@ -32,7 +32,7 @@ var globalConfig = {
           },
           "settings": {},
           "minSizeX": 3,
-          "minSizeY": 2
+          "minSizeY": 3
         }, {
           "name"    : "openATTIC wizards",
           "manager" : {
@@ -41,8 +41,8 @@ var globalConfig = {
             "group"  : "Local storage"
           },
           "settings": {},
-          "minSizeX": 2,
-          "minSizeY": 2
+          "minSizeX": 3,
+          "minSizeY": 3
         }]
       }, {
         "name"   : "Ceph",
