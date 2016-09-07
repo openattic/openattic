@@ -153,10 +153,8 @@ class DrbdTests(object):
             self.send_request("PUT", "mirrors", obj_id=mirror["id"],
                               data={"new_size": self.growsize})
 
-        self.assertEqual(str(err.exception), "501 Server Error: Not Implemented")
-        self.assertEqual(err.exception.response.status_code, 501)
-        self.assertEqual(str(err.exception.response.json()),
-                         "Resizing a formatted DRBD connection is not implemented yet.")
+        expected_err_message = "Resizing a formatted DRBD connection is not implemented yet."
+        self.check_exception_messages(err, expected_err_message)
 
         # Check if resize (grow) was successful
         # time.sleep(self.sleeptime)
@@ -200,7 +198,7 @@ class DrbdTests(object):
         # check status code and error message
         expected_err_message = "The size of a DRBD connection can only be increased but the new " \
                                "size (500.00MB) is smaller than the current size (1,000.00MB)."
-        self.check_exception_messages(err, expected_err_message)
+        self.check_exception_messages(err, expected_err_message, status_code=500)
 
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
@@ -302,6 +300,78 @@ class DrbdTests(object):
         # check status code and error message
         expected_err_message = "syncer rate must be in <number>[K|M|G] format"
         self.check_exception_messages(err, expected_err_message, field="syncer_rate")
+
+    def test_create_without_source_volume_data(self):
+        """ Create a Connection without source volume data and check if it fails. """
+        mirror_data = {"remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
+
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+
+        # check status code and error message
+        expected_err_message = "Parameter 'source_volume' is missing."
+        self.check_exception_messages(err, expected_err_message)
+
+    def test_create_without_remote_pool_data(self):
+        """ Create a Connection without remote pool data and check if it fails. """
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        mirror_data = {"source_volume": vol,
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
+
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+        self.send_request("DELETE", "volumes", obj_id=vol["id"])
+
+        # check status code and error message
+        expected_err_message = "Parameter 'remote_pool' is missing."
+        self.check_exception_messages(err, expected_err_message)
+
+    def test_create_without_valid_source_volume_host_id(self):
+        """ Try to create a DRBD connection without a valid/existing volume host id. """
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        vol_wrong_id = vol
+        vol_wrong_id["host"]["id"] = 2000
+
+        mirror_data = {"source_volume": vol_wrong_id,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
+
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+        self.send_request("DELETE", "volumes", obj_id=vol["id"])
+
+        expected_err_message = "Host matching query does not exist."
+        self.check_exception_messages(err, expected_err_message, status_code=500)
+
+    def test_create_without_valid_remote_pool_host_id(self):
+        """ Try to create a DRBD connection without a valid/existing remote pool host id. """
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        remote_pool = self._get_remote_pool()
+        remote_pool["host"]["id"] = 2000
+
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": remote_pool,
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
+
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+        self.send_request("DELETE", "volumes", obj_id=vol["id"])
+
+        expected_err_message = "Host matching query does not exist."
+        self.check_exception_messages(err, expected_err_message, status_code=500)
+
 
     def _get_mirror_volume(self, source_pool_id):
         vol_data = {"megs": self.volumesize,
