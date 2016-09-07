@@ -47,7 +47,7 @@ app.directive("cephClusterPerformanceSettings", function () {
             })
             .catch(function (error) {
               throw error;
-            })
+            });
       };
 
       // init
