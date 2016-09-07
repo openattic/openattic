@@ -1,39 +1,5 @@
 <i class="fa fa-spinner fa-spin overlay" ng-show="isLoading"></i>
 
-<div ng-if="!widget.settings.saved">
-  <form name="performanceForm">
-    <div class="form-group">
-      <label for="cluster" class="control-label">Cluster</label>
-      <select id="cluster"
-              name="cluster"
-              class="form-control tc_cluster"
-              ng-model="widget.settings.cluster"
-              ng-options="(c.name + ' (' + c.fsid + ')') for c in cluster track by c.fsid"
-              required>
-        <option value="">-- Select a cluster --</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="perfData" class="control-label">Performance data options</label>
-      <select id="perfData"
-              name="perfData"
-              class="form-control tc_perfData"
-              ng-model="widget.settings.perfdata"
-              ng-options="pd for pd in perfData"
-              required>
-        <option value="">-- Select an option --</option>
-      </select>
-    </div>
-
-    <button type="submit"
-            class="btn btn-sm btn-primary tc_submitButton"
-            ng-click="saveSettings()"
-            ng-disabled="performanceForm.$invalid">Save settings
-    </button>
-  </form>
-</div>
-
-<div ng-if="widget.settings.saved" class="max-height">
+<div class="max-height">
   <nvd3 api="graph.api" config="graph.config" data="graph.data" options="graph.options"></nvd3>
 </div>
