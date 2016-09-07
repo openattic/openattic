@@ -246,12 +246,12 @@ class Connection(BlockVolume):
         if self.storageobj.filesystemvolume_or_none:
             raise NotSupportedError("Resizing a formatted DRBD connection is not implemented yet.")
         if self.status != "Connected":
-            raise SystemError("Can only resize DRBD volumes in 'Connected' state, current state is '%s'" % self.status)
+            raise NotSupportedError("Can only resize DRBD volumes in 'Connected' state, current state is '%s'" % self.status)
         if self.storageobj.megs >= new_size:
             output_new_size = _to_number_with_unit(new_size)
             output_megs = _to_number_with_unit(self.storageobj.megs)
-            raise SystemError("The size of a DRBD connection can only be increased but the new size (%s) is smaller than"
-                              " the current size (%s)." % (output_new_size, output_megs))
+            raise NotSupportedError("The size of a DRBD connection can only be increased but the new size (%s) is smaller than"
+                                    " the current size (%s)." % (output_new_size, output_megs))
 
         local_endpoint = Endpoint.objects.get(connection=self)
         local_endpoint.volume.storageobj.resize(new_size)

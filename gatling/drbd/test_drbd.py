@@ -198,7 +198,7 @@ class DrbdTests(object):
         # check status code and error message
         expected_err_message = "The size of a DRBD connection can only be increased but the new " \
                                "size (500.00MB) is smaller than the current size (1,000.00MB)."
-        self.check_exception_messages(err, expected_err_message, status_code=500)
+        self.check_exception_messages(err, expected_err_message)
 
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
