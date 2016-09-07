@@ -236,6 +236,15 @@ app.directive("cephClusterPerformance", function () {
         $interval.cancel(promise);
       };
 
+      // Watcher
+      $scope.$watch("widget.settings", function (newValue, oldValue) {
+        if (angular.equals(newValue, oldValue)) {
+          return;
+        }
+
+        $scope.getData();
+      });
+
       // Event-Handler
       $scope.$on("$destroy", function () {
         $scope.stopInterval();
