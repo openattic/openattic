@@ -193,6 +193,23 @@ class GatlingTestCase(unittest.TestCase):
                     cls.send_request("DELETE", "volumes", obj_id=vol["id"])
 
     def check_exception_messages(self, err_response, expected_message, **kwargs):
+        """
+        Checks the content of error responses.
+
+        :param err_response: Error response object
+        :rtype: HTTPError
+        :param expected_message: Expected response message
+        :rtype: str
+        :param kwargs:  field(str)          -> Which field of the error response should be checked?
+                                               Default value is detail.
+                        fuzzy(bool)         -> Checks just a part of the error message (uses
+                                               assertIn instead of assertEqual). Default value is
+                                               False.
+                        status_code(int)    -> Checks error response for this status code. Default
+                                               value is 400.
+        :rtype: dict[str, Any]
+        :return: None
+        """
         field = kwargs.get("field", "detail")
         fuzzy = kwargs.get("fuzzy", False)
         status_code = kwargs.get("status_code", 400)
