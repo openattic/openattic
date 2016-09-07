@@ -31,4 +31,4 @@
 "use strict";
 
 var app = angular.module("openattic.dashboardWidgets");
-app.value("cephPerfDataOpt", ["Read / Write per sec", "OSDs", "Storage"]);
+app.value("cephPerfDataOpt", ["Read / Write per sec", "OSDs", "Utilization"]);
