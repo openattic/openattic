@@ -69,11 +69,11 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
   }, {
     "name"   : "Ceph cluster status",
     "manager": "ceph-cluster-status",
-    "group"  : "ceph"
+    "group"  : "Ceph"
   }, {
     "name"   : "Ceph cluster performance",
     "manager": "ceph-cluster-performance",
-    "group"  : "ceph"
+    "group"  : "Ceph"
   }];
 
   // functions
@@ -229,19 +229,16 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
           "type"           : "widget",
           "name"           : name,
           "manager"        : $scope.manager,
-          "selectedManager": $scope.dashboard.widgets[idx].manager
+          "selectedManager": $scope.dashboard.widgets[idx].manager,
+          "settings"       : $scope.dashboard.widgets[idx].settings
         }
       }
     });
 
     modalInstance.result.then(function (data) {
       $scope.dashboard.widgets[idx].name = data.name;
-
-      // Check if manager has changed
-      if ($scope.dashboard.widgets[idx].manager !== data.manager) {
-        $scope.dashboard.widgets[idx].manager = data.manager;
-        $scope.dashboard.widgets[idx].settings = {};
-      }
+      $scope.dashboard.widgets[idx].manager = data.manager;
+      $scope.dashboard.widgets[idx].settings = data.settings;
 
       $scope.saveDashboard();
       toasty.success({
@@ -318,7 +315,8 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
     // verify board and widget objects
     if (!angular.isDefined(globalConfig.GUI.defaultDashboard.boards) ||
         !angular.isArray(globalConfig.GUI.defaultDashboard.boards) ||
-        globalConfig.GUI.defaultDashboard.boards.length < 1) {
+        globalConfig.GUI.defaultDashboard.boards.length <
+        1) {
       throw "InvalidDashboardConfiguration";
     }
 
