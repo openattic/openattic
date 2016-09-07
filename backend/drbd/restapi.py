@@ -118,20 +118,11 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     model = Connection
 
     def create(self, request, *args, **kwargs):
-        try:
-            # Get all needed information from request
-            source_volume = request.DATA["source_volume"]
-            remote_pool = request.DATA["remote_pool"]
-        except KeyError:
-            return Response("The mandatory parameter(s) 'source_volume' and/or 'remote_pool' are "
-                            "missing.", status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
-            remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
-        except Host.DoesNotExist:
-            return Response("Can't find the related host object of the volume that should be "
-                            "mirrored", status=status.HTTP_404_NOT_FOUND)
+        # Get all needed information from request
+        source_volume = request.DATA["source_volume"]
+        remote_pool = request.DATA["remote_pool"]
+        source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
+        remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
 
         # First find out whether we're supposed to be primary or secondary.
         if "connection_id" not in request.DATA:
@@ -173,11 +164,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     def update(self, request, *args, **kwargs):
         if "new_size" in request.DATA:
             connection = self.get_object()
-
-            try:
-                host = connection.host
-            except SystemError, e:
-                return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            host = connection.host
 
             if host == Host.objects.get_current():
                 # Step 1: Call second host to grow his endpoint, if the request was not forwarded by
@@ -209,11 +196,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
 
     def destroy(self, request, *args, **kwargs):
         connection = self.get_object()
-
-        try:
-            host = connection.host
-        except SystemError, e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        host = connection.host
 
         if host == Host.objects.get_current():
             # Step 1: Call second host to delete his endpoint, if the request was not forwarded by
