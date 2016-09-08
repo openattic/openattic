@@ -32,6 +32,5 @@
 
 angular.module("openattic.dashboard", [
   "gridster",
-  "nvd3",
   "openattic.dashboardWidgets"
 ]);

@@ -32,7 +32,10 @@
 
 var app = angular.module("openattic.dashboard");
 app.controller("DashboardAddCtrl", function ($scope, $uibModalInstance, data) {
-  $scope.data = data;
+  $scope.data = angular.copy(data);
+  $scope.input = {
+    settings: $scope.data.settings
+  };
 
   $scope.addDashboard = function () {
     $uibModalInstance.close($scope.input);

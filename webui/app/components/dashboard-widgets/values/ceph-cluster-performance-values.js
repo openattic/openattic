@@ -30,19 +30,5 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCluster");
-app.factory("cephClusterService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid", {
-    fsid: "@fsid"
-  }, {
-    performancedata: {
-      url    : globalConfig.API.URL + "ceph/:fsid/performancedata",
-      method : "GET",
-      isArray: true
-    },
-    status         : {
-      url   : globalConfig.API.URL + "ceph/:fsid/status",
-      method: "GET"
-    }
-  });
-});
+var app = angular.module("openattic.dashboardWidgets");
+app.value("cephPerfDataOpt", ["Read / Write per sec", "OSDs", "Utilization"]);

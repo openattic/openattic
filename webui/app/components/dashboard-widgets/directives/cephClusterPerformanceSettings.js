@@ -30,19 +30,29 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCluster");
-app.factory("cephClusterService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid", {
-    fsid: "@fsid"
-  }, {
-    performancedata: {
-      url    : globalConfig.API.URL + "ceph/:fsid/performancedata",
-      method : "GET",
-      isArray: true
+var app = angular.module("openattic.dashboardWidgets");
+app.directive("cephClusterPerformanceSettings", function () {
+  return {
+    restrict   : "E",
+    scope      : false,
+    controller : function ($scope, cephClusterService, cephPerfDataOpt) {
+      $scope.perfData = cephPerfDataOpt;
+
+      var init = function () {
+        cephClusterService
+            .get()
+            .$promise
+            .then(function (res) {
+              $scope.cluster = res.results;
+            })
+            .catch(function (error) {
+              throw error;
+            });
+      };
+
+      // init
+      init();
     },
-    status         : {
-      url   : globalConfig.API.URL + "ceph/:fsid/status",
-      method: "GET"
-    }
-  });
+    templateUrl: "components/dashboard-widgets/templates/ceph-cluster-performance-settings.html"
+  };
 });

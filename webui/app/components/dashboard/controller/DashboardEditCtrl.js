@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.dashboard");
 app.controller("DashboardEditCtrl", function ($scope, $uibModalInstance, data) {
-  $scope.data = data;
+  $scope.data = angular.copy(data);
 
   $scope.editDashboard = function () {
     $uibModalInstance.close($scope.input);
@@ -46,6 +46,14 @@ app.controller("DashboardEditCtrl", function ($scope, $uibModalInstance, data) {
     $uibModalInstance.dismiss("cancel");
   };
 
+  $scope.$watch("input.manager", function (newValue, oldValue) {
+    if (angular.equals(newValue, oldValue)) {
+      return;
+    }
+
+    $scope.input.settings = {};
+  });
+
   var init = function () {
     if (data.type === "dashboard") {
       $scope.input = {
@@ -55,8 +63,9 @@ app.controller("DashboardEditCtrl", function ($scope, $uibModalInstance, data) {
 
     if (data.type === "widget") {
       $scope.input = {
-        "name"   : $scope.data.name,
-        "manager": $scope.data.selectedManager
+        "name"    : $scope.data.name,
+        "manager" : $scope.data.selectedManager,
+        "settings": $scope.data.settings
       };
     }
   };
