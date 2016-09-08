@@ -108,25 +108,25 @@ app.directive("cephClusterPerformance", function () {
           return [0, "B", 1, "B", 0];
         }
 
-        var units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+        var units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
         var factor = 1024;
         var dm = decimals || 2;
 
         var i = Math.floor(Math.log(bytes) / Math.log(factor));
         var k = i;
         var value = parseFloat((bytes / Math.pow(factor, i)).toFixed(dm));
-        var round = 0;
+        var rounded = 0;
 
         if (value < 100) {
-          round = Math.ceil(value / 10) * 10;
+          rounded = Math.ceil(value / 10) * 10;
         } else if (value < 1000) {
-          round = Math.ceil(value / 100) * 100;
+          rounded = Math.ceil(value / 100) * 100;
         } else {
           k++;
-          round = 2;
+          rounded = 2;
         }
 
-        return [value, units[i], i, round, units[k], k, factor];
+        return [value, units[i], i, rounded, units[k], k, factor];
       };
 
       $scope.getData = function () {
