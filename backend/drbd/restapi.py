@@ -91,9 +91,9 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
 
         if len(connection.get_storage_devices()) == 0:
             connection.storageobj.delete()
-            return Response("DRBD connection removed", status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response("Local DRBD endpoint removed", status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def _install_connection(self, request, connection_id):
         # called on the primary only, not part of the REST API
@@ -219,7 +219,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             if "proxy_host_id" not in request.DATA:
                 self._remote_request(request, connection_host, obj=connection)
 
-            return Response("DRBD connection removed", status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 RESTAPI_VIEWSETS = [
