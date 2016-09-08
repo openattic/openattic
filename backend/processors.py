@@ -22,7 +22,6 @@ def project_url(request):
     return {'PROJECT_URL': settings.PROJECT_URL}
 
 def profile(request):
-    print "### PROFILE ###"
     if not request.user.is_authenticated():
         return {}
     else:
