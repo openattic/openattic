@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_noop as _
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
 import ceph.tasks
+from exception import NotSupportedError
 from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
@@ -219,7 +220,8 @@ class CephCluster(NodbModel):
 
                 return perf_data_results
         else:
-            return "Nagios does not appear to be installed, no performance data could be returned."
+            raise NotSupportedError("Nagios does not appear to be installed, no performance data "
+                                    "could be returned.")
 
     @staticmethod
     def _get_cluster_rrd(fsid, other_obj=None):
