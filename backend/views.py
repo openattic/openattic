@@ -25,6 +25,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 
 from oa_auth import oa_authenticate, oa_authorize, Unauthorized, RequestAuthentication
+from processors import profile
 from rest.restapi import UserSerializer
 
 
@@ -39,6 +40,7 @@ class AuthView(APIView):
             # fail. hence, we only call it if the `backend' attribute is present,
             # which is set by django's authenticate().
             login(request, request.user)
+            profile(request)
         return Response(UserSerializer(request.user, context={'request': request}).data)
 
     def delete(self, request, *args, **kwargs):
