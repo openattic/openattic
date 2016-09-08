@@ -119,7 +119,7 @@ user interface:
   They will be converted to a 400 status code in the API.
 * Standard Python errors, like ``SystemError``, ``ValueError`` or ``KeyError``
   will end up as internal server errors in the API.
-* Assert statements can help, if you want to protect function from having bad
+* Assert statements can help, if you want to protect functions from having bad
   side effects or return bad results.
 
 In general, do not return error responses in the REST API. They will be
