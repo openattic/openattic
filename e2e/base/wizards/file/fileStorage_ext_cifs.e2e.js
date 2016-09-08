@@ -15,10 +15,11 @@ describe('Wizard panel', function(){
     expect(browser.getCurrentUrl()).toContain('#/dashboard');
   });
 
-  it('should a widget title', function(){
-    expect(element.all(by.css('.tc_widget_title')).get(1).getText()).toEqual('openATTIC Wizards');
-    helpers.check_wizard_titles();
-  });
+  // TODO: implement this test in the dashboard tests
+  //it('should a widget title', function(){
+  //  expect(element.all(by.css('.tc_widget_title')).get(1).getText()).toEqual('openATTIC Wizards');
+  //  helpers.check_wizard_titles();
+  //});
 
   //<-- begin wizard --->
   it('should open the "VM Storage" wizard', function(){
