@@ -373,62 +373,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         parent: "volumes.detail.snapshots"
       }
     })
-    .state("hosts", {
-      url: "/hosts",
-      views: {
-        "main": {
-          templateUrl: "templates/hosts.html",
-          controller : "HostCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Hosts"
-      }
-    })
-    .state("hosts-add", {
-      url: "/hosts/add",
-      views: {
-        "main": {
-          templateUrl: "templates/hosts/host-form.html",
-          controller : "HostFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Add",
-        parent: "hosts"
-      }
-    })
-    .state("hosts-edit", {
-      url: "/hosts/edit/:host",
-      views: {
-        "main": {
-          templateUrl: "templates/hosts/host-form.html",
-          controller : "HostFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Edit {{host.name}}",
-        parent: "hosts"
-      }
-    })
-    .state("hosts.detail", {
-      url: "/:host",
-      views: {
-        "tab": {templateUrl: "templates/hosts/tab.html"}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("hosts.detail.status", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "templates/hosts/details.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Status"
-      }
-    })
     .state("users", {
       url: "/users",
       views: {

@@ -46,24 +46,41 @@ app.controller("blockstorage", function ($scope, HostService, InitiatorService) 
     iscsi_fc: {
       lun_id: 0
     },
-    volume: {}
+    volume: {},
+    hostSelection: "select"
   };
 
-  $scope.$watch("input.iscsi_fc.host", function (host) {
+  $scope.hostDirective = {
+    config:{
+      header: false,
+      class: {
+        label: "col-md-2",
+        labelOffset: "col-md-offset-2",
+        field: "col-md-10"
+      }
+    },
+    submit: {}
+  };
+
+  $scope.useThisHost = function (host) {
+    if ($scope.input.hostSelection === "create") {
+      $scope.input.iscsi_fc.host = host;
+    }
+    host = $scope.input.iscsi_fc.host;
     if (host) {
       $scope.input.iscsi_fc.create = true;
       InitiatorService.filter({
         host: host.id,
         type: "qla2xxx"
       })
-          .$promise
-          .then(function (res) {
-            $scope.has_initiator = (res.count > 0);
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+        .$promise
+        .then(function (res) {
+          $scope.has_initiator = (res.count > 0);
+        }, function (error) {
+          console.log("An error occured", error);
+        });
     } else {
       $scope.input.iscsi_fc.create = false;
     }
-  });
+  };
 });
