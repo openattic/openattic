@@ -72,13 +72,13 @@
         </div>
       </div>
       <div class="panel-body">
-        <openattic-cluster-status widget="widget" ng-if="widget.manager.manager == 'openattic-cluster-status'">
+        <openattic-cluster-status widget="widget" ng-if="widget.manager.manager === 'openattic-cluster-status'">
         </openattic-cluster-status>
-        <openattic-wizards widget="widget" ng-if="widget.manager.manager == 'openattic-wizards'">
+        <openattic-wizards widget="widget" ng-if="widget.manager.manager === 'openattic-wizards'">
         </openattic-wizards>
-        <ceph-cluster-status widget="widget" ng-if="widget.manager.manager == 'ceph-cluster-status'">
+        <ceph-cluster-status widget="widget" ng-if="widget.manager.manager === 'ceph-cluster-status'">
         </ceph-cluster-status>
-        <ceph-cluster-performance widget="widget" ng-if="widget.manager.manager == 'ceph-cluster-performance'">
+        <ceph-cluster-performance widget="widget" ng-if="widget.manager.manager === 'ceph-cluster-performance'">
         </ceph-cluster-performance>
       </div>
     </div>
