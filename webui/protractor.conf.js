@@ -79,7 +79,7 @@ var categories = {
     startsWith: '../e2e/base'
   },
   ceph: {
-    isAvailable: Object.keys(config.cephCluster).length > 0,
+    isAvailable: config.cephCluster && Object.keys(config.cephCluster).length > 0,
     startsWith: '../e2e/ceph'
   },
   zfs: {
@@ -117,43 +117,45 @@ exports.config = {
 
   onPrepare: function(){
     browser.driver.manage().window().maximize();
-    var fs = require('fs');
-    var path = require('path');
-    var errorCount = 0;
-    var savePath = path.join(config.outDir, new Date().toJSON().replace(/[-:.]/g, '_'));
-    var checkPath = function(callback){
-      fs.exists(savePath, function(exists){
-        if(!exists){
-          fs.mkdir(savePath);
-        }
-        callback();
-      });
-    };
-    console.log('If any errors appear they will be logged in "' + savePath + '".');
-    jasmine.getEnv().addReporter(new function(){
-      this.specDone = function(result){
-        if(result.failedExpectations.length > 0){
-          errorCount++;
-          checkPath(function(){
-            browser.takeScreenshot().then(function(png){
-              var stream = fs.createWriteStream(savePath + '/error' + errorCount + '.png');
-              stream.write(new Buffer(png, 'base64'));
-              stream.end();
-            });
-            var stream = fs.createWriteStream(savePath + '/error' + errorCount + '.log');
-            var out = new console.Console(stream);
-            out.log('Description of the suite:\n', result.description + '\n');
-            out.log('Description of the test:\n', result.fullName + '\n\n\n');
-            out.log('Failed expectations:' + '\n\n');
-            result.failedExpectations.forEach(function(fail){
-              out.log('Expected "' + fail.expected + '" but got "' + fail.actual + '" with Matcher "' +
-                fail.matcherName + '"\n');
-              out.log('Message:\n' + fail.message + '\n');
-              out.log('Call-Stack:\n' + fail.stack + '\n\n');
-            });
-          });
-        }
+    if(config.outDir){
+      var fs = require('fs');
+      var path = require('path');
+      var errorCount = 0;
+      var savePath = path.join(config.outDir, new Date().toJSON().replace(/[-:.]/g, '_'));
+      var checkPath = function(callback){
+        fs.exists(savePath, function(exists){
+          if(!exists){
+            fs.mkdir(savePath);
+          }
+          callback();
+        });
       };
-    });
+      console.log('If any errors appear they will be logged in "' + savePath + '".');
+      jasmine.getEnv().addReporter(new function(){
+        this.specDone = function(result){
+          if(result.failedExpectations.length > 0){
+            errorCount++;
+            checkPath(function(){
+              browser.takeScreenshot().then(function(png){
+                var stream = fs.createWriteStream(savePath + '/error' + errorCount + '.png');
+                stream.write(new Buffer(png, 'base64'));
+                stream.end();
+              });
+              var stream = fs.createWriteStream(savePath + '/error' + errorCount + '.log');
+              var out = new console.Console(stream);
+              out.log('Description of the suite:\n', result.description + '\n');
+              out.log('Description of the test:\n', result.fullName + '\n\n\n');
+              out.log('Failed expectations:' + '\n\n');
+              result.failedExpectations.forEach(function(fail){
+                out.log('Expected "' + fail.expected + '" but got "' + fail.actual + '" with Matcher "' +
+                  fail.matcherName + '"\n');
+                out.log('Message:\n' + fail.message + '\n');
+                out.log('Call-Stack:\n' + fail.stack + '\n\n');
+              });
+            });
+          }
+        };
+      });
+    }
   }
 };

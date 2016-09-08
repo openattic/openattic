@@ -1,6 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# You may want to enable this line if you're using libvirt and have trouble using 'vagrant destroy'.
+# For more information see https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561
+# ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -12,10 +16,17 @@ Vagrant.configure(2) do |config|
 
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://atlas.hashicorp.com/search.
-    if ENV['DISTRO'] == "debian"
-        config.vm.box = "debian/jessie64" # should work, too!
+    if ENV['DISTRO'] == 'debian'
+        config.vm.box = 'debian/jessie64' # should work, too!
     else
-        config.vm.box = "opensuse/openSUSE-42.1-x86_64"
+        config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
+    end
+
+    config.vm.provider :libvirt do |lv|
+        # May be necessary to use 'qemu' here on some mainboards where 'kvm' doesn't work through a bug. 'qemu' seems to
+        # work on all machines, but it looks like it's slower than 'kvm'.
+        # See OP-1455 (https://tracker.openattic.org/browse/OP-1455) for more information.
+        lv.driver = 'kvm'
     end
 
     # Disable automatic box update checking. If you disable this, then
@@ -31,7 +42,7 @@ Vagrant.configure(2) do |config|
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
     # Needs to be enabled for VirtualBox to be able to use NFS
-    config.vm.network "private_network", ip: "192.168.10.101"
+    config.vm.network 'private_network', ip: '192.168.10.101'
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
@@ -42,7 +53,7 @@ Vagrant.configure(2) do |config|
     # the path on the host to the actual folder. The second argument is
     # the path on the guest to mount the folder. And the optional third
     # argument is a set of non-required options.
-    config.vm.synced_folder "..", "/home/vagrant/openattic", type: "nfs",
+    config.vm.synced_folder '..', '/home/vagrant/openattic', type: 'nfs',
                             :mount_options => ['nolock,vers=3,udp,noatime,actimeo=1']
     config.vm.synced_folder '.', '/vagrant', disabled: true # Disable default
 
@@ -53,10 +64,10 @@ Vagrant.configure(2) do |config|
     config.vm.provider :virtualbox do |vb|
         #   # Display the VirtualBox GUI when booting the machine
         #   vb.gui = true
-        vb.memory = "2048"
+        vb.memory = '2048'
     end
     config.vm.provider :libvirt do |lv|
-        lv.memory = "2048"
+        lv.memory = '2048'
     end
     #
     # View the documentation for the provider you are using for more
@@ -109,9 +120,9 @@ Vagrant.configure(2) do |config|
         libvirt.storage :file, :size => '2G', :bus => 'scsi'
     end
 
-    config.vm.provision :shell, :path => "install.sh"
+    config.vm.provision :shell, :path => 'install.sh'
     
-    if Vagrant.has_plugin?("vagrant-cachier")
+    if Vagrant.has_plugin?('vagrant-cachier')
         # Configure cached packages to be shared between instances of the same base box.
         # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
         config.cache.scope = :box
@@ -133,5 +144,4 @@ Vagrant.configure(2) do |config|
     config.cache.enable :zypper
     config.cache.enable :npm
     config.cache.enable :bower
-  
 end
