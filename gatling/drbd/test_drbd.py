@@ -312,8 +312,8 @@ class DrbdTests(object):
             self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
 
         # check status code and error message
-        expected_err_message = "Parameter 'source_volume' is missing."
-        self.check_exception_messages(err, expected_err_message)
+        expected_err_message = "This field is required"
+        self.check_exception_messages(err, expected_err_message, field="source_volume")
 
     def test_create_without_remote_pool_data(self):
         """ Create a Connection without remote pool data and check if it fails. """
@@ -329,8 +329,8 @@ class DrbdTests(object):
         self.send_request("DELETE", "volumes", obj_id=vol["id"])
 
         # check status code and error message
-        expected_err_message = "Parameter 'remote_pool' is missing."
-        self.check_exception_messages(err, expected_err_message)
+        expected_err_message = "This field is required"
+        self.check_exception_messages(err, expected_err_message, field="remote_pool")
 
     def test_create_without_valid_source_volume_host_id(self):
         """ Try to create a DRBD connection without a valid/existing volume host id. """

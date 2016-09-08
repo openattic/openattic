@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from drbd.models import Connection
+from exception import validate_input_fields
 from ifconfig.models import Host
 from volumes.models import StorageObject
 
@@ -119,8 +120,11 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
 
     def create(self, request, *args, **kwargs):
         # Get all needed information from request
+
+        validate_input_fields(request.DATA, ["source_volume", "remote_pool"])
         source_volume = request.DATA["source_volume"]
         remote_pool = request.DATA["remote_pool"]
+
         source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
         remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
 
