@@ -114,7 +114,7 @@ user interface:
   ``ValidationErrors`` when deserializing input.
 * In case a ``NotImplementedError`` is not appropriate, because it is intentional
   not to implement a method and a ``ValidationError`` is not appropriate, because
-  you're not validating any imput, you can use a ``NotSupportedError``. For example,
+  you're not validating any input, you can use a ``NotSupportedError``. For example,
   if a file system does not support shrinking, you can use this exception here.
   They will be converted to a 400 status code in the API.
 * Standard Python errors, like ``SystemError``, ``ValueError`` or ``KeyError``
