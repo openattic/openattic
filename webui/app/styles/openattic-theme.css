@@ -469,6 +469,9 @@ fieldset[disabled] .btn-primary.active {
   right: 5px;
   z-index: 10;
 }
+.panel-dashboard .max-height {
+  height: 100%;
+}
 .panel-openattic {
   border: 1px solid #d1d1d1;
   border-top: 0;

@@ -2,7 +2,7 @@
   <span>Edit widget '{{data.name}}'</span>
 </div>
 
-<form name="editForm" role="form" class="form-horizontal" novalidate>
+<form name="editForm" role="form" novalidate>
   <div class="openattic-modal-content">
     <p>
       You are about to edit the widget <strong>{{data.name}}</strong>.
@@ -13,31 +13,30 @@
     </p>
 
     <div class="form-group">
-      <label for="manager" class="control-label col-sm-2">Type</label>
-      <div class="col-sm-10">
-        <select id="manager"
-                class="form-control"
-                ng-model="input.manager"
-                ng-options="m.name group by m.group for m in data.manager track by m.name"
-                required
-                autofocus>
-          <option value="">-- Select a type --</option>
-        </select>
-      </div>
+      <label for="manager" class="control-label">Type</label>
+      <select id="manager"
+              class="form-control"
+              ng-model="input.manager"
+              ng-options="m.name group by m.group for m in data.manager track by m.name"
+              required
+              autofocus>
+        <option value="">-- Select a type --</option>
+      </select>
     </div>
 
     <div class="form-group">
-      <label for="name" class="control-label col-sm-2">Name</label>
-      <div class="col-sm-10">
-        <input type="text"
-               id="name"
-               class="form-control"
-               ng-model="input.name"
-               ng-maxlength="30"
-               maxlength="30"
-               required>
-      </div>
+      <label for="name" class="control-label">Name</label>
+      <input type="text"
+             id="name"
+             class="form-control"
+             ng-model="input.name"
+             ng-maxlength="30"
+             maxlength="30"
+             required>
     </div>
+
+    <ceph-cluster-performance-settings ng-if="input.manager.manager === 'ceph-cluster-performance'">
+    </ceph-cluster-performance-settings>
   </div>
 
   <div class="openattic-modal-footer">
