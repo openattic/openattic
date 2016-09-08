@@ -17,6 +17,8 @@ Version 2.0.14, (not released yet):
   be predefined (OP-1386)
 * WebUI: Replaced malhar-angular-dashboard with a gridster based
   implemenation (OP-1485)
+* WebUI: Allow sorting storage volumes by additional fields `Used`, `Status`,
+  `Type` and `Created`. Thanks to Tahaa Karim. (OP-1427)
 * WebUI/QA: Extended E2E test configuration by ceph pools and suite path
   filter (OP-1339)
 * WebUI/QA: Added screenshot and error log functionality (OP-1375)
