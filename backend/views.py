@@ -16,24 +16,17 @@
 
 import json
 
-from django import template
-from django.shortcuts  import render_to_response
-from django.template   import RequestContext
-from django.http       import HttpResponse, HttpResponseRedirect
-from django.conf       import settings
-from django.contrib.auth            import login, logout
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.contrib.auth import login, logout
 
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 
-from userprefs.models import UserProfile
-from ifconfig.models  import Host
-
 from oa_auth import oa_authenticate, oa_authorize, Unauthorized, RequestAuthentication
 from rest.restapi import UserSerializer
+
 
 class AuthView(APIView):
     authentication_classes = (SessionAuthentication, RequestAuthentication)
@@ -52,20 +45,21 @@ class AuthView(APIView):
         logout(request)
         return Response({})
 
-def do_login( request ):
-    """ Check login credentials sent by ExtJS. """
 
+def do_login(request):
+    """ Check login credentials sent by ExtJS. """
     user = oa_authenticate(request)
 
     if user is None:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_credentials' }), "application/json", status=401 )
+        return HttpResponse(json.dumps({"success": False, "errormsg": 'invalid_credentials'}),
+                            "application/json", status=401)
 
     try:
         oa_authorize(user)
     except Unauthorized, err:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": err.args[0] }), "application/json", status=403 )
+        return HttpResponse(json.dumps({"success": False, "errormsg": err.args[0]}),
+                            "application/json", status=403)
 
     # Good to go!
-    login( request, user )
-    return HttpResponse( json.dumps({ "success": True }), "application/json", status=200 )
-
+    login(request, user)
+    return HttpResponse(json.dumps({"success": True}), "application/json", status=200)
