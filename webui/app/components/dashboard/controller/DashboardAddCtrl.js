@@ -30,14 +30,19 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCluster");
-app.factory("cephClusterService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid", {
-    fsid: "@fsid"
-  }, {
-    status: {
-      url   : globalConfig.API.URL + "ceph/:fsid/status",
-      method: "GET"
-    }
-  });
+var app = angular.module("openattic.dashboard");
+app.controller("DashboardAddCtrl", function ($scope, $uibModalInstance, data) {
+  $scope.data = data;
+
+  $scope.addDashboard = function () {
+    $uibModalInstance.close($scope.input);
+  };
+
+  $scope.addWidget = function () {
+    $uibModalInstance.close($scope.input);
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  };
 });

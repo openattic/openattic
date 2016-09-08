@@ -30,14 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCluster");
-app.factory("cephClusterService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid", {
-    fsid: "@fsid"
-  }, {
-    status: {
-      url   : globalConfig.API.URL + "ceph/:fsid/status",
-      method: "GET"
+var app = angular.module("openattic");
+app.filter("objLength", function () {
+  return function (object) {
+    var count = 0;
+
+    for (var i in object) {
+      if (!object.hasOwnProperty(i)) {
+        continue;
+      }
+      count++;
     }
-  });
+    return count;
+  };
 });

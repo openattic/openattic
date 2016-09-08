@@ -1,0 +1,25 @@
+<div class="openattic-modal-header">
+  <span>Delete widget '{{data.name}}'</span>
+</div>
+
+<div class="openattic-modal-content">
+  <p>
+    You are about to delete the widget <strong>{{data.name}}</strong>.
+  </p>
+
+  <p>
+    To confirm, please click <kbd>Delete widget</kbd>, or cancel and return to the page.
+  </p>
+</div>
+
+<div class="openattic-modal-footer">
+  <form name="deleteForm" role="form">
+    <div class="button-group text-right">
+      <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+              ng-click="deleteWidget()" autofocus>
+        Delete widget
+      </button>
+      <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -3,46 +3,47 @@ openATTIC webui licenses
 
 bower packages
 --------------
-angular                         1.5.3               MIT                         https://github.com/angular/bower-angular/tree/v1.5.3
-angular-bootstrap               1.3.2               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/1.3.2
-angular-breadcrumb              0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
-angular-flot                    0.0.16              MIT                         https://github.com/develersrl/angular-flot/tree/v0.0.16
-angular-md5                     0.1.10              MIT                         https://github.com/gdi2290/angular-md5/tree/v0.1.10
-angular-mocks                   1.5.3               MIT                         https://github.com/angular/bower-angular-mocks/tree/v1.5.3
-angular-nvd3                    1.0.6               MIT                         https://github.com/krispo/angular-nvd3/tree/v1.0.6
-angular-resource                1.5.3               MIT                         https://github.com/angular/bower-angular-resource/tree/v1.5.3
-angular-sanitize                1.5.3               MIT                         https://github.com/angular/bower-angular-sanitize/tree/v1.5.3
-angular-toasty                  1.0.5               MIT                         https://github.com/Salakar/angular-toasty/tree/1.0.5
-angular-ui-router               0.2.18              MIT                         https://github.com/angular-ui/angular-ui-router-bower/tree/0.2.18
-angular-ui-sortable             0.14.0              MIT                         https://github.com/angular-ui/ui-sortable/tree/v0.14.0
-angular-ui-tree                 2.15.0              MIT                         https://github.com/JimLiu/angular-ui-tree/tree/v2.15.0
-bootstrap                       3.3.6               MIT                         https://github.com/twbs/bootstrap/tree/v3.3.6
-d3                              3.5.16              BSD-3-Clause                https://github.com/mbostock-bower/d3-bower/tree/v3.5.16
-fontawesome                     4.5.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.5.0
-jquery                          2.2.3               MIT                         https://github.com/jquery/jquery-dist/tree/2.2.3
-jquery.easy-pie-chart           2.1.6               MIT                         https://github.com/rendro/easy-pie-chart/tree/2.1.6
-jquery-flot                     0.8.3               MIT                         https://github.com/flot/flot/tree/v0.8.3
-jquery-ui                       1.11.4              MIT                         https://github.com/components/jqueryui/tree/1.11.4
-lodash                          4.11.0              MIT                         https://github.com/lodash/lodash/tree/4.11.0
-malhar-angular-dashboard        2.0.0               Apache-2.0                  https://github.com/DataTorrent/malhar-angular-dashboard/tree/v2.0.0
-ng-tags-input                   3.0.0               MIT                         https://github.com/mbenford/ngTagsInput-bower/tree/v3.0.0
-nvd3                            1.8.2               Apache-2.0                  https://github.com/novus/nvd3/tree/v1.8.2
-requirejs                       2.2.0               MIT, BSD-3-Clause           https://github.com/jrburke/requirejs-bower/tree/2.2.0
+angular                           1.5.3               MIT                         https://github.com/angular/bower-angular/tree/v1.5.3
+angular-bootstrap                 1.3.2               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/1.3.2
+angular-breadcrumb                0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
+angular-flot                      0.0.16              MIT                         https://github.com/develersrl/angular-flot/tree/v0.0.16
+angular-gridster                  0.13.9              MIT                         https://github.com/ManifestWebDesign/angular-gridster/tree/v0.13.9
+angular-md5                       0.1.10              MIT                         https://github.com/gdi2290/angular-md5/tree/v0.1.10
+angular-mocks                     1.5.3               MIT                         https://github.com/angular/bower-angular-mocks/tree/v1.5.3
+angular-nvd3                      1.0.8               MIT                         https://github.com/krispo/angular-nvd3/tree/v1.0.8
+angular-resource                  1.5.3               MIT                         https://github.com/angular/bower-angular-resource/tree/v1.5.3
+angular-sanitize                  1.5.3               MIT                         https://github.com/angular/bower-angular-sanitize/tree/v1.5.3
+angular-toasty                    1.0.5               MIT                         https://github.com/Salakar/angular-toasty/tree/1.0.5
+angular-ui-router                 0.2.18              MIT                         https://github.com/angular-ui/angular-ui-router-bower/tree/0.2.18
+angular-ui-sortable               0.14.0              MIT                         https://github.com/angular-ui/ui-sortable/tree/v0.14.0
+angular-ui-tree                   2.15.0              MIT                         https://github.com/JimLiu/angular-ui-tree/tree/v2.15.0
+bootstrap                         3.3.6               MIT                         https://github.com/twbs/bootstrap/tree/v3.3.6
+d3                                3.5.17              BSD-3-Clause                https://github.com/mbostock-bower/d3-bower/tree/v3.5.17
+fontawesome                       4.5.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.5.0
+javascript-detect-element-resize  0.5.3               MIT                         https://github.com/sdecima/javascript-detect-element-resize/tree/v0.5.3
+jquery                            2.2.3               MIT                         https://github.com/jquery/jquery-dist/tree/2.2.3
+jquery.easy-pie-chart             2.1.6               MIT                         https://github.com/rendro/easy-pie-chart/tree/2.1.6
+jquery-flot                       0.8.3               MIT                         https://github.com/flot/flot/tree/v0.8.3
+jquery-ui                         1.11.4              MIT                         https://github.com/components/jqueryui/tree/1.11.4
+lodash                            4.11.0              MIT                         https://github.com/lodash/lodash/tree/4.11.0
+ng-tags-input                     3.0.0               MIT                         https://github.com/mbenford/ngTagsInput-bower/tree/v3.0.0
+nvd3                              1.8.4               Apache-2.0                  https://github.com/novus/nvd3/tree/v1.8.4
+requirejs                         2.2.0               MIT, BSD-3-Clause           https://github.com/jrburke/requirejs-bower/tree/2.2.0
 
 npm packages
 ------------
-grunt                           0.4.5               MIT                         https://github.com/gruntjs/grunt/tree/v0.4.5
-grunt-contrib-clean             1.0.0               MIT                         https://github.com/gruntjs/grunt-contrib-clean/tree/v1.0.0
-grunt-contrib-concat            1.0.0               MIT                         https://github.com/gruntjs/grunt-contrib-concat/tree/v1.0.0
-grunt-contrib-copy              0.8.2               MIT                         https://github.com/gruntjs/grunt-contrib-copy/tree/v0.8.2
-grunt-contrib-cssmin            0.14.0              MIT                         https://github.com/gruntjs/grunt-contrib-cssmin/tree/v0.14.0
-grunt-contrib-jshint            1.0.0               MIT                         https://github.com/gruntjs/grunt-contrib-jshint/tree/v1.0.0
-grunt-contrib-uglify            0.11.1              MIT                         https://github.com/gruntjs/grunt-contrib-uglify/tree/v0.11.1
-grunt-contrib-watch             0.6.1               MIT                         https://github.com/gruntjs/grunt-contrib-watch/tree/v0.6.1
-grunt-html-build                0.5.3               MIT                         https://github.com/spatools/grunt-html-build/tree/0.5.2
-grunt-jscs                      2.7.0               MIT                         https://github.com/jscs-dev/grunt-jscs/tree/v2.7.0
-grunt-ng-annotate               1.0.1               MIT                         https://github.com/mgol/grunt-ng-annotate/tree/1.0.1
-grunt-rev                       0.1.0               MIT                         https://github.com/cbas/grunt-rev/
-grunt-usemin                    3.1.1               BSD-2-Clause                https://github.com/yeoman/grunt-usemin/tree/3.1.1
-load-grunt-tasks                3.4.1               MIT                         https://github.com/sindresorhus/load-grunt-tasks/tree/v3.4.1
-matchdep                        1.0.1               MIT                         https://github.com/tkellen/js-matchdep/tree/v1.0.1
+grunt                             0.4.5               MIT                         https://github.com/gruntjs/grunt/tree/v0.4.5
+grunt-contrib-clean               1.0.0               MIT                         https://github.com/gruntjs/grunt-contrib-clean/tree/v1.0.0
+grunt-contrib-concat              1.0.0               MIT                         https://github.com/gruntjs/grunt-contrib-concat/tree/v1.0.0
+grunt-contrib-copy                0.8.2               MIT                         https://github.com/gruntjs/grunt-contrib-copy/tree/v0.8.2
+grunt-contrib-cssmin              0.14.0              MIT                         https://github.com/gruntjs/grunt-contrib-cssmin/tree/v0.14.0
+grunt-contrib-jshint              1.0.0               MIT                         https://github.com/gruntjs/grunt-contrib-jshint/tree/v1.0.0
+grunt-contrib-uglify              0.11.1              MIT                         https://github.com/gruntjs/grunt-contrib-uglify/tree/v0.11.1
+grunt-contrib-watch               0.6.1               MIT                         https://github.com/gruntjs/grunt-contrib-watch/tree/v0.6.1
+grunt-html-build                  0.5.3               MIT                         https://github.com/spatools/grunt-html-build/tree/0.5.2
+grunt-jscs                        2.7.0               MIT                         https://github.com/jscs-dev/grunt-jscs/tree/v2.7.0
+grunt-ng-annotate                 1.0.1               MIT                         https://github.com/mgol/grunt-ng-annotate/tree/1.0.1
+grunt-rev                         0.1.0               MIT                         https://github.com/cbas/grunt-rev/
+grunt-usemin                      3.1.1               BSD-2-Clause                https://github.com/yeoman/grunt-usemin/tree/3.1.1
+load-grunt-tasks                  3.4.1               MIT                         https://github.com/sindresorhus/load-grunt-tasks/tree/v3.4.1
+matchdep                          1.0.1               MIT                         https://github.com/tkellen/js-matchdep/tree/v1.0.1

@@ -1,0 +1,84 @@
+<div>
+  <form class="form-inline">
+    <div class="form-group">
+      <select id="selectDashboard" class="form-control"
+              ng-model="data.settings.activeBoard"
+              ng-options="board.id as board.name for board in data.boards | orderBy: 'name'">
+      </select>
+    </div>
+
+    <div class="btn-toolbar pull-right">
+      <div class="btn-group">
+        <a class="btn btn-sm btn-primary tc_add_widget" type="button" ng-click="addWidget()">
+          <i class="fa fa-fw fa-plus"></i>Add Widget
+        </a>
+      </div>
+
+      <div class="btn-group pull-right">
+        <a class="btn btn-sm btn-primary tc_add_dashboard" type="button" ng-click="addDashboard()">
+          <i class="fa fa-fw fa-plus"></i>Add Dashboard
+        </a>
+        <a class="btn btn-sm btn-primary dropdown-toggle tc_menudropdown" data-toggle="dropdown">
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu oa-dropdown-actions oa-dropdown-menu" role="menu">
+          <li class="menuitem">
+            <a class="tc_edit_dashboard" ng-click="editDashboard()">
+              <i class="fa fa-fw fa-edit"></i>Dashboard settings
+            </a>
+          </li>
+          <li class="menuitem" ng-hide="(dashboard.widgets | objLength) == 0">
+            <a class="tc_clear_dashboard" ng-click="clearDashboard()">
+              <i class="fa fa-fw fa-times"></i>Clear dashboard
+            </a>
+          </li>
+          <li class="menuitem" ng-hide="(data.boards | objLength) <= 1">
+            <a class="tc_delete_dashboard" ng-click="deleteDashboard()">
+              <i class="fa fa-fw fa-trash-o"></i>Delete dashboard
+            </a>
+          </li>
+          <li class="divider"></li>
+          <li class="menuitem">
+            <a class="tc_lock_dashboard" ng-hide="data.settings.locked" ng-click="lockDashboard()">
+              <i class="fa fa-fw fa-lock"></i>Lock dashboard
+            </a>
+            <a class="tc_unlock_dashboard" ng-hide="!data.settings.locked" ng-click="lockDashboard()">
+              <i class="fa fa-fw fa-unlock"></i>Unlock dashboard
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div gridster="gridsterOptions">
+  <div gridster-item="widget" ng-repeat="widget in dashboard.widgets">
+    <div id="widget_{{widget.id}}"
+         class="panel panel-dashboard panel-openattic">
+      <div class="panel-heading" ng-class="{locked: data.settings.locked}">
+        <h3 class="panel-title" title="{{widget.name}}">
+          {{widget.name}}
+        </h3>
+
+        <div class="box-header-btns toolbar pull-right" ng-hide="data.settings.locked">
+          <a title="Settings" class="tc_edit_widget" ng-click="editWidget(widget.id, widget.name)">
+            <i class="fa fa-lg fa-fw fa-cog"></i>
+          </a>
+          <a title="Remove widget" class="tc_delete_widget" ng-click="deleteWidget(widget.id, widget.name)">
+            <i class="fa fa-lg fa-fw fa-trash-o"></i>
+          </a>
+        </div>
+      </div>
+      <div class="panel-body">
+        <ceph-cluster-status widget="widget" ng-if="widget.manager.manager == 'ceph-cluster-status'">
+        </ceph-cluster-status>
+        <openattic-cluster-status widget="widget" ng-if="widget.manager.manager == 'openattic-cluster-status'">
+        </openattic-cluster-status>
+        <openattic-wizards widget="widget" ng-if="widget.manager.manager == 'openattic-wizards'">
+        </openattic-wizards>
+      </div>
+    </div>
+  </div>
+</div>
