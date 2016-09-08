@@ -80,20 +80,20 @@ app.directive("hostForm", function () {
             notation: "iqn.$year-$month.$reversedAddress:$definedName"
           },
           mac: {
-            desc: "A MAC is a 64bit long hexadecimal number $scope means it is 16 characters long. " +
+            desc: "A MAC is a 64bit long hexadecimal number this means it is 16 characters long. " +
             "You can just type the number and it will be LIO formatted for you or you can type it LIO formatted.",
             example: "1234567890abcdef equal to 12:34:56:78:90:ab:cd:ef",
             link: "https://en.wikipedia.org/wiki/MAC_address#Notational_conventions",
             notation: "16 characters long hexadecimal number"
           },
           eui: {
-            desc: "The Extended Unique Identifier (EUI) looks like $scope 'eui-${64bit hexadecimal number}'.",
+            desc: "The Extended Unique Identifier (EUI) looks like this 'eui-${64bit hexadecimal number}'.",
             example: "eui.1234567890abcdef",
             link: "https://en.wikipedia.org/wiki/MAC_address#Notational_conventions",
             notation: "eui.${16 characters long hexadecimal number}"
           },
           naa: {
-            desc: "The T11 Network Address Authority (NAA) looks like $scope 'eui-${64bit or 128bit hexadecimal number}'",
+            desc: "The T11 Network Address Authority (NAA) looks like this 'eui-${64bit or 128bit hexadecimal number}'",
             example: "naa.1234567890abcdef or naa.1234567890abcdef1234567890abcdef",
             link: "https://en.wikipedia.org/wiki/ISCSI#Addressing",
             notation: "naa.${16 or 32 characters long hexadecimal number}"

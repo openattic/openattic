@@ -1,7 +1,7 @@
 <form name="hostForm" role="form" class="form-horizontal" novalidate>
     <div ng-class="config.header ? 'panel panel-default' : ''">
         <div class="panel-heading tc_formHeadline" ng-if="config.header">
-            <h3 class="panel-title tc_hostAddTitle">{{editing ? "Edit" : "Add"}} Host: {{host.name}}</h3>
+            <h3 class="panel-title tc_hostAddTitle tc_hostEditTitle">{{editing ? "Edit" : "Add"}} Host: {{host.name}}</h3>
         </div>
         <div class="panel-body">
             <fieldset>
@@ -68,7 +68,7 @@
                 <button type="submit" class="btn btn-sm btn-primary tc_submitButton" ng-click="submitAction(hostForm)">
                     Submit
                 </button>
-                <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="goto()">
+                <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="goBack()">
                     Back
                 </button>
             </div>

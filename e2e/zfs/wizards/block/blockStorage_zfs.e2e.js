@@ -60,13 +60,53 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
     expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
   });
 
-  it('should remove the fc share', function() {
-    helpers.delete_fc_share(volumeName, hostname)
+  it('should remove the fc share, host and volume', function() {
+    helpers.delete_fc_share(volumeName, hostname);
+    helpers.delete_volume(volume, volumeName);
+    helpers.delete_host();
+  });
+
+  // Should use the wizard again but with out creating the host before
+  //<-- begin wizard --->
+  it('should open the "iSCSI/Fibre Channel target" wizard', function(){
+    var dashboard = menu.get(0);
+    dashboard.click();
+    wizardProperties.openWizard('iSCSI/Fibre Channel target');
+  });
+
+  it('should test step 1 and fill it out and go to the next step', function(){
+    wizardProperties.creationPagePoolSelection('zpool');
+    wizardProperties.creationFromFill(volumeName, '100MB');
+  });
+
+  it('should test step 2 and fill it out and go to the last step', function(){
+    wizardProperties.shareCreateFc(hostname, iqn);
+    wizardProperties.nextBtn.click();
+  });
+
+  it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
+    wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
+
+    helpers.check_wizard_titles();
+  });
+  //<-- end wizard --->
+
+  it('should have created a lun with a fc share', function() {
+    //check if lun exists
+    volumesItem.click();
+    expect(volume.isPresent()).toBe(true);
+    volume.click();
+    element(by.css('.tc_iscsi_fcTab')).click();
+    expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
+  });
+
+  it('should remove the fc share, host and volume', function() {
+    helpers.delete_fc_share(volumeName, hostname);
+    helpers.delete_volume(volume, volumeName);
+    helpers.delete_host();
   });
 
   afterAll(function(){
-    helpers.delete_volume(volume, volumeName);
-    helpers.delete_host();
     console.log('blockStorage_zfs -> blockStorage_zfs.e2e.js');
   });
 
