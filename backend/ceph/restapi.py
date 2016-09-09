@@ -17,7 +17,6 @@ from django.utils.functional import cached_property
 from rest_framework import serializers, viewsets, status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route, list_route
 
 from ceph.models import *
@@ -219,18 +218,6 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
             raise ValueError('{}. Method not allowed.'.format(request.method))
 
 
-class PaginatedCephPoolSerializer(PaginationSerializer):
-
-    class Meta:
-        object_serializer_class = CephPoolSerializer
-
-
-class PaginatedCephClusterSerializer(PaginationSerializer):
-
-    class Meta:
-        object_serializer_class = CephClusterSerializer
-
-
 class CephErasureCodeProfileSerializer(NodbSerializer):
 
     class Meta:
@@ -286,12 +273,6 @@ class CephOsdViewSet(NodbViewSet):
         ]
 
         return Response(json_data, status=status.HTTP_200_OK)
-
-
-class PaginatedCephOsdSerializer(PaginationSerializer):
-
-    class Meta(object):
-        object_serializer_class = CephOsdSerializer
 
 
 class CephPgSerializer(NodbSerializer):
