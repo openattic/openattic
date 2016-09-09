@@ -37,6 +37,7 @@ from utilities import get_request_query_params
 # * (has an FSV or a BV) and
 # * is not a snapshot and is not named '.snapshots' and
 # * does not have an upper volume
+
 VOLUME_FILTER_Q = \
     Q(physicalblockdevice__isnull=True) & \
     Q(Q(filesystemvolume__isnull=False) | Q(blockvolume__isnull=False)) & \
@@ -308,7 +309,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.StorageObject
         fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage',
-                  'status', 'is_protected', 'upper')
+                  'status', 'is_protected', 'upper', 'storage', 'snapshot')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
