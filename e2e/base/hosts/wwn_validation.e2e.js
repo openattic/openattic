@@ -204,6 +204,6 @@ describe('Should add a host and attributes', function(){
   });
 
   afterAll(function(){
-    console.log('hosts -> wwn_validation.e2e.js');
+    console.log('host_wwns -> wwn_validation.e2e.js');
   });
 });
