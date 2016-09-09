@@ -302,7 +302,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
                                                     source="source_pool.storageobj")
     usage = serializers.SerializerMethodField("get_usage")
     status = serializers.SerializerMethodField("get_status")
-    upper = relations.HyperlinkedRelatedField(view_name="volume-detail")
+    upper = relations.HyperlinkedRelatedField(view_name="volume-detail", queryset=models.StorageObject.objects.all())
 
     class Meta:
         model = models.StorageObject

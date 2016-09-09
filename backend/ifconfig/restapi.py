@@ -20,14 +20,14 @@ from ifconfig import models
 from rest import relations
 
 class IPAddressSerializer(serializers.ModelSerializer):
-    device        = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=False, read_only=False)
+    device        = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=False, read_only=False, queryset=models.NetDevice.objects.all())
 
     class Meta:
         model = models.IPAddress
 
 class NetDeviceSerializer(serializers.HyperlinkedModelSerializer):
     ipaddress_set = relations.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True,  read_only=True)
-    host          = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False)
+    host          = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False, queryset=models.Host.objects.all())
 
     class Meta:
         model = models.NetDevice

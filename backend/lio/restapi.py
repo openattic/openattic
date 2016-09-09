@@ -13,6 +13,7 @@
 """
 
 import django_filters
+from ifconfig.models import Host
 
 from rest_framework import serializers, viewsets, status
 
@@ -27,7 +28,7 @@ class HostACLSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HostACL. """
     url         = serializers.HyperlinkedIdentityField(view_name="lun-detail")
     volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
-    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
+    host        = relations.HyperlinkedRelatedField(view_name="host-detail", queryset=Host.objects.all())
 
     class Meta:
         model = HostACL
@@ -62,7 +63,7 @@ class HostACLProxyViewSet(RequestHandlers, HostACLViewSet):
 class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Initiator. """
     url         = serializers.HyperlinkedIdentityField(view_name="initiator-detail")
-    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
+    host        = relations.HyperlinkedRelatedField(view_name="host-detail", queryset=Host.objects.all())
 
     class Meta:
         model = Initiator

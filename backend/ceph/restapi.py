@@ -125,7 +125,7 @@ class CephPoolSerializer(NodbSerializer):
     class Meta:
         model = CephPool
 
-    erasure_code_profile = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    erasure_code_profile = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephErasureCodeProfile.objects.all())
     quota_max_objects = serializers.IntegerField(default=0)
     quota_max_bytes = serializers.IntegerField(default=0)
 #    crush_ruleset = serializers.IntegerField() # TODO OP-1415
@@ -133,9 +133,9 @@ class CephPoolSerializer(NodbSerializer):
     min_size = serializers.IntegerField(default=None, required=False)
     crash_replay_interval = serializers.IntegerField(default=0)
     cache_mode = serializers.CharField(default='none')
-    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False)
-    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False)
-    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephPool.objects.all())
+    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephPool.objects.all())
+    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephPool.objects.all())
     target_max_bytes = serializers.IntegerField(default=0)
     hit_set_period = serializers.IntegerField(default=0)
     hit_set_count = serializers.IntegerField(default=0)
