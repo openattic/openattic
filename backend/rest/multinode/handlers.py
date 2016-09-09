@@ -26,6 +26,8 @@ from rest_framework.request import Request
 
 from ifconfig.models import Host
 
+from utilities import get_related_model, drf_version
+
 
 class RequestHandlers(object):
 
@@ -168,8 +170,8 @@ class RequestHandlers(object):
             try:
                 return self.model.objects.get(id=data[host_filter[0]]['id']).host
             except:
-                target_model = self.model._meta.get_field_by_name(
-                    host_filter[0])[0].related.parent_model
+                target_model = get_related_model(
+                    self.model._meta.get_field_by_name(host_filter[0])[0])
 
                 if target_model == Host:
                     return Host.objects.get(id=data[host_filter[0]]['id'])
@@ -179,8 +181,8 @@ class RequestHandlers(object):
                     except target_model.DoesNotExist:
                         key = host_filter.pop(0)
 
-                        target_model = target_model._meta.get_field_by_name(
-                            host_filter[0])[0].related.parent_model
+                        target_model = get_related_model(
+                            target_model._meta.get_field_by_name(host_filter[0])[0])
                         host = target_model.all_objects.get(id=data[key]['id'])
 
                     for field in host_filter[1:]:

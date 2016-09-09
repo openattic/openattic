@@ -23,6 +23,8 @@ from datetime import datetime
 
 from cmdlog import models
 
+from utilities import get_request_query_params
+
 
 class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
     host = relations.HyperlinkedRelatedField(view_name='host-detail', read_only=True)
@@ -52,7 +54,7 @@ class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
             filtered_items = []
 
             for key in ['ids', 'datetime']:
-                for entry in self.request.QUERY_PARAMS.getlist(key):
+                for entry in get_request_query_params(self.request).getlist(key):
                     if key == 'ids':
                         filtered_items.append(queryset.get(id=entry))
                     if key == 'datetime':

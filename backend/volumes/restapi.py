@@ -30,6 +30,7 @@ from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
 
+from utilities import get_request_query_params
 
 # filter queryset by...
 # * is not a physical block device and
@@ -385,7 +386,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
     def filter_queryset(self, queryset):
-        filter_value = self.request.QUERY_PARAMS.get('upper__isnull')
+        filter_value = get_request_query_params(self.request).get('upper__isnull')
         if filter_value:
             if filter_value.lower() == 'true':
                 filter = True
@@ -393,7 +394,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
                 filter = False
             queryset = queryset.filter(upper__isnull=filter)
 
-        filter_value = self.request.QUERY_PARAMS.get('upper__id')
+        filter_value = get_request_query_params(self.request).get('upper__id')
         if filter_value:
             queryset = queryset.filter(upper__id=filter_value)
 

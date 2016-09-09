@@ -22,6 +22,8 @@ from rest_framework.response import Response
 from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
+from utilities import drf_version, get_request_query_params
+
 
 class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -42,7 +44,8 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("url", "id", "host", "user", "preferences")
 
     def get_preferences(self, profile):
-        filter_values = self.context["request"].QUERY_PARAMS.get("search")
+        filter_values = get_request_query_params(self.context["request"]).get("search")
+
         if filter_values:
             filter_values = filter_values.split(",")
             profile = profile.filter_prefs(filter_values)
