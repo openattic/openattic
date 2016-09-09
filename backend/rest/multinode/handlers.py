@@ -46,8 +46,12 @@ class RequestHandlers(object):
 
     def list(self, request, *args, **kwargs):
         queryset_total = self.get_queryset()
-        queryset = self.filter_queryset(queryset_total)
-        queryset = self.paginate_queryset(queryset)
+        unpaginated_queryset = self.filter_queryset(queryset_total)
+        if drf_version() < (3, 0):
+            queryset = self.paginate_queryset(unpaginated_queryset)
+        else:
+            queryset = self.paginator.paginate_queryset(unpaginated_queryset, request, self)
+        assert queryset is not None
 
         current_host = Host.objects.get_current()
 
@@ -60,6 +64,9 @@ class RequestHandlers(object):
             else:
                 response = self._remote_request(request, host, obj=obj)
                 results.append(response.data)
+
+        if drf_version() >= (3, 0):
+            return self.paginator.get_paginated_response(results)
 
         next_page = None
         prev_page = None

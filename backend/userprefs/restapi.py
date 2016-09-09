@@ -96,6 +96,11 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
                 result_profiles.append(profile)
 
         page = self.paginate_queryset(result_profiles)
+
+        if drf_version() >= (3, 0):
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         if page is not None:
             profile_ser = self.get_pagination_serializer(page)
         else:
