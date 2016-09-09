@@ -31,6 +31,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_noop as _
+from django.shortcuts import get_object_or_404
 
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi
@@ -183,6 +184,8 @@ class CephCluster(NodbModel):
         """
 
         if "nagios" in settings.INSTALLED_APPS:
+            get_object_or_404(CephCluster, fsid=fsid)
+
             from nagios.graphbuilder import Graph
 
             def get_graph(rrd, source_filter=None):
