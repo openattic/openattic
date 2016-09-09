@@ -25,12 +25,12 @@ from peering.models import PeerHost
 
 class PeerHostSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a PeerHost. """
-    url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
-    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
+    #url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    #host        = relations.HyperlinkedRelatedField(view_name="host-detail")
 
     class Meta:
         model = PeerHost
-        fields = ('url', 'id', 'host', 'base_url')
+    #    fields = ('url', 'id', 'host', 'base_url')
 
 
 class PeerHostViewSet(viewsets.ModelViewSet):
