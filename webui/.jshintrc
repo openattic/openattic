@@ -1,5 +1,5 @@
 {
-  //"bitwise": true, // Works with jslint only.
+  "bitwise": true,
   "curly": true,
   "eqeqeq": true,
   "esnext": true,
@@ -8,17 +8,15 @@
   "funcscope": false,
   "futurehostile": true,
   "globals": {
-    "angular": false,
     "_": false,
+    "angular": false,
+    "d3": false,
     "EventSource": false,
     "globalConfig": false
   },
   "latedef": false,
-  //"maxcomplexity": 8,
   "maxerr": false,
-  //"maxdepth": 5,
   "maxparams": 10,
-  //"maxstatements": 40,
   "noarg": true,
   "nonbsp": true,
   "nonew": false,

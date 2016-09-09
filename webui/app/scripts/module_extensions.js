@@ -31,19 +31,20 @@
 "use strict";
 
 angular.module("openattic.extensions", [
-  "openattic.navigation",
-  "openattic.auth",
   "openattic.apirecorder",
-  "openattic.cephRbd",
+  "openattic.auth",
+  "openattic.cephErasureCodeProfiles",
   "openattic.cephOsd",
   "openattic.cephPools",
-  "openattic.cephErasureCodeProfiles",
+  "openattic.cephRbd",
+  "openattic.clusterstatuswidget",
+  "openattic.dashboard",
   "openattic.datatable",
   "openattic.graph",
+  "openattic.navigation",
+  "openattic.required",
   "openattic.sizeparser",
-  "openattic.todowidget",
-  "openattic.clusterstatuswidget",
   "openattic.oaWizards",
-  "openattic.userinfo",
-  "openattic.required"
+  "openattic.todowidget",
+  "openattic.userinfo"
 ]);
