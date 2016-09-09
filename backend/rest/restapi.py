@@ -39,7 +39,7 @@ class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
-    auth_token = serializers.SerializerMethodField("get_auth_token")
+    auth_token = serializers.SerializerMethodField()
     profile = relations.HyperlinkedIdentityField(view_name='userprofile-detail')
 
     class Meta:

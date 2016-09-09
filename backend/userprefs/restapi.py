@@ -35,7 +35,7 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 
-    preferences = serializers.SerializerMethodField("get_preferences")
+    preferences = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile

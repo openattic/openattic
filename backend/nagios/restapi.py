@@ -25,7 +25,7 @@ from rest import relations
 from rest.multinode.handlers import RequestHandlers
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
-    graphs  = serializers.SerializerMethodField('get_graphs')
+    graphs  = serializers.SerializerMethodField()
     last_check  = serializers.DateTimeField(read_only=True)
     next_check  = serializers.DateTimeField(read_only=True)
     status      = serializers.CharField(read_only=True)

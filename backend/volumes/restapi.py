@@ -62,8 +62,8 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a disk. """
 
     url = serializers.HyperlinkedIdentityField(view_name="disk-detail")
-    status = serializers.SerializerMethodField("get_status")
-    size = serializers.SerializerMethodField("get_size")
+    status = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
@@ -141,8 +141,8 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
     filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
-    usage = serializers.SerializerMethodField("get_usage")
-    status = serializers.SerializerMethodField("get_status")
+    usage = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = models.StorageObject
@@ -300,8 +300,8 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     snapshot = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
-    usage = serializers.SerializerMethodField("get_usage")
-    status = serializers.SerializerMethodField("get_status")
+    usage = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
     upper = relations.HyperlinkedRelatedField(view_name="volume-detail", queryset=models.StorageObject.objects.all())
 
     class Meta:
