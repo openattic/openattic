@@ -216,12 +216,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'nagios': {
-            'handlers': ['file'],
-            'level': 'INFO',
-            'propagate': True
-        },
-        'ceph': {
+        '': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True
