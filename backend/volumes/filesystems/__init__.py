@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from volumes.filesystems.filesystem import FileSystemMeta
+from volumes.filesystems.filesystem import FileSystemMeta, FileSystem
 
 
 def __import_filesystems():
