@@ -92,7 +92,10 @@ app.config(function ($stateProvider) {
       .state("cephPools.detail.statistics", {
         url          : "/statistics",
         views        : {
-          "tab-content": {templateUrl: "components/ceph-pools/templates/statistics.html"}
+          "tab-content": {
+            controller : "CephPoolsStatisticsCtrl",
+            templateUrl: "components/ceph-pools/templates/statistics.html"
+          }
         },
         ncyBreadcrumb: {
           label: "{{selection.item.name}} statistics"
