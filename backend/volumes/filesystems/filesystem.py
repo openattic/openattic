@@ -18,8 +18,6 @@ import dbus
 import os
 import os.path
 
-from django.core.exceptions import ValidationError
-
 from exception import NotSupportedError
 from systemd import get_dbus_object, dbus_to_python
 from volumes.conf import settings as volumes_settings

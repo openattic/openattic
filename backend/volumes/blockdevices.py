@@ -14,14 +14,14 @@
  *  GNU General Public License for more details.
 """
 
-import os
-import os.path
 
 class UnsupportedRAID(Exception):
     pass
 
+
 class UnsupportedRAIDVendor(UnsupportedRAID):
     pass
+
 
 class UnsupportedRAIDLevel(UnsupportedRAID):
     pass

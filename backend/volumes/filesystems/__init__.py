@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from volumes.filesystems.filesystem import FileSystemMeta, FileSystem
+from volumes.filesystems.filesystem import FileSystemMeta
+
 
 def __import_filesystems():
     import os
@@ -26,10 +27,10 @@ __import_filesystems()
 
 FILESYSTEMS = FileSystemMeta.filesystems
 
+
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """
     for fs in FILESYSTEMS:
         if fs.name == name:
             return fs
     raise KeyError("No such filesystem found: '%s'" % name)
-
