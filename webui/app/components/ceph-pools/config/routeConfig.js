@@ -81,7 +81,7 @@ app.config(function ($stateProvider) {
         }
       })
       .state("cephPools.detail.cacheTier", {
-        url          : "/status",
+        url          : "/cachetier",
         views        : {
           "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
         },
