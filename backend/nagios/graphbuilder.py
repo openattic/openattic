@@ -109,6 +109,7 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 
     return args
 
+
 def _call_rrdtool(args):
     rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in args],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
