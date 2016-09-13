@@ -60,6 +60,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
+    'EXCEPTION_HANDLER': 'exception.custom_handler',
     'PAGINATE_BY':        50,
     'PAGINATE_BY_PARAM': 'pageSize',
     'MAX_PAGINATE_BY':   100,

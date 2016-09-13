@@ -35,6 +35,7 @@ from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
 from django.core.cache           import get_cache
 
+from exception import NotSupportedError
 from systemd import get_dbus_object
 from systemd.helpers import Transaction
 from systemd.lockutils import Lockfile, AlreadyLocked
@@ -643,10 +644,10 @@ class VolumePool(models.Model):
             return self._create_volume(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.__class__)
+        raise NotSupportedError("{} does not support grow".format(self.__class__.__name__))
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.__class__)
+        raise NotSupportedError("{} does not support shrink".format(self.__class__.__name__))
 
     def post_grow(self, oldmegs, newmegs):
         pass
@@ -729,10 +730,10 @@ class AbstractVolume(models.Model):
             return self._create_snapshot(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.__class__)
+        raise NotSupportedError("{} does not support grow".format(self.__class__.__name__))
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.__class__)
+        raise NotSupportedError("{} does not support shrink".format(self.__class__.__name__))
 
     def post_grow(self, oldmegs, newmegs):
         pass

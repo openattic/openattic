@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from drbd.models import Connection
+from exception import validate_input_fields
 from ifconfig.models import Host
 from volumes.models import StorageObject
 
@@ -63,11 +64,8 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
             protocol = request.DATA.get("protocol", protocol_default)
             syncer_rate = request.DATA.get("syncer_rate", syncer_rate_default)
 
-            try:
-                connection = Connection.objects.create_connection(protocol, syncer_rate,
-                                                                  source_volume["id"])
-            except Exception, err:
-                return Response(err.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
+            connection = Connection.objects.create_connection(protocol, syncer_rate,
+                                                              source_volume["id"])
         else:
             # CREATE VOLUME
             connection_id = request.DATA["connection_id"]
@@ -81,17 +79,11 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
         if "new_size" in request.DATA:
             connection = self.get_object()
 
-            if not connection.storageobj.filesystemvolume_or_none:
-                try:
-                    # resize the local endpoint
-                    connection.resize_local_storage_device(request.DATA["new_size"])
-                except SystemError, e:
-                    return Response(e.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
+            # resize the local endpoint
+            connection.resize_local_storage_device(request.DATA["new_size"])
+            ser = DrbdConnectionSerializer(connection, context={"request": request})
+            return Response(ser.data, status=status.HTTP_200_OK)
 
-                ser = DrbdConnectionSerializer(connection, context={"request": request})
-                return Response(ser.data, status=status.HTTP_200_OK)
-            return Response("Resizing a formatted DRBD connection is not implemented yet.",
-                            status=status.HTTP_501_NOT_IMPLEMENTED, exception=True)
         return super(DrbdConnectionViewSet, self).update(request, args, kwargs)
 
     def destroy(self, request, *args, **kwargs):
@@ -100,9 +92,9 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
 
         if len(connection.get_storage_devices()) == 0:
             connection.storageobj.delete()
-            return Response("DRBD connection removed", status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response("Local DRBD endpoint removed", status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def _install_connection(self, request, connection_id):
         # called on the primary only, not part of the REST API
@@ -127,20 +119,14 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     model = Connection
 
     def create(self, request, *args, **kwargs):
-        try:
-            # Get all needed information from request
-            source_volume = request.DATA["source_volume"]
-            remote_pool = request.DATA["remote_pool"]
-        except KeyError:
-            return Response("The mandatory parameter(s) 'source_volume' and/or 'remote_pool' are "
-                            "missing.", status=status.HTTP_400_BAD_REQUEST)
+        # Get all needed information from request
 
-        try:
-            source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
-            remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
-        except Host.DoesNotExist:
-            return Response("Can't find the related host object of the volume that should be "
-                            "mirrored", status=status.HTTP_404_NOT_FOUND)
+        validate_input_fields(request.DATA, ["source_volume", "remote_pool"])
+        source_volume = request.DATA["source_volume"]
+        remote_pool = request.DATA["remote_pool"]
+
+        source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
+        remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
 
         # First find out whether we're supposed to be primary or secondary.
         if "connection_id" not in request.DATA:
@@ -151,6 +137,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                 # Step 1: Create the connection
                 connection_resp = super(DrbdConnectionProxyViewSet, self).create(request, args,
                                                                                  kwargs)
+
                 if connection_resp.exception:
                     return connection_resp
                 connection_data = connection_resp.data
@@ -181,11 +168,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     def update(self, request, *args, **kwargs):
         if "new_size" in request.DATA:
             connection = self.get_object()
-
-            try:
-                host = connection.host
-            except SystemError, e:
-                return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            host = connection.host
 
             if host == Host.objects.get_current():
                 # Step 1: Call second host to grow his endpoint, if the request was not forwarded by
@@ -217,11 +200,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
 
     def destroy(self, request, *args, **kwargs):
         connection = self.get_object()
-
-        try:
-            host = connection.host
-        except SystemError, e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        host = connection.host
 
         if host == Host.objects.get_current():
             # Step 1: Call second host to delete his endpoint, if the request was not forwarded by
@@ -244,7 +223,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             if "proxy_host_id" not in request.DATA:
                 self._remote_request(request, connection_host, obj=connection)
 
-            return Response("DRBD connection removed", status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 RESTAPI_VIEWSETS = [
