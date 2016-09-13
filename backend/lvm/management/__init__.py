@@ -14,25 +14,16 @@
  *  GNU General Public License for more details.
 """
 
-try:
-    import readline
-except ImportError:
-    pass
-
-from os.path import exists
-
 from django.contrib.auth.models import User
-from django.db.models import signals
 from django.core.cache import get_cache
 
 from systemd import dbus_to_python, get_dbus_object
 
-import lvm.models
 import sysutils.models
-from ifconfig.models  import Host
-from lvm              import blockdevices
-from lvm.models       import VolumeGroup, LogicalVolume
-from volumes.models   import StorageObject
+from ifconfig.models import Host
+from lvm.models import VolumeGroup, LogicalVolume
+from volumes.models import StorageObject
+
 
 def create_vgs(**kwargs):
     get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
@@ -68,7 +59,7 @@ def create_vgs(**kwargs):
     try:
         admin = User.objects.get(username="openattic", is_superuser=True)
     except User.DoesNotExist:
-        admin = User.objects.filter( is_superuser=True )[0]
+        admin = User.objects.filter(is_superuser=True)[0]
 
     for lvname in lvs:
         # Skip LV if entire VG is tagged as sys
@@ -84,7 +75,8 @@ def create_vgs(**kwargs):
                 continue
 
             print "Adding Logical Volume %s" % lvname
-            so = StorageObject(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), uuid=lvs[lvname]["LVM2_LV_UUID"], source_pool=vg)
+            so = StorageObject(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]),
+                               uuid=lvs[lvname]["LVM2_LV_UUID"], source_pool=vg)
             so.save()
             lv = LogicalVolume(storageobj=so, vg=vg)
             print lv.storageobj.name, lv.storageobj.megs, lv.vg.storageobj.name

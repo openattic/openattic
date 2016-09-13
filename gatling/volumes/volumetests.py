@@ -259,8 +259,9 @@ class VolumeTests(object):
             vol = self.send_request("POST", data=data)
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
-        err_message = str(err.exception)
-        self.assertEqual(err_message.lower(), "500 server error: internal server error")
+
+        self.check_exception_messages(err, self.error_messages["test_create_not_enough_space"],
+                                      field="megs", fuzzy=True)
 
     def test_create_0mb(self):
         """ Create a volume with 0 MB size. """
@@ -270,8 +271,8 @@ class VolumeTests(object):
             vol = self.send_request("POST", data=data)
             time.sleep(self.sleeptime)
             self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
-        err_message = str(err.exception)
-        self.assertEqual(err_message.lower(), "500 server error: internal server error")
+
+        self.check_exception_messages(err, self.error_messages["test_create_0mb"], field="megs")
 
     def test_resize_0mb(self):
         """ Resize a volume to 0 MB. """
@@ -283,8 +284,8 @@ class VolumeTests(object):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": 0, "id": vol["response"]["id"]})
-        err_message = str(err.exception)
-        self.assertEqual(err_message.lower(), "500 server error: internal server error")
+
+        self.check_exception_messages(err, self.error_messages["test_resize_0mb"], field="megs")
 
 
 class Ext4VolumeTests(VolumeTests):
@@ -305,5 +306,5 @@ class XfsVolumeTests(VolumeTests):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": 0, "id": vol["response"]["id"]})
-        err_message = str(err.exception)
-        self.assertEqual(err_message.lower(), "500 server error: internal server error")
+
+        self.check_exception_messages(err, self.error_messages["test_shrink"], field="megs")

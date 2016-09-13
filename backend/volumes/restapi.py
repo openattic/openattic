@@ -455,7 +455,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
             storageobj.save()
 
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})
-        return Response(volume.data)
+        return Response(volume.data, status=status.HTTP_200_OK)
 
 
 class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):

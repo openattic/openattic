@@ -35,6 +35,7 @@ else:
     GUI_ROOT = "/usr/share/openattic-gui"
 
 API_ROOT = "/openattic/api"
+API_OS_USER = 'openattic'
 
 from ConfigParser import ConfigParser
 
@@ -59,6 +60,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
+    'EXCEPTION_HANDLER': 'exception.custom_handler',
     'PAGINATE_BY':        50,
     'PAGINATE_BY_PARAM': 'pageSize',
     'MAX_PAGINATE_BY':   100,

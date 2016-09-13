@@ -20,13 +20,12 @@ from django.core.management.base import BaseCommand
 
 from lvm.models import LVSnapshotJob
 
-class Command( BaseCommand ):
+
+class Command(BaseCommand):
     help = "Creates a Snapshot."
 
     option_list = BaseCommand.option_list + (
-        make_option( "-j", "--jobid", type=int,
-            help="Snapshot job ID",
-            ),
+        make_option("-j", "--jobid", type=int, help="Snapshot job ID", ),
     )
 
     def handle(self, **options):

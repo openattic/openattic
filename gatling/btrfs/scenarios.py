@@ -44,3 +44,11 @@ class BtrfsLvmPoolTestScenario(LvTestScenario):
 
     def _get_pool(self):
         return self.btrfs
+
+    @property
+    def error_messages(self):
+        return {
+            "test_volume_grow": "BtrfsSubvolume does not support grow",
+            "test_volume_shrink": "BtrfsSubvolume does not support shrink",
+            "test_pool_shrink": "BtrfsSubvolume does not support shrink"
+        }

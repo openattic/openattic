@@ -18,11 +18,14 @@ from rpcd.handlers import ModelHandler
 
 from nagios.models import Command, Service, Graph
 
+
 class CommandHandler(ModelHandler):
     model = Command
 
+
 class GraphHandler(ModelHandler):
     model = Graph
+
 
 class ServiceHandler(ModelHandler):
     model = Service
@@ -30,17 +33,18 @@ class ServiceHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         try:
-            data['state']  = obj.state
+            data['state'] = obj.state
         except KeyError:
-            data['state']  = None
+            data['state'] = None
             data["graphs"] = None
         else:
-            qryset = Graph.objects.filter( command=obj.command )
+            qryset = Graph.objects.filter(command=obj.command)
             if qryset.count():
-                data["graphs"] = [ { "id": gr.id, "title": gr.title } for gr in qryset ]
+                data["graphs"] = [{"id": gr.id, "title": gr.title} for gr in qryset]
             else:
                 try:
-                    data["graphs"] = [ { "id": k, "title": v } for (k, v) in obj.rrd.source_labels.items() ]
+                    data["graphs"] = [{"id": k, "title": v} for (k, v) in
+                                      obj.rrd.source_labels.items()]
                 except SystemError:
                     data["graphs"] = None
 

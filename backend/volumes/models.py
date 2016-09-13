@@ -29,16 +29,17 @@ from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.utils.translation    import ugettext_lazy as _, ugettext_noop
-from django.utils.timezone       import make_aware, get_default_timezone
-from django.contrib.auth.models  import User
-from django.core.exceptions      import ValidationError
-from django.core.cache           import get_cache
+from django.utils.translation import ugettext_lazy as _, ugettext_noop
+from django.utils.timezone import make_aware, get_default_timezone
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.cache import get_cache
 
+from exception import NotSupportedError
 from systemd import get_dbus_object
 from systemd.helpers import Transaction
-from systemd.lockutils import Lockfile, AlreadyLocked
-from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
+from systemd.lockutils import AlreadyLocked
+from ifconfig.models import Host, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 from volumes import signals as volume_signals
 
@@ -77,18 +78,22 @@ def _to_number_with_unit(value, unit="B", base=1024, round=False):
         if round:
             value = float(trunc(value * 100)) / 100
         return "{:,.2f}{:}".format(value, unit)
-    except (AttributeError, ValueError): # python 2.5 and 2.6 respectively
+    except (AttributeError, ValueError):  # python 2.5 and 2.6 respectively
         return str(value) + unit
+
 
 class DeviceNotFound(Exception):
     pass
 
+
 class InvalidVolumeType(Exception):
     pass
 
+
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
-        return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
+        return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'],
+                          params=[capability.flag, capability.flag])
 
 
 STORAGEOBJECT_STATUS_CHOICES = (
@@ -100,24 +105,37 @@ STORAGEOBJECT_STATUS_CHOICES = (
     )
 
 STORAGEOBJECT_STATUS_FLAGS = {
-    "unknown":       {"severity": -1, "desc": ugettext_noop("The status cannot be checked and is therefore unknown.")},
-    "locked":        {"severity": -1, "desc": ugettext_noop("The volume is currently locked. Its status cannot be "
-                                                            "checked.")},
+    "unknown":       {"severity": -1, "desc": ugettext_noop("The status cannot be checked and is "
+                                                            "therefore unknown.")},
+    "locked":        {"severity": -1, "desc": ugettext_noop("The volume is currently locked. Its "
+                                                            "status cannot be checked.")},
     "online":        {"severity":  0, "desc": ugettext_noop("The volume is accessible.")},
     "readonly":      {"severity":  0, "desc": ugettext_noop("The volume cannot be written to.")},
     "offline":       {"severity":  0, "desc": ugettext_noop("The volume is inaccessible.")},
     "creating":      {"severity":  0, "desc": ugettext_noop("The volume is being created.")},
-    "initializing":  {"severity":  0, "desc": ugettext_noop("The storage device is initializing the volume.")},
-    "verifying":     {"severity":  0, "desc": ugettext_noop("The storage device is verifying the volume's integrity.")},
+    "initializing":  {"severity":  0, "desc": ugettext_noop("The storage device is initializing "
+                                                            "the volume.")},
+    "verifying":     {"severity":  0, "desc": ugettext_noop("The storage device is verifying the "
+                                                            "volume's integrity.")},
     "primary":       {"severity":  0, "desc": ugettext_noop("The volume is in Primary mode.")},
     "secondary":     {"severity":  0, "desc": ugettext_noop("The volume is in Secondary mode.")},
-    "rebuilding":    {"severity":  1, "desc": ugettext_noop("The storage device is rebuilding data.")},
-    "degraded":      {"severity":  2, "desc": ugettext_noop("A storage device has failed and needs to be replaced.")},
-    "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be recovered.")},
+    "rebuilding":    {"severity":  1, "desc": ugettext_noop("The storage device is rebuilding "
+                                                            "data.")},
+    "degraded":      {"severity":  2, "desc": ugettext_noop("A storage device has failed and needs "
+                                                            "to be replaced.")},
+    "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be "
+                                                            "recovered.")},
     "nearfull":      {"severity":  1, "desc": ugettext_noop("The volume is nearly full.")},
-    "highload":      {"severity":  1, "desc": ugettext_noop("The volume is experiencing high load.")},
-    "highlatency":   {"severity":  1, "desc": ugettext_noop("Write operations take a long time to complete. Consider using a battery-backed-up hardware cache or faster disks.")},
-    "randomio":      {"severity":  1, "desc": ugettext_noop("The workload is mostly random. Consider tuning the application to reduce the amount of random IO operations.")},
+    "highload":      {"severity":  1, "desc": ugettext_noop("The volume is experiencing high "
+                                                            "load.")},
+    "highlatency":   {"severity":  1, "desc": ugettext_noop("Write operations take a long time to "
+                                                            "complete. Consider using a "
+                                                            "battery-backed-up hardware cache or "
+                                                            "faster disks.")},
+    "randomio":      {"severity":  1, "desc": ugettext_noop("The workload is mostly random. "
+                                                            "Consider tuning the application to "
+                                                            "reduce the amount of random IO "
+                                                            "operations.")},
     }
 
 CATALOGS = {
@@ -126,7 +144,6 @@ CATALOGS = {
     'volumepool':          [],
     'physicalblockdevice': []
 }
-
 
 
 class StorageObject(models.Model):
@@ -151,19 +168,20 @@ class StorageObject(models.Model):
         The ``upper'' field defined by this class is set to an object that is using this
         device as part of a mirror, array or volume pool (i.e., NOT a share).
     """
-    name            = models.CharField(max_length=150)
-    megs            = models.IntegerField()
-    uuid            = models.CharField(max_length=38, editable=False)
-    is_origin       = models.BooleanField(default=False)
-    createdate      = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    name = models.CharField(max_length=150)
+    megs = models.IntegerField()
+    uuid = models.CharField(max_length=38, editable=False)
+    is_origin = models.BooleanField(default=False)
+    createdate = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
-    capflags        = models.BigIntegerField(default=0)
-    source_pool     = models.ForeignKey('VolumePool', blank=True, null=True, related_name="volume_set")
-    snapshot        = models.ForeignKey('self', blank=True, null=True, related_name="snapshot_storageobject_set")
-    upper           = models.ForeignKey('self', blank=True, null=True, related_name="base_set")
-    is_protected    = models.BooleanField(default=False)
+    capflags = models.BigIntegerField(default=0)
+    source_pool = models.ForeignKey('VolumePool', blank=True, null=True, related_name="volume_set")
+    snapshot = models.ForeignKey('self', blank=True, null=True,
+                                 related_name="snapshot_storageobject_set")
+    upper = models.ForeignKey('self', blank=True, null=True, related_name="base_set")
+    is_protected = models.BooleanField(default=False)
 
-    objects     = CapabilitiesAwareManager()
+    objects = CapabilitiesAwareManager()
     all_objects = models.Manager()
 
     def full_clean(self, exclude=None, validate_unique=True):
@@ -249,10 +267,12 @@ class StorageObject(models.Model):
 
     @property
     def authoritative_obj(self):
-        obj = self.volumepool_or_none or self.blockvolume_or_none or self.filesystemvolume_or_none or self.physicalblockdevice_or_none
+        obj = (self.volumepool_or_none or self.blockvolume_or_none or
+               self.filesystemvolume_or_none or self.physicalblockdevice_or_none)
         if obj is not None:
             return obj
-        raise ValueError("No authoritative object found for storageobj %d ('%s')" % (self.id, self.name))
+        raise ValueError("No authoritative object found for storageobj %d ('%s')" %
+                         (self.id, self.name))
 
     @property
     def host(self):
@@ -267,7 +287,8 @@ class StorageObject(models.Model):
         self.lock()
         for snap in self.snapshot_storageobject_set.all():
             snap._delete()
-        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none,
+                    self.blockvolume_or_none):
             if obj is not None:
                 obj.delete()
 
@@ -320,7 +341,8 @@ class StorageObject(models.Model):
         try:
             return self.volumepool.volumepool.create_volume(name, megs, options).storageobj
         except VolumePool.DoesNotExist:
-            raise NotImplementedError("This object is not a volume pool, cannot create volumes in it")
+            raise NotImplementedError("This object is not a volume pool, cannot create volumes in "
+                                      "it")
 
     def create_filesystem(self, fstype, options):
         """ If this is a block volume, format it with the given fstype.
@@ -361,7 +383,6 @@ class StorageObject(models.Model):
     def __unicode__(self):
         return self.name
 
-
     def get_volume_usage(self):
         stats = {
             "db_megs":  self.megs,
@@ -381,7 +402,6 @@ class StorageObject(models.Model):
                 obj.get_volume_usage(stats)
 
         return self._mkstats(stats)
-
 
     def get_volumepool_usage(self):
         stats = {
@@ -423,7 +443,9 @@ class StorageObject(models.Model):
             "free":        stats["free"],
             "usable":      _opNone(operator.add, stats["used"], stats["free"]),
             "size":        _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
-            "used_pcnt":   _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
+            "used_pcnt":   _opNone(operator.mul, _opNone(operator.div, stats["used"],
+                                                         _opNone(operator.add, stats["used"],
+                                                                 stats["free"])), 100.)
         }
         _stats.update({
             "used_text":   _to_number_with_unit(_stats["used"]),
@@ -446,7 +468,7 @@ class StorageObject(models.Model):
             return []
 
         cache = get_cache("status")
-        ckey  = "storageobject__status__%d" % self.pk
+        ckey = "storageobject__status__%d" % self.pk
 
         flags = cache.get(ckey)
         if flags is not None and isinstance(flags, set):
@@ -458,7 +480,8 @@ class StorageObject(models.Model):
             if obj.host == Host.objects.get_current():
                 flags = flags.union(obj._get_status())
 
-        for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none, self.physicalblockdevice_or_none):
+        for obj in (self.blockvolume_or_none, self.volumepool_or_none,
+                    self.filesystemvolume_or_none, self.physicalblockdevice_or_none):
             if obj is not None:
                 flags = flags.union(obj.get_status())
 
@@ -467,13 +490,14 @@ class StorageObject(models.Model):
             if pd is not None:
                 if pd["load"] > 30:
                     flags.add("highload")
-                if pd["latency_write"] > 0.010: # > 10ms
+                if pd["latency_write"] > 0.010:  # > 10ms
                     flags.add("highlatency")
-                if pd["iops_write"] and pd["reqsz_write"] < 32 * 1024: # <32KiB
+                if pd["iops_write"] and pd["reqsz_write"] < 32 * 1024:  # <32KiB
                     flags.add("randomio")
 
         if self.filesystemvolume_or_none is not None:
-            if self.get_volume_usage().get("used_pcnt", 0) >= self.filesystemvolume_or_none.fscritical:
+            if self.get_volume_usage().get("used_pcnt", 0) >= \
+                    self.filesystemvolume_or_none.fscritical:
                 flags.add("nearfull")
 
         cache.set(ckey, flags, 300)
@@ -497,16 +521,18 @@ class StorageObject(models.Model):
         return {
             "status": STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][0],
             "text":   STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][1],
-            "flags":  dict([ (flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in flags ])
+            "flags":  dict([(flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in flags])
         }
 
     def get_storage_devices(self):
-        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none,
+                    self.blockvolume_or_none):
             if obj is not None:
                 qryset = obj.get_storage_devices()
                 if qryset is not None:
                     return qryset
         return []
+
 
 def __wait_for_released_lock(instance, **kwargs):
     instance.wait()
@@ -546,17 +572,21 @@ class VolumePool(models.Model):
         * host       -> ForeignKey or property of a node that can modify the volumepool
 
         ...and the following methods:
-        * _create_volume_for_storageobject(storageobj, options) -> create a volume for the given options in this pool
-        * is_fs_supported(filesystem) -> return whether or not volumes with this file system can be created
+        * _create_volume_for_storageobject(storageobj, options) -> create a volume for the given
+          options in this pool
+        * is_fs_supported(filesystem) -> return whether or not volumes with this file system can be
+          created
 
         Valid values for the ``status'' field are:
-          online, readonly, degraded, verifying, rebuilding, restoring_snapshot, failed, offline, unknown
+          online, readonly, degraded, verifying, rebuilding, restoring_snapshot, failed, offline,
+          unknown
     """
-    storageobj  = models.OneToOneField(StorageObject)
-    volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
-    volumepool      = generic.GenericForeignKey("volumepool_type", "id")
+    storageobj = models.OneToOneField(StorageObject)
+    volumepool_type = models.ForeignKey(ContentType, blank=True, null=True,
+                                        related_name="%(class)s_volumepool_type_set")
+    volumepool = generic.GenericForeignKey("volumepool_type", "id")
 
-    objects     = getHostDependentManagerClass('volumepool__host')()
+    objects = getHostDependentManagerClass('volumepool__host')()
     all_objects = models.Manager()
 
     @property
@@ -571,7 +601,8 @@ class VolumePool(models.Model):
         """ Create a volume that best fulfills the specification given
             in `options' and attach it to the passed storageobj.
         """
-        raise NotImplementedError("VolumePool::_create_volume_for_storageobject needs to be overridden")
+        raise NotImplementedError("VolumePool::_create_volume_for_storageobject needs to be "
+                                  "overridden")
 
     def is_fs_supported(self, type):
         """ Check if we can create a volume with the given file system. """
@@ -607,7 +638,8 @@ class VolumePool(models.Model):
 
         is_protected = options.pop('is_protected', False)
 
-        storageobj = StorageObject(name=name, megs=megs, source_pool=self, is_protected=is_protected)
+        storageobj = StorageObject(name=name, megs=megs, source_pool=self,
+                                   is_protected=is_protected)
         storageobj.full_clean()
         storageobj.save()
         storageobj.lock()
@@ -643,10 +675,10 @@ class VolumePool(models.Model):
             return self._create_volume(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.__class__)
+        raise NotSupportedError("{} does not support grow".format(self.__class__.__name__))
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.__class__)
+        raise NotSupportedError("{} does not support shrink".format(self.__class__.__name__))
 
     def post_grow(self, oldmegs, newmegs):
         pass
@@ -655,12 +687,12 @@ class VolumePool(models.Model):
         pass
 
 
-
 class AbstractVolume(models.Model):
     """ Abstract base class for BlockVolume and FileSystemVolume. """
-    storageobj  = models.OneToOneField(StorageObject)
-    volume_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
-    volume      = generic.GenericForeignKey("volume_type", "id")
+    storageobj = models.OneToOneField(StorageObject)
+    volume_type = models.ForeignKey(ContentType, blank=True, null=True,
+                                    related_name="%(class)s_volume_type_set")
+    volume = generic.GenericForeignKey("volume_type", "id")
 
     class Meta:
         abstract = True
@@ -696,7 +728,8 @@ class AbstractVolume(models.Model):
     def _create_snapshot(self, name, megs, options):
         """ Actual snapshot creation. """
         sourcepool = self.storageobj.volumepool_or_none or self.storageobj.source_pool
-        storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs, source_pool=sourcepool)
+        storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs,
+                                   source_pool=sourcepool)
         storageobj.full_clean()
         storageobj.save()
         storageobj.lock()
@@ -705,14 +738,17 @@ class AbstractVolume(models.Model):
         try:
             vol = self._create_snapshot_for_storageobject(storageobj, options)
 
-            if self.storageobj.filesystemvolume_or_none is not None and storageobj.filesystemvolume_or_none is None:
+            if self.storageobj.filesystemvolume_or_none is not None \
+                    and storageobj.filesystemvolume_or_none is None:
                 # The origin has an FSV but the snapshot does not. if we have an FSP, this makes
                 # sense; create a new one for the snapshot in this case.
                 origin = self.storageobj.filesystemvolume_or_none.volume
                 if not isinstance(origin, FileSystemProvider):
-                    raise TypeError("Missing file system on snapshot of '%s': '%s'" % (unicode(self), unicode(storageobj)))
+                    raise TypeError("Missing file system on snapshot of '%s': '%s'"
+                                    % (unicode(self), unicode(storageobj)))
                 snapfsp = FileSystemProvider(storageobj=storageobj, fstype=origin.fstype,
-                                                fswarning=origin.fswarning, fscritical=origin.fscritical, owner=origin.owner)
+                                             fswarning=origin.fswarning,
+                                             fscritical=origin.fscritical, owner=origin.owner)
                 snapfsp.full_clean()
                 snapfsp.save()
         except:
@@ -729,17 +765,16 @@ class AbstractVolume(models.Model):
             return self._create_snapshot(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support grow" % self.__class__)
+        raise NotSupportedError("{} does not support grow".format(self.__class__.__name__))
 
     def shrink(self, oldmegs, newmegs):
-        raise NotImplementedError("%s does not support shrink" % self.__class__)
+        raise NotSupportedError("{} does not support shrink".format(self.__class__.__name__))
 
     def post_grow(self, oldmegs, newmegs):
         pass
 
     def post_shrink(self, oldmegs, newmegs):
         pass
-
 
 
 class BlockVolume(AbstractVolume):
@@ -753,7 +788,7 @@ class BlockVolume(AbstractVolume):
         Optionally, the following properties may be implemented:
         * raid_params > RAID layout information (chunk/stripe size etc)
     """
-    objects     = getHostDependentManagerClass('volume__host')()
+    objects = getHostDependentManagerClass('volume__host')()
     all_objects = models.Manager()
 
     @property
@@ -784,7 +819,9 @@ class BlockVolume(AbstractVolume):
         """
         if target_storageobject.megs < self.volume.storageobj.megs:
             raise ValueError("target volume is too small")
-        get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path, self.volume.storageobj.megs, "1M")
+        get_dbus_object("/volumes").dd(self.volume.path,
+                                       target_storageobject.blockvolume.volume.path,
+                                       self.volume.storageobj.megs, "1M")
 
     def _clone(self, target_storageobject, options):
         self.storageobj.lock()
@@ -792,7 +829,8 @@ class BlockVolume(AbstractVolume):
         if target_storageobject is None:
             if self.storageobj.source_pool is None:
                 raise NotImplementedError("This volume can only be cloned into existing targets.")
-            target_volume = self.storageobj.source_pool.volumepool._create_volume(options["name"], self.storageobj.megs, {})
+            target_volume = self.storageobj.source_pool.volumepool._create_volume(
+                options["name"], self.storageobj.megs, {})
             target_storageobject = target_volume.storageobj
             # target_storageobject will be locked by _create_volume
         else:
@@ -812,16 +850,18 @@ class BlockVolume(AbstractVolume):
 
         if src_fsv:
             if not isinstance(src_fsv, FileSystemProvider):
-                raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside" % type(src_fsv))
+                raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside"
+                                % type(src_fsv))
 
             if tgt_fsv is None:
                 tgt_fsv = FileSystemProvider(storageobj=target_storageobject, fstype=src_fsv.fstype,
-                                             fswarning=src_fsv.fswarning, fscritical=src_fsv.fscritical, owner=src_fsv.owner)
+                                             fswarning=src_fsv.fswarning,
+                                             fscritical=src_fsv.fscritical, owner=src_fsv.owner)
             else:
-                tgt_fsv.fstype     = src_fsv.fstype
-                tgt_fsv.fswarning  = src_fsv.fswarning
+                tgt_fsv.fstype = src_fsv.fstype
+                tgt_fsv.fswarning = src_fsv.fswarning
                 tgt_fsv.fscritical = src_fsv.fscritical
-                tgt_fsv.owner      = src_fsv.owner
+                tgt_fsv.owner = src_fsv.owner
 
             tgt_fsv.save_clone()
 
@@ -852,7 +892,8 @@ class BlockVolume(AbstractVolume):
         if serv.last_check is None:
             # service has never been checked
             return None
-        if make_aware(datetime.now(), get_default_timezone()) - serv.last_check > timedelta(minutes=15):
+        if make_aware(datetime.now(), get_default_timezone()) - serv.last_check \
+                > timedelta(minutes=15):
             # perfdata is outdated
             return None
         pd = serv.perfdata
@@ -894,7 +935,8 @@ if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
         ctype = ContentType.objects.get_for_model(instance.__class__)
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() \
+                != 0:
             return
 
         desc = nagios_settings.LV_PERF_DESCRIPTION % unicode(instance)
@@ -904,13 +946,8 @@ if HAVE_NAGIOS:
         try:
             srv = Service.objects.get(description=desc)
         except Service.DoesNotExist:
-            srv = Service(
-                host        = instance.host,
-                target      = instance,
-                command     = cmd,
-                description = desc,
-                arguments   = instance.path
-            )
+            srv = Service(host=instance.host, target=instance, command=cmd, description=desc,
+                          arguments=instance.path)
         else:
             srv.target = instance
 
@@ -923,7 +960,7 @@ if HAVE_NAGIOS:
 
     def __connect_signals_for_blockvolume(sender, **kwargs):
         if issubclass(sender, BlockVolume):
-            volume_signals.post_install.connect(  __create_service_for_blockvolume, sender=sender)
+            volume_signals.post_install.connect(__create_service_for_blockvolume, sender=sender)
             signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
 
     signals.class_prepared.connect(__connect_signals_for_blockvolume)
@@ -938,11 +975,11 @@ class FileSystemVolume(AbstractVolume):
         * status     -> CharField or property
         * stat       -> property that returns { size:, free:, used: } in MiB
     """
-    owner       = models.ForeignKey(User, blank=True)
-    fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
-    fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
+    owner = models.ForeignKey(User, blank=True)
+    fswarning = models.IntegerField(_("Warning Level (%)"),  default=75)
+    fscritical = models.IntegerField(_("Critical Level (%)"), default=85)
 
-    objects     = getHostDependentManagerClass('volume__host')()
+    objects = getHostDependentManagerClass('volume__host')()
     all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
@@ -986,7 +1023,8 @@ if HAVE_NAGIOS:
     def __create_service_for_filesystemvolume(instance, **kwargs):
         ctype = ContentType.objects.get_for_model(instance.__class__)
         cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() \
+                != 0:
             return
 
         desc = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance)
@@ -996,13 +1034,8 @@ if HAVE_NAGIOS:
         try:
             srv = Service.objects.get(description=desc)
         except Service.DoesNotExist:
-            srv = Service(
-                host        = instance.host,
-                target      = instance,
-                command     = cmd,
-                description = desc,
-                arguments   = instance.storageobj.uuid
-            )
+            srv = Service(host=instance.host, target=instance, command=cmd, description=desc,
+                          arguments=instance.storageobj.uuid)
         else:
             srv.target = instance
 
@@ -1015,7 +1048,8 @@ if HAVE_NAGIOS:
 
     def __connect_signals_for_filesystemvolume(sender, **kwargs):
         if issubclass(sender, FileSystemVolume):
-            volume_signals.post_install.connect(  __create_service_for_filesystemvolume, sender=sender)
+            volume_signals.post_install.connect(__create_service_for_filesystemvolume,
+                                                sender=sender)
             signals.post_delete.connect(__delete_service_for_filesystemvolume, sender=sender)
 
     signals.class_prepared.connect(__connect_signals_for_filesystemvolume)
@@ -1024,9 +1058,10 @@ if HAVE_NAGIOS:
 class PhysicalBlockDevice(models.Model):
     """ Base class for physical block devices.
     """
-    storageobj  = models.OneToOneField(StorageObject)
-    device_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
-    device      = generic.GenericForeignKey("device_type", "id")
+    storageobj = models.OneToOneField(StorageObject)
+    device_type = models.ForeignKey(ContentType, blank=True, null=True,
+                                    related_name="%(class)s_volume_type_set")
+    device = generic.GenericForeignKey("device_type", "id")
 
     def save(self, *args, **kwargs):
         if self.__class__ is not PhysicalBlockDevice:
@@ -1047,13 +1082,11 @@ def __add_to_catalogs(sender, **kwargs):
 signals.class_prepared.connect(__add_to_catalogs)
 
 
-
-
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
-    fstype      = models.CharField(max_length=100)
+    fstype = models.CharField(max_length=100)
 
-    objects     = getHostDependentManagerClass('storageobj__host')()
+    objects = getHostDependentManagerClass('storageobj__host')()
     all_objects = models.Manager()
 
     def save(self, database_only=False, *args, **kwargs):
@@ -1120,8 +1153,8 @@ class FileSystemProvider(FileSystemVolume):
             stats["fs_used"] = fs_stat["used"]
             stats["fs_free"] = fs_stat["free"]
 
-        stats["used"]  = max(stats.get("used", None),         stats["fs_used"])
-        stats["free"]  = min(stats.get("free", float("inf")), stats["fs_free"])
+        stats["used"] = max(stats.get("used", None),         stats["fs_used"])
+        stats["free"] = min(stats.get("free", float("inf")), stats["fs_free"])
 
         return stats
 
@@ -1139,11 +1172,11 @@ signals.post_delete.connect(__delete_filesystemprovider_post, sender=FileSystemP
 
 class DiskDevice(PhysicalBlockDevice):
     """ The physical view of a standard disk (hence, PhysicalBlockDevice). """
-    host        = models.ForeignKey(Host)
-    model       = models.CharField(max_length=150, blank=True)
-    serial      = models.CharField(max_length=150, blank=True)
-    type        = models.CharField(max_length=150, blank=True)
-    rpm         = models.IntegerField(blank=True, null=True)
+    host = models.ForeignKey(Host)
+    model = models.CharField(max_length=150, blank=True)
+    serial = models.CharField(max_length=150, blank=True)
+    type = models.CharField(max_length=150, blank=True)
+    rpm = models.IntegerField(blank=True, null=True)
 
     def full_clean(self, exclude=None, validate_unique=True):
         PhysicalBlockDevice.full_clean(self, exclude=exclude, validate_unique=validate_unique)
@@ -1199,7 +1232,8 @@ class DiskDevice(PhysicalBlockDevice):
     def __unicode__(self):
         if self.enclslot is None:
             return "%s %s %dk" % (self.storageobj.name, self.type, self.rpm / 1000)
-        return "%s %s %dk Slot %d" % (self.storageobj.name, self.type, self.rpm / 1000, self.enclslot)
+        return "%s %s %dk Slot %d" % (self.storageobj.name, self.type, self.rpm / 1000,
+                                      self.enclslot)
 
 
 class GenericDisk(BlockVolume):
@@ -1231,8 +1265,6 @@ class GenericDisk(BlockVolume):
         return unicode(self.disk_device)
 
 
-
-
 def get_storage_tree(top_obj):
     def serialize_obj(obj):
         try:
@@ -1257,5 +1289,3 @@ def get_storage_tree(top_obj):
     top = serialize_obj(top_obj)
     top["devices"] = mktree(top_obj)
     return top
-
-

@@ -24,33 +24,37 @@ from rest import relations
 
 from rest.multinode.handlers import RequestHandlers
 
+
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
-    graphs  = serializers.SerializerMethodField('get_graphs')
-    last_check  = serializers.DateTimeField(read_only=True)
-    next_check  = serializers.DateTimeField(read_only=True)
-    status      = serializers.CharField(read_only=True)
+    graphs = serializers.SerializerMethodField('get_graphs')
+    last_check = serializers.DateTimeField(read_only=True)
+    next_check = serializers.DateTimeField(read_only=True)
+    status = serializers.CharField(read_only=True)
     plugin_output = serializers.CharField(source="state.plugin_output", read_only=True)
-    perfdata      = serializers.SerializerMethodField('get_performance_data')
-    host          = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False)
+    perfdata = serializers.SerializerMethodField('get_performance_data')
+    host = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False)
 
     class Meta:
-        model  = Service
-        fields = ('url', 'id', 'host', 'description', 'graphs', 'last_check', 'next_check', 'status', 'plugin_output', 'perfdata')
+        model = Service
+        fields = ('url', 'id', 'host', 'description', 'graphs', 'last_check', 'next_check',
+                  'status', 'plugin_output', 'perfdata')
 
     def get_graphs(self, obj):
         graphs = []
-        for graph in Graph.objects.filter( command=obj.command ):
+        for graph in Graph.objects.filter(command=obj.command):
             graphs.append({
                 "id":    graph.id,
                 "title": graph.title,
-                "url":   reverse("nagios.views.graph", args=(obj.id, graph.id), request=self.context["request"])
+                "url":   reverse("nagios.views.graph", args=(obj.id, graph.id),
+                                 request=self.context["request"])
             })
         try:
             for (srcid, title) in obj.rrd.source_labels.items():
                 graphs.append({
                     "id":    srcid,
                     "title": title,
-                    "url":   reverse("nagios.views.graph", args=(obj.id, srcid), request=self.context["request"])
+                    "url":   reverse("nagios.views.graph", args=(obj.id, srcid),
+                                     request=self.context["request"])
                 })
         except SystemError:
             pass
@@ -75,8 +79,8 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         rrd = obj.rrd
         srcname = request.GET["srcname"]
         try:
-            start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
-            end    = int(request.GET.get("end",    rrd.last_check))
+            start = int(request.GET.get("start",  rrd.last_check - 24*60*60))
+            end = int(request.GET.get("end",    rrd.last_check))
 
             # Accept negative numbers for start and end by interpreting them as
             # "x seconds before last_check". The numbers are negative already,
@@ -92,6 +96,8 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
                 raise ValueError("end date must be greater than zero")
 
         except ValueError, err:
+            import sys
+            from django.http import Http404
             print >> sys.stderr, unicode(err)
             raise Http404("Invalid start or end specified")
 
@@ -99,9 +105,9 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ServiceProxyViewSet(RequestHandlers, ServiceViewSet):
-    queryset    = Service.all_objects.all()
-    api_prefix  = 'services'
-    model       = Service
+    queryset = Service.all_objects.all()
+    api_prefix = 'services'
+    model = Service
 
     @detail_route()
     def fetch(self, request, *args, **kwargs):
@@ -111,4 +117,3 @@ class ServiceProxyViewSet(RequestHandlers, ServiceViewSet):
 RESTAPI_VIEWSETS = [
     ('services', ServiceProxyViewSet),
 ]
-
