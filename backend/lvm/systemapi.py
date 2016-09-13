@@ -14,17 +14,16 @@
  *  GNU General Public License for more details.
 """
 
-import logging
-
 from time import time
 
 from django.core.cache import get_cache
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method, deferredmethod
+from systemd.plugins import logged, BasePlugin, method, deferredmethod
 
-from lvm.conf   import settings as lvm_settings
+from lvm.conf import settings as lvm_settings
 from lvm.models import LogicalVolume
+
 
 def lvm_command(cmd):
     cache = get_cache("systemd")
@@ -44,9 +43,9 @@ def lvm_command(cmd):
     ST_VARNAME, ST_DELIM, ST_VALUE = range(3)
     state = ST_VARNAME
 
-    result   = []
-    currvar  = ""
-    valbuf   = ""
+    result = []
+    currvar = ""
+    valbuf = ""
     currdata = {}
     for char in out:
         if state == ST_VARNAME:
@@ -71,7 +70,7 @@ def lvm_command(cmd):
                 state = ST_VARNAME
                 currdata[currvar] = valbuf
                 currvar = ""
-                valbuf  = ""
+                valbuf = ""
             else:
                 valbuf += char
 
@@ -79,24 +78,28 @@ def lvm_command(cmd):
 
     return result
 
+
 def lvm_pvs():
-    info = dict( [ (lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"]) ] )
+    info = dict([(lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"])])
     for field in ("LVM2_PV_SIZE", "LVM2_PV_FREE"):
         for pv in info:
-            info[pv][field] = info[pv][field][:-1] # cut off the m from 13.37m
+            info[pv][field] = info[pv][field][:-1]  # cut off the m from 13.37m
     return info
+
 
 def lvm_vgs():
-    info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs", '-o', '+vg_tags']) ] )
+    info = dict([(lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs", '-o', '+vg_tags'])])
     for field in ("LVM2_VG_SIZE", "LVM2_VG_FREE"):
         for vg in info:
-            info[vg][field] = info[vg][field][:-1] # cut off the m from 13.37m
+            info[vg][field] = info[vg][field][:-1]  # cut off the m from 13.37m
     return info
 
+
 def lvm_lvs():
-    info = dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+lv_kernel_minor,lv_minor,uuid,lv_tags']) ] )
+    info = dict([(lv["LVM2_LV_NAME"], lv) for lv in lvm_command(
+        ["/sbin/lvs", '-o', '+lv_kernel_minor,lv_minor,uuid,lv_tags'])])
     for lv in info:
-        info[lv]["LVM2_LV_SIZE"] = info[lv]["LVM2_LV_SIZE"][:-1] # cut off the m from 13.37m
+        info[lv]["LVM2_LV_SIZE"] = info[lv]["LVM2_LV_SIZE"][:-1]  # cut off the m from 13.37m
     return info
 
 
@@ -135,9 +138,7 @@ class SystemD(BasePlugin):
             cmd.append("--yes")
         if snapshot:
             cmd.extend(["-s", snapshot])
-        cmd.extend(["-L", ("%dM" % megs),
-            '-n', lvname,
-            ])
+        cmd.extend(["-L", ("%dM" % megs), '-n', lvname, ])
         if not snapshot:
             cmd.append(vgname)
         self.lvs_time = 0
@@ -210,38 +211,37 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(["/sbin/dmsetup", "targets"], return_out_err=True)
         if ret != 0:
             raise SystemError("dmsetup targets failed: " + err)
-        return dict([ line.split() for line in out.split("\n") if line.strip()])
+        return dict([line.split() for line in out.split("\n") if line.strip()])
 
     @method(in_signature="s", out_signature="ia{ss}aa{ss}")
     def get_partitions(self, device):
-        ret, out, err = invoke(["parted", "-s", "-m", device, "unit", "MB", "print"], return_out_err=True, log=False)
+        ret, out, err = invoke(["parted", "-s", "-m", device, "unit", "MB", "print"],
+                               return_out_err=True, log=False)
 
         lines = out.split("\n")
         splittedlines = []
         for line in lines:
             if line:
                 # lines end with ";", strip that before splitting
-                splittedlines.append( line[:-1].split(":") )
+                splittedlines.append(line[:-1].split(":"))
 
         partitions = []
         for currentline in splittedlines[2:]:
             partitions.append({
-                "number":currentline[0] ,
-                "begin":currentline[1],
-                "end":currentline[2],
-                "size":currentline[3],
-                "filesystem-type":currentline[4],
-                "partition-name":currentline[5],
-                "flags-set":currentline[6],
+                "number": currentline[0],
+                "begin": currentline[1],
+                "end": currentline[2],
+                "size": currentline[3],
+                "filesystem-type": currentline[4],
+                "partition-name": currentline[5],
+                "flags-set": currentline[6],
                 })
         return ret, {
             "path": splittedlines[1][0],
-            "size":splittedlines[1][1],
+            "size": splittedlines[1][1],
             "transport-type": splittedlines[1][2],
             "logical-sector-size": splittedlines[1][3],
-            "physical-sector-size":splittedlines[1][4],
-            "partition-table-type":splittedlines[1][5],
-            "model-name":splittedlines[1][6],
+            "physical-sector-size": splittedlines[1][4],
+            "partition-table-type": splittedlines[1][5],
+            "model-name": splittedlines[1][6],
             }, partitions
-
-
