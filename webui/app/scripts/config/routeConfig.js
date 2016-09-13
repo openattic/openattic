@@ -44,18 +44,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         }
       }
     })
-    .state("dashboard", {
-      url: "/dashboard",
-      views: {
-        "main": {
-          templateUrl: "templates/dashboard.html",
-          controller : "DashboardCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Dashboard"
-      }
-    })
     .state("disks", {
       url: "/disks",
       views: {
