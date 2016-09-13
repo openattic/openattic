@@ -5,6 +5,8 @@ Version 2.0.15 (not released yet):
 ----------------------------------
 
 * Backend: Improved custom error messages in the REST API (OP-497)
+* Backend: Code cleanup (PEP8) for the following apps: DRBD, volumes,
+  lvm and nagios (OP-838)
 * Backend: Performance data for non existing Ceph clusters are no longer
   returned (OP-1406)
 
