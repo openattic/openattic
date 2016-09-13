@@ -17,6 +17,10 @@ set -o xtrace
 if grep -q  debian /etc/*-release
 then
     IS_DEBIAN="1"
+    if grep -q  debian /etc/*-release
+    then
+        IS_UBUNTU="1"
+    fi
 fi
 
 if grep -q suse /etc/*-release
@@ -30,7 +34,7 @@ then
     export DEBIAN_FRONTEND=noninteractive
 
     apt-get update -y
-    apt-get upgrade -y
+    apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
 fi
 
 if [ "$IS_SUSE" ]
@@ -97,22 +101,48 @@ pgsql'
 
 if [ "$IS_DEBIAN" ]
 then
+    if [ "$IS_UBUNTU" ]
+    then
+        toInstall="$(python << EOF
+def agg(state, line):
+     isin, deps = state
+     if not isin:
+         return (True, deps + [line[9:]]) if line.startswith('Depends: ') else (False, deps)
+     else:
+         return (True, deps + [line[1:]]) if line.startswith(' ') else (False, deps)
+
+deps = reduce(agg, open('/home/vagrant/openattic/debian/control'), (False, []))
+deps2 = {d.strip() for d in sum([dep.split(',') for dep in deps[1]], []) if 'python' not in d and 'openattic' not in d and '$' not in d and 'apache' not in d and '|' not in d}
+deps3 = [d.split(' ')[0] for d in deps2 if d not in ['tw-cli', 'mail-transport-agent', 'udisks']]
+print ' '.join(deps3)
+EOF
+)"
+    else
     OA_PACKAGES="$OA_PACKAGES
 module-apt"
     toInstall="$(apt-get install -s $(echo -e "$OA_PACKAGES" | xargs -I SUB echo openattic-SUB) | grep 'Inst ' | cut -c 6- | egrep -o '^[.a-zA-Z0-9-]+' | sort |  grep -v -e python -e openattic -e apache)"
+    fi
+
     echo $toInstall
     apt-get install -y --force-yes $toInstall
 
     # System packages not available in pip + npm
 
     apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-rtslib-fb nodejs npm
-    apt-get install -y libjpeg-dev # interestingly this is required for openattic-module-nagios
+    apt-get install -y libjpeg-dev # TODO this is required for openattic-module-nagios
+    if [ "$IS_UBUNTU" ]
+    then
+        apt-get install -y --force-yes nullmailer # FIXME! Needed for newaliases command
+    fi
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
     ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
-    rm /etc/nagios3/conf.d/localhost_nagios2.cfg # TODO: OP-1066
+    if [ ! "$IS_UBUNTU" ]
+    then
+        rm /etc/nagios3/conf.d/localhost_nagios2.cfg # TODO: OP-1066
+    fi
 
 fi
 
@@ -149,7 +179,7 @@ pushd openattic
 popd
 EOF
 
-service dbus restart
+service dbus reload
 
 npm install -g bower
 npm install grunt
@@ -159,7 +189,7 @@ npm install -g grunt-cli
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
 create user pyfiler createdb createuser password 'pyf!l0r';
-create database pyfiler owner pyfiler;
+create database pyfiler OWNER pyfiler ENCODING 'UTF-8';
 EOF
 
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.
@@ -167,12 +197,17 @@ mkdir -p "/var/log/openattic"
 touch "/var/log/openattic/openattic.log"
 chmod 777 "/var/log/openattic/openattic.log"
 
-sudo -i -u vagrant bash -e << EOF
+sudo IS_UBUNTU="$IS_UBUNTU" -i -u vagrant bash -e << EOF
 
 virtualenv env
 . env/bin/activate
 pip install --upgrade pip
+if [ "$IS_UBUNTU" ]
+then
+pip install -r openattic/requirements-ubuntu-16.04.txt
+else
 pip install -r openattic/requirements.txt
+fi
 
 # dbus
 cp  /usr/lib*/python2.7/*-packages/_dbus* env/lib/python2.7/site-packages/
@@ -197,7 +232,16 @@ cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 pushd openattic/backend/
 
 python manage.py pre_install
+if [ "$IS_UBUNTU" ]
+then
+python manage.py migrate sites
+python manage.py migrate auth
+python manage.py migrate contenttypes
+python manage.py migrate ifconfig
+python manage.py migrate
+else
 python manage.py syncdb --noinput
+fi
 python manage.py createcachetable status_cache
 python manage.py add-host
 
