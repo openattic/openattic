@@ -74,7 +74,7 @@ model field definitions, like ``unique=True`` to catch duplicate inserts.
 In general, input validation is the best place to catch errors and generate
 the best error messages. If feasible, generate errors as soon as possible.
 
-Django-Rest-Framework has a default way of `serializing errors
+Django REST framework has a default way of `serializing errors
 <http://www.django-rest-framework.org/api-guide/exceptions/#exception-handling-in-rest-framework-views>`_.
 We should use this standard when creating own exceptions. For example,
 we should attach an error to a specific model field, if possible.
