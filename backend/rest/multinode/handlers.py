@@ -142,7 +142,6 @@ class RequestHandlers(object):
         data = dict(request.DATA, proxy_host_id=current_host.id)
 
         response = requests.request(request.method, url, data=json.dumps(data), headers=header)
-        response.raise_for_status()
 
         try:
             response_data = response.json()
