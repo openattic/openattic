@@ -11,11 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-import rest_framework
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import serializers, viewsets
 
-from utilities import get_request_query_params, drf_version
+from utilities import drf_version
 
 try:
     from rest_framework.fields import WritableField
@@ -32,6 +30,9 @@ class JsonField(WritableField):
         """
         :return:Returns the value itself, not a string representation.
         """
+        return value
+
+    def to_representation(self, value):
         return value
 
 

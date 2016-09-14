@@ -27,6 +27,8 @@ class QuerySetTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(QuerySetTestCase, cls).setUpClass()
+
         class CephClusterMock(NodbModel):
 
             @staticmethod
