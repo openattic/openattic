@@ -24,7 +24,8 @@ class Migration(migrations.Migration):
                 ('performance_data_options', nodb.models.JsonField(base_type=list, editable=False)),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -41,7 +42,8 @@ class Migration(migrations.Migration):
                 ('w', models.IntegerField(editable=False)),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -51,7 +53,8 @@ class Migration(migrations.Migration):
                 ('data_pools', nodb.models.JsonField(base_type=list)),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -72,7 +75,8 @@ class Migration(migrations.Migration):
                 ('kb_avail', models.IntegerField(editable=False)),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -118,7 +122,8 @@ class Migration(migrations.Migration):
                 ('pool_name', models.CharField(max_length=100)),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -150,9 +155,15 @@ class Migration(migrations.Migration):
                 ('tiers', nodb.models.JsonField(base_type=list, editable=False)),
                 ('flags', nodb.models.JsonField(base_type=list, editable=False)),
                 ('pool_snaps', nodb.models.JsonField(base_type=list, editable=False)),
+                ('cluster', models.ForeignKey(blank=True, editable=False, to='ceph.CephCluster', null=True)),
+                ('erasure_code_profile', models.ForeignKey(default=None, blank=True, to='ceph.CephErasureCodeProfile', null=True)),
+                ('read_tier', models.ForeignKey(related_name='related_read_tier', default=None, blank=True, to='ceph.CephPool', null=True)),
+                ('tier_of', models.ForeignKey(related_name='related_tier_of', default=None, blank=True, to='ceph.CephPool', null=True)),
+                ('write_tier', models.ForeignKey(related_name='related_write_tier', default=None, blank=True, to='ceph.CephPool', null=True)),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -167,9 +178,11 @@ class Migration(migrations.Migration):
                 ('features', nodb.models.JsonField(help_text=b'For example: ["deep-flatten", "journaling", "stripingv2", "exclusive-lock", "layering", "object-map", "fast-diff"]', null=True, base_type=list, blank=True)),
                 ('old_format', models.BooleanField(default=False, help_text=b'should always be false')),
                 ('used_size', models.IntegerField(editable=False)),
+                ('pool', models.ForeignKey(to='ceph.CephPool')),
             ],
             options={
-                'managed': False,
+                'abstract': False,
+                'managed': True,
             },
         ),
         migrations.CreateModel(
@@ -256,6 +269,11 @@ class Migration(migrations.Migration):
             model_name='image',
             name='rbd_pool',
             field=models.ForeignKey(to='ceph.Pool'),
+        ),
+        migrations.AddField(
+            model_name='cephfs',
+            name='metadata_pool',
+            field=models.ForeignKey(related_name='metadata_of_ceph_fs', to='ceph.CephPool'),
         ),
         migrations.AlterUniqueTogether(
             name='pool',

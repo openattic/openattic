@@ -197,6 +197,13 @@ mkdir -p "/var/log/openattic"
 touch "/var/log/openattic/openattic.log"
 chmod 777 "/var/log/openattic/openattic.log"
 
+cat << EOF >> /home/vagrant/.bash_history
+. env/bin/activate
+cd openattic/backend/
+EOF
+chown vagrant:vagrant /home/vagrant/.bash_history
+chmod 600 /home/vagrant/.bash_history
+
 sudo IS_UBUNTU="$IS_UBUNTU" -i -u vagrant bash -e << EOF
 
 virtualenv env
@@ -234,11 +241,8 @@ pushd openattic/backend/
 python manage.py pre_install
 if [ "$IS_UBUNTU" ]
 then
-python manage.py migrate sites
-python manage.py migrate auth
-python manage.py migrate contenttypes
-python manage.py migrate ifconfig
 python manage.py migrate
+python manage.py loaddata nagios/*/initial_data.json
 else
 python manage.py syncdb --noinput
 fi
