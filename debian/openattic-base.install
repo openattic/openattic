@@ -25,6 +25,7 @@ backend/urls.py        /usr/share/openattic
 backend/views.py       /usr/share/openattic
 backend/openattic.wsgi /usr/share/openattic
 backend/serverstats.wsgi /usr/share/openattic
+backend/exception.py   /usr/share/openattic
 
 # Init scripts, configs that are shipped upstream
 etc/init.d/openattic-systemd        /etc/init.d
