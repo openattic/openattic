@@ -14,7 +14,6 @@ Depends: ${misc:Depends},
  openattic-module-http,
  openattic-module-lio,
  openattic-module-samba,
- openattic-module-apt,
  openattic-module-nagios,
  openattic-module-cron,
  openattic-module-mailaliases
