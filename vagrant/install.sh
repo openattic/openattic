@@ -17,7 +17,7 @@ set -o xtrace
 if grep -q  debian /etc/*-release
 then
     IS_DEBIAN="1"
-    if grep -q  debian /etc/*-release
+    if grep -q  ubuntu /etc/*-release
     then
         IS_UBUNTU="1"
     fi
@@ -186,11 +186,20 @@ npm install grunt
 npm install -g grunt-cli
 
 
+if [ "$IS_UBUNTU" ]
+then
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
 create user pyfiler createdb createuser password 'pyf!l0r';
 create database pyfiler OWNER pyfiler ENCODING 'UTF-8';
 EOF
+else
+sudo -u postgres psql << EOF
+alter user postgres password 'postgres';
+create user pyfiler createdb createuser password 'pyf!l0r';
+create database pyfiler OWNER pyfiler;
+EOF
+fi
 
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.
 mkdir -p "/var/log/openattic"
