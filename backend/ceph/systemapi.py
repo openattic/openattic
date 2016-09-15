@@ -215,7 +215,7 @@ class SystemD(BasePlugin):
     def write_cluster_nagios_configs(self, sender):
         for cluster in CephCluster.objects.all():
             cluster_file_name = "cephcluster_{}.cfg".format(cluster.fsid)
-            cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+            cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid, 5)]
             self._write_services_to_file(cluster_file_name, cluster_services)
 
     @deferredmethod(in_signature="")
@@ -226,16 +226,17 @@ class SystemD(BasePlugin):
                     pool_file_name = "cephpool_{}_{}.cfg".format(cluster.fsid, pool.name)
                     pool_services = [self._gen_service_data(
                         pool.__class__.__name__,
-                        "{} {}".format(cluster.fsid, pool.name))]
+                        "{} {}".format(cluster.fsid, pool.name), 5)]
                     self._write_services_to_file(pool_file_name, pool_services)
 
-    def _gen_service_data(self, service_instance_name, service_arguments):
+    def _gen_service_data(self, service_instance_name, service_arguments, check_interval):
         class _CephService(object):
 
-            def __init__(self, desc, command_name, args):
+            def __init__(self, desc, command_name, args, check_interval):
                 self.description = desc
                 self.arguments = args
                 self.active = True
+                self.normal_check_interval = check_interval
 
                 command = self._CephCommand(command_name)
                 self.command = command
@@ -247,7 +248,7 @@ class SystemD(BasePlugin):
         service_desc = "Check {} {}".format(service_instance_name, service_arguments)
         service_command = "check_{}".format(str.lower(service_instance_name))
 
-        return _CephService(service_desc, service_command, service_arguments)
+        return _CephService(service_desc, service_command, service_arguments, check_interval)
 
     def _write_services_to_file(self, file_name, services):
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
