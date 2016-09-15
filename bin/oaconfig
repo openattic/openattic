@@ -110,7 +110,20 @@ case $1 in
 		fi
 		
 		# Initialize the schema so our daemons can start
-		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		DJANGO_MIGRATE="$(su "$OAUSER" -c 'python - << EOF
+from django import VERSION
+print "1" if VERSION[:2] > (1, 7) else ""
+EOF
+'
+)"
+		if [ "$DJANGO_MIGRATE" ]
+		then
+			su "$OAUSER" -c "python manage.py migrate"
+			su "$OAUSER" -c "python manage.py loaddata nagios/*/initial_data.json"
+		else
+			su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		fi
+
 		
 		# Create the status_cache table, ignoring failures (those mean we did this before)
 		su "$OAUSER" -c 'python manage.py createcachetable status_cache >/dev/null 2>/dev/null' || /bin/true
