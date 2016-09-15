@@ -1,0 +1,35 @@
+<div class="openattic-modal-header">
+    <span>Background-Tasks</span>
+</div>
+
+<form name="pendingTasks" role="form" novalidate>
+    <div class="openattic-modal-content">
+        <table class="table table-striped table-bordered table-hover datatable dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" ng-model="selection.checkAll"/>
+                    </th>
+                    <th ng-repeat="col in tableColumns" ng-click="order(col.attribute)"
+                        class="{{orderClass(col.attribute)}}" ng-bind="col.name" width="{{col.width}}">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in tasks.pending | orderBy:tableSort.attribute:tableSort.reverse"
+                    ng-class="{ info: isRowSelected(row) }"
+                    ng-click="toggleSelection(row, $event)">
+                    <td>
+                        <input class="tc_checkboxes" type="checkbox" checklist-model="selection.items" checklist-value="row"/>
+                    </td>
+                    <td ng-bind="row.name"></td>
+                    <td ng-bind="row.started | date:'yyyy-MM-dd HH:mm:ss'"></td>
+                    <td>
+                        <uib-progressbar value="row.done">{{row.done}}%</uib-progressbar>
+                    </td>
+                    <td ng-bind="row.approxFormat"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>

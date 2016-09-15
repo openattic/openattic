@@ -194,6 +194,8 @@ fieldset[disabled] .btn-primary.active {
 /* Modal */
 .modal-dialog {
   margin: 30px auto !important;
+  height: 90%;
+  overflow: auto;
 }
 .modal .modal-content .openattic-modal-header,
 .modal .modal-content .openattic-modal-content,

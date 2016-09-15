@@ -30,22 +30,48 @@
  */
 "use strict";
 
-angular.module("openattic.extensions", [
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.clusterstatuswidget",
-  "openattic.dashboard",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.navigation",
-  "openattic.required",
-  "openattic.sizeparser",
-  "openattic.oaWizards",
-  "openattic.todowidget",
-  "openattic.runnersQ",
-  "openattic.userinfo"
-]);
+var app = angular.module("openattic.runnersQ");
+app.controller("RunnersQModalCtrl", function ($scope, toasty, tasks) {
+  $scope.tableSort = {
+    attribute: 'done',
+    reverse: true
+  };
+
+  $scope.order = function (attribute) {
+    if ($scope.tableSort.attribute === attribute) {
+      $scope.tableSort.reverse = !$scope.tableSort.reverse;
+    }
+    $scope.tableSort.attribute = attribute;
+  };
+
+  $scope.orderClass = function (attribute) {
+    var cssClass = "sorting";
+    if ($scope.tableSort.attribute === attribute) {
+      cssClass = $scope.tableSort.reverse ? "sorting_desc" : "sorting_asc";
+    }
+    return cssClass;
+  };
+
+  $scope.tableColumns = [
+    {
+      name: "Name",
+      attribute: "name",
+      width: "30%"
+    },
+    {
+      name: "Created",
+      attribute: "started",
+      width: "15%"
+    },
+    {
+      name: "Complete",
+      attribute: "done",
+      width: "45%"
+    },
+    {
+      name: "Approx",
+      attribute: "approx",
+      width: "10%"
+    }
+  ];
+});
