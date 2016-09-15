@@ -13,7 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+import django
 from django.core.exceptions import ValidationError
 
 from rest_framework import status
@@ -27,7 +27,10 @@ def custom_handler(exc, context=None):
     :type context: dict
     """
     # Call the default exception handler of the Django REST framework
-    response = exception_handler(exc, context)
+    if django.VERSION[:2] >= (1, 8):
+        response = exception_handler(exc, context)
+    else:
+        response = exception_handler(exc)
 
     if response:
         return response
