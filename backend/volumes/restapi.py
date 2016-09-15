@@ -30,7 +30,7 @@ from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
 
-from utilities import get_request_query_params
+from utilities import get_request_query_params, mk_method_field_params
 
 # filter queryset by...
 # * is not a physical block device and
@@ -64,8 +64,8 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a disk. """
 
     url = serializers.HyperlinkedIdentityField(view_name="disk-detail")
-    status = serializers.SerializerMethodField()
-    size = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
+    size = serializers.SerializerMethodField(*mk_method_field_params('size'))
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
@@ -143,8 +143,8 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
     filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
-    usage = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
+    usage = serializers.SerializerMethodField(*mk_method_field_params('usage'))
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
 
     class Meta:
         model = models.StorageObject
@@ -302,8 +302,8 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     snapshot = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
-    usage = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
+    usage = serializers.SerializerMethodField(*mk_method_field_params('usage'))
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
     upper = relations.HyperlinkedRelatedField(view_name="volume-detail", queryset=models.StorageObject.objects.all())
 
     class Meta:

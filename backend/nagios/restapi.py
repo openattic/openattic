@@ -23,10 +23,11 @@ from nagios.models import Service, Graph
 from rest import relations
 
 from rest.multinode.handlers import RequestHandlers
+from utilities import mk_method_field_params
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
-    graphs = serializers.SerializerMethodField()
+    graphs = serializers.SerializerMethodField(*mk_method_field_params('graphs'))
     last_check = serializers.DateTimeField(read_only=True)
     next_check = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(read_only=True)

@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
-from utilities import drf_version, get_request_query_params
+from utilities import drf_version, get_request_query_params, mk_method_field_params
 
 
 class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
@@ -37,7 +37,7 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 
-    preferences = serializers.SerializerMethodField()
+    preferences = serializers.SerializerMethodField(*mk_method_field_params('preferences'))
 
     class Meta:
         model = UserProfile

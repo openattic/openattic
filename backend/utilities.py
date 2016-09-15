@@ -33,7 +33,7 @@ def get_related_model(field):
 def drf_version():
     """:rtype: tuple"""
     import rest_framework
-    return tuple(rest_framework.VERSION.split('.'))
+    return tuple(map(int, rest_framework.VERSION.split('.')))
 
 
 def get_request_query_params(request):
@@ -42,3 +42,20 @@ def get_request_query_params(request):
         return request.QUERY_PARAMS
     else:
         return request.query_params
+
+
+def mk_method_field_params(field_name):
+    """
+    In DRF 2.4, serializers.SerializerMethodField() requires the method name. In DRF 3.3, the
+    method name MUST not be provided, if it equals the default generated one.
+
+    Usage:
+    >>> from rest_framework import serializers
+    >>> field_name = serializers.SerializerMethodField(*mk_method_field_params('field_name'))
+
+    This is stupid.
+    """
+    if drf_version() >= (3, 3):
+        return []
+    else:
+        return ['get_{}'.format(field_name)]
