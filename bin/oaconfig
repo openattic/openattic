@@ -112,7 +112,7 @@ case $1 in
 		# Initialize the schema so our daemons can start
 		DJANGO_MIGRATE="$(su "$OAUSER" -c 'python - << EOF
 from django import VERSION
-print "1" if VERSION[:2] > (1, 7) else ""
+print "1" if VERSION[:2] > (1, 6) else ""
 EOF
 '
 )"
