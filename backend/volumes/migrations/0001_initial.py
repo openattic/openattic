@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import django
 from django.db import migrations, models
 from django.conf import settings
 
@@ -8,7 +9,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ('contenttypes', '0002_remove_content_type_name' if django.VERSION[:2] >= (1, 8) else '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('ifconfig', '0002_auto_20160329_1248'),
     ]
