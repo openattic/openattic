@@ -590,6 +590,7 @@ echo ""
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
 %{_datadir}/%{name}/exception.py*
+%{_datadir}/%{name}/utilities.py*
 
 %files module-btrfs
 %defattr(-,root,root,-)
