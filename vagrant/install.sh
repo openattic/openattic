@@ -197,12 +197,12 @@ mkdir -p "/var/log/openattic"
 touch "/var/log/openattic/openattic.log"
 chmod 777 "/var/log/openattic/openattic.log"
 
-cat << EOF >> /home/vagrant/.bash_history
+sudo -i -u vagrant bash -e << EOF
+cat << EOF2 >> /home/vagrant/.bash_history
 . env/bin/activate
 cd openattic/backend/
+EOF2
 EOF
-chown vagrant:vagrant /home/vagrant/.bash_history
-chmod 600 /home/vagrant/.bash_history
 
 sudo IS_UBUNTU="$IS_UBUNTU" -i -u vagrant bash -e << EOF
 
@@ -211,7 +211,7 @@ virtualenv env
 pip install --upgrade pip
 if [ "$IS_UBUNTU" ]
 then
-pip install -r openattic/requirements-ubuntu-16.04.txt
+pip install -r openattic/requirements/ubuntu-16.04.txt
 else
 pip install -r openattic/requirements.txt
 fi
@@ -239,13 +239,9 @@ cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 pushd openattic/backend/
 
 python manage.py pre_install
-if [ "$IS_UBUNTU" ]
-then
 python manage.py migrate
 python manage.py loaddata nagios/*/initial_data.json
-else
-python manage.py syncdb --noinput
-fi
+#python manage.py syncdb --noinput
 python manage.py createcachetable status_cache
 python manage.py add-host
 
