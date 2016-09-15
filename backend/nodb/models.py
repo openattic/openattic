@@ -236,7 +236,8 @@ class NodbQuerySet(QuerySet):
         return super(NodbQuerySet, self).__repr__()
 
     def iterator(self):
-        logger.warning('{}.iterator should only be access when running tests.'.format(self.__class__))
+        logger.warning(
+            '{}.iterator should only be access when running tests.'.format(self.__class__))
         return []
 
 

@@ -14,7 +14,6 @@
  *  GNU General Public License for more details.
 """
 import django
-from django.db import models
 
 
 def get_related_model(field):
@@ -22,8 +21,8 @@ def get_related_model(field):
     Provides a Django 1.8 and pre-1.8 compatible version of
     >>> ..._meta.get_field_by_name(...)[0].related.parent_model
 
-    :type field: models.Field
-    :rtype: models.Model
+    :type field: django.db.models.Field
+    :rtype: django.db.models.Model
     """
     if django.VERSION < (1, 8):
         return field.related.parent_model

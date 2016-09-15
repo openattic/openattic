@@ -31,12 +31,13 @@ class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.LogEntry
-        fields = ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
+        fields = \
+            ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
 
 
 class LogEntryFilter(django_filters.FilterSet):
-    start_datetime  = django_filters.DateTimeFilter(name='starttime', lookup_type='gte')
-    end_datetime    = django_filters.DateTimeFilter(name='endtime', lookup_type='lte')
+    start_datetime = django_filters.DateTimeFilter(name='starttime', lookup_type='gte')
+    end_datetime = django_filters.DateTimeFilter(name='endtime', lookup_type='lte')
 
     class Meta:
         model = models.LogEntry

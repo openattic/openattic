@@ -127,7 +127,9 @@ class CephPoolSerializer(NodbSerializer):
     class Meta:
         model = CephPool
 
-    erasure_code_profile = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephErasureCodeProfile.objects.all())
+    erasure_code_profile = \
+        serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                           queryset=CephErasureCodeProfile.objects.all())
     quota_max_objects = serializers.IntegerField(default=0)
     quota_max_bytes = serializers.IntegerField(default=0)
 #    crush_ruleset = serializers.IntegerField() # TODO OP-1415
@@ -135,9 +137,12 @@ class CephPoolSerializer(NodbSerializer):
     min_size = serializers.IntegerField(default=None, required=False)
     crash_replay_interval = serializers.IntegerField(default=0)
     cache_mode = serializers.CharField(default='none')
-    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephPool.objects.all())
-    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephPool.objects.all())
-    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False, queryset=CephPool.objects.all())
+    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                 queryset=CephPool.objects.all())
+    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                    queryset=CephPool.objects.all())
+    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                   queryset=CephPool.objects.all())
     target_max_bytes = serializers.IntegerField(default=0)
     hit_set_period = serializers.IntegerField(default=0)
     hit_set_count = serializers.IntegerField(default=0)
@@ -212,10 +217,12 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
             return Response(pool.pool_snaps, status=status.HTTP_200_OK)
         elif request.method == 'POST':
             pool.create_snapshot(request.DATA['name'])
-            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_201_CREATED)
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
+                            status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
             pool.delete_snapshot(request.DATA['name'])
-            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_200_OK)
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
+                            status=status.HTTP_200_OK)
         else:
             raise ValueError('{}. Method not allowed.'.format(request.method))
 
