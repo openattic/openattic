@@ -21,9 +21,13 @@ from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
 
-def custom_handler(exc):
+def custom_handler(exc, context=None):
+    """
+    :type exc: Exception
+    :type context: dict
+    """
     # Call the default exception handler of the Django REST framework
-    response = exception_handler(exc)
+    response = exception_handler(exc, context)
 
     if response:
         return response
