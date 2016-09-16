@@ -489,6 +489,14 @@ systemctl daemon-reload
 systemctl restart dbus
 systemctl restart httpd
 
+%post module-ceph
+# Add nagios user to the ceph group (OP-1320)
+if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
+  if ! groups nagios | grep -q ceph ; then
+    groupmems -g ceph -u nagios 
+  fi
+fi
+
 %post gui
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
