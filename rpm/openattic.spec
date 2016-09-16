@@ -431,6 +431,7 @@ install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbu
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
 install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
+touch %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
 
 # configure yum repo
 install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
@@ -546,6 +547,7 @@ echo ""
 %defattr(-,openattic,openattic,-)
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
+%attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_bindir}/oacli
