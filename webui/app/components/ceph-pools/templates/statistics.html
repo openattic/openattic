@@ -1,1 +1,41 @@
-{{hello}}
+<div class="">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title pull-left">Utilization</h3>
+
+          <div class="panel-toolbar">
+            <i class="fa fa-spinner fa-spin" ng-show="isLoading"></i>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+          <nvd3 api="utilization.api"
+                config="utilization.config"
+                data="utilization.data"
+                options="utilization.options"></nvd3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title pull-left">Number of objects</h3>
+
+          <div class="panel-toolbar">
+            <i class="fa fa-spinner fa-spin" ng-show="isLoading"></i>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+          <nvd3 api="noo.api"
+                config="noo.config"
+                data="noo.data"
+                options="noo.options"></nvd3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
