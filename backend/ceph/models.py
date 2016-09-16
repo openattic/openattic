@@ -859,11 +859,22 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                    'supported'.format(key, value, self.name))
 
             super(CephRbd, self).save(*args, **kwargs)
+            self._update_nagios_configs()
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = RbdApi(rados[context.fsid])
         api.remove(self.pool.name, self.name)
+        self._update_nagios_configs()
+
+    def _update_nagios_configs(self):
+        if "nagios" in settings.INSTALLED_APPS:
+            ceph = get_dbus_object("/ceph")
+            nagios = get_dbus_object("/nagios")
+
+            ceph.remove_nagios_configs(["rbd"])
+            ceph.write_rbd_nagios_configs()
+            nagios.restart_service()
 
 
 class CephFs(NodbModel):

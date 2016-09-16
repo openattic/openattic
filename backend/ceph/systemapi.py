@@ -22,7 +22,7 @@ import re
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
 
-from ceph.models import CephCluster, CephPool, fsid_context
+from ceph.models import CephCluster, CephPool, CephRbd, fsid_context
 from ifconfig.models import Host
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
@@ -200,7 +200,8 @@ class SystemD(BasePlugin):
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
         rgx = {"cluster": r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$",
-               "pool": r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+.cfg$"}
+               "pool": r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+.cfg$",
+               "rbd": r"^cephrbd_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+_[\w]+.cfg$"}
 
         if len(objects_to_delete) == 1 and objects_to_delete[0] == "all":
             objects_to_delete = rgx.keys()
@@ -228,6 +229,19 @@ class SystemD(BasePlugin):
                         pool.__class__.__name__,
                         "{} {}".format(cluster.fsid, pool.name), 5)]
                     self._write_services_to_file(pool_file_name, pool_services)
+
+    @deferredmethod(in_signature="")
+    def write_rbd_nagios_configs(self, sender):
+        for cluster in CephCluster.objects.all():
+            with fsid_context(cluster.fsid):
+                for pool in CephPool.objects.all():
+                    for rbd in CephRbd.objects.filter(pool__name=pool.name):
+                        rbd_file_name = "cephrbd_{}_{}_{}.cfg".format(cluster.fsid, pool.name,
+                                                                      rbd.name)
+                        rbd_services = [self._gen_service_data(
+                            rbd.__class__.__name__,
+                            "{} {} {}".format(cluster.fsid, pool.name, rbd.name), 5)]
+                        self._write_services_to_file(rbd_file_name, rbd_services)
 
     def _gen_service_data(self, service_instance_name, service_arguments, check_interval):
         class _CephService(object):
