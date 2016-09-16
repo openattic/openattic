@@ -26,7 +26,7 @@ from rest_framework.request import Request
 
 from ifconfig.models import Host
 
-from utilities import get_related_model, drf_version
+from utilities import get_related_model, drf_version, get_request_data
 
 
 class RequestHandlers(object):
@@ -94,7 +94,7 @@ class RequestHandlers(object):
         ]))
 
     def create(self, request, *args, **kwargs):
-        host = self._get_reqdata_host(request.DATA)
+        host = self._get_reqdata_host(get_request_data(request))
 
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).create(request, args, kwargs)
@@ -139,7 +139,7 @@ class RequestHandlers(object):
         header['content-type'] = 'application/json'
 
         current_host = Host.objects.get_current()
-        data = dict(request.DATA, proxy_host_id=current_host.id)
+        data = dict(get_request_data(request), proxy_host_id=current_host.id)
 
         response = requests.request(request.method, url, data=json.dumps(data), headers=header)
 

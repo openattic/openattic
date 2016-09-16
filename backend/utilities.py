@@ -44,6 +44,19 @@ def get_request_query_params(request):
         return request.query_params
 
 
+def get_request_data(request):
+    """
+    `request.DATA` has been deprecated in favor of `request.data` since version 3.0, and has been
+    fully removed as of version 3.2.
+
+    :type request: rest_framework.request.Request
+    """
+    if drf_version() < (3, 0):
+        return request.DATA
+    else:
+        return request.data
+
+
 def mk_method_field_params(field_name):
     """
     In DRF 2.4, serializers.SerializerMethodField() requires the method name. In DRF 3.3, the

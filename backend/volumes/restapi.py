@@ -30,7 +30,7 @@ from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
 
-from utilities import get_request_query_params, mk_method_field_params
+from utilities import get_request_query_params, mk_method_field_params, get_request_data
 
 # filter queryset by...
 # * is not a physical block device and
@@ -187,8 +187,9 @@ class PoolViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         vp_so = models.create_volumepool(
             [models.StorageObject.objects.get(id=disk_id)
-                for disk_id in request.DATA.get("disks", [])],
-            dict(request.DATA.get('options', {}), name=request.DATA["name"]))
+                for disk_id in get_request_data(request).get("disks", [])],
+            dict(get_request_data(request).get('options', {}),
+                 name=get_request_data(request)["name"]))
         serializer = PoolSerializer(vp_so, many=False, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -304,7 +305,8 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
                                                     source="source_pool.storageobj")
     usage = serializers.SerializerMethodField(*mk_method_field_params('usage'))
     status = serializers.SerializerMethodField(*mk_method_field_params('status'))
-    upper = relations.HyperlinkedRelatedField(view_name="volume-detail", queryset=models.StorageObject.objects.all())
+    upper = relations.HyperlinkedRelatedField(view_name="volume-detail",
+                                              queryset=models.StorageObject.objects.all())
 
     class Meta:
         model = models.StorageObject
@@ -354,13 +356,14 @@ class SnapshotViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
     def create(self, request, *args, **kwargs):
-        volume_so = self.origin.create_snapshot(request.DATA["name"], request.DATA["megs"], {})
+        volume_so = self.origin.create_snapshot(get_request_data(request)["name"],
+                                                get_request_data(request)["megs"], {})
         serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
-        options = {"name": request.DATA["name"]}
+        options = {"name": get_request_data(request)["name"]}
 
         storageobj = self.get_object()
         clone = storageobj.clone(None, options)
@@ -403,7 +406,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
-        options = {"name": request.DATA["name"]}
+        options = {"name": get_request_data(request)["name"]}
 
         storageobj = self.get_object()
         clone = storageobj.clone(None, options)
@@ -426,34 +429,36 @@ class VolumeViewSet(viewsets.ModelViewSet):
         return Response(models.get_storage_tree(self.get_object().authoritative_obj))
 
     def create(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.all_objects.get(id=request.DATA["source_pool"]["id"])
+        storageobj = models.StorageObject.all_objects.get(
+            id=get_request_data(request)["source_pool"]["id"])
 
-        volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {
+        volume = storageobj.create_volume(get_request_data(request)["name"],
+                                          get_request_data(request)["megs"], {
             "owner": request.user,
             "fswarning": 75,
             "fscritical": 85,
-            "filesystem": request.DATA.get("filesystem", None),
-            "is_protected": request.DATA.get('is_protected', False)
+            "filesystem": get_request_data(request).get("filesystem", None),
+            "is_protected": get_request_data(request).get('is_protected', False)
             })
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
+        storageobj = models.StorageObject.objects.get(id=get_request_data(request)["id"])
 
-        if "filesystem" in request.DATA:
-            storageobj.create_filesystem(request.DATA["filesystem"], {
+        if "filesystem" in get_request_data(request):
+            storageobj.create_filesystem(get_request_data(request)["filesystem"], {
                 "owner": request.user,
                 "fswarning": 75,
                 "fscritical": 85,
             })
 
-        if "megs" in request.DATA:
-            storageobj.resize(int(request.DATA["megs"]))
+        if "megs" in get_request_data(request):
+            storageobj.resize(int(get_request_data(request)["megs"]))
 
-        if "is_protected" in request.DATA:
-            storageobj.is_protected = request.DATA["is_protected"]
+        if "is_protected" in get_request_data(request):
+            storageobj.is_protected = get_request_data(request)["is_protected"]
             storageobj.save()
 
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})

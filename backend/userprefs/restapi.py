@@ -22,7 +22,8 @@ from rest_framework.response import Response
 from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
-from utilities import drf_version, get_request_query_params, mk_method_field_params
+from utilities import drf_version, get_request_query_params, mk_method_field_params, \
+    get_request_data
 
 
 class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
@@ -63,7 +64,7 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
         host = Host.objects.get_current()
         profile, _ = UserProfile.objects.get_or_create(user=request.user, host=host)
 
-        for key, value in request.DATA.items():
+        for key, value in get_request_data(request).items():
             profile[key] = value
 
         profile_ser = self.get_serializer(profile, many=False)
@@ -76,7 +77,7 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
             return Response("You are not allowed to delete preferences of other users",
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        settings = request.DATA["settings"]
+        settings = get_request_data(request)["settings"]
 
         for setting in settings:
             try:

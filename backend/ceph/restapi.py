@@ -24,7 +24,7 @@ from ceph.models import *
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 
-from utilities import get_request_query_params
+from utilities import get_request_query_params, get_request_data
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -60,8 +60,8 @@ class ClusterViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         cluster = self.get_object()
 
-        if "crushmap" in request.DATA:
-            cluster.set_crushmap(request.DATA["crushmap"])
+        if "crushmap" in get_request_data(request):
+            cluster.set_crushmap(get_request_data(request)["crushmap"])
 
         cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
 
@@ -216,11 +216,11 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
         if request.method == 'GET':
             return Response(pool.pool_snaps, status=status.HTTP_200_OK)
         elif request.method == 'POST':
-            pool.create_snapshot(request.DATA['name'])
+            pool.create_snapshot(get_request_data(request)['name'])
             return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
                             status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            pool.delete_snapshot(request.DATA['name'])
+            pool.delete_snapshot(get_request_data(request)['name'])
             return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
                             status=status.HTTP_200_OK)
         else:

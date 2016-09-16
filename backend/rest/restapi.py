@@ -24,7 +24,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 
 from rest import relations
-from utilities import mk_method_field_params
+from utilities import mk_method_field_params, get_request_data
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -111,7 +111,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        user_data = request.DATA
+        user_data = get_request_data(request)
         user = User.objects.create_user(user_data["username"], user_data["email"],
                                         user_data["password"])
         user.first_name = user_data["first_name"]
