@@ -308,7 +308,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="volume-detail")
     storage = relations.HyperlinkedIdentityField(view_name="volume-storage")
     snapshots = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
-    snapshot = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
+
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
     usage = serializers.SerializerMethodField(*mk_method_field_params('usage'))
@@ -319,7 +319,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.StorageObject
         fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage',
-                  'status', 'is_protected', 'upper', 'storage', 'snapshot')
+                  'status', 'is_protected', 'upper', 'storage')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -354,6 +354,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 class SnapshotSerializer(VolumeSerializer):
     """ Serializer for a Snapshot. """
     url = serializers.HyperlinkedIdentityField(view_name="snapshot-detail")
+    snapshot = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
 
     class Meta:
         model = models.StorageObject
