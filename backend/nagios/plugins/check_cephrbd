@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import os
+import sys
+import time
+
+from optparse import OptionParser
+from configobj import ConfigObj
+
+
+distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
+for config_file in distro_config:
+    if os.path.isfile(config_file):
+        config = ConfigObj(config_file)
+        sys.path.append(config["OADIR"])
+        break
+else:
+    raise IOError("Can't find the needed configuration file 'openattic' containing the OADIR "
+                  "setting. Please reinstall the openattic-base package to get the missing "
+                  "configuration file.")
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+
+
+def main():
+    from ceph.librados import RbdApi
+    from ceph.models import RadosClientManager
+
+    parser = OptionParser(usage="%prog <cluster FSID> <pool name> <image name>")
+    _, args = parser.parse_args()
+
+    if len(args) != 3:
+        parser.print_usage()
+        sys.exit(3)
+
+    start_time = time.time()
+    try:
+        rados = RadosClientManager()
+        api = RbdApi(rados[args[0]])
+        disk_usage = api.image_disk_usage(args[1], args[2])
+    except:
+        print "CRITICAL"
+        sys.exit(2)
+    exec_time = time.time() - start_time
+
+    print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms".format(
+        disk_usage["used_size"], disk_usage["used_size"], disk_usage["provisioned_size"],
+        round(exec_time * 1000, 2))
+    sys.exit(0)
+
+if __name__ == "__main__":
+    main()
