@@ -31,78 +31,26 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPoolsService) {
+app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPoolsService, graphConfigService,
+    graphOptionsService) {
   var promise;
+  var map = {};
+  var refreshInterval = 5000;
   $scope.isLoading = false;
 
   $scope.data = [];
-  $scope.utilization = {};
-  $scope.noo = {};
-
-  // Options
-  $scope.graph = {
-    config: {
-      deepWatchDataDepth: 0
-    },
+  $scope.utilization = {
+    api: {},
+    config: graphConfigService,
     data: [],
-    options: {
-      chart: {
-        color: ["#288cea", "#6430ec", "#ffdb1b", "#ffa21b", "#19f13f", "#ff2b1b"],
-        forceY: [0],
-        interpolate: "linear",
-        legend: {
-          vers: "furious",
-          margin: {
-            top: 3,
-            right: 0,
-            bottom: 10,
-            left: -64
-          },
-          rightAlign: false
-        },
-        legendPosition: "top",
-        margin: {
-          top: 0,
-          right: 0,
-          bottom: 40,
-          left: 80
-        },
-        type: "lineChart",
-        useInteractiveGuideline: true,
-        x: function (d) {
-          return d[0];
-        },
-        xAxis: {
-          axisLabel: "Time",
-          fontSize: 11,
-          showMaxMin: false,
-          tickFormat: function (d) {
-            return d3.time.format("%d.%m %H:%M")(new Date(d * 1000));
-          }
-        },
-        y: function (d) {
-          if (d[1] === null) {
-            d[1] = 0;
-          }
-          return d[1];
-        },
-        yAxis: {
-          axisLabel: "placeholder",
-          axisLabelDistance: 20,
-          fontSize: 11,
-          tickFormat: function (d) {
-            return d;
-          }
-        }
-      }
-    }
+    options: graphOptionsService
   };
-  $scope.utilization.config = $scope.graph.config;
-  $scope.utilization.options = $scope.graph.options;
-  $scope.utilization.data = [];
-  $scope.noo.config = $scope.graph.config;
-  $scope.noo.options = $scope.graph.options;
-  $scope.noo.data = [];
+  $scope.noo = {
+    api: {},
+    config: graphConfigService,
+    data: [],
+    options: graphOptionsService
+  };
 
   // Functions
   var init = function () {
@@ -111,6 +59,11 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
   };
 
   $scope.getData = function () {
+    if (!angular.isDefined($scope.selection.item)) {
+      return;
+    }
+
+    $scope.isLoading = true;
     cephPoolsService
         .performancedata({
           fsid: $scope.selection.item.cluster,
@@ -119,16 +72,25 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
         .$promise
         .then(function (res) {
           angular.forEach(res[$scope.selection.item.name], function (value) {
-            // First call
-            if (angular.equals($scope.data, [])) {
-              $scope.data[value.key] = value;
-            }
+            $scope.data[value.key] = value;
           });
-          $scope.utilization.data = [];
-          $scope.noo.data = [];
-          $scope.utilization.data.push($scope.data.max_avail);
-          $scope.utilization.data.push($scope.data.num_bytes);
-          $scope.noo.data.push($scope.data.num_objects);
+
+          // First call
+          if (angular.equals($scope.utilization.data, []) && angular.equals($scope.noo.data, [])) {
+            map["max_avail"] = $scope.utilization.data.push($scope.data["max_avail"]);
+            map["num_bytes"] = $scope.utilization.data.push($scope.data["num_bytes"]);
+            map["num_objects"] = $scope.noo.data.push($scope.data["num_objects"]);
+
+            angular.forEach(map, function (element, key) {
+              map[key] = element - 1;
+            });
+          } else {
+            $scope.utilization.data[map["max_avail"]].values = $scope.data["max_avail"].values;
+            $scope.utilization.data[map["num_bytes"]].values = $scope.data["num_bytes"].values;
+            $scope.noo.data[map["num_objects"]].values = $scope.data["num_objects"].values;
+          }
+
+          $scope.update();
         })
         .catch(function (err) {
           throw err;
@@ -137,9 +99,12 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
           $interval(function () {
             $scope.isLoading = false;
           }, 1000, 1);
-
-          //console.log($scope.utilization);
         });
+  };
+
+  $scope.update = function () {
+    $scope.utilization.api.update();
+    $scope.noo.api.update();
   };
 
   $scope.startInterval = function () {
@@ -149,7 +114,7 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
     // store the interval promise
     promise = $interval(function () {
       $scope.getData();
-    }, 5000, false);
+    }, refreshInterval, false);
   };
 
   $scope.stopInterval = function () {
