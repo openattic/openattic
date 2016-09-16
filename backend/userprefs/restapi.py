@@ -35,6 +35,10 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
     def to_native(self, obj):
         return (obj.setting, json.loads(obj.value))
 
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
+
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 

@@ -79,6 +79,10 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
                               if value is not None]))
         return data
 
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
+
     class Meta:
         model = models.StorageObject
         fields = ('name', 'url', 'id', 'status', 'size')
@@ -161,6 +165,10 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items()
                               if value is not None]))
         return data
+
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
 
     def get_usage(self, obj):
         return obj.get_volumepool_usage()
@@ -331,6 +339,10 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
                               if value is not None]))
             data[flag] = True
         return data
+
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
 
     def get_usage(self, obj):
         return obj.get_volume_usage()
