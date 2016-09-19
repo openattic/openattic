@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService,
-    $uibModal) {
+    $uibModal, TabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.pools = {};
@@ -91,6 +91,31 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
   };
 
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "cephPools.detail.status",
+        class: "tc_statusTab",
+        name: "Status"
+      },
+      cacheTier: {
+        show: "selection.item.tiers.length > 0",
+        state: "cephPools.detail.cacheTier",
+        class: "tc_cacheTieringTab",
+        name: "Cache Tier"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "cephPool",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  TabViewService.setScope($scope);
+  $scope.changeTab = TabViewService.changeTab;
+
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
       return;
@@ -112,10 +137,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
 
     if (item) {
-      $state.go("cephPools.detail.status", {
-        cephPool: item.id,
-        "#"     : "more"
-      });
+      $scope.changeTab("cephPools.detail.status");
     }
   });
 

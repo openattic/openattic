@@ -28,7 +28,7 @@
     <table class="datatable table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
-                <th class="oadatatablecheckbox" ng-if="cifsSelection.available"><input type="checkbox" ng-model="cifsSelection.checkAll"/></th>
+                <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
                 <th sortfield="name"       sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
                 <th sortfield="path"       sortdir="asc" sortheaderclass ng-show="columns['Path']"      >Path</th>
                 <th sortfield="available"  sortdir="asc" sortheaderclass ng-show="columns['Available']" >Available</th>
@@ -40,7 +40,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
-                <td ng-if="cifsSelection.available"><input type="checkbox" checklist-model="cifsSelection.items" checklist-value="row"/></td>
+                <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
                 <td ng-show="columns['Name']"       ng-bind="row.name"></td>
                 <td ng-show="columns['Path']"       ng-bind="row.path"></td>
                 <td ng-show="columns['Available']"  id="is_available"   ><i class="fa" ng-class="{
