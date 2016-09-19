@@ -98,7 +98,7 @@ class CephClusterViewSet(NodbViewSet):
     def performancedata(self, request, *args, **kwargs):
         fsid = kwargs['pk']
         filter_data = self._get_filter("filter")
-        performance_data = CephCluster.get_performance_data(fsid, "cluster", filter_data)
+        performance_data = CephCluster.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=["get"])
@@ -109,7 +109,7 @@ class CephClusterViewSet(NodbViewSet):
         for filter_key in ["filter_pools", "filter_sources"]:
             filter_data[filter_key] = self._get_filter(filter_key)
 
-        performance_data = CephCluster.get_performance_data(fsid, "pools", filter_data)
+        performance_data = CephPool.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
 
     def _get_filter(self, filter_key):
