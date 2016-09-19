@@ -41,7 +41,7 @@ app.factory("cephPoolsService", function ($resource) {
       url: globalConfig.API.URL + "ceph/:id/pools/:poolId"
     },
     performancedata: {
-      method : "GET",
+      method: "GET",
       url: globalConfig.API.URL + "ceph/:fsid/performancedata_pools"
     },
     query: {
