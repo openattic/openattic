@@ -318,7 +318,8 @@ Description: BTRFS module for openATTIC
 
 Package: openattic-module-ceph
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, ceph-common (>= 10.0.0), python-ceph
+Depends: ${misc:Depends}, openattic-base, ceph-common (>= 10.0.0), python-ceph,
+ openattic-module-nagios
 Description: Ceph module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
