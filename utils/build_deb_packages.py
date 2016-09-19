@@ -378,9 +378,10 @@ class DebPackageBuilderTest(unittest.TestCase):
 
 def main():
     args = docopt.docopt(__doc__)
-    path_to_tarball = os.path.abspath(args['<tarball>'])
+    path_to_tarball = args['<tarball>']
     if path_to_tarball == '-':
-        path_to_tarball = sys.stdin.readline().strip()
+        path_to_tarball = sys.stdin.readlines()[-1].strip()
+    path_to_tarball = os.path.abspath(path_to_tarball)
     deb_pkg_builder = DebPackageBuilder(args)
     release_channel = DebPackageBuilder.detect_release_by_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
