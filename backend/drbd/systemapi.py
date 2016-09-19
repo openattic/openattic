@@ -19,14 +19,18 @@ import os
 from time import time, sleep
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method, deferredmethod
+from systemd.plugins import logged, BasePlugin, method, deferredmethod
+
 
 def stackcmd(resource, stacked, command, options=None):
     cmd = ["/sbin/drbdadm"]
-    if stacked: cmd.append("-S")
-    if options: cmd.extend(["--"] + options)
+    if stacked:
+        cmd.append("-S")
+    if options:
+        cmd.extend(["--"] + options)
     cmd.extend([command, resource])
     return cmd
+
 
 @logged
 class SystemD(BasePlugin):
@@ -55,7 +59,7 @@ class SystemD(BasePlugin):
         start = time()
         while time() < start + 10:
             try:
-                fd = os.open(device, os.O_RDWR|os.O_EXCL)
+                fd = os.open(device, os.O_RDWR | os.O_EXCL)
             except OSError:
                 sleep(0.1)
             else:
@@ -119,26 +123,29 @@ class SystemD(BasePlugin):
     def resize(self, resource, stacked, sender):
         invoke(stackcmd(resource, stacked, "resize", ["--assume-clean"]))
 
-    @method( in_signature="sb", out_signature="a{ss}")
+    @method(in_signature="sb", out_signature="a{ss}")
     def get_dstate(self, resource, stacked):
-        ret, out, err = invoke(stackcmd(resource, stacked, "dstate"), return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "dstate"), return_out_err=True,
+                               log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @method( in_signature="sb", out_signature="s")
+    @method(in_signature="sb", out_signature="s")
     def get_cstate(self, resource, stacked):
-        ret, out, err = invoke(stackcmd(resource, stacked, "cstate"), return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "cstate"), return_out_err=True,
+                               log=False)
         return out.strip()
 
-    @method( in_signature="sb", out_signature="a{ss}")
+    @method(in_signature="sb", out_signature="a{ss}")
     def get_role(self, resource, stacked):
-        ret, out, err = invoke(stackcmd(resource, stacked, "role"), return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "role"), return_out_err=True,
+                               log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @deferredmethod( in_signature="ss")
+    @deferredmethod(in_signature="ss")
     def conf_write(self, resource_name, conf, sender):
         with open("/etc/drbd.d/%s.res" % resource_name, "wb") as fd:
             fd.write(unicode(conf).encode("utf-8"))
 
-    @deferredmethod( in_signature="s")
+    @deferredmethod(in_signature="s")
     def conf_delete(self, resource_name, sender):
         os.unlink("/etc/drbd.d/%s.res" % resource_name)

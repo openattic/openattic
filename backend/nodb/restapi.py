@@ -11,10 +11,15 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from rest_framework import serializers, viewsets
-from rest_framework.fields import WritableField
+
+from utilities import drf_version
+
+try:
+    from rest_framework.fields import WritableField
+except ImportError:
+    # Django REST Framework 3.0 removed rest_framework.fields.WritableField
+    from rest_framework.fields import Field as WritableField
 
 import nodb.models
 
@@ -27,10 +32,20 @@ class JsonField(WritableField):
         """
         return value
 
+    def to_representation(self, value):
+        return value
 
-class NodbSerializer(serializers.ModelSerializer):
-    field_mapping = dict(serializers.ModelSerializer.field_mapping.items()
-                         + [(nodb.models.JsonField, JsonField)])
+
+if drf_version() < (3, 0):
+    class NodbSerializer(serializers.ModelSerializer):
+        field_mapping = dict(serializers.ModelSerializer.field_mapping.items()
+                             + [(nodb.models.JsonField, JsonField)])
+
+else:
+    class NodbSerializer(serializers.ModelSerializer):
+        serializer_field_mapping = dict(
+            serializers.ModelSerializer.serializer_field_mapping.items() + [
+                (nodb.models.JsonField, JsonField)])
 
 
 class NodbViewSet(viewsets.ModelViewSet):
@@ -41,20 +56,3 @@ class NodbViewSet(viewsets.ModelViewSet):
 
     def set_nodb_context(self, context):
         nodb.models.NodbManager.set_nodb_context(context)
-
-    def paginate(self, iterable, request):
-        """Automatically paginates the given set of items according to the given request."""
-
-        page_size = request.QUERY_PARAMS.get('pageSize', 10)
-        page = request.QUERY_PARAMS.get('pages', 1)
-
-        paginator = Paginator(iterable, page_size)
-        try:
-            iterable = paginator.page(page)
-        except PageNotAnInteger:
-            iterable = paginator.page(1)
-        except EmptyPage:
-            # The list index is out of range, so take the last page and display it.
-            iterable = paginator.page(paginator.num_pages)
-
-        return iterable

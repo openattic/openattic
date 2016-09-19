@@ -57,6 +57,17 @@ class LvTestScenario(GatlingTestCase):
     def _get_pool(self):
         return self.vg
 
+    @property
+    def error_messages(self):
+        vg_name = self.remote_vg["name"] if hasattr(self, "remote_vg") else self.vg["name"]
+        return {
+            "test_create_not_enough_space": "Volume Group {} has insufficient free space."
+                .format(vg_name),
+            "test_create_0mb": "Volumes need to be at least 100MB in size.",
+            "test_resize_0mb": "Volumes need to be at least 100MB in size.",
+            "test_shrink": "Volumes need to be at least 100MB in size."
+        }
+
 
 class RemoteLvTestScenario(LvTestScenario):
     @classmethod

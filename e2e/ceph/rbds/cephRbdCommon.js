@@ -240,27 +240,26 @@ var rbdCommons = function(){
     element(by.css('.tc_deleteItem > a')).click();
     element(by.model('input.enteredName')).sendKeys('yes');
     element(by.id('bot2-Msg1')).click();
+    browser.sleep(helpers.configs.sleep);
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
   };
 
   this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
-    rbdObjSize = rbdObjSize || "32.00 MB";
+    rbdObjSize = rbdObjSize || "4.00 MB";
     self.name.clear();
     self.name.sendKeys(rbdName);
     self.size.clear();
-    self.size.sendKeys(65);
+    self.size.sendKeys(rbdObjSize);
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
-    browser.sleep(helpers.configs.sleep);
     element(by.className('tc_submitButton')).click();
 
-    browser.sleep(helpers.configs.sleep);
     var rbd = element(by.cssContainingText('tr', rbdName));
     expect(rbd.isDisplayed()).toBe(true);
     rbd.click();
 
     browser.sleep(helpers.configs.sleep);
-    expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
+    expect(element(by.binding('selection.item.obj_size')).getText()).toBe(rbdObjSize);
     if(rbdFeatureCase){
       var keys = Object.keys(self.formElements.features.items);
       rbdFeatureCase.forEach(function(state, index){ // check the features

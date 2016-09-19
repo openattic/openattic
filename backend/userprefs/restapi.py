@@ -22,6 +22,9 @@ from rest_framework.response import Response
 from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
+from utilities import drf_version, get_request_query_params, mk_method_field_params, \
+    get_request_data
+
 
 class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -32,17 +35,22 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
     def to_native(self, obj):
         return (obj.setting, json.loads(obj.value))
 
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
+
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 
-    preferences = serializers.SerializerMethodField("get_preferences")
+    preferences = serializers.SerializerMethodField(*mk_method_field_params('preferences'))
 
     class Meta:
         model = UserProfile
         fields = ("url", "id", "host", "user", "preferences")
 
     def get_preferences(self, profile):
-        filter_values = self.context["request"].QUERY_PARAMS.get("search")
+        filter_values = get_request_query_params(self.context["request"]).get("search")
+
         if filter_values:
             filter_values = filter_values.split(",")
             profile = profile.filter_prefs(filter_values)
@@ -60,7 +68,7 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
         host = Host.objects.get_current()
         profile, _ = UserProfile.objects.get_or_create(user=request.user, host=host)
 
-        for key, value in request.DATA.items():
+        for key, value in get_request_data(request).items():
             profile[key] = value
 
         profile_ser = self.get_serializer(profile, many=False)
@@ -73,7 +81,7 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
             return Response("You are not allowed to delete preferences of other users",
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        settings = request.DATA["settings"]
+        settings = get_request_data(request)["settings"]
 
         for setting in settings:
             try:
@@ -93,6 +101,11 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
                 result_profiles.append(profile)
 
         page = self.paginate_queryset(result_profiles)
+
+        if drf_version() >= (3, 0):
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         if page is not None:
             profile_ser = self.get_pagination_serializer(page)
         else:

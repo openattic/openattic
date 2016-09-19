@@ -59,7 +59,6 @@ class AuthTokenTestCase(UserTestScenario, TokenAuthTestScenario):
         with self.assertRaises(requests.HTTPError) as err:
             # try to refresh auth token by default user
             self.send_request("POST", ["users", "gen_new_token"], obj_id=self.testuser["id"])
-        self.assertEqual(str(err.exception), "403 Client Error: Forbidden")
         self.assertEqual(err.exception.response.status_code, 403)
         self.assertEqual(str(err.exception.response.json()),
                          "You can't refresh the authentication token of another user. Only the "
@@ -92,6 +91,5 @@ class AuthTokenTestCase(UserTestScenario, TokenAuthTestScenario):
                               auth_token="wrongauthenticationtoken")
 
         err_message = err.exception.response.json()
-        self.assertEqual(str(err.exception), "401 Client Error: Unauthorized")
         self.assertEqual(err.exception.response.status_code, 401)
-        self.assertEqual(err_message["detail"], "Invalid token")
+        self.assertIn("Invalid token", err_message["detail"])

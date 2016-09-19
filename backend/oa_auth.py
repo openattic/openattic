@@ -25,7 +25,9 @@ from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
 
 def oa_authenticate(request=None, username=None, password=None):
-    # AUTHENTICATION
+    """AUTHENTICATION
+    :type request: django.http.HttpRequest
+    """
 
     # If username + password given, check PAM and our database through authenticate().
     if username is not None and password is not None:
@@ -33,6 +35,8 @@ def oa_authenticate(request=None, username=None, password=None):
 
     if request is None:
         return None
+
+    body = request.body  # Django 1.8: request.body will be inaccessible after calling request.POST
 
     if "username" in request.POST and "password" in request.POST:
         username = request.POST['username']
@@ -45,7 +49,7 @@ def oa_authenticate(request=None, username=None, password=None):
 
     # username + password may also be given as a JSON object.
     try:
-        rawjson = json.loads(request.body)
+        rawjson = json.loads(body)
         username = rawjson['username']
         password = rawjson['password']
         return django_authenticate(username=username, password=password)

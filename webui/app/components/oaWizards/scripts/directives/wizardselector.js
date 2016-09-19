@@ -53,27 +53,7 @@ var app = angular.module("openattic.oaWizards");
 app.directive("wizardselector", function () {
   return {
     template: "<div ng-include=\"page\"></div>",
-    controller: function ($scope, $element, RESPONSIVE) {
-      var setSize = function (width) {
-        if (width >= RESPONSIVE.lg) {
-          $scope.size = "lg";
-        } else if (width >= RESPONSIVE.md) {
-          $scope.size = "md";
-        } else if (width >= RESPONSIVE.sm) {
-          $scope.size = "sm";
-        } else {
-          $scope.size = "xs";
-        }
-      };
-      var initWidth = $element.closest(".dashboard-widget-area").width() / 100 * parseFloat($scope.widget.size.width);
-      setSize(initWidth);
-      $scope.$on("widgetResized", function (event, values) {
-        setSize(values.widthPx);
-        // Save apply
-        if ($scope.$root.$$phase !== "$apply" && $scope.$root.$$phase !== "$digest") {
-          $scope.$digest();
-        }
-      });
+    controller: function ($scope) {
       $scope.page = "components/oaWizards/templates/wizardSelector.html";
       $scope.wizards = wizardDefinitions;
       $scope.selectPage = function (page) {

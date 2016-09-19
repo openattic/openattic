@@ -1,18 +1,43 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.14, (not released yet):
+Version 2.0.15 (not released yet):
+----------------------------------
+
+* Backend: Improved custom error messages in the REST API (OP-497)
+* Backend: Code cleanup (PEP8) for the following apps: DRBD, volumes,
+  lvm and nagios (OP-838)
+* Backend: Performance data for non existing Ceph clusters is no longer
+  returned (OP-1406)
+* Backend: Fixed compatibility issues with Django 1.8 and Django REST 
+  Framework 3 (OP-1210, OP-1490, OP-1486) 
+* Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
+* Packaging/Installation: Fixed installation issues on Ubuntu 16.04
+  (OP-1012, OP-1484, OP-1494)
+* Packaging/Installation: fixed permission problems for Nagios plugins that
+  require writing to `openattic.log` or reading the Ceph key ring and
+  configuration (OP-1320)
+
+Version 2.0.14, 12. September 2016:
 -----------------------------------
 
 * Backend: Removed unused module 'Clustering' (OP-1251)
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
 * Backend: Added a task queue module to track long-running commands (OP-1360)
 * Backend: Properly handle optional attributes of Ceph pools (OP-1416)
-* Backend: Fixed broken call to `ceph/<fsid>/osds on http://demo.openattic.org (OP-1453)
-* Monitoring: Fixed compatibility of the Ceph pool plugin with Django 1.6 (OP-1393)
+* Backend: Fixed broken call to `ceph/<fsid>/osds on
+  http://demo.openattic.org (OP-1453)
+* Monitoring: Fixed compatibility of the Ceph pool plugin with
+  Django 1.6 (OP-1393)
+* WebUI: Implemented a widget which displays the current state of the
+  Ceph cluster (OP-85)
 * WebUI: Create and delete ceph pools (OP-1299)
 * WebUI: If quicklogin is defined in config.js, the username and password will
   be predefined (OP-1386)
+* WebUI: Replaced malhar-angular-dashboard with a gridster based
+  implemenation (OP-1485)
+* WebUI: Allow sorting storage volumes by additional fields `Used`, `Status`,
+  `Type` and `Created`. Thanks to Tahaa Karim. (OP-1427)
 * WebUI/QA: Extended E2E test configuration by ceph pools and suite path
   filter (OP-1339)
 * WebUI/QA: Added screenshot and error log functionality (OP-1375)
@@ -20,6 +45,9 @@ Version 2.0.14, (not released yet):
   in case of an error (OP-1376)
 * WebUI/QA: Create and delete ceph pool tests (OP-1417)
 * WebUI/QA: Fix a timing problem and create needed RBDs (OP-1461)
+* WebUI/QA: Fix the timing problems with in the RBD creation test (OP-1471)
+* WebUI/QA: Make e2e outDir and cephCluster attribute optional (OP-1474)
+* WebUI/QA: Add sleeps for the rbd creation and deletion in e2e tests (OP-1489)
 * Installation: `oaconfig version` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
 * Installation: The `openattic-gui` RPM and DEB packages now take care of

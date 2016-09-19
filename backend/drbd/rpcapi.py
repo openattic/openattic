@@ -24,6 +24,7 @@ from ifconfig.models import Host
 from volumes.rpcapi import AbstractBlockVolumeHandler
 from volumes.models import BlockVolume
 
+
 class DrbdConnectionHandler(AbstractBlockVolumeHandler):
     model = Connection
 
@@ -35,27 +36,35 @@ class DrbdConnectionHandler(AbstractBlockVolumeHandler):
 
         return data
 
-    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
-        return Connection.objects.create_connection(other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id)
+    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate,
+                          self_volume_id):
+        return Connection.objects.create_connection(other_host_id, peer_volumepool_id, protocol,
+                                                    syncer_rate, self_volume_id)
 
-    def install_connection(self, connection_id, self_host, other_host, is_primary, primary_volume_id, peer_volumepool_id):
+    def install_connection(self, connection_id, self_host, other_host, is_primary,
+                           primary_volume_id, peer_volumepool_id):
         connection = Connection.objects.get(id=connection_id)
         primary_volume = BlockVolume.all_objects.get(id=primary_volume_id)
-        return Connection.objects.install_connection(connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id)
+        return Connection.objects.install_connection(connection, self_host, other_host, is_primary,
+                                                     primary_volume, peer_volumepool_id)
+
 
 class DrbdConnectionProxy(ProxyModelHandler, DrbdConnectionHandler):
-    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
+    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate,
+                          self_volume_id):
         volume = BlockVolume.all_objects.get(id=self_volume_id).volume
-        peer  = self._find_target_host_from_model_instance(volume)
+        peer = self._find_target_host_from_model_instance(volume)
         if peer is None:
             create_connection = self.backing_handler.create_connection
         else:
             create_connection = self._get_proxy_object(peer).create_connection
         try:
-            res = create_connection(other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id)
+            res = create_connection(other_host_id, peer_volumepool_id, protocol, syncer_rate,
+                                    self_volume_id)
         except Fault, flt:
             raise translate_exception(flt)
-        return self._convert_datetimes( res )
+        return self._convert_datetimes(res)
+
 
 class DrbdEndpointHandler(ModelHandler):
     model = Endpoint
@@ -77,6 +86,7 @@ class DrbdEndpointHandler(ModelHandler):
     def uninstall(self, endpoint_id):
         endpoint = Endpoint.objects.get(id=endpoint_id)
         return endpoint.uninstall()
+
 
 class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
     pass
