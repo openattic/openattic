@@ -912,7 +912,8 @@ class Graph(object):
 
         return _call_rrdtool(self.args)
 
-    def convert_rrdtool_json_to_nvd3(self, data):
+    @staticmethod
+    def convert_rrdtool_json_to_nvd3(data):
         """
         Returns the performnce data of 'rrdtool xport' in NVD3 compatible JSON format
 
