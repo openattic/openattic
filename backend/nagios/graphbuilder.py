@@ -29,6 +29,7 @@ from time import time
 from xml.dom import minidom
 from datetime import datetime
 from StringIO import StringIO
+from os.path import exists
 
 from PIL import Image
 from numpy import array
@@ -674,6 +675,32 @@ class RRD(object):
             if '=' in pd
             ])
 
+    @staticmethod
+    def get_rrd(host, service):
+        """ Returns a RRD file by host and service definition.
+
+        :param host: host information
+        :rtype: ifconfig.Host
+        :param service: service definition
+        :rtype: str
+        :return: Returns the related RRD file
+        :rtype: RRD
+        :raises SystemError: If the RRD related XML file can't be found.
+        """
+        xmlpath = nagios_settings.XML_PATH % {
+            "host": host,
+            "serv": service
+        }
+
+        if not exists(xmlpath):
+            raise SystemError("XML file '{}' could not be found.".format(xmlpath))
+        return RRD(xmlpath)
+
+    @staticmethod
+    def get_sources_list(host, service):
+        rrd = RRD.get_rrd(host, service)
+        return list(rrd.sources)
+
     def get_source(self, srcname):
         return Source(self, srcname)
 
@@ -893,6 +920,27 @@ class Graph(object):
                 out = buf.getvalue()
 
         return out
+
+    @staticmethod
+    def get_graph(rrd, source_filter=None):
+        """
+        Returns a Graph object for a rrd file and filtered by sources if source_filter is specified.
+
+        :param rrd:
+        :rtype: RRD
+        :param source_filter:
+        :rtype: list[str]
+        :return:
+        :rtype: Graph
+        """
+        sources = source_filter if source_filter else rrd.sources
+
+        graph = Graph()
+        for source in sources:
+            source_obj = rrd.get_source(source)
+            graph.add_source(source_obj)
+
+        return graph
 
     def get_json(self):
         """
