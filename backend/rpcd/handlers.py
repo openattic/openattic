@@ -33,6 +33,9 @@ from xmlrpclib import Fault
 from httplib import BadStatusLine
 from rpcd.exceptionhelper import translate_exception
 
+from utilities import get_related_model
+
+
 class BaseHandler(object):
     """ Base RPC handler class.
 
@@ -382,7 +385,7 @@ class ModelHandler(BaseHandler):
         for field in self.model._meta.fields + self.model._meta.virtual_fields:
             if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ) and field.name in data:
                 if data[field.name]:
-                    handler = self._get_handler_instance(field.related.parent_model)
+                    handler = self._get_handler_instance(get_related_model(field))
                     data[field.name] = handler.idobj(int(data[field.name]))
                 else:
                     data[field.name] = None
@@ -686,7 +689,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             raise KeyError("Wai u ID")
         # Find the peer by walking through the given data
         fields = self.model.objects.hostfilter.split('__')
-        target_model = self.model._meta.get_field_by_name(fields[0])[0].related.parent_model
+        target_model = get_related_model(self.model._meta.get_field_by_name(fields[0])[0])
         if target_model == Host:
             curr = Host.objects.get(id=data[fields[0]]["id"])
         else:
