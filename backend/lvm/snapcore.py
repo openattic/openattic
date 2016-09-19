@@ -9,6 +9,8 @@ from django.db import models
 
 from systemd.procutils import invoke
 
+from utilities import get_related_model
+
 
 def process_config(conf_dict, snapconf):
     if len(conf_dict["data"]["prescript"]) > 0:
@@ -195,7 +197,7 @@ class Plugin(object):
 
     def find_foreign_object(self, obj, rel_model):
         for field in obj._meta.fields:
-            if isinstance(field, models.ForeignKey) and field.related.parent_model == rel_model:
+            if isinstance(field, models.ForeignKey) and get_related_model(field) == rel_model:
                 return getattr(obj, field.name)
         raise KeyError("No foreignkey from '%r' to '%r' found!" % (obj, rel_model))
 

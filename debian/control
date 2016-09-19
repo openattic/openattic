@@ -14,7 +14,6 @@ Depends: ${misc:Depends},
  openattic-module-http,
  openattic-module-lio,
  openattic-module-samba,
- openattic-module-apt,
  openattic-module-nagios,
  openattic-module-cron,
  openattic-module-mailaliases
@@ -69,7 +68,7 @@ Pre-Depends: adduser
 Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends},
  python-django (>= 1.6),
- python-django (<< 1.8),
+ python-django (<< 1.9),
  dbus,
  ntp,
  resolvconf, bridge-utils, vlan, ifenslave-2.6,
@@ -112,7 +111,7 @@ Description: Web GUI for openATTIC
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, lvm2, parted,
- openattic-module-cron, file, udisks
+ openattic-module-cron, file, udisks | udisks2
 Enhances: lvm2
 Description: LVM module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
@@ -294,7 +293,7 @@ Description: LIO module for openATTIC
 
 Package: openattic-module-zfs
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, debian-zfs | ubuntu-zfs
+Depends: ${misc:Depends}, openattic-base, debian-zfs | ubuntu-zfs | zfsutils-linux
 Description: ZFS module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -318,7 +317,8 @@ Description: BTRFS module for openATTIC
 
 Package: openattic-module-ceph
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, ceph-common (>= 10.0.0), python-ceph
+Depends: ${misc:Depends}, openattic-base, ceph-common (>= 10.0.0), python-ceph,
+ openattic-module-nagios
 Description: Ceph module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
