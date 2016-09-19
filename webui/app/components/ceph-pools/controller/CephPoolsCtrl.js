@@ -104,7 +104,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
         show: "selection.item.tiers.length > 0",
         state: "cephPools.detail.cacheTier",
         class: "tc_cacheTieringTab",
-        name: "Status"
+        name: "Cache Tier"
       }
     }
   };
