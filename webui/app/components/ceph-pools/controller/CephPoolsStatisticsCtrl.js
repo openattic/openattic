@@ -41,16 +41,19 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
   $scope.data = [];
   $scope.utilization = {
     api: {},
-    config: graphConfigService,
+    config: angular.copy(graphConfigService),
     data: [],
-    options: graphOptionsService
+    options: angular.copy(graphOptionsService)
   };
   $scope.noo = {
     api: {},
-    config: graphConfigService,
+    config: angular.copy(graphConfigService),
     data: [],
-    options: graphOptionsService
+    options: angular.copy(graphOptionsService)
   };
+
+  $scope.utilization.options.chart.yAxis.axisLabel = "Bytes per sec";
+  $scope.noo.options.chart.yAxis.axisLabel = "Number of objects";
 
   // Functions
   var init = function () {
@@ -77,17 +80,17 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
 
           // First call
           if (angular.equals($scope.utilization.data, []) && angular.equals($scope.noo.data, [])) {
-            map["max_avail"] = $scope.utilization.data.push($scope.data["max_avail"]);
-            map["num_bytes"] = $scope.utilization.data.push($scope.data["num_bytes"]);
-            map["num_objects"] = $scope.noo.data.push($scope.data["num_objects"]);
+            map.max_avail = $scope.utilization.data.push($scope.data.max_avail);
+            map.num_bytes = $scope.utilization.data.push($scope.data.num_bytes);
+            map.num_objects = $scope.noo.data.push($scope.data.num_objects);
 
             angular.forEach(map, function (element, key) {
               map[key] = element - 1;
             });
           } else {
-            $scope.utilization.data[map["max_avail"]].values = $scope.data["max_avail"].values;
-            $scope.utilization.data[map["num_bytes"]].values = $scope.data["num_bytes"].values;
-            $scope.noo.data[map["num_objects"]].values = $scope.data["num_objects"].values;
+            $scope.utilization.data[map.max_avail].values = $scope.data.max_avail.values;
+            $scope.utilization.data[map.num_bytes].values = $scope.data.num_bytes.values;
+            $scope.noo.data[map.num_objects].values = $scope.data.num_objects.values;
           }
 
           $scope.update();
