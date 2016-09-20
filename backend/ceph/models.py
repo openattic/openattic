@@ -174,7 +174,7 @@ class CephCluster(NodbModel):
         :rtype: str
         :param filter: The performance data will be filtered by these sources (based on the RRD
             file).
-        :rtype: str | list[str]
+        :rtype: list[str]
         :return: Returns a list of performance data.
         :rtype: dict
         """
@@ -448,7 +448,7 @@ class CephPool(NodbModel):
         :rtype: str
         :param filter: The performance data will be filtered by these sources (based on the RRD
             file).
-        :rtype: str | list[str]
+        :rtype: dict["filter_pools": list[str], "filter_sources": list[str]]
         :return: Returns a list of performance data.
         :rtype: dict
         """
