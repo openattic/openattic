@@ -830,6 +830,33 @@ class CephRbd(NodbModel):  # aka RADOS block device
             ceph.write_rbd_nagios_configs()
             nagios.restart_service()
 
+    @staticmethod
+    def get_performance_data(rbd, filter=None):
+        """
+        Returns the performance data for a pool by the FSID and consideration of the filter
+        parameters if given.
+
+        :param fsid: FSID of the cluster
+        :rtype: str
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file).
+        :rtype: dict["filter_pools": list[str], "filter_sources": list[str]]
+        :return: Returns a list of performance data.
+        :rtype: dict
+        """
+
+        check_for_installed_nagios()
+
+        from nagios.graphbuilder import Graph, RRD
+        curr_host = Host.objects.get_current()
+
+        rrd = RRD.get_rrd(curr_host, "Check_CephRbd_{}_{}_{}".format(
+            rbd.pool.cluster.fsid, rbd.pool.name, rbd.name))
+
+        graph = Graph.get_graph(rrd, filter)
+        perf_data = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+        return perf_data
+
 
 class CephFs(NodbModel):
     name = models.CharField(max_length=100, primary_key=True)

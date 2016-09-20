@@ -324,6 +324,13 @@ class CephRbdViewSet(NodbViewSet):
     def get_queryset(self):
         return CephRbd.objects.all()
 
+    @detail_route(methods=["get"])
+    def performancedata_rbd(self, request, *args, **kwargs):
+        rbd = self.get_object()
+        filter_data = get_request_query_filter_data(request, "filter")
+        performance_data = CephRbd.get_performance_data(rbd, filter_data)
+        return Response(performance_data, status=status.HTTP_200_OK)
+
 
 class CephFsSerializer(NodbSerializer):
 
