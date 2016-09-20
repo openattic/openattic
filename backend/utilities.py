@@ -44,6 +44,25 @@ def get_request_query_params(request):
         return request.query_params
 
 
+def get_request_query_filter_data(request, filter_key):
+    """
+    Returns the comma separated filter parameters of a request as list.
+
+    :param request: Request object including the filter
+    :rtype: rest_framework.request.Request
+    :param filter_key: Name/key of the filter in the request object
+    :rtype: str
+    :return: List of filter parameters or None if filter_key not found in request
+    :rtype: list[str] | None
+    """
+    filter_data = get_request_query_params(request).get(filter_key, None)
+
+    if filter_data:
+        filter_data = filter_data.split(',')
+
+    return filter_data
+
+
 def get_request_data(request):
     """
     `request.DATA` has been deprecated in favor of `request.data` since version 3.0, and has been

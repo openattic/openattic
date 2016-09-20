@@ -24,7 +24,7 @@ from ceph.models import *
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 
-from utilities import get_request_query_params, get_request_data
+from utilities import get_request_query_filter_data, get_request_data
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -98,7 +98,7 @@ class CephClusterViewSet(NodbViewSet):
     @detail_route(methods=['get'])
     def performancedata(self, request, *args, **kwargs):
         fsid = kwargs['pk']
-        filter_data = self._get_filter("filter")
+        filter_data = get_request_query_filter_data(request, "filter")
         performance_data = CephCluster.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
 
@@ -108,18 +108,10 @@ class CephClusterViewSet(NodbViewSet):
 
         filter_data = dict()
         for filter_key in ["filter_pools", "filter_sources"]:
-            filter_data[filter_key] = self._get_filter(filter_key)
+            filter_data[filter_key] = get_request_query_filter_data(request, filter_key)
 
         performance_data = CephPool.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
-
-    def _get_filter(self, filter_key):
-        filter_data = get_request_query_params(self.request).get(filter_key, None)
-
-        if filter_data:
-            filter_data = filter_data.split(',')
-
-        return filter_data
 
 
 class CephPoolSerializer(NodbSerializer):
