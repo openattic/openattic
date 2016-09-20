@@ -17,6 +17,8 @@ Version 2.0.15 (not released yet):
 * Packaging/Installation: fixed permission problems for Nagios plugins that
   require writing to `openattic.log` or reading the Ceph key ring and
   configuration (OP-1320)
+* Packaging: Fixes a bug with piped tarball paths to
+  `build_deb_packages.py` (OP-1536)
 
 Version 2.0.14, 12. September 2016:
 -----------------------------------
