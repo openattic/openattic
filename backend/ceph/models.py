@@ -158,6 +158,12 @@ class CephCluster(NodbModel):
                         sources["performancedata_pools"] = RRD.get_sources_list(
                             curr_host, "Check_CephPool_{}_{}".format(self.fsid, pools[0].name))
 
+                    rbds = CephRbd.objects.all()
+                    if len(rbds) > 0:
+                        sources["performancedata_rbds"] = RRD.get_sources_list(
+                            curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
+                                                                       rbds[0].name))
+
                 self.performance_data_options = sources
 
             except SystemError:
