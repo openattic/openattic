@@ -13,17 +13,28 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import logging
 
+import django
 from django.core.exceptions import ValidationError
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
+logger = logging.getLogger(__file__)
 
-def custom_handler(exc):
+
+def custom_handler(exc, context=None):
+    """
+    :type exc: Exception
+    :type context: dict
+    """
     # Call the default exception handler of the Django REST framework
-    response = exception_handler(exc)
+    if django.VERSION[:2] >= (1, 8):
+        response = exception_handler(exc, context)
+    else:
+        response = exception_handler(exc)
 
     if response:
         return response
@@ -34,6 +45,8 @@ def custom_handler(exc):
 
     if isinstance(exc, NotSupportedError):
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+    logger.exception('Internal Server Error: {}'.format(context))
 
     if exc is not None:
         return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

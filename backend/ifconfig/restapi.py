@@ -19,23 +19,32 @@ from rest_framework import serializers, viewsets
 from ifconfig import models
 from rest import relations
 
+
 class IPAddressSerializer(serializers.ModelSerializer):
-    device        = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=False, read_only=False)
+    device = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=False,
+                                               read_only=False,
+                                               queryset=models.NetDevice.objects.all())
 
     class Meta:
         model = models.IPAddress
 
+
 class NetDeviceSerializer(serializers.HyperlinkedModelSerializer):
-    ipaddress_set = relations.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True,  read_only=True)
-    host          = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False)
+    ipaddress_set = relations.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True,
+                                                      read_only=True)
+    host = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False,
+                                             queryset=models.Host.objects.all())
 
     class Meta:
         model = models.NetDevice
 
+
 class HostSerializer(serializers.ModelSerializer):
-    url                 = serializers.HyperlinkedIdentityField(view_name='host-detail')
-    netdevice_set       = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
-    hostgroup_set       = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='host-detail')
+    netdevice_set = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True,
+                                                      read_only=True)
+    hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True,
+                                                      read_only=True)
     primary_ip_address  = serializers.SerializerMethodField("serialize_primaryip")
 
     class Meta:
@@ -53,25 +62,30 @@ class HostSerializer(serializers.ModelSerializer):
             serializer = IPAddressSerializer(ip, many=False, context=self.context)
             return serializer.data
 
+
 class HostGroupSerializer(serializers.ModelSerializer):
     hosts = relations.HyperlinkedRelatedField(view_name='host-detail', many=True , read_only=True)
 
     class Meta:
         model = models.HostGroup
 
+
 class IPAddressViewSet(viewsets.ModelViewSet):
     queryset = models.IPAddress.objects.all()
     serializer_class = IPAddressSerializer
 
+
 class NetDeviceViewSet(viewsets.ModelViewSet):
     queryset = models.NetDevice.objects.all()
     serializer_class = NetDeviceSerializer
+
 
 class HostViewSet(viewsets.ModelViewSet):
     queryset = models.Host.objects.all()
     serializer_class = HostSerializer
     filter_fields = ('name',)
     search_fields = ('name',)
+
 
 class HostGroupViewSet(viewsets.ModelViewSet):
     queryset = models.HostGroup.objects.all()

@@ -18,48 +18,55 @@ from rest_framework.relations import \
     HyperlinkedRelatedField  as RestFramework_HyperlinkedRelatedField,  \
     HyperlinkedIdentityField as RestFramework_HyperlinkedIdentityField
 
-class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
-    def __init__(self, *args, **kwargs):
-        # Work around a bug in Django Rest Framework that causes the
-        # serializer context to not be passed down to us.
-        #
-        # https://github.com/tomchristie/django-rest-framework/issues/1237
-        #
-        # To fix this, we add a dummy request object that provides a
-        # build_absolute_uri method which doesn't do anything. This does
-        # not affect all cases where the context is set correctly because
-        # it will be overwritten before being used.
+from utilities import drf_version
 
-        class DummyRequest(object):
-            def build_absolute_uri(self, url):
-                return url
+if drf_version() < (3, 0):
 
-        self.context = {
-            "request": DummyRequest()
-        }
+    class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
+        def __init__(self, *args, **kwargs):
+            # Work around a bug in Django Rest Framework that causes the
+            # serializer context to not be passed down to us.
+            #
+            # https://github.com/tomchristie/django-rest-framework/issues/1237
+            #
+            # To fix this, we add a dummy request object that provides a
+            # build_absolute_uri method which doesn't do anything. This does
+            # not affect all cases where the context is set correctly because
+            # it will be overwritten before being used.
 
-        super(HyperlinkedRelatedField, self).__init__(*args, **kwargs)
+            class DummyRequest(object):
+                def build_absolute_uri(self, url):
+                    return url
 
-    def to_native(self, obj):
-        url = super(HyperlinkedRelatedField, self).to_native(obj)
-        return {
-            'id':    obj.pk,
-            'url':   url,
-            'title': unicode(obj)
-        }
+            self.context = {
+                "request": DummyRequest()
+            }
 
-    def from_native(self, value):
-        if type(value) != dict:
-            raise TypeError("value needs to be a dictionary")
-        if "id" in value:
-            return self.queryset.get(id=value["id"])
-        if "url" in value:
-            return super(HyperlinkedRelatedField, self).from_native(value["url"])
-        raise KeyError("need id or url field (id preferred)")
+            super(HyperlinkedRelatedField, self).__init__(*args, **kwargs)
 
-class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
-    def field_to_native(self, obj, field_name):
-        url = super(HyperlinkedIdentityField, self).field_to_native(obj, field_name)
-        return {
-            'url': url
-        }
+        def to_native(self, obj):
+            url = super(HyperlinkedRelatedField, self).to_native(obj)
+            return {
+                'id':    obj.pk,
+                'url':   url,
+                'title': unicode(obj)
+            }
+
+        def from_native(self, value):
+            if type(value) != dict:
+                raise TypeError("value needs to be a dictionary")
+            if "id" in value:
+                return self.queryset.get(id=value["id"])
+            if "url" in value:
+                return super(HyperlinkedRelatedField, self).from_native(value["url"])
+            raise KeyError("need id or url field (id preferred)")
+
+    class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
+        def field_to_native(self, obj, field_name):
+            url = super(HyperlinkedIdentityField, self).field_to_native(obj, field_name)
+            return {
+                'url': url
+            }
+else:
+    HyperlinkedRelatedField = RestFramework_HyperlinkedRelatedField
+    HyperlinkedIdentityField = RestFramework_HyperlinkedIdentityField
