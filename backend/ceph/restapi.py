@@ -17,12 +17,14 @@ from django.utils.functional import cached_property
 from rest_framework import serializers, viewsets, status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route, list_route
 
 from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
+from taskqueue.restapi import TaskQueueLocationMixin
+
+from utilities import get_request_query_params, get_request_data
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -58,8 +60,8 @@ class ClusterViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         cluster = self.get_object()
 
-        if "crushmap" in request.DATA:
-            cluster.set_crushmap(request.DATA["crushmap"])
+        if "crushmap" in get_request_data(request):
+            cluster.set_crushmap(get_request_data(request)["crushmap"])
 
         cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
 
@@ -112,7 +114,7 @@ class CephClusterViewSet(NodbViewSet):
         return Response(performance_data, status=status.HTTP_200_OK)
 
     def _get_filter(self, filter_key):
-        filter_data = self.request.QUERY_PARAMS.get(filter_key, None)
+        filter_data = get_request_query_params(self.request).get(filter_key, None)
 
         if filter_data:
             filter_data = filter_data.split(',')
@@ -124,6 +126,45 @@ class CephPoolSerializer(NodbSerializer):
 
     class Meta:
         model = CephPool
+
+    erasure_code_profile = \
+        serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                           queryset=CephErasureCodeProfile.objects.all())
+    quota_max_objects = serializers.IntegerField(default=0)
+    quota_max_bytes = serializers.IntegerField(default=0)
+#    crush_ruleset = serializers.IntegerField() # TODO OP-1415
+    size = serializers.IntegerField(default=None, required=False)
+    min_size = serializers.IntegerField(default=None, required=False)
+    crash_replay_interval = serializers.IntegerField(default=0)
+    cache_mode = serializers.CharField(default='none')
+    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                 queryset=CephPool.objects.all())
+    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                    queryset=CephPool.objects.all())
+    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                   queryset=CephPool.objects.all())
+    target_max_bytes = serializers.IntegerField(default=0)
+    hit_set_period = serializers.IntegerField(default=0)
+    hit_set_count = serializers.IntegerField(default=0)
+
+    def validate(self, data):
+        if data['type'] == 'replicated':
+            errors = {
+                field: ['Replicated pools need ' + field]
+                for field
+                in ['size', 'min_size']
+                if field not in data or data[field] is None
+            }
+        else:
+            errors = {
+                field: ['Erasure coded pools need ' + field]
+                for field
+                in ['erasure_code_profile']
+                if not field in data or data[field] is None
+            }
+        if errors:
+            raise serializers.ValidationError(errors)
+        return data
 
 
 class FsidContext(object):
@@ -142,7 +183,7 @@ class FsidContext(object):
         return CephCluster.objects.all().get(fsid=self.fsid)
 
 
-class CephPoolViewSet(NodbViewSet):
+class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
     """Represents a Ceph pool.
 
     Due to the fact that we need a Ceph cluster fsid, we can't provide the ViewSet directly with
@@ -175,25 +216,15 @@ class CephPoolViewSet(NodbViewSet):
         if request.method == 'GET':
             return Response(pool.pool_snaps, status=status.HTTP_200_OK)
         elif request.method == 'POST':
-            pool.create_snapshot(request.DATA['name'])
-            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_201_CREATED)
+            pool.create_snapshot(get_request_data(request)['name'])
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
+                            status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            pool.delete_snapshot(request.DATA['name'])
-            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_200_OK)
+            pool.delete_snapshot(get_request_data(request)['name'])
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
+                            status=status.HTTP_200_OK)
         else:
             raise ValueError('{}. Method not allowed.'.format(request.method))
-
-
-class PaginatedCephPoolSerializer(PaginationSerializer):
-
-    class Meta:
-        object_serializer_class = CephPoolSerializer
-
-
-class PaginatedCephClusterSerializer(PaginationSerializer):
-
-    class Meta:
-        object_serializer_class = CephClusterSerializer
 
 
 class CephErasureCodeProfileSerializer(NodbSerializer):
@@ -251,12 +282,6 @@ class CephOsdViewSet(NodbViewSet):
         ]
 
         return Response(json_data, status=status.HTTP_200_OK)
-
-
-class PaginatedCephOsdSerializer(PaginationSerializer):
-
-    class Meta(object):
-        object_serializer_class = CephOsdSerializer
 
 
 class CephPgSerializer(NodbSerializer):

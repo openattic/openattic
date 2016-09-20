@@ -98,6 +98,7 @@ This package includes the Web UI based on AngularJS/Bootstrap.
 %package module-ceph
 Requires: ceph-common >= 10.0.0
 Requires: %{name}-base
+Requires: %{name}-module-nagios
 Requires: python-rados
 Summary: Ceph module for openATTIC
 
@@ -372,6 +373,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
+mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
@@ -402,6 +404,9 @@ install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
 
+# Install HTML redirect
+install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.html
+
 # Install /etc/default/openattic
 # TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
@@ -427,6 +432,7 @@ install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbu
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
 install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
+touch %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
 
 # configure yum repo
 install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
@@ -482,6 +488,14 @@ systemctl start httpd
 systemctl daemon-reload
 systemctl restart dbus
 systemctl restart httpd
+
+%post module-ceph
+# Add nagios user to the ceph group (OP-1320)
+if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
+  if ! groups nagios | grep -q ceph ; then
+    groupmems -g ceph -u nagios 
+  fi
+fi
 
 %post gui
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
@@ -542,6 +556,7 @@ echo ""
 %defattr(-,openattic,openattic,-)
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
+%attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_bindir}/oacli
@@ -559,12 +574,11 @@ echo ""
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
-%{_datadir}/%{name}/clustering/
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
 %{_datadir}/%{name}/installed_apps.d/20_volumes
-%{_datadir}/%{name}/installed_apps.d/70_clustering
+%{_datadir}/%{name}/installed_apps.d/60_taskqueue
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
 %{_datadir}/%{name}/nodb/
@@ -579,12 +593,15 @@ echo ""
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
+%{_datadir}/%{name}/taskqueue/
 %{_datadir}/%{name}/templates/
 %{_datadir}/%{name}/urls.py*
 %{_datadir}/%{name}/userprefs/
 %{_datadir}/%{name}/version.txt
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
+%{_datadir}/%{name}/exception.py*
+%{_datadir}/%{name}/utilities.py*
 
 %files module-btrfs
 %defattr(-,root,root,-)
@@ -595,10 +612,13 @@ echo ""
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
+%{_libdir}/nagios/plugins/check_cephcluster
+%{_libdir}/nagios/plugins/check_cephpool
 
 %files gui
 %defattr(-,root,root,-)
 %{_datadir}/%{name}-gui
+%{_localstatedir}/www/html/index.html
 
 %files module-cron
 %defattr(-,root,root,-)
@@ -660,8 +680,6 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
-%{_libdir}/nagios/plugins/check_cephcluster
-%{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd

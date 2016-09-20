@@ -2,40 +2,42 @@
     <span ng-if="volume">Delete volume</span>
     <span ng-if="!volume && volumes">Delete volumes</span>
 </div>
-<div class="openattic-modal-content">
-    <!-- single volume -->
-    <p ng-if="volume">
-        You are about to delete the volume <strong>{{volume.name}}</strong>.
-    </p>
-    <p ng-if="volume">
-        Be aware that you will <strong>lose all data</strong>
-        in that volume and that this operation <strong>cannot be undone</strong>.
-    </p>
-    <p ng-if="volume">
-        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
-    <!-- end single volume -->
 
-    <!-- multiple volumes -->
-    <p ng-if="!volume && volumes">
-        You are about to delete multiple volumes.
-    </p>
-    <p ng-if="!volume && volumes">
-        Be aware that you will <strong>lose all data</strong>
-        in the volumes and that this operation <strong>cannot be undone</strong>.
-    </p>
-    <span class="text-danger" ng-if="!volume && volumes">The following volumes will be deleted:</span>
-    <ul class="text-danger" ng-if="!volume && volumes">
-        <li ng-repeat="vol in volumes">
-            {{vol.name}} ({{vol.type.app_label}}, {{vol.usage.size_text}})
-        </li>
-    </ul>
-    <p ng-if="!volume && volumes">
-        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
-    <!-- end multiple volumes -->
+<form name="deleteForm" role="form" novalidate>
+    <div class="openattic-modal-content">
+        <!-- single volume -->
+        <p ng-if="volume">
+            You are about to delete the volume <strong>{{volume.name}}</strong>.
+        </p>
+        <p ng-if="volume">
+            Be aware that you will <strong>lose all data</strong>
+            in that volume and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <p ng-if="volume">
+            To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+        <!-- end single volume -->
 
-    <form name="deleteForm" role="form" novalidate>
+        <!-- multiple volumes -->
+        <p ng-if="!volume && volumes">
+            You are about to delete multiple volumes.
+        </p>
+        <p ng-if="!volume && volumes">
+            Be aware that you will <strong>lose all data</strong>
+            in the volumes and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <span class="text-danger" ng-if="!volume && volumes">The following volumes will be deleted:</span>
+        <ul class="text-danger" ng-if="!volume && volumes">
+            <li ng-repeat="vol in volumes">
+                {{vol.name}} ({{vol.type.app_label}}, {{vol.usage.size_text}})
+            </li>
+        </ul>
+        <p ng-if="!volume && volumes">
+            To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+        <!-- end multiple volumes -->
+
+
         <div class="form-group"
              ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
             <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
@@ -50,7 +52,9 @@
             </span>
             <!-- end Error -->
         </div>
+    </div>
 
+    <div class="openattic-modal-footer">
         <div class="button-group text-right">
             <button id="bot2-Msg1" class="btn btn-primary btn-sm"
                     ng-click="delete()" ng-disabled="deleteForm.$invalid">
@@ -58,5 +62,5 @@
             </button>
             <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
         </div>
-    </form>
-</div>
+    </div>
+</form>

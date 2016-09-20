@@ -26,7 +26,9 @@ from rest.multinode.handlers import RequestHandlers
 class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HTTP Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
-    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
+    volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
+                                               source="volume.storageobj",
+                                               queryset=StorageObject.objects.all())
 
     class Meta:
         model = Export

@@ -7,10 +7,12 @@ backend/rest      /usr/share/openattic
 backend/rpcd      /usr/share/openattic
 backend/systemd   /usr/share/openattic
 backend/sysutils  /usr/share/openattic
+backend/taskqueue /usr/share/openattic
 backend/userprefs /usr/share/openattic
 backend/volumes   /usr/share/openattic
 
 backend/installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
+backend/installed_apps.d/60_taskqueue /usr/share/openattic/installed_apps.d
 
 # Python files
 backend/__init__.py    /usr/share/openattic
@@ -23,6 +25,8 @@ backend/urls.py        /usr/share/openattic
 backend/views.py       /usr/share/openattic
 backend/openattic.wsgi /usr/share/openattic
 backend/serverstats.wsgi /usr/share/openattic
+backend/exception.py   /usr/share/openattic
+backend/utilities.py   /usr/share/openattic
 
 # Init scripts, configs that are shipped upstream
 etc/init.d/openattic-systemd        /etc/init.d
@@ -39,9 +43,6 @@ etc/dbus-1/system.d/openattic.conf        /etc/dbus-1/system.d
 etc/logrotate.d/openattic                 /etc/logrotate.d
 version.txt                               /usr/share/openattic
 debian/default/openattic            /etc/default
-
-# Pacemaker resource agents
-bin/resource_agents/* /usr/lib/ocf/resource.d/openattic/
 
 bin/oaconfig    /usr/sbin
 bin/oacli       /usr/bin

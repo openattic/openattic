@@ -48,6 +48,7 @@ BOND_MODE_CHOICES = (
     ("balance-alb",    _("balance-alb")),
     )
 
+
 def statfile(devname, fname):
     fpath = join("/sys/class/net", devname, fname)
     if exists(fpath):
@@ -77,9 +78,9 @@ class HostManager(models.Manager):
 
 
 class Host(models.Model):
-    name        = models.CharField(max_length=63, unique=True)
+    name = models.CharField(max_length=63, unique=True)
 
-    objects     = HostManager()
+    objects = HostManager()
 
     def __unicode__(self):
         return self.name
@@ -96,7 +97,6 @@ class Host(models.Model):
     def get_primary_ip_address(self):
         return IPAddress.all_objects.get(primary_address=True, device__host=self)
 
-
     @staticmethod
     def insert_current_host():
         fqdn = socket.getfqdn()
@@ -111,9 +111,10 @@ class HostDependentQuerySet(models.query.QuerySet):
             curr = obj
             for field in self.model.objects.hostfilter.split('__'):
                 if curr is None:
-                    raise ValueError("got none when querying model '%s' instance '%s' for field '%s'" % (self.model, obj.id, field))
-                curr = getattr( curr, field )
-                if isinstance( curr, Host ):
+                    raise ValueError("got none when querying model '%s' instance '%s' for field "
+                                     "'%s'" % (self.model, obj.id, field))
+                curr = getattr(curr, field)
+                if isinstance(curr, Host):
                     break
             if curr == currhost:
                 yield obj
@@ -121,6 +122,7 @@ class HostDependentQuerySet(models.query.QuerySet):
 
     def count(self):
         return len(list(self.iterator()))
+
 
 class HostDependentManager(models.Manager):
     hostfilter = "host"
@@ -134,32 +136,35 @@ def getHostDependentManagerClass(hostfilter="host"):
 
 
 class HostGroup(models.Model):
-    name        = models.CharField(max_length=250)
-    hosts       = models.ManyToManyField(Host)
+    name = models.CharField(max_length=250)
+    hosts = models.ManyToManyField(Host)
 
     def __unicode__(self):
         return "%s (%d hosts)" % (self.name, self.hosts.count())
 
 
 class NetDevice(models.Model):
-    host        = models.ForeignKey(Host)
-    devname     = models.CharField(max_length=15)
-    dhcp        = models.BooleanField(default=False, blank=True)
-    auto        = models.BooleanField(default=True,  blank=True)
-    jumbo       = models.BooleanField(default=False, blank=True)
-    slaves      = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bond_dev_set",
-                    help_text=_("If this interface is a bonding device, add the slave devices here."))
-    brports     = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bridge_dev_set",
-                    help_text=_("If this interface is a bridge, add the ports here."))
-    vlanrawdev  = models.ForeignKey('self', blank=True, null=True, related_name="vlan_dev_set",
-                    help_text=_("If this interface is VLAN device, name the raw device here."))
+    host = models.ForeignKey(Host)
+    devname = models.CharField(max_length=15)
+    dhcp = models.BooleanField(default=False, blank=True)
+    auto = models.BooleanField(default=True,  blank=True)
+    jumbo = models.BooleanField(default=False, blank=True)
+    slaves = models.ManyToManyField(
+        'self', blank=True, symmetrical=False, related_name="bond_dev_set",
+        help_text=_("If this interface is a bonding device, add the slave devices here."))
+    brports = models.ManyToManyField(
+        'self', blank=True, symmetrical=False, related_name="bridge_dev_set",
+        help_text=_("If this interface is a bridge, add the ports here."))
+    vlanrawdev = models.ForeignKey(
+        'self', blank=True, null=True, related_name="vlan_dev_set",
+        help_text=_("If this interface is VLAN device, name the raw device here."))
 
-    bond_mode      = models.CharField( max_length=50, default="active-backup", choices=BOND_MODE_CHOICES )
-    bond_miimon    = models.IntegerField( default=100 )
-    bond_downdelay = models.IntegerField( default=200 )
-    bond_updelay   = models.IntegerField( default=200 )
+    bond_mode = models.CharField(max_length=50, default="active-backup", choices=BOND_MODE_CHOICES)
+    bond_miimon = models.IntegerField(default=100)
+    bond_downdelay = models.IntegerField(default=200)
+    bond_updelay = models.IntegerField(default=200)
 
-    objects     = HostDependentManager()
+    objects = HostDependentManager()
     all_objects = models.Manager()
 
     class Meta:
@@ -170,33 +175,38 @@ class NetDevice(models.Model):
 
     @classmethod
     def get_root_devices(cls):
-        """ Return all devices that are either a bonding, or a native which is not a bonding slave. """
+        """ Return all devices that are either a bonding, or a native which is not a bonding slave.
+        """
         rootdevs = list(NetDevice.objects.filter(slaves__isnull=False).distinct())
-        rootdevs.extend([ dev for dev in NetDevice.objects.all()
-            if dev.devtype == "native" and NetDevice.objects.filter(slaves__devname=dev.devname).count() == 0
-            ])
+        rootdevs.extend([dev for dev in NetDevice.objects.all()
+                         if dev.devtype == "native" and
+                         NetDevice.objects.filter(slaves__devname=dev.devname).count() == 0
+                         ])
         return rootdevs
 
     @classmethod
     def validate_config(cls):
         """ Validate the current configuration. """
         haveaddr = False
-        havegw   = False
-        havedns  = False
+        havegw = False
+        havedns = False
         havedomain = False
 
         for interface in NetDevice.objects.all():
             if interface.childdevs and interface.ipaddress_set.filter(configure=True).count() > 0:
-                raise ValueError(_("Interface %s has children and has an address") % interface.devname)
+                raise ValueError(_("Interface %s has children and has an address") %
+                                 interface.devname)
 
             if interface.dhcp:
                 if interface.ipaddress_set.filter(configure=True).count() > 0:
-                    raise ValueError(_("Interface %s uses DHCP but has an address") % interface.devname)
+                    raise ValueError(_("Interface %s uses DHCP but has an address") %
+                                     interface.devname)
                 if interface.childdevs:
-                    raise ValueError(_("Interface %s has children and uses DHCP") % interface.devname)
+                    raise ValueError(_("Interface %s has children and uses DHCP") %
+                                     interface.devname)
                 haveaddr = True
-                havegw   = True
-                havedns  = True
+                havegw = True
+                havedns = True
                 havedomain = True
 
             elif interface.ipaddress_set.filter(configure=True).count() > 0:
@@ -205,7 +215,8 @@ class NetDevice(models.Model):
                         addr = address.address.split("/")
                         haveaddr = True
                         if len(addr) == 1:
-                            raise ValueError(_("Interface %s has an address without a netmask") % interface.devname)
+                            raise ValueError(_("Interface %s has an address without a netmask") %
+                                             interface.devname)
                         if address.gateway:
                             havegw = True
                         if address.domain:
@@ -216,20 +227,25 @@ class NetDevice(models.Model):
             if interface.vlanrawdev:
                 base = interface.vlanrawdev
                 if base == interface:
-                    raise ValueError(_("Vlan %s has ITSELF as its base interface") % interface.devname)
+                    raise ValueError(_("Vlan %s has ITSELF as its base interface") %
+                                     interface.devname)
 
             if interface.brports.all().count():
                 if interface.brports.filter(id=interface.id).count():
-                    raise ValueError(_("Bridge %s has ITSELF as one of its ports") % interface.devname)
+                    raise ValueError(_("Bridge %s has ITSELF as one of its ports") %
+                                     interface.devname)
 
             if interface.slaves.count():
                 if interface.slaves.filter(id=interface.id).count():
-                    raise ValueError(_("Bonding %s has ITSELF as one of its slaves") % interface.devname)
+                    raise ValueError(_("Bonding %s has ITSELF as one of its slaves") %
+                                     interface.devname)
                 if interface.slaves.filter(jumbo=(not interface.jumbo)).count():
-                    raise ValueError(_("Bonding %s has slaves with mismatching Jumbo Frames setting") % interface.devname)
+                    raise ValueError(_("Bonding %s has slaves with mismatching Jumbo Frames "
+                                       "setting") % interface.devname)
 
         if not haveaddr:
-            raise ValueError(_("There is no interface that has an IP (none with dhcp and none with static address)."))
+            raise ValueError(_("There is no interface that has an IP (none with dhcp and none with "
+                               "static address)."))
 
         if not havegw:
             raise ValueError(_("There is no default gateway."))
@@ -286,24 +302,24 @@ class NetDevice(models.Model):
     def operstate(self):
         if self.devname == "lo":
             return None
-        return statfile( self.devname, "operstate" ) == 'up'
+        return statfile(self.devname, "operstate") == 'up'
 
     @property
     def carrier(self):
-        if self.operstate == False:
+        if not self.operstate:
             return None
-        return statfile( self.devname, "carrier" ) == '1'
+        return statfile(self.devname, "carrier") == '1'
 
     @property
     def macaddress(self):
-        return statfile( self.devname, "address" )
+        return statfile(self.devname, "address")
 
     @property
     def mtu(self):
-        mtu = statfile( self.devname, "mtu" )
+        mtu = statfile(self.devname, "mtu")
         if mtu is None:
             return None
-        return int( mtu )
+        return int(mtu)
 
     @property
     def speed(self):
@@ -312,19 +328,19 @@ class NetDevice(models.Model):
         elif self.devtype == "native":
             if not self.operstate:
                 return None
-            speed = statfile( self.devname, "speed" )
+            speed = statfile(self.devname, "speed")
             if speed is None:
                 return None
-            return int( speed )
+            return int(speed)
         else:
             if self.vlanrawdev:
                 return self.vlanrawdev.speed
 
             if self.brports.all().count():
-                return min( [ port.speed for port in self.brports.all() ] )
+                return min([port.speed for port in self.brports.all()])
 
             if self.slaves.count():
-                return min( [ slave.speed for slave in self.slaves.all() ] )
+                return min([slave.speed for slave in self.slaves.all()])
         raise ValueError("Speed could not be determined")
 
     def get_addresses(self, af=None):
@@ -336,11 +352,12 @@ class NetDevice(models.Model):
             for addrinfo in ifaddrs[ifaddrfam]:
                 if ifaddrfam not in af or addrinfo["addr"] in addrs:
                     continue
-                curaddr = netaddr.IPNetwork( "%s/%s" % ( addrinfo["addr"].split('%')[0], addrinfo["netmask"] ) )
-                curaddr.iface  = self.devname
+                curaddr = netaddr.IPNetwork("%s/%s" % (addrinfo["addr"].split('%')[0],
+                                                       addrinfo["netmask"]))
+                curaddr.iface = self.devname
                 curaddr.family = ifaddrfam
 
-                addrs.append( curaddr )
+                addrs.append(curaddr)
         return addrs
 
     @classmethod
@@ -349,23 +366,23 @@ class NetDevice(models.Model):
         get_dbus_object("/ifconfig").write_interfaces()
 
 
-
 class IPAddress(models.Model):
-    address         = models.CharField(max_length=250)
-    gateway         = models.CharField(max_length=50, blank=True)
-    nameservers     = models.CharField(max_length=50, blank=True, null=True)
-    domain          = models.CharField(max_length=250, blank=True, null=True)
-    device          = models.ForeignKey(NetDevice, blank=True, null=True)
-    configure       = models.BooleanField(blank=True, default=True)
+    address = models.CharField(max_length=250)
+    gateway = models.CharField(max_length=50, blank=True)
+    nameservers = models.CharField(max_length=50, blank=True, null=True)
+    domain = models.CharField(max_length=250, blank=True, null=True)
+    device = models.ForeignKey(NetDevice, blank=True, null=True)
+    configure = models.BooleanField(blank=True, default=True)
     primary_address = models.BooleanField(blank=True, default=False)
 
-    objects         = getHostDependentManagerClass("device__host")()
-    all_objects     = models.Manager()
+    objects = getHostDependentManagerClass("device__host")()
+    all_objects = models.Manager()
 
     @property
     def in_use(self):
-        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
-            if relobj.model.objects.filter( **{ relobj.field.name: self } ).count() > 0:
+        for relobj in (self._meta.get_all_related_objects() +
+                       self._meta.get_all_related_many_to_many_objects()):
+            if relobj.model.objects.filter(**{relobj.field.name: self}).count() > 0:
                 return True
         return False
 
@@ -395,25 +412,18 @@ if "nagios" in settings.INSTALLED_APPS:
         ctype = ContentType.objects.get_for_model(instance.__class__)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
             return
-        srv = Service(
-            host        = Host.objects.get_current(),
-            target      = instance,
-            command     = cmd,
-            description = nagios_settings.TRAFFIC_DESCRIPTION % instance.device.devname,
-            arguments   = instance.device.devname
-        )
+        srv = Service(host=Host.objects.get_current(), target=instance, command=cmd,
+                      description=nagios_settings.TRAFFIC_DESCRIPTION % instance.device.devname,
+                      arguments=instance.device.devname)
         srv.save()
 
     def __delete_service_for_ipaddress(instance, **kwargs):
         # can't import these in the module scope, because nagios imports stuff from us.
-        from nagios.models import Command, Service
-        from nagios.conf import settings as nagios_settings
+        from nagios.models import Service
         from django.contrib.contenttypes.models import ContentType
         ctype = ContentType.objects.get_for_model(instance.__class__)
         for srv in Service.objects.filter(target_type=ctype, target_id=instance.id):
             srv.delete()
 
-    signals.post_save.connect(  __create_service_for_ipaddress, sender=IPAddress)
+    signals.post_save.connect(__create_service_for_ipaddress, sender=IPAddress)
     signals.post_delete.connect(__delete_service_for_ipaddress, sender=IPAddress)
-
-

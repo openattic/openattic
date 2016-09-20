@@ -19,6 +19,7 @@ from django.test import TestCase
 
 from volumes.filesystems import FileSystem, get_by_name
 
+
 class FileSystemTestCase(TestCase):
 
     def test_write_fstab(self):
@@ -26,10 +27,10 @@ class FileSystemTestCase(TestCase):
             fs = FileSystem(None)
             fs.write_fstab()
 
-            self.assertTrue( mock_get_dbus_object.called)
+            self.assertTrue(mock_get_dbus_object.called)
             self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
 
-            self.assertTrue( mock_get_dbus_object().write_fstab.called)
+            self.assertTrue(mock_get_dbus_object().write_fstab.called)
             self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
 
     def test_e4fs_format(self):
@@ -38,33 +39,38 @@ class FileSystemTestCase(TestCase):
             volume.storageobj.name = "yaaayname"
             volume.storageobj.snapshot = None
             volume.storageobj.blockvolume.volume.path = "/dev/testpath"
-            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
+            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024,
+                                                                "datadisks": 4}
             volume.owner.username = "mziegler"
 
             fs = get_by_name("ext4")(volume)
             fs.format()
 
-            self.assertTrue( mock_get_dbus_object.called)
+            self.assertTrue(mock_get_dbus_object.called)
             self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
 
-            self.assertTrue( mock_get_dbus_object().e4fs_format.called)
+            self.assertTrue(mock_get_dbus_object().e4fs_format.called)
             self.assertEqual(mock_get_dbus_object().e4fs_format.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0], ("/dev/testpath", "yaaayname", 256*1024, 4))
+            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0], ("/dev/testpath",
+                                                                               "yaaayname",
+                                                                               256*1024, 4))
 
-            self.assertTrue( mock_get_dbus_object().write_fstab.called)
+            self.assertTrue(mock_get_dbus_object().write_fstab.called)
             self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
 
-            self.assertTrue( mock_get_dbus_object().fs_mount.called)
+            self.assertTrue(mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ext4", "/dev/testpath", "/media/yaaayname", []))
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ext4", "/dev/testpath",
+                                                                            "/media/yaaayname", []))
 
-            self.assertTrue( mock_get_dbus_object().fs_chown.called)
+            self.assertTrue(mock_get_dbus_object().fs_chown.called)
             self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname", "mziegler", "users"))
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname",
+                                                                            "mziegler", "users"))
 
     def test_e2fs_shrink_online(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
-             mock.patch("os.path.ismount") as mock_os_path_ismount:
+                mock.patch("os.path.ismount") as mock_os_path_ismount:
 
             volume = mock.MagicMock()
             volume.storageobj.name = "yaaayname"
@@ -76,25 +82,28 @@ class FileSystemTestCase(TestCase):
             fs = get_by_name("ext2")(volume)
             fs.shrink(100000, 10000)
 
-            self.assertTrue( mock_get_dbus_object().fs_unmount.called)
+            self.assertTrue(mock_get_dbus_object().fs_unmount.called)
             self.assertEqual(mock_get_dbus_object().fs_unmount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0], ("/dev/testpath", "/media/yaaayname"))
+            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0],
+                             ("/dev/testpath", "/media/yaaayname"))
 
-            self.assertTrue( mock_get_dbus_object().e2fs_check.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_check.called)
             self.assertEqual(mock_get_dbus_object().e2fs_check.call_count, 1)
             self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0], ("/dev/testpath",))
 
-            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 10000, False))
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0],
+                             ("/dev/testpath", 10000, False))
 
-            self.assertTrue( mock_get_dbus_object().fs_mount.called)
+            self.assertTrue(mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ext2", "/dev/testpath", "/media/yaaayname", []))
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0],
+                             ("ext2", "/dev/testpath", "/media/yaaayname", []))
 
     def test_e2fs_shrink_offline(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
-             mock.patch("os.path.ismount") as mock_os_path_ismount:
+                mock.patch("os.path.ismount") as mock_os_path_ismount:
 
             volume = mock.MagicMock()
             volume.storageobj.name = "yaaayname"
@@ -108,19 +117,20 @@ class FileSystemTestCase(TestCase):
 
             self.assertFalse(mock_get_dbus_object().fs_unmount.called)
 
-            self.assertTrue( mock_get_dbus_object().e2fs_check.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_check.called)
             self.assertEqual(mock_get_dbus_object().e2fs_check.call_count, 1)
             self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0], ("/dev/testpath",))
 
-            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 10000, False))
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0],
+                             ("/dev/testpath", 10000, False))
 
-            self.assertFalse( mock_get_dbus_object().fs_mount.called)
+            self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
     def test_e2fs_grow_online(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
-             mock.patch("os.path.ismount") as mock_os_path_ismount:
+                mock.patch("os.path.ismount") as mock_os_path_ismount:
 
             volume = mock.MagicMock()
             volume.storageobj.name = "yaaayname"
@@ -136,21 +146,23 @@ class FileSystemTestCase(TestCase):
 
             self.assertFalse(mock_get_dbus_object().e2fs_check.called)
 
-            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 100000, True))
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0],
+                             ("/dev/testpath", 100000, True))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
     def test_e2fs_grow_offline(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
-             mock.patch("os.path.ismount") as mock_os_path_ismount:
+                mock.patch("os.path.ismount") as mock_os_path_ismount:
 
             volume = mock.MagicMock()
             volume.storageobj.name = "yaaayname"
             volume.storageobj.snapshot = None
             volume.storageobj.blockvolume.volume.path = "/dev/testpath"
-            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
+            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024,
+                                                                "datadisks": 4}
             volume.owner.username = "mziegler"
 
             mock_os_path_ismount.return_value = False
@@ -162,9 +174,10 @@ class FileSystemTestCase(TestCase):
 
             self.assertFalse(mock_get_dbus_object().e2fs_check.called)
 
-            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 100000, True))
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0],
+                             ("/dev/testpath", 100000, True))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
@@ -176,9 +189,10 @@ class FileSystemTestCase(TestCase):
             fs = get_by_name("ext2")(volume)
             fs.set_uuid("1111-2222-3333-4444")
 
-            self.assertTrue( mock_get_dbus_object().e2fs_set_uuid.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0], ("/dev/testpath", "1111-2222-3333-4444"))
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0],
+                             ("/dev/testpath", "1111-2222-3333-4444"))
 
     def test_e2fs_set_uuid_generate(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
@@ -188,13 +202,16 @@ class FileSystemTestCase(TestCase):
             fs = get_by_name("ext2")(volume)
             fs.set_uuid(generate=True)
 
-            self.assertTrue( mock_get_dbus_object().e2fs_set_uuid.called)
+            self.assertTrue(mock_get_dbus_object().e2fs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0], ("/dev/testpath", "random"))
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0], ("/dev/testpath",
+                                                                                 "random"))
 
     def test_e3fs_check_type(self):
         from volumes.filesystems.extfs import Ext3
-        self.assertTrue( Ext3.check_type("""/dev/vgfaithdata/linux: sticky Linux rev 1.0 ext3 filesystem data, UUID=40275826-df77-49e3-9686-2f46dd8e2052, volume name "linux" (needs journal recovery) (large files)""") )
+        self.assertTrue(Ext3.check_type("""/dev/vgfaithdata/linux: sticky Linux rev 1.0 ext3
+                        filesystem data, UUID=40275826-df77-49e3-9686-2f46dd8e2052, volume name
+                        "linux" (needs journal recovery) (large files)"""))
 
     def test_xfs_format(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
@@ -203,29 +220,33 @@ class FileSystemTestCase(TestCase):
             volume.storageobj.megs = 100000
             volume.storageobj.snapshot = None
             volume.storageobj.blockvolume.volume.path = "/dev/testpath"
-            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
+            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024,
+                                                                "datadisks": 4}
             volume.owner.username = "mziegler"
 
             fs = get_by_name("xfs")(volume)
             fs.format()
 
-            self.assertTrue( mock_get_dbus_object.called)
+            self.assertTrue(mock_get_dbus_object.called)
             self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
 
-            self.assertTrue( mock_get_dbus_object().xfs_format.called)
+            self.assertTrue(mock_get_dbus_object().xfs_format.called)
             self.assertEqual(mock_get_dbus_object().xfs_format.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0], ("/dev/testpath", 256*1024, 4, 16))
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0], ("/dev/testpath",
+                                                                              256*1024, 4, 16))
 
-            self.assertTrue( mock_get_dbus_object().write_fstab.called)
+            self.assertTrue(mock_get_dbus_object().write_fstab.called)
             self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
 
-            self.assertTrue( mock_get_dbus_object().fs_mount.called)
+            self.assertTrue(mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("xfs", "/dev/testpath", "/media/yaaayname", []))
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("xfs", "/dev/testpath",
+                                                                            "/media/yaaayname", []))
 
-            self.assertTrue( mock_get_dbus_object().fs_chown.called)
+            self.assertTrue(mock_get_dbus_object().fs_chown.called)
             self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname", "mziegler", "users"))
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname",
+                                                                            "mziegler", "users"))
 
     def test_xfs_shrink(self):
         with self.assertRaises(NotImplementedError):
@@ -243,9 +264,10 @@ class FileSystemTestCase(TestCase):
 
             self.assertFalse(mock_get_dbus_object().fs_unmount.called)
 
-            self.assertTrue( mock_get_dbus_object().xfs_resize.called)
+            self.assertTrue(mock_get_dbus_object().xfs_resize.called)
             self.assertEqual(mock_get_dbus_object().xfs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0], ("/media/yaaayname", 100000))
+            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0],
+                             ("/media/yaaayname", 100000))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
@@ -257,9 +279,10 @@ class FileSystemTestCase(TestCase):
             fs = get_by_name("xfs")(volume)
             fs.set_uuid("1111-2222-3333-4444")
 
-            self.assertTrue( mock_get_dbus_object().xfs_set_uuid.called)
+            self.assertTrue(mock_get_dbus_object().xfs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0], ("/dev/testpath", "1111-2222-3333-4444"))
+            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0],
+                             ("/dev/testpath", "1111-2222-3333-4444"))
 
     def test_xfs_set_uuid_generate(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
@@ -269,11 +292,12 @@ class FileSystemTestCase(TestCase):
             fs = get_by_name("xfs")(volume)
             fs.set_uuid(generate=True)
 
-            self.assertTrue( mock_get_dbus_object().xfs_set_uuid.called)
+            self.assertTrue(mock_get_dbus_object().xfs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0], ("/dev/testpath", "generate"))
+            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0], ("/dev/testpath",
+                                                                                "generate"))
 
     def test_xfs_check_type(self):
         from volumes.filesystems.xfs import Xfs
-        self.assertTrue( Xfs.check_type("""/dev/vgfaithdata/ceph03: sticky SGI XFS filesystem data (blksz 4096, inosz 256, v2 dirs)""") )
-
+        self.assertTrue(Xfs.check_type("""/dev/vgfaithdata/ceph03: sticky SGI XFS filesystem data
+                        (blksz 4096, inosz 256, v2 dirs)"""))

@@ -23,7 +23,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin"
+	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin version"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -32,19 +32,6 @@ fi
 
 set -e
 set -u
-
-create_indexpage () {
-<<EOF cat >/var/www/html/index.html
-<html>
-  <head>
-    <meta http-equiv="refresh" content="1;url=/openattic" ></meta>
-  </head>
-  <body>
-    Redirecting...
-  </body>
-</html>
-EOF
-}
 
 usage () {
 	echo "Usage: $0 <command> [<args>]"
@@ -62,6 +49,7 @@ usage () {
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
 	echo "    dbdump       Create a database dump on stdout."
+	echo "    version      Returns version information."
 	echo
 	echo "Any other command will be passed as-is to the openATTIC management system,"
 	echo "which supports the commands and options listed below."
@@ -122,7 +110,20 @@ case $1 in
 		fi
 		
 		# Initialize the schema so our daemons can start
-		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		DJANGO_MIGRATE="$(su "$OAUSER" -c 'python - << EOF
+from django import VERSION
+print "1" if VERSION[:2] > (1, 6) else ""
+EOF
+'
+)"
+		if [ "$DJANGO_MIGRATE" ]
+		then
+			su "$OAUSER" -c "python manage.py migrate"
+			su "$OAUSER" -c "python manage.py loaddata */fixtures/initial_data.json"
+		else
+			su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		fi
+
 		
 		# Create the status_cache table, ignoring failures (those mean we did this before)
 		su "$OAUSER" -c 'python manage.py createcachetable status_cache >/dev/null 2>/dev/null' || /bin/true
@@ -139,11 +140,6 @@ case $1 in
 		for hook in $OADIR/*/bin/oaconfig-install.sh; do
 			source $hook
 		done
-		
-		INDEXHTML="`md5sum /var/www/html/index.html | cut -d' ' -f1`"
-		if [ "$INDEXHTML" = '74cec59a19e5d16f7cc6a2445e35fa3b' ] || [ "$INDEXHTML" = 'c32ad802df5abca941d784abf642e7fd' ]; then
-			create_indexpage
-		fi
 		
 		su "$OAUSER" -c 'python manage.py post_install'
 		
@@ -397,6 +393,20 @@ EOF
 		else
 			echo "Please install sudo for this command to work."
 		fi
+		;;
+
+	version|--version)
+ 		# Check version.txt for version
+		REL_VER_FILE="/usr/share/openattic/version.txt"
+		DEV_VER_FILE="/srv/openattic/bin/version.txt"
+		if [ -f "$DEV_VER_FILE" ]; then
+			echo "openATTIC DEV: $(grep VERSION $DEV_VER_FILE |awk '{print $3}')"
+		elif [ -f "$REL_VER_FILE" ]; then
+			echo "openATTIC version: $(grep VERSION $REL_VER_FILE |awk '{print $3}')"
+		else
+			echo "No openATTIC version file found."
+		fi
+		echo "Django version: $(python manage.py --version)"
 		;;
 
 	*)

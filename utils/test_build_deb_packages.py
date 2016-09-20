@@ -22,7 +22,14 @@ process = Process(verbosity=VERBOSITY_VERBOSE)
 home_dir = os.path.expanduser('~')
 build_deb_packages_py_path = os.path.join(os.path.dirname(sys.argv[0]), 'build_deb_packages.py')
 tarballs = glob.glob(os.path.join(home_dir, 'src', '*.tar.bz2'))
+print 'Creating packages of the following archives:'
 for tarball in tarballs:
+    print '\t{}'.format(tarball)
+print
+for i, tarball in enumerate(tarballs):
+    msg = 'Creating package {} of {}'.format(i+1, len(tarballs))
+    print msg
+    print '=' * len(msg) + '\n'
     process.run(['/usr/bin/python', build_deb_packages_py_path, tarball])
     print
 

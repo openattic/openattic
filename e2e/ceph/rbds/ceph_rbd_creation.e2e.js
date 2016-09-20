@@ -1,96 +1,72 @@
 var helpers = require('../../common.js');
 var rbdCommons = require('./cephRbdCommon.js');
 
-describe('should test the ceph rbd creation and deletion', function(){
+describe('ceph rbd creation and deletion', function(){
   var rbdProperties = new rbdCommons();
+  var featureRbdName = "e2eFeatures";
 
   beforeAll(function(){
     helpers.login();
     rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
-    rbdProperties.selectCluster.click();
-  });
-
-  beforeEach(function(){
-    rbdProperties.addButton.click();
   });
 
   var objSizeTests = [
-    '4.00 kB',
-    '8.00 kB',
-    '16.00 kB',
-    '32.00 kB',
-    '64.00 kB',
-    '128.00 kB',
-    '256.00 kB',
-    '512.00 kB',
-    '1.00 MB',
-    '2.00 MB',
-    '4.00 MB',
-    '8.00 MB',
-    '16.00 MB',
-    '32.00 MB'
+    [4, "kB"],
+    [8, 'kB'],
+    [16, 'kB'],
+    [32, 'kB'],
+    [64, 'kB'],
+    [128, 'kB'],
+    [256, 'kB'],
+    [512, 'kB'],
+    [1, 'MB'],
+    [2, 'MB'],
+    [4, 'MB'],
+    [8, 'MB'],
+    [16, 'MB'],
+    [32, 'MB']
   ];
 
-  var deleteRbd = function(rbdName){
-    element(by.css('.tc_menudropdown')).click();
-    element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('input.enteredName')).sendKeys('yes');
-    element(by.id('bot2-Msg1')).click();
-    rbd = element(by.cssContainingText('tr', rbdName));
-    expect(rbd.isPresent()).toBe(false);
-  };
-
-  var createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
-    rbdObjSize = rbdObjSize || "32.00 MB";
-    rbdProperties.name.clear();
-    rbdProperties.name.sendKeys(rbdName);
-    rbdProperties.size.clear();
-    rbdProperties.size.sendKeys(65);
-    rbdProperties.objSize.clear();
-    rbdProperties.objSize.sendKeys(rbdObjSize);
-    element(by.className('tc_submitButton')).click();
-    var rbd = element(by.cssContainingText('tr', rbdName));
-    expect(rbd.isDisplayed()).toBe(true);
- 
-    rbd.click();
-    expect(element(by.cssContainingText('dd', rbdObjSize)).isDisplayed()).toBe(true);
-    if(rbdFeatureCase){
-      var keys = Object.keys(rbdProperties.formElements.features.items);
-      rbdFeatureCase.forEach(function(state, index){ // check the features
-        if(state === 1){
-          expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
-        }
-      });
-    }
-  };
-
-  objSizeTests.forEach(function(objSize, index){
-    it("should create a rbd with this object size: " + objSize, function(){
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    objSizeTests.forEach(function(sizeArr, index){
+      var objSize = sizeArr[0] + '.00 ' + sizeArr[1];
       var rbdName = "e2eObjectSize" + index;
-      createRbd(rbdName, objSize);
-      deleteRbd(rbdName);
+      it('should create a rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
+          + '" in cluster "' + cluster.name + '"', function(){
+        rbdProperties.selectClusterAndPool(cluster, pool);
+        rbdProperties.createRbd(rbdName, objSize);
+      });
+      it('should delete created rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
+        + '" in cluster "' + cluster.name + '"', function(){
+        rbdProperties.deleteRbd(rbdName);
+      });
     });
   });
 
-  rbdProperties.expandedFeatureCases.forEach(function(testCase){
-    var keys = Object.keys(rbdProperties.formElements.features.items);
-    var values = rbdProperties.formElements.features.items;
-    it('should test the following case: [' + testCase + ']',function(){
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
-      for (var i=0; i<7; i++){ // uncheck all boxes
-        rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
-      }
-      testCase.forEach(function(state, index){ // check the features
-        rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    rbdProperties.expandedFeatureCases.forEach(function(testCase){
+      var keys = Object.keys(rbdProperties.formElements.features.items);
+      var values = rbdProperties.formElements.features.items;
+      it('should create a rbd with the following expert option case: "[' + testCase + ']" options on pool "' + pool.name
+          + '" in cluster "' + cluster.name + '"', function(){
+        rbdProperties.selectClusterAndPool(cluster, pool);
+        for (var i=0; i<7; i++){ // uncheck all boxes
+          rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
+        }
+        testCase.forEach(function(state, index){ // check the features
+          rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
+        });
+        rbdProperties.createRbd(featureRbdName, null, testCase);
       });
-      createRbd("e2eFeatures", null, testCase);
-      deleteRbd("e2eFeatures");
-    })
+      it('should delete created rbd with the following expert option case: "[' + testCase + ']" options on pool "' +
+        pool.name + '" in cluster "' + cluster.name + '"', function(){
+        rbdProperties.deleteRbd(featureRbdName);
+      })
+    });
   });
 
   afterAll(function(){
-    console.log('ceph_rbds -> ceph_rbds_form.e2e.js');
+    console.log('ceph_rbd_creation -> ceph_rbd_creation.e2e.js');
   });
 });

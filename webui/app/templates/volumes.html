@@ -53,13 +53,13 @@
                 </th>
                 <th sortfield="name" sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
                 <th sortfield="megs" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
-                <th ng-show="columns['Used']">Used</th>
-                <th ng-show="columns['Status']">Status</th>
+                <th sortfield="usage.used" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
+                <th sortfield="status.status" sortdir="asc" sortheaderclass ng-show="columns['Status']">Status</th>
                 <th ng-show="columns['Protection']">Protection</th>
-                <th ng-show="columns['Type']">Type</th>
+                <th sortfield="type.name" sortdir="asc" sortheaderclass ng-show="columns['Type']">Type</th>
                 <th ng-show="columns['Path']">Path</th>
-                <th ng-show="columns['Host']">Host</th>
-                <th ng-show="columns['Created']">Created</th>
+                <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
+                <th sortfield="createdate" sortdir="asc" sortheaderclass ng-show="columns['Created']">Created</th>
             </tr>
         </thead>
         <tbody>

@@ -27,6 +27,8 @@ class QuerySetTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(QuerySetTestCase, cls).setUpClass()
+
         class CephClusterMock(NodbModel):
 
             @staticmethod
@@ -58,7 +60,6 @@ class QuerySetTestCase(TestCase):
         cls.ordering_a = OrderTestModel(x=1, y=1)
         cls.ordering_b = OrderTestModel(x=1, y=2)
         cls.ordering_c = OrderTestModel(x=2, y=2)
-
 
         cls.order_qs = NodbQuerySet(OrderTestModel)
 
@@ -142,7 +143,8 @@ class QuerySetTestCase(TestCase):
 
         def eq_order(expected, *order):
             ordered = self.order_qs.order_by(*order)
-            self.assertEqual([(obj.x, obj.y) for obj in ordered], [(obj.x, obj.y) for obj in expected])
+            self.assertEqual([(obj.x, obj.y) for obj in ordered],
+                             [(obj.x, obj.y) for obj in expected])
 
         eq_order([self.ordering_a, self.ordering_b, self.ordering_c], "x", "y")
         eq_order([self.ordering_b, self.ordering_a, self.ordering_c], "x", "-y")
@@ -273,3 +275,18 @@ class LazyPropertyTest(TestCase):
         self.assertIn('e', o1.__dict__)
 
 
+class NodbModelTest(TestCase):
+
+    class SimpleModel(NodbModel):
+        a = models.IntegerField(primary_key=True)
+        b = models.IntegerField()
+
+        @staticmethod
+        def get_all_objects(context, query):
+            raise NotImplementedError()
+
+    def test_make_model_args(self):
+        args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3))
+        self.assertEqual(args, dict(a=1))
+        args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3), fields_force_none=['b'])
+        self.assertEqual(args, dict(a=1, b=None))

@@ -16,8 +16,8 @@
 
 from django.dispatch import Signal
 
-pre_install     = Signal()
-post_install    = Signal()
+pre_install = Signal()
+post_install = Signal()
 
-pre_uninstall   = Signal()
-post_uninstall  = Signal()
+pre_uninstall = Signal()
+post_uninstall = Signal()

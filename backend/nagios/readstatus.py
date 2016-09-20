@@ -24,6 +24,7 @@ except ImportError:
 else:
     HAVE_C_PARSER = True
 
+
 class NagiosState(object):
     """ Dict-like class to access Nagios's status information.
 
@@ -31,11 +32,11 @@ class NagiosState(object):
         check if the file has been updated in the meantime before returning data.
     """
     def __init__(self, statfile="/var/cache/nagios3/status.dat"):
-        self.statfile    = statfile
-        self.timestamp   = 0
-        self.nagstate    = None
+        self.statfile = statfile
+        self.timestamp = 0
+        self.nagstate = None
         self._servicemap = {}
-        self.lock        = Lock()
+        self.lock = Lock()
 
     def __getitem__(self, name):
         self.update()
@@ -86,12 +87,12 @@ class NagiosState(object):
         result = {}
         self._servicemap = {}
 
-        currsect  = ''
-        currname  = ''
+        currsect = ''
+        currname = ''
         currvalue = ''
         curresult = {}
 
-        with open( self.statfile, "rb" ) as nag:
+        with open(self.statfile, "rb") as nag:
             while True:
                 buf = nag.read(4096)
                 if not buf:
@@ -130,7 +131,8 @@ class NagiosState(object):
                             if currsect == "servicestatus":
                                 if curresult["host_name"] not in self._servicemap:
                                     self._servicemap[curresult["host_name"]] = {}
-                                self._servicemap[curresult["host_name"]][curresult["service_description"]] = curresult
+                                self._servicemap[curresult["host_name"]][
+                                    curresult["service_description"]] = curresult
                             curresult = {}
                             currsect = ''
                         else:
@@ -142,7 +144,7 @@ class NagiosState(object):
                         elif char == '\n':
                             state = ST_BEGINVALUE
                             curresult[currname] = currvalue
-                            currname  = ''
+                            currname = ''
                             currvalue = ''
                         else:
                             currvalue += char

@@ -18,12 +18,15 @@ import mock
 import tempfile
 import json
 
+from ceph.restapi import CephPoolSerializer
 from django.test import TestCase
 
 import ceph.models
 import ceph.librados
 
 from ceph.librados import Keyring, undoable, undo_transaction
+from ceph.tasks import track_pg_creation
+from ifconfig.models import Host
 
 
 def open_testdata(name):
@@ -77,6 +80,10 @@ class KeyringTestCase(TestCase):
 
 
 class CephPoolTestCase(TestCase):
+    def setUp(self):
+        if Host.objects.get_current() is None:
+            Host.insert_current_host()
+
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
@@ -366,3 +373,45 @@ class CephPgTest(TestCase):
         query = ceph.models.CephPg.objects.filter(osd_id__exact=42).query
         cmd = ceph.models.CephPg.get_mon_command_by_query(query)
         self.assertEqual(cmd,  ('pg ls-by-osd', {'osd': '42'}))
+
+
+class TrackPgCreationTest(TestCase):
+    def test_percent(self):
+        data = \
+            [
+                (0, 10, 5, 50),
+                (0, 10, 0, 0),
+                (0, 10, 10, 100),
+                (10, 20, 10, 0),
+                (10, 20, 15, 50),
+                (10, 20, 20, 100),
+                (10, 20, 0, 0),
+                (10, 20, 30, 100),
+            ]
+        for before, after, current, percent in data:
+            result = track_pg_creation.percent('', 0, before, after, current)
+            self.assertEqual(result, percent)
+
+
+class CephPoolSerializerTest(TestCase):
+    minimal_replicated_pool = {'name': 'pool_name', 'pg_num': 5,
+                               'type': 'replicated', 'crush_ruleset': 0, 'size': 1, 'min_size': 1}
+    minimal_ersaure_pool = {'name': 'erasure_coded_pool', 'erasure_code_profile': 'default',
+                            'type': 'erasure', 'pg_num': 3, 'crush_ruleset': 0}
+
+    @mock.patch('ceph.models.CephErasureCodeProfile.get_all_objects')
+    def test_minimum_valid_pools(self, cecpo_mock):
+
+        profile = ceph.models.CephErasureCodeProfile(name='default', m=1, k=1)
+        cecpo_mock.return_value = [profile]
+
+        for pool in [self.minimal_replicated_pool, self.minimal_ersaure_pool]:
+
+            s = CephPoolSerializer(data=pool)
+            self.assertTrue(s.is_valid(), 'pool={} errors={}'.format(pool, s.errors))
+
+            for key in pool.keys():
+                obj = {k: v for k, v in pool.items() if k != key}
+                s = CephPoolSerializer(data=obj)
+                self.assertFalse(s.is_valid(), 'key={} pool={}'.format(key, obj))
+                self.assertIn(key, s.errors)

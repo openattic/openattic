@@ -63,12 +63,14 @@ the following configuration changes should be performed:
 #. Install and configure an NTP daemon on every host, so the clocks on all
    these nodes are in sync.
 
-#. HTTP access to the Web UI might be blocked by the default firewall
-   configuration. For example, in order to allow external HTTP requests on an
-   EL7 system, execute the following commands::
+#. HTTP access and other things might be blocked by the default firewall
+   configuration. For example on EL7 system, execute the following commands::
 
-     # firewall-cmd --zone=public --add-port=80/tcp --permanent
-     # systemctl restart firewalld
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=http
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=samba
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=nfs
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=iscsi-target
+     # firewall-cmd --reload
 
 Consult your Linux distribution's documentation for further details on how to
 make these changes.
@@ -81,7 +83,9 @@ Basic Storage Configuration
 .. note::
   If you only want to use |oA| for managing and monitoring a Ceph cluster, you
   can skip the storage configuration. No additional local disks or storage
-  pools are required for performing this functionality.
+  pools are required for performing this functionality. After performing the
+  basic |oA| software installation, follow the steps outlined in
+  :ref:`enabling_ceph_support` to make your Ceph cluster known to |oA|.
 
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
 group or a ZFS zpool) for creating storage volumes. In the following chapters,
@@ -250,6 +254,11 @@ After enabling the apt repository, run the following commands to install the
   # apt-get install openattic
 
 .. note::
+  Installation of the ``openattic-gui`` package will replace the
+  distribution's default ``index.html`` page in the Apache web server's
+  document root with a redirect page to the |oA| web interface.
+
+.. note::
   For **Ubuntu 14.04 LTS** it is necessary to install some extra package in
   order to get the ``lio-utils`` package working which is used by
   ``openattic-module-lio`` (installed by the base openattic package). You may
@@ -348,7 +357,12 @@ It can be installed with the following command::
 
   # yum install openattic-gui
 
-Configure pnp4nagios
+.. note::
+  Installation of the ``openattic-gui`` package will install an ``index.html``
+  page in the Apache web server's document root that will redirect requests to
+  the |oA| web interface.
+
+Configure PNP4Nagios
 --------------------
 
 |oA| uses `Nagios <https://www.nagios.org/>`_ and the `PNP4Nagios

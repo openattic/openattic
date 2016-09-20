@@ -1,14 +1,15 @@
 <div class="openattic-modal-header">
     <span>Resize volume</span>
 </div>
-<div class="openattic-modal-content">
-    <p>You are about to resize the volume <strong>{{volume.name}}</strong>.</p>
-    <p>
-        To confirm, please click <kbd>Resize volume</kbd>, or cancel and return to the page.<br>
-        The maximum volume size can be found below.
-    </p>
 
-    <form name="input.resizeForm" role="form" novalidate>
+<form name="input.resizeForm" role="form" novalidate>
+    <div class="openattic-modal-content">
+        <p>You are about to resize the volume <strong>{{volume.name}}</strong>.</p>
+        <p>
+            To confirm, please click <kbd>Resize volume</kbd>, or cancel and return to the page.<br>
+            The maximum volume size can be found below.
+        </p>
+
         <div class="form-group"
              ng-class="{'has-error': (submitted || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}">
             <input type="text" class="form-control" id="newsize" name="newsize" placeholder="{{volume.usage.size_text}}"
@@ -30,7 +31,9 @@
 
             <p>{{pool.usage.max_new_fsv_text}} free</p>
         </div>
+    </div>
 
+    <div class="openattic-modal-footer">
         <div class="button-group text-right">
             <button id="bot2-Msg1" class="btn btn-primary btn-sm"
                     ng-click="resize()" ng-disabled="input.resizeForm.$invalid">
@@ -38,5 +41,5 @@
             </button>
             <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
