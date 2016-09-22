@@ -18,6 +18,8 @@
 import os
 import sys
 import django
+import json
+import time
 
 from optparse import OptionParser
 from configobj import ConfigObj
@@ -51,13 +53,30 @@ def main():
         parser.print_usage()
         sys.exit(3)
 
-    tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
-        args[0], args[1], args[2], [TaskQueue.STATUS_FINISHED]))
+    if len(TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+            args[0], args[1], args[2]), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) \
+            == 0:
+        get_rbd_performance_data.delay(args[0], args[1], args[2])
 
-    for task in tasks:
-        print task.result
-        task.delete()
-    sys.exit(0)
+    finished_tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED])
+    finished_tasks = list(finished_tasks)
+
+    if len(finished_tasks) > 0:
+        latest_task = finished_tasks.pop()
+
+        for task in finished_tasks:
+            task.delete()
+
+        if json.loads(latest_task.result) == "CIRITICAL":
+            sys.exit(2)
+
+        last_modified = int(time.mktime(latest_task.last_modified.timetuple())*1000)
+        print "{} last_modified={}".format(json.loads(latest_task.result), last_modified)
+        sys.exit(0)
+    else:
+        print "UNKNOWN"
+        sys.exit(3)
 
 if __name__ == "__main__":
     main()
