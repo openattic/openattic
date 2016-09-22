@@ -23,6 +23,8 @@ Version 2.0.15 (not released yet):
   configuration (OP-1320)
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
+* Packaging: Allow to override the default GPG key or disable the signing
+  completely using `build_deb_packages.py` (OP-1435) 
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)  
