@@ -35,7 +35,7 @@ def set_pgs(fsid, pool_id, pgs):
 
 @task(description='Setting number of PGs to {3}',
       percent=lambda fsid, poolid, before, after, current=None: float(
-    (current or 0) - before) / float(after - before) * 100)
+          (current or 0) - before) / float(after - before) * 100)
 def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_current_active=None):
     """
     :type fsid: str
@@ -57,8 +57,8 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_curren
         creating = pg_in_state('creating')
 
         logger.info(
-            'before={} after={} all={} active={} creating={}'.format(pg_count_before, pg_count_after,
-                                                                     len(pgs), active, creating))
+            'before={} after={} all={} active={} creating={}'.format(
+                pg_count_before, pg_count_after, len(pgs), active, creating))
 
         if active >= pg_count_after:
             return
