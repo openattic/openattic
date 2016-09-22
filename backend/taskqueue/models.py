@@ -136,9 +136,9 @@ class TaskQueue(Model):
                                                 json.dumps(task.args), json.dumps(task.kwargs))
         if task_status:
             status = TaskQueue.in_status_q(task_status)
-            return TaskQueue.objects.filter(status, task=task_definition).order_by('id')
+            return TaskQueue.objects.filter(status, task=task_definition).order_by('last_modified')
         else:
-            return TaskQueue.objects.filter(task=task_definition).order_by('id')
+            return TaskQueue.objects.filter(task=task_definition).order_by('last_modified')
 
     def __unicode__(self):
         return str(self.pk)
