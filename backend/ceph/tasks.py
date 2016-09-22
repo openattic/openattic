@@ -13,6 +13,7 @@
  *  GNU General Public License for more details.
 """
 import logging
+import time
 
 from taskqueue.models import task
 from ceph import librados
@@ -64,3 +65,21 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_curren
             return
         else:
             return track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, active)
+
+
+@task(description='Get RBD performance data of cluster \'{0}\', pool \'{1}\' and RBD image \'{2}\'')
+def get_rbd_performance_data(fsid, pool_name, image_name):
+    from ceph.models import RadosClientManager
+
+    try:
+        start_time = time.time()
+        rados = RadosClientManager()
+        api = librados.RbdApi(rados[fsid])
+        disk_usage = api.image_disk_usage(pool_name, image_name)
+        exec_time = time.time() - start_time
+
+        return "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms".format(
+            disk_usage["used_size"], disk_usage["used_size"], disk_usage["provisioned_size"],
+            round(exec_time * 1000, 2))
+    except:
+        return "CRITICAL"
