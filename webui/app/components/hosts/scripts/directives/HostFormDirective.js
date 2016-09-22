@@ -99,7 +99,7 @@ app.directive("hostForm", function () {
             notation: "naa.${16 or 32 characters long hexadecimal number}"
           }
         },
-        exists: "The WWN already exists, choose another one."
+        exists: "This WWN already exists, please choose another one."
       };
       $scope.wwns = [];
 
