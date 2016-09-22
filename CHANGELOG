@@ -14,6 +14,7 @@ Version 2.0.15 (not released yet):
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
+* Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
