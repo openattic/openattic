@@ -11,29 +11,88 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+
+from collections import defaultdict
+
+from django.core.exceptions import ValidationError
+
+from ceph.models import CephCluster
 from ceph_deployment import salt
 from django.db import models
+
+from exception import NotSupportedError
 from nodb.models import NodbModel, JsonField
+from utilities import aggregate_dict
+
+
+def merge_dicts_by_key(key, *lists):
+    """
+    :type key: str
+    :type lists: list[dict]
+    :rtype: list[dict]
+    """
+    d = defaultdict(dict)
+    for l in lists:
+        for elem in l:
+            d[elem[key]].update(elem)
+    return d.values()
 
 
 class CephMinion(NodbModel):
 
-    hostname = models.CharField(max_length=250, primary_key=True)
-    ip_address = models.CharField(max_length=100)
-    role = models.CharField(max_length=100)
-    cluster = models.CharField(max_length=100, blank=True, null=True)
-    fsid = models.CharField(max_length=100, blank=True, null=True)
+    hostname = models.CharField(max_length=250, primary_key=True, editable=False)
+    public_address = models.CharField(max_length=100, null=True, blank=True, editable=False)
+    cluster = models.ForeignKey(CephCluster, blank=True, null=True)
     public_network = models.CharField(max_length=100, blank=True, null=True)
-    key_accepted = models.BooleanField(default=False)
-    roles = JsonField(base_type=list, editable=False)
-    storage = JsonField(base_type=dict, editable=False)
+    cluster_network = models.CharField(max_length=100, blank=True, null=True, editable=False)
+    key_status = models.CharField(max_length=100, choices=[(c, c) for c in
+                                                           'accepted|rejected|denied|pre'.split(
+                                                               '|')])
+    roles = JsonField(base_type=list, null=True, blank=True)
+    storage = JsonField(base_type=dict, null=True, blank=True)
+    mon_initial_members = JsonField(base_type=list, editable=False, null=True, blank=True)
+    mon_host = JsonField(base_type=list, editable=False, null=True, blank=True)
 
     @staticmethod
     def get_all_objects(context, query):
         assert context is None
 
-        hosts = salt.get_config()
+        hosts = salt.get_salt_minions()
+        ceph_minions = salt.get_config()
 
-        return [CephMinion(**CephMinion.make_model_args(host))
-                for host
-                in hosts]
+        minions = merge_dicts_by_key('hostname', hosts, ceph_minions)
+
+        fields_to_force = ['public_address', 'role', 'cluster_id', 'public_network',
+                           'cluster_network', 'key_status', 'roles', 'storage', 'mon_host']
+
+        return [CephMinion(
+                     **CephMinion.make_model_args(aggregate_dict(minion, cluster_id=minion['fsid']),
+                                                  fields_force_none=fields_to_force))
+                for minion
+                in minions]
+
+    def save(self, *args, **kwargs):
+        """
+        This method implements three purposes.
+
+        1. Implements the functionality originally done by django (e.g. setting id on self)
+        2. Modify the Ceph state-machine in a sane way.
+        3. Providing a RESTful API.
+        """
+        insert = self._state.adding  # there seems to be no id field.
+        if insert:
+            raise NotSupportedError('Adding Minions is not supported.')
+
+        diff, original = self.get_modified_fields()
+        self.set_read_only_fields(original)
+
+        for key, value in diff.items():
+            if key == 'roles':
+                new_roles = set(value).difference(original.roles)
+                for role in new_roles:
+                    salt.add_role(self.hostname, role)
+            else:
+                raise ValidationError({key: 'Tried to set "{}" to "{}" on rbd "{}", which is not '
+                                            'supported'.format(key, value, self.hostname)})
+
+        super(CephMinion, self).save(*args, **kwargs)

@@ -27,6 +27,7 @@ class CephMinionViewSet(NodbViewSet):
     """
 
     serializer_class = CephMinionSerializer
+    lookup_value_regex = r'[^/]+'
 
     def get_queryset(self):
         return CephMinion.objects.all()

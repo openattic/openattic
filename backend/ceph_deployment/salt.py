@@ -11,14 +11,44 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
-import ast
+import logging
+from itertools import chain
 import os
 import subprocess
 
 import yaml
 
-cluster_dir = "/srv/pillar/ceph/cluster"
+from ceph_deployment.systemapi import salt_cmd
+from ceph_deployment.conf import settings as ceph_deployment_settings
+from systemd import get_dbus_object
+from utilities import aggregate_dict
+
+logger = logging.getLogger(__file__)
+
+
+def get_salt_minions():
+    res = salt_cmd(lambda d: d.invoke_salt_key())
+    flat = list(chain.from_iterable([
+        [
+            (hostname, key_status)
+            for hostname
+            in hostnames
+        ]
+        for key_status, hostnames
+        in res.items()
+    ]))
+    return [
+        {
+            'hostname': hostname,
+            'key_status': key_status[8:] if '_' in key_status else 'accepted'
+        }
+        for hostname, key_status
+        in flat
+    ]
+
+
+def salt_has_active_jobs():
+    return bool(get_running_jobs())
 
 
 def get_config():
@@ -36,14 +66,14 @@ def get_config():
     >>> subprocess.check_output(['salt', '*', 'pillar.items'])
 
     """
-    def fixup_minion_config(minion):
-        config = minion.values()[0]
-        config['hostname'] = minion.keys()[0]
-        return config
+    out = salt_cmd(lambda d: d.invoke_salt(['*', 'pillar.items']))
+    return [
+        aggregate_dict(data, hostname=hostname)
+        for (hostname, data)
+        in out.iteritems()
+    ]
 
-    # lines = subprocess.check_output(['salt', '--out=raw', '\'*\'', 'pillar.items'], shell=True).splitlines()
-    lines = subprocess.check_output('salt').splitlines()
-    return [fixup_minion_config(ast.literal_eval(l)) for l in lines]
+minion_roles = ['storage', 'mon', 'mds', 'rgw', 'master', 'admin']
 
 
 def add_role(minion, role):
@@ -51,26 +81,27 @@ def add_role(minion, role):
     Adds a role to a given host. E.g. "storage", "mon", "mds", "rgw"
     Ceph cluster already set up. Afterwards, also edit the stack file.
 
-    :type minion: str
+    :type minion: str | unicode
     :type role: str
     """
-    filename = "{}/{}.sls".format(cluster_dir, minion)
-    contents = {}
-    if os.path.isfile(filename):
-        with open(filename) as yml:
-            contents = yaml.safe_load(yml)
+    assert role in minion_roles
+    filename = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'cluster',
+                            minion + '.sls')
 
-    if 'role' not in contents:
-        contents['role'] = [role]
-    elif role not in contents['role']:
-        contents['role'].append(role)
+    with open(filename) as f:
+        contents = yaml.safe_load(f)
+
+    if 'roles' not in contents:
+        contents['roles'] = [role]
+    elif role not in contents['roles']:
+        contents['roles'].append(role)
     else:
-        return # already present
+        return  # already present
 
     dumper = yaml.SafeDumper
     dumper.ignore_aliases = lambda self, data: True
-    with open(filename, "w") as yml:
-        yml.write(yaml.dump(contents, Dumper=dumper, default_flow_style=False))
+    content = yaml.dump(contents, Dumper=dumper, default_flow_style=False)
+    get_dbus_object("/ceph_deployment").write_pillar_file(filename, content)
 
 
 def set_storage_configuration(hostname, storage_configuration):
@@ -107,7 +138,7 @@ def get_running_jobs():
     """
     Returns a list of all jobs that are running at the moment.
     """
-    pass
+    return salt_cmd(lambda d: d.invoke_salt_run(['jobs.active']))
 
 
 def register_salt_eventbus_callback(callback):

@@ -745,14 +745,6 @@ class CephPg(NodbModel):
         return ret
 
 
-def aggregate_dict(*args, **kwargs):
-    ret = {}
-    for arg in args:
-        ret.update(arg)
-    ret.update(**kwargs)
-    return ret
-
-
 class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448

@@ -72,3 +72,16 @@ def mk_method_field_params(field_name):
         return []
     else:
         return ['get_{}'.format(field_name)]
+
+
+def aggregate_dict(*args, **kwargs):
+    """
+    >>> assert aggregate_dict({1:2}, {3:4}, a=5) == {1:2, 3:4, 'a':5}
+
+    :rtype: dict
+    """
+    ret = {}
+    for arg in args:
+        ret.update(arg)
+    ret.update(**kwargs)
+    return ret

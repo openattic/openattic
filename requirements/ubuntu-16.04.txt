@@ -31,3 +31,4 @@ traitlets==4.2.1
 wheel==0.24.0
 docopt==0.6.2
 image==1.5.3
+pyyaml
