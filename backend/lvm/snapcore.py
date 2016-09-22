@@ -9,6 +9,9 @@ from django.db import models
 
 from systemd.procutils import invoke
 
+from utilities import get_related_model
+
+
 def process_config(conf_dict, snapconf):
     if len(conf_dict["data"]["prescript"]) > 0:
         invoke(shlex.split(conf_dict["data"]["prescript"]))
@@ -36,10 +39,11 @@ def process_config(conf_dict, snapconf):
     if len(conf_dict["data"]["postscript"]) > 0:
         invoke(shlex.split(conf_dict["data"]["postscript"]))
 
+
 class Container(object):
     def __init__(self, data, model_instance):
-        self.data           = data
-        self.children       = []
+        self.data = data
+        self.children = []
         self.model_instance = model_instance
 
     def get_targets(self):
@@ -51,9 +55,10 @@ class Container(object):
                 targets.append(child)
         return targets
 
+
 class Target(object):
     def __init__(self, data, model_instance):
-        self.data           = data
+        self.data = data
         self.model_instance = model_instance
         self.snapshot_state = None
 
@@ -64,24 +69,28 @@ class Target(object):
         if self.snapshot_state is not None:
             self.model_instance.delete_snapshot(self.snapshot_state)
 
+
 class PluginLibrary(type):
     """ Meta class that keeps a library of defined plugins. """
     plugins = {}
 
-    def __init__( cls, name, bases, attrs ):
-        type.__init__( cls, name, bases, attrs )
+    def __init__(cls, name, bases, attrs):
+        type.__init__(cls, name, bases, attrs)
         if name != "Plugin":
-            PluginLibrary.plugins[ cls.plugin_name ] = cls
+            PluginLibrary.plugins[cls.plugin_name] = cls
+
 
 class Plugin(object):
     __metaclass__ = PluginLibrary
     plugin_name = "INITIALIZE ME"
-    models      = "models"
+    models = "models"
 
     def restore_config(self, snapconf):
         conf_dict = {}
+
         def _get_conf_obj(target_obj, modelstack):
-            # modelstack enhaelt alle objektklassen UEBER target_obj, NICHT die von target_obj selbst
+            # modelstack enhaelt alle objektklassen UEBER target_obj, NICHT die von target_obj
+            # selbst
             if not modelstack:
                 # target_obj isn Host, also conf_dict[host] anlegen und return
                 if target_obj.id not in conf_dict:
@@ -95,7 +104,8 @@ class Plugin(object):
                     containermodel, containerconfmodel = modelstack[-1]
                 else:
                     containermodel = modelstack[-1]
-                cnt = _get_conf_obj(self.find_foreign_object(target_obj, containermodel), modelstack[:-1])
+                cnt = _get_conf_obj(self.find_foreign_object(target_obj, containermodel),
+                                    modelstack[:-1])
                 if target_obj.name not in cnt["children"]:
                     cnt["children"][target_obj.name] = {
                         "data": {},
@@ -120,7 +130,8 @@ class Plugin(object):
     def save_config(self, conf_dict, snapconf):
         def _save_items(confobj, model_instance, confmodel, modelstack):
             if confmodel is not None:
-                if confobj["data"] is not None and "consistency" in confobj["data"] and confobj["data"]["consistency"]:
+                if confobj["data"] is not None and "consistency" in confobj["data"] and \
+                        confobj["data"]["consistency"]:
                     conf_rel_obj = self.find_relation(model_instance, confmodel)
                     conf_instance = conf_rel_obj.get_or_create(snapshot_conf=snapconf)[0]
                     conf_instance.consistency = confobj["data"]["consistency"]
@@ -164,7 +175,8 @@ class Plugin(object):
                 rel_obj = self.find_relation(model_instance, child_model)
 
                 if len(modelstack) == 1:
-                    child_conf = model_instance.get_complete_childlist(confobj["children"], merged_data)
+                    child_conf = model_instance.get_complete_childlist(confobj["children"],
+                                                                       merged_data)
                 else:
                     child_conf = confobj["children"]
 
@@ -185,7 +197,7 @@ class Plugin(object):
 
     def find_foreign_object(self, obj, rel_model):
         for field in obj._meta.fields:
-            if isinstance(field, models.ForeignKey) and field.related.parent_model == rel_model:
+            if isinstance(field, models.ForeignKey) and get_related_model(field) == rel_model:
                 return getattr(obj, field.name)
         raise KeyError("No foreignkey from '%r' to '%r' found!" % (obj, rel_model))
 

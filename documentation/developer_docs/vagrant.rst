@@ -18,15 +18,22 @@ For example, KVM/libvirt can be installed on Ubuntu by running::
     sudo apt-get install qemu-kvm
 
 Please follow the official documentation for
-`installing Vagrant <https://www.vagrantup.com/docs/installation/>`_. After installing Vagrant,
-install the optional ``vagrant-cachier`` plugin for caching packages that are downloaded while
-setting up the development environment::
+`installing Vagrant <https://www.vagrantup.com/docs/installation/>`_.
+
+After installing Vagrant, install the ``vagrant-cachier`` plugin for caching
+packages that are downloaded while setting up the development environment::
 
     vagrant plugin install vagrant-cachier
 
 The ``vagrant-libvirt`` plugin is required when using KVM on Linux::
 
     vagrant plugin install vagrant-libvirt
+
+If you're using VirtualBox on your host operating system, the
+``vagrant-vbguest`` plugin enables guest support for some VirtualBox features
+like shared folders::
+
+    vagrant plugin install vagrant-vbguest
 
 .. note::
 
@@ -65,18 +72,25 @@ virtual machine at ``~/openattic``::
 Then, start your browser an open the URL as shown in the last lines of the log output of
 ``vagrant up``.
 
-SUSE vs Debian
---------------
+Choosing a different Linux distribution
+---------------------------------------
 
 Per default, the VM is based on OpenSUSE, but developing |oA| based on a ``debian/jessie64``
-`Vagrant box <https://www.vagrantup.com/docs/boxes.html>`_ is also supported. To run a Debian VM,
-run::
+`Vagrant box <https://www.vagrantup.com/docs/boxes.html>`_ is also supported, by setting
+the environment variable ``DISTRO``. To run a Debian VM, run::
 
     DISTRO=debian vagrant up
 
 or using KVM/libvirt::
 
     DISTRO=debian vagrant up --provider libvirt
+
+.. note::
+    On a Windows host system using Windows Powershell, the environment variable can be
+    defined as follows::
+
+        $env:DISTRO="debian"
+        vagrant up
 
 Debugging |oA| with PyCharm Professional
 ----------------------------------------

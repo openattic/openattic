@@ -16,6 +16,7 @@
 }
 
 /var/log/openattic/openattic.log {
+  create 660 openattic openattic
   rotate 12
   monthly
   compress

@@ -23,7 +23,7 @@ keeping an eye on the state of the whole system, being able to access any other
 piece of information necessary.
 
 Please check out
-`Django at a glance <https://docs.djangoproject.com/en/1.6/intro/overview/>`_
+`Django at a glance <https://docs.djangoproject.com/en/1.7/intro/overview/>`_
 for more information.
 
 Filesystem API

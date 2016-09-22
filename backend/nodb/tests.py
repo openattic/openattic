@@ -27,6 +27,8 @@ class QuerySetTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(QuerySetTestCase, cls).setUpClass()
+
         class CephClusterMock(NodbModel):
 
             @staticmethod
@@ -58,7 +60,6 @@ class QuerySetTestCase(TestCase):
         cls.ordering_a = OrderTestModel(x=1, y=1)
         cls.ordering_b = OrderTestModel(x=1, y=2)
         cls.ordering_c = OrderTestModel(x=2, y=2)
-
 
         cls.order_qs = NodbQuerySet(OrderTestModel)
 
@@ -142,7 +143,8 @@ class QuerySetTestCase(TestCase):
 
         def eq_order(expected, *order):
             ordered = self.order_qs.order_by(*order)
-            self.assertEqual([(obj.x, obj.y) for obj in ordered], [(obj.x, obj.y) for obj in expected])
+            self.assertEqual([(obj.x, obj.y) for obj in ordered],
+                             [(obj.x, obj.y) for obj in expected])
 
         eq_order([self.ordering_a, self.ordering_b, self.ordering_c], "x", "y")
         eq_order([self.ordering_b, self.ordering_a, self.ordering_c], "x", "-y")

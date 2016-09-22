@@ -26,6 +26,7 @@ import ceph.librados
 
 from ceph.librados import Keyring, undoable, undo_transaction
 from ceph.tasks import track_pg_creation
+from ifconfig.models import Host
 
 
 def open_testdata(name):
@@ -79,6 +80,10 @@ class KeyringTestCase(TestCase):
 
 
 class CephPoolTestCase(TestCase):
+    def setUp(self):
+        if Host.objects.get_current() is None:
+            Host.insert_current_host()
+
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)

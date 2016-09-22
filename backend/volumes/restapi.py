@@ -30,12 +30,14 @@ from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
 
+from utilities import get_request_query_params, mk_method_field_params, get_request_data
 
 # filter queryset by...
 # * is not a physical block device and
 # * (has an FSV or a BV) and
 # * is not a snapshot and is not named '.snapshots' and
 # * does not have an upper volume
+
 VOLUME_FILTER_Q = \
     Q(physicalblockdevice__isnull=True) & \
     Q(Q(filesystemvolume__isnull=False) | Q(blockvolume__isnull=False)) & \
@@ -62,8 +64,8 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a disk. """
 
     url = serializers.HyperlinkedIdentityField(view_name="disk-detail")
-    status = serializers.SerializerMethodField("get_status")
-    size = serializers.SerializerMethodField("get_size")
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
+    size = serializers.SerializerMethodField(*mk_method_field_params('size'))
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
@@ -76,6 +78,10 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items()
                               if value is not None]))
         return data
+
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
 
     class Meta:
         model = models.StorageObject
@@ -141,8 +147,8 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
     filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
-    usage = serializers.SerializerMethodField("get_usage")
-    status = serializers.SerializerMethodField("get_status")
+    usage = serializers.SerializerMethodField(*mk_method_field_params('usage'))
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
 
     class Meta:
         model = models.StorageObject
@@ -159,6 +165,10 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items()
                               if value is not None]))
         return data
+
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
 
     def get_usage(self, obj):
         return obj.get_volumepool_usage()
@@ -185,8 +195,9 @@ class PoolViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         vp_so = models.create_volumepool(
             [models.StorageObject.objects.get(id=disk_id)
-                for disk_id in request.DATA.get("disks", [])],
-            dict(request.DATA.get('options', {}), name=request.DATA["name"]))
+                for disk_id in get_request_data(request).get("disks", [])],
+            dict(get_request_data(request).get('options', {}),
+                 name=get_request_data(request)["name"]))
         serializer = PoolSerializer(vp_so, many=False, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -297,17 +308,18 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="volume-detail")
     storage = relations.HyperlinkedIdentityField(view_name="volume-storage")
     snapshots = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
-    snapshot = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
+
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True,
                                                     source="source_pool.storageobj")
-    usage = serializers.SerializerMethodField("get_usage")
-    status = serializers.SerializerMethodField("get_status")
-    upper = relations.HyperlinkedRelatedField(view_name="volume-detail")
+    usage = serializers.SerializerMethodField(*mk_method_field_params('usage'))
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
+    upper = relations.HyperlinkedRelatedField(view_name="volume-detail",
+                                              queryset=models.StorageObject.objects.all())
 
     class Meta:
         model = models.StorageObject
         fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage',
-                  'status', 'is_protected', 'upper')
+                  'status', 'is_protected', 'upper', 'storage')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -328,6 +340,10 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
             data[flag] = True
         return data
 
+    def to_representation(self, instance):
+        """DRF 3: `to_native` was replaced by `to_representation`"""
+        return self.to_native(instance)
+
     def get_usage(self, obj):
         return obj.get_volume_usage()
 
@@ -338,6 +354,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 class SnapshotSerializer(VolumeSerializer):
     """ Serializer for a Snapshot. """
     url = serializers.HyperlinkedIdentityField(view_name="snapshot-detail")
+    snapshot = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
 
     class Meta:
         model = models.StorageObject
@@ -352,13 +369,14 @@ class SnapshotViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
     def create(self, request, *args, **kwargs):
-        volume_so = self.origin.create_snapshot(request.DATA["name"], request.DATA["megs"], {})
+        volume_so = self.origin.create_snapshot(get_request_data(request)["name"],
+                                                get_request_data(request)["megs"], {})
         serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
-        options = {"name": request.DATA["name"]}
+        options = {"name": get_request_data(request)["name"]}
 
         storageobj = self.get_object()
         clone = storageobj.clone(None, options)
@@ -385,7 +403,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
     def filter_queryset(self, queryset):
-        filter_value = self.request.QUERY_PARAMS.get('upper__isnull')
+        filter_value = get_request_query_params(self.request).get('upper__isnull')
         if filter_value:
             if filter_value.lower() == 'true':
                 filter = True
@@ -393,7 +411,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
                 filter = False
             queryset = queryset.filter(upper__isnull=filter)
 
-        filter_value = self.request.QUERY_PARAMS.get('upper__id')
+        filter_value = get_request_query_params(self.request).get('upper__id')
         if filter_value:
             queryset = queryset.filter(upper__id=filter_value)
 
@@ -401,7 +419,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
-        options = {"name": request.DATA["name"]}
+        options = {"name": get_request_data(request)["name"]}
 
         storageobj = self.get_object()
         clone = storageobj.clone(None, options)
@@ -424,38 +442,40 @@ class VolumeViewSet(viewsets.ModelViewSet):
         return Response(models.get_storage_tree(self.get_object().authoritative_obj))
 
     def create(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.all_objects.get(id=request.DATA["source_pool"]["id"])
+        storageobj = models.StorageObject.all_objects.get(
+            id=get_request_data(request)["source_pool"]["id"])
 
-        volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {
+        volume = storageobj.create_volume(get_request_data(request)["name"],
+                                          get_request_data(request)["megs"], {
             "owner": request.user,
             "fswarning": 75,
             "fscritical": 85,
-            "filesystem": request.DATA.get("filesystem", None),
-            "is_protected": request.DATA.get('is_protected', False)
+            "filesystem": get_request_data(request).get("filesystem", None),
+            "is_protected": get_request_data(request).get('is_protected', False)
             })
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
+        storageobj = models.StorageObject.objects.get(id=get_request_data(request)["id"])
 
-        if "filesystem" in request.DATA:
-            storageobj.create_filesystem(request.DATA["filesystem"], {
+        if "filesystem" in get_request_data(request):
+            storageobj.create_filesystem(get_request_data(request)["filesystem"], {
                 "owner": request.user,
                 "fswarning": 75,
                 "fscritical": 85,
             })
 
-        if "megs" in request.DATA:
-            storageobj.resize(int(request.DATA["megs"]))
+        if "megs" in get_request_data(request):
+            storageobj.resize(int(get_request_data(request)["megs"]))
 
-        if "is_protected" in request.DATA:
-            storageobj.is_protected = request.DATA["is_protected"]
+        if "is_protected" in get_request_data(request):
+            storageobj.is_protected = get_request_data(request)["is_protected"]
             storageobj.save()
 
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})
-        return Response(volume.data)
+        return Response(volume.data, status=status.HTTP_200_OK)
 
 
 class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):

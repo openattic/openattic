@@ -13,7 +13,7 @@
 """
 import ast
 import json
-from itertools import product
+import logging
 
 import django
 import itertools
@@ -26,6 +26,8 @@ from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
 from django.utils.functional import cached_property
+
+logger = logging.getLogger(__file__)
 
 
 class NoDbQuery(object):
@@ -70,7 +72,10 @@ class NoDbQuery(object):
 
 class NodbQuerySet(QuerySet):
 
-    def __init__(self, model, using=None, hints=None, request=None, context=None):
+    def __init__(self, model=None, using=None, hints=None, request=None, context=None):
+        """
+        model parameter needs to be optional, as QuerySet.__deepcopy__() sets self.model afterwards.
+        """
         self.model = model
         self._context = context
         self._current = 0
@@ -185,6 +190,9 @@ class NodbQuerySet(QuerySet):
         my_clone._query = self._query.clone()
         return my_clone
 
+    def __deepcopy__(self, memo):
+        return super(NodbQuerySet, self).__deepcopy__(memo)
+
     def count(self):
         return len(self._filtered_data)
 
@@ -226,6 +234,11 @@ class NodbQuerySet(QuerySet):
 
     def __repr__(self):
         return super(NodbQuerySet, self).__repr__()
+
+    def iterator(self):
+        logger.warning(
+            '{}.iterator should only be access when running tests.'.format(self.__class__))
+        return []
 
 
 if django.VERSION[:2] == (1, 6):

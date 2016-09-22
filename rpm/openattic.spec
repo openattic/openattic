@@ -98,6 +98,7 @@ This package includes the Web UI based on AngularJS/Bootstrap.
 %package module-ceph
 Requires: ceph-common >= 10.0.0
 Requires: %{name}-base
+Requires: %{name}-module-nagios
 Requires: python-rados
 Summary: Ceph module for openATTIC
 
@@ -431,6 +432,7 @@ install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbu
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
 install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
+touch %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
 
 # configure yum repo
 install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
@@ -486,6 +488,14 @@ systemctl start httpd
 systemctl daemon-reload
 systemctl restart dbus
 systemctl restart httpd
+
+%post module-ceph
+# Add nagios user to the ceph group (OP-1320)
+if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
+  if ! groups nagios | grep -q ceph ; then
+    groupmems -g ceph -u nagios 
+  fi
+fi
 
 %post gui
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
@@ -546,6 +556,7 @@ echo ""
 %defattr(-,openattic,openattic,-)
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
+%attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_bindir}/oacli
@@ -589,6 +600,8 @@ echo ""
 %{_datadir}/%{name}/version.txt
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
+%{_datadir}/%{name}/exception.py*
+%{_datadir}/%{name}/utilities.py*
 
 %files module-btrfs
 %defattr(-,root,root,-)
@@ -599,6 +612,8 @@ echo ""
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
+%{_libdir}/nagios/plugins/check_cephcluster
+%{_libdir}/nagios/plugins/check_cephpool
 
 %files gui
 %defattr(-,root,root,-)
@@ -665,8 +680,6 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
-%{_libdir}/nagios/plugins/check_cephcluster
-%{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd
