@@ -35,7 +35,7 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
     graphOptionsService) {
   var promise;
   var map = {};
-  var refreshInterval = 5000;
+  var refreshInterval = 60000; // 1min
   $scope.isLoading = false;
 
   $scope.data = [];
@@ -74,6 +74,8 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
         })
         .$promise
         .then(function (res) {
+          var domain;
+
           angular.forEach(res[$scope.selection.item.name], function (value) {
             $scope.data[value.key] = value;
           });
@@ -92,6 +94,39 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
             $scope.utilization.data[map.num_bytes].values = $scope.data.num_bytes.values;
             $scope.noo.data[map.num_objects].values = $scope.data.num_objects.values;
           }
+
+          // Bytes
+          domain = [
+            d3.min($scope.utilization.data[0].values)[0],
+            d3.max($scope.utilization.data[0].values)[0],
+            0,
+            d3.max($scope.utilization.data, function (chart) {
+              return d3.max(chart.values.map(function (array) {
+                return d3.max(array.slice(1));
+              }));
+            })
+          ];
+
+          $scope.utilization.options.chart.xDomain = [domain[0], domain[1]];
+          $scope.utilization.options.chart.yDomain = [domain[2], domain[3] + Math.ceil(domain[3] / 10)];
+
+          // Number of objects
+          domain = [
+            d3.min($scope.noo.data[0].values)[0],
+            d3.max($scope.noo.data[0].values)[0],
+            0,
+            d3.max($scope.noo.data, function (chart) {
+              return d3.max(chart.values.map(function (array) {
+                return d3.max(array.slice(1));
+              }));
+            })
+          ];
+
+          $scope.noo.options.chart.xDomain = [domain[0], domain[1]];
+          $scope.noo.options.chart.yDomain = [domain[2], domain[3] + Math.ceil(domain[3] / 10)];
+          $scope.noo.options.chart.yAxis.tickFormat = function (d) {
+            return d;
+          };
 
           $scope.update();
         })
@@ -125,7 +160,10 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
   };
 
   // Watcher
-  $scope.$watch("selection.item", function () {
+  $scope.$watch("selection.item", function (newValue, oldValue) {
+    if (angular.equals(newValue, oldValue)) {
+      return;
+    }
     $scope.getData();
   });
 
