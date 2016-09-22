@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+# Add nagios user to the ceph group (OP-1320)
+if [ "$1" = "configure" ] ; then
+  if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
+    if ! groups nagios | grep -q ceph ; then
+      adduser nagios ceph
+    fi
+  fi
+fi
+
+#DEBHELPER#

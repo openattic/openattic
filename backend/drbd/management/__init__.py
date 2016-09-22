@@ -17,6 +17,7 @@
 import sysutils.models
 from drbd.models import DeviceMinor
 
+
 def create_devminors(**kwargs):
     existing_minors = [dm["minor"] for dm in DeviceMinor.objects.all().values("minor")]
     for i in range(10, 256):

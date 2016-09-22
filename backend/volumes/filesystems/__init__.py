@@ -16,6 +16,7 @@
 
 from volumes.filesystems.filesystem import FileSystemMeta, FileSystem
 
+
 def __import_filesystems():
     import os
     for module in os.listdir(os.path.dirname(__file__)):
@@ -26,10 +27,10 @@ __import_filesystems()
 
 FILESYSTEMS = FileSystemMeta.filesystems
 
+
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """
     for fs in FILESYSTEMS:
         if fs.name == name:
             return fs
     raise KeyError("No such filesystem found: '%s'" % name)
-

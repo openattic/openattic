@@ -101,7 +101,7 @@ var suites = {};
 for(var suiteName in allSuites){
   for(var category in categories){
     var path = allSuites[suiteName];
-    if(path.startsWith(categories[category].startsWith)){
+    if(categories[category].isAvailable && path.startsWith(categories[category].startsWith)){
       suites[suiteName] = path;
       break;
     }
