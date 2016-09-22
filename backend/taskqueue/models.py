@@ -131,9 +131,9 @@ class TaskQueue(Model):
         return reduce(lambda l, status: l | Q(status=status), states[1:], Q(status=states[0]))
 
     @staticmethod
-    def filter_by_definition_and_status(task_name, task_args, task_kwargs, task_status=None):
-        task_definition = "[{}, {}, {}]".format(json.dumps(task_name), json.dumps(task_args),
-                                                json.dumps(task_kwargs))
+    def filter_by_definition_and_status(task, task_status=None):
+        task_definition = "[{}, {}, {}]".format(json.dumps(task.func_reference),
+                                                json.dumps(task.args), json.dumps(task.kwargs))
         if task_status:
             status = TaskQueue.in_status_q(task_status)
             return TaskQueue.objects.filter(status, task=task_definition).order_by('id')
