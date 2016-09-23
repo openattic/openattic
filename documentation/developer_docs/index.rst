@@ -60,5 +60,6 @@ documentation.
   contributing_guidelines
   core
   developer-documentation
+  ui_customizing
   dev_e2e
   dev_gatling

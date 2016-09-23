@@ -19,6 +19,8 @@ import logging
 from django.conf import settings
 from django.utils.importlib import import_module
 
+logger = logging.getLogger(__name__)
+
 def load_viewsets(module_param):
     logging.info("Detecting modules...")
     rpcdplugins = []
@@ -27,7 +29,7 @@ def load_viewsets(module_param):
             module = import_module( app+".restapi" )
         except ImportError, err:
             if unicode(err) != "No module named restapi":
-                logging.error("Got error when checking app %s: %s", app, unicode(err))
+                logger.exception('Got error when checking app: {}'.format(app))
         else:
             rpcdplugins.append(module)
     logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in rpcdplugins]) )
