@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.runnersQ");
-app.directive("runnersQ", function () {
+var app = angular.module("openattic.taskQueue");
+app.directive("taskQueueDirective", function () {
   return {
     restrict: "A",
     controller: function ($scope, toasty, $uibModal) {
@@ -109,8 +109,8 @@ app.directive("runnersQ", function () {
       $scope.runnersDialog = function (selection) {
         var modalInstance = $uibModal.open({
           windowTemplateUrl: "templates/messagebox.html",
-          templateUrl: "components/runnersQ/templates/runners-q-dialog.html",
-          controller: "RunnersQModalCtrl",
+          templateUrl: "components/taskQueue/templates/task-queue-dialog.html",
+          controller: "TaskQueueModalCtrl",
           size: 'lg',
           resolve: {
             tasks: function () {
@@ -124,6 +124,6 @@ app.directive("runnersQ", function () {
         });
       };
     },
-    templateUrl: "components/runnersQ/templates/runners-q.html"
+    templateUrl: "components/taskQueue/templates/task-queue-directive.html"
   };
 });

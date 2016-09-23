@@ -30,4 +30,4 @@
  */
 "use strict";
 
-angular.module("openattic.runnersQ", []);
+angular.module("openattic.taskQueue", []);

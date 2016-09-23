@@ -18,7 +18,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in tab.data | orderBy: tab.tableSort.attribute:tab.tableSort.reverse"
-                        ng-class="{ info: isRowSelected(row) }">
+                        ng-class="{ info: isTaskSelected(row, tab) }">
                         <td>
                             <input class="tc_checkboxes" type="checkbox" checklist-model="tab.selection.items"
                                    ng-click="updateTaskSelection(tabKey, tab.selection.items)" checklist-value="row"/>

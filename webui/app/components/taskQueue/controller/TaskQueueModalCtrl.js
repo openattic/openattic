@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.runnersQ");
-app.controller("RunnersQModalCtrl", function ($scope, $uibModalInstance, toasty, tasks, $state, $filter) {
+var app = angular.module("openattic.taskQueue");
+app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, tasks, $state, $filter) {
   $scope.order = function (attribute, tab) {
     if (tab.tableSort.attribute === attribute) {
       tab.tableSort.reverse = !tab.tableSort.reverse;
@@ -50,6 +50,10 @@ app.controller("RunnersQModalCtrl", function ($scope, $uibModalInstance, toasty,
   $scope.selectColumn = function (attr, data) {
     var attribute = attr.displayAttr || attr.attribute;
     return data[attribute];
+  };
+
+  $scope.isTaskSelected = function (row, tab) {
+    return tab.selection.items.indexOf(row) !== -1;
   };
 
   $scope.updateTaskSelection = function (key, items) {
