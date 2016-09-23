@@ -79,7 +79,7 @@ def main():
 
         print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms last_modified={}"\
             .format(disk_usage["used_size"], disk_usage["used_size"],
-                    disk_usage["provisioned_size"], round(exec_time * 1000, 2), last_modified)
+                    disk_usage["provisioned_size"], exec_time, last_modified)
         sys.exit(0)
     else:
         print "UNKNOWN"
