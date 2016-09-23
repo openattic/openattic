@@ -30,22 +30,21 @@
  */
 "use strict";
 
-angular.module("openattic.extensions", [
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.clusterstatuswidget",
-  "openattic.dashboard",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.navigation",
-  "openattic.required",
-  "openattic.sizeparser",
-  "openattic.oaWizards",
-  "openattic.todowidget",
-  "openattic.hosts",
-  "openattic.userinfo"
-]);
+var app = angular.module("openattic.hosts");
+app.factory("HostService", function ($resource) {
+  return $resource(globalConfig.API.URL + "hosts/:id", {
+    id: "@id"
+  }, {
+    update: {method: "PUT"},
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    filter: {
+      method: "GET"
+    }
+  });
+});
