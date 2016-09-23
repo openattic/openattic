@@ -15,8 +15,10 @@ Version 2.0.15 (not released yet):
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
 * Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
+* WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
+* WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
