@@ -778,9 +778,9 @@ class CephRbd(NodbModel):  # aka RADOS block device
         fsid = self.pool.cluster.fsid
         pool_name = self.pool.name
 
-        if len(TaskQueue.filter_by_definition_and_status(ceph.tasks.get_rbd_performance_data(
-            fsid, pool_name, self.name), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING]))\
-            == 0:
+        if len(TaskQueue.filter_by_definition_and_status(
+                ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
+                [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) == 0:
             ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
 
         finished_tasks = TaskQueue.filter_by_definition_and_status(
