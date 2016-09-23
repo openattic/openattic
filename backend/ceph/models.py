@@ -39,6 +39,7 @@ from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
+from taskqueue.models import TaskQueue
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
@@ -773,9 +774,30 @@ class CephRbd(NodbModel):  # aka RADOS block device
     def set_disk_usage(self, objects):
         """This can be really expensive, thus we're calling "rbd du" only for rbds that will be
         serialized."""
-        api = RbdApi(rados[self.pool.cluster.fsid])  # TODO: self.pool.cluster calls "ceph osd dump"
-        val = api.image_disk_usage(self.pool.name, self.name)
-        self.used_size = val['used_size'] if 'used_size' in val else 0
+
+        fsid = self.pool.cluster.fsid
+        pool_name = self.pool.name
+
+        if len(TaskQueue.filter_by_definition_and_status(ceph.tasks.get_rbd_performance_data(
+            fsid, pool_name, self.name), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING]))\
+            == 0:
+            ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
+
+        finished_tasks = TaskQueue.filter_by_definition_and_status(
+            ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
+            [TaskQueue.STATUS_FINISHED])
+        finished_tasks = list(finished_tasks)
+        disk_usage = dict()
+
+        if len(finished_tasks) > 0:
+            latest_task = finished_tasks.pop()
+
+            for task in finished_tasks:
+                task.delete()
+
+            disk_usage = json.loads(latest_task.result)[0]
+
+        self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
 
     def save(self, *args, **kwargs):
         """
