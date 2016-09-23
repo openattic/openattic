@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.hosts");
 app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService, NetdeviceService) {
   $scope.data = {};
 
@@ -152,7 +152,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     }
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "templates/hosts/delete-host.html",
+      templateUrl: "components/hosts/templates/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
         host: function () {

@@ -52,6 +52,17 @@ app.directive("wizard", function () {
     },
     controller: function ($scope, VolumeService, CifsSharesService, NfsSharesService, LunService, SizeParserService) {
       $scope.activeTab = 1;
+      $scope.addFc = function (fc, host) {
+        $scope.useThisHost(host);
+        if (fc.create) {
+          LunService.save(fc)
+            .$promise
+            .then(function () {
+            }, function (error) {
+              console.log("An error occured", error);
+            });
+        }
+      };
       $scope.isActiveTab = function (index) {
         return $scope.activeTab === index;
       };
@@ -97,14 +108,15 @@ app.directive("wizard", function () {
                           });
                     }
                   } else if ("iscsi_fc" in $scope.input) {
-                    if ($scope.input.iscsi_fc.create) {
-                      $scope.input.iscsi_fc.volume = {id: res.id};
-                      LunService.save($scope.input.iscsi_fc)
-                          .$promise
-                          .then(function () {
-                          }, function (error) {
-                            console.log("An error occured", error);
-                          });
+                    $scope.input.iscsi_fc.volume = {id: res.id};
+                    if ($scope.input.hostSelection === "create") {
+                      var submit = $scope.hostDirective.submit;
+                      submit.createNewHost(submit.hostForm, submit.host, submit.changes, submit.saveShares,
+                        function (host) {
+                          $scope.addFc($scope.input.iscsi_fc, host);
+                        });
+                    } else {
+                      $scope.addFc($scope.input.iscsi_fc);
                     }
                   }
                 })
