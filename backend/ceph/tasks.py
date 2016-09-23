@@ -78,8 +78,6 @@ def get_rbd_performance_data(fsid, pool_name, image_name):
         disk_usage = api.image_disk_usage(pool_name, image_name)
         exec_time = time.time() - start_time
 
-        return "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms".format(
-            disk_usage["used_size"], disk_usage["used_size"], disk_usage["provisioned_size"],
-            round(exec_time * 1000, 2))
+        return disk_usage, round(exec_time * 1000, 2)
     except:
         return "CRITICAL"

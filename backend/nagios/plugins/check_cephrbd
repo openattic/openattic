@@ -68,12 +68,18 @@ def main():
         for task in finished_tasks:
             task.delete()
 
-        if json.loads(latest_task.result) == "CIRITICAL":
+        task_result = json.loads(latest_task.result)
+        disk_usage = task_result[0]
+
+        if disk_usage == "CIRITICAL":
             sys.exit(2)
 
+        exec_time = task_result[1]
         last_modified = int(time.mktime(latest_task.last_modified.timetuple()))
 
-        print "{} last_modified={}".format(json.loads(latest_task.result), last_modified)
+        print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms last_modified={}"\
+            .format(disk_usage["used_size"], disk_usage["used_size"],
+                    disk_usage["provisioned_size"], round(exec_time * 1000, 2), last_modified)
         sys.exit(0)
     else:
         print "UNKNOWN"
