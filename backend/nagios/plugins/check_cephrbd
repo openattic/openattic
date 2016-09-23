@@ -71,7 +71,8 @@ def main():
         if json.loads(latest_task.result) == "CIRITICAL":
             sys.exit(2)
 
-        last_modified = int(time.mktime(latest_task.last_modified.timetuple())*1000)
+        last_modified = int(time.mktime(latest_task.last_modified.timetuple()))
+
         print "{} last_modified={}".format(json.loads(latest_task.result), last_modified)
         sys.exit(0)
     else:
