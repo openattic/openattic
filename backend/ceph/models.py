@@ -41,6 +41,7 @@ from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
+from utilities import aggregate_dict
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
