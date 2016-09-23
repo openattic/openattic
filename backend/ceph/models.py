@@ -842,14 +842,13 @@ class CephRbd(NodbModel):  # aka RADOS block device
     @staticmethod
     def get_performance_data(rbd, filter=None):
         """
-        Returns the performance data for a pool by the FSID and consideration of the filter
-        parameters if given.
+        Returns the performance data for a RBD by consideration of the filter parameters if given.
 
-        :param fsid: FSID of the cluster
-        :rtype: str
+        :param rbd: RBD object
+        :rtype: CephRbd
         :param filter: The performance data will be filtered by these sources (based on the RRD
             file).
-        :rtype: dict["filter_pools": list[str], "filter_sources": list[str]]
+        :rtype: list[str]
         :return: Returns a list of performance data.
         :rtype: dict
         """
