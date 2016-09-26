@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.graph", []);
+angular.module("openattic.graph", [
+  "nvd3"
+]);
