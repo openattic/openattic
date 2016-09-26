@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, toasty, ClusterResource,
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, toasty, ClusterResource,
     cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
@@ -254,4 +254,32 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
     goToListView();
   };
 
+  // Erasure Code Profile
+  $scope.deleteErasureCodeProfile = function () {
+    var modalInstance = $uibModal.open({
+      controller       : "CephErasureCodeProfilesDeleteCtrl",
+      templateUrl      : "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
+      windowTemplateUrl: "templates/messagebox.html",
+      resolve: {
+        profile: function () {
+          return $scope.pool.erasure;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      cephErasureCodeProfilesService
+          .delete({id: $scope.pool.erasure.profile})
+          .then(function () {
+            // Trigger toasty message on success
+            toasty.success({
+              title: "Erasure code profile deleted",
+              msg  : "Erasure code profile '" + $scope.pool.erasure.profile + "' successfully deleted."
+            });
+          })
+          .catch(function (err) {
+            throw err;
+          });
+    });
+  };
 });
