@@ -979,15 +979,22 @@ class Graph(object):
         data = json.loads(data)
 
         step = data["meta"]["step"]
+        perf_data = data["data"]
         out = []
+
+        # remove the last element because the timestamp is always in the future
+        # the values of the penultimate element might be empty as well if yes delete it
+        for perf_data_item in [perf_data[-1], perf_data[-2]]:
+            if all(x is None for x in perf_data_item):
+                perf_data.pop()
 
         for index, graph_desc in enumerate(data["meta"]["legend"]):
             timestamp = data["meta"]["start"]
 
             conv_perf_data = []
 
-            for perf_data in data["data"]:
-                conv_perf_data.append([timestamp, perf_data[index]])
+            for perf_data_item in perf_data:
+                conv_perf_data.append([timestamp, perf_data_item[index]])
                 timestamp = timestamp + step
             out.append({"key": graph_desc, "values": conv_perf_data})
 
