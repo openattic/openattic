@@ -68,13 +68,12 @@ def main():
         for task in tasks:
             task.delete()
 
-        task_result = latest_task.json_result
-        disk_usage = task_result[0]
-
         if latest_task.status == TaskQueue.STATUS_EXCEPTION:
             print "CRITICAL"
             sys.exit(2)
 
+        task_result = latest_task.json_result
+        disk_usage = task_result[0]
         exec_time = task_result[1]
         last_modified = int(time.mktime(latest_task.last_modified.timetuple()))
 
