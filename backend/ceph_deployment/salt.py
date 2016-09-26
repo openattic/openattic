@@ -11,12 +11,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import copy
 import logging
 from itertools import chain
 import os
 import subprocess
 
 import yaml
+from django.core.exceptions import ValidationError
 
 from ceph_deployment.systemapi import salt_cmd
 from ceph_deployment.conf import settings as ceph_deployment_settings
@@ -90,6 +92,7 @@ def add_role(minion, role):
 
     with open(filename) as f:
         contents = yaml.safe_load(f)
+    original_content = copy.deepcopy(contents)
 
     if 'roles' not in contents:
         contents['roles'] = [role]
@@ -102,6 +105,13 @@ def add_role(minion, role):
     dumper.ignore_aliases = lambda self, data: True
     content = yaml.dump(contents, Dumper=dumper, default_flow_style=False)
     get_dbus_object("/ceph_deployment").write_pillar_file(filename, content)
+    try:
+        validate_pillar_data()
+    except ValidationError:
+        print "resetting"
+        old_content = yaml.dump(original_content, Dumper=dumper, default_flow_style=False)
+        get_dbus_object("/ceph_deployment").write_pillar_file(filename, old_content)
+        raise
 
 
 def set_storage_configuration(hostname, storage_configuration):
@@ -151,3 +161,28 @@ def initialize_cluster(name):
     config, creates the keys.
     """
     pass
+
+
+def validate_pillar_data():
+    out = salt_cmd(lambda d: d.invoke_salt_run_quiet(['validate.pillars']))
+
+    def format_errors(name, errors):
+        return [
+            "{}: {}: {}".format(name, key, '\n'.join(error))
+            for key, error
+            in errors.items()
+        ]
+
+    def format_cluster(name, cluster):
+        if 'errors' in cluster:
+            return format_errors(name, cluster['errors'])
+        else:
+            return []
+
+    all_errors = list(
+        chain.from_iterable([format_cluster(name, cluster) for name, cluster in out.items()]))
+    if all_errors:
+        raise ValidationError({'detail': all_errors})
+
+
+
