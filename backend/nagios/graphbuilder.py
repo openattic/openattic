@@ -982,13 +982,13 @@ class Graph(object):
         out = []
 
         for index, graph_desc in enumerate(data["meta"]["legend"]):
-            timestemp = data["meta"]["start"]
+            timestamp = data["meta"]["start"]
 
             conv_perf_data = []
 
             for perf_data in data["data"]:
-                conv_perf_data.append([timestemp, perf_data[index]])
-                timestemp = timestemp + step
+                conv_perf_data.append([timestamp, perf_data[index]])
+                timestamp = timestamp + step
             out.append({"key": graph_desc, "values": conv_perf_data})
 
         return out
