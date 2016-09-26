@@ -454,7 +454,7 @@ install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
 install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
 
 #configure ceph
-install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}-ceph_plugins.cfg
+install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -613,7 +613,7 @@ echo ""
 
 %files module-ceph
 %defattr(-,root,root,-)
-%config %{_sysconfdir}/nagios/conf.d/%{name}-ceph_plugins.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
 %{_libdir}/nagios/plugins/check_cephcluster
