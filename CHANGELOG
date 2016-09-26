@@ -15,6 +15,7 @@ Version 2.0.15 (not released yet):
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
 * Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
+* Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added performance data to the extended view of a ceph
   pool (OP-1405)
