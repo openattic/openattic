@@ -48,7 +48,7 @@ def main():
 
     if len(args) != 2:
         parser.print_usage()
-        sys.exit(4)
+        sys.exit(3)
 
     start_time = time.time()
     with fsid_context(args[0]):
