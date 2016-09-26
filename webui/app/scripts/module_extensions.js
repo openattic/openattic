@@ -41,11 +41,11 @@ angular.module("openattic.extensions", [
   "openattic.dashboard",
   "openattic.datatable",
   "openattic.graph",
+  "openattic.hosts",
   "openattic.navigation",
   "openattic.required",
   "openattic.sizeparser",
   "openattic.oaWizards",
   "openattic.todowidget",
-  "openattic.hosts",
   "openattic.userinfo"
 ]);
