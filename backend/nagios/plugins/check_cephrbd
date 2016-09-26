@@ -72,6 +72,7 @@ def main():
         disk_usage = task_result[0]
 
         if latest_task.status == TaskQueue.STATUS_EXCEPTION:
+            print "CRITICAL"
             sys.exit(2)
 
         exec_time = task_result[1]
