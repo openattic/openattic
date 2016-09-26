@@ -39,12 +39,14 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
   $scope.isLoading = false;
 
   $scope.data = [];
+  // Utilization - scope.object
   $scope.utilization = {
     api: {},
     config: angular.copy(graphConfigService),
     data: [],
     options: angular.copy(graphOptionsService)
   };
+  // Number of objects - scope.object
   $scope.noo = {
     api: {},
     config: angular.copy(graphConfigService),
@@ -86,6 +88,7 @@ app.controller("CephPoolsStatisticsCtrl", function ($scope, $interval, cephPools
             map.num_bytes = $scope.utilization.data.push($scope.data.num_bytes);
             map.num_objects = $scope.noo.data.push($scope.data.num_objects);
 
+            // decrement by 1, because array.push returns the new array length and not the index of the pushed element
             angular.forEach(map, function (element, key) {
               map[key] = element - 1;
             });
