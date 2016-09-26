@@ -144,7 +144,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           });
           throw osdError;
         });
-      cephErasureCodeProfilesService.get({id: cluster.fsid})
+      cephErasureCodeProfilesService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
           $scope.data.profiles = res.results;
