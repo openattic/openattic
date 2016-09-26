@@ -101,7 +101,7 @@
                 <select class="form-control tc_crushSet_selection" name="crushSet" ng-required="data.expert"
                     ng-enabled="data.cluster" ng-model="data.ruleset"
                     ng-options="rule.rule_name for rule in data.cluster.rules">
-                    <option class="tc_crushSetOption" value=""> -- Select a erasure code profile -- </option>
+                    <option class="tc_crushSetOption" value=""> -- Select a crush ruleset -- </option>
                 </select>
                 <span class="help-block tc_crushSetRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
                     && poolForm.crushSet.$error.required">
