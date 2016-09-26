@@ -11,6 +11,42 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+function usage {
+    echo "Usage:"
+    echo -e "\t$0 [--disable-ceph-repo]"
+    echo -e "\t$0 (-h|--help)"
+    echo
+    echo "Options:"
+    echo
+    echo -e "\t--disable-ceph-repo"
+    echo
+    echo -e "\t\tDisables the adding of the Ceph repo and expects that it's already added when"
+    echo -e "\t\tthis script is executed."
+}
+
+DISABLE_CEPH_REPO=false
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+
+        -h|--help)
+            usage
+            exit 0
+            ;;
+
+        --disable-ceph-repo)
+            DISABLE_CEPH_REPO=true
+            ;;
+
+        *)
+            echo "error: unknown argument"
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
+
 set -e
 set -o xtrace
 
@@ -46,22 +82,23 @@ fi
 
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
+if [ "${DISABLE_CEPH_REPO}" == false ] ; then
+    if [ "$IS_DEBIAN" ]
+    then
+        apt-get install -y mercurial git build-essential python-dev lsb-release
 
-if [ "$IS_DEBIAN" ]
-then
-    apt-get install -y mercurial git build-essential python-dev lsb-release
+        wget 'https://download.ceph.com/keys/release.asc'
+        apt-key add release.asc
 
-    wget 'https://download.ceph.com/keys/release.asc'
-    apt-key add release.asc
+        echo deb http://download.ceph.com/debian-jewel/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list
+    fi
 
-    echo deb http://download.ceph.com/debian-jewel/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list
-fi
-
-if [ "$IS_SUSE" ]
-then
-    zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
-    zypper --gpg-auto-import-keys --non-interactive ref
-    zypper --gpg-auto-import-keys --non-interactive install ceph-common
+    if [ "$IS_SUSE" ]
+    then
+        zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+        zypper --gpg-auto-import-keys --non-interactive ref
+        zypper --gpg-auto-import-keys --non-interactive install ceph-common
+    fi
 fi
 
 # Installing openATTIC

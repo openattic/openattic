@@ -86,7 +86,8 @@ class NodbQuerySet(QuerySet):
         return len(self._filtered_data) - 1
 
     def _data(self):
-        objects = self.model.get_all_objects(self._context, query=self._query)
+        context = self._context if self._context else NodbManager.nodb_context
+        objects = self.model.get_all_objects(context, query=self._query)
         self_pointer = LazyProperty.QuerySetPointer(objects)
         for obj in objects:
             #  Because we're calling the model constructors ourselves, django thinks that
