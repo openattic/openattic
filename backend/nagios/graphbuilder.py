@@ -982,8 +982,9 @@ class Graph(object):
         perf_data = data["data"]
         out = []
 
-        # remove the last element because the timestamp is always in the future
-        # the values of the penultimate element might be empty as well if yes delete it
+        # Remove the last element because the timestamp is always in the future and so the values
+        # are always None. The values of the penultimate element might be empty as well if yes
+        # delete it.
         for perf_data_item in [perf_data[-1], perf_data[-2]]:
             if all(x is None for x in perf_data_item):
                 perf_data.pop()
