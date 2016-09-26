@@ -58,14 +58,14 @@ def main():
             == 0:
         get_rbd_performance_data.delay(args[0], args[1], args[2])
 
-    finished_tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
-        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED])
-    finished_tasks = list(finished_tasks)
+    tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])
+    tasks = list(tasks)
 
-    if len(finished_tasks) > 0:
-        latest_task = finished_tasks.pop()
+    if len(tasks) > 0:
+        latest_task = tasks.pop()
 
-        for task in finished_tasks:
+        for task in tasks:
             task.delete()
 
         task_result = latest_task.json_result
