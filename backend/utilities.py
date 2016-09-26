@@ -51,7 +51,7 @@ def get_request_query_filter_data(request, filter_key):
     :param request: Request object including the filter
     :type request: rest_framework.request.Request
     :param filter_key: Name/key of the filter in the request object
-    :rtype: str
+    :type filter_key: str
     :return: List of filter parameters or None if filter_key not found in request
     :rtype: list[str] | None
     """

@@ -848,7 +848,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
         :type rbd: CephRbd
         :param filter: The performance data will be filtered by these sources (based on the RRD
             file).
-        :rtype: list[str]
+        :type filter: list[str]
         :return: Returns a list of performance data.
         :rtype: dict
         """
