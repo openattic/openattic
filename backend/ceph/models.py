@@ -491,9 +491,7 @@ class CephErasureCodeProfile(NodbModel):
     plugin = models.CharField(max_length=100, editable=False)
     technique = models.CharField(max_length=100, editable=False)
     jerasure_per_chunk_alignment = models.CharField(max_length=100, editable=False)
-    ruleset_failure_domain = models.CharField(max_length=100, blank=True,
-                                              choices=[('rack', 'rack'), ('host', 'host'),
-                                                       ('osd', 'osd')])
+    ruleset_failure_domain = models.CharField(max_length=100, blank=True)
     ruleset_root = models.CharField(max_length=100, editable=False)
     w = models.IntegerField(editable=False)
 
