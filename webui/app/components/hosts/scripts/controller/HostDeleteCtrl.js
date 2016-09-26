@@ -30,22 +30,26 @@
  */
 "use strict";
 
-angular.module("openattic.extensions", [
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.clusterstatuswidget",
-  "openattic.dashboard",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.navigation",
-  "openattic.required",
-  "openattic.sizeparser",
-  "openattic.oaWizards",
-  "openattic.todowidget",
-  "openattic.hosts",
-  "openattic.userinfo"
-]);
+var app = angular.module("openattic.hosts");
+app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, host, toasty) {
+    $scope.host = host;
+
+    $scope.delete = function () {
+      HostService.delete({id: $scope.host.id})
+          .$promise
+          .then(function () {
+            $uibModalInstance.close("deleted");
+          }, function (error) {
+            console.log("An error occured", error);
+          });
+    };
+
+    $scope.cancel = function () {
+      $uibModalInstance.dismiss("cancel");
+
+      toasty.warning({
+        title: "Delete host",
+        msg: "Cancelled"
+      });
+    };
+  });

@@ -17,6 +17,8 @@
 
 import os
 import sys
+import django
+import json
 import time
 
 from optparse import OptionParser
@@ -36,10 +38,13 @@ else:
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
+if django.VERSION[:2] >= (1, 7):
+    django.setup()
+
 
 def main():
-    from ceph.librados import RbdApi
-    from ceph.models import RadosClientManager
+    from ceph.tasks import get_rbd_performance_data
+    from taskqueue.models import TaskQueue
 
     parser = OptionParser(usage="%prog <cluster FSID> <pool name> <image name>")
     _, args = parser.parse_args()
@@ -48,20 +53,37 @@ def main():
         parser.print_usage()
         sys.exit(3)
 
-    start_time = time.time()
-    try:
-        rados = RadosClientManager()
-        api = RbdApi(rados[args[0]])
-        disk_usage = api.image_disk_usage(args[1], args[2])
-    except:
-        print "CRITICAL"
-        sys.exit(2)
-    exec_time = time.time() - start_time
+    if len(TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+            args[0], args[1], args[2]), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) \
+            == 0:
+        get_rbd_performance_data.delay(args[0], args[1], args[2])
 
-    print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms".format(
-        disk_usage["used_size"], disk_usage["used_size"], disk_usage["provisioned_size"],
-        round(exec_time * 1000, 2))
-    sys.exit(0)
+    finished_tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED])
+    finished_tasks = list(finished_tasks)
+
+    if len(finished_tasks) > 0:
+        latest_task = finished_tasks.pop()
+
+        for task in finished_tasks:
+            task.delete()
+
+        task_result = json.loads(latest_task.result)
+        disk_usage = task_result[0]
+
+        if disk_usage == "CIRITICAL":
+            sys.exit(2)
+
+        exec_time = task_result[1]
+        last_modified = int(time.mktime(latest_task.last_modified.timetuple()))
+
+        print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms last_modified={}"\
+            .format(disk_usage["used_size"], disk_usage["used_size"],
+                    disk_usage["provisioned_size"], exec_time, last_modified)
+        sys.exit(0)
+    else:
+        print "UNKNOWN"
+        sys.exit(3)
 
 if __name__ == "__main__":
     main()

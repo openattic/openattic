@@ -54,7 +54,7 @@ with regular text::
   <a class="navbar-brand" href="#"><img src="images/openattic_brand_bright.png" alt="openATTIC"></a>
   <!--<a class="navbar-brand" href="#">openATTIC storage management framework</a>-->
 
-In addition, the logo on the login screen should to be replaced to match your
+In addition to that, the logo on the login screen should be replaced to match your
 desired logo. It should be in PNG format and should not exceed 256x256 px. This
 can be achieved by changing the image file name in file
 ``templates/login.html``, line 4::

@@ -12,6 +12,13 @@ Version 2.0.15 (not released yet):
 * Backend: Fixed compatibility issues with Django 1.8 and Django REST 
   Framework 3 (OP-1210, OP-1490, OP-1486) 
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
+* Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
+  get sources list) from the Ceph to the Nagios module (OP-1542)
+* Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
+* WebUI: Blockstorage wizard can create a new host (OP-1150)
+* WebUI: Bugfix - It's no longer possible to remove his own
+  privileges (OP-1497)
+* WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
@@ -19,8 +26,11 @@ Version 2.0.15 (not released yet):
   configuration (OP-1320)
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
+* Packaging: Allow to override the default GPG key or disable the signing
+  completely using `build_deb_packages.py` (OP-1435) 
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
+* WebUI/QA: Adds missing condition to filter test categories (OP-1551)  
 
 Version 2.0.14, 12. September 2016:
 -----------------------------------
