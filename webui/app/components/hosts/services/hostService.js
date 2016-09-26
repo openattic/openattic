@@ -30,26 +30,21 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.factory("cephPoolsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:id/pools", {
-    id: "@id",
-    poolId: "@poolId"
+var app = angular.module("openattic.hosts");
+app.factory("HostService", function ($resource) {
+  return $resource(globalConfig.API.URL + "hosts/:id", {
+    id: "@id"
   }, {
-    delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:id/pools/:poolId"
-    },
-    performancedata: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph/:fsid/performancedata_pools"
-    },
+    update: {method: "PUT"},
     query: {
       method: "GET",
       isArray: true,
       transformResponse: function (data) {
         return JSON.parse(data).results;
       }
+    },
+    filter: {
+      method: "GET"
     }
   });
 });

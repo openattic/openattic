@@ -8,6 +8,10 @@
             <a ui-sref="cephPools.detail.cacheTier({cephPool: selection.item.id, '#': 'more'})"
                class="tc_cacheTieringTab" data-toggle="tab" data-target="#tab-content">Cache Tiering</a>
         </li>
+        <li ui-sref-active="active">
+            <a ui-sref="cephPools.detail.statistics({cephPool: selection.item.id, '#': 'more'})"
+               class="tc_statisticsTab" data-toggle="tab" data-target="#tab-content">Statistics</a>
+        </li>
     </ul>
     <div class="tab-content" ui-view="tab-content"></div>
 </div>

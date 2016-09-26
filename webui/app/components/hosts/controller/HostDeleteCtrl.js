@@ -30,26 +30,26 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.factory("cephPoolsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:id/pools", {
-    id: "@id",
-    poolId: "@poolId"
-  }, {
-    delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:id/pools/:poolId"
-    },
-    performancedata: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph/:fsid/performancedata_pools"
-    },
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
-    }
+var app = angular.module("openattic.hosts");
+app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, host, toasty) {
+    $scope.host = host;
+
+    $scope.delete = function () {
+      HostService.delete({id: $scope.host.id})
+          .$promise
+          .then(function () {
+            $uibModalInstance.close("deleted");
+          }, function (error) {
+            console.log("An error occured", error);
+          });
+    };
+
+    $scope.cancel = function () {
+      $uibModalInstance.dismiss("cancel");
+
+      toasty.warning({
+        title: "Delete host",
+        msg: "Cancelled"
+      });
+    };
   });
-});
