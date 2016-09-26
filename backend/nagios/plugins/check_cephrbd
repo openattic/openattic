@@ -68,10 +68,10 @@ def main():
         for task in finished_tasks:
             task.delete()
 
-        task_result = json.loads(latest_task.result)
+        task_result = latest_task.json_result
         disk_usage = task_result[0]
 
-        if disk_usage == "CIRITICAL":
+        if latest_task.status == TaskQueue.STATUS_EXCEPTION:
             sys.exit(2)
 
         exec_time = task_result[1]

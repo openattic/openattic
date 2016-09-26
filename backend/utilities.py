@@ -49,7 +49,7 @@ def get_request_query_filter_data(request, filter_key):
     Returns the comma separated filter parameters of a request as list.
 
     :param request: Request object including the filter
-    :rtype: rest_framework.request.Request
+    :type request: rest_framework.request.Request
     :param filter_key: Name/key of the filter in the request object
     :rtype: str
     :return: List of filter parameters or None if filter_key not found in request
