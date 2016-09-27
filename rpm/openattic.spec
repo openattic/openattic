@@ -454,7 +454,7 @@ install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
 install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
 
 #configure ceph
-install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
+install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
