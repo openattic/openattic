@@ -85,7 +85,7 @@
                     required
                     ng-options="poolType.name as poolType.description for poolType in data.poolTypes"
                     ng-model="pool.type">
-              <option class="tc_poolTypesOption" value=""> -- Select a pool type --</option>
+              <option class="tc_poolTypesOption" value=""> -- Select a pool type -- </option>
             </select>
             <span class="help-block tc_typeRequired"
                   ng-show="(poolForm.$submitted || poolForm.poolTypes.$dirty) && poolForm.poolTypes.$error.required">
