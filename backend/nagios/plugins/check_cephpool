@@ -51,8 +51,12 @@ def main():
         sys.exit(3)
 
     start_time = time.time()
-    with fsid_context(args[0]):
-        pool = CephPool.objects.get(name=args[1])
+    try:
+        with fsid_context(args[0]):
+            pool = CephPool.objects.get(name=args[1])
+    except Exception:
+        print "CRITICAL"
+        sys.exit(2)
     exec_time = time.time() - start_time
 
     used_per_cent = pool.num_bytes / pool.max_avail * 100
