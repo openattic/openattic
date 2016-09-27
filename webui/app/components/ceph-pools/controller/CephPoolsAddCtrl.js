@@ -148,7 +148,10 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function (res) {
           $scope.data.profiles = res.results;
-          $scope.pool.erasure.profile = $scope.data.profiles[0];
+
+          if ($scope.data.profiles.length === 1) {
+            $scope.pool.erasure.profile = $scope.data.profiles[0]
+          }
         })
         .catch(function (osdError) {
           toasty.error({
