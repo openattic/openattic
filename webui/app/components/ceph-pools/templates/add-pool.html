@@ -204,7 +204,7 @@
                         ng-required="pool.type === 'erasure'"
                         ng-options="profile as profile.name for profile in data.profiles"
                         ng-model="pool.erasure.profile">
-                  <option class="tc_erasureProfilesOption" value=""> -- Select a erasure code profile --</option>
+                  <option class="tc_erasureProfilesOption" value=""> -- Select an erasure code profile -- </option>
                 </select>
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-default" ng-click="deleteErasureCodeProfile()">
