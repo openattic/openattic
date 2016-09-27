@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
+var app = angular.module("openattic.hosts");
 app.config(function ($stateProvider) {
   $stateProvider
     .state("hosts", {
