@@ -794,7 +794,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
                 task.delete()
 
             if latest_task.status != TaskQueue.STATUS_EXCEPTION:
-                disk_usage = json.loads(latest_task.result)[0]
+                disk_usage = latest_task.json_result
 
         self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
 
