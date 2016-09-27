@@ -130,6 +130,16 @@ class TaskQueue(Model):
     def in_status_q(states):
         return reduce(lambda l, status: l | Q(status=status), states[1:], Q(status=states[0]))
 
+    @staticmethod
+    def filter_by_definition_and_status(task, task_status=None):
+        task_definition = json.dumps(task.serialize())
+
+        if task_status:
+            status = TaskQueue.in_status_q(task_status)
+            return TaskQueue.objects.filter(status, task=task_definition).order_by('last_modified')
+        else:
+            return TaskQueue.objects.filter(task=task_definition).order_by('last_modified')
+
     def __unicode__(self):
         return str(self.pk)
 

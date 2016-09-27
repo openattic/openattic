@@ -7,8 +7,12 @@ describe('ceph rbd creation and deletion', function(){
 
   beforeAll(function(){
     helpers.login();
+  });
+
+  beforeEach(function(){
     rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
+    browser.sleep(helpers.configs.sleep);
   });
 
   var objSizeTests = [

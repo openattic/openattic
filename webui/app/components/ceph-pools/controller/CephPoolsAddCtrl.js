@@ -197,7 +197,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
     }
   });
 
-  $scope.$watch("pool.replicated.size", function (ruleset) {
+  $scope.$watch("pool.replicated.size", function () {
     if ($scope.data.cluster) {
       $scope.rulesetValidation();
     }

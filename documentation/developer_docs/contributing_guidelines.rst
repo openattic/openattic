@@ -161,8 +161,9 @@ notes or documentation include:
 * Bug/security fixes on a release branch.
 * User-visible changes or changes in behavior on a release branch. Make sure
   to review and update the documentation, if required.
-* Major changes / new features. In addition to the ``CHANGELOG``, these must
-  be described in the documentation as well.
+* Major changes / new features. In addition to the ``CHANGELOG``, these must be
+  described in the documentation as well. See :ref:`developer_documentation` for
+  details on how to update the |oA| documentation.
 
 Minor or "behind the scene" changes that have no user-visible impact or do not
 cause changes in behavior/functionality (e.g. improvements to build scripts,

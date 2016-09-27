@@ -9,7 +9,7 @@ var wizardCommon = function(){
   this.volumefield = element(by.model('result.name'));
   this.size = element(by.model('data.megs'));
   this.volume_required = element(by.className('tc_nameRequired'));
-  this.volume_unique = element(by.className('tc_noUniqueName'));
+  this.volume_unique = element.all(by.className('tc_noUniqueName')).get(0);
   this.pool_required = element(by.className('tc_poolRequired'));
   this.size_required = element(by.className('tc_sizeRequired'));
   this.size_exceeded = element(by.className('tc_wrongVolumeSize'));
@@ -144,10 +144,18 @@ var wizardCommon = function(){
     self.cifsName.sendKeys(shareName);
   };
 
-  this.shareCreateFc = function(hostname){
-    //select host
-    var hostSelect = element(by.model('input.iscsi_fc.host'));
-    hostSelect.element(by.cssContainingText('option', hostname)).click();
+  this.shareCreateFc = function(hostname, iscsi){
+    if (!iscsi) {
+      //select host
+      var hostSelect = element(by.model('input.iscsi_fc.host'));
+      hostSelect.element(by.cssContainingText('option', hostname)).click();
+    } else {
+      element(by.className('tc_create_host')).click();
+      element(by.model('host.name')).sendKeys(hostname);
+      element.all(by.model('type.check')).get(0).click();
+      element.all(by.model('data[key]')).get(0).click();
+      element.all(by.model('newTag.text')).get(0).sendKeys(iscsi);
+    }
   };
 
   this.configurationExecution = function(pageTitle){
