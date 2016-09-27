@@ -587,10 +587,15 @@ class CephOsd(NodbModel):
         pg_dump_data = MonApi(rados[context.fsid]).pg_dump()['osd_stats']  # key=osd
         osd_metadata = MonApi(rados[context.fsid]).osd_metadata()  # key=id
         fields_to_force = ['primary_affinity']
-        return [CephOsd(**CephOsd.make_model_args(dict(in_state=data['in'], **data),
-                                                  fields_force_none=fields_to_force))
+        zipped_data = zip_by_keys(('id', osd_tree),
+                                  ('osd', osd_dump_data),
+                                  ('osd', pg_dump_data),
+                                  ('id', osd_metadata))
+        return [CephOsd(
+            **CephOsd.make_model_args(dict(in_state=data['in'] if 'in' in data else 0, **data),
+                                      fields_force_none=fields_to_force))
                 for data
-                in zip_by_keys(('id', osd_tree), ('osd', osd_dump_data), ('osd', pg_dump_data), ('id', osd_metadata))]
+                in zipped_data]
 
     def save(self, *args, **kwargs):
         """
@@ -623,6 +628,9 @@ class CephOsd(NodbModel):
     @property
     def utilization(self):
         return float(self.kb_used) / float(self.kb_avail)
+
+    def __unicode__(self):
+        return getattr(self, 'name', unicode(self.pk))
 
 
 class CephPg(NodbModel):

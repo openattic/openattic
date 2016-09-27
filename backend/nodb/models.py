@@ -277,9 +277,11 @@ class LazyProperty(object):
         def __init__(self, target):
             self.target = target
 
-    def __init__(self, field_name, eval_func):
+    def __init__(self, field_name, eval_func, catch_exceptions, field_names):
         self.field_name = field_name
         self.eval_func = eval_func
+        self.catch_exceptions = catch_exceptions
+        self.field_names = field_names
 
     def __get__(self, instance, owner=None):
         """
@@ -293,7 +295,18 @@ class LazyProperty(object):
         if self.field_name in instance.__dict__:
             return instance.__dict__[self.field_name]
 
-        self.eval_func(instance, query_set)
+        if self.catch_exceptions is None:
+            self.eval_func(instance, query_set, self.field_names)
+        else:
+            try:
+                self.eval_func(instance, query_set, self.field_names)
+            except self.catch_exceptions as e:
+                logger.exception('failed to populate Field "{}" of {} ({})'
+                                 .format(self.field_name, unicode(instance), instance.__class__))
+                fields = instance.__class__.make_model_args({}, fields_force_none=self.field_names)
+                for field_name, value in fields.items():
+                    setattr(instance, field_name, value)
+
         if self.field_name not in instance.__dict__:
             raise KeyError(
                 'LazyProperty: {} did not set {} of {}'.format(self.eval_func, self.field_name,
@@ -308,7 +321,7 @@ class LazyProperty(object):
         instance.__dict__[self.field_name] = value
 
 
-def bulk_attribute_setter(*filed_names):
+def bulk_attribute_setter(filed_names=None, catch_exceptions=None):
     """
     The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone
     really needs the information gathered in this call. If the attribute is never used, the call
@@ -325,8 +338,8 @@ def bulk_attribute_setter(*filed_names):
     >>> class MyModel(NodbModel):
     >>>     my_filed = models.IntegerField()
     >>>
-    >>>     @bulk_attribute_setter('my_filed')
-    >>>     def set_my_filed(self, objs):
+    >>>     @bulk_attribute_setter(['my_filed'])
+    >>>     def set_my_filed(self, objs, field_names):
     >>>         self.my_filed = 42
 
     Keep in mind, that you can set the my_field attribute on all objects, not just self.
@@ -364,6 +377,9 @@ def bulk_attribute_setter(*filed_names):
     1	'bar'  	2MB
     """
 
+    if filed_names is None:
+        filed_names = []
+
     class LazyPropertyContributor(object):
         def __init__(self, field_names, func):
             self.field_names = field_names
@@ -371,7 +387,7 @@ def bulk_attribute_setter(*filed_names):
 
         def contribute_to_class(self, cls, name, virtual_only=False):
             for name in self.field_names:
-                setattr(cls, name, LazyProperty(name, self.func))
+                setattr(cls, name, LazyProperty(name, self.func, catch_exceptions, self.field_names))
 
     def decorator(func):
         return LazyPropertyContributor(filed_names, func)
