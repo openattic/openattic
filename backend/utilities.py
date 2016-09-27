@@ -99,7 +99,7 @@ def aggregate_dict(*args, **kwargs):
     """
     >>> assert aggregate_dict({1:2}, {3:4}, a=5) == {1:2, 3:4, 'a':5}
 
-    :rtype: dict
+    :rtype: dict[str, Any]
     """
     ret = {}
     for arg in args:

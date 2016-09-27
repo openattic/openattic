@@ -12,8 +12,6 @@
  *  GNU General Public License for more details.
 """
 
-from collections import defaultdict
-
 from django.core.exceptions import ValidationError
 
 from ceph.models import CephCluster
@@ -22,20 +20,7 @@ from django.db import models
 
 from exception import NotSupportedError
 from nodb.models import NodbModel, JsonField
-from utilities import aggregate_dict
-
-
-def merge_dicts_by_key(key, *lists):
-    """
-    :type key: str
-    :type lists: list[dict]
-    :rtype: list[dict]
-    """
-    d = defaultdict(dict)
-    for l in lists:
-        for elem in l:
-            d[elem[key]].update(elem)
-    return d.values()
+from utilities import aggregate_dict, zip_by_key
 
 
 class CephMinion(NodbModel):
@@ -60,7 +45,7 @@ class CephMinion(NodbModel):
         hosts = salt.get_salt_minions()
         ceph_minions = salt.get_config()
 
-        minions = merge_dicts_by_key('hostname', hosts, ceph_minions)
+        minions = zip_by_key('hostname', hosts, ceph_minions)
 
         fields_to_force = ['public_address', 'role', 'cluster_id', 'public_network',
                            'cluster_network', 'key_status', 'roles', 'storage', 'mon_host']
