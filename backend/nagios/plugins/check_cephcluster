@@ -113,7 +113,7 @@ def main():
 
     if len(args) != 1:
         parser.print_usage()
-        sys.exit(4)
+        sys.exit(3)
 
     start_time = time.time()
     status = ClusterStatus(CephCluster.get_status(args[0]))

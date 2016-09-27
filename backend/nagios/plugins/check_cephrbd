@@ -18,10 +18,12 @@
 import os
 import sys
 import django
+import json
 import time
 
 from optparse import OptionParser
 from configobj import ConfigObj
+
 
 distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
 for config_file in distro_config:
@@ -41,27 +43,47 @@ if django.VERSION[:2] >= (1, 7):
 
 
 def main():
-    from ceph.models import CephPool, fsid_context
+    from ceph.tasks import get_rbd_performance_data
+    from taskqueue.models import TaskQueue
 
-    parser = OptionParser(usage="%prog <cluster FSID> <pool name>")
+    parser = OptionParser(usage="%prog <cluster FSID> <pool name> <image name>")
     _, args = parser.parse_args()
 
-    if len(args) != 2:
+    if len(args) != 3:
         parser.print_usage()
         sys.exit(3)
 
-    start_time = time.time()
-    with fsid_context(args[0]):
-        pool = CephPool.objects.get(name=args[1])
-    exec_time = time.time() - start_time
+    if len(TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+            args[0], args[1], args[2]), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) \
+            == 0:
+        get_rbd_performance_data.delay(args[0], args[1], args[2])
 
-    used_per_cent = pool.num_bytes / pool.max_avail * 100
-    perfdata = "Used: {} M ({}%)|num_bytes={} max_avail={} num_objects={} exec_time={}ms".format(
-        pool.num_bytes, used_per_cent, pool.num_bytes, pool.max_avail, pool.num_objects,
-        round(exec_time * 1000, 2))
+    tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])
+    tasks = list(tasks)
 
-    print perfdata
-    sys.exit(0)
+    if len(tasks) > 0:
+        latest_task = tasks.pop()
+
+        for task in tasks:
+            task.delete()
+
+        if latest_task.status == TaskQueue.STATUS_EXCEPTION:
+            print "CRITICAL"
+            sys.exit(2)
+
+        task_result = latest_task.json_result
+        disk_usage = task_result[0]
+        exec_time = task_result[1]
+        last_modified = int(time.mktime(latest_task.last_modified.timetuple()))
+
+        print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms last_modified={}"\
+            .format(disk_usage["used_size"], disk_usage["used_size"],
+                    disk_usage["provisioned_size"], exec_time, last_modified)
+        sys.exit(0)
+    else:
+        print "UNKNOWN"
+        sys.exit(3)
 
 if __name__ == "__main__":
     main()

@@ -614,6 +614,7 @@ echo ""
 %{_datadir}/%{name}/ceph/
 %{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cephpool
+%{_libdir}/nagios/plugins/check_cephrbd
 
 %files gui
 %defattr(-,root,root,-)
