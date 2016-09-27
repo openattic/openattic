@@ -13,6 +13,10 @@ Version 2.0.15 (not released yet):
 * Backend: Fixed compatibility issues with Django 1.8 and Django REST 
   Framework 3 (OP-1210, OP-1490, OP-1486) 
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
+* Backend: The Nagios plugins 'check_cephcluster' and 'check_cephpool' are
+  now ending with the correct exit codes (as per the Nagios plugin development
+  guidelines: https://nagios-plugins.org/doc/guidelines.html#AEN78) for
+  invalid arguments (OP-1522)
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
 * Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
