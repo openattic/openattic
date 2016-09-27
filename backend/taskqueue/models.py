@@ -132,8 +132,8 @@ class TaskQueue(Model):
 
     @staticmethod
     def filter_by_definition_and_status(task, task_status=None):
-        task_definition = "[{}, {}, {}]".format(json.dumps(task.func_reference),
-                                                json.dumps(task.args), json.dumps(task.kwargs))
+        task_definition = json.dumps(task.serialize())
+
         if task_status:
             status = TaskQueue.in_status_q(task_status)
             return TaskQueue.objects.filter(status, task=task_definition).order_by('last_modified')

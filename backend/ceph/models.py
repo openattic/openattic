@@ -515,8 +515,10 @@ class CephErasureCodeProfile(NodbModel):
     @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
                            'ruleset_failure_domain', 'ruleset_root', 'w')
     def set_data(self, objects):
+        context = self.get_context()
+
         for field_name, value in CephErasureCodeProfile.make_model_args(
-                MonApi(rados[self._context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+                MonApi(rados[context.fsid]).osd_erasure_code_profile_get(self.name)).items():
             setattr(self, field_name, value)
         for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
                            'ruleset_failure_domain', 'ruleset_root', 'w']:
@@ -524,7 +526,7 @@ class CephErasureCodeProfile(NodbModel):
                 setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        context = self.__class__.objects.nodb_context
+        context = self.get_context()
         if not force_insert:
             raise NotImplementedError('Updating is not supported.')
         profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
@@ -533,8 +535,15 @@ class CephErasureCodeProfile(NodbModel):
         MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
 
     def delete(self, using=None):
-        context = self.__class__.objects.nodb_context
+        context = self.get_context()
         MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+
+    def get_context(self):
+        try:
+            return self._context
+        except AttributeError:
+            return self.__class__.objects.nodb_context
+
 
 
 class CephOsd(NodbModel):
@@ -845,10 +854,10 @@ class CephRbd(NodbModel):  # aka RADOS block device
         Returns the performance data for a RBD by consideration of the filter parameters if given.
 
         :param rbd: RBD object
-        :rtype: CephRbd
+        :type rbd: CephRbd
         :param filter: The performance data will be filtered by these sources (based on the RRD
             file).
-        :rtype: list[str]
+        :type filter: list[str]
         :return: Returns a list of performance data.
         :rtype: dict
         """
