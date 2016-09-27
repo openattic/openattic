@@ -102,8 +102,8 @@ def zip_by_keys(*args):
     >>> l1 = [{'k1': 0, 'v1': 'hello'}, {'k1': 1, 'v1': 'Hallo'}]
     >>> l2 = [{'k2': 0, 'v2': 'world'}, {'k2': 1, 'v2': 'Welt'}]
     >>> r = zip_by_keys(('k1', l1), ('k2', l2))
-    >>> assert r = [{'k1': 0, 'v1': 'hello', 'k2': 0, 'v2': 'world'},
-    >>>             {'k1': 1, 'v1': 'Hallo', 'k2': 1, 'v2': 'Welt'}]
+    >>> assert r == [{'k1': 0, 'v1': 'hello', 'k2': 0, 'v2': 'world'},
+    >>>              {'k1': 1, 'v1': 'Hallo', 'k2': 1, 'v2': 'Welt'}]
 
     :type args: tuple(tuple[str, Any]]
     :rtype: list[dict[str, Any]]
@@ -125,8 +125,8 @@ def zip_by_key(key, *args):
     >>> l1 = [{'k': 0, 'v1': 'hello'}, {'k': 1, 'v1': 'Hallo'}]
     >>> l2 = [{'k': 0, 'v2': 'world'}, {'k': 1, 'v2': 'Welt'}]
     >>> r = zip_by_key('k', l1, l2)
-    >>> assert r = [{'k': 0, 'v1': 'hello', 'v2': 'world'},
-    >>>             {'k': 1, 'v1': 'Hallo', 'v2': 'Welt'}]
+    >>> assert r == [{'k': 0, 'v1': 'hello', 'v2': 'world'},
+    >>>              {'k': 1, 'v1': 'Hallo', 'v2': 'Welt'}]
 
     :type key: str
     :type args: tuple[dict[str, Any]]
