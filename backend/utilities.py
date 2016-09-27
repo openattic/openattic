@@ -95,6 +95,19 @@ def mk_method_field_params(field_name):
         return ['get_{}'.format(field_name)]
 
 
+def aggregate_dict(*args, **kwargs):
+    """
+    >>> assert aggregate_dict({1:2}, {3:4}, a=5) == {1:2, 3:4, 'a':5}
+
+    :rtype: dict[str, Any]
+    """
+    ret = {}
+    for arg in args:
+        ret.update(arg)
+    ret.update(**kwargs)
+    return ret
+
+
 def zip_by_keys(*args):
     """
     Zips lists of dicts by keys into one list of dicts.

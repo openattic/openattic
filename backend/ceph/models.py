@@ -39,7 +39,7 @@ from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
-from utilities import zip_by_keys
+from utilities import aggregate_dict, zip_by_keys
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
@@ -715,14 +715,6 @@ class CephPg(NodbModel):
 
             ret.append(CephPg(**model_args))
         return ret
-
-
-def aggregate_dict(*args, **kwargs):
-    ret = {}
-    for arg in args:
-        ret.update(arg)
-    ret.update(**kwargs)
-    return ret
 
 
 class CephRbd(NodbModel):  # aka RADOS block device
