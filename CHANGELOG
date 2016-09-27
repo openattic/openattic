@@ -9,6 +9,7 @@ Version 2.0.15 (not released yet):
   lvm and nagios (OP-838)
 * Backend: Performance data for non existing Ceph clusters is no longer
   returned (OP-1406)
+* Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
 * Backend: Fixed compatibility issues with Django 1.8 and Django REST 
   Framework 3 (OP-1210, OP-1490, OP-1486) 
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
