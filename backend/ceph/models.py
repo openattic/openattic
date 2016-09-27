@@ -773,9 +773,6 @@ class CephRbd(NodbModel):  # aka RADOS block device
 
     @bulk_attribute_setter('used_size')
     def set_disk_usage(self, objects):
-        """This can be really expensive, thus we're calling "rbd du" only for rbds that will be
-        serialized."""
-
         fsid = self.pool.cluster.fsid
         pool_name = self.pool.name
 
