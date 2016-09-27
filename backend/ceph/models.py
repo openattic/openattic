@@ -158,6 +158,12 @@ class CephCluster(NodbModel):
                         sources["performancedata_pools"] = RRD.get_sources_list(
                             curr_host, "Check_CephPool_{}_{}".format(self.fsid, pools[0].name))
 
+                    rbds = CephRbd.objects.all()
+                    if len(rbds) > 0:
+                        sources["performancedata_rbds"] = RRD.get_sources_list(
+                            curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
+                                                                       rbds[0].name))
+
                 self.performance_data_options = sources
 
             except SystemError:
@@ -825,11 +831,48 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                    'supported'.format(key, value, self.name))
 
             super(CephRbd, self).save(*args, **kwargs)
+            self._update_nagios_configs()
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = RbdApi(rados[context.fsid])
         api.remove(self.pool.name, self.name)
+        self._update_nagios_configs()
+
+    def _update_nagios_configs(self):
+        if "nagios" in settings.INSTALLED_APPS:
+            ceph = get_dbus_object("/ceph")
+            nagios = get_dbus_object("/nagios")
+
+            ceph.remove_nagios_configs(["rbd"])
+            ceph.write_rbd_nagios_configs()
+            nagios.restart_service()
+
+    @staticmethod
+    def get_performance_data(rbd, filter=None):
+        """
+        Returns the performance data for a RBD by consideration of the filter parameters if given.
+
+        :param rbd: RBD object
+        :type rbd: CephRbd
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file).
+        :type filter: list[str]
+        :return: Returns a list of performance data.
+        :rtype: dict
+        """
+
+        check_for_installed_nagios()
+
+        from nagios.graphbuilder import Graph, RRD
+        curr_host = Host.objects.get_current()
+
+        rrd = RRD.get_rrd(curr_host, "Check_CephRbd_{}_{}_{}".format(
+            rbd.pool.cluster.fsid, rbd.pool.name, rbd.name))
+
+        graph = Graph.get_graph(rrd, filter)
+        perf_data = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+        return perf_data
 
 
 class CephFs(NodbModel):
