@@ -39,6 +39,7 @@ from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
+from utilities import zip_by_keys
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
@@ -566,16 +567,15 @@ class CephOsd(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        osds = sorted(rados[context.fsid].list_osds(), key=lambda osd: osd['id'])
-        osd_dump_data = sorted(MonApi(rados[context.fsid]).osd_dump()['osds'],
-                               key=lambda osd: osd['osd'])
-        pg_dump_data = sorted(MonApi(rados[context.fsid]).pg_dump()['osd_stats'],
-                              key=lambda osd: osd['osd'])
+        osd_tree = rados[context.fsid].list_osds()  # key=id
+        osd_dump_data = MonApi(rados[context.fsid]).osd_dump()['osds']  # key=osd
+        pg_dump_data = MonApi(rados[context.fsid]).pg_dump()['osd_stats']  # key=osd
+        osd_metadata = MonApi(rados[context.fsid]).osd_metadata()  # key=id
         fields_to_force = ['primary_affinity']
-        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **dict(osd, **pg_dump)),
+        return [CephOsd(**CephOsd.make_model_args(dict(in_state=data['in'], **data),
                                                   fields_force_none=fields_to_force))
-                for (osd, dump, pg_dump)
-                in zip(osds, osd_dump_data, pg_dump_data)]
+                for data
+                in zip_by_keys(('id', osd_tree), ('osd', osd_dump_data), ('osd', pg_dump_data), ('id', osd_metadata))]
 
     def save(self, *args, **kwargs):
         """

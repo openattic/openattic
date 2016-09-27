@@ -13,6 +13,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from collections import defaultdict
+
 import django
 
 
@@ -91,3 +93,43 @@ def mk_method_field_params(field_name):
         return []
     else:
         return ['get_{}'.format(field_name)]
+
+
+def zip_by_keys(*args):
+    """
+    Zips lists of dicts by keys into one list of dicts.
+
+    >>> l1 = [{'k1': 0, 'v1': 'hello'}, {'k1': 1, 'v1': 'Hallo'}]
+    >>> l2 = [{'k2': 0, 'v2': 'world'}, {'k2': 1, 'v2': 'Welt'}]
+    >>> r = zip_by_keys(('k1', l1), ('k2', l2))
+    >>> assert r == [{'k1': 0, 'v1': 'hello', 'k2': 0, 'v2': 'world'},
+    >>>              {'k1': 1, 'v1': 'Hallo', 'k2': 1, 'v2': 'Welt'}]
+
+    :type args: tuple(tuple[str, Any]]
+    :rtype: list[dict[str, Any]]
+    """
+    if not args:
+        return []
+    d = defaultdict(dict)
+    for (key, l) in args:
+        for elem in l:
+            d[elem[key]].update(elem)
+    keyname = args[0][0]
+    return sorted(d.values(), key=lambda e: getattr(e, keyname, None))
+
+
+def zip_by_key(key, *args):
+    """
+    Zip args by key.
+
+    >>> l1 = [{'k': 0, 'v1': 'hello'}, {'k': 1, 'v1': 'Hallo'}]
+    >>> l2 = [{'k': 0, 'v2': 'world'}, {'k': 1, 'v2': 'Welt'}]
+    >>> r = zip_by_key('k', l1, l2)
+    >>> assert r == [{'k': 0, 'v1': 'hello', 'v2': 'world'},
+    >>>              {'k': 1, 'v1': 'Hallo', 'v2': 'Welt'}]
+
+    :type key: str
+    :type args: tuple[dict[str, Any]]
+    :rtype: list[dict[str, Any]]
+    """
+    return zip_by_keys(*[(key, l) for l in args])

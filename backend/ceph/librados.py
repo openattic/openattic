@@ -162,7 +162,7 @@ class Client(object):
             if u'depth' in node:
                 del node[u'depth']
         nodes = unique_list_of_dicts(nodes)
-        return list(unique_list_of_dicts([dict(hostname=k["name"], **v)
+        return list(unique_list_of_dicts([v
                                           for (k, v) in product(nodes, nodes)
                     if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]))
 
@@ -607,6 +607,18 @@ class MonApi(object):
             by osd tree.
         """
         return self.client.mon_command('osd tree')
+
+    def osd_metadata(self, name=None):
+        """
+        COMMAND("osd metadata " \
+        "name=id,type=CephInt,range=0,req=false", \
+        "fetch metadata for osd {id} (default all)", \
+        "osd", "r", "cli,rest")
+
+        :type name: int
+        :rtype: list[dict] | dict
+        """
+        return self.client.mon_command('osd metadata', self._args_to_argdict(name=name))
 
     def fs_ls(self):
         return self.client.mon_command('fs ls')
