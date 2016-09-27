@@ -60,7 +60,7 @@ def main():
     exec_time = time.time() - start_time
 
     used_per_cent = pool.num_bytes / pool.max_avail * 100
-    perfdata = "Used: {} M ({}%)|num_bytes={} max_avail={} num_objects={} exec_time={}ms".format(
+    perfdata = "OK: Used {} M ({}%)|num_bytes={} max_avail={} num_objects={} exec_time={}ms".format(
         pool.num_bytes, used_per_cent, pool.num_bytes, pool.max_avail, pool.num_objects,
         round(exec_time * 1000, 2))
 
