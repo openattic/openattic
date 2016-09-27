@@ -148,7 +148,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function (res) {
           $scope.data.profiles = res.results;
-          $scope.pool.erasure.profile = $scope.data.profiles[0].name;
+          $scope.pool.erasure.profile = $scope.data.profiles[0];
         })
         .catch(function (osdError) {
           toasty.error({
@@ -233,7 +233,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         pool.crush_ruleset = $scope.pool[pool.type].expert.crush_ruleset;
       } else if (pool.type === "erasure") {
         pool.min_size = 2; // No need for this here - API update needed.
-        pool.erasure_code_profile = $scope.pool[pool.type].profile;
+        pool.erasure_code_profile = $scope.pool[pool.type].profile.name;
       }
       cephPoolsService.save(pool)
         .$promise
@@ -261,25 +261,19 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
       templateUrl      : "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
       windowTemplateUrl: "templates/messagebox.html",
       resolve: {
+        cluster: function () {
+          return $scope.data.cluster;
+        },
         profile: function () {
-          return $scope.pool.erasure;
+          return $scope.pool.erasure.profile;
         }
       }
     });
 
     modalInstance.result.then(function () {
-      cephErasureCodeProfilesService
-          .delete({id: $scope.pool.erasure.profile})
-          .then(function () {
-            // Trigger toasty message on success
-            toasty.success({
-              title: "Erasure code profile deleted",
-              msg  : "Erasure code profile '" + $scope.pool.erasure.profile + "' successfully deleted."
-            });
-          })
-          .catch(function (err) {
-            throw err;
-          });
+      // Remove item from select box
+      var idx = $scope.data.profiles.indexOf($scope.pool.erasure.profile);
+      $scope.data.profiles.splice(idx, 1);
     });
   };
 });
