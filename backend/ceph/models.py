@@ -136,12 +136,12 @@ class CephCluster(NodbModel):
 
         return result
 
-    @bulk_attribute_setter('health')
-    def set_cluster_health(self, objects):
+    @bulk_attribute_setter(['health'])
+    def set_cluster_health(self, objects, field_names):
         self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
 
-    @bulk_attribute_setter('performance_data_options')
-    def set_performance_data_options(self, objects):
+    @bulk_attribute_setter(['performance_data_options'])
+    def set_performance_data_options(self, objects, field_names):
         self.performance_data_options = {}
         if "nagios" in settings.INSTALLED_APPS:
             from nagios.graphbuilder import RRD
@@ -332,8 +332,8 @@ class CephPool(NodbModel):
 
         return result
 
-    @bulk_attribute_setter('max_avail', 'kb_used')
-    def ceph_df(self, pools):
+    @bulk_attribute_setter(['max_avail', 'kb_used'])
+    def ceph_df(self, pools, field_names):
         fsid = self.cluster.fsid
         df_data = rados[fsid].mon_command('df')
         df_per_pool = {
@@ -513,18 +513,18 @@ class CephErasureCodeProfile(NodbModel):
             setattr(profile, '_context', context)
         return profiles
 
-    @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
-                           'ruleset_failure_domain', 'ruleset_root', 'w')
-    def set_data(self, objects):
+    @bulk_attribute_setter(['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
+                           'ruleset_failure_domain', 'ruleset_root', 'w'],
+                           catch_exceptions=librados.ExternalCommandError)
+    def set_data(self, objects, field_names):
         context = self.get_context()
 
-        for field_name, value in CephErasureCodeProfile.make_model_args(
-                MonApi(rados[context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+        model_args = CephErasureCodeProfile.make_model_args(
+                MonApi(rados[context.fsid]).osd_erasure_code_profile_get(self.name),
+                fields_force_none=field_names).items()
+
+        for field_name, value in model_args:
             setattr(self, field_name, value)
-        for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
-                           'ruleset_failure_domain', 'ruleset_root', 'w']:
-            if field_name not in self.__dict__:
-                setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         context = self.get_context()
@@ -533,17 +533,32 @@ class CephErasureCodeProfile(NodbModel):
         profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
         if self.ruleset_failure_domain:
             profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
-        MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
+        try:
+            MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
+        except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
+            # ExternalCommandError here, but ExternalCommandError should default to an
+            # internal server error.
+            logger.exception('Failed to create ECP')
+            raise NotSupportedError(e)
 
     def delete(self, using=None):
         context = self.get_context()
-        MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+        try:
+            MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+        except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
+            # ExternalCommandError here, but ExternalCommandError should default to an
+            # internal server error.
+            logger.exception('Failed to delete ECP')
+            raise NotSupportedError(e)
 
     def get_context(self):
         try:
             return self._context
         except AttributeError:
             return self.__class__.objects.nodb_context
+
+    def __unicode__(self):
+        return self.name
 
 
 
@@ -778,8 +793,8 @@ class CephRbd(NodbModel):  # aka RADOS block device
         return [CephRbd(**CephRbd.make_model_args(aggregate_dict(
             rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name'])))) for (rbd, pool) in rbds]
 
-    @bulk_attribute_setter('used_size')
-    def set_disk_usage(self, objects):
+    @bulk_attribute_setter(['used_size'])
+    def set_disk_usage(self, objects, field_names):
         """This can be really expensive, thus we're calling "rbd du" only for rbds that will be
         serialized."""
         api = RbdApi(rados[self.pool.cluster.fsid])  # TODO: self.pool.cluster calls "ceph osd dump"
