@@ -263,7 +263,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
       controller       : "CephErasureCodeProfilesDeleteCtrl",
       templateUrl      : "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
       windowTemplateUrl: "templates/messagebox.html",
-      resolve: {
+      resolve          : {
         cluster: function () {
           return $scope.data.cluster;
         },
