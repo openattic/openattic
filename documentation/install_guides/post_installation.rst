@@ -58,8 +58,8 @@ Enabling Ceph Support in |oA|
 =============================
 
 .. note::
-  |oA| currently supports Ceph "Jewel" (or newer). Older Ceph versions may not
-  work.
+  Ceph support in |oA| is currently developed against Ceph 10.2 aka "Jewel".
+  Older Ceph versions may not work as expected.
 
 To set up |oA| with Ceph you first have to copy the Ceph administrator keyring
 and configuration from your Ceph admin node to your local |oA| system.
@@ -74,6 +74,17 @@ On the |oA| node, you should then have the following files::
 
   /etc/ceph/ceph.client.admin.keyring
   /etc/ceph/ceph.conf
+
+.. note::
+  Please ensure that these files are actually readable by the |oA| user
+  (``openattic``) and the Nagios/Icinga user account (usually ``nagios`` or
+  ``icinga``) that runs the related Nagios checks. In a default installation,
+  these users are added to the group ``openattic``, so it should be sufficient
+  to make sure these files are either world-readable or owned and readable by
+  this group::
+
+    # chgrp openattic /etc/ceph/ceph.conf /etc/ceph/ceph.client.admin.keyring
+    # chmod g+r /etc/ceph/ceph.conf /etc/ceph/ceph.client.admin.keyring
 
 Alternatively, you can copy these files manually.
 

@@ -159,6 +159,12 @@ class CephCluster(NodbModel):
                         sources["performancedata_pools"] = RRD.get_sources_list(
                             curr_host, "Check_CephPool_{}_{}".format(self.fsid, pools[0].name))
 
+                    rbds = CephRbd.objects.all()
+                    if len(rbds) > 0:
+                        sources["performancedata_rbds"] = RRD.get_sources_list(
+                            curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
+                                                                       rbds[0].name))
+
                 self.performance_data_options = sources
 
             except SystemError:
@@ -510,8 +516,10 @@ class CephErasureCodeProfile(NodbModel):
     @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
                            'ruleset_failure_domain', 'ruleset_root', 'w')
     def set_data(self, objects):
+        context = self.get_context()
+
         for field_name, value in CephErasureCodeProfile.make_model_args(
-                MonApi(rados[self._context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+                MonApi(rados[context.fsid]).osd_erasure_code_profile_get(self.name)).items():
             setattr(self, field_name, value)
         for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
                            'ruleset_failure_domain', 'ruleset_root', 'w']:
@@ -519,7 +527,7 @@ class CephErasureCodeProfile(NodbModel):
                 setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        context = self.__class__.objects.nodb_context
+        context = self.get_context()
         if not force_insert:
             raise NotImplementedError('Updating is not supported.')
         profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
@@ -528,8 +536,15 @@ class CephErasureCodeProfile(NodbModel):
         MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
 
     def delete(self, using=None):
-        context = self.__class__.objects.nodb_context
+        context = self.get_context()
         MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+
+    def get_context(self):
+        try:
+            return self._context
+        except AttributeError:
+            return self.__class__.objects.nodb_context
+
 
 
 class CephOsd(NodbModel):
@@ -816,11 +831,48 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                    'supported'.format(key, value, self.name))
 
             super(CephRbd, self).save(*args, **kwargs)
+            self._update_nagios_configs()
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = RbdApi(rados[context.fsid])
         api.remove(self.pool.name, self.name)
+        self._update_nagios_configs()
+
+    def _update_nagios_configs(self):
+        if "nagios" in settings.INSTALLED_APPS:
+            ceph = get_dbus_object("/ceph")
+            nagios = get_dbus_object("/nagios")
+
+            ceph.remove_nagios_configs(["rbd"])
+            ceph.write_rbd_nagios_configs()
+            nagios.restart_service()
+
+    @staticmethod
+    def get_performance_data(rbd, filter=None):
+        """
+        Returns the performance data for a RBD by consideration of the filter parameters if given.
+
+        :param rbd: RBD object
+        :type rbd: CephRbd
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file).
+        :type filter: list[str]
+        :return: Returns a list of performance data.
+        :rtype: dict
+        """
+
+        check_for_installed_nagios()
+
+        from nagios.graphbuilder import Graph, RRD
+        curr_host = Host.objects.get_current()
+
+        rrd = RRD.get_rrd(curr_host, "Check_CephRbd_{}_{}_{}".format(
+            rbd.pool.cluster.fsid, rbd.pool.name, rbd.name))
+
+        graph = Graph.get_graph(rrd, filter)
+        perf_data = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+        return perf_data
 
 
 class CephFs(NodbModel):

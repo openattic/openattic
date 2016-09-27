@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import os
+import sys
+import django
+import json
+import time
+
+from optparse import OptionParser
+from configobj import ConfigObj
+
+
+distro_config = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
+for config_file in distro_config:
+    if os.path.isfile(config_file):
+        config = ConfigObj(config_file)
+        sys.path.append(config["OADIR"])
+        break
+else:
+    raise IOError("Can't find the needed configuration file 'openattic' containing the OADIR "
+                  "setting. Please reinstall the openattic-base package to get the missing "
+                  "configuration file.")
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+
+if django.VERSION[:2] >= (1, 7):
+    django.setup()
+
+
+def main():
+    from ceph.tasks import get_rbd_performance_data
+    from taskqueue.models import TaskQueue
+
+    parser = OptionParser(usage="%prog <cluster FSID> <pool name> <image name>")
+    _, args = parser.parse_args()
+
+    if len(args) != 3:
+        parser.print_usage()
+        sys.exit(3)
+
+    if len(TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+            args[0], args[1], args[2]), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) \
+            == 0:
+        get_rbd_performance_data.delay(args[0], args[1], args[2])
+
+    tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
+        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])
+    tasks = list(tasks)
+
+    if len(tasks) > 0:
+        latest_task = tasks.pop()
+
+        for task in tasks:
+            task.delete()
+
+        if latest_task.status == TaskQueue.STATUS_EXCEPTION:
+            print "CRITICAL"
+            sys.exit(2)
+
+        task_result = latest_task.json_result
+        disk_usage = task_result[0]
+        exec_time = task_result[1]
+        last_modified = int(time.mktime(latest_task.last_modified.timetuple()))
+
+        print "OK Used: {} B|used_size={} provisioned_size={} exec_time={}ms last_modified={}"\
+            .format(disk_usage["used_size"], disk_usage["used_size"],
+                    disk_usage["provisioned_size"], exec_time, last_modified)
+        sys.exit(0)
+    else:
+        print "UNKNOWN"
+        sys.exit(3)
+
+if __name__ == "__main__":
+    main()
