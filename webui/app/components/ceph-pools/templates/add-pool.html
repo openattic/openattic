@@ -197,17 +197,21 @@
               Erasure code profile
             </label>
             <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-              <select class="form-control tc_erasureProfiles_selection"
-                      id="erasureProfiles"
-                      name="erasureProfiles"
-                      ng-required="pool.type === 'erasure'"
-                      ng-options="profile as profile.name for profile in data.profiles"
-                      ng-model="pool.erasure.profile">
-                <option class="tc_erasureProfilesOption" value=""> -- Select a erasure code profile --</option>
-              </select>
-              <button type="button" class="btn btn-default" ng-click="deleteErasureCodeProfile()">
-                <i class="fa fa-trash-o" aria-hidden="true"></i>
-              </button>
+              <div class="input-group">
+                <select class="form-control tc_erasureProfiles_selection"
+                        id="erasureProfiles"
+                        name="erasureProfiles"
+                        ng-required="pool.type === 'erasure'"
+                        ng-options="profile as profile.name for profile in data.profiles"
+                        ng-model="pool.erasure.profile">
+                  <option class="tc_erasureProfilesOption" value=""> -- Select a erasure code profile --</option>
+                </select>
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-default" ng-click="deleteErasureCodeProfile()">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                  </button>
+                </span>
+              </div>
               <span class="help-block tc_erasureRequired"
                     ng-show="(poolForm.$submitted || poolForm.erasureProfiles.$dirty) && poolForm.erasureProfiles.$error.required">
                   This field is required!
