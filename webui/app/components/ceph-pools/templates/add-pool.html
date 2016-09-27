@@ -85,7 +85,7 @@
                     required
                     ng-options="poolType.name as poolType.description for poolType in data.poolTypes"
                     ng-model="pool.type">
-              <option class="tc_poolTypesOption" value=""> -- Select a pool type --</option>
+              <option class="tc_poolTypesOption" value=""> -- Select a pool type -- </option>
             </select>
             <span class="help-block tc_typeRequired"
                   ng-show="(poolForm.$submitted || poolForm.poolTypes.$dirty) && poolForm.poolTypes.$error.required">
@@ -207,6 +207,9 @@
                   <option class="tc_erasureProfilesOption" value=""> -- Select an erasure code profile -- </option>
                 </select>
                 <span class="input-group-btn">
+                  <button type="button" class="btn btn-default" ng-click="addErasureCodeProfile()">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                  </button>
                   <button type="button" class="btn btn-default" ng-click="deleteErasureCodeProfile()">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                   </button>
