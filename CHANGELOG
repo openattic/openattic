@@ -23,6 +23,7 @@ Version 2.0.15 (not released yet):
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
+* WebUI/QA: Adds missing condition to filter test categories (OP-1551)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
@@ -34,8 +35,10 @@ Version 2.0.15 (not released yet):
   completely using `build_deb_packages.py` (OP-1435) 
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
-* WebUI/QA: Adds missing condition to filter test categories (OP-1551)  
-
+* Documentation: Updated Ceph installation chapter, emphasizing the requirement
+  of openATTIC and Nagios being able to read the Ceph config file and keyring
+  (OP-1572).
+  
 Version 2.0.14, 12. September 2016:
 -----------------------------------
 
