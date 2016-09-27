@@ -39,6 +39,7 @@ from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
+from utilities import aggregate_dict, zip_by_keys
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
@@ -564,16 +565,15 @@ class CephOsd(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        osds = sorted(rados[context.fsid].list_osds(), key=lambda osd: osd['id'])
-        osd_dump_data = sorted(MonApi(rados[context.fsid]).osd_dump()['osds'],
-                               key=lambda osd: osd['osd'])
-        pg_dump_data = sorted(MonApi(rados[context.fsid]).pg_dump()['osd_stats'],
-                              key=lambda osd: osd['osd'])
+        osd_tree = rados[context.fsid].list_osds()  # key=id
+        osd_dump_data = MonApi(rados[context.fsid]).osd_dump()['osds']  # key=osd
+        pg_dump_data = MonApi(rados[context.fsid]).pg_dump()['osd_stats']  # key=osd
+        osd_metadata = MonApi(rados[context.fsid]).osd_metadata()  # key=id
         fields_to_force = ['primary_affinity']
-        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **dict(osd, **pg_dump)),
+        return [CephOsd(**CephOsd.make_model_args(dict(in_state=data['in'], **data),
                                                   fields_force_none=fields_to_force))
-                for (osd, dump, pg_dump)
-                in zip(osds, osd_dump_data, pg_dump_data)]
+                for data
+                in zip_by_keys(('id', osd_tree), ('osd', osd_dump_data), ('osd', pg_dump_data), ('id', osd_metadata))]
 
     def save(self, *args, **kwargs):
         """
@@ -829,11 +829,48 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                    'supported'.format(key, value, self.name))
 
             super(CephRbd, self).save(*args, **kwargs)
+            self._update_nagios_configs()
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = RbdApi(rados[context.fsid])
         api.remove(self.pool.name, self.name)
+        self._update_nagios_configs()
+
+    def _update_nagios_configs(self):
+        if "nagios" in settings.INSTALLED_APPS:
+            ceph = get_dbus_object("/ceph")
+            nagios = get_dbus_object("/nagios")
+
+            ceph.remove_nagios_configs(["rbd"])
+            ceph.write_rbd_nagios_configs()
+            nagios.restart_service()
+
+    @staticmethod
+    def get_performance_data(rbd, filter=None):
+        """
+        Returns the performance data for a RBD by consideration of the filter parameters if given.
+
+        :param rbd: RBD object
+        :type rbd: CephRbd
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file).
+        :type filter: list[str]
+        :return: Returns a list of performance data.
+        :rtype: dict
+        """
+
+        check_for_installed_nagios()
+
+        from nagios.graphbuilder import Graph, RRD
+        curr_host = Host.objects.get_current()
+
+        rrd = RRD.get_rrd(curr_host, "Check_CephRbd_{}_{}_{}".format(
+            rbd.pool.cluster.fsid, rbd.pool.name, rbd.name))
+
+        graph = Graph.get_graph(rrd, filter)
+        perf_data = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+        return perf_data
 
 
 class CephFs(NodbModel):
