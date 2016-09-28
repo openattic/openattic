@@ -200,8 +200,8 @@ class SystemD(BasePlugin):
         from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
 
         rgx = {"cluster": r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$",
-               "pool": r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+.cfg$",
-               "rbd": r"^cephrbd_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w]+_[\w]+.cfg$"}
+               "pool": r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w\.]+.cfg$",
+               "rbd": r"^cephrbd_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w\.]+_[\w\.]+.cfg$"}
 
         if len(objects_to_delete) == 1 and objects_to_delete[0] == "all":
             objects_to_delete = rgx.keys()
