@@ -321,7 +321,7 @@ class LazyProperty(object):
         instance.__dict__[self.field_name] = value
 
 
-def bulk_attribute_setter(filed_names=None, catch_exceptions=None):
+def bulk_attribute_setter(field_names=None, catch_exceptions=None):
     """
     The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone
     really needs the information gathered in this call. If the attribute is never used, the call
@@ -336,32 +336,32 @@ def bulk_attribute_setter(filed_names=None, catch_exceptions=None):
 
     The bulk_attribute_setter decorator can be used like so:
     >>> class MyModel(NodbModel):
-    >>>     my_filed = models.IntegerField()
+    >>>     my_field = models.IntegerField()
     >>>
-    >>>     @bulk_attribute_setter(['my_filed'])
-    >>>     def set_my_filed(self, objs, field_names):
-    >>>         self.my_filed = 42
+    >>>     @bulk_attribute_setter(['my_field'])
+    >>>     def set_my_field(self, objs, field_names):
+    >>>         self.my_field = 42
 
     Keep in mind, that you can set the my_field attribute on all objects, not just self.
 
     The decorator modifies the model to look like this:
-    >>> def set_my_filed(self, objs):
-    >>>     self.my_filed = 42
+    >>> def set_my_field(self, objs):
+    >>>     self.my_field = 42
     >>>
     >>> class MyModel(NodbModel):
-    >>>     my_filed = models.IntegerField()
-    >>>     set_my_filed = LazyPropertyContributor(['my_filed'], set_my_filed)
+    >>>     my_field = models.IntegerField()
+    >>>     set_my_field = LazyPropertyContributor(['my_field'], set_my_field)
 
     A LazyPropertyContributor property implements the contribute_to_class method, which modifies
     the model itself to look like so:
     >>> class MyModel(NodbModel):
-    >>>     my_filed = LazyProperty('my_filed', set_my_filed)
+    >>>     my_field = LazyProperty('my_field', set_my_field)
 
-    The my_filed filed is not overwritten, because the fields are already moved into the _meta class
+    The my_field field is not overwritten, because the fields are already moved into the _meta class
     at this point. If someone then accesses the my_field attribute, LazyProperty.__get__ is called,
     which then calls set_my_field to set the field, as if one had written:
     >>> instances = MyModel.objects.all()
-    >>> set_my_filed(instances[0], instances)
+    >>> set_my_field(instances[0], instances)
     >>> assert instances[0].my_field == 42
 
     For example, get_all_objects generates a QuerySet like this:
@@ -377,8 +377,8 @@ def bulk_attribute_setter(filed_names=None, catch_exceptions=None):
     1	'bar'  	2MB
     """
 
-    if filed_names is None:
-        filed_names = []
+    if field_names is None:
+        field_names = []
 
     class LazyPropertyContributor(object):
         def __init__(self, field_names, func):
@@ -390,7 +390,7 @@ def bulk_attribute_setter(filed_names=None, catch_exceptions=None):
                 setattr(cls, name, LazyProperty(name, self.func, catch_exceptions, self.field_names))
 
     def decorator(func):
-        return LazyPropertyContributor(filed_names, func)
+        return LazyPropertyContributor(field_names, func)
 
     return decorator
 
