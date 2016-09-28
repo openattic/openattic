@@ -28,6 +28,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.http import Http404
 from django.utils.translation import ugettext_noop as _
 from django.shortcuts import get_object_or_404
 
@@ -51,16 +52,51 @@ class RadosClientManager(object):
     instances = {}
 
     def __getitem__(self, fsid):
+        """
+        :type fsid: str | unicode
+        :rtype: librados.Client
+        """
         if fsid not in self.instances:
             cluster_name = CephCluster.get_name(fsid)
             self.instances[fsid] = librados.Client(cluster_name)
 
         return self.instances[fsid]
 
+
 rados = RadosClientManager()
 
 
-class CephCluster(NodbModel):
+class RadosMixin:
+
+    @staticmethod
+    def rados_client_or_404(fsid=None):
+        """
+        :type fsid: str | unicode
+        :rtype: librados.Client
+        """
+        if fsid is None:
+            fsid = NodbManager.nodb_context.fsid
+        try:
+            return rados[fsid]
+        except LookupError:
+            raise Http404('Unknwown Ceph cluster: {}'.format(fsid))
+
+    @staticmethod
+    def mon_api_or_404(fsid=None):
+        """
+        :type fsid: str | unicode
+        """
+        return MonApi(RadosMixin.rados_client_or_404(fsid))
+
+    @staticmethod
+    def rbd_api_or_404(fsid=None):
+        """
+        :type fsid: str | unicode
+        """
+        return RbdApi(RadosMixin.rados_client_or_404(fsid))
+
+
+class CephCluster(NodbModel, RadosMixin):
     """Represents a Ceph cluster."""
 
     fsid = models.CharField(max_length=36, primary_key=True)
@@ -123,9 +159,9 @@ class CephCluster(NodbModel):
 
         raise LookupError()
 
-    @staticmethod
-    def get_status(fsid, status_command='status'):
-        return rados[fsid].mon_command(status_command)
+    @property
+    def status(self):
+        return self.mon_api_or_404(self.fsid).status()
 
     @staticmethod
     def get_all_objects(context, query):
@@ -139,7 +175,7 @@ class CephCluster(NodbModel):
 
     @bulk_attribute_setter(['health'])
     def set_cluster_health(self, objects, field_names):
-        self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
+        self.health = self.mon_api_or_404(self.fsid).health()['overall_status']
 
     @bulk_attribute_setter(['performance_data_options'])
     def set_performance_data_options(self, objects, field_names):
@@ -199,7 +235,7 @@ class CephCluster(NodbModel):
 
     @property
     def rados_client(self):
-        """Mainly for django shell by simplifying the access to librados.
+        """
         :rtype: librados.Client
         """
         return rados[self.fsid]
@@ -229,7 +265,7 @@ def fsid_context(fsid):
         NodbManager.set_nodb_context(previous_context)
 
 
-class CephPool(NodbModel):
+class CephPool(NodbModel, RadosMixin):
 
     id = models.IntegerField(primary_key=True, editable=False)
     cluster = models.ForeignKey(CephCluster, editable=False, null=True, blank=True)
@@ -279,7 +315,7 @@ class CephPool(NodbModel):
         cluster = context.cluster
         fsid = cluster.fsid
 
-        osd_dump_data = MonApi(rados[fsid]).osd_dump()
+        osd_dump_data = RadosMixin.mon_api_or_404(fsid).osd_dump()
 
         for pool_data in osd_dump_data['pools']:
 
@@ -336,7 +372,7 @@ class CephPool(NodbModel):
     @bulk_attribute_setter(['max_avail', 'kb_used'])
     def ceph_df(self, pools, field_names):
         fsid = self.cluster.fsid
-        df_data = rados[fsid].mon_command('df')
+        df_data = self.mon_api_or_404(fsid).df()
         df_per_pool = {
             elem['id']: elem['stats']
             for elem
@@ -365,7 +401,7 @@ class CephPool(NodbModel):
         """
         context = CephPool.objects.nodb_context
         insert = getattr(self, 'id', None) is None
-        with undo_transaction(MonApi(rados[context.fsid]), re_raise_exception=True) as api:
+        with undo_transaction(self.mon_api_or_404(), re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
                                     self.pg_num,
@@ -431,19 +467,16 @@ class CephPool(NodbModel):
             self._update_nagios_configs()
 
     def delete(self, using=None):
-        context = CephPool.objects.nodb_context
-        api = MonApi(rados[context.fsid])
+        api = self.mon_api_or_404()
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
         self._update_nagios_configs()
 
     def create_snapshot(self, name):
-        context = CephPool.objects.nodb_context
-        api = MonApi(rados[context.fsid])
+        api = self.mon_api_or_404()
         api.osd_pool_mksnap(self.name, name)
 
     def delete_snapshot(self, name):
-        context = CephPool.objects.nodb_context
-        api = MonApi(rados[context.fsid])
+        api = self.mon_api_or_404()
         api.osd_pool_rmsnap(self.name, name)
 
     def _update_nagios_configs(self):
@@ -492,7 +525,7 @@ class CephPool(NodbModel):
         return perf_data_results
 
 
-class CephErasureCodeProfile(NodbModel):
+class CephErasureCodeProfile(NodbModel, RadosMixin):
     name = models.CharField(max_length=100, primary_key=True)
     k = models.IntegerField()
     m = models.IntegerField()
@@ -508,8 +541,9 @@ class CephErasureCodeProfile(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
+        api = RadosMixin.mon_api_or_404(context.fsid)
         profiles = [CephErasureCodeProfile(name=profile)
-                    for profile in MonApi(rados[context.fsid]).osd_erasure_code_profile_ls()]
+                    for profile in api.osd_erasure_code_profile_ls()]
         for profile in profiles:
             setattr(profile, '_context', context)
         return profiles
@@ -519,9 +553,10 @@ class CephErasureCodeProfile(NodbModel):
                            catch_exceptions=librados.ExternalCommandError)
     def set_data(self, objects, field_names):
         context = self.get_context()
+        api = self.mon_api_or_404(context.fsid)
 
         model_args = CephErasureCodeProfile.make_model_args(
-                MonApi(rados[context.fsid]).osd_erasure_code_profile_get(self.name),
+                api.osd_erasure_code_profile_get(self.name),
                 fields_force_none=field_names).items()
 
         for field_name, value in model_args:
@@ -529,13 +564,15 @@ class CephErasureCodeProfile(NodbModel):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         context = self.get_context()
+        api = self.mon_api_or_404(context.fsid)
+
         if not force_insert:
             raise NotImplementedError('Updating is not supported.')
         profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
         if self.ruleset_failure_domain:
             profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
         try:
-            MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
+            api.osd_erasure_code_profile_set(self.name, profile)
         except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
             # ExternalCommandError here, but ExternalCommandError should default to an
             # internal server error.
@@ -544,8 +581,9 @@ class CephErasureCodeProfile(NodbModel):
 
     def delete(self, using=None):
         context = self.get_context()
+        api = self.mon_api_or_404(context.fsid)
         try:
-            MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+            api.osd_erasure_code_profile_rm(self.name)
         except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
             # ExternalCommandError here, but ExternalCommandError should default to an
             # internal server error.
@@ -563,7 +601,7 @@ class CephErasureCodeProfile(NodbModel):
 
 
 
-class CephOsd(NodbModel):
+class CephOsd(NodbModel, RadosMixin):
     id = models.IntegerField(primary_key=True, editable=False)
     crush_weight = models.FloatField()
     exists = models.IntegerField(editable=False)
@@ -583,10 +621,11 @@ class CephOsd(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        osd_tree = rados[context.fsid].list_osds()  # key=id
-        osd_dump_data = MonApi(rados[context.fsid]).osd_dump()['osds']  # key=osd
-        pg_dump_data = MonApi(rados[context.fsid]).pg_dump()['osd_stats']  # key=osd
-        osd_metadata = MonApi(rados[context.fsid]).osd_metadata()  # key=id
+        api = RadosMixin.mon_api_or_404(context.fsid)
+        osd_tree = RadosMixin.rados_client_or_404(context.fsid).list_osds()  # key=id
+        osd_dump_data = api.osd_dump()['osds']  # key=osd
+        pg_dump_data = api.pg_dump()['osd_stats']  # key=osd
+        osd_metadata = api.osd_metadata()  # key=id
         fields_to_force = ['primary_affinity']
         zipped_data = zip_by_keys(('id', osd_tree),
                                   ('osd', osd_dump_data),
@@ -607,9 +646,11 @@ class CephOsd(NodbModel):
         3. Providing a RESTful API.
         """
         context = CephPool.objects.nodb_context
+        api = self.mon_api_or_404(context.fsid)
+
         if self.id is None:
             raise ValidationError('Creating OSDs is not supported.')
-        with undo_transaction(MonApi(rados[context.fsid]), re_raise_exception=True) as api:
+        with undo_transaction(api, re_raise_exception=True) as api:
             diff, original = self.get_modified_fields()
 
             for key, value in diff.items():
@@ -634,7 +675,7 @@ class CephOsd(NodbModel):
         return getattr(self, 'name', unicode(self.pk))
 
 
-class CephPg(NodbModel):
+class CephPg(NodbModel, RadosMixin):
 
     acting = JsonField(base_type=list, editable=False)
     acting_primary = models.IntegerField()
@@ -719,7 +760,7 @@ class CephPg(NodbModel):
         assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = rados[context.fsid].mon_command(cmd, argdict)
+            pgs = RadosMixin.rados_client_or_404(context.fsid).mon_command(cmd, argdict)
         except librados.ExternalCommandError, e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []
@@ -741,7 +782,7 @@ class CephPg(NodbModel):
         return ret
 
 
-class CephRbd(NodbModel):  # aka RADOS block device
+class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
     """
@@ -777,7 +818,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        api = RbdApi(rados[context.fsid])
+        api = RadosMixin.rbd_api_or_404(context.fsid)
 
         pools = CephPool.objects.all()
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool)
@@ -829,13 +870,14 @@ class CephRbd(NodbModel):  # aka RADOS block device
         2. Modify the Ceph state-machine in a sane way.
         3. Providing a RESTful API.
         """
-        context = CephPool.objects.nodb_context
         insert = self._state.adding  # there seems to be no id field.
         if not hasattr(self, 'features') or self.features == u'':
             self.features = None
 
-        with undo_transaction(RbdApi(rados[context.fsid]), re_raise_exception=True,
-                              exception_type=CephRbd.DoesNotExist) as api:
+        api = self.rbd_api_or_404()
+
+        with undo_transaction(api, re_raise_exception=True,
+                              exception_type=CephRbd.DoesNotExist):
 
             if insert:
                 order = None
@@ -869,8 +911,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
             self._update_nagios_configs()
 
     def delete(self, using=None):
-        context = CephPool.objects.nodb_context
-        api = RbdApi(rados[context.fsid])
+        api = self.rbd_api_or_404()
         api.remove(self.pool.name, self.name)
         self._update_nagios_configs()
 
@@ -910,7 +951,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
         return perf_data
 
 
-class CephFs(NodbModel):
+class CephFs(NodbModel, RadosMixin):
     name = models.CharField(max_length=100, primary_key=True)
     metadata_pool = models.ForeignKey(CephPool, related_name='metadata_of_ceph_fs')
     data_pools = JsonField(base_type=list)
@@ -919,7 +960,8 @@ class CephFs(NodbModel):
     def get_all_objects(context, query):
         """:type context: ceph.restapi.FsidContext"""
         assert context is not None
-        api = MonApi(rados[context.fsid])
+        api = RadosMixin.mon_api_or_404(context.fsid)
+
 
         ret = []
         for fs in api.fs_ls():
@@ -931,16 +973,16 @@ class CephFs(NodbModel):
         return ret
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        context = self.__class__.objects.nodb_context
+        api = RadosMixin.mon_api_or_404()
         insert = self._state.adding
         if not insert:
             raise NotImplementedError('Updating is not supported.')
         data_pool = CephPool.objects.get(id=self.data_pools[0])
-        MonApi(rados[context.fsid]).fs_new(self.name, self.metadata_pool.name, data_pool.name)
+        api.fs_new(self.name, self.metadata_pool.name, data_pool.name)
 
     def delete(self, using=None):
-        context = self.__class__.objects.nodb_context
-        MonApi(rados[context.fsid]).fs_rm(self.name, '--yes-i-really-mean-it')
+        api = RadosMixin.mon_api_or_404()
+        api.fs_rm(self.name, '--yes-i-really-mean-it')
 
 
 class Cluster(StorageObject):

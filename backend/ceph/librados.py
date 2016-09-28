@@ -424,9 +424,9 @@ class MonApi(object):
         "osd", "rw", "cli,rest")
 
         :param pool: Pool name
-        :type pool: str
+        :type pool: str | unicode
         :param pool2: Second pool name
-        :type pool2: str
+        :type pool2: str | unicode
         :param sure: should be "--yes-i-really-really-mean-it"
         :type sure: str
         :return: empty string
@@ -654,6 +654,15 @@ class MonApi(object):
     def pg_dump(self):
         """Also contains OSD statistics"""
         return self.client.mon_command('pg dump')
+
+    def status(self):
+        return self.client.mon_command('status')
+
+    def health(self):
+        return self.client.mon_command('health')
+
+    def df(self):
+        return self.client.mon_command('df')
 
 
 class RbdApi(object):
