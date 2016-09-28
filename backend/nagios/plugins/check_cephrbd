@@ -58,8 +58,9 @@ def main():
             == 0:
         get_rbd_performance_data.delay(args[0], args[1], args[2])
 
-    tasks = TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
-        args[0], args[1], args[2]), [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])
+    tasks = TaskQueue.filter_by_definition_and_status(
+        get_rbd_performance_data(args[0], args[1], args[2]),
+        [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
     tasks = list(tasks)
 
     if len(tasks) > 0:
@@ -68,7 +69,7 @@ def main():
         for task in tasks:
             task.delete()
 
-        if latest_task.status == TaskQueue.STATUS_EXCEPTION:
+        if latest_task.status in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
             print "CRITICAL"
             sys.exit(2)
 
