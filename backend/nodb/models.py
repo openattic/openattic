@@ -321,7 +321,7 @@ class LazyProperty(object):
         instance.__dict__[self.field_name] = value
 
 
-def bulk_attribute_setter(field_names=None, catch_exceptions=None):
+def bulk_attribute_setter(field_names, catch_exceptions=None):
     """
     The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone
     really needs the information gathered in this call. If the attribute is never used, the call
@@ -375,10 +375,15 @@ def bulk_attribute_setter(field_names=None, catch_exceptions=None):
     id	name	disk_usage
     0	'foo'   1MB
     1	'bar'  	2MB
+
+    :type field_names: list[str]
+    :param catch_exceptions: Exceptions that will be caught. In case of an exception, all
+        `field_names` will be set to None.
+    :type catch_exceptions: exceptions.Exception | tuple[exceptions.Exception]
     """
 
-    if field_names is None:
-        field_names = []
+    if not len(field_names):
+        raise ValueError('`field_names` must not be empty.')
 
     class LazyPropertyContributor(object):
         def __init__(self, field_names, func):
