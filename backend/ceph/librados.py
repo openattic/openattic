@@ -150,7 +150,7 @@ class Client(object):
 
     def list_osds(self):
         """
-        Info about each osd, eg "up" or "down". Also adding the `hostname`.
+        Info about each osd, eg "up" or "down".
 
         :rtype: list[dict[str, Any]]
         """
