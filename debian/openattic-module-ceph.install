@@ -1,6 +1,8 @@
 backend/ceph /usr/share/openattic
 backend/installed_apps.d/60_ceph /usr/share/openattic/installed_apps.d
 
+etc/nagios-plugins/config/openattic-ceph.cfg    /etc/nagios-plugins/config
+
 backend/nagios/plugins/check_cephcluster        /usr/lib/nagios/plugins
 backend/nagios/plugins/check_cephpool           /usr/lib/nagios/plugins
 backend/nagios/plugins/check_cephrbd            /usr/lib/nagios/plugins
