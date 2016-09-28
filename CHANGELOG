@@ -9,6 +9,10 @@ Version 2.0.15 (not released yet):
   lvm and nagios (OP-838)
 * Backend: Performance data for non existing Ceph clusters is no longer
   returned (OP-1406)
+* Backend: The used_size of an RBD is now given by the
+  'get_rbd_performance_data' task and not directly from the RbdApi. This
+  should prevent the 504 error that sometimes occurred by getting RBDs
+  (OP-1411)
 * Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
 * Backend: The empty values at the end of the performance data collections
   are filtered now (OP-1470)
