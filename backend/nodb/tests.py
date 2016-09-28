@@ -214,19 +214,19 @@ class LazyPropertyTest(TestCase):
         d = models.IntegerField()
         e = models.IntegerField()
 
-        @bulk_attribute_setter('b')
-        def set_b(self, objects):
+        @bulk_attribute_setter(['b'])
+        def set_b(self, objects, field_names):
             assert self in objects
             for o in objects:
                 o.b = o.a
 
-        @bulk_attribute_setter('c')
-        def set_c(self, objects):
+        @bulk_attribute_setter(['c'])
+        def set_c(self, objects, field_names):
             for o in objects:
                 o.c = self.a
 
-        @bulk_attribute_setter('d', 'e')
-        def set_d_e(self, objects):
+        @bulk_attribute_setter(['d', 'e'])
+        def set_d_e(self, objects, field_names):
             self.d = self.a
             self.e = self.a
 
