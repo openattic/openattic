@@ -30,6 +30,8 @@ Version 2.0.15 (not released yet):
   of Ceph OSDs (OP-1573)
 * Backend: Added read-only REST API returning 
   `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
+* Fixed internal server error when creating invalid Erasure Code Profiles 
+  or deleting used ones (OP-1578)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added performance data to the extended view of a ceph
   pool (OP-1405)
