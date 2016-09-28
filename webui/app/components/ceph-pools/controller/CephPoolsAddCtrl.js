@@ -259,7 +259,20 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
 
   // Erasure Code Profile
   $scope.addErasureCodeProfile = function () {
+    var modalInstance = $uibModal.open({
+      controller       : "CephErasureCodeProfilesAddCtrl",
+      templateUrl      : "components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html",
+      windowTemplateUrl: "templates/messagebox.html",
+      resolve          : {
+        cluster: function () {
+          return $scope.data.cluster;
+        }
+      }
+    });
 
+    modalInstance.result.then(function () {
+      // Todo Add profile to dropdown
+    });
   };
 
   $scope.deleteErasureCodeProfile = function () {
