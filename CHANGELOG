@@ -51,7 +51,9 @@ Version 2.0.15 (not released yet):
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
 * Packaging: Allow to override the default GPG key or disable the signing
-  completely using `build_deb_packages.py` (OP-1435) 
+  completely using `build_deb_packages.py` (OP-1435)
+* Packaging: Separated the Ceph related Nagios commands into their own
+  configuration file 'openattic-ceph.cfg' (OP-1548)
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
 * Documentation: Updated Ceph installation chapter, emphasizing the requirement
