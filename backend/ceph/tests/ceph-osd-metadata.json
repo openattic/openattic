@@ -1,0 +1,66 @@
+[
+ {
+  "hostname": "z2-host03",
+  "id": 0
+},
+ {
+  "hostname": "z2-host04",
+  "id": 1
+},
+ {
+  "hostname": "z2-host05",
+  "id": 2
+},
+ {
+  "hostname": "z3-host03",
+  "id": 4
+},
+ {
+  "hostname": "z3-host04",
+  "id": 5
+},
+ {
+  "hostname": "z1-host03",
+  "id": 6
+},
+ {
+  "hostname": "z1-host04",
+  "id": 7
+},
+ {
+  "hostname": "z2-host06",
+  "id": 8
+},
+ {
+  "hostname": "z1-host05",
+  "id": 9
+},
+ {
+  "hostname": "z3-host06",
+  "id": 11
+},
+ {
+  "hostname": "z1-host06",
+  "id": 12
+},
+ {
+  "hostname": "z4-host02",
+  "id": 13
+},
+ {
+  "hostname": "z4-host03",
+  "id": 14
+},
+ {
+  "hostname": "z4-host04",
+  "id": 14
+},
+ {
+  "hostname": "z4-host03",
+  "id": 15
+},
+ {
+  "hostname": "z4-host03",
+  "id": 14
+}
+]
