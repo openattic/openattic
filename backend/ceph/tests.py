@@ -331,7 +331,6 @@ class LibradosTest(TestCase):
                 "status": "up",
                 "reweight": 1,
                 "primary_affinity": 1,
-                "hostname": "z2-dfs06"
             }
         ])
 
@@ -349,8 +348,12 @@ class LibradosTest(TestCase):
             osd_tree = json.load(f)
             monApi_mock.return_value.osd_tree.return_value = osd_tree
             librados_monApi_mock.return_value.osd_tree.return_value = osd_tree
+        with open_testdata("tests/ceph-osd-metadata.json") as f:
+            osd_metadata = json.load(f)
+            monApi_mock.return_value.osd_metadata.return_value = osd_metadata
+            librados_monApi_mock.return_value.osd_metadata.return_value = osd_metadata
         monApi_mock.return_value.pg_dump.return_value = {
-            'osd_stats': [{'osd': 'osd.{}'.format(i)} for i in range(100)]
+            'osd_stats': [{'osd': i} for i in range(15) if i != 3 and i != 10]
         }
 
         class Ctx:
