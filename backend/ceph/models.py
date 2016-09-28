@@ -320,7 +320,7 @@ class CephPool(NodbModel, RadosMixin):
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
-            stats = rados[fsid].get_stats(str(pool_data['pool_name']))
+
 
             object_data = {
                 'id': pool_id,
@@ -339,8 +339,6 @@ class CephPool(NodbModel, RadosMixin):
                 'pg_num': pool_data['pg_num'],
                 'size': pool_data['size'],
                 'crush_ruleset': pool_data['crush_ruleset'],
-                'num_bytes': stats['num_bytes'],
-                'num_objects': stats['num_objects'],
                 # Considered advanced options
                 'pgp_num': pool_data['pg_placement_num'],
                 'stripe_width': pool_data['stripe_width'],
@@ -387,6 +385,14 @@ class CephPool(NodbModel, RadosMixin):
             else:
                 pool.max_avail = None
                 pool.kb_used = None
+
+    @bulk_attribute_setter(['num_bytes', 'num_objects'],
+                           catch_exceptions=librados.rados.ObjectNotFound)
+    def set_stats(self, pools, field_names):
+        fsid = self.cluster.fsid
+        stats = self.rados_client_or_404(fsid).get_stats(self.name)
+        self.num_bytes = stats['num_bytes'] if 'num_bytes' in stats else None
+        self.num_objects = stats['num_objects'] if 'num_objects' in stats else None
 
     def __unicode__(self):
         return self.name
