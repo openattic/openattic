@@ -806,7 +806,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
 
         tasks = TaskQueue.filter_by_definition_and_status(
             ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
-            [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])
+            [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
         tasks = list(tasks)
         disk_usage = dict()
 
@@ -816,7 +816,7 @@ class CephRbd(NodbModel):  # aka RADOS block device
             for task in tasks:
                 task.delete()
 
-            if latest_task.status != TaskQueue.STATUS_EXCEPTION:
+            if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
                 disk_usage = latest_task.json_result
 
         self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
