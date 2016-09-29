@@ -38,8 +38,10 @@ Version 2.0.15 (not released yet):
   deleted too (OP-1534)
 * Backend: Fixed two Internal Server Errors when accessing Ceph 
   resources (OP-1569)
-* Fixed internal server error when creating invalid Erasure Code Profiles 
-  or deleting used ones (OP-1578)
+* Backend: Fixed internal server error when creating invalid Erasure Code
+  Profiles or deleting used ones (OP-1578)
+* Backend/Installation: Fixed misleading debug message during `oaconfig
+  install` (OP-1580)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added functionality to delete existing erasure code
   profiles (OP-1297)
