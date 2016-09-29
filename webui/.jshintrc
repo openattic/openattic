@@ -16,7 +16,7 @@
   },
   "latedef": false,
   "maxerr": false,
-  "maxparams": 10,
+  "maxparams": 15,
   "noarg": true,
   "nonbsp": true,
   "nonew": false,
