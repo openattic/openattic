@@ -105,6 +105,12 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
         state: "cephPools.detail.cacheTier",
         class: "tc_cacheTieringTab",
         name: "Cache Tier"
+      },
+      statistics: {
+        show: "selection.item",
+        state: "cephPools.detail.cacheTier",
+        class: "tc_statisticsTab",
+        name: "Statistics"
       }
     }
   };
@@ -137,7 +143,11 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
 
     if (item) {
-      $scope.changeTab("cephPools.detail.status");
+      if ($state.current.name === "cephPools") {
+        $scope.changeTab("cephPools.detail.status");
+      } else {
+        $scope.changeTab($state.current.name);
+      }
     }
   });
 

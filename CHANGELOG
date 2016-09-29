@@ -9,13 +9,40 @@ Version 2.0.15 (not released yet):
   lvm and nagios (OP-838)
 * Backend: Performance data for non existing Ceph clusters is no longer
   returned (OP-1406)
+* Backend: The used_size of an RBD is now given by the
+  'get_rbd_performance_data' task and not directly from the RbdApi. This
+  should prevent the 504 error that sometimes occurred by getting RBDs
+  (OP-1411)
+* Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
+* Backend: The empty values at the end of the performance data collections
+  are filtered now (OP-1470)
 * Backend: Fixed compatibility issues with Django 1.8 and Django REST 
   Framework 3 (OP-1210, OP-1490, OP-1486) 
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
+* Backend: The 'check_cephpool' Nagios plugin does return the correct outputs
+  and exit codes (per the Nagios plugin development guidelines) in error and
+  success case now (OP-1521)
+* Backend: The Nagios plugins 'check_cephcluster' and 'check_cephpool' are
+  now ending with the correct exit codes (as per the Nagios plugin development
+  guidelines: https://nagios-plugins.org/doc/guidelines.html#AEN78) for
+  invalid arguments (OP-1522)
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
+* Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
+* Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
+* Backend: Use `osd metadata` instead of `osd tree` to get the hostname
+  of Ceph OSDs (OP-1573)
+* Backend: Added read-only REST API returning 
+  `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
+* Fixed internal server error when creating invalid Erasure Code Profiles 
+  or deleting used ones (OP-1578)
+* WebUI: Blockstorage wizard can create a new host (OP-1150)
+* WebUI: Added performance data to the extended view of a ceph
+  pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
+* WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
+* WebUI/QA: Adds missing condition to filter test categories (OP-1551)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
@@ -24,11 +51,15 @@ Version 2.0.15 (not released yet):
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
 * Packaging: Allow to override the default GPG key or disable the signing
-  completely using `build_deb_packages.py` (OP-1435) 
+  completely using `build_deb_packages.py` (OP-1435)
+* Packaging: Separated the Ceph related Nagios commands into their own
+  configuration file 'openattic-ceph.cfg' (OP-1548)
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
-* WebUI/QA: Adds missing condition to filter test categories (OP-1551)  
-
+* Documentation: Updated Ceph installation chapter, emphasizing the requirement
+  of openATTIC and Nagios being able to read the Ceph config file and keyring
+  (OP-1572).
+  
 Version 2.0.14, 12. September 2016:
 -----------------------------------
 

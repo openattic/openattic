@@ -39,6 +39,8 @@ from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
+from taskqueue.models import TaskQueue
+from utilities import aggregate_dict, zip_by_keys
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 logger = logging.getLogger(__name__)
@@ -135,12 +137,12 @@ class CephCluster(NodbModel):
 
         return result
 
-    @bulk_attribute_setter('health')
-    def set_cluster_health(self, objects):
+    @bulk_attribute_setter(['health'])
+    def set_cluster_health(self, objects, field_names):
         self.health = CephCluster.get_status(self.fsid, 'health')['overall_status']
 
-    @bulk_attribute_setter('performance_data_options')
-    def set_performance_data_options(self, objects):
+    @bulk_attribute_setter(['performance_data_options'])
+    def set_performance_data_options(self, objects, field_names):
         self.performance_data_options = {}
         if "nagios" in settings.INSTALLED_APPS:
             from nagios.graphbuilder import RRD
@@ -157,6 +159,12 @@ class CephCluster(NodbModel):
                     if len(pools) > 0:
                         sources["performancedata_pools"] = RRD.get_sources_list(
                             curr_host, "Check_CephPool_{}_{}".format(self.fsid, pools[0].name))
+
+                    rbds = CephRbd.objects.all()
+                    if len(rbds) > 0:
+                        sources["performancedata_rbds"] = RRD.get_sources_list(
+                            curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
+                                                                       rbds[0].name))
 
                 self.performance_data_options = sources
 
@@ -325,8 +333,8 @@ class CephPool(NodbModel):
 
         return result
 
-    @bulk_attribute_setter('max_avail', 'kb_used')
-    def ceph_df(self, pools):
+    @bulk_attribute_setter(['max_avail', 'kb_used'])
+    def ceph_df(self, pools, field_names):
         fsid = self.cluster.fsid
         df_data = rados[fsid].mon_command('df')
         df_per_pool = {
@@ -506,29 +514,53 @@ class CephErasureCodeProfile(NodbModel):
             setattr(profile, '_context', context)
         return profiles
 
-    @bulk_attribute_setter('k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
-                           'ruleset_failure_domain', 'ruleset_root', 'w')
-    def set_data(self, objects):
-        for field_name, value in CephErasureCodeProfile.make_model_args(
-                MonApi(rados[self._context.fsid]).osd_erasure_code_profile_get(self.name)).items():
+    @bulk_attribute_setter(['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
+                           'ruleset_failure_domain', 'ruleset_root', 'w'],
+                           catch_exceptions=librados.ExternalCommandError)
+    def set_data(self, objects, field_names):
+        context = self.get_context()
+
+        model_args = CephErasureCodeProfile.make_model_args(
+                MonApi(rados[context.fsid]).osd_erasure_code_profile_get(self.name),
+                fields_force_none=field_names).items()
+
+        for field_name, value in model_args:
             setattr(self, field_name, value)
-        for field_name in ['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
-                           'ruleset_failure_domain', 'ruleset_root', 'w']:
-            if field_name not in self.__dict__:
-                setattr(self, field_name, None)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        context = self.__class__.objects.nodb_context
+        context = self.get_context()
         if not force_insert:
             raise NotImplementedError('Updating is not supported.')
         profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
         if self.ruleset_failure_domain:
             profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
-        MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
+        try:
+            MonApi(rados[context.fsid]).osd_erasure_code_profile_set(self.name, profile)
+        except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
+            # ExternalCommandError here, but ExternalCommandError should default to an
+            # internal server error.
+            logger.exception('Failed to create ECP')
+            raise NotSupportedError(e)
 
     def delete(self, using=None):
-        context = self.__class__.objects.nodb_context
-        MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+        context = self.get_context()
+        try:
+            MonApi(rados[context.fsid]).osd_erasure_code_profile_rm(self.name)
+        except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
+            # ExternalCommandError here, but ExternalCommandError should default to an
+            # internal server error.
+            logger.exception('Failed to delete ECP')
+            raise NotSupportedError(e)
+
+    def get_context(self):
+        try:
+            return self._context
+        except AttributeError:
+            return self.__class__.objects.nodb_context
+
+    def __unicode__(self):
+        return self.name
+
 
 
 class CephOsd(NodbModel):
@@ -551,16 +583,20 @@ class CephOsd(NodbModel):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        osds = sorted(rados[context.fsid].list_osds(), key=lambda osd: osd['id'])
-        osd_dump_data = sorted(MonApi(rados[context.fsid]).osd_dump()['osds'],
-                               key=lambda osd: osd['osd'])
-        pg_dump_data = sorted(MonApi(rados[context.fsid]).pg_dump()['osd_stats'],
-                              key=lambda osd: osd['osd'])
+        osd_tree = rados[context.fsid].list_osds()  # key=id
+        osd_dump_data = MonApi(rados[context.fsid]).osd_dump()['osds']  # key=osd
+        pg_dump_data = MonApi(rados[context.fsid]).pg_dump()['osd_stats']  # key=osd
+        osd_metadata = MonApi(rados[context.fsid]).osd_metadata()  # key=id
         fields_to_force = ['primary_affinity']
-        return [CephOsd(**CephOsd.make_model_args(dict(in_state=dump['in'], **dict(osd, **pg_dump)),
-                                                  fields_force_none=fields_to_force))
-                for (osd, dump, pg_dump)
-                in zip(osds, osd_dump_data, pg_dump_data)]
+        zipped_data = zip_by_keys(('id', osd_tree),
+                                  ('osd', osd_dump_data),
+                                  ('osd', pg_dump_data),
+                                  ('id', osd_metadata))
+        return [CephOsd(
+            **CephOsd.make_model_args(dict(in_state=data['in'] if 'in' in data else 0, **data),
+                                      fields_force_none=fields_to_force))
+                for data
+                in zipped_data]
 
     def save(self, *args, **kwargs):
         """
@@ -593,6 +629,9 @@ class CephOsd(NodbModel):
     @property
     def utilization(self):
         return float(self.kb_used) / float(self.kb_avail)
+
+    def __unicode__(self):
+        return getattr(self, 'name', unicode(self.pk))
 
 
 class CephPg(NodbModel):
@@ -702,14 +741,6 @@ class CephPg(NodbModel):
         return ret
 
 
-def aggregate_dict(*args, **kwargs):
-    ret = {}
-    for arg in args:
-        ret.update(arg)
-    ret.update(**kwargs)
-    return ret
-
-
 class CephRbd(NodbModel):  # aka RADOS block device
     """
     See http://tracker.ceph.com/issues/15448
@@ -763,13 +794,32 @@ class CephRbd(NodbModel):  # aka RADOS block device
         return [CephRbd(**CephRbd.make_model_args(aggregate_dict(
             rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name'])))) for (rbd, pool) in rbds]
 
-    @bulk_attribute_setter('used_size')
-    def set_disk_usage(self, objects):
-        """This can be really expensive, thus we're calling "rbd du" only for rbds that will be
-        serialized."""
-        api = RbdApi(rados[self.pool.cluster.fsid])  # TODO: self.pool.cluster calls "ceph osd dump"
-        val = api.image_disk_usage(self.pool.name, self.name)
-        self.used_size = val['used_size'] if 'used_size' in val else 0
+    @bulk_attribute_setter(['used_size'])
+    def set_disk_usage(self, objects, field_names):
+        fsid = self.pool.cluster.fsid
+        pool_name = self.pool.name
+
+        if len(TaskQueue.filter_by_definition_and_status(
+                ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
+                [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) == 0:
+            ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
+
+        tasks = TaskQueue.filter_by_definition_and_status(
+            ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
+            [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
+        tasks = list(tasks)
+        disk_usage = dict()
+
+        if len(tasks) > 0:
+            latest_task = tasks.pop()
+
+            for task in tasks:
+                task.delete()
+
+            if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
+                disk_usage = latest_task.json_result
+
+        self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
 
     def save(self, *args, **kwargs):
         """
@@ -816,11 +866,48 @@ class CephRbd(NodbModel):  # aka RADOS block device
                                    'supported'.format(key, value, self.name))
 
             super(CephRbd, self).save(*args, **kwargs)
+            self._update_nagios_configs()
 
     def delete(self, using=None):
         context = CephPool.objects.nodb_context
         api = RbdApi(rados[context.fsid])
         api.remove(self.pool.name, self.name)
+        self._update_nagios_configs()
+
+    def _update_nagios_configs(self):
+        if "nagios" in settings.INSTALLED_APPS:
+            ceph = get_dbus_object("/ceph")
+            nagios = get_dbus_object("/nagios")
+
+            ceph.remove_nagios_configs(["rbd"])
+            ceph.write_rbd_nagios_configs()
+            nagios.restart_service()
+
+    @staticmethod
+    def get_performance_data(rbd, filter=None):
+        """
+        Returns the performance data for a RBD by consideration of the filter parameters if given.
+
+        :param rbd: RBD object
+        :type rbd: CephRbd
+        :param filter: The performance data will be filtered by these sources (based on the RRD
+            file).
+        :type filter: list[str]
+        :return: Returns a list of performance data.
+        :rtype: dict
+        """
+
+        check_for_installed_nagios()
+
+        from nagios.graphbuilder import Graph, RRD
+        curr_host = Host.objects.get_current()
+
+        rrd = RRD.get_rrd(curr_host, "Check_CephRbd_{}_{}_{}".format(
+            rbd.pool.cluster.fsid, rbd.pool.name, rbd.name))
+
+        graph = Graph.get_graph(rrd, filter)
+        perf_data = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+        return perf_data
 
 
 class CephFs(NodbModel):

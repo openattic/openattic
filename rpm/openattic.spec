@@ -453,6 +453,9 @@ done
 install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
 install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
 
+#configure ceph
+install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
+
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -610,10 +613,12 @@ echo ""
 
 %files module-ceph
 %defattr(-,root,root,-)
+%config %{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
 %{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cephpool
+%{_libdir}/nagios/plugins/check_cephrbd
 
 %files gui
 %defattr(-,root,root,-)
@@ -675,9 +680,9 @@ systemctl start lvm2-lvmetad
 
 %files module-nagios
 %defattr(-,root,root,-)
-%config %{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
-%config %{_sysconfdir}/nagios/conf.d/openattic_static.cfg
-%config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}_static.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}_contacts.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cputime
