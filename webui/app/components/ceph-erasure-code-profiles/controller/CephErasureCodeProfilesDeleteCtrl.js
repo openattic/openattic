@@ -31,10 +31,41 @@
 "use strict";
 
 var app = angular.module("openattic.cephErasureCodeProfiles");
-app.factory("cephErasureCodeProfilesService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/erasure-code-profiles/:id", {
-    fsid: "@fsid",
-    id: "@id",
-    isArray: true
-  });
+app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalInstance, cephErasureCodeProfilesService,
+    cluster, profile, toasty) {
+  $scope.cluster = cluster;
+  $scope.profile = profile;
+
+  $scope.deleteErasureCodeProfile = function () {
+    cephErasureCodeProfilesService
+        .delete({
+          fsid: $scope.cluster.fsid,
+          id  : $scope.profile.name
+        })
+        .$promise
+        .then(function () {
+          // Trigger toasty message on success
+          toasty.success({
+            title: "Erasure code profile deleted",
+            msg  : "Erasure code profile '" + $scope.profile.name + "' successfully deleted."
+          });
+
+          // Close dialog
+          $uibModalInstance.close("deleted");
+        })
+        .catch(function (err) {
+          // Trigger toasty on error
+          toasty.error({
+            title: "Error",
+            msg  : "Erasure code profile '" + $scope.profile.name + "' couldn't be deleted."
+          });
+          $scope.cancel();
+
+          throw err;
+        });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  };
 });

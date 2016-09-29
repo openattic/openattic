@@ -9,6 +9,10 @@ Version 2.0.15 (not released yet):
   lvm and nagios (OP-838)
 * Backend: Performance data for non existing Ceph clusters is no longer
   returned (OP-1406)
+* Backend: The used_size of an RBD is now given by the
+  'get_rbd_performance_data' task and not directly from the RbdApi. This
+  should prevent the 504 error that sometimes occurred by getting RBDs
+  (OP-1411)
 * Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
 * Backend: The empty values at the end of the performance data collections
   are filtered now (OP-1470)
@@ -33,6 +37,8 @@ Version 2.0.15 (not released yet):
 * Fixed internal server error when creating invalid Erasure Code Profiles 
   or deleting used ones (OP-1578)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
+* WebUI: Added functionality to delete existing erasure code
+  profiles (OP-1297)
 * WebUI: Added performance data to the extended view of a ceph
   pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
@@ -47,7 +53,9 @@ Version 2.0.15 (not released yet):
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
 * Packaging: Allow to override the default GPG key or disable the signing
-  completely using `build_deb_packages.py` (OP-1435) 
+  completely using `build_deb_packages.py` (OP-1435)
+* Packaging: Separated the Ceph related Nagios commands into their own
+  configuration file 'openattic-ceph.cfg' (OP-1548)
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
 * Documentation: Updated Ceph installation chapter, emphasizing the requirement
