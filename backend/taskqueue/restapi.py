@@ -12,6 +12,8 @@
  *  GNU General Public License for more details.
 """
 from rest_framework import serializers, viewsets
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
@@ -32,6 +34,16 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
 
     serializer_class = TaskQueueSerializer
     queryset = TaskQueue.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        # Inspired by rest_framework.mixins.UpdateModelMixin
+        self.object = self.get_object()
+
+        self.object.finish_task(None, TaskQueue.STATUS_ABORTED)
+
+        serializer = self.get_serializer(self.object)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class TaskQueueLocationMixin(object):

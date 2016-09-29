@@ -71,6 +71,8 @@ then
 
     apt-get update -y
     apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+
+    apt-get install -y mercurial git build-essential python-dev lsb-release
 fi
 
 if [ "$IS_SUSE" ]
@@ -83,22 +85,24 @@ fi
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
 if [ "${DISABLE_CEPH_REPO}" == false ] ; then
-    if [ "$IS_DEBIAN" ]
-    then
-        apt-get install -y mercurial git build-essential python-dev lsb-release
-
+    if [ "$IS_DEBIAN" ] ; then
         wget 'https://download.ceph.com/keys/release.asc'
         apt-key add release.asc
-
         echo deb http://download.ceph.com/debian-jewel/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list
     fi
 
-    if [ "$IS_SUSE" ]
-    then
+    if [ "$IS_SUSE" ] ; then
         zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
         zypper --gpg-auto-import-keys --non-interactive ref
-        zypper --gpg-auto-import-keys --non-interactive install ceph-common
     fi
+fi
+
+if [ "$IS_DEBIAN" ] ; then
+    apt install -y ceph-common
+fi
+
+if [ "$IS_SUSE" ] ; then
+    zypper --gpg-auto-import-keys --non-interactive install ceph-common
 fi
 
 # Installing openATTIC
@@ -203,6 +207,7 @@ module-icinga"
     systemctl restart postgresql.service
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
+    systemctl enable postgresql.service
 
     ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 fi
