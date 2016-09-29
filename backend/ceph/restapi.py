@@ -230,6 +230,8 @@ class CephErasureCodeProfileViewSet(NodbViewSet):
 
     serializer_class = CephErasureCodeProfileSerializer
     lookup_field = "name"
+    filter_fields = ("name",)
+    search_fields = ("name",)
 
     def __init__(self, **kwargs):
         super(CephErasureCodeProfileViewSet, self).__init__(**kwargs)
