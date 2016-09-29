@@ -31,16 +31,46 @@
 "use strict";
 
 var app = angular.module("openattic.cephErasureCodeProfiles");
-app.controller("CephErasureCodeProfilesAddCtrl", function ($scope) {
+app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInstance, cephErasureCodeProfilesService,
+    cluster, osd, toasty) {
+  $scope.cluster = cluster;
+  $scope.osdCount = osd;
   $scope.erasureCodeProfile = {
-    k: null, // data-chunks
-    m: null, // coding-chunks
-    name: null,
-    ruleset_failure_domain: null
+    k                     : "", // data-chunks
+    m                     : "", // coding-chunks
+    name                  : "",
+    ruleset_failure_domain: ""
   };
 
   $scope.addErasureCodeProfile = function () {
-    // Save Data
-    // Close Dialog
+    cephErasureCodeProfilesService
+        .save({
+          fsid                  : $scope.cluster.fsid,
+          k                     : $scope.erasureCodeProfile.k,
+          m                     : $scope.erasureCodeProfile.m,
+          name                  : $scope.erasureCodeProfile.name,
+          ruleset_failure_domain: $scope.erasureCodeProfile.ruleset_failure_domain
+        })
+        .$promise
+        .then(function (res) {
+          toasty.success({
+            title: "Erasure code profile created",
+            msg  : "Erasure code profile '" + $scope.erasureCodeProfile.name + "' successfully created."
+          });
+
+          $uibModalInstance.close(res);
+        })
+        .catch(function (err) {
+          toasty.error({
+            title: "Error",
+            msg  : err.data.detail
+          });
+
+          throw err;
+        });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
   };
 });
