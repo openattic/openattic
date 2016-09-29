@@ -23,18 +23,21 @@ from datetime import datetime
 
 from cmdlog import models
 
+from utilities import get_request_query_params
+
 
 class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
     host = relations.HyperlinkedRelatedField(view_name='host-detail', read_only=True)
 
     class Meta:
         model = models.LogEntry
-        fields = ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
+        fields = \
+            ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
 
 
 class LogEntryFilter(django_filters.FilterSet):
-    start_datetime  = django_filters.DateTimeFilter(name='starttime', lookup_type='gte')
-    end_datetime    = django_filters.DateTimeFilter(name='endtime', lookup_type='lte')
+    start_datetime = django_filters.DateTimeFilter(name='starttime', lookup_type='gte')
+    end_datetime = django_filters.DateTimeFilter(name='endtime', lookup_type='lte')
 
     class Meta:
         model = models.LogEntry
@@ -52,7 +55,7 @@ class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
             filtered_items = []
 
             for key in ['ids', 'datetime']:
-                for entry in self.request.QUERY_PARAMS.getlist(key):
+                for entry in get_request_query_params(self.request).getlist(key):
                     if key == 'ids':
                         filtered_items.append(queryset.get(id=entry))
                     if key == 'datetime':

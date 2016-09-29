@@ -60,9 +60,12 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
+    'EXCEPTION_HANDLER': 'exception.custom_handler',
     'PAGINATE_BY':        50,
     'PAGINATE_BY_PARAM': 'pageSize',
     'MAX_PAGINATE_BY':   100,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # Required by 3
+    'PAGE_SIZE': 10,  # Required by DRF 3
     'URL_FIELD_NAME':    'url',
 }
 
@@ -216,12 +219,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'nagios': {
-            'handlers': ['file'],
-            'level': 'INFO',
-            'propagate': True
-        },
-        'ceph': {
+        '': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True

@@ -41,6 +41,7 @@ angular.module("openattic.extensions", [
   "openattic.dashboard",
   "openattic.datatable",
   "openattic.graph",
+  "openattic.hosts",
   "openattic.navigation",
   "openattic.required",
   "openattic.sizeparser",

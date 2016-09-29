@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.hosts");
 app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService, NetdeviceService,
     TabViewService) {
   $scope.data = {};

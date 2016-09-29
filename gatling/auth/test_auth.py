@@ -31,7 +31,6 @@ class TokenAuthTestCase(TokenAuthTestScenario):
             self.get_auth_token(password="wrongpass")
 
         err_message = err.exception.response.json()
-        self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
         self.assertEqual(err.exception.response.status_code, 400)
         self.assertEqual(err_message["non_field_errors"][0], "Unable to log in with provided "
                                                              "credentials.")
@@ -42,7 +41,6 @@ class TokenAuthTestCase(TokenAuthTestScenario):
             self.get_auth_token(username="wronguser")
 
         err_message = err.exception.response.json()
-        self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
         self.assertEqual(err.exception.response.status_code, 400)
         self.assertEqual(err_message["non_field_errors"][0], "Unable to log in with provided "
                                                              "credentials.")
