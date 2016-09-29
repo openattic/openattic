@@ -36,5 +36,13 @@ app.factory("cephErasureCodeProfilesService", function ($resource) {
     fsid: "@fsid",
     id: "@id",
     isArray: true
+  }, {
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    }
   });
 });
