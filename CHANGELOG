@@ -34,6 +34,8 @@ Version 2.0.15 (not released yet):
   of Ceph OSDs (OP-1573)
 * Backend: Added read-only REST API returning 
   `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
+* Backend: Nagios config files including a dot (.) in filename are now
+  deleted too (OP-1534)
 * Backend: Fixed two Internal Server Errors when accessing Ceph 
   resources (OP-1569)
 * Fixed internal server error when creating invalid Erasure Code Profiles 
