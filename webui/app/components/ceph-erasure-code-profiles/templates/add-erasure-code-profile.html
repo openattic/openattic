@@ -84,7 +84,7 @@
         Must be equal to or greater than 1.
       </span>
       <span class="help-block tc_codingChunksMax"
-                  ng-show="addForm.codingChunks.$error.max">
+            ng-show="addForm.codingChunks.$error.max">
         Must be equal to or smaller than the number of osds.
       </span>
       <span class="help-block tc_codingChunksNoInt"
@@ -95,11 +95,12 @@
 
     <div class="form-group">
       <label for="rulesetFailureDomain" class="control-label">Ruleset-failure-domain</label>
-      <input type="text"
-             id="rulesetFailureDomain"
-             name="rulesetFailureDomain"
-             class="form-control tc_rulesetFailureDomain"
-             ng-model="erasureCodeProfile.ruleset_failure_domain">
+      <select id="rulesetFailureDomain"
+              name="rulesetFailureDomain"
+              class="form-control tc_rulesetFailureDomain"
+              ng-model="erasureCodeProfile.ruleset_failure_domain"
+              ng-options="ruleset.name as ruleset.name for ruleset in rulesetFailureDomains">
+      </select>
     </div>
   </div>
 

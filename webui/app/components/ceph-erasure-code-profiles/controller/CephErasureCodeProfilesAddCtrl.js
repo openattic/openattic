@@ -41,6 +41,7 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
     name                  : "",
     ruleset_failure_domain: ""
   };
+  $scope.rulesetFailureDomains = [];
 
   $scope.addErasureCodeProfile = function () {
     cephErasureCodeProfilesService
@@ -73,4 +74,28 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
   };
+
+  // Todo: This needs to be overhauled when the crushmap is integrated in the nodb models
+  function init() {
+    cephErasureCodeProfilesService
+        .getfailureDomains({
+          ordering: "-id",
+          pageSize: 1
+        })
+        .$promise
+        .then(function (res) {
+          $scope.rulesetFailureDomains = res.results[0].crushmap.crushmap.types;
+
+          angular.forEach($scope.rulesetFailureDomains, function (e) {
+            if (e.name === "host") {
+              $scope.erasureCodeProfile.ruleset_failure_domain = e.name;
+            }
+          });
+        })
+        .catch(function (err) {
+          throw err;
+        });
+  }
+
+  init();
 });
