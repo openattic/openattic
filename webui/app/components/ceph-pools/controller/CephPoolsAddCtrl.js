@@ -266,12 +266,17 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
       resolve          : {
         cluster: function () {
           return $scope.data.cluster;
+        },
+        osd: function () {
+          return $scope.data.osdCount;
         }
       }
     });
 
-    modalInstance.result.then(function () {
-      // Todo Add profile to dropdown
+    modalInstance.result.then(function (profile) {
+      // Add and select created profile
+      var len = $scope.data.profiles.push(profile);
+      $scope.pool.erasure.profile = $scope.data.profiles[len - 1];
     });
   };
 
