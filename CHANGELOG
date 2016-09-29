@@ -37,6 +37,8 @@ Version 2.0.15 (not released yet):
 * Fixed internal server error when creating invalid Erasure Code Profiles 
   or deleting used ones (OP-1578)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
+* WebUI: Added functionality to delete existing erasure code
+  profiles (OP-1297)
 * WebUI: Added performance data to the extended view of a ceph
   pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
