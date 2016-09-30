@@ -44,7 +44,11 @@ app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
 
   $scope.selection = {};
 
-  $scope.loadHosts = function () {
+  $scope.error = false;
+
+  $scope.getHosts = function () {
+    $scope.error = false;
+
     cephHostsService.filter({
           page: $scope.filterConfig.page + 1,
           pageSize: $scope.filterConfig.entries,
@@ -56,6 +60,7 @@ app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
           $scope.data = res;
         })
         .catch(function (error) {
+          $scope.error = error;
           throw error
         });
   };
@@ -65,6 +70,6 @@ app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
     if (newVal.entries === null) {
       return;
     }
-    $scope.loadHosts();
+    $scope.getHosts();
   }, true);
 });
