@@ -5,11 +5,11 @@
         <th class="oadatatablecheckbox" ng-if="selection.available">
           <input type="checkbox" ng-model="selection.checkAll"/>
         </th>
-        <th ng-show="columns['Hostname']">Hostname</th>
-        <th ng-show="columns['Public address']">Public address</th>
-        <th ng-show="columns['Cluster']">Cluster</th>
+        <th ng-show="columns['Hostname']" sortfield="hostname" sortdir="asc" sortheaderclass sortdefault>Hostname</th>
+        <th ng-show="columns['Public address']" sortfield="public_address" sortdir="asc" sortheaderclass>Public address</th>
+        <th ng-show="columns['Cluster']" sortfield="cluster" sortdir="asc" sortheaderclass>Cluster</th>
         <th ng-show="columns['Roles']">Roles</th>
-        <th ng-show="columns['Key status']" sortfield="key_status" sortheaderclass>Key status</th>
+        <th ng-show="columns['Key status']" sortfield="key_status" sortdir="asc" sortheaderclass>Key status</th>
       </tr>
     </thead>
     <tbody>
