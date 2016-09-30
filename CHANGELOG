@@ -71,7 +71,9 @@ Version 2.0.15 (not released yet):
   added chapter about customizing the WebUI (OP-1541).
 * Documentation: Updated Ceph installation chapter, emphasizing the requirement
   of openATTIC and Nagios being able to read the Ceph config file and keyring
-  (OP-1572).
+  (OP-1572). Emphasized the requirement of Ceph Jewel on both the Ceph cluster
+  and the openATTIC node. Added a note to the EL7 installation instructions to
+  perform a check of the Nagios configuration after editing it.
   
 Version 2.0.14, 12. September 2016:
 -----------------------------------
