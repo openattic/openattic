@@ -1,0 +1,116 @@
+<div class="openattic-modal-header">
+  <span>Add erasure code profile</span>
+</div>
+
+<form name="addForm" role="form" novalidate>
+  <div class="openattic-modal-content">
+    <p>
+      You are about to add a new erasure code profile.
+    </p>
+
+    <p>
+      To confirm, please enter the information below and click <kbd>Add erasure code profile</kbd>, or cancel and return to the page.
+    </p>
+
+    <div class="form-group"
+         ng-class="{'has-error': (addForm.$submitted || addForm.name.$dirty) && addForm.name.$invalid}">
+      <label for="name" class="control-label">Name</label>
+      <input type="text"
+             id="name"
+             name="name"
+             class="form-control tc_name"
+             ng-model="erasureCodeProfile.name"
+             validname
+             uniquename="erasure-code-profiles"
+             required
+             autofocus>
+      <span class="help-block tc_nameRequired"
+            ng-show="(addForm.$submitted || addForm.name.$dirty) && addForm.name.$error.required">
+        This field is required!
+      </span>
+      <span class="help-block tc_noValidName"
+            ng-show="addForm.name.$error.validname">
+        {{errortext}}
+      </span>
+      <span class="help-block tc_noUniqueName"
+            ng-show="addForm.name.$error.uniquename">
+        The chosen erasure code profile name is already in use.
+      </span>
+    </div>
+
+    <div class="form-group"
+         ng-class="{'has-error': (addForm.$submitted || addForm.dataChunks.$dirty) && addForm.dataChunks.$invalid}">
+      <label for="dataChunks" class="control-label">Data chunks (k)</label>
+      <input type="number"
+             id="dataChunks"
+             name="dataChunks"
+             class="form-control tc_dataChunks"
+             ng-model="erasureCodeProfile.k"
+             min="2"
+             ng-pattern="/^[0-9]+$/"
+             required>
+      <span class="help-block tc_dataChunksRequired"
+            ng-show="(addForm.$submitted || addForm.dataChunks.$dirty) && addForm.dataChunks.$error.required">
+        This field is required!
+      </span>
+      <span class="help-block tc_dataChunksMin"
+            ng-show="addForm.dataChunks.$error.min">
+        Must be equal to or greater than 2.
+      </span>
+      <span class="help-block tc_dataChunksNoInt"
+            ng-show="addForm.dataChunks.$error.pattern">
+        Not a valid number!
+      </span>
+    </div>
+
+    <div class="form-group"
+         ng-class="{'has-error': (addForm.$submitted || addForm.codingChunks.$dirty) && addForm.codingChunks.$invalid}">
+      <label for="codingChunks" class="control-label">Coding chunks (m)</label>
+      <input type="number"
+             id="codingChunks"
+             name="codingChunks"
+             class="form-control tc_codingChunks"
+             ng-model="erasureCodeProfile.m"
+             min="1"
+             max="{{osdCount}}"
+             ng-pattern="/^[0-9]+$/"
+             required>
+      <span class="help-block tc_dataChunksRequired"
+            ng-show="(addForm.$submitted || addForm.codingChunks.$dirty) && addForm.codingChunks.$error.required">
+        This field is required!
+      </span>
+      <span class="help-block tc_codingChunksMin"
+            ng-show="addForm.codingChunks.$error.min">
+        Must be equal to or greater than 1.
+      </span>
+      <span class="help-block tc_codingChunksMax"
+            ng-show="addForm.codingChunks.$error.max">
+        Must be equal to or smaller than the number of osds.
+      </span>
+      <span class="help-block tc_codingChunksNoInt"
+            ng-show="addForm.codingChunks.$error.pattern">
+        Not a valid number!
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="rulesetFailureDomain" class="control-label">Ruleset-failure-domain</label>
+      <select id="rulesetFailureDomain"
+              name="rulesetFailureDomain"
+              class="form-control tc_rulesetFailureDomain"
+              ng-model="erasureCodeProfile.ruleset_failure_domain"
+              ng-options="ruleset.name as ruleset.name for ruleset in rulesetFailureDomains">
+      </select>
+    </div>
+  </div>
+
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+              ng-click="addErasureCodeProfile()" ng-disabled="addForm.$invalid">
+        Add erasure code profile
+      </button>
+      <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

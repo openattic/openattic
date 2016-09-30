@@ -34,7 +34,18 @@ var app = angular.module("openattic.cephErasureCodeProfiles");
 app.factory("cephErasureCodeProfilesService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid/erasure-code-profiles/:id", {
     fsid: "@fsid",
-    id: "@id",
-    isArray: true
+    id: "@id"
+  }, {
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    getfailureDomains: {
+      url: globalConfig.API.URL + "cephclusters",
+      method: "GET"
+    }
   });
 });
