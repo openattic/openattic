@@ -17,13 +17,14 @@ from django.utils.functional import cached_property
 from rest_framework import serializers, viewsets, status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.pagination import PaginationSerializer
 from rest_framework.decorators import detail_route, list_route
 
 from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
+
+from utilities import get_request_query_filter_data, get_request_data
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -59,8 +60,8 @@ class ClusterViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         cluster = self.get_object()
 
-        if "crushmap" in request.DATA:
-            cluster.set_crushmap(request.DATA["crushmap"])
+        if "crushmap" in get_request_data(request):
+            cluster.set_crushmap(get_request_data(request)["crushmap"])
 
         cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
 
@@ -90,15 +91,14 @@ class CephClusterViewSet(NodbViewSet):
 
     @detail_route(methods=['get'])
     def status(self, request, *args, **kwargs):
-        fsid = kwargs['pk']
-        cluster_status = CephCluster.get_status(fsid)
-        return Response(cluster_status, status=status.HTTP_200_OK)
+        object = self.get_object()
+        return Response(object.status, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def performancedata(self, request, *args, **kwargs):
         fsid = kwargs['pk']
-        filter_data = self._get_filter("filter")
-        performance_data = CephCluster.get_performance_data(fsid, "cluster", filter_data)
+        filter_data = get_request_query_filter_data(request, "filter")
+        performance_data = CephCluster.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=["get"])
@@ -107,18 +107,10 @@ class CephClusterViewSet(NodbViewSet):
 
         filter_data = dict()
         for filter_key in ["filter_pools", "filter_sources"]:
-            filter_data[filter_key] = self._get_filter(filter_key)
+            filter_data[filter_key] = get_request_query_filter_data(request, filter_key)
 
-        performance_data = CephCluster.get_performance_data(fsid, "pools", filter_data)
+        performance_data = CephPool.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
-
-    def _get_filter(self, filter_key):
-        filter_data = self.request.QUERY_PARAMS.get(filter_key, None)
-
-        if filter_data:
-            filter_data = filter_data.split(',')
-
-        return filter_data
 
 
 class CephPoolSerializer(NodbSerializer):
@@ -126,7 +118,9 @@ class CephPoolSerializer(NodbSerializer):
     class Meta:
         model = CephPool
 
-    erasure_code_profile = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    erasure_code_profile = \
+        serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                           queryset=CephErasureCodeProfile.objects.all())
     quota_max_objects = serializers.IntegerField(default=0)
     quota_max_bytes = serializers.IntegerField(default=0)
 #    crush_ruleset = serializers.IntegerField() # TODO OP-1415
@@ -134,28 +128,33 @@ class CephPoolSerializer(NodbSerializer):
     min_size = serializers.IntegerField(default=None, required=False)
     crash_replay_interval = serializers.IntegerField(default=0)
     cache_mode = serializers.CharField(default='none')
-    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False)
-    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False)
-    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False)
+    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                 queryset=CephPool.objects.all())
+    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                    queryset=CephPool.objects.all())
+    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                   queryset=CephPool.objects.all())
     target_max_bytes = serializers.IntegerField(default=0)
     hit_set_period = serializers.IntegerField(default=0)
     hit_set_count = serializers.IntegerField(default=0)
 
     def validate(self, data):
-        if data['type'] == 'replicated':
-            errors = {
-                field: ['Replicated pools need ' + field]
-                for field
-                in ['size', 'min_size']
-                if field not in data or data[field] is None
-            }
-        else:
-            errors = {
-                field: ['Erasure coded pools need ' + field]
-                for field
-                in ['erasure_code_profile']
-                if not field in data or data[field] is None
-            }
+        errors = {}
+        if 'type' in data:
+            if data['type'] == 'replicated':
+                errors = {
+                    field: ['Replicated pools need ' + field]
+                    for field
+                    in ['size', 'min_size']
+                    if field not in data or data[field] is None
+                }
+            else:
+                errors = {
+                    field: ['Erasure coded pools need ' + field]
+                    for field
+                    in ['erasure_code_profile']
+                    if not field in data or data[field] is None
+                }
         if errors:
             raise serializers.ValidationError(errors)
         return data
@@ -174,7 +173,7 @@ class FsidContext(object):
 
     @cached_property
     def cluster(self):
-        return CephCluster.objects.all().get(fsid=self.fsid)
+        return get_object_or_404(CephCluster, fsid=self.fsid)
 
 
 class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
@@ -210,25 +209,15 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
         if request.method == 'GET':
             return Response(pool.pool_snaps, status=status.HTTP_200_OK)
         elif request.method == 'POST':
-            pool.create_snapshot(request.DATA['name'])
-            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_201_CREATED)
+            pool.create_snapshot(get_request_data(request)['name'])
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
+                            status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            pool.delete_snapshot(request.DATA['name'])
-            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps, status=status.HTTP_200_OK)
+            pool.delete_snapshot(get_request_data(request)['name'])
+            return Response(CephPool.objects.get(pk=kwargs['pk']).pool_snaps,
+                            status=status.HTTP_200_OK)
         else:
             raise ValueError('{}. Method not allowed.'.format(request.method))
-
-
-class PaginatedCephPoolSerializer(PaginationSerializer):
-
-    class Meta:
-        object_serializer_class = CephPoolSerializer
-
-
-class PaginatedCephClusterSerializer(PaginationSerializer):
-
-    class Meta:
-        object_serializer_class = CephClusterSerializer
 
 
 class CephErasureCodeProfileSerializer(NodbSerializer):
@@ -242,6 +231,8 @@ class CephErasureCodeProfileViewSet(NodbViewSet):
 
     serializer_class = CephErasureCodeProfileSerializer
     lookup_field = "name"
+    filter_fields = ("name",)
+    search_fields = ("name",)
 
     def __init__(self, **kwargs):
         super(CephErasureCodeProfileViewSet, self).__init__(**kwargs)
@@ -286,12 +277,6 @@ class CephOsdViewSet(NodbViewSet):
         ]
 
         return Response(json_data, status=status.HTTP_200_OK)
-
-
-class PaginatedCephOsdSerializer(PaginationSerializer):
-
-    class Meta(object):
-        object_serializer_class = CephOsdSerializer
 
 
 class CephPgSerializer(NodbSerializer):
@@ -341,6 +326,13 @@ class CephRbdViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephRbd.objects.all()
+
+    @detail_route(methods=["get"])
+    def performancedata_rbd(self, request, *args, **kwargs):
+        rbd = self.get_object()
+        filter_data = get_request_query_filter_data(request, "filter")
+        performance_data = CephRbd.get_performance_data(rbd, filter_data)
+        return Response(performance_data, status=status.HTTP_200_OK)
 
 
 class CephFsSerializer(NodbSerializer):

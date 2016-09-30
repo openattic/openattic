@@ -25,7 +25,7 @@ if [ "$1" = "configure" ] ; then
     setperm "/var/log/openattic"   0755
 
     touch "$OPENATTIC_LOGFILE"
-    setperm "$OPENATTIC_LOGFILE" 0640
+    setperm "$OPENATTIC_LOGFILE" 0660
     touch "$SYSD_LOGFILE"
     setperm "$SYSD_LOGFILE" 0640
     touch "$RPCD_LOGFILE"

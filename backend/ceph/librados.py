@@ -150,7 +150,7 @@ class Client(object):
 
     def list_osds(self):
         """
-        Info about each osd, eg "up" or "down". Also adding the `hostname`.
+        Info about each osd, eg "up" or "down".
 
         :rtype: list[dict[str, Any]]
         """
@@ -162,7 +162,7 @@ class Client(object):
             if u'depth' in node:
                 del node[u'depth']
         nodes = unique_list_of_dicts(nodes)
-        return list(unique_list_of_dicts([dict(hostname=k["name"], **v)
+        return list(unique_list_of_dicts([v
                                           for (k, v) in product(nodes, nodes)
                     if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]))
 
@@ -424,9 +424,9 @@ class MonApi(object):
         "osd", "rw", "cli,rest")
 
         :param pool: Pool name
-        :type pool: str
+        :type pool: str | unicode
         :param pool2: Second pool name
-        :type pool2: str
+        :type pool2: str | unicode
         :param sure: should be "--yes-i-really-really-mean-it"
         :type sure: str
         :return: empty string
@@ -608,6 +608,18 @@ class MonApi(object):
         """
         return self.client.mon_command('osd tree')
 
+    def osd_metadata(self, name=None):
+        """
+        COMMAND("osd metadata " \
+        "name=id,type=CephInt,range=0,req=false", \
+        "fetch metadata for osd {id} (default all)", \
+        "osd", "r", "cli,rest")
+
+        :type name: int
+        :rtype: list[dict] | dict
+        """
+        return self.client.mon_command('osd metadata', self._args_to_argdict(name=name))
+
     def fs_ls(self):
         return self.client.mon_command('fs ls')
 
@@ -642,6 +654,15 @@ class MonApi(object):
     def pg_dump(self):
         """Also contains OSD statistics"""
         return self.client.mon_command('pg dump')
+
+    def status(self):
+        return self.client.mon_command('status')
+
+    def health(self):
+        return self.client.mon_command('health')
+
+    def df(self):
+        return self.client.mon_command('df')
 
 
 class RbdApi(object):

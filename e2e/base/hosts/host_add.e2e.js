@@ -101,6 +101,6 @@ describe('Should add a host and attributes', function(){
   });
 
   afterAll(function(){
-    console.log('hosts -> host_add.e2e.js');
+    console.log('host_add -> host_add.e2e.js');
   });
 });

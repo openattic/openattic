@@ -161,6 +161,10 @@ class Service(models.Model):
         except KeyError:
             return "Unknown"
 
+    @property
+    def normal_check_interval(self):
+        return 5
+
 
 def update_conf_for_user(instance, **kwargs):
     try:

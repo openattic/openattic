@@ -24,6 +24,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 
 from rest import relations
+from utilities import mk_method_field_params, get_request_data
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,7 +40,7 @@ class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
-    auth_token = serializers.SerializerMethodField("get_auth_token")
+    auth_token = serializers.SerializerMethodField(*mk_method_field_params('auth_token'))
     profile = relations.HyperlinkedIdentityField(view_name='userprofile-detail')
 
     class Meta:
@@ -110,7 +111,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        user_data = request.DATA
+        user_data = get_request_data(request)
         user = User.objects.create_user(user_data["username"], user_data["email"],
                                         user_data["password"])
         user.first_name = user_data["first_name"]

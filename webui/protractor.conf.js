@@ -49,7 +49,9 @@ var allSuites = {
   nfs_share            : '../e2e/base/shares/nfs/*.e2e.js',
   cifs_share           : '../e2e/base/shares/cifs/*.e2e.js',
   lun                  : '../e2e/base/shares/lun/*.e2e.js',
-  hosts                : '../e2e/base/hosts/**/*.e2e.js',
+  host_add             : '../e2e/base/hosts/host_add.e2e.js',
+  host_form            : '../e2e/base/hosts/host_form_workflow.e2e.js',
+  host_wwns            : '../e2e/base/hosts/wwn_validation.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
   auth                 : '../e2e/base/auth/*.e2e.js',
   cmdlogs              : '../e2e/base/commandLogs/**/*.e2e.js',
@@ -99,7 +101,7 @@ var suites = {};
 for(var suiteName in allSuites){
   for(var category in categories){
     var path = allSuites[suiteName];
-    if(path.startsWith(categories[category].startsWith)){
+    if(categories[category].isAvailable && path.startsWith(categories[category].startsWith)){
       suites[suiteName] = path;
       break;
     }
