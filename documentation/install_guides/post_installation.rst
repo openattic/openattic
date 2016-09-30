@@ -59,7 +59,14 @@ Enabling Ceph Support in |oA|
 
 .. note::
   Ceph support in |oA| is currently developed against Ceph 10.2 aka "Jewel".
-  Older Ceph versions may not work as expected.
+  Older Ceph versions may not work as expected. If your Linux distribution
+  ships an older version of Ceph (as most currently do), please either use the
+  `upstream Ceph package repositories
+  <http://docs.ceph.com/docs/master/install/get-packages/>`_ or find an
+  alternative package repository for your distribution that provides a version
+  of Ceph that meets the requirements. Note that this applies to both the
+  version of the Ceph tools installed on the |oA| node as well as the version
+  running on your Ceph cluster.
 
 To set up |oA| with Ceph you first have to copy the Ceph administrator keyring
 and configuration from your Ceph admin node to your local |oA| system.
