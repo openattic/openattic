@@ -67,11 +67,13 @@ app.directive("oadatatable", function () {
       $scope.store = $localStorage.datatables[tableName];
 
       $scope.$watch(function () {
-        if (!angular.equals(tableName, $state.current.name)) {
+        if (!$state.current.name.startsWith(tableName)) {
           return false;
         }
 
-        return $http.pendingRequests.length > 0;
+        return $http.pendingRequests.some(function (req) {
+          return req.url.endsWith(tableName);
+        });
       }, function (value) {
         $scope.waiting = value;
       });

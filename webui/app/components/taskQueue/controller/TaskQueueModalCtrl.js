@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, tasks, $state, $filter) {
+app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, tasks, $state, $filter,
+    taskQueueService) {
   $scope.order = function (attribute, tab) {
     if (tab.tableSort.attribute === attribute) {
       tab.tableSort.reverse = !tab.tableSort.reverse;
@@ -64,23 +65,24 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   $scope.toggleTaskSelection = function (item, key, $event) {
     var items = $scope.tabs[key].selection.items;
     var exists = items.indexOf(item);
-    if (exists !== -1 && $event.target.tagName !== "INPUT" || $event.target.tagName === "INPUT" && !$event.target.checked){
+    if (exists !== -1 && $event.target.tagName !== "INPUT" ||
+        $event.target.tagName === "INPUT" && !$event.target.checked) {
       items.splice(exists, 1);
     } else {
-      if ($event.target.checked || $event.ctrlKey ){
+      if ($event.target.checked || $event.ctrlKey) {
         items.push(item);
       } else if ($event.shiftKey) {
         var tab = $scope.tabs[key];
-        var sorted = $filter('orderBy')(tab.data, tab.tableSort.attribute);
+        var sorted = $filter("orderBy")(tab.data, tab.tableSort.attribute);
         if (tab.tableSort.reverse) {
           sorted.reverse();
         }
-        var iPrev = sorted.indexOf(items[items.length-1]);
+        var iPrev = sorted.indexOf(items[items.length - 1]);
         var iNow = sorted.indexOf(item);
         var newItems = iPrev < iNow ? sorted.slice(iPrev + 1, iNow + 1) : sorted.slice(iNow, iPrev);
         newItems.forEach(function (item) {
           var exists = items.indexOf(item);
-          if (exists !== -1){
+          if (exists !== -1) {
             items.splice(exists, 1);
           } else {
             items.push(item);
@@ -95,7 +97,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
 
   $scope.checkAllTasks = function (key) {
     var tab = $scope.tabs[key];
-    $scope.tabs[key].selection.items = tab.selection.checkAll ? tab.data.slice() : [] ;
+    $scope.tabs[key].selection.items = tab.selection.checkAll ? tab.data.slice() : [];
   };
 
   $scope.closeTasks = function () {
@@ -106,8 +108,10 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     pending: {
       name: "Pending",
       data: tasks.pending,
+      states: ["Running", "Not started"],
+      count: null,
       tableSort: {
-        attribute: 'done',
+        attribute: "percent",
         reverse: true
       },
       selection: {
@@ -118,19 +122,19 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       tableColumns: [
         {
           name: "Name",
-          attribute: "name",
+          attribute: "description",
           type: "text",
           width: "30%"
         },
         {
           name: "Created",
-          attribute: "started",
+          attribute: "created",
           type: "date",
           width: "15%"
         },
         {
           name: "Complete",
-          attribute: "done",
+          attribute: "percent",
           type: "percent",
           width: "42%"
         },
@@ -146,8 +150,10 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     failed: {
       name: "Failed",
       data: tasks.failed,
+      states: ["Exception", "Aborted"],
+      count: null,
       tableSort: {
-        attribute: 'ended',
+        attribute: "last_modified",
         reverse: true
       },
       selection: {
@@ -159,26 +165,26 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         {
           name: "Name",
           type: "text",
-          attribute: "name",
+          attribute: "description",
           width: "22%"
         },
         {
           name: "Created",
           type: "date",
-          attribute: "started",
+          attribute: "created",
           width: "15%"
         },
         {
           name: "Completed to",
           type: "percent",
-          attribute: "done",
+          attribute: "percent",
           css: "danger",
           width: "35%"
         },
         {
           name: "Failed",
           type: "date",
-          attribute: "ended",
+          attribute: "last_modified",
           width: "15%"
         },
         {
@@ -189,11 +195,13 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         }
       ]
     },
-    complete: {
+    finished: {
       name: "Done",
-      data: tasks.complete,
+      data: tasks.finished,
+      states: ["Finished"],
+      count: null,
       tableSort: {
-        attribute: 'ended',
+        attribute: "last_modified",
         reverse: true
       },
       selection: {
@@ -205,19 +213,104 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         {
           name: "Name",
           type: "text",
-          attribute: "name"
+          attribute: "description"
         },
         {
           name: "Created",
           type: "date",
-          attribute: "started"
+          attribute: "created"
         },
         {
           name: "Finished",
           type: "date",
-          attribute: "ended"
+          attribute: "last_modified"
         }
       ]
     }
   };
+
+  $scope.loadTabTasks = function (tabKey) {
+    $scope.tabs[tabKey].tempCount = 0;
+    $scope.tabs[tabKey].loadingCount = 0;
+    $scope.tabs[tabKey].data = [];
+    $scope.tabs[tabKey].states.forEach(function (state) {
+      taskQueueService.get({
+          pageSize: 1,
+          status: state
+        })
+        .$promise
+        .then(function (res) {
+          $scope.tabs[tabKey].tempCount += res.count;
+          $scope.tabs[tabKey].loadingCount++;
+          console.log("counting");
+          if (res.count === 0) {
+            return;
+          }
+          var max = parseInt(res.count / 100, 10) + 1;
+          for (var i = 1; i <= max; i++) {
+            $scope.loadTabTasksPage(i, state, tabKey);
+          }
+        })
+        .catch(function (error) {
+          error.toasty = {
+            title: "Background task loading failure",
+            msg: "Background tasks with status " + state + " couldn't be loaded.",
+            timeout: 10000
+          };
+          toasty.error(error.toasty);
+          throw error;
+        });
+    });
+    var unbindWatch = $scope.$watch("tabs." + tabKey + ".loadingCount", function (count) {
+      var tab = $scope.tabs[tabKey];
+      if (count === tab.states.length) {
+        $scope.tabs[tabKey].count = tab.tempCount;
+        console.log(tab);
+        unbindWatch();
+      }
+    });
+  };
+
+  $scope.loadTabTasksPage = function (pgnr, state, tabKey) {
+    taskQueueService.get({
+      page: pgnr,
+      pageSize: 100,
+      status: state
+    })
+      .$promise
+      .then(function (res) {
+        if (state === "Running") {
+          res.results.forEach($scope.calcApprox);
+        }
+        $scope.tabs[tabKey].data.concat(res.results);
+      })
+      .catch(function (error) {
+        error.toasty = {
+          title: "Background task loading failure",
+          msg: "Background tasks with status " + state + " page " + pgnr + " couldn't be loaded.",
+          timeout: 10000
+        };
+        toasty.error(error.toasty);
+        throw error;
+      });
+  };
+
+  $scope.calcApprox = function (task) {
+    task.created = new Date(task.created);
+    task.last_modified = new Date(task.last_modified);
+    var runtime = task.last_modified.getTime() - task.created.getTime();
+    var approx = new Date(Math.floor((100 / task.percent) * runtime) - runtime);
+    var days = approx.getDate() - 1;
+    var h = approx.getHours() - 1;
+    var m = approx.getMinutes();
+    var approxFormat = (days > 0) ? days + "d " : "";
+    approxFormat += (h > 0) ? h + "h " : "";
+    approxFormat += (approxFormat !== "" || m > 0) ? m + "m" : "< 1m";
+    task.approx = approx;
+    task.approxFormat = approxFormat;
+  };
+
+  Object.keys($scope.tabs).forEach(function (tabKey) {
+    $scope.loadTabTasks(tabKey);
+  });
 });

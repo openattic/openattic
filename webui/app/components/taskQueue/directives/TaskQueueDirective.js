@@ -34,84 +34,83 @@ var app = angular.module("openattic.taskQueue");
 app.directive("taskQueueDirective", function () {
   return {
     restrict: "A",
-    controller: function ($scope, toasty, $uibModal) {
-      var today = new Date();
-      var diff = new Date(today.getFullYear(), today.getMonth());
-      var word = "eeeeeennniiissrraattddhhulcgmobwf";
-      //example
-      $scope.randomList = function () {
-        var sum = Math.floor(Math.random() * 80);
-        var run = Math.floor(Math.random() * sum);
-        var fin = Math.floor(Math.random() * (sum - run));
-        var fail = sum - run - fin;
-        var avr = run !== 0 ? run / sum * 100 : 0;
+    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService) {
+      $scope.tasks = {
+        overview: {},
+        pending: [],
+        failed: [],
+        finished: []
+      };
+
+      $scope.updateTaskOverview = function () {
+        var ov = $scope.tasks.overview;
+        var avr = ov.run !== 0 ? ov.queue / ov.sum * 100 : 0;
         var icons = ["fa-hourglass-o", "fa-hourglass-end", "fa-hourglass-half", "fa-hourglass-start"];
-        var icon = run !== 0 ? icons[Math.floor(avr / 33.3) + 1] : icons[0];
-        $scope.tasks = {
-          sum: sum,
-          run: run,
-          fin: fin,
-          fail: fail,
-          avr: avr,
-          icon: icon
-        };
-        $scope.tasks.item = {id: 0};
-        $scope.tasks.pending = [];
-        $scope.tasks.failed = [];
-        $scope.tasks.complete = [];
-        var i = 0;
-        for (i = 0; i < run; i++) {
-          $scope.tasks.pending.push($scope.genTask());
-        }
-        for (i = 0; i < fail; i++) {
-          $scope.tasks.failed.push($scope.genTask());
-        }
-        for (i = 0; i < fail; i++) {
-          $scope.tasks.complete.push($scope.genTask());
-        }
-        console.log($scope.tasks);
+        var icon = ov.run !== 0 ? icons[Math.floor(avr / 33.3) + 1] : icons[0];
+
+        $scope.tasks.overview.avr = avr;
+        $scope.tasks.overview.icon = icon;
+        $scope.tasks.overview.updated = 1;
       };
 
-      $scope.genTask = function () {
-        var name = "";
-        for (var j = 0; j < Math.floor(Math.random() * 6) + 3; j++) {
-          name += word[Math.floor(Math.random() * word.length)];
-        }
-        var runtime = Math.floor(Math.random() * (today.getTime() - diff.getTime()));
-        var started = new Date( runtime + diff.getTime());
-        var endTime = Math.floor(Math.random() * (today.getTime() - started.getTime()));
-        var ended = new Date( endTime + started.getTime());
-        var done = Math.floor(Math.random() * 100);
-        if (done === 0) {
-          done = 1;
-        }
-        var approx = new Date(Math.floor((100 / done) * (runtime / 1000)));
-        var days = approx.getDate() - 1;
-        var h = approx.getHours() - 1;
-        var m = approx.getMinutes();
-        var approxFormat = (days > 0) ? days + "d " : "";
-        approxFormat += (h > 0) ? h + "h " : "";
-        approxFormat += (approxFormat !== "" || m > 0) ? m + "m" : "< 1m";
-
-        return {
-          name: "Create ceph pool '" + name + "'",
-          errCode: Math.floor(Math.random() * 300 + 300),
-          started: started,
-          ended: ended,
-          done: done,
-          approx: approx,
-          approxFormat: approxFormat
-        };
+      $scope.loadOverview = function () {
+        $scope.tasks.overview.queue = 0;
+        $scope.tasks.overview.queueLoad = 0;
+        $scope.tasks.overview.updated = 0;
+        $scope.tasks.overview.sum = undefined;
+        ["Running", "Not started"].forEach(function (state) {
+          taskQueueService.get({
+            pageSize: 1,
+            status: state
+          })
+            .$promise
+            .then(function (res) {
+              $scope.tasks.overview.queue += res.count;
+              $scope.tasks.overview.queueLoad++;
+            })
+            .catch(function (error) {
+              error.toasty = {
+                title: "Background task loading failure",
+                msg: "Background tasks with status " + state + " couldn't be loaded.",
+                timeout: 10000
+              };
+              toasty.error(error.toasty);
+              throw error;
+            });
+        });
+        taskQueueService.get({
+          pageSize: 1
+        })
+          .$promise
+          .then(function (res) {
+            $scope.tasks.overview.sum = res.count;
+          })
+          .catch(function (error) {
+            error.toasty = {
+              title: "Background task loading failure",
+              msg: "Background tasks couldn't be loaded.",
+              timeout: 10000
+            };
+            toasty.error(error.toasty);
+            throw error;
+          });
       };
 
-      $scope.randomList();
+      $scope.$watchCollection("tasks.overview", function () {
+        if ($scope.tasks.overview.sum !== undefined && $scope.tasks.overview.queueLoad === 2 &&
+            $scope.tasks.overview.updated === 0) {
+          $scope.updateTaskOverview();
+        } else if ($scope.tasks.overview.updated === 1) {
+          setTimeout($scope.loadOverview, 10000);
+        }
+      });
 
       $scope.runnersDialog = function (selection) {
         var modalInstance = $uibModal.open({
           windowTemplateUrl: "templates/messagebox.html",
           templateUrl: "components/taskQueue/templates/task-queue-dialog.html",
           controller: "TaskQueueModalCtrl",
-          size: 'lg',
+          size: "lg",
           resolve: {
             tasks: function () {
               return $scope.tasks;
@@ -123,6 +122,8 @@ app.directive("taskQueueDirective", function () {
           $scope.filterConfig.refresh = new Date();
         });
       };
+
+      $scope.loadOverview()
     },
     templateUrl: "components/taskQueue/templates/task-queue-directive.html"
   };
