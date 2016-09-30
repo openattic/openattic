@@ -207,7 +207,13 @@
                   <option class="tc_erasureProfilesOption" value=""> -- Select an erasure code profile -- </option>
                 </select>
                 <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="deleteErasureCodeProfile()">
+                  <button type="button" class="btn btn-default" ng-click="addErasureCodeProfile()">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                  </button>
+                  <button type="button"
+                          class="btn btn-default"
+                          ng-click="deleteErasureCodeProfile()"
+                          ng-disabled="data.profiles.length < 1">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                   </button>
                 </span>
