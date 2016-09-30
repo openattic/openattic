@@ -51,6 +51,9 @@ Version 2.0.15 (not released yet):
   privileges (OP-1497)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
+* Installation: Fixed `NAGIOS_PLUGIN_DIR` path in in the SUSE sysconfig
+  file to point to the Icinga plugin directory. Thanks to Abhishek
+  Lekshmanan. (PR-457)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
