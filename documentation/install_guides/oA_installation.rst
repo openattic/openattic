@@ -485,7 +485,7 @@ openattic``, as it might not be required on each node of an |oA| cluster.
 
 It can be installed with the following command::
 
-  # yum install openattic-gui
+  # zypper install openattic-gui
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.
