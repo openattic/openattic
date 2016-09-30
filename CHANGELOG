@@ -74,6 +74,8 @@ Version 2.0.15 (not released yet):
   (OP-1572). Emphasized the requirement of Ceph Jewel on both the Ceph cluster
   and the openATTIC node. Added a note to the EL7 installation instructions to
   perform a check of the Nagios configuration after editing it.
+* Documentation: Fixed bug in the SUSE installation instructions (thanks to
+  Kenneth Wimer for reporting this).
   
 Version 2.0.14, 12. September 2016:
 -----------------------------------
