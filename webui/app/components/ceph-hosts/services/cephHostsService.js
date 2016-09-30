@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephHosts");
 app.factory("cephHostsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph-minions/:id", {
+  return $resource(globalConfig.API.URL + "cephminions/:id", {
     id: "@id"
   }, {
     query: {
