@@ -638,6 +638,7 @@ echo ""
 
 %files module-ceph-deployment
 %defattr(-,root,root,-)
+%{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
 %{_datadir}/%{name}/ceph_deployment/
 
 %files gui
