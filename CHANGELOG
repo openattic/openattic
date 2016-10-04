@@ -42,6 +42,8 @@ Version 2.0.15 (not released yet):
   Profiles or deleting used ones (OP-1578)
 * Backend/Installation: Fixed misleading debug message during `oaconfig
   install` (OP-1580)
+* Backend: The `check_cephcluster` plugin now prints the correct message and 
+  returns the correct exit code in case of an error (OP-1586)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added functionality to delete existing erasure code
   profiles (OP-1297)
