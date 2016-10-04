@@ -55,9 +55,11 @@ class ClusterStatus(dict):
 
     def _map_health_status(self):
         status = self['health']['overall_status']
+        # See also: ceph.models.Pool#get_status
         status_map = {
             'HEALTH_OK': ('OK', 0),
             'HEALTH_WARN': ('WARNING', 1),
+            'HEALTH_CRIT': ('CRITICAL', 2),
             'HEALTH_ERR': ('CRITICAL', 2),
         }
         if status in status_map:
