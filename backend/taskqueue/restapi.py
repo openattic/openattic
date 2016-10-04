@@ -24,6 +24,7 @@ from utilities import get_request_query_params
 
 class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
+    estimated = serializers.DateTimeField(read_only=True, blank=True)
     result = JsonField(source='json_result')
 
     class Meta(object):
