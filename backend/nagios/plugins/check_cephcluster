@@ -116,7 +116,11 @@ def main():
         sys.exit(3)
 
     start_time = time.time()
-    status = ClusterStatus(CephCluster.get_status(args[0]))
+    try:
+        status = ClusterStatus(CephCluster.objects.get(fsid=args[0]).status)
+    except Exception:
+        print "CRITICAL"
+        sys.exit(2)
     exec_time = time.time() - start_time
 
     print "{}|{} exec_time={}ms".format(status.get_nagios_string(), status.get_perf_data(),
