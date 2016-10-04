@@ -157,7 +157,10 @@ class TaskQueue(Model):
     def filter_by_status_name_q(status_name):
         """:type status_name: str | unicode"""
         status_map = {name: value for value, name in TaskQueue.STATUS_CHOICES}
-        return Q(status=status_map[status_name])
+        try:
+            return Q(status=status_map[status_name])
+        except KeyError:
+            raise TaskQueue.DoesNotExist('Unknown Status "{}". Possible Values: {}'.format(status_name, status_map.keys()))
 
     def __unicode__(self):
         return str(self.pk)
