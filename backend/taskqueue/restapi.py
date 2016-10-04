@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from django.conf import settings
 from rest_framework import serializers, viewsets
 from rest_framework import status
 from rest_framework.decorators import list_route
@@ -19,6 +20,7 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
+from utilities import get_request_data
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
@@ -45,10 +47,13 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(self.object)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @list_route(['get'])
+    @list_route(['post'])
     def test_task(self, request, *args, **kwargs):
+        if not settings.DEBUG:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         from taskqueue.tests import wait
-        task = wait.delay(100)
+        times = get_request_data(request).get('times', 100)
+        task = wait.delay(times)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
