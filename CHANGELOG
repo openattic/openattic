@@ -44,6 +44,7 @@ Version 2.0.15 (not released yet):
   install` (OP-1580)
 * Backend: The `check_cephcluster` plugin now prints the correct message and 
   returns the correct exit code in case of an error (OP-1586)
+* Backend: Fixed `oaconfig install` on CentOS 7 (OP-1368)  
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added functionality to delete existing erasure code
   profiles (OP-1297)
