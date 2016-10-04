@@ -1,147 +1,247 @@
 <div class="col-sm-12 col-lg-6">
-    <form name="poolForm" role="form" class="form-horizontal" novalidate>
-        <div class="panel panel-default">
-            <div class="panel-heading tc_formHeadline">
-                <h3 class="panel-title">Create Ceph pool: {{pool.name}}</h3>
-            </div>
-            <div class="panel-body">
-                <!-- The following panel body needs to be encapsulated into the template of a directive in order to
-                     create a Ceph pool wizard or use the form somewhere else. Therefor it's not intended as expected at the
-                     moment and it already includes class adjustments in case it's a template. -->
-<div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.name.$dirty)
-    && poolForm.name.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="poolName">Name</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <input type="text" class="form-control tc_pool_name" placeholder="Name..."
-            ng-model="pool.name" name="name" validname uniquename="ceph-pool" required autofocus>
-        <span class="help-block tc_nameRequired" ng-show="(poolForm.$submitted || poolForm.name.$dirty)
-            && poolForm.name.$error.required">This field is required!</span>
-        <span class="help-block tc_noValidName" ng-show="poolForm.name.$error.validname">{{errortext}}</span>
-        <span class="help-block tc_noUniqueName" ng-show="poolForm.name.$error.uniquename">
-            The chosen Ceph pool name is already in use.
-        </span>
-    </div>
-</div>
+  <form name="poolForm" role="form" class="form-horizontal" novalidate>
+    <div class="panel panel-default">
+      <div class="panel-heading tc_formHeadline">
+        <h3 class="panel-title">Create Ceph pool: {{pool.name}}</h3>
+      </div>
+      <div class="panel-body">
+        <!-- The following panel body needs to be encapsulated into the template of a directive in order to
+             create a Ceph pool wizard or use the form somewhere else. Therefor it's not intended as expected at the
+             moment and it already includes class adjustments in case it's a template. -->
+        <div class="form-group"
+             ng-class="{'has-error': (poolForm.$submitted || poolForm.name.$dirty) && poolForm.name.$invalid}">
+          <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                 class="control-label"
+                 for="poolName">
+            Name
+          </label>
+          <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+            <input id="poolName"
+                   name="name"
+                   type="text"
+                   class="form-control tc_pool_name"
+                   placeholder="Name..."
+                   ng-model="pool.name"
+                   validname
+                   uniquename="ceph-pool"
+                   required
+                   autofocus>
+            <span class="help-block tc_nameRequired"
+                  ng-show="(poolForm.$submitted || poolForm.name.$dirty) && poolForm.name.$error.required">
+              This field is required!
+            </span>
+            <span class="help-block tc_noValidName"
+                  ng-show="poolForm.name.$error.validname">
+              {{errortext}}
+            </span>
+            <span class="help-block tc_noUniqueName"
+                  ng-show="poolForm.name.$error.uniquename">
+              The chosen Ceph pool name is already in use.
+            </span>
+          </div>
+        </div>
 
-<div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.cluster.$dirty)
-    && poolForm.cluster.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="cluster">Cluster</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select ng-disabled="!clusters" class="form-control tc_cluster_selection" ng-model="data.cluster"
-                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid"
-                name="cluster" required>
-            <option class="tc_clusterOption" value="" ng-bind="waitingClusterMsg"></option>
-        </select>
-        <span class="help-block tc_clusterRequired" ng-show="(poolForm.$submitted || poolForm.cluster.$dirty)
-            && poolForm.cluster.$error.required">
-            This field is required!
-        </span>
-        <span class="help-block tc_clusterLoading" ng-show="poolForm.$error.clusterLoading">
-            Couldn't load any cluster, please contact your administrator for details.
-        </span>
-    </div>
-</div>
+        <div class="form-group"
+             ng-class="{'has-error': (poolForm.$submitted || poolForm.cluster.$dirty) && poolForm.cluster.$invalid}">
+          <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                 class="control-label"
+                 for="cluster">
+            Cluster
+          </label>
+          <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+            <select ng-disabled="!clusters"
+                    id="cluster"
+                    class="form-control tc_cluster_selection"
+                    ng-model="data.cluster"
+                    ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid"
+                    name="cluster" required>
+              <option class="tc_clusterOption"
+                      value=""
+                      ng-bind="waitingClusterMsg">
+              </option>
+            </select>
+            <span class="help-block tc_clusterRequired"
+                  ng-show="(poolForm.$submitted || poolForm.cluster.$dirty) && poolForm.cluster.$error.required">
+              This field is required!
+            </span>
+            <span class="help-block tc_clusterLoading"
+                  ng-show="poolForm.$error.clusterLoading">
+              Couldn't load any cluster, please contact your administrator for details.
+            </span>
+          </div>
+        </div>
 
-<div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.poolTypes.$dirty)
-    && poolForm.poolTypes.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="poolTypes">Pool type</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select class="form-control tc_poolTypes_selection" name="poolTypes" required
-            ng-options="poolType.name as poolType.description for poolType in data.poolTypes" ng-model="pool.type">
-            <option class="tc_poolTypesOption" value=""> -- Select a pool type -- </option>
-        </select>
-        <span class="help-block tc_typeRequired" ng-show="(poolForm.$submitted || poolForm.poolTypes.$dirty)
-            && poolForm.poolTypes.$error.required">
-            This field is required!
-        </span>
-    </div>
-</div>
+        <div class="form-group"
+             ng-class="{'has-error': (poolForm.$submitted || poolForm.poolTypes.$dirty) && poolForm.poolTypes.$invalid}">
+          <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                 class="control-label"
+                 for="poolTypes">
+            Pool type
+          </label>
+          <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+            <select id="poolTypes"
+                    class="form-control tc_poolTypes_selection"
+                    name="poolTypes"
+                    required
+                    ng-options="poolType.name as poolType.description for poolType in data.poolTypes"
+                    ng-model="pool.type">
+              <option class="tc_poolTypesOption" value=""> -- Select a pool type -- </option>
+            </select>
+            <span class="help-block tc_typeRequired"
+                  ng-show="(poolForm.$submitted || poolForm.poolTypes.$dirty) && poolForm.poolTypes.$error.required">
+              This field is required!
+            </span>
+          </div>
+        </div>
 
-<div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.pgNum.$dirty)
-    && poolForm.pgNum.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.pgNum">Placement groups</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <input class="form-control tc_pool_pgNum" min="1" type="number" name="pgNum" ng-model="pool.pg_num" required>
-        <span class="help-block tc_pgNumRequired" ng-show="(poolForm.$submitted || poolForm.pgNum.$dirty)
-            && poolForm.pgNum.$error.required">
-            This field is required!
-        </span>
-    </div>
-</div>
+        <div class="form-group"
+             ng-class="{'has-error': (poolForm.$submitted || poolForm.pgNum.$dirty) && poolForm.pgNum.$invalid}"
+             ng-show="pool.type === 'replicated' || pool.type === 'erasure'">
+          <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                 class="control-label"
+                 for="pgNum">
+            Placement groups
+          </label>
+          <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+            <input id="pgNum"
+                   class="form-control tc_pool_pgNum"
+                   min="1"
+                   type="number"
+                   name="pgNum"
+                   ng-model="pool.pg_num"
+                   required>
+            <span class="help-block tc_pgNumRequired"
+                  ng-show="(poolForm.$submitted || poolForm.pgNum.$dirty) && poolForm.pgNum.$error.required">
+              This field is required!
+            </span>
+          </div>
+        </div>
 
-<div ng-show="pool.type === 'replicated'">
-    <div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.size.$dirty)
-        && poolForm.size.$invalid}">
-        <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="data.size">Replica size</label>
-        <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-            <input class="form-control tc_pool_size" min="1" max="{{data.osdCount}}" type="number" name="size"
-                ng-model="pool.replicated.size" ng-required="pool.type === 'replicated'">
-            <span class="help-block tc_sizeRequired" ng-show="(poolForm.$submitted || poolForm.size.$dirty)
-                && poolForm.size.$error.required">
+        <!-- Replicated begin -->
+        <div ng-show="pool.type === 'replicated'">
+          <div class="form-group"
+               ng-class="{'has-error': (poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$invalid}">
+            <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                   class="control-label"
+                   for="replica_size">
+              Replica size
+            </label>
+            <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+              <input id="replica_size"
+                     class="form-control tc_pool_size"
+                     min="1"
+                     max="{{data.osdCount}}"
+                     type="number"
+                     name="size"
+                     ng-model="pool.replicated.size"
+                     ng-required="pool.type === 'replicated'">
+            <span class="help-block tc_sizeRequired"
+                  ng-show="(poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$error.required">
                 This field is required!
             </span>
-        </div>
-    </div>
-    <div class="form-group">
-        <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
-            <br>
-            <div class="checkbox checkbox-primary">
-                <input type="checkbox" ng-model="data.expert" ng-name="expert"
-                    ng-disabled="poolForm.crushSet.$error.sizeError">
-                <label class="tc_expertSettings" for="data.expert"
-                    ng-click="data.expert = poolForm.crushSet.$error.sizeError ||!data.expert">Expert settings</label>
             </div>
-        </div>
-    </div>
-    <div ng-show="data.expert || poolForm.crushSet.$error.sizeError">
-        <div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty)
-            && poolForm.crushSet.$invalid}">
-            <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="crushSet">Crush ruleset</label>
-            <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-                <select class="form-control tc_crushSet_selection" name="crushSet" ng-required="data.expert"
-                    ng-enabled="data.cluster" ng-model="data.ruleset"
-                    ng-options="rule.rule_name for rule in data.cluster.rules">
-                    <option class="tc_crushSetOption" value=""> -- Select a erasure code profile -- </option>
+          </div>
+
+          <div class="form-group">
+            <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="data.expert"
+                       ng-name="expert"
+                       ng-disabled="poolForm.crushSet.$error.sizeError">
+                <label class="tc_expertSettings"
+                       for="data.expert"
+                       ng-click="data.expert = poolForm.crushSet.$error.sizeError ||!data.expert">Expert settings
+                </label>
+              </div>
+            </div>
+          </div>
+          <div ng-show="data.expert || poolForm.crushSet.$error.sizeError">
+            <div class="form-group"
+                 ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty) && poolForm.crushSet.$invalid}">
+              <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                     class="control-label"
+                     for="crushSet">
+                Crush ruleset
+              </label>
+              <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+                <select class="form-control tc_crushSet_selection"
+                        id="crushSet"
+                        name="crushSet"
+                        ng-required="data.expert"
+                        ng-enabled="data.cluster" ng-model="data.ruleset"
+                        ng-options="rule.rule_name for rule in data.cluster.rules">
+                  <option class="tc_crushSetOption" value=""> -- Select a crush ruleset -- </option>
                 </select>
-                <span class="help-block tc_crushSetRequired" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
-                    && poolForm.crushSet.$error.required">
+                <span class="help-block tc_crushSetRequired"
+                      ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty) && poolForm.crushSet.$error.required">
                     This field is required!
                 </span>
-                <span class="help-block tc_crushSetFailure" ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty)
-                    && poolForm.crushSet.$error.sizeError" ng-bind="replicaSizeError"></span>
+                <span class="help-block tc_crushSetFailure"
+                      ng-show="(poolForm.$submitted || poolForm.crushSet.$dirty) && poolForm.crushSet.$error.sizeError"
+                      ng-bind="replicaSizeError">
+                </span>
+              </div>
             </div>
+          </div>
         </div>
+        <!-- Replicated end -->
+
+        <!-- Erasure begin -->
+        <div ng-show="pool.type === 'erasure'">
+          <div class="form-group"
+               ng-class="{'has-error': (poolForm.$submitted || poolForm.erasureProfiles.$dirty) && poolForm.erasureProfiles.$invalid}">
+            <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+                   class="control-label"
+                   for="erasureProfiles">
+              Erasure code profile
+            </label>
+            <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+              <div class="input-group">
+                <select class="form-control tc_erasureProfiles_selection"
+                        id="erasureProfiles"
+                        name="erasureProfiles"
+                        ng-required="pool.type === 'erasure'"
+                        ng-options="profile as profile.name for profile in data.profiles"
+                        ng-model="pool.erasure.profile">
+                  <option class="tc_erasureProfilesOption" value=""> -- Select an erasure code profile -- </option>
+                </select>
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-default" ng-click="addErasureCodeProfile()">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                  </button>
+                  <button type="button"
+                          class="btn btn-default"
+                          ng-click="deleteErasureCodeProfile()"
+                          ng-disabled="data.profiles.length < 1">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block tc_erasureRequired"
+                    ng-show="(poolForm.$submitted || poolForm.erasureProfiles.$dirty) && poolForm.erasureProfiles.$error.required">
+                  This field is required!
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- Erasure end -->
+      </div>
+
+      <div class="panel-footer">
+        <div class="button-group text-right">
+          <button type="submit"
+                  class="btn btn-sm btn-primary tc_submitButton"
+                  ng-click="submitAction(poolForm)">
+            Create
+          </button>
+          <button type="button"
+                  class="btn btn-sm btn-default tc_backButton"
+                  ng-click="cancelAction()">
+            Back
+          </button>
+        </div>
+      </div>
     </div>
-</div>
-<div ng-show="pool.type === 'erasure'">
-    <div class="form-group" ng-class="{'has-error': (poolForm.$submitted || poolForm.erasureProfiles.$dirty)
-        && poolForm.erasureProfiles.$invalid}">
-        <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="erasureProfiles">Erasure code profile</label>
-        <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-            <select class="form-control tc_erasureProfiles_selection" name="erasureProfiles"
-                ng-required="pool.type === 'erasure'" ng-options="profile.name as profile.name for profile in data.profiles"
-                ng-model="pool.erasure.profile">
-                <option class="tc_erasureProfilesOption" value=""> -- Select a erasure code profile -- </option>
-            </select>
-            <span class="help-block tc_erasureRequired" ng-show="(poolForm.$submitted || poolForm.erasureProfiles.$dirty)
-                && poolForm.erasureProfiles.$error.required">
-                This field is required!
-            </span>
-        </div>
-    </div>
-</div>
-            </div>
-            <div class="panel-footer">
-                <div class="button-group text-right">
-                    <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-                            ng-click="submitAction(poolForm)">
-                        Create
-                    </button>
-                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
-                        Back
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
+  </form>
 </div>

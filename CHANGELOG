@@ -34,15 +34,28 @@ Version 2.0.15 (not released yet):
   of Ceph OSDs (OP-1573)
 * Backend: Added read-only REST API returning 
   `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
-* Fixed internal server error when creating invalid Erasure Code Profiles 
-  or deleting used ones (OP-1578)
+* Backend: Nagios config files including a dot (.) in filename are now
+  deleted too (OP-1534)
+* Backend: Fixed two Internal Server Errors when accessing Ceph 
+  resources (OP-1569)
+* Backend: Fixed internal server error when creating invalid Erasure Code
+  Profiles or deleting used ones (OP-1578)
+* Backend/Installation: Fixed misleading debug message during `oaconfig
+  install` (OP-1580)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
+* WebUI: Added functionality to delete existing erasure code
+  profiles (OP-1297)
+* WebUI: Added functionality to add erasure code profiles when creating
+  new Ceph pools (OP-1298)
 * WebUI: Added performance data to the extended view of a ceph
   pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
+* Installation: Fixed `NAGIOS_PLUGIN_DIR` path in in the SUSE sysconfig
+  file to point to the Icinga plugin directory. Thanks to Abhishek
+  Lekshmanan. (PR-457)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
@@ -58,7 +71,9 @@ Version 2.0.15 (not released yet):
   added chapter about customizing the WebUI (OP-1541).
 * Documentation: Updated Ceph installation chapter, emphasizing the requirement
   of openATTIC and Nagios being able to read the Ceph config file and keyring
-  (OP-1572).
+  (OP-1572). Emphasized the requirement of Ceph Jewel on both the Ceph cluster
+  and the openATTIC node. Added a note to the EL7 installation instructions to
+  perform a check of the Nagios configuration after editing it.
   
 Version 2.0.14, 12. September 2016:
 -----------------------------------

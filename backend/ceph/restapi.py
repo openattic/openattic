@@ -91,9 +91,8 @@ class CephClusterViewSet(NodbViewSet):
 
     @detail_route(methods=['get'])
     def status(self, request, *args, **kwargs):
-        fsid = kwargs['pk']
-        cluster_status = CephCluster.get_status(fsid)
-        return Response(cluster_status, status=status.HTTP_200_OK)
+        object = self.get_object()
+        return Response(object.status, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def performancedata(self, request, *args, **kwargs):
@@ -140,20 +139,22 @@ class CephPoolSerializer(NodbSerializer):
     hit_set_count = serializers.IntegerField(default=0)
 
     def validate(self, data):
-        if data['type'] == 'replicated':
-            errors = {
-                field: ['Replicated pools need ' + field]
-                for field
-                in ['size', 'min_size']
-                if field not in data or data[field] is None
-            }
-        else:
-            errors = {
-                field: ['Erasure coded pools need ' + field]
-                for field
-                in ['erasure_code_profile']
-                if not field in data or data[field] is None
-            }
+        errors = {}
+        if 'type' in data:
+            if data['type'] == 'replicated':
+                errors = {
+                    field: ['Replicated pools need ' + field]
+                    for field
+                    in ['size', 'min_size']
+                    if field not in data or data[field] is None
+                }
+            else:
+                errors = {
+                    field: ['Erasure coded pools need ' + field]
+                    for field
+                    in ['erasure_code_profile']
+                    if not field in data or data[field] is None
+                }
         if errors:
             raise serializers.ValidationError(errors)
         return data
@@ -172,7 +173,7 @@ class FsidContext(object):
 
     @cached_property
     def cluster(self):
-        return CephCluster.objects.all().get(fsid=self.fsid)
+        return get_object_or_404(CephCluster, fsid=self.fsid)
 
 
 class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
@@ -230,6 +231,8 @@ class CephErasureCodeProfileViewSet(NodbViewSet):
 
     serializer_class = CephErasureCodeProfileSerializer
     lookup_field = "name"
+    filter_fields = ("name",)
+    search_fields = ("name",)
 
     def __init__(self, **kwargs):
         super(CephErasureCodeProfileViewSet, self).__init__(**kwargs)

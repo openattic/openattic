@@ -16,6 +16,7 @@
 from collections import defaultdict
 
 import django
+from django.http.request import QueryDict # Docstring
 
 
 def get_related_model(field):
@@ -39,7 +40,13 @@ def drf_version():
 
 
 def get_request_query_params(request):
-    """:type request: rest_framework.request.Request"""
+    """
+    DRF 3.0 renamed rest_framework.request.Request.QUERY_PARAMS to
+    rest_framework.request.Request.query_params.
+
+    :type request: rest_framework.request.Request
+    :rtype: QueryDict
+    """
     if drf_version() < (3, 0):
         return request.QUERY_PARAMS
     else:

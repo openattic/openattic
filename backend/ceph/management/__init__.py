@@ -149,7 +149,7 @@ def update(**kwargs):
             try:
                 ip = IPAddress.objects.get(address__startswith=m.group("ip"))
             except IPAddress.DoesNotExist:
-                print "Host unknown, ignored"
+                print "skipped"
                 continue
 
             try:
@@ -168,7 +168,7 @@ def update(**kwargs):
             try:
                 ip = IPAddress.objects.get(address__startswith=m.group("ip"))
             except IPAddress.DoesNotExist:
-                print "Host unknown, ignored"
+                print "skipped"
                 continue
 
             try:
