@@ -64,6 +64,8 @@ Version 2.0.15 (not released yet):
 * Packaging/Installation: fixed permission problems for Nagios plugins that
   require writing to `openattic.log` or reading the Ceph key ring and
   configuration (OP-1320)
+* Packaging/Installation: Added `openattic-module-ceph-deployment` RPM and
+  DEB Packages for the DeepSea integration backend module. (OP-1566)
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
 * Packaging: Allow to override the default GPG key or disable the signing
