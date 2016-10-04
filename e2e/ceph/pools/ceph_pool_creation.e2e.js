@@ -39,11 +39,11 @@ describe('ceph pool creation', function(){
     var create = cephPoolProperties.formElements.createButton.byClass;
     name.clear();
     name.sendKeys(poolName);
+    type.sendKeys(poolType);
     pgnum.clear();
     pgnum.sendKeys(poolPgnum);
-    type.sendKeys(poolType);
-    name.click();
     create.click();
+    browser.sleep(helpers.configs.sleep);
     var cephPool = element(by.cssContainingText('tr', poolName));
     expect(cephPool.isDisplayed()).toBe(true);
 
