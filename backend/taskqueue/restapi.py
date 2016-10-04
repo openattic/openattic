@@ -20,7 +20,7 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from utilities import get_request_data
+from utilities import get_request_query_params
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
@@ -36,7 +36,17 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     """This API provides access to long running tasks."""
 
     serializer_class = TaskQueueSerializer
-    queryset = TaskQueue.objects.all()
+
+    def get_queryset(self):
+        """
+        django-filter 0.7 has no `method` parameter in django_filters.Filter.__init__. Thus, I have
+        to filter manually here. :-(
+        """
+        queryset = TaskQueue.objects.all()
+        status = get_request_query_params(self.request).get('status', None)
+        if status is not None:
+            return queryset.filter(TaskQueue.filter_by_status_name_q(status))
+        return queryset
 
     def destroy(self, request, *args, **kwargs):
         # Inspired by rest_framework.mixins.UpdateModelMixin
@@ -52,7 +62,7 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
         if not settings.DEBUG:
             return Response(status=status.HTTP_404_NOT_FOUND)
         from taskqueue.tests import wait
-        times = get_request_data(request).get('times', 100)
+        times = get_request_query_params(request).get('times', 100)
         task = wait.delay(times)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
