@@ -150,7 +150,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           $scope.data.profiles = res.results;
 
           if ($scope.data.profiles.length === 1) {
-            $scope.pool.erasure.profile = $scope.data.profiles[0]
+            $scope.pool.erasure.profile = $scope.data.profiles[0];
           }
         })
         .catch(function (osdError) {
@@ -258,6 +258,28 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
   };
 
   // Erasure Code Profile
+  $scope.addErasureCodeProfile = function () {
+    var modalInstance = $uibModal.open({
+      controller       : "CephErasureCodeProfilesAddCtrl",
+      templateUrl      : "components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html",
+      windowTemplateUrl: "templates/messagebox.html",
+      resolve          : {
+        cluster: function () {
+          return $scope.data.cluster;
+        },
+        osd: function () {
+          return $scope.data.osdCount;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (profile) {
+      // Add and select created profile
+      var len = $scope.data.profiles.push(profile);
+      $scope.pool.erasure.profile = $scope.data.profiles[len - 1];
+    });
+  };
+
   $scope.deleteErasureCodeProfile = function () {
     var modalInstance = $uibModal.open({
       controller       : "CephErasureCodeProfilesDeleteCtrl",

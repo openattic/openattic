@@ -57,7 +57,7 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
           // Trigger toasty on error
           toasty.error({
             title: "Error",
-            msg  : "Erasure code profile '" + $scope.profile.name + "' couldn't be deleted."
+            msg  : err.data.detail
           });
           $scope.cancel();
 

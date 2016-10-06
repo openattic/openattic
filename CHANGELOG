@@ -38,22 +38,35 @@ Version 2.0.15 (not released yet):
   deleted too (OP-1534)
 * Backend: Fixed two Internal Server Errors when accessing Ceph 
   resources (OP-1569)
-* Fixed internal server error when creating invalid Erasure Code Profiles 
-  or deleting used ones (OP-1578)
+* Backend: Fixed internal server error when creating invalid Erasure Code
+  Profiles or deleting used ones (OP-1578)
+* Backend/Installation: Fixed misleading debug message during `oaconfig
+  install` (OP-1580)
+* Backend: The `check_cephcluster` plugin now prints the correct message and 
+  returns the correct exit code in case of an error (OP-1586)
+* Backend: Fixed `oaconfig install` on CentOS 7 (OP-1368)  
+* Backend: Fixed HEALTH_ERR not handled in `ceph.models.Pool#get_status` (OP-1593)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added functionality to delete existing erasure code
   profiles (OP-1297)
+* WebUI: Added functionality to add erasure code profiles when creating
+  new Ceph pools (OP-1298)
 * WebUI: Added performance data to the extended view of a ceph
   pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
+* Installation: Fixed `NAGIOS_PLUGIN_DIR` path in in the SUSE sysconfig
+  file to point to the Icinga plugin directory. Thanks to Abhishek
+  Lekshmanan. (PR-457)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
   require writing to `openattic.log` or reading the Ceph key ring and
   configuration (OP-1320)
+* Packaging/Installation: Added `openattic-module-ceph-deployment` RPM and
+  DEB Packages for the DeepSea integration backend module. (OP-1566)
 * Packaging: Fixes a bug with piped tarball paths to
   `build_deb_packages.py` (OP-1536)
 * Packaging: Allow to override the default GPG key or disable the signing
@@ -64,7 +77,11 @@ Version 2.0.15 (not released yet):
   added chapter about customizing the WebUI (OP-1541).
 * Documentation: Updated Ceph installation chapter, emphasizing the requirement
   of openATTIC and Nagios being able to read the Ceph config file and keyring
-  (OP-1572).
+  (OP-1572). Emphasized the requirement of Ceph Jewel on both the Ceph cluster
+  and the openATTIC node. Added a note to the EL7 installation instructions to
+  perform a check of the Nagios configuration after editing it.
+* Documentation: Fixed bug in the SUSE installation instructions (thanks to
+  Kenneth Wimer for reporting this).
   
 Version 2.0.14, 12. September 2016:
 -----------------------------------

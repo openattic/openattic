@@ -11,17 +11,21 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from django.conf import settings
 from rest_framework import serializers, viewsets
 from rest_framework import status
+from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
+from utilities import get_request_query_params
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
+    estimated = serializers.DateTimeField(read_only=True, blank=True)
     result = JsonField(source='json_result')
 
     class Meta(object):
@@ -33,7 +37,17 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     """This API provides access to long running tasks."""
 
     serializer_class = TaskQueueSerializer
-    queryset = TaskQueue.objects.all()
+
+    def get_queryset(self):
+        """
+        django-filter 0.7 has no `method` parameter in django_filters.Filter.__init__. Thus, I have
+        to filter manually here. :-(
+        """
+        queryset = TaskQueue.objects.all()
+        status = get_request_query_params(self.request).get('status', None)
+        if status is not None:
+            return queryset.filter(TaskQueue.filter_by_status_name_q(status))
+        return queryset
 
     def destroy(self, request, *args, **kwargs):
         # Inspired by rest_framework.mixins.UpdateModelMixin
@@ -43,6 +57,17 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(self.object)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(['post'])
+    def test_task(self, request, *args, **kwargs):
+        if not settings.DEBUG:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        from taskqueue.tests import wait
+        times = get_request_query_params(request).get('times', 100)
+        task = wait.delay(times)
+        serializer = self.get_serializer(task)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 

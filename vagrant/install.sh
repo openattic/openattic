@@ -102,7 +102,7 @@ if [ "$IS_DEBIAN" ] ; then
 fi
 
 if [ "$IS_SUSE" ] ; then
-    zypper --gpg-auto-import-keys --non-interactive install ceph-common
+    zypper --quiet --gpg-auto-import-keys --non-interactive install ceph-common
 fi
 
 # Installing openATTIC
@@ -193,7 +193,7 @@ then
 module-icinga"
     ZYP_PACKAGES="$(echo -e "$OA_PACKAGES" | xargs -I SUB echo openattic-SUB)"
     DEPS="$(zypper --non-interactive install  --dry-run $ZYP_PACKAGES | grep -A 1 'NEW packages are going to be installed' | tail -n 1)"
-    zypper --non-interactive install $(echo $DEPS | tr " " "\n" | grep -v -e openattic -e apache -e python)
+    zypper --quiet --non-interactive install $(echo $DEPS | tr " " "\n" | grep -v -e openattic -e apache -e python)
 
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/icinga/conf.d/openattic_static.cfg
@@ -201,7 +201,7 @@ module-icinga"
 
     # System packages not available in pip + npm
 
-    zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
+    zypper --quiet --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
     # python-dbus  python-gobject-2
     #zypper --non-interactive install -y libjpeg-dev # interestingly this is required for openattic-module-nagios
     systemctl restart postgresql.service
