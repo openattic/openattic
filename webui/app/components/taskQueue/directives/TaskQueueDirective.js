@@ -34,6 +34,7 @@ var app = angular.module("openattic.taskQueue");
 app.directive("taskQueueDirective", function () {
   return {
     restrict: "A",
+    templateUrl: "components/taskQueue/templates/task-queue-directive.html",
     controller: function ($scope, toasty, $uibModal, $resource, taskQueueService) {
       $scope.tasks = {
         overview: {},
@@ -44,13 +45,14 @@ app.directive("taskQueueDirective", function () {
 
       $scope.updateTaskOverview = function () {
         var ov = $scope.tasks.overview;
-        var avr = ov.run !== 0 ? ov.queue / ov.sum * 100 : 0;
+        var avr = ov.queue !== 0 ? ov.queue / ov.sum * 100 : 0;
         var icons = ["fa-hourglass-o", "fa-hourglass-end", "fa-hourglass-half", "fa-hourglass-start"];
-        var icon = ov.run !== 0 ? icons[Math.floor(avr / 33.3) + 1] : icons[0];
+        var icon = ov.queue !== 0 ? icons[Math.floor(avr / 33.4) + 1] : icons[0];
 
         $scope.tasks.overview.avr = avr;
         $scope.tasks.overview.icon = icon;
         $scope.tasks.overview.updated = 1;
+        console.log($scope.tasks.overview);
       };
 
       $scope.loadOverview = function () {
@@ -58,7 +60,7 @@ app.directive("taskQueueDirective", function () {
         $scope.tasks.overview.queueLoad = 0;
         $scope.tasks.overview.updated = 0;
         $scope.tasks.overview.sum = undefined;
-        ["Running", "Not started"].forEach(function (state) {
+        ["Running", "Not Started"].forEach(function (state) {
           taskQueueService.get({
             pageSize: 1,
             status: state
@@ -111,6 +113,7 @@ app.directive("taskQueueDirective", function () {
           templateUrl: "components/taskQueue/templates/task-queue-dialog.html",
           controller: "TaskQueueModalCtrl",
           size: "lg",
+          animation: false,
           resolve: {
             tasks: function () {
               return $scope.tasks;
@@ -124,7 +127,6 @@ app.directive("taskQueueDirective", function () {
       };
 
       $scope.loadOverview()
-    },
-    templateUrl: "components/taskQueue/templates/task-queue-directive.html"
+    }
   };
 });

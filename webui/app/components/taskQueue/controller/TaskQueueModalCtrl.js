@@ -33,6 +33,16 @@
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, tasks, $state, $filter,
     taskQueueService) {
+
+  $scope.tasksFilter = {
+    page: 0,
+    entries: null,
+    search: "",
+    sortfield: null,
+    sortorder: null,
+    volume: null
+  };
+
   $scope.order = function (attribute, tab) {
     if (tab.tableSort.attribute === attribute) {
       tab.tableSort.reverse = !tab.tableSort.reverse;
@@ -108,8 +118,9 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     pending: {
       name: "Pending",
       data: tasks.pending,
-      states: ["Running", "Not started"],
+      states: ["Running", "Not Started"],
       count: null,
+      loaded: false,
       tableSort: {
         attribute: "percent",
         reverse: true
@@ -152,6 +163,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       data: tasks.failed,
       states: ["Exception", "Aborted"],
       count: null,
+      loaded: false,
       tableSort: {
         attribute: "last_modified",
         reverse: true
@@ -200,6 +212,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       data: tasks.finished,
       states: ["Finished"],
       count: null,
+      loaded: false,
       tableSort: {
         attribute: "last_modified",
         reverse: true
@@ -230,23 +243,36 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   $scope.loadTabTasks = function (tabKey) {
-    $scope.tabs[tabKey].tempCount = 0;
-    $scope.tabs[tabKey].loadingCount = 0;
-    $scope.tabs[tabKey].data = [];
-    $scope.tabs[tabKey].states.forEach(function (state) {
+    var tab = $scope.tabs[tabKey];
+    tab.tempCount = 0;
+    tab.pageCount = 0;
+    tab.pageMax = 0;
+    tab.loadingCount = 0;
+    tab.tempData = [];
+    $scope.tabs[tabKey] = tab;
+    tab.states.forEach(function (state) {
       taskQueueService.get({
           pageSize: 1,
           status: state
         })
         .$promise
         .then(function (res) {
-          $scope.tabs[tabKey].tempCount += res.count;
-          $scope.tabs[tabKey].loadingCount++;
-          console.log("counting");
+          var tab = $scope.tabs[tabKey];
+          tab.tempCount += res.count;
+          tab.loadingCount++;
+          var max = parseInt((res.count + 99) / 100, 10);
+          tab.pageMax += max;
+          if (tab.loadingCount === tab.states.length) {
+            tab.count = tab.tempCount;
+            if (tab.pageMax === 0) {
+              tab.loaded = true;
+            }
+          }
+          console.log(tab, tab.pageCount, tab.pageMax);
+          $scope.tabs[tabKey] = tab;
           if (res.count === 0) {
             return;
           }
-          var max = parseInt(res.count / 100, 10) + 1;
           for (var i = 1; i <= max; i++) {
             $scope.loadTabTasksPage(i, state, tabKey);
           }
@@ -261,14 +287,6 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           throw error;
         });
     });
-    var unbindWatch = $scope.$watch("tabs." + tabKey + ".loadingCount", function (count) {
-      var tab = $scope.tabs[tabKey];
-      if (count === tab.states.length) {
-        $scope.tabs[tabKey].count = tab.tempCount;
-        console.log(tab);
-        unbindWatch();
-      }
-    });
   };
 
   $scope.loadTabTasksPage = function (pgnr, state, tabKey) {
@@ -282,7 +300,16 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         if (state === "Running") {
           res.results.forEach($scope.calcApprox);
         }
-        $scope.tabs[tabKey].data.concat(res.results);
+        var tab = $scope.tabs[tabKey];
+        tab.tempData = tab.tempData.concat(res.results);
+        tab.pageCount++;
+        console.log(tab, tab.pageCount, tab.pageMax);
+        $scope.tabs[tabKey] = tab;
+        if (tab.pageCount === tab.pageMax) {
+          tab.loaded = true;
+          tab.data = tab.tempData;
+          $scope.tabs[tabKey] = tab;
+        }
       })
       .catch(function (error) {
         error.toasty = {
@@ -310,7 +337,18 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     task.approxFormat = approxFormat;
   };
 
-  Object.keys($scope.tabs).forEach(function (tabKey) {
-    $scope.loadTabTasks(tabKey);
+  $scope.loadAllTabs = function () {
+    Object.keys($scope.tabs).forEach(function (tabKey) {
+      $scope.loadTabTasks(tabKey);
+    });
+  };
+  $uibModalInstance.opened.then(function () {
+      $scope.loadAllTabs();
+      $scope.tabRefresh = setInterval(function(){
+        $scope.loadAllTabs();
+      }, 10000);
+  });
+  $uibModalInstance.closed.then(function () {
+    clearInterval($scope.tabRefresh);
   });
 });

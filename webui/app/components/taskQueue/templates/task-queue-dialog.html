@@ -5,7 +5,9 @@
     <uib-tabset active="modalTabData.active">
         <uib-tab ng-repeat="(tabKey, tab) in tabs" heading="{{tab.name}}
             {{tab.count >= 0 ? ' (' + tab.count + ')' : ''}}" index="$index">
-            <form name="{{tab.name}}Tasks" role="form" novalidate>
+            <p ng-hide="tab.loaded">Loading...<p>
+            <p ng-show="tab.loaded && tab.data.length === 0">There are no {{tabKey}} Tasks.<p>
+            <form name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
                 <table class="table table-striped table-bordered table-hover datatable dataTable">
                     <thead>
                     <tr>
