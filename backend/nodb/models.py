@@ -13,7 +13,7 @@
 """
 import ast
 import json
-from itertools import product
+import logging
 
 import django
 import itertools
@@ -26,6 +26,8 @@ from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
 from django.utils.functional import cached_property
+
+logger = logging.getLogger(__file__)
 
 
 class NoDbQuery(object):
@@ -70,7 +72,10 @@ class NoDbQuery(object):
 
 class NodbQuerySet(QuerySet):
 
-    def __init__(self, model, using=None, hints=None, request=None, context=None):
+    def __init__(self, model=None, using=None, hints=None, request=None, context=None):
+        """
+        model parameter needs to be optional, as QuerySet.__deepcopy__() sets self.model afterwards.
+        """
         self.model = model
         self._context = context
         self._current = 0
@@ -81,7 +86,8 @@ class NodbQuerySet(QuerySet):
         return len(self._filtered_data) - 1
 
     def _data(self):
-        objects = self.model.get_all_objects(self._context, query=self._query)
+        context = self._context if self._context else NodbManager.nodb_context
+        objects = self.model.get_all_objects(context, query=self._query)
         self_pointer = LazyProperty.QuerySetPointer(objects)
         for obj in objects:
             #  Because we're calling the model constructors ourselves, django thinks that
@@ -185,6 +191,9 @@ class NodbQuerySet(QuerySet):
         my_clone._query = self._query.clone()
         return my_clone
 
+    def __deepcopy__(self, memo):
+        return super(NodbQuerySet, self).__deepcopy__(memo)
+
     def count(self):
         return len(self._filtered_data)
 
@@ -227,6 +236,11 @@ class NodbQuerySet(QuerySet):
     def __repr__(self):
         return super(NodbQuerySet, self).__repr__()
 
+    def iterator(self):
+        logger.warning(
+            '{}.iterator should only be access when running tests.'.format(self.__class__))
+        return []
+
 
 if django.VERSION[:2] == (1, 6):
     from django.db.models.manager import Manager
@@ -263,9 +277,11 @@ class LazyProperty(object):
         def __init__(self, target):
             self.target = target
 
-    def __init__(self, field_name, eval_func):
+    def __init__(self, field_name, eval_func, catch_exceptions, field_names):
         self.field_name = field_name
         self.eval_func = eval_func
+        self.catch_exceptions = catch_exceptions
+        self.field_names = field_names
 
     def __get__(self, instance, owner=None):
         """
@@ -279,7 +295,18 @@ class LazyProperty(object):
         if self.field_name in instance.__dict__:
             return instance.__dict__[self.field_name]
 
-        self.eval_func(instance, query_set)
+        if self.catch_exceptions is None:
+            self.eval_func(instance, query_set, self.field_names)
+        else:
+            try:
+                self.eval_func(instance, query_set, self.field_names)
+            except self.catch_exceptions as e:
+                logger.exception('failed to populate Field "{}" of {} ({})'
+                                 .format(self.field_name, unicode(instance), instance.__class__))
+                fields = instance.__class__.make_model_args({}, fields_force_none=self.field_names)
+                for field_name, value in fields.items():
+                    setattr(instance, field_name, value)
+
         if self.field_name not in instance.__dict__:
             raise KeyError(
                 'LazyProperty: {} did not set {} of {}'.format(self.eval_func, self.field_name,
@@ -294,7 +321,7 @@ class LazyProperty(object):
         instance.__dict__[self.field_name] = value
 
 
-def bulk_attribute_setter(*filed_names):
+def bulk_attribute_setter(field_names, catch_exceptions=None):
     """
     The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone
     really needs the information gathered in this call. If the attribute is never used, the call
@@ -309,32 +336,32 @@ def bulk_attribute_setter(*filed_names):
 
     The bulk_attribute_setter decorator can be used like so:
     >>> class MyModel(NodbModel):
-    >>>     my_filed = models.IntegerField()
+    >>>     my_field = models.IntegerField()
     >>>
-    >>>     @bulk_attribute_setter('my_filed')
-    >>>     def set_my_filed(self, objs):
-    >>>         self.my_filed = 42
+    >>>     @bulk_attribute_setter(['my_field'])
+    >>>     def set_my_field(self, objs, field_names):
+    >>>         self.my_field = 42
 
     Keep in mind, that you can set the my_field attribute on all objects, not just self.
 
     The decorator modifies the model to look like this:
-    >>> def set_my_filed(self, objs):
-    >>>     self.my_filed = 42
+    >>> def set_my_field(self, objs):
+    >>>     self.my_field = 42
     >>>
     >>> class MyModel(NodbModel):
-    >>>     my_filed = models.IntegerField()
-    >>>     set_my_filed = LazyPropertyContributor(['my_filed'], set_my_filed)
+    >>>     my_field = models.IntegerField()
+    >>>     set_my_field = LazyPropertyContributor(['my_field'], set_my_field)
 
     A LazyPropertyContributor property implements the contribute_to_class method, which modifies
     the model itself to look like so:
     >>> class MyModel(NodbModel):
-    >>>     my_filed = LazyProperty('my_filed', set_my_filed)
+    >>>     my_field = LazyProperty('my_field', set_my_field)
 
-    The my_filed filed is not overwritten, because the fields are already moved into the _meta class
+    The my_field field is not overwritten, because the fields are already moved into the _meta class
     at this point. If someone then accesses the my_field attribute, LazyProperty.__get__ is called,
     which then calls set_my_field to set the field, as if one had written:
     >>> instances = MyModel.objects.all()
-    >>> set_my_filed(instances[0], instances)
+    >>> set_my_field(instances[0], instances)
     >>> assert instances[0].my_field == 42
 
     For example, get_all_objects generates a QuerySet like this:
@@ -348,7 +375,15 @@ def bulk_attribute_setter(*filed_names):
     id	name	disk_usage
     0	'foo'   1MB
     1	'bar'  	2MB
+
+    :type field_names: list[str]
+    :param catch_exceptions: Exceptions that will be caught. In case of an exception, all
+        `field_names` will be set to None.
+    :type catch_exceptions: exceptions.Exception | tuple[exceptions.Exception]
     """
+
+    if not len(field_names):
+        raise ValueError('`field_names` must not be empty.')
 
     class LazyPropertyContributor(object):
         def __init__(self, field_names, func):
@@ -357,10 +392,10 @@ def bulk_attribute_setter(*filed_names):
 
         def contribute_to_class(self, cls, name, virtual_only=False):
             for name in self.field_names:
-                setattr(cls, name, LazyProperty(name, self.func))
+                setattr(cls, name, LazyProperty(name, self.func, catch_exceptions, self.field_names))
 
     def decorator(func):
-        return LazyPropertyContributor(filed_names, func)
+        return LazyPropertyContributor(field_names, func)
 
     return decorator
 

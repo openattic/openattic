@@ -23,9 +23,11 @@ from django.test import TestCase
 
 import ceph.models
 import ceph.librados
+import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction
 from ceph.tasks import track_pg_creation
+from ifconfig.models import Host
 
 
 def open_testdata(name):
@@ -79,11 +81,17 @@ class KeyringTestCase(TestCase):
 
 
 class CephPoolTestCase(TestCase):
+    def setUp(self):
+        if Host.objects.get_current() is None:
+            Host.insert_current_host()
+
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
     def test_insert(self, monApi_mock, rados_mock, cephpool_objects_mock):
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
+        nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
+
         cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0,
                                                                       type='replicated')
 
@@ -119,6 +127,7 @@ class CephPoolTestCase(TestCase):
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
+        nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   erasure_code_profile_id=None, cluster_id='0',
                                                   cluster=ceph.models.CephCluster(fsid='0',
@@ -149,6 +158,8 @@ class CephPoolTestCase(TestCase):
                resulting in weird parameters to osd_tier_remove.
         """
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
+        nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
+
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   cache_mode='writeback', tier_of_id=0,
                                                   tier_of=ceph.models.CephPool(id=0, name='test',
@@ -326,7 +337,6 @@ class LibradosTest(TestCase):
                 "status": "up",
                 "reweight": 1,
                 "primary_affinity": 1,
-                "hostname": "z2-dfs06"
             }
         ])
 
@@ -344,8 +354,12 @@ class LibradosTest(TestCase):
             osd_tree = json.load(f)
             monApi_mock.return_value.osd_tree.return_value = osd_tree
             librados_monApi_mock.return_value.osd_tree.return_value = osd_tree
+        with open_testdata("tests/ceph-osd-metadata.json") as f:
+            osd_metadata = json.load(f)
+            monApi_mock.return_value.osd_metadata.return_value = osd_metadata
+            librados_monApi_mock.return_value.osd_metadata.return_value = osd_metadata
         monApi_mock.return_value.pg_dump.return_value = {
-            'osd_stats': [{'osd': 'osd.{}'.format(i)} for i in range(100)]
+            'osd_stats': [{'osd': i} for i in range(15) if i != 3 and i != 10]
         }
 
         class Ctx:

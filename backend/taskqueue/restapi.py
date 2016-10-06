@@ -12,10 +12,14 @@
  *  GNU General Public License for more details.
 """
 from rest_framework import serializers, viewsets
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
+from taskqueue.tests import wait
+from utilities import get_request_query_params
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
@@ -31,7 +35,27 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     """This API provides access to long running tasks."""
 
     serializer_class = TaskQueueSerializer
-    queryset = TaskQueue.objects.all()
+
+    def get_queryset(self):
+        """
+        django-filter 0.7 has no `method` parameter in django_filters.Filter.__init__. Thus, I have
+        to filter manually here. :-(
+        """
+        queryset = TaskQueue.objects.all()
+        status = get_request_query_params(self.request).get('status', None)
+        if status is not None:
+            return queryset.filter(TaskQueue.filter_by_status_name_q(status))
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        # Inspired by rest_framework.mixins.UpdateModelMixin
+        self.object = self.get_object()
+
+        self.object.finish_task(None, TaskQueue.STATUS_ABORTED)
+
+        serializer = self.get_serializer(self.object)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class TaskQueueLocationMixin(object):

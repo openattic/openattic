@@ -149,7 +149,7 @@ def update(**kwargs):
             try:
                 ip = IPAddress.objects.get(address__startswith=m.group("ip"))
             except IPAddress.DoesNotExist:
-                print "Host unknown, ignored"
+                print "skipped"
                 continue
 
             try:
@@ -168,7 +168,7 @@ def update(**kwargs):
             try:
                 ip = IPAddress.objects.get(address__startswith=m.group("ip"))
             except IPAddress.DoesNotExist:
-                print "Host unknown, ignored"
+                print "skipped"
                 continue
 
             try:
@@ -204,6 +204,7 @@ def update(**kwargs):
         ceph.remove_nagios_configs(["all"])
         ceph.write_cluster_nagios_configs()
         ceph.write_pool_nagios_configs()
+        ceph.write_rbd_nagios_configs()
         nagios.restart_service()
     else:
         print "Nagios does not appear to be installed, skipping adding Ceph clusters"

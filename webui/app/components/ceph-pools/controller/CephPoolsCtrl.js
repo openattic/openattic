@@ -112,10 +112,22 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
 
     if (item) {
-      $state.go("cephPools.detail.status", {
-        cephPool: item.id,
-        "#"     : "more"
-      });
+      if ($state.current.name === "cephPools")  {
+        $state.go("cephPools.detail.status", {
+          cephPool: item.id,
+          "#": "more"
+        });
+      } else if ($state.current.name === "cephPools.detail.statistics") {
+        $state.go("cephPools.detail.statistics", {
+          cephPool: item.id,
+          "#": "more"
+        });
+      } else {
+        $state.go($state.current.name, {
+          cephPool: item.id,
+          "#": "more"
+        });
+      }
     }
   });
 

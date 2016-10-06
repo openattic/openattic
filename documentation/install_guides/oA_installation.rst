@@ -421,6 +421,10 @@ Add the following to ``/etc/nagios/objects/commands.cfg``::
    command_line /bin/mv /var/log/pnp4nagios/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$
   }
 
+To make sure that all changes have been applied correctly, please run ``nagios
+--verify-config /etc/nagios/nagios.cfg`` afterwards, to verify the
+configuration files for errors.
+
 Nagios will be restarted during the |oA| installation and should then generate
 the necessary RRD and XML files in ``/var/lib/pnp4nagios/<hostname>``.
 
@@ -481,7 +485,7 @@ openattic``, as it might not be required on each node of an |oA| cluster.
 
 It can be installed with the following command::
 
-  # yum install openattic-gui
+  # zypper install openattic-gui
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.

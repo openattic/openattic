@@ -29,6 +29,7 @@ from time import time
 from xml.dom import minidom
 from datetime import datetime
 from StringIO import StringIO
+from os.path import exists
 
 from PIL import Image
 from numpy import array
@@ -674,6 +675,32 @@ class RRD(object):
             if '=' in pd
             ])
 
+    @staticmethod
+    def get_rrd(host, service):
+        """ Returns a RRD file by host and service definition.
+
+        :param host: host information
+        :rtype: ifconfig.Host
+        :param service: service definition
+        :rtype: str
+        :return: Returns the related RRD file
+        :rtype: RRD
+        :raises SystemError: If the RRD related XML file can't be found.
+        """
+        xmlpath = nagios_settings.XML_PATH % {
+            "host": host,
+            "serv": service
+        }
+
+        if not exists(xmlpath):
+            raise SystemError("XML file '{}' could not be found.".format(xmlpath))
+        return RRD(xmlpath)
+
+    @staticmethod
+    def get_sources_list(host, service):
+        rrd = RRD.get_rrd(host, service)
+        return list(rrd.sources)
+
     def get_source(self, srcname):
         return Source(self, srcname)
 
@@ -894,6 +921,27 @@ class Graph(object):
 
         return out
 
+    @staticmethod
+    def get_graph(rrd, source_filter=None):
+        """
+        Returns a Graph object for a rrd file and filtered by sources if source_filter is specified.
+
+        :param rrd:
+        :rtype: RRD
+        :param source_filter:
+        :rtype: list[str]
+        :return:
+        :rtype: Graph
+        """
+        sources = source_filter if source_filter else rrd.sources
+
+        graph = Graph()
+        for source in sources:
+            source_obj = rrd.get_source(source)
+            graph.add_source(source_obj)
+
+        return graph
+
     def get_json(self):
         """
         Returns the performance data of a rrd file in JSON format.
@@ -912,7 +960,8 @@ class Graph(object):
 
         return _call_rrdtool(self.args)
 
-    def convert_rrdtool_json_to_nvd3(self, data):
+    @staticmethod
+    def convert_rrdtool_json_to_nvd3(data):
         """
         Returns the performnce data of 'rrdtool xport' in NVD3 compatible JSON format
 
@@ -930,16 +979,24 @@ class Graph(object):
         data = json.loads(data)
 
         step = data["meta"]["step"]
+        perf_data = data["data"]
         out = []
 
+        # Remove the last element because the timestamp is always in the future and so the values
+        # are always None. The values of the penultimate element might be empty as well if yes
+        # delete it.
+        for perf_data_item in [perf_data[-1], perf_data[-2]]:
+            if all(x is None for x in perf_data_item):
+                perf_data.pop()
+
         for index, graph_desc in enumerate(data["meta"]["legend"]):
-            timestemp = data["meta"]["start"]
+            timestamp = data["meta"]["start"]
 
             conv_perf_data = []
 
-            for perf_data in data["data"]:
-                conv_perf_data.append([timestemp, perf_data[index]])
-                timestemp = timestemp + step
+            for perf_data_item in perf_data:
+                conv_perf_data.append([timestamp, perf_data_item[index]])
+                timestamp = timestamp + step
             out.append({"key": graph_desc, "values": conv_perf_data})
 
         return out
