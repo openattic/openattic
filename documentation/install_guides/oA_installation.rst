@@ -209,38 +209,34 @@ look as follows::
   uid                  Business Critical Computing <is-bcc@it-novum.com>
   sub   2048R/A99076EE 2012-03-05
 
-Enabling the |oA| Apt package repository
+Enabling the |oA| Apt Package Repository
 ----------------------------------------
 
-In order to use enable the |oA| Apt repository, create a file named
-``/etc/apt/sources.list.d/openattic.list``, and put the following lines into
-it:
+In order to add the |oA| apt repository, create a file named
+``/etc/apt/sources.list.d/openattic.list``, and put the following lines into it.
+Replace the field ``<distribution>`` with your distribution's short codename:
 
-For Debian 8 (Jessie)
-~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  deb     http://apt.openattic.org/ jessie   main
-  deb-src http://apt.openattic.org/ jessie   main
-
-For Ubuntu 14.04 LTS (Trusty)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* ``jessie`` (for Debian 8 "Jessie")
+* ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
 
 ::
 
-  deb     http://apt.openattic.org/ trusty   main
-  deb-src http://apt.openattic.org/ trusty   main
+  deb     http://apt.openattic.org/ <distribution>   main
+  deb-src http://apt.openattic.org/ <distribution>   main
 
 Enabling Nightly Builds
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-In addition to the offical releases, we also provide nightly builds, build off
-the current "default" branch that will become the next official |oA| release.
+In addition to the offical releases, we also provide nightly builds, built off
+the current "default" branch that will eventually become the next official |oA|
+release.
 
-Add the following to the existing ``/etc/apt/sources.list.d/openattic.list``
-file::
+To enable the nightly repo, the file ``/etc/apt/sources.list.d/openattic.list``
+needs to be expanded to look as follows. Again, please replace ``<distribution>`` with your
+distribution's code name as outlined above::
 
+  deb     http://apt.openattic.org/ <distribution>   main
+  deb-src http://apt.openattic.org/ <distribution>   main
   deb     http://apt.openattic.org/ nightly  main
   deb-src http://apt.openattic.org/ nightly  main
 
