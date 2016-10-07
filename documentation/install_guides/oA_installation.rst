@@ -358,8 +358,8 @@ It can be installed with the following command::
   page in the Apache web server's document root that will redirect requests to
   the |oA| web interface.
 
-Configure PNP4Nagios
---------------------
+Configure PNP4Nagios on EL7
+---------------------------
 
 |oA| uses `Nagios <https://www.nagios.org/>`_ and the `PNP4Nagios
 <http://pnp4nagios.org/>`_ addon for analyzing performance data and generating
