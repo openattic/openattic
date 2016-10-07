@@ -22,11 +22,11 @@ from rest_framework.response import Response
 from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
-from utilities import drf_version, get_request_query_params, mk_method_field_params, \
-    get_request_data
+from rest.utilities import drf_version, get_request_query_params, mk_method_field_params, \
+    get_request_data, ToNativeToRepresentationMixin
 
 
-class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
+class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
 
     class Meta:
         model = UserPreference
@@ -34,10 +34,6 @@ class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_native(self, obj):
         return (obj.setting, json.loads(obj.value))
-
-    def to_representation(self, instance):
-        """DRF 3: `to_native` was replaced by `to_representation`"""
-        return self.to_native(instance)
 
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
