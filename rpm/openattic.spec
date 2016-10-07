@@ -110,6 +110,22 @@ storage space on demand.
 This package includes support for Ceph, a distributed storage system
 designed to provide excellent performance, reliability, and scalability.
 
+%package module-ceph-deployment
+Requires: ceph-common >= 10.0.0
+Requires: %{name}-module-ceph
+Requires: deepsea
+Summary: Ceph deployment and management module for openATTIC
+
+%description module-ceph-deployment
+openATTIC is a storage management system based upon Open Source tools with a
+comprehensive user interface that allows you to create, share and backup storage
+space on demand.
+
+This package includes deployment and remote management support for Ceph, a
+distributed storage system designed to provide excellent performance,
+reliability, and scalability. It is based on the "DeepSea" collection of Salt
+files (https://github.com/SUSE/DeepSea).
+
 %package module-btrfs
 Requires:	btrfs-progs
 Requires: %{name}-base
@@ -619,6 +635,11 @@ echo ""
 %{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cephrbd
+
+%files module-ceph-deployment
+%defattr(-,root,root,-)
+%{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
+%{_datadir}/%{name}/ceph_deployment/
 
 %files gui
 %defattr(-,root,root,-)

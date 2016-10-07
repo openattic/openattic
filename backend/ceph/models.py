@@ -1236,10 +1236,12 @@ class Pool(VolumePool):
         return self.cluster.status
 
     def get_status(self):
+        # See also: nagios.plugins.check_cephcluster.ClusterStatus#_map_health_status
         return [{
             "HEALTH_OK": "online",
             "HEALTH_WARN": "degraded",
-            "HEALTH_CRIT": "failed"
+            "HEALTH_CRIT": "failed",
+            "HEALTH_ERR": "failed",
         }[self.cluster.status]]
 
     @property
