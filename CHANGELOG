@@ -82,6 +82,9 @@ Version 2.0.15 (not released yet):
   perform a check of the Nagios configuration after editing it.
 * Documentation: Fixed bug in the SUSE installation instructions (thanks to
   Kenneth Wimer for reporting this).
+* Documentation: Improved the Debian/Ubuntu package installation chapter by
+  removing some duplicate content and clarifying how to enable the nightly builds.
+  (OP-1603)
   
 Version 2.0.14, 12. September 2016:
 -----------------------------------
