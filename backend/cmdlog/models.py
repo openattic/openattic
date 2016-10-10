@@ -15,22 +15,23 @@
 """
 
 from django.db import models
-from django.utils.translation   import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from ifconfig.models import Host
 
+
 class LogEntry(models.Model):
-    host      = models.ForeignKey(Host)
-    command   = models.CharField(max_length=250, verbose_name=_("Command"))
-    user      = models.CharField(max_length=50)
+    host = models.ForeignKey(Host)
+    command = models.CharField(max_length=250, verbose_name=_("Command"))
+    user = models.CharField(max_length=50)
     starttime = models.DateTimeField(verbose_name=_("Start time"))
-    endtime   = models.DateTimeField(verbose_name=_("End time"))
-    exitcode  = models.IntegerField(verbose_name=_("Exit code"))
-    text      = models.TextField(verbose_name=_("Output"))
+    endtime = models.DateTimeField(verbose_name=_("End time"))
+    exitcode = models.IntegerField(verbose_name=_("Exit code"))
+    text = models.TextField(verbose_name=_("Output"))
 
     def __unicode__(self):
         if self.exitcode == 0:
             templ = "%s at %s"
         else:
             templ = "%s at %s (failed)"
-        return templ % ( self.command, self.starttime )
+        return templ % (self.command, self.starttime)

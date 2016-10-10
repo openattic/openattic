@@ -19,10 +19,13 @@ from rpcd.handlers import ProxyModelHandler
 
 from samba.models import Share
 
+
 class ShareHandler(ModelHandler):
     model = Share
 
+
 class ShareProxy(ProxyModelHandler, ShareHandler):
     pass
+
 
 RPCD_HANDLERS = [ShareProxy]

@@ -18,7 +18,7 @@ import os.path
 import ctypes
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method
+from systemd.plugins import logged, BasePlugin, method
 
 
 @logged
@@ -35,10 +35,10 @@ class SystemD(BasePlugin):
 
     @method(in_signature="ss", out_signature="i")
     def run_initscript(self, sname, command):
-        spath = os.path.join( "/etc/init.d", sname )
+        spath = os.path.join("/etc/init.d", sname)
         if not os.path.exists(spath):
             raise ValueError("No such file or directory: '%s'" % spath)
-        return invoke([spath, command], log=( command != "status" ), fail_on_err=False)
+        return invoke([spath, command], log=(command != "status"), fail_on_err=False)
 
     @method(in_signature="i", out_signature="i")
     def set_time(self, seconds):
@@ -50,4 +50,4 @@ class SystemD(BasePlugin):
                 ('tv_nsec', ctypes.c_long)]
 
         timeobj = timespec(int(seconds), 0)
-        return librt.clock_settime( 0, ctypes.pointer(timeobj) )
+        return librt.clock_settime(0, ctypes.pointer(timeobj))
