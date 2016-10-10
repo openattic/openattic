@@ -19,6 +19,9 @@ Version 2.0.15 (not released yet):
 * Backend: Fixed compatibility issues with Django 1.8 and Django REST 
   Framework 3 (OP-1210, OP-1490, OP-1486) 
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
+* Backend: Fixed code-style for the following Django apps: samba, sysutils,
+  nfs, cmdlog, ifconfig and http (OP-1503, OP-1505, OP-1506, OP-1511, OP-1517,
+  OP-1519)
 * Backend: The 'check_cephpool' Nagios plugin does return the correct outputs
   and exit codes (per the Nagios plugin development guidelines) in error and
   success case now (OP-1521)
