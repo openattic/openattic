@@ -32,6 +32,9 @@ Version 2.0.15 (not released yet):
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
 * Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
+* Backend: The 'check_cephcluster' Nagios plugin does log into the
+  openattic.log logfile if the conf file and/or the keyring do not exist or
+  are not accessible (OP-1572)
 * Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
 * Backend: Use `osd metadata` instead of `osd tree` to get the hostname
   of Ceph OSDs (OP-1573)
