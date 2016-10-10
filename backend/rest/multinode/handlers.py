@@ -26,7 +26,8 @@ from rest_framework.request import Request
 
 from ifconfig.models import Host
 
-from utilities import get_related_model, drf_version, get_request_data
+from utilities import get_related_model
+from rest.utilities import drf_version, get_request_data
 
 
 class RequestHandlers(object):

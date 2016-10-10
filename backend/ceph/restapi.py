@@ -24,7 +24,7 @@ from ceph.models import *
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 
-from utilities import get_request_query_filter_data, get_request_data
+from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class CrushmapVersionSerializer(serializers.ModelSerializer):
 class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Ceph Cluster. """
     url = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
-    crushmap = serializers.SerializerMethodField("get_crushmap")
+    crushmap = serializers.SerializerMethodField(*mk_method_field_params('crushmap'))
 
     class Meta:
         model = Cluster

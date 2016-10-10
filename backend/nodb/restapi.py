@@ -13,7 +13,7 @@
 """
 from rest_framework import serializers, viewsets
 
-from utilities import drf_version
+from rest.utilities import ToNativeToRepresentationMixin, drf_version
 
 try:
     from rest_framework.fields import WritableField
@@ -24,7 +24,7 @@ except ImportError:
 import nodb.models
 
 
-class JsonField(WritableField):
+class JsonField(WritableField, ToNativeToRepresentationMixin):
 
     def to_native(self, value):
         """
@@ -32,7 +32,9 @@ class JsonField(WritableField):
         """
         return value
 
-    def to_representation(self, value):
+    def from_native(self, value):
+        if value in validators.EMPTY_VALUES:
+            return None
         return value
 
 

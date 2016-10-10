@@ -154,7 +154,7 @@ def agg(state, line):
 
 deps = reduce(agg, open('/home/vagrant/openattic/debian/control'), (False, []))
 deps2 = {d.strip() for d in sum([dep.split(',') for dep in deps[1]], []) if 'python' not in d and 'openattic' not in d and '$' not in d and 'apache' not in d and '|' not in d}
-deps3 = [d.split(' ')[0] for d in deps2 if d not in ['tw-cli', 'mail-transport-agent', 'udisks']]
+deps3 = [d.split(' ')[0] for d in deps2 if d not in ['tw-cli', 'mail-transport-agent', 'udisks', 'deepsea']]
 print ' '.join(deps3)
 EOF
 )"
