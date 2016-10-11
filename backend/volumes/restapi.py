@@ -30,7 +30,8 @@ from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
 
-from utilities import get_request_query_params, mk_method_field_params, get_request_data
+from rest.utilities import get_request_query_params, mk_method_field_params, get_request_data, \
+    ToNativeToRepresentationMixin
 
 # filter queryset by...
 # * is not a physical block device and
@@ -60,7 +61,7 @@ class PhysicalDiskSerializer(serializers.Serializer):
     host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
-class DiskSerializer(serializers.HyperlinkedModelSerializer):
+class DiskSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
     """ Serializer for a disk. """
 
     url = serializers.HyperlinkedIdentityField(view_name="disk-detail")
@@ -69,7 +70,7 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
-        data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
+        data.update(super(DiskSerializer, self).to_native(obj))
         if obj is None:
             return data
         if obj.physicalblockdevice_or_none is not None:
@@ -78,10 +79,6 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items()
                               if value is not None]))
         return data
-
-    def to_representation(self, instance):
-        """DRF 3: `to_native` was replaced by `to_representation`"""
-        return self.to_native(instance)
 
     class Meta:
         model = models.StorageObject
@@ -139,7 +136,7 @@ class VolumePoolSerializer(serializers.Serializer):
     host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
-class PoolSerializer(serializers.HyperlinkedModelSerializer):
+class PoolSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
     """ Serializer for a pool. """
 
     url = serializers.HyperlinkedIdentityField(view_name="pool-detail")
@@ -157,7 +154,7 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
-        data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
+        data.update(self.super_to_native_or_to_representation(obj))
         if obj is None:
             return data
         if obj.volumepool_or_none is not None:
@@ -165,10 +162,6 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items()
                               if value is not None]))
         return data
-
-    def to_representation(self, instance):
-        """DRF 3: `to_native` was replaced by `to_representation`"""
-        return self.to_native(instance)
 
     def get_usage(self, obj):
         return obj.get_volumepool_usage()
@@ -295,7 +288,7 @@ class VolumePoolRootVolumeSerializer(serializers.Serializer):
     host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
-class VolumeSerializer(serializers.HyperlinkedModelSerializer):
+class VolumeSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
     """ Serializer for a volume.
 
         Of course, there is no such thing as "a volume" in the models layer,
@@ -324,7 +317,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
                      "fswarning", "fscritical", "owner")])
-        data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
+        data.update(self.super_to_native_or_to_representation(obj))
         if obj is None:
             return data
         for (Serializer, top_obj, flag) in (
@@ -339,10 +332,6 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
                               if value is not None]))
             data[flag] = True
         return data
-
-    def to_representation(self, instance):
-        """DRF 3: `to_native` was replaced by `to_representation`"""
-        return self.to_native(instance)
 
     def get_usage(self, obj):
         return obj.get_volume_usage()

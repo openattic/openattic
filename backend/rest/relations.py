@@ -18,7 +18,7 @@ from rest_framework.relations import \
     HyperlinkedRelatedField  as RestFramework_HyperlinkedRelatedField,  \
     HyperlinkedIdentityField as RestFramework_HyperlinkedIdentityField
 
-from utilities import drf_version
+from rest.utilities import drf_version
 
 if drf_version() < (3, 0):
 

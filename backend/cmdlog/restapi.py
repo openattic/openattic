@@ -23,7 +23,7 @@ from datetime import datetime
 
 from cmdlog import models
 
-from utilities import get_request_query_params
+from rest.utilities import get_request_query_params
 
 
 class LogEntrySerializer(serializers.HyperlinkedModelSerializer):

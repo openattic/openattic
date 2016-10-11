@@ -20,12 +20,12 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from utilities import get_request_query_params
+from rest.utilities import get_request_query_params
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
-    estimated = serializers.DateTimeField(read_only=True, blank=True)
+    estimated = serializers.DateTimeField(read_only=True)
     result = JsonField(source='json_result')
 
     class Meta(object):
