@@ -14,13 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-import socket
-
 from django.core.management.base import BaseCommand
 
 from ifconfig.models import Host
 
-class Command( BaseCommand ):
+
+class Command(BaseCommand):
     help = "Make sure a Host entry for this host exists."
 
     def handle(self, **options):

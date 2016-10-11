@@ -18,10 +18,10 @@ from django.core.management.base import BaseCommand
 
 from systemd.procutils import invoke
 
-class Command( BaseCommand ):
+
+class Command(BaseCommand):
     help = "Run a given command and log it to openATTIC's database."
 
     def handle(self, *args, **options):
         ret, out, err = invoke(args, return_out_err=True, fail_on_err=False)
         return out
-

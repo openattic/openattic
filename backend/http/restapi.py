@@ -14,7 +14,7 @@
 
 import django_filters
 
-from rest_framework import serializers, viewsets, status
+from rest_framework import serializers, viewsets
 
 from rest import relations
 
@@ -23,9 +23,10 @@ from http.models import Export
 
 from rest.multinode.handlers import RequestHandlers
 
+
 class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HTTP Export. """
-    url         = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
     volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
                                                source="volume.storageobj",
                                                queryset=StorageObject.objects.all())
@@ -39,24 +40,26 @@ class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
         del attrs["volume.storageobj"]
         return super(HttpShareSerializer, self).restore_object(attrs, instance)
 
+
 class HttpShareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
 
     class Meta:
-        model  = Export
+        model = Export
         fields = ['volume']
 
+
 class HttpShareViewSet(viewsets.ModelViewSet):
-    queryset         = Export.objects.all()
+    queryset = Export.objects.all()
     serializer_class = HttpShareSerializer
-    filter_class     = HttpShareFilter
+    filter_class = HttpShareFilter
 
 
 class HttpShareProxyViewSet(RequestHandlers, HttpShareViewSet):
-    queryset    = Export.all_objects.all()
-    api_prefix  = 'httpshares'
+    queryset = Export.all_objects.all()
+    api_prefix = 'httpshares'
     host_filter = 'volume__storageobj__host'
-    model       = Export
+    model = Export
 
 
 RESTAPI_VIEWSETS = [

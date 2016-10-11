@@ -3,6 +3,7 @@ backend/nagios/bin        /usr/share/openattic/nagios
 backend/nagios/conf       /usr/share/openattic/nagios
 backend/nagios/templates  /usr/share/openattic/nagios
 backend/nagios/management /usr/share/openattic/nagios
+backend/nagios/migrations /usr/share/openattic/nagios
 backend/nagios/fixtures   /usr/share/openattic/nagios
 backend/nagios/locale     /usr/share/openattic/nagios
 

@@ -13,6 +13,7 @@
 """
 import json
 import logging
+import datetime
 
 from django.db import models
 from django.db.models import Model
@@ -73,7 +74,7 @@ class TaskQueue(Model):
                 'Failed to deserialize "{}" created "{}"'.format(self.task, self.created))
             self.finish_with_exception(e)
             return
-        logger.info(u'Running {}: {}'.format(self.pk, task))
+        logger.info(u'Running {}: {}. Estimated: {}'.format(self.pk, task, self.estimated))
         try:
             res = task.run_once()
         except Exception as e:
@@ -100,6 +101,24 @@ class TaskQueue(Model):
             return json.loads(self.result)
         except ValueError as e:
             return None
+
+    @property
+    def estimated(self):
+
+        def divide_timedelta(td, divisor):
+            """Python 2.x timedelta doesn't support division by float."""
+            total_seconds = td.total_seconds()
+            divided_seconds = total_seconds / float(divisor)
+            return datetime.timedelta(seconds=divided_seconds)
+
+        if self.status != TaskQueue.STATUS_RUNNING:
+            return None
+        if self.percent < 5:
+            return None
+        if self.percent > 100:
+            return self.last_modified
+        current = datetime.datetime.now()
+        return self.created + divide_timedelta((current - self.created), (float(self.percent) / 100.0))
 
     def finish_with_exception(self, e):
         """:type e: Exception"""
