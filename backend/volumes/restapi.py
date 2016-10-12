@@ -61,7 +61,7 @@ class PhysicalDiskSerializer(serializers.Serializer):
     host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
-class DiskSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
+class DiskSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a disk. """
 
     url = serializers.HyperlinkedIdentityField(view_name="disk-detail")
@@ -136,7 +136,7 @@ class VolumePoolSerializer(serializers.Serializer):
     host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
-class PoolSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
+class PoolSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a pool. """
 
     url = serializers.HyperlinkedIdentityField(view_name="pool-detail")
@@ -288,7 +288,7 @@ class VolumePoolRootVolumeSerializer(serializers.Serializer):
     host = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
-class VolumeSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
+class VolumeSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a volume.
 
         Of course, there is no such thing as "a volume" in the models layer,

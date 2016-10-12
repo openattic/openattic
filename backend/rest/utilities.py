@@ -88,6 +88,7 @@ def mk_method_field_params(field_name):
     else:
         return ['get_{}'.format(field_name)]
 
+
 class ToNativeToRepresentationMixin(object):
     """DRF 3: `to_native` was replaced by `to_representation`"""
 

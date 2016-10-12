@@ -25,7 +25,7 @@ except ImportError:
 import nodb.models
 
 
-class JsonField(WritableField, ToNativeToRepresentationMixin):
+class JsonField(ToNativeToRepresentationMixin, WritableField):
 
     def to_native(self, value):
         """
