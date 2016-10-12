@@ -23,7 +23,7 @@ from nagios.models import Service, Graph
 from rest import relations
 
 from rest.multinode.handlers import RequestHandlers
-from utilities import mk_method_field_params
+from rest.utilities import mk_method_field_params
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):

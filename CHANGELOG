@@ -61,6 +61,7 @@ Version 2.0.15 (not released yet):
   pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
+* WebUI:  Show Salt Minions plus DeepSea Pillar Data (OP-1571)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
 * Installation: Fixed `NAGIOS_PLUGIN_DIR` path in in the SUSE sysconfig
