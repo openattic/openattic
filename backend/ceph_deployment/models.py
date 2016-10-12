@@ -48,10 +48,12 @@ class CephMinion(NodbModel):
         minions = zip_by_key('hostname', hosts, ceph_minions)
 
         fields_to_force = ['public_address', 'role', 'cluster_id', 'public_network',
-                           'cluster_network', 'key_status', 'roles', 'storage', 'mon_host']
+                           'cluster_network', 'key_status', 'roles', 'storage', 'mon_host', 'mon_initial_members']
 
         return [CephMinion(
-                     **CephMinion.make_model_args(aggregate_dict(minion, cluster_id=minion['fsid']),
+                     **CephMinion.make_model_args(aggregate_dict(minion,
+                                                                 cluster_id=(minion['fsid'] if 'fsid' in minion else None)
+                                                                 ),
                                                   fields_force_none=fields_to_force))
                 for minion
                 in minions]
