@@ -1,8 +1,11 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.15 (not released yet):
+Version 2.0.16 (not released yet):
 ----------------------------------
+
+Version 2.0.15, 12. October 2016:
+---------------------------------
 
 * Backend: Improved custom error messages in the REST API (OP-497)
 * Backend: Code cleanup (PEP8) for the following apps: DRBD, volumes,
