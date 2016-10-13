@@ -33,5 +33,5 @@ class CephMinionViewSet(NodbViewSet):
         return CephMinion.objects.all()
 
 RESTAPI_VIEWSETS = [
-    ('ceph-minions', CephMinionViewSet, 'ceph-minion'),
+    ('cephminions', CephMinionViewSet, 'cephminion'),
 ]

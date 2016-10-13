@@ -24,7 +24,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 
 from rest import relations
-from utilities import mk_method_field_params, get_request_data
+from rest.utilities import mk_method_field_params, get_request_data
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):

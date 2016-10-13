@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_noop as _
 from django.shortcuts import get_object_or_404
 
 from ceph import librados
-from ceph.librados import MonApi, undo_transaction, RbdApi
+from ceph.librados import MonApi, undo_transaction, RbdApi, Keyring
 import ceph.tasks
 from exception import NotSupportedError
 from ifconfig.models import Host
@@ -105,56 +105,66 @@ class CephCluster(NodbModel, RadosMixin):
     performance_data_options = JsonField(base_type=list, editable=False)
 
     @staticmethod
-    def has_valid_config_file():
-        conf_dir = '/etc/ceph'
-        # Check for existance of /etc/ceph.
-        if os.path.isdir(conf_dir):
-            # Look into that directory and check if at least one conf file exists and is readable.
-            for file_name in os.listdir(conf_dir):
-                file_path = os.path.join(conf_dir, file_name)
-                if file_name.endswith('.conf') and os.access(file_path, os.R_OK):
-                    return True
+    def has_valid_config_file_and_keyring(cluster_name="ceph", ceph_dir="/etc/ceph"):
+        valid = True
 
-        logger.error('No usable Ceph configuration file could be found')
-        return False
+        # Check for existance of Ceph directory
+        if not os.path.isdir(ceph_dir):
+            valid = False
+            logger.error("No Ceph config directory found at '{}'".format(ceph_dir))
+        else:
+            # Check if valid config file exists
+            file_path = os.path.join(ceph_dir, cluster_name + ".conf")
+
+            if not os.path.exists(file_path):
+                valid = False
+                logger.error("No Ceph cluster configuration file '{}' found".format(file_path))
+            else:
+                # If yes check if config file is accessible
+                if not os.access(file_path, os.R_OK):
+                    valid = False
+                    logger.error("Ceph configuration file '{}' is not accessible, permission denied"
+                                 .format(file_path))
+            # Check for existing and accessible keyring
+            try:
+                Keyring(cluster_name, ceph_dir)
+            except RuntimeError:
+                valid = False
+
+        return valid
 
     @staticmethod
     def get_names():
         clusters = []
 
-        if not CephCluster.has_valid_config_file():
-            return clusters
-
         for file in os.listdir('/etc/ceph'):
             if file.endswith('.conf'):
-                if os.access(os.path.join('/etc/ceph', file), os.R_OK):
-                    clusters.append(os.path.splitext(file)[0])
-                else:
-                    logger.warning('Could\'nt access {}'.format(file))
-
+                cluster_name = os.path.splitext(file)[0]
+                if CephCluster.has_valid_config_file_and_keyring(cluster_name):
+                    clusters.append(cluster_name)
         return clusters
 
     @staticmethod
     def get_name(fsid):
         for conf_file in os.listdir('/etc/ceph'):
-            conf_file_path = os.path.join('/etc/ceph', conf_file)
-            if conf_file.endswith('.conf') and os.access(conf_file_path, os.R_OK):
-                config = ConfigParser.ConfigParser()
-                config.read(os.path.join('/etc/ceph/', conf_file))
+            if conf_file.endswith('.conf'):
+                cluster_name = os.path.splitext(conf_file)[0]
+                if CephCluster.has_valid_config_file_and_keyring(cluster_name):
+                    config = ConfigParser.ConfigParser()
+                    config.read(os.path.join('/etc/ceph/', conf_file))
 
-                if config.get('global', 'fsid') == fsid:
-                    return os.path.splitext(conf_file)[0]
+                    if config.get('global', 'fsid') == fsid:
+                        return cluster_name
 
         raise LookupError()
 
     @staticmethod
     def get_fsid(cluster_name):
         f = '/etc/ceph/{name}.conf'.format(name=cluster_name)
-        if os.path.isfile(f) and os.access(f, os.R_OK):
+        if CephCluster.has_valid_config_file_and_keyring(cluster_name):
             config = ConfigParser.ConfigParser()
             config.read(f)
             fsid = config.get('global', 'fsid')
-
             return fsid
 
         raise LookupError()
@@ -1236,10 +1246,12 @@ class Pool(VolumePool):
         return self.cluster.status
 
     def get_status(self):
+        # See also: nagios.plugins.check_cephcluster.ClusterStatus#_map_health_status
         return [{
             "HEALTH_OK": "online",
             "HEALTH_WARN": "degraded",
-            "HEALTH_CRIT": "failed"
+            "HEALTH_CRIT": "failed",
+            "HEALTH_ERR": "failed",
         }[self.cluster.status]]
 
     @property

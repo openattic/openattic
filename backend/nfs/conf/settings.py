@@ -16,4 +16,4 @@
 
 from django.conf import settings
 
-EXPORTS     = getattr( settings, "NFS_EXPORTS",   "/etc/exports" )
+EXPORTS = getattr(settings, "NFS_EXPORTS", "/etc/exports")
