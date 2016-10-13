@@ -25,7 +25,7 @@ from rest_framework import status
 from drbd.models import Connection
 from exception import validate_input_fields
 from ifconfig.models import Host
-from utilities import get_request_data
+from rest.utilities import get_request_data, mk_method_field_params
 from volumes.models import StorageObject
 
 from rest.multinode.handlers import RequestHandlers
@@ -37,7 +37,7 @@ class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     volume = relations.HyperlinkedRelatedField(view_name="volume-detail", source="storageobj",
                                                queryset=StorageObject.objects.all())
     url = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
-    status = serializers.SerializerMethodField("get_status")
+    status = serializers.SerializerMethodField(*mk_method_field_params('status'))
 
     class Meta:
         model = Connection
