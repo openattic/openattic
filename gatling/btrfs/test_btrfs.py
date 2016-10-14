@@ -76,8 +76,7 @@ class BtrfsVolumeTests(object):
 
         # try to grow the btrfs subvolume and check for error
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=vol["response"]["id"],
-                              data={"megs": size + 1000, "id": vol["response"]["id"]})
+            self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": size + 1000})
         self.check_exception_messages(err, self.error_messages["test_volume_grow"])
 
     def test_volume_shrink(self):
@@ -93,8 +92,7 @@ class BtrfsVolumeTests(object):
 
         # try to shrink the btrfs subvolume and check for error
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=vol["response"]["id"],
-                              data={"megs": size - 1000, "id": vol["response"]["id"]})
+            self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": size - 1000})
         self.check_exception_messages(err, self.error_messages["test_volume_shrink"])
 
 
@@ -113,7 +111,7 @@ class BtrfsPoolTests(object):
         new_size = old_size + 1000
 
         # resize the pool
-        self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size, "id": pool["id"]})
+        self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size})
         time.sleep(self.sleeptime)
 
         # get pool and check properties
@@ -131,7 +129,7 @@ class BtrfsPoolTests(object):
 
         # resize the pool
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size, "id": pool["id"]})
+            self.send_request("PUT", obj_id=pool["id"], data={"megs": new_size})
         self.check_exception_messages(err, self.error_messages["test_pool_shrink"])
 
 

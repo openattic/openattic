@@ -447,7 +447,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.objects.get(id=get_request_data(request)["id"])
+        storageobj = self.get_object()
 
         if "filesystem" in get_request_data(request):
             storageobj.create_filesystem(get_request_data(request)["filesystem"], {
