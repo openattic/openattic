@@ -106,8 +106,7 @@ class VolumeTests(object):
         self.assertFalse(vol["response"]["is_filesystemvolume"])
         self.assertIn(vol["response"]["status"]["status"], ["good", "locked"])
 
-        self.send_request("PUT", obj_id=vol["response"]["id"], data={"id": vol["response"]["id"],
-                                                                     "filesystem": fs})
+        self.send_request("PUT", obj_id=vol["response"]["id"], data={"filesystem": fs})
         time.sleep(self.sleeptime)
         updated_vol = self.send_request("GET", obj_id=vol["response"]["id"])
         self.check_volume_properties(updated_vol)
