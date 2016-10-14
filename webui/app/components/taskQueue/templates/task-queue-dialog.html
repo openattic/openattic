@@ -23,12 +23,12 @@
                     <tr ng-repeat="row in tab.data | orderBy: tab.tableSort.attribute:tab.tableSort.reverse"
                         ng-class="{ info: isTaskSelected(row, tab) }">
                         <td>
-                            <input class="tc_checkboxes" type="checkbox" checklist-model="tab.selection.items"
+                            <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(row, tab)" checklist-model="tab.selection.items"
                                    ng-click="updateTaskSelection(tabKey, tab.selection.items)" checklist-value="row"/>
                         </td>
                         <td ng-click="toggleTaskSelection(row, tabKey, $event)" ng-repeat="attr in tab.tableColumns">
                             <span ng-if="attr.type === 'text'" ng-bind="selectColumn(attr, row)"></span>
-                            <span ng-if="attr.type === 'date'" ng-bind="selectColumn(attr, row) | date:'yyyy-MM-dd HH:mm:ss'"></span>
+                            <span ng-if="attr.type === 'date'" ng-bind="selectColumn(attr, row) | date:'medium'"></span>
                             <span ng-if="attr.type === 'percent'">
                                 <uib-progressbar value="selectColumn(attr, row)">{{selectColumn(attr, row)}}%</uib-progressbar>
                             </span>

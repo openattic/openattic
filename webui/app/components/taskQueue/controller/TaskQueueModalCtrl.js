@@ -64,7 +64,26 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   $scope.isTaskSelected = function (row, tab) {
-    return tab.selection.items.indexOf(row) !== -1;
+    return tab.selection.items.some(function (item) {
+      return row.id === item.id;
+    });
+  };
+
+  $scope.updateCompleteSelection = function(tab) {
+    var oldSelection = tab.selection.items;
+    var newSelection = [];
+    for (var i = 0; i < tab.data.length && 0 < oldSelection.length; i++) {
+      var item = tab.data[i];
+      oldSelection.some(function(selected, index){
+        if (item.id === selected.id) {
+          newSelection.push(item);
+          oldSelection.splice(index, 1);
+        }
+      });
+    }
+    tab.selection.item = newSelection.length === 1 ? newSelection[0] : null;
+    tab.selection.items = newSelection;
+    return tab;
   };
 
   $scope.updateTaskSelection = function (key, items) {
@@ -268,9 +287,9 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
               tab.loaded = true;
             }
           }
-          console.log(tab, tab.pageCount, tab.pageMax);
           $scope.tabs[tabKey] = tab;
-          if (res.count === 0) {
+          if (res.count === 0 ||
+              $scope.modalTabData && tabKey !== Object.keys($scope.tabs)[$scope.modalTabData.active]) {
             return;
           }
           for (var i = 1; i <= max; i++) {
@@ -303,12 +322,11 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         var tab = $scope.tabs[tabKey];
         tab.tempData = tab.tempData.concat(res.results);
         tab.pageCount++;
-        console.log(tab, tab.pageCount, tab.pageMax);
         $scope.tabs[tabKey] = tab;
         if (tab.pageCount === tab.pageMax) {
           tab.loaded = true;
           tab.data = tab.tempData;
-          $scope.tabs[tabKey] = tab;
+          $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
         }
       })
       .catch(function (error) {
@@ -325,14 +343,18 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   $scope.calcApprox = function (task) {
     task.created = new Date(task.created);
     task.last_modified = new Date(task.last_modified);
-    var runtime = task.last_modified.getTime() - task.created.getTime();
-    var approx = new Date(Math.floor((100 / task.percent) * runtime) - runtime);
-    var days = approx.getDate() - 1;
-    var h = approx.getHours() - 1;
-    var m = approx.getMinutes();
-    var approxFormat = (days > 0) ? days + "d " : "";
-    approxFormat += (h > 0) ? h + "h " : "";
-    approxFormat += (approxFormat !== "" || m > 0) ? m + "m" : "< 1m";
+    if (task.estimated !== null) {
+      task.estimated = new Date(task.estimated);
+      var approx = new Date(task.estimated.getTime() - task.last_modified.getTime());
+      var days = approx.getDate() - 1;
+      var h = approx.getHours() - 1;
+      var m = approx.getMinutes();
+      var approxFormat = (days > 0) ? days + "d " : "";
+      approxFormat += (h > 0) ? h + "h " : "";
+      approxFormat += (approxFormat !== "" || m > 0) ? m + "m" : "< 1m";
+    } else {
+      approxFormat = "NA";
+    }
     task.approx = approx;
     task.approxFormat = approxFormat;
   };
