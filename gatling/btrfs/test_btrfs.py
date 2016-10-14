@@ -91,7 +91,7 @@ class BtrfsVolumeTests(object):
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
-        # try to grow the btrfs subvolume and check for error
+        # try to shrink the btrfs subvolume and check for error
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("PUT", obj_id=vol["response"]["id"],
                               data={"megs": size - 1000, "id": vol["response"]["id"]})
