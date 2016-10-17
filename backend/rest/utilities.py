@@ -88,14 +88,15 @@ def mk_method_field_params(field_name):
     else:
         return ['get_{}'.format(field_name)]
 
+
 class ToNativeToRepresentationMixin(object):
     """DRF 3: `to_native` was replaced by `to_representation`"""
 
     def super_to_native_or_to_representation(self, obj):
         if drf_version() >= (3, 3):
-            return super(ToNativeToRepresentationMixin, self).to_native(obj)
-        else:
             return super(ToNativeToRepresentationMixin, self).to_representation(obj)
+        else:
+            return super(ToNativeToRepresentationMixin, self).to_native(obj)
 
     def to_representation(self, instance):
         return self.to_native(instance)

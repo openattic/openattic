@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from django.core import validators
 from rest_framework import serializers, viewsets
 
 from rest.utilities import ToNativeToRepresentationMixin, drf_version
@@ -24,7 +25,7 @@ except ImportError:
 import nodb.models
 
 
-class JsonField(WritableField, ToNativeToRepresentationMixin):
+class JsonField(ToNativeToRepresentationMixin, WritableField):
 
     def to_native(self, value):
         """

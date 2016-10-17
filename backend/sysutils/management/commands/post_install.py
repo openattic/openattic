@@ -15,13 +15,13 @@
 """
 
 from django.core.management.base import BaseCommand
-from django.conf                 import settings
-from django.utils.importlib      import import_module
-
+from django.conf import settings
+from django.utils.importlib import import_module
 
 import sysutils.models
 
-class Command( BaseCommand ):
+
+class Command(BaseCommand):
     help = "Send the post_install signal (for use by maintainer scripts only)."
 
     def handle(self, **options):

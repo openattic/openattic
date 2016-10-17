@@ -23,14 +23,15 @@ from django.db import models
 from ifconfig.models import getHostDependentManagerClass
 from volumes.models import FileSystemVolume
 
-class Export(models.Model):
-    volume      = models.ForeignKey(FileSystemVolume, related_name="http_export_set")
-    path        = models.CharField(max_length=255)
 
-    objects     = getHostDependentManagerClass("volume__storageobj__host")()
+class Export(models.Model):
+    volume = models.ForeignKey(FileSystemVolume, related_name="http_export_set")
+    path = models.CharField(max_length=255)
+
+    objects = getHostDependentManagerClass("volume__storageobj__host")()
     all_objects = models.Manager()
 
-    share_type  = "http"
+    share_type = "http"
 
     def __unicode__(self):
         return self.volume.storageobj.name
@@ -39,17 +40,17 @@ class Export(models.Model):
     def url(self):
         return "/volumes/%s" % self.volume.storageobj.name
 
-    def save( self, *args, **kwargs ):
+    def save(self, *args, **kwargs):
         ret = models.Model.save(self, *args, **kwargs)
         linkname = join(http_settings.VOLUMESDIR, self.volume.storageobj.name)
-        if not exists( linkname ):
-            symlink( self.path, linkname )
+        if not exists(linkname):
+            symlink(self.path, linkname)
         return ret
+
 
 def __export_pre_delete(instance, **kwargs):
     linkname = join(http_settings.VOLUMESDIR, instance.volume.storageobj.name)
-    if islink( linkname ):
-        unlink( linkname )
+    if islink(linkname):
+        unlink(linkname)
 
 models.signals.pre_delete.connect(__export_pre_delete, sender=Export)
-

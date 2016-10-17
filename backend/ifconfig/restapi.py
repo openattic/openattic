@@ -45,7 +45,7 @@ class HostSerializer(serializers.ModelSerializer):
                                                       read_only=True)
     hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True,
                                                       read_only=True)
-    primary_ip_address  = serializers.SerializerMethodField("serialize_primaryip")
+    primary_ip_address = serializers.SerializerMethodField("serialize_primaryip")
 
     class Meta:
         model = models.Host
@@ -64,7 +64,7 @@ class HostSerializer(serializers.ModelSerializer):
 
 
 class HostGroupSerializer(serializers.ModelSerializer):
-    hosts = relations.HyperlinkedRelatedField(view_name='host-detail', many=True , read_only=True)
+    hosts = relations.HyperlinkedRelatedField(view_name='host-detail', many=True, read_only=True)
 
     class Meta:
         model = models.HostGroup
