@@ -84,7 +84,6 @@ class GlobTestCase(TestCase):
         one_one_any = Glob([(Glob.T_One,), (Glob.T_One,), (Glob.T_Any, )])
         self.assertEqual(gs_set_to_str_set(one_any.merge(one_one_any, [])), fzs('?*'))
 
-
     def test_gen_globs(self):
         self.assertEqual(generate_globs(['a', 'b', 'c'], []), frozenset(['*']))
         self.assertEqual(generate_globs(['a', 'b', 'c'], ['d']), frozenset(['[a-c]']))
@@ -107,7 +106,6 @@ class GlobTestCase(TestCase):
         wl = ['data1', 'data2', 'mon1', 'mon2', 'mon3', 'igw1', 'igw2']
         bl = ['client1', 'client2', 'admin1', 'admin2', 'rgw1', 'rgw2']
 
-        # TODO: this seems a bit broken:
         self.assertEqual(generate_globs(wl, bl), frozenset(['[dim][ago][ntw]*', 'data1']))
 
 
@@ -165,11 +163,11 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
     ]
 
     def test_identity(self):
-        for file, minion_names in PolicyCfgTestCase.files:
-            generated = str(PolicyCfg(file.splitlines(False), minion_names))
+        for content, minion_names in PolicyCfgTestCase.files:
+            generated = str(PolicyCfg(content.splitlines(False), minion_names))
 
             self.assertEqual(PolicyCfg(generated.splitlines(), minion_names),
-                             PolicyCfg(file.splitlines(), minion_names))
+                             PolicyCfg(content.splitlines(), minion_names))
 
     def test_attributes(self):
         content, minion_names = PolicyCfgTestCase.files[0]
@@ -201,4 +199,3 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
                                  'mon': {'mon1', 'mon2', 'mon3'},
                                  'mds': {'mon1', 'mon2'},
                              })
-

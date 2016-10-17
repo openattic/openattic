@@ -11,16 +11,19 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import copy
 import logging
+import os
+import fnmatch
+import re
+import yaml
+
 from collections import defaultdict
 from contextlib import contextmanager
 from functools import total_ordering
 from itertools import chain, product
 from os.path import commonprefix
 
-import fnmatch
-import re
-import yaml
 from django.core.exceptions import ValidationError
 
 from ceph_deployment.systemapi import salt_cmd
@@ -43,6 +46,7 @@ def get_config():
         * roles
     May be similar to:
 
+    >>> import subprocess
     >>> subprocess.check_output(['salt', '*', 'pillar.items'])
 
     """
@@ -107,6 +111,7 @@ def get_possible_storage_configurations(hostname):
     """
     pass
 
+
 def deepsea_stage_0():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.0'])
     pass
@@ -125,6 +130,7 @@ def deepsea_stage_2():
 def deepsea_stage_3():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.3'])
     pass
+
 
 def deepsea_stage_4():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.4'])
@@ -169,6 +175,7 @@ def policy_cfg(minion_names):
     with open(file, 'w') as f:
         f.write(str(cfg))
 
+
 class PolicyCfg(object):
     def __init__(self, f, minion_names):
         self.minion_names = minion_names
@@ -184,9 +191,7 @@ class PolicyCfg(object):
         for line in f:
             self.read_cluster_assignment(line)
             self.read_hardware_profiles(line)
-            #self.read_common_configuration(line)
             self.read_role_assigments(line)
-            #self.read_default_stuff(line)
 
     def get_globs(self, whitelist):
         return generate_globs(whitelist, set(self.minion_names).difference(whitelist))
@@ -217,7 +222,7 @@ class PolicyCfg(object):
         def globs_for_profile(profile, minions):
             return [
                 (profile, glob)
-                for glob in  self.get_globs(minions)
+                for glob in self.get_globs(minions)
             ]
         tuples = chain.from_iterable(
             [globs_for_profile(profile, minions)
@@ -228,9 +233,6 @@ class PolicyCfg(object):
         lines += ['{}/cluster/default/ceph/minion/{}.sls'.format(*line) for line in tuples]
         return '\n'.join(lines)
 
-
-    #def read_common_configuration(self, line):
-    #    pass
     @property
     def common_configuration(self):
         return '\n'.join(self._common_configuration)
@@ -250,7 +252,7 @@ class PolicyCfg(object):
         def globs_for_role(role, minions):
             return [
                 (role, glob)
-                for glob in  self.get_globs(minions)
+                for glob in self.get_globs(minions)
             ]
         tuples = chain.from_iterable(
             [globs_for_role(role, minions)
@@ -259,9 +261,6 @@ class PolicyCfg(object):
         )
         lines = ['role-{}/cluster/{}.sls'.format(*line) for line in tuples]
         return '\n'.join(lines)
-
-    #def read_default_stuff(self, line):
-    #    pass
 
     @property
     def default_stuff(self):
@@ -299,6 +298,7 @@ class PolicyCfg(object):
     def __repr__(self):
         return 'PolicyCfg("""{}""", {})'.format(str(self), repr(self.minion_names))
 
+
 def validate_pillar_data():
     out = salt_cmd().invoke_salt_run_quiet(['validate.pillars'])
 
@@ -322,32 +322,51 @@ def validate_pillar_data():
 
 
 def generate_globs(whitelist, blacklist):
+    """
+    Generate a list of globs that match all elements of whitelist and none of blacklist.
+
+    >>> import fnmatch
+    >>> whitelist, blacklist = [], []
+    >>> globs = generate_globs(whitelist, blacklist)
+    >>> assert all([any([fnmatch.filter([white], glob) for glob in globs]) for white in
+    >>>            whitelist])
+    >>> assert not any([fnmatch.filter(blacklist, glob) for glob in globs])
+
+    :type whitelist: list[str]
+    :type blacklist: list[str]
+    :rtype: frozenset[str]
+    :raise ValueError: If white and blacklist overlap.
+    """
 
     def is_odd_len(l):
         return len(l) % 2 != 0
 
     def merge_globs_rec(globs):
         """
-        :type globs: list[set[GlobSolution]]
-        :rtype: list[set[GlobSolution]]
+        merge_globs_rec merges two glob proposals in a tree-like way.
+
+        :type globs: list[str]
+        :rtype: set[GlobSolution]
         """
-        if len(globs) <= 1:
-            return globs
-        if is_odd_len(globs):
-            merged_globs = [globs[0]] + merge_globs_rec(globs[1:])
-            return merge_globs_rec(merged_globs)
-        i = iter(globs)
-        res = [merge_two_globs_proposals(ls, rs, blacklist) for ls, rs in zip(i, i)]
-        return merge_globs_rec(res)
+        if len(globs) == 1:
+            return {GlobSolution(Glob.from_string(globs[0]))}
+
+        first_half = globs[:len(globs) // 2]
+        second_half = globs[len(globs) // 2:]
+
+        return merge_two_globs_proposals(merge_globs_rec(first_half),
+                                         merge_globs_rec(second_half),
+                                         blacklist)
 
     if not whitelist:
         return []
 
-    start = [{GlobSolution(Glob.from_string(s))} for s in whitelist]
-    res = merge_globs_rec(start)[0]
+    res = merge_globs_rec(list(whitelist))
     best_globs = sorted(res, key=lambda s: s.complexity())[0]
-    # TODO: remove?
-    assert all([any([fnmatch.filter([white], glob) for glob in best_globs.str_set()]) for white in whitelist])
+
+    # TODO: remove, if your confidence level in generate_globs() is high enough.
+    assert all([any([fnmatch.filter([white], glob) for glob in best_globs.str_set()]) for white in
+                whitelist])
     assert not any([fnmatch.filter(blacklist, glob) for glob in best_globs.str_set()])
 
     return best_globs.str_set()
@@ -355,11 +374,11 @@ def generate_globs(whitelist, blacklist):
 
 def merge_two_globs_proposals(ls, rs, blacklist):
     """
+    Generates a set of all merged glob proposals. All results match the union of ls and rs.
+
     :type ls: set[GlobSolution]
     :type rs: set[GlobSolution]
     :rtype: set[GlobSolution]
-
-    Generates a set of all merged glob proposals. All results match the union of ls and rs.
     """
 
     proposals = set()
@@ -368,11 +387,11 @@ def merge_two_globs_proposals(ls, rs, blacklist):
     return set(sorted(proposals, key=lambda s: s.complexity())[:3])
 
 
-
 class GlobSolution(object):
-    """represents one solution of multiple globs"""
+    """Represents one solution of multiple globs"""
+
     def __init__(self, globs):
-        """:type globs: set[Glob] | Glob"""
+        """:type globs: iterable[Glob] | Glob"""
         if isinstance(globs, Glob):
             self.globs = frozenset({globs})
         elif isinstance(globs, frozenset):
@@ -384,11 +403,11 @@ class GlobSolution(object):
 
     def merge_solutions(self, rs, blacklist):
         """
-        :type ls: GlobSolution
-        :type rs: GlobSolution
-        :rtype: set[GlobSolution]
-
         Generate lots of solutions for these two solutions. All results match both input solutions.
+
+        :type rs: GlobSolution
+        :type blacklist: list[str]
+        :rtype: set[GlobSolution]
         """
 
         ret = []
@@ -425,13 +444,12 @@ class GlobSolution(object):
         return str(self)
 
 
-
 @total_ordering
 class Glob(object):
-    T_Char = 1
-    T_Any = 2
-    T_One = 3
-    T_Range = 4
+    T_Char = 1  # Matches a specific char "x"
+    T_Any = 2  # Matches any string "*"
+    T_One = 3  # Matches one character "?"
+    T_Range = 4  # Matches a set of chars "[a-z1-5]"
 
     def __init__(self, elems=None):
         """:type elems: list | tuple"""
@@ -450,13 +468,18 @@ class Glob(object):
         return Glob([(Glob.T_Char, c) for c in s])
 
     @staticmethod
-    def make_range_string(r):
+    def make_range_string(range):
         """
         Generates strings like "a-c" or "abde" or "1-5e-g"
-        :param r:
-        :return:
+
+        :type range: set[str]
         """
         def split_chunks(l):
+            """
+            Generates a list of lists of neighbouring chars.
+
+            :rtype list[list[int]]
+            """
             ret = [[l[0]]]
             for c in l[1:]:
                 if ret[-1][-1] == c - 1:
@@ -465,7 +488,7 @@ class Glob(object):
                     ret.append([c])
             return ret
 
-        l = sorted(map(ord, r))
+        l = sorted(map(ord, range))
         chunks = split_chunks(l)
         return ''.join([
             ''.join(map(chr, chunk)) if len(chunk) <= 2 else '{}-{}'.format(
@@ -475,7 +498,6 @@ class Glob(object):
             ])
 
     def __str__(self):
-        """Returns a string representation of this glob."""
         def mk1(elem):
             return {
                 Glob.T_Char: lambda: elem[1],
@@ -512,17 +534,18 @@ class Glob(object):
                 Glob.T_Char: lambda: 0.0,
                 Glob.T_Any: lambda: 1.0,
                 Glob.T_One: lambda: 2.0,
-                Glob.T_Range: lambda: max(3, len(self.make_range_string(e[1]))), # pefer small
+                Glob.T_Range: lambda: max(3, len(self.make_range_string(e[1]))),  # prefer small
             }[e[0]]()
             if e[0] != Glob.T_Char and index != len(self) - 1:
                 ret += 0.5  # Prefer globing last character
             return ret
 
-        return sum((complexity1(index, elem) for index, elem in  enumerate(self.elems)))
+        return sum((complexity1(index, elem) for index, elem in enumerate(self.elems)))
 
     def merge(self, r, blacklist):
         """
-        Merges this glob with `r`. Filters all solutions that violate the blacklist.
+        Merges this glob with `r` by creating multiple solutions. Filters all solutions that
+        violate the blacklist.
 
         :type r: Glob
         :rtype: set[GlobSolution]
@@ -541,7 +564,11 @@ class Glob(object):
         return ret
 
     def merge_all(self, r):
-        """:rtype: set[Glob]"""
+        """
+        Generates a set of all possible merges between self and r. Can be empty.
+
+        :type r: Glob
+        :rtype: set[Glob]"""
         if self == r:
             return {self}
         if not self or not r:
@@ -647,9 +674,6 @@ class Glob(object):
 
     def commonprefix(self, r):
         return Glob(commonprefix([self, r]))
-
-    def has_special(self):
-        return any((elem[0] != Glob.T_Char) for elem in self.elems)
 
     def __repr__(self):
         return 'Glob(({}))'.format(', '.join([repr(elem) for elem in self.elems]))
