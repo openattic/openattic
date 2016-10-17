@@ -157,6 +157,9 @@ class RequestHandlers(object):
         return 'http://%s%s/%s' % (ip, api_root, api_prefix)
 
     def _get_object_host(self, obj):
+        if isinstance(obj, Host):
+            return obj
+
         try:
             host_filter = self.get_queryset().model.objects.hostfilter
         except AttributeError:
