@@ -13,7 +13,7 @@
 
 from django.test import TestCase
 
-from ceph_deployment.deepsea import Glob, generate_globs, GlobSolution
+from ceph_deployment.deepsea import Glob, generate_globs, GlobSolution, PolicyCfg
 
 
 def g(s):
@@ -35,9 +35,12 @@ def gs_set_to_str_set(gss):
     return set(map(GlobSolution.str_set, gss))
 
 
-class CGlobTestCase(TestCase):
+class GlobTestCase(TestCase):
     def test_glob_base(self):
         self.assertEqual(len({g(''), g('')}), 1)
+
+        star = Glob([(Glob.T_Any,)])
+        self.assertEqual(star + star, star)
 
     def test_string(self):
         self.assertEqual(g('abc'), Glob([(1, 'a'), (1, 'b'), (1, 'c')]))
@@ -96,4 +99,101 @@ class CGlobTestCase(TestCase):
         self.assertEqual(generate_globs(['x1x', 'x2x', 'x3x'], ['xxx']), frozenset(['x[1-3]x']))
         self.assertEqual(generate_globs(['x1y3z', 'x2y2z', 'x3y1z'], ['xxyzz']),
                          frozenset(['x[1-3]y[1-3]z']))
+        wl = ['data1', 'data2', 'mon1', 'mon2', 'mon3', 'igw1', 'igw2']
+        bl = ['client1', 'client2', 'admin1', 'admin2', 'rgw1', 'rgw2']
+
+        # TODO: this seems a bit broken:
+        self.assertEqual(generate_globs(wl, bl), frozenset(['[dim][ago][ntw]*', 'data1']))
+
+
+class PolicyCfgTestCase(TestCase):
+    files = [("""
+# cluster assignment
+cluster-ceph/cluster/*.sls
+#cluster-unassigned/cluster/client*.sls
+
+# Hardware Profile
+#2Dsk2GB-1/cluster/data*.sls
+2Disk2GB-1/cluster/data*.sls
+#2Dsk2GB-1/stack/default/ceph/minions/data*.ceph.yml
+2Disk2GB-1/stack/default/ceph/minions/data*.ceph.yml
+
+# Common configuration
+config/stack/default/global.yml
+config/stack/default/ceph/cluster.yml
+
+# Role assignment
+role-master/cluster/admin*.sls
+role-admin/cluster/mon*.sls
+#role-admin/cluster/igw*.sls
+#role-admin/cluster/data*.sls
+role-admin/cluster/admin*.sls
+#role-igw/cluster/igw*.sls
+role-mon/cluster/mon*.sls
+#role-mds/cluster/mon[12]*.sls
+
+# Default stuff
+role-mon/stack/default/ceph/minions/mon*.yml
+""", ['data1', 'data2', 'admin', 'mon1', 'mon2']), ("""
+
+# Cluster assignment
+cluster-ceph/cluster/*.sls
+cluster-unassigned/cluster/client*.sls
+# Hardware Profile
+2Disk2GB-1/cluster/data*.sls
+2Disk2GB-1/stack/default/ceph/minions/data*.ceph.yml
+# Common configuration
+config/stack/default/global.yml
+config/stack/default/ceph/cluster.yml
+# Role assignment
+role-master/cluster/admin*.sls
+role-admin/cluster/mon*.sls
+role-admin/cluster/igw*.sls
+role-admin/cluster/data*.sls
+role-igw/cluster/igw*.sls
+role-rgw/cluster/rgw*.sls
+role-mon/cluster/mon*.sls
+role-mds/cluster/mon[12]*.sls
+role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1', 'data2', 'admin1',
+                                                  'admin2', 'mon1', 'mon2', 'mon3', 'igw1', 'igw2',
+                                                  'rgw1', 'rgw2'])
+    ]
+
+    def test_identity(self):
+        for file, minion_names in PolicyCfgTestCase.files:
+            generated = str(PolicyCfg(file.splitlines(False), minion_names))
+
+            self.assertEqual(PolicyCfg(generated.splitlines(), minion_names),
+                             PolicyCfg(file.splitlines(), minion_names))
+
+    def test_attributes(self):
+        content, minion_names = PolicyCfgTestCase.files[0]
+        for cfg in [PolicyCfg(content.splitlines(False), minion_names),
+                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names)).splitlines(),
+                              minion_names)]:
+            self.assertEqual(cfg._cluster_assignment, set(minion_names))
+            self.assertEqual(dict(cfg._hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
+            self.assertEqual(dict(cfg._role_assigments),
+                             {
+                                 'master': {'admin'},
+                                 'admin': {'admin', 'mon1', 'mon2'},
+                                 'mon': {'mon1', 'mon2'},
+                             })
+
+        content, minion_names = PolicyCfgTestCase.files[1]
+        for cfg in [PolicyCfg(content.splitlines(False), minion_names),
+                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names)).splitlines(),
+                              minion_names)]:
+            self.assertEqual(cfg._cluster_assignment, set(minion_names))
+            self.assertEqual(dict(cfg._hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
+            self.assertEqual(dict(cfg._role_assigments),
+                             {
+                                 'master': {'admin1', 'admin2'},
+                                 'admin': {'admin1', 'admin2', 'mon1', 'mon2', 'mon3', 'data1',
+                                           'data2'},
+                                 'igw': {'igw1', 'igw2'},
+                                 'rgw': {'rgw1', 'rgw2'},
+                                 'mon': {'mon1', 'mon2', 'mon3'},
+                                 'mds': {'mon1', 'mon2'},
+                             })
 

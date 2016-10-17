@@ -160,58 +160,141 @@ def policy_cfg(minion_names):
 
     file = '/srv/pillar/ceph/proposals/policy.cfg'
 
-    class PolicyCfg(object):
-        def __init__(self, f):
-            self.cluster_assignment = set()
-            self.hardware_profiles = defaultdict(set)
-            self.common_configuration = [
-                'config/stack/default/global.yml'
-                'config/stack/default/ceph/cluster.yml'
+    with open(file) as f:
+        cfg = PolicyCfg(f, minion_names)
+    yield cfg
+    with open(file, 'w') as f:
+        f.write(str(cfg))
+
+class PolicyCfg(object):
+    def __init__(self, f, minion_names):
+        self.minion_names = minion_names
+        self._cluster_assignment = set()
+        self._hardware_profiles = defaultdict(set)
+        self._common_configuration = [
+            'config/stack/default/global.yml'
+            'config/stack/default/ceph/cluster.yml'
+        ]
+        self._role_assigments = defaultdict(set)
+        self._default_stuff = set()
+
+        for line in f:
+            self.read_cluster_assignment(line)
+            self.read_hardware_profiles(line)
+            #self.read_common_configuration(line)
+            self.read_role_assigments(line)
+            #self.read_default_stuff(line)
+
+    def get_globs(self, whitelist):
+        return generate_globs(whitelist, set(self.minion_names).difference(whitelist))
+
+    def read_cluster_assignment(self, line):
+        res = re.match(r'^cluster-ceph/cluster/(.*).sls$', line)
+        if res is None:
+            return
+        minions = fnmatch.filter(self.minion_names, res.groups()[0])
+        self._cluster_assignment.update(minions)
+
+    @property
+    def cluster_assignment(self):
+        return '\n'.join(['cluster-ceph/cluster/{}.sls'.format(glob) for glob in
+                          self.get_globs(self._cluster_assignment)])
+
+
+    def read_hardware_profiles(self, line):
+        res = re.match(r'^([^#]*Disk[^/]*)/cluster/(.*).sls$', line)
+        if res is None:
+            return
+        profile, pattern = res.groups()
+        minions = fnmatch.filter(self.minion_names, pattern)
+        self._hardware_profiles[profile].update(minions)
+
+    @property
+    def hardware_profiles(self):
+        def globs_for_profile(profile, minions):
+            return [
+                (profile, glob)
+                for glob in  self.get_globs(minions)
             ]
-            self.role_assigments = defaultdict(set)
-            self.default_stuff = set()
-
-            for line in f:
-                self.read_cluster_assignment(line)
-                self.read_hardware_profiles(line)
-                #self.read_common_configuration(line)
-                self.read_role_assigments(line)
-                self.read_default_stuff(line)
-
-        def read_cluster_assignment(self, line):
-            res = re.match(r'^cluster-ceph/cluster/(.*).sls$', line)
-            if res is None:
-                return
-            minions = fnmatch.filter(minion_names, res.groups()[0])
-            self.cluster_assignment = self.cluster_assignment.union(minions)
-
-        def read_hardware_profiles(self, line):
-            res = re.match(r'^([^#]*Disk[^/]*)/cluster/(.*).sls$', line)
-            if res is None:
-                return
-            profile, pattern = res.groups()
-            minions = fnmatch.filter(minion_names, pattern)
-            self.hardware_profiles[profile] = self.hardware_profiles[profile].union(minions)
+        tuples = chain.from_iterable(
+            [globs_for_profile(profile, minions)
+             for profile, minions
+             in sorted(self._hardware_profiles.items())]
+        )
+        lines = ['{}/cluster/{}.sls'.format(*line) for line in tuples]
+        lines += ['{}/cluster/default/ceph/minion/{}.sls'.format(*line) for line in tuples]
+        return '\n'.join(lines)
 
 
-        #def read_common_configuration(self, line):
-        #    pass
+    #def read_common_configuration(self, line):
+    #    pass
+    @property
+    def common_configuration(self):
+        return '\n'.join(self._common_configuration)
 
-        def read_role_assigments(self, line):
-            res = re.match(r'^role-(.*)/cluster/(.*).sls$', line)
-            if res is None:
-                return
-            role, pattern = res.groups()
-            minions = fnmatch.filter(minion_names, pattern)
-            self.role_assigments[role] = self.hardware_profiles[role].union(minions)
-            if role == 'mon':
-                self.default_stuff = self.default_stuff.union({minions})
-            pass
+    def read_role_assigments(self, line):
+        res = re.match(r'^role-(.*)/cluster/(.*).sls$', line)
+        if res is None:
+            return
+        role, pattern = res.groups()
+        minions = fnmatch.filter(self.minion_names, pattern)
+        self._role_assigments[role].update(minions)
+        if role == 'mon':
+            self._default_stuff.update(minions)
 
+    @property
+    def role_assignments(self):
+        def globs_for_role(role, minions):
+            return [
+                (role, glob)
+                for glob in  self.get_globs(minions)
+            ]
+        tuples = chain.from_iterable(
+            [globs_for_role(role, minions)
+             for role, minions
+             in sorted(self._role_assigments.items())]
+        )
+        lines = ['role-{}/cluster/{}.sls'.format(*line) for line in tuples]
+        return '\n'.join(lines)
 
-        def read_default_stuff(self, line):
-            pass
+    #def read_default_stuff(self, line):
+    #    pass
 
+    @property
+    def default_stuff(self):
+        mons = self._role_assigments["mon"]
+        globs = self.get_globs(mons)
+        return '\n'.join(['role-mon/stack/default/ceph/minions/{}.yml'.format(glob) for glob in globs])
+
+    def __str__(self):
+        content = """
+# cluster assignment
+{self.cluster_assignment}
+#cluster-unassigned/cluster/client*.sls
+
+# Hardware Profile
+{self.hardware_profiles}
+
+# Common configuration
+{self.common_configuration}
+
+# Role assignment
+{self.role_assignments}
+
+# Default stuff
+{self.default_stuff}
+""".format(self=self)
+        return content
+
+    def __eq__(self, other):
+        return self._cluster_assignment == other._cluster_assignment \
+               and self._hardware_profiles == other._hardware_profiles \
+               and self._common_configuration == other._common_configuration \
+               and self._default_stuff == other._default_stuff \
+               and self._role_assigments == other._role_assigments
+
+    def __repr__(self):
+        return 'PolicyCfg("""{}""", {})'.format(str(self), repr(self.minion_names))
 
 def validate_pillar_data():
     out = salt_cmd().invoke_salt_run_quiet(['validate.pillars'])
@@ -260,6 +343,10 @@ def generate_globs(whitelist, blacklist):
     start = [{GlobSolution(Glob.from_string(s))} for s in whitelist]
     res = merge_globs_rec(start)[0]
     best_globs = sorted(res, key=lambda s: s.complexity())[0]
+    # TODO: remove?
+    assert all([any([fnmatch.filter([white], glob) for glob in best_globs.str_set()]) for white in whitelist])
+    assert not any([fnmatch.filter(blacklist, glob) for glob in best_globs.str_set()])
+
     return best_globs.str_set()
 
 
@@ -320,7 +407,7 @@ class GlobSolution(object):
         return 'GlobSolution({})'.format(str(self.globs))
 
     def complexity(self):
-        return 100 * len(self.globs) + sum((g.complexity() for g in self.globs))
+        return sum((8 + g.complexity() for g in self.globs))
 
     def __hash__(self):
         return hash(self.globs)
@@ -330,6 +417,10 @@ class GlobSolution(object):
 
     def str_set(self):
         return frozenset(map(str, self.globs))
+
+    def __repr__(self):
+        return str(self)
+
 
 
 @total_ordering
@@ -465,16 +556,23 @@ class Glob(object):
 
         ret = set()
         ret.add(fix(mid_l.merge_any(mid_r)))
-        ret.update(map(fix, mid_l.merge_one(mid_r)))
+
+        one_merged = mid_l.merge_one(mid_r)
+        if one_merged is not None:
+            ret.update(map(fix, one_merged))
+
         range_merged = mid_l.merge_range(mid_r)
         if range_merged is not None:
-            ret.update(map(fix, mid_l.merge_range(mid_r)))
+            ret.update(map(fix, range_merged))
+
         if None in ret:
             ret.remove(None)
         return ret
         pass
 
     def __add__(self, other):
+        if self.elems[-1:] == ((Glob.T_Any, ), ) and other.elems[:1] == ((Glob.T_Any, ), ):
+            return Glob(self.elems + other.elems[1:])
         return Glob(self.elems + other.elems)
 
     def __nonzero__(self):
@@ -489,14 +587,29 @@ class Glob(object):
         return Glob([(Glob.T_Any, )])
 
     def merge_one(self, r):
-        l = min(len(self), len(r))
-        ones = tuple([(Glob.T_One, )] * l)
-        ends = self[l:].merge_all(r[l:])
-        return {Glob(ones + merged.elems) for merged in ends}
+        def one(e1, e2):
+            t_1 = e1[0]
+            t_2 = e2[0]
+            if t_1 == Glob.T_Char and t_2 == Glob.T_Char:
+                if e1[1] != e2[1]:
+                    return (Glob.T_One, )
+                else:
+                    return Glob.T_Char, e2[1]
+            if Glob.T_Any in [t_1, t_2]:
+                return None
+            return (Glob.T_One,)
+
+        length = min(len(self), len(r))
+        ranges = [one(e1, e2) for e1, e2 in zip(self[:length], r[:length])]
+        if any([range is None for range in ranges]):
+            return None
+        ends = self[length:].merge_all(r[length:])
+        return {Glob(ranges) + Glob(merged.elems) for merged in ends}
 
     def merge_range(self, r):
-        def combine_range_char(r, c):
-            return Glob.T_Range, frozenset(r[1].union({c[1]}))
+        """:rtype: set[Glob]"""
+        def combine_range_char(r1, c):
+            return Glob.T_Range, frozenset(r1[1].union({c[1]}))
 
         def combine_ranges(r1, r2):
             return Glob.T_Range, frozenset(r1[1].union(r2[1]))
@@ -522,7 +635,7 @@ class Glob(object):
         if any([range is None for range in ranges]):
             return None
         ends = self[length:].merge_all(r[length:])
-        return {Glob(tuple(ranges) + merged.elems) for merged in ends}
+        return {Glob(ranges) + Glob(merged.elems) for merged in ends}
 
     def commonsuffix(self, r):
         return self[::-1].commonprefix(r[::-1])[::-1]
