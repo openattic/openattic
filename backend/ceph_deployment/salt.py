@@ -23,7 +23,7 @@ from django.core.exceptions import ValidationError
 
 from ceph_deployment.systemapi import salt_cmd
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 def get_salt_minions():

@@ -80,6 +80,11 @@ class GlobTestCase(TestCase):
                                                                            ['ab', 'ac', 'bc'])),
                          fzs({'a', 'bb', 'ccc'}))
 
+        one_any = Glob([(Glob.T_One,), (Glob.T_Any, )])
+        one_one_any = Glob([(Glob.T_One,), (Glob.T_One,), (Glob.T_Any, )])
+        self.assertEqual(gs_set_to_str_set(one_any.merge(one_one_any, [])), fzs('?*'))
+
+
     def test_gen_globs(self):
         self.assertEqual(generate_globs(['a', 'b', 'c'], []), frozenset(['*']))
         self.assertEqual(generate_globs(['a', 'b', 'c'], ['d']), frozenset(['[a-c]']))
@@ -189,7 +194,7 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
             self.assertEqual(dict(cfg._role_assigments),
                              {
                                  'master': {'admin1', 'admin2'},
-                                 'admin': {'admin1', 'admin2', 'mon1', 'mon2', 'mon3', 'data1',
+                                 'admin': {'igw1', 'igw2', 'mon1', 'mon2', 'mon3', 'data1',
                                            'data2'},
                                  'igw': {'igw1', 'igw2'},
                                  'rgw': {'rgw1', 'rgw2'},

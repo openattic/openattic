@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import logging
 from collections import defaultdict
 from contextlib import contextmanager
 from functools import total_ordering
@@ -26,6 +27,8 @@ from ceph_deployment.systemapi import salt_cmd
 from ceph_deployment.conf import settings as ceph_deployment_settings
 from systemd import get_dbus_object
 from utilities import aggregate_dict
+
+logger = logging.getLogger(__name__)
 
 
 def get_config():
@@ -404,7 +407,7 @@ class GlobSolution(object):
         return set(sorted(ret, key=lambda s: s.complexity())[:4])
 
     def __str__(self):
-        return 'GlobSolution({})'.format(str(self.globs))
+        return 'GlobSolution({})'.format(map(str, self.globs))
 
     def complexity(self):
         return sum((8 + g.complexity() for g in self.globs))
@@ -532,10 +535,10 @@ class Glob(object):
         merged = self.merge_all(r)
         ok = {e for e in merged if not any((fnmatch.fnmatch(black, str(e)) for black in blacklist))}
         ok = sorted(ok, key=Glob.complexity)[:3]
-        if not ok:
-            return {GlobSolution({self, r})}
-        else:
-            return {GlobSolution(e) for e in ok}
+        ret = {GlobSolution(e) for e in ok} if ok else {GlobSolution({self, r})}
+        if self.complexity() > 1 and r.complexity() > 1 and sum([gs.complexity() for gs in ret]):
+            logger.debug('{} + {} = {}'.format(str(self), str(r), str(ret)))
+        return ret
 
     def merge_all(self, r):
         """:rtype: set[Glob]"""
@@ -545,7 +548,7 @@ class Glob(object):
             return {self.merge_any(r)}
 
         prefix = self.commonprefix(r)
-        suffix = self.commonsuffix(r[len(prefix):])
+        suffix = self[len(prefix):].commonsuffix(r[len(prefix):])
         mid_l = self[len(prefix):len(self)-len(suffix)]
         mid_r = r[len(prefix):len(r)-len(suffix)]
 
@@ -568,7 +571,6 @@ class Glob(object):
         if None in ret:
             ret.remove(None)
         return ret
-        pass
 
     def __add__(self, other):
         if self.elems[-1:] == ((Glob.T_Any, ), ) and other.elems[:1] == ((Glob.T_Any, ), ):
@@ -628,6 +630,9 @@ class Glob(object):
                 return combine_range_char(e2, e1)
             if t_1 == Glob.T_Range and t_2 == Glob.T_Range:
                 return combine_ranges(e1, e2)
+            if (t_1 == Glob.T_Range and t_2 == Glob.T_One) or (
+                    t_1 == Glob.T_One and t_2 == Glob.T_Range):
+                return (Glob.T_One,)
             return None
 
         length = min(len(self), len(r))
