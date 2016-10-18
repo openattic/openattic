@@ -11,12 +11,10 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-import copy
 import logging
 import os
 import fnmatch
 import re
-import yaml
 
 from collections import defaultdict
 from contextlib import contextmanager
@@ -60,56 +58,48 @@ def get_config():
 minion_roles = ['storage', 'mon', 'mds', 'rgw', 'master', 'admin']
 
 
-def add_role(minion, role):
+def add_role(minion, role, minions):
     """
-    Adds a role to a given host. E.g. "storage", "mon", "mds", "rgw"
+    Adds a role to a given host. E.g. , "mon", "mds", "rgw"
     Ceph cluster already set up. Afterwards, also edit the stack file.
+
+    "storage" is not a valid role.
 
     :type minion: str | unicode
     :type role: str
     """
-    assert role in minion_roles
-    filename = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'cluster',
-                            minion + '.sls')
-
-    with open(filename) as f:
-        contents = yaml.safe_load(f)
-    original_content = copy.deepcopy(contents)
-
-    if 'roles' not in contents:
-        contents['roles'] = [role]
-    elif role not in contents['roles']:
-        contents['roles'].append(role)
-    else:
-        return  # already present
-
-    dumper = yaml.SafeDumper
-    dumper.ignore_aliases = lambda self, data: True
-    content = yaml.dump(contents, Dumper=dumper, default_flow_style=False)
-    get_dbus_object("/ceph_deployment").write_pillar_file(filename, content)
-    try:
-        validate_pillar_data()
-    except ValidationError:
-        print "resetting"
-        old_content = yaml.dump(original_content, Dumper=dumper, default_flow_style=False)
-        get_dbus_object("/ceph_deployment").write_pillar_file(filename, old_content)
-        raise
+    with policy_cfg(minions) as cfg:  # type: PolicyCfg
+        cfg.cluster_assignment.add(minion)
+        cfg.role_assigments[role].add(minion)
+        if role == 'mon' or role == 'master':
+            cfg.role_assigments['master'].add(minion)
 
 
-def set_storage_configuration(hostname, storage_configuration):
+def set_hardware_profile(minion, hardware_profile, minions):
     """
     Sets the storage configuration as returned by
     get_possible_storage_configurations()
     """
-    pass
+    with policy_cfg(minions) as cfg:  # type: PolicyCfg
+        cfg.cluster_assignment.add(minion)
+        cfg.hardware_profiles[hardware_profile].add(minion)
 
 
-def get_possible_storage_configurations(hostname):
+def get_possible_storage_configurations():
     """
     Returns a list of proposals, of how this node
     could be configured.
     """
-    pass
+    proposals = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'proposals')
+    configs = [dir for dir in os.listdir(proposals) if all(
+        [pattern not in dir for pattern in [
+            'role-',
+            'cluster-',
+            'config'
+            'policy.cfg'
+        ]]
+    )]
+    return configs
 
 
 def deepsea_stage_0():
@@ -137,16 +127,14 @@ def deepsea_stage_4():
     pass
 
 @contextmanager
-def policy_cfg(minion_names):
+def policy_cfg(minion_names, read_only=False):
     """
     # cluster assignment
     cluster-ceph/cluster/*.sls
     #cluster-unassigned/cluster/client*.sls
 
     # Hardware Profile
-    #2Dsk2GB-1/cluster/data*.sls
     2Disk2GB-1/cluster/data*.sls
-    #2Dsk2GB-1/stack/default/ceph/minions/data*.ceph.yml
     2Disk2GB-1/stack/default/ceph/minions/data*.ceph.yml
 
     # Common configuration
@@ -172,21 +160,22 @@ def policy_cfg(minion_names):
     with open(file) as f:
         cfg = PolicyCfg(f, minion_names)
     yield cfg
-    with open(file, 'w') as f:
-        f.write(str(cfg))
+    if not read_only:
+        with open(file, 'w') as f:
+            f.write(str(cfg))
 
 
 class PolicyCfg(object):
     def __init__(self, f, minion_names):
         self.minion_names = minion_names
-        self._cluster_assignment = set()
-        self._hardware_profiles = defaultdict(set)
-        self._common_configuration = [
+        self.cluster_assignment = set()
+        self.hardware_profiles = defaultdict(set)
+        self.common_configuration = [
             'config/stack/default/global.yml'
             'config/stack/default/ceph/cluster.yml'
         ]
-        self._role_assigments = defaultdict(set)
-        self._default_stuff = set()
+        self.role_assigments = defaultdict(set)
+        self.default_stuff = set()
 
         for line in f:
             self.read_cluster_assignment(line)
@@ -201,12 +190,12 @@ class PolicyCfg(object):
         if res is None:
             return
         minions = fnmatch.filter(self.minion_names, res.groups()[0])
-        self._cluster_assignment.update(minions)
+        self.cluster_assignment.update(minions)
 
     @property
-    def cluster_assignment(self):
+    def cluster_assignment_lines(self):
         return '\n'.join(['cluster-ceph/cluster/{}.sls'.format(glob) for glob in
-                          self.get_globs(self._cluster_assignment)])
+                          self.get_globs(self.cluster_assignment)])
 
 
     def read_hardware_profiles(self, line):
@@ -215,10 +204,10 @@ class PolicyCfg(object):
             return
         profile, pattern = res.groups()
         minions = fnmatch.filter(self.minion_names, pattern)
-        self._hardware_profiles[profile].update(minions)
+        self.hardware_profiles[profile].update(minions)
 
     @property
-    def hardware_profiles(self):
+    def hardware_profiles_lines(self):
         def globs_for_profile(profile, minions):
             return [
                 (profile, glob)
@@ -227,15 +216,15 @@ class PolicyCfg(object):
         tuples = chain.from_iterable(
             [globs_for_profile(profile, minions)
              for profile, minions
-             in sorted(self._hardware_profiles.items())]
+             in sorted(self.hardware_profiles.items())]
         )
         lines = ['{}/cluster/{}.sls'.format(*line) for line in tuples]
         lines += ['{}/cluster/default/ceph/minion/{}.sls'.format(*line) for line in tuples]
         return '\n'.join(lines)
 
     @property
-    def common_configuration(self):
-        return '\n'.join(self._common_configuration)
+    def common_configuration_lines(self):
+        return '\n'.join(self.common_configuration)
 
     def read_role_assigments(self, line):
         res = re.match(r'^role-(.*)/cluster/(.*).sls$', line)
@@ -243,12 +232,12 @@ class PolicyCfg(object):
             return
         role, pattern = res.groups()
         minions = fnmatch.filter(self.minion_names, pattern)
-        self._role_assigments[role].update(minions)
+        self.role_assigments[role].update(minions)
         if role == 'mon':
-            self._default_stuff.update(minions)
+            self.default_stuff.update(minions)
 
     @property
-    def role_assignments(self):
+    def role_assignments_lines(self):
         def globs_for_role(role, minions):
             return [
                 (role, glob)
@@ -257,43 +246,43 @@ class PolicyCfg(object):
         tuples = chain.from_iterable(
             [globs_for_role(role, minions)
              for role, minions
-             in sorted(self._role_assigments.items())]
+             in sorted(self.role_assigments.items())]
         )
         lines = ['role-{}/cluster/{}.sls'.format(*line) for line in tuples]
         return '\n'.join(lines)
 
     @property
-    def default_stuff(self):
-        mons = self._role_assigments["mon"]
+    def default_stuff_lines(self):
+        mons = self.role_assigments["mon"]
         globs = self.get_globs(mons)
         return '\n'.join(['role-mon/stack/default/ceph/minions/{}.yml'.format(glob) for glob in globs])
 
     def __str__(self):
         content = """
 # cluster assignment
-{self.cluster_assignment}
+{self.cluster_assignment_lines}
 #cluster-unassigned/cluster/client*.sls
 
 # Hardware Profile
-{self.hardware_profiles}
+{self.hardware_profiles_lines}
 
 # Common configuration
-{self.common_configuration}
+{self.common_configuration_lines}
 
 # Role assignment
-{self.role_assignments}
+{self.role_assignments_lines}
 
 # Default stuff
-{self.default_stuff}
+{self.default_stuff_lines}
 """.format(self=self)
         return content
 
     def __eq__(self, other):
-        return self._cluster_assignment == other._cluster_assignment \
-               and self._hardware_profiles == other._hardware_profiles \
-               and self._common_configuration == other._common_configuration \
-               and self._default_stuff == other._default_stuff \
-               and self._role_assigments == other._role_assigments
+        return self.cluster_assignment == other.cluster_assignment \
+               and self.hardware_profiles == other.hardware_profiles \
+               and self.common_configuration == other.common_configuration \
+               and self.default_stuff == other.default_stuff \
+               and self.role_assigments == other.role_assigments
 
     def __repr__(self):
         return 'PolicyCfg("""{}""", {})'.format(str(self), repr(self.minion_names))
@@ -332,8 +321,8 @@ def generate_globs(whitelist, blacklist):
     >>>            whitelist])
     >>> assert not any([fnmatch.filter(blacklist, glob) for glob in globs])
 
-    :type whitelist: list[str]
-    :type blacklist: list[str]
+    :type whitelist: iterable[str]
+    :type blacklist: iterable[str]
     :rtype: frozenset[str]
     :raise ValueError: If white and blacklist overlap.
     """

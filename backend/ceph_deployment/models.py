@@ -15,11 +15,13 @@
 from django.core.exceptions import ValidationError
 
 from ceph.models import CephCluster
+from ceph_deployment import deepsea
 from ceph_deployment import salt
 from django.db import models
 
+from ceph_deployment.deepsea import policy_cfg, PolicyCfg  # PolicyCfg needed for type info
 from exception import NotSupportedError
-from nodb.models import NodbModel, JsonField
+from nodb.models import NodbModel, JsonField, bulk_attribute_setter
 from utilities import aggregate_dict, zip_by_key
 
 
@@ -44,26 +46,42 @@ class CephMinion(NodbModel):
     storage = JsonField(base_type=dict, null=True, blank=True)
     mon_initial_members = JsonField(base_type=list, editable=False, null=True, blank=True)
     mon_host = JsonField(base_type=list, editable=False, null=True, blank=True)
+    hardware_profile = models.CharField(max_length=100, null=True, blank=True, editable=False)
 
     @staticmethod
     def get_all_objects(context, query):
         assert context is None
 
         hosts = salt.get_salt_minions()
-        ceph_minions = salt.get_config()
 
-        minions = zip_by_key('hostname', hosts, ceph_minions)
+        return [CephMinion(**CephMinion.make_model_args(host))
+                for host
+                in hosts]
 
-        fields_to_force = ['public_address', 'role', 'cluster_id', 'public_network',
-                           'cluster_network', 'key_status', 'roles', 'storage', 'mon_host', 'mon_initial_members']
+    @bulk_attribute_setter( ['public_address', 'role', 'cluster_id', 'public_network',
+                    'cluster_network', 'key_status', 'roles', 'storage', 'mon_host', 'mon_initial_members'])
+    def set_deepse_pillar(self, objects, field_names):
+        ceph_minions = deepsea.get_config()
 
-        return [CephMinion(
-                     **CephMinion.make_model_args(aggregate_dict(minion,
-                                                                 cluster_id=(minion['fsid'] if 'fsid' in minion else None)
-                                                                 ),
-                                                  fields_force_none=fields_to_force))
-                for minion
-                in minions]
+        minions = zip_by_key('hostname', [{'hostname': o.hostname, 'obj': o} for o in objects], ceph_minions)
+        for minion in minions:
+            cluster_id = minion['fsid'] if 'fsid' in minion else None
+            args = CephMinion.make_model_args(aggregate_dict(minion, cluster_id=cluster_id),
+                                              fields_force_none=field_names)
+            for key, value in args.items():
+                setattr(minion['obj'], key, value)
+
+    @bulk_attribute_setter(['hardware_profile'])
+    def set_hardware_profile(self, objects, field_names):
+        minion_names = [obj.hostname for obj in objects]
+        with policy_cfg(minion_names, read_only=True) as cfg: # type: PolicyCfg
+            profiles = aggregate_dict(*[{minion: profile for minion in minions}
+                                        for profile, minions in cfg.hardware_profiles.items()])
+
+        for obj in objects:
+            obj.hardware_profile = profiles.get(obj.hostname)
+
+
 
     def save(self, *args, **kwargs):
         """
