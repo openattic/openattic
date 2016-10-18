@@ -98,6 +98,12 @@ class Host(models.Model):
     def get_primary_ip_address(self):
         return IPAddress.all_objects.get(primary_address=True, device__host=self)
 
+    @property
+    def installed_apps(self):
+        if self.is_oa_host:
+            return settings.INSTALLED_APPS
+        return []
+
     @staticmethod
     def insert_current_host():
         fqdn = socket.getfqdn()

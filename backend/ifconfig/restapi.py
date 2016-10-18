@@ -47,10 +47,12 @@ class HostSerializer(serializers.ModelSerializer):
     hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True,
                                                       read_only=True)
     primary_ip_address = serializers.SerializerMethodField("serialize_primaryip")
+    installed_apps = serializers.SerializerMethodField("get_installed_apps")
 
     class Meta:
         model = models.Host
-        fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address')
+        fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address',
+                  'installed_apps')
 
     def serialize_primaryip(self, obj):
         host = models.Host.objects.get(id=obj.id)
@@ -62,6 +64,9 @@ class HostSerializer(serializers.ModelSerializer):
         else:
             serializer = IPAddressSerializer(ip, many=False, context=self.context)
             return serializer.data
+
+    def get_installed_apps(self, obj):
+        return obj.installed_apps
 
 
 class HostGroupSerializer(serializers.ModelSerializer):
