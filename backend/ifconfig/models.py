@@ -79,6 +79,7 @@ class HostManager(models.Manager):
 
 class Host(models.Model):
     name = models.CharField(max_length=63, unique=True)
+    is_oa_host = models.NullBooleanField()
 
     objects = HostManager()
 
