@@ -72,7 +72,7 @@ class HostManager(models.Manager):
                 return self.get(name=socket.gethostname())
             except Host.DoesNotExist:
                 if not self.exists():  # The Hosts model is empty.
-                    Host.insert_current_host()
+                    return Host.insert_current_host()
                 else:
                     raise
 
@@ -109,6 +109,7 @@ class Host(models.Model):
         fqdn = socket.getfqdn()
         host = Host(name=fqdn)
         host.save()
+        return host
 
 
 class HostDependentQuerySet(models.query.QuerySet):
