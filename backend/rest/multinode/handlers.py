@@ -158,7 +158,10 @@ class RequestHandlers(object):
 
     def _get_object_host(self, obj):
         if isinstance(obj, Host):
-            return obj
+            if obj.is_oa_host:
+                return obj
+            else:
+                return Host.objects.get_current()
 
         try:
             host_filter = self.get_queryset().model.objects.hostfilter
