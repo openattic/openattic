@@ -17,13 +17,17 @@
 import socket
 import netifaces
 import netaddr
+import logging
 
-from os.path import join, exists
+from os.path import join, exists, isfile
+from configobj import ConfigObj
 
 from django.conf import settings
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
+
+logger = logging.getLogger(__file__)
 
 AF_CHOICES = (
     (socket.AF_INET,  "IPv4"),
@@ -102,6 +106,29 @@ class Host(models.Model):
     def installed_apps(self):
         if self.is_oa_host:
             return settings.INSTALLED_APPS
+
+    @property
+    def oa_version(self):
+        if self.is_oa_host:
+            oa_configs = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
+            for config_file in oa_configs:
+
+                if isfile(config_file):
+                    config = ConfigObj(config_file)
+                    oa_dir = config["OADIR"]
+
+                    if str.endswith(config["OADIR"], "/backend"):
+                        oa_dir = str.rsplit(config["OADIR"], "/", 1)[0]
+
+                    version_file = oa_dir + "/version.txt"
+
+                    if isfile(version_file):
+                        version_config = ConfigObj(version_file)
+                        return version_config["package"]["VERSION"]
+
+                    logger.error("ERROR: The 'version.txt' file could not be found or is not "
+                                 "readable. Please have a look at your openATTIC ({}) directory."
+                                 .format(oa_dir))
 
     @staticmethod
     def insert_current_host():
