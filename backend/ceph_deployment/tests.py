@@ -161,22 +161,24 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
                                                   'admin2', 'mon1', 'mon2', 'mon3', 'igw1', 'igw2',
                                                   'rgw1', 'rgw2'])
     ]
+    hw_profiles = ['2Disk2GB-1', 'other_profile']
 
     def test_identity(self):
         for content, minion_names in PolicyCfgTestCase.files:
-            generated = str(PolicyCfg(content.splitlines(False), minion_names))
+            generated = str(PolicyCfg(content.splitlines(False), minion_names, PolicyCfgTestCase.hw_profiles))
 
-            self.assertEqual(PolicyCfg(generated.splitlines(), minion_names),
-                             PolicyCfg(content.splitlines(), minion_names))
+            self.assertEqual(PolicyCfg(generated.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles),
+                             PolicyCfg(content.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles))
 
     def test_attributes(self):
+        hw = PolicyCfgTestCase.hw_profiles
         content, minion_names = PolicyCfgTestCase.files[0]
-        for cfg in [PolicyCfg(content.splitlines(False), minion_names),
-                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names)).splitlines(),
-                              minion_names)]:
-            self.assertEqual(cfg._cluster_assignment, set(minion_names))
-            self.assertEqual(dict(cfg._hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
-            self.assertEqual(dict(cfg._role_assigments),
+        for cfg in [PolicyCfg(content.splitlines(False), minion_names, hw),
+                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names, hw)).splitlines(),
+                              minion_names, hw)]:
+            self.assertEqual(dict(cfg.cluster_assignment), {'ceph': set(minion_names)})
+            self.assertEqual(dict(cfg.hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
+            self.assertEqual(dict(cfg.role_assigments),
                              {
                                  'master': {'admin'},
                                  'admin': {'admin', 'mon1', 'mon2'},
@@ -184,12 +186,13 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
                              })
 
         content, minion_names = PolicyCfgTestCase.files[1]
-        for cfg in [PolicyCfg(content.splitlines(False), minion_names),
-                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names)).splitlines(),
-                              minion_names)]:
-            self.assertEqual(cfg._cluster_assignment, set(minion_names))
-            self.assertEqual(dict(cfg._hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
-            self.assertEqual(dict(cfg._role_assigments),
+        for cfg in [PolicyCfg(content.splitlines(False), minion_names, hw),
+                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names, hw)).splitlines(),
+                              minion_names, hw)]:
+            self.assertEqual(dict(cfg.cluster_assignment), {'ceph': set(minion_names),
+                                                            'unassigned': {'client1', 'client2'}})
+            self.assertEqual(dict(cfg.hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
+            self.assertEqual(dict(cfg.role_assigments),
                              {
                                  'master': {'admin1', 'admin2'},
                                  'admin': {'igw1', 'igw2', 'mon1', 'mon2', 'mon3', 'data1',
