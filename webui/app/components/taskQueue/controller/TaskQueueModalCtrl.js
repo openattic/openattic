@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, tasks, $state, $filter,
-    taskQueueService) {
+    taskQueueService, $uibModal, $timeout) {
 
   $scope.tasksFilter = {
     page: 0,
@@ -245,17 +245,20 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         {
           name: "Name",
           type: "text",
-          attribute: "description"
+          attribute: "description",
+          width: "33%"
         },
         {
           name: "Created",
           type: "date",
-          attribute: "created"
+          attribute: "created",
+          width: "32%"
         },
         {
           name: "Finished",
           type: "date",
-          attribute: "last_modified"
+          attribute: "last_modified",
+          width: "32%"
         }
       ]
     }
@@ -284,7 +287,10 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           if (tab.loadingCount === tab.states.length) {
             tab.count = tab.tempCount;
             if (tab.pageMax === 0) {
+              tab.data = [];
               tab.loaded = true;
+              // Reload all tasks if many after a longer timeout has passed to reduce the load on the client.
+              $scope.reloadTaskIn(15);
             }
           }
           $scope.tabs[tabKey] = tab;
@@ -327,6 +333,8 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           tab.loaded = true;
           tab.data = tab.tempData;
           $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
+          // Reload all tasks if many after a longer timeout has passed to reduce the load on the client.
+          $scope.reloadTaskIn(tab.pageMax * 15);
         }
       })
       .catch(function (error) {
@@ -359,17 +367,56 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     task.approxFormat = approxFormat;
   };
 
+  $scope.taskDeleteAction = function (tab) {
+    var items = tab.selection.items;
+    if (!items) {
+      return;
+    }
+    var modalInstance = $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "components/taskQueue/templates/task-deletion.html",
+      controller: "TaskDeletionCtrl",
+      resolve: {
+        taskSelection: function () {
+          return items;
+        }
+      }
+    });
+
+    modalInstance.opened.then(function () {
+      $timeout.cancel($scope.timeout);
+    });
+
+    modalInstance.closed.then(function () {
+      $scope.loadAllTabs();
+    });
+  };
+
   $scope.loadAllTabs = function () {
     Object.keys($scope.tabs).forEach(function (tabKey) {
       $scope.loadTabTasks(tabKey);
     });
   };
-  $uibModalInstance.opened.then(function () {
+
+  $scope.reloadTaskIn = function (time) {
+    if ($scope.timeout) {
+      $timeout.cancel($scope.timeout);
+    }
+    $scope.timeout = $timeout(function(){
       $scope.loadAllTabs();
-      $scope.tabRefresh = setInterval(function(){
-        $scope.loadAllTabs();
-      }, 10000);
+    }, time * 1000);
+  };
+
+  $scope.$watch("modalTabData.active", function(tabNew, tabOld){
+    if (tabOld !== null && tabNew !== null) {
+      $scope.loadAllTabs();
+    }
   });
+
+  $uibModalInstance.opened.then(function (time) {
+    $scope.loadAllTabs();
+  });
+
   $uibModalInstance.closed.then(function () {
     clearInterval($scope.tabRefresh);
   });

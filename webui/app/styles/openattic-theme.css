@@ -223,6 +223,32 @@ fieldset[disabled] .btn-primary.active {
   font-size: 2em;
 }
 
+/* Modal Table (Task Queue) */
+
+table.task-queue-table {
+  display: block;
+  height: 300px; /* Overwrite to meet the right size */
+  overflow: auto;
+}
+table.task-queue-table thead {
+  display: flex;
+  flex-flow: row;
+}
+table.task-queue-table thead tr {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+table.task-queue-table tbody {
+  display: flex;
+  flex-flow: row wrap;
+  overflow: auto;
+}
+table.task-queue-table tbody tr {
+  display: flex;
+  width: 100%
+}
+
 /* Navbar */
 .navbar-openattic {
   margin-bottom: 0;
@@ -851,7 +877,7 @@ h6{
 .dataTables_paginate .pagination .last>span {
   border-right: 0;
 }
-.oadatatable div.overlay {
+.oadatatable div.overlay, div.oa-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -860,7 +886,7 @@ h6{
   width: 100%;
   background-color: rgba(30, 30, 30, 0.2);
 }
-.oadatatable div.overlay-content {
+.oadatatable div.overlay-content, div.oa-overlay-content {
   margin: 200px auto;
   width: 50px;
   height: 50px;

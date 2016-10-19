@@ -31,9 +31,48 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.factory("taskQueueService", function ($resource) {
-  return $resource(globalConfig.API.URL + "taskqueue/:id", {
-    id: "@id"
-  });
+app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
+  $scope.tasks = taskSelection.slice();
+  $scope.waiting = false;
+  $scope.done = 0;
+  $scope.donePrc = 0;
+
+  $scope.input = {
+    enteredName: "",
+    pattern: "yes"
+  };
+
+  $scope.deleteTask = function (entries) {
+    var taskE = entries.next().value;
+    if (taskE) {
+      var task = taskE[1];
+      taskQueueService.delete({id: task.id})
+        .$promise
+        .then(function () {
+          $scope.done++;
+          $scope.deleteTask(entries);
+        }, function (error) {
+          error.toasty = {
+            title: "Task deletion failure",
+            msg: "Task couldn't be deleted.",
+            timeout: 10000
+          };
+          toasty.error(error.toasty);
+          throw error;
+        });
+    } else {
+      $scope.waiting = false;
+      $uibModalInstance.close("deleted");
+    }
+  };
+
+  $scope.deleteTasks = function () {
+    $scope.waiting = true;
+    $scope.deleteTask($scope.tasks.entries());
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  };
 });
 

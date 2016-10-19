@@ -1,0 +1,65 @@
+<div class="oa-overlay overlay" ng-show="waiting">
+    <div class="oa-overlay-content overlay-content">
+        <i class="fa fa-4x fa-spinner fa-spin"></i>
+    </div>
+</div>
+
+<div class="openattic-modal-header">
+    <span ng-if="task">Delete task</span>
+    <span ng-if="!task && tasks">Delete tasks</span>
+</div>
+
+<form name="deleteForm" role="form" novalidate>
+    <div class="openattic-modal-content">
+        <p ng-if="tasks.length === 1" ng-hide="waiting">
+            You are about to delete <strong>{{tasks[0].description}}</strong> task
+            which is <strong>{{tasks[0].status | lowercase}}</strong>
+            and was last modified on {{tasks[0].last_modified | date:'medium'}}.
+        </p>
+        <p ng-if="tasks.length > 1">
+            You are about to delete multiple tasks.
+        </p>
+        <p class="text-danger" ng-if="tasks[0].status === 'Running' || task[0].status === 'Not Started'">
+            Be aware that you could this task is running and that this will abort the execution without rolling back to
+            a state before the execution was started. Be sure that you know what you do.
+        </p>
+        <div ng-if="tasks.length > 1">
+            <div ng-hide="waiting">
+                <span>The following tasks will be deleted:</span>
+                <ul>
+                    <li ng-repeat="task in tasks">
+                        {{task.description}} ({{task.status}}, {{task.last_modified | date:'medium'}})
+                    </li>
+                </ul>
+            </div>
+            <div ng-show="waiting">
+                <p>Processing deletion requests: {{done}} of {{tasks.length}}</p>
+            </div>
+        </div>
+
+        <p>To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>.</p>
+        <div class="form-group"
+             ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
+            <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
+                   ng-model="input.enteredName" ng-pattern="input.pattern" required autofocus>
+            <!-- Error -->
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
+                This field is required.
+            </span>
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
+                The input value does not match 'yes'.
+            </span>
+            <!-- end Error -->
+        </div>
+    </div>
+
+    <div class="openattic-modal-footer">
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="deleteTasks()" ng-disabled="deleteForm.$invalid">
+                Delete
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </div>
+</form>

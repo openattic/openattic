@@ -35,7 +35,7 @@ app.directive("taskQueueDirective", function () {
   return {
     restrict: "A",
     templateUrl: "components/taskQueue/templates/task-queue-directive.html",
-    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService) {
+    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $timeout) {
       $scope.tasks = {
         overview: {},
         pending: [],
@@ -52,7 +52,6 @@ app.directive("taskQueueDirective", function () {
         $scope.tasks.overview.avr = avr;
         $scope.tasks.overview.icon = icon;
         $scope.tasks.overview.updated = 1;
-        console.log($scope.tasks.overview);
       };
 
       $scope.loadOverview = function () {
@@ -103,12 +102,12 @@ app.directive("taskQueueDirective", function () {
             $scope.tasks.overview.updated === 0) {
           $scope.updateTaskOverview();
         } else if ($scope.tasks.overview.updated === 1) {
-          setTimeout($scope.loadOverview, 10000);
+          $scope.taskTimeout = $timeout($scope.loadOverview, 15000);
         }
       });
 
       $scope.runnersDialog = function (selection) {
-        var modalInstance = $uibModal.open({
+        var taskDialog = $uibModal.open({
           windowTemplateUrl: "templates/messagebox.html",
           templateUrl: "components/taskQueue/templates/task-queue-dialog.html",
           controller: "TaskQueueModalCtrl",
@@ -121,12 +120,16 @@ app.directive("taskQueueDirective", function () {
           }
         });
 
-        modalInstance.result.then(function () {
-          $scope.filterConfig.refresh = new Date();
+        taskDialog.opened.then(function () {
+          $timeout.cancel($scope.taskTimeout);
+        });
+
+        taskDialog.closed.then(function () {
+          $scope.loadOverview();
         });
       };
 
-      $scope.loadOverview()
+      $scope.loadOverview();
     }
   };
 });

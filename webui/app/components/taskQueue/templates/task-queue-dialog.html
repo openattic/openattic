@@ -8,25 +8,31 @@
             <p ng-hide="tab.loaded">Loading...<p>
             <p ng-show="tab.loaded && tab.data.length === 0">There are no {{tabKey}} Tasks.<p>
             <form name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
-                <table class="table table-striped table-bordered table-hover datatable dataTable">
+                <div class="dataTables_header clearfix">
+                    <button type="button" class="btn btn-sm btn-primary tc_delete_{{tabKey}}_tasks"
+                        ng-class="{disabled: tab.selection.items.length === 0}"  ng-click="taskDeleteAction(tab)">
+                        Delete</button>
+                </div>
+
+                <table class="table table-striped table-bordered table-hover datatable dataTable task-queue-table">
                     <thead>
                     <tr>
                         <th width="3%">
                             <input type="checkbox" ng-model="tab.selection.checkAll" ng-change="checkAllTasks(tabKey)"/>
                         </th>
                         <th ng-repeat="col in tab.tableColumns" ng-click="order(col.attribute, tab)"
-                            class="{{orderClass(col.attribute, tab)}}" ng-bind="col.name" width="{{col.width ? col.width : 'auto'}}">
+                            class="{{orderClass(col.attribute, tab)}}" ng-bind="col.name" width="{{col.width}}">
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in tab.data | orderBy: tab.tableSort.attribute:tab.tableSort.reverse"
                         ng-class="{ info: isTaskSelected(row, tab) }">
-                        <td>
+                        <td style="width: 3%">
                             <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(row, tab)" checklist-model="tab.selection.items"
                                    ng-click="updateTaskSelection(tabKey, tab.selection.items)" checklist-value="row"/>
                         </td>
-                        <td ng-click="toggleTaskSelection(row, tabKey, $event)" ng-repeat="attr in tab.tableColumns">
+                        <td ng-click="toggleTaskSelection(row, tabKey, $event)" ng-repeat="attr in tab.tableColumns" style="width: {{attr.width}}">
                             <span ng-if="attr.type === 'text'" ng-bind="selectColumn(attr, row)"></span>
                             <span ng-if="attr.type === 'date'" ng-bind="selectColumn(attr, row) | date:'medium'"></span>
                             <span ng-if="attr.type === 'percent'">
