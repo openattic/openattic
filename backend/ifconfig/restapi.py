@@ -48,11 +48,12 @@ class HostSerializer(serializers.ModelSerializer):
                                                       read_only=True)
     primary_ip_address = serializers.SerializerMethodField("serialize_primaryip")
     installed_apps = serializers.SerializerMethodField("get_installed_apps")
+    oa_version = serializers.SerializerMethodField("get_oa_version")
 
     class Meta:
         model = models.Host
         fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address',
-                  'installed_apps')
+                  'installed_apps', 'oa_version')
 
     def serialize_primaryip(self, obj):
         host = models.Host.objects.get(id=obj.id)
@@ -67,6 +68,9 @@ class HostSerializer(serializers.ModelSerializer):
 
     def get_installed_apps(self, obj):
         return obj.installed_apps
+
+    def get_oa_version(self, obj):
+        return obj.oa_version
 
 
 class HostGroupSerializer(serializers.ModelSerializer):
