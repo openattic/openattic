@@ -107,7 +107,7 @@ class Host(models.Model):
     @staticmethod
     def insert_current_host():
         fqdn = socket.getfqdn()
-        host = Host(name=fqdn)
+        host = Host(name=fqdn, is_oa_host=True)
         host.save()
         return host
 
