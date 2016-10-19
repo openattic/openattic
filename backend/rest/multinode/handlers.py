@@ -175,6 +175,9 @@ class RequestHandlers(object):
                     return host
 
     def _get_reqdata_host(self, data):
+        if self.model == Host:
+            return Host.objects.get_current()
+
         try:
             return self.get_host_by_data(data)
         except:
