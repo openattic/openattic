@@ -130,15 +130,14 @@ def policy_cfg(minion_names, read_only=False):
     role-mon/stack/default/ceph/minions/mon*.yml
     """
 
-    file = '/srv/pillar/ceph/proposals/policy.cfg'
+    file = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'proposals/policy.cfg')
     hw_profiles = get_possible_storage_configurations()
 
     with open(file) as f:
         cfg = PolicyCfg(f, minion_names, hw_profiles)
     yield cfg
     if not read_only:
-        with open(file, 'w') as f:
-            f.write(str(cfg))
+        get_dbus_object("/ceph_deployment").write_pillar_file('proposals/policy.cfg', str(cfg))
 
 
 class PolicyCfg(object):
@@ -148,7 +147,7 @@ class PolicyCfg(object):
         self.all_hw_profiles = all_hw_profiles
         self.hardware_profiles = defaultdict(set)
         self.common_configuration = [
-            'config/stack/default/global.yml'
+            'config/stack/default/global.yml',
             'config/stack/default/ceph/cluster.yml'
         ]
         self.role_assigments = defaultdict(set)
@@ -165,7 +164,8 @@ class PolicyCfg(object):
         for key in prop.keys():
             if minion in prop[key]:
                 prop[key].remove(minion)
-        prop[new_key].add(minion)
+        if new_key:
+            prop[new_key].add(minion)
 
     def read_cluster_assignment(self, line):
         res = re.match(r'^cluster-(.*)/cluster/(.*).sls$', line)
@@ -183,6 +183,9 @@ class PolicyCfg(object):
 
     def set_cluster_assignment(self, minion, cluster):
         self._set_minion(self.cluster_assignment, minion, cluster)
+        if not cluster:
+            self.set_roles(minion, [])
+            self.set_hardware_profiles(minion, None)
 
     def read_hardware_profiles(self, line):
         profiles = r'|'.join(self.all_hw_profiles)

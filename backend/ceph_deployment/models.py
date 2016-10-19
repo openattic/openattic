@@ -92,9 +92,9 @@ class CephMinion(NodbModel):
             cluster_name = clusters.get(obj.hostname)
             obj.cluster_id = cluster_map[
                 cluster_name] if cluster_name in cluster_map.keys() else None
-            obj.roles = {role for minion, role in roles if minion == obj.hostname}
+            obj.roles = [role for minion, role in roles if minion == obj.hostname]
             if obj.hardware_profile:
-                obj.roles.add('storage')  # because, "storage" is not a real role.
+                obj.roles.append('storage')  # because, "storage" is not a real role.
 
     @cached_property
     def all_minion_names(self):
@@ -128,7 +128,8 @@ class CephMinion(NodbModel):
                 salt.set_key_state(self.hostname, value)
             elif key == 'cluster_id':
                 with policy_cfg(self.all_minion_names) as cfg:  # type: PolicyCfg
-                    cfg.set_cluster_assignment(self.hostname, CephCluster.objects.get(value).name)
+                    new_cluster = None if value is None else CephCluster.objects.get(pk=value).name
+                    cfg.set_cluster_assignment(self.hostname, new_cluster)
             elif key == 'hardware_profile':
                 with policy_cfg(self.all_minion_names) as cfg:  # type: PolicyCfg
                     cfg.set_hardware_profiles(self.hostname, value)
