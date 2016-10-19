@@ -102,7 +102,7 @@ class Host(models.Model):
     def installed_apps(self):
         if self.is_oa_host:
             return settings.INSTALLED_APPS
-        return []
+        return
 
     @staticmethod
     def insert_current_host():
