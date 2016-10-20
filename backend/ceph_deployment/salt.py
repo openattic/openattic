@@ -29,7 +29,7 @@ logger = logging.getLogger(__file__)
 
 
 def get_salt_minions():
-    res = salt_cmd(lambda d: d.invoke_salt_key())
+    res = salt_cmd().invoke_salt_key(['-L'])
     flat = list(chain.from_iterable([
         [
             (hostname, key_status)
@@ -68,7 +68,7 @@ def get_config():
     >>> subprocess.check_output(['salt', '*', 'pillar.items'])
 
     """
-    out = salt_cmd(lambda d: d.invoke_salt(['*', 'pillar.items']))
+    out = salt_cmd().invoke_salt(['*', 'pillar.items'])
     return [
         aggregate_dict(data, hostname=hostname)
         for (hostname, data)
@@ -130,11 +130,18 @@ def get_possible_storage_configurations(hostname):
     pass
 
 
-def accept_key(hostname):
+def set_key_state(hostname, state):
     """
-    Accepts this minion's key
+    Accepts or rejects this minion's key
     """
-    pass
+    arg = {
+        'accepted': '-a',
+        'rejected': '-r',
+    }[state]
+    try:
+        salt_cmd().invoke_salt_key(['-y', arg, hostname])
+    except ValueError:
+        pass
 
 
 def apply_changes():  # TODO: Not sure this will work or is a good idea
@@ -148,7 +155,7 @@ def get_running_jobs():
     """
     Returns a list of all jobs that are running at the moment.
     """
-    return salt_cmd(lambda d: d.invoke_salt_run(['jobs.active']))
+    return salt_cmd().invoke_salt_run(['jobs.active'])
 
 
 def register_salt_eventbus_callback(callback):
@@ -164,7 +171,7 @@ def initialize_cluster(name):
 
 
 def validate_pillar_data():
-    out = salt_cmd(lambda d: d.invoke_salt_run_quiet(['validate.pillars']))
+    out = salt_cmd().invoke_salt_run_quiet(['validate.pillars'])
 
     def format_errors(name, errors):
         return [
