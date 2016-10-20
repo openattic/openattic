@@ -4,6 +4,8 @@ openATTIC Changelog
 Version 2.0.16 (not released yet):
 ----------------------------------
 
+* Backend: Salt minions keys can now be accepted via our REST API (OP-1601)
+
 Version 2.0.15, 12. October 2016:
 ---------------------------------
 
