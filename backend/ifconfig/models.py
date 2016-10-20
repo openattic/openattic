@@ -126,8 +126,8 @@ class Host(models.Model):
                         version_config = ConfigObj(version_file)
                         return version_config["package"]["VERSION"]
 
-                    logger.error("ERROR: The 'version.txt' file could not be found or is not "
-                                 "readable. Please have a look at your openATTIC ({}) directory."
+                    logger.error("The 'version.txt' file could not be found or is not readable. "
+                                 "Please have a look at your openATTIC ({}) directory."
                                  .format(oa_dir))
 
     @staticmethod
