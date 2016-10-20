@@ -14,7 +14,6 @@
 from itertools import chain
 
 from django.core.exceptions import ValidationError
-from django.forms import ChoiceField
 from django.utils.functional import cached_property
 
 from ceph.models import CephCluster
@@ -61,8 +60,8 @@ class CephMinion(NodbModel):
                 for host
                 in hosts]
 
-    @bulk_attribute_setter( ['public_address', 'public_network', 'cluster_network',
-                             'key_status', 'storage', 'mon_host', 'mon_initial_members'])
+    @bulk_attribute_setter(['public_address', 'public_network', 'cluster_network',
+                            'key_status', 'storage', 'mon_host', 'mon_initial_members'])
     def set_deepse_pillar(self, objects, field_names):
         ceph_minions = deepsea.get_config()
 
@@ -79,7 +78,7 @@ class CephMinion(NodbModel):
     def set_from_policy_cfg(self, objects, field_names):
         minion_names = [obj.hostname for obj in objects]
         cluster_map = {c.name: c.fsid for c in CephCluster.objects.all()}
-        with policy_cfg(minion_names, read_only=True) as cfg: # type: PolicyCfg
+        with policy_cfg(minion_names, read_only=True) as cfg:  # type: PolicyCfg
             profiles = aggregate_dict(*[{minion: profile for minion in minions}
                                         for profile, minions in cfg.hardware_profiles.items()])
             clusters = aggregate_dict(*[{minion: profile for minion in minions}
@@ -124,7 +123,7 @@ class CephMinion(NodbModel):
                 with policy_cfg(self.all_minion_names) as cfg:  # type: PolicyCfg
                     cfg.set_roles(self.hostname, new_roles)
             elif key == 'key_status' and value in [CephMinion.KEY_STATE_ACCEPTED,
-                                                 CephMinion.KEY_STATE_REJECTED]:
+                                                   CephMinion.KEY_STATE_REJECTED]:
                 salt.set_key_state(self.hostname, value)
             elif key == 'cluster_id':
                 with policy_cfg(self.all_minion_names) as cfg:  # type: PolicyCfg

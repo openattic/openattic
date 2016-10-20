@@ -20,7 +20,6 @@ from nodb.restapi import NodbSerializer, NodbViewSet
 
 class CephMinionSerializer(NodbSerializer):
 
-
     class Meta(object):
         model = CephMinion
 

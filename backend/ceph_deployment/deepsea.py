@@ -66,8 +66,8 @@ def get_possible_storage_configurations():
     :rtype: list[str]
     """
     proposals = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'proposals')
-    configs = [dir for dir in os.listdir(proposals) if all(
-        [pattern not in dir for pattern in [
+    configs = [name for name in os.listdir(proposals) if all(
+        [pattern not in name for pattern in [
             'role-',
             'cluster-',
             'config'
@@ -101,6 +101,7 @@ def deepsea_stage_4():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.4'])
     pass
 
+
 @contextmanager
 def policy_cfg(minion_names, read_only=False):
     """
@@ -130,10 +131,10 @@ def policy_cfg(minion_names, read_only=False):
     role-mon/stack/default/ceph/minions/mon*.yml
     """
 
-    file = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'proposals/policy.cfg')
+    file_path = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, 'proposals/policy.cfg')
     hw_profiles = get_possible_storage_configurations()
 
-    with open(file) as f:
+    with open(file_path) as f:
         cfg = PolicyCfg(f, minion_names, hw_profiles)
     yield cfg
     if not read_only:
@@ -160,7 +161,8 @@ class PolicyCfg(object):
     def get_globs(self, whitelist):
         return generate_globs(whitelist, set(self.minion_names).difference(whitelist))
 
-    def _set_minion(self, prop, minion, new_key):
+    @staticmethod
+    def _set_minion(prop, minion, new_key):
         for key in prop.keys():
             if minion in prop[key]:
                 prop[key].remove(minion)
@@ -197,10 +199,14 @@ class PolicyCfg(object):
         self.hardware_profiles[profile].update(minions)
 
     def _mk_tuples(self, elems):
-        def globs_for_key(profile, minions):
+        """
+        :type elems: dict[str, set[str]]
+        :rtype: list[tuple[str]]
+        """
+        def globs_for_key(profile, ms):
             return [
                 (profile, glob)
-                for glob in self.get_globs(minions)
+                for glob in self.get_globs(ms)
             ]
         return chain.from_iterable(
             [globs_for_key(key, minions)
@@ -242,13 +248,12 @@ class PolicyCfg(object):
 
     def set_roles(self, minion, roles):
         """
-        Adds a role to a given host. E.g. , "mon", "mds", "rgw"
-        Ceph cluster already set up. Afterwards, also edit the stack file.
+        Sets the DeepSea roles of a given host. E.g. , "mon", "mds", "rgw".
 
         "storage" is not a valid role.
 
         :type minion: str | unicode
-        :type role: str
+        :type roles: iterable[str]
         """
         assert 'storage' not in roles
         for role in roles:
@@ -264,7 +269,8 @@ class PolicyCfg(object):
     def default_stuff_lines(self):
         mons = self.role_assigments["mon"]
         globs = self.get_globs(mons)
-        return '\n'.join(['role-mon/stack/default/ceph/minions/{}.yml'.format(glob) for glob in globs])
+        return '\n'.join(
+            ['role-mon/stack/default/ceph/minions/{}.yml'.format(glob) for glob in globs])
 
     def __str__(self):
         content = """
@@ -299,16 +305,16 @@ class PolicyCfg(object):
 def validate_pillar_data():
     out = salt_cmd().invoke_salt_run_quiet(['validate.pillars'])
 
-    def format_errors(name, errors):
+    def format_errors(name1, errors):
         return [
-            "{}: {}: {}".format(name, key, '\n'.join(error))
+            "{}: {}: {}".format(name1, key, '\n'.join(error))
             for key, error
             in errors.items()
         ]
 
-    def format_cluster(name, cluster):
+    def format_cluster(name1, cluster1):
         if 'errors' in cluster:
-            return format_errors(name, cluster['errors'])
+            return format_errors(name1, cluster1['errors'])
         else:
             return []
 
@@ -329,14 +335,13 @@ def generate_globs(whitelist, blacklist):
     >>>            whitelist])
     >>> assert not any([fnmatch.filter(blacklist, glob) for glob in globs])
 
+    Returns an empty list, if whitelist is empty.
+
     :type whitelist: iterable[str]
     :type blacklist: iterable[str]
     :rtype: frozenset[str]
     :raise ValueError: If white and blacklist overlap.
     """
-
-    def is_odd_len(l):
-        return len(l) % 2 != 0
 
     def merge_globs_rec(globs):
         """
@@ -375,6 +380,7 @@ def merge_two_globs_proposals(ls, rs, blacklist):
 
     :type ls: set[GlobSolution]
     :type rs: set[GlobSolution]
+    :type blacklist: list[str]
     :rtype: set[GlobSolution]
     """
 
@@ -398,26 +404,26 @@ class GlobSolution(object):
         else:
             assert False
 
-    def merge_solutions(self, rs, blacklist):
+    def merge_solutions(self, other, blacklist):
         """
         Generate lots of solutions for these two solutions. All results match both input solutions.
 
-        :type rs: GlobSolution
+        :type other: GlobSolution
         :type blacklist: list[str]
         :rtype: set[GlobSolution]
         """
 
         ret = []
-        for l, r in product(self.globs, rs.globs):
+        for l, r in product(self.globs, other.globs):
             merges = l.merge(r, blacklist)
             for merge in merges:
                 merge_set = set(merge.globs)
 
-                ls_no_l = set(self.globs).difference({l})
-                rs_no_r = set(rs.globs).difference({r})
+                self_no_l = set(self.globs).difference({l})
+                other_no_r = set(other.globs).difference({r})
 
-                merge_set.update(ls_no_l)
-                merge_set.update(rs_no_r)
+                merge_set.update(self_no_l)
+                merge_set.update(other_no_r)
                 ret.append(GlobSolution(merge_set))
 
         return set(sorted(ret, key=lambda s: s.complexity())[:4])
@@ -465,16 +471,17 @@ class Glob(object):
         return Glob([(Glob.T_Char, c) for c in s])
 
     @staticmethod
-    def make_range_string(range):
+    def make_range_string(range_set):
         """
         Generates strings like "a-c" or "abde" or "1-5e-g"
 
-        :type range: set[str]
+        :type range_set: set[str]
         """
         def split_chunks(l):
             """
             Generates a list of lists of neighbouring chars.
 
+            :type l: list[int]
             :rtype list[list[int]]
             """
             ret = [[l[0]]]
@@ -485,8 +492,8 @@ class Glob(object):
                     ret.append([c])
             return ret
 
-        l = sorted(map(ord, range))
-        chunks = split_chunks(l)
+        sorted_list = sorted(map(ord, range_set))
+        chunks = split_chunks(sorted_list)
         return ''.join([
             ''.join(map(chr, chunk)) if len(chunk) <= 2 else '{}-{}'.format(
                 chr(chunk[0]), chr(chunk[-1]))
@@ -545,6 +552,7 @@ class Glob(object):
         violate the blacklist.
 
         :type r: Glob
+        :type blacklist: list[str]
         :rtype: set[GlobSolution]
         :raise ValueError: If either self or r matches the blacklist.
         """
@@ -607,70 +615,70 @@ class Glob(object):
     def __len__(self):
         return len(self.elems)
 
-    def merge_any(self, r):
-        if not self and not r:
+    def merge_any(self, other):
+        if not self and not other:
             return Glob()
         return Glob([(Glob.T_Any, )])
 
-    def merge_one(self, r):
-        def one(e1, e2):
-            t_1 = e1[0]
-            t_2 = e2[0]
+    def merge_one(self, other):
+        def one(elem1, elem2):
+            t_1 = elem1[0]
+            t_2 = elem2[0]
             if t_1 == Glob.T_Char and t_2 == Glob.T_Char:
-                if e1[1] != e2[1]:
-                    return (Glob.T_One, )
+                if e1[1] != elem2[1]:
+                    return Glob.T_One,
                 else:
-                    return Glob.T_Char, e2[1]
+                    return Glob.T_Char, elem2[1]
             if Glob.T_Any in [t_1, t_2]:
                 return None
-            return (Glob.T_One,)
+            return Glob.T_One,
 
-        length = min(len(self), len(r))
-        ranges = [one(e1, e2) for e1, e2 in zip(self[:length], r[:length])]
-        if any([range is None for range in ranges]):
+        length = min(len(self), len(other))
+        ranges = [one(e1, e2) for e1, e2 in zip(self[:length], other[:length])]
+        if any([range_elem is None for range_elem in ranges]):
             return None
-        ends = self[length:].merge_all(r[length:])
+        ends = self[length:].merge_all(other[length:])
         return {Glob(ranges) + Glob(merged.elems) for merged in ends}
 
-    def merge_range(self, r):
+    def merge_range(self, other):
         """:rtype: set[Glob]"""
-        def combine_range_char(r1, c):
-            return Glob.T_Range, frozenset(r1[1].union({c[1]}))
+        def combine_range_char(range_elem_1, char_elem):
+            return Glob.T_Range, frozenset(range_elem_1[1].union({char_elem[1]}))
 
-        def combine_ranges(r1, r2):
-            return Glob.T_Range, frozenset(r1[1].union(r2[1]))
+        def combine_ranges(range_elem_1, range_elem_2):
+            return Glob.T_Range, frozenset(range_elem_1[1].union(range_elem_2[1]))
 
-        def one(e1, e2):
-            t_1 = e1[0]
-            t_2 = e2[0]
+        def one(elem1, elem2):
+            t_1 = elem1[0]
+            t_2 = elem2[0]
             if t_1 == Glob.T_Char and t_2 == Glob.T_Char:
-                if e1[1] != e2[1]:
-                    return Glob.T_Range, frozenset({e1[1], e2[1]})
+                if elem1[1] != elem2[1]:
+                    return Glob.T_Range, frozenset({elem1[1], elem2[1]})
                 else:
-                    return Glob.T_Char, e2[1]
+                    return Glob.T_Char, elem2[1]
             if t_1 == Glob.T_Range and t_2 == Glob.T_Char:
-                return combine_range_char(e1, e2)
+                return combine_range_char(elem1, elem2)
             if t_1 == Glob.T_Char and t_2 == Glob.T_Range:
-                return combine_range_char(e2, e1)
+                return combine_range_char(elem2, elem1)
             if t_1 == Glob.T_Range and t_2 == Glob.T_Range:
-                return combine_ranges(e1, e2)
+                return combine_ranges(elem1, elem2)
             if (t_1 == Glob.T_Range and t_2 == Glob.T_One) or (
                     t_1 == Glob.T_One and t_2 == Glob.T_Range):
-                return (Glob.T_One,)
+                return Glob.T_One,
             return None
 
-        length = min(len(self), len(r))
-        ranges = [one(e1, e2) for e1, e2 in zip(self[:length], r[:length])]
-        if any([range is None for range in ranges]):
+        length = min(len(self), len(other))
+        ranges = [one(e1, e2) for e1, e2 in zip(self[:length], other[:length])]
+        if any([range_elem is None for range_elem in ranges]):
             return None
-        ends = self[length:].merge_all(r[length:])
+        ends = self[length:].merge_all(other[length:])
         return {Glob(ranges) + Glob(merged.elems) for merged in ends}
 
-    def commonsuffix(self, r):
-        return self[::-1].commonprefix(r[::-1])[::-1]
+    def commonsuffix(self, other):
+        return self[::-1].commonprefix(other[::-1])[::-1]
 
-    def commonprefix(self, r):
-        return Glob(commonprefix([self, r]))
+    def commonprefix(self, other):
+        return Glob(commonprefix([self, other]))
 
     def __repr__(self):
         return 'Glob(({}))'.format(', '.join([repr(elem) for elem in self.elems]))

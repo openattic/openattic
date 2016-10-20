@@ -12,14 +12,8 @@
  *  GNU General Public License for more details.
 """
 
-import copy
 import logging
 from itertools import chain
-import os
-import subprocess
-
-import yaml
-from django.core.exceptions import ValidationError
 
 from ceph_deployment.systemapi import salt_cmd
 
@@ -68,13 +62,6 @@ def set_key_state(hostname, state):
         pass
 
 
-def apply_changes():  # TODO: Not sure this will work or is a good idea
-    """
-    Applies the modified values to the minions
-    """
-    pass
-
-
 def get_running_jobs():
     """
     Returns a list of all jobs that are running at the moment.
@@ -84,16 +71,3 @@ def get_running_jobs():
 
 def register_salt_eventbus_callback(callback):
     pass
-
-
-def initialize_cluster(name):
-    """
-    initializes a new Ceph cluster. E.g. creates a
-    config, creates the keys.
-    """
-    pass
-
-
-
-
-

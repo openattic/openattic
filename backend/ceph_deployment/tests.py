@@ -165,17 +165,20 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
 
     def test_identity(self):
         for content, minion_names in PolicyCfgTestCase.files:
-            generated = str(PolicyCfg(content.splitlines(False), minion_names, PolicyCfgTestCase.hw_profiles))
+            generated = str(
+                PolicyCfg(content.splitlines(False), minion_names, PolicyCfgTestCase.hw_profiles))
 
-            self.assertEqual(PolicyCfg(generated.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles),
-                             PolicyCfg(content.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles))
+            self.assertEqual(
+                PolicyCfg(generated.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles),
+                PolicyCfg(content.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles))
 
     def test_attributes(self):
         hw = PolicyCfgTestCase.hw_profiles
         content, minion_names = PolicyCfgTestCase.files[0]
-        for cfg in [PolicyCfg(content.splitlines(False), minion_names, hw),
-                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names, hw)).splitlines(),
-                              minion_names, hw)]:
+        lines = content.splitlines(False)
+        for cfg in [PolicyCfg(lines, minion_names, hw),
+                    PolicyCfg(str(PolicyCfg(lines, minion_names, hw)).splitlines(), minion_names,
+                              hw)]:
             self.assertEqual(dict(cfg.cluster_assignment), {'ceph': set(minion_names)})
             self.assertEqual(dict(cfg.hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
             self.assertEqual(dict(cfg.role_assigments),
@@ -186,9 +189,10 @@ role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1',
                              })
 
         content, minion_names = PolicyCfgTestCase.files[1]
-        for cfg in [PolicyCfg(content.splitlines(False), minion_names, hw),
-                    PolicyCfg(str(PolicyCfg(content.splitlines(False), minion_names, hw)).splitlines(),
-                              minion_names, hw)]:
+        lines = content.splitlines(False)
+        for cfg in [PolicyCfg(lines, minion_names, hw),
+                    PolicyCfg(str(PolicyCfg(lines, minion_names, hw)).splitlines(), minion_names,
+                              hw)]:
             self.assertEqual(dict(cfg.cluster_assignment), {'ceph': set(minion_names),
                                                             'unassigned': {'client1', 'client2'}})
             self.assertEqual(dict(cfg.hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
