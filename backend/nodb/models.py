@@ -567,7 +567,7 @@ class JsonField(Field):
         try:
             parsed = json.loads(value)
             return check_base_type(parsed)
-        except ValueError:
+        except (ValueError, TypeError) as _:
             try:
                 # Evil hack to support PUT requests to the Browsable API of the
                 # django-rest-framework as we cannot determine if restapi.JsonField.tonative() is
