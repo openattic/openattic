@@ -25,18 +25,28 @@ from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method
 
 
-def salt_cmd(func):
-    """:rtype: dict | list"""
-    return json.loads(dbus_to_python(func(get_dbus_object("/ceph_deployment"))))
+def salt_cmd():
+    class SaltCmd(object):
+        def __getattr__(self, item):
+            class Run(object):
+                def __call__(self, *args, **kwargs):
+                    dbus_obj = get_dbus_object("/ceph_deployment")
+                    meth = getattr(dbus_obj, item)
+                    return json.loads(dbus_to_python(meth(*args, **kwargs)))
+            return Run()
+    return SaltCmd()
 
 
 @logged
 class SystemD(BasePlugin):
     dbus_path = '/ceph_deployment'
 
-    @method(in_signature='', out_signature='s')
-    def invoke_salt_key(self):
-        return invoke(['salt-key', '--out=json'], log=True, return_out_err=True)[1]
+    @method(in_signature='as', out_signature='s')
+    def invoke_salt_key(self, args):
+        print 'invoke_salt_key', args
+        res = invoke(['salt-key', '--out=json'] + args, log=True, return_out_err=True)[1]
+        print 'invoke_salt_key', res
+        return res
 
     @method(in_signature='as', out_signature='s')
     def invoke_salt_run(self, args):

@@ -25,14 +25,21 @@ from utilities import aggregate_dict, zip_by_key
 
 class CephMinion(NodbModel):
 
+    KEY_STATE_ACCEPTED = 'accepted'
+    KEY_STATE_REJECTED = 'rejected'
+    KEY_STATE_DENIED = 'denied'
+    KEY_STATE_PRE = 'pre'
+    KEY_STATES = [
+        KEY_STATE_ACCEPTED, KEY_STATE_REJECTED, KEY_STATE_DENIED, KEY_STATE_PRE
+    ]
+
     hostname = models.CharField(max_length=250, primary_key=True, editable=False)
     public_address = models.CharField(max_length=100, null=True, blank=True, editable=False)
     cluster = models.ForeignKey(CephCluster, blank=True, null=True)
-    public_network = models.CharField(max_length=100, blank=True, null=True)
+    public_network = models.CharField(max_length=100, blank=True, null=True, editable=False)
     cluster_network = models.CharField(max_length=100, blank=True, null=True, editable=False)
-    key_status = models.CharField(max_length=100, choices=[(c, c) for c in
-                                                           'accepted|rejected|denied|pre'.split(
-                                                               '|')])
+    key_status = models.CharField(max_length=100,
+                                  choices=[(c, c) for c in KEY_STATES])  # TODO rename to key_state
     roles = JsonField(base_type=list, null=True, blank=True)
     storage = JsonField(base_type=dict, null=True, blank=True)
     mon_initial_members = JsonField(base_type=list, editable=False, null=True, blank=True)
@@ -63,7 +70,7 @@ class CephMinion(NodbModel):
         This method implements three purposes.
 
         1. Implements the functionality originally done by django (e.g. setting id on self)
-        2. Modify the Ceph state-machine in a sane way.
+        2. Modify the Salt and DeepSea in a sane way.
         3. Providing a RESTful API.
         """
         insert = self._state.adding  # there seems to be no id field.
@@ -78,8 +85,11 @@ class CephMinion(NodbModel):
                 new_roles = set(value).difference(original.roles)
                 for role in new_roles:
                     salt.add_role(self.hostname, role)
+            if key == 'key_status' and value in [CephMinion.KEY_STATE_ACCEPTED,
+                                                 CephMinion.KEY_STATE_REJECTED]:
+                salt.set_key_state(self.hostname, value)
             else:
-                raise ValidationError({key: 'Tried to set "{}" to "{}" on rbd "{}", which is not '
-                                            'supported'.format(key, value, self.hostname)})
+                raise ValidationError({key: 'Tried to set "{}" to "{}" on Minion "{}", which is '
+                                            'not supported'.format(key, value, self.hostname)})
 
         super(CephMinion, self).save(*args, **kwargs)
