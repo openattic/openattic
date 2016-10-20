@@ -19,12 +19,14 @@ from rpcd.handlers import ProxyModelHandler
 
 from http.models import Export
 
+
 class HttpExportHandler(ModelHandler):
     model = Export
 
     def _override_get(self, obj, data):
         data["url"] = obj.url
         return data
+
 
 class HttpExportProxy(ProxyModelHandler, HttpExportHandler):
     pass

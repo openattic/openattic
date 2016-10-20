@@ -1,8 +1,13 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.15 (not released yet):
+Version 2.0.16 (not released yet):
 ----------------------------------
+
+* Backend: Salt minions keys can now be accepted via our REST API (OP-1601)
+
+Version 2.0.15, 12. October 2016:
+---------------------------------
 
 * Backend: Improved custom error messages in the REST API (OP-497)
 * Backend: Code cleanup (PEP8) for the following apps: DRBD, volumes,
@@ -19,6 +24,9 @@ Version 2.0.15 (not released yet):
 * Backend: Fixed compatibility issues with Django 1.8 and Django REST 
   Framework 3 (OP-1210, OP-1490, OP-1486) 
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
+* Backend: Fixed code-style for the following Django apps: samba, sysutils,
+  nfs, cmdlog, ifconfig and http (OP-1503, OP-1505, OP-1506, OP-1511, OP-1517,
+  OP-1519)
 * Backend: The 'check_cephpool' Nagios plugin does return the correct outputs
   and exit codes (per the Nagios plugin development guidelines) in error and
   success case now (OP-1521)
@@ -29,6 +37,9 @@ Version 2.0.15 (not released yet):
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
 * Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
+* Backend: The 'check_cephcluster' Nagios plugin does log into the
+  openattic.log logfile if the conf file and/or the keyring do not exist or
+  are not accessible (OP-1572)
 * Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
 * Backend: Use `osd metadata` instead of `osd tree` to get the hostname
   of Ceph OSDs (OP-1573)
@@ -55,6 +66,7 @@ Version 2.0.15 (not released yet):
   pool (OP-1405)
 * WebUI: Bugfix - It's no longer possible to remove his own
   privileges (OP-1497)
+* WebUI:  Show Salt Minions plus DeepSea Pillar Data (OP-1571)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
 * Installation: Fixed `NAGIOS_PLUGIN_DIR` path in in the SUSE sysconfig
@@ -82,6 +94,9 @@ Version 2.0.15 (not released yet):
   perform a check of the Nagios configuration after editing it.
 * Documentation: Fixed bug in the SUSE installation instructions (thanks to
   Kenneth Wimer for reporting this).
+* Documentation: Improved the Debian/Ubuntu package installation chapter by
+  removing some duplicate content and clarifying how to enable the nightly builds.
+  (OP-1603)
   
 Version 2.0.14, 12. September 2016:
 -----------------------------------

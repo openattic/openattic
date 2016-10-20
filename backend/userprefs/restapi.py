@@ -26,7 +26,8 @@ from rest.utilities import drf_version, get_request_query_params, mk_method_fiel
     get_request_data, ToNativeToRepresentationMixin
 
 
-class UserPreferenceSerializer(serializers.HyperlinkedModelSerializer, ToNativeToRepresentationMixin):
+class UserPreferenceSerializer(ToNativeToRepresentationMixin,
+                               serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = UserPreference
