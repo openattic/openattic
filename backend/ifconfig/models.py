@@ -121,10 +121,8 @@ class Host(models.Model):
                         oa_dir = str.rsplit(config["OADIR"], "/", 1)[0]
 
                     version_file = oa_dir + "/version.txt"
-
                     if isfile(version_file):
-                        version_config = ConfigObj(version_file)
-                        return version_config["package"]["VERSION"]
+                        return ConfigObj(version_file)
 
                     logger.error("The 'version.txt' file could not be found or is not readable. "
                                  "Please have a look at your openATTIC ({}) directory."
