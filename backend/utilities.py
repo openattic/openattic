@@ -13,10 +13,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import logging
 from collections import defaultdict
+from importlib import import_module
 
 import django
-from django.http.request import QueryDict # Docstring
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 def get_related_model(field):
@@ -84,3 +88,19 @@ def zip_by_key(key, *args):
     :rtype: list[dict[str, Any]]
     """
     return zip_by_keys(*[(key, l) for l in args])
+
+
+def get_django_app_modules(module_name):
+    """Returns a list of app modules named `module_name`"""
+    plugins = []
+    for app in settings.INSTALLED_APPS:
+        try:
+            module = import_module(app + "." + module_name)
+        except ImportError, err:
+            if unicode(err) != "No module named {}".format(module_name):
+                logger.exception('Got error when checking app: {}'.format(app))
+        else:
+            plugins.append(module)
+    logging.info("Loaded {} modules: {}".format(module_name,
+                                                ', '.join([module.__name__ for module in plugins])))
+    return plugins
