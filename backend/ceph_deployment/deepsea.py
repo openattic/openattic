@@ -455,7 +455,17 @@ class Glob(object):
     T_Range = 4  # Matches a set of chars "[a-z1-5]"
 
     def __init__(self, elems=None):
-        """:type elems: list | tuple"""
+        """
+        `elems` is a list of glob-elements. Each glob-element is one of:
+            1. A pair of T_Char and a char ,e.g. `(T_Char, 'x')`
+            2. A one-elemnt tuple of T_Any, e.g. `(T_Any, )`
+            3. A one-elemnt tuple of T_One, e.g. `(T_One, )`
+            3. A pair of T_Range and a set of chars, e.g. `(T_Range, set('ab01'))`
+
+        Note, consecutive elems of `T_Any` are invalid.
+
+        :type elems: list[tuple] | tuple[tuple]
+        """
         if elems is None:
             self.elems = tuple()
         elif isinstance(elems, Glob):
@@ -479,7 +489,10 @@ class Glob(object):
         """
         def split_chunks(l):
             """
-            Generates a list of lists of neighbouring chars.
+            Generates a list of lists of neighbouring ints. `l` must not be empty.
+
+            >>> chunks = split_chunks([1,2,3,5,6,7,9])
+            >>> assert chunks == [[1,2,3],[5,6,7],[9]]
 
             :type l: list[int]
             :rtype list[list[int]]
@@ -503,6 +516,7 @@ class Glob(object):
 
     def __str__(self):
         def mk1(elem):
+            """:type elem: tuple"""
             return {
                 Glob.T_Char: lambda: elem[1],
                 Glob.T_Any: lambda: '*',
@@ -621,7 +635,16 @@ class Glob(object):
         return Glob([(Glob.T_Any, )])
 
     def merge_one(self, other):
+        """
+        :type other: Glob
+        :rtype: set[Glob] | None
+        """
         def one(elem1, elem2):
+            """
+            :type elem1: tuple
+            :type elem2: tuple
+            :rtype: tuple | None
+            """
             t_1 = elem1[0]
             t_2 = elem2[0]
             if t_1 == Glob.T_Char and t_2 == Glob.T_Char:
@@ -641,7 +664,10 @@ class Glob(object):
         return {Glob(ranges) + Glob(merged.elems) for merged in ends}
 
     def merge_range(self, other):
-        """:rtype: set[Glob]"""
+        """
+        :type other: Glob
+        :rtype: set[Glob] | None
+        """
         def combine_range_char(range_elem_1, char_elem):
             return Glob.T_Range, frozenset(range_elem_1[1].union({char_elem[1]}))
 
@@ -649,6 +675,11 @@ class Glob(object):
             return Glob.T_Range, frozenset(range_elem_1[1].union(range_elem_2[1]))
 
         def one(elem1, elem2):
+            """
+            :type elem1: tuple
+            :type elem2: tuple
+            :rtype: tuple | None
+            """
             t_1 = elem1[0]
             t_2 = elem2[0]
             if t_1 == Glob.T_Char and t_2 == Glob.T_Char:
