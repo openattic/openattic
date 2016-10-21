@@ -110,23 +110,18 @@ class Host(models.Model):
     @property
     def oa_version(self):
         if self.is_oa_host:
-            oa_configs = ["/etc/default/openattic", "/etc/sysconfig/openattic"]
-            for config_file in oa_configs:
+            oa_dir = settings.BASE_DIR
 
-                if isfile(config_file):
-                    config = ConfigObj(config_file)
-                    oa_dir = config["OADIR"]
+            if str.endswith(oa_dir, "/backend"):
+                oa_dir = str.rsplit(oa_dir, "/", 1)[0]
 
-                    if str.endswith(config["OADIR"], "/backend"):
-                        oa_dir = str.rsplit(config["OADIR"], "/", 1)[0]
+            version_file = oa_dir + "/version.txt"
+            if isfile(version_file):
+                return ConfigObj(version_file)
 
-                    version_file = oa_dir + "/version.txt"
-                    if isfile(version_file):
-                        return ConfigObj(version_file)
-
-                    logger.error("The 'version.txt' file could not be found or is not readable. "
-                                 "Please have a look at your openATTIC ({}) directory."
-                                 .format(oa_dir))
+            logger.error("The 'version.txt' file could not be found or is not readable. "
+                         "Please have a look at your openATTIC ({}) directory."
+                         .format(oa_dir))
 
     @staticmethod
     def insert_current_host():
