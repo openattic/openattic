@@ -79,27 +79,22 @@ def get_possible_storage_configurations():
 
 def deepsea_stage_0():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.0'])
-    pass
 
 
 def deepsea_stage_1():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.1'])
-    pass
 
 
 def deepsea_stage_2():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.2'])
-    pass
 
 
 def deepsea_stage_3():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.3'])
-    pass
 
 
 def deepsea_stage_4():
     salt_cmd().invoke_salt_run(['state.orch', 'ceph.stage.4'])
-    pass
 
 
 @contextmanager
@@ -142,7 +137,18 @@ def policy_cfg(minion_names, read_only=False):
 
 
 class PolicyCfg(object):
-    def __init__(self, f, minion_names, all_hw_profiles):
+    """
+    This is a wrapper for Deepsea's policy.cfg. This class handles the reading and denormalization
+    of the file and normalization and generation of the file. When reading the file, we will
+    generate a list of all minions per property. When generating the file, we will create globs
+    that match the list of minions per property.
+    """
+    def __init__(self, content, minion_names, all_hw_profiles):
+        """
+        :param content: Line-wise content of the file.
+        :param minion_names: All Salt minions. Needed for generating globs.
+        :param all_hw_profiles: All hardware profiles.
+        """
         self.minion_names = minion_names
         self.cluster_assignment = defaultdict(set)
         self.all_hw_profiles = all_hw_profiles
@@ -153,12 +159,19 @@ class PolicyCfg(object):
         ]
         self.role_assigments = defaultdict(set)
 
-        for line in f:
+        for line in content:
             self.read_cluster_assignment(line)
             self.read_hardware_profiles(line)
             self.read_role_assigments(line)
 
     def get_globs(self, whitelist):
+        """
+        Generates a globs that match all minions in whitelist, but noe of `self.minion_names`
+        minus whitelist.
+
+        :type whitelist: iterable[str]
+        :rtype: set[str]
+        """
         return generate_globs(whitelist, set(self.minion_names).difference(whitelist))
 
     @staticmethod
@@ -191,7 +204,7 @@ class PolicyCfg(object):
 
     def read_hardware_profiles(self, line):
         profiles = r'|'.join(self.all_hw_profiles)
-        res = re.match(r'^(' + profiles + ')/cluster/(.*).sls$', line)
+        res = re.match(r'^(' + profiles + r')/cluster/(.*).sls$', line)
         if res is None:
             return
         profile, pattern = res.groups()

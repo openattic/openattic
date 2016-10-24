@@ -16,22 +16,34 @@ from django.test import TestCase
 from ceph_deployment.deepsea import Glob, generate_globs, GlobSolution, PolicyCfg
 
 
-def g(s):
-    return Glob.from_string(s)
+def g(single_string):
+    return Glob.from_string(single_string)
 
 
-def gs(ss):
-    if isinstance(ss, list):
-        return GlobSolution({g(s) for s in ss})
+def gs(strings):
+    """Generate a GlobSolution for `strings`"""
+    if isinstance(strings, list):
+        return GlobSolution({g(s) for s in strings})
     else:
-        return GlobSolution(g(ss))
+        return GlobSolution(g(strings))
 
 
 def fzs(*args):
+    """
+    Generate a set of frozensets of args. This is needed, because set cannot be a member of a set.
+
+    >>> fzs({'a', 'b'}, 'c') == {frozenset({'a', 'b'}), frozenset({'c'})}
+    """
     return {frozenset(s) if isinstance(s, set) else frozenset({s}) for s in args}
 
 
 def gs_set_to_str_set(gss):
+    """
+    Converts a set of glob solutions to a set of frozensets of strings. This is needed, because
+    there is no way to generate a complex Glob from a complex glob
+
+    >>> gs_set_to_str_set({gs('a'), gs('b', 'c')}) == {frozenset({'a'}, frozenset{'b', 'c'})}
+    """
     return set(map(GlobSolution.str_set, gss))
 
 
