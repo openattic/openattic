@@ -39,6 +39,7 @@ from django.conf import settings
 
 from rpcd.models   import APIKey
 from rpcd.handlers import ModelHandler
+from utilities import get_django_app_modules
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -211,7 +212,7 @@ class RPCd(object):
         self.handlers = {}
 
         for plugin in rpcdplugins:
-            for handler in getattr(getattr(plugin, "rpcapi"), "RPCD_HANDLERS", []):
+            for handler in getattr(plugin, "RPCD_HANDLERS", []):
                 self.handlers[ handler.handler_name ] = handler
 
     def _resolve(self, method, user):
@@ -385,17 +386,7 @@ class Command( BaseCommand ):
                 logsh.setFormatter( logging.Formatter('%(name)s: %(levelname)s %(message)s') )
                 rootlogger.addHandler(logsh)
 
-        logging.info("Detecting modules...")
-        rpcdplugins = []
-        for app in settings.INSTALLED_APPS:
-            try:
-                module = __import__( app+".rpcapi" )
-            except ImportError, err:
-                if unicode(err) != "No module named rpcapi":
-                    logging.error("Got error when checking app %s: %s", app, unicode(err))
-            else:
-                rpcdplugins.append(module)
-        logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in rpcdplugins]) )
+        rpcdplugins = get_django_app_modules('rpcapi')
 
         if options["profile"]:
             requestHandler = ProfilingRequestHandler

@@ -27,7 +27,7 @@ from django.core import exceptions
 from django.db.models.fields import Field
 from django.utils.functional import cached_property
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 class NoDbQuery(object):
