@@ -27,7 +27,7 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 AF_CHOICES = (
     (socket.AF_INET,  "IPv4"),
