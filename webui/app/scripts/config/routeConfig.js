@@ -35,15 +35,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
   $urlRouterProvider.otherwise("/dashboard");
 
   $stateProvider
-    .state("login", {
-      url: "/login",
-      views: {
-        "main": {
-          templateUrl: "templates/login.html",
-          controller : "authController"
-        }
-      }
-    })
     .state("disks", {
       url: "/disks",
       views: {
