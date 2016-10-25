@@ -37,6 +37,10 @@ from django.conf import settings
 
 from systemd.plugins   import makeloggedfunc, deferredmethod
 from systemd.lockutils import acquire_lock, release_lock, Lockfile
+from utilities import get_django_app_modules
+
+logger = logging.getLogger(__name__)
+
 
 class SystemD(dbus.service.Object):
     """ Implements the main DBus section (/). """
@@ -55,10 +59,10 @@ class SystemD(dbus.service.Object):
         self.modules = {}
         for module in detected_modules:
             try:
-                daemon = getattr( getattr( module, "systemapi" ), "SystemD" )
+                daemon = getattr(module, "SystemD" )
                 self.modules[ module.__name__ ] = daemon(self.bus, self.busname, self)
             except:
-                traceback.print_exc()
+                logger.exception('No SystemD in {}'.format(module.__name__))
 
         signal.signal(signal.SIGCHLD, self._cleanup_procs)
 
@@ -251,17 +255,7 @@ class Command( BaseCommand ):
                 logsh.setFormatter( logging.Formatter('%(name)s: %(levelname)s %(message)s') )
                 rootlogger.addHandler(logsh)
 
-        logging.info("Detecting modules...")
-        sysdplugins = []
-        for app in settings.INSTALLED_APPS:
-            try:
-                module = __import__( app+".systemapi" )
-            except ImportError, err:
-                if unicode(err) != "No module named systemapi":
-                    logging.error("Got error when checking app %s: %s", app, unicode(err))
-            else:
-                sysdplugins.append(module)
-        logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in sysdplugins]) )
+        sysdplugins = get_django_app_modules('systemapi')
 
         logging.info( "Running." )
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)

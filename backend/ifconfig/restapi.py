@@ -18,6 +18,7 @@ from rest_framework import serializers, viewsets
 
 from ifconfig import models
 from rest import relations
+from rest.multinode.handlers import RequestHandlers
 
 
 class IPAddressSerializer(serializers.ModelSerializer):
@@ -46,10 +47,12 @@ class HostSerializer(serializers.ModelSerializer):
     hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True,
                                                       read_only=True)
     primary_ip_address = serializers.SerializerMethodField("serialize_primaryip")
+    installed_apps = serializers.SerializerMethodField("get_installed_apps")
 
     class Meta:
         model = models.Host
-        fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address')
+        fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address',
+                  'installed_apps')
 
     def serialize_primaryip(self, obj):
         host = models.Host.objects.get(id=obj.id)
@@ -62,6 +65,9 @@ class HostSerializer(serializers.ModelSerializer):
             serializer = IPAddressSerializer(ip, many=False, context=self.context)
             return serializer.data
 
+    def get_installed_apps(self, obj):
+        return obj.installed_apps
+
 
 class HostGroupSerializer(serializers.ModelSerializer):
     hosts = relations.HyperlinkedRelatedField(view_name='host-detail', many=True, read_only=True)
@@ -71,13 +77,24 @@ class HostGroupSerializer(serializers.ModelSerializer):
 
 
 class IPAddressViewSet(viewsets.ModelViewSet):
-    queryset = models.IPAddress.objects.all()
+    queryset = models.IPAddress.all_objects.all()
     serializer_class = IPAddressSerializer
 
 
+class IPAddressProxyViewSet(RequestHandlers, IPAddressViewSet):
+    api_prefix = "ipaddresses"
+    model = models.IPAddress
+    host_filter = "device"
+
+
 class NetDeviceViewSet(viewsets.ModelViewSet):
-    queryset = models.NetDevice.objects.all()
+    queryset = models.NetDevice.all_objects.all()
     serializer_class = NetDeviceSerializer
+
+
+class NetDeviceProxyViewSet(RequestHandlers, NetDeviceViewSet):
+    api_prefix = 'netdevices'
+    model = models.NetDevice
 
 
 class HostViewSet(viewsets.ModelViewSet):
@@ -87,14 +104,19 @@ class HostViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
 
+class HostProxyViewSet(RequestHandlers, HostViewSet):
+    api_prefix = 'hosts'
+    model = models.Host
+
+
 class HostGroupViewSet(viewsets.ModelViewSet):
     queryset = models.HostGroup.objects.all()
     serializer_class = HostGroupSerializer
 
 
 RESTAPI_VIEWSETS = [
-    ('hosts', HostViewSet),
+    ('hosts', HostProxyViewSet, 'host'),
     ('hostgroups', HostGroupViewSet),
-    ('netdevices', NetDeviceViewSet),
-    ('ipaddresses', IPAddressViewSet),
+    ('netdevices', NetDeviceProxyViewSet, 'netdevice'),
+    ('ipaddresses', IPAddressProxyViewSet, 'ipaddress'),
 ]

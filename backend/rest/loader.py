@@ -13,30 +13,19 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+from __future__ import absolute_import
 import logging
 
-from django.conf import settings
-from django.utils.importlib import import_module
+from utilities import get_django_app_modules
 
 logger = logging.getLogger(__name__)
 
+
 def load_viewsets(module_param):
-    logging.info("Detecting modules...")
-    rpcdplugins = []
-    for app in settings.INSTALLED_APPS:
-        try:
-            module = import_module( app+".restapi" )
-        except ImportError, err:
-            if unicode(err) != "No module named restapi":
-                logger.exception('Got error when checking app: {}'.format(app))
-        else:
-            rpcdplugins.append(module)
-    logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in rpcdplugins]) )
 
     viewsets = []
 
-    for plugin in rpcdplugins:
+    for plugin in get_django_app_modules('restapi'):
         viewsets.extend(getattr(plugin, module_param, []))
 
     return viewsets
