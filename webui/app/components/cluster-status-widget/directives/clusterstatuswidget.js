@@ -33,10 +33,10 @@
 var app = angular.module("openattic.clusterstatuswidget");
 app.directive("clusterstatuswidget", function () {
   return {
-    restrict: "A",
+    restrict: "E",
     scope: true,
     replace: true,
-    templateUrl: "components/clusterStatusWidget/templates/clusterstatus.html",
-    controller: function () {}
+    templateUrl: "components/cluster-status-widget/templates/clusterstatus.html",
+    controller: "ChartCtrl"
   };
 });

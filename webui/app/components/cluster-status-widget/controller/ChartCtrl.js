@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.clusterstatuswidget");
 
-app.controller("chartCtrl", function ($scope, lineChartService) {
+app.controller("ChartCtrl", function ($scope, lineChartService) {
   /* Variables  ----------------------------------------------------------------------------------------------- */
   var colorSet = {
     white:  "#ffffff",  // white
