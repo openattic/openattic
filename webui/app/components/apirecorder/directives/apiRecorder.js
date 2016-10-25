@@ -80,7 +80,7 @@ app.directive("apiRecorder", function () {
 
           $uibModal.open({
             windowTemplateUrl: "templates/messagebox.html",
-            templateUrl: "components/apirecorder/templates/snippet.view.html",
+            templateUrl: "components/apirecorder/templates/snippet.html",
             controller: "ApiRecorderCtrl"
           });
         }
