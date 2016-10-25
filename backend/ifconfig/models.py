@@ -72,13 +72,14 @@ class HostManager(models.Manager):
                 return self.get(name=socket.gethostname())
             except Host.DoesNotExist:
                 if not self.exists():  # The Hosts model is empty.
-                    Host.insert_current_host()
+                    return Host.insert_current_host()
                 else:
                     raise
 
 
 class Host(models.Model):
     name = models.CharField(max_length=63, unique=True)
+    is_oa_host = models.NullBooleanField()
 
     objects = HostManager()
 
@@ -97,11 +98,17 @@ class Host(models.Model):
     def get_primary_ip_address(self):
         return IPAddress.all_objects.get(primary_address=True, device__host=self)
 
+    @property
+    def installed_apps(self):
+        if self.is_oa_host:
+            return settings.INSTALLED_APPS
+
     @staticmethod
     def insert_current_host():
         fqdn = socket.getfqdn()
-        host = Host(name=fqdn)
+        host = Host(name=fqdn, is_oa_host=True)
         host.save()
+        return host
 
 
 class HostDependentQuerySet(models.query.QuerySet):
