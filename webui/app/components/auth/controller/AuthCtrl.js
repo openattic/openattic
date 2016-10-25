@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.auth");
-app.controller("authController", function ($scope, $rootScope, $state, authService) {
+app.controller("AuthCtrl", function ($scope, $rootScope, $state, authService) {
   $scope.fieldRequired = "This field is required.";
   $scope.correctInput = "The given credentials are not correct.";
 
