@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.16 (not released yet):
 ----------------------------------
 
+* Backend: Removed ID parameter from volume update view (OP-1473)
 * Backend: Salt minions keys can now be accepted via our REST API (OP-1601)
 * Backend: Reverted NAGIOS_PLUGIN_DIR on SUSE back to `/usr/lib/nagios/plugins`
 * Backend: Django migration files aren't checked by Flake8 anymore (OP-1638)
