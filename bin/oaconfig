@@ -122,6 +122,7 @@ EOF
 			su "$OAUSER" -c "python manage.py loaddata */fixtures/initial_data.json"
 		else
 			su "$OAUSER" -c 'python manage.py syncdb --noinput'
+			su "$OAUSER" -c 'python manage.py django_16_migrate'
 		fi
 
 		
