@@ -49,7 +49,7 @@ app.config(function ($stateProvider) {
       url: "/hosts/add",
       views: {
         "main": {
-          templateUrl: "components/hosts/templates/host-form.html",
+          templateUrl: "components/hosts/templates/add-host.html",
           controller : "HostFormCtrl"
         }
       },
@@ -62,7 +62,7 @@ app.config(function ($stateProvider) {
       url: "/hosts/edit/:host",
       views: {
         "main": {
-          templateUrl: "components/hosts/templates/host-form.html",
+          templateUrl: "components/hosts/templates/add-host.html",
           controller : "HostFormCtrl"
         }
       },
