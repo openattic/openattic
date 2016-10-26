@@ -18,18 +18,9 @@
             Ceph pools are loading...
         </div>
     </div>
-
-    <div class="panel panel-default" ng-show="!error && pools.results.length === 0">
-        <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
-        </div>
-        <div class="panel-body">
-            No pools available.
-        </div>
-    </div>
 </div>
 
-<oadatatable ng-show="!error && pools.results.length > 0" data="pools"
+<oadatatable ng-show="!error" data="pools"
         class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
