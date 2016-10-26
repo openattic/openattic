@@ -35,6 +35,6 @@ app.directive("navigation", function () {
   return {
     restrict: "E",
     replace: true,
-    templateUrl: "components/navigation/navigation.view.html"
+    templateUrl: "components/navigation/templates/navigation.html"
   };
 });
