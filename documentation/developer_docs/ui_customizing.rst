@@ -46,7 +46,7 @@ exceed 250x25 pixel (to ensure it is displayed properly on mobile devices).
 
 The logo file should be copied into the ``images/`` directory. If you choose a
 different name than the default, update the file name in file
-``components/navigation/navigation.view.html`` (currently located in line 5).
+``components/navigation/templates/navigation.html`` (currently located in line 5).
 
 If you comment out line 5 and enable line 6, the graphical logo can be replaced
 with regular text::
@@ -57,6 +57,6 @@ with regular text::
 In addition to that, the logo on the login screen should be replaced to match your
 desired logo. It should be in PNG format and should not exceed 256x256 px. This
 can be achieved by changing the image file name in file
-``templates/login.html``, line 4::
+``components/auth/templates/login.html``, line 4::
 
   <img src="images/openattic_favicon_256x256.png" alt="openATTIC" class="pull-right">
