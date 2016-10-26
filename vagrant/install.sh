@@ -56,6 +56,12 @@ then
     if grep -q  ubuntu /etc/*-release
     then
         IS_UBUNTU="1"
+        if grep -q Trusty /etc/os-release
+        then
+            IS_TRUSTY="1"
+        else
+            IS_XENIAL="1"
+        fi
     fi
 fi
 
@@ -108,13 +114,24 @@ fi
 # Installing openATTIC
 # http://docs.openattic.org/2.0/install_guides/oA_installation.html#installation-on-debian-ubuntu-linux
 
+if [ "$IS_TRUSTY" ]
+then
+    # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
+    apt-get install -y linux-image-extra-$(uname -r)
+fi
+
 if [ "$IS_DEBIAN" ]
 then
     wget http://apt.openattic.org/A7D3EAFA.txt -q -O - | apt-key add -
+    distro="jessie"
+    if [ "$IS_TRUSTY" ]
+    then
+        distro="trusty"
+    fi
 
     cat << EOF > /etc/apt/sources.list.d/openattic.list
-deb     http://apt.openattic.org/ jessie   main
-deb-src http://apt.openattic.org/ jessie   main
+deb     http://apt.openattic.org/ $distro   main
+deb-src http://apt.openattic.org/ $distro   main
 deb     http://apt.openattic.org/ nightly  main
 deb-src http://apt.openattic.org/ nightly  main
 EOF
@@ -142,7 +159,7 @@ pgsql'
 
 if [ "$IS_DEBIAN" ]
 then
-    if [ "$IS_UBUNTU" ]
+    if [ "$IS_XENIAL" ]
     then
         toInstall="$(python << EOF
 def agg(state, line):
@@ -169,20 +186,29 @@ module-apt"
 
     # System packages not available in pip + npm
 
-    apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-rtslib-fb nodejs npm
+    apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 nodejs npm
     apt-get install -y libjpeg-dev # TODO this is required for openattic-module-nagios
-    if [ "$IS_UBUNTU" ]
+    if [ "$IS_XENIAL" ]
     then
-        apt-get install -y --force-yes nullmailer # FIXME! Needed for newaliases command
+        apt-get install -y --force-yes nullmailer python-rtslib-fb # FIXME! Needed for newaliases command
+    fi
+    if [ "$IS_TRUSTY" ]
+    then
+        apt-get install -y --force-yes python-rtslib
     fi
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
     ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
-    if [ ! "$IS_UBUNTU" ]
+    if [ ! "$IS_XENIAL" ]
     then
         rm /etc/nagios3/conf.d/localhost_nagios2.cfg # TODO: OP-1066
+    fi
+    if [ "$IS_TRUSTY" ]
+    then
+        # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
+        service target restart
     fi
 
 fi
@@ -228,7 +254,7 @@ npm install grunt
 npm install -g grunt-cli
 
 
-if [ "$IS_UBUNTU" ]
+if [ "$IS_XENIAL" ]
 then
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
@@ -243,6 +269,15 @@ create database pyfiler OWNER pyfiler;
 EOF
 fi
 
+# sudo -u postgres psql << EOF
+# drop database pyfiler;
+# EOF
+
+# sudo -u postgres psql << EOF
+# create database pyfiler OWNER pyfiler;
+# EOF
+
+
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.
 mkdir -p "/var/log/openattic"
 touch "/var/log/openattic/openattic.log"
@@ -250,19 +285,23 @@ chmod 777 "/var/log/openattic/openattic.log"
 
 sudo -i -u vagrant bash -e << EOF
 cat << EOF2 >> /home/vagrant/.bash_history
+sudo systemctl reload dbus
 . env/bin/activate
 cd openattic/backend/
 EOF2
 EOF
 
-sudo IS_UBUNTU="$IS_UBUNTU" -i -u vagrant bash -e << EOF
+sudo -i -u vagrant bash -e << EOF
 
 virtualenv env
 . env/bin/activate
 pip install --upgrade pip
-if [ "$IS_UBUNTU" ]
+if [ "$IS_XENIAL" ]
 then
 pip install -r openattic/requirements/ubuntu-16.04.txt
+elif [ "$IS_TRUSTY" ]
+then
+pip install -r openattic/requirements/ubuntu-14.04.txt
 else
 pip install -r openattic/requirements.txt
 fi
@@ -290,9 +329,13 @@ cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 pushd openattic/backend/
 
 python manage.py pre_install
+if [ "$IS_TRUSTY" ]
+then
+python manage.py syncdb --noinput
+else
 python manage.py migrate
+fi
 python manage.py loaddata nagios/*/initial_data.json
-#python manage.py syncdb --noinput
 python manage.py createcachetable status_cache
 python manage.py add-host
 
