@@ -19,6 +19,7 @@ from rest_framework import serializers, viewsets
 from ifconfig import models
 from rest import relations
 from rest.multinode.handlers import RequestHandlers
+from rest.utilities import mk_method_field_params
 
 
 class IPAddressSerializer(serializers.ModelSerializer):
@@ -46,16 +47,17 @@ class HostSerializer(serializers.ModelSerializer):
                                                       read_only=True)
     hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True,
                                                       read_only=True)
-    primary_ip_address = serializers.SerializerMethodField("serialize_primaryip")
-    installed_apps = serializers.SerializerMethodField("get_installed_apps")
-    oa_version = serializers.SerializerMethodField("get_oa_version")
+    primary_ip_address = serializers.SerializerMethodField(*mk_method_field_params(
+        'primary_ip_address'))
+    installed_apps = serializers.SerializerMethodField(*mk_method_field_params('installed_apps'))
+    oa_version = serializers.SerializerMethodField(*mk_method_field_params('oa_version'))
 
     class Meta:
         model = models.Host
         fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address',
                   'installed_apps', 'oa_version')
 
-    def serialize_primaryip(self, obj):
+    def get_primary_ip_address(self, obj):
         host = models.Host.objects.get(id=obj.id)
 
         try:
