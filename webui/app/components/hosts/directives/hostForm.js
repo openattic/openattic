@@ -40,7 +40,7 @@ app.directive("hostForm", function () {
       config: "=?",
       submit: "=?"
     },
-    templateUrl: "components/hosts/templates/host.form.directive.html",
+    templateUrl: "components/hosts/templates/add-host-directive.html",
     controller: function ($scope, $state, HostService, InitiatorService, $q, toasty) {
       if (!$scope.config) {
         $scope.config = {
