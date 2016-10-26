@@ -34,7 +34,7 @@ var app = angular.module("openattic.userinfo");
 app.directive("userinfo", function () {
   return {
     restrict: "A",
-    templateUrl: "components/userinfo/partial/userinfo.view.html",
+    templateUrl: "components/userinfo/templates/userinfo.html",
     controller: function ($rootScope, UserService) {
       UserService.current()
       .$promise
