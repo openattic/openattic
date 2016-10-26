@@ -20,6 +20,8 @@ Vagrant.configure(2) do |config|
         config.vm.box = 'debian/jessie64' # should work, too!
     elsif ENV['DISTRO'] == 'xenial'
         config.vm.box = 'yk0/ubuntu-xenial'
+    elsif ENV['DISTRO'] == 'trusty'
+        config.vm.box = 'alxgrh/ubuntu-trusty-x86_64'
     else
         config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
     end
