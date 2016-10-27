@@ -4,6 +4,8 @@ openATTIC Changelog
 Version 2.0.16 (not released yet):
 ----------------------------------
 
+* Backend: The REST API 'host' resource returns the openATTIC version (in
+  version.txt) if the host is an openATTIC host (OP-553)
 * Backend: The REST API 'host' resource returns the installed Django apps if
   the host is an openATTIC host (OP-1023)
 * Backend: Removed ID parameter from volume update view (OP-1473)
