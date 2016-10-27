@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.oaWizards");
-app.controller("filestorage", function ($scope) {
+app.controller("FilestorageCtrl", function ($scope) {
   $scope.limitTypes = ["zfs", "btrfs", "ext4", "ext3"];
 
   $scope.input = {

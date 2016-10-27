@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.oaWizards");
-app.controller("vmstorage", function ($scope) {
+app.controller("VmstorageCtrl", function ($scope) {
   $scope.limitTypes = ["xfs", "zfs", "btrfs"];
 
   $scope.input = {

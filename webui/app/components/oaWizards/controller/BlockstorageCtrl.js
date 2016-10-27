@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.oaWizards");
-app.controller("blockstorage", function ($scope, HostService, InitiatorService) {
+app.controller("BlockstorageCtrl", function ($scope, HostService, InitiatorService) {
   $scope.limitTypes = ["lun"];
 
   HostService.query()
