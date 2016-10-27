@@ -56,6 +56,7 @@ Requires:	numpy
 Requires:	policycoreutils-python
 Requires:	pygobject2
 Requires:	python-dbus
+Requires:   python-configobj
 Requires:	python-django
 Requires:	python-imaging
 Requires:	python-m2ext
@@ -274,7 +275,6 @@ Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
 Requires: nagios-plugins-tcp
-Requires: python-configobj
 
 Summary: Nagios module for openATTIC
 

@@ -74,6 +74,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  resolvconf, bridge-utils, vlan, ifenslave-2.6,
  sg3-utils,
  python-dbus,
+ python-configobj,
  python-gobject,
  python-pam,
  python-m2crypto,
@@ -188,9 +189,8 @@ Description: Cron module for openATTIC
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, python (>= 2.6),
- ${python:Depends}, python-imaging, python-numpy, python-configobj,
- openattic-base, openattic-base,
- bc, adduser,
+ ${python:Depends}, python-imaging, python-numpy, openattic-base,
+ openattic-base, bc, adduser,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
  pnp4nagios-bin, rrdtool
 Description: Nagios module for openATTIC
