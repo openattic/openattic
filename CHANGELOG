@@ -14,6 +14,7 @@ Version 2.0.16 (not released yet):
 * Backend: The backend does no longer print the whole traceback into the
   logfile if the XML file of an RRD file is not found (OP-1632)
 * Backend: Django migration files aren't checked by Flake8 anymore (OP-1638)
+* Backend: Added reading and writing of the `policy.cfg` of DeepSea REST API (OP-1617)
 
 
 Version 2.0.15, 12. October 2016:
