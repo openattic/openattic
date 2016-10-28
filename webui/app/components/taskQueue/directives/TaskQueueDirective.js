@@ -36,29 +36,42 @@ app.directive("taskQueueDirective", function () {
     restrict: "A",
     templateUrl: "components/taskQueue/templates/task-queue-directive.html",
     controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $timeout) {
-      $scope.tasks = {
-        overview: {},
-        pending: [],
-        failed: [],
-        finished: []
+      $scope.taskOverview = {
+        avr: 0,
+        run: 0,
+        icon: "fa-hourglass-o",
+        updated: 0
       };
 
+      /**
+       * Updates the hourglass
+       * The hourglass has four different states which will be set according to the amount of running tasks relative to
+       * all tasks in the queue.
+       */
       $scope.updateTaskOverview = function () {
-        var ov = $scope.tasks.overview;
+        var ov = $scope.taskOverview;
         var avr = ov.queue !== 0 ? ov.queue / ov.sum * 100 : 0;
         var icons = ["fa-hourglass-o", "fa-hourglass-end", "fa-hourglass-half", "fa-hourglass-start"];
         var icon = ov.queue !== 0 ? icons[Math.floor(avr / 33.4) + 1] : icons[0];
 
-        $scope.tasks.overview.avr = avr;
-        $scope.tasks.overview.icon = icon;
-        $scope.tasks.overview.updated = 1;
+        $scope.taskOverview.run = ov.queue;
+        $scope.taskOverview.avr = avr;
+        $scope.taskOverview.icon = icon;
+        $scope.taskOverview.updated = 1;
       };
 
+      /**
+       * Sums up all active tasks and retrieves the total number of tasks in the queue.
+       */
       $scope.loadOverview = function () {
-        $scope.tasks.overview.queue = 0;
-        $scope.tasks.overview.queueLoad = 0;
-        $scope.tasks.overview.updated = 0;
-        $scope.tasks.overview.sum = undefined;
+        if (!$scope.user) {
+          $scope.taskTimeout = $timeout($scope.loadOverview, 5000);
+          return;
+        }
+        $scope.taskOverview.queue = 0;
+        $scope.taskOverview.queueLoad = 0;
+        $scope.taskOverview.updated = 0;
+        $scope.taskOverview.sum = undefined;
         ["Running", "Not Started"].forEach(function (state) {
           taskQueueService.get({
             pageSize: 1,
@@ -66,8 +79,8 @@ app.directive("taskQueueDirective", function () {
           })
             .$promise
             .then(function (res) {
-              $scope.tasks.overview.queue += res.count;
-              $scope.tasks.overview.queueLoad++;
+              $scope.taskOverview.queue += res.count;
+              $scope.taskOverview.queueLoad++;
             })
             .catch(function (error) {
               error.toasty = {
@@ -84,7 +97,7 @@ app.directive("taskQueueDirective", function () {
         })
           .$promise
           .then(function (res) {
-            $scope.tasks.overview.sum = res.count;
+            $scope.taskOverview.sum = res.count;
           })
           .catch(function (error) {
             error.toasty = {
@@ -97,27 +110,29 @@ app.directive("taskQueueDirective", function () {
           });
       };
 
-      $scope.$watchCollection("tasks.overview", function () {
-        if ($scope.tasks.overview.sum !== undefined && $scope.tasks.overview.queueLoad === 2 &&
-            $scope.tasks.overview.updated === 0) {
+      /**
+       * Watches taskOverview to update the hourglass as soon as the needed data is loaded, after that it's sets the
+       * refresh time.
+       */
+      $scope.$watchCollection("taskOverview", function () {
+        if ($scope.taskOverview.sum !== undefined && $scope.taskOverview.queueLoad === 2 &&
+            $scope.taskOverview.updated === 0) {
           $scope.updateTaskOverview();
-        } else if ($scope.tasks.overview.updated === 1) {
+        } else if ($scope.taskOverview.updated === 1) {
           $scope.taskTimeout = $timeout($scope.loadOverview, 15000);
         }
       });
 
-      $scope.runnersDialog = function (selection) {
+      /**
+       * Opens task queue dialog, stops the refresh timeout and refreshes on close.
+       */
+      $scope.runnersDialog = function () {
         var taskDialog = $uibModal.open({
           windowTemplateUrl: "templates/messagebox.html",
           templateUrl: "components/taskQueue/templates/task-queue-dialog.html",
           controller: "TaskQueueModalCtrl",
           size: "lg",
-          animation: false,
-          resolve: {
-            tasks: function () {
-              return $scope.tasks;
-            }
-          }
+          animation: false
         });
 
         taskDialog.opened.then(function () {
@@ -129,6 +144,7 @@ app.directive("taskQueueDirective", function () {
         });
       };
 
+      // Initial load.
       $scope.loadOverview();
     }
   };

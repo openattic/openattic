@@ -1,5 +1,7 @@
 <a ng-click="runnersDialog()">
-    <i class="fa {{tasks.overview.icon}}"></i>
-    {{tasks.overview.run !== 1 ? tasks.overview.run + " Background-Tasks" : tasks.overview.run + " Background-Task"}}
+    <i class="fa {{taskOverview.icon}}"></i>
+    <span ng-show="taskOverview.run > 1" ng-bind="taskOverview.run + ' Background-Tasks'"></span>
+    <span ng-show="taskOverview.run === 1" ng-bind="taskOverview.run + ' Background-Task'"></span>
+    <span ng-show="taskOverview.run === 0">Background-Tasks</span>
 </a>
 

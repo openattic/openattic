@@ -32,20 +32,33 @@
 
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
-  $scope.tasks = taskSelection.slice();
+  $scope.tasks = taskSelection;
   $scope.waiting = false;
   $scope.done = 0;
-  $scope.donePrc = 0;
 
   $scope.input = {
     enteredName: "",
     pattern: "yes"
   };
 
+  /**
+   * Starts the deletion process and sets the loading screen.
+   */
+  $scope.deleteTasks = function () {
+    $scope.waiting = true;
+    $scope.deleteTask($scope.tasks.entries());
+  };
+
+  /**
+   * Deletes all tasks sequentially and updates how many tasks were successfully deleted.
+   * The method calls it self recursively in order to process sequentially.
+   * @param {iterator} entries - The iterator contains the remaining tasks.
+   */
   $scope.deleteTask = function (entries) {
     var taskE = entries.next().value;
+    var task = {};
     if (taskE) {
-      var task = taskE[1];
+      task = taskE[1];
       taskQueueService.delete({id: task.id})
         .$promise
         .then(function () {
@@ -54,21 +67,17 @@ app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModal
         }, function (error) {
           error.toasty = {
             title: "Task deletion failure",
-            msg: "Task couldn't be deleted.",
+            msg: "Task " + task.description + "(" + task.id + ") couldn't be deleted.",
             timeout: 10000
           };
           toasty.error(error.toasty);
+          $scope.deleteTask(entries);
           throw error;
         });
     } else {
       $scope.waiting = false;
       $uibModalInstance.close("deleted");
     }
-  };
-
-  $scope.deleteTasks = function () {
-    $scope.waiting = true;
-    $scope.deleteTask($scope.tasks.entries());
   };
 
   $scope.cancel = function () {
