@@ -52,6 +52,10 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         # Inspired by rest_framework.mixins.UpdateModelMixin
         self.object = self.get_object()
+        if self.object.status in [TaskQueue.STATUS_FINISHED,
+                                  TaskQueue.STATUS_EXCEPTION,
+                                  TaskQueue.STATUS_ABORTED]:
+            return super(TaskQueueViewSet, self).destroy(request, *args, **kwargs)
 
         self.object.finish_task(None, TaskQueue.STATUS_ABORTED)
 
