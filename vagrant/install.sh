@@ -288,14 +288,16 @@ cat << EOF2 >> /home/vagrant/.bash_history
 sudo systemctl reload dbus
 . env/bin/activate
 cd openattic/backend/
+sudo systemctl reload dbus
 EOF2
 EOF
 
 sudo -i -u vagrant bash -e << EOF
 
+pip install --upgrade pip
+
 virtualenv env
 . env/bin/activate
-pip install --upgrade pip
 if [ "$IS_XENIAL" ]
 then
 pip install -r openattic/requirements/ubuntu-16.04.txt
@@ -331,11 +333,11 @@ pushd openattic/backend/
 python manage.py pre_install
 if [ "$IS_TRUSTY" ]
 then
-python manage.py syncdb --noinput
+    python manage.py syncdb --noinput
 else
-python manage.py migrate
+    python manage.py migrate
 fi
-python manage.py loaddata nagios/*/initial_data.json
+python manage.py loaddata */fixtures/initial_data.json
 python manage.py createcachetable status_cache
 python manage.py add-host
 
