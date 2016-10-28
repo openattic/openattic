@@ -56,7 +56,7 @@ Requires:	numpy
 Requires:	policycoreutils-python
 Requires:	pygobject2
 Requires:	python-dbus
-Requires:   python-configobj
+Requires:	python-configobj
 Requires:	python-django
 Requires:	python-imaging
 Requires:	python-m2ext
