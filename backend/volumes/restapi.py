@@ -70,7 +70,7 @@ class DiskSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModel
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
-        data.update(super(DiskSerializer, self).to_native(obj))
+        data.update(self.super_to_native_or_to_representation(obj))
         if obj is None:
             return data
         if obj.physicalblockdevice_or_none is not None:
