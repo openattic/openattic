@@ -220,6 +220,7 @@ user interface.
 %package module-lvm
 Requires:	lvm2
 Requires: %{name}-base
+Requires: %{name}-module-cron
 Summary: LVM module for openATTIC
 
 %description module-lvm
