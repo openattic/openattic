@@ -91,7 +91,7 @@ var categories = {
 };
 
 for(var poolName in config.pools){
-  if (config.pools[poolName].poolType === "zpool") {
+  if (config.pools[poolName].type === 'zpool') {
     categories.zfs.isAvailable = true;
     break;
   }

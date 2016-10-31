@@ -88,4 +88,4 @@ NAGIOS_STATE_DIR="/var/lib/icinga"
 ## Default: "/usr/lib/nagios/plugins"
 #
 # Location of the Nagios plugin directory
-NAGIOS_PLUGIN_DIR="/usr/lib/icinga/plugins"
+NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"

@@ -24,19 +24,32 @@ from systemd import get_dbus_object
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method
 
+from ceph_deployment.conf import settings as ceph_deployment_settings
 
-def salt_cmd(func):
-    """:rtype: dict | list"""
-    return json.loads(dbus_to_python(func(get_dbus_object("/ceph_deployment"))))
+
+def salt_cmd():
+    """:rtype: SystemD"""
+    class SaltCmd(object):
+        def __getattr__(self, item):
+            class Run(object):
+                def __call__(self, *args, **kwargs):
+                    dbus_obj = get_dbus_object("/ceph_deployment")
+                    meth = getattr(dbus_obj, item)
+                    return json.loads(dbus_to_python(meth(*args, **kwargs)))
+            return Run()
+    return SaltCmd()
 
 
 @logged
 class SystemD(BasePlugin):
     dbus_path = '/ceph_deployment'
 
-    @method(in_signature='', out_signature='s')
-    def invoke_salt_key(self):
-        return invoke(['salt-key', '--out=json'], log=True, return_out_err=True)[1]
+    @method(in_signature='as', out_signature='s')
+    def invoke_salt_key(self, args):
+        print 'invoke_salt_key', args
+        res = invoke(['salt-key', '--out=json'] + args, log=True, return_out_err=True)[1]
+        print 'invoke_salt_key', res
+        return res
 
     @method(in_signature='as', out_signature='s')
     def invoke_salt_run(self, args):
@@ -46,16 +59,15 @@ class SystemD(BasePlugin):
     def invoke_salt_run_quiet(self, args):
         return invoke(['salt-run', '--out=quiet'] + args, log=True, return_out_err=True)[1]
 
-
     @method(in_signature='as', out_signature='s')
     def invoke_salt(self, args):
         return invoke(['salt', '--out=json', '--static'] + args, log=True, return_out_err=True)[1]
 
     @method(in_signature='ss', out_signature='')
     def write_pillar_file(self, file_path, content):
-        assert file_path.startswith('/srv/pillar')
-        with open(file_path, "w") as f:
+        full_path = os.path.join(ceph_deployment_settings.DEEPSEA_PILLAR_ROOT, file_path)
+        with open(full_path, "w") as f:
             f.write(content)
 
         pwn_salt = getpwnam('salt')
-        os.chown(file_path, pwn_salt.pw_uid, pwn_salt.pw_gid)
+        os.chown(full_path, pwn_salt.pw_uid, pwn_salt.pw_gid)

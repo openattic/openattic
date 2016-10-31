@@ -211,11 +211,17 @@ except NameError:
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'oa': {
+            'format': '%(asctime)s - %(levelname)s - %(name)s#%(funcName)s - %(message)s'
+        }
+    },
     'handlers': {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/openattic/openattic.log'
+            'filename': '/var/log/openattic/openattic.log',
+            'formatter': 'oa',
         }
     },
     'loggers': {
