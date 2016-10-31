@@ -269,13 +269,8 @@ create database pyfiler OWNER pyfiler;
 EOF
 fi
 
-# sudo -u postgres psql << EOF
-# drop database pyfiler;
-# EOF
-
-# sudo -u postgres psql << EOF
-# create database pyfiler OWNER pyfiler;
-# EOF
+# echo "drop database pyfiler;" | sudo -u postgres psql
+# echo "create database pyfiler OWNER pyfiler;" | sudo -u postgres psql
 
 
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.

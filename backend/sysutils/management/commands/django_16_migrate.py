@@ -26,7 +26,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-# Look, as Django doesn't support migrations, we either have to use the outdated and deprecated
+# As Django 1.6 doesn't support migrations, we either have to use the outdated and deprecated
 # South migrations, or delete the DB on every update, or build our own migration framework.
 # This is our own migration framework. Backward migrations will not work.
 #
@@ -37,14 +37,16 @@ logger = logging.getLogger(__name__)
 #
 # Let's hope Django 1.6 will be unsupported, before we have more than 10 migrations.
 #
-# Unfortunately, this got a bit more complicated than anticipated, becuase these migrations need
+# Unfortunately, this got a bit more complicated than anticipated, because these migrations need
 # to be detected by future Django versions.
 #
 # Here are some important rules:
-# * If you add a new app here, make sure to include fake the initial migration.
-# * The result must be compatible to Django 1.7 migrations.
+# * If you add a new app here, make sure to fake the initial migration by adding a migration
+#   without SQL stmt.
+# * The result must be compatible to Django 1.7+ migrations.
 # * Don't add initial migrations, until you need a second one.
-# * Include all migrations, even migrations without SQL statements.
+# * Include all migrations, even migrations without SQL statements. Otherwise, the Django 1.7+
+#   migration framework may not work as expected.
 # * The order of migrations must be valid, according to migration dependencies.
 # * We still need to add a test function, in order to cope with db tables created by syncdb, which
 #   are newer than the initial table schema. This a main reason for the this complexity here.
@@ -61,10 +63,10 @@ def test_ifconfig_0003_host_is_oa_host(cursor):
     stmt = "select column_name from INFORMATION_SCHEMA.COLUMNS where table_name = 'ifconfig_host'"
     return "is_oa_host" not in [d['column_name'] for d in execute_and_fetch(cursor, stmt)]
 
-# (app, name, test function, sql statement)
+# (app, name, test function, SQL statement)
 # * If app and name is None, this migration will always be executed, if test function returns True.
-# * If test function and sql stmt is None, the migratio will only be added to the django_migrations
-#   db table.
+# * If test function and SQL stmt are None, the migration will only be added to the
+#   django_migrations DB table.
 _migrations = [
     (
         None, None,
