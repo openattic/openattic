@@ -116,9 +116,20 @@ print "1" if VERSION[:2] > (1, 6) else ""
 EOF
 '
 )"
+		DJANGO_FAKE_INITIAL="$(su "$OAUSER" -c 'python - << EOF
+from django import VERSION
+print "1" if VERSION[:2] >= (1, 8) else ""
+EOF
+'
+)"
 		if [ "$DJANGO_MIGRATE" ]
 		then
-			su "$OAUSER" -c "python manage.py migrate"
+		    if [ "$DJANGO_FAKE_INITIAL" ]
+		    then
+		        su "$OAUSER" -c "python manage.py migrate --fake-initial"
+		    else
+		        su "$OAUSER" -c "python manage.py migrate"
+		    fi
 			su "$OAUSER" -c "python manage.py loaddata */fixtures/initial_data.json"
 		else
 			su "$OAUSER" -c 'python manage.py syncdb --noinput'
