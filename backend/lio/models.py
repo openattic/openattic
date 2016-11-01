@@ -305,7 +305,7 @@ class IscsiHandler(ProtocolHandler):
         """ Yield the target to be used for the volume. """
         fabric = rtslib.FabricModule(self.module.encode("utf-8"))
         if not fabric.exists:
-            raise SystemError("fabric %s not loaded" % self.module)
+            get_dbus_object("/lio").fabric_load(self.module)
 
         # Generate IQN. the "prefix" part is shamelessly stolen from rtslib, but we use
         # the volume name instead of a random serial.
@@ -351,7 +351,7 @@ class FcHandler(ProtocolHandler):
         """ Yield all targets for this host (volume doesn't matter). """
         fabric = rtslib.FabricModule(self.module.encode("utf-8"))
         if not fabric.exists:
-            raise SystemError("fabric %s not loaded" % self.module)
+            get_dbus_object("/lio").fabric_load(self.module)
 
         for lio_tgt in fabric.targets:
             yield ctxupdate(target=lio_tgt, fabric=fabric, module=self.module)
