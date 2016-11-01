@@ -49,18 +49,18 @@ logger = logging.getLogger(__name__)
 #   migration framework may not work as expected.
 # * The order of migrations must be valid, according to migration dependencies.
 # * We still need to add a test function, in order to cope with db tables created by syncdb, which
-#   are newer than the initial table schema. This a main reason for the this complexity here.
+#   are newer than the initial table schema. This is a main reason for this complexity here.
 
 
 def test_ifconfig_0002_auto_20160329_1248(cursor):
-    stmt = """select character_maximum_length from INFORMATION_SCHEMA.COLUMNS
-              where table_name = 'ifconfig_netdevice' and column_name = 'devname';"""
+    stmt = """SELECT character_maximum_length FROM INFORMATION_SCHEMA.COLUMNS
+              WHERE table_name = 'ifconfig_netdevice' AND column_name = 'devname';"""
     res = execute_and_fetch(cursor, stmt)
     return len(res) == 1 and res[0]['character_maximum_length'] == 10
 
 
 def test_ifconfig_0003_host_is_oa_host(cursor):
-    stmt = "select column_name from INFORMATION_SCHEMA.COLUMNS where table_name = 'ifconfig_host'"
+    stmt = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'ifconfig_host'"
     return "is_oa_host" not in [d['column_name'] for d in execute_and_fetch(cursor, stmt)]
 
 # (app, name, test function, SQL statement)
@@ -173,18 +173,14 @@ def migrate_one(migration, cursor):
 
 
 def insert_into_django_migrations(app, name, cursor):
-    stmt = """
-        INSERT INTO "django_migrations" ("app", "name", "applied")
-        VALUES (%s, %s, now())
-        """
+    stmt = """INSERT INTO "django_migrations" ("app", "name", "applied")
+              VALUES (%s, %s, now())"""
     cursor.execute(stmt, [app, name])
 
 
 def django_migration_already_inserted(app, name, cursor):
-    stmt = """
-    SELECT * FROM "django_migrations"
-    WHERE app = %s AND name = %s
-    """
+    stmt = """SELECT * FROM "django_migrations"
+              WHERE app = %s AND name = %s"""
     return len(execute_and_fetch(cursor, stmt, [app, name])) == 1
 
 
@@ -206,7 +202,7 @@ def dictfetchall(cursor):
 
 
 def _table_exists(table_name, cursor):
-    stmt = """select table_name from INFORMATION_SCHEMA.COLUMNS
-              where table_name = %s;"""
+    stmt = """SELECT table_name FROM INFORMATION_SCHEMA.COLUMNS
+              WHERE table_name = %s;"""
     res = execute_and_fetch(cursor, stmt, [table_name])
     return len(res) > 0 and res[0]['table_name'] == table_name
