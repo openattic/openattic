@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
-    registryService, cephPoolsService, toasty) {
+    registryService, cephPoolsService, toasty, TabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.rbd = {};
@@ -117,6 +117,25 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     }
   };
 
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "cephRbds.detail.details",
+        class: "tc_statusTab",
+        name: "Status"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "cephRbds",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  TabViewService.setScope($scope);
+  $scope.changeTab = TabViewService.changeTab;
+
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
       return;
@@ -138,10 +157,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     }
 
     if (item) {
-      $state.go("cephRbds.detail.details", {
-        cephRbd: item.id,
-        "#"    : "more"
-      });
+      $scope.changeTab("cephRbds.detail.details");
     }
   });
   $scope.addAction = function () {

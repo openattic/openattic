@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.hosts");
-app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService, NetdeviceService) {
+app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService, NetdeviceService,
+    TabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -119,6 +120,25 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     });
   };
 
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "hosts.detail.status",
+        class: "tc_statusTab",
+        name: "Status"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "host",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  TabViewService.setScope($scope);
+  $scope.changeTab = TabViewService.changeTab;
+
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {
       return;
@@ -129,10 +149,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
   $scope.$watch("selection.item", function (selitem) {
     $scope.hasSelection = Boolean(selitem);
     if (selitem) {
-      $state.go("hosts.detail.status", {
-        host: selitem.id,
-        "#": "more"
-      });
+      $scope.changeTab("hosts.detail.status");
     } else {
       $state.go("hosts");
     }
@@ -152,7 +169,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     }
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/hosts/templates/delete-host.html",
+      templateUrl: "templates/hosts/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
         host: function () {
