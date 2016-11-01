@@ -169,7 +169,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     }
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "templates/hosts/delete-host.html",
+      templateUrl: "components/hosts/templates/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
         host: function () {
