@@ -56,6 +56,7 @@ Requires:	numpy
 Requires:	policycoreutils-python
 Requires:	pygobject2
 Requires:	python-dbus
+Requires:	python-configobj
 Requires:	python-django
 Requires:	python-imaging
 Requires:	python-m2ext
@@ -219,6 +220,7 @@ user interface.
 %package module-lvm
 Requires:	lvm2
 Requires: %{name}-base
+Requires: %{name}-module-cron
 Summary: LVM module for openATTIC
 
 %description module-lvm
@@ -274,7 +276,6 @@ Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
 Requires: nagios-plugins-tcp
-Requires: python-configobj
 
 Summary: Nagios module for openATTIC
 
