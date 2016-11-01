@@ -17,6 +17,10 @@ Version 2.0.16 (not released yet):
 * Backend: Added reading and writing of the `policy.cfg` of DeepSea REST API (OP-1617)
 * Backend: The is_oa_host field is set to True for oA hosts by 'oaconfig
   add-host' (OP-1665)
+* Packaging: The python-configobj dependency is moved to the openattic-base
+  package (OP-1666)
+* Packaging: Added missing dependency openattic-module-cron in
+  openattic-module-lvm (OP-1664)
 
 
 Version 2.0.15, 12. October 2016:
