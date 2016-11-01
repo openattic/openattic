@@ -135,14 +135,14 @@ check for ``None`` values.
 Database migrations
 -------------------
 
-In order to support database migrations form Django 1.6 onwards, we had to build our own
+In order to support database migrations from Django 1.6 onwards, we had to build our own
 database migration framework. This framework has three major requirements. First, we need to
 migrate the database without the `Django 1.7 migration framework
 <https://docs.djangoproject.com/en/1.7/topics/migrations/>`_. Second, updates of Django should
 be possible. Finally, Django updates of already updated databases should work, too.
 
 Our framework will listen to the ``django_16_migrate`` Django command and will then perform
-database migrations which are compatible to future Django versions. This allow Django's migration
+database migrations which are compatible to future Django versions. This allows Django's migration
 framework to take over existing migrations.
 
 The idea is to execute Django 1.7+ migrations on Django 1.6 by running
