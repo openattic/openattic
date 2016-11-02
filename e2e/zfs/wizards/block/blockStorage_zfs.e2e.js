@@ -5,14 +5,14 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
   var wizardProperties = new wizardsCommon();
   var volumeName1 = 'protractor_wizardTest_zfs_blockvol1';
   var volume1 = element(by.cssContainingText('tr', volumeName1));
-  var volumeName2 = 'protractor_wizardTest_zfs_blockvol2';
+  var volumeName2 = 'protractor_wizardTest_zfs_block2';
   var volume2 = element(by.cssContainingText('tr', volumeName2));
-  var hostname1 = "protractor_test_host1";
-  var hostname2 = "protractor_test_host2";
+  var hostname1 = "protractor_zfs_host1";
+  var hostname2 = "protractor_zfs_host1";
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var hostItem = element(by.css('ul .tc_menuitem_hosts > a'));
-  var iqn1 = "iqn.1991-05.com.microsoft:protractor_test_host1";
-  var iqn2 = "iqn.1991-05.com.microsoft:protractor_test_host2";
+  var iqn1 = "iqn.1991-05.com.microsoft:protractor_zfs_host1";
+  var iqn2 = "iqn.1991-05.com.microsoft:protractor_zblock_host2";
   var menu = element.all(by.css('ul .tc_menuitem > a'));
 
   beforeAll(function(){
