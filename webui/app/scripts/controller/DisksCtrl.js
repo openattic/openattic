@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("DiskCtrl", function ($scope, $state, DiskService, TabViewService) {
+app.controller("DiskCtrl", function ($scope, $state, DiskService, tabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -60,8 +60,8 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService, TabViewService
     linkedBy: "id",
     jumpTo: "more"
   };
-  TabViewService.setScope($scope);
-  $scope.changeTab = TabViewService.changeTab;
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {

@@ -52,8 +52,8 @@ var app = angular.module("openattic.tabView");
  *      linkedBy: "<attribute child of $scope.selection.item>",
  *      jumpTo: "<css id of the content element>"
  *    };
- *   TabViewService.setScope($scope); // Update the internal scope.
- *   $scope.changeTab = TabViewService.changeTab; // Only get the definition the function.
+ *   tabViewService.setScope($scope); // Update the internal scope.
+ *   $scope.changeTab = tabViewService.changeTab; // Only get the definition the function.
  */
 app.service("tabViewService", function ($state) {
   var scope = {};
