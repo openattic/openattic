@@ -157,6 +157,12 @@ class RequestHandlers(object):
         return 'http://%s%s/%s' % (ip, api_root, api_prefix)
 
     def _get_object_host(self, obj):
+        if isinstance(obj, Host):
+            if obj.is_oa_host:
+                return obj
+            else:
+                return Host.objects.get_current()
+
         try:
             host_filter = self.get_queryset().model.objects.hostfilter
         except AttributeError:
@@ -169,6 +175,9 @@ class RequestHandlers(object):
                     return host
 
     def _get_reqdata_host(self, data):
+        if self.model == Host:
+            return Host.objects.get_current()
+
         try:
             return self.get_host_by_data(data)
         except:

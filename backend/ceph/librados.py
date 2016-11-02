@@ -43,13 +43,13 @@ class Keyring(object):
         self._find(keyrings)
 
         if self.filename:
-            logger.info("Selected keyring {}".format(self.filename))
+            logger.debug("Selected keyring {}".format(self.filename))
         else:
             logger.error("No usable keyring")
             raise RuntimeError("Check keyring permissions")
 
         self._username()
-        logger.info("Connecting as {}".format(self.username))
+        logger.debug("Connecting as {}".format(self.username))
 
     def _find(self, keyrings):
         """

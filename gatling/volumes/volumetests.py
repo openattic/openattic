@@ -106,8 +106,7 @@ class VolumeTests(object):
         self.assertFalse(vol["response"]["is_filesystemvolume"])
         self.assertIn(vol["response"]["status"]["status"], ["good", "locked"])
 
-        self.send_request("PUT", obj_id=vol["response"]["id"], data={"id": vol["response"]["id"],
-                                                                     "filesystem": fs})
+        self.send_request("PUT", obj_id=vol["response"]["id"], data={"filesystem": fs})
         time.sleep(self.sleeptime)
         updated_vol = self.send_request("GET", obj_id=vol["response"]["id"])
         self.check_volume_properties(updated_vol)
@@ -123,8 +122,8 @@ class VolumeTests(object):
         self.assertIn(vol["response"]["status"]["status"], ["good", "locked"])
 
         # resize the volume and check properties
-        self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": self.bigsize,
-                                                                     "id": vol["response"]["id"]})
+        self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": self.bigsize})
+
         # bad workaround if systemd is not able to unmount the volume in time
         time.sleep(self.sleeptime)
         resized_vol = self.send_request("GET", obj_id=vol["response"]["id"])
@@ -143,8 +142,8 @@ class VolumeTests(object):
         self.assertIn(vol["response"]["status"]["status"], ["good", "locked"])
 
         # resize the volume and check properties
-        self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": self.smallsize,
-                                                                     "id": vol["response"]["id"]})
+        self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": self.smallsize})
+
         # bad workaround if systemd is not able to unmount the volume in time
         time.sleep(self.sleeptime)
         resized_vol = self.send_request("GET", obj_id=vol["response"]["id"])
@@ -282,8 +281,7 @@ class VolumeTests(object):
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=vol["response"]["id"],
-                              data={"megs": 0, "id": vol["response"]["id"]})
+            self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": 0})
 
         self.check_exception_messages(err, self.error_messages["test_resize_0mb"], field="megs")
 
@@ -304,7 +302,6 @@ class XfsVolumeTests(VolumeTests):
         self.assertLessEqual(vol["response"]["usage"]["size"], self.bigsize)
 
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=vol["response"]["id"],
-                              data={"megs": 0, "id": vol["response"]["id"]})
+            self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": 0})
 
         self.check_exception_messages(err, self.error_messages["test_shrink"], field="megs")
