@@ -46,8 +46,8 @@ app.directive("tabView", function () {
       selection: "=",
       super: "="
     },
-    templateUrl: "components/tabView/templates/tab.view.html",
-    controller: function ($scope, TabViewService) {
+    templateUrl: "components/tabView/templates/tabset.html",
+    controller: function ($scope, tabViewService) {
       Object.keys($scope.tabData.tabs).forEach(function (tabName) {
         var tab = $scope.tabData.tabs[tabName];
         if (!tab.show) {
@@ -60,8 +60,8 @@ app.directive("tabView", function () {
           throw "Error wrong tab format in " + tab;
         }
       });
-      TabViewService.setScope($scope);
-      $scope.changeTab = TabViewService.changeTab;
+      tabViewService.setScope($scope);
+      $scope.changeTab = tabViewService.changeTab;
     }
   };
 });
