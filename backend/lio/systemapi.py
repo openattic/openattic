@@ -17,17 +17,15 @@
 import logging
 
 try:
-    from rtslib_fb import target
+    import rtslib_fb as rtslib
 except ImportError:
-    from rtslib import target
+    import rtslib
 
-from ifconfig.models import Host
-from systemd         import dbus_to_python
-from systemd.plugins import logged, BasePlugin, method, deferredmethod
+from systemd.plugins import logged, BasePlugin, deferredmethod
 from systemd.lockutils import Lockfile
 from systemd.procutils import invoke
 
-from lio             import models
+from lio import models
 
 
 @logged
@@ -40,6 +38,20 @@ class SystemD(BasePlugin):
         invoke(["modprobe", "iscsi_target_mod"])
         invoke(["modprobe", "target_core_iblock"])
         invoke(["modprobe", "target_core_pscsi"])
+
+    @deferredmethod(in_signature="i")
+    def fabric_load(self, fabric_name, sender):
+        """
+        load() has been removed in later versions, but is required on Trusty.
+
+        :raise SystemError: If fabric still doesn't exist afterwards.
+        """
+        fabric = rtslib.FabricModule(fabric_name.encode("utf-8"))
+        if not fabric.exists and hasattr(fabric, 'load'):
+            list(fabric.load())  # load() returns a list generator.
+
+        if not fabric.exists:
+            raise SystemError("fabric %s not loaded" % fabric_name)
 
     @deferredmethod(in_signature="i")
     def install_hostacl(self, id, sender):
