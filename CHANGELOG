@@ -19,6 +19,7 @@ Version 2.0.16 (not released yet):
   add-host' (OP-1665)
 * Backend: Added database migrations for Django 1.6 (OP-1649)
 * Backend: Fixed Bug on Ubuntu Trusty preventing deletion of iSCSI targets (OP-722)
+* Backend: Fixed issue breaking the WebUI on Xenial (OP-1689)
 * WebUI: Tabs will be selected as expected (OP-1082)
 * Packaging: The python-configobj dependency is moved to the openattic-base
   package (OP-1666)
