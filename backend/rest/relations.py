@@ -68,5 +68,39 @@ if drf_version() < (3, 0):
                 'url': url
             }
 else:
-    HyperlinkedRelatedField = RestFramework_HyperlinkedRelatedField
+    class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
+        """
+        There is a problem, if
+        1. You are using DRF >= 3.0
+        1. and your serializer contains a HyperlinkedRelatedField named f
+        2. and the corresponding model does not have a related field f.
+        3. Instead, it has a property f returning an F-model instance, e.g.:
+
+        >>> class M(Model):
+        >>>     @property
+        >>>     def my_prop(self):
+        >>>         return self.foo.my_prop
+
+        Then, the serializer will fail to generate the URL, because the HyperlinkedRelatedField
+        cannot cope with the fact that `django.db.models.base.Model#serializable_value`
+        returns the PK, if the model returns a field with that name, or else the model instance.
+
+        If we disable the pk-only-optimization, `HyperlinkedRelatedField` will not call
+        `django.db.models.base.Model#serializable_value`, thus disabling the ode path affected
+        by this bug.
+
+        Another idea would be to force the use of the PK for these property based
+        HyperlinkedRelatedFields by specifying the sorce attribute of the HyperlinkedRelatedField.
+        But that doesn't work, cause some serializers must support properties and ForeinKeys at
+        the same time.
+
+        Feel free to find and implement another workaround.
+
+        See also: https://github.com/tomchristie/django-rest-framework/issues/4653
+        """
+
+        def use_pk_only_optimization(self):
+            return False
+
+
     HyperlinkedIdentityField = RestFramework_HyperlinkedIdentityField
