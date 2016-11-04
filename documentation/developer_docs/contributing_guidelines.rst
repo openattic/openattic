@@ -132,6 +132,63 @@ check for ``None`` values.
 
 .. _documenting_changes:
 
+Database migrations
+-------------------
+
+In order to support database migrations from Django 1.6 onwards, we had to build our own
+database migration framework. This framework has three major requirements. First, we need to
+migrate the database without the `Django 1.7 migration framework
+<https://docs.djangoproject.com/en/1.7/topics/migrations/>`_. Second, updates of Django should
+be possible. Finally, Django updates of already updated databases should work, too.
+
+Our framework will listen to the ``django_16_migrate`` Django command and will then perform
+database migrations which are compatible to future Django versions. This allows Django's migration
+framework to take over existing migrations.
+
+The idea is to execute Django 1.7+ migrations on Django 1.6 by running
+the same SQL command of later Django versions. You just need to generate
+the SQL statements by running ``sqlmigrate`` on a Django 1.7+ installation::
+
+  ~/openattic/backend$ ./manage.py sqlmigrate ifconfig 0003_host_is_oa_host
+  BEGIN;
+  ALTER TABLE "ifconfig_host" ADD COLUMN "is_oa_host" boolean NULL;
+  ALTER TABLE "ifconfig_host" ALTER COLUMN "is_oa_host" DROP DEFAULT;
+  COMMIT;
+
+Then, store these migrations in a list of SQL statements in Python. Afterwards, make sure that
+already applied migrations (by executing ``syncdb``) will never be applied again, as this
+could lead to data loss in future migrations.
+
+If you want to perform a manual migration from one database to another, please execute these
+Django commands:
+
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+|           From \\ To              | Django 1.6 original DB | Django 1.6 + DB Migrations         | Django 1.7 original DB | Django 1.7 + DB Migrations    | Django 1.8 original DB     | Django 1.8 + DB Migrations    |
++===================================+========================+====================================+========================+===============================+============================+===============================+
+| **No DB Table**                   | ``syncdb``             | ``syncdb`` + ``django_16_migrate`` | ``migrate``            | ``migrate``                   | ``migrate``                | ``migrate``                   |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+| **Django 1.6 original DB**        | ``syncdb``             | ``syncdb`` + ``django_16_migrate`` | ``migrate``            | ``migrate``                   | ``migrate --fake-initial`` | ``migrate --fake-initial``    |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+| **Django 1.6 + DB Migrations**    | unsupported            | ``syncdb`` + ``django_16_migrate`` | unsupported            | ``migrate``                   | unsupported                | ``migrate --fake-initial``    |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+| **Django 1.7 original DB**        | unsupported            | unsupported                        | -                      | ``migrate``                   | ``migrate``                | ``migrate``                   |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+| **Django 1.7 + DB Migrations**    | unsupported            | unsupported                        | ``migrate``            | ``migrate``                   | ``migrate``                | ``migrate``                   |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+| **Django 1.8 original DB**        | unsupported            | unsupported                        | ``migrate``            | ``migrate``                   | -                          | ``migrate``                   |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+| **Django 1.8 + DB Migrations**    | unsupported            | unsupported                        | ``migrate``            | ``migrate``                   | ``migrate``                | ``migrate``                   |
++-----------------------------------+------------------------+------------------------------------+------------------------+-------------------------------+----------------------------+-------------------------------+
+
+Notice that ``syncdb`` will not perform any alterations to exiting database tables, instead it only
+creates new database tables based on the current model information. Also, notice that
+``--fake-initial`` is required to take over existing database tables without any exiting database
+migration files in Django 1.8.
+
+In order to add a database migration, take a look at our migration framework in
+``backend/sysutils/management/commands/django_16_migrate.py``.
+
+
 Documenting Your Changes
 ------------------------
 

@@ -12,7 +12,7 @@
         <li>
             <a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i>Add</a>
         </li>
-        <li class="tc_snap_clone" ng-class="{disabled: !hasSelection}" ng-click="cloneAction()">
+        <li class="tc_snap_clone" ng-class="{disabled: !snapshotsSelection.item}" ng-click="cloneAction()">
             <a><i class="fa fa-fw fa-files-o"></i>Clone</a>
         </li>
         <li class="divider"></li>
@@ -23,8 +23,8 @@
     <table class="datatable table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
-                <th class="oadatatablecheckbox" ng-if="snapshotsSelection.available">
-                    <input type="checkbox" ng-model="snapshotsSelection.checkAll"/>
+                <th class="oadatatablecheckbox" ng-if="selection.available">
+                    <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 <th sortfield="name" sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
                 <th sortfield="megs" sortdir="asc" sortheaderclass ng-show="!special && columns['Size']">Size</th>
@@ -38,8 +38,8 @@
         <tbody>
             <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }"
                 ng-click="toggleSelection(row, $event)">
-                <td ng-if="snapshotsSelection.available">
-                    <input type="checkbox" checklist-model="snapshotsSelection.items" checklist-value="row"/>
+                <td ng-if="selection.available">
+                    <input class="tc_checkboxes" type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name" class="tc_snapRowName"></td>
                 <td ng-show="!special && columns['Size']" ng-bind="row.usage.size_text"></td>

@@ -41,6 +41,7 @@ from ConfigParser import ConfigParser
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+ALLOWED_HOSTS = '*'  # Required by Django 1.8
 
 APPEND_SLASH = False
 

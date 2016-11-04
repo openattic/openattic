@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("PoolCtrl", function ($scope, $state, PoolService) {
+app.controller("PoolCtrl", function ($scope, $state, PoolService, TabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -43,6 +43,37 @@ app.controller("PoolCtrl", function ($scope, $state, PoolService) {
   };
 
   $scope.selection = {};
+
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "pools.detail.status",
+        class: "tc_status_tab",
+        name: "Status"
+      },
+      storage: {
+        show: "selection.item",
+        state: "pools.detail.storage",
+        class: "tc_storage_tab",
+        name: "Storage"
+      },
+      cephPool: {
+        show: "selection.item.type.app_label === 'ceph'",
+        state: "pools.detail.cephpool",
+        class: "tc_ceph_pool_tab",
+        name: "Ceph Pool"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "pool",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  TabViewService.setScope($scope);
+  $scope.changeTab = TabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {
@@ -65,10 +96,12 @@ app.controller("PoolCtrl", function ($scope, $state, PoolService) {
 
   $scope.$watch("selection.item", function (selitem) {
     if (selitem) {
-      $state.go("pools.detail.status", {
-        pool: selitem.id,
-        "#": "more"
-      });
+      if ($state.current.name === "pools" ||
+          $state.current.name === "pools.detail.cephpool" && selitem.type.app_label !== "ceph") {
+        $scope.changeTab("pools.detail.status");
+      } else {
+        $scope.changeTab($state.current.name);
+      }
     } else {
       $state.go("pools");
     }
