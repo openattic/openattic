@@ -1,7 +1,11 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.16 (not released yet):
+Version 2.0.17 (not released yet):
+----------------------------------
+
+
+Version 2.0.16, 07. November 2016:
 ----------------------------------
 
 * Backend: The REST API 'host' resource returns the openATTIC version (in
