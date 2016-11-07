@@ -263,6 +263,13 @@ After enabling the apt repository, run the following commands to install the
     # apt-get install linux-image-extra-`uname -r`
     # service target restart
 
+.. note::
+  For **Ubuntu 16.04 LTS** some required LVM services may not run after the installation of |oA|.
+  Please enable them by executing::
+
+    # systemctl enable lvm2-lvmetad.socket
+    # systemctl start lvm2-lvmetad.socket
+
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.
 
