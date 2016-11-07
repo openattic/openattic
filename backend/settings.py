@@ -180,13 +180,6 @@ STATIC_URL  = PROJECT_URL + '/staticfiles/'
 STATIC_ROOT = "/var/lib/openattic/static"
 STATICFILES_DIRS = (MEDIA_ROOT,)
 
-import django
-if django.VERSION[:2] == (1, 2):
-    # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-    # trailing slash.
-    # Examples: "http://foo.com/media/", "/media/".
-    ADMIN_MEDIA_PREFIX = PROJECT_URL + '/static/admin/'
-
 LOGIN_URL = PROJECT_URL + '/accounts/login/'
 LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 
@@ -303,8 +296,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
-
-from django import VERSION as django_version
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.auth.context_processors.auth",
