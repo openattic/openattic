@@ -218,6 +218,7 @@ Replace the field ``<distribution>`` with your distribution's short codename:
 
 * ``jessie`` (for Debian 8 "Jessie")
 * ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
+* ``xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
 
 ::
 
