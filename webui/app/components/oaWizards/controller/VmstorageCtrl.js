@@ -30,33 +30,27 @@
  */
 "use strict";
 
-angular.module("openattic.auth", []);
+var app = angular.module("openattic.oaWizards");
+app.controller("VmstorageCtrl", function ($scope) {
+  $scope.limitTypes = ["xfs", "zfs", "btrfs"];
 
-var app = angular.module("openattic.auth");
-app.config(function ($httpProvider) {
-  $httpProvider.defaults.xsrfCookieName = "csrftoken";
-  $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
-});
-
-app.factory("AuthHttpInterceptor", function ($q, $injector) {
-  return {
-    request: function (config) {
-      // Give the backend a clue that we're using AJAX here...
-      config.headers["X-Requested-With"] = "XMLHttpRequest";
-      return config;
+  $scope.input = {
+    cifs: {
+      create: false,
+      available: true,
+      browseable: true,
+      writeable: true
     },
-    responseError: function (rejection) {
-      // Just depending on $state would create a circular dependency,
-      // so we need to get $state via the $injector.
-      var $state = $injector.get("$state");
-      if (rejection.status === 401) {
-        $state.go("login");
-      }
-      return $q.reject(rejection);
-    }
+    nfs: {
+      create: false,
+      options: "rw,no_subtree_check,no_root_squash"
+    },
+    volume: {}
   };
-});
 
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push("AuthHttpInterceptor");
+  $scope.$watch("input.volume.name", function (volName) {
+    if (volName) {
+      $scope.input.cifs.name = volName;
+    }
+  });
 });

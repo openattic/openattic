@@ -30,33 +30,38 @@
  */
 "use strict";
 
-angular.module("openattic.auth", []);
-
-var app = angular.module("openattic.auth");
-app.config(function ($httpProvider) {
-  $httpProvider.defaults.xsrfCookieName = "csrftoken";
-  $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
-});
-
-app.factory("AuthHttpInterceptor", function ($q, $injector) {
+var app = angular.module("openattic.tabView");
+/**
+ * In order to use the directive correctly and well, you first have to set up your controller as explained in the
+ * tabViewService. To use it in the template you just have to add the following:
+ *
+ *   <tab-view tab-data="tabData" tab-config="tabConfig" selection="selection"></tab-view>
+ */
+app.directive("tabView", function () {
   return {
-    request: function (config) {
-      // Give the backend a clue that we're using AJAX here...
-      config.headers["X-Requested-With"] = "XMLHttpRequest";
-      return config;
+    restrict: "E",
+    scope: {
+      tabData: "=",
+      tabConfig: "=",
+      selection: "=",
+      super: "="
     },
-    responseError: function (rejection) {
-      // Just depending on $state would create a circular dependency,
-      // so we need to get $state via the $injector.
-      var $state = $injector.get("$state");
-      if (rejection.status === 401) {
-        $state.go("login");
-      }
-      return $q.reject(rejection);
+    templateUrl: "components/tabView/templates/tabset.html",
+    controller: function ($scope, tabViewService) {
+      Object.keys($scope.tabData.tabs).forEach(function (tabName) {
+        var tab = $scope.tabData.tabs[tabName];
+        if (!tab.show) {
+          tab.show = "true";
+        }
+        if (!tab.class) {
+          tab.class = "";
+        }
+        if (!tab.state || !tab.name) {
+          throw "Error wrong tab format in " + tab;
+        }
+      });
+      tabViewService.setScope($scope);
+      $scope.changeTab = tabViewService.changeTab;
     }
   };
-});
-
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push("AuthHttpInterceptor");
 });
