@@ -596,7 +596,7 @@ class CephOsd(NodbModel, RadosMixin):
     def get_all_objects(context, query):
         assert context is not None
         api = RadosMixin.mon_api(context.fsid)
-        osd_tree = RadosMixin.mon_api(context.fsid).osd_list() # key=id
+        osd_tree = api.osd_list() # key=id
         osd_dump_data = api.osd_dump()['osds']  # key=osd
         pg_dump_data = api.pg_dump()['osd_stats']  # key=osd
         osd_metadata = api.osd_metadata()  # key=id
