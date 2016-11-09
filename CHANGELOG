@@ -5,6 +5,7 @@ Version 2.0.17 (not released yet):
 ----------------------------------
 
 * Backend: Fixed creation of NFS and Samba shares on Xenial (OP-1697)
+* Backend: Fixed XML-RPCD on Xenail (OP-1698)
 
 Version 2.0.16, 07. November 2016:
 ----------------------------------
