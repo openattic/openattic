@@ -13,7 +13,7 @@
 """
 import subprocess
 from collections import deque
-from contextlib import contextmanager
+from contextlib import contextmanager, closing
 from itertools import product
 
 import rados
@@ -21,7 +21,9 @@ import os
 import json
 import glob
 import logging
+import multiprocessing
 import ConfigParser
+import traceback
 
 import rbd
 
@@ -121,6 +123,12 @@ class Client(object):
         if self.connected():
             self._cluster.shutdown()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.disconnect()
+
     def connected(self):
         return self._cluster and self._cluster.state == 'connected'
 
@@ -212,6 +220,44 @@ class Client(object):
 
 class ExternalCommandError(Exception):
     pass
+
+
+def call_librados(fsid, method, timeout=30):
+    class LibradosProcess(multiprocessing.Process):
+        def __init__(self, fsid, com_pipe):
+            multiprocessing.Process.__init__(self)
+            self.com_pipe = com_pipe
+            self.fsid = fsid
+
+        def run(self):
+            with closing(self.com_pipe):
+                try:
+                    with self._get_client() as client:
+                        res = method(client)
+                        self.com_pipe.send(res)
+                except Exception as e:
+                    trace = traceback.format_exc()
+                    self.com_pipe.send((e, trace))
+                    raise
+
+        def _get_client(self):
+            from ceph.models import CephCluster
+            cluster_name = CephCluster.get_name(self.fsid)
+            client = Client(cluster_name)
+            return client
+
+    com1, com2 = multiprocessing.Pipe()
+    p = LibradosProcess(fsid, com2)
+    p.start()
+    p.join(timeout)
+    res = ''
+    if p.is_alive():
+        p.terminate()
+        logger.error('Process {} terminated because of timeout ({} sec)'.format(p.name, timeout))
+    else:
+        res = com1.recv()
+    com1.close()
+    return res
 
 
 def undoable(func):
