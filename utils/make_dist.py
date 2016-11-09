@@ -681,7 +681,7 @@ class DistBuilder(object):
 
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
-                                        version,
+                                        version + '-1',
                                         self._datestring,
                                         self._get_current_revision_hash(self._tmp_oa_clone_dir),
                                         self._tmp_oa_clone_dir)
