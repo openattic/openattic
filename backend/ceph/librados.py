@@ -757,11 +757,13 @@ class RbdApi(object):
                       ],
                       0)
 
-    def __init__(self, client):
+    def __init__(self, fsid):
         """
-        :type client: Client
+        :type fsid: str | unicode
         """
-        self.cluster = client
+        from ceph.models import CephCluster
+        self.fsid = fsid
+        self.cluster_name = CephCluster.get_name(self.fsid)
 
     @logged
     @undoable
@@ -779,7 +781,7 @@ class RbdApi(object):
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
         """
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         rbd_inst = rbd.RBD()
         default_features = 0 if old_format else 61  # FIXME: hardcoded int
         feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
@@ -789,7 +791,7 @@ class RbdApi(object):
         self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         rbd_inst = rbd.RBD()
         rbd_inst.remove(ioctx, image_name)
 
@@ -798,7 +800,7 @@ class RbdApi(object):
         :returns: list -- a list of image names
         :rtype: list[str]
         """
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         rbd_inst = rbd.RBD()
         return rbd_inst.list(ioctx)
 
@@ -811,14 +813,14 @@ class RbdApi(object):
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
             return image.stat()
 
     def image_disk_usage(self, pool_name, name):
         """The "rbd du" command is not exposed in python, as it
         is directly implemented in the rbd tool."""
-        out = subprocess.check_output(['rbd', 'disk-usage', '--cluster', self.cluster.cluster_name,
+        out = subprocess.check_output(['rbd', 'disk-usage', '--cluster', self.cluster_name,
                                        '--pool', pool_name, '--image', name, '--format', 'json'])
         du = json.loads(out)['images']
         return du[0] if du else {}
@@ -827,21 +829,21 @@ class RbdApi(object):
     def image_resize(self, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         with rbd.Image(ioctx, name=name) as image:
             original_size = image.size()
             yield image.resize(size)
             image.resize(original_size)
 
     def image_features(self, pool_name, name):
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         with rbd.Image(ioctx, name=name) as image:
             return RbdApi._bitmask_to_list(image.features())
 
     @undoable
     def image_set_feature(self, pool_name, name, feature, enabled):
         """:type enabled: bool"""
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         with rbd.Image(ioctx, name=name) as image:
             bitmask = RbdApi._list_to_bitmask([feature])
             if bitmask not in RbdApi.get_feature_mapping().keys():
@@ -850,6 +852,6 @@ class RbdApi(object):
             self.image_set_feature(pool_name, name, feature, not enabled)
 
     def image_old_format(self, pool_name, name):
-        ioctx = self.cluster._get_pool(pool_name)
+        ioctx = call_librados(self.fsid, lambda client: client._get_pool(pool_name))
         with rbd.Image(ioctx, name=name) as image:
             return image.old_format()

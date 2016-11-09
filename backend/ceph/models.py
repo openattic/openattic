@@ -28,7 +28,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.http import Http404
 from django.utils.translation import ugettext_noop as _
 from django.shortcuts import get_object_or_404
 
@@ -47,25 +46,6 @@ from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVol
 logger = logging.getLogger(__name__)
 
 
-class RadosClientManager(object):
-
-    instances = {}
-
-    def __getitem__(self, fsid):
-        """
-        :type fsid: str | unicode
-        :rtype: librados.Client
-        """
-        if fsid not in self.instances:
-            cluster_name = CephCluster.get_name(fsid)
-            self.instances[fsid] = librados.Client(cluster_name)
-
-        return self.instances[fsid]
-
-
-rados = RadosClientManager()
-
-
 class RadosMixin:
 
     @staticmethod
@@ -78,18 +58,13 @@ class RadosMixin:
         return MonApi(fsid)
 
     @staticmethod
-    def mon_api_or_404(fsid=None):
+    def rbd_api(fsid=None):
         """
         :type fsid: str | unicode
         """
-        return MonApi(RadosMixin.rados_client_or_404(fsid))
-
-    @staticmethod
-    def rbd_api_or_404(fsid=None):
-        """
-        :type fsid: str | unicode
-        """
-        return RbdApi(RadosMixin.rados_client_or_404(fsid))
+        if fsid is None:
+            fsid = NodbManager.nodb_context.fsid
+        return RbdApi(fsid)
 
 
 class CephCluster(NodbModel, RadosMixin):
@@ -817,7 +792,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        api = RadosMixin.rbd_api_or_404(context.fsid)
+        api = RadosMixin.rbd_api(context.fsid)
 
         pools = CephPool.objects.all()
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool)
@@ -873,7 +848,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         if not hasattr(self, 'features') or self.features == u'':
             self.features = None
 
-        api = self.rbd_api_or_404()
+        api = self.rbd_api()
 
         with undo_transaction(api, re_raise_exception=True,
                               exception_type=CephRbd.DoesNotExist):
@@ -910,7 +885,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             self._update_nagios_configs()
 
     def delete(self, using=None):
-        api = self.rbd_api_or_404()
+        api = self.rbd_api()
         api.remove(self.pool.name, self.name)
         self._update_nagios_configs()
 

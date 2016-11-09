@@ -69,11 +69,8 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_curren
 
 @task(description='Get RBD performance data of cluster \'{0}\', pool \'{1}\' and RBD image \'{2}\'')
 def get_rbd_performance_data(fsid, pool_name, image_name):
-    from ceph.models import RadosClientManager
-
     start_time = time.time()
-    rados = RadosClientManager()
-    api = librados.RbdApi(rados[fsid])
+    api = librados.RbdApi(fsid)
     disk_usage = api.image_disk_usage(pool_name, image_name)
     exec_time = time.time() - start_time
 
