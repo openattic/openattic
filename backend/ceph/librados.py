@@ -342,7 +342,7 @@ class MonApi(object):
                 "name=name,type=CephString,goodchars=[A-Za-z0-9-_.] " \
                 "name=profile,type=CephString,n=N,req=false", \
                 "create erasure code profile <name> with [<key[=value]> ...] pairs. Add a --force
-                    at the end to override an existing profile (VERY DANGEROUS)", \
+                at the end to override an existing profile (VERY DANGEROUS)", \
                 "osd", "rw", "cli,rest")
 
         .. example::
