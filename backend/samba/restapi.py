@@ -21,6 +21,7 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
 from rest import relations
+from rest.utilities import DeleteCreateMixin
 
 from volumes.models import StorageObject
 from samba.models import Share
@@ -29,7 +30,7 @@ from samba.conf import settings as samba_settings
 from rest.multinode.handlers import RequestHandlers
 
 
-class SambaShareSerializer(serializers.HyperlinkedModelSerializer):
+class SambaShareSerializer(DeleteCreateMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a Samba Share. """
     url = serializers.HyperlinkedIdentityField(view_name="sambashare-detail")
     volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
@@ -41,10 +42,13 @@ class SambaShareSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'name', 'path', 'available', 'browseable', 'guest_ok', 'writeable',
                   'comment', 'volume')
 
-    def restore_object(self, attrs, instance=None):
-        attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
-        del attrs["volume.storageobj"]
-        return super(SambaShareSerializer, self).restore_object(attrs, instance)
+    def update_validated_data(self, attrs):
+        if "volume.storageobj" in attrs:
+            attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
+            del attrs["volume.storageobj"]
+        else:
+            attrs["volume"] = attrs["volume"]["storageobj"].filesystemvolume_or_none
+        return attrs
 
 
 class SambaShareFilter(django_filters.FilterSet):
