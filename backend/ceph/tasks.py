@@ -27,7 +27,7 @@ def set_pgs(fsid, pool_id, pgs):
 
     with fsid_context(fsid) as ctx:
         pool = CephPool.objects.get(id=pool_id)
-        api = librados.MonApi(ctx.cluster.rados_client)
+        api = librados.MonApi(fsid)
 
         api.osd_pool_set(pool.name, 'pg_num', pgs)
         api.osd_pool_set(pool.name, 'pgp_num', pgs)
