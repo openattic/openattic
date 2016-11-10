@@ -72,7 +72,7 @@ VERSIONFILE="$PKGDIR/version.txt"
 SPECFILE="$PKGDIR/rpm/openattic.spec"
 TMPDIR=$(mktemp -d)
 echo "Extracting version.txt and RPM spec file..."
-tar jxf "$PKGDIST" -C "$TMPDIR" "$VERSIONFILE" "$SPECFILE"
+tar jxf "$PKGDIST" --no-same-owner -C "$TMPDIR" "$VERSIONFILE" "$SPECFILE"
 
 # Determine the package version and build date from version.txt
 # Can't source the file directly due to the ini-Style section header.
