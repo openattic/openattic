@@ -128,5 +128,13 @@ else:
             raise KeyError("need id or url field (id preferred)")
 
 
-
-    HyperlinkedIdentityField = RestFramework_HyperlinkedIdentityField
+    class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
+        def to_representation(self, obj):
+            """
+            We actually modify the output of `HyperlinkedIdentityField` to be non-standard.
+            This should have been done in a class with a different name or not at all.
+            """
+            url = super(HyperlinkedIdentityField, self).to_representation(obj)
+            return {
+                'url': url
+            }
