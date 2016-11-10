@@ -24,6 +24,7 @@ Version 2.0.16 (not released yet):
   package (OP-1666)
 * Packaging: Added missing dependency openattic-module-cron in
   openattic-module-lvm (OP-1664)
+* Packaging: Fixed permission problem when building rpm packages (OP-1700)
 
 
 Version 2.0.15, 12. October 2016:
