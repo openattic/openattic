@@ -114,7 +114,7 @@ else:
                 'title': unicode(obj)
             }
 
-        def from_representation(self, value):
+        def to_internal_value(self, value):
             """
             We actually modify the output of `HyperlinkedRelatedField` to be non-standard.
             This should have been done in a different class, and not directly here.
@@ -124,9 +124,17 @@ else:
             if "id" in value:
                 return self.queryset.get(id=value["id"])
             if "url" in value:
-                return super(HyperlinkedRelatedField, self).from_representation(value["url"])
+                return super(HyperlinkedRelatedField, self).to_internal_value(value["url"])
             raise KeyError("need id or url field (id preferred)")
 
 
-
-    HyperlinkedIdentityField = RestFramework_HyperlinkedIdentityField
+    class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
+        def to_representation(self, obj):
+            """
+            We actually modify the output of `HyperlinkedIdentityField` to be non-standard.
+            This should have been done in a class with a different name or not at all.
+            """
+            url = super(HyperlinkedIdentityField, self).to_representation(obj)
+            return {
+                'url': url
+            }

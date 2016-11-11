@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, toasty,
-    TabViewService) {
+    tabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -107,8 +107,8 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     linkedBy: "id",
     jumpTo: "more"
   };
-  TabViewService.setScope($scope);
-  $scope.changeTab = TabViewService.changeTab;
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
 
   $scope.selection = {};
 
