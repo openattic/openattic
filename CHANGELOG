@@ -9,6 +9,10 @@ Version 2.0.17 (not released yet):
 * Backend: Fixed creation of volume snapshots on Xenail (OP-1699)
 * Backend: Fixed display of pool types on Xenial (OP-1703)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Xenial (OP-1672)
+* WebUI: Display alternative graph image if loading fails (OP-1403)
+* Installation: Fix Permission denied: '/usr/bin/pip' for Vagrant development
+  environment using SUSE Leap (OP-1715)
+
 
 Version 2.0.16, 07. November 2016:
 ----------------------------------
