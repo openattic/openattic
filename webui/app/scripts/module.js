@@ -49,12 +49,7 @@ angular.module("openattic", [
 
 var app = angular.module("openattic");
 // Start configuration
-app.constant("RESPONSIVE", {
-  xs: 0,
-  sm: 768,
-  md: 992,
-  lg: 1200
-});
+
 // End configuration
 
 app.config(function ($httpProvider) {
