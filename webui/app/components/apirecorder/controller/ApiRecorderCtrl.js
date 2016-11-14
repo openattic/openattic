@@ -42,7 +42,7 @@ app.controller("ApiRecorderCtrl", function ($scope, $uibModalInstance, toasty) {
     var selection = document.getSelection();
     selection.removeAllRanges();
     node.select();
-    document.execCommand('copy');
+    document.execCommand("copy");
     selection.removeAllRanges();
     // Display success message.
     toasty.success({
