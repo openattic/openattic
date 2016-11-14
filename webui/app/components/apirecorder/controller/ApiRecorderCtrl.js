@@ -45,8 +45,11 @@ app.controller("ApiRecorderCtrl", function ($scope, $uibModalInstance, $document
     node.style.top = ($window.pageYOffset || $document[0].documentElement.scrollTop) + 'px';
     // Copy text to clipboard.
     $document[0].body.appendChild(node);
+    var selection = $document[0].getSelection();
+    selection.removeAllRanges();
     node.select();
     $document[0].execCommand("copy");
+    selection.removeAllRanges();
     $document[0].body.removeChild(node);
     // Display success message.
     toasty.success({
