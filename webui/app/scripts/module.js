@@ -42,7 +42,9 @@ angular.module("openattic", [
   "ui.sortable",
   "ui.tree",
   "ngStorage",
-  "openattic.extensions"
+  "openattic.core",
+  "openattic.local",
+  "openattic.ceph"
 ]);
 
 var app = angular.module("openattic");
