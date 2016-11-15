@@ -49,5 +49,5 @@ app.controller("ApiRecorderCtrl", function ($scope, $uibModalInstance, toasty) {
       title: "API Recorder",
       msg  : "Script successfully copied to clipboard."
     });
-  }
+  };
 });
