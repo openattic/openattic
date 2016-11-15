@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, $state, $filter,
-    taskQueueService, $uibModal, $timeout) {
+    taskQueueService, $uibModal, $interval, $http) {
   /**
    * Describes and configures all displayed tabs and tables.
    */
@@ -167,6 +167,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       ]
     }
   };
+  $scope.reloadTime = 5000;
 
   /**
    * Returns the data of the active tab.
@@ -348,7 +349,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
               tab.data = [];
               tab.loaded = true;
               // Reload all tasks if many after a longer timeout has passed to reduce the load on the client.
-              $scope.reloadTaskIn(15);
+              $scope.reloadTaskIn($scope.reloadTime);
             }
           }
           $scope.tabs[tabKey] = tab;
@@ -401,7 +402,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           tab.data = tab.tempData;
           $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
           // Reload all tasks if many after a longer timeout has passed to reduce the load on the client.
-          $scope.reloadTaskIn(tab.pageMax * 15);
+          $scope.reloadTaskIn(tab.pageMax * $scope.reloadTime);
         }
       })
       .catch(function (error) {
@@ -507,7 +508,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     });
 
     modalInstance.opened.then(function () {
-      $timeout.cancel($scope.timeout);
+      $interval.cancel($scope.timeout);
     });
 
     modalInstance.closed.then(function () {
@@ -516,9 +517,13 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   /**
-   * Triggers a refresh over all tabs.
+   * Triggers a refresh over all tabs, but only if there are no pending requests.
    */
   $scope.loadAllTabs = function () {
+    if ($http.pendingRequests.length > 0) {
+      $scope.reloadTaskIn(30);
+      return;
+    }
     Object.keys($scope.tabs).forEach(function (tabKey) {
       $scope.loadTabTasks(tabKey);
     });
@@ -530,11 +535,11 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
    */
   $scope.reloadTaskIn = function (time) {
     if ($scope.timeout) {
-      $timeout.cancel($scope.timeout);
+      $interval.cancel($scope.timeout);
     }
-    $scope.timeout = $timeout(function () {
+    $scope.timeout = $interval(function () {
       $scope.loadAllTabs();
-    }, time * 1000);
+    }, time, 1);
   };
 
   /**
@@ -557,6 +562,6 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
    * Cancels any refresh call, when the dialog is closed.
    */
   $uibModalInstance.closed.then(function () {
-    $timeout.cancel($scope.timeout);
+    $interval.cancel($scope.timeout);
   });
 });

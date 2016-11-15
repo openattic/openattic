@@ -35,7 +35,7 @@ app.directive("taskQueueDirective", function () {
   return {
     restrict: "A",
     templateUrl: "components/taskQueue/templates/task-queue-directive.html",
-    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $timeout) {
+    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $interval) {
       $scope.taskOverview = {
         avr: 0,
         run: 0,
@@ -65,7 +65,7 @@ app.directive("taskQueueDirective", function () {
        */
       $scope.loadOverview = function () {
         if (!$scope.user) {
-          $scope.taskTimeout = $timeout($scope.loadOverview, 5000);
+          $scope.taskTimeout = $interval($scope.loadOverview, 5000, 1);
           return;
         }
         $scope.taskOverview.queue = 0;
@@ -119,7 +119,7 @@ app.directive("taskQueueDirective", function () {
             $scope.taskOverview.updated === 0) {
           $scope.updateTaskOverview();
         } else if ($scope.taskOverview.updated === 1) {
-          $scope.taskTimeout = $timeout($scope.loadOverview, 15000);
+          $scope.taskTimeout = $interval($scope.loadOverview, 15000, 1);
         }
       });
 
@@ -136,7 +136,7 @@ app.directive("taskQueueDirective", function () {
         });
 
         taskDialog.opened.then(function () {
-          $timeout.cancel($scope.taskTimeout);
+          $interval.cancel($scope.taskTimeout);
         });
 
         taskDialog.closed.then(function () {

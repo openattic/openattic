@@ -3,13 +3,15 @@
 </div>
 <div class="openattic-modal-content">
     <uib-tabset active="modalTabData.active">
-        <uib-tab ng-repeat="(tabKey, tab) in tabs" heading="{{tab.name}}
+        <uib-tab class="tc_tab_{{tabKey}}" ng-repeat="(tabKey, tab) in tabs" heading="{{tab.name}}
             {{tab.count >= 0 ? ' (' + tab.count + ')' : ''}}" index="$index">
-            <p ng-hide="tab.loaded">Loading...<p>
-            <p ng-show="tab.loaded && tab.data.length === 0">There are no {{tabKey}} Tasks.<p>
-            <form name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
+            <p class="tc_loading_{{tabKey}}" ng-hide="tab.loaded">Loading...<p>
+            <p class="tc_no_elements_{{tabKey}}" ng-show="tab.loaded && tab.data.length === 0">
+                There are no {{tabKey}} Tasks.
+            <p>
+            <form class="tc_listing_{{tabKey}}" name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
                 <div class="dataTables_header clearfix">
-                    <button type="button" class="btn btn-sm btn-primary tc_delete_{{tabKey}}_tasks"
+                    <button type="button" class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
                         ng-class="{disabled: tab.selection.items.length === 0}"  ng-click="taskDeleteAction()">
                         Delete</button>
                 </div>
@@ -18,10 +20,12 @@
                     <thead>
                         <tr>
                             <th width="3%">
-                                <input type="checkbox" ng-model="tab.selection.checkAll" ng-change="checkAllTasks()"/>
+                                <input type="checkbox" class="tc_select_all_{{tabKey}}"
+                                       ng-model="tab.selection.checkAll" ng-change="checkAllTasks()"/>
                             </th>
                             <th ng-repeat="col in tab.tableColumns" ng-click="order(col.attribute)"
-                                class="{{orderClass(col.attribute)}}" ng-bind="col.name" width="{{col.width}}">
+                                class="{{orderClass(col.attribute)}} tc-col-{{tabKey}}-{{col.attribute}}"
+                                ng-bind="col.name" width="{{col.width}}">
                             </th>
                         </tr>
                     </thead>
@@ -62,6 +66,6 @@
 </div>
 <div class="openattic-modal-footer">
     <div class="button-group text-right">
-        <button id="bot1-Msg1" class="btn btn-default btn-sm" ng-click="closeTaskQueue()">Close</button>
+        <button class="btn btn-default btn-sm modal-close-btn" ng-click="closeTaskQueue()">Close</button>
     </div>
 </div>
