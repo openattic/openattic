@@ -30,19 +30,19 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephHosts");
+var app = angular.module("openattic.cephNodes");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("cephHosts", {
-        url          : "/ceph/hosts",
+      .state("cephNodes", {
+        url          : "/ceph/nodes",
         views        : {
           "main": {
-            templateUrl: "components/ceph-hosts/templates/hosts.html",
-            controller : "CephHostsCtrl"
+            templateUrl: "components/ceph-nodes/templates/nodes.html",
+            controller : "CephNodesCtrl"
           }
         },
         ncyBreadcrumb: {
-          label: "Ceph Hosts"
+          label: "Ceph Nodes"
         }
       });
 });

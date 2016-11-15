@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephHosts");
-app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
+var app = angular.module("openattic.cephNodes");
+app.controller("CephNodesCtrl", function ($scope, cephNodesService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -46,10 +46,10 @@ app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
 
   $scope.error = false;
 
-  $scope.getHosts = function () {
+  $scope.getNodes = function () {
     $scope.error = false;
 
-    cephHostsService.filter({
+    cephNodesService.filter({
           page: $scope.filterConfig.page + 1,
           pageSize: $scope.filterConfig.entries,
           search: $scope.filterConfig.search,
@@ -70,6 +70,6 @@ app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
     if (newVal.entries === null) {
       return;
     }
-    $scope.getHosts();
+    $scope.getNodes();
   }, true);
 });

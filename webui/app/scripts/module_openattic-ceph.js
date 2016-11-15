@@ -32,7 +32,7 @@
 
 angular.module("openattic.ceph", [
   "openattic.cephErasureCodeProfiles",
-  "openattic.cephHosts",
+  "openattic.cephNodes",
   "openattic.cephOsd",
   "openattic.cephPools",
   "openattic.cephRbd"

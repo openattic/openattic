@@ -30,4 +30,4 @@
  */
 "use strict";
 
-angular.module("openattic.cephHosts", []);
+angular.module("openattic.cephNodes", []);

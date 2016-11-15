@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephHosts");
-app.factory("cephHostsService", function ($resource) {
+var app = angular.module("openattic.cephNodes");
+app.factory("cephNodesService", function ($resource) {
   return $resource(globalConfig.API.URL + "cephminions/:id", {
     id: "@id"
   }, {
