@@ -20,8 +20,8 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from rest.utilities import get_request_query_params
-
+from rest.utilities import get_request_query_params, get_request_data
+import logging
 
 class TaskQueueSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
@@ -67,7 +67,8 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
         if not settings.DEBUG:
             return Response(status=status.HTTP_404_NOT_FOUND)
         from taskqueue.tests import wait
-        times = get_request_query_params(request).get('times', 100)
+        times = get_request_data(request).get('times')
+	logging.warning(times)
         task = wait.delay(times)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
