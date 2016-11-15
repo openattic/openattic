@@ -48,7 +48,8 @@ var allSuites = {
   http_share           : '../e2e/base/shares/http/*.e2e.js',
   nfs_share            : '../e2e/base/shares/nfs/*.e2e.js',
   cifs_share           : '../e2e/base/shares/cifs/*.e2e.js',
-  lun                  : '../e2e/base/shares/lun/*.e2e.js',
+  //TODO: check if "lun" can be deleted due to duplicated content
+  //lun                  : '../e2e/base/shares/lun/*.e2e.js',
   host_add             : '../e2e/base/hosts/host_add.e2e.js',
   host_form            : '../e2e/base/hosts/host_form_workflow.e2e.js',
   host_wwns            : '../e2e/base/hosts/wwn_validation.e2e.js',

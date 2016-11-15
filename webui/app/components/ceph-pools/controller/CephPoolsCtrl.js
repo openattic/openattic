@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService,
-    $uibModal, TabViewService) {
+    $uibModal, tabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.pools = {};
@@ -119,8 +119,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     linkedBy: "id",
     jumpTo: "more"
   };
-  TabViewService.setScope($scope);
-  $scope.changeTab = TabViewService.changeTab;
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
