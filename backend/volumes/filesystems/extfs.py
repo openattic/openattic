@@ -14,11 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-from systemd  import dbus_to_python
+from systemd import dbus_to_python
 
 from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
+
 
 class Ext2(FileSystem):
     """ Handler for Ext2 (without journal). """
@@ -27,14 +28,17 @@ class Ext2(FileSystem):
 
     @property
     def info(self):
-        return dbus_to_python( self.dbus_object.e2fs_info( self.volume.storageobj.blockvolume.volume.path ) )
+        return dbus_to_python(self.dbus_object.e2fs_info(
+            self.volume.storageobj.blockvolume.volume.path))
 
     def format(self):
         try:
             raidparams = self.volume.storageobj.blockvolume.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e2fs_format( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e2fs_format(self.volume.storageobj.blockvolume.volume.path,
+                                     self.volume.storageobj.name, raidparams["chunksize"],
+                                     raidparams["datadisks"])
         self.write_fstab()
         self.mount()
         self.chown()
@@ -42,7 +46,7 @@ class Ext2(FileSystem):
     def shrink(self, oldmegs, newmegs):
         if self.mounted:
             self.unmount()
-        self.dbus_object.e2fs_check( self.volume.storageobj.blockvolume.volume.path )
+        self.dbus_object.e2fs_check(self.volume.storageobj.blockvolume.volume.path)
         # call grow for the actual resize2fs
         self.grow(oldmegs, newmegs)
 
@@ -51,17 +55,19 @@ class Ext2(FileSystem):
 
     def grow(self, oldmegs, newmegs):
         # grow can be called as part of shrink(), so make sure we set the `grow' param correctly
-        self.dbus_object.e2fs_resize( self.volume.storageobj.blockvolume.volume.path, newmegs, (newmegs > oldmegs) )
+        self.dbus_object.e2fs_resize(self.volume.storageobj.blockvolume.volume.path, newmegs,
+                                     (newmegs > oldmegs))
 
     def set_uuid(self, value="", generate=False):
         """ Set the file system's UUID. """
         if generate:
             value = "random"
-        self.dbus_object.e2fs_set_uuid( self.volume.storageobj.blockvolume.volume.path, value )
+        self.dbus_object.e2fs_set_uuid(self.volume.storageobj.blockvolume.volume.path, value)
 
     @classmethod
     def check_type(cls, typestring):
         return "ext2 filesystem data" in typestring
+
 
 class Ext3(Ext2):
     """ Handler for Ext3 (Ext2 + Journal). """
@@ -73,7 +79,9 @@ class Ext3(Ext2):
             raidparams = self.volume.storageobj.blockvolume.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e3fs_format( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e3fs_format(self.volume.storageobj.blockvolume.volume.path,
+                                     self.volume.storageobj.name, raidparams["chunksize"],
+                                     raidparams["datadisks"])
         self.write_fstab()
         self.mount()
         self.chown()
@@ -93,7 +101,9 @@ class Ext4(Ext2):
             raidparams = self.volume.storageobj.blockvolume.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e4fs_format( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e4fs_format(self.volume.storageobj.blockvolume.volume.path,
+                                     self.volume.storageobj.name, raidparams["chunksize"],
+                                     raidparams["datadisks"])
         self.write_fstab()
         self.mount()
         self.chown()
@@ -116,8 +126,7 @@ class ExtFSDevice(capabilities.Device):
         capabilities.ShrinkCapability,
         capabilities.FileIOCapability,
         ]
-    removes  = [
+    removes = [
         capabilities.BlockbasedCapability,
         capabilities.BlockIOCapability,
         ]
-

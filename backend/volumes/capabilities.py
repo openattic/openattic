@@ -16,6 +16,7 @@
 
 import operator
 
+
 class AbstractCapabilityNode(object):
     op = None
 
@@ -59,11 +60,12 @@ class AbstractCapabilityNode(object):
             else:
                 return TypeError("Unexpected type '%r'" % something)
 
-        return self.op( _get(self.lft), _get(self.rgt) ), satisfied
+        return self.op(_get(self.lft), _get(self.rgt)), satisfied
 
 
 class CapabilityAddNode(AbstractCapabilityNode):
     op = operator.add
+
 
 class CapabilityMulNode(AbstractCapabilityNode):
     op = operator.mul
@@ -72,8 +74,8 @@ class CapabilityMulNode(AbstractCapabilityNode):
 class CapabilityMeta(type):
     capabilities = []
 
-    def __init__( cls, name, bases, attrs ):
-        type.__init__( cls, name, bases, attrs )
+    def __init__(cls, name, bases, attrs):
+        type.__init__(cls, name, bases, attrs)
         if name != "Capability":
             CapabilityMeta.capabilities.append(cls)
 
@@ -89,6 +91,7 @@ class CapabilityMeta(type):
     def __rmul__(self, other):
         return CapabilityMulNode(other, self)
 
+
 class Capability(object):
     __metaclass__ = CapabilityMeta
     # The ``flag'' class variable carries a bit flag used to represent a capability in an int.
@@ -96,147 +99,184 @@ class Capability(object):
     # because if this flag should change for some reason, all hell will break loose.
     flag = None
 
+
 class SlowSATASpeedCapability(Capability):
     """ 3.5" 7200RPM SATA disks """
-    flag = (1<<0)
+    flag = (1 << 0)
+
 
 class FastSATASpeedCapability(SlowSATASpeedCapability):
     """ 2.5" 10kRPM SATA disks """
-    flag = (1<<1)
+    flag = (1 << 1)
+
 
 class SlowSASSpeedCapability(FastSATASpeedCapability):
     """ 2.5" 10kRPM SAS Disks """
-    flag = (1<<2)
+    flag = (1 << 2)
+
 
 class FastSASSpeedCapability(SlowSASSpeedCapability):
     """ 2.5" 15kRPM SAS Disks """
-    flag = (1<<3)
+    flag = (1 << 3)
+
 
 class SSDSpeedCapability(FastSASSpeedCapability):
     """ SSDs """
-    flag = (1<<4)
+    flag = (1 << 4)
+
 
 class UnlimitedWritesCapability(Capability):
     """ Does not age when written to (i.e., unlike SSDs). """
-    flag = (1<<5)
+    flag = (1 << 5)
 
 
 class BlockbasedCapability(Capability):
     """ Block-based access e.g. over iSCSI or FC """
-    flag = (1<<6)
+    flag = (1 << 6)
+
 
 class FailureToleranceCapability(Capability):
-    flag = (1<<7)
+    flag = (1 << 7)
+
 
 class MirroredBlockDeviceCapability(BlockbasedCapability):
     """ Mirrored block device like DRBD or RBD """
-    flag = (1<<8)
+    flag = (1 << 8)
+
 
 class MultiPrimaryBlockDeviceCapability(BlockbasedCapability):
     """ Dual-Primary DRBD, RBD """
-    flag = (1<<9)
+    flag = (1 << 9)
+
 
 class FileIOCapability(BlockbasedCapability):
-    flag = (1<<10)
+    flag = (1 << 10)
+
 
 class BlockIOCapability(BlockbasedCapability):
-    flag = (1<<11)
+    flag = (1 << 11)
 
 
 class FileSystemCapability(Capability):
     """ File-based access e.g. over NFS or Samba """
-    flag = (1<<12)
+    flag = (1 << 12)
+
 
 class MirroredFileSystemCapability(FileSystemCapability):
     """ Mirrored file-systems like Ceph """
-    flag = (1<<13)
+    flag = (1 << 13)
+
 
 class MultiPrimaryFileSystemCapability(FileSystemCapability):
     """ Mirrored file-systems like Ceph, that are writable on more than one host """
-    flag = (1<<14)
+    flag = (1 << 14)
+
 
 class VolumeSnapshotCapability(Capability):
     """ Supports snapshots for the entire volume """
-    flag = (1<<15)
+    flag = (1 << 15)
+
 
 class SubvolumesCapability(Capability):
     """ Supports subvolumes """
-    flag = (1<<16)
+    flag = (1 << 16)
+
 
 class SubvolumeSnapshotCapability(SubvolumesCapability):
     """ Supports snapshots for subvolumes """
-    flag = (1<<17)
+    flag = (1 << 17)
+
 
 class FileSnapshotCapability(FileSystemCapability):
     """ Supports snapshots which can be mounted to restore individual files """
-    flag = (1<<18)
+    flag = (1 << 18)
+
 
 class PosixACLCapability(FileSystemCapability):
     """ Supports snapshots which can be mounted to restore individual files """
-    flag = (1<<19)
+    flag = (1 << 19)
+
 
 class DeduplicationCapability(FileSystemCapability):
     """ Supports deduplication """
-    flag = (1<<19)
+    flag = (1 << 19)
+
 
 class CompressionCapability(FileSystemCapability):
     """ Supports compression """
-    flag = (1<<20)
+    flag = (1 << 20)
+
 
 class GrowCapability(Capability):
     """ Supports growing """
-    flag = (1<<21)
+    flag = (1 << 21)
+
 
 class ShrinkCapability(Capability):
     """ Supports shrinking """
-    flag = (1<<22)
+    flag = (1 << 22)
+
 
 class ParallelIOCapability(FileSystemCapability):
     """ FileSystem is optimized for efficiently handling massively parallel IO. """
-    flag = (1<<23)
+    flag = (1 << 23)
+
 
 class SectorBlocksCapability(FileSystemCapability):
     """ File system blocksize == sector size (512 Bytes). """
-    flag = (1<<24)
+    flag = (1 << 24)
+
 
 class OnlineGrowCapability(GrowCapability):
     """ Can be grown while accessed. """
-    flag = (1<<25)
+    flag = (1 << 25)
+
 
 class OnlineShrinkCapability(ShrinkCapability):
     """ Can be shrunk while accessed. """
-    flag = (1<<26)
+    flag = (1 << 26)
+
 
 class DefaultBlocksCapability(FileSystemCapability):
     """ File system blocksize == 4096 Bytes. """
-    flag = (1<<27)
+    flag = (1 << 27)
+
 
 class LargeBlocksCapability(FileSystemCapability):
     """ File system blocksize == 128*1024 Bytes. """
-    flag = (1<<28)
+    flag = (1 << 28)
+
 
 class HandlesMountCapability(FileSystemCapability):
     """ Handles mounting itself, so no fstab entry is required (e.g. btrfs subvolumes, ZFS). """
-    flag = (1<<29)
+    flag = (1 << 29)
 
 
 def to_flags(capabilities):
     return reduce(operator.or_, [cap.flag for cap in capabilities])
 
+
 def from_flags(flags):
-    return [ cap for cap in CapabilityMeta.capabilities if cap.flag & flags == cap.flag ]
+    return [cap for cap in CapabilityMeta.capabilities if cap.flag & flags == cap.flag]
 
 
 class Profile(object):
     capabilities = None
 
+
 class FileserverProfile(Profile):
     """ Optimized for a file server """
-    capabilities = FileSystemCapability * (VolumeSnapshotCapability + PosixACLCapability) * (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
+    capabilities = FileSystemCapability * (VolumeSnapshotCapability + PosixACLCapability) * \
+        (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
+
 
 class VMProfile(Profile):
     """ Optimized for running VMs that support proper disk alignment """
-    capabilities = SlowSASSpeedCapability * ParallelIOCapability * (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
+    capabilities = SlowSASSpeedCapability * ParallelIOCapability * (True + GrowCapability +
+                                                                    ShrinkCapability +
+                                                                    DeduplicationCapability +
+                                                                    CompressionCapability)
+
 
 class LegacyVMProfile(VMProfile):
     """ Optimized for running VMs that don't support disk alignment """
@@ -247,12 +287,13 @@ class DeviceMeta(type):
     devices = []
     modeldevices = {}
 
-    def __init__( cls, name, bases, attrs ):
-        type.__init__( cls, name, bases, attrs )
+    def __init__(cls, name, bases, attrs):
+        type.__init__(cls, name, bases, attrs)
         if name != "Device":
             DeviceMeta.devices.append(cls)
         if cls.model is not None:
             DeviceMeta.modeldevices[cls.model] = cls
+
 
 class Device(object):
     """ Describes some kind of device, regarding its capabilities.
@@ -270,8 +311,8 @@ class Device(object):
 
     requires = None
     provides = None
-    removes  = None
-    model    = None
+    removes = None
+    model = None
 
     def __init__(self):
         # Make sure each instance gets its own lists.
@@ -283,16 +324,18 @@ class Device(object):
             self.provides = []
         else:
             self.provides = [cap for cap in self.__class__.provides]
-        if self.removes  is None:
-            self.removes  = []
+        if self.removes is None:
+            self.removes = []
         else:
-            self.removes  = [cap for cap in self.__class__.removes ]
+            self.removes = [cap for cap in self.__class__.removes]
+
 
 class Disk(Device):
     provides = [
         BlockbasedCapability,
         BlockIOCapability,
         ]
+
 
 class Raid5(Device):
     requires = [
@@ -302,6 +345,7 @@ class Raid5(Device):
         FailureToleranceCapability,
         ]
 
+
 class DrbdConnection(Device):
     requires = [
         FailureToleranceCapability,
@@ -310,6 +354,7 @@ class DrbdConnection(Device):
         MirroredBlockDeviceCapability,
         ]
 
+
 class ImageFile(Device):
     requires = [
         FileSystemCapability,
@@ -317,7 +362,7 @@ class ImageFile(Device):
     provides = [
         BlockbasedCapability,
         ]
-    removes  = [
+    removes = [
         FileSystemCapability,
         ]
 
@@ -348,7 +393,8 @@ def device_stack_capabilities(devs):
         # b) nextdev requires some capability that topdev does not provide.
         if not isinstance(nextdev.requires, list):
             if nextdev.requires != type(topdev):
-                raise RequirementNotSatisfied("'%r' requires '%r', got '%r' instead" % (nextdev, nextdev.requires, topdev))
+                raise RequirementNotSatisfied("'%r' requires '%r', got '%r' instead" %
+                                              (nextdev, nextdev.requires, topdev))
         else:
             for dependency in nextdev.requires:
                 if dependency not in topdev.provides:
@@ -381,7 +427,8 @@ def device_stack_capabilities(devs):
         # now see what happens when we put another device on top of our stack.
         return _process_stack(devs[1:], nextdev)
 
-    return _process_stack([ dev() for dev in devs ]).provides
+    return _process_stack([dev() for dev in devs]).provides
+
 
 def testdis():
     from lvm.models import VolumeGroupDevice, LogicalVolumeDevice

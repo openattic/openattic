@@ -18,6 +18,7 @@ from django.core.management.base import BaseCommand
 
 from volumes.models import StorageObject, get_storage_tree
 
+
 class Command(BaseCommand):
     help = "Lists all StorageObjects or prints the storage device tree if a volume name is given."
 

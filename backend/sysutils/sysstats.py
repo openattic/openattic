@@ -17,10 +17,11 @@
 import re
 from time import sleep
 
+
 def get_cpu_stats():
     # read /proc/stat
     with open("/proc/stat", "r") as fd:
-        sys_stats = [ line.split() for line in fd ]
+        sys_stats = [line.split() for line in fd]
 
     # Count CPUs
     cpumax = 0
@@ -46,18 +47,20 @@ def get_cpu_stats():
     if len(cpu_stats) > 10:
         fields.append("guestnice")
 
-    stats = dict( zip( fields, cpu_stats ) )
+    stats = dict(zip(fields, cpu_stats))
     del stats["cpu"]
 
     return stats
+
 
 def get_cpu_percent(inter=1):
     first = get_cpu_stats()
     sleep(inter)
     secnd = get_cpu_stats()
-    diff  = dict([(key, float(secnd[key]) - float(first[key])) for key in first])
+    diff = dict([(key, float(secnd[key]) - float(first[key])) for key in first])
     summe = sum(diff.values())
     return dict([(key, diff[key] / summe * 100) for key in first])
+
 
 def get_system_boot_time():
     """Return the system boot time expressed in seconds since the epoch."""
@@ -66,6 +69,7 @@ def get_system_boot_time():
             if line.startswith('btime'):
                 return float(line.strip().split()[1])
         raise ValueError("btime not found in /proc/stat")
+
 
 def get_meminfo():
     rgx = re.compile(r"^(?P<key>[\w\(\)_]+):\s+(?P<val>\d+)(\s+kB)?$")

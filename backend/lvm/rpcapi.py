@@ -20,9 +20,7 @@ from __future__ import division
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from lvm.models import VolumeGroup, LogicalVolume, \
-                       LVMetadata, \
-                       LVSnapshotJob, SnapshotConf
+from lvm.models import VolumeGroup, LogicalVolume, LVMetadata, LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
 from lvm import udevquery
 from ifconfig.models import Host
@@ -46,6 +44,7 @@ class DiskHandler(BaseHandler):
         if len(disks) > 1:
             raise SystemError("more than one disk found")
         return disks[0]
+
 
 class BlockDevicesHandler(BaseHandler):
     handler_name = "lvm.BlockDevices"
@@ -71,6 +70,7 @@ class BlockDevicesHandler(BaseHandler):
     def get_lvm_capabilities(self):
         return blockdevices.get_lvm_capabilities()
 
+
 class VgHandler(AbstractVolumePoolHandler):
     model = VolumeGroup
     order = ("storageobj__name",)
@@ -90,6 +90,7 @@ class VgHandler(AbstractVolumePoolHandler):
         vg = VolumeGroup.objects.get(id=id)
         return vg.megs - vg.usedmegs
 
+
 class LvHandler(AbstractBlockVolumeHandler):
     model = LogicalVolume
     order = ("storageobj__name",)
@@ -107,8 +108,10 @@ class LvHandler(AbstractBlockVolumeHandler):
 class LVMetadataHandler(ModelHandler):
     model = LVMetadata
 
+
 class LVSnapshotJobHandler(ModelHandler):
     model = LVSnapshotJob
+
 
 class VgProxy(ProxyModelHandler, VgHandler):
     def get_free_megs(self, id):
@@ -135,19 +138,20 @@ class LvProxy(ProxyModelHandler, LvHandler):
         if "id" in data:
             raise KeyError("Wai u ID")
         if "snapshot" in data and data["snapshot"] is not None:
-            orig = LogicalVolume.all_objects.get( id=data["snapshot"]["id"] )
+            orig = LogicalVolume.all_objects.get(id=data["snapshot"]["id"])
             curr = orig.vg.host
         else:
-            vg   = VolumeGroup.all_objects.get( id=data["vg"]["id"] )
+            vg = VolumeGroup.all_objects.get(id=data["vg"]["id"])
             curr = vg.host
         if curr == Host.objects.get_current():
             return self.backing_handler.create(data)
         else:
             peer = PeerHost.objects.get(host=curr)
             try:
-                return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
+                return self._convert_datetimes(self._get_proxy_object(peer).create(data))
             except Fault, flt:
                 raise translate_exception(flt)
+
 
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
@@ -157,6 +161,7 @@ class SnapshotConfHandler(ModelHandler):
 
     def process_config(self, config):
         return SnapshotConf.objects.process_config(config)
+
 
 RPCD_HANDLERS = [
     DiskHandler,

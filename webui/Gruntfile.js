@@ -110,7 +110,7 @@ module.exports = function (grunt) {
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
           "<%= buildConfig.src %>components/{,**/}*.js",
-          "<%= buildConfig.src %>extensions/{,**/}*.js",
+          "<%= buildConfig.src %>extensions/{,**/}*.js"
         ]
       },
 
@@ -122,7 +122,7 @@ module.exports = function (grunt) {
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
           "<%= buildConfig.src %>components/{,**/}*.js",
-          "<%= buildConfig.src %>extensions/{,**/}*.js",
+          "<%= buildConfig.src %>extensions/{,**/}*.js"
         ]
       },
 
@@ -166,6 +166,12 @@ module.exports = function (grunt) {
               expand: true,
               cwd: buildConfig.src,
               src: ["styles/awesome-bootstrap-checkbox.css"],
+              dest: buildConfig.dist
+            },
+            {
+              expand: true,
+              cwd: buildConfig.src,
+              src: ["styles/vendor.css"],
               dest: buildConfig.dist
             }
           ]

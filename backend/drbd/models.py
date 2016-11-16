@@ -21,23 +21,28 @@ import re
 import socket
 import dbus
 
-from collections                import Counter
+from collections import Counter
 
-from django.db                  import models, transaction
-from django.template.loader     import render_to_string
-from django.utils.translation   import ugettext_noop as _
+from django.db import models, transaction
+from django.template.loader import render_to_string
+from django.utils.translation import ugettext_noop as _
 
-from systemd                    import dbus_to_python, get_dbus_object
-from systemd.helpers            import Transaction
+from exception import NotSupportedError
+from systemd import dbus_to_python, get_dbus_object
+from systemd.helpers import Transaction
 
-from volumes.models             import StorageObject, BlockVolume, VolumePool, _to_number_with_unit
-from ifconfig.models            import Host, IPAddress, getHostDependentManagerClass
+from volumes.models import StorageObject, BlockVolume, _to_number_with_unit
+from ifconfig.models import Host, IPAddress, getHostDependentManagerClass
 
 DRBD_PROTOCOL_CHOICES = (
-    ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
-    ('B', 'Protocol B: write IO is reported as completed, if it has reached local disk and remote buffer cache.'),
-    ('C', 'Protocol C: write IO is reported as completed, if it has reached both local and remote disk.'),
+    ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local '
+          'TCP send buffer.'),
+    ('B', 'Protocol B: write IO is reported as completed, if it has reached local disk and remote '
+          'buffer cache.'),
+    ('C', 'Protocol C: write IO is reported as completed, if it has reached both local and remote '
+          'disk.'),
     )
+
 
 class ConnectionManager(models.Manager):
     hostfilter = "host"
@@ -50,18 +55,23 @@ class ConnectionManager(models.Manager):
 
         # create drbd connection object
         with Transaction():
-            with StorageObject(name=source_volume.storageobj.name, megs=source_volume.storageobj.megs, is_origin=True) as self_storageobj:
-                connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
+            with StorageObject(name=source_volume.storageobj.name,
+                               megs=source_volume.storageobj.megs, is_origin=True) \
+                    as self_storageobj:
+                connection = Connection(storageobj=self_storageobj, protocol=protocol,
+                                        syncer_rate=syncer_rate)
                 connection.full_clean()
                 connection.save()
 
                 # Allocate minor
                 try:
                     with transaction.atomic():
-                        # First we select all free minors, in the process locking them for the duration of this
-                        # transaction, so no other process can steal the minor we're going to use.
+                        # First we select all free minors, in the process locking them for the
+                        # duration of this transaction, so no other process can steal the minor
+                        # we're going to use.
                         free_minor = min([dm["minor"] for dm in
-                                          DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
+                                          DeviceMinor.objects.select_for_update().filter(
+                                              connection__isnull=True).values("minor")])
                         # now update the minor with our ID.
                         DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
                 except ValueError:
@@ -71,7 +81,8 @@ class ConnectionManager(models.Manager):
                 connection = Connection.all_objects.get(id=connection.id)
 
                 host = Host.objects.get_current()
-                endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=source_volume)
+                endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(),
+                                    volume=source_volume)
                 endpoint.save()
 
                 return connection
@@ -101,7 +112,8 @@ class ConnectionManager(models.Manager):
 
             host = Host.objects.get_current()
             # create drbd endpoint
-            endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=volume)
+            endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(),
+                                volume=volume)
             endpoint.save()
 
             is_primary = False
@@ -113,11 +125,12 @@ class ConnectionManager(models.Manager):
 
         endpoint.install(is_primary)
 
+
 class Connection(BlockVolume):
-    protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
+    protocol = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
     syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
-                                    "Bandwidth limit for background synchronization, measured in "
-                                    "K/M/G<b><i>Bytes</i></b>."))
+                                   "Bandwidth limit for background synchronization, measured in "
+                                   "K/M/G<b><i>Bytes</i></b>."))
 
     objects = ConnectionManager()
     all_objects = models.Manager()
@@ -173,7 +186,8 @@ class Connection(BlockVolume):
         try:
             info = dbus_to_python(self.drbd.get_role(self.name, False))
         except dbus.DBusException:
-            raise SystemError("Can not determine the primary host. Is the DRBD connection possibly unconfigured?")
+            raise SystemError("Can not determine the primary host. Is the DRBD connection possibly "
+                              "unconfigured?")
 
         info_count = Counter(info.values())
 
@@ -226,7 +240,8 @@ class Connection(BlockVolume):
     @property
     def endpoints_running_here(self):
         """ Check if any of my endpoints run here. """
-        return self.endpoint_set.filter(ipaddress__device__host=Host.objects.get_current()).count() > 0
+        return self.endpoint_set.filter(
+            ipaddress__device__host=Host.objects.get_current()).count() > 0
 
     def post_install(self):
         pass
@@ -242,13 +257,17 @@ class Connection(BlockVolume):
         self.drbd.resize(self.name, False)
 
     def resize_local_storage_device(self, new_size):
+        if self.storageobj.filesystemvolume_or_none:
+            raise NotSupportedError("Resizing a formatted DRBD connection is not implemented yet.")
         if self.status != "Connected":
-            raise SystemError("Can only resize DRBD volumes in 'Connected' state, current state is '%s'" % self.status)
+            raise NotSupportedError("Can only resize DRBD volumes in 'Connected' state, current "
+                                    "state is '%s'" % self.status)
         if self.storageobj.megs >= new_size:
             output_new_size = _to_number_with_unit(new_size)
             output_megs = _to_number_with_unit(self.storageobj.megs)
-            raise SystemError("The size of a DRBD connection can only be increased but the new size (%s) is smaller than"
-                              " the current size (%s)." % (output_new_size, output_megs))
+            raise NotSupportedError("The size of a DRBD connection can only be increased but the "
+                                    "new size (%s) is smaller than the current size (%s)."
+                                    % (output_new_size, output_megs))
 
         local_endpoint = Endpoint.objects.get(connection=self)
         local_endpoint.volume.storageobj.resize(new_size)
@@ -259,11 +278,11 @@ class Connection(BlockVolume):
 
 
 class Endpoint(models.Model):
-    connection  = models.ForeignKey(Connection, related_name="endpoint_set")
-    ipaddress   = models.ForeignKey(IPAddress)
-    volume      = models.ForeignKey(BlockVolume, related_name="accessor_endpoint_set")
+    connection = models.ForeignKey(Connection, related_name="endpoint_set")
+    ipaddress = models.ForeignKey(IPAddress)
+    volume = models.ForeignKey(BlockVolume, related_name="accessor_endpoint_set")
 
-    objects     = getHostDependentManagerClass("volume__volume__host")()
+    objects = getHostDependentManagerClass("volume__volume__host")()
     all_objects = models.Manager()
 
     def __unicode__(self):
@@ -329,19 +348,19 @@ class Endpoint(models.Model):
 
     def install(self, init_primary):
         conf = ""
-        #for lowerconn in self.connection.stack_child_set.all():
+        # for lowerconn in self.connection.stack_child_set.all():
         #    conf += render_to_string( "drbd/device.res", {
         #        'Hostname':   socket.gethostname(),
         #        'Connection': lowerconn,
         #        'UpperConn':  self.connection
         #        } )
 
-        conf += render_to_string( "drbd/device.res", {
+        conf += render_to_string("drbd/device.res", {
             'Hostname':   socket.gethostname(),
             'Connection': self.connection,
             'Endpoints':  Endpoint.all_objects.filter(connection=self.connection),
             'UpperConn':  None
-            } )
+            })
 
         self.connection.storageobj.lock()
         self.connection.drbd.modprobe()
@@ -375,5 +394,5 @@ class Endpoint(models.Model):
 
 
 class DeviceMinor(models.Model):
-    minor       = models.IntegerField(unique=True)
-    connection  = models.OneToOneField(Connection, null=True, on_delete=models.SET_NULL)
+    minor = models.IntegerField(unique=True)
+    connection = models.OneToOneField(Connection, null=True, on_delete=models.SET_NULL)

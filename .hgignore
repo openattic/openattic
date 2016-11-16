@@ -50,3 +50,4 @@ gatling/test/reports/
 documentation/_build
 vagrant/.vagrant/
 vagrant/disks/*
+vagrant-ceph/

@@ -131,7 +131,8 @@ describe('Should add a host and attributes', function(){
 
   var tryInvalid = function(key, field){
     invalidWwns[key].forEach(function(wwn){
-      it('should show the "' + key + '" error when trying to add ' + wwn + ' in field ' + field, function(){
+      it('should show an error message when trying to add the following tag: "' + wwn + '" as "' + key +
+          '" into tag field "' + field + '"', function(){
         sendTag(wwn, field);
         expect(element.all(by.className('tc_wwn_invalid')).get(field).isDisplayed()).toBe(true);
         expect(element.all(by.className('tc_err_' + key)).get(field).isDisplayed()).toBe(true);
@@ -142,7 +143,8 @@ describe('Should add a host and attributes', function(){
 
   var tryValid = function(key, field){
     validWwns[key].forEach(function(wwn){
-      it('should successfully add ' + wwn + ' to as a valid tag in field ' + field, function(){
+      it('should successfully add a valid tag in a defined format: "' + wwn + '" as "' + key + '" into tag field "'
+          + field + "'", function(){
         sendTag(wwn, field);
         expect(element.all(by.className('tc_wwn_invalid')).get(field).isDisplayed()).toBe(false);
         if(key === "mac"){
@@ -158,7 +160,8 @@ describe('Should add a host and attributes', function(){
   };
 
   var info = function(key, field){
-    it('should show the correct ' + key + ' error message in field ' + field, function(){
+    it('should show the correct error message for: "' + key + '" typing "' + invalidWwns[key][0] + '" into tag field "'
+        + field + '"', function(){
       sendTag(invalidWwns[key][0], field);
       expect(element.all(by.className('tc_wwn_invalid')).get(field).isDisplayed()).toBe(true);
       var error = element.all(by.className('tc_err_' + key)).get(field);
@@ -201,6 +204,6 @@ describe('Should add a host and attributes', function(){
   });
 
   afterAll(function(){
-    console.log('hosts -> wwn_validation.e2e.js');
+    console.log('host_wwns -> wwn_validation.e2e.js');
   });
 });

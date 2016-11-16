@@ -26,6 +26,9 @@ from rest_framework.request import Request
 
 from ifconfig.models import Host
 
+from utilities import get_related_model
+from rest.utilities import drf_version, get_request_data
+
 
 class RequestHandlers(object):
 
@@ -44,8 +47,12 @@ class RequestHandlers(object):
 
     def list(self, request, *args, **kwargs):
         queryset_total = self.get_queryset()
-        queryset = self.filter_queryset(queryset_total)
-        queryset = self.paginate_queryset(queryset)
+        unpaginated_queryset = self.filter_queryset(queryset_total)
+        if drf_version() < (3, 0):
+            queryset = self.paginate_queryset(unpaginated_queryset)
+        else:
+            queryset = self.paginator.paginate_queryset(unpaginated_queryset, request, self)
+        assert queryset is not None
 
         current_host = Host.objects.get_current()
 
@@ -58,6 +65,9 @@ class RequestHandlers(object):
             else:
                 response = self._remote_request(request, host, obj=obj)
                 results.append(response.data)
+
+        if drf_version() >= (3, 0):
+            return self.paginator.get_paginated_response(results)
 
         next_page = None
         prev_page = None
@@ -85,7 +95,7 @@ class RequestHandlers(object):
         ]))
 
     def create(self, request, *args, **kwargs):
-        host = self._get_reqdata_host(request.DATA)
+        host = self._get_reqdata_host(get_request_data(request))
 
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).create(request, args, kwargs)
@@ -102,10 +112,7 @@ class RequestHandlers(object):
         return self._remote_request(request, host, obj=obj)
 
     def update(self, request, *args, **kwargs):
-        obj = self.get_object_or_none()
-
-        if obj is None:
-            return self.create(request, args, kwargs)
+        obj = self.get_object()
 
         host = self._get_object_host(obj)
         if host == Host.objects.get_current():
@@ -130,10 +137,9 @@ class RequestHandlers(object):
         header['content-type'] = 'application/json'
 
         current_host = Host.objects.get_current()
-        data = dict(request.DATA, proxy_host_id=current_host.id)
+        data = dict(get_request_data(request), proxy_host_id=current_host.id)
 
         response = requests.request(request.method, url, data=json.dumps(data), headers=header)
-        response.raise_for_status()
 
         try:
             response_data = response.json()
@@ -148,6 +154,12 @@ class RequestHandlers(object):
         return 'http://%s%s/%s' % (ip, api_root, api_prefix)
 
     def _get_object_host(self, obj):
+        if isinstance(obj, Host):
+            if obj.is_oa_host:
+                return obj
+            else:
+                return Host.objects.get_current()
+
         try:
             host_filter = self.get_queryset().model.objects.hostfilter
         except AttributeError:
@@ -160,6 +172,9 @@ class RequestHandlers(object):
                     return host
 
     def _get_reqdata_host(self, data):
+        if self.model == Host:
+            return Host.objects.get_current()
+
         try:
             return self.get_host_by_data(data)
         except:
@@ -168,8 +183,8 @@ class RequestHandlers(object):
             try:
                 return self.model.objects.get(id=data[host_filter[0]]['id']).host
             except:
-                target_model = self.model._meta.get_field_by_name(
-                    host_filter[0])[0].related.parent_model
+                target_model = get_related_model(
+                    self.model._meta.get_field_by_name(host_filter[0])[0])
 
                 if target_model == Host:
                     return Host.objects.get(id=data[host_filter[0]]['id'])
@@ -179,8 +194,8 @@ class RequestHandlers(object):
                     except target_model.DoesNotExist:
                         key = host_filter.pop(0)
 
-                        target_model = target_model._meta.get_field_by_name(
-                            host_filter[0])[0].related.parent_model
+                        target_model = get_related_model(
+                            target_model._meta.get_field_by_name(host_filter[0])[0])
                         host = target_model.all_objects.get(id=data[key]['id'])
 
                     for field in host_filter[1:]:

@@ -38,7 +38,6 @@ angular.module("openattic", [
   "ngSanitize",
   "ngTagsInput",
   "ui.bootstrap",
-  "ui.dashboard",
   "ui.router",
   "ui.sortable",
   "ui.tree",

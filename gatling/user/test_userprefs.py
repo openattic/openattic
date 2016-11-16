@@ -98,8 +98,6 @@ class UserPrefsTestCase(UserTestScenario):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("GET", obj_id=profile["response"][0]["id"],
                               auth_token=testuser_auth_token)
-        err_message = str(err.exception)
-        self.assertEqual(err_message.lower(), "401 client error: unauthorized")
         self.assertEqual(err.exception.response.status_code, 401)
         self.assertEqual(str(err.exception.response.json()), "You are not allowed to access other "
                                                              "users profiles")
@@ -120,8 +118,6 @@ class UserPrefsTestCase(UserTestScenario):
             self.send_request("DELETE", obj_id=res["response"]["id"],
                               auth_token=testuser_auth_token,
                               data={"settings": [self.test_preference.keys()[0]]})
-        err_message = str(err.exception)
-        self.assertEqual(err_message.lower(), "401 client error: unauthorized")
         self.assertEqual(err.exception.response.status_code, 401)
         self.assertEqual(str(err.exception.response.json()), "You are not allowed to delete "
                                                              "preferences of other users")

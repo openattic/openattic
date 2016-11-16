@@ -17,11 +17,12 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from ifconfig.models import Host
 from nfs.models import Export
+
 
 class NfsExportHandler(ModelHandler):
     model = Export
+
 
 class NfsExportProxy(ProxyModelHandler, NfsExportHandler):
     pass

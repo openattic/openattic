@@ -132,7 +132,7 @@ class Service(models.Model):
             'serv': servname
             }
         if not exists(xmlpath):
-            raise SystemError("XML file not found")
+            raise SystemError("XML file '{}' could not be found.".format(xmlpath))
 
         return RRD(xmlpath)
 
@@ -160,6 +160,10 @@ class Service(models.Model):
             return {"0": "OK", "1": "Warning", "2": "Critical"}[self.state["current_state"]]
         except KeyError:
             return "Unknown"
+
+    @property
+    def normal_check_interval(self):
+        return 5
 
 
 def update_conf_for_user(instance, **kwargs):

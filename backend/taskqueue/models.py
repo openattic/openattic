@@ -13,11 +13,14 @@
 """
 import json
 import logging
+import datetime
 
 from django.db import models
 from django.db.models import Model
 from django.db.models.query_utils import Q
 from django.utils.functional import cached_property
+
+from exception import NotSupportedError
 
 logger = logging.getLogger(__name__)
 
@@ -30,12 +33,14 @@ class TaskQueue(Model):
     STATUS_RUNNING = 2
     STATUS_FINISHED = 3
     STATUS_EXCEPTION = 4
+    STATUS_ABORTED = 5
 
     STATUS_CHOICES = (
         (STATUS_NOT_STARTED, 'Not Started'),
         (STATUS_RUNNING, 'Running'),
         (STATUS_FINISHED, 'Finished'),
-        (STATUS_EXCEPTION, 'Exception')
+        (STATUS_EXCEPTION, 'Exception'),
+        (STATUS_ABORTED, 'Aborted'),
     )
 
     task = models.TextField(help_text="The JSON-serialized task to run.", blank=False)
@@ -69,7 +74,7 @@ class TaskQueue(Model):
                 'Failed to deserialize "{}" created "{}"'.format(self.task, self.created))
             self.finish_with_exception(e)
             return
-        logger.info(u'Running {}: {}'.format(self.pk, task))
+        logger.info(u'Running {}: {}. Estimated: {}'.format(self.pk, task, self.estimated))
         try:
             res = task.run_once()
         except Exception as e:
@@ -90,18 +95,40 @@ class TaskQueue(Model):
     @property
     def json_result(self):
         """:rtype: list | dict | None"""
+        if self.result is None:
+            return None
         try:
             return json.loads(self.result)
         except ValueError as e:
             return None
 
+    @property
+    def estimated(self):
+
+        def divide_timedelta(td, divisor):
+            """Python 2.x timedelta doesn't support division by float."""
+            total_seconds = td.total_seconds()
+            divided_seconds = total_seconds / float(divisor)
+            return datetime.timedelta(seconds=divided_seconds)
+
+        if self.status != TaskQueue.STATUS_RUNNING:
+            return None
+        if self.percent < 5:
+            return None
+        if self.percent > 100:
+            return self.last_modified
+        current = datetime.datetime.now()
+        return self.created + divide_timedelta((current - self.created), (float(self.percent) / 100.0))
+
     def finish_with_exception(self, e):
         """:type e: Exception"""
-        self.finish_task(e.message, TaskQueue.STATUS_EXCEPTION)
+        self.finish_task(str(e), TaskQueue.STATUS_EXCEPTION)
 
     def finish_task(self, result, status=STATUS_FINISHED):
-        assert TaskQueue.objects.get(pk=self.pk).status not in [TaskQueue.STATUS_FINISHED,
-                                                                TaskQueue.STATUS_EXCEPTION]
+        if TaskQueue.objects.get(pk=self.pk).status in [TaskQueue.STATUS_FINISHED,
+                                                        TaskQueue.STATUS_EXCEPTION,
+                                                        TaskQueue.STATUS_ABORTED]:
+            raise NotSupportedError('Task is not running')
         logger.info(u'Task finished: {}'.format(result))
         self.result = json.dumps(result)
         self.percent = 100
@@ -124,11 +151,35 @@ class TaskQueue(Model):
     @staticmethod
     def cleanup():
         TaskQueue.objects.filter(
-            TaskQueue.in_status_q([TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION])).delete()
+            TaskQueue.in_status_q([TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION,
+                                   TaskQueue.STATUS_ABORTED])).delete()
 
     @staticmethod
     def in_status_q(states):
+        """
+        :type states: list[int]
+        :rtype: Q
+        """
         return reduce(lambda l, status: l | Q(status=status), states[1:], Q(status=states[0]))
+
+    @staticmethod
+    def filter_by_definition_and_status(task, task_status=None):
+        task_definition = json.dumps(task.serialize())
+
+        if task_status:
+            status = TaskQueue.in_status_q(task_status)
+            return TaskQueue.objects.filter(status, task=task_definition).order_by('last_modified')
+        else:
+            return TaskQueue.objects.filter(task=task_definition).order_by('last_modified')
+
+    @staticmethod
+    def filter_by_status_name_q(status_name):
+        """:type status_name: str | unicode"""
+        status_map = {name: value for value, name in TaskQueue.STATUS_CHOICES}
+        try:
+            return Q(status=status_map[status_name])
+        except KeyError:
+            raise TaskQueue.DoesNotExist('Unknown Status "{}". Possible Values: {}'.format(status_name, status_map.keys()))
 
     def __unicode__(self):
         return str(self.pk)

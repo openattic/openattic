@@ -19,18 +19,18 @@ from __future__ import division
 
 import sys
 import re
-from time     import time
+from time import time
 
-from django.http       import HttpResponse, Http404
-from django.shortcuts  import get_object_or_404
+from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.cache import never_cache
 
-from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
 from nagios.graphbuilder import Graph as GraphBuilder, parse
 
 from volumes.models import StorageObject
+
 
 @never_cache
 def graph(request, service_id, srcidx):
@@ -46,9 +46,9 @@ def graph(request, service_id, srcidx):
           Graph instance which is to be drawn. In this case, a single image may contain multiple
           graphs stacked on one another.
 
-          Otherwise, the service's performance data will be regarded as an array, and srcidx points to
-          the index of the value that is to be drawn. In this case, a single image only contains a
-          single graph, as Multigraph support is configured using the nagios.Graph entries.
+          Otherwise, the service's performance data will be regarded as an array, and srcidx points
+          to the index of the value that is to be drawn. In this case, a single image only contains
+          a single graph, as Multigraph support is configured using the nagios.Graph entries.
 
         Optionally, this view allows for a set of GET variables to be passed in order to modify
         the image's appearance:
@@ -67,7 +67,7 @@ def graph(request, service_id, srcidx):
         If the image should be rendered upon a background image, the image's path needs to be
         configured in the Nagios module's settings.
     """
-    serv  = get_object_or_404(Service, pk=int(service_id))
+    serv = get_object_or_404(Service, pk=int(service_id))
 
     try:
         srcidx = int(srcidx)
@@ -86,11 +86,11 @@ def graph(request, service_id, srcidx):
 
     builder = GraphBuilder()
     for src in parse(srcline):
-        builder.add_source( src.get_value(rrd) )
+        builder.add_source(src.get_value(rrd))
 
     try:
-        builder.start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
-        builder.end    = int(request.GET.get("end",    rrd.last_check))
+        builder.start = int(request.GET.get("start", rrd.last_check - 24*60*60))
+        builder.end = int(request.GET.get("end", rrd.last_check))
 
         # Accept negative numbers for start and end by interpreting them as
         # "x seconds before last_check". The numbers are negative already,
@@ -110,7 +110,7 @@ def graph(request, service_id, srcidx):
         raise Http404("Invalid start or end specified")
 
     builder.height = int(request.GET.get("height", 150))
-    builder.width  = int(request.GET.get("width",  700))
+    builder.width = int(request.GET.get("width",  700))
 
     def request_GET_clr(field, default):
         """ Get a color code from request.GET and use it only if it validates
@@ -121,12 +121,12 @@ def graph(request, service_id, srcidx):
             return default
         return inp
 
-    builder.bgcol  = request_GET_clr("bgcol", builder.bgcol)
-    builder.fgcol  = request_GET_clr("fgcol", builder.fgcol)
-    builder.grcol  = request_GET_clr("grcol", builder.grcol)
-    builder.sacol  = request_GET_clr("sacol", builder.sacol)
-    builder.sbcol  = request_GET_clr("sbcol", builder.sbcol)
-    builder.grad   = request.GET.get("grad",  builder.grad) == "true"
+    builder.bgcol = request_GET_clr("bgcol", builder.bgcol)
+    builder.fgcol = request_GET_clr("fgcol", builder.fgcol)
+    builder.grcol = request_GET_clr("grcol", builder.grcol)
+    builder.sacol = request_GET_clr("sacol", builder.sacol)
+    builder.sbcol = request_GET_clr("sbcol", builder.sbcol)
+    builder.grad = request.GET.get("grad",  builder.grad) == "true"
 
     if rrd.last_check < builder.start and "start" in request.GET and "end" not in request.GET:
         # Apparently, something is wrong and Nagios hasn't been checking the service
@@ -144,7 +144,7 @@ def graph(request, service_id, srcidx):
         else:
             builder.title = dbgraph.title
 
-    return HttpResponse( builder.get_image(), content_type="image/png" )
+    return HttpResponse(builder.get_image(), content_type="image/png")
 
 
 @never_cache

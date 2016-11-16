@@ -21,7 +21,8 @@ from django.contrib.contenttypes.models import ContentType
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from volumes.models import GenericDisk, StorageObject, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
+from volumes.models import GenericDisk, StorageObject, VolumePool, BlockVolume, FileSystemVolume, \
+    FileSystemProvider
 from volumes.filesystems import FILESYSTEMS
 from volumes import initscripts
 from ifconfig.models import Host
@@ -53,7 +54,7 @@ class AbstractVolumePoolHandler(ModelHandler):
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
         data["usedmegs"] = obj.volumepool.usedmegs
-        data["status"]   = obj.volumepool.status
+        data["status"] = obj.volumepool.status
         try:
             data["member_set"] = [
                 self._get_handler_instance(member.__class__)._idobj(member)
@@ -71,6 +72,7 @@ class AbstractVolumePoolHandler(ModelHandler):
             "usedmegs":  obj.volumepool.usedmegs,
             "type":      obj.volumepool_type,
         }
+
 
 class VolumePoolHandler(ModelHandler):
     model = VolumePool
@@ -118,10 +120,12 @@ class VolumePoolHandler(ModelHandler):
         obj = VolumePool.objects.get(id=id)
         return [{"name": fs.name} for fs in obj.volumepool.get_supported_filesystems()]
 
+
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volumepool is None:
-            logging.error("Got None when querying model '%s' instance '%s' for its concrete volumepool" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete "
+                          "volumepool" % (type(model), model.id))
             return None
         if model.volumepool.host in (None, Host.objects.get_current()):
             return None
@@ -169,8 +173,8 @@ class AbstractBlockVolumeHandler(ModelHandler):
 
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
-        data["name"]   = obj.storageobj.name
-        data["megs"]   = obj.storageobj.megs
+        data["name"] = obj.storageobj.name
+        data["megs"] = obj.storageobj.megs
         if obj.volume.host is not None:
             data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
         else:
@@ -213,14 +217,16 @@ class BlockVolumeHandler(ModelHandler):
 class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume is None:
-            logging.error("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete volume"
+                          % (type(model), model.id))
             return None
         if model.volume.host in (None, Host.objects.get_current()):
             return None
         return model.volume.host.peerhost_set.all()[0]
 
     def create(self, data):
-        raise NotImplementedError("BlockVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+        raise NotImplementedError("BlockVolume.create is disabled, call "
+                                  "volumes.VolumePool.create_volume instead.")
 
     def run_initscript(self, id, script):
         return self._call_singlepeer_method("run_initscript", id, script)
@@ -234,8 +240,8 @@ class AbstractFileSystemVolumeHandler(ModelHandler):
     """
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
-        data["name"]    = obj.storageobj.name
-        data["megs"]    = obj.storageobj.megs
+        data["name"] = obj.storageobj.name
+        data["megs"] = obj.storageobj.megs
         if obj.volume.host is not None:
             data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
         else:
@@ -245,8 +251,8 @@ class AbstractFileSystemVolumeHandler(ModelHandler):
         except:
             pass
         data["mounted"] = obj.volume.fs.mounted
-        data["usedmegs"]= obj.volume.fs.stat["used"]
-        data["status"]  = obj.volume.status
+        data["usedmegs"] = obj.volume.fs.stat["used"]
+        data["status"] = obj.volume.status
         return data
 
 
@@ -282,17 +288,20 @@ class FileSystemVolumeHandler(ModelHandler):
     def unmount(self, id):
         return FileSystemVolume.objects.get(id=id).unmount()
 
+
 class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume is None:
-            logging.error("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete volume"
+                          % (type(model), model.id))
             return None
         if model.volume.host in (None, Host.objects.get_current()):
             return None
         return model.volume.host.peerhost_set.all()[0]
 
     def create(self, data):
-        raise NotImplementedError("FileSystemVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+        raise NotImplementedError("FileSystemVolume.create is disabled, call "
+                                  "volumes.VolumePool.create_volume instead.")
 
     def run_initscript(self, id, script):
         return self._call_singlepeer_method("run_initscript", id, script)
@@ -319,21 +328,23 @@ class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
     def get_installed_filesystems(self):
         return [{"name": fs.name} for fs in FILESYSTEMS]
 
+
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.base.volume is None:
-            logging.error("Got None when querying model '%s' instance '%s' for its concrete base volume" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete base "
+                          "volume" % (type(model), model.id))
             return None
         if model.base.volume.host in (None, Host.objects.get_current()):
             return None
         return model.base.volume.host.peerhost_set.all()[0]
 
     def create(self, data):
-        raise NotImplementedError("FileSystemProvider.create is disabled, call volumes.VolumePool.create_volume instead.")
+        raise NotImplementedError("FileSystemProvider.create is disabled, call "
+                                  "volumes.VolumePool.create_volume instead.")
 
     def remove(self, id):
         return self._call_singlepeer_method("remove", id)
-
 
 
 class StorageObjectHandler(ModelHandler):
@@ -437,6 +448,7 @@ class StorageObjectHandler(ModelHandler):
         """
         return StorageObject.objects.get(id=id).wait(int(max_wait))
 
+
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
         try:
@@ -522,7 +534,6 @@ class InitScriptHandler(BaseHandler):
 
     def get_initscript_info(self, script):
         return initscripts.get_initscript_info(script)
-
 
 
 RPCD_HANDLERS = [

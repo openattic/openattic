@@ -101,7 +101,8 @@ var cephPoolCommons = function(){
       name: 'Placement groups',
       byClass: element(by.className('tc_pool_pgNum')),
       byModel: element(by.model('pool.pg_num')),
-      displayed: true,
+      displayed: false,
+      displayedIf: 'replicated',
       type: "number",
       items: {
         helpPgnum: element(by.className('tc_pgNumRequired'))

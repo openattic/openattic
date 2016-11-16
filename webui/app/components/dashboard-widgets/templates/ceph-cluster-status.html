@@ -1,0 +1,68 @@
+<i class="fa fa-spinner fa-spin overlay" ng-show="isLoading"></i>
+
+<div class="flex-container flex-column">
+  <div class="flex-item bg-info" ng-if="data.unknown.length > 0">
+    <ng-pluralize count="data.unknown.length"
+                  when="{'1': 'The Ceph cluster is in an unknown error state.',
+                         'other': data.unknown.length + ' Ceph clusters are in an unknown error state.'
+                  }">
+    </ng-pluralize>
+    <br>
+    <ng-pluralize count="data.unknown.length"
+                  when="{'1': ' The following error state is not supported by the widget yet:',
+                         'other': ' The following error states are not supported by the widget yet:'
+                  }">
+    </ng-pluralize>
+    <ul class="list-nomargin">
+      <li ng-repeat="cluster in data.unknown" ng-bind="cluster.health"></li>
+    </ul>
+  </div>
+
+  <div class="flex-item bg-success" ng-if="data.ok.length > 0">
+    <strong>
+      <ng-pluralize count="data.ok.length"
+                    when="{'1': 'The Ceph cluster is up and running',
+                         'other': data.ok.length + ' Ceph clusters are up and running'
+                  }">
+      </ng-pluralize>
+    </strong>
+  </div>
+
+  <div class="flex-item bg-warning clickable"
+       ng-click="warnCollapsed = !warnCollapsed"
+       ng-if="data.warn.length > 0">
+    <strong>
+      <ng-pluralize count="data.warn.length"
+                    when="{'1': 'The Ceph cluster is not operating correctly',
+                         'other': data.warn.length + ' Ceph clusters are not operating correctly'
+                  }">
+      </ng-pluralize>
+    </strong>
+
+    <div class="indent" ng-if="!warnCollapsed" ng-repeat="cluster in data.warn">
+      <span ng-bind="cluster.name"></span> (<span ng-bind="cluster.fsid"></span>)
+      <ul>
+        <li ng-repeat="warn in cluster.summary | filter:{severity: 'HEALTH_WARN'}" ng-bind="warn.summary"></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flex-item bg-danger clickable"
+       ng-click="errCollapsed = !errCollapsed"
+       ng-if="data.err.length > 0">
+    <strong>
+      <ng-pluralize count="data.err.length"
+                    when="{'1': 'The Ceph cluster is offline',
+                         'other': data.err.length + ' Ceph clusters are offline'
+                  }">
+      </ng-pluralize>
+    </strong>
+
+    <div class="indent" ng-if="!errCollapsed" ng-repeat="cluster in data.err">
+      <span ng-bind="cluster.name"></span> (<span ng-bind="cluster.fsid"></span>)
+      <ul>
+        <li ng-repeat="err in cluster.summary | filter:{severity: 'HEALTH_ERR'}" ng-bind="err.summary"></li>
+      </ul>
+    </div>
+  </div>
+</div>

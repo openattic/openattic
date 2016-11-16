@@ -36,16 +36,20 @@ app.factory("cephPoolsService", function ($resource) {
     id: "@id",
     poolId: "@poolId"
   }, {
+    delete: {
+      method: "DELETE",
+      url: globalConfig.API.URL + "ceph/:id/pools/:poolId"
+    },
+    performancedata: {
+      method: "GET",
+      url: globalConfig.API.URL + "ceph/:fsid/performancedata_pools"
+    },
     query: {
       method: "GET",
       isArray: true,
       transformResponse: function (data) {
         return JSON.parse(data).results;
       }
-    },
-    delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:id/pools/:poolId"
     }
   });
 });

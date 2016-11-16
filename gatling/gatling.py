@@ -98,7 +98,7 @@ def main():
                             auth=(username, password))
     try:
         user.raise_for_status()
-    except requests.HTTPError:
+    except requests.HTTPError as e:
         if user.status_code == 401:
             print "The given login credentials ('admin' and 'password') are not correct. Please " \
                   "check your configuration or define 'admin' and 'password' in you config file " \
@@ -106,7 +106,7 @@ def main():
         else:
             print "The given name of the openATTIC host '{}' might be wrong. Please " \
                   "check your configuration or define 'host_name' in your config " \
-                  "file.".format(host_name)
+                  "file: \n{}".format(host_name, e)
         return 1
     else:
         userid = user.json()["results"][0]["id"]
@@ -157,7 +157,12 @@ def main():
 
     failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter),
                                   auth=(username, password))
-    failedcmds = failedcmds.json()
+
+    try:
+        failedcmds = failedcmds.json()
+    except ValueError:
+        print 'failed to get parse json:\n{}'.format(failedcmds.content)
+        raise
 
     if failedcmds['count'] > 0:
         print "openATTIC's command log recorded %d failed commands during the test period:" % \

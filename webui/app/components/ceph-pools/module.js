@@ -32,7 +32,8 @@
 
 angular.module("openattic.cephPools", [
   "openattic.cephCluster",
-  "openattic.cephOsd",
   "openattic.cephErasureCodeProfiles",
+  "openattic.cephOsd",
+  "openattic.graph",
   "openattic.registry"
 ]);

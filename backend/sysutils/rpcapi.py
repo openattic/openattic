@@ -22,6 +22,7 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from sysutils.models import InitScript
 from sysutils import sysstats
 
+
 class SysUtilsHandler(BaseHandler):
     handler_name = "sysutils.System"
 
@@ -42,7 +43,8 @@ class SysUtilsHandler(BaseHandler):
         return get_dbus_object("/sysutils").set_time(timestamp)
 
     def get_load_avg(self):
-        """ Return the number of processes in the system run queue averaged over the last 1, 5, and 15 minutes. """
+        """ Return the number of processes in the system run queue averaged over the last 1, 5, and
+        15 minutes. """
         return os.getloadavg()
 
     def get_cpu_percent(self):
@@ -57,7 +59,7 @@ class SysUtilsHandler(BaseHandler):
         """ Return memory use indicators in MiB. """
         meminfo = sysstats.get_meminfo()
         return dict([(key, meminfo[key] / 1024.) for key in
-            ('MemTotal', 'MemFree', 'Buffers', 'Cached')])
+                     ('MemTotal', 'MemFree', 'Buffers', 'Cached')])
 
 
 class InitScriptHandler(ModelHandler):
@@ -83,5 +85,6 @@ class InitScriptHandler(ModelHandler):
     def stop(self, id):
         """ Stop the service. """
         return InitScript.objects.get(id=id).stop()
+
 
 RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler]

@@ -83,6 +83,6 @@ describe('Host form workflow', function(){
   });
 
   afterAll(function(){
-    console.log('hosts -> host_form_workflow.e2e.js');
+    console.log('host_form -> host_form_workflow.e2e.js');
   });
 });

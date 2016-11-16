@@ -13,6 +13,7 @@
  *  GNU General Public License for more details.
 """
 import logging
+import time
 
 from taskqueue.models import task
 from ceph import librados
@@ -35,7 +36,7 @@ def set_pgs(fsid, pool_id, pgs):
 
 @task(description='Setting number of PGs to {3}',
       percent=lambda fsid, poolid, before, after, current=None: float(
-    (current or 0) - before) / float(after - before) * 100)
+          (current or 0) - before) / float(after - before) * 100)
 def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_current_active=None):
     """
     :type fsid: str
@@ -57,10 +58,23 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_curren
         creating = pg_in_state('creating')
 
         logger.info(
-            'before={} after={} all={} active={} creating={}'.format(pg_count_before, pg_count_after,
-                                                                     len(pgs), active, creating))
+            'before={} after={} all={} active={} creating={}'.format(
+                pg_count_before, pg_count_after, len(pgs), active, creating))
 
         if active >= pg_count_after:
             return
         else:
             return track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, active)
+
+
+@task(description='Get RBD performance data of cluster \'{0}\', pool \'{1}\' and RBD image \'{2}\'')
+def get_rbd_performance_data(fsid, pool_name, image_name):
+    from ceph.models import RadosClientManager
+
+    start_time = time.time()
+    rados = RadosClientManager()
+    api = librados.RbdApi(rados[fsid])
+    disk_usage = api.image_disk_usage(pool_name, image_name)
+    exec_time = time.time() - start_time
+
+    return disk_usage, round(exec_time * 1000, 2)

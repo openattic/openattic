@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, toasty, ClusterResource,
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, toasty, ClusterResource,
     cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
@@ -144,11 +144,14 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           });
           throw osdError;
         });
-      cephErasureCodeProfilesService.get({id: cluster.fsid})
+      cephErasureCodeProfilesService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
           $scope.data.profiles = res.results;
-          $scope.pool.erasure.profile = $scope.data.profiles[0].name;
+
+          if ($scope.data.profiles.length === 1) {
+            $scope.pool.erasure.profile = $scope.data.profiles[0];
+          }
         })
         .catch(function (osdError) {
           toasty.error({
@@ -197,7 +200,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
     }
   });
 
-  $scope.$watch("pool.replicated.size", function (ruleset) {
+  $scope.$watch("pool.replicated.size", function () {
     if ($scope.data.cluster) {
       $scope.rulesetValidation();
     }
@@ -233,7 +236,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         pool.crush_ruleset = $scope.pool[pool.type].expert.crush_ruleset;
       } else if (pool.type === "erasure") {
         pool.min_size = 2; // No need for this here - API update needed.
-        pool.erasure_code_profile = $scope.pool[pool.type].profile;
+        pool.erasure_code_profile = $scope.pool[pool.type].profile.name;
       }
       cephPoolsService.save(pool)
         .$promise
@@ -254,4 +257,48 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
     goToListView();
   };
 
+  // Erasure Code Profile
+  $scope.addErasureCodeProfile = function () {
+    var modalInstance = $uibModal.open({
+      controller       : "CephErasureCodeProfilesAddCtrl",
+      templateUrl      : "components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html",
+      windowTemplateUrl: "templates/messagebox.html",
+      resolve          : {
+        cluster: function () {
+          return $scope.data.cluster;
+        },
+        osd: function () {
+          return $scope.data.osdCount;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (profile) {
+      // Add and select created profile
+      var len = $scope.data.profiles.push(profile);
+      $scope.pool.erasure.profile = $scope.data.profiles[len - 1];
+    });
+  };
+
+  $scope.deleteErasureCodeProfile = function () {
+    var modalInstance = $uibModal.open({
+      controller       : "CephErasureCodeProfilesDeleteCtrl",
+      templateUrl      : "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
+      windowTemplateUrl: "templates/messagebox.html",
+      resolve          : {
+        cluster: function () {
+          return $scope.data.cluster;
+        },
+        profile: function () {
+          return $scope.pool.erasure.profile;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      // Remove item from select box
+      var idx = $scope.data.profiles.indexOf($scope.pool.erasure.profile);
+      $scope.data.profiles.splice(idx, 1);
+    });
+  };
 });

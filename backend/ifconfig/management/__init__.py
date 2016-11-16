@@ -15,18 +15,15 @@
 """
 
 import os
-import socket
 import netaddr
 import netifaces
-import socket, struct
+import socket
+import struct
 
-from django.core.management import call_command
-from django.db.models import signals
-
-import ifconfig.models
 import sysutils.models
-from ifconfig.models  import Host, NetDevice, IPAddress
+from ifconfig.models import Host, NetDevice, IPAddress
 from systemd import get_dbus_object, dbus_to_python
+
 
 def get_default_gateway_linux():
     """Read the default gateway directly from /proc."""
@@ -65,23 +62,28 @@ def create_interfaces(**kwargs):
 
         if iface in vlans:
             depends = [vlans[iface][1]]
-            iftype  = "VLAN"
+            iftype = "VLAN"
 
-        elif os.path.exists( "/sys/class/net/%s/brif" % iface ):
-            depends = [depiface for depiface in os.listdir("/sys/class/net/%s/brif" % iface) if "tap" not in depiface]
-            iftype  = "BRIDGE"
+        elif os.path.exists("/sys/class/net/%s/brif" % iface):
+            depends = [depiface for depiface in os.listdir("/sys/class/net/%s/brif" % iface)
+                       if "tap" not in depiface]
+            iftype = "BRIDGE"
 
-        elif os.path.exists( "/sys/class/net/%s/bonding/slaves" % iface ):
+        elif os.path.exists("/sys/class/net/%s/bonding/slaves" % iface):
             depends = open("/sys/class/net/%s/bonding/slaves" % iface).read().strip().split()
-            iftype  = "BONDING"
-            args["bond_mode"]      =     open("/sys/class/net/%s/bonding/mode"      % iface).read().strip().split()[0]
-            args["bond_miimon"]    = int(open("/sys/class/net/%s/bonding/miimon"    % iface).read().strip())
-            args["bond_downdelay"] = int(open("/sys/class/net/%s/bonding/updelay"   % iface).read().strip())
-            args["bond_updelay"]   = int(open("/sys/class/net/%s/bonding/downdelay" % iface).read().strip())
+            iftype = "BONDING"
+            args["bond_mode"] = open("/sys/class/net/%s/bonding/mode"
+                                     % iface).read().strip().split()[0]
+            args["bond_miimon"] = int(open("/sys/class/net/%s/bonding/miimon"
+                                           % iface).read().strip())
+            args["bond_downdelay"] = int(open("/sys/class/net/%s/bonding/updelay"
+                                              % iface).read().strip())
+            args["bond_updelay"] = int(open("/sys/class/net/%s/bonding/downdelay"
+                                            % iface).read().strip())
 
         else:
             depends = []
-            iftype  = "NATIVE"
+            iftype = "NATIVE"
 
         havealldeps = True
         for depiface in depends:
@@ -105,20 +107,20 @@ def create_interfaces(**kwargs):
             haveifaces[iface].save()
 
             if iftype in ("BRIDGE", "BONDING"):
-                depifaces = [ haveifaces[depiface] for depiface in depends ]
+                depifaces = [haveifaces[depiface] for depiface in depends]
                 if iftype == "BRIDGE":
                     haveifaces[iface].brports = depifaces
                 else:
-                    haveifaces[iface].slaves  = depifaces
+                    haveifaces[iface].slaves = depifaces
 
             elif iftype == "VLAN":
-                haveifaces[iface].vlanrawdev  = NetDevice.objects.get(devname=depends[0])
+                haveifaces[iface].vlanrawdev = NetDevice.objects.get(devname=depends[0])
 
-        #print "%s is a %s device with depends to %s" % ( iface, iftype, ','.join(depends) )
-        #print args
+        # print "%s is a %s device with depends to %s" % ( iface, iftype, ','.join(depends) )
+        # print args
 
         for addrfam, addresses in netifaces.ifaddresses(iface).iteritems():
-            if addrfam not in ( socket.AF_INET, socket.AF_INET6 ):
+            if addrfam not in (socket.AF_INET, socket.AF_INET6):
                 continue
             for addr in addresses:
                 if addrfam == socket.AF_INET6 and addr["addr"][:4] == "fe80":
@@ -126,14 +128,16 @@ def create_interfaces(**kwargs):
                     continue
                 ipnet = netaddr.IPNetwork(addr["addr"] + "/" + addr["netmask"])
                 try:
-                    ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"]+"/" )
+                    ip = IPAddress.objects.get(device__host=host,
+                                               address__startswith=addr["addr"]+"/")
                     ip.address = str(ipnet)
-                    primary_address=(defaultgw in ipnet)
+                    primary_address = (defaultgw in ipnet)
                     ip.full_clean()
                     ip.save()
                 except IPAddress.DoesNotExist:
                     print "Adding ", addr
-                    ip = IPAddress(address=str(ipnet), device=haveifaces[iface], primary_address=(defaultgw in ipnet))
+                    ip = IPAddress(address=str(ipnet), device=haveifaces[iface],
+                                   primary_address=(defaultgw in ipnet))
                     ip.save()
 
     for iface in unseen_ifaces:
