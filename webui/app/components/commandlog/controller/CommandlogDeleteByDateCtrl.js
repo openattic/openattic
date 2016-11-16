@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibModalInstance, toasty) {
+var app = angular.module("openattic.commandlog");
+app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService, $uibModalInstance, toasty) {
   $scope.datePicker = {
     opened: false,
     maxDate: null,
@@ -52,7 +52,7 @@ app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibMo
   };
 
   $scope.delete = function () {
-    CmdlogService.delete({"datetime": $scope.datePicker.dateTime})
+    commandlogService.delete({"datetime": $scope.datePicker.dateTime})
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");

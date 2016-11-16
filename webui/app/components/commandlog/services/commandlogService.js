@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.factory("CmdlogService", function ($resource) {
+var app = angular.module("openattic.commandlog");
+app.factory("commandlogService", function ($resource) {
   return $resource(globalConfig.API.URL + "cmdlogs/:id", {
     id: "@id"
   }, {

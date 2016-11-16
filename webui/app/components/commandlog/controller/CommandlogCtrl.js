@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $uibModal) {
+var app = angular.module("openattic.commandlog");
+app.controller("CommandlogCtrl", function ($scope, $state, commandlogService, $uibModal) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -48,7 +48,7 @@ app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $uibModal)
     if (newVal.entries === null) {
       return;
     }
-    CmdlogService.filter({
+    commandlogService.filter({
       page: $scope.filterConfig.page + 1,
       pageSize: $scope.filterConfig.entries,
       search: $scope.filterConfig.search,
@@ -72,8 +72,8 @@ app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $uibModal)
   $scope.deleteAction = function () {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "templates/cmdlogs/delete-by-selection.html",
-      controller: "CmdlogDeleteBySelectionCtrl",
+      templateUrl: "components/commandlog/templates/delete-by-selection.html",
+      controller: "CommandlogDeleteBySelectionCtrl",
       resolve: {
         selection: function () {
           return $scope.selection.items;
@@ -89,8 +89,8 @@ app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $uibModal)
   $scope.deleteByDateAction = function () {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "templates/cmdlogs/delete-by-date.html",
-      controller: "CmdlogDeleteByDateCtrl"
+      templateUrl: "components/commandlog/templates/delete-by-date.html",
+      controller: "CommandlogDeleteByDateCtrl"
     });
 
     modalInstance.result.then(function () {

@@ -30,13 +30,13 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $uibModalInstance, $filter, selection,
-    toasty) {
+var app = angular.module("openattic.commandlog");
+app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogService, $uibModalInstance, $filter,
+    selection, toasty) {
   $scope.selectionLength = selection.length;
   $scope.itemText = false;
   if (selection.length === 1) {
-    $scope.itemText = $filter("shortlog")(selection[0].text);
+    $scope.itemText = $filter("shortcommandlog")(selection[0].text);
     $scope.command = selection[0].command;
   }
 
@@ -46,7 +46,7 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
   }
 
   $scope.delete = function () {
-    CmdlogService.delete({"ids": ids})
+    commandlogService.delete({"ids": ids})
         .$promise
         .then(function () {
           $uibModalInstance.close("cloned");
