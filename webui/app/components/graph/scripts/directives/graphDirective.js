@@ -47,7 +47,8 @@ app.directive("graph", function () {
           "style=\"background-color: rgba(30, 30, 220, 0.4); ",
             "position: absolute; height: 153px; width: 1px; ",
             "z-index: 100; visibility: hidden;\">&nbsp;</div>",
-        "<img ng-src=\"/openattic/nagios/v/{{ volume.id }}/{{ encodedTitle }}.png?{{ urlparams }}\" />",
+        "<img ng-src=\"/openattic/nagios/v/{{ volume.id }}/{{ encodedTitle }}.png?{{ urlparams }}\" ",
+          "ng-alt-src=\"fa fa-bug fa-4x\" />",
       "</div>"
     ].join(""),
     controller: function ($scope, GraphProfileService) {

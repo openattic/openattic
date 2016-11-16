@@ -1,7 +1,20 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.16 (not released yet):
+Version 2.0.17 (not released yet):
+----------------------------------
+
+* Backend: Fixed creation of NFS and Samba shares on Xenial (OP-1697)
+* Backend: Fixed XML-RPCD on Xenail (OP-1698)
+* Backend: Fixed creation of volume snapshots on Xenail (OP-1699)
+* Backend: Fixed display of pool types on Xenial (OP-1703)
+* Installation: Fixed Apache redirect from `/` to `/openattic` on Xenial (OP-1672)
+* WebUI: Display alternative graph image if loading fails (OP-1403)
+* Installation: Fix Permission denied: '/usr/bin/pip' for Vagrant development
+  environment using SUSE Leap (OP-1715)
+
+
+Version 2.0.16, 07. November 2016:
 ----------------------------------
 
 * Backend: The REST API 'host' resource returns the openATTIC version (in
@@ -15,6 +28,16 @@ Version 2.0.16 (not released yet):
   logfile if the XML file of an RRD file is not found (OP-1632)
 * Backend: Django migration files aren't checked by Flake8 anymore (OP-1638)
 * Backend: Added reading and writing of the `policy.cfg` of DeepSea REST API (OP-1617)
+* Backend: The is_oa_host field is set to True for oA hosts by 'oaconfig
+  add-host' (OP-1665)
+* Backend: Added database migrations for Django 1.6 (OP-1649)
+* Backend: Fixed Bug on Ubuntu Trusty preventing deletion of iSCSI targets (OP-722)
+* Backend: Fixed issue breaking the WebUI on Xenial (OP-1689)
+* WebUI: Tabs will be selected as expected (OP-1082)
+* Packaging: The python-configobj dependency is moved to the openattic-base
+  package (OP-1666)
+* Packaging: Added missing dependency openattic-module-cron in
+  openattic-module-lvm (OP-1664)
 
 
 Version 2.0.15, 12. October 2016:

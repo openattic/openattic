@@ -47,6 +47,7 @@ angular.module("openattic.extensions", [
   "openattic.required",
   "openattic.sizeparser",
   "openattic.oaWizards",
+  "openattic.tabView",
   "openattic.todowidget",
   "openattic.userinfo"
 ]);

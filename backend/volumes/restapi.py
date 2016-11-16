@@ -31,7 +31,7 @@ from rest.multinode.handlers import RequestHandlers
 from volumes import models
 
 from rest.utilities import get_request_query_params, mk_method_field_params, get_request_data, \
-    ToNativeToRepresentationMixin
+    ToNativeToRepresentationMixin, drf_version
 
 # filter queryset by...
 # * is not a physical block device and
@@ -70,7 +70,7 @@ class DiskSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModel
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
-        data.update(super(DiskSerializer, self).to_native(obj))
+        data.update(self.super_to_native_or_to_representation(obj))
         if obj is None:
             return data
         if obj.physicalblockdevice_or_none is not None:
@@ -419,11 +419,30 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
     @detail_route(["get", "post"])
     def snapshots(self, request, *args, **kwargs):
+        """
+        Here, we're using a non-supported variant of nested ViewSets. Expect this to break at any
+        DRF upgrades.
+
+        Since DRF 3, `rest_framework.views.APIView#dispatch``can no longer cope with `request`
+        already being a `rest_framework.request.Request` instead of a Django HttpRequest.
+        This is, because `rest_framework.views.APIView#initialize_request` converts a Django request
+        to a DRF request and cannot handle `rest_framework.request.Request` as parameter.
+
+        As a result, calling `request.data` would raise in rest_framework/parsers.py", line 69:
+            "ParseError: JSON parse error - No JSON object could be decoded"
+
+        :param request: `rest_framework.request.Request`
+        """
         origin = self.get_object()
-        ViewSet = type("VolumeSnapshotViewSet", (SnapshotViewSet,), {
+        attributes = {
             "queryset": origin.snapshot_storageobject_set.all(),
             "origin":   origin
-            })
+            }
+        if drf_version() >= (3,0):
+            # Don't perform any conversions in `initialize_request`:
+            attributes['initialize_request'] = lambda self, request, *args, **kwargs: request
+
+        ViewSet = type("VolumeSnapshotViewSet", (SnapshotViewSet,), attributes)
         return ViewSet.as_view({'get': 'list', 'post': 'create'})(request, *args, **kwargs)
 
     @detail_route()

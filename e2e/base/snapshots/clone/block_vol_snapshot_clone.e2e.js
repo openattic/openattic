@@ -17,9 +17,6 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     helpers.login();
     helpers.create_volume(volumename, "lun");
     helpers.create_snapshot(volume);
-    volume.click();
-    element(by.css('.tc_snapshotTab')).click();
-
   });
 
   it('should not allow spaces or additional characters', function(){

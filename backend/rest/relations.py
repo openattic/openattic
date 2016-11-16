@@ -68,5 +68,73 @@ if drf_version() < (3, 0):
                 'url': url
             }
 else:
-    HyperlinkedRelatedField = RestFramework_HyperlinkedRelatedField
-    HyperlinkedIdentityField = RestFramework_HyperlinkedIdentityField
+    class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
+        """
+        There is a problem, if
+        1. You are using DRF >= 3.0
+        1. and your serializer contains a HyperlinkedRelatedField named f
+        2. and the corresponding model does not have a related field f.
+        3. Instead, it has a property f returning an F-model instance, e.g.:
+
+        >>> class M(Model):
+        >>>     @property
+        >>>     def my_prop(self):
+        >>>         return self.foo.my_prop
+
+        Then, the serializer will fail to generate the URL, because the HyperlinkedRelatedField
+        cannot cope with the fact that `django.db.models.base.Model#serializable_value`
+        returns the PK, if the model returns a field with that name, or else the model instance.
+
+        If we disable the pk-only-optimization, `HyperlinkedRelatedField` will not call
+        `django.db.models.base.Model#serializable_value`, thus disabling the ode path affected
+        by this bug.
+
+        Another idea would be to force the use of the PK for these property based
+        HyperlinkedRelatedFields by specifying the sorce attribute of the HyperlinkedRelatedField.
+        But that doesn't work, cause some serializers must support properties and ForeinKeys at
+        the same time.
+
+        Feel free to find and implement another workaround.
+
+        See also: https://github.com/tomchristie/django-rest-framework/issues/4653
+        """
+
+        def use_pk_only_optimization(self):
+            return False
+
+        def to_representation(self, obj):
+            """
+            We actually modify the output of `HyperlinkedRelatedField` to be non-standard.
+            This should have been done in a different class, and not directly here.
+            """
+            url = super(HyperlinkedRelatedField, self).to_representation(obj)
+            return {
+                'id':    obj.pk,
+                'url':   url,
+                'title': unicode(obj)
+            }
+
+        def to_internal_value(self, value):
+            """
+            We actually modify the output of `HyperlinkedRelatedField` to be non-standard.
+            This should have been done in a different class, and not directly here.
+            """
+            if type(value) != dict:
+                raise TypeError("value needs to be a dictionary")
+            if "id" in value:
+                return self.queryset.get(id=value["id"])
+            if "url" in value:
+                return super(HyperlinkedRelatedField, self).to_internal_value(value["url"])
+            raise KeyError("need id or url field (id preferred)")
+
+
+    class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
+        def to_representation(self, obj):
+            """
+            We actually modify the output of `HyperlinkedIdentityField` to be non-standard.
+            This should have been done in a class with a different name or not at all.
+            """
+            url = super(HyperlinkedIdentityField, self).to_representation(obj)
+            return {
+                'url': url
+            }

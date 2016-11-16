@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService,
-    $uibModal) {
+    $uibModal, tabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.pools = {};
@@ -91,6 +91,37 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
   };
 
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "cephPools.detail.status",
+        class: "tc_statusTab",
+        name: "Status"
+      },
+      cacheTier: {
+        show: "selection.item.tiers.length > 0",
+        state: "cephPools.detail.cacheTier",
+        class: "tc_cacheTieringTab",
+        name: "Cache Tier"
+      },
+      statistics: {
+        show: "selection.item",
+        state: "cephPools.detail.cacheTier",
+        class: "tc_statisticsTab",
+        name: "Statistics"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "cephPool",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
+
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
       return;
@@ -112,21 +143,10 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
 
     if (item) {
-      if ($state.current.name === "cephPools")  {
-        $state.go("cephPools.detail.status", {
-          cephPool: item.id,
-          "#": "more"
-        });
-      } else if ($state.current.name === "cephPools.detail.statistics") {
-        $state.go("cephPools.detail.statistics", {
-          cephPool: item.id,
-          "#": "more"
-        });
+      if ($state.current.name === "cephPools") {
+        $scope.changeTab("cephPools.detail.status");
       } else {
-        $state.go($state.current.name, {
-          cephPool: item.id,
-          "#": "more"
-        });
+        $scope.changeTab($state.current.name);
       }
     }
   });

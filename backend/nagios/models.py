@@ -132,7 +132,7 @@ class Service(models.Model):
             'serv': servname
             }
         if not exists(xmlpath):
-            raise SystemError("XML file not found")
+            raise SystemError("XML file '{}' could not be found.".format(xmlpath))
 
         return RRD(xmlpath)
 
