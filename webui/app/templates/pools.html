@@ -25,7 +25,7 @@
                 <input type="checkbox" ng-model="selection.checkAll"/>
             </th>
             <th sortfield="name" sortheaderclass sortdefault sortdir="asc" ng-show="columns['Name']">Name</th>
-            <th sortfield="megs" sortheaderclass ng-show="columns['Size']">Size</th>
+            <th sortfield="usage.size" sortheaderclass ng-show="columns['Size']">Size</th>
             <th sortfield="usage.used" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
             <th sortfield="status.status" sortdir="asc" sortheaderclass ng-show="columns['Status']">Status</th>
             <th sortfield="type.name" sortdir="asc" sortheaderclass ng-show="columns['Type']">Type</th>
