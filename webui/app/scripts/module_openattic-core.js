@@ -33,6 +33,7 @@
 angular.module("openattic.core", [
   "openattic.apirecorder",
   "openattic.auth",
+  "openattic.commandlog",
   "openattic.dashboard",
   "openattic.datatable",
   "openattic.graph",
