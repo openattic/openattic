@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.disks", []);
+angular.module("openattic.disks", [
+    "openattic.tabView"
+]);
