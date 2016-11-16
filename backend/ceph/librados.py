@@ -98,7 +98,7 @@ class Client(object):
         self._default_timeout = 30
         self.connect(self._conf_file)
 
-    def _get_pool(self, pool_name):
+    def get_pool(self, pool_name):
         if pool_name not in self._pools:
             self._pools[pool_name] = self._cluster.open_ioctx(pool_name)
         self._pools[pool_name].require_ioctx_open()
@@ -151,10 +151,10 @@ class Client(object):
         return self._cluster.delete_pool(pool_name)
 
     def get_stats(self, pool_name):
-        return self._get_pool(pool_name).get_stats()
+        return self.get_pool(pool_name).get_stats()
 
     def change_pool_owner(self, pool_name, auid):
-        return self._get_pool(pool_name).change_auid(auid)
+        return self.get_pool(pool_name).change_auid(auid)
 
     def mon_command(self, cmd, argdict=None, output_format='json'):
         """Calls a monitor command and returns the result as dict.
@@ -790,7 +790,7 @@ class RbdApi(object):
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
         """
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         rbd_inst = rbd.RBD()
         default_features = 0 if old_format else 61  # FIXME: hardcoded int
         feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
@@ -801,7 +801,7 @@ class RbdApi(object):
 
     @call_librados_api
     def remove(client, pool_name, image_name):
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         rbd_inst = rbd.RBD()
         rbd_inst.remove(ioctx, image_name)
 
@@ -811,7 +811,7 @@ class RbdApi(object):
         :returns: list -- a list of image names
         :rtype: list[str]
         """
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         rbd_inst = rbd.RBD()
         return rbd_inst.list(ioctx)
 
@@ -825,7 +825,7 @@ class RbdApi(object):
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
             return image.stat()
 
@@ -842,7 +842,7 @@ class RbdApi(object):
     def image_resize(client, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             original_size = image.size()
             yield image.resize(size)
@@ -850,7 +850,7 @@ class RbdApi(object):
 
     @call_librados_api
     def image_features(client, pool_name, name):
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             return RbdApi._bitmask_to_list(image.features())
 
@@ -858,7 +858,7 @@ class RbdApi(object):
     @call_librados_api
     def image_set_feature(client, pool_name, name, feature, enabled):
         """:type enabled: bool"""
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             bitmask = RbdApi._list_to_bitmask([feature])
             if bitmask not in RbdApi.get_feature_mapping().keys():
@@ -868,6 +868,6 @@ class RbdApi(object):
 
     @call_librados_api
     def image_old_format(client, pool_name, name):
-        ioctx = client._get_pool(pool_name)
+        ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             return image.old_format()
