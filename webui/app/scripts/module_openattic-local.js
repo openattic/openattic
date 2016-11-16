@@ -32,6 +32,7 @@
 
 angular.module("openattic.local", [
   "openattic.clusterstatuswidget",
+  "openattic.disks",
   "openattic.hosts",
   "openattic.oaWizards",
   "openattic.todowidget"
