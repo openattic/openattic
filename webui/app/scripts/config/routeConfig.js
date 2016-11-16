@@ -401,18 +401,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         label: "Apikeys"
       }
     })
-    .state("cmdlogs", {
-      url: "/cmdlogs",
-      views: {
-        "main": {
-          templateUrl: "templates/cmdlogs.html",
-          controller : "CmdlogCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Command logs"
-      }
-    })
     .state("crushmap", {
       url: "/ceph/crushmap",
       views: {
