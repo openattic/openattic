@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.factory("DiskService", function ($resource) {
+var app = angular.module("openattic.disks");
+app.factory("disksService", function ($resource) {
   return $resource(globalConfig.API.URL + "disks/:id", {
     id: "@id"
   }, {
