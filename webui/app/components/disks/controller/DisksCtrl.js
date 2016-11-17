@@ -30,8 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("DiskCtrl", function ($scope, $state, DiskService, tabViewService) {
+var app = angular.module("openattic.disks");
+app.controller("DisksCtrl", function ($scope, $state, disksService, tabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -67,7 +67,7 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService, tabViewService
     if (newVal.entries === null) {
       return;
     }
-    DiskService.filter({
+    disksService.filter({
       page: $scope.filterConfig.page + 1,
       pageSize: $scope.filterConfig.entries,
       search: $scope.filterConfig.search,
