@@ -108,11 +108,11 @@ describe('General', function(){
     url: '/openattic/#/',
     subitems: {
       users: element(by.css('.tc_submenuitem_system_users')),
-      cmdlog: element(by.css('.tc_submenuitem_system_cmdlog'))
+      commandlog: element(by.css('.tc_submenuitem_system_cmdlog'))
     },
     order: [
       'users',
-      'cmdlog'
+      'commandlog'
     ]
   });
 
