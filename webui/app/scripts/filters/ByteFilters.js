@@ -34,7 +34,7 @@ var app = angular.module("openattic");
 
 app.filter("bytes", function () {
   return function (bytes, precision, unit) {
-    var units = ["bytes", "kB", "MB", "GB", "TB", "PB"];
+    var units = ["bytes", "KiB", "MiB", "GiB", "TiB", "PiB"];
     if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
       return "-";
     }
@@ -42,13 +42,18 @@ app.filter("bytes", function () {
       return bytes + " " + units[0];
     }
     precision = precision || 2;
-    if (!unit || unit < 0 || unit > units.length) {
-      unit = 0;
+    if (angular.isDefined(unit)) {
+      // Manually set the unit.
+      if (angular.isString(unit)) {
+        unit = units.indexOf(unit);
+      }
+      if (!unit || unit < 0 || unit > units.length) {
+        unit = 0;
+      }
+    } else {
+      // Calculate the best matching unit.
+      unit = Math.floor(Math.log(bytes) / Math.log(1024));
     }
-    if (typeof unit === "string") {
-      units.indexOf(unit);
-    }
-    var number = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, number)).toFixed(precision) +  " " + units[number];
+    return (bytes / Math.pow(1024, unit)).toFixed(precision) +  " " + units[unit];
   };
 });
