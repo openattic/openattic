@@ -1,0 +1,72 @@
+/**
+ *
+ * @source: http://bitbucket.org/openattic/openattic
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in this page.
+ *
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *
+ * The JavaScript code in this page is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software
+ * Foundation; version 2.
+ *
+ * This package is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * As additional permission under GNU GPL version 2 section 3, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 1, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in this page.
+ *
+ */
+"use strict";
+
+var app = angular.module("openattic");
+/**
+ * @param {string} ngClipboardTarget The identifer of the DOM element whose
+ *   text is copied into the clipboard.
+ * @param {string} ngClipboardText An alternative text. Default is 'Text'.
+ */
+app.directive("ngClipboard", function (toasty) {
+  return {
+    restrict: "A",
+    scope: {
+      ngClipboardTarget: "@",
+      ngClipboardText: "@"
+    },
+    link: function (scope, element, attrs) {
+      element.on("click", function () {
+        attrs.ngClipboardText = angular.isString(attrs.ngClipboardText) ?
+          attrs.ngClipboardText : "text";
+        try {
+          // Get the DOM element by id.
+          var node = $("#" + attrs.ngClipboardTarget);
+          // Copy text to clipboard.
+          var selection = document.getSelection();
+          selection.removeAllRanges();
+          node.select();
+          document.execCommand("copy");
+          selection.removeAllRanges();
+          // Display success message.
+          toasty.success({
+            msg: "Successfully copied " + attrs.ngClipboardText + " to the clipboard."
+          });
+        } catch (err) {
+          // Display error message.
+          toasty.error({
+            msg: "Failed to copy " + attrs.ngClipboardText + " to the clipboard."
+          });
+        }
+      });
+    }
+  };
+});
