@@ -31,10 +31,15 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter) {
+app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter, $rootScope) {
   var gravatarId = $filter("gravatar")("");
 
   $scope.isCurrentUser = false;
+
+  // Display the auth token only if the currently logged in user has
+  // administrator privileges.
+  $scope.showAuthToken = angular.isDefined($rootScope.user) ?
+    $rootScope.user.is_staff : false;
 
   var goToListView = function () {
     $state.go("users");
@@ -72,7 +77,7 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
     UserService.get({id: $stateParams.user})
         .$promise
         .then(function (res) {
-          if ($scope.user.id === Number($stateParams.user)) {
+          if (angular.isDefined($scope.user) && ($scope.user.id === Number($stateParams.user))) {
             $scope.isCurrentUser = true;
           }
           $scope.user = res;
@@ -94,6 +99,15 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
               console.log("An error occured", error);
             });
       }
+    };
+
+    $scope.copyAuthTokenToClipboard = function () {
+      var node = $("#userAuthToken");
+      var selection = document.getSelection();
+      selection.removeAllRanges();
+      node.select();
+      document.execCommand("copy");
+      selection.removeAllRanges();
     };
   }
 
