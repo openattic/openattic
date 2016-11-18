@@ -33,14 +33,23 @@
 var app = angular.module("openattic");
 
 app.filter("bytes", function () {
-  return function (bytes, precision, unit) {
-    var units = ["bytes", "KiB", "MiB", "GiB", "TiB", "PiB"];
-    if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
+  /**
+   * Display the given size in the best matching unit.
+   * @param {number} value The value in MiB.
+   * @param {number} precision The number of digits after the decimal point.
+   *   Default is 2.
+   * @param {number|string} unit The unit to output, e.g. 2 or 'MiB'.
+   *   If not set, the best matching unit is calculated. Default is auto-calc.
+   */
+  return function (value, precision, unit) {
+    var units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"];
+    if (isNaN(parseFloat(value)) || !isFinite(value)) {
       return "-";
     }
-    if (bytes === 0) {
-      return bytes + " " + units[0];
+    if (value === 0) {
+      return value + " " + units[0];
     }
+    value = (value * Math.pow(1024, 2)).toFixed(0); // Convert to bytes
     precision = precision || 2;
     if (angular.isDefined(unit)) {
       // Manually set the unit.
@@ -52,8 +61,8 @@ app.filter("bytes", function () {
       }
     } else {
       // Calculate the best matching unit.
-      unit = Math.floor(Math.log(bytes) / Math.log(1024));
+      unit = Math.floor(Math.log(value) / Math.log(1024));
     }
-    return (bytes / Math.pow(1024, unit)).toFixed(precision) +  " " + units[unit];
+    return (value / Math.pow(1024, unit)).toFixed(precision) +  " " + units[unit];
   };
 });
