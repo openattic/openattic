@@ -108,9 +108,16 @@ var taskQueueCommons = function(){
     Object.keys(self.dialog.modalElements).forEach(function(e){
       expect(self.dialog.modalElements[e].isDisplayed()).toBe(true);
       if(tab === 'pending'){ // Updates tab view.
-        element(by.className(self.dialog.tabElements.tab + 'failed')).click();
+        self.changeTab('failed');
       }
       element(by.className(self.dialog.tabElements.tab + tab)).click();
+    });
+  };
+
+  this.open = function(){
+    self.taskQueue.click();
+    Object.keys(self.dialog.modalElements).forEach(function(element){
+      expect(self.dialog.modalElements[element].isPresent()).toBe(true);
     });
   };
 
@@ -118,6 +125,23 @@ var taskQueueCommons = function(){
     self.dialog.modalElements.closeBtn.click();
     Object.keys(self.dialog.modalElements).forEach(function(element){
       expect(self.dialog.modalElements[element].isPresent()).toBe(false);
+    });
+  };
+
+  this.waitForPendingTasks = function(depth){
+    browser.sleep(helpers.configs.sleep);
+    if(!depth){
+      self.open();
+      depth = 1;
+    }else{
+      self.changeTab('pending');
+    }
+    self.dialog.tabs.pending.elements.tab.getText().then(function(s){
+      if(parseInt(s.match(/[0-9]+/)[0], 10) === 0){
+        self.close();
+      }else{
+        self.waitForPendingTasks(depth + 1);
+      }
     });
   };
 
@@ -130,6 +154,7 @@ var taskQueueCommons = function(){
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify({times: time}));
     }, time, helpers.configs);
+    browser.sleep(helpers.configs.sleep);
   };
 
   this.deleteTasks = function(tab, name){

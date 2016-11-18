@@ -11,7 +11,7 @@ describe('task queue form test', function(){
   });
 
   beforeEach(function(){
-    qProp.taskQueue.click();
+    qProp.open();
   });
 
   Object.keys(qProp.dialog.tabs).forEach(function(tabName){ // => [pending, failed, finished]
@@ -71,6 +71,14 @@ describe('task queue form test', function(){
       qProp.changeTab(tabName);
       qProp.deleteTasks(tabName, 'wait');
     });
+  });
+
+  it('Tests the waiting for task function', function(){
+    qProp.createTask(5);
+    qProp.close();
+    qProp.waitForPendingTasks();
+    qProp.open();
+    expect(qProp.dialog.tabs.pending.elements.tab.getText()).toBe('Pending (0)');
   });
 
   afterEach(function(){
