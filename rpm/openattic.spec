@@ -429,7 +429,7 @@ install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
 # Install db file
-install -m 644 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
+install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
 
 ln -s %{_sysconfdir}/%{name}/databases/pgsql.ini %{buildroot}%{_sysconfdir}/openattic/database.ini
 
@@ -739,7 +739,7 @@ systemctl start smb
 %{_datadir}/%{name}/zfs/
 
 %files 	pgsql
-%defattr(-,root,root,-)
+%defattr(-,openattic,openattic,-)
 %config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
 %{_sysconfdir}/%{name}/database.ini
 
