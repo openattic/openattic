@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, UserService, $filter) {
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter) {
   var gravatarId = $filter("gravatar")("");
 
   $scope.isCurrentUser = false;
@@ -57,7 +57,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, UserS
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
       if (userForm.$valid === true) {
-        UserService.save($scope.user)
+        usersService.save($scope.user)
             .$promise
             .then(function () {
               goToListView();
@@ -69,7 +69,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, UserS
   } else {
     $scope.editing = true;
 
-    UserService.get({id: $stateParams.user})
+    usersService.get({id: $stateParams.user})
         .$promise
         .then(function (res) {
           if ($scope.user.id === Number($stateParams.user)) {
@@ -86,7 +86,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, UserS
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
       if (userForm.$valid === true) {
-        UserService.update({id: $scope.user.id}, $scope.user)
+        usersService.update({id: $scope.user.id}, $scope.user)
             .$promise
             .then(function () {
               goToListView();

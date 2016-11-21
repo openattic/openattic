@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, cephPoolsService, cephRbdService,
-    HostService, UserService, VolumeService) {
+    HostService, usersService, VolumeService) {
   return {
     restrict: "A",
     require : "ngModel",
@@ -70,7 +70,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               break;
             case "user":
               obj = {
-                model    : UserService,
+                model    : usersService,
                 current  : scope.user.id,
                 attribute: "id"
               };
