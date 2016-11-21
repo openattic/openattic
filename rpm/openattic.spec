@@ -529,24 +529,6 @@ fi
 systemctl enable postgresql
 systemctl start postgresql
 
-#TODO: Dynamisches Passwort erzeugen und ausgeben
-#pass=$(openssl rand -hex 10)
-dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
-echo "===> $dbu"
-if [ -n "$dbu" ]; then
-	echo "Database openattic exists, owned by $dbu"
-else
-su - postgres -c psql << EOT
-create user openattic with password 'ip32...beg';
-create database openattic with owner openattic;
-\q
-EOT
-	#sed -i -e "s/ip32...beg/$pass/g" /etc/openattic/databases/pgsql.ini
-	sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
-fi
-systemctl reload postgresql
-systemctl status postgresql
-
 %postun pgsql
 # Datenbank drop
 echo "You need to drop the openattic database & user"

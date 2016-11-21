@@ -96,18 +96,7 @@ case $1 in
 
 		if ! service postgresql status >/dev/null; then
 			# Start database
-			service postgresql enable # ???
 			service postgresql start
-
-			# RedHat family only
-			POSTGRESQL_SETUP=`which postgresql-setup 2>/dev/null`
-			if [ -n "$POSTGRESQL_SETUP" ]; then
-				if $POSTGRESQL_SETUP initdb; then
-					echo "postgresql database initialized";
-				else
-					echo "postgres database already initialized";
-				fi
-			fi
 		fi
 
 		dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
