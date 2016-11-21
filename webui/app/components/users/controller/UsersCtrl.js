@@ -78,8 +78,8 @@ app.controller("UsersCtrl", function ($scope, $state, UserService, $uibModal) {
   $scope.deleteAction = function () {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "templates/users/user-delete.html",
-      controller: "UserDeleteCtrl",
+      templateUrl: "components/users/templates/delete-user.html",
+      controller: "UsersDeleteCtrl",
       resolve: {
         user: function () {
           return $scope.selection.item;
