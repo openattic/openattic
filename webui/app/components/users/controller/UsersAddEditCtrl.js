@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter) {
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, UserService, $filter) {
   var gravatarId = $filter("gravatar")("");
 
   $scope.isCurrentUser = false;
