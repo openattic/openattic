@@ -32,24 +32,24 @@
 
 var app = angular.module("openattic");
 /**
- * @param {string} ngClipboardTarget The identifer of the DOM element whose
+ * @param {string} oaClipboardTarget The identifer of the DOM element whose
  *   text is copied into the clipboard.
- * @param {string} ngClipboardText An alternative text. Default is 'Text'.
+ * @param {string} oaClipboardText An alternative text. Default is 'text'.
  */
-app.directive("ngClipboard", function (toasty) {
+app.directive("oaClipboard", function (toasty) {
   return {
     restrict: "A",
     scope: {
-      ngClipboardTarget: "@",
-      ngClipboardText: "@"
+      oaClipboardTarget: "@",
+      oaClipboardText: "@"
     },
     link: function (scope, element, attrs) {
       element.on("click", function () {
-        attrs.ngClipboardText = angular.isString(attrs.ngClipboardText) ?
-          attrs.ngClipboardText : "text";
+        attrs.oaClipboardText = angular.isString(attrs.oaClipboardText) ?
+          attrs.oaClipboardText : "text";
         try {
           // Get the DOM element by id.
-          var node = $("#" + attrs.ngClipboardTarget);
+          var node = $("#" + attrs.oaClipboardTarget);
           // Copy text to clipboard.
           var selection = document.getSelection();
           selection.removeAllRanges();
@@ -58,12 +58,12 @@ app.directive("ngClipboard", function (toasty) {
           selection.removeAllRanges();
           // Display success message.
           toasty.success({
-            msg: "Successfully copied " + attrs.ngClipboardText + " to the clipboard."
+            msg: "Successfully copied " + attrs.oaClipboardText + " to the clipboard."
           });
         } catch (err) {
           // Display error message.
           toasty.error({
-            msg: "Failed to copy " + attrs.ngClipboardText + " to the clipboard."
+            msg: "Failed to copy " + attrs.oaClipboardText + " to the clipboard."
           });
         }
       });
