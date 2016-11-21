@@ -62,5 +62,5 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           label: "{{selection.item.name}} Status"
         }
-      })
+      });
 });

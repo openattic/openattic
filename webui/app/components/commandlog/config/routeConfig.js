@@ -44,5 +44,5 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           label: "Command log"
         }
-      })
+      });
 });
