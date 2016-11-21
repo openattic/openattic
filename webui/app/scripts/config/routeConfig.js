@@ -322,44 +322,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         parent: "volumes.detail.snapshots"
       }
     })
-    .state("users", {
-      url: "/users",
-      views: {
-        "main": {
-          templateUrl: "templates/users.html",
-          controller : "UserCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Users"
-      }
-    })
-    .state("users-add", {
-      url: "/users/add",
-      views: {
-        "main": {
-          templateUrl: "templates/users/user-form.html",
-          controller : "UserFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Add",
-        parent: "users"
-      }
-    })
-    .state("users-edit", {
-      url: "/users/edit/:user",
-      views: {
-        "main": {
-          templateUrl: "templates/users/user-form.html",
-          controller : "UserFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Edit {{user.username}}",
-        parent: "users"
-      }
-    })
     .state("apikeys", {
       url: "/apikeys",
       views: {
