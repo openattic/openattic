@@ -428,18 +428,8 @@ install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.
 # TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
-# database config
-## TODO: generate random password
-
-cat <<EOF > %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
-[default]
-engine   = django.db.backends.postgresql_psycopg2
-name     = openattic
-user     = openattic
-password = ip32...beg
-host     = localhost
-port     =
-EOF
+# Install db file
+install -m 644 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases
 
 ln -s %{_sysconfdir}/%{name}/databases/pgsql.ini %{buildroot}%{_sysconfdir}/openattic/database.ini
 
