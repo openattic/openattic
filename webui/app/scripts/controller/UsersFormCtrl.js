@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter) {
+app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter, $uibModal, toasty) {
   var gravatarId = $filter("gravatar")("");
 
   $scope.isCurrentUser = false;
@@ -96,14 +96,26 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
       }
     };
 
-    $scope.renewAuthToken = function () {
-      UserService.genNewToken({id: $scope.user.id})
-          .$promise
-          .then(function (res) {
-            $scope.user.auth_token = res.auth_token;
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+    $scope.generateAuthToken = function () {
+      var modalInstance = $uibModal.open({
+        windowTemplateUrl: "templates/messagebox.html",
+        templateUrl: "templates/users/generate-auth-token.html",
+        controller: "UsersModalCtrl",
+        resolve: {
+          user: function () {
+            return $scope.user;
+          }
+        }
+      });
+      modalInstance.result.then(function (token) {
+        // Display the new token.
+        $scope.user.auth_token.token = token;
+        // Display a message.
+        toasty.success({
+          title: "Generate API authentication token",
+          msg: "The token has been created successfully."
+        });
+      });
     };
   }
 

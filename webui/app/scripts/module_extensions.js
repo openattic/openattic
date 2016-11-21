@@ -49,5 +49,6 @@ angular.module("openattic.extensions", [
   "openattic.oaWizards",
   "openattic.tabView",
   "openattic.todowidget",
-  "openattic.userinfo"
+  "openattic.userinfo",
+  "openattic.users"
 ]);
