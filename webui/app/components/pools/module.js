@@ -30,11 +30,4 @@
  */
 "use strict";
 
-angular.module("openattic.local", [
-  "openattic.clusterstatuswidget",
-  "openattic.disks",
-  "openattic.pools",
-  "openattic.hosts",
-  "openattic.oaWizards",
-  "openattic.todowidget"
-]);
+angular.module("openattic.pools", []);
