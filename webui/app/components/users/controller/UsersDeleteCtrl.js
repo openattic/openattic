@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserDeleteCtrl", function ($scope, UserService, $uibModalInstance, user, toasty) {
+app.controller("UsersDeleteCtrl", function ($scope, UserService, $uibModalInstance, user, toasty) {
   $scope.user = user;
 
   $scope.delete = function () {
