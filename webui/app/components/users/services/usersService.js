@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("UserService", function ($resource) {
+app.factory("usersService", function ($resource) {
   return $resource(globalConfig.API.URL + "users/:id", {
     id: "@id"
   }, {
