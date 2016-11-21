@@ -36,11 +36,6 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
 
   $scope.isCurrentUser = false;
 
-  // Display the auth token only if the currently logged in user has
-  // administrator privileges.
-  $scope.showAuthToken = angular.isDefined($rootScope.user) ?
-    $rootScope.user.is_staff : false;
-
   var goToListView = function () {
     $state.go("users");
   };
