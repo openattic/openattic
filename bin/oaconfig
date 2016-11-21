@@ -116,7 +116,10 @@ create user openattic with password '$pass';
 create database openattic with owner openattic;
 \q
 EOT
-			sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
+			hba_conf="/var/lib/pgsql/data/pg_hba.conf"
+			if [ -e ${hba_conf} ] ; then
+				sed -i -e 's/ident$/md5/g' ${hba_conf}
+			fi
 			service postgresql reload
 			service postgresql status
 		fi
