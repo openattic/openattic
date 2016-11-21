@@ -95,6 +95,16 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
             });
       }
     };
+
+    $scope.renewAuthToken = function () {
+      UserService.genNewToken({id: $scope.user.id})
+          .$promise
+          .then(function (res) {
+            $scope.user.auth_token = res.auth_token;
+          }, function (error) {
+            console.log("An error occured", error);
+          });
+    };
   }
 
   $scope.cancelAction = function () {
