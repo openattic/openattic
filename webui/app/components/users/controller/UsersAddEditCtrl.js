@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.users");
 app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter) {
   var gravatarId = $filter("gravatar")("");
 

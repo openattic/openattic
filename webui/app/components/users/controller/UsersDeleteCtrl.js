@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.users");
 app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInstance, user, toasty) {
   $scope.user = user;
 

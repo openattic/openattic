@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.users");
 app.controller("UsersCtrl", function ($scope, $state, usersService, $uibModal) {
   $scope.data = {};
 
