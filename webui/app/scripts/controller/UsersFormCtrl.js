@@ -100,15 +100,6 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
             });
       }
     };
-
-    $scope.copyAuthTokenToClipboard = function () {
-      var node = $("#userAuthToken");
-      var selection = document.getSelection();
-      selection.removeAllRanges();
-      node.select();
-      document.execCommand("copy");
-      selection.removeAllRanges();
-    };
   }
 
   $scope.cancelAction = function () {
