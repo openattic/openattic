@@ -21,6 +21,7 @@ Version 2.0.17 (not released yet):
   environment using SUSE Leap (OP-1715)
 * Installation: New database instances are created using a random password.
   This change applies to RPM packages only. (OP-1438)
+* Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 
 
 Version 2.0.16, 07. November 2016:
