@@ -4,11 +4,15 @@ openATTIC Changelog
 Version 2.0.17 (not released yet):
 ----------------------------------
 
-* Backend: Fixed creation of NFS and Samba shares on Xenial (OP-1697)
-* Backend: Fixed XML-RPCD on Xenail (OP-1698)
-* Backend: Fixed creation of volume snapshots on Xenail (OP-1699)
+* Backend: Fixed creation of NFS and Samba shares on Ubuntu Xenial
+  (OP-1697)
+* Backend: Fixed XML-RPCD on Ubuntu Xenial (OP-1698)
+* Backend: Fixed creation of volume snapshots on Xenial (OP-1699)
 * Backend: Fixed display of pool types on Xenial (OP-1703)
-* Installation: Fixed Apache redirect from `/` to `/openattic` on Xenial (OP-1672)
+* Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
+  Xenial (OP-1672)
+* Installation: Replaced hard-coded paths in systemd unit files with
+  OADIR variable. Thanks to Ricardo Marques. (PR#522)
 * WebUI: Display alternative graph image if loading fails (OP-1403)
 * WebUI: Make the Disks/Pools/Volumes datatable sortable by additional
   criteria (OP-1427)
