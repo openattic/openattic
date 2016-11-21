@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserCtrl", function ($scope, $state, UserService, $uibModal) {
+app.controller("UsersCtrl", function ($scope, $state, UserService, $uibModal) {
   $scope.data = {};
 
   $scope.filterConfig = {
