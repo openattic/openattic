@@ -124,7 +124,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       ]
     },
     finished: {
-      name: "Done",
+      name: "Finished",
       data: [],
       states: ["Finished"],
       count: null,
