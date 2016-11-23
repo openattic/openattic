@@ -112,7 +112,7 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
         $scope.user.auth_token.token = token;
         // Display a message.
         toasty.success({
-          title: "Generate API authentication token",
+          title: "API authentication token",
           msg: "The token has been created successfully."
         });
       });

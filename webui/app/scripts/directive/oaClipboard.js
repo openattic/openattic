@@ -57,14 +57,12 @@ app.directive("oaClipboard", function (toasty) {
           document.execCommand("copy");
           selection.removeAllRanges();
           // Display success message.
-          toasty.success({
-            msg: "Successfully copied " + attrs.oaClipboardText + " to the clipboard."
-          });
+          toasty.success("Successfully copied the " + attrs.oaClipboardText +
+            " to the clipboard.");
         } catch (err) {
           // Display error message.
-          toasty.error({
-            msg: "Failed to copy " + attrs.oaClipboardText + " to the clipboard."
-          });
+          toasty.error("Failed to copy the " + attrs.oaClipboardText +
+            " to the clipboard.");
         }
       });
     }
