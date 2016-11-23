@@ -231,15 +231,15 @@ def call_librados(fsid, method, timeout=30):
     com1, com2 = multiprocessing.Pipe()
     p = LibradosProcess(fsid, com2)
     p.start()
-    p.join(timeout)
-    res = ''
-    if p.is_alive():
-        p.terminate()
-        logger.error('Process {} terminated because of timeout ({} sec)'.format(p.name, timeout))
-    else:
-        res = com1.recv()
-    com1.close()
-    return res
+    with closing(com1):
+        if com1.poll(timeout):
+            res = com1.recv()
+            p.join()
+            return res
+        else:
+            p.terminate()
+            raise ExternalCommandError('Process {} with ID {} terminated because of timeout ({} '
+                                       'sec).'.format(p.name, p.pid, timeout))
 
 
 def call_librados_api(func):
