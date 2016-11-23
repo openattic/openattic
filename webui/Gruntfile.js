@@ -110,7 +110,7 @@ module.exports = function (grunt) {
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
           "<%= buildConfig.src %>components/{,**/}*.js",
-          "<%= buildConfig.src %>extensions/{,**/}*.js",
+          "<%= buildConfig.src %>extensions/{,**/}*.js"
         ]
       },
 
@@ -122,7 +122,7 @@ module.exports = function (grunt) {
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
           "<%= buildConfig.src %>components/{,**/}*.js",
-          "<%= buildConfig.src %>extensions/{,**/}*.js",
+          "<%= buildConfig.src %>extensions/{,**/}*.js"
         ]
       },
 
@@ -153,6 +153,12 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.src,
+              src: ["config.js"],
+              dest: buildConfig.dist
+            },
+            {
+              expand: true,
+              cwd: buildConfig.src,
               src: ["bower_components/**", "fonts/**", "images/**"],
               dest: buildConfig.dist
             },
@@ -160,6 +166,12 @@ module.exports = function (grunt) {
               expand: true,
               cwd: buildConfig.src,
               src: ["styles/awesome-bootstrap-checkbox.css"],
+              dest: buildConfig.dist
+            },
+            {
+              expand: true,
+              cwd: buildConfig.src,
+              src: ["styles/vendor.css"],
               dest: buildConfig.dist
             }
           ]
@@ -169,7 +181,7 @@ module.exports = function (grunt) {
       // add revision numbers to js and css files to avoid caching problems
       rev: {
         files: {
-          src: ["<%= buildConfig.dist %>*.{js,css}"]
+          src: ["<%= buildConfig.dist %>oa-app.css", "<%= buildConfig.dist %>oa-app.js"]
         }
       },
 
@@ -204,6 +216,11 @@ module.exports = function (grunt) {
 
   grunt.registerTask("default", [
     "dev"
+  ]);
+
+  grunt.registerTask("inspect", [
+    "jshint",
+    "jscs"
   ]);
 
   grunt.registerTask("build", [

@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephOsd");
 app.factory("cephOsdService", function ($resource) {
-  return $resource("/openattic/api/ceph/:id/osds", {
+  return $resource(globalConfig.API.URL + "ceph/:id/osds", {
     id: "@id"
   });
 });

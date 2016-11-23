@@ -31,11 +31,12 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.directive("uniquename", function (VolumeService, HostService, UserService, $timeout) {
+app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, cephPoolsService, cephRbdService,
+    HostService, UserService, VolumeService) {
   return {
     restrict: "A",
-    require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
+    require : "ngModel",
+    link    : function (scope, elem, attrs, ctrl) {
       var stopTimeout;
       ctrl.model = attrs.uniquename;
       ctrl.field = attrs.name;
@@ -50,38 +51,73 @@ app.directive("uniquename", function (VolumeService, HostService, UserService, $
           return;
         }
         stopTimeout = $timeout(function () {
-          var model;
-          var current;
+          var obj;
           var query = {};
           switch (ctrl.model) {
-          case "host":
-            model = HostService;
-            current = scope.host.id;
-            break;
-          case "volume":
-            model = VolumeService;
-            break;
-          case "user":
-            model = UserService;
-            current = scope.user.id;
-            break;
-          default:
-            console.log("Error: Service not implemented yet.");
-            return;
+            case "host":
+              obj = {
+                model    : HostService,
+                current  : scope.host.id,
+                attribute: "id"
+              };
+              break;
+            case "volume":
+              obj = {
+                model    : VolumeService,
+                current  : null, // Has no renaming feature.
+                attribute: "id"
+              };
+              break;
+            case "user":
+              obj = {
+                model    : UserService,
+                current  : scope.user.id,
+                attribute: "id"
+              };
+              break;
+            case "rbd":
+              query.id = scope.data.cluster.fsid;
+              obj = {
+                model    : cephRbdService,
+                current  : null, // Has no renaming feature.
+                attribute: "name"
+              };
+              break;
+            case "ceph-pool":
+              query.id = scope.data.cluster.fsid;
+              obj = {
+                model    : cephPoolsService,
+                current  : null, // Has no renaming feature.
+                attribute: "name"
+              };
+              break;
+            case "erasure-code-profiles":
+              query.fsid = scope.cluster.fsid;
+              obj = {
+                model    : cephErasureCodeProfilesService,
+                current  : null, // Has no renaming feature.
+                attribute: "name"
+              };
+              break;
+
+            default:
+              console.log("Error: Service not implemented yet.");
+              return;
           }
-          query[ctrl.field] = modelValue;
-          model.query(query)
-          .$promise
-          .then(function (res) {
-            if (res.length !== 0 && current) {
-              ctrl.$setValidity("uniquename", res[0].id === current);
+          var resCheck = function (res) {
+            if (res.length !== 0 && obj.current) {
+              ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
             } else {
               ctrl.$setValidity("uniquename", res.length === 0);
             }
-          })
-          .catch(function (error) {
-            console.log("An error occurred", error);
-          });
+          };
+          query[ctrl.field] = modelValue;
+          obj.model.query(query)
+              .$promise
+              .then(resCheck)
+              .catch(function (error) {
+                console.log("An error occurred", error);
+              });
         }, 300);
       });
     }

@@ -1,15 +1,16 @@
 <div class="openattic-modal-header">
     <span>Delete log entry by date</span>
 </div>
-<div class="openattic-modal-content">
-    <p>
-        Select a date. All entries that are older than this date will be deleted.
-    </p>
-    <p>
-        To confirm, please click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
 
-    <form name="pickDateForm" role="form" novalidate>
+<form name="pickDateForm" role="form" novalidate>
+    <div class="openattic-modal-content">
+        <p>
+            Select a date. All entries that are older than this date will be deleted.
+        </p>
+        <p>
+            To confirm, please click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+
         <div class="form-group"
              ng-class="{'has-error': (submitted || pickDateForm.datePicker.$dirty) && pickDateForm.datePicker.$invalid}">
             <p class="input-group">
@@ -29,7 +30,9 @@
             </span>
             <!-- end Error -->
         </div>
+    </div>
 
+    <div class="openattic-modal-footer">
         <div class="button-group text-right">
             <button id="bot2-Msg1" class="btn btn-primary btn-sm"
                     ng-click="delete()" ng-disabled="pickDateForm.$invalid">
@@ -37,5 +40,6 @@
             </button>
             <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
         </div>
-    </form>
-</div>
+
+    </div>
+</form>

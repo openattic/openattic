@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService) {
+app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService,
+    $uibModal, tabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.pools = {};
@@ -90,6 +91,37 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
   };
 
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "cephPools.detail.status",
+        class: "tc_statusTab",
+        name: "Status"
+      },
+      cacheTier: {
+        show: "selection.item.tiers.length > 0",
+        state: "cephPools.detail.cacheTier",
+        class: "tc_cacheTieringTab",
+        name: "Cache Tier"
+      },
+      statistics: {
+        show: "selection.item",
+        state: "cephPools.detail.cacheTier",
+        class: "tc_statisticsTab",
+        name: "Statistics"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "cephPool",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
+
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
       return;
@@ -102,7 +134,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     var item = selection.item;
     var items = selection.items;
 
-    $scope.multiSelection = Boolean(items);
+    $scope.multiSelection = Boolean(items) && items.length > 1;
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {
@@ -111,10 +143,43 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     }
 
     if (item) {
-      $state.go("cephPools.detail.status", {
-        cephPool: item.id,
-        "#"     : "more"
-      });
+      if ($state.current.name === "cephPools") {
+        $scope.changeTab("cephPools.detail.status");
+      } else {
+        $scope.changeTab($state.current.name);
+      }
     }
   });
+
+  $scope.addAction = function () {
+    $state.go("ceph-pools-add", {
+      clusterId: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.deleteAction = function () {
+    if (!$scope.hasSelection && !$scope.multiSelection) {
+      return;
+    }
+    var item = $scope.selection.item;
+    var items = $scope.selection.items;
+    $scope.deletionDialog(item ? item : items);
+  };
+
+  $scope.deletionDialog = function (selection) {
+    var modalInstance = $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "components/ceph-pools/templates/delete-pool.html",
+      controller: "CephPoolsDeleteCtrl",
+      resolve: {
+        cephPoolSelection: function () {
+          return selection;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
+    });
+  };
 });

@@ -7,6 +7,7 @@ import dbus
 
 from systemd import dbus_to_python, get_dbus_object
 
+
 def get_mounts():
     """ Get currently mounted devices. """
     fd = open("/proc/mounts", "rb")
@@ -14,33 +15,35 @@ def get_mounts():
         mounts = fd.read()
     finally:
         fd.close()
-    return [ line.split(" ") for line in mounts.split("\n") if line ]
+    return [line.split(" ") for line in mounts.split("\n") if line]
+
 
 def get_devices():
     """ Get existing block devices. """
     devinfo = []
 
     def getfile(basedir, fname):
-        fd = open( os.path.join( basedir, fname ), "rb")
+        fd = open(os.path.join(basedir, fname), "rb")
         try:
             return fd.read().strip()
         finally:
             fd.close()
 
     for dirname in os.listdir("/sys/bus/scsi/devices"):
-        if re.match( "^\d+:\d+:\d+:\d+$", dirname ):
-            basedir = os.path.join( "/sys/bus/scsi/devices", dirname )
-            if not os.path.exists(os.path.join( basedir, "block" )):
+        if re.match("^\d+:\d+:\d+:\d+$", dirname):
+            basedir = os.path.join("/sys/bus/scsi/devices", dirname)
+            if not os.path.exists(os.path.join(basedir, "block")):
                 continue
             devinfo.append({
                 "type":   getfile(basedir, "type"),
                 "vendor": getfile(basedir, "vendor"),
                 "model":  getfile(basedir, "model"),
                 "rev":    getfile(basedir, "rev"),
-                "block":  os.listdir( os.path.join( basedir, "block" ) )[0]
+                "block":  os.listdir(os.path.join(basedir, "block"))[0]
                 })
 
     return devinfo
+
 
 def is_device_in_use(device):
     """ Check if this device is mounted somewhere or used as a physical volume. """
@@ -56,7 +59,7 @@ def is_device_in_use(device):
     if holders:
         return True, "mdraid", ','.join(holders)
     # if device is not already a partition or md device, recurse to check partitions
-    if re.match( "^[a-zA-Z]+$", device ):
+    if re.match("^[a-zA-Z]+$", device):
         try:
             partitions = get_partitions("/dev/" + device)
         except dbus.DBusException, err:
@@ -75,6 +78,7 @@ def is_device_in_use(device):
                     return in_use, usetype, info
     return False
 
+
 def get_partitions(device):
     """ Get partitions from the given device. """
     lvm = get_dbus_object("/lvm")
@@ -83,18 +87,19 @@ def get_partitions(device):
         raise SystemError("parted failed, check the log")
     return dbus_to_python(disk), dbus_to_python(part)
 
+
 def get_lvm_capabilities():
-    lvm  = get_dbus_object("/lvm")
+    lvm = get_dbus_object("/lvm")
     return dbus_to_python(lvm.get_lvm_capabilities())
+
 
 def get_disk_size(device):
     """ Get disk size from `/sys/block/X/size'. """
-    if not os.path.exists( "/sys/block/%s/size" % device ):
-        raise SystemError( "No such device: '%s'" % device )
+    if not os.path.exists("/sys/block/%s/size" % device):
+        raise SystemError("No such device: '%s'" % device)
 
     fd = open("/sys/block/%s/size" % device, "rb")
     try:
         return int(fd.read()) * 512 / 1024**2
     finally:
         fd.close()
-

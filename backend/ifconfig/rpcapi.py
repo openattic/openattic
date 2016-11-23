@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from django.db   import models
+from django.db import models
 
 from systemd import get_dbus_object
 from rpcd.handlers import ModelHandler
@@ -24,6 +24,7 @@ from ifconfig.models import HostGroup, Host, IPAddress, NetDevice
 
 class HostGroupHandler(ModelHandler):
     model = HostGroup
+
 
 class HostHandler(ModelHandler):
     model = Host
@@ -36,12 +37,14 @@ class HostHandler(ModelHandler):
 
     def get_lowest_primary_ip_address_speed(self, peer_id):
         speed_peer = Host.objects.get(id=peer_id).get_primary_ip_address_speed()
-        speed_self = Host.objects.get(id=Host.objects.get_current().id).get_primary_ip_address_speed()
+        speed_self = Host.objects.get(
+            id=Host.objects.get_current().id).get_primary_ip_address_speed()
 
         if(speed_self <= speed_peer):
             return speed_self
         else:
             return speed_peer
+
 
 class IPAddressHandler(ModelHandler):
     model = IPAddress
@@ -50,7 +53,7 @@ class IPAddressHandler(ModelHandler):
         return self.model.all_objects
 
     def _override_get(self, obj, data):
-        data["editable"]  = obj.configure and not obj.is_loopback
+        data["editable"] = obj.configure and not obj.is_loopback
         return data
 
     def get_valid_ips(self, idobj):
@@ -58,25 +61,25 @@ class IPAddressHandler(ModelHandler):
         handler = self._get_handler_instance(model)
         targethost = handler._find_target_host(idobj["id"])
         if targethost is None:
-            return [ self._idobj(ip) for ip in
-                IPAddress.objects.all()
-                if not ip.is_loopback ]
-        return [ self._idobj(ip) for ip in
-            IPAddress.all_objects.filter(device__host__name=targethost.name)
-            if not ip.is_loopback ]
+            return [self._idobj(ip) for ip in
+                    IPAddress.objects.all()
+                    if not ip.is_loopback]
+        return [self._idobj(ip) for ip in
+                IPAddress.all_objects.filter(device__host__name=targethost.name)
+                if not ip.is_loopback]
 
 
 class NetDeviceHandler(ModelHandler):
     model = NetDevice
 
     def _override_get(self, obj, data):
-        data["basedevs"]  = [ self._idobj(base) for base in obj.basedevs ]
-        data["childdevs"] = [ self._idobj(chld) for chld in obj.childdevs ]
-        data["devtype"]   = obj.devtype
+        data["basedevs"] = [self._idobj(base) for base in obj.basedevs]
+        data["childdevs"] = [self._idobj(chld) for chld in obj.childdevs]
+        data["devtype"] = obj.devtype
         data["operstate"] = obj.operstate
-        data["speed"]     = obj.speed
-        data["carrier"]   = obj.carrier
-        data["mtu"]       = obj.mtu
+        data["speed"] = obj.speed
+        data["carrier"] = obj.carrier
+        data["mtu"] = obj.mtu
         data["macaddress"] = obj.macaddress
         return data
 
@@ -106,7 +109,8 @@ class NetDeviceHandler(ModelHandler):
         return True
 
     def in_use(self, id):
-        """ Determine whether or not the device with the given ID is configured with any services. """
+        """ Determine whether or not the device with the given ID is configured with any services.
+        """
         return NetDevice.objects.get(id=id).in_use
 
 RPCD_HANDLERS = [HostGroupHandler, HostHandler, NetDeviceHandler, IPAddressHandler]

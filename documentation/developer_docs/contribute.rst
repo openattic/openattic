@@ -4,14 +4,14 @@ Contributing Code to |oA|
 =========================
 
 This is an introduction on how to contribute code or patches to the |oA|
-upstream project. If you intend to submit your code upstream, please also
-review and consider the guidelines outlined in chapter
+project. If you intend to submit your code upstream, please also review and
+consider the guidelines outlined in chapter
 :ref:`developer_contributing_guidelines`.
 
 Keeping Your Local Repository in Sync
 -------------------------------------
 
-If you have followed the instructions in :ref:`developer_setup_howto`, you
+If you have followed the instructions in :ref:`developer_hg_howto`, you
 should already have a local |oA| instance that is based on the current
 development branch.
 

@@ -19,15 +19,16 @@ import os.path
 from django.db import models
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import InvalidVolumeType, StorageObject, VolumePool, BlockVolume, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, StorageObject, VolumePool, BlockVolume, \
+    FileSystemVolume
 
 from zfs import filesystems
 
 
 class Zpool(VolumePool):
-    host        = models.ForeignKey(Host)
+    host = models.ForeignKey(Host)
 
-    objects     = HostDependentManager()
+    objects = HostDependentManager()
     all_objects = models.Manager()
 
     @property
@@ -88,22 +89,23 @@ class Zpool(VolumePool):
         stats["vp_used"] = self.fs.rootfs_used_megs
         stats["vp_free"] = self.fs.rootfs_free_megs
         stats["vp_max_new_fsv"] = self.storageobj.megs
-        stats["vp_max_new_bv"]  = self.fs.rootfs_free_megs
-        stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
-        stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+        stats["vp_max_new_bv"] = self.fs.rootfs_free_megs
+        stats["used"] = max(stats.get("used", None), stats["vp_used"])
+        stats["free"] = min(stats.get("free", float("inf")), stats["vp_free"])
         return stats
 
+
 class RaidZ(models.Model):
-    name        = models.CharField(max_length=150)
-    zpool       = models.ForeignKey(Zpool)
-    type        = models.CharField(max_length=150)
+    name = models.CharField(max_length=150)
+    zpool = models.ForeignKey(Zpool)
+    type = models.CharField(max_length=150)
 
 
 class Zfs(FileSystemVolume):
-    zpool       = models.ForeignKey(Zpool)
-    parent      = models.ForeignKey(StorageObject, blank=True, null=True)
+    zpool = models.ForeignKey(Zpool)
+    parent = models.ForeignKey(StorageObject, blank=True, null=True)
 
-    objects     = getHostDependentManagerClass("zpool__host")()
+    objects = getHostDependentManagerClass("zpool__host")()
     all_objects = models.Manager()
 
     def save(self, database_only=False, *args, **kwargs):
@@ -119,7 +121,8 @@ class Zfs(FileSystemVolume):
                 # zfs subvolume that my storageobj's "snapshot" attribute points to.
                 origin = self.storageobj.snapshot.filesystemvolume.volume
                 if not isinstance(origin, Zfs):
-                    raise TypeError("zfs can only snapshot zfs volumes, got '%s' instead" % unicode(origin))
+                    raise TypeError("zfs can only snapshot zfs volumes, got '%s' instead" %
+                                    unicode(origin))
                 self.fs.create_snapshot(origin)
             else:
                 self.fs.create_subvolume()
@@ -141,7 +144,7 @@ class Zfs(FileSystemVolume):
         # real size limit
         if float(self.zpool.storageobj.megs) < int(self.storageobj.megs):
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": ["ZPool %s has insufficient space (%f < %d)." % (
+            raise ValidationError({"megs": ["ZPool %s has insufficient free space (%f < %d)." % (
                 self.zpool.storageobj.name, self.zpool.storageobj.megs, self.storageobj.megs)]})
 
     @property
@@ -192,17 +195,18 @@ class Zfs(FileSystemVolume):
         if fs_stat["used"] is not None and fs_stat["free"] is not None:
             stats["fs_used"] = fs_stat["used"]
             stats["fs_free"] = fs_stat["free"]
-            stats["steal"]   = self.storageobj.megs - fs_stat["used"] - fs_stat["free"]
+            stats["steal"] = self.storageobj.megs - fs_stat["used"] - fs_stat["free"]
 
-        stats["used"]  = max(stats.get("used", None),         stats["fs_used"])
-        stats["free"]  = min(stats.get("free", float("inf")), stats["fs_free"])
+        stats["used"] = max(stats.get("used", None), stats["fs_used"])
+        stats["free"] = min(stats.get("free", float("inf")), stats["fs_free"])
 
         return stats
 
-class ZVol(BlockVolume):
-    zpool       = models.ForeignKey(Zpool)
 
-    objects     = getHostDependentManagerClass("zpool__host")()
+class ZVol(BlockVolume):
+    zpool = models.ForeignKey(Zpool)
+
+    objects = getHostDependentManagerClass("zpool__host")()
     all_objects = models.Manager()
 
     def save(self, database_only=False, *args, **kwargs):
@@ -216,7 +220,8 @@ class ZVol(BlockVolume):
                 # zfs subvolume that my storageobj's "snapshot" attribute points to.
                 origin = self.storageobj.snapshot.blockvolume.volume
                 if not isinstance(origin, ZVol):
-                    raise TypeError("zfs can only snapshot zfs volumes, got '%s' instead" % unicode(origin))
+                    raise TypeError("zfs can only snapshot zfs volumes, got '%s' instead" %
+                                    unicode(origin))
                 self.fs.create_zvol_snapshot(origin)
             else:
                 self.fs.create_zvol()
@@ -268,7 +273,8 @@ class ZVol(BlockVolume):
     @property
     def fullname(self):
         if self.storageobj.snapshot is not None:
-            return "%s@%s" % (self.storageobj.snapshot.blockvolume.volume.fullname, self.storageobj.name)
+            return "%s@%s" % (self.storageobj.snapshot.blockvolume.volume.fullname,
+                              self.storageobj.name)
         return "%s/%s" % (self.zpool.storageobj.name, self.storageobj.name)
 
     @property
@@ -284,8 +290,8 @@ class ZVol(BlockVolume):
     def __unicode__(self):
         return self.fullname
 
-    def shrink( self, oldmegs, newmegs ):
+    def shrink(self, oldmegs, newmegs):
         self.fs.set_zvol_size(newmegs)
 
-    def grow( self, oldmegs, newmegs ):
+    def grow(self, oldmegs, newmegs):
         self.fs.set_zvol_size(newmegs)

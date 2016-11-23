@@ -64,6 +64,43 @@ app.config(function ($stateProvider) {
           skip: true
         }
       })
+      .state("ceph-pools-add", {
+        url: "/ceph/pools/add",
+        views: {
+          "main": {
+            templateUrl: "components/ceph-pools/templates/add-pool.html",
+            controller : "CephPoolsAddCtrl"
+          }
+        },
+        params: {
+          clusterId: null
+        },
+        ncyBreadcrumb: {
+          parent: "cephPools",
+          label: "Add"
+        }
+      })
+      .state("cephPools.detail.cacheTier", {
+        url          : "/cachetier",
+        views        : {
+          "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.name}} cache tier"
+        }
+      })
+      .state("cephPools.detail.statistics", {
+        url          : "/statistics",
+        views        : {
+          "tab-content": {
+            controller : "CephPoolsStatisticsCtrl",
+            templateUrl: "components/ceph-pools/templates/statistics.html"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.name}} statistics"
+        }
+      })
       .state("cephPools.detail.status", {
         url          : "/status",
         views        : {
@@ -71,15 +108,6 @@ app.config(function ($stateProvider) {
         },
         ncyBreadcrumb: {
           label: "{{selection.item.name}} status"
-        }
-      })
-      .state("cephPools.detail.cacheTier", {
-        url          : "/status",
-        views        : {
-          "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} cache tier"
         }
       });
 });

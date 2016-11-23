@@ -1,0 +1,929 @@
+{
+  "nodes": [
+    {
+      "id": -24,
+      "name": "sata_flat_bucket",
+      "type": "pool",
+      "type_id": 3,
+      "children": [
+        -13,
+        -7,
+        -6,
+        -10,
+        -4,
+        -3,
+        -2,
+        -14,
+        -11,
+        -9,
+        -8
+      ]
+    },
+    {
+      "id": -8,
+      "name": "z1-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        6
+      ]
+    },
+    {
+      "id": 6,
+      "name": "osd.6",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -9,
+      "name": "z1-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        7
+      ]
+    },
+    {
+      "id": 7,
+      "name": "osd.7",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -11,
+      "name": "z1-host05",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        9
+      ]
+    },
+    {
+      "id": 9,
+      "name": "osd.9",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -14,
+      "name": "z1-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        12
+      ]
+    },
+    {
+      "id": 12,
+      "name": "osd.12",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -2,
+      "name": "z2-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        0
+      ]
+    },
+    {
+      "id": 0,
+      "name": "osd.0",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -3,
+      "name": "z2-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        1
+      ]
+    },
+    {
+      "id": 1,
+      "name": "osd.1",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -4,
+      "name": "z2-host05",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "osd.2",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -10,
+      "name": "z2-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        8
+      ]
+    },
+    {
+      "id": 8,
+      "name": "osd.8",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -6,
+      "name": "z3-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        4
+      ]
+    },
+    {
+      "id": 4,
+      "name": "osd.4",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -7,
+      "name": "z3-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        5
+      ]
+    },
+    {
+      "id": 5,
+      "name": "osd.5",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -13,
+      "name": "z3-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        11
+      ]
+    },
+    {
+      "id": 11,
+      "name": "osd.11",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -20,
+      "name": "sata_by_zone_bucket",
+      "type": "pool",
+      "type_id": 3,
+      "children": [
+        -16,
+        -15,
+        -17
+      ]
+    },
+    {
+      "id": -17,
+      "name": "z1-host",
+      "type": "zone",
+      "type_id": 2,
+      "children": [
+        -14,
+        -11,
+        -9,
+        -8
+      ]
+    },
+    {
+      "id": -8,
+      "name": "z1-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        6
+      ]
+    },
+    {
+      "id": 6,
+      "name": "osd.6",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -9,
+      "name": "z1-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        7
+      ]
+    },
+    {
+      "id": 7,
+      "name": "osd.7",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -11,
+      "name": "z1-host05",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        9
+      ]
+    },
+    {
+      "id": 9,
+      "name": "osd.9",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -14,
+      "name": "z1-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        12
+      ]
+    },
+    {
+      "id": 12,
+      "name": "osd.12",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -15,
+      "name": "z2-host",
+      "type": "zone",
+      "type_id": 2,
+      "children": [
+        -10,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": -2,
+      "name": "z2-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        0
+      ]
+    },
+    {
+      "id": 0,
+      "name": "osd.0",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -3,
+      "name": "z2-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        1
+      ]
+    },
+    {
+      "id": 1,
+      "name": "osd.1",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -4,
+      "name": "z2-host05",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "osd.2",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -10,
+      "name": "z2-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        8
+      ]
+    },
+    {
+      "id": 8,
+      "name": "osd.8",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -16,
+      "name": "z3-host",
+      "type": "zone",
+      "type_id": 2,
+      "children": [
+        -13,
+        -7,
+        -6
+      ]
+    },
+    {
+      "id": -6,
+      "name": "z3-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        4
+      ]
+    },
+    {
+      "id": 4,
+      "name": "osd.4",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -7,
+      "name": "z3-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        5
+      ]
+    },
+    {
+      "id": 5,
+      "name": "osd.5",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -13,
+      "name": "z3-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        11
+      ]
+    },
+    {
+      "id": 11,
+      "name": "osd.11",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 3,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -19,
+      "name": "sata_raid_bucket",
+      "type": "pool",
+      "type_id": 3,
+      "children": [
+        -23,
+        -22,
+        -21
+      ]
+    },
+    {
+      "id": -21,
+      "name": "z4-host02",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        13
+      ]
+    },
+    {
+      "id": 13,
+      "name": "osd.13",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 1.589996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -22,
+      "name": "z4-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        14
+      ]
+    },
+    {
+      "id": 14,
+      "name": "osd.14",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 1.589996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -23,
+      "name": "z4-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        15
+      ]
+    },
+    {
+      "id": 15,
+      "name": "osd.15",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 1.589996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -18,
+      "name": "sas_raid_bucket",
+      "type": "pool",
+      "type_id": 3,
+      "children": []
+    },
+    {
+      "id": -1,
+      "name": "default",
+      "type": "root",
+      "type_id": 8,
+      "children": [
+        -23,
+        -22,
+        -21,
+        -14,
+        -13,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -4,
+        -3,
+        -2
+      ]
+    },
+    {
+      "id": -2,
+      "name": "z2-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        0
+      ]
+    },
+    {
+      "id": 0,
+      "name": "osd.0",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -3,
+      "name": "z2-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        1
+      ]
+    },
+    {
+      "id": 1,
+      "name": "osd.1",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -4,
+      "name": "z2-host05",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "osd.2",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -6,
+      "name": "z3-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        4
+      ]
+    },
+    {
+      "id": 4,
+      "name": "osd.4",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -7,
+      "name": "z3-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        5
+      ]
+    },
+    {
+      "id": 5,
+      "name": "osd.5",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -8,
+      "name": "z1-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        6
+      ]
+    },
+    {
+      "id": 6,
+      "name": "osd.6",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -9,
+      "name": "z1-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        7
+      ]
+    },
+    {
+      "id": 7,
+      "name": "osd.7",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -10,
+      "name": "z2-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        8
+      ]
+    },
+    {
+      "id": 8,
+      "name": "osd.8",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -11,
+      "name": "z1-host05",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        9
+      ]
+    },
+    {
+      "id": 9,
+      "name": "osd.9",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -13,
+      "name": "z3-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        11
+      ]
+    },
+    {
+      "id": 11,
+      "name": "osd.11",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -14,
+      "name": "z1-host06",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        12
+      ]
+    },
+    {
+      "id": 12,
+      "name": "osd.12",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 0.229996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -21,
+      "name": "z4-host02",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        13
+      ]
+    },
+    {
+      "id": 13,
+      "name": "osd.13",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 1.589996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -22,
+      "name": "z4-host03",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        14
+      ]
+    },
+    {
+      "id": 14,
+      "name": "osd.14",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 1.589996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    },
+    {
+      "id": -23,
+      "name": "z4-host04",
+      "type": "host",
+      "type_id": 1,
+      "children": [
+        15
+      ]
+    },
+    {
+      "id": 15,
+      "name": "osd.15",
+      "type": "osd",
+      "type_id": 0,
+      "crush_weight": 1.589996,
+      "depth": 2,
+      "exists": 1,
+      "status": "up",
+      "reweight": 1,
+      "primary_affinity": 1
+    }
+  ],
+  "stray": []
+}

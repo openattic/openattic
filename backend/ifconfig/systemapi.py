@@ -19,8 +19,9 @@ import os.path
 from datetime import datetime
 from StringIO import StringIO
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method
+from systemd.plugins import logged, BasePlugin, method
 from ifconfig.models import NetDevice
+
 
 def cidr2mask(len):
     """Convert a bit length to a dotted netmask (aka. CIDR to netmask)"""
@@ -108,15 +109,17 @@ class SystemD(BasePlugin):
 
                 if interface.brports.all().count():
                     depends[interface.devname].extend(list(interface.brports.all()))
-                    out.write("\tbridge-ports %s\n" % " ".join([p.devname for p in interface.brports.all()]))
+                    out.write("\tbridge-ports %s\n" % " ".join([p.devname for p in
+                                                                interface.brports.all()]))
 
                 if interface.slaves.count():
                     depends[interface.devname].extend(list(interface.slaves.all()))
-                    out.write("\tslaves %s\n"  % ' '.join( [p.devname for p in interface.slaves.all()] ))
-                    out.write("\tbond_mode %s\n"      % interface.bond_mode)
-                    out.write("\tbond_miimon %s\n"    % interface.bond_miimon)
+                    out.write("\tslaves %s\n" % ' '.join([p.devname
+                                                          for p in interface.slaves.all()]))
+                    out.write("\tbond_mode %s\n" % interface.bond_mode)
+                    out.write("\tbond_miimon %s\n" % interface.bond_miimon)
                     out.write("\tbond_downdelay %s\n" % interface.bond_downdelay)
-                    out.write("\tbond_updelay %s\n"   % interface.bond_updelay)
+                    out.write("\tbond_updelay %s\n" % interface.bond_updelay)
 
                 if interface.jumbo:
                     out.write("\tmtu 9000\n")
@@ -126,9 +129,9 @@ class SystemD(BasePlugin):
 
                 out.write("\n")
 
-            out.write( "# Interface Dependency Tree:\n" )
-            out.write( "# " + str(depends) + "\n" )
-            out.write( "\n" )
+            out.write("# Interface Dependency Tree:\n")
+            out.write("# " + str(depends) + "\n")
+            out.write("\n")
 
             while autoifs:
                 for interface in autoifs:
@@ -140,8 +143,8 @@ class SystemD(BasePlugin):
                                 depends[depiface].remove(interface)
 
             out.seek(0)
-            fd = open( "/etc/network/interfaces", "wb" )
-            fd.write( out.read() )
+            fd = open("/etc/network/interfaces", "wb")
+            fd.write(out.read())
 
         finally:
             fd.close()
@@ -162,9 +165,8 @@ class SystemD(BasePlugin):
     def get_vconfig(self):
         if os.path.exists("/proc/net/vlan/config"):
             with open("/proc/net/vlan/config") as vlanconf:
-                vlans = [ [ field.strip() for field in line.split('|') ] for line in vlanconf ]
-                vlans = dict( [ ( vln[0], vln[1:] ) for vln in vlans[2:] ] )
+                vlans = [[field.strip() for field in line.split('|')] for line in vlanconf]
+                vlans = dict([(vln[0], vln[1:]) for vln in vlans[2:]])
         else:
             vlans = {}
         return vlans
-

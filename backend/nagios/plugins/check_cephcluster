@@ -15,8 +15,10 @@
  *  GNU General Public License for more details.
 """
 
+import django
 import os
 import sys
+import time
 
 from optparse import OptionParser
 
@@ -34,6 +36,9 @@ else:
                   "configuration file.")
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+if django.VERSION[:2] >= (1, 7):
+    django.setup()
 
 
 class ClusterStatus(dict):
@@ -54,9 +59,11 @@ class ClusterStatus(dict):
 
     def _map_health_status(self):
         status = self['health']['overall_status']
+        # See also: ceph.models.Pool#get_status
         status_map = {
             'HEALTH_OK': ('OK', 0),
             'HEALTH_WARN': ('WARNING', 1),
+            'HEALTH_CRIT': ('CRITICAL', 2),
             'HEALTH_ERR': ('CRITICAL', 2),
         }
         if status in status_map:
@@ -112,10 +119,18 @@ def main():
 
     if len(args) != 1:
         parser.print_usage()
-        sys.exit(4)
+        sys.exit(3)
 
-    status = ClusterStatus(CephCluster.get_status(args[0]))
-    print "%s|%s" % (status.get_nagios_string(), status.get_perf_data())
+    start_time = time.time()
+    try:
+        status = ClusterStatus(CephCluster.objects.get(fsid=args[0]).status)
+    except Exception:
+        print "CRITICAL"
+        sys.exit(2)
+    exec_time = time.time() - start_time
+
+    print "{}|{} exec_time={}ms".format(status.get_nagios_string(), status.get_perf_data(),
+                                        round(exec_time * 1000, 2))
 
     sys.exit(status.get_exit_code())
 

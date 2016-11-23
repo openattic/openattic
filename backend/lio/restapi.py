@@ -13,31 +13,40 @@
 """
 
 import django_filters
+from ifconfig.models import Host
 
 from rest_framework import serializers, viewsets, status
 
 from rest import relations
+from rest.utilities import DeleteCreateMixin
 
 from volumes.models import StorageObject
 from lio.models import HostACL, Initiator
 
 from rest.multinode.handlers import RequestHandlers
 
-class HostACLSerializer(serializers.HyperlinkedModelSerializer):
+
+class HostACLSerializer(DeleteCreateMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a HostACL. """
     url         = serializers.HyperlinkedIdentityField(view_name="lun-detail")
-    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
-    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
+    volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
+                                               source="volume.storageobj",
+                                               queryset=StorageObject.objects.all())
+    host = relations.HyperlinkedRelatedField(view_name="host-detail", queryset=Host.objects.all())
 
     class Meta:
         model = HostACL
         # TODO: add portals
         fields = ('url', 'id', 'host', 'volume', 'lun_id')
 
-    def restore_object(self, attrs, instance=None):
-        attrs["volume"] = attrs["volume.storageobj"].blockvolume_or_none
-        del attrs["volume.storageobj"]
-        return super(HostACLSerializer, self).restore_object(attrs, instance)
+    def update_validated_data(self, attrs):
+        if "volume.storageobj" in attrs:
+            attrs["volume"] = attrs["volume.storageobj"].blockvolume_or_none
+            del attrs["volume.storageobj"]
+        else:
+            attrs["volume"] = attrs["volume"]["storageobj"].blockvolume_or_none
+        return attrs
+
 
 class HostACLFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
@@ -62,7 +71,7 @@ class HostACLProxyViewSet(RequestHandlers, HostACLViewSet):
 class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Initiator. """
     url         = serializers.HyperlinkedIdentityField(view_name="initiator-detail")
-    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
+    host = relations.HyperlinkedRelatedField(view_name="host-detail", queryset=Host.objects.all())
 
     class Meta:
         model = Initiator

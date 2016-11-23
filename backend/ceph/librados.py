@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import subprocess
 from collections import deque
 from contextlib import contextmanager
 from itertools import product
@@ -42,13 +43,13 @@ class Keyring(object):
         self._find(keyrings)
 
         if self.filename:
-            logger.info("Selected keyring {}".format(self.filename))
+            logger.debug("Selected keyring {}".format(self.filename))
         else:
             logger.error("No usable keyring")
             raise RuntimeError("Check keyring permissions")
 
         self._username()
-        logger.info("Connecting as {}".format(self.username))
+        logger.debug("Connecting as {}".format(self.username))
 
     def _find(self, keyrings):
         """
@@ -83,6 +84,7 @@ class Client(object):
     """Represents the connection to a single ceph cluster."""
 
     def __init__(self, cluster_name='ceph'):
+        self.cluster_name = cluster_name
         self._conf_file = os.path.join('/etc/ceph/', cluster_name + '.conf')
         keyring = Keyring(cluster_name)
         self._keyring = keyring.filename
@@ -148,15 +150,21 @@ class Client(object):
 
     def list_osds(self):
         """
-        Args:
-            obj_type (str): Either "osd" or "host" or "root"
+        Info about each osd, eg "up" or "down".
 
-        Returns:
-            list[dict]: Info about each osd, eg "up" or "down". Also adding the `hostname`.
+        :rtype: list[dict[str, Any]]
         """
-        nodes = self.mon_command("osd tree")["nodes"]
-        return [dict(hostname=k["name"], **v) for (k, v) in product(nodes, nodes)
-                if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]
+        def unique_list_of_dicts(l):
+            return reduce(lambda x, y: x if y in x else x + [y], l, [])
+
+        nodes = MonApi(self).osd_tree()["nodes"]
+        for node in nodes:
+            if u'depth' in node:
+                del node[u'depth']
+        nodes = unique_list_of_dicts(nodes)
+        return list(unique_list_of_dicts([v
+                                          for (k, v) in product(nodes, nodes)
+                    if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]))
 
     def mon_command(self, cmd, argdict=None, output_format='json'):
         """Calls a monitor command and returns the result as dict.
@@ -190,7 +198,9 @@ class Client(object):
 
         elif type(cmd) is dict:
             (ret, out, err) = self._cluster.mon_command(
-                json.dumps(dict(cmd, format=output_format, **argdict if argdict is not None else {})),
+                json.dumps(dict(cmd,
+                                format=output_format,
+                                **argdict if argdict is not None else {})),
                 '',
                 timeout=self._default_timeout)
             logger.debug('mod command {}, {}, {}'.format(cmd, argdict, err))
@@ -207,8 +217,9 @@ class ExternalCommandError(Exception):
 def undoable(func):
     """decorator for undoable actions. See `undo_transaction` for starting a transaction.
 
-    Inspired by http://undo.readthedocs.io/. The decorated method should use the side effect of the first value as
-    the "do" step and the side effect after the first element as the "undo" step.
+    Inspired by http://undo.readthedocs.io/. The decorated method should use the side
+    effect of the first value as the "do" step and the side effect after the first element
+    as the "undo" step.
     """
     def undo(runner):
         try:
@@ -227,6 +238,17 @@ def undoable(func):
     return wrapper
 
 
+def logged(func):
+    def wrapper(*args, **kwargs):
+        retval = None
+        try:
+            retval = func(*args, **kwargs)
+        finally:
+            logger.debug('{}, {}, {} -> {}'.format(func.__name__, args, kwargs, retval))
+        return retval
+    return wrapper
+
+
 @contextmanager
 def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise_exception=False):
     """Context manager for starting a transaction. Use `undoable` decorator for undoable actions.
@@ -238,8 +260,12 @@ def undo_transaction(undo_context, exception_type=ExternalCommandError, re_raise
     try:
         undo_context._undo_stack = deque()
         yield undo_context
-        delattr(undo_context, '_undo_stack')
-    except exception_type:
+        try:
+            delattr(undo_context, '_undo_stack')
+        except AttributeError:
+            logger.exception('Ignoring Attribute error here.')
+    except exception_type as e:
+        logger.exception('Will now undo steps performed.')
         stack = getattr(undo_context, '_undo_stack')
         delattr(undo_context, '_undo_stack')
         for undo_closure in reversed(stack):
@@ -269,14 +295,15 @@ class MonApi(object):
         COMMAND("osd erasure-code-profile set " \
                 "name=name,type=CephString,goodchars=[A-Za-z0-9-_.] " \
                 "name=profile,type=CephString,n=N,req=false", \
-                "create erasure code profile <name> with [<key[=value]> ...] pairs. Add a --force at the end to override
-                    an existing profile (VERY DANGEROUS)", \
+                "create erasure code profile <name> with [<key[=value]> ...] pairs. Add a --force
+                    at the end to override an existing profile (VERY DANGEROUS)", \
                 "osd", "rw", "cli,rest")
 
         .. example::
             >>> api = MonApi()
             >>> api.osd_erasure_code_profile_set('five-three', ['k=5', 'm=3'])
-            >>> api.osd_erasure_code_profile_set('my-rack', ['k=3', 'm=2', 'ruleset-failure-domain=rack'])
+            >>> api.osd_erasure_code_profile_set('my-rack', ['k=3', 'm=2',
+            >>>                                  'ruleset-failure-domain=rack'])
 
         :param profile: Reverse engineering revealed: this is in fact a list of strings.
         :type profile: list[str]
@@ -293,7 +320,8 @@ class MonApi(object):
                 "get erasure code profile <name>", \
                 "osd", "r", "cli,rest")
         """
-        return self.client.mon_command('osd erasure-code-profile get', self._args_to_argdict(name=name))
+        return self.client.mon_command('osd erasure-code-profile get',
+                                       self._args_to_argdict(name=name))
 
     def osd_erasure_code_profile_rm(self, name):
         """
@@ -315,8 +343,8 @@ class MonApi(object):
         return self.client.mon_command('osd erasure-code-profile ls')
 
     @undoable
-    def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None, ruleset=None,
-                        expected_num_objects=None):
+    def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None,
+                        ruleset=None, expected_num_objects=None):
         """
         COMMAND("osd pool create " \
             "name=pool,type=CephPoolname " \
@@ -330,8 +358,8 @@ class MonApi(object):
 
         :param pool: The pool name.
         :type pool: str
-        :param pg_num: Number of pgs. pgs per osd should be about 100, independent of the number of pools, as each osd
-                       can store pgs of multiple pools.
+        :param pg_num: Number of pgs. pgs per osd should be about 100, independent of the number of
+                       pools, as each osd can store pgs of multiple pools.
         :type pg_num: int
         :param pgp_num: *MUST* equal pg_num
         :type pgp_num: int
@@ -361,13 +389,15 @@ class MonApi(object):
         """
         COMMAND("osd pool set " \
         "name=pool,type=CephPoolname " \
-        "name=var,type=CephChoices,strings=size|min_size|crash_replay_interval|pg_num|pgp_num|crush_ruleset|hashpspool|
-            nodelete|nopgchange|nosizechange|write_fadvise_dontneed|noscrub|nodeep-scrub|hit_set_type|hit_set_period|
-            hit_set_count|hit_set_fpp|use_gmt_hitset|debug_fake_ec_pool|target_max_bytes|target_max_objects|
-            cache_target_dirty_ratio|cache_target_dirty_high_ratio|cache_target_full_ratio|cache_min_flush_age|
-            cache_min_evict_age|auid|min_read_recency_for_promote|min_write_recency_for_promote|fast_read|
-            hit_set_grade_decay_rate|hit_set_search_last_n|scrub_min_interval|scrub_max_interval|deep_scrub_interval|
-            recovery_priority|recovery_op_priority|scrub_priority " \
+        "name=var,type=CephChoices,strings=size|min_size|crash_replay_interval|pg_num|pgp_num|
+            crush_ruleset|hashpspool|nodelete|nopgchange|nosizechange|write_fadvise_dontneed|
+            noscrub|nodeep-scrub|hit_set_type|hit_set_period|hit_set_count|hit_set_fpp|
+            use_gmt_hitset|debug_fake_ec_pool|target_max_bytes|target_max_objects|
+            cache_target_dirty_ratio|cache_target_dirty_high_ratio|cache_target_full_ratio|
+            cache_min_flush_age|cache_min_evict_age|auid|min_read_recency_for_promote|
+            min_write_recency_for_promote|fast_read|hit_set_grade_decay_rate|hit_set_search_last_n|
+            scrub_min_interval|scrub_max_interval|deep_scrub_interval|recovery_priority|
+            recovery_op_priority|scrub_priority " \
         "name=val,type=CephString " \
         "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
         "set pool parameter <var> to <val>", "osd", "rw", "cli,rest")
@@ -379,7 +409,8 @@ class MonApi(object):
         :return: empty string.
         """
         yield self.client.mon_command('osd pool set',
-                                      self._args_to_argdict(pool=pool, var=var, val=val, force=force),
+                                      self._args_to_argdict(pool=pool, var=var,
+                                                            val=val, force=force),
                                       output_format='string')
         self.osd_pool_set(pool, var, undo_previous_value)
 
@@ -393,15 +424,16 @@ class MonApi(object):
         "osd", "rw", "cli,rest")
 
         :param pool: Pool name
-        :type pool: str
+        :type pool: str | unicode
         :param pool2: Second pool name
-        :type pool2: str
+        :type pool2: str | unicode
         :param sure: should be "--yes-i-really-really-mean-it"
         :type sure: str
         :return: empty string
         """
         return self.client.mon_command('osd pool delete',
-                                       self._args_to_argdict(pool=pool, pool2=pool2, sure=sure), output_format='string')
+                                       self._args_to_argdict(pool=pool, pool2=pool2, sure=sure),
+                                       output_format='string')
 
     @undoable
     def osd_pool_mksnap(self, pool, snap):
@@ -412,7 +444,8 @@ class MonApi(object):
         "make snapshot <snap> in <pool>", "osd", "rw", "cli,rest")
         """
         yield self.client.mon_command('osd pool mksnap',
-                                      self._args_to_argdict(pool=pool, snap=snap), output_format='string')
+                                      self._args_to_argdict(pool=pool, snap=snap),
+                                      output_format='string')
         self.osd_pool_rmsnap(pool, snap)
 
     def osd_pool_rmsnap(self, pool, snap):
@@ -423,7 +456,8 @@ class MonApi(object):
         "remove snapshot <snap> from <pool>", "osd", "rw", "cli,rest")
         """
         return self.client.mon_command('osd pool rmsnap',
-                                       self._args_to_argdict(pool=pool, snap=snap), output_format='string')
+                                       self._args_to_argdict(pool=pool, snap=snap),
+                                       output_format='string')
 
     @undoable
     def osd_tier_add(self, pool, tierpool):
@@ -474,7 +508,8 @@ class MonApi(object):
         """
         COMMAND("osd tier cache-mode " \
         "name=pool,type=CephPoolname " \
-        "name=mode,type=CephChoices,strings=none|writeback|forward|readonly|readforward|proxy|readproxy " \
+        "name=mode,type=CephChoices,strings=none|writeback|forward|readonly|readforward|proxy|
+            readproxy " \
         "name=sure,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
         "specify the caching mode for cache tier <pool>", "osd", "rw", "cli,rest")
 
@@ -527,7 +562,8 @@ class MonApi(object):
         "name=ids,type=CephString,n=N", \
         "set osd(s) <id> [<id>...] out", "osd", "rw", "cli,rest")
         """
-        yield self.client.mon_command('osd out', self._args_to_argdict(name=name), output_format='string')
+        yield self.client.mon_command('osd out', self._args_to_argdict(name=name),
+                                      output_format='string')
         self.osd_in(name)
 
     @undoable
@@ -537,7 +573,8 @@ class MonApi(object):
         "name=ids,type=CephString,n=N", \
         "set osd(s) <id> [<id>...] in", "osd", "rw", "cli,rest")
         """
-        yield self.client.mon_command('osd in', self._args_to_argdict(name=name), output_format='string')
+        yield self.client.mon_command('osd in', self._args_to_argdict(name=name),
+                                      output_format='string')
         self.osd_out(name)
 
     @undoable
@@ -557,6 +594,32 @@ class MonApi(object):
     def osd_dump(self):
         return self.client.mon_command('osd dump')
 
+    def osd_tree(self):
+        """Does not return a tree, but a directed graph with multiple roots.
+
+        Possible node types are: pool. zone, root, host, osd
+
+        Note, OSDs may be duplicated in the list, although the u'depth' attribute may differ between
+        them.
+
+        ..warning:: does not return the physical structure, but the crushmap, which will differ on
+            some clusters. An osd may be physically located on a different host, than it is returned
+            by osd tree.
+        """
+        return self.client.mon_command('osd tree')
+
+    def osd_metadata(self, name=None):
+        """
+        COMMAND("osd metadata " \
+        "name=id,type=CephInt,range=0,req=false", \
+        "fetch metadata for osd {id} (default all)", \
+        "osd", "r", "cli,rest")
+
+        :type name: int
+        :rtype: list[dict] | dict
+        """
+        return self.client.mon_command('osd metadata', self._args_to_argdict(name=name))
+
     def fs_ls(self):
         return self.client.mon_command('fs ls')
 
@@ -571,7 +634,8 @@ class MonApi(object):
         "fs", "rw", "cli,rest")
         """
         yield self.client.mon_command('fs new',
-                                      self._args_to_argdict(fs_name=fs_name, metadata=metadata, data=data),
+                                      self._args_to_argdict(fs_name=fs_name, metadata=metadata,
+                                                            data=data),
                                       output_format='string')
         self.fs_rm(fs_name, '--yes-i-really-mean-it')
 
@@ -587,29 +651,39 @@ class MonApi(object):
                                        self._args_to_argdict(fs_name=fs_name, sure=sure),
                                        output_format='string')
 
+    def pg_dump(self):
+        """Also contains OSD statistics"""
+        return self.client.mon_command('pg dump')
+
+    def status(self):
+        return self.client.mon_command('status')
+
+    def health(self):
+        return self.client.mon_command('health')
+
+    def df(self):
+        return self.client.mon_command('df')
+
 
 class RbdApi(object):
     """
     http://docs.ceph.com/docs/master/rbd/librbdpy/
-    """
 
-    # https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
+    Exported features are defined here:
+       https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
+    """
     @staticmethod
     def get_feature_mapping():
-        try:
-            return {
-                rbd.RBD_FEATURE_LAYERING: 'layering',
-                rbd.RBD_FEATURE_STRIPINGV2: 'striping',
-                rbd.RBD_FEATURE_EXCLUSIVE_LOCK: 'exclusive-lock',
-                rbd.RBD_FEATURE_OBJECT_MAP: 'object-map',
-                rbd.RBD_FEATURE_FAST_DIFF: 'fast-diff',
-                rbd.RBD_FEATURE_DEEP_FLATTEN: 'deep-flatten',
-                rbd.RBD_FEATURE_JOURNALING: 'journaling',
-            }
-        except AttributeError:
-            logger.error('Your Ceph version is too old: some expected RBD features are missing. Please update to a more'
-                         'recent Ceph version.')
-            raise
+        ret = {
+            getattr(rbd, feature): feature[12:].lower().replace('_', '-')
+            for feature
+            in dir(rbd)
+            if feature.startswith('RBD_FEATURE_')
+        }
+        if not ret:
+            raise ImportError('Your Ceph version is too old: RBD features are missing. Please'
+                              ' update to a more recent Ceph version.')
+        return ret
 
     @classmethod
     def _bitmask_to_list(cls, features):
@@ -632,7 +706,8 @@ class RbdApi(object):
         """
         return reduce(lambda l, r: l | r,
                       [
-                          cls.get_feature_mapping().keys()[cls.get_feature_mapping().values().index(value)]
+                          cls.get_feature_mapping().keys()[cls.get_feature_mapping().values().index(
+                              value)]
                           for value
                           in cls.get_feature_mapping().values()
                           if value in features
@@ -645,8 +720,9 @@ class RbdApi(object):
         """
         self.cluster = client
 
+    @logged
     @undoable
-    def create(self, pool_name, image_name, size, old_format=True, features=None):
+    def create(self, pool_name, image_name, size, old_format=True, features=None, order=None):
         """
         .. example::
                 >>> api = RbdApi()
@@ -654,14 +730,19 @@ class RbdApi(object):
                 >>> api.remove('mypool', 'myimage')
 
         :param pool_name: RBDs are typically created in a pool named `rbd`.
-        :param features: see :method:`image_features`. The Linux kernel module doesn't support all features.
+        :param features: see :method:`image_features`. The Linux kernel module doesn't support
+            all features.
+        :param order: obj_size will be 2**order
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
         """
         ioctx = self.cluster._get_pool(pool_name)
         rbd_inst = rbd.RBD()
-        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else 0)
-        yield rbd_inst.create(ioctx, image_name, size, old_format=old_format, features=feature_bitmask)
+        default_features = 0 if old_format else 61  # FIXME: hardcoded int
+        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
+                           default_features)
+        yield rbd_inst.create(ioctx, image_name, size, old_format=old_format,
+                              features=feature_bitmask, order=order)
         self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
@@ -680,6 +761,8 @@ class RbdApi(object):
 
     def image_stat(self, pool_name, name, snapshot=None):
         """
+
+        obj_size is similar to the block size of ordinary hard drives.
         :param name: the name of the image
         :type name: str
         :param snapshot: which snapshot to read from
@@ -688,6 +771,14 @@ class RbdApi(object):
         ioctx = self.cluster._get_pool(pool_name)
         with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
             return image.stat()
+
+    def image_disk_usage(self, pool_name, name):
+        """The "rbd du" command is not exposed in python, as it
+        is directly implemented in the rbd tool."""
+        out = subprocess.check_output(['rbd', 'disk-usage', '--cluster', self.cluster.cluster_name,
+                                       '--pool', pool_name, '--image', name, '--format', 'json'])
+        du = json.loads(out)['images']
+        return du[0] if du else {}
 
     @undoable
     def image_resize(self, pool_name, name, size):
@@ -719,4 +810,3 @@ class RbdApi(object):
         ioctx = self.cluster._get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             return image.old_format()
-

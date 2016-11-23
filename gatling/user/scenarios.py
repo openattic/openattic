@@ -20,12 +20,12 @@ from requests.exceptions import HTTPError
 from testcase import GatlingTestCase
 
 
-class AuthTokenTestScenario(GatlingTestCase):
+class UserTestScenario(GatlingTestCase):
     username = "gatling_testuser"
 
     @classmethod
     def setUpClass(cls):
-        super(AuthTokenTestScenario, cls).setUpClass()
+        super(UserTestScenario, cls).setUpClass()
         cls.require_enabled("user")
 
     @classmethod
@@ -34,7 +34,7 @@ class AuthTokenTestScenario(GatlingTestCase):
 
     @classmethod
     def tearDown(cls):
-        super(AuthTokenTestScenario, cls).tearDownClass()
+        super(UserTestScenario, cls).tearDownClass()
         res = cls.send_request("GET", "users", search_param=("username=%s" % cls.username))
         if res["count"] > 0:
             for entry in res["response"]:

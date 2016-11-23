@@ -16,33 +16,34 @@
 
 from django.dispatch import Signal
 
-pre_install     = Signal()
-post_install    = Signal()
 
-pre_uninstall   = Signal()
-post_uninstall  = Signal()
+pre_install = Signal()
+post_install = Signal()
 
-pre_shrink      = Signal()
-post_shrink     = Signal()
-pre_grow        = Signal()
-post_grow       = Signal()
+pre_uninstall = Signal()
+post_uninstall = Signal()
 
-pre_format      = Signal()
-post_format     = Signal()
+pre_shrink = Signal()
+post_shrink = Signal()
+pre_grow = Signal()
+post_grow = Signal()
 
-pre_mount       = Signal(providing_args=["mountpoint"])
-post_mount      = Signal(providing_args=["mountpoint"])
-pre_unmount     = Signal(providing_args=["mountpoint"])
-post_unmount    = Signal(providing_args=["mountpoint"])
+pre_format = Signal()
+post_format = Signal()
 
+pre_mount = Signal(providing_args=["mountpoint"])
+post_mount = Signal(providing_args=["mountpoint"])
+pre_unmount = Signal(providing_args=["mountpoint"])
+post_unmount = Signal(providing_args=["mountpoint"])
 
 # Signals for oavgmanager.
-# oavgmanager start: send pre_activate, update host field, send activate, mount volumes, send post_activate
-# oavgmanager stop:  send pre_deactivate, unmount volumes, send deactivate, update host field, send post_deactivate
-pre_activate    = Signal(providing_args=["host"])
-activate        = Signal()
-post_activate   = Signal()
-pre_deactivate  = Signal()
-deactivate      = Signal()
+# oavgmanager start: send pre_activate, update host field, send activate, mount volumes, send
+# post_activate
+# oavgmanager stop:  send pre_deactivate, unmount volumes, send deactivate, update host field, send
+# post_deactivate
+pre_activate = Signal(providing_args=["host"])
+activate = Signal()
+post_activate = Signal()
+pre_deactivate = Signal()
+deactivate = Signal()
 post_deactivate = Signal()
-

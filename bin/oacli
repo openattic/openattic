@@ -133,7 +133,7 @@ HAVE_GET_FUNCTION_ARGS = "get_function_args" in server.system.listMethods()
 if options.uidcheck and os.geteuid() != 0:
     user = server.auth.User.filter({"username": getuser()})
     if len(user) != 1 or not user[0]['is_superuser']:
-        sys.exit("Access denied, sorry mate.")
+        sys.exit("Access denied: invalid user.")
 
 
 # Check if using colors on stdout is sensible
@@ -677,7 +677,7 @@ else:
                 if os.geteuid() != 0:
                     user = server.auth.User.filter({"username": getuser()})
                     if len(user) != 1 or not user[0]['is_staff']:
-                        print >> sys.stderr, "Access denied, sorry mate."
+                        print >> sys.stderr, "Access denied: invalid user."
                         return
                 return self._shellcmd("bash", args)
 

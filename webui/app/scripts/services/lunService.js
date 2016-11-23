@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("LunService", function ($resource) {
-  return $resource("/openattic/api/luns/:id", {
+  return $resource(globalConfig.API.URL + "luns/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,7 +45,7 @@ app.factory("LunService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/luns"
+      url: globalConfig.API.URL + "luns"
     }
   });
 });

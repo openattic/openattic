@@ -24,9 +24,13 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 
 from rest import relations
+from rest.utilities import mk_method_field_params, get_request_data, drf_version
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
+    if drf_version() >= (3,0):
+        name = serializers.CharField()  # in DRF 3, `name` is no longer automatically generated.
+
     class Meta:
         model = ContentType
 
@@ -39,12 +43,14 @@ class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
-    auth_token = serializers.SerializerMethodField("get_auth_token")
+    auth_token = serializers.SerializerMethodField(*mk_method_field_params('auth_token'))
+    profile = relations.HyperlinkedIdentityField(view_name='userprofile-detail')
 
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'is_active',
-                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token')
+                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token',
+                  'profile')
 
     def get_auth_token(self, obj):
         current_user = self.context["request"].user
@@ -108,7 +114,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        user_data = request.DATA
+        user_data = get_request_data(request)
         user = User.objects.create_user(user_data["username"], user_data["email"],
                                         user_data["password"])
         user.first_name = user_data["first_name"]

@@ -1,4 +1,15 @@
-
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
 
 import logging
 import os
@@ -9,19 +20,18 @@ if os.environ.get("DJANGO_SETTINGS_MODULE"):
 
 def distro_settings(distro_specific=['/etc/default/openattic', '/etc/sysconfig/openattic']):
     """
-    Read the custom settings for a distribution to override defaults. Debian
-    and Ubuntu use /etc/default/openattic. SUSE and RedHat use 
-    /etc/sysconfig/openattic.
+    Read the custom settings for a distribution to override defaults. Debian and Ubuntu use
+    /etc/default/openattic. SUSE and RedHat use /etc/sysconfig/openattic.
 
     Returns a dict for non-Django environments
     Sets settings object for Django environments
     """
     logger = logging.getLogger(__name__)
-    
+
     _settings = {}
     for filename in distro_specific:
         if os.path.isfile(filename):
-            logger.info("Reading %s", filename)
+            logger.debug("Reading %s", filename)
             with open(filename, "r") as f:
                 for line in f:
                     line = line.rstrip()
@@ -32,5 +42,5 @@ def distro_settings(distro_specific=['/etc/default/openattic', '/etc/sysconfig/o
                         _settings[key] = value
                         if os.environ.get("DJANGO_SETTINGS_MODULE"):
                             setattr(settings, key, value)
-                        
+
     return _settings

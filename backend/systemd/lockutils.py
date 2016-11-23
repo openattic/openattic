@@ -23,6 +23,8 @@ import stat
 import fcntl
 import logging
 
+from django.conf import settings
+
 class AlreadyLocked(Exception):
     pass
 
@@ -53,7 +55,7 @@ def acquire_lock(lockfile, max_wait=600):
     if not os.path.exists("/var/lock/openattic"):
         os.mkdir("/var/lock/openattic", 0755)
         if os.getuid() == 0:
-            openattic = pwd.getpwnam("openattic")
+            openattic = pwd.getpwnam(settings.API_OS_USER)
             os.chown("/var/lock/openattic", openattic.pw_uid, openattic.pw_gid)
 
     created = None
@@ -141,7 +143,7 @@ def acquire_lock(lockfile, max_wait=600):
 
     # make sure the openattic user can access the lockfile
     if os.getuid() == 0:
-        openattic = pwd.getpwnam("openattic")
+        openattic = pwd.getpwnam(settings.API_OS_USER)
         os.chown(lockfile, openattic.pw_uid, openattic.pw_gid)
 
     return (lockfile, f, created)

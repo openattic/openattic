@@ -20,6 +20,7 @@ from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
 
+
 class Xfs(FileSystem):
     """ Handler for NTFS-3g. """
     name = "xfs"
@@ -32,24 +33,24 @@ class Xfs(FileSystem):
     def get_agcount(self, megs=None):
         if megs is None:
             megs = self.volume.storageobj.megs
-        usablesize   = megs * 1024 * 1024
-        usableblocks = int( usablesize / 4096 )
+        usablesize = megs * 1024 * 1024
+        usableblocks = int(usablesize / 4096)
 
         # see xfs_mkfs.c, calc_default_ag_geometry()
-        if   usablesize >  512 * 1024**3:
+        if usablesize > 512 * 1024**3:
             shift = 5
-        elif usablesize >    8 * 1024**3:
+        elif usablesize > 8 * 1024**3:
             shift = 4
         elif usablesize >= 128 * 1024**2:
             shift = 3
-        elif usablesize >=  64 * 1024**2:
+        elif usablesize >= 64 * 1024**2:
             shift = 2
-        elif usablesize >=  32 * 1024**2:
+        elif usablesize >= 32 * 1024**2:
             shift = 1
         else:
             shift = 0
 
-        agsize  = usableblocks >> shift
+        agsize = usableblocks >> shift
         agcount = usableblocks / agsize
         return agcount
 
@@ -61,7 +62,8 @@ class Xfs(FileSystem):
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
 
-        self.dbus_object.xfs_format( self.volume.storageobj.blockvolume.volume.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
+        self.dbus_object.xfs_format(self.volume.storageobj.blockvolume.volume.path,
+                                    raidparams["chunksize"], raidparams["datadisks"], self.agcount)
         self.write_fstab()
         self.mount()
         self.chown()
@@ -72,17 +74,18 @@ class Xfs(FileSystem):
         return dbus.Array([], signature="as")
 
     def grow(self, oldmegs, newmegs):
-        self.dbus_object.xfs_resize( self.path, newmegs )
+        self.dbus_object.xfs_resize(self.path, newmegs)
 
     def set_uuid(self, value="", generate=False):
         """ Set the file system's UUID. """
         if generate:
             value = "generate"
-        self.dbus_object.xfs_set_uuid( self.volume.storageobj.blockvolume.volume.path, value )
+        self.dbus_object.xfs_set_uuid(self.volume.storageobj.blockvolume.volume.path, value)
 
     @classmethod
     def check_type(cls, typestring):
         return "SGI XFS filesystem data" in typestring
+
 
 class XfsDefaultBlocksDevice(capabilities.Device):
     requires = [
@@ -96,14 +99,14 @@ class XfsDefaultBlocksDevice(capabilities.Device):
         capabilities.ParallelIOCapability,
         capabilities.FileIOCapability,
         ]
-    removes  = [
+    removes = [
         capabilities.BlockbasedCapability,
         capabilities.BlockIOCapability,
         capabilities.ShrinkCapability,
         ]
 
+
 class XfsSectorBlocksDevice(capabilities.Device):
     requires = XfsDefaultBlocksDevice.requires
     provides = XfsDefaultBlocksDevice.provides + [capabilities.SectorBlocksCapability]
-    removes  = XfsDefaultBlocksDevice.removes
-
+    removes = XfsDefaultBlocksDevice.removes

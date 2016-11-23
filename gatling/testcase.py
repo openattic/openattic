@@ -98,14 +98,13 @@ class GatlingTestCase(unittest.TestCase):
         if "obj_id" in kwargs:
             url = "%s/%s" % (url, str(kwargs["obj_id"]))
 
+        header["content-type"] = "application/json"
+        data = kwargs.get("data", None)
+
         # POST, PUT
         if method in ["POST", "PUT"]:
             if prefixes["detail_route"]:
                 url = "%s/%s" % (url, prefixes["detail_route"])
-
-            header["content-type"] = "application/json"
-
-            data = kwargs.get("data", None)
 
             res = requests.request(method, url, data=json.dumps(data), headers=header)
             res.raise_for_status()
@@ -119,7 +118,11 @@ class GatlingTestCase(unittest.TestCase):
         elif method in ["GET", "DELETE"]:
             if "search_param" in kwargs:
                 url = "%s?%s" % (url, kwargs["search_param"])
-            res = requests.request(method, url, headers=header)
+
+            if data:
+                res = requests.request(method, url, data=json.dumps(data), headers=header)
+            else:
+                res = requests.request(method, url, headers=header)
             res.raise_for_status()
 
             # For method DELETE no json object could be decoded, so just return the response
@@ -188,6 +191,46 @@ class GatlingTestCase(unittest.TestCase):
             if res["count"] > 0:
                 for vol in res["response"]:
                     cls.send_request("DELETE", "volumes", obj_id=vol["id"])
+
+    def check_exception_messages(self, err_response, expected_message, **kwargs):
+        """
+        Checks the content of error responses.
+
+        :param err_response: Error response object
+        :rtype: HTTPError
+        :param expected_message: Expected response message
+        :rtype: str
+        :param kwargs:  field(str)          -> Which field of the error response should be checked?
+                                               Default value is detail.
+                        fuzzy(bool)         -> Checks just a part of the error message (uses
+                                               assertIn instead of assertEqual). Default value is
+                                               False.
+                        status_code(int)    -> Checks error response for this status code. Default
+                                               value is 400.
+        :rtype: dict[str, Any]
+        :return: None
+        """
+        field = kwargs.get("field", "detail")
+        fuzzy = kwargs.get("fuzzy", False)
+        status_code = kwargs.get("status_code", 400)
+
+        if status_code == 400:
+            self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
+        else:
+            self.assertEqual(str(err_response.exception), "500 Server Error: Internal Server Error")
+
+        self.assertEqual(err_response.exception.response.status_code, status_code)
+
+        detailed_err = err_response.exception.response.json()[field]
+        if type(detailed_err) == list:
+            message = str(detailed_err[0])
+        else:
+            message = detailed_err
+
+        if fuzzy:
+            self.assertIn(expected_message, message)
+        else:
+            self.assertEqual(expected_message, message)
 
     def check_volume_properties(self, vol, max_size=None):
         """

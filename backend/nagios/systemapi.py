@@ -60,6 +60,9 @@ class SystemD(BasePlugin):
                 }))
         finally:
             fd.close()
+
+    @deferredmethod(in_signature="")
+    def restart_service(self, sender):
         invoke([nagios_settings.BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
         # Sometimes, reloading Nagios can cause it to not come up due to some strange errors that
         # may or may not be fixed simply through retrying.

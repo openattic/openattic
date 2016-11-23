@@ -18,6 +18,7 @@ import logging
 import socket
 import errno
 import sys
+from itertools import chain
 
 from operator import or_
 
@@ -32,6 +33,9 @@ from peering.models import PeerHost, PeerError
 from xmlrpclib import Fault
 from httplib import BadStatusLine
 from rpcd.exceptionhelper import translate_exception
+
+from utilities import get_related_model
+
 
 class BaseHandler(object):
     """ Base RPC handler class.
@@ -141,7 +145,7 @@ class ModelHandler(BaseHandler):
             id = {'id': int(id)}
         data = {}
         obj = self._get_model_manager().get(**id)
-        for field in obj._meta.fields + obj._meta.virtual_fields:
+        for field in chain(obj._meta.fields, obj._meta.virtual_fields):
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
@@ -318,7 +322,7 @@ class ModelHandler(BaseHandler):
             return obj
 
         data = {'__unicode__': unicode(obj)}
-        for field in obj._meta.fields + obj._meta.many_to_many + obj._meta.virtual_fields:
+        for field in chain(obj._meta.fields, obj._meta.many_to_many, obj._meta.virtual_fields):
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
@@ -379,10 +383,10 @@ class ModelHandler(BaseHandler):
                       if key not in ("id", "extAction", "extMethod", "extTID", "extType", "extUpload")
                     ])
 
-        for field in self.model._meta.fields + self.model._meta.virtual_fields:
+        for field in chain(self.model._meta.fields,  self.model._meta.virtual_fields):
             if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ) and field.name in data:
                 if data[field.name]:
-                    handler = self._get_handler_instance(field.related.parent_model)
+                    handler = self._get_handler_instance(get_related_model(field))
                     data[field.name] = handler.idobj(int(data[field.name]))
                 else:
                     data[field.name] = None
@@ -430,7 +434,7 @@ class ModelHandler(BaseHandler):
 
     def _setobj(self, obj, data):
         """ Update the given object with values from the `data` dict. """
-        for field in obj._meta.fields + obj._meta.virtual_fields:
+        for field in chain(obj._meta.fields, obj._meta.virtual_fields):
             if field.name in data:
                 if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
                     if data[field.name] is not None:
@@ -686,7 +690,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             raise KeyError("Wai u ID")
         # Find the peer by walking through the given data
         fields = self.model.objects.hostfilter.split('__')
-        target_model = self.model._meta.get_field_by_name(fields[0])[0].related.parent_model
+        target_model = get_related_model(self.model._meta.get_field_by_name(fields[0])[0])
         if target_model == Host:
             curr = Host.objects.get(id=data[fields[0]]["id"])
         else:

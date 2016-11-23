@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("CmdlogService", function ($resource) {
-  return $resource("/openattic/api/cmdlogs/:id", {
+  return $resource(globalConfig.API.URL + "cmdlogs/:id", {
     id: "@id"
   }, {
     query: {
@@ -44,7 +44,7 @@ app.factory("CmdlogService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/cmdlogs"
+      url: globalConfig.API.URL + "cmdlogs"
     }
   });
 });

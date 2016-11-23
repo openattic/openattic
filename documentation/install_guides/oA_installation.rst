@@ -63,12 +63,14 @@ the following configuration changes should be performed:
 #. Install and configure an NTP daemon on every host, so the clocks on all
    these nodes are in sync.
 
-#. HTTP access to the Web UI might be blocked by the default firewall
-   configuration. For example, in order to allow external HTTP requests on an
-   EL7 system, execute the following commands::
+#. HTTP access and other things might be blocked by the default firewall
+   configuration. For example on EL7 system, execute the following commands::
 
-     # firewall-cmd --zone=public --add-port=80/tcp --permanent
-     # systemctl restart firewalld
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=http
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=samba
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=nfs
+     # firewall-cmd --permanent --zone=<your zone ie internal|public> --add-service=iscsi-target
+     # firewall-cmd --reload
 
 Consult your Linux distribution's documentation for further details on how to
 make these changes.
@@ -77,6 +79,13 @@ make these changes.
 
 Basic Storage Configuration
 ===========================
+
+.. note::
+  If you only want to use |oA| for managing and monitoring a Ceph cluster, you
+  can skip the storage configuration. No additional local disks or storage
+  pools are required for performing this functionality. After performing the
+  basic |oA| software installation, follow the steps outlined in
+  :ref:`enabling_ceph_support` to make your Ceph cluster known to |oA|.
 
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
 group or a ZFS zpool) for creating storage volumes. In the following chapters,
@@ -182,43 +191,8 @@ http://apt.openattic.org .
   followed the steps outlined in :ref:`base operating system installation` and
   :ref:`basic storage configuration`.
 
-Enabling the |oA| Apt package repository
-----------------------------------------
-
-In order to use enable the |oA| Apt repository, create a file named
-``/etc/apt/sources.list.d/openattic.list``, and put the following lines into
-it:
-
-For Debian 8 (Jessie)
-~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  deb     http://apt.openattic.org/ jessie   main
-  deb-src http://apt.openattic.org/ jessie   main
-
-For Ubuntu 14.04 LTS (Trusty)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  deb     http://apt.openattic.org/ trusty   main
-  deb-src http://apt.openattic.org/ trusty   main
-
-Enabling Nightly Builds
-~~~~~~~~~~~~~~~~~~~~~~~
-
-In addition to the offical releases, we also provide nightly builds, build off
-the current "default" branch that will become the next official |oA| release.
-
-Add the following to the existing ``/etc/apt/sources.list.d/openattic.list``
-file::
-
-  deb     http://apt.openattic.org/ nightly  main
-  deb-src http://apt.openattic.org/ nightly  main
-
 Importing the |oA| Keyfile
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 The |oA| packages are signed using a cryptographic key. You can import the
 public GPG key from the download site using the following command:
@@ -227,12 +201,44 @@ public GPG key from the download site using the following command:
 
   # wget http://apt.openattic.org/A7D3EAFA.txt -q -O - | apt-key add -
 
-The GPG key's fingerprint should look as follows::
+The GPG key's fingerprint can be verified with ``apt-key finger`` and should
+look as follows::
 
   pub   2048R/A7D3EAFA 2012-03-05
         Key fingerprint = 9A91 1EDD 45A2 4B25 9C39  E7D4 1D5C D44D A7D3 EAFA
   uid                  Business Critical Computing <is-bcc@it-novum.com>
   sub   2048R/A99076EE 2012-03-05
+
+Enabling the |oA| Apt Package Repository
+----------------------------------------
+
+In order to add the |oA| apt repository, create a file named
+``/etc/apt/sources.list.d/openattic.list``, and put the following lines into it.
+Replace the field ``<distribution>`` with your distribution's short codename:
+
+* ``jessie`` (for Debian 8 "Jessie")
+* ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
+
+::
+
+  deb     http://apt.openattic.org/ <distribution>   main
+  deb-src http://apt.openattic.org/ <distribution>   main
+
+Enabling Nightly Builds
+~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the offical releases, we also provide nightly builds, built off
+the current "default" branch that will eventually become the next official |oA|
+release.
+
+To enable the nightly repo, the file ``/etc/apt/sources.list.d/openattic.list``
+needs to be expanded to look as follows. Again, please replace ``<distribution>`` with your
+distribution's code name as outlined above::
+
+  deb     http://apt.openattic.org/ <distribution>   main
+  deb-src http://apt.openattic.org/ <distribution>   main
+  deb     http://apt.openattic.org/ nightly  main
+  deb-src http://apt.openattic.org/ nightly  main
 
 Package Installation
 --------------------
@@ -244,10 +250,16 @@ After enabling the apt repository, run the following commands to install the
   # apt-get install openattic
 
 .. note::
-  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in order
-  to get the ``lio-utils`` package working which is used by ``openattic-module-lio``
-  (included in the base openattic package).
-  You may need to restart the target service as well::
+  Installation of the ``openattic-gui`` package will replace the
+  distribution's default ``index.html`` page in the Apache web server's
+  document root with a redirect page to the |oA| web interface.
+
+.. note::
+  For **Ubuntu 14.04 LTS** it is necessary to install some extra package in
+  order to get the ``lio-utils`` package working which is used by
+  ``openattic-module-lio`` (installed by the base openattic package). You may
+  need to restart the target service as well::
+
     # apt-get install linux-image-extra-`uname -r`
     # service target restart
 
@@ -341,8 +353,13 @@ It can be installed with the following command::
 
   # yum install openattic-gui
 
-Configure pnp4nagios
---------------------
+.. note::
+  Installation of the ``openattic-gui`` package will install an ``index.html``
+  page in the Apache web server's document root that will redirect requests to
+  the |oA| web interface.
+
+Configure PNP4Nagios on EL7
+---------------------------
 
 |oA| uses `Nagios <https://www.nagios.org/>`_ and the `PNP4Nagios
 <http://pnp4nagios.org/>`_ addon for analyzing performance data and generating
@@ -400,6 +417,10 @@ Add the following to ``/etc/nagios/objects/commands.cfg``::
    command_line /bin/mv /var/log/pnp4nagios/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$
   }
 
+To make sure that all changes have been applied correctly, please run ``nagios
+--verify-config /etc/nagios/nagios.cfg`` afterwards, to verify the
+configuration files for errors.
+
 Nagios will be restarted during the |oA| installation and should then generate
 the necessary RRD and XML files in ``/var/lib/pnp4nagios/<hostname>``.
 
@@ -423,7 +444,7 @@ repositories named ``filesystems:openATTIC``.
   followed the steps outlined in :ref:`base operating system installation` and
   :ref:`basic storage configuration`.
 
-Yum Repository Configuration
+Zypper Repository Configuration
 ----------------------------
 
 From a web browser, the installation of |oA| on SLES or Leap can be performed
@@ -460,7 +481,7 @@ openattic``, as it might not be required on each node of an |oA| cluster.
 
 It can be installed with the following command::
 
-  # yum install openattic-gui
+  # zypper install openattic-gui
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.

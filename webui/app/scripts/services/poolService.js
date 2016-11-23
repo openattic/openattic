@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("PoolService", function ($resource) {
-    return $resource("/openattic/api/pools/:id", {
+    return $resource(globalConfig.API.URL + "pools/:id", {
       id: "@id"
     }, {
       update: {method: "PUT"},
@@ -45,15 +45,15 @@ app.factory("PoolService", function ($resource) {
       },
       storage: {
         method: "GET",
-        url: "/openattic/api/pools/:id/storage"
+        url: globalConfig.API.URL + "pools/:id/storage"
       },
       filesystems: {
         method: "GET",
-        url: "/openattic/api/pools/:id/filesystems"
+        url: globalConfig.API.URL + "pools/:id/filesystems"
       },
       filter: {
         method: "GET",
-        url: "/openattic/api/pools"
+        url: globalConfig.API.URL + "pools"
       }
     });
   });

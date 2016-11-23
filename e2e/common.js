@@ -16,7 +16,6 @@
   var clone = element(by.cssContainingText('tr', clonename));
 
   var hostname = "protractor_test_host";
-  var host = element(by.cssContainingText('tr', hostname));
 
   var volumePoolSelect = element(by.model('pool'));
 
@@ -51,6 +50,7 @@
       element(by.model('data.megs')).sendKeys(size);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(configs.sleep);
+      expect(element(by.cssContainingText('tr', volumename)).isDisplayed()).toBe(true);
       return pool;
     },
 
@@ -131,23 +131,38 @@
       element(by.id('bot2-Msg1')).click();
     },
 
-    create_host: function(){
+    create_host: function(iqn, fc, $hostname){
       element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
-      element(by.model('host.name')).sendKeys(hostname);
+      var name = $hostname ? $hostname : hostname;
+      element(by.model('host.name')).sendKeys(name);
+      if(iqn){
+        element.all(by.model('type.check')).get(0).click();
+        element.all(by.model('data[key]')).get(0).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
+      }
+      if(fc){
+        element.all(by.model('type.check')).get(1).click();
+        element.all(by.model('data[key]')).get(1).click();
+        element.all(by.model('newTag.text')).get(0).sendKeys(fc);
+      }
+      browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
+      expect(element(by.cssContainingText('tr', name)).isDisplayed()).toBe(true);
     },
 
-    delete_host: function(){
+    delete_host: function($hostname){
       hostsItem.click();
+      var name = $hostname ? $hostname : hostname;
+      var host = element(by.cssContainingText('tr', name));
       host.click();
-      browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
-      browser.sleep(400);
       element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
+      browser.sleep(400);
+      expect(host.isPresent()).toBe(false);
     },
 
     check_wizard_titles: function(){
@@ -168,6 +183,50 @@
             //console.log(block_title);
           });
       });
+    },
+
+    delete_nfs_share: function(volName, nfsName){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      element(by.css('.tc_nfsShareTab')).click();
+      var share = element(by.cssContainingText('td', nfsName));
+      expect(share.isDisplayed()).toBe(true);
+      share.click();
+      element(by.css('.tc_nfsShareDelete')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
+
+    delete_cifs_share: function(volName, cifsName){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      element(by.css('.tc_cifsShareTab')).click();
+      var share = element(by.cssContainingText('tr', cifsName));
+      expect(share.isDisplayed()).toBe(true);
+      share.click();
+      element.all(by.css('.tc_menudropdown')).get(1).click();
+      element(by.css('.tc_cifsShareDelete > a')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
+    },
+
+    delete_fc_share: function(volName, hostname){
+      volumesItem.click();
+      var volume = element(by.cssContainingText('tr', volName));
+      expect(volume.isPresent()).toBe(true);
+      volume.click();
+      element(by.css('.tc_iscsi_fcTab')).click();
+      var share = element(by.cssContainingText('tr', hostname))
+      share.click();
+      element(by.css('.tc_lunDelete')).click();
+      element(by.id('bot2-Msg1')).click();
+      expect(share.isPresent()).toBe(false);
     },
   };
 }());

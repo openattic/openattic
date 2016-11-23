@@ -18,7 +18,7 @@ from __future__ import division
 
 import os
 
-from pyudev import Context, Device
+from pyudev import Context
 
 from lvm.blockdevices import get_mounts
 
@@ -29,7 +29,8 @@ def get_blockdevices(uuid=None):
     for dev in ctx.list_devices():
         if dev["SUBSYSTEM"] != "block" or dev["DEVTYPE"] != "disk":
             continue
-        if uuid is not None and ("ID_SCSI_SERIAL" not in dev or not uuid.startswith(dev["ID_SCSI_SERIAL"])):
+        if uuid is not None and ("ID_SCSI_SERIAL" not in dev or
+                                 not uuid.startswith(dev["ID_SCSI_SERIAL"])):
             continue
         data.append(get_device_info(dev))
     return data
@@ -56,13 +57,13 @@ def get_device_info(device):
         data["fs_type"] = device["ID_FS_TYPE"]
         if device["ID_FS_TYPE"] == "LVM2_member":
             data["mountpoint"] = device["UDISKS_LVM2_PV_VG_NAME"]
-            data["megs_free"]  = int(device["UDISKS_LVM2_PV_VG_FREE_SIZE"]) / 1024**2
+            data["megs_free"] = int(device["UDISKS_LVM2_PV_VG_FREE_SIZE"]) / 1024**2
         elif device["ID_FS_TYPE"] != "linux_raid_member" and device["ID_FS_USAGE"] == "filesystem":
             for mntdev, mntpoint, mnttype, _, _, _ in get_mounts():
-                if os.path.realpath(mntdev) == device.device_node and mnttype == device["ID_FS_TYPE"]:
+                if os.path.realpath(mntdev) == device.device_node and mnttype == \
+                        device["ID_FS_TYPE"]:
                     s = os.statvfs(mntpoint)
                     data["mountpoint"] = mntpoint
-                    data["megs_free"]  = s.f_bfree * s.f_frsize / 1024**2
+                    data["megs_free"] = s.f_bfree * s.f_frsize / 1024**2
 
     return data
-

@@ -18,4 +18,4 @@ from os.path import join
 
 from django.conf import settings
 
-VOLUMESDIR = getattr( settings, "HTTP_VOLUMESDIR", join(settings.DATA_ROOT, "http", "volumes") )
+VOLUMESDIR = getattr(settings, "HTTP_VOLUMESDIR", join(settings.DATA_ROOT, "http", "volumes"))

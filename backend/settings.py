@@ -35,11 +35,13 @@ else:
     GUI_ROOT = "/usr/share/openattic-gui"
 
 API_ROOT = "/openattic/api"
+API_OS_USER = 'openattic'
 
 from ConfigParser import ConfigParser
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+ALLOWED_HOSTS = '*'  # Required by Django 1.8
 
 APPEND_SLASH = False
 
@@ -59,9 +61,12 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
+    'EXCEPTION_HANDLER': 'exception.custom_handler',
     'PAGINATE_BY':        50,
     'PAGINATE_BY_PARAM': 'pageSize',
     'MAX_PAGINATE_BY':   100,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # Required by 3
+    'PAGE_SIZE': 10,  # Required by DRF 3
     'URL_FIELD_NAME':    'url',
 }
 
@@ -70,6 +75,10 @@ DATABASES = {}
 
 __conf__ = ConfigParser()
 __conf__.read("/etc/openattic/database.ini")
+
+if not len(__conf__.sections()):
+    raise IOError("database.ini not found")
+
 for sec in __conf__.sections():
     DATABASES[sec] = {
         "ENGINE":   __conf__.get(sec, "engine"),
@@ -203,20 +212,21 @@ except NameError:
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'oa': {
+            'format': '%(asctime)s - %(levelname)s - %(name)s#%(funcName)s - %(message)s'
+        }
+    },
     'handlers': {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/openattic/openattic.log'
+            'filename': '/var/log/openattic/openattic.log',
+            'formatter': 'oa',
         }
     },
     'loggers': {
-        'nagios': {
-            'handlers': ['file'],
-            'level': 'INFO',
-            'propagate': True
-        },
-        'ceph': {
+        '': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True
@@ -380,7 +390,7 @@ def __loadmods__():
                 return cmp(a, b)
 
     import os
-    mods = os.listdir( join( PROJECT_ROOT, "installed_apps.d") )
+    mods = [dir for dir in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ) if not dir.startswith('.')]
     mods.sort(cmp=modnamecmp)
     for name in mods:
         m = rgx.match(name)

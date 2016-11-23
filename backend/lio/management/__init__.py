@@ -13,7 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+import logging
 import re
 import os
 import os.path
@@ -27,6 +27,8 @@ from django.db.models import signals
 import sysutils.models
 
 from ifconfig.models import Host, IPAddress
+
+logger = logging.getLogger(__name__)
 
 
 def create_fc_objects(**kwargs):
@@ -42,7 +44,12 @@ def create_fc_objects(**kwargs):
 
     unseen_ini_wwns = [ini.wwn for ini in host.initiator_set.filter(type="qla2xxx")]
 
-    fabric = rtslib.FabricModule("qla2xxx")
+    try:
+        fabric = rtslib.FabricModule("qla2xxx")
+    except KeyError:
+        logger.info('There is no FabricModule("qla2xxx")')
+        return
+
 
     for hba in os.listdir("/sys/class/fc_host"):
         port_name = open(os.path.join("/sys/class/fc_host", hba, "port_name"), "rb").read().strip()

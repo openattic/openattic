@@ -56,6 +56,7 @@ Requires:	numpy
 Requires:	policycoreutils-python
 Requires:	pygobject2
 Requires:	python-dbus
+Requires:	python-configobj
 Requires:	python-django
 Requires:	python-imaging
 Requires:	python-m2ext
@@ -66,7 +67,6 @@ Requires:	python-pam
 Requires:	python-psycopg2
 Requires:	python-pyudev
 Requires:	python-requests
-Requires:	python-simplejson
 Requires:	udisks2
 Requires:	vconfig
 Requires:	wget
@@ -99,6 +99,7 @@ This package includes the Web UI based on AngularJS/Bootstrap.
 %package module-ceph
 Requires: ceph-common >= 10.0.0
 Requires: %{name}-base
+Requires: %{name}-module-nagios
 Requires: python-rados
 Summary: Ceph module for openATTIC
 
@@ -109,6 +110,22 @@ storage space on demand.
 
 This package includes support for Ceph, a distributed storage system
 designed to provide excellent performance, reliability, and scalability.
+
+%package module-ceph-deployment
+Requires: ceph-common >= 10.0.0
+Requires: %{name}-module-ceph
+Requires: deepsea
+Summary: Ceph deployment and management module for openATTIC
+
+%description module-ceph-deployment
+openATTIC is a storage management system based upon Open Source tools with a
+comprehensive user interface that allows you to create, share and backup storage
+space on demand.
+
+This package includes deployment and remote management support for Ceph, a
+distributed storage system designed to provide excellent performance,
+reliability, and scalability. It is based on the "DeepSea" collection of Salt
+files (https://github.com/SUSE/DeepSea).
 
 %package module-btrfs
 Requires:	btrfs-progs
@@ -203,6 +220,7 @@ user interface.
 %package module-lvm
 Requires:	lvm2
 Requires: %{name}-base
+Requires: %{name}-module-cron
 Summary: LVM module for openATTIC
 
 %description module-lvm
@@ -258,7 +276,6 @@ Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
 Requires: nagios-plugins-tcp
-Requires: python-configobj
 
 Summary: Nagios module for openATTIC
 
@@ -373,6 +390,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
+mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
@@ -390,6 +408,8 @@ mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
+install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
+rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
 rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
@@ -401,22 +421,15 @@ install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
 
+# Install HTML redirect
+install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.html
+
 # Install /etc/default/openattic
 # TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
-# database config
-## TODO: generate random password
-
-cat <<EOF > %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
-[default]
-engine   = django.db.backends.postgresql_psycopg2
-name     = openattic
-user     = openattic
-password = ip32...beg
-host     = localhost
-port     =
-EOF
+# Install db file
+install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
 
 ln -s %{_sysconfdir}/%{name}/databases/pgsql.ini %{buildroot}%{_sysconfdir}/openattic/database.ini
 
@@ -426,6 +439,7 @@ install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbu
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
 install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
+touch %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
 
 # configure yum repo
 install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
@@ -445,6 +459,9 @@ done
 
 install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
 install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
+
+#configure ceph
+install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -482,6 +499,14 @@ systemctl daemon-reload
 systemctl restart dbus
 systemctl restart httpd
 
+%post module-ceph
+# Add nagios user to the ceph group (OP-1320)
+if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
+  if ! groups nagios | grep -q ceph ; then
+    groupmems -g ceph -u nagios 
+  fi
+fi
+
 %post gui
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
@@ -504,24 +529,6 @@ fi
 systemctl enable postgresql
 systemctl start postgresql
 
-#TODO: Dynamisches Passwort erzeugen und ausgeben
-#pass=$(openssl rand -hex 10)
-dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
-echo "===> $dbu"
-if [ -n "$dbu" ]; then
-	echo "Database openattic exists, owned by $dbu"
-else
-su - postgres -c psql << EOT
-create user openattic with password 'ip32...beg';
-create database openattic with owner openattic;
-\q
-EOT
-	#sed -i -e "s/ip32...beg/$pass/g" /etc/openattic/databases/pgsql.ini
-	sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
-fi
-systemctl reload postgresql
-systemctl status postgresql
-
 %postun pgsql
 # Datenbank drop
 echo "You need to drop the openattic database & user"
@@ -541,6 +548,7 @@ echo ""
 %defattr(-,openattic,openattic,-)
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
+%attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_bindir}/oacli
@@ -558,12 +566,11 @@ echo ""
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
-%{_datadir}/%{name}/clustering/
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
 %{_datadir}/%{name}/installed_apps.d/20_volumes
-%{_datadir}/%{name}/installed_apps.d/70_clustering
+%{_datadir}/%{name}/installed_apps.d/60_taskqueue
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
 %{_datadir}/%{name}/nodb/
@@ -578,12 +585,15 @@ echo ""
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
+%{_datadir}/%{name}/taskqueue/
 %{_datadir}/%{name}/templates/
 %{_datadir}/%{name}/urls.py*
 %{_datadir}/%{name}/userprefs/
+%{_datadir}/%{name}/version.txt
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
-%{_datadir}/%{name}/.style.yapf
+%{_datadir}/%{name}/exception.py*
+%{_datadir}/%{name}/utilities.py*
 
 %files module-btrfs
 %defattr(-,root,root,-)
@@ -592,12 +602,22 @@ echo ""
 
 %files module-ceph
 %defattr(-,root,root,-)
+%config %{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
+%{_libdir}/nagios/plugins/check_cephcluster
+%{_libdir}/nagios/plugins/check_cephpool
+%{_libdir}/nagios/plugins/check_cephrbd
+
+%files module-ceph-deployment
+%defattr(-,root,root,-)
+%{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
+%{_datadir}/%{name}/ceph_deployment/
 
 %files gui
 %defattr(-,root,root,-)
 %{_datadir}/%{name}-gui
+%{_localstatedir}/www/html/index.html
 
 %files module-cron
 %defattr(-,root,root,-)
@@ -654,12 +674,11 @@ systemctl start lvm2-lvmetad
 
 %files module-nagios
 %defattr(-,root,root,-)
-%config %{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
-%config %{_sysconfdir}/nagios/conf.d/openattic_static.cfg
-%config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}_static.cfg
+%config %{_sysconfdir}/nagios/conf.d/%{name}_contacts.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
-%{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd
@@ -720,7 +739,7 @@ systemctl start smb
 %{_datadir}/%{name}/zfs/
 
 %files 	pgsql
-%defattr(-,root,root,-)
+%defattr(-,openattic,openattic,-)
 %config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
 %{_sysconfdir}/%{name}/database.ini
 

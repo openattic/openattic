@@ -13,12 +13,13 @@
 """
 
 import mock
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from django.db.models import Q
 from django.test import TestCase
 
-from nodb.models import NodbQuerySet, NodbModel, DictField
+from nodb.models import NodbQuerySet, NodbModel, JsonField, bulk_attribute_setter
 from nodb.restapi import NodbSerializer
 
 
@@ -26,6 +27,8 @@ class QuerySetTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(QuerySetTestCase, cls).setUpClass()
+
         class CephClusterMock(NodbModel):
 
             @staticmethod
@@ -57,7 +60,6 @@ class QuerySetTestCase(TestCase):
         cls.ordering_a = OrderTestModel(x=1, y=1)
         cls.ordering_b = OrderTestModel(x=1, y=2)
         cls.ordering_c = OrderTestModel(x=2, y=2)
-
 
         cls.order_qs = NodbQuerySet(OrderTestModel)
 
@@ -141,13 +143,13 @@ class QuerySetTestCase(TestCase):
 
         def eq_order(expected, *order):
             ordered = self.order_qs.order_by(*order)
-            self.assertEqual([(obj.x, obj.y) for obj in ordered], [(obj.x, obj.y) for obj in expected])
+            self.assertEqual([(obj.x, obj.y) for obj in ordered],
+                             [(obj.x, obj.y) for obj in expected])
 
         eq_order([self.ordering_a, self.ordering_b, self.ordering_c], "x", "y")
         eq_order([self.ordering_b, self.ordering_a, self.ordering_c], "x", "-y")
         eq_order([self.ordering_c, self.ordering_a, self.ordering_b], "-x", "y")
         eq_order([self.ordering_c, self.ordering_b, self.ordering_a], "-x", "-y")
-
 
 
 class DictFieldSerializerTest(TestCase):
@@ -160,7 +162,7 @@ class DictFieldSerializerTest(TestCase):
             def get_all_objects(context, query):
                 self.fail("should not be called")
 
-            my_dict = DictField(primary_key=True)
+            my_dict = JsonField(base_type=list, primary_key=True)
 
         class DictFieldModelSerializer(NodbSerializer):
             class Meta:
@@ -171,3 +173,120 @@ class DictFieldSerializerTest(TestCase):
         serializer = DictFieldModelSerializer(DictFieldModel(my_dict=my_dict))
 
         self.assertEqual(serializer.data, {'my_dict': my_dict})
+
+    def test_nullable(self):
+        class DictFieldModel2(NodbModel):
+            non_nullable = JsonField(base_type=list, primary_key=True)
+            nullable = JsonField(base_type=dict, primary_key=True, blank=True, null=True)
+            blank = JsonField(base_type=list, blank=True)
+
+            @staticmethod
+            def get_all_objects(context, query):
+                return []
+
+        m = DictFieldModel2(non_nullable=[1], nullable=None, blank=[])
+        m.full_clean()
+        self.assertIsNone(m.nullable)
+        self.assertEqual(m.blank, [])
+        self.assertEqual(m.non_nullable, [1])
+
+        try:
+            m2 = DictFieldModel2(non_nullable=[], nullable=None, blank=[])
+            m2.full_clean()
+            self.fail()
+        except ValidationError:
+            pass
+
+        try:
+            m2 = DictFieldModel2(non_nullable=[1], nullable=None, blank=None)
+            m2.full_clean()
+            self.fail()
+        except ValidationError:
+            pass
+
+
+class LazyPropertyTest(TestCase):
+
+    class TestModel(NodbModel):
+        a = models.IntegerField(primary_key=True)
+        b = models.IntegerField()
+        c = models.IntegerField()
+        d = models.IntegerField()
+        e = models.IntegerField()
+
+        @bulk_attribute_setter(['b'])
+        def set_b(self, objects, field_names):
+            assert self in objects
+            for o in objects:
+                o.b = o.a
+
+        @bulk_attribute_setter(['c'])
+        def set_c(self, objects, field_names):
+            for o in objects:
+                o.c = self.a
+
+        @bulk_attribute_setter(['d', 'e'])
+        def set_d_e(self, objects, field_names):
+            self.d = self.a
+            self.e = self.a
+
+        @staticmethod
+        def get_all_objects(context, query):
+            return [
+                LazyPropertyTest.TestModel(a=1),
+                LazyPropertyTest.TestModel(a=2)
+            ]
+
+        def __unicode__(self):
+            return u'<TestModel {}>'.format(self.a)
+
+    def test_simple(self):
+        os = list(LazyPropertyTest.TestModel.objects.all())
+        for o in os:
+            self.assertIsInstance(o.__dict__['a'], int)
+        for o in os:
+            self.assertEqual(o.b, o.a)
+            self.assertIsInstance(o.__dict__['b'], int)
+
+    def test_filter(self):
+        o = LazyPropertyTest.TestModel.objects.all().get(a=2)
+        self.assertIsInstance(o.__dict__['a'], int)
+        self.assertEqual(o.a, 2)
+        self.assertEqual(o.b, 2)
+        self.assertIsInstance(o.__dict__['b'], int)
+
+    def test_non_deterministic(self):
+        o1, o2 = LazyPropertyTest.TestModel.objects.all()
+        self.assertEqual(o2.c, o2.a)
+        self.assertEqual(o1.c, o2.a)
+
+    def test_single_row(self):
+        o1, o2 = LazyPropertyTest.TestModel.objects.all()
+        self.assertNotIn('d', o2.__dict__)
+        self.assertEqual(o2.d, o2.a)
+        self.assertIn('e', o2.__dict__)
+        self.assertNotIn('d', o1.__dict__)
+        self.assertNotIn('e', o1.__dict__)
+
+    def test_filter_order_by(self):
+        o1 = LazyPropertyTest.TestModel.objects.filter(d=1).order_by('a')[0]
+        self.assertEqual(o1.a, 1)
+        self.assertIn('d', o1.__dict__)
+        self.assertIn('e', o1.__dict__)
+
+
+class NodbModelTest(TestCase):
+
+    class SimpleModel(NodbModel):
+        a = models.IntegerField(primary_key=True)
+        b = models.IntegerField()
+
+        @staticmethod
+        def get_all_objects(context, query):
+            raise NotImplementedError()
+
+    def test_make_model_args(self):
+        args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3))
+        self.assertEqual(args, dict(a=1))
+        args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3), fields_force_none=['b'])
+        self.assertEqual(args, dict(a=1, b=None))

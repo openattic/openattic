@@ -25,10 +25,11 @@
                 <input type="checkbox" ng-model="selection.checkAll"/>
             </th>
             <th sortfield="name" sortheaderclass sortdefault sortdir="asc" ng-show="columns['Name']">Name</th>
-            <th sortfield="megs" sortheaderclass ng-show="columns['Size']">Size</th>
-            <th ng-show="columns['Used']">Used</th>
-            <th ng-show="columns['Status']">Status</th>
-            <th ng-show="columns['Type']">Type</th>
+            <th sortfield="usage.size" sortheaderclass ng-show="columns['Size']">Size</th>
+            <th sortfield="usage.used" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
+            <th sortfield="status.status" sortdir="asc" sortheaderclass ng-show="columns['Status']">Status</th>
+            <th sortfield="type.name" sortdir="asc" sortheaderclass ng-show="columns['Type']">Type</th>
+            <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
         </tr>
         </thead>
         <tbody>
@@ -72,6 +73,7 @@
                             'fa-lock':                 row.status.status == 'locked'
                             }"></i></td>
             <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
+            <td ng-show="columns['Host']" ng-bind="row.host.title"></td>
         </tr>
         </tbody>
     </table>

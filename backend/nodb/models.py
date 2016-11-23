@@ -13,16 +13,21 @@
 """
 import ast
 import json
-from itertools import product
+import logging
 
 import django
+import itertools
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.db.models.base import ModelState
+from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
 from django.utils.functional import cached_property
+
+logger = logging.getLogger(__name__)
 
 
 class NoDbQuery(object):
@@ -67,24 +72,29 @@ class NoDbQuery(object):
 
 class NodbQuerySet(QuerySet):
 
-    def __init__(self, model, using=None, hints=None, request=None, context=None):
+    def __init__(self, model=None, using=None, hints=None, request=None, context=None):
+        """
+        model parameter needs to be optional, as QuerySet.__deepcopy__() sets self.model afterwards.
+        """
         self.model = model
         self._context = context
         self._current = 0
         self._query = NoDbQuery()
-#        self.oInstance = QuerySet()
 
     @cached_property
     def _max(self):
         return len(self._filtered_data) - 1
 
-    @cached_property
     def _data(self):
-        objects = self.model.get_all_objects(self._context, query=self._query)
+        context = self._context if self._context else NodbManager.nodb_context
+        objects = self.model.get_all_objects(context, query=self._query)
+        self_pointer = LazyProperty.QuerySetPointer(objects)
         for obj in objects:
             #  Because we're calling the model constructors ourselves, django thinks that
             #  the objects are not in the database. We need to "hack" this.
             obj._state.adding = False
+            obj._query_set_pointer = self_pointer
+
         return objects
 
     @cached_property
@@ -95,9 +105,12 @@ class NodbQuerySet(QuerySet):
 
         def filter_impl(keys, value, obj):
             assert keys
-            attr = getattr(obj, keys[0])
+            if not hasattr(obj, keys[0]):
+                raise AttributeError(
+                    'Attribute {} does not exist for {}'.format(keys[0], obj.__class__))
+            attr = getattr(obj, keys[0], None)
             if attr is None:
-                raise AttributeError('Attribute {} dows not exists for {}'.format(keys[0], obj.__class__))
+                return value is None
             elif isinstance(attr, models.Model):
                 return filter_impl(keys[1:], value, attr)
             else:
@@ -113,10 +126,9 @@ class NodbQuerySet(QuerySet):
 
         def filter_one_q(q, obj):
             """
-            Args:
-                q (Q):
-                obj NodbModel:
-
+            :type q: Q
+            :type obj: NodbModel
+            :rtype: bool
             """
             def negate(res):
                 return not res if q.negated else res
@@ -130,7 +142,7 @@ class NodbQuerySet(QuerySet):
             else:
                 return negate(reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False))
 
-        filtered = [obj for obj in self._data
+        filtered = [obj for obj in self._data()
                     if filter_one_q(self._query.q, obj)]
 
         for order_key in self.query.ordering[::-1]:
@@ -179,6 +191,9 @@ class NodbQuerySet(QuerySet):
         my_clone._query = self._query.clone()
         return my_clone
 
+    def __deepcopy__(self, memo):
+        return super(NodbQuerySet, self).__deepcopy__(memo)
+
     def count(self):
         return len(self._filtered_data)
 
@@ -193,11 +208,11 @@ class NodbQuerySet(QuerySet):
             return filtered_data[0]
         if not num:
             raise self.model.DoesNotExist(
-                "%s matching query does not exist." %
-                self.model._meta.object_name)
+                '{} matching query "{}" does not exist.'.format(self.model._meta.object_name,
+                                                                filtered_data.query))
         raise self.model.MultipleObjectsReturned(
             "get() returned more than one %s -- it returned %s!" % (
-                self.mode_._meta.object_name,
+                self.model._meta.object_name,
                 num
             )
         )
@@ -221,9 +236,13 @@ class NodbQuerySet(QuerySet):
     def __repr__(self):
         return super(NodbQuerySet, self).__repr__()
 
+    def iterator(self):
+        logger.warning(
+            '{}.iterator should only be access when running tests.'.format(self.__class__))
+        return []
 
 
-if django.VERSION[1] == 6:
+if django.VERSION[:2] == (1, 6):
     from django.db.models.manager import Manager
     base_manager_class = Manager
 else:
@@ -241,13 +260,144 @@ class NodbManager(base_manager_class):
         cls.nodb_context = context
 
     def get_queryset(self):
-        if django.VERSION[1] == 6:
+        if django.VERSION[:2] == (1, 6):
             return NodbQuerySet(self.model, using=self._db, context=NodbManager.nodb_context)
         else:
             return self._queryset_class(self.model, using=self._db, hints=self._hints,
                                         context=NodbManager.nodb_context)
 
 
+class LazyProperty(object):
+    """
+    See also: django.db.models.query_utils.DeferredAttribute
+
+    Internally used by @bulk_attribute_setter().
+    """
+    class QuerySetPointer(object):
+        def __init__(self, target):
+            self.target = target
+
+    def __init__(self, field_name, eval_func, catch_exceptions, field_names):
+        self.field_name = field_name
+        self.eval_func = eval_func
+        self.catch_exceptions = catch_exceptions
+        self.field_names = field_names
+
+    def __get__(self, instance, owner=None):
+        """
+        runs eval_func which fills some lazy properties.
+        """
+        if hasattr(instance, '_query_set_pointer'):
+            query_set = instance._query_set_pointer.target
+        else:
+            # Fallback. Needed for objects without a queryset.
+            query_set = [instance]
+        if self.field_name in instance.__dict__:
+            return instance.__dict__[self.field_name]
+
+        if self.catch_exceptions is None:
+            self.eval_func(instance, query_set, self.field_names)
+        else:
+            try:
+                self.eval_func(instance, query_set, self.field_names)
+            except self.catch_exceptions as e:
+                logger.exception('failed to populate Field "{}" of {} ({})'
+                                 .format(self.field_name, unicode(instance), instance.__class__))
+                fields = instance.__class__.make_model_args({}, fields_force_none=self.field_names)
+                for field_name, value in fields.items():
+                    setattr(instance, field_name, value)
+
+        if self.field_name not in instance.__dict__:
+            raise KeyError(
+                'LazyProperty: {} did not set {} of {}'.format(self.eval_func, self.field_name,
+                                                               instance))
+        return instance.__dict__[self.field_name]
+
+    def __set__(self, instance, value):
+        """
+        Deferred loading attributes can be set normally (which means there will
+        never be a database lookup involved.
+        """
+        instance.__dict__[self.field_name] = value
+
+
+def bulk_attribute_setter(field_names, catch_exceptions=None):
+    """
+    The idea @behind bulk_attribute_setter is to delay expensive calls to librados, until someone
+    really needs the information gathered in this call. If the attribute is never used, the call
+    will never be executed. In general, this is called lazy execution.
+
+    Before, NodbQuerySet called self.model.get_all_objects to generate a list of objects. The
+    implementations of get_all_objects were calling the librados commands to fill all attributes,
+    even if they were never accessed.
+
+    Because a field may never be accessed, this can generate better performance than caching,
+    especially if the cache is cold.
+
+    The bulk_attribute_setter decorator can be used like so:
+    >>> class MyModel(NodbModel):
+    >>>     my_field = models.IntegerField()
+    >>>
+    >>>     @bulk_attribute_setter(['my_field'])
+    >>>     def set_my_field(self, objs, field_names):
+    >>>         self.my_field = 42
+
+    Keep in mind, that you can set the my_field attribute on all objects, not just self.
+
+    The decorator modifies the model to look like this:
+    >>> def set_my_field(self, objs):
+    >>>     self.my_field = 42
+    >>>
+    >>> class MyModel(NodbModel):
+    >>>     my_field = models.IntegerField()
+    >>>     set_my_field = LazyPropertyContributor(['my_field'], set_my_field)
+
+    A LazyPropertyContributor property implements the contribute_to_class method, which modifies
+    the model itself to look like so:
+    >>> class MyModel(NodbModel):
+    >>>     my_field = LazyProperty('my_field', set_my_field)
+
+    The my_field field is not overwritten, because the fields are already moved into the _meta class
+    at this point. If someone then accesses the my_field attribute, LazyProperty.__get__ is called,
+    which then calls set_my_field to set the field, as if one had written:
+    >>> instances = MyModel.objects.all()
+    >>> set_my_field(instances[0], instances)
+    >>> assert instances[0].my_field == 42
+
+    For example, get_all_objects generates a QuerySet like this:
+
+    id	name	  disk_usage
+    0	'foo'     LazyProperty('disk_usage')
+    1	'bar'	  LazyProperty('disk_usage')
+
+    When accessing bar.disk_usage, LazyProperty calls `ceph df` and fills the queryset like so:
+
+    id	name	disk_usage
+    0	'foo'   1MB
+    1	'bar'  	2MB
+
+    :type field_names: list[str]
+    :param catch_exceptions: Exceptions that will be caught. In case of an exception, all
+        `field_names` will be set to None.
+    :type catch_exceptions: exceptions.Exception | tuple[exceptions.Exception]
+    """
+
+    if not len(field_names):
+        raise ValueError('`field_names` must not be empty.')
+
+    class LazyPropertyContributor(object):
+        def __init__(self, field_names, func):
+            self.field_names = field_names
+            self.func = func
+
+        def contribute_to_class(self, cls, name, virtual_only=False):
+            for name in self.field_names:
+                setattr(cls, name, LazyProperty(name, self.func, catch_exceptions, self.field_names))
+
+    def decorator(func):
+        return LazyPropertyContributor(field_names, func)
+
+    return decorator
 
 
 class NodbModel(models.Model):
@@ -281,17 +431,30 @@ class NodbModel(models.Model):
 
         original = self.__class__.objects.get(**kwargs)
         return {
-            field.attname: getattr(self, field.attname)
+            field.attname: getattr(self, field.attname, None)
             for field
             in self.__class__._meta.fields
-            if field.editable and getattr(self, field.attname) != getattr(original, field.attname)
+            if field.editable and getattr(self, field.attname, None) != getattr(original,
+                                                                                field.attname, None)
         }, original
+
+    def attribute_is_unevaluated_lazy_property(self, attr):
+        """
+        :rtype: bool
+        """
+        if attr not in self.__class__.__dict__:
+            return False
+        prop = self.__class__.__dict__[attr]
+        if not isinstance(prop, LazyProperty):
+            return False
+        return attr not in self.__dict__
 
     def set_read_only_fields(self, obj, include_pk=True):
         """
         .. example::
             >>> insert = self.id is None
-            >>> diff, original = self.get_modified_fields(name=self.name) if insert else self.get_modified_fields()
+            >>> diff, original = self.get_modified_fields(name=self.name) if insert
+            >>>     else self.get_modified_fields()
             >>> if not insert:
             >>>     self.set_read_only_fields()
         """
@@ -299,35 +462,76 @@ class NodbModel(models.Model):
             self.pk = obj.pk
 
         for field in self.__class__._meta.fields:
-            if not field.editable and getattr(self, field.attname) != getattr(obj, field.attname):
+            if (not field.editable
+               and not self.attribute_is_unevaluated_lazy_property(field.attname)
+               and hasattr(obj, field.attname)
+               and getattr(self, field.attname, None) != getattr(obj, field.attname)):
                 setattr(self, field.attname, getattr(obj, field.attname))
 
     @classmethod
-    def make_model_args(cls, json_result):
+    def make_model_args(cls, json_result, fields_force_none=None):
+        """
+        TODO: fields_force_none could be auto generated by the field names.
 
-        def validate_field(field, json_result, score_or_underscore):
-            # '-' is not supported for field names, but used by ceph.
-            json_key = field.attname.replace('_', score_or_underscore)
-            if json_key not in json_result:
-                return False
+        :type json_result: dict[str, Any]
+        :type fields_force_none: list[str]
+        :rtype: dict[str, Any]
+        """
+        def get_val_from_json(key):
+            if key in json_result:
+                return json_result[key]
+            elif key.replace('_', '-') in json_result:
+                # '-' is not supported for field names, but used by ceph.
+                return json_result[key.replace('_', '-')]
+            return None
+
+        def handle_field(field):
+            """:rtype: list[tuple[str, Any]]"""
+            val = get_val_from_json(field.attname)
+            if isinstance(field, models.ForeignKey):
+                if isinstance(val, int) or isinstance(val, basestring):
+                    return [(field.attname, val)]
+                val = get_val_from_json(field.attname[:-3])
+                if hasattr(val, 'pk'):
+                    return [(field.attname, val.pk)]
+                else:
+                    return []
+            if val is None:
+                return []
             try:
-                field.to_python(json_result[json_key])
-                return True
-            except ValidationError:
-                return False
+                python_val = field.to_python(val)
+            except ValidationError as e:
+                return []
 
-        return {
-            field.attname: field.to_python(json_result[field.attname.replace('_', score_or_underscore)])
-            for (field, score_or_underscore)
-            in product(cls._meta.fields, '_-')
-            if validate_field(field, json_result, score_or_underscore)
-            }
+            return [(field.attname, python_val)]
+
+        model_args = dict(
+            itertools.chain.from_iterable([handle_field(field) for field in cls._meta.fields])
+        )
+        for name in fields_force_none or []:
+            if name not in model_args:
+                model_args[name] = None
+        return model_args
+
+    def __init__(self, *args, **kwargs):
+        # super(NodbModel, self).__init__(*args, **kwargs)
+        self._state = ModelState()
+
+        self.__dict__.update(kwargs)
+
+        # We need to trigger the __set__ method of related fields
+        for (key, value) in kwargs.iteritems():
+            if key in self.__class__.__dict__ and \
+                    isinstance(self.__class__.__dict__[key], ReverseSingleRelatedObjectDescriptor):
+                setattr(self, key, value)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        """This base implementation does nothing, except telling django that self is now successfully inserted."""
+        """
+        This base implementation does nothing, except telling django that self is now successfully
+        inserted.
+        """
         self._state.adding = False
-
 
 
 class JsonField(Field):
@@ -355,18 +559,19 @@ class JsonField(Field):
             return val
 
         if value is None:
-            return self.base_type()
+            return None
         if isinstance(value, self.base_type):
             return value
-
+        if not value and self.null:
+            return None
         try:
             parsed = json.loads(value)
             return check_base_type(parsed)
-        except ValueError:
+        except (ValueError, TypeError) as _:
             try:
-                # Evil hack to support PUT requests to the Browsable API of the django-rest-framework
-                # as we cannot determine if restapi.JsonField.tonative() is called for json or for rendering the
-                # form.
+                # Evil hack to support PUT requests to the Browsable API of the
+                # django-rest-framework as we cannot determine if restapi.JsonField.tonative() is
+                # called for json or for rendering the form.
                 obj = ast.literal_eval(value)
                 return check_base_type(obj)
             except ValueError:
@@ -381,3 +586,6 @@ class JsonField(Field):
         kwargs['base_type'] = self.base_type
         return name, path, args, kwargs
 
+    @property
+    def empty_values(self):
+        return [u'', [], {}]

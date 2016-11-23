@@ -52,15 +52,24 @@ package manager, i.e.::
 .. note::
   Don't forget to run ``oaconfig install`` after installing new modules.
 
+.. _enabling_ceph_support:
+
 Enabling Ceph Support in |oA|
------------------------------
+=============================
 
 .. note::
-  |oA| currently supports Ceph "Jewel" (or newer). Older Ceph versions may not
-  work.
+  Ceph support in |oA| is currently developed against Ceph 10.2 aka "Jewel".
+  Older Ceph versions may not work as expected. If your Linux distribution
+  ships an older version of Ceph (as most currently do), please either use the
+  `upstream Ceph package repositories
+  <http://docs.ceph.com/docs/master/install/get-packages/>`_ or find an
+  alternative package repository for your distribution that provides a version
+  of Ceph that meets the requirements. Note that this applies to both the
+  version of the Ceph tools installed on the |oA| node as well as the version
+  running on your Ceph cluster.
 
 To set up |oA| with Ceph you first have to copy the Ceph administrator keyring
-and configuration from your Ceph admin node to your |oA| system.
+and configuration from your Ceph admin node to your local |oA| system.
 
 From your Ceph admin node, you can perform this step by using ``ceph-deploy``
 (assuming that you can perform SSH logins from the admin node into the
@@ -73,14 +82,36 @@ On the |oA| node, you should then have the following files::
   /etc/ceph/ceph.client.admin.keyring
   /etc/ceph/ceph.conf
 
+.. note::
+  Please ensure that these files are actually readable by the |oA| user
+  (``openattic``) and the Nagios/Icinga user account (usually ``nagios`` or
+  ``icinga``) that runs the related Nagios checks. In a default installation,
+  these users are added to the group ``openattic``, so it should be sufficient
+  to make sure these files are either world-readable or owned and readable by
+  this group::
+
+    # chgrp openattic /etc/ceph/ceph.conf /etc/ceph/ceph.client.admin.keyring
+    # chmod g+r /etc/ceph/ceph.conf /etc/ceph/ceph.client.admin.keyring
+
 Alternatively, you can copy these files manually.
 
-The next step is to install the |oA| Ceph module on your system::
+.. note::
+  |oA| supports managing multiple Ceph clusters, provided they have different
+  names and FSIDs. You can add another cluster by copying the cluster's admin
+  keyring and configuration into ``/etc/ceph`` using a different cluster name,
+  e.g. ``development`` instead of the default name ``ceph``::
+
+    /etc/ceph/development.client.admin.keyring
+    /etc/ceph/development.conf
+
+The next step is to install the |oA| Ceph module ``openattic-module-ceph`` on your
+system::
 
   # apt-get install openattic-module-ceph
   - or -
   # yum install openattic-module-ceph
 
+The packages should automatically install any additionally required packages.
 The last step is to recreate your |oA| configuration::
 
   # oaconfig install

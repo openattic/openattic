@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("InitiatorService", function ($resource) {
-  return $resource("/openattic/api/initiators/:id", {
+  return $resource(globalConfig.API.URL + "initiators/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},

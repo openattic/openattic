@@ -52,12 +52,16 @@ app.directive("volumeAddForm", function () {
         name: "",
         source_pool: {
           id: 0
+          name: "" // Not needed in backend, but in frontend.
         }
       };
       */
       $scope.$watch("data.pool", function () {
         if ($scope.data.pool) {
-          $scope.result.source_pool = {id: $scope.data.pool.id};
+          $scope.result.source_pool = {
+            id: $scope.data.pool.id,
+            name: $scope.data.pool.name
+          };
         }
       });
       $scope.$watch("data.megs", function (megs) {

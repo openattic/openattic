@@ -13,7 +13,8 @@ from __future__ import division
 from django.test import TestCase
 
 from nagios.graphbuilder import (rgbstr_to_rgb_int, rgbstr_to_rgb, get_hls_complementary,
-                          hls_to_rgbstr, get_gradient_args)
+                                 hls_to_rgbstr, get_gradient_args)
+
 
 class SimpleTest(TestCase):
     def test_rgbstr_to_rgb_int(self):
@@ -24,7 +25,8 @@ class SimpleTest(TestCase):
 
     def test_complementary(self):
         self.assertEqual(get_hls_complementary((0.3, 0.2, 0.5)), (0.8, 0.8, 0.5))
-        self.assertEqual(get_hls_complementary(get_hls_complementary((0.8, 0.8, 0.5))), (0.8, 0.8, 0.5))
+        self.assertEqual(get_hls_complementary(get_hls_complementary((0.8, 0.8, 0.5))),
+                         (0.8, 0.8, 0.5))
 
     def test_gradient(self):
         self.assertEqual(
@@ -44,4 +46,3 @@ class SimpleTest(TestCase):
 
     def test_hls_to_rgbstr(self):
         self.assertEqual(hls_to_rgbstr((0.8, 0.8, 0.5)), 'DBB2E5')
-

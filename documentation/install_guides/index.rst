@@ -19,6 +19,8 @@ The installation can be broken down into the following steps:
 
 #) :ref:`post-installation configuration`
 
+#) :ref:`download preconfigured virtual machine`
+
 #) :ref:`getting started`
 
 .. toctree::
@@ -26,6 +28,7 @@ The installation can be broken down into the following steps:
 
   oA_installation
   post_installation
+  preconfigured_vms
   getting_started
   authentication
   config_recommendations

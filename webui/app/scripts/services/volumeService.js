@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.factory("VolumeService", function ($resource) {
-  return $resource("/openattic/api/volumes/:id", {
+  return $resource(globalConfig.API.URL + "volumes/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,28 +45,28 @@ app.factory("VolumeService", function ($resource) {
     },
     storage: {
       method: "GET",
-      url: "/openattic/api/volumes/:id/storage"
+      url: globalConfig.API.URL + "volumes/:id/storage"
     },
     snapshots: {
       method: "GET",
-      url: "/openattic/api/volumes/:id/snapshots"
+      url: globalConfig.API.URL + "volumes/:id/snapshots"
     },
     createSnapshot: {
       method: "POST",
-      url: "/openattic/api/volumes/:id/snapshots"
+      url: globalConfig.API.URL + "volumes/:id/snapshots"
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/volumes"
+      url: globalConfig.API.URL + "volumes"
     },
     clone: {
       method: "POST",
-      url: "/openattic/api/volumes/:id/clone"
+      url: globalConfig.API.URL + "volumes/:id/clone"
     }
   });
 });
 app.factory("VolumeSnapshotService", function ($resource) {
-  return $resource("/openattic/api/volumes/:volumeId/snapshots", {
+  return $resource(globalConfig.API.URL + "volumes/:volumeId/snapshots", {
     volumeId: "@volumeId"
   }, {
   });

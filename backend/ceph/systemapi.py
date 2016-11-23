@@ -17,11 +17,12 @@
 import os
 import os.path
 import json
+import re
 
 from django.core.cache import get_cache
 from django.template.loader import render_to_string
 
-from ceph.models import CephCluster
+from ceph.models import CephCluster, CephPool, CephRbd, fsid_context
 from ifconfig.models import Host
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
@@ -184,30 +185,72 @@ class SystemD(BasePlugin):
         ret, out, err = self.invoke_ceph(cluster, ["fsid"])
         return out
 
+    @deferredmethod(in_signature="(s)")
+    def remove_nagios_configs(self, objects_to_delete, sender):
+        """
+        Deletes existing Nagios config files for Ceph cluster objects by object list.
+        :param objects_to_delete: Which objects should the config be deleted for? - Possible values
+               are: "cluster", "pool" and "all". If you choose "all" the configs of all known
+               objects are deleted.
+        :rtype: list[str]
+        :param sender: Unique ID of DBUS sender object.
+        :rtype: str
+        :return: None
+        """
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+
+        rgx = {"cluster": r"^cephcluster_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}.cfg$",
+               "pool": r"^cephpool_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w\.]+.cfg$",
+               "rbd": r"^cephrbd_[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}_[\w\.]+_[\w\.]+.cfg$"}
+
+        if len(objects_to_delete) == 1 and objects_to_delete[0] == "all":
+            objects_to_delete = rgx.keys()
+
+        for conf_file in os.listdir(NAGIOS_SERVICES_CFG_PATH):
+            for delete in objects_to_delete:
+                if re.match(rgx[delete], conf_file):
+                    path = os.path.join(NAGIOS_SERVICES_CFG_PATH, conf_file)
+                    os.remove(path)
+
     @deferredmethod(in_signature="")
-    def write_nagios_configs(self, sender):
-        from nagios.conf import settings
-
+    def write_cluster_nagios_configs(self, sender):
         for cluster in CephCluster.objects.all():
-            file_name = "{}/cephcluster_{}.cfg".format(settings.NAGIOS_SERVICES_CFG_PATH,
-                                                       cluster.fsid)
+            cluster_file_name = "cephcluster_{}.cfg".format(cluster.fsid)
+            cluster_services = [self._gen_service_data(cluster.__class__.__name__, cluster.fsid, 5)]
+            self._write_services_to_file(cluster_file_name, cluster_services)
 
-            services = [self.gen_service_data(cluster.__class__.__name__, cluster.fsid)]
+    @deferredmethod(in_signature="")
+    def write_pool_nagios_configs(self, sender):
+        for cluster in CephCluster.objects.all():
+            with fsid_context(cluster.fsid):
+                for pool in CephPool.objects.all():
+                    pool_file_name = "cephpool_{}_{}.cfg".format(cluster.fsid, pool.name)
+                    pool_services = [self._gen_service_data(
+                        pool.__class__.__name__,
+                        "{} {}".format(cluster.fsid, pool.name), 5)]
+                    self._write_services_to_file(pool_file_name, pool_services)
 
-            with open(file_name, "wb") as config_file:
-                config_file.write(render_to_string("nagios/services.cfg", {
-                    "IncludeHost": False,
-                    "Host": Host.objects.get_current(),
-                    "Services": services
-                }))
+    @deferredmethod(in_signature="")
+    def write_rbd_nagios_configs(self, sender):
+        for cluster in CephCluster.objects.all():
+            with fsid_context(cluster.fsid):
+                for pool in CephPool.objects.all():
+                    for rbd in CephRbd.objects.filter(pool__name=pool.name):
+                        rbd_file_name = "cephrbd_{}_{}_{}.cfg".format(cluster.fsid, pool.name,
+                                                                      rbd.name)
+                        rbd_services = [self._gen_service_data(
+                            rbd.__class__.__name__,
+                            "{} {} {}".format(cluster.fsid, pool.name, rbd.name), 30)]
+                        self._write_services_to_file(rbd_file_name, rbd_services)
 
-    def gen_service_data(self, service_instance_name, service_arguments):
+    def _gen_service_data(self, service_instance_name, service_arguments, check_interval):
         class _CephService(object):
 
-            def __init__(self, desc, command_name, args):
+            def __init__(self, desc, command_name, args, check_interval):
                 self.description = desc
                 self.arguments = args
                 self.active = True
+                self.normal_check_interval = check_interval
 
                 command = self._CephCommand(command_name)
                 self.command = command
@@ -219,4 +262,15 @@ class SystemD(BasePlugin):
         service_desc = "Check {} {}".format(service_instance_name, service_arguments)
         service_command = "check_{}".format(str.lower(service_instance_name))
 
-        return _CephService(service_desc, service_command, service_arguments)
+        return _CephService(service_desc, service_command, service_arguments, check_interval)
+
+    def _write_services_to_file(self, file_name, services):
+        from nagios.conf.settings import NAGIOS_SERVICES_CFG_PATH
+        path = os.path.join(NAGIOS_SERVICES_CFG_PATH, file_name)
+
+        with open(path, "wb") as config_file:
+            config_file.write(render_to_string("nagios/services.cfg", {
+                "IncludeHost": False,
+                "Host": Host.objects.get_current(),
+                "Services": services
+            }))

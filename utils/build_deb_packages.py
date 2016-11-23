@@ -14,22 +14,41 @@
 
 """Usage:
     build_deb_packages.py <tarball> [<release_channel>] [--publish=<repo_dir>]
+        [--gpg-key-id=<gpg_key_id>|--no-signing]
 
-Create a deb package out of a tarball. The release channel is automatically determined, based on the
-file name of the tarball.
+Create a deb package out of a tarball. The release channel is automatically
+determined, based on the file name of the tarball.
 
 Arguments:
-    <tarball>           The path to the tarball file. Use "-" as path to read it from stdin.
-    <release_channel>   'stable' or 'nightly'. Skips automatic detection of the release channel.
+
+    <tarball>           The path to the tarball file. Use "-" as path to read
+                        it from stdin.
+    <release_channel>   'stable' or 'nightly'. Skips automatic detection of the
+                        release channel.
 
 Options:
-    --publish=<repo_dir>    Publish the created debian files using `reprepro`. Does also remove the
-                            nightly packages if the release channel is `nightly`.
-                            <repo_dir> is the directory of the repository to publish the built
-                            packages to.
 
-More sophisticated example:
-    ./make_dist.py create stable -s | ./build_deb_packages.py -
+    --publish=<repo_dir>
+
+        Publish the created debian files using `reprepro`. Does also remove the
+        nightly packages if the release channel is `nightly`. <repo_dir> is the
+        directory of the repository to publish the built packages to.
+
+    --gpg-key-id=<gpg_key_id>   [default: A7D3EAFA]
+
+        Signs the package with the given key ID.
+
+    --no-signing
+
+        Deactivates the signing of packages.
+
+Examples:
+
+        ./build_deb_packages.py ~/src/openattic-2.0.14~201608100339.tar.bz2
+
+    In conjunction with `make_dist.py`:
+
+        ./make_dist.py create stable -s | ./build_deb_packages.py -
 """
 import glob
 import os
@@ -119,11 +138,12 @@ class DebPackageBuilder(object):
         :return: The filename of the tarball
         """
         filename = basename(filepath)
-        regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)[\w~-]*(\.tar\.(bz2|gz|lxma|xz))$'
+        regex = r'^(\w+)[-_](\d+\.\d+\.\d+(\.\d+)?)([-_]orig)?([\w~-]*)(\.tar\.(bz2|gz|lxma|xz))$'
 
         match = re.search(regex, filename)
         if match:
-            filename = match.group(1) + '_' + match.group(2) + '.orig' + match.group(4)
+            filename = match.group(1) + '_' + match.group(2) + match.group(5) + '.orig' + \
+                match.group(6)
             return filename
 
         raise ParsingError
@@ -234,33 +254,6 @@ class DebPackageBuilder(object):
 
         return build_dir
 
-    def adapt_debian_changelog(self, release_channel, version, pkgdate, hg_id, tarball_source_dir):
-        # Provide necessary information.
-        env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
-        if release_channel == 'stable':
-            newversion = version
-            msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
-            distribution = 'unstable'
-        else:
-            distribution = 'nightly'
-            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
-            newversion = version + '~' + pkgdate
-
-        # Adapt the `debian/changelog` file via `debchange`.
-        self._process.run(
-            [
-                'debchange',
-                '--distribution',
-                distribution,
-                '--force-distribution',
-                '--force-bad-version',  # Allows the version to be lower than the current one.
-                '--newversion',
-                newversion,
-                msg,
-            ],
-            cwd=tarball_source_dir,
-            env=env)
-
     @staticmethod
     def get_config_txt_values(tarball_source_dir):
         config = SafeConfigParser()
@@ -288,14 +281,18 @@ class DebPackageBuilder(object):
         shutil.copy(tarball_file_path, build_dir)
         shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
                     os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
-        version, pkgdate, hg_id = self.get_config_txt_values(tarball_source_dir)
-        self.adapt_debian_changelog(release_channel, version, pkgdate, hg_id, tarball_source_dir)
 
-        self._process.run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
+        # It's possible that debuild asks for user input. It seems that this behaviour cannot be
+        # disabled, so the system call seems to be necessary at this point, to show the user that
+        # debuild asks for input.
+        self._process.system(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
 
         changes_filename = basename(glob.glob(os.path.join(build_dir, '*.changes'))[0])
-        # Sign the packages with changes file.
-        self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
+        # Sign the changes file.
+        print self._args
+        if not self._args['--no-signing']:
+            self._process.run(['debsign', '-k', self._args['--gpg-key-id'], changes_filename],
+                              build_dir)
 
         print 'The packages have been created in %s' % build_dir
 
@@ -367,7 +364,7 @@ class DebPackageBuilderTest(unittest.TestCase):
 
     def test_determine_deb_tarball_filename(self):
         target_states = {
-            '~/path/to/file/openattic-2.0.5~201512141039.tar.bz2': 'openattic_2.0.5.orig.tar.bz2',
+            '~/path/oa-2.0.5~201512141039.tar.bz2': 'oa_2.0.5~201512141039.orig.tar.bz2',
             '~/path/to/file/openattic-2.0.5-orig.tar.bz2': 'openattic_2.0.5.orig.tar.bz2',
             '~/path/to/file/openattic-2.0.5_orig.tar.bz2': 'openattic_2.0.5.orig.tar.bz2',
             'oitc-2.0.5_orig.tar.bz2': 'oitc_2.0.5.orig.tar.bz2',
@@ -406,7 +403,8 @@ def main():
     args = docopt.docopt(__doc__)
     path_to_tarball = args['<tarball>']
     if path_to_tarball == '-':
-        path_to_tarball = sys.stdin.readline().strip()
+        path_to_tarball = sys.stdin.readlines()[-1].strip()
+    path_to_tarball = os.path.abspath(path_to_tarball)
     deb_pkg_builder = DebPackageBuilder(args)
     release_channel = DebPackageBuilder.detect_release_by_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
