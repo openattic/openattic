@@ -93,6 +93,36 @@ case $1 in
 				exit 2
 			fi
 		fi
+
+		if ! service postgresql status >/dev/null; then
+			# Start database
+			service postgresql start
+		fi
+
+		dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
+		if [ -n "$dbu" ]; then
+			echo "Database openattic exists, owned by $dbu"
+		else
+			# Initialize database
+			pass=$(openssl rand -hex 10)
+			PGSQL_INI="/etc/openattic/databases/pgsql.ini"
+			sed -i 's/DB_PASSWORD/'$pass'/' $PGSQL_INI
+			if [ $? -ne 0 ]; then
+				echo "Failed to update $PGSQL_INI"
+				exit 2
+			fi
+			su - postgres -c psql << EOT
+create user openattic with password '$pass';
+create database openattic with owner openattic;
+\q
+EOT
+			hba_conf="/var/lib/pgsql/data/pg_hba.conf"
+			if [ -e ${hba_conf} ] ; then
+				sed -i -e 's/ident$/md5/g' ${hba_conf}
+			fi
+			service postgresql reload
+			service postgresql status
+		fi
 		
 		su "$OAUSER" -c 'python manage.py pre_install'
 		
