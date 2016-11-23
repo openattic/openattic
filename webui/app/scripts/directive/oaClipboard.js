@@ -44,26 +44,28 @@ app.directive("oaClipboard", function (toasty) {
       oaClipboardText: "@"
     },
     link: function (scope, element, attrs) {
-      element.on("click", function () {
-        attrs.oaClipboardText = angular.isString(attrs.oaClipboardText) ?
-          attrs.oaClipboardText : "text";
-        try {
-          // Get the DOM element by id.
-          var node = $("#" + attrs.oaClipboardTarget);
-          // Copy text to clipboard.
-          var selection = document.getSelection();
-          selection.removeAllRanges();
-          node.select();
-          document.execCommand("copy");
-          selection.removeAllRanges();
-          // Display success message.
-          toasty.success("Successfully copied the " + attrs.oaClipboardText +
-            " to the clipboard.");
-        } catch (err) {
-          // Display error message.
-          toasty.error("Failed to copy the " + attrs.oaClipboardText +
-            " to the clipboard.");
-        }
+      element.bind("click", function () {
+        scope.$apply(function () {
+          attrs.oaClipboardText = angular.isString(attrs.oaClipboardText) ?
+            attrs.oaClipboardText : "text";
+          try {
+            // Get the DOM element by id.
+            var node = $("#" + attrs.oaClipboardTarget);
+            // Copy text to clipboard.
+            var selection = document.getSelection();
+            selection.removeAllRanges();
+            node.select();
+            document.execCommand("copy");
+            selection.removeAllRanges();
+            // Display success message.
+            toasty.success("Successfully copied the " + attrs.oaClipboardText +
+              " to the clipboard.");
+          } catch (err) {
+            // Display error message.
+            toasty.error("Failed to copy the " + attrs.oaClipboardText +
+              " to the clipboard.");
+          }
+        });
       });
     }
   };
