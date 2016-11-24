@@ -250,7 +250,7 @@ def call_librados(fsid, method, timeout=30):
 def call_librados_api(func):
     def wrapper(self, *args, **kwargs):
         def impl(client):
-            return func(client, *args, **kwargs)
+            return func(self, client, *args, **kwargs)
         return call_librados(self.fsid, impl)
     return wrapper
 
@@ -331,7 +331,8 @@ class MonApi(object):
         return {k: v for (k, v) in kwargs.iteritems() if v is not None}
 
     @undoable
-    def osd_erasure_code_profile_set(self, name, profile=None):
+    @call_librados_api
+    def osd_erasure_code_profile_set(self, client, name, profile=None):
         """
         COMMAND("osd erasure-code-profile set " \
                 "name=name,type=CephString,goodchars=[A-Za-z0-9-_.] " \
@@ -349,41 +350,45 @@ class MonApi(object):
         :param profile: Reverse engineering revealed: this is in fact a list of strings.
         :type profile: list[str]
         """
-        yield self._call_mon_command('osd erasure-code-profile set',
-                                     self._args_to_argdict(name=name, profile=profile),
-                                     output_format='string')
+        yield client.mon_command('osd erasure-code-profile set',
+                                 self._args_to_argdict(name=name, profile=profile),
+                                 output_format='string')
         self.osd_erasure_code_profile_rm(name)
 
-    def osd_erasure_code_profile_get(self, name):
+    @call_librados_api
+    def osd_erasure_code_profile_get(self, client, name):
         """
         COMMAND("osd erasure-code-profile get " \
                 "name=name,type=CephString,goodchars=[A-Za-z0-9-_.]", \
                 "get erasure code profile <name>", \
                 "osd", "r", "cli,rest")
         """
-        return self._call_mon_command('osd erasure-code-profile get',
-                                      self._args_to_argdict(name=name))
+        return client.mon_command('osd erasure-code-profile get',
+                                  self._args_to_argdict(name=name))
 
-    def osd_erasure_code_profile_rm(self, name):
+    @call_librados_api
+    def osd_erasure_code_profile_rm(self, client, name):
         """
         COMMAND("osd erasure-code-profile rm " \
                 "name=name,type=CephString,goodchars=[A-Za-z0-9-_.]", \
                 "remove erasure code profile <name>", \
                 "osd", "rw", "cli,rest")
         """
-        return self._call_mon_command('osd erasure-code-profile rm',
-                                      self._args_to_argdict(name=name), output_format='string')
+        return client.mon_command('osd erasure-code-profile rm',
+                                  self._args_to_argdict(name=name), output_format='string')
 
-    def osd_erasure_code_profile_ls(self):
+    @call_librados_api
+    def osd_erasure_code_profile_ls(self, client):
         """
         COMMAND("osd erasure-code-profile ls", \
                 "list all erasure code profiles", \
                 "osd", "r", "cli,rest")
         """
-        return self._call_mon_command('osd erasure-code-profile ls')
+        return client.mon_command('osd erasure-code-profile ls')
 
     @undoable
-    def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None,
+    @call_librados_api
+    def osd_pool_create(self, client, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None,
                         ruleset=None, expected_num_objects=None):
         """
         COMMAND("osd pool create " \
@@ -413,7 +418,7 @@ class MonApi(object):
         """
         if pool_type == 'erasure' and not erasure_code_profile:
             raise ExternalCommandError('erasure_code_profile missing')
-        yield self._call_mon_command(
+        yield client.mon_command(
             'osd pool create', self._args_to_argdict(pool=pool,
                                                      pg_num=pg_num,
                                                      pgp_num=pgp_num,
@@ -425,7 +430,8 @@ class MonApi(object):
         self.osd_pool_delete(pool, pool, "--yes-i-really-really-mean-it")
 
     @undoable
-    def osd_pool_set(self, pool, var, val, force=None, undo_previous_value=None):
+    @call_librados_api
+    def osd_pool_set(self, client, pool, var, val, force=None, undo_previous_value=None):
         """
         COMMAND("osd pool set " \
         "name=pool,type=CephPoolname " \
@@ -448,12 +454,13 @@ class MonApi(object):
         :type var: Any
         :return: empty string.
         """
-        yield self._call_mon_command(
+        yield client.mon_command(
             'osd pool set', self._args_to_argdict(pool=pool, var=var, val=val, force=force),
             output_format='string')
         self.osd_pool_set(pool, var, undo_previous_value)
 
-    def osd_pool_delete(self, pool, pool2=None, sure=None):
+    @call_librados_api
+    def osd_pool_delete(self, client, pool, pool2=None, sure=None):
         """
         COMMAND("osd pool delete " \
         "name=pool,type=CephPoolname " \
@@ -470,35 +477,37 @@ class MonApi(object):
         :type sure: str
         :return: empty string
         """
-        return self._call_mon_command('osd pool delete',
-                                      self._args_to_argdict(pool=pool, pool2=pool2, sure=sure),
-                                      output_format='string')
+        return client.mon_command('osd pool delete',
+                                  self._args_to_argdict(pool=pool, pool2=pool2, sure=sure),
+                                  output_format='string')
 
     @undoable
-    def osd_pool_mksnap(self, pool, snap):
+    @call_librados_api
+    def osd_pool_mksnap(self, client, pool, snap):
         """
         COMMAND("osd pool mksnap " \
         "name=pool,type=CephPoolname " \
         "name=snap,type=CephString", \
         "make snapshot <snap> in <pool>", "osd", "rw", "cli,rest")
         """
-        yield self._call_mon_command('osd pool mksnap', self._args_to_argdict(pool=pool, snap=snap),
-                                     output_format='string')
+        yield client.mon_command('osd pool mksnap', self._args_to_argdict(pool=pool, snap=snap),
+                                 output_format='string')
         self.osd_pool_rmsnap(pool, snap)
 
-    def osd_pool_rmsnap(self, pool, snap):
+    @call_librados_api
+    def osd_pool_rmsnap(self, client, pool, snap):
         """
         COMMAND("osd pool rmsnap " \
         "name=pool,type=CephPoolname " \
         "name=snap,type=CephString", \
         "remove snapshot <snap> from <pool>", "osd", "rw", "cli,rest")
         """
-        return self._call_mon_command('osd pool rmsnap',
-                                      self._args_to_argdict(pool=pool, snap=snap),
-                                      output_format='string')
+        return client.mon_command('osd pool rmsnap', self._args_to_argdict(pool=pool, snap=snap),
+                                  output_format='string')
 
     @undoable
-    def osd_tier_add(self, pool, tierpool):
+    @call_librados_api
+    def osd_tier_add(self, client, pool, tierpool):
         """
         COMMAND("osd tier add " \
         "name=pool,type=CephPoolname " \
@@ -517,13 +526,14 @@ class MonApi(object):
 
         .. note:: storagepool is typically of type replicated and cachepool is of type erasure
         """
-        yield self._call_mon_command('osd tier add',
-                                     self._args_to_argdict(pool=pool, tierpool=tierpool),
-                                     output_format='string')
+        yield client.mon_command('osd tier add',
+                                 self._args_to_argdict(pool=pool, tierpool=tierpool),
+                                 output_format='string')
         self.osd_tier_remove(pool, tierpool)
 
     @undoable
-    def osd_tier_remove(self, pool, tierpool):
+    @call_librados_api
+    def osd_tier_remove(self, client, pool, tierpool):
         """
         COMMAND("osd tier remove " \
         "name=pool,type=CephPoolname " \
@@ -536,13 +546,14 @@ class MonApi(object):
             >>> api.osd_tier_add('storagepool', 'cachepool')
             >>> api.osd_tier_remove('storagepool', 'cachepool')
         """
-        yield self._call_mon_command('osd tier remove',
-                                     self._args_to_argdict(pool=pool, tierpool=tierpool),
-                                     output_format='string')
+        yield client.mon_command('osd tier remove',
+                                 self._args_to_argdict(pool=pool, tierpool=tierpool),
+                                 output_format='string')
         self.osd_tier_add(pool, tierpool)
 
     @undoable
-    def osd_tier_cache_mode(self, pool, mode, undo_previous_mode=None):
+    @call_librados_api
+    def osd_tier_cache_mode(self, client, pool, mode, undo_previous_mode=None):
         """
         COMMAND("osd tier cache-mode " \
         "name=pool,type=CephPoolname " \
@@ -555,13 +566,14 @@ class MonApi(object):
 
         .. seealso:: method:`osd_tier_add`
         """
-        yield self._call_mon_command('osd tier cache-mode',
-                                     self._args_to_argdict(pool=pool, mode=mode),
-                                     output_format='string')
+        yield client.mon_command('osd tier cache-mode',
+                                 self._args_to_argdict(pool=pool, mode=mode),
+                                 output_format='string')
         self.osd_tier_cache_mode(pool, undo_previous_mode)
 
     @undoable
-    def osd_tier_set_overlay(self, pool, overlaypool):
+    @call_librados_api
+    def osd_tier_set_overlay(self, client, pool, overlaypool):
         """
         COMMAND("osd tier set-overlay " \
         "name=pool,type=CephPoolname " \
@@ -572,13 +584,14 @@ class MonApi(object):
 
         Modifies the `read_tier` field of the storagepool
         """
-        yield self._call_mon_command('osd tier set-overlay',
-                                     self._args_to_argdict(pool=pool, overlaypool=overlaypool),
-                                     output_format='string')
+        yield client.mon_command('osd tier set-overlay',
+                                 self._args_to_argdict(pool=pool, overlaypool=overlaypool),
+                                 output_format='string')
         self.osd_tier_remove_overlay(pool)
 
     @undoable
-    def osd_tier_remove_overlay(self, pool, undo_previous_overlay):
+    @call_librados_api
+    def osd_tier_remove_overlay(self, client, pool, undo_previous_overlay):
         """
         COMMAND("osd tier remove-overlay " \
         "name=pool,type=CephPoolname ", \
@@ -588,34 +601,36 @@ class MonApi(object):
 
         Modifies the `read_tier` field of the storagepool
         """
-        yield self._call_mon_command('osd tier remove-overlay', self._args_to_argdict(pool=pool),
-                                     output_format='string')
+        yield client.mon_command('osd tier remove-overlay', self._args_to_argdict(pool=pool),
+                                 output_format='string')
         self.osd_tier_set_overlay(pool, undo_previous_overlay)
 
     @undoable
-    def osd_out(self, name):
+    @call_librados_api
+    def osd_out(self, client, name):
         """
         COMMAND("osd out " \
         "name=ids,type=CephString,n=N", \
         "set osd(s) <id> [<id>...] out", "osd", "rw", "cli,rest")
         """
-        yield self._call_mon_command('osd out', self._args_to_argdict(name=name),
-                                     output_format='string')
+        yield client.mon_command('osd out', self._args_to_argdict(name=name),
+                                 output_format='string')
         self.osd_in(name)
 
     @undoable
-    def osd_in(self, name):
+    @call_librados_api
+    def osd_in(self, client, name):
         """
         COMMAND("osd in " \
         "name=ids,type=CephString,n=N", \
         "set osd(s) <id> [<id>...] in", "osd", "rw", "cli,rest")
         """
-        yield self._call_mon_command('osd in', self._args_to_argdict(name=name),
-                                     output_format='string')
+        yield client.mon_command('osd in', self._args_to_argdict(name=name), output_format='string')
         self.osd_out(name)
 
     @undoable
-    def osd_crush_reweight(self, name, weight, undo_previous_weight=None):
+    @call_librados_api
+    def osd_crush_reweight(self, client, name, weight, undo_previous_weight=None):
         """
         COMMAND("osd crush reweight " \
         "name=name,type=CephString,goodchars=[A-Za-z0-9-_.] " \
@@ -623,13 +638,14 @@ class MonApi(object):
         "change <name>'s weight to <weight> in crush map", \
         "osd", "rw", "cli,rest")
         """
-        yield self._call_mon_command('osd crush reweight',
-                                     self._args_to_argdict(name=name, weight=weight),
-                                     output_format='string')
+        yield client.mon_command('osd crush reweight',
+                                 self._args_to_argdict(name=name, weight=weight),
+                                 output_format='string')
         self.osd_crush_reweight(name, undo_previous_weight)
 
-    def osd_dump(self):
-        return self._call_mon_command('osd dump')
+    @call_librados_api
+    def osd_dump(self, client):
+        return client.mon_command('osd dump')
 
     def osd_list(self):
         """
@@ -649,7 +665,8 @@ class MonApi(object):
                                           for (k, v) in product(nodes, nodes)
                     if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]))
 
-    def osd_tree(self):
+    @call_librados_api
+    def osd_tree(self, client):
         """Does not return a tree, but a directed graph with multiple roots.
 
         Possible node types are: pool. zone, root, host, osd
@@ -661,9 +678,10 @@ class MonApi(object):
             some clusters. An osd may be physically located on a different host, than it is returned
             by osd tree.
         """
-        return self._call_mon_command('osd tree')
+        return client.mon_command('osd tree')
 
-    def osd_metadata(self, name=None):
+    @call_librados_api
+    def osd_metadata(self, client, name=None):
         """
         COMMAND("osd metadata " \
         "name=id,type=CephInt,range=0,req=false", \
@@ -673,13 +691,14 @@ class MonApi(object):
         :type name: int
         :rtype: list[dict] | dict
         """
-        return self._call_mon_command('osd metadata', self._args_to_argdict(name=name))
+        return client.mon_command('osd metadata', self._args_to_argdict(name=name))
 
-    def fs_ls(self):
-        return self._call_mon_command('fs ls')
+    def fs_ls(self, client):
+        return client.mon_command('fs ls')
 
     @undoable
-    def fs_new(self, fs_name, metadata, data):
+    @call_librados_api
+    def fs_new(self, client, fs_name, metadata, data):
         """
         COMMAND("fs new " \
         "name=fs_name,type=CephString " \
@@ -688,11 +707,12 @@ class MonApi(object):
         "make new filesystem using named pools <metadata> and <data>", \
         "fs", "rw", "cli,rest")
         """
-        yield self._call_mon_command('fs new', self._args_to_argdict(
+        yield client.mon_command('fs new', self._args_to_argdict(
             fs_name=fs_name, metadata=metadata, data=data), output_format='string')
         self.fs_rm(fs_name, '--yes-i-really-mean-it')
 
-    def fs_rm(self, fs_name, sure):
+    @call_librados_api
+    def fs_rm(self, client, fs_name, sure):
         """
         COMMAND("fs rm " \
         "name=fs_name,type=CephString " \
@@ -700,25 +720,25 @@ class MonApi(object):
         "disable the named filesystem", \
         "fs", "rw", "cli,rest")
         """
-        return self._call_mon_command('fs rm', self._args_to_argdict(fs_name=fs_name, sure=sure),
+        return client.mon_command('fs rm', self._args_to_argdict(fs_name=fs_name, sure=sure),
                                       output_format='string')
 
-    def pg_dump(self):
+    @call_librados_api
+    def pg_dump(self, client):
         """Also contains OSD statistics"""
-        return self._call_mon_command('pg dump')
+        return client.mon_command('pg dump')
 
-    def status(self):
-        return self._call_mon_command('status')
+    @call_librados_api
+    def status(self, client):
+        return client.mon_command('status')
 
-    def health(self):
-        return self._call_mon_command('health')
+    @call_librados_api
+    def health(self, client):
+        return client.mon_command('health')
 
-    def df(self):
-        return self._call_mon_command('df')
-
-    def _call_mon_command(self, cmd, argdict=None, output_format='json'):
-        return call_librados(self.fsid, lambda client: client.mon_command(cmd, argdict,
-                                                                          output_format))
+    @call_librados_api
+    def df(self, client):
+        return client.mon_command('df')
 
 
 class RbdApi(object):
@@ -781,7 +801,8 @@ class RbdApi(object):
     @logged
     @undoable
     @call_librados_api
-    def create(client, pool_name, image_name, size, old_format=True, features=None, order=None):
+    def create(self, client, pool_name, image_name, size, old_format=True, features=None,
+               order=None):
         """
         .. example::
                 >>> api = RbdApi()
@@ -805,13 +826,13 @@ class RbdApi(object):
         client.remove(pool_name, image_name)
 
     @call_librados_api
-    def remove(client, pool_name, image_name):
+    def remove(self, client, pool_name, image_name):
         ioctx = client.get_pool(pool_name)
         rbd_inst = rbd.RBD()
         rbd_inst.remove(ioctx, image_name)
 
     @call_librados_api
-    def list(client, pool_name):
+    def list(self, client, pool_name):
         """
         :returns: list -- a list of image names
         :rtype: list[str]
@@ -821,7 +842,7 @@ class RbdApi(object):
         return rbd_inst.list(ioctx)
 
     @call_librados_api
-    def image_stat(client, pool_name, name, snapshot=None):
+    def image_stat(self, client, pool_name, name, snapshot=None):
         """
 
         obj_size is similar to the block size of ordinary hard drives.
@@ -844,7 +865,7 @@ class RbdApi(object):
 
     @undoable
     @call_librados_api
-    def image_resize(client, pool_name, name, size):
+    def image_resize(self, client, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
         ioctx = client.get_pool(pool_name)
@@ -854,14 +875,14 @@ class RbdApi(object):
             image.resize(original_size)
 
     @call_librados_api
-    def image_features(client, pool_name, name):
+    def image_features(self, client, pool_name, name):
         ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             return RbdApi._bitmask_to_list(image.features())
 
     @undoable
     @call_librados_api
-    def image_set_feature(client, pool_name, name, feature, enabled):
+    def image_set_feature(self, client, pool_name, name, feature, enabled):
         """:type enabled: bool"""
         ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
@@ -869,10 +890,10 @@ class RbdApi(object):
             if bitmask not in RbdApi.get_feature_mapping().keys():
                 raise ValueError(u'Feature "{}" is unknown.'.format(feature))
             yield image.update_features(bitmask, enabled)
-            client.image_set_feature(pool_name, name, feature, not enabled)
+            self.image_set_feature(pool_name, name, feature, not enabled)
 
     @call_librados_api
-    def image_old_format(client, pool_name, name):
+    def image_old_format(self, client, pool_name, name):
         ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             return image.old_format()
