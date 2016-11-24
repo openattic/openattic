@@ -15,6 +15,7 @@ import subprocess
 from collections import deque
 from contextlib import contextmanager, closing
 from itertools import product
+from conf import settings
 
 import rados
 import os
@@ -205,6 +206,12 @@ class ExternalCommandError(Exception):
 
 
 def call_librados(fsid, method, timeout=30):
+    def _get_client():
+        from ceph.models import CephCluster
+        cluster_name = CephCluster.get_name(fsid)
+        client = Client(cluster_name)
+        return client
+
     class LibradosProcess(multiprocessing.Process):
         def __init__(self, fsid, com_pipe):
             multiprocessing.Process.__init__(self)
@@ -214,7 +221,7 @@ def call_librados(fsid, method, timeout=30):
         def run(self):
             with closing(self.com_pipe):
                 try:
-                    with self._get_client() as client:
+                    with _get_client() as client:
                         res = method(client)
                         self.com_pipe.send(res)
                 except Exception as e:
@@ -222,24 +229,22 @@ def call_librados(fsid, method, timeout=30):
                     self.com_pipe.send((e, trace))
                     raise
 
-        def _get_client(self):
-            from ceph.models import CephCluster
-            cluster_name = CephCluster.get_name(self.fsid)
-            client = Client(cluster_name)
-            return client
-
-    com1, com2 = multiprocessing.Pipe()
-    p = LibradosProcess(fsid, com2)
-    p.start()
-    with closing(com1):
-        if com1.poll(timeout):
-            res = com1.recv()
-            p.join()
-            return res
-        else:
-            p.terminate()
-            raise ExternalCommandError('Process {} with ID {} terminated because of timeout ({} '
-                                       'sec).'.format(p.name, p.pid, timeout))
+    if settings.SEPARATE_LIBRADOS_PROCESS:
+        com1, com2 = multiprocessing.Pipe()
+        p = LibradosProcess(fsid, com2)
+        p.start()
+        with closing(com1):
+            if com1.poll(timeout):
+                res = com1.recv()
+                p.join()
+                return res
+            else:
+                p.terminate()
+                raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
+                                           '({} sec).'.format(p.name, p.pid, timeout))
+    else:
+        with _get_client() as client:
+            return method(client)
 
 
 def call_librados_api(func):
