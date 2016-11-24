@@ -19,6 +19,7 @@ import django_filters
 from rest_framework import serializers, viewsets
 
 from rest import relations
+from rest.utilities import DeleteCreateMixin
 
 from volumes.models import StorageObject
 from nfs.models import Export
@@ -26,7 +27,7 @@ from nfs.models import Export
 from rest.multinode.handlers import RequestHandlers
 
 
-class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
+class NfsShareSerializer(DeleteCreateMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for an NFS Export. """
     url = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
     volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
@@ -37,10 +38,13 @@ class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
         model = Export
         fields = ('url', 'id', 'path', 'address', 'options', 'volume')
 
-    def restore_object(self, attrs, instance=None):
-        attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
-        del attrs["volume.storageobj"]
-        return super(NfsShareSerializer, self).restore_object(attrs, instance)
+    def update_validated_data(self, attrs):
+        if "volume.storageobj" in attrs:
+            attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
+            del attrs["volume.storageobj"]
+        else:
+            attrs["volume"] = attrs["volume"]["storageobj"].filesystemvolume_or_none
+        return attrs
 
 
 class NfsShareFilter(django_filters.FilterSet):

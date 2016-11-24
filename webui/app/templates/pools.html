@@ -25,10 +25,10 @@
                 <input type="checkbox" ng-model="selection.checkAll"/>
             </th>
             <th sortfield="name" sortheaderclass sortdefault sortdir="asc" ng-show="columns['Name']">Name</th>
-            <th sortfield="megs" sortheaderclass ng-show="columns['Size']">Size</th>
-            <th ng-show="columns['Used']">Used</th>
-            <th ng-show="columns['Status']">Status</th>
-            <th ng-show="columns['Type']">Type</th>
+            <th sortfield="usage.size" sortheaderclass ng-show="columns['Size']">Size</th>
+            <th sortfield="usage.used" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
+            <th sortfield="status.status" sortdir="asc" sortheaderclass ng-show="columns['Status']">Status</th>
+            <th sortfield="type.name" sortdir="asc" sortheaderclass ng-show="columns['Type']">Type</th>
             <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
         </tr>
         </thead>
@@ -39,8 +39,8 @@
             <td ng-if="selection.available">
                 <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
             </td>
-            <td ng-show="columns['Name']"   ng-bind="row.name"></td>
-            <td ng-show="columns['Size']"   ng-bind="row.usage.size_text"></td>
+            <td ng-show="columns['Name']" ng-bind="row.name"></td>
+            <td ng-show="columns['Size']" ng-bind="row.usage.size | bytes"></td>
             <td ng-show="columns['Used']">
                 <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
                      data-toggle="tooltip" data-placement="right"

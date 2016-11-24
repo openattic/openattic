@@ -287,9 +287,9 @@ sudo systemctl reload dbus
 EOF2
 EOF
 
-sudo -i -u vagrant bash -e << EOF
-
 pip install --upgrade pip
+
+sudo -i -u vagrant bash -e << EOF
 
 virtualenv env
 . env/bin/activate
