@@ -45,26 +45,37 @@ app.directive("oaClipboard", function (toasty) {
     },
     link: function (scope, element, attrs) {
       element.bind("click", function () {
+        var toastyOptions = {};
+        attrs.oaClipboardText = angular.isString(attrs.oaClipboardText) ?
+          attrs.oaClipboardText : "text";
+        try {
+          // Get the DOM element by id.
+          var node = $("#" + attrs.oaClipboardTarget);
+          // Copy text to clipboard.
+          var selection = document.getSelection();
+          selection.removeAllRanges();
+          node.select();
+          document.execCommand("copy");
+          selection.removeAllRanges();
+          // Set success message.
+          toastyOptions = {
+            type: "success",
+            msg: "Successfully copied the " + attrs.oaClipboardText +
+              " to the clipboard."
+          };
+        } catch (err) {
+          // Set error message.
+          toastyOptions = {
+            type: "error",
+            msg: "Failed to copy the " + attrs.oaClipboardText +
+              " to the clipboard."
+          };
+        }
+        // Display a toasty/message.
+        // Note, the scope is not updated automatically because we are inside
+        // a click event, so we need to do this ourself.
         scope.$apply(function () {
-          attrs.oaClipboardText = angular.isString(attrs.oaClipboardText) ?
-            attrs.oaClipboardText : "text";
-          try {
-            // Get the DOM element by id.
-            var node = $("#" + attrs.oaClipboardTarget);
-            // Copy text to clipboard.
-            var selection = document.getSelection();
-            selection.removeAllRanges();
-            node.select();
-            document.execCommand("copy");
-            selection.removeAllRanges();
-            // Display success message.
-            toasty.success("Successfully copied the " + attrs.oaClipboardText +
-              " to the clipboard.");
-          } catch (err) {
-            // Display error message.
-            toasty.error("Failed to copy the " + attrs.oaClipboardText +
-              " to the clipboard.");
-          }
+          toasty(toastyOptions.msg, toastyOptions.type);
         });
       });
     }
