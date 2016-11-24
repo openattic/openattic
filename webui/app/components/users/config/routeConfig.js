@@ -30,16 +30,45 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
+var app = angular.module("openattic.users");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("login", {
-        url: "/login",
+      .state("users", {
+        url: "/users",
         views: {
           "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
+            templateUrl: "components/users/templates/users.html",
+            controller : "UsersCtrl"
           }
+        },
+        ncyBreadcrumb: {
+          label: "Users"
+        }
+      })
+      .state("users-add", {
+        url: "/users/add",
+        views: {
+          "main": {
+            templateUrl: "components/users/templates/add-edit-user.html",
+            controller : "UsersAddEditCtrl"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "Add",
+          parent: "users"
+        }
+      })
+      .state("users-edit", {
+        url: "/users/edit/:user",
+        views: {
+          "main": {
+            templateUrl: "components/users/templates/add-edit-user.html",
+            controller : "UsersAddEditCtrl"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "Edit {{user.username}}",
+          parent: "users"
         }
       });
 });

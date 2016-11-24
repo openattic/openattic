@@ -30,16 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.config(function ($stateProvider) {
-  $stateProvider
-      .state("login", {
-        url: "/login",
-        views: {
-          "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
-          }
-        }
-      });
-});
+angular.module("openattic.local", [
+  "openattic.clusterstatuswidget",
+  "openattic.disks",
+  "openattic.pools",
+  "openattic.hosts",
+  "openattic.oaWizards",
+  "openattic.todowidget"
+]);

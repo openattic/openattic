@@ -30,16 +30,46 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.config(function ($stateProvider) {
-  $stateProvider
-      .state("login", {
-        url: "/login",
-        views: {
-          "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
-          }
-        }
-      });
+var app = angular.module("openattic.cephNodes");
+app.controller("CephNodesCtrl", function ($scope, cephNodesService) {
+  $scope.data = {};
+
+  $scope.filterConfig = {
+    page: 0,
+    entries: null,
+    search: "",
+    sortfield: null,
+    sortorder: null
+  };
+
+  $scope.selection = {};
+
+  $scope.error = false;
+
+  $scope.getNodes = function () {
+    $scope.error = false;
+
+    cephNodesService.filter({
+          page: $scope.filterConfig.page + 1,
+          pageSize: $scope.filterConfig.entries,
+          search: $scope.filterConfig.search,
+          ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+        })
+        .$promise
+        .then(function (res) {
+          $scope.data = res;
+        })
+        .catch(function (error) {
+          $scope.error = error;
+          throw error;
+        });
+  };
+
+  // Watcher
+  $scope.$watch("filterConfig", function (newVal) {
+    if (newVal.entries === null) {
+      return;
+    }
+    $scope.getNodes();
+  }, true);
 });

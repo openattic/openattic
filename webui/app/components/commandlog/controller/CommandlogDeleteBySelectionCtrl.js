@@ -30,6 +30,37 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", [
-    "openattic.users"
-]);
+var app = angular.module("openattic.commandlog");
+app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogService, $uibModalInstance, $filter,
+    selection, toasty) {
+  $scope.selectionLength = selection.length;
+  $scope.itemText = false;
+  if (selection.length === 1) {
+    $scope.itemText = $filter("shortcommandlog")(selection[0].text);
+    $scope.command = selection[0].command;
+  }
+
+  var ids = [];
+  for (var i = 0; i < selection.length; i++) {
+    ids.push(selection[i].id);
+  }
+
+  $scope.delete = function () {
+    commandlogService.delete({"ids": ids})
+        .$promise
+        .then(function () {
+          $uibModalInstance.close("cloned");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+
+    toasty.warning({
+      title: "Delete log entry",
+      msg: "Cancelled"
+    });
+  };
+});

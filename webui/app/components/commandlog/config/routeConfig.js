@@ -30,16 +30,19 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
+var app = angular.module("openattic.commandlog");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("login", {
-        url: "/login",
+      .state("commandlog", {
+        url: "/commandlog",
         views: {
           "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
+            templateUrl: "components/commandlog/templates/commandlog.html",
+            controller : "CommandlogCtrl"
           }
+        },
+        ncyBreadcrumb: {
+          label: "Command log"
         }
       });
 });

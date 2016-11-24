@@ -30,6 +30,21 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", [
-    "openattic.users"
-]);
+var app = angular.module("openattic.commandlog");
+app.factory("commandlogService", function ($resource) {
+  return $resource(globalConfig.API.URL + "cmdlogs/:id", {
+    id: "@id"
+  }, {
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    filter: {
+      method: "GET",
+      url: globalConfig.API.URL + "cmdlogs"
+    }
+  });
+});

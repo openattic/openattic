@@ -35,100 +35,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
   $urlRouterProvider.otherwise("/dashboard");
 
   $stateProvider
-    .state("disks", {
-      url: "/disks",
-      views: {
-        "main": {
-          templateUrl: "templates/disks.html",
-          controller : "DiskCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Disks"
-      }
-    })
-    .state("disks.detail", {
-      url: "/:disk",
-      views: {
-        "tab": {templateUrl: "templates/disks/tab.html"}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("disks.detail.status", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "templates/disks/status.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Status"
-      }
-    })
-    .state("pools", {
-      url: "/pools",
-      views: {
-        "main": {
-          templateUrl: "templates/pools.html",
-          controller : "PoolCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Pools"
-      }
-    })
-    .state("pools-add", {
-      url: "/pools/add/:diskId",
-      views: {
-        "main": {
-          templateUrl: "templates/pools/pool-form.html",
-          controller : "PoolFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        parent: "pools",
-        label: "Add"
-      }
-    })
-    .state("pools.detail", {
-      url: "/:pool",
-      views: {
-        "tab": {templateUrl: "templates/pools/tab.html"}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("pools.detail.status", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "templates/pools/status.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Status"
-      }
-    })
-    .state("pools.detail.storage", {
-      url: "/storage",
-      views: {
-        "tab-content": {
-          templateUrl: "templates/pools/storage.html",
-          controller : "PoolStorageCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Storage"
-      }
-    })
-    .state("pools.detail.cephpool", {
-      url: "/cephpool",
-      views: {
-        "tab-content": {templateUrl: "templates/pools/cephpool.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Cephpool"
-      }
-    })
     .state("volumes", {
       url: "/volumes",
       views: {
@@ -352,44 +258,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         parent: "volumes.detail.snapshots"
       }
     })
-    .state("users", {
-      url: "/users",
-      views: {
-        "main": {
-          templateUrl: "templates/users.html",
-          controller : "UserCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Users"
-      }
-    })
-    .state("users-add", {
-      url: "/users/add",
-      views: {
-        "main": {
-          templateUrl: "templates/users/user-form.html",
-          controller : "UserFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Add",
-        parent: "users"
-      }
-    })
-    .state("users-edit", {
-      url: "/users/edit/:user",
-      views: {
-        "main": {
-          templateUrl: "templates/users/user-form.html",
-          controller : "UserFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Edit {{user.username}}",
-        parent: "users"
-      }
-    })
     .state("apikeys", {
       url: "/apikeys",
       views: {
@@ -399,18 +267,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       },
       ncyBreadcrumb: {
         label: "Apikeys"
-      }
-    })
-    .state("cmdlogs", {
-      url: "/cmdlogs",
-      views: {
-        "main": {
-          templateUrl: "templates/cmdlogs.html",
-          controller : "CmdlogCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Command logs"
       }
     })
     .state("crushmap", {

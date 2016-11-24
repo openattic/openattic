@@ -30,16 +30,37 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
+var app = angular.module("openattic.disks");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("login", {
-        url: "/login",
+      .state("disks", {
+        url: "/disks",
         views: {
           "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
+            templateUrl: "components/disks/templates/disks.html",
+            controller : "DisksCtrl"
           }
+        },
+        ncyBreadcrumb: {
+          label: "Disks"
+        }
+      })
+      .state("disks.detail", {
+        url: "/:disk",
+        views: {
+          "tab": {templateUrl: "components/disks/templates/tab.html"}
+        },
+        ncyBreadcrumb: {
+          skip: true
+        }
+      })
+      .state("disks.detail.status", {
+        url: "/status",
+        views: {
+          "tab-content": {templateUrl: "components/disks/templates/status.html"}
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.name}} Status"
         }
       });
 });

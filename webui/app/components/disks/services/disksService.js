@@ -30,6 +30,21 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", [
-    "openattic.users"
-]);
+var app = angular.module("openattic.disks");
+app.factory("disksService", function ($resource) {
+  return $resource(globalConfig.API.URL + "disks/:id", {
+    id: "@id"
+  }, {
+    update: {method: "PUT"},
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    filter: {
+      method: "GET"
+    }
+  });
+});

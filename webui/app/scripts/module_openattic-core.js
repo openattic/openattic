@@ -30,16 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.config(function ($stateProvider) {
-  $stateProvider
-      .state("login", {
-        url: "/login",
-        views: {
-          "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
-          }
-        }
-      });
-});
+angular.module("openattic.core", [
+  "openattic.apirecorder",
+  "openattic.auth",
+  "openattic.commandlog",
+  "openattic.dashboard",
+  "openattic.datatable",
+  "openattic.graph",
+  "openattic.navigation",
+  "openattic.required",
+  "openattic.sizeparser",
+  "openattic.tabView",
+  "openattic.userinfo",
+  "openattic.users"
+]);

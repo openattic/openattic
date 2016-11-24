@@ -30,16 +30,20 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.config(function ($stateProvider) {
-  $stateProvider
-      .state("login", {
-        url: "/login",
-        views: {
-          "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
-          }
-        }
-      });
+var app = angular.module("openattic.cephNodes");
+app.factory("cephNodesService", function ($resource) {
+  return $resource(globalConfig.API.URL + "cephminions/:id", {
+    id: "@id"
+  }, {
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    filter: {
+      method: "GET"
+    }
+  });
 });

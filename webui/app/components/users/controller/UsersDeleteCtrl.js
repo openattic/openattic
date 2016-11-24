@@ -30,6 +30,26 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", [
-    "openattic.users"
-]);
+var app = angular.module("openattic.users");
+app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInstance, user, toasty) {
+  $scope.user = user;
+
+  $scope.delete = function () {
+    usersService.delete({id: $scope.user.id})
+        .$promise
+        .then(function () {
+          $uibModalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+
+    toasty.warning({
+      title: "Delete user",
+      msg: "Cancelled"
+    });
+  };
+});

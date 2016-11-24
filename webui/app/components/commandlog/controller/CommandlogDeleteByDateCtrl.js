@@ -30,6 +30,43 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", [
-    "openattic.users"
-]);
+var app = angular.module("openattic.commandlog");
+app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService, $uibModalInstance, toasty) {
+  $scope.datePicker = {
+    opened: false,
+    maxDate: null,
+    dateTime: null,
+    format: "dd/MM/yyyy",
+    showBtnBar: false
+  };
+
+  $scope.options = {
+    startingDay: 1
+  };
+
+  $scope.open = function ($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.datePicker.maxDate = new Date();
+    $scope.datePicker.opened = true;
+  };
+
+  $scope.delete = function () {
+    commandlogService.delete({"datetime": $scope.datePicker.dateTime})
+        .$promise
+        .then(function () {
+          $uibModalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+
+    toasty.warning({
+      title: "Delete log entry",
+      msg: "Cancelled"
+    });
+  };
+});

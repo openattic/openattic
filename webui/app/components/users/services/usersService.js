@@ -30,6 +30,25 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", [
-    "openattic.users"
-]);
+var app = angular.module("openattic.users");
+app.factory("usersService", function ($resource) {
+  return $resource(globalConfig.API.URL + "users/:id", {
+    id: "@id"
+  }, {
+    update: {method: "PUT"},
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
+      }
+    },
+    filter: {
+      method: "GET"
+    },
+    current: {
+      method: "GET",
+      url: globalConfig.API.URL + "users/current"
+    }
+  });
+});
