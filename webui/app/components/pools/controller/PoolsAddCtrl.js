@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.pools");
 app.controller("PoolsAddCtrl", function ($scope, $state, $stateParams, PoolService) {
   $scope.pool = {
     options: { type: "lvm" },

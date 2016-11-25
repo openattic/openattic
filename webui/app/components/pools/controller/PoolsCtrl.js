@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.pools");
 app.controller("PoolsCtrl", function ($scope, $state, PoolService, tabViewService) {
   $scope.data = {};
 
