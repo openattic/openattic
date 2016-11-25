@@ -40,28 +40,33 @@ app.directive("taskQueueDirective", function () {
         avr: 0,
         run: 0,
         icon: "fa-hourglass-o",
+        percent: 0,
+        tooltip: "No tasks running.",
         updated: 0
       };
+      $scope.taskUpdateIntervall = 5; //seconds
 
       /**
-       * Updates the hourglass
-       * The hourglass has four different states which will be set according to the amount of running tasks relative to
-       * all tasks in the queue.
+       * Updates the hourglass and the tooltip
+       * The hourglass has four different states which will be set according to the percentage of all running tasks in
+       * relation to their count.
+       * The tooltip shows the average percent done over all running tasks.
        */
       $scope.updateTaskOverview = function () {
         var ov = $scope.taskOverview;
-        var avr = ov.queue !== 0 ? ov.queue / ov.sum * 100 : 0;
-        var icons = ["fa-hourglass-o", "fa-hourglass-end", "fa-hourglass-half", "fa-hourglass-start"];
-        var icon = ov.queue !== 0 ? icons[Math.floor(avr / 33.4) + 1] : icons[0];
+        var avr = ov.queue !== 0 ? ov.percent / ov.queue : 0;
+        var icons = ["fa-hourglass-o", "fa-hourglass-start", "fa-hourglass-half", "fa-hourglass-end"];
+        var icon = ov.queue !== 0 ? icons[Math.floor(avr / 30) + 1] : icons[0];
 
         $scope.taskOverview.run = ov.queue;
         $scope.taskOverview.avr = avr;
         $scope.taskOverview.icon = icon;
         $scope.taskOverview.updated = 1;
+        $scope.taskOverview.tooltip = avr === 0 ? "No tasks running" : parseInt(avr, 10) + "% done in average";
       };
 
       /**
-       * Sums up all active tasks and retrieves the total number of tasks in the queue.
+       * Counts all active tasks and sums up the percentage done of each task.
        */
       $scope.loadOverview = function () {
         if (!$scope.user) {
@@ -69,18 +74,24 @@ app.directive("taskQueueDirective", function () {
           return;
         }
         $scope.taskOverview.queue = 0;
+        $scope.taskOverview.percent = 0;
         $scope.taskOverview.queueLoad = 0;
         $scope.taskOverview.updated = 0;
         $scope.taskOverview.sum = undefined;
         ["Running", "Not Started"].forEach(function (state) {
           taskQueueService.get({
-            pageSize: 1,
+            pageSize: 100,
             status: state
           })
             .$promise
             .then(function (res) {
               $scope.taskOverview.queue += res.count;
               $scope.taskOverview.queueLoad++;
+              res.results.forEach(function (task) {
+                if (typeof task.percent === "number") {
+                  $scope.taskOverview.percent += task.percent;
+                }
+              })
             })
             .catch(function (error) {
               error.toasty = {
@@ -92,22 +103,6 @@ app.directive("taskQueueDirective", function () {
               throw error;
             });
         });
-        taskQueueService.get({
-          pageSize: 1
-        })
-          .$promise
-          .then(function (res) {
-            $scope.taskOverview.sum = res.count;
-          })
-          .catch(function (error) {
-            error.toasty = {
-              title: "Background task loading failure",
-              msg: "Background tasks couldn't be loaded.",
-              timeout: 10000
-            };
-            toasty.error(error.toasty);
-            throw error;
-          });
       };
 
       /**
@@ -115,11 +110,11 @@ app.directive("taskQueueDirective", function () {
        * refresh time.
        */
       $scope.$watchCollection("taskOverview", function () {
-        if ($scope.taskOverview.sum !== undefined && $scope.taskOverview.queueLoad === 2 &&
+        if ($scope.taskOverview.queueLoad === 2 &&
             $scope.taskOverview.updated === 0) {
           $scope.updateTaskOverview();
         } else if ($scope.taskOverview.updated === 1) {
-          $scope.taskTimeout = $interval($scope.loadOverview, 15000, 1);
+          $scope.taskTimeout = $interval($scope.loadOverview, $scope.taskUpdateIntervall * 1000, 1);
         }
       });
 
