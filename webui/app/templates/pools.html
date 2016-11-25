@@ -39,8 +39,8 @@
             <td ng-if="selection.available">
                 <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
             </td>
-            <td ng-show="columns['Name']"   ng-bind="row.name"></td>
-            <td ng-show="columns['Size']"   ng-bind="row.usage.size_text"></td>
+            <td ng-show="columns['Name']" ng-bind="row.name"></td>
+            <td ng-show="columns['Size']" ng-bind="row.usage.size | bytes"></td>
             <td ng-show="columns['Used']">
                 <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
                      data-toggle="tooltip" data-placement="right"
