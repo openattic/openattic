@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("PoolService", function ($resource) {
+app.factory("poolsService", function ($resource) {
     return $resource(globalConfig.API.URL + "pools/:id", {
       id: "@id"
     }, {
