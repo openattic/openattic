@@ -49,7 +49,7 @@ app.config(function ($stateProvider) {
         url: "/pools/add/:diskId",
         views: {
           "main": {
-            templateUrl: "components/pools/add-pool.html",
+            templateUrl: "components/pools/templates/add-pool.html",
             controller : "PoolsAddCtrl"
           }
         },
@@ -61,10 +61,19 @@ app.config(function ($stateProvider) {
       .state("pools.detail", {
         url: "/:pool",
         views: {
-          "tab": {templateUrl: "components/pools/tab.html"}
+          "tab": {templateUrl: "components/pools/templates/tab.html"}
         },
         ncyBreadcrumb: {
           skip: true
+        }
+      })
+      .state("pools.detail.status", {
+        url: "/status",
+        views: {
+          "tab-content": {templateUrl: "components/pools/templates/status.html"}
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.name}} Status"
         }
       });
 });
