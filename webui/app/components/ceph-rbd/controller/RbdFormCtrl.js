@@ -195,11 +195,11 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       }
     }
     if (power < 12) {
-      size = 1 << 12; // Set size to minimum of 4 KB.
+      size = Math.pow(2, 12); // 1 << 12; Set size to minimum of 4 KB.
     } else if (power > 25) {
-      size = 1 << 25; // Set size to maximum of 32 MB.
+      size = Math.pow(2, 25); // 1 << 25; Set size to maximum of 32 MB.
     } else {
-      size = 1 << power; // Set size the nearest accurate size.
+      size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
     }
     if ($scope.rbd.obj_size !== size) {
       $scope.rbd.obj_size = size;
@@ -297,7 +297,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           pool.oaUnused = 100 - pool.oaUsed;
           pool.oaFree = pool.max_avail - pool.num_bytes;
           //pool.oaMaxFree = (pool.max_avail - pool.num_bytes) >> 20; // Did not work, don't know why.
-          pool.oaMaxFree = parseInt((pool.max_avail - pool.num_bytes) / (1 << 20), 10);
+          pool.oaMaxFree = parseInt((pool.max_avail - pool.num_bytes) / Math.pow(2, 20), 10);
           pool.oaFreeText = $filter("bytes")(pool.oaFree);
           if (pool.name === "rbd") {
             $scope.data.pool = pool;
