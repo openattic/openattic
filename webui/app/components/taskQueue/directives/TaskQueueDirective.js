@@ -73,6 +73,7 @@ app.directive("taskQueueDirective", function () {
           $scope.taskTimeout = $interval($scope.loadOverview, 5000, 1);
           return;
         }
+        var max = $scope.taskOverview.queue;
         $scope.taskOverview.queue = 0;
         $scope.taskOverview.percent = 0;
         $scope.taskOverview.queueLoad = 0;
@@ -80,7 +81,7 @@ app.directive("taskQueueDirective", function () {
         $scope.taskOverview.sum = undefined;
         ["Running", "Not Started"].forEach(function (state) {
           taskQueueService.get({
-            pageSize: 100,
+            pageSize: state === "Running" ? max : 1,
             status: state
           })
             .$promise
