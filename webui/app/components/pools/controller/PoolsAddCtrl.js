@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.pools");
-app.controller("PoolsAddCtrl", function ($scope, $state, $stateParams, PoolService) {
+app.controller("PoolsAddCtrl", function ($scope, $state, $stateParams, poolsService) {
   $scope.pool = {
     options: { type: "lvm" },
     name: "",
@@ -49,7 +49,7 @@ app.controller("PoolsAddCtrl", function ($scope, $state, $stateParams, PoolServi
   $scope.submitAction = function (poolForm) {
     $scope.submitted = true;
     if (poolForm.$valid) {
-      $scope.pool = PoolService.save($scope.pool, function () {
+      $scope.pool = poolsService.save($scope.pool, function () {
         goToListView();
       }, function (error) {
         console.log("An error occured", error);

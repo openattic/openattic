@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
         url: "/pools",
         views: {
           "main": {
-            templateUrl: "templates/pools.html",
-            controller : "PoolCtrl"
+            templateUrl: "components/pools/templates/pools.html",
+            controller : "PoolsCtrl"
           }
         },
         ncyBreadcrumb: {
@@ -49,8 +49,8 @@ app.config(function ($stateProvider) {
         url: "/pools/add/:diskId",
         views: {
           "main": {
-            templateUrl: "templates/pools/pool-form.html",
-            controller : "PoolFormCtrl"
+            templateUrl: "components/pools/add-pool.html",
+            controller : "PoolsAddCtrl"
           }
         },
         ncyBreadcrumb: {
@@ -61,7 +61,7 @@ app.config(function ($stateProvider) {
       .state("pools.detail", {
         url: "/:pool",
         views: {
-          "tab": {templateUrl: "templates/pools/tab.html"}
+          "tab": {templateUrl: "components/pools/tab.html"}
         },
         ncyBreadcrumb: {
           skip: true
