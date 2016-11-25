@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.pools", []);
+angular.module("openattic.pools", [
+    "openattic.disks"
+]);
