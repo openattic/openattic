@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("PoolCtrl", function ($scope, $state, PoolService, tabViewService) {
+app.controller("PoolsCtrl", function ($scope, $state, PoolService, tabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
