@@ -76,7 +76,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       }
     },
     obj_num: 1,
-    obj_size: "4 MB",
+    obj_size: "4 MiB",
     size: "",
     expert: false
   };
