@@ -71,27 +71,32 @@ REST_FRAMEWORK = {
     'URL_FIELD_NAME':    'url',
 }
 
-# Read database.ini
-DATABASES = {}
+def read_database_configs(configfile):
+    # Read database.ini
+    databases = {}
 
-if not os.access('/etc/openattic/database.ini', os.R_OK):
-    raise IOError('Unable to read database.ini')
+    if not os.access(configfile, os.R_OK):
+        raise IOError('Unable to read {}'.format(configfile)
 
-__conf__ = ConfigParser()
-__conf__.read('/etc/openattic/database.ini')
+    conf = ConfigParser()
+    conf.read(configfile)
 
-if not len(__conf__.sections()):
-    raise IOError("database.ini does not contain expected content")
+    if not len(conf.sections()):
+        raise IOError('{} does not contain expected content'.format(configfile))
 
-for sec in __conf__.sections():
-    DATABASES[sec] = {
-        "ENGINE":   __conf__.get(sec, "engine"),
-        "NAME":     __conf__.get(sec, "name"),
-        "USER":     __conf__.get(sec, "user"),
-        "PASSWORD": __conf__.get(sec, "password"),
-        "HOST":     __conf__.get(sec, "host"),
-        "PORT":     __conf__.get(sec, "port"),
-    }
+    for sec in conf.sections():
+        databases[sec] = {
+            "ENGINE":   conf.get(sec, "engine"),
+            "NAME":     conf.get(sec, "name"),
+            "USER":     conf.get(sec, "user"),
+            "PASSWORD": conf.get(sec, "password"),
+            "HOST":     conf.get(sec, "host"),
+            "PORT":     conf.get(sec, "port"),
+        }
+
+    return databases
+
+DATABASES = read_database_configs('/etc/openattic/databases.ini')
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
