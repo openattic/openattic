@@ -17,6 +17,7 @@
 
 import os, sys
 from configobj import ConfigObj
+import django
 
 distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
 for filename in distro_config:
@@ -29,6 +30,10 @@ sys.path.append(config['OADIR'])
 # environment variables
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from nagios.conf.distro import distro_settings
+
+# Init Django
+if django.VERSION[:2] >= (1, 7):
+    django.setup()
 
 # If you get an error about Python not being able to write to the Python
 # egg cache, the egg cache path might be set awkwardly. This should not
