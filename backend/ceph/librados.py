@@ -24,7 +24,6 @@ import glob
 import logging
 import multiprocessing
 import ConfigParser
-import traceback
 
 import rbd
 
