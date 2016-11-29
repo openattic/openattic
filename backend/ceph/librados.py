@@ -197,11 +197,19 @@ class Client(object):
             if ret == 0:
                 return json.loads(out) if output_format == "json" else out
             else:
-                raise ExternalCommandError(err)
+                raise ExternalCommandError(err, cmd, argdict)
 
 
 class ExternalCommandError(Exception):
-    pass
+    def __init__(self, err, cmd=None, argdict=None):
+        argdict = argdict if isinstance(argdict, dict) else {}
+        if cmd is None:
+            s = err
+        else:
+            cmd = cmd['prefix'] if isinstance(cmd, dict) and 'prefix' in cmd else cmd
+            s = 'Executing "{} {}" failed: {}'.format(cmd, ' '.join(
+                ['{}={}'.format(k, v) for k, v in argdict.items()]), err)
+        super(ExternalCommandError, self).__init__(s)
 
 
 def call_librados(fsid, method, timeout=30):
