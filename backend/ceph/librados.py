@@ -254,14 +254,6 @@ def call_librados(fsid, method, timeout=30):
             return method(client)
 
 
-def call_librados_api(func):
-    def wrapper(self, *args, **kwargs):
-        def impl(client):
-            return func(self, client, *args, **kwargs)
-        return call_librados(self.fsid, impl)
-    return wrapper
-
-
 def undoable(func):
     """decorator for undoable actions. See `undo_transaction` for starting a transaction.
 
@@ -817,24 +809,27 @@ class RbdApi(object):
         yield self._call_librados(_do)
         self._call_librados(_undo)
 
-    @call_librados_api
-    def remove(self, client, pool_name, image_name):
-        ioctx = client.get_pool(pool_name)
-        rbd_inst = rbd.RBD()
-        rbd_inst.remove(ioctx, image_name)
+    def remove(self, pool_name, image_name):
+        def _action(client):
+            ioctx = client.get_pool(pool_name)
+            rbd_inst = rbd.RBD()
+            rbd_inst.remove(ioctx, image_name)
 
-    @call_librados_api
-    def list(self, client, pool_name):
+        self._call_librados(_action)
+
+    def list(self, pool_name):
         """
         :returns: list -- a list of image names
         :rtype: list[str]
         """
-        ioctx = client.get_pool(pool_name)
-        rbd_inst = rbd.RBD()
-        return rbd_inst.list(ioctx)
+        def _action(client):
+            ioctx = client.get_pool(pool_name)
+            rbd_inst = rbd.RBD()
+            return rbd_inst.list(ioctx)
 
-    @call_librados_api
-    def image_stat(self, client, pool_name, name, snapshot=None):
+        self._call_librados(_action)
+
+    def image_stat(self, pool_name, name, snapshot=None):
         """
 
         obj_size is similar to the block size of ordinary hard drives.
@@ -843,9 +838,12 @@ class RbdApi(object):
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """
-        ioctx = client.get_pool(pool_name)
-        with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
-            return image.stat()
+        def _action(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
+                return image.stat()
+
+        self._call_librados(_action)
 
     def image_disk_usage(self, pool_name, name):
         """The "rbd du" command is not exposed in python, as it
@@ -869,11 +867,13 @@ class RbdApi(object):
         yield result
         self.image_resize(pool_name, name, original_size)
 
-    @call_librados_api
-    def image_features(self, client, pool_name, name):
-        ioctx = client.get_pool(pool_name)
-        with rbd.Image(ioctx, name=name) as image:
-            return RbdApi._bitmask_to_list(image.features())
+    def image_features(self, pool_name, name):
+        def _action(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                return RbdApi._bitmask_to_list(image.features())
+
+        self._call_librados(_action)
 
     @undoable
     def image_set_feature(self, pool_name, name, feature, enabled):
@@ -889,11 +889,13 @@ class RbdApi(object):
         yield self._call_librados(_do)
         self.image_set_feature(pool_name, name, feature, not enabled) # Undo step
 
-    @call_librados_api
-    def image_old_format(self, client, pool_name, name):
-        ioctx = client.get_pool(pool_name)
-        with rbd.Image(ioctx, name=name) as image:
-            return image.old_format()
+    def image_old_format(self, pool_name, name):
+        def _action(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                return image.old_format()
+
+        self._call_librados(_action)
 
     def _call_librados(self, func):
         return call_librados(self.fsid, lambda client: func(client))
