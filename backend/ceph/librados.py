@@ -879,18 +879,14 @@ class RbdApi(object):
     def image_resize(self, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
-        def _get_original_size(client):
-            ioctx = client.get_pool(pool_name)
-            with rbd.Image(ioctx, name=name) as image:
-                return image.size()
-
         def _do(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
-                image.resize(size)
+                original_size = image.size()
+                return original_size, image.resize(size)
 
-        original_size = self._call_librados(_get_original_size)
-        yield self._call_librados(_do)
+        original_size, result = self._call_librados(_do)
+        yield result
         self.image_resize(pool_name, name, original_size)
 
     @call_librados_api
