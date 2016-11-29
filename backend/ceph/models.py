@@ -868,7 +868,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                 if key == 'size':
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
-                if key == 'features':
+                elif key == 'features':
                     if not insert:
                         for feature in set(original.features).difference(set(value)):
                             api.image_set_feature(self.pool.name, self.name, feature, False)
