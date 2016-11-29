@@ -21,6 +21,7 @@ PROJECT_URL  = '/openattic'
 #FORCE_SCRIPT_NAME = PROJECT_URL
 
 DATA_ROOT = "/var/lib/openattic"
+import os
 
 from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
@@ -73,11 +74,14 @@ REST_FRAMEWORK = {
 # Read database.ini
 DATABASES = {}
 
+if not os.access('/etc/openattic/database.ini', os.R_OK):
+    raise IOError('database.ini is not accessible')
+
 __conf__ = ConfigParser()
-__conf__.read("/etc/openattic/database.ini")
+__conf__.read('/etc/openattic/database.ini')
 
 if not len(__conf__.sections()):
-    raise IOError("database.ini not found")
+    raise IOError("database.ini does not contain expected content")
 
 for sec in __conf__.sections():
     DATABASES[sec] = {
@@ -389,7 +393,6 @@ def __loadmods__():
             else:
                 return cmp(a, b)
 
-    import os
     mods = [dir for dir in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ) if not dir.startswith('.')]
     mods.sort(cmp=modnamecmp)
     for name in mods:
