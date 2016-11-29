@@ -71,15 +71,16 @@ Options:
 
     --push-changes
 
-        Pushes the changes made to the repository. This switch is ment to be
-        used on a release to push the changes made back to the repository.
-        Those changes include the adaption of the `debian/changelog` file as
-        well as the creation of Mercurial tags. The latter is not yet
-        implemented. This switch will be ignored if the argument to --source is
-        a local path and changes have been commited to create a tar archive for
-        testing purposes. If there weren't changes to the repository, the
-        switch won't be ignored. If the push creates a new head on the remote
-        repository, the changes won't be pushed and the execution of the
+        Pushes the changes made to the temporary repository which is used to
+        create the tarball. This switch is ment to be used on a release to push
+        changes back to the repository.  Those changes include the adaption of
+        the `debian/changelog` as well as any created Mercurial tags.  This
+        switch will be ignored if the argument to --source is a local path
+        which contains uncommitted changes. If there aren't uncommited changes
+        to the repository, the switch won't be ignored. Be aware of that every
+        commited but not yet pushed change to the local repository is going to
+        be pushed! If the push would create a new head on the remote
+        repository, the changes won't get pushed and the execution of the
         script will be aborted.
 
     -v
@@ -681,7 +682,7 @@ class DistBuilder(object):
 
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
-                                        version,
+                                        version + ('-1' if channel == 'release' else ''),
                                         self._datestring,
                                         self._get_current_revision_hash(self._tmp_oa_clone_dir),
                                         self._tmp_oa_clone_dir)

@@ -52,12 +52,12 @@
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 <th sortfield="name" sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
-                <th sortfield="megs" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
+                <th sortfield="usage.size" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
                 <th sortfield="usage.used" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
                 <th sortfield="status.status" sortdir="asc" sortheaderclass ng-show="columns['Status']">Status</th>
-                <th ng-show="columns['Protection']">Protection</th>
+                <th sortfield="is_protected" sortdir="asc" sortheaderclass ng-show="columns['Protection']">Protection</th>
                 <th sortfield="type.name" sortdir="asc" sortheaderclass ng-show="columns['Type']">Type</th>
-                <th ng-show="columns['Path']">Path</th>
+                <th sortfield="path" sortdir="asc" sortheaderclass ng-show="columns['Path']">Path</th>
                 <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
                 <th sortfield="createdate" sortdir="asc" sortheaderclass ng-show="columns['Created']">Created</th>
             </tr>
@@ -70,7 +70,7 @@
                     <input class="tc_checkboxes" type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name" class="tc_volumeRowName"></td>
-                <td ng-show="columns['Size']" ng-bind="row.usage.size_text"></td>
+                <td ng-show="columns['Size']" ng-bind="row.usage.size | bytes:'MiB'"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
                          data-toggle="tooltip" data-placement="right" title="Used: {{row.usage.used_text}} &mdash;

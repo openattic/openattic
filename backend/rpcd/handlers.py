@@ -18,6 +18,7 @@ import logging
 import socket
 import errno
 import sys
+from itertools import chain
 
 from operator import or_
 
@@ -144,7 +145,7 @@ class ModelHandler(BaseHandler):
             id = {'id': int(id)}
         data = {}
         obj = self._get_model_manager().get(**id)
-        for field in obj._meta.fields + obj._meta.virtual_fields:
+        for field in chain(obj._meta.fields, obj._meta.virtual_fields):
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
@@ -321,7 +322,7 @@ class ModelHandler(BaseHandler):
             return obj
 
         data = {'__unicode__': unicode(obj)}
-        for field in obj._meta.fields + obj._meta.many_to_many + obj._meta.virtual_fields:
+        for field in chain(obj._meta.fields, obj._meta.many_to_many, obj._meta.virtual_fields):
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
@@ -382,7 +383,7 @@ class ModelHandler(BaseHandler):
                       if key not in ("id", "extAction", "extMethod", "extTID", "extType", "extUpload")
                     ])
 
-        for field in self.model._meta.fields + self.model._meta.virtual_fields:
+        for field in chain(self.model._meta.fields,  self.model._meta.virtual_fields):
             if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ) and field.name in data:
                 if data[field.name]:
                     handler = self._get_handler_instance(get_related_model(field))
@@ -433,7 +434,7 @@ class ModelHandler(BaseHandler):
 
     def _setobj(self, obj, data):
         """ Update the given object with values from the `data` dict. """
-        for field in obj._meta.fields + obj._meta.virtual_fields:
+        for field in chain(obj._meta.fields, obj._meta.virtual_fields):
             if field.name in data:
                 if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
                     if data[field.name] is not None:

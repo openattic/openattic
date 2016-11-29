@@ -30,7 +30,7 @@
  */
 "use strict";
 
-angular.module("openattic.auth", ["ngResource"]);
+angular.module("openattic.auth", []);
 
 var app = angular.module("openattic.auth");
 app.config(function ($httpProvider) {

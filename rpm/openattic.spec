@@ -428,18 +428,8 @@ install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.
 # TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
-# database config
-## TODO: generate random password
-
-cat <<EOF > %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
-[default]
-engine   = django.db.backends.postgresql_psycopg2
-name     = openattic
-user     = openattic
-password = ip32...beg
-host     = localhost
-port     =
-EOF
+# Install db file
+install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
 
 ln -s %{_sysconfdir}/%{name}/databases/pgsql.ini %{buildroot}%{_sysconfdir}/openattic/database.ini
 
@@ -538,24 +528,6 @@ else
 fi
 systemctl enable postgresql
 systemctl start postgresql
-
-#TODO: Dynamisches Passwort erzeugen und ausgeben
-#pass=$(openssl rand -hex 10)
-dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
-echo "===> $dbu"
-if [ -n "$dbu" ]; then
-	echo "Database openattic exists, owned by $dbu"
-else
-su - postgres -c psql << EOT
-create user openattic with password 'ip32...beg';
-create database openattic with owner openattic;
-\q
-EOT
-	#sed -i -e "s/ip32...beg/$pass/g" /etc/openattic/databases/pgsql.ini
-	sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
-fi
-systemctl reload postgresql
-systemctl status postgresql
 
 %postun pgsql
 # Datenbank drop
@@ -767,7 +739,7 @@ systemctl start smb
 %{_datadir}/%{name}/zfs/
 
 %files 	pgsql
-%defattr(-,root,root,-)
+%defattr(-,openattic,openattic,-)
 %config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
 %{_sysconfdir}/%{name}/database.ini
 

@@ -41,7 +41,6 @@ based on the latest commit in the ``default`` branch.
 #.  Install Bower and Grunt (to build the Web UI)::
 
       # npm install -g bower
-      # npm install grunt
       # npm install -g grunt-cli
 
 #.  Go to the ``/srv`` directory, and create a local clone of your |oA| fork

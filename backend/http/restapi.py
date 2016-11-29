@@ -17,6 +17,7 @@ import django_filters
 from rest_framework import serializers, viewsets
 
 from rest import relations
+from rest.utilities import DeleteCreateMixin
 
 from volumes.models import StorageObject
 from http.models import Export
@@ -24,8 +25,9 @@ from http.models import Export
 from rest.multinode.handlers import RequestHandlers
 
 
-class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
+class HttpShareSerializer(DeleteCreateMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a HTTP Export. """
+
     url = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
     volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
                                                source="volume.storageobj",
@@ -35,10 +37,13 @@ class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
         model = Export
         fields = ('url', 'id', 'path', 'volume')
 
-    def restore_object(self, attrs, instance=None):
-        attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
-        del attrs["volume.storageobj"]
-        return super(HttpShareSerializer, self).restore_object(attrs, instance)
+    def update_validated_data(self, attrs):
+        if "volume.storageobj" in attrs:
+            attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
+            del attrs["volume.storageobj"]
+        else:
+            attrs["volume"] = attrs["volume"]["storageobj"].filesystemvolume_or_none
+        return attrs
 
 
 class HttpShareFilter(django_filters.FilterSet):

@@ -112,10 +112,7 @@ class RequestHandlers(object):
         return self._remote_request(request, host, obj=obj)
 
     def update(self, request, *args, **kwargs):
-        obj = self.get_object_or_none()
-
-        if obj is None:
-            return self.create(request, args, kwargs)
+        obj = self.get_object()
 
         host = self._get_object_host(obj)
         if host == Host.objects.get_current():
