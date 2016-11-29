@@ -72,7 +72,7 @@ REST_FRAMEWORK = {
 }
 
 def read_database_configs(configfile):
-    # Read database.ini
+    # Reads the database configuration of an INI file
     databases = {}
 
     if not os.access(configfile, os.R_OK):
