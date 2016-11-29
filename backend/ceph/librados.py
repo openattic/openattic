@@ -225,9 +225,7 @@ def call_librados(fsid, method, timeout=30):
                         res = method(client)
                         self.com_pipe.send(res)
                 except Exception as e:
-                    trace = traceback.format_exc()
-                    self.com_pipe.send((e, trace))
-                    raise
+                    self.com_pipe.send(e)
 
     if settings.SEPARATE_LIBRADOS_PROCESS:
         com1, com2 = multiprocessing.Pipe()
@@ -237,6 +235,8 @@ def call_librados(fsid, method, timeout=30):
             if com1.poll(timeout):
                 res = com1.recv()
                 p.join()
+                if isinstance(res, Exception):
+                    raise res
                 return res
             else:
                 p.terminate()
