@@ -799,8 +799,7 @@ class RbdApi(object):
 
     @logged
     @undoable
-    @call_librados_api
-    def create(self, client, pool_name, image_name, size, old_format=True, features=None,
+    def create(self, pool_name, image_name, size, old_format=True, features=None,
                order=None):
         """
         .. example::
@@ -815,14 +814,20 @@ class RbdApi(object):
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
         """
-        ioctx = client.get_pool(pool_name)
-        rbd_inst = rbd.RBD()
-        default_features = 0 if old_format else 61  # FIXME: hardcoded int
-        feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
-                           default_features)
-        yield rbd_inst.create(ioctx, image_name, size, old_format=old_format,
-                              features=feature_bitmask, order=order)
-        client.remove(pool_name, image_name)
+        def _do(client):
+            ioctx = client.get_pool(pool_name)
+            rbd_inst = rbd.RBD()
+            default_features = 0 if old_format else 61  # FIXME: hardcoded int
+            feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
+                               default_features)
+            rbd_inst.create(ioctx, image_name, size, old_format=old_format,
+                            features=feature_bitmask, order=order)
+
+        def _undo(client):
+            client.remove(pool_name, image_name)
+
+        yield self._call_librados(_do)
+        self._call_librados(_undo)
 
     @call_librados_api
     def remove(self, client, pool_name, image_name):
@@ -863,15 +868,22 @@ class RbdApi(object):
         return du[0] if du else {}
 
     @undoable
-    @call_librados_api
-    def image_resize(self, client, pool_name, name, size):
+    def image_resize(self, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
-        ioctx = client.get_pool(pool_name)
-        with rbd.Image(ioctx, name=name) as image:
-            original_size = image.size()
-            yield image.resize(size)
-            image.resize(original_size)
+        def _get_original_size(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                return image.size()
+
+        def _do(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                image.resize(size)
+
+        original_size = self._call_librados(_get_original_size)
+        yield self._call_librados(_do)
+        self.image_resize(pool_name, name, original_size)
 
     @call_librados_api
     def image_features(self, client, pool_name, name):
@@ -880,19 +892,24 @@ class RbdApi(object):
             return RbdApi._bitmask_to_list(image.features())
 
     @undoable
-    @call_librados_api
-    def image_set_feature(self, client, pool_name, name, feature, enabled):
+    def image_set_feature(self, pool_name, name, feature, enabled):
         """:type enabled: bool"""
-        ioctx = client.get_pool(pool_name)
-        with rbd.Image(ioctx, name=name) as image:
-            bitmask = RbdApi._list_to_bitmask([feature])
-            if bitmask not in RbdApi.get_feature_mapping().keys():
-                raise ValueError(u'Feature "{}" is unknown.'.format(feature))
-            yield image.update_features(bitmask, enabled)
-            self.image_set_feature(pool_name, name, feature, not enabled)
+        def _do(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                bitmask = RbdApi._list_to_bitmask([feature])
+                if bitmask not in RbdApi.get_feature_mapping().keys():
+                    raise ValueError(u'Feature "{}" is unknown.'.format(feature))
+                image.update_features(bitmask, enabled)
+
+        yield self._call_librados(_do)
+        self.image_set_feature(pool_name, name, feature, not enabled) # Undo step
 
     @call_librados_api
     def image_old_format(self, client, pool_name, name):
         ioctx = client.get_pool(pool_name)
         with rbd.Image(ioctx, name=name) as image:
             return image.old_format()
+
+    def _call_librados(self, func):
+        return call_librados(self.fsid, lambda client: func(client))
