@@ -75,7 +75,7 @@ REST_FRAMEWORK = {
 DATABASES = {}
 
 if not os.access('/etc/openattic/database.ini', os.R_OK):
-    raise IOError('database.ini is not accessible')
+    raise IOError('Unable to read database.ini')
 
 __conf__ = ConfigParser()
 __conf__.read('/etc/openattic/database.ini')
