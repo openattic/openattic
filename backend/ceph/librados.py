@@ -715,9 +715,10 @@ class MonApi(object):
     def df(self):
         return self._call_mon_command('df')
 
-    def _call_mon_command(self, cmd, argdict=None, output_format='json'):
-        return call_librados(self.fsid, lambda client: client.mon_command(cmd, argdict,
-                                                                          output_format))
+    def _call_mon_command(self, cmd, argdict=None, output_format='json', timeout=30):
+        return call_librados(self.fsid,
+                             lambda client: client.mon_command(cmd, argdict, output_format),
+                             timeout)
 
 
 class RbdApi(object):
@@ -897,5 +898,5 @@ class RbdApi(object):
 
         self._call_librados(_action)
 
-    def _call_librados(self, func):
-        return call_librados(self.fsid, lambda client: func(client))
+    def _call_librados(self, func, timeout=30):
+        return call_librados(self.fsid, func, timeout)
