@@ -29,7 +29,6 @@ sys.path.append(config['OADIR'])
 
 # environment variables
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-from nagios.conf.distro import distro_settings
 
 # Init Django
 if django.VERSION[:2] >= (1, 7):
