@@ -804,11 +804,8 @@ class RbdApi(object):
             rbd_inst.create(ioctx, image_name, size, old_format=old_format,
                             features=feature_bitmask, order=order)
 
-        def _undo(client):
-            client.remove(pool_name, image_name)
-
         yield self._call_librados(_do)
-        self._call_librados(_undo)
+        self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
         def _action(client):
