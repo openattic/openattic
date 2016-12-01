@@ -200,6 +200,26 @@ class Client(object):
                 raise ExternalCommandError(err, cmd, argdict)
 
 
+class ClientManager(object):
+
+    instances = {}
+
+    def __getitem__(self, fsid):
+        """
+        :type fsid: str | unicode
+        :rtype: librados.Client
+        """
+        from ceph.models import CephCluster
+
+        if fsid not in self.instances:
+            cluster_name = CephCluster.get_name(fsid)
+            self.instances[fsid] = Client(cluster_name)
+
+        return self.instances[fsid]
+
+clients = ClientManager()
+
+
 class ExternalCommandError(Exception):
     def __init__(self, err, cmd=None, argdict=None):
         argdict = argdict if isinstance(argdict, dict) else {}
@@ -250,8 +270,8 @@ def call_librados(fsid, method, timeout=30):
                 raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
                                            '({} sec).'.format(p.name, p.pid, timeout))
     else:
-        with _get_client() as client:
-            return method(client)
+        client = clients[fsid]
+        return method(client)
 
 
 def undoable(func):
