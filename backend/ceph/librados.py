@@ -825,7 +825,7 @@ class RbdApi(object):
             rbd_inst = rbd.RBD()
             return rbd_inst.list(ioctx)
 
-        self._call_librados(_action)
+        return self._call_librados(_action)
 
     def image_stat(self, pool_name, name, snapshot=None):
         """
@@ -841,7 +841,7 @@ class RbdApi(object):
             with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
                 return image.stat()
 
-        self._call_librados(_action)
+        return self._call_librados(_action)
 
     def image_disk_usage(self, pool_name, name):
         """The "rbd du" command is not exposed in python, as it
@@ -871,7 +871,7 @@ class RbdApi(object):
             with rbd.Image(ioctx, name=name) as image:
                 return RbdApi._bitmask_to_list(image.features())
 
-        self._call_librados(_action)
+        return self._call_librados(_action)
 
     @undoable
     def image_set_feature(self, pool_name, name, feature, enabled):
@@ -893,7 +893,7 @@ class RbdApi(object):
             with rbd.Image(ioctx, name=name) as image:
                 return image.old_format()
 
-        self._call_librados(_action)
+        return self._call_librados(_action)
 
     def _call_librados(self, func, timeout=30):
         return call_librados(self.fsid, func, timeout)
