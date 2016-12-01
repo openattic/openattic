@@ -186,7 +186,7 @@ module-apt"
 
     # System packages not available in pip + npm
 
-    apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 nodejs npm
+    apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-m2crypto nodejs npm
     apt-get install -y libjpeg-dev # TODO this is required for openattic-module-nagios
     if [ "$IS_XENIAL" ]
     then
@@ -320,6 +320,9 @@ cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 
 #rtslib
 cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
+
+#RPCD
+ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
 
 # oaconfig install
 
