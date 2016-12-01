@@ -258,19 +258,19 @@ if [ "$IS_XENIAL" ]
 then
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user pyfiler createdb createuser password 'pyf!l0r';
-create database pyfiler OWNER pyfiler ENCODING 'UTF-8';
+create user openattic createdb createuser password 'DB_PASSWORD';
+create database openattic OWNER openattic ENCODING 'UTF-8';
 EOF
 else
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user pyfiler createdb createuser password 'pyf!l0r';
-create database pyfiler OWNER pyfiler;
+create user openattic createdb createuser password 'DB_PASSWORD';
+create database openattic OWNER openattic;
 EOF
 fi
 
-# echo "drop database pyfiler;" | sudo -u postgres psql
-# echo "create database pyfiler OWNER pyfiler;" | sudo -u postgres psql
+# echo "drop database openattic;" | sudo -u postgres psql
+# echo "create database openattic OWNER openattic;" | sudo -u postgres psql
 
 
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.
