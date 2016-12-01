@@ -13,6 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from distutils.spawn import find_executable
 
 import os
 import os.path
@@ -29,7 +30,7 @@ class Btrfs(FileSystem):
 
     @classmethod
     def check_installed(cls):
-        return os.path.exists("/sbin/btrfs")
+        return find_executable('btrfs')
 
     @classmethod
     def format_blockvolume(cls, volume, options):
