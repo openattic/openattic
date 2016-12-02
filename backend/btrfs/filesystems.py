@@ -13,12 +13,11 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from distutils.spawn import find_executable
-
 import os
 import os.path
 
 from systemd import get_dbus_object
+from utilities import is_executable_installed
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
@@ -30,7 +29,7 @@ class Btrfs(FileSystem):
 
     @classmethod
     def check_installed(cls):
-        return find_executable('btrfs')
+        return is_executable_installed('btrfs')
 
     @classmethod
     def format_blockvolume(cls, volume, options):

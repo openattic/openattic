@@ -13,14 +13,13 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from distutils.spawn import find_executable
-
 import dbus
 import os
 import os.path
 
 from exception import NotSupportedError
 from systemd import get_dbus_object, dbus_to_python
+from utilities import is_executable_installed
 from volumes.conf import settings as volumes_settings
 
 
@@ -216,7 +215,7 @@ class FileSystem(object):
 
     @classmethod
     def check_installed(cls):
-        return find_executable("mkfs.%s" % cls.name)
+        return is_executable_installed("mkfs.%s" % cls.name)
 
     def write_fstab(self, delete=False, id=0):
         """ Update /etc/fstab. """
