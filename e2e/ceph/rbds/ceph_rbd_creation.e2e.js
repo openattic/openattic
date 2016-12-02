@@ -16,20 +16,20 @@ describe('ceph rbd creation and deletion', function(){
   });
 
   var objSizeTests = [
-    [4, "kB"],
-    [8, 'kB'],
-    [16, 'kB'],
-    [32, 'kB'],
-    [64, 'kB'],
-    [128, 'kB'],
-    [256, 'kB'],
-    [512, 'kB'],
-    [1, 'MB'],
-    [2, 'MB'],
-    [4, 'MB'],
-    [8, 'MB'],
-    [16, 'MB'],
-    [32, 'MB']
+    [4, "KiB"],
+    [8, 'KiB'],
+    [16, 'KiB'],
+    [32, 'KiB'],
+    [64, 'KiB'],
+    [128, 'KiB'],
+    [256, 'KiB'],
+    [512, 'KiB'],
+    [1, 'MiB'],
+    [2, 'MiB'],
+    [4, 'MiB'],
+    [8, 'MiB'],
+    [16, 'MiB'],
+    [32, 'MiB']
   ];
 
   rbdProperties.useWriteablePools(function(cluster, pool){

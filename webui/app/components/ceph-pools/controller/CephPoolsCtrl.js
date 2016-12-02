@@ -108,7 +108,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
       },
       statistics: {
         show: "selection.item",
-        state: "cephPools.detail.cacheTier",
+        state: "cephPools.detail.statistics",
         class: "tc_statisticsTab",
         name: "Statistics"
       }
