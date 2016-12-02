@@ -76,7 +76,7 @@ def read_database_configs(configfile):
     databases = {}
 
     if not os.access(configfile, os.R_OK):
-        raise IOError('Unable to read {}'.format(configfile)
+        raise IOError('Unable to read {}'.format(configfile))
 
     conf = ConfigParser()
     conf.read(configfile)
@@ -96,7 +96,7 @@ def read_database_configs(configfile):
 
     return databases
 
-DATABASES = read_database_configs('/etc/openattic/databases.ini')
+DATABASES = read_database_configs('/etc/openattic/database.ini')
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
