@@ -15,7 +15,9 @@
 """
 import logging
 from collections import defaultdict
+from distutils.spawn import find_executable
 from importlib import import_module
+from os import path
 
 import django
 from django.conf import settings
@@ -104,3 +106,14 @@ def get_django_app_modules(module_name):
     logging.info("Loaded {} modules: {}".format(module_name,
                                                 ', '.join([module.__name__ for module in plugins])))
     return plugins
+
+
+def is_executable_installed(executable):
+    """
+    Tries to find an executable in the typical locations.
+    :type executable: str
+    :rtype: bool
+    """
+    if find_executable(executable):
+        return True
+    return any([path.isfile(path.join(root, executable)) for root in ['/sbin', '/usr/sbin']])
