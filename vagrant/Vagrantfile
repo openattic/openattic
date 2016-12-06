@@ -18,6 +18,10 @@ Vagrant.configure(2) do |config|
     # boxes at https://atlas.hashicorp.com/search.
     if ENV['DISTRO'] == 'debian'
         config.vm.box = 'debian/jessie64' # should work, too!
+        # Rename the storage controller.
+        config.vm.provider :virtualbox do |vb|
+            vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--rename', 'SATA']
+        end
     elsif ENV['DISTRO'] == 'xenial'
         config.vm.box = 'yk0/ubuntu-xenial'
     elsif ENV['DISTRO'] == 'trusty'
@@ -105,10 +109,6 @@ Vagrant.configure(2) do |config|
     #  end
 
     config.vm.provider :virtualbox do |vb|
-        # Rename the storage controller.
-        if ENV['DISTRO'] == 'debian'
-            vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--rename', 'SATA']
-        end
         # note 1 would mean 2 disks
         disk_num = 1
         disk_size = 50 * 1024
