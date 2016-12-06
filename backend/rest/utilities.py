@@ -17,6 +17,7 @@ from collections import defaultdict
 
 import django
 from django.http.request import QueryDict # Docstring
+from rest_framework.serializers import Serializer
 
 
 def drf_version():
@@ -100,3 +101,38 @@ class ToNativeToRepresentationMixin(object):
 
     def to_representation(self, instance):
         return self.to_native(instance)
+
+
+class DeleteCreateMixin(object):
+    """
+    In DRF 3, `restore_object()` was replace by `create()` and `update()`.
+
+    This mixin will create either `restore_object()` or `create()` and `update()`. depending
+    on the DRF version.
+
+    Usage:
+
+    >>> class FooSerializer(DeleteCreateMixin, Serializer):
+    >>>
+    >>> def update_validated_data(self, attrs):
+    >>>     attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
+    >>>     del attrs["volume.storageobj"]
+    >>>     return attrs
+    """
+
+    def update_validated_data(self, validated_data):
+        raise NotImplementedError()
+
+    if drf_version() >= (3, 0):
+        def create(self, validated_data):  # DRF 3
+            validated_data = self.update_validated_data(validated_data)
+            return super(DeleteCreateMixin, self).create(validated_data)
+
+        def update(self, instance, validated_data):  # DRF 3
+            validated_data = self.update_validated_data(validated_data)
+            return super(DeleteCreateMixin, self).update(instance, validated_data)
+    else:
+        def restore_object(self, attrs, instance=None):  # DRF 2
+            attrs = self.update_validated_data(attrs)
+            return super(DeleteCreateMixin, self).restore_object(attrs, instance)
+

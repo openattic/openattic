@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("PoolCtrl", function ($scope, $state, PoolService, TabViewService) {
+app.controller("PoolCtrl", function ($scope, $state, PoolService, tabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -72,8 +72,8 @@ app.controller("PoolCtrl", function ($scope, $state, PoolService, TabViewService
     linkedBy: "id",
     jumpTo: "more"
   };
-  TabViewService.setScope($scope);
-  $scope.changeTab = TabViewService.changeTab;
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {

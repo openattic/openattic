@@ -444,7 +444,7 @@ repositories named ``filesystems:openATTIC``.
   followed the steps outlined in :ref:`base operating system installation` and
   :ref:`basic storage configuration`.
 
-Yum Repository Configuration
+Zypper Repository Configuration
 ----------------------------
 
 From a web browser, the installation of |oA| on SLES or Leap can be performed

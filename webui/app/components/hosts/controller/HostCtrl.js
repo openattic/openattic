@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.hosts");
 app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, InitiatorService, NetdeviceService,
-    TabViewService) {
+    tabViewService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -136,8 +136,8 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     linkedBy: "id",
     jumpTo: "more"
   };
-  TabViewService.setScope($scope);
-  $scope.changeTab = TabViewService.changeTab;
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {

@@ -722,6 +722,9 @@ h6{
   resize: none;
   width:100%;
 }
+.apirecorder-enabled {
+  color: red;
+}
 
 /* Caret */
 .caret {
