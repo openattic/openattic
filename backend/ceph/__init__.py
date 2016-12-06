@@ -13,16 +13,16 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import sys
 from utilities import is_executable_installed
 
 if not is_executable_installed('ceph'):
-    print(
-        'ERROR:ceph:Ceph executable couldn\'t be found. ' +
-        'The `ceph` package provided by your distribution is probably not installed.')
+    print >> sys.stderr, 'ERROR:ceph:Ceph executable couldn\'t be found. ' +
+        'The `ceph` package provided by your distribution is probably not installed.'
     raise ImportError()
 
 try:
     import rados
 except ImportError:
-    print('ERROR:ceph:`rados` library couldn\'t be found.')
+    print >> sys.stderr, 'ERROR:ceph:`rados` library couldn\'t be found.'
     raise

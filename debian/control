@@ -88,7 +88,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  openattic-pgsql,
  libapache2-mod-wsgi, apache2 (>= 2.4),
  memcached, python-memcache
-Recommends: sudo, xfsprogs
+Recommends: ${misc:Recommends}, sudo, xfsprogs
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -189,7 +189,7 @@ Description: Cron module for openATTIC
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, python (>= 2.6),
- ${python:Depends}, python-imaging, python-numpy, openattic-base, bc, adduser,
+ python-imaging, python-numpy, openattic-base, bc, adduser,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
  pnp4nagios-bin, rrdtool
 Description: Nagios module for openATTIC
@@ -228,6 +228,7 @@ Package: openattic-module-http
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  apache2
+Recommends: ${misc:Recommends}
 Description: HTTP module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
