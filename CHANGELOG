@@ -9,6 +9,7 @@ Version 2.0.17 (not released yet):
 * Backend: Fixed XML-RPCD on Ubuntu Xenial (OP-1698)
 * Backend: Fixed creation of volume snapshots on Xenial (OP-1699)
 * Backend: Fixed btrfs not being available when adding a new volume (OP-1726)
+* Backend: Fixed pagination on Xenial (OP-1727)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
