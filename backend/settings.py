@@ -63,10 +63,10 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'EXCEPTION_HANDLER': 'exception.custom_handler',
-    'PAGINATE_BY':        50,
-    'PAGINATE_BY_PARAM': 'pageSize',
-    'MAX_PAGINATE_BY':   100,
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # Required by 3
+    'PAGINATE_BY':        50,  # Only DRF 2
+    'PAGINATE_BY_PARAM': 'pageSize',  # Only DRF 2
+    'MAX_PAGINATE_BY':   100,  # Only DRF 2
+    'DEFAULT_PAGINATION_CLASS': 'rest.pagination.PageSizePageNumberPagination',  # Only DRF 3
     'PAGE_SIZE': 10,  # Required by DRF 3
     'URL_FIELD_NAME':    'url',
 }
