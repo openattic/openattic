@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, $state, $filter,
-    taskQueueService, $uibModal, $interval, $http) {
+    taskQueueService, $uibModal, $interval, taskQueueFetcher) {
   /**
    * Describes and configures all displayed tabs and tables.
    */
@@ -256,6 +256,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     tab.selection.checkAll = selection.length === tab.data.length;
     tab.selection.item = selection.length === 1 ? $scope.getTaskFromId(tab, selection[0]) : null;
     tab.selection.items = selection;
+    tab.loaded = true;
     return tab;
   };
 
@@ -319,101 +320,35 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   /**
-   * Counts all tasks in the tabs and triggers call for all tasks in the active tab.
-   * @param {String} tabKey - Attribute of the tab where it retrieves the task count.
-   * @throws {object} Throws an error and shows a toasty if the API call fails.
+   * Counts all tasks in the tabs and adds all tasks to the active tab.
+   * @param {String} tabKey - Attribute of the tab.
+   * @param {object} allTasks - Holds all old and new tasks.
    */
-  $scope.loadTabTasks = function (tabKey) {
+  $scope.loadTabTasks = function (tabKey, allTasks) {
+    var tasks = allTasks.tasks;
     var tab = $scope.tabs[tabKey];
+    var activeTab = $scope.modalTabData && tabKey === Object.keys($scope.tabs)[$scope.modalTabData.active];
     tab.tempCount = 0;
-    tab.pageCount = 0;
-    tab.pageMax = 0;
-    tab.loadingCount = 0;
     tab.tempData = [];
-    $scope.tabs[tabKey] = tab;
     tab.states.forEach(function (state) {
-      taskQueueService.get({
-          pageSize: 1,
-          status: state
-        })
-        .$promise
-        .then(function (res) {
-          var tab = $scope.tabs[tabKey];
-          var max = res.count === 0 ? 0 : parseInt(res.count / 100, 10) + 1;
-          tab.tempCount += res.count;
-          tab.loadingCount++;
-          tab.pageMax += max;
-          if (tab.loadingCount === tab.states.length) {
-            tab.count = tab.tempCount;
-            if (tab.pageMax === 0) {
-              tab.data = [];
-              tab.loaded = true;
-              // Reload all tasks if many after a longer timeout has passed to reduce the load on the client.
-              $scope.reloadTaskIn($scope.reloadTime);
-            }
-          }
-          $scope.tabs[tabKey] = tab;
-          if ($scope.modalTabData && tabKey !== Object.keys($scope.tabs)[$scope.modalTabData.active]) {
-            return;
-          }
-          for (var i = 1; i <= max; i++) {
-            $scope.loadTabTasksPage(i, state, tabKey);
-          }
-        })
-        .catch(function (error) {
-          error.toasty = {
-            title: "Background task loading failure",
-            msg: "Background tasks with status " + state + " couldn't be loaded.",
-            timeout: 10000
-          };
-          toasty.error(error.toasty);
-          throw error;
-        });
-    });
-  };
-
-  /**
-   * Loads a page with at max 100 tasks of a task state that is seen in the active tab.
-   * @param {number} pgnr - The page number to fetch with at max 100 tasks.
-   * @param {String} state - The state each task represents.
-   * @param {String} tabKey - Attribute of the tab where it retrieves the task count.
-   * @throws {object} Throws an error and shows a toasty if the API call fails.
-   */
-  $scope.loadTabTasksPage = function (pgnr, state, tabKey) {
-    taskQueueService.get({
-      page: pgnr,
-      pageSize: 100,
-      status: state
-    })
-      .$promise
-      .then(function (res) {
+      var current = tasks[state];
+      tab.tempCount += current.length;
+      if (activeTab) {
         if (state === "Running") {
-          res.results.forEach($scope.calcApprox);
+          current.forEach($scope.calcApprox);
         } else if (["Exception", "Aborted", "Finished"].indexOf(state) !== -1) {
-          res.results.forEach($scope.calcRuntime);
+          current.forEach($scope.calcRuntime);
         }
-
-        var tab = $scope.tabs[tabKey];
-        tab.tempData = tab.tempData.concat(res.results);
-        tab.pageCount++;
-        $scope.tabs[tabKey] = tab;
-        if (tab.pageCount === tab.pageMax) {
-          tab.loaded = true;
-          tab.data = tab.tempData;
-          $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
-          // Reload all tasks if many after a longer timeout has passed to reduce the load on the client.
-          $scope.reloadTaskIn(tab.pageMax * $scope.reloadTime);
-        }
-      })
-      .catch(function (error) {
-        error.toasty = {
-          title: "Background task loading failure",
-          msg: "Background tasks with status " + state + " page " + pgnr + " couldn't be loaded.",
-          timeout: 10000
-        };
-        toasty.error(error.toasty);
-        throw error;
-      });
+        tab.tempData = tab.tempData.concat(current)
+      }
+    });
+    tab.count = tab.tempCount;
+    if (activeTab) {
+      tab.data = tab.tempData;
+      $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
+    }
+    $scope.tabs[tabKey] = tab;
+    $scope.reloadTaskIn($scope.reloadTime);
   };
 
   /**
@@ -520,12 +455,10 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
    * Triggers a refresh over all tabs, but only if there are no pending requests.
    */
   $scope.loadAllTabs = function () {
-    if ($http.pendingRequests.length > 0) {
-      $scope.reloadTaskIn(30);
-      return;
-    }
-    Object.keys($scope.tabs).forEach(function (tabKey) {
-      $scope.loadTabTasks(tabKey);
+    taskQueueFetcher.loadOverview().then(function (allTasks) {
+      Object.keys($scope.tabs).forEach(function (tabKey) {
+        $scope.loadTabTasks(tabKey, allTasks);
+      });
     });
   };
 

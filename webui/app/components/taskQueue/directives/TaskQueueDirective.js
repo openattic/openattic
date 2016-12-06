@@ -35,25 +35,16 @@ app.directive("taskQueueDirective", function () {
   return {
     restrict: "A",
     templateUrl: "components/taskQueue/templates/task-queue-directive.html",
-    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $interval, $http) {
+    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $interval, $http, taskQueueFetcher) {
       $scope.taskOverview = {
         firstUpdate: true,
-        oldTasks: {},
-        tasks: {
-          "Running": [],
-          "Not Started": [],
-          "Exception": [],
-          "Aborted": [],
-          "Finished": []
-        },
         avr: 0,
         queue: 0,
         icon: "fa-hourglass-o",
         percent: 0,
-        tooltip: "No tasks running.",
-        updated: false
+        tooltip: "No tasks running."
       };
-      $scope.taskUpdateIntervall = 5; //seconds
+      $scope.taskUpdateInterval = 5000;
 
       /**
        * Update all needed parts.
@@ -70,39 +61,41 @@ app.directive("taskQueueDirective", function () {
        * update.
        */
       $scope.updateTaskOverview = function () {
-        var ov = $scope.taskOverview;
-        ov.percent = 0;
-        ov.tasks.Running.forEach(function (task) {
-          ov.percent += task.percent;
+        taskQueueFetcher.loadOverview().then(function (allTasks) {
+          var ov = $scope.taskOverview;
+          ov.percent = 0;
+          allTasks.tasks.Running.forEach(function (task) {
+            ov.percent += task.percent;
+          });
+          ov.queue = allTasks.tasks.Running.length + allTasks.tasks["Not Started"].length;
+          ov.avr = ov.queue !== 0 ? ov.percent / ov.queue : 0;
+          ov.icons = ["fa-hourglass-o", "fa-hourglass-start", "fa-hourglass-half", "fa-hourglass-end"];
+          ov.icon = ov.queue !== 0 ? ov.icons[Math.floor(ov.avr / 30) + 1] : ov.icons[0];
+          ov.tooltip = ov.avr === 0 ? "No tasks running" : parseInt(ov.avr, 10) + "% done in average";
+          if (ov.firstUpdate) {
+            ov.firstUpdate = false;
+          } else {
+            $scope.createNeededToasties(allTasks);
+          }
+          $scope.taskOverview = ov;
+          $scope.taskTimeout = $interval($scope.updateTaskOverview, $scope.taskUpdateInterval, 1);
         });
-        ov.queue = ov.tasks.Running.length + ov.tasks["Not Started"].length;
-        ov.avr = ov.queue !== 0 ? ov.percent / ov.queue : 0;
-        ov.icons = ["fa-hourglass-o", "fa-hourglass-start", "fa-hourglass-half", "fa-hourglass-end"];
-        ov.icon = ov.queue !== 0 ? ov.icons[Math.floor(ov.avr / 30) + 1] : ov.icons[0];
-        ov.tooltip = ov.avr === 0 ? "No tasks running" : parseInt(ov.avr, 10) + "% done in average";
-        if (ov.firstUpdate) {
-          ov.firstUpdate = false;
-        } else {
-          $scope.createNeededToasties();
-        }
-        $scope.taskOverview = ov;
-        $scope.taskTimeout = $interval($scope.loadOverview, $scope.taskUpdateIntervall * 1000, 1);
       };
 
       /**
        * Toasties are created if their is a changed between the finalized tasks from the last and the current task
        * update.
        */
-      $scope.createNeededToasties = function () {
-        var moved = $scope.getNewFinalTasks(); //id's
-        var tasks = $scope.taskOverview.tasks;
+      $scope.createNeededToasties = function (allTasks) {
+        var moved = $scope.getNewFinalTasks(allTasks); //id's
+        var tasks = allTasks.tasks;
         if (moved.length !== 0) {
           Object.keys(tasks).forEach(function (state) {
             tasks[state].forEach(function (task) {
               if (moved.indexOf(task.id) !== -1) {
                 var toast = {
                   title: task.status + ": " + task.description,
-                  msg: task.description + " has been " + task.status.toLowerCase() + ".",
+                  msg: task.description + " has been " + task.status.toLowerCase() + "."
                 };
                 if (task.status === "Finished") {
                   toast.timeout = 3000;
@@ -118,15 +111,15 @@ app.directive("taskQueueDirective", function () {
             });
           });
         }
-      }
+      };
 
       /**
        * Find out which tasks changed to a final state, by comparing the previous and the current fetched tasks.
        * @returns {Array} - Containing all changed task ids.
        */
-      $scope.getNewFinalTasks = function (){
-        var older = $scope.taskOverview.oldTasks;
-        var newer = $scope.taskOverview.tasks;
+      $scope.getNewFinalTasks = function (allTasks) {
+        var older = allTasks.oldTasks;
+        var newer = allTasks.tasks;
         var oldIds = [];
         var newIds = [];
         ["Exception", "Aborted", "Finished"].forEach(function (state) {
@@ -145,52 +138,6 @@ app.directive("taskQueueDirective", function () {
       };
 
       /**
-       * Counts all active tasks and sums up the percentage done of each task.
-       */
-      $scope.loadOverview = function () {
-        if ($http.pendingRequests.length > 0 || !$scope.user) {
-          $scope.taskTimeout = $interval($scope.loadOverview, 100, 1);
-          return;
-        }
-        $scope.taskOverview.updated = false;
-        angular.copy($scope.taskOverview.tasks, $scope.taskOverview.oldTasks);
-        Object.keys($scope.taskOverview.tasks).forEach(function (state) {
-            $scope.taskOverview.tasks[state] = [];
-        });
-        $scope.loadAllTasks();
-      };
-
-      $scope.loadAllTasks = function (pgnum) {
-        if (pgnum === undefined) {
-          pgnum = 1;
-        }
-        taskQueueService.get({
-          pageSize: 100,
-          page: pgnum
-        })
-          .$promise
-          .then(function (res) {
-            res.results.forEach(function (task) {
-              $scope.taskOverview.tasks[task.status].push(task);
-            });
-            if (res.next !== null) {
-              $scope.loadAllTasks(++pgnum);
-            } else {
-              $scope.updateTaskOverview();
-            }
-          })
-          .catch(function (error) {
-            error.toasty = {
-              title: "Background task loading failure",
-              msg: "Background tasks page " + pgnum + " couldn't be loaded.",
-              timeout: 10000
-            };
-            toasty.error(error.toasty);
-            throw error;
-          });
-      }
-
-      /**
        * Opens task queue dialog, stops the refresh timeout and refreshes on close.
        */
       $scope.runnersDialog = function () {
@@ -207,12 +154,12 @@ app.directive("taskQueueDirective", function () {
         });
 
         taskDialog.closed.then(function () {
-          $scope.loadOverview();
+          $scope.updateTaskOverview();
         });
       };
 
       // Initial load.
-      $scope.loadOverview();
+      $scope.updateTaskOverview();
     }
   };
 });

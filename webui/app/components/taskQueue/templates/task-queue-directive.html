@@ -2,6 +2,6 @@
     <i class="fa {{taskOverview.icon}}"></i>
     <span ng-show="taskOverview.queue > 1" ng-bind="taskOverview.queue + ' Background-Tasks'"></span>
     <span ng-show="taskOverview.queue === 1" ng-bind="taskOverview.queue + ' Background-Task'"></span>
-    <span ng-show="taskOverview.queue === 0" ng-bind="Background-Tasks"></span>
+    <span ng-show="taskOverview.queue === 0">Background-Tasks</span>
 </a>
 

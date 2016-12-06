@@ -227,7 +227,7 @@ fieldset[disabled] .btn-primary.active {
 
 table.task-queue-table {
   display: block;
-  height: 300px; /* Overwrite to meet the right size */
+  height: 30em;
   overflow: auto;
 }
 table.task-queue-table thead {

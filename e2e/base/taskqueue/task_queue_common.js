@@ -97,8 +97,8 @@ var taskQueueCommons = function(){
     },
     element: {
       warning: element(by.className('tc_run_warn')),
-      oneDel: element(by.className('tc_delete_one')),
-      mulDel: element(by.className('tc_delete_multiple')),
+      singleDelete: element(by.className('tc_delete_one')),
+      multiDelete: element(by.className('tc_delete_multiple')),
       inputField: element(by.model('input.enteredName')),
       confirmBtn: element(by.className('tc-tab-del-confirm'))
     }
@@ -174,16 +174,16 @@ var taskQueueCommons = function(){
 
   this.handleDeleteForm = function(tab){
     var warning = self.deletionDialog.element.warning;
-    var oneDel = self.deletionDialog.element.oneDel;
-    var mulDel = self.deletionDialog.element.mulDel;
+    var singleDelete = self.deletionDialog.element.singleDelete;
+    var multiDelete = self.deletionDialog.element.multiDelete;
     var inputField = self.deletionDialog.element.inputField;
     var confirmBtn = self.deletionDialog.element.confirmBtn;
     expect(warning.isDisplayed()).toBe(tab === 'pending');
     if(tab === 'pending'){
       expect(warning.getText()).toBe(self.deletionDialog.text.warning);
     }
-    mulDel.isDisplayed().then(function(displayed){
-      expect(oneDel.isDisplayed()).toBe(!displayed);
+    multiDelete.isDisplayed().then(function(displayed){
+      expect(singleDelete.isDisplayed()).toBe(!displayed);
     });
     expect(inputField.isDisplayed()).toBe(true);
     inputField.sendKeys('yes');
