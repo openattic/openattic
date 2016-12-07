@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
-
 """
- *   Copyright (c) 2016 SUSE LLC
+ *  Copyright (c) 2016 SUSE LLC
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -13,16 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from utilities import is_executable_installed
 
-if not is_executable_installed('ceph'):
-    print(
-        'ERROR:ceph:Ceph executable couldn\'t be found. ' +
-        'The `ceph` package provided by your distribution is probably not installed.')
-    raise ImportError()
+from django.conf import settings
 
-try:
-    import rados
-except ImportError:
-    print('ERROR:ceph:`rados` library couldn\'t be found.')
-    raise
+SEPARATE_LIBRADOS_PROCESS = getattr(settings, 'SEPARATE_LIBRADOS_PROCESS', True)

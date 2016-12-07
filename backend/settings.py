@@ -21,6 +21,7 @@ PROJECT_URL  = '/openattic'
 #FORCE_SCRIPT_NAME = PROJECT_URL
 
 DATA_ROOT = "/var/lib/openattic"
+import os
 
 from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
@@ -62,32 +63,40 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'EXCEPTION_HANDLER': 'exception.custom_handler',
-    'PAGINATE_BY':        50,
-    'PAGINATE_BY_PARAM': 'pageSize',
-    'MAX_PAGINATE_BY':   100,
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # Required by 3
+    'PAGINATE_BY':        50,  # Only DRF 2
+    'PAGINATE_BY_PARAM': 'pageSize',  # Only DRF 2
+    'MAX_PAGINATE_BY':   100,  # Only DRF 2
+    'DEFAULT_PAGINATION_CLASS': 'rest.pagination.PageSizePageNumberPagination',  # Only DRF 3
     'PAGE_SIZE': 10,  # Required by DRF 3
     'URL_FIELD_NAME':    'url',
 }
 
-# Read database.ini
-DATABASES = {}
+def read_database_configs(configfile):
+    # Reads the database configuration of an INI file
+    databases = {}
 
-__conf__ = ConfigParser()
-__conf__.read("/etc/openattic/database.ini")
+    if not os.access(configfile, os.R_OK):
+        raise IOError('Unable to read {}'.format(configfile))
 
-if not len(__conf__.sections()):
-    raise IOError("database.ini not found")
+    conf = ConfigParser()
+    conf.read(configfile)
 
-for sec in __conf__.sections():
-    DATABASES[sec] = {
-        "ENGINE":   __conf__.get(sec, "engine"),
-        "NAME":     __conf__.get(sec, "name"),
-        "USER":     __conf__.get(sec, "user"),
-        "PASSWORD": __conf__.get(sec, "password"),
-        "HOST":     __conf__.get(sec, "host"),
-        "PORT":     __conf__.get(sec, "port"),
-    }
+    if not len(conf.sections()):
+        raise IOError('{} does not contain expected content'.format(configfile))
+
+    for sec in conf.sections():
+        databases[sec] = {
+            "ENGINE":   conf.get(sec, "engine"),
+            "NAME":     conf.get(sec, "name"),
+            "USER":     conf.get(sec, "user"),
+            "PASSWORD": conf.get(sec, "password"),
+            "HOST":     conf.get(sec, "host"),
+            "PORT":     conf.get(sec, "port"),
+        }
+
+    return databases
+
+DATABASES = read_database_configs('/etc/openattic/database.ini')
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
@@ -380,7 +389,6 @@ def __loadmods__():
             else:
                 return cmp(a, b)
 
-    import os
     mods = [dir for dir in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ) if not dir.startswith('.')]
     mods.sort(cmp=modnamecmp)
     for name in mods:

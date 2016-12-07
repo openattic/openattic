@@ -86,9 +86,8 @@ class CephPoolTestCase(TestCase):
             Host.insert_current_host()
 
     @mock.patch('ceph.models.CephPool.objects')
-    @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_insert(self, monApi_mock, rados_mock, cephpool_objects_mock):
+    def test_insert(self, monApi_mock, cephpool_objects_mock):
         cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
         nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
 
@@ -120,9 +119,8 @@ class CephPoolTestCase(TestCase):
         monApi_mock.return_value.osd_tier_add.assert_called_with('test1', 'test1')
 
     @mock.patch('ceph.models.CephPool.objects')
-    @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_cache_tier(self, monApi_mock, rados_mock, cephpool_objects_mock):
+    def test_call_cache_tier(self, monApi_mock, cephpool_objects_mock):
         """
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
@@ -149,9 +147,8 @@ class CephPoolTestCase(TestCase):
         monApi_mock.return_value.assert_has_calls(calls)
 
     @mock.patch('ceph.models.CephPool.objects')
-    @mock.patch('ceph.models.rados')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_tier_remove(self, monApi_mock, rados_mock, cephpool_objects_mock):
+    def test_call_tier_remove(self, monApi_mock, cephpool_objects_mock):
         """
         Checking the reverse order.
         FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of,
@@ -288,9 +285,9 @@ class UndoFrameworkTest(TestCase):
 
 
 class LibradosTest(TestCase):
-    @mock.patch.object(ceph.librados.Client, 'connect')
-    @mock.patch('ceph.librados.MonApi', autospec=True)
-    def test_osd_tree(self, monApi_mock, connect_mock):
+    @mock.patch('ceph.librados.call_librados')
+    @mock.patch.object(ceph.librados.MonApi, 'osd_tree')
+    def test_osd_tree(self, osd_tree_mock, call_librados_mock):
         tree = [json.loads("""{
             "id": 12,
             "name": "osd.12",
@@ -324,8 +321,9 @@ class LibradosTest(TestCase):
             "type_id": 3,
             "children": [-17]
         }""")] * 2
-        monApi_mock.return_value.osd_tree.return_value = {'nodes': tree}
-        res = ceph.librados.Client().list_osds()
+        osd_tree_mock.return_value = {'nodes': tree}
+        api = ceph.librados.MonApi('')
+        res = api.osd_list()
         self.assertEqual(res, [
             {
                 "id": 12,
@@ -340,25 +338,21 @@ class LibradosTest(TestCase):
             }
         ])
 
-    @mock.patch('ceph.models.rados', autospec=True)
-    @mock.patch.object(ceph.models.librados.Client, 'connect')
-    @mock.patch('ceph.models.MonApi', autospec=True)
+    @mock.patch('ceph.librados.call_librados')
+    @mock.patch.object(ceph.librados.MonApi, 'osd_tree')
     @mock.patch('ceph.models.librados.MonApi', autospec=True)
-    def test_ceph_osd_list(self, librados_monApi_mock, monApi_mock, connect_mock, rados):
-        rados.__getitem__ = mock.MagicMock(return_value=ceph.models.librados.Client())
+    def test_ceph_osd_list(self, librados_monApi_mock, osd_tree_mock, call_librados_mock):
         with open_testdata("tests/ceph-osd-dump.json") as f:
             osd_dump = json.load(f)
-            monApi_mock.return_value.osd_dump.return_value = osd_dump
             librados_monApi_mock.return_value.osd_dump.return_value = osd_dump
         with open_testdata("tests/ceph-osd-tree.json") as f:
             osd_tree = json.load(f)
-            monApi_mock.return_value.osd_tree.return_value = osd_tree
             librados_monApi_mock.return_value.osd_tree.return_value = osd_tree
+            osd_tree_mock.return_value = osd_tree
         with open_testdata("tests/ceph-osd-metadata.json") as f:
             osd_metadata = json.load(f)
-            monApi_mock.return_value.osd_metadata.return_value = osd_metadata
             librados_monApi_mock.return_value.osd_metadata.return_value = osd_metadata
-        monApi_mock.return_value.pg_dump.return_value = {
+        librados_monApi_mock.return_value.pg_dump.return_value = {
             'osd_stats': [{'osd': i} for i in range(15) if i != 3 and i != 10]
         }
 

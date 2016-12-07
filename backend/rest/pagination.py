@@ -13,16 +13,16 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from utilities import is_executable_installed
+from rest_framework.pagination import PageNumberPagination
 
-if not is_executable_installed('ceph'):
-    print(
-        'ERROR:ceph:Ceph executable couldn\'t be found. ' +
-        'The `ceph` package provided by your distribution is probably not installed.')
-    raise ImportError()
+from rest.utilities import drf_version
 
-try:
-    import rados
-except ImportError:
-    print('ERROR:ceph:`rados` library couldn\'t be found.')
-    raise
+assert drf_version() >= (3, 0)
+
+
+class PageSizePageNumberPagination(PageNumberPagination):
+    """
+    This class must be declared in a module without any reference to any Views, otherwise
+    you get a circular import.
+    """
+    page_size_query_param = "pageSize"
