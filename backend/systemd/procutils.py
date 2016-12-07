@@ -36,32 +36,31 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
 
         Parameters:
 
-        * close_fds=True       -- If False, file descriptors will not be closed for the child process.
+        * close_fds=True       -- If False, file descriptors will not be closed for the child
+                                  process.
         * return_out_err=False -- If True, stdout and stderr of the child will be returned.
         * log=True             -- If False, the command's execution will not be logged.
         * stdin=None           -- Any string given will be sent to the child's stdin.
         * fail_on_err=True     -- If the child's exit code is not zero, raise SystemError.
 
-        Returns the exit code if return_out_err is False, and a tuple of (exit code, stdout, stderr) otherwise.
+        Returns the exit code if return_out_err is False, and a tuple of (exit code, stdout, stderr)
+        otherwise.
     """
     starttime = datetime.now()
 
     procenv = os.environ.copy()
     procenv["LANG"] = procenv["LANGUAGE"] = procenv["LC_ALL"] = "C"
 
-    proc = subprocess.Popen( [arg.encode("UTF-8") if isinstance(arg, unicode) else arg for arg in args],
-        stdin  = (None if stdin is None else subprocess.PIPE),
-        stdout = subprocess.PIPE,
-        stderr = subprocess.PIPE,
-        close_fds = close_fds,
-        env = procenv
-        )
+    proc = subprocess.Popen(
+        [arg.encode("UTF-8") if isinstance(arg, unicode) else arg for arg in args],
+        stdin=(None if stdin is None else subprocess.PIPE), stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, close_fds=close_fds, env=procenv)
 
     procout = ""
     procerr = ""
 
     cmdline = ' '.join(['"' + arg + '"' for arg in args])
-    out = [ "> " + cmdline ]
+    out = ["> " + cmdline]
 
     if stdin is not None:
         try:
@@ -78,11 +77,11 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
             if proc.stdout in rdy_read:
                 data = proc.stdout.read().decode("UTF-8")
                 procout += data
-                out.extend([ "O " + line for line in data.split("\n") if line ])
+                out.extend(["O " + line for line in data.split("\n") if line])
             if proc.stderr in rdy_read:
                 data = proc.stderr.read().decode("UTF-8")
                 procerr += data
-                out.extend([ "E " + line for line in data.split("\n") if line ])
+                out.extend(["E " + line for line in data.split("\n") if line])
             if proc.poll() is not None:
                 if process_alive:
                     proc.wait()
@@ -101,14 +100,11 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     proc.stderr.close()
 
     if log or proc.returncode != 0:
-        logent = LogEntry(
-            host = Host.objects.get_current(),
-            user = pwd.getpwuid(os.getuid()).pw_name,
-            starttime = starttime,
-            command = args[0][:250] )
-        logent.endtime  = datetime.now()
+        logent = LogEntry(host=Host.objects.get_current(), user=pwd.getpwuid(os.getuid()).pw_name,
+                          starttime=starttime, command=args[0][:250])
+        logent.endtime = datetime.now()
         logent.exitcode = proc.returncode
-        logent.text     = '\n'.join(out)
+        logent.text = '\n'.join(out)
         logent.save()
 
         if proc.returncode == 0:
@@ -151,5 +147,5 @@ def service_command(service, command="reload"):
         invoke([initscript, command])
         return
 
-    raise SystemError("service_command(%s): don't know how (no systemd, no /usr/sbin/service installed, no init script found)" % service)
-
+    raise SystemError("service_command(%s): don't know how (no systemd, no /usr/sbin/service "
+                      "installed, no init script found)" % service)
