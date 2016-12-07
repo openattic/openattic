@@ -141,7 +141,7 @@ def service_command(service, command="reload"):
             invoke(['systemctl', command, service])
             return
 
-    if os.path.exists("/usr/sbin/service"):
+    if is_executable_installed('service'):
         logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))
         invoke(["/usr/sbin/service", service, command])
         return
