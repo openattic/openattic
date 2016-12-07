@@ -16,7 +16,6 @@
 
 import os
 import pwd
-import dbus
 import errno
 import os.path
 import logging
