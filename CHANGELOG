@@ -4,11 +4,14 @@ openATTIC Changelog
 Version 2.0.17 (not released yet):
 ----------------------------------
 
+* Backend: Infinite hanging librados calls are avoided by separated Apache
+  processes with timeouts (OP-1340)
 * Backend: Fixed creation of NFS and Samba shares on Ubuntu Xenial
   (OP-1697)
 * Backend: Fixed XML-RPCD on Ubuntu Xenial (OP-1698)
 * Backend: Fixed creation of volume snapshots on Xenial (OP-1699)
 * Backend: Fixed btrfs not being available when adding a new volume (OP-1726)
+* Backend: Fixed pagination on Xenial (OP-1727)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
@@ -27,6 +30,7 @@ Version 2.0.17 (not released yet):
   This change applies to RPM packages only. (OP-1438)
 * Installation: Improved error message for problems with database.ini (OP-1739)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
+* Development: Fix storage controller issue with the Vagrant Debian box.
 
 
 Version 2.0.16, 07. November 2016:
