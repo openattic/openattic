@@ -129,12 +129,11 @@ def service_command(service, command="reload"):
     if command not in ("start", "stop", "reload", "restart"):
         raise ValueError("invalid command %s" % command)
 
-    if settings.USE_SYSTEMD_IF_AVAIL:
-        if is_executable_installed('systemctl'):
-            logging.info('service_command({}): invoking `systemctl {} {}`'.format(service, command,
-                                                                                  service))
-            invoke(['systemctl', command, service])
-            return
+    if is_executable_installed('systemctl'):
+        logging.info('service_command({}): invoking `systemctl {} {}`'.format(service, command,
+                                                                              service))
+        invoke(['systemctl', command, service])
+        return
 
     if is_executable_installed('service'):
         logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))

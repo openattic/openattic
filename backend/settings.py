@@ -122,9 +122,6 @@ CACHES = {
 # Logging commands like lvcreate/lvresize/lvremove won't be affected by this.
 LVM_LOG_COMMANDS = False
 
-# If available, try to use Systemd to restart daemons.
-USE_SYSTEMD_IF_AVAIL = True
-
 # Auto-Configure distro defaults
 try:
     import platform
@@ -145,9 +142,6 @@ else:
         LVM_HAVE_YES_OPTION = True
     elif distro == "Ubuntu":
         SAMBA_SERVICE_NAME = "smbd"
-        USE_SYSTEMD_IF_AVAIL = False
-    elif distro == "debian":
-        USE_SYSTEMD_IF_AVAIL = False
 
 
 if exists('/var/run/rrdcached.sock'):
