@@ -130,7 +130,7 @@ case $1 in
 		fi
 
 		# Check if the connection can be established with the database user and password.
-		# Set a new password if the connetion cannot be established.
+		# Set a new password if the connection cannot be established.
 		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $pgsql_ini)
 		if ! PGPASSWORD=$password psql openattic openattic -h localhost --no-password -c "\q" ; then
 			pass=$(openssl rand -hex 10)
