@@ -18,6 +18,10 @@ Vagrant.configure(2) do |config|
     # boxes at https://atlas.hashicorp.com/search.
     if ENV['DISTRO'] == 'debian'
         config.vm.box = 'debian/jessie64' # should work, too!
+        # Rename the storage controller.
+        config.vm.provider :virtualbox do |vb|
+            vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--rename', 'SATA']
+        end
     elsif ENV['DISTRO'] == 'xenial'
         config.vm.box = 'yk0/ubuntu-xenial'
     elsif ENV['DISTRO'] == 'trusty'
@@ -114,7 +118,7 @@ Vagrant.configure(2) do |config|
                 vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
             end
             # comment this out after provision -> find solution for this
-            vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', i + 1,
+            vb.customize ['storageattach', :id, '--storagectl', 'SATA', '--port', i + 1,
                           '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
         end
     end
@@ -125,7 +129,7 @@ Vagrant.configure(2) do |config|
     end
 
     config.vm.provision :shell, :path => 'install.sh'
-    
+
     if Vagrant.has_plugin?('vagrant-cachier') and ENV['DISTRO'] != 'xenial'
         # Configure cached packages to be shared between instances of the same base box.
         # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
