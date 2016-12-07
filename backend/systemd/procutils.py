@@ -146,5 +146,5 @@ def service_command(service, command="reload"):
         invoke([initscript, command])
         return
 
-    raise SystemError("service_command(%s): don't know how (no systemd, no /usr/sbin/service "
-                      "installed, no init script found)" % service)
+    raise SystemError("service_command(%s): don't know how (no systemd, no service installed, no "
+                      "init script found)" % service)
