@@ -138,7 +138,7 @@ def service_command(service, command="reload"):
 
     if is_executable_installed('service'):
         logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))
-        invoke(["/usr/sbin/service", service, command])
+        invoke(['service', service, command])
         return
 
     initscript = os.path.join("/etc/init.d", service)
