@@ -74,7 +74,7 @@ app.directive("oaClipboard", function (toasty) {
         // Display a toasty/message.
         // Note, the scope is not updated automatically because we are inside
         // a click event, so we need to do this ourself.
-        scope.$digest(function () {
+        scope.$apply(function () {
           toasty(toastyOptions.msg, toastyOptions.type);
         });
       });
