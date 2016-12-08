@@ -60,8 +60,8 @@ app.directive("oaClipboard", function (toasty) {
           // Set success message.
           toastyOptions = {
             type: "success",
-            msg: "Successfully copied the " + attrs.oaClipboardText +
-              " to the clipboard."
+            msg: "Copied " + attrs.oaClipboardText +
+              " to the clipboard successfully."
           };
         } catch (err) {
           // Set error message.
@@ -74,7 +74,7 @@ app.directive("oaClipboard", function (toasty) {
         // Display a toasty/message.
         // Note, the scope is not updated automatically because we are inside
         // a click event, so we need to do this ourself.
-        scope.$apply(function () {
+        scope.$digest(function () {
           toasty(toastyOptions.msg, toastyOptions.type);
         });
       });
