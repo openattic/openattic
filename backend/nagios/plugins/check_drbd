@@ -17,6 +17,7 @@
 
 import os
 import sys
+import django
 
 from optparse import OptionParser
 from configobj import ConfigObj
@@ -30,6 +31,10 @@ for filename in distro_config:
 sys.path.append(config['OADIR'])
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from nagios.conf.distro import distro_settings
+
+# Init Django
+if django.VERSION[:2] >= (1, 7):
+    django.setup()
 
 from drbd.rpcapi import DrbdConnectionProxy
 

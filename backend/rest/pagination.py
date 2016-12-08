@@ -13,12 +13,16 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from utilities import is_executable_installed
+from rest_framework.pagination import PageNumberPagination
 
-try:
-    import ceph
-except ImportError:
-    raise ImportError('Cannot import app "ceph", disabling app "ceph_deployment"')
+from rest.utilities import drf_version
 
-if not is_executable_installed('salt'):
-    raise ImportError('"salt" executable not found, disabling app "ceph_deployment"')
+assert drf_version() >= (3, 0)
+
+
+class PageSizePageNumberPagination(PageNumberPagination):
+    """
+    This class must be declared in a module without any reference to any Views, otherwise
+    you get a circular import.
+    """
+    page_size_query_param = "pageSize"
