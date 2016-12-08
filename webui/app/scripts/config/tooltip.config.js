@@ -34,7 +34,6 @@ var app = angular.module("openattic");
 app.config(["$uibTooltipProvider", function ($uibTooltipProvider) {
   $uibTooltipProvider.options({
     "placement": "right",
-    "trigger": "none",
     "appendToBody": true
   });
 }]);
