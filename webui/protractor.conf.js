@@ -60,7 +60,7 @@ var allSuites = {
   fs_wiz_ext_cifs      : '../e2e/base/wizards/file/fileStorage_ext_cifs.e2e.js',
   blockStorage         : '../e2e/base/wizards/block/blockStorage.e2e.js',
   vmStorage_xfs_nfs    : '../e2e/base/wizards/vm/vmStorage_xfs_nfs.e2e.js',
-  task_queue_form      : '../e2e/base/taskqueue/task_queue_form.e2e.js',
+  task_queue           : '../e2e/base/taskqueue/task_queue.e2e.js',
   // ceph suites - They only run if a ceph pool is configured.
   ceph_pools           : '../e2e/ceph/pools/ceph_pools.e2e.js',
   ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',

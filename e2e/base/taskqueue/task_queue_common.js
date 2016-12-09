@@ -91,9 +91,9 @@ var taskQueueCommons = function(){
 
   this.deletionDialog = {
     text: {
-      warning: 'Be aware that you could this task is running and that this will abort the execution without rolling ' +
-        'back to a state before the execution was started. Be sure that you know what you do.',
-      multiDel: 'You are about to delete multiple tasks.'
+      warning: 'If you delete running tasks, it will abort the execution and won\'t roll back what has been done ' +
+        'so far!',
+      multiDelete: 'You are about to delete multiple tasks.'
     },
     element: {
       warning: element(by.className('tc_run_warn')),

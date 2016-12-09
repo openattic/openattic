@@ -11,7 +11,7 @@ The task will finish in the background fulfilling it's duty.
 Where can I find the running background tasks?
 ----------------------------------------------
 You can watch your current background tasks by one click on "Background-Tasks"
-at the top right, to the left of your login name. A Dialog will open and
+at the top right, to the left of your login name. A dialogue will open and
 list the current pending tasks if any.
 
 Are there different types of tasks?

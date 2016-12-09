@@ -57,7 +57,7 @@ app.directive("taskQueueDirective", function () {
        * The tooltip shows the average percent done over all running tasks.
        *
        * If toasties are needed:
-       * Toasties are created if their is a changed between the finalized tasks from the last and the current task
+       * Toasties are created if their is a change between the finalized tasks from the last and the current task
        * update.
        */
       $scope.updateTaskOverview = function () {
@@ -83,7 +83,7 @@ app.directive("taskQueueDirective", function () {
       };
 
       /**
-       * Toasties are created if their is a changed between the finalized tasks from the last and the current task
+       * Toasties are created if their is a change between the finalized tasks from the last and the current task
        * update.
        */
       $scope.createNeededToasties = function (allTasks) {
@@ -95,16 +95,20 @@ app.directive("taskQueueDirective", function () {
               if (moved.indexOf(task.id) !== -1) {
                 var toast = {
                   title: task.status + ": " + task.description,
-                  msg: task.description + " has been " + task.status.toLowerCase() + "."
+                  msg: task.description
                 };
                 if (task.status === "Finished") {
                   toast.timeout = 3000;
+                  toast.msg += " has finished.";
                   toasty.success(toast);
                 } else if (task.status === "Aborted") {
                   toast.timeout = 6000;
+                  toast.msg += " was aborted.";
                   toasty.warning(toast);
                 } else if (task.status === "Exception") {
                   toast.timeout = 10000;
+                  toast.title = "Error: " + task.description;
+                  toast.msg += " has failed.";
                   toasty.error(toast);
                 }
               }
