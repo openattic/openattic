@@ -100,8 +100,8 @@ case $1 in
 		fi
 
 		pgsql_ini="/etc/openattic/databases/pgsql.ini"
-		# Check if the database role 'openattic' exists and creates it if it doesn't exist.
-		if ! sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='openattic'" | grep -q 1 ; then
+		# Check if the database role 'openattic' exists and create it if it doesn't exist.
+		if ! su - postgres -c "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='openattic'\"" | grep -q 1 ; then
 			echo "Creating database role \"openattic\""
 			pass=$(openssl rand -hex 10)
 			sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $pgsql_ini
@@ -114,7 +114,7 @@ case $1 in
 			echo "User 'openattic' created"
 		fi
 
-		# Check if database 'openattic' exists and creates it if it doesn't.
+		# Check if database 'openattic' exists and create it if it doesn't.
 		dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
 		if [ -n "$dbu" ]; then
 			echo "Database openattic exists, owned by $dbu"
