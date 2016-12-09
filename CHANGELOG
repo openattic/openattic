@@ -32,6 +32,7 @@ Version 2.0.17 (not released yet):
 * Installation: New database instances are created using a random password.
   This change applies to RPM packages only. (OP-1438)
 * Installation: Improved error message for problems with database.ini (OP-1739)
+* Installation: Fix a bug with recreation of the database (OP-1757)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 * Development: Fix storage controller issue with the Vagrant Debian box.
 
