@@ -42,8 +42,8 @@ usage () {
 	echo
 	echo "    install      Run this command after you installed new openATTIC modules."
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
-	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
-	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
+	echo "    add-vg       Has been removed. Please use 'oaconfig install'."
+	echo "    add-disk     Has been removed. Please use the LVM command line tool and 'oaconfig install'."
 	echo "    domainjoin   Join a Windows Active Directory Domain."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
@@ -195,50 +195,11 @@ EOF
 		;;
 
 	add-vg)
-		if [ "$#" != "2" ]; then
-			echo "Usage: $0 $1 <vgname>" >&2
-			exit 1
-		fi
-		if [ ! -f "/etc/openattic/cli.conf" ]; then
-			echo "This command requires oacli to be configured (run $0 install-cli)."
-			exit 1
-		fi
-		HOSTID=`oacli 'ifconfig.Host.current' | grep '^id' | cut -d\' -f2`
-
-		# Check if VG actually exists
-		vgs "$2" > /dev/null || exit 1
-		eval $(LANG=C vgs --units M -o vg_size,vg_uuid,vg_tags --noheadings --nameprefixes --nosuffix "$2")
-		for tag in $(echo "$LVM2_VG_TAGS"|sed s/,/\\n/g)
-		do
-			if [ $tag == "sys" ]; then
-				echo "Volume Group $2 is tagged as sys, aborting."
-				exit 1
-			fi
-		done
-		ROUNDEDMEGS=`awk '{printf "%.0f\n", $1}' <<< $LVM2_VG_SIZE`
-		STOROBJID=`oacli volumes.StorageObject.create 'json:{"name": "'$2'", "megs": "'$ROUNDEDMEGS'", "uuid": "'$LVM2_VG_UUID'", "is_origin": true }' | grep '^id' | cut -d\' -f2`
-		oacli lvm.VolumeGroup.create 'json:{"storageobj": {"app": "volumes", "obj": "StorageObject", "id": '$STOROBJID'}, "host": {"app":"ifconfig", "obj":"Host", "id":'$HOSTID'} }'
+		echo "'add-vg' has been removed from oaconfig. Please use 'oaconfig install' instead."
 		;;
 
 	add-disk)
-		if [ "$#" != "3" ]; then
-			echo "Usage: $0 $1 <disk> <vgname>" >&2
-			exit 1
-		fi
-		if [ ! -f "/etc/openattic/cli.conf" ]; then
-			echo "This command requires oacli to be configured (run $0 install-cli)."
-			exit 1
-		fi
-		DISK=$2
-		VG=$3
-		pvcreate $DISK
-		VGINFO=$( oacli lvm.VolumeGroup.filter "json:{\"storageobj__name\": \"$VG\"}" )
-		if [ -z "$VGINFO" ]; then
-			vgcreate $VG $DISK
-			$0 add-vg $VG
-		else
-			vgextend $VG $DISK
-		fi
+		echo "'add-disk' has been removed from oaconfig. Please use the LVM command line tool instead. Don't forget to run 'oaconfig install' afterwards."
 		;;
 
 	reload)
@@ -276,11 +237,6 @@ EOF
 		
 		if [ ! -e "$OADIR"/installed_apps.d/*samba ]; then
 			echo "The Samba module must be enabled for this to work."
-			exit 2
-		fi
-		
-		if [ ! -f "/etc/openattic/cli.conf" ]; then
-			echo "This command requires oacli to be configured (run $0 install-cli)."
 			exit 2
 		fi
 		
@@ -406,9 +362,6 @@ EOF
 		sed -i -e 's/^group:.*$/group:          compat winbind/' /etc/nsswitch.conf
 		
 		echo "Restarting Samba and Winbind..."
-		while ! oacli ping ; do
-			sleep 1
-		done
 		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:" "string:"
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart
