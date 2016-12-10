@@ -61,7 +61,7 @@ app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
         })
         .catch(function (error) {
           $scope.error = error;
-          throw error
+          throw error;
         });
   };
 

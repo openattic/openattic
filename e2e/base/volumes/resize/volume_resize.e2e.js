@@ -46,7 +46,7 @@ describe('Volumes resize', function(){
     browser.sleep(helpers.configs.sleep);
 
     var volume = element(by.cssContainingText('tr', volumename));
-    expect(volume.element(by.binding('row.usage.size_text')).getText()).toEqual('250.00MB');
+    expect(volume.element(by.binding('row.usage.size')).getText()).toEqual('250.00 MiB');
   });
 
   it('should not allow to shrink the volume', function(){

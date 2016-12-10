@@ -245,7 +245,7 @@ var rbdCommons = function(){
   };
 
   this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
-    rbdObjSize = rbdObjSize || "4.00 MB";
+    rbdObjSize = rbdObjSize || "4.00 MiB";
     self.name.clear();
     self.name.sendKeys(rbdName);
     self.size.clear();
