@@ -250,7 +250,6 @@ EOF
 service dbus reload
 
 npm install -g bower
-npm install grunt
 npm install -g grunt-cli
 
 
