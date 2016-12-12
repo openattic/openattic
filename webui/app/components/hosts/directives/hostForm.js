@@ -58,6 +58,7 @@ app.directive("hostForm", function () {
       $scope.wwn = {
         iscsi: {
           current: {},
+          usage: ["iqn", "eui", "naa"],
           valid: true,
           label: "iSCSI IQN",
           desc: "Use iSCSI for sharing",
@@ -65,6 +66,7 @@ app.directive("hostForm", function () {
         },
         qla2xxx: {
           current: {},
+          usage: ["mac", "eui", "naa"],
           valid: true,
           label: "FC WWN",
           desc: "Use Fibre Channel for sharing",
@@ -261,33 +263,55 @@ app.directive("hostForm", function () {
         return $scope.wwn[type].valid;
       };
 
+      /**
+       * Validates the WWN that was typed.
+       * @param {object} tag
+       * @param {string} type
+       * @return {string|object} error code or tag object
+       */
       $scope.validWwn = function (tag, type) {
         var wwn = tag.text;
-        if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
-          if (wwn.match(/^[a-fA-F0-9:]*$/)) {
-            wwn = wwn.replace(/:/g, "");
-            if (wwn.length === 16) {
-              tag.text = wwn.match(/.{2}/g).join(":");
-              return tag;
-            }
+        var usage = $scope.wwn[type].usage;
+        for (var share in usage) {
+          switch (usage[share]) {
+            case "mac":
+              if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
+                if (wwn.match(/^[a-fA-F0-9:]*$/)) {
+                  wwn = wwn.replace(/:/g, "");
+                  if (wwn.length === 16) {
+                    tag.text = wwn.match(/.{2}/g).join(":");
+                    return tag;
+                  }
+                }
+                return "mac";
+              }
+              break;
+            case "iqn":
+              if (wwn.indexOf("iqn") === 0) {
+                if (wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/)) {
+                  return tag;
+                }
+                return "iqn";
+              }
+              break;
+            case "eui":
+              if (wwn.indexOf("eui") === 0) {
+                if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
+                  return tag;
+                }
+                return "eui";
+              }
+              break;
+            case "naa":
+              if (wwn.indexOf("naa") === 0) {
+                var ident = wwn.substr(4);
+                if (wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
+                  return tag;
+                }
+                return "naa";
+              }
+              break;
           }
-          return "mac";
-        } else if (wwn.indexOf("iqn") === 0 && type === "iscsi") {
-          if (wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/)) {
-            return tag;
-          }
-          return "iqn";
-        } else if (wwn.indexOf("eui") === 0) {
-          if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
-            return tag;
-          }
-          return "eui";
-        } else if (wwn.indexOf("naa") === 0) {
-          var ident = wwn.substr(4);
-          if (wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
-            return tag;
-          }
-          return "naa";
         }
         return "all";
       };
@@ -316,6 +340,25 @@ app.directive("hostForm", function () {
           tag: tag,
           type: "delete"
         });
+      };
+
+      /**
+       * Returns the right help text to the template.
+       * @param {string} format of the WWN
+       * @param {bool} example if true it will return a comprehensive help text
+       * @return {string} to bind as html
+       */
+      $scope.getHelpText = function (format, example) {
+        if (typeof format !== "string" || format === "all") {
+          return;
+        }
+        var validation = $scope.validationText.format[format];
+        if (!example) {
+          return "<br>" + format.toUpperCase() + ": " + validation.notation;
+        } else {
+          return validation.desc + "<br>" + "For example: " + validation.example + "<br><a target=\"_blank\" href=\"" +
+            validation.link + "\">More information</a>";
+        }
       };
 
       $scope.goBack = function () {
