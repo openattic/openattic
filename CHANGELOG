@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.17 (not released yet):
 ----------------------------------
 
+* Backend: RPC API dependencies removed in oaconfig (OP-1255)
 * Backend: Infinite hanging librados calls are avoided by separated Apache
   processes with timeouts (OP-1340)
 * Backend: Fixed creation of NFS and Samba shares on Ubuntu Xenial
@@ -14,10 +15,13 @@ Version 2.0.17 (not released yet):
 * Backend: Fixed pagination on Xenial (OP-1727)
 * Backend: Fix Nagios scripts to get the volume usage statistics working
   again (OP-1403)
+* Backend: Fixed compatibility issues in our Ceph module on Xenial (OP-1763)
+* Backend: Fixed calls to systemd (not oA systemd) (OP-1769)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
   OADIR variable. Thanks to Ricardo Marques. (PR#522)
+* WebUI: Display and generate a user's API auth token. (OP-815)
 * WebUI: Render the Disks/Pools/Volumes indication of size in the
   frontend (OP-1115)
 * WebUI: Display alternative graph image if loading fails (OP-1403)
@@ -35,6 +39,8 @@ Version 2.0.17 (not released yet):
 * Installation: Fix a bug with recreation of the database (OP-1757)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 * Development: Fix storage controller issue with the Vagrant Debian box.
+* Development: Fix patch file which is customizing settings in a Vagrant VM.
+* Development: Fix vagrant-cachier issues. (OP-1466)
 
 
 Version 2.0.16, 07. November 2016:

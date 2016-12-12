@@ -24,7 +24,8 @@ from ceph.models import *
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 
-from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params
+from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params, \
+    drf_version
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -128,12 +129,25 @@ class CephPoolSerializer(NodbSerializer):
     min_size = serializers.IntegerField(default=None, required=False)
     crash_replay_interval = serializers.IntegerField(default=0)
     cache_mode = serializers.CharField(default='none')
-    tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False,
-                                                 queryset=CephPool.objects.all())
-    write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
-                                                    queryset=CephPool.objects.all())
-    read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
-                                                   queryset=CephPool.objects.all())
+    if drf_version() >= (3, 0):
+        # DRF 3 requires `allow_null=True` and DRF 2 cannot cope with `allow_null`
+        tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                     allow_null=True,
+                                                     queryset=CephPool.objects.all())
+        write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                        allow_null=True,
+                                                        queryset=CephPool.objects.all())
+        read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                       allow_null=True,
+                                                       queryset=CephPool.objects.all())
+    else:
+        tier_of = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                     queryset=CephPool.objects.all())
+        write_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                        queryset=CephPool.objects.all())
+        read_tier = serializers.PrimaryKeyRelatedField(default=None, required=False,
+                                                       queryset=CephPool.objects.all())
+
     target_max_bytes = serializers.IntegerField(default=0)
     hit_set_period = serializers.IntegerField(default=0)
     hit_set_count = serializers.IntegerField(default=0)
