@@ -14,6 +14,7 @@ Version 2.0.17 (not released yet):
 * Backend: Fixed pagination on Xenial (OP-1727)
 * Backend: Fix Nagios scripts to get the volume usage statistics working
   again (OP-1403)
+* Backend: Fixed compatibility issues in our Ceph module on Xenial (OP-1763)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
