@@ -51,4 +51,5 @@ angular.module("openattic.extensions", [
   "openattic.todowidget",
   "openattic.taskQueue",
   "openattic.userinfo"
+  "openattic.users"
 ]);

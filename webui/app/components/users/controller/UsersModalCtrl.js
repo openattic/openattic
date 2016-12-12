@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,46 +30,21 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephHosts");
-app.controller("CephHostsCtrl", function ($scope, cephHostsService) {
-  $scope.data = {};
+var app = angular.module("openattic.users");
+app.controller("UsersModalCtrl", function ($scope, UserService, $uibModalInstance, user) {
+  $scope.user = user;
 
-  $scope.filterConfig = {
-    page: 0,
-    entries: null,
-    search: "",
-    sortfield: null,
-    sortorder: null
-  };
-
-  $scope.selection = {};
-
-  $scope.error = false;
-
-  $scope.getHosts = function () {
-    $scope.error = false;
-
-    cephHostsService.filter({
-          page: $scope.filterConfig.page + 1,
-          pageSize: $scope.filterConfig.entries,
-          search: $scope.filterConfig.search,
-          ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
-        })
+  $scope.generateAuthToken = function () {
+    UserService.generateAuthToken({id: $scope.user.id})
         .$promise
         .then(function (res) {
-          $scope.data = res;
-        })
-        .catch(function (error) {
-          $scope.error = error;
-          throw error;
+          $uibModalInstance.close(res.auth_token.token);
+        }, function (error) {
+          console.log("An error occured", error);
         });
   };
 
-  // Watcher
-  $scope.$watch("filterConfig", function (newVal) {
-    if (newVal.entries === null) {
-      return;
-    }
-    $scope.getHosts();
-  }, true);
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  };
 });

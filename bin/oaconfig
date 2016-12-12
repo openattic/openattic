@@ -93,6 +93,57 @@ case $1 in
 				exit 2
 			fi
 		fi
+
+		if ! service postgresql status >/dev/null; then
+			# Start database
+			service postgresql start
+		fi
+
+		pgsql_ini="/etc/openattic/databases/pgsql.ini"
+		# Check if the database role 'openattic' exists and create it if it doesn't exist.
+		if ! su - postgres -c "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='openattic'\"" | grep -q 1 ; then
+			echo "Creating database role \"openattic\""
+			pass=$(openssl rand -hex 10)
+			sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $pgsql_ini
+			if [ $? -ne 0 ]; then
+				echo "Failed to update $pgsql_ini"
+				exit 2
+			fi
+
+			su - postgres -c "psql -c \"CREATE USER openattic WITH PASSWORD '$pass'\""
+			echo "User 'openattic' created"
+		fi
+
+		# Check if database 'openattic' exists and create it if it doesn't.
+		dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
+		if [ -n "$dbu" ]; then
+			echo "Database openattic exists, owned by $dbu"
+		else
+			su - postgres -c "psql -c \"CREATE DATABASE openattic WITH OWNER openattic\""
+
+			hba_conf="/var/lib/pgsql/data/pg_hba.conf"
+			if [ -e ${hba_conf} ] ; then
+				sed -i -e 's/ident$/md5/g' ${hba_conf}
+			fi
+			service postgresql reload
+			service postgresql status
+		fi
+
+		# Check if the connection can be established with the database user and password.
+		# Set a new password if the connection cannot be established.
+		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $pgsql_ini)
+		# We have to have an 'openattic' database already at this point.
+		if ! PGPASSWORD=$password psql openattic openattic -h localhost --no-password -c "\q" ; then
+			pass=$(openssl rand -hex 10)
+			sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $pgsql_ini
+			if [ $? -ne 0 ]; then
+				echo "Failed to update $pgsql_ini"
+				exit 2
+			fi
+
+			su - postgres -c "psql -c \"ALTER USER openattic WITH PASSWORD '$pass'\""
+			echo "Password of database user openattic and database.ini updated"
+		fi
 		
 		su "$OAUSER" -c 'python manage.py pre_install'
 		

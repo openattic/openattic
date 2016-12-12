@@ -14,16 +14,24 @@ Vagrant.configure(2) do |config|
     # For a complete reference, please see the online documentation at
     # https://docs.vagrantup.com.
 
+    # Most boxes are using the following SATA controller name. Please
+    # override this if a box uses any other name.
+    sata_controller_name = "SATA"
+
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://atlas.hashicorp.com/search.
     if ENV['DISTRO'] == 'debian'
         config.vm.box = 'debian/jessie64' # should work, too!
+        # Rename the storage controller.
+        sata_controller_name = 'SATA Controller'
     elsif ENV['DISTRO'] == 'xenial'
         config.vm.box = 'yk0/ubuntu-xenial'
     elsif ENV['DISTRO'] == 'trusty'
         config.vm.box = 'alxgrh/ubuntu-trusty-x86_64'
     else
         config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
+        # Rename the storage controller.
+        sata_controller_name = 'SATA Controller'
     end
 
     config.vm.provider :libvirt do |lv|
@@ -112,10 +120,9 @@ Vagrant.configure(2) do |config|
             file_to_disk = "./disks/box-disk#{i}.vmdk"
             unless File.exist?(file_to_disk)
                 vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
+                vb.customize ['storageattach', :id, '--storagectl', sata_controller_name, '--port', i + 1,
+                    '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
             end
-            # comment this out after provision -> find solution for this
-            vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', i + 1,
-                          '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
         end
     end
 
@@ -125,7 +132,7 @@ Vagrant.configure(2) do |config|
     end
 
     config.vm.provision :shell, :path => 'install.sh'
-    
+
     if Vagrant.has_plugin?('vagrant-cachier') and ENV['DISTRO'] != 'xenial'
         # Configure cached packages to be shared between instances of the same base box.
         # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
@@ -144,8 +151,4 @@ Vagrant.configure(2) do |config|
         }
         # For more information please check http://docs.vagrantup.com/v2/synced-folders/basic_usage.html
     end
-    # config.cache.enable :pip
-    config.cache.enable :zypper
-    config.cache.enable :npm
-    config.cache.enable :bower
 end

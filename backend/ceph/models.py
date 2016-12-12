@@ -28,12 +28,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.http import Http404
 from django.utils.translation import ugettext_noop as _
 from django.shortcuts import get_object_or_404
 
 from ceph import librados
-from ceph.librados import MonApi, undo_transaction, RbdApi, Keyring
+from ceph.librados import MonApi, undo_transaction, RbdApi, Keyring, call_librados
 import ceph.tasks
 from exception import NotSupportedError
 from ifconfig.models import Host
@@ -47,53 +46,25 @@ from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVol
 logger = logging.getLogger(__name__)
 
 
-class RadosClientManager(object):
-
-    instances = {}
-
-    def __getitem__(self, fsid):
-        """
-        :type fsid: str | unicode
-        :rtype: librados.Client
-        """
-        if fsid not in self.instances:
-            cluster_name = CephCluster.get_name(fsid)
-            self.instances[fsid] = librados.Client(cluster_name)
-
-        return self.instances[fsid]
-
-
-rados = RadosClientManager()
-
-
 class RadosMixin:
 
     @staticmethod
-    def rados_client_or_404(fsid=None):
+    def mon_api(fsid=None):
         """
         :type fsid: str | unicode
-        :rtype: librados.Client
         """
         if fsid is None:
             fsid = NodbManager.nodb_context.fsid
-        try:
-            return rados[fsid]
-        except LookupError:
-            raise Http404('Unknwown Ceph cluster: {}'.format(fsid))
+        return MonApi(fsid)
 
     @staticmethod
-    def mon_api_or_404(fsid=None):
+    def rbd_api(fsid=None):
         """
         :type fsid: str | unicode
         """
-        return MonApi(RadosMixin.rados_client_or_404(fsid))
-
-    @staticmethod
-    def rbd_api_or_404(fsid=None):
-        """
-        :type fsid: str | unicode
-        """
-        return RbdApi(RadosMixin.rados_client_or_404(fsid))
+        if fsid is None:
+            fsid = NodbManager.nodb_context.fsid
+        return RbdApi(fsid)
 
 
 class CephCluster(NodbModel, RadosMixin):
@@ -171,7 +142,7 @@ class CephCluster(NodbModel, RadosMixin):
 
     @property
     def status(self):
-        return self.mon_api_or_404(self.fsid).status()
+        return self.mon_api(self.fsid).status()
 
     @staticmethod
     def get_all_objects(context, query):
@@ -185,7 +156,7 @@ class CephCluster(NodbModel, RadosMixin):
 
     @bulk_attribute_setter(['health'])
     def set_cluster_health(self, objects, field_names):
-        self.health = self.mon_api_or_404(self.fsid).health()['overall_status']
+        self.health = self.mon_api(self.fsid).health()['overall_status']
 
     @bulk_attribute_setter(['performance_data_options'])
     def set_performance_data_options(self, objects, field_names):
@@ -241,13 +212,6 @@ class CephCluster(NodbModel, RadosMixin):
         rrd = RRD.get_rrd(curr_host, "Check_CephCluster_{}".format(fsid))
         graph = Graph.get_graph(rrd, filter)
         return Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
-
-    @property
-    def rados_client(self):
-        """
-        :rtype: librados.Client
-        """
-        return rados[self.fsid]
 
     def __str__(self):
         return self.name
@@ -321,26 +285,23 @@ class CephPool(NodbModel, RadosMixin):
         """:type context: ceph.restapi.FsidContext"""
         assert context is not None
         result = []
-        cluster = context.cluster
-        fsid = cluster.fsid
+        fsid = context.cluster.fsid
 
-        osd_dump_data = RadosMixin.mon_api_or_404(fsid).osd_dump()
+        osd_dump_data = RadosMixin.mon_api(fsid).osd_dump()
 
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
 
-
             object_data = {
                 'id': pool_id,
-                'cluster': cluster,
+                'cluster_id': fsid,
                 'name': pool_data['pool_name'],
                 'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],  # type is an
                                                                              # undocumented dump of
                 # https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
-                'erasure_code_profile':
-                    (CephErasureCodeProfile(name=pool_data['erasure_code_profile'])
-                     if pool_data['erasure_code_profile'] else None),
+                'erasure_code_profile_id':
+                    (pool_data['erasure_code_profile'] if pool_data['erasure_code_profile'] else None),
                 'last_change': pool_data['last_change'],
                 'full': 'full' in pool_data['flags_names'],
                 'min_size': pool_data['min_size'],
@@ -355,11 +316,9 @@ class CephPool(NodbModel, RadosMixin):
                 'quota_max_objects': pool_data['quota_max_objects'],
                 # Cache tiering related
                 'cache_mode': pool_data['cache_mode'],
-                'tier_of': CephPool(id=pool_data['tier_of']) if pool_data['tier_of'] > 0 else None,
-                'write_tier': (CephPool(id=pool_data['write_tier']) if pool_data['write_tier'] > 0
-                               else None),
-                'read_tier': (CephPool(id=pool_data['read_tier']) if pool_data['read_tier'] > 0
-                              else None),
+                'tier_of_id': pool_data['tier_of'] if pool_data['tier_of'] > 0 else None,
+                'write_tier_id': pool_data['write_tier'] if pool_data['write_tier'] > 0 else None,
+                'read_tier_id': pool_data['read_tier'] if pool_data['read_tier'] > 0 else None,
                 # Attributes for cache tiering
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
@@ -379,7 +338,7 @@ class CephPool(NodbModel, RadosMixin):
     @bulk_attribute_setter(['max_avail', 'kb_used'])
     def ceph_df(self, pools, field_names):
         fsid = self.cluster.fsid
-        df_data = self.mon_api_or_404(fsid).df()
+        df_data = self.mon_api(fsid).df()
         df_per_pool = {
             elem['id']: elem['stats']
             for elem
@@ -398,8 +357,7 @@ class CephPool(NodbModel, RadosMixin):
     @bulk_attribute_setter(['num_bytes', 'num_objects'],
                            catch_exceptions=librados.rados.ObjectNotFound)
     def set_stats(self, pools, field_names):
-        fsid = self.cluster.fsid
-        stats = self.rados_client_or_404(fsid).get_stats(self.name)
+        stats = call_librados(self.cluster.fsid, lambda client: client.get_stats(self.name))
         self.num_bytes = stats['num_bytes'] if 'num_bytes' in stats else None
         self.num_objects = stats['num_objects'] if 'num_objects' in stats else None
 
@@ -416,7 +374,7 @@ class CephPool(NodbModel, RadosMixin):
         """
         context = CephPool.objects.nodb_context
         insert = getattr(self, 'id', None) is None
-        with undo_transaction(self.mon_api_or_404(), re_raise_exception=True) as api:
+        with undo_transaction(self.mon_api(), re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
                                     self.pg_num,
@@ -482,16 +440,16 @@ class CephPool(NodbModel, RadosMixin):
             self._update_nagios_configs()
 
     def delete(self, using=None):
-        api = self.mon_api_or_404()
+        api = self.mon_api()
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
         self._update_nagios_configs()
 
     def create_snapshot(self, name):
-        api = self.mon_api_or_404()
+        api = self.mon_api()
         api.osd_pool_mksnap(self.name, name)
 
     def delete_snapshot(self, name):
-        api = self.mon_api_or_404()
+        api = self.mon_api()
         api.osd_pool_rmsnap(self.name, name)
 
     def _update_nagios_configs(self):
@@ -554,7 +512,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        api = RadosMixin.mon_api_or_404(context.fsid)
+        api = RadosMixin.mon_api(context.fsid)
         profiles = [CephErasureCodeProfile(name=profile)
                     for profile in api.osd_erasure_code_profile_ls()]
         for profile in profiles:
@@ -566,7 +524,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
                            catch_exceptions=librados.ExternalCommandError)
     def set_data(self, objects, field_names):
         context = self.get_context()
-        api = self.mon_api_or_404(context.fsid)
+        api = self.mon_api(context.fsid)
 
         model_args = CephErasureCodeProfile.make_model_args(
                 api.osd_erasure_code_profile_get(self.name),
@@ -577,7 +535,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         context = self.get_context()
-        api = self.mon_api_or_404(context.fsid)
+        api = self.mon_api(context.fsid)
 
         if not force_insert:
             raise NotImplementedError('Updating is not supported.')
@@ -594,7 +552,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
 
     def delete(self, using=None):
         context = self.get_context()
-        api = self.mon_api_or_404(context.fsid)
+        api = self.mon_api(context.fsid)
         try:
             api.osd_erasure_code_profile_rm(self.name)
         except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
@@ -611,7 +569,6 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
 
     def __unicode__(self):
         return self.name
-
 
 
 class CephOsd(NodbModel, RadosMixin):
@@ -634,8 +591,8 @@ class CephOsd(NodbModel, RadosMixin):
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        api = RadosMixin.mon_api_or_404(context.fsid)
-        osd_tree = RadosMixin.rados_client_or_404(context.fsid).list_osds()  # key=id
+        api = RadosMixin.mon_api(context.fsid)
+        osd_tree = api.osd_list() # key=id
         osd_dump_data = api.osd_dump()['osds']  # key=osd
         pg_dump_data = api.pg_dump()['osd_stats']  # key=osd
         osd_metadata = api.osd_metadata()  # key=id
@@ -659,7 +616,7 @@ class CephOsd(NodbModel, RadosMixin):
         3. Providing a RESTful API.
         """
         context = CephPool.objects.nodb_context
-        api = self.mon_api_or_404(context.fsid)
+        api = self.mon_api(context.fsid)
 
         if self.id is None:
             raise ValidationError('Creating OSDs is not supported.')
@@ -773,7 +730,7 @@ class CephPg(NodbModel, RadosMixin):
         assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = RadosMixin.rados_client_or_404(context.fsid).mon_command(cmd, argdict)
+            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict))
         except librados.ExternalCommandError, e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []
@@ -831,7 +788,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     @staticmethod
     def get_all_objects(context, query):
         assert context is not None
-        api = RadosMixin.rbd_api_or_404(context.fsid)
+        api = RadosMixin.rbd_api(context.fsid)
 
         pools = CephPool.objects.all()
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool)
@@ -840,7 +797,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
                                 old_format=api.image_old_format(pool.name, image_name),
                                 features=api.image_features(pool.name, image_name),
-                                name=image_name),
+                                name=image_name,
+                                pool_id=pool.id),
                  pool)
                 for (image_name, pool)
                 in rbd_name_pools)
@@ -887,7 +845,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         if not hasattr(self, 'features') or self.features == u'':
             self.features = None
 
-        api = self.rbd_api_or_404()
+        api = self.rbd_api()
 
         with undo_transaction(api, re_raise_exception=True,
                               exception_type=CephRbd.DoesNotExist):
@@ -907,7 +865,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                 if key == 'size':
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
-                if key == 'features':
+                elif key == 'features':
                     if not insert:
                         for feature in set(original.features).difference(set(value)):
                             api.image_set_feature(self.pool.name, self.name, feature, False)
@@ -924,7 +882,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             self._update_nagios_configs()
 
     def delete(self, using=None):
-        api = self.rbd_api_or_404()
+        api = self.rbd_api()
         api.remove(self.pool.name, self.name)
         self._update_nagios_configs()
 
@@ -973,7 +931,7 @@ class CephFs(NodbModel, RadosMixin):
     def get_all_objects(context, query):
         """:type context: ceph.restapi.FsidContext"""
         assert context is not None
-        api = RadosMixin.mon_api_or_404(context.fsid)
+        api = RadosMixin.mon_api(context.fsid)
 
 
         ret = []
@@ -986,7 +944,7 @@ class CephFs(NodbModel, RadosMixin):
         return ret
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        api = RadosMixin.mon_api_or_404()
+        api = RadosMixin.mon_api()
         insert = self._state.adding
         if not insert:
             raise NotImplementedError('Updating is not supported.')
@@ -994,7 +952,7 @@ class CephFs(NodbModel, RadosMixin):
         api.fs_new(self.name, self.metadata_pool.name, data_pool.name)
 
     def delete(self, using=None):
-        api = RadosMixin.mon_api_or_404()
+        api = RadosMixin.mon_api()
         api.fs_rm(self.name, '--yes-i-really-mean-it')
 
 
