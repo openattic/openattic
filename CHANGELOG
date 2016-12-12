@@ -18,6 +18,7 @@ Version 2.0.17 (not released yet):
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
   OADIR variable. Thanks to Ricardo Marques. (PR#522)
+* WebUI: Display and generate a user's API auth token. (OP-815)
 * WebUI: Render the Disks/Pools/Volumes indication of size in the
   frontend (OP-1115)
 * WebUI: Display alternative graph image if loading fails (OP-1403)
