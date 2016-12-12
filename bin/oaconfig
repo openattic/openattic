@@ -199,7 +199,7 @@ EOF
 		;;
 
 	add-disk)
-		echo "'add-disk' has been removed from oaconfig. Please use the LVM command line tool instead. Don't forget to run 'oaconfig install' afterwards."
+		echo "'add-disk' has been removed from oaconfig. Please use the LVM command line tools instead. Don't forget to run 'oaconfig install' afterwards."
 		;;
 
 	reload)
