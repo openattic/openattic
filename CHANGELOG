@@ -35,6 +35,8 @@ Version 2.0.17 (not released yet):
 * Installation: Fix a bug with recreation of the database (OP-1757)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 * Development: Fix storage controller issue with the Vagrant Debian box.
+* Development: Fix patch file which is customizing settings in a Vagrant VM.
+* Development: Fix vagrant-cachier issues. (OP-1466)
 
 
 Version 2.0.16, 07. November 2016:
