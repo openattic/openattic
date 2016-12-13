@@ -99,50 +99,70 @@ case $1 in
 			service postgresql start
 		fi
 
-		pgsql_ini="/etc/openattic/databases/pgsql.ini"
-		# Check if the database role 'openattic' exists and create it if it doesn't exist.
-		if ! su - postgres -c "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='openattic'\"" | grep -q 1 ; then
-			echo "Creating database role \"openattic\""
-			pass=$(openssl rand -hex 10)
-			sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $pgsql_ini
-			if [ $? -ne 0 ]; then
-				echo "Failed to update $pgsql_ini"
-				exit 2
-			fi
-
-			su - postgres -c "psql -c \"CREATE USER openattic WITH PASSWORD '$pass'\""
-			echo "User 'openattic' created"
+		database_ini="/etc/openattic/database.ini"
+		host=$(sed -rn 's/^[ \t]*host[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		if [[ "${host}" == 'localhost' || "${host}" == '127.0.0.1' ||
+				"${host}" == "127.0.1.1" || "${host}" == "$(hostname)" ||
+				"${host}" == "$(hostname --fqdn)" ]] ; then
+			is_local=1
+		else
+			is_local=0
 		fi
 
-		# Check if database 'openattic' exists and create it if it doesn't.
-		dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
-		if [ -n "$dbu" ]; then
-			echo "Database openattic exists, owned by $dbu"
-		else
-			su - postgres -c "psql -c \"CREATE DATABASE openattic WITH OWNER openattic\""
+		if (( ${is_local} )) ; then
+			# Check if the database role 'openattic' exists and create it if it doesn't exist.
+# 			command="psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='openattic'\""
+# 			if ! su - postgres -c "${command}" | grep -q 1 ; then
+			sql="SELECT 1 FROM pg_roles WHERE rolname='openattic'"
+			if ! su - postgres -c "psql postgres -tAc \"${sql}\""| grep -q 1 ; then
+				echo "Creating database role \"openattic\""
+				pass=$(openssl rand -hex 10)
+				sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				if [ $? -ne 0 ]; then
+					echo "Failed to update $database_ini"
+					exit 2
+				fi
 
-			hba_conf="/var/lib/pgsql/data/pg_hba.conf"
-			if [ -e ${hba_conf} ] ; then
-				sed -i -e 's/ident$/md5/g' ${hba_conf}
+				su - postgres -c "psql -c \"CREATE USER openattic WITH PASSWORD '$pass'\""
+				echo "User 'openattic' created"
 			fi
-			service postgresql reload
-			service postgresql status
+
+			# Check if database 'openattic' exists and create it if it doesn't.
+			dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
+			if [ -n "$dbu" ]; then
+				echo "Database openattic exists, owned by $dbu"
+			else
+				su - postgres -c "psql -c \"CREATE DATABASE openattic WITH OWNER openattic\""
+
+				hba_conf="/var/lib/pgsql/data/pg_hba.conf"
+				if [ -e ${hba_conf} ] ; then
+					sed -i -e 's/ident$/md5/g' ${hba_conf}
+				fi
+				service postgresql reload
+				service postgresql status
+			fi
 		fi
 
 		# Check if the connection can be established with the database user and password.
 		# Set a new password if the connection cannot be established.
-		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $pgsql_ini)
+		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
 		# We have to have an 'openattic' database already at this point.
-		if ! PGPASSWORD=$password psql openattic openattic -h localhost --no-password -c "\q" ; then
-			pass=$(openssl rand -hex 10)
-			sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $pgsql_ini
-			if [ $? -ne 0 ]; then
-				echo "Failed to update $pgsql_ini"
+		if ! PGPASSWORD="$password" psql openattic openattic -h "${host}" --no-password -c "\q" ; then
+			if (( ${is_local} )) ; then
+				pass=$(openssl rand -hex 10)
+				sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				if [ $? -ne 0 ]; then
+					echo "Failed to update $database_ini"
+					exit 2
+				fi
+
+				su - postgres -c "psql -c \"ALTER USER openattic WITH PASSWORD '$pass'\""
+				echo "Password of database user openattic and database.ini updated"
+			else
+				echo "Error: Couldn't establish a connection to the database. Please review the database" \
+					"configuration file in ${database_ini}"
 				exit 2
 			fi
-
-			su - postgres -c "psql -c \"ALTER USER openattic WITH PASSWORD '$pass'\""
-			echo "Password of database user openattic and database.ini updated"
 		fi
 		
 		su "$OAUSER" -c 'python manage.py pre_install'
