@@ -41,12 +41,6 @@ NAGIOS_CONTACTS_CFG_PATH="/etc/icinga/conf.d/openattic_contacts.cfg"
 # Defines additional services
 NAGIOS_SERVICES_CFG_PATH="/etc/icinga/conf.d"
 
-## Type: boolean
-## Default: True
-#
-#
-NAGIOS_INCLUDE_HOST_IN_CFG=True
-
 ## Type: string
 ## Default: "icinga"
 #

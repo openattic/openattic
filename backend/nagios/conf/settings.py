@@ -18,23 +18,10 @@ from .distro import distro_settings
 
 distro_settings()
 
-LV_UTIL_DESCRIPTION = getattr(settings, "NAGIOS_LV_UTIL_DESCRIPTION", "Utilization for %s")
-LV_UTIL_CHECK_CMD = getattr(settings, "NAGIOS_LV_UTIL_CHECK_CMD", "check_volume_utilization")
-
-LV_PERF_DESCRIPTION = getattr(settings, "NAGIOS_LV_PERF_DESCRIPTION", "Disk stats for %s")
-LV_PERF_CHECK_CMD = getattr(settings, "NAGIOS_LV_PERF_CHECK_CMD", "check_diskstats")
-
-LV_SNAP_DESCRIPTION = getattr(settings, "NAGIOS_LV_SNAP_DESCRIPTION", "Snapshot Utilization of %s")
-LV_SNAP_CHECK_CMD = getattr(settings, "NAGIOS_LV_SNAP_CHECK_CMD", "check_lvm_snapshot")
-
-TWRAID_UNIT_DESCRIPTION = getattr(settings, "NAGIOS_TWRAID_UNIT_DESCRIPTION", "RAID Unit state %s")
-TWRAID_UNIT_CHECK_CMD = getattr(settings, "NAGIOS_TWRAID_UNIT_CHECK_CMD", "check_twraid_unit")
-
-TRAFFIC_DESCRIPTION = getattr(settings, "NAGIOS_TRAFFIC_DESCRIPTION", "Traffic on %s")
-TRAFFIC_CHECK_CMD = getattr(settings, "NAGIOS_TRAFFIC_CHECK_CMD", "check_protocol_traffic")
-
-CPUTIME_DESCRIPTION = getattr(settings, "NAGIOS_CPUTIME_DESCRIPTION", "CPU Time")
-CPUTIME_CHECK_CMD = getattr(settings, "NAGIOS_CPUTIME_CHECK_CMD", "check_cputime")
+LV_UTIL_DESCRIPTION = "Utilization for %s"
+LV_PERF_DESCRIPTION = "Disk stats for %s"
+TRAFFIC_DESCRIPTION = "Traffic on %s"
+CPUTIME_DESCRIPTION = "CPU Time"
 
 RRD_BASEDIR = getattr(settings, "NAGIOS_RRD_BASEDIR", "/var/lib/pnp4nagios/perfdata")
 RRD_PATH = getattr(settings, "NAGIOS_RRD_PATH",
@@ -48,7 +35,6 @@ NAGIOS_CFG_PATH = getattr(settings, "NAGIOS_CFG_PATH", "/etc/nagios3/nagios.cfg"
 CONTACTS_CFG_PATH = getattr(settings, "NAGIOS_CONTACTS_CFG_PATH",
                             "/etc/nagios3/conf.d/openattic_contacts.cfg")
 NAGIOS_SERVICES_CFG_PATH = getattr(settings, "NAGIOS_SERVICES_CFG_PATH")
-INCLUDE_HOST_IN_CFG = getattr(settings, "NAGIOS_INCLUDE_HOST_IN_CFG", True)
 
 BINARY_NAME = getattr(settings, "NAGIOS_BINARY_NAME", "nagios3")
 SERVICE_NAME = getattr(settings, "NAGIOS_SERVICE_NAME", "nagios3")

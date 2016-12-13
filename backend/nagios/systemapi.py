@@ -45,7 +45,7 @@ class SystemD(BasePlugin):
         fd = open(nagios_settings.NAGIOS_SERVICES_CFG_PATH + "/openattic.cfg", "wb")
         try:
             fd.write(render_to_string("nagios/services.cfg", {
-                "IncludeHost": nagios_settings.INCLUDE_HOST_IN_CFG,
+                "IncludeHost": True,
                 "Host":     Host.objects.get_current(),
                 "Commands": Command.objects.all(),
                 "Services": Service.objects.filter(command__query_only=False)
