@@ -4,19 +4,19 @@ Installing an |oA| Multi-node System
 ====================================
 
 |oA| can be installed in a multi-node setup, in which any node can be used to
-manage the whole system and commands are distributed to the approprate node
+manage the whole system and commands are distributed to the appropriate node
 automatically. This is implemented by using a shared configuration database,
 connecting all |oA| nodes to the same PostgreSQL database.
 
-This is usually the database of the first node that you installed and
+This is usually the database of the first node that you have installed and
 configured, but can be a database running on a dedicated node, too.
 
-In order to use DRBD |reg|, you will need a set up a multi-node setup consisting
+In order to use DRBD |reg|, you will need to set up a multi-node setup consisting
 of **two** hosts.
 
 .. note::
 
-	Note that multinode support currently applies to the "traditional" storage
+	Note that multi-node support currently applies to the "traditional" storage
 	management functionality of |oA| only. For managing Ceph, you need to
 	connect to the web interface of the |oA| node configured to connect to the
 	Ceph cluster directly.
@@ -43,30 +43,11 @@ in :ref:`install_guides_index`.
 .. note::
 	
 	You should only perform the :ref:`post-installation configuration` on
-	**one** of the two hosts first! In the following example the command was
-	executed on host **openattic01**. This will result in the installation of
-	the entire |oA| system including the database.
+	**one** of the two hosts for now! This example assumes that the command was
+	executed on host **openattic01**, which will result in the installation of
+	the entire |oA| system including the configuration database on that node.
 
-Step 2 - Remote Database Configuration on **openattic02**
----------------------------------------------------------
-
-Since **openattic02** needs to connect to the database of **openattic01** you
-will have to enter the database information (database name, user, password and
-host) from **openattic01** into the database configuration file
-``/etc/openattic/database.ini`` on **openattic02** manually. The password can
-be obtained from the ``database.ini`` file on **openattic01**.
-
-The ``database.ini`` file on **openattic02** should look something like this::
-
-	[default]
-	engine   = django.db.backends.postgresql_psycopg2
-	name     = openattic
-	user     = openattic
-	password = <password>
-	host     = openattic01.yourdomain.com
-	port     =
-
-Step 3 - Database Configuration on **openattic01**
+Step 2 - Database Configuration on **openattic01**
 --------------------------------------------------
 
 Next, the PostgreSQL database configuration on **openattic01** needs to be
@@ -117,14 +98,34 @@ apply these settings::
 
   # systemctl restart postgresql
 
+Step 3 - Remote Database Configuration on **openattic02**
+---------------------------------------------------------
+
+Since **openattic02** needs to connect to the database of **openattic01** you
+will have to enter the database information (database name, user, password and
+host) from **openattic01** into the database configuration file
+``/etc/openattic/database.ini`` on **openattic02** manually. The password can be
+obtained from the ``database.ini`` file on **openattic01**. The username and
+database name are ``openattic`` by default.
+
+The ``database.ini`` file on **openattic02** should look something like this::
+
+	[default]
+	engine   = django.db.backends.postgresql_psycopg2
+	name     = openattic
+	user     = openattic
+	password = <password>
+	host     = openattic01.yourdomain.com
+	port     =
+
 Step 4 - Execute ``oaconfig install`` on **openattic02**
 --------------------------------------------------------
 
-Now that you have configured **openattic02** to connect to **openattic01**'s
-database, you can conclude the |oA| install on **openattic02** by executing
-``oaconfig install`` there.
+Now that you have configured **openattic02** to connect to the database running
+on **openattic01**, you can conclude the :ref:`post-installation configuration`
+on **openattic02** by executing ``oaconfig install`` there.
 
 If everything worked out well, you should now see both **openattic01** and
 **openattic02** in the **Hosts** tab of the web UI running on **openattic01**
-(and **openattic02** respectively), and the disks, pools and volumes of both
-hosts should also be visible.
+(and **openattic02** respectively), as well as the disks, pools and volumes of both
+hosts.
