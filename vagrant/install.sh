@@ -248,7 +248,7 @@ EOF
 
 service dbus reload
 
-# Make sure the directory /run/lock/openeattic is created with the
+# Make sure the directory /run/lock/openattic is created with the
 # correct privileges.
 systemd-tmpfiles --create
 
