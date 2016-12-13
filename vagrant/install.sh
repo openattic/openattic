@@ -236,6 +236,7 @@ module-icinga"
     systemctl enable postgresql.service
 fi
 
+# Make sure the directory /run/lock/openeattic is created with the correct privileges.
 ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 systemd-tmpfiles --create
 
