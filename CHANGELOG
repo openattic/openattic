@@ -43,6 +43,7 @@ Version 2.0.17 (not released yet):
 * Development: Fix storage controller issue with the Vagrant Debian box.
 * Development: Fix patch file which is customizing settings in a Vagrant VM.
 * Development: Fix vagrant-cachier issues. (OP-1466)
+* Documentation: Added chapter about multinode setup (OP-1045) 
 
 
 Version 2.0.16, 07. November 2016:
