@@ -30,5 +30,6 @@ The installation can be broken down into the following steps:
   post_installation
   preconfigured_vms
   getting_started
+  multinode_setup
   authentication
   config_recommendations
