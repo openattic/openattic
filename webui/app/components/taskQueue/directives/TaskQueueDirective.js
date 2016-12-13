@@ -44,7 +44,6 @@ app.directive("taskQueueDirective", function () {
         percent: 0,
         tooltip: "No tasks running."
       };
-      $scope.taskUpdateInterval = 5000;
 
       /**
        * Update all needed parts.
@@ -78,7 +77,7 @@ app.directive("taskQueueDirective", function () {
             $scope.createNeededToasties(allTasks);
           }
           $scope.taskOverview = ov;
-          $scope.taskTimeout = $interval($scope.updateTaskOverview, $scope.taskUpdateInterval, 1);
+          $scope.taskTimeout = $interval($scope.updateTaskOverview, globalConfig.GUI.defaultTaskReloadTime, 1);
         });
       };
 
@@ -98,15 +97,15 @@ app.directive("taskQueueDirective", function () {
                   msg: task.description
                 };
                 if (task.status === "Finished") {
-                  toast.timeout = 3000;
+                  toast.timeout = globalConfig.GUI.defaultToastTimes.success;
                   toast.msg += " has finished.";
                   toasty.success(toast);
                 } else if (task.status === "Aborted") {
-                  toast.timeout = 6000;
+                  toast.timeout = globalConfig.GUI.defaultToastTimes.warning;
                   toast.msg += " was aborted.";
                   toasty.warning(toast);
                 } else if (task.status === "Exception") {
-                  toast.timeout = 10000;
+                  toast.timeout = globalConfig.GUI.defaultToastTimes.error;
                   toast.title = "Error: " + task.description;
                   toast.msg += " has failed.";
                   toasty.error(toast);

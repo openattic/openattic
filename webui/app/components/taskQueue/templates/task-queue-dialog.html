@@ -19,24 +19,24 @@
                 <table class="table table-striped table-bordered table-hover datatable dataTable task-queue-table">
                     <thead>
                         <tr>
-                            <th width="3%">
+                            <th class="oadatatablecheckbox">
                                 <input type="checkbox" class="tc_select_all_{{tabKey}}"
                                        ng-model="tab.selection.checkAll" ng-change="checkAllTasks()"/>
                             </th>
                             <th ng-repeat="col in tab.tableColumns" ng-click="order(col.attribute)"
                                 class="{{orderClass(col.attribute)}} tc-col-{{tabKey}}-{{col.attribute}}"
-                                ng-bind="col.name" width="{{col.width}}">
+                                ng-bind="col.name">
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="row in tab.data | orderBy: tab.tableSort.attribute:tab.tableSort.reverse"
                             ng-class="{ info: isTaskSelected(row) }">
-                            <td style="width: 3%">
+                            <td class="oadatatablecheckbox">
                                 <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(row)" checklist-model="tab.selection.items"
                                        ng-click="toggleTaskSelection(row, $event)" checklist-value="row"/>
                             </td>
-                            <td ng-click="toggleTaskSelection(row, $event)" ng-repeat="attr in tab.tableColumns" style="width: {{attr.width}}">
+                            <td ng-click="toggleTaskSelection(row, $event)" ng-repeat="attr in tab.tableColumns">
                                 <span ng-if="attr.type === 'text'" ng-bind="getColumnData(attr, row)"></span>
                                 <span ng-if="attr.type === 'date'" ng-bind="getColumnData(attr, row) | date:'medium'"></span>
                                 <span ng-if="attr.type === 'percent'">

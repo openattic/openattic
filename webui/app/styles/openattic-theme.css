@@ -248,6 +248,12 @@ table.task-queue-table tbody tr {
   display: flex;
   width: 100%
 }
+table.task-queue-table > * > tr > * {
+  flex: 1;
+}
+table.task-queue-table > * > tr > .oadatatablecheckbox {
+  flex: 0;
+}
 
 /* Navbar */
 .navbar-openattic {

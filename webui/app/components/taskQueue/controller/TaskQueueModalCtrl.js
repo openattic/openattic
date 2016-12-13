@@ -56,27 +56,23 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         {
           name: "Name",
           attribute: "description",
-          type: "text",
-          width: "30%"
+          type: "text"
         },
         {
           name: "Created",
           attribute: "created",
-          type: "date",
-          width: "25%"
+          type: "date"
         },
         {
           name: "Complete",
           attribute: "percent",
-          type: "percent",
-          width: "25%"
+          type: "percent"
         },
         {
           name: "Estimated",
           attribute: "approx",
           displayAttr: "approxFormat",
-          type: "text",
-          width: "17%"
+          type: "text"
         }
       ]
     },
@@ -99,27 +95,23 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         {
           name: "Name",
           type: "text",
-          attribute: "description",
-          width: "30%"
+          attribute: "description"
         },
         {
           name: "Created",
           type: "date",
-          attribute: "created",
-          width: "25%"
+          attribute: "created"
         },
         {
           name: "Runtime",
           attribute: "approx",
           displayAttr: "approxFormat",
-          type: "date",
-          width: "17%"
+          type: "date"
         },
         {
           name: "Failed",
           type: "date",
-          attribute: "last_modified",
-          width: "25%"
+          attribute: "last_modified"
         }
       ]
     },
@@ -142,32 +134,27 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         {
           name: "Name",
           type: "text",
-          attribute: "description",
-          width: "30%"
+          attribute: "description"
         },
         {
           name: "Created",
           type: "date",
-          attribute: "created",
-          width: "25%"
+          attribute: "created"
         },
         {
           name: "Runtime",
           attribute: "approx",
           displayAttr: "approxFormat",
-          type: "date",
-          width: "17%"
+          type: "date"
         },
         {
           name: "Finished",
           type: "date",
-          attribute: "last_modified",
-          width: "25%"
+          attribute: "last_modified"
         }
       ]
     }
   };
-  $scope.reloadTime = 5000;
 
   /**
    * Returns the data of the active tab.
@@ -339,7 +326,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         } else if (["Exception", "Aborted", "Finished"].indexOf(state) !== -1) {
           current.forEach($scope.calcRuntime);
         }
-        tab.tempData = tab.tempData.concat(current)
+        tab.tempData = tab.tempData.concat(current);
       }
     });
     tab.count = tab.tempCount;
@@ -348,7 +335,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
     }
     $scope.tabs[tabKey] = tab;
-    $scope.reloadTaskIn($scope.reloadTime);
+    $scope.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
   };
 
   /**

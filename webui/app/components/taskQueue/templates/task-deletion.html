@@ -56,7 +56,7 @@
     <div class="openattic-modal-footer">
         <div class="button-group text-right">
             <button class="btn btn-primary btn-sm tc-tab-del-confirm"
-                    ng-click="deleteTasks()" ng-disabled="deleteForm.$invalid">
+                    ng-click="deleteTasks(tasks.entries())" ng-disabled="deleteForm.$invalid">
                 Delete
             </button>
             <button class="btn btn-link btn-sm tc-tab-del-cancel" ng-click="cancel()">Cancel</button>

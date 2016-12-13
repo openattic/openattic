@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $rootScope, $q) {
+app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $rootScope, $q, toasty) {
   this.taskTimeout = {};
   this.tasks = {
     "Running": [],
@@ -102,7 +102,7 @@ app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $r
         error.toasty = {
           title: "Background task loading failure",
           msg: "Background tasks page " + pgnum + " couldn't be loaded.",
-          timeout: 10000
+          timeout: globalConfig.GUI.defaultToastTimes.error
         };
         toasty.error(error.toasty);
         throw error;

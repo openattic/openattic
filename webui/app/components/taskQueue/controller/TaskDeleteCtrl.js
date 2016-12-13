@@ -34,7 +34,7 @@ var app = angular.module("openattic.taskQueue");
 app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
   $scope.tasks = taskSelection;
   $scope.waiting = false;
-  $scope.done = 0;
+  $scope.finishedTasks = 0;
 
   $scope.input = {
     enteredName: "",
@@ -42,28 +42,23 @@ app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModal
   };
 
   /**
-   * Starts the deletion process and sets the loading screen.
-   */
-  $scope.deleteTasks = function () {
-    $scope.waiting = true;
-    $scope.deleteTask($scope.tasks.entries());
-  };
-
-  /**
    * Deletes all tasks sequentially and updates how many tasks were successfully deleted.
    * The method calls it self recursively in order to process sequentially.
    * @param {iterator} entries - The iterator contains the remaining tasks.
    */
-  $scope.deleteTask = function (entries) {
-    var taskE = entries.next().value;
+  $scope.deleteTasks = function (entries) {
+    var taskEntry = entries.next().value;
     var task = {};
-    if (taskE) {
-      task = taskE[1];
+    if (taskEntry) {
+      if (taskEntry[0] === 0) {
+        $scope.waiting = true;
+      }
+      task = taskEntry[1];
       taskQueueService.delete({id: task.id})
         .$promise
         .then(function () {
-          $scope.done++;
-          $scope.deleteTask(entries);
+          $scope.finishedTasks++;
+          $scope.deleteTasks(entries);
         }, function (error) {
           error.toasty = {
             title: "Task deletion failure",
@@ -71,7 +66,7 @@ app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModal
             timeout: 10000
           };
           toasty.error(error.toasty);
-          $scope.deleteTask(entries);
+          $scope.deleteTasks(entries);
           throw error;
         });
     } else {

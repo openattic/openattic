@@ -1,4 +1,4 @@
-<a ng-click="runnersDialog()" uib-tooltip="{{taskOverview.tooltip}}">
+<a ng-click="runnersDialog()" uib-tooltip="{{taskOverview.tooltip}}" tooltip-placement="bottom">
     <i class="fa {{taskOverview.icon}}"></i>
     <span ng-show="taskOverview.queue > 1" ng-bind="taskOverview.queue + ' Background-Tasks'"></span>
     <span ng-show="taskOverview.queue === 1" ng-bind="taskOverview.queue + ' Background-Task'"></span>

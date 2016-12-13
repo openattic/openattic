@@ -66,13 +66,17 @@ app.directive("oadatatable", function () {
       }
       $scope.store = $localStorage.datatables[tableName];
 
+      /**
+       * Evaluates on any digest!
+       * It will be true if the API-call will match the last word of any active table.
+       * If true a loading sign will appear.
+       */
       $scope.$watch(function () {
-        if (!$state.current.name.startsWith(tableName)) {
+        if (!$state.includes(tableName)) {
           return false;
         }
-
         return $http.pendingRequests.some(function (req) {
-          return req.url.endsWith(tableName);
+          return Boolean(req.url.match(tableName.match(/[^.]+$/)));
         });
       }, function (value) {
         $scope.waiting = value;

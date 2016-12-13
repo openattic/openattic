@@ -4,6 +4,7 @@ var helpers = require('../../common.js');
 var taskQueueCommon = require('./task_queue_common.js');
 
 describe('task queue form test', function(){
+  // Defines task queue elements and common task queue related functions.
   var qProperties = new taskQueueCommon();
 
   beforeAll(function(){
@@ -11,13 +12,24 @@ describe('task queue form test', function(){
   });
 
   beforeEach(function(){
+    // This will open the task queue dialogue.
     qProperties.open();
   });
 
+  /**
+   * Iterates over all task queue tabs
+   * The sequence is "pending" -> "failed" -> "finished".
+   *
+   * The following will be done in each tab:
+   * 1. Checkout all default elements.
+   * 2. Remove any tasks.
+   * 3. Check the no tasks available message.
+   */
   Object.keys(qProperties.dialog.tabs).forEach(function(tabName){ // => [pending, failed, finished]
     var tab = qProperties.dialog.tabs[tabName];
     var elements = tab.elements;
 
+    // 1. Checkout all default elements.
     Object.keys(elements).forEach(function(e){
       it('should check if the element exists in tab: ' + e + ' in ' + tabName, function(){
         qProperties.changeTab(tabName);
@@ -25,6 +37,7 @@ describe('task queue form test', function(){
       });
     });
 
+    // 2. Remove any tasks.
     it('should empty the tasks if any tasks are in tab ' +  tabName, function(){
       qProperties.changeTab(tabName);
       elements.listing.isDisplayed().then(function(displayed){
@@ -34,6 +47,7 @@ describe('task queue form test', function(){
       });
     });
 
+    // 3. Check the no tasks available message.
     it('should have an empty task queue in tab ' + tabName, function(){
       var noElements = elements.noElements;
       qProperties.changeTab(tabName);
@@ -43,10 +57,21 @@ describe('task queue form test', function(){
     });
   });
 
+  /**
+   * Iterates over all task queue tabs
+   * The sequence is "pending" -> "failed" -> "finished".
+   *
+   * The following will be done in each tab:
+   * 1. Let a task show up in the current tab.
+   * 2. Checkout each column of the tab.
+   * 3. Delete the task.
+   */
   Object.keys(qProperties.dialog.tabs).forEach(function(tabName){ // => [pending, failed, finished]
     var tab = qProperties.dialog.tabs[tabName];
     var elements = tab.elements;
-    it('should create a running task in tab ' + tabName, function(){
+
+    // 1. Let a task show up in the current tab.
+    it('should show task in tab ' + tabName, function(){
       if(tabName === 'pending'){
         qProperties.createTask(500); // long living (~10 min)
       }else if(tabName === 'finished'){
@@ -58,6 +83,7 @@ describe('task queue form test', function(){
       expect(listing.isDisplayed()).toBe(true);
     });
 
+    // 2. Checkout each column of the tab.
     Object.keys(tab.columns).forEach(function(col){
       var column = tab.columns[col];
       it('should display the following column in tab: ' + column.name + ' in ' + tabName, function(){
@@ -67,12 +93,16 @@ describe('task queue form test', function(){
       });
     });
 
+    // 3. Delete the task.
     it('should delete the running task in pending tab', function(){
       qProperties.changeTab(tabName);
       qProperties.deleteTasks(tabName, 'wait');
     });
   });
 
+  /**
+   * This is a test for test cases that use the waitForPendingTasks function.
+   */
   it('Tests the waiting for task function', function(){
     qProperties.createTask(5);
     qProperties.close();
@@ -82,6 +112,7 @@ describe('task queue form test', function(){
   });
 
   afterEach(function(){
+    // This will close the task queue dialogue.
     qProperties.close();
   });
 

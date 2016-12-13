@@ -50,6 +50,6 @@ angular.module("openattic.extensions", [
   "openattic.tabView",
   "openattic.todowidget",
   "openattic.taskQueue",
-  "openattic.userinfo"
+  "openattic.userinfo",
   "openattic.users"
 ]);
