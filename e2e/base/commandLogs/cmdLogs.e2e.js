@@ -7,6 +7,7 @@ describe('CommandLogs', function(){
   systemItem = systemItem.all(by.css(' a')).first();
   var volumename = 'protractor_cmdlog_vol';
   var volume = element(by.cssContainingText('tr', volumename));
+  var searchField = element(by.model('filterConfig.search'));
 
   beforeAll(function(){
     helpers.login();
@@ -33,9 +34,9 @@ describe('CommandLogs', function(){
   });
 
   it('should contain the lvcreate log entry', function(){
-    element(by.model('filterConfig.search')).click();
+    searchField.click();
     browser.sleep(400);
-    element(by.model('filterConfig.search')).sendKeys(volumename);
+    searchField.sendKeys(volumename);
     browser.sleep(400);
     expect(element(by.cssContainingText('tr', '"' + volumename + '" created.')).isDisplayed()).toBe(true);
   });
