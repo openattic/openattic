@@ -236,10 +236,7 @@ module-icinga"
     systemctl enable postgresql.service
 fi
 
-# Make sure the directory /run/lock/openeattic is created with the correct privileges.
 ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
-systemd-tmpfiles --create
-
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
@@ -250,6 +247,10 @@ popd
 EOF
 
 service dbus reload
+
+# Make sure the directory /run/lock/openeattic is created with the
+# correct privileges.
+systemd-tmpfiles --create
 
 npm install -g bower
 npm install grunt
