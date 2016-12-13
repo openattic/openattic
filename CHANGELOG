@@ -17,6 +17,7 @@ Version 2.0.17 (not released yet):
   again (OP-1403)
 * Backend: Fixed compatibility issues in our Ceph module on Xenial (OP-1763)
 * Backend: Fixed calls to systemd (not oA systemd) (OP-1769)
+* Backend: Fixed truncated dropdown inputs on Xenial (OP-1788)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
@@ -37,6 +38,7 @@ Version 2.0.17 (not released yet):
   This change applies to RPM packages only. (OP-1438)
 * Installation: Improved error message for problems with database.ini (OP-1739)
 * Installation: Fix a bug with recreation of the database (OP-1757)
+* Installation: Properly restart npcd in `oaconfig install` on distributions using systemd (OP-1688)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 * Development: Fix storage controller issue with the Vagrant Debian box.
 * Development: Fix patch file which is customizing settings in a Vagrant VM.

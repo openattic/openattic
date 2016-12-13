@@ -234,10 +234,9 @@ module-icinga"
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
     systemctl enable postgresql.service
-
-    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 fi
 
+ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
@@ -248,6 +247,10 @@ popd
 EOF
 
 service dbus reload
+
+# Make sure the directory /run/lock/openattic is created with the
+# correct privileges.
+systemd-tmpfiles --create
 
 npm install -g bower
 npm install grunt
