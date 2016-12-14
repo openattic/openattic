@@ -141,7 +141,7 @@ else:
         NAGIOS_STATUS_DAT_PATH = "/var/log/nagios/status.dat"
         SAMBA_SERVICE_NAME = "smb"
         LVM_HAVE_YES_OPTION = True
-    elif distro == "Ubuntu":
+    elif distro == "Ubuntu" or distro == "debian":
         SAMBA_SERVICE_NAME = "smbd"
 
 
