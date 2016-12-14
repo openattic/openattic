@@ -157,8 +157,9 @@ case $1 in
 				su - postgres -c "psql -c \"ALTER USER openattic WITH PASSWORD '$pass'\""
 				echo "Password of database user openattic and database.ini updated"
 			else
-				echo "Error: Couldn't establish a connection to the database. Please review the database" \
-					"configuration file in ${database_ini}"
+				echo "ERROR: Couldn't establish a connection to the remote database" \
+					"running on ${host}."
+				echo "       Please review the configuration in file ${database_ini}."
 				exit 2
 			fi
 		fi
