@@ -253,7 +253,6 @@ service dbus reload
 systemd-tmpfiles --create
 
 npm install -g bower
-npm install grunt
 npm install -g grunt-cli
 
 
