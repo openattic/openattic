@@ -104,12 +104,12 @@ case $1 in
 		if [[ "${host}" == 'localhost' || "${host}" == '127.0.0.1' ||
 				"${host}" == "127.0.1.1" || "${host}" == "$(hostname)" ||
 				"${host}" == "$(hostname --fqdn)" ]] ; then
-			is_local=1
+			has_local_database=1
 		else
-			is_local=0
+			has_local_database=0
 		fi
 
-		if (( ${is_local} )) ; then
+		if (( ${has_local_database} )) ; then
 			# Check if the database role 'openattic' exists and create it if it doesn't exist.
 # 			command="psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='openattic'\""
 # 			if ! su - postgres -c "${command}" | grep -q 1 ; then
@@ -148,7 +148,7 @@ case $1 in
 		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
 		# We have to have an 'openattic' database already at this point.
 		if ! PGPASSWORD="$password" psql openattic openattic -h "${host}" --no-password -c "\q" ; then
-			if (( ${is_local} )) ; then
+			if (( ${has_local_database} )) ; then
 				pass=$(openssl rand -hex 10)
 				sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
