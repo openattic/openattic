@@ -225,19 +225,16 @@ EOF
 
 	reload)
 		service openattic-systemd restart
-		service openattic-rpcd restart
 		service "${WEBSERVER_SERVICE}" reload
 		;;
 
 	start|stop|restart|force-reload)
 		service openattic-systemd $1
-		service openattic-rpcd $1
 		service "${WEBSERVER_SERVICE}" $1
 		;;
 
 	status)
 		service openattic-systemd status || /bin/true
-		service openattic-rpcd status    || /bin/true
 		service "${WEBSERVER_SERVICE}" status || /bin/true
 		;;
 

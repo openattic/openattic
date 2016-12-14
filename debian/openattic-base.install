@@ -29,7 +29,6 @@ backend/utilities.py   /usr/share/openattic
 
 # Init scripts, configs that are shipped upstream
 etc/init.d/openattic-systemd        /etc/init.d
-etc/init.d/openattic-rpcd           /etc/init.d
 etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
 etc/pam.d/openattic                 /etc/pam.d
 
