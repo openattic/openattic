@@ -577,7 +577,6 @@ echo ""
 %{_datadir}/%{name}/oa_auth.py*
 %{_datadir}/%{name}/openattic.wsgi
 %{_datadir}/%{name}/pamauth.py*
-%{_datadir}/%{name}/peering/
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
 %{_datadir}/%{name}/rpcd/
