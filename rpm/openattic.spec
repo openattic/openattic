@@ -293,7 +293,6 @@ This package also contains the Nagios check plugins for openATTIC, namely:
  * check_diskstats
  * check_iface_traffic
  * check_openattic_systemd
- * check_openattic_rpcd
 
 %package module-nfs
 Requires:	nfs-utils
@@ -685,7 +684,6 @@ systemctl start lvm2-lvmetad
 %{_libdir}/nagios/plugins/check_iface_traffic
 %{_libdir}/nagios/plugins/check_lvm_snapshot
 %{_libdir}/nagios/plugins/check_oa_utilization
-%{_libdir}/nagios/plugins/check_openattic_rpcd
 %{_libdir}/nagios/plugins/check_openattic_systemd
 %{_libdir}/nagios/plugins/check_protocol_traffic
 %{_libdir}/nagios/plugins/check_twraid_unit
