@@ -412,7 +412,6 @@ rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
 rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
-install -m 755 bin/oacli %{buildroot}%{_bindir}
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 
@@ -550,7 +549,6 @@ echo ""
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
-%{_bindir}/oacli
 %{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
@@ -564,7 +562,6 @@ echo ""
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
-%doc %{_mandir}/man1/oacli.1.gz
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
