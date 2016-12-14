@@ -32,6 +32,7 @@ Version 2.0.17 (not released yet):
   into clipboard. (OP-1706)
 * WebUI: Modify the API-Recorder Start/Stop buttons (OP-1720)
 * WebUI: Display tooltips again (OP-1749)
+* WebUI/QA: refactored cmdlog e2e tests (OP-1797)
 * Installation: Fix Permission denied: '/usr/bin/pip' for Vagrant development
   environment using SUSE Leap (OP-1715)
 * Installation: New database instances are created using a random password.
