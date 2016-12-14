@@ -101,9 +101,7 @@ case $1 in
 
 		database_ini="/etc/openattic/database.ini"
 		host=$(sed -rn 's/^[ \t]*host[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
-		if [[ "${host}" == 'localhost' || "${host}" == '127.0.0.1' ||
-				"${host}" == "127.0.1.1" || "${host}" == "$(hostname)" ||
-				"${host}" == "$(hostname --fqdn)" ]] ; then
+		if [ "${host}" == 'localhost' ] ; then
 			has_local_database=1
 		else
 			has_local_database=0
