@@ -38,7 +38,7 @@ describe('CommandLogs', function(){
     browser.sleep(400);
     searchField.sendKeys(volumename);
     browser.sleep(400);
-    expect(element(by.cssContainingText('tr', '"' + volumename + '" created.')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('tr', '"' + volumename + '" created')).isDisplayed()).toBe(true);
   });
 
   afterAll(function(){
