@@ -16,7 +16,6 @@
 
 import os
 import pwd
-import dbus
 import errno
 import os.path
 import logging
@@ -29,38 +28,39 @@ from django.conf import settings
 
 from cmdlog.models import LogEntry
 from ifconfig.models import Host
+from utilities import is_executable_installed
+
 
 def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fail_on_err=True):
     """ Invoke a subprocess with the given args and log the output.
 
         Parameters:
 
-        * close_fds=True       -- If False, file descriptors will not be closed for the child process.
+        * close_fds=True       -- If False, file descriptors will not be closed for the child
+                                  process.
         * return_out_err=False -- If True, stdout and stderr of the child will be returned.
         * log=True             -- If False, the command's execution will not be logged.
         * stdin=None           -- Any string given will be sent to the child's stdin.
         * fail_on_err=True     -- If the child's exit code is not zero, raise SystemError.
 
-        Returns the exit code if return_out_err is False, and a tuple of (exit code, stdout, stderr) otherwise.
+        Returns the exit code if return_out_err is False, and a tuple of (exit code, stdout, stderr)
+        otherwise.
     """
     starttime = datetime.now()
 
     procenv = os.environ.copy()
     procenv["LANG"] = procenv["LANGUAGE"] = procenv["LC_ALL"] = "C"
 
-    proc = subprocess.Popen( [arg.encode("UTF-8") if isinstance(arg, unicode) else arg for arg in args],
-        stdin  = (None if stdin is None else subprocess.PIPE),
-        stdout = subprocess.PIPE,
-        stderr = subprocess.PIPE,
-        close_fds = close_fds,
-        env = procenv
-        )
+    proc = subprocess.Popen(
+        [arg.encode("UTF-8") if isinstance(arg, unicode) else arg for arg in args],
+        stdin=(None if stdin is None else subprocess.PIPE), stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, close_fds=close_fds, env=procenv)
 
     procout = ""
     procerr = ""
 
     cmdline = ' '.join(['"' + arg + '"' for arg in args])
-    out = [ "> " + cmdline ]
+    out = ["> " + cmdline]
 
     if stdin is not None:
         try:
@@ -77,11 +77,11 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
             if proc.stdout in rdy_read:
                 data = proc.stdout.read().decode("UTF-8")
                 procout += data
-                out.extend([ "O " + line for line in data.split("\n") if line ])
+                out.extend(["O " + line for line in data.split("\n") if line])
             if proc.stderr in rdy_read:
                 data = proc.stderr.read().decode("UTF-8")
                 procerr += data
-                out.extend([ "E " + line for line in data.split("\n") if line ])
+                out.extend(["E " + line for line in data.split("\n") if line])
             if proc.poll() is not None:
                 if process_alive:
                     proc.wait()
@@ -100,14 +100,11 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     proc.stderr.close()
 
     if log or proc.returncode != 0:
-        logent = LogEntry(
-            host = Host.objects.get_current(),
-            user = pwd.getpwuid(os.getuid()).pw_name,
-            starttime = starttime,
-            command = args[0][:250] )
-        logent.endtime  = datetime.now()
+        logent = LogEntry(host=Host.objects.get_current(), user=pwd.getpwuid(os.getuid()).pw_name,
+                          starttime=starttime, command=args[0][:250])
+        logent.endtime = datetime.now()
         logent.exitcode = proc.returncode
-        logent.text     = '\n'.join(out)
+        logent.text = '\n'.join(out)
         logent.save()
 
         if proc.returncode == 0:
@@ -132,36 +129,15 @@ def service_command(service, command="reload"):
     if command not in ("start", "stop", "reload", "restart"):
         raise ValueError("invalid command %s" % command)
 
-    if settings.USE_SYSTEMD_IF_AVAIL:
-        try:
-            bus = dbus.SystemBus(private=True)
-            obj = bus.get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
-            systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
-        except dbus.DBusException:
-            import traceback
-            logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()\n%s" % (service, traceback.format_exc()))
-        else:
-            logging.info("service_command(%s): calling systemd(1)" % service)
-            def passfn(*args):
-                pass
-            try:
-                if command == "reload":
-                    systemd.ReloadOrRestartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-                elif command == "restart":
-                    systemd.RestartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-                elif command == "start":
-                    systemd.StartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-                elif command == "stop":
-                    systemd.StopUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-            except dbus.DBusException, err:
-                import traceback
-                logging.error("service_command(%s): caught exception, falling back to invoke():\n%s" % (service, traceback.format_exc()))
-            else:
-                return
+    if is_executable_installed('systemctl'):
+        logging.info('service_command({}): invoking `systemctl {} {}`'.format(service, command,
+                                                                              service))
+        invoke(['systemctl', command, service])
+        return
 
-    if os.path.exists("/usr/sbin/service"):
+    if is_executable_installed('service'):
         logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))
-        invoke(["/usr/sbin/service", service, command])
+        invoke(['service', service, command])
         return
 
     initscript = os.path.join("/etc/init.d", service)
@@ -170,5 +146,5 @@ def service_command(service, command="reload"):
         invoke([initscript, command])
         return
 
-    raise SystemError("service_command(%s): don't know how (no systemd, no /usr/sbin/service installed, no init script found)" % service)
-
+    raise SystemError("service_command(%s): don't know how (no systemd, no service installed, no "
+                      "init script found)" % service)

@@ -445,7 +445,7 @@ repositories named ``filesystems:openATTIC``.
   :ref:`basic storage configuration`.
 
 Zypper Repository Configuration
-----------------------------
+-------------------------------
 
 From a web browser, the installation of |oA| on SLES or Leap can be performed
 via "1 Click Install" from the `openSUSE download site

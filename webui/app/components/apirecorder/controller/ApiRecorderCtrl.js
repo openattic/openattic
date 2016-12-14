@@ -31,23 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.apirecorder");
-app.controller("ApiRecorderCtrl", function ($scope, $uibModalInstance, toasty) {
+app.controller("ApiRecorderCtrl", function ($scope, $uibModalInstance) {
   $scope.close = function () {
     $uibModalInstance.dismiss("cancel");
-  };
-
-  $scope.copyToClipboard = function () {
-    // Copy text to clipboard.
-    var node = $("#apiRecorderScript");
-    var selection = document.getSelection();
-    selection.removeAllRanges();
-    node.select();
-    document.execCommand("copy");
-    selection.removeAllRanges();
-    // Display success message.
-    toasty.success({
-      title: "API Recorder",
-      msg  : "Script successfully copied to clipboard."
-    });
   };
 });

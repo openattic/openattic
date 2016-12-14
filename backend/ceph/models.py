@@ -285,8 +285,7 @@ class CephPool(NodbModel, RadosMixin):
         """:type context: ceph.restapi.FsidContext"""
         assert context is not None
         result = []
-        cluster = context.cluster
-        fsid = cluster.fsid
+        fsid = context.cluster.fsid
 
         osd_dump_data = RadosMixin.mon_api(fsid).osd_dump()
 
@@ -296,14 +295,13 @@ class CephPool(NodbModel, RadosMixin):
 
             object_data = {
                 'id': pool_id,
-                'cluster': cluster,
+                'cluster_id': fsid,
                 'name': pool_data['pool_name'],
                 'type': {1: 'replicated', 3: 'erasure'}[pool_data['type']],  # type is an
                                                                              # undocumented dump of
                 # https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
-                'erasure_code_profile':
-                    (CephErasureCodeProfile(name=pool_data['erasure_code_profile'])
-                     if pool_data['erasure_code_profile'] else None),
+                'erasure_code_profile_id':
+                    (pool_data['erasure_code_profile'] if pool_data['erasure_code_profile'] else None),
                 'last_change': pool_data['last_change'],
                 'full': 'full' in pool_data['flags_names'],
                 'min_size': pool_data['min_size'],
@@ -318,11 +316,9 @@ class CephPool(NodbModel, RadosMixin):
                 'quota_max_objects': pool_data['quota_max_objects'],
                 # Cache tiering related
                 'cache_mode': pool_data['cache_mode'],
-                'tier_of': CephPool(id=pool_data['tier_of']) if pool_data['tier_of'] > 0 else None,
-                'write_tier': (CephPool(id=pool_data['write_tier']) if pool_data['write_tier'] > 0
-                               else None),
-                'read_tier': (CephPool(id=pool_data['read_tier']) if pool_data['read_tier'] > 0
-                              else None),
+                'tier_of_id': pool_data['tier_of'] if pool_data['tier_of'] > 0 else None,
+                'write_tier_id': pool_data['write_tier'] if pool_data['write_tier'] > 0 else None,
+                'read_tier_id': pool_data['read_tier'] if pool_data['read_tier'] > 0 else None,
                 # Attributes for cache tiering
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
@@ -801,7 +797,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
                                 old_format=api.image_old_format(pool.name, image_name),
                                 features=api.image_features(pool.name, image_name),
-                                name=image_name),
+                                name=image_name,
+                                pool_id=pool.id),
                  pool)
                 for (image_name, pool)
                 in rbd_name_pools)
