@@ -20,7 +20,6 @@ do
 done
 
 cd $OADIR
-OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
 	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin version"
@@ -146,9 +145,9 @@ case $1 in
 		fi
 		
 		su "$OAUSER" -c 'python manage.py pre_install'
-		
-		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
-		
+
+		chown $OAUSER:$OAGROUP /etc/openattic/databases/*sql.ini
+
 		if [ "$#" -gt 1 ]; then
 			shift
 			echo "Please use your operating system's package manager"

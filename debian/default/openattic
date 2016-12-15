@@ -11,6 +11,8 @@
 
 PYTHON="/usr/bin/python"
 OADIR="/usr/share/openattic"
+OAUSER="openattic"
+OAGROUP="openattic"
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
 SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"

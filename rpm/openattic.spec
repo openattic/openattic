@@ -552,7 +552,6 @@ echo ""
 %{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
-/lib/systemd/system/%{name}-rpcd.service
 /lib/systemd/system/%{name}-systemd.service
 /lib/tmpfiles.d/%{name}.conf
 %config %{_sysconfdir}/httpd/conf.d/%{name}.conf
@@ -575,7 +574,6 @@ echo ""
 %{_datadir}/%{name}/pamauth.py*
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
-%{_datadir}/%{name}/rpcd/
 %{_datadir}/%{name}/serverstats.wsgi
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/

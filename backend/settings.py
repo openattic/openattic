@@ -343,7 +343,6 @@ INSTALLED_APPS = [
     'ifconfig',
     'userprefs',
     'cmdlog',
-    'rpcd',
     'rest',
     'systemd',
     'sysutils',
