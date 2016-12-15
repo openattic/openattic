@@ -323,9 +323,6 @@ cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 #rtslib
 cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 
-#RPCD
-ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
-
 # oaconfig install
 
 pushd openattic/backend/
