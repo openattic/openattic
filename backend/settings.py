@@ -286,12 +286,6 @@ if __domconf__.get("domain", "workgroup"):
 # privileges when they login, if they don't have them already.)
 AUTHZ_SYSGROUP = __domconf__.get("authz", "group").decode("utf-8")
 
-
-# Timeout to use when connecting to peers via XMLRPC. This timeout only applies for
-# the connect() and send() operations, but not for recv(); hence it can be set to an
-# aggressively low value in order to either be sure we will get an answer or move on.
-PEER_CONNECT_TIMEOUT=0.5
-
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
