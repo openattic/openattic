@@ -27,12 +27,13 @@ var taskQueueCommons = function(){
   // Describes the dialog elements.
   this.dialog = {
     tabs: {
-      pending: {
+      pending: { // This is the same attribute key used by the UI.
         name: 'Pending',
-        elements: {},
+        elements: {}, // Will be filled with protractor elements for each tab.
         columns: {
-          description: {
+          description: { // This is the same attribute key that's used by the API-Object.
             name: 'Name'
+            // 'element: protractorElement' will be inserted into each column.
           },
           created: {
             name: 'Created'
@@ -82,13 +83,13 @@ var taskQueueCommons = function(){
         }
       }
     },
-    modalElements: {
+    modalElements: { // Holds protractorElements.
       header: element(by.className('openattic-modal-header')),
       content: element(by.className('openattic-modal-content')),
       footer: element(by.className('openattic-modal-footer')),
       closeBtn: element(by.className('modal-close-btn'))
     },
-    tabElements: { // is used to create elements for each tab (just for structure creation)
+    tabElements: { // This is used to create elements for each tab for structure creation. (Internal use)
       tab: 'tc_tab_',
       deleteBtn: 'tc_task_delete_',
       loadingParagraph: 'tc_loading_',
@@ -99,21 +100,30 @@ var taskQueueCommons = function(){
   };
 
   /**
-   * Adds elements to each tab under dialog.tabs.
-   * Uses dialog.tabElements to combine it with the tab names.
-   * - Structure creation -
+   * Adds elements to each tab.elements and adds an element to each column of the tab.
+   * For internal use only.
    */
-  Object.keys(this.dialog.tabs).forEach(function(tab){
-    Object.keys(self.dialog.tabElements).forEach(function(elementName){
-      var className = self.dialog.tabElements[elementName] + tab;
-      self.dialog.tabs[tab].elements[elementName] = element(by.className(className));
+  Object.keys(this.dialog.tabs).forEach(function(tabName){
+    var tabElements = self.dialog.tabElements;
+    var tab = self.dialog.tabs[tabName];
+    /**
+     * Uses dialog.tabElements to combine it with the tab names to create the tab elements.
+     */
+    Object.keys(tabElements).forEach(function(elementName){
+      var className = tabElements[elementName] + tabName;
+      tab.elements[elementName] = element(by.className(className));
     });
-    Object.keys(self.dialog.tabs[tab].columns).forEach(function(col){
-      self.dialog.tabs[tab].columns[col].element = element(by.className('tc-col-' + tab + '-' + col));
+    /**
+     * Uses the attribute name of each column and tab name to create an column element.
+     */
+    Object.keys(tab.columns).forEach(function(columnName){
+      tab.columns[columnName].element = element(by.className('tc-col-' + tabName + '-' + columnName));
     });
   });
 
-  // Holds the different texts and needed elements.
+  /**
+   * Holds the different texts and needed elements of the deletion dialog.
+   */
   this.deletionDialog = {
     text: {
       warning: 'If you delete running tasks, it will abort the execution and won\'t roll back what has been done ' +
@@ -129,28 +139,39 @@ var taskQueueCommons = function(){
     }
   };
 
-  /**
-   * Changes to the given tab.
-   * @param {String} tab
+  /*
+   * Expects default buttons to be displayed or not.
+   * @param {Boolean} displayed - What to expect.
    */
-  this.changeTab = function(tab){
-    Object.keys(self.dialog.modalElements).forEach(function(e){
-      expect(self.dialog.modalElements[e].isDisplayed()).toBe(true);
-      if(tab === 'pending'){ // Updates pending tab view.
-        self.changeTab('failed');
+  this.expectDefaultModalElements = function(displayed){
+    var elements = self.dialog.modalElements;
+    Object.keys(elements).forEach(function(elementName){
+      var modalElement = elements[elementName];
+      expect(modalElement.isPresent()).toBe(displayed);
+      if(displayed){
+        expect(modalElement.isDisplayed()).toBe(displayed);
       }
-      element(by.className(self.dialog.tabElements.tab + tab)).click();
     });
   };
 
   /**
-   * Opens the task queue dialog.
+   * Changes to the given tab and expect default elements to be there.
+   * @param {String} tabName
+   */
+  this.changeTab = function(tabName){
+    if(tabName === 'pending'){ // Updates pending tab view.
+      self.changeTab('failed');
+    }
+    element(by.className(self.dialog.tabElements.tab + tabName)).click();
+    self.expectDefaultModalElements(true);
+  };
+
+  /**
+   * Opens the task queue dialog and expect default elements to be there.
    */
   this.open = function(){
     self.taskQueue.click();
-    Object.keys(self.dialog.modalElements).forEach(function(element){
-      expect(self.dialog.modalElements[element].isPresent()).toBe(true);
-    });
+    self.expectDefaultModalElements(true);
   };
 
   /**
@@ -158,9 +179,7 @@ var taskQueueCommons = function(){
    */
   this.close = function(){
     self.dialog.modalElements.closeBtn.click();
-    Object.keys(self.dialog.modalElements).forEach(function(element){
-      expect(self.dialog.modalElements[element].isPresent()).toBe(false);
-    });
+    self.expectDefaultModalElements(false);
   };
 
   /**
@@ -170,54 +189,55 @@ var taskQueueCommons = function(){
   this.waitForPendingTasks = function(depth){
     browser.sleep(helpers.configs.sleep);
     if(!depth){
-      self.open();
+      self.open(); // Opens the dialog at first call.
       depth = 1;
     }else{
-      self.changeTab('pending');
+      self.changeTab('pending'); // Updates the pending view.
     }
     self.dialog.tabs.pending.elements.tab.getText().then(function(s){
       if(parseInt(s.match(/[0-9]+/)[0], 10) === 0){
-        self.close();
+        self.close(); // Closes the dialog when there are zero pending tasks.
       }else{
-        self.waitForPendingTasks(depth + 1);
+        self.waitForPendingTasks(depth + 1); // Calls itself if there are pending tasks.
       }
     });
   };
 
   /**
    * Triggers an API-Call to create a test task with a specified time.
-   * @param {int} time
+   * It executes an XMLHttpRequest to the api with the login data provided by configs.js.
+   * @param {int} times - One round takes around 1 1/2 seconds.
    */
-  this.createTask = function(time){
-    browser.executeScript(function(time, configs){
+  this.createTask = function(times){
+    browser.executeScript(function(times, configs){
       var xhr = new XMLHttpRequest();
       var url = configs.url.split('/');
       url = url[0] + '//' + configs.username + ':' + configs.password + '@' + url[2];
       xhr.open('post', url + '/openattic/api/taskqueue/test_task', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.send(JSON.stringify({times: time}));
-    }, time, helpers.configs);
+      xhr.send(JSON.stringify({times: times}));
+    }, times, helpers.configs);
     browser.sleep(helpers.configs.sleep);
   };
 
   /**
    * Deletes all or the given task name in the given tab.
-   * @param {String} tab - Name of the tasks where the deletion takes place.
-   * @param {String} [name] - Name of the task to delete.
+   * @param {String} tabName - Name of the tasks where the deletion takes place and which is displayed.
+   * @param {String} [taskName] - Name of the task to delete.
    */
-  this.deleteTasks = function(tab, name){
-    var deleteBtn = self.dialog.tabs[tab].elements.deleteBtn;
-    //expect(deleteBtn.isEnabled()).toBe(false);
-    if(name){
-      var task = element.all(by.cssContainingText('tr', name)).first();
+  this.deleteTasks = function(tabName, taskName){
+    var deleteBtn = self.dialog.tabs[tabName].elements.deleteBtn;
+    expect(deleteBtn.isEnabled()).toBe(false);
+    if(taskName){ // If a singel deletion takes place.
+      var task = element.all(by.cssContainingText('tr', taskName)).first();
       expect(task.isDisplayed()).toBe(true);
       task.click();
-    }else{
-      self.dialog.tabs[tab].elements.selectAll.click();
+    }else{ // Delete all tasks in the tabName.
+      self.dialog.tabs[tabName].elements.selectAll.click();
     }
-    //expect(deleteBtn.isEnabled()).toBe(true);
+    expect(deleteBtn.isEnabled()).toBe(true);
     deleteBtn.click();
-    self.handleDeleteForm(tab);
+    self.handleDeleteForm(tabName);
   };
 
   /**
@@ -226,16 +246,19 @@ var taskQueueCommons = function(){
    * @param {String} tab - Name of the current tab.
    */
   this.handleDeleteForm = function(tab){
-    var warning = self.deletionDialog.element.warning;
-    var singleDelete = self.deletionDialog.element.singleDelete;
-    var multiDelete = self.deletionDialog.element.multiDelete;
-    var inputField = self.deletionDialog.element.inputField;
-    var confirmBtn = self.deletionDialog.element.confirmBtn;
-    expect(warning.isDisplayed()).toBe(tab === 'pending');
-    if(tab === 'pending'){
-      expect(warning.getText()).toBe(self.deletionDialog.text.warning);
+    var dialog = self.deletionDialog;
+    var elements = dialog.element;
+    var warning = elements.warning;
+    var singleDelete = elements.singleDelete;
+    var multiDelete = elements.multiDelete;
+    var inputField = elements.inputField;
+    var confirmBtn = elements.confirmBtn;
+    var showWarning = tab === 'pending';
+    expect(warning.isDisplayed()).toBe(showWarning); // Should only show the warning if you want to delete a pending task.
+    if(showWarning){
+      expect(warning.getText()).toBe(dialog.text.warning);
     }
-    multiDelete.isDisplayed().then(function(displayed){
+    multiDelete.isDisplayed().then(function(displayed){ // If you delete multiple tasks you the single deletion can't be shown and vice versa.
       expect(singleDelete.isDisplayed()).toBe(!displayed);
     });
     expect(inputField.isDisplayed()).toBe(true);
@@ -243,6 +266,7 @@ var taskQueueCommons = function(){
     expect(confirmBtn.isDisplayed()).toBe(true);
     expect(confirmBtn.getText()).toBe('Delete');
     confirmBtn.click();
+    browser.sleep(helpers.configs.sleep);
   };
 };
 

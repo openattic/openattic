@@ -12,7 +12,7 @@
             <form class="tc_listing_{{tabKey}}" name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
                 <div class="dataTables_header clearfix">
                     <button type="button" class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
-                        ng-class="{disabled: tab.selection.items.length === 0}"  ng-click="taskDeleteAction()">
+                        ng-disabled="tab.selection.items.length === 0" ng-click="taskDeleteAction()">
                         Delete</button>
                 </div>
 

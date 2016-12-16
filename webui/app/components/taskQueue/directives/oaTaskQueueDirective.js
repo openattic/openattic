@@ -31,10 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.directive("taskQueueDirective", function () {
+app.directive("oaTaskQueue", function () {
   return {
     restrict: "A",
-    templateUrl: "components/taskQueue/templates/task-queue-directive.html",
+    templateUrl: "components/taskQueue/templates/oa-task-queue-directive.html",
     controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $interval, $http, taskQueueFetcher) {
       $scope.taskOverview = {
         firstUpdate: true,
@@ -56,7 +56,7 @@ app.directive("taskQueueDirective", function () {
        * The tooltip shows the average percent done over all running tasks.
        *
        * If toasties are needed:
-       * Toasties are created if their is a change between the finalized tasks from the last and the current task
+       * Toasties are created if there is a change between the finalized tasks from the last and the current task
        * update.
        */
       $scope.updateTaskOverview = function () {
@@ -82,7 +82,7 @@ app.directive("taskQueueDirective", function () {
       };
 
       /**
-       * Toasties are created if their is a change between the finalized tasks from the last and the current task
+       * Toasties are created if there is a change between the finalized tasks from the last and the current task
        * update.
        */
       $scope.createNeededToasties = function (allTasks) {

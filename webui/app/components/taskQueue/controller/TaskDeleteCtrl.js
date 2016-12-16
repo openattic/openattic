@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.controller("TaskDeletionCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
+app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
   $scope.tasks = taskSelection;
   $scope.waiting = false;
   $scope.finishedTasks = 0;

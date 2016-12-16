@@ -258,19 +258,20 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   $scope.toggleTaskSelection = function (task, $event) {
     var tab = $scope.getActiveTab();
     var items = tab.selection.items;
-    var exists = -1;
+    var exists = items.indexOf(task.id);;
     var sorted = [];
     var iPrev = 0;
     var iNow = 0;
     var newItems = [];
-    if ($event.target.checked || $event.ctrlKey) {
-      exists = items.indexOf(task.id);
+    if (!$event.shiftKey) {
       if (exists !== -1) {
         items.splice(exists, 1);
-      } else {
+      } else if ($event.ctrlKey) {
         items.push(task.id);
+      } else {
+        items = [task.id];
       }
-    } else if ($event.shiftKey) {
+    } else {
       sorted = $filter("orderBy")(tab.data, tab.tableSort.attribute, tab.tableSort.reverse);
       sorted = sorted.map($scope.getTaskId);
       iPrev = sorted.indexOf(items[items.length - 1]);
@@ -284,8 +285,6 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           items.push(id);
         }
       });
-    } else {
-      items = [task.id];
     }
     $scope.updateSelectedTasks(tab, items);
   };
@@ -419,7 +418,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/taskQueue/templates/task-deletion.html",
-      controller: "TaskDeletionCtrl",
+      controller: "TaskDeleteCtrl",
       resolve: {
         taskSelection: function () {
           return items.map(function (id) {
