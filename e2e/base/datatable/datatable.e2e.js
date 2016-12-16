@@ -181,6 +181,11 @@ describe('Should test oadatatable and its options', function(){
     expect(protectionColumn.isDisplayed()).toBe(true);
   });
 
+  /**
+   * Disable each column, in order to disable them all.
+   * The columns are counted and are expected to have at least two columns.
+   * The check box column and the last column that was tried to disable.
+   */
   it('should not allow to disable all columns', function(){
     columnListButton.click();
     var columns = [];
