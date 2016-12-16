@@ -1,11 +1,9 @@
 'use strict';
 
 var helpers = require('../../common.js');
-var taskQueueCommon = require('./task_queue_common.js');
+var qProperties = require('./task_queue_common.js'); // Defines task queue elements and common task queue related functions.
 
 describe('task queue form test', function(){
-  var qProperties = new taskQueueCommon(); // Defines task queue elements and common task queue related functions.
-
   beforeAll(function(){
     helpers.login();
   });

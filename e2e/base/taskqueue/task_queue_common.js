@@ -17,21 +17,21 @@
  * - createTask(int time) - Triggers an API-Call to create a test task with a specified time.
  * - deleteTasks(String tab [, String name]) - Deletes all or the given task name in the given tab.
  */
-var taskQueueCommons = function(){
-  var self = this;
+(function(){
+  var self = {};
   var helpers = require('../../common.js');
 
   // The element to click to open the modal dialogue.
-  this.taskQueue = element(by.className('tc_task-queue'));
+  self.taskQueue = element(by.className('tc_task-queue'));
 
   // Describes the dialog elements.
-  this.dialog = {
+  self.dialog = {
     tabs: {
-      pending: { // This is the same attribute key used by the UI.
+      pending: { // self.is the same attribute key used by the UI.
         name: 'Pending',
         elements: {}, // Will be filled with protractor elements for each tab.
         columns: {
-          description: { // This is the same attribute key that's used by the API-Object.
+          description: { // self.is the same attribute key that's used by the API-Object.
             name: 'Name'
             // 'element: protractorElement' will be inserted into each column.
           },
@@ -89,7 +89,7 @@ var taskQueueCommons = function(){
       footer: element(by.className('openattic-modal-footer')),
       closeBtn: element(by.className('modal-close-btn'))
     },
-    tabElements: { // This is used to create elements for each tab for structure creation. (Internal use)
+    tabElements: { // self.is used to create elements for each tab for structure creation. (Internal use)
       tab: 'tc_tab_',
       deleteBtn: 'tc_task_delete_',
       loadingParagraph: 'tc_loading_',
@@ -103,7 +103,7 @@ var taskQueueCommons = function(){
    * Adds elements to each tab.elements and adds an element to each column of the tab.
    * For internal use only.
    */
-  Object.keys(this.dialog.tabs).forEach(function(tabName){
+  Object.keys(self.dialog.tabs).forEach(function(tabName){
     var tabElements = self.dialog.tabElements;
     var tab = self.dialog.tabs[tabName];
     /**
@@ -124,7 +124,7 @@ var taskQueueCommons = function(){
   /**
    * Holds the different texts and needed elements of the deletion dialog.
    */
-  this.deletionDialog = {
+  self.deletionDialog = {
     text: {
       warning: 'If you delete running tasks, it will abort the execution and won\'t roll back what has been done ' +
         'so far!',
@@ -143,7 +143,7 @@ var taskQueueCommons = function(){
    * Expects default buttons to be displayed or not.
    * @param {Boolean} displayed - What to expect.
    */
-  this.expectDefaultModalElements = function(displayed){
+  self.expectDefaultModalElements = function(displayed){
     var elements = self.dialog.modalElements;
     Object.keys(elements).forEach(function(elementName){
       var modalElement = elements[elementName];
@@ -158,7 +158,7 @@ var taskQueueCommons = function(){
    * Changes to the given tab and expect default elements to be there.
    * @param {String} tabName
    */
-  this.changeTab = function(tabName){
+  self.changeTab = function(tabName){
     if(tabName === 'pending'){ // Updates pending tab view.
       self.changeTab('failed');
     }
@@ -169,7 +169,7 @@ var taskQueueCommons = function(){
   /**
    * Opens the task queue dialog and expect default elements to be there.
    */
-  this.open = function(){
+  self.open = function(){
     self.taskQueue.click();
     self.expectDefaultModalElements(true);
   };
@@ -177,7 +177,7 @@ var taskQueueCommons = function(){
   /**
    * Closes the task queue dialog.
    */
-  this.close = function(){
+  self.close = function(){
     self.dialog.modalElements.closeBtn.click();
     self.expectDefaultModalElements(false);
   };
@@ -186,7 +186,7 @@ var taskQueueCommons = function(){
    * Waits for all pending tasks to finish, use it with care because it's recursive.
    * @param {int} [depth] - Given by the recursive call.
    */
-  this.waitForPendingTasks = function(depth){
+  self.waitForPendingTasks = function(depth){
     browser.sleep(helpers.configs.sleep);
     if(!depth){
       self.open(); // Opens the dialog at first call.
@@ -208,7 +208,7 @@ var taskQueueCommons = function(){
    * It executes an XMLHttpRequest to the api with the login data provided by configs.js.
    * @param {int} times - One round takes around 1 1/2 seconds.
    */
-  this.createTask = function(times){
+  self.createTask = function(times){
     browser.executeScript(function(times, configs){
       var xhr = new XMLHttpRequest();
       var url = configs.url.split('/');
@@ -225,7 +225,7 @@ var taskQueueCommons = function(){
    * @param {String} tabName - Name of the tasks where the deletion takes place and which is displayed.
    * @param {String} [taskName] - Name of the task to delete.
    */
-  this.deleteTasks = function(tabName, taskName){
+  self.deleteTasks = function(tabName, taskName){
     var deleteBtn = self.dialog.tabs[tabName].elements.deleteBtn;
     expect(deleteBtn.isEnabled()).toBe(false);
     if(taskName){ // If a singel deletion takes place.
@@ -242,10 +242,10 @@ var taskQueueCommons = function(){
 
   /**
    * Is used to determine if everything is alright while deleting.
-   * You should't call this function from outside.
+   * You should't call self.function from outside.
    * @param {String} tab - Name of the current tab.
    */
-  this.handleDeleteForm = function(tab){
+  self.handleDeleteForm = function(tab){
     var dialog = self.deletionDialog;
     var elements = dialog.element;
     var warning = elements.warning;
@@ -268,6 +268,6 @@ var taskQueueCommons = function(){
     confirmBtn.click();
     browser.sleep(helpers.configs.sleep);
   };
-};
+  module.exports = self;
+}());
 
-module.exports = taskQueueCommons;
