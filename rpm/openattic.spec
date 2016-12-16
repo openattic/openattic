@@ -674,14 +674,12 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
-%{_libdir}/nagios/plugins/check_drbd
 %{_libdir}/nagios/plugins/check_drbdstats
 %{_libdir}/nagios/plugins/check_iface_traffic
 %{_libdir}/nagios/plugins/check_lvm_snapshot
 %{_libdir}/nagios/plugins/check_oa_utilization
 %{_libdir}/nagios/plugins/check_openattic_systemd
 %{_libdir}/nagios/plugins/check_protocol_traffic
-%{_libdir}/nagios/plugins/check_twraid_unit
 %{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
