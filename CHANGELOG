@@ -18,6 +18,8 @@ Version 2.0.17 (not released yet):
 * Backend: Fixed compatibility issues in our Ceph module on Xenial (OP-1763)
 * Backend: Fixed calls to systemd (not oA systemd) (OP-1769)
 * Backend: Fixed truncated dropdown inputs on Xenial (OP-1788)
+* Backend: Use `reload-or-restart` instead of plain `reload` for restarting
+  services on systemd-based operating systems (OP-984).
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
