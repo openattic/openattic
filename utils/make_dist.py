@@ -114,6 +114,7 @@ from datetime import datetime
 from hashlib import md5
 from docopt import docopt
 from urlparse import urlparse
+from distutils.spawn import find_executable
 
 VERBOSITY_SCRIPT = -1
 VERBOSITY_QUIET = 0
@@ -440,7 +441,7 @@ class DistBuilder(object):
 
         :type message: str
         """
-        sys.stderr.write(message + os.linesep)
+        sys.stderr.write('\033[101;10m{}\033[0m{}'.format(message, os.linesep))
         sys.exit(2)
 
     def _retrieve_source(self, source, destination_dir, skip_if_exists=False):
@@ -675,11 +676,28 @@ class DistBuilder(object):
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
         build_basename = self._get_build_basename(channel, version)
 
-        if (self._args['--adapt-debian-changelog'] or self._is_debian_or_derivative()):
-            if not self._args['--adapt-debian-changelog'] and self._is_debian_or_derivative():
-                self._warn('The --adapt-debian-changelog switch has automatically been enabled for '
-                           'you because you are using Debian or a derivative of it.')
+        debchange_installed = bool(find_executable('debchange'))
+        enable_debchange = False
+        if self._args['--adapt-debian-changelog']:
+            if debchange_installed:
+                enable_debchange = True
+            else:
+                self._fail('`debchange` wasn\'t found, but `--adapt-debian-changelog` has been '
+                           'specified. You may either install the executable (usually in the'
+                           '`devscripts` package) or deactivate the `--adapt-debian-changelog` '
+                           'switch.')
+        elif self._is_debian_or_derivative():
+            if debchange_installed:
+                self._warn('The --adapt-debian-changelog switch has automatically been enabled '
+                           'for you because you are using Debian or a derivative of it.')
+                enable_debchange = True
+            else:
+                self._warn('`debchange` executable wasn\'t found. The `debian/changelog` cannot '
+                           'be adapted without it. You\'ll be able to build the tar archive but '
+                           'you may not be able to create a debian package with it because of '
+                           'missmatching version information.')
 
+        if enable_debchange:
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
                                         version + ('-1' if channel == 'release' else ''),
