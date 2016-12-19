@@ -363,7 +363,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           goToListView();
         }, function (error) {
           $scope.submitted = false;
-          var toastMsg = "Could not create the RBD through a server failure.";
+          var toastMsg = "Could not create the RBD because of a server error.";
           if (error.status === 400) {
             if (error.data.size) {
               var size = error.data.size[0].match(/[0-9]+/)[0];
@@ -373,7 +373,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
             }
           }
           toasty.error({
-            title: "Can't create RBD",
+            title: "Failed to create RBD " + $scope.rbd.name,
             msg: toastMsg,
             timeout: 10000
           });
