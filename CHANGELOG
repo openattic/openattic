@@ -38,6 +38,8 @@ Version 2.0.17 (not released yet):
 * WebUI: Display tooltips again (OP-1749)
 * WebUI: Remove the OSD selection (OP-1615)
 * WebUI: Prevent the disabling of all columns in oA-datatables (OP-1158)
+* WebUI: Validate the right WWN formats in the selected host share method (OP-1786)
+* WebUI/QA: E2E adjustments related to OP-1786 (OP-1787)
 * WebUI/QA: Try to disable all columns and expect not to succeed (OP-1718)
 * WebUI/QA: refactored cmdlog e2e tests (OP-1797)
 * Installation: Fix Permission denied: '/usr/bin/pip' for Vagrant development
