@@ -195,9 +195,7 @@ describe('Should test oadatatable and its options', function(){
           column.click();
           columnListButton.click();
           element.all(by.css('.datatable th')).filter(function(column){
-            return column.isDisplayed().then(function(displayed){
-              return displayed;
-            });
+            return column.isDisplayed();
           }).count().then(function(count){
             expect(count >= 2).toBe(true);
             browser.executeScript('window.localStorage.clear();'); // Reset local cache.
