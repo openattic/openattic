@@ -160,7 +160,7 @@ Keep in mind that you need need at least Django 1.7::
     0001_initial.py:
       - Create model TaskQueue
 
-Then, add add the ``migrations`` directory to your mercurial clone::
+Then, add the ``migrations`` directory to your mercurial clone::
 
   ~/openattic/backend$ hg add taskqueue/migrations/__init__.py taskqueue/migrations/0001_initial.py
 
@@ -215,7 +215,7 @@ You can now append your generated migration to the ``_migrations`` array in
 Afterwards, make sure that already applied migrations (by executing ``syncdb``) will never
 be applied again, as this could lead to data loss in future migrations. Thus, create a test
 function named ``test_taskqueue_0002_taskqueue_description_textfield`` which returns ``True``,
-**iff** the migration should be applied::
+**if and only if** the migration should be applied. For example like this::
 
   def test_taskqueue_0002_taskqueue_description_textfield(cursor):
       stmt = """SELECT data_type FROM INFORMATION_SCHEMA.COLUMNS
