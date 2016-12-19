@@ -104,7 +104,7 @@ pointing to ``/home/vagrant/env/bin/python`` on your VM. Then, add
 a few PyCharm extensions, like a Django support or the remote interpreter tools.
 
 Finally, add the |oA| Django Server as a Pycharm `Django server` in the `Run Configurations` using
-your configured remote interpreter.
+your configured remote interpreter and host 0.0.0.0.
 
 Debugging |oA| with PyCharm Community
 -------------------------------------
