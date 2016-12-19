@@ -89,16 +89,32 @@ app.directive("oadatatable", function () {
 
       $scope.filterConfig.entries = $scope.store.entries || 10;
 
-      $scope.$watchCollection("columns", function (cols) {
+      /**
+       * Watches for enabled or disabled columns.
+       *
+       * The first call will be handled differently than the rest, because the old column set will be loaded if
+       * available or the column set will be saved to the local storage.
+       *
+       * The next calls will enable or disable columns and make sure that at least one column is checked.
+       * The column change will be saved to the local storage object.
+       */
+      $scope.$watchCollection("columns", function (cols, oldCols) {
         if (firstColCall) {
           firstColCall = false;
           if (!$scope.store.columns) {
             $scope.store.columns = cols;
           }
+          $scope.columns = $scope.store.columns;
         } else {
-          $scope.store.columns = cols;
+          var allowed = Object.keys(cols).some(function (colName) {
+            return cols[colName];
+          });
+          if (allowed) {
+            $scope.store.columns = cols;
+          } else {
+            $scope.columns = oldCols;
+          }
         }
-        $scope.columns = $scope.store.columns;
       });
 
       $scope.$watch("selection.checkAll", function (newVal) {
