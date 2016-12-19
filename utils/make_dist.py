@@ -253,6 +253,7 @@ class DistBuilder(object):
         self._source = self._args['--source']
         self._source_is_path = not DistBuilder.is_url(self._source)
         if self._source_is_path:
+            self._source = os.path.expanduser(self._source)
             self._source = os.path.abspath(self._source)
         self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
         self._tmp_oa_clone_dir = os.path.join(self._tmp_dir, 'openattic')
