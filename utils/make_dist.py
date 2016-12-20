@@ -695,8 +695,8 @@ class DistBuilder(object):
             else:
                 self._warn('`debchange` executable wasn\'t found. The `debian/changelog` cannot '
                            'be adapted without it. You\'ll be able to build the tar archive but '
-                           'you may not be able to create a debian package with it because of '
-                           'missmatching version information.')
+                           'you may not be able to create a Debian package with it because of '
+                           'mismatching version information.')
 
         if enable_debchange:
             debian_channel = 'stable' if channel == 'release' else 'nightly'
