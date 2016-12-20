@@ -198,9 +198,11 @@ describe('Should test oadatatable and its options', function(){
             return column.isDisplayed();
           }).count().then(function(count){
             expect(count >= 2).toBe(true);
-            browser.executeScript('window.localStorage.clear();'); // Reset local cache.
           });
         });
+      }).then(function(){
+        browser.executeScript('window.localStorage.clear();'); // Reset local cache.
+        browser.refresh();
       });
   });
 
