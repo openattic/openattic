@@ -1,21 +1,56 @@
 <div class="openattic-modal-header">
-    <span>Delete host</span>
+    <span ng-if="host">Delete host</span>
+    <span ng-if="!host && hosts">Delete hosts</span>
 </div>
 <div class="openattic-modal-content">
-    <p>
+    <!-- single host -->
+    <p ng-if="host">
         You are about to delete the host <strong>{{host.name}}</strong>.
     </p>
-    <p>
-        To confirm, please click <kbd>Delete host</kbd>, or cancel and return to the page.
-    </p>
-</div>
+    <!-- end single host -->
 
-<div class="openattic-modal-footer">
+    <!-- multiple hosts -->
+    <div ng-if="hosts">
+        <p>
+            You are about to delete multiple hosts.
+        </p>
+        <p>
+            Be aware that you will <strong>lose all data</strong>
+            in the hosts and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <span class="text-danger">The following hosts will be deleted:</span>
+        <ul class="text-danger">
+            <li ng-repeat="host in hosts">
+                {{host.name}}
+            </li>
+        </ul>
+
+    </div>
+    <!-- end multiple hosts -->
+
+    <p>
+        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+    </p>
     <form name="deleteForm" role="form" novalidate>
+        <div class="form-group"
+             ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
+            <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
+                   ng-model="input.enteredName" ng-pattern="input.pattern" required autofocus>
+
+            <!-- Error -->
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
+                This field is required.
+            </span>
+            <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
+                The input value does not match 'yes'.
+            </span>
+            <!-- end Error -->
+        </div>
+
         <div class="button-group text-right">
             <button id="bot2-Msg1" class="btn btn-primary btn-sm"
                     ng-click="delete()" ng-disabled="deleteForm.$invalid">
-                Delete host
+                Delete
             </button>
             <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
         </div>

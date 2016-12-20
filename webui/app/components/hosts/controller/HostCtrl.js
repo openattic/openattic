@@ -146,9 +146,19 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     $scope.updateData();
   }, true);
 
-  $scope.$watch("selection.item", function (selitem) {
-    $scope.hasSelection = Boolean(selitem);
-    if (selitem) {
+  /**
+   * Watches the selection to
+   * - set multiSelection and hasSelection
+   * - do a tab change or route back to the overview
+   */
+  $scope.$watchCollection("selection", function (selection) {
+    var item = selection.item;
+    var items = selection.items;
+
+    $scope.multiSelection = Boolean(items) && items.length > 1;
+    $scope.hasSelection = Boolean(item);
+
+    if (item) {
       $scope.changeTab("hosts.detail.status");
     } else {
       $state.go("hosts");
@@ -163,17 +173,30 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     $state.go("hosts-edit", {host: $scope.selection.item.id});
   };
 
+  /**
+   * Calls deletionDialog with an available selection.
+   */
   $scope.deleteAction = function () {
-    if (!$scope.selection.item) {
+    if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
+    var item = $scope.selection.item;
+    var items = $scope.selection.items;
+    $scope.deletionDialog(item ? item : items);
+  };
+
+  /**
+   * Opens the deletion dialog with the given selection.
+   * It will reload the table then the dialog is closed.
+   */
+  $scope.deletionDialog = function (selection) {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/hosts/templates/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
-        host: function () {
-          return $scope.selection.item;
+        hostSelection: function () {
+          return selection;
         }
       }
     });
