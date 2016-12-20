@@ -31,15 +31,24 @@
 "use strict";
 
 var app = angular.module("openattic.oaWizards");
-app.controller("BlockstorageCtrl", function ($scope, HostService, InitiatorService) {
+app.controller("BlockstorageCtrl", function ($scope, HostService, $filter, InitiatorService, toasty) {
   $scope.limitTypes = ["lun"];
 
+  /**
+   * Loads all initiator hosts to $scope.hosts.
+   */
   HostService.query()
       .$promise
       .then(function (res) {
-        $scope.hosts = res;
+        $scope.hosts = $filter("initiatorsonly")(res);
       }, function (error) {
-        console.log("An error occurred", error);
+        error.toasty = {
+          title: "Failed to load hosts",
+          msg: "Host loading problem occurred.",
+          timeout: 10000
+        };
+        toasty.error(error.toasty);
+        throw error;
       });
 
   $scope.input = {
@@ -77,7 +86,13 @@ app.controller("BlockstorageCtrl", function ($scope, HostService, InitiatorServi
         .then(function (res) {
           $scope.has_initiator = (res.count > 0);
         }, function (error) {
-          console.log("An error occured", error);
+          error.toasty = {
+            title: "Failed to load initiators",
+            msg: "Initiators loading problem occurred.",
+            timeout: 10000
+          };
+          toasty.error(error.toasty);
+          throw error;
         });
     } else {
       $scope.input.iscsi_fc.create = false;

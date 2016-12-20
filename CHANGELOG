@@ -20,6 +20,7 @@ Version 2.0.17 (not released yet):
 * Backend: Fixed truncated dropdown inputs on Xenial (OP-1788)
 * Backend: Use `reload-or-restart` instead of plain `reload` for restarting
   services on systemd-based operating systems (OP-984).
+* Backend: Change taskqueue description and result fields to `TextField` (OP-1755)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
@@ -32,8 +33,14 @@ Version 2.0.17 (not released yet):
   criteria (OP-1427)
 * WebUI: Add a button to the API Recorder dialog to copy the Python script
   into clipboard. (OP-1706)
+* WebUI: Fixes iSCSI/FC wizard issue (OP-1718)
 * WebUI: Modify the API-Recorder Start/Stop buttons (OP-1720)
 * WebUI: Display tooltips again (OP-1749)
+* WebUI: Remove the OSD selection (OP-1615)
+* WebUI: Prevent the disabling of all columns in oA-datatables (OP-1158)
+* WebUI: Validate the right WWN formats in the selected host share method (OP-1786)
+* WebUI/QA: E2E adjustments related to OP-1786 (OP-1787)
+* WebUI/QA: Try to disable all columns and expect not to succeed (OP-1718)
 * WebUI/QA: refactored cmdlog e2e tests (OP-1797)
 * Installation: Fix Permission denied: '/usr/bin/pip' for Vagrant development
   environment using SUSE Leap (OP-1715)
