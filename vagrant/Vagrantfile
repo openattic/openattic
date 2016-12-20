@@ -11,7 +11,7 @@ end
 
 # Get the distribution name to be used. If no distribution i
 distro = ENV['DISTRO']
-if (!distro)
+unless distro
     raise NoDistributionSpecified.new
 end
 
