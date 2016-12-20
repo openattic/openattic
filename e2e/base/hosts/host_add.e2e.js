@@ -4,14 +4,16 @@ var helpers = require('../../common.js');
 describe('Should add a host and attributes', function(){
   var hostname = 'protractor_test_host';
   var hostname2 = 'e2e_test_host';
-  var host = element(by.cssContainingText('tr', hostname));
+  var hostname3 = 'e2e_mul_1';
+  var hostname4 = 'e2e_mul_2';
+  var host = helpers.get_list_element(hostname);
   var iqn = 'iqn.2016-12.org.openattic:storage:disk.sn-a8675309';
 
   beforeAll(function(){
     helpers.login();
     element(by.css('ul .tc_menuitem_hosts > a')).click();
   });
-  
+
   beforeEach(function(){
     browser.sleep(400);
   });
@@ -19,6 +21,8 @@ describe('Should add a host and attributes', function(){
   it('should create the test hosts', function(){
     helpers.create_host(iqn);
     helpers.create_host(null,null,hostname2);
+    helpers.create_host(null,null,hostname3);
+    helpers.create_host(null,null,hostname4);
   });
 
   it('should display the created test host', function(){
@@ -90,14 +94,25 @@ describe('Should add a host and attributes', function(){
     hostName.sendKeys('renamed_protractor_test_host');
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
-    var edited_host = element(by.cssContainingText('tr', 'renamed_protractor_test_host'));
+    var edited_host = helpers.get_list_element('renamed_protractor_test_host');
     expect(edited_host.isDisplayed()).toBe(true);
   });
 
-
-  it('should delete the test hosts', function(){
+  it('should delete the test host 1 and 2', function(){
     helpers.delete_host('renamed_protractor_test_host');
     helpers.delete_host(hostname2);
+  });
+
+  it('should delete the test host 3 and 4 via multi deletion', function(){
+    helpers.search_for('e2e_mul');
+    var host3 = helpers.get_list_element(hostname3);
+    var host4 = helpers.get_list_element(hostname4);
+    expect(host3.isDisplayed()).toBe(true);
+    expect(host4.isDisplayed()).toBe(true);
+    element(by.model('selection.checkAll')).click();
+    helpers.delete_selection();
+    expect(host3.isPresent()).toBe(false);
+    expect(host4.isPresent()).toBe(false);
   });
 
   afterAll(function(){
