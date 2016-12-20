@@ -5,6 +5,8 @@
 # For more information see https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561
 # ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
 
+distro = ENV['DISTRO'] || "malachite"
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -20,19 +22,23 @@ Vagrant.configure(2) do |config|
 
     # Every Vagrant development environment requires a box. You can search for
     # boxes at https://atlas.hashicorp.com/search.
-    if ENV['DISTRO'] == 'debian'
+    case distro
+    when 'debian'
         config.vm.box = 'debian/jessie64' # should work, too!
         # Rename the storage controller.
         sata_controller_name = 'SATA Controller'
-    elsif ENV['DISTRO'] == 'xenial'
+    when 'xenial'
         config.vm.box = 'yk0/ubuntu-xenial'
-    elsif ENV['DISTRO'] == 'trusty'
+    when 'trusty'
         config.vm.box = 'alxgrh/ubuntu-trusty-x86_64'
     else
         config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
         # Rename the storage controller.
         sata_controller_name = 'SATA Controller'
     end
+
+    # Set the machine name.
+    config.vm.define "oa_#{distro}_box"
 
     config.vm.provider :libvirt do |lv|
         # May be necessary to use 'qemu' here on some mainboards where 'kvm' doesn't work through a bug. 'qemu' seems to
@@ -74,6 +80,8 @@ Vagrant.configure(2) do |config|
     # Example for VirtualBox:
     #
     config.vm.provider :virtualbox do |vb|
+        # Rename the box.
+        vb.name = "oa_#{distro}_box"
         #   # Display the VirtualBox GUI when booting the machine
         #   vb.gui = true
         vb.memory = '2048'
@@ -117,7 +125,7 @@ Vagrant.configure(2) do |config|
         disk_num = 1
         disk_size = 50 * 1024
         for i in 0..disk_num do
-            file_to_disk = "./disks/box-disk#{i}.vmdk"
+            file_to_disk = "./disks/oa_#{distro}-disk#{i}.vmdk"
             unless File.exist?(file_to_disk)
                 vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
                 vb.customize ['storageattach', :id, '--storagectl', sata_controller_name, '--port', i + 1,
@@ -133,7 +141,7 @@ Vagrant.configure(2) do |config|
 
     config.vm.provision :shell, :path => 'install.sh'
 
-    if Vagrant.has_plugin?('vagrant-cachier') and ENV['DISTRO'] != 'xenial'
+    if Vagrant.has_plugin?('vagrant-cachier') and distro != 'xenial'
         # Configure cached packages to be shared between instances of the same base box.
         # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
         config.cache.scope = :box
