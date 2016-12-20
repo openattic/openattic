@@ -157,9 +157,10 @@
       var name = $hostname ? $hostname : hostname;
       var host = element(by.cssContainingText('tr', name));
       host.click();
-      element(by.css('.tc_menudropdown')).click();
-      element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
+      element(by.css('.tc_menudropdown')).click();
+      element(by.css('.tc_deleteItem > a')).click();
+      element(by.model('input.enteredName')).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
       browser.sleep(400);
       expect(host.isPresent()).toBe(false);
