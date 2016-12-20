@@ -5,7 +5,14 @@
 # For more information see https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561
 # ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
 
-distro = ENV['DISTRO'] || "malachite"
+class NoDistributionSpecified < Vagrant::Errors::VagrantError
+    error_message "No distribution specified. Use the DISTRO environment variable."
+end
+
+distro = ENV['DISTRO']
+if (!distro)
+    raise NoDistributionSpecified.new
+end
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -45,7 +52,7 @@ Vagrant.configure(2) do |config|
         config.vm.box = 'alxgrh/ubuntu-trusty-x86_64'
         # Set the IP address for this machine.
         ip4_address = '192.168.10.104'
-    else
+    when 'malachite'
         # Set the box to be used in the VM.
         config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
         # Rename the storage controller.
@@ -55,7 +62,7 @@ Vagrant.configure(2) do |config|
     end
 
     # Set the machine name.
-    config.vm.define "oa_#{distro}_box"
+    config.vm.define "oa_#{distro}"
 
     config.vm.provider :libvirt do |lv|
         # May be necessary to use 'qemu' here on some mainboards where 'kvm' doesn't work through a bug. 'qemu' seems to
