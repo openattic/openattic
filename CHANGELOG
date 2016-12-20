@@ -1,7 +1,7 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.17 (not released yet):
+Version 2.0.17, 20. December 2016:
 ----------------------------------
 
 * Backend: RPC API dependencies removed in oaconfig (OP-1255)
