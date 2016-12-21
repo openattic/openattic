@@ -30,12 +30,6 @@ NAGIOS_CFG_PATH="/etc/icinga/icinga.cfg"
 NAGIOS_CFG="/etc/icinga/icinga.cfg"
 
 ## Type: string
-## Default: "/etc/icinga/conf.d/openattic_contacts.cfg"
-#
-# Defines default contact groups
-NAGIOS_CONTACTS_CFG_PATH="/etc/icinga/conf.d/openattic_contacts.cfg"
-
-## Type: string
 ## Default: "/etc/icinga/conf.d"
 #
 # Defines additional services
@@ -71,6 +65,12 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 #
 # Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/pnp4nagios/perfdata"
+#
+# Path to RRDs
+NAGIOS_RRD_BASEDIR="/var/lib/pnp4nagios/perfdata"
 
 ## Type: string
 ## Default: "/var/lib/icinga"
