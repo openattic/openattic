@@ -9,10 +9,37 @@ class NoDistributionSpecified < Vagrant::Errors::VagrantError
     error_message "No distribution specified, use the DISTRO environment variable."
 end
 
-# Get the distribution name to be used. If no distribution i
+class UnknownDistributionSpecified < Vagrant::Errors::VagrantError
+    error_message "The specified distribution is not supported."
+end
+
+# Configuration map for all supported OS.
+distro_settings = {
+    jessie: {
+        box_name: 'debian/jessie64',
+        sata_controller_name: 'SATA Controller'
+    },
+    trusty: {
+        box_name: 'alxgrh/ubuntu-trusty-x86_64',
+        sata_controller_name: 'SATA'
+    },
+    xenial: {
+        box_name: 'yk0/ubuntu-xenial',
+        sata_controller_name: 'SATA'
+    },
+    malachite: {
+        box_name: 'opensuse/openSUSE-42.1-x86_64',
+        sata_controller_name: 'SATA Controller'
+    }
+}
+
+# Get the distribution name to be used.
 distro = ENV['DISTRO']
 unless distro
     raise NoDistributionSpecified.new
+end
+unless distro_settings.has_key? distro
+    raise UnknownDistributionSpecified
 end
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -24,31 +51,8 @@ Vagrant.configure(2) do |config|
     # For a complete reference, please see the online documentation at
     # https://docs.vagrantup.com.
 
-    # Most boxes are using the following SATA controller name. Please
-    # override this if a box uses any other name.
-    sata_controller_name = "SATA"
-
-    # Every Vagrant development environment requires a box. You can search for
-    # boxes at https://atlas.hashicorp.com/search.
-    case distro
-    when 'debian', 'jessie'
-        distro = 'jessie'
-        # Set the box to be used in the VM.
-        config.vm.box = 'debian/jessie64' # should work, too!
-        # Rename the storage controller.
-        sata_controller_name = 'SATA Controller'
-    when 'xenial'
-        # Set the box to be used in the VM.
-        config.vm.box = 'yk0/ubuntu-xenial'
-    when 'trusty'
-        # Set the box to be used in the VM.
-        config.vm.box = 'alxgrh/ubuntu-trusty-x86_64'
-    when 'malachite'
-        # Set the box to be used in the VM.
-        config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
-        # Rename the storage controller.
-        sata_controller_name = 'SATA Controller'
-    end
+    # Set the box to be used in the VM.
+    config.vm.box = distro_settings[distro][:box_name]
 
     # Set the machine name.
     config.vm.define "oa_#{distro}"
@@ -144,7 +148,7 @@ Vagrant.configure(2) do |config|
             file_to_disk = "./disks/oa_#{distro}-disk#{i}.vmdk"
             unless File.exist?(file_to_disk)
                 vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
-                vb.customize ['storageattach', :id, '--storagectl', sata_controller_name, '--port', i + 1,
+                vb.customize ['storageattach', :id, '--storagectl', distro_settings[distro][:sata_controller_name], '--port', i + 1,
                     '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
             end
         end
