@@ -15,19 +15,19 @@ end
 
 # Configuration map for all supported OS.
 distro_settings = {
-    jessie: {
+    'jessie' => {
         box_name: 'debian/jessie64',
         sata_controller_name: 'SATA Controller'
     },
-    trusty: {
+    'trusty' => {
         box_name: 'alxgrh/ubuntu-trusty-x86_64',
         sata_controller_name: 'SATA'
     },
-    xenial: {
+    'xenial' => {
         box_name: 'yk0/ubuntu-xenial',
         sata_controller_name: 'SATA'
     },
-    malachite: {
+    'malachite' => {
         box_name: 'opensuse/openSUSE-42.1-x86_64',
         sata_controller_name: 'SATA Controller'
     }
