@@ -365,14 +365,19 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.submitted = false;
           var toast = {
             title: "Error " + error.status,
-            msg: error.detail,
+            msg: "",
             timeout: 10000
           };
-          if (error.status === 400) {
-            if (error.data.size) {
-              var size = error.data.size[0].match(/[0-9]+/)[0];
-              toast.msg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
+          angular.forEach(error.data, function (val, key) {
+            if (key === "detail") {
+              toast.msg = val + toast.msg;
+            } else {
+              toast.msg += "<br>" + key + ": " + val;
             }
+          });
+          if (error.status === 400 && error.data.size) {
+            var size = error.data.size[0].match(/[0-9]+/)[0];
+            toast.msg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
           }
           toasty.error(toast);
           throw error;
