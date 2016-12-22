@@ -148,7 +148,6 @@ describe('Should test oadatatable and its options', function(){
     expect(allSelected.isPresent()).toBe(false);
   });
 
-  //TODO: add test case for OP-800
   it('should display enabled/disabled columns when clicked', function(){
     columnListButton.click();
     browser.sleep(400);
@@ -180,6 +179,31 @@ describe('Should test oadatatable and its options', function(){
     columnListButton.click();
     protectionListItem.click();
     expect(protectionColumn.isDisplayed()).toBe(true);
+  });
+
+  /**
+   * Disable each column, in order to disable them all.
+   * The columns are counted and are expected to have at least two columns.
+   * The check box column and the last column that was tried to disable.
+   */
+  it('should not allow to disable all columns', function(){
+    columnListButton.click();
+    var columns = [];
+    element.all(by.repeater('(text, checked) in columns'))
+      .then(function(columns){
+        columns.forEach(function(column){
+          column.click();
+          columnListButton.click();
+          element.all(by.css('.datatable th')).filter(function(column){
+            return column.isDisplayed();
+          }).count().then(function(count){
+            expect(count >= 2).toBe(true);
+          });
+        });
+      }).then(function(){
+        browser.executeScript('window.localStorage.clear();'); // Reset local cache.
+        browser.refresh();
+      });
   });
 
   it('should filter for the volumename', function(){

@@ -236,7 +236,9 @@ module-icinga"
     systemctl enable postgresql.service
 fi
 
-ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
+if [ -z "$IS_TRUSTY" ] ; then
+    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
+fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
@@ -250,7 +252,9 @@ service dbus reload
 
 # Make sure the directory /run/lock/openattic is created with the
 # correct privileges.
-systemd-tmpfiles --create
+if [ -z "$IS_TRUSTY" ] ; then
+    systemd-tmpfiles --create
+fi
 
 npm install -g bower
 npm install -g grunt-cli

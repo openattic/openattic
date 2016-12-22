@@ -44,7 +44,7 @@ class TaskQueue(Model):
     )
 
     task = models.TextField(help_text="The JSON-serialized task to run.", blank=False)
-    result = models.CharField(max_length=1024, editable=False, blank=True, null=True,
+    result = models.TextField(editable=False, blank=True, null=True,
                               help_text="The return value of the task queue.")
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -52,7 +52,7 @@ class TaskQueue(Model):
                                  help_text="A state-machine: not-started -> running -> finished | "
                                            "exception")
     percent = models.IntegerField(default=0)
-    description = models.CharField(max_length=128, blank=False)
+    description = models.TextField(blank=False)
 
     def run_once(self):
         """

@@ -130,6 +130,8 @@ def service_command(service, command="reload"):
         raise ValueError("invalid command %s" % command)
 
     if is_executable_installed('systemctl'):
+        if command == 'reload':
+            command = 'reload-or-restart'  # Also handles units which cannot be reloaded.
         logging.info('service_command({}): invoking `systemctl {} {}`'.format(service, command,
                                                                               service))
         invoke(['systemctl', command, service])
