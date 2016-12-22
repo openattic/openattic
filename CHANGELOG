@@ -5,6 +5,7 @@ Version 2.0.18, (not released yet):
 -----------------------------------
 
 * Documentation: Added Xenial to the list of distributions provided by our repository (OP-1543)
+* Deployment: Improve error messages and handling of errors of make_dist.py related to debchange (OP-1804)
 
 
 Version 2.0.17, 20. December 2016:
