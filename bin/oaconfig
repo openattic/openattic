@@ -113,7 +113,8 @@ case $1 in
 			if ! su - postgres -c "psql postgres -tAc \"${sql}\""| grep -q 1 ; then
 				echo "Creating database role \"openattic\""
 				pass=$(openssl rand -hex 10)
-				sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				sed -ri --follow-symlinks \
+				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
 					echo "Failed to update $database_ini"
 					exit 2
@@ -146,7 +147,8 @@ case $1 in
 		if ! PGPASSWORD="$password" psql openattic openattic -h "${host}" --no-password -c "\q" ; then
 			if (( has_local_database )) ; then
 				pass=$(openssl rand -hex 10)
-				sed -ri "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				sed -ri --follow-symlinks \
+				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
 					echo "Failed to update $database_ini"
 					exit 2
