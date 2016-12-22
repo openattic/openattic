@@ -363,20 +363,18 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           goToListView();
         }, function (error) {
           $scope.submitted = false;
-          var toastMsg = "Could not create the RBD because of a server error.";
+          var toast = {
+            title: "Error " + error.status,
+            msg: error.detail,
+            timeout: 10000
+          };
           if (error.status === 400) {
             if (error.data.size) {
               var size = error.data.size[0].match(/[0-9]+/)[0];
-              toastMsg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
-            } else {
-              toastMsg = "Could not create the RBD because of " + $filter("json")(error.data);
+              toast.msg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
             }
           }
-          toasty.error({
-            title: "Failed to create RBD " + $scope.rbd.name,
-            msg: toastMsg,
-            timeout: 10000
-          });
+          toasty.error(toast);
           throw error;
         });
     }
