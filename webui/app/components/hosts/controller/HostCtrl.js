@@ -152,13 +152,11 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
    * - do a tab change or route back to the overview
    */
   $scope.$watchCollection("selection", function (selection) {
-    var item = selection.item;
     var items = selection.items;
+    $scope.multiSelection = items && items.length > 1;
+    $scope.hasSelection = selection.item && items && items.length === 1; // Item isn't changed as fast as items.
 
-    $scope.multiSelection = Boolean(items) && items.length > 1;
-    $scope.hasSelection = Boolean(item);
-
-    if (item) {
+    if ($scope.hasSelection) {
       $scope.changeTab("hosts.detail.status");
     } else {
       $state.go("hosts");
@@ -174,29 +172,20 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
   };
 
   /**
-   * Calls deletionDialog with an available selection.
+   * Opens the deletion dialog with all selected items.
+   * It will reload the table then the dialog is closed.
    */
   $scope.deleteAction = function () {
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
-    var item = $scope.selection.item;
-    var items = $scope.selection.items;
-    $scope.deletionDialog(item ? item : items);
-  };
-
-  /**
-   * Opens the deletion dialog with the given selection.
-   * It will reload the table then the dialog is closed.
-   */
-  $scope.deletionDialog = function (selection) {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/hosts/templates/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
-        hostSelection: function () {
-          return selection;
+        hosts: function () {
+          return $scope.selection.items;
         }
       }
     });

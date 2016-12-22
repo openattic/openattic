@@ -4,13 +4,13 @@
 </div>
 <div class="openattic-modal-content">
     <!-- single host -->
-    <p ng-if="host">
-        You are about to delete the host <strong>{{host.name}}</strong>.
+    <p ng-if="hosts.length === 1">
+        You are about to delete the host <strong>{{hosts[0].name}}</strong>.
     </p>
     <!-- end single host -->
 
     <!-- multiple hosts -->
-    <div ng-if="hosts">
+    <div ng-if="hosts.length > 1">
         <p>
             You are about to delete multiple hosts.
         </p>
