@@ -92,6 +92,10 @@ option {
 .navbar-openattic .navbar-brand>img {
   height: 25px;
 }
+.navbar-openattic .oa-version {
+  color: #288cea;
+  margin: 2px 4px;
+}
 
 /* Breadcrumb */
 .breadcrumb {
