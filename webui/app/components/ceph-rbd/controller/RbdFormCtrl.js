@@ -364,7 +364,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         }, function (error) {
           $scope.submitted = false;
           var toast = {
-            title: "Error " + error.status,
+            title: "RBD creation error " + error.status,
             msg: "",
             timeout: 10000
           };
@@ -377,7 +377,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           });
           if (error.status === 400 && error.data.size) {
             var size = error.data.size[0].match(/[0-9]+/)[0];
-            toast.msg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
+            toast.msg = "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + ".";
           }
           toasty.error(toast);
           throw error;
