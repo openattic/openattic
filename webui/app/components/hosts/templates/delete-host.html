@@ -5,20 +5,16 @@
 <div class="openattic-modal-content">
     <!-- single host -->
     <p ng-if="hosts.length === 1">
-        You are about to delete the host <strong>{{hosts[0].name}}</strong>.
+        You are about to delete the host configuration for host <strong>{{hosts[0].name}}</strong>.
     </p>
     <!-- end single host -->
 
     <!-- multiple hosts -->
     <div ng-if="hosts.length > 1">
         <p>
-            You are about to delete multiple hosts.
+            You are about to delete multiple host configurations.
         </p>
-        <p>
-            Be aware that you will <strong>lose all data</strong>
-            in the hosts and that this operation <strong>cannot be undone</strong>.
-        </p>
-        <span class="text-danger">The following hosts will be deleted:</span>
+        <span class="text-danger">The configurations of the following hosts will be deleted:</span>
         <ul class="text-danger">
             <li ng-repeat="host in hosts">
                 {{host.name}}

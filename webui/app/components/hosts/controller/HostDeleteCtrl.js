@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.hosts");
-app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, hosts, toasty, $q) {
+app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibModalInstance, hosts, toasty, $q) {
   $scope.hosts = hosts;
   $scope.input = {
     enteredName: "",
@@ -53,8 +53,8 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstanc
       $uibModalInstance.close("deleted");
     }, function (error) {
       toasty.error({
-        title: error.status,
-        msg: error.data.detail
+        title: "Error " + error.status + " when deleting host" + hosts.length === 1 ? "" : "s",
+        msg: $filter("json")(error.data)
       });
       $uibModalInstance.close("deleted");
       throw error;
