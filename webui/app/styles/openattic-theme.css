@@ -92,9 +92,13 @@ option {
 .navbar-openattic .navbar-brand>img {
   height: 25px;
 }
-.navbar-openattic .oa-version {
+.oa-version .tooltip-inner {
+  background-color: #474544;
   color: #288cea;
-  margin: 2px 4px;
+  padding: 8px 0px 0px 0px;
+}
+.oa-version .tooltip-arrow {
+  display: none;
 }
 
 /* Breadcrumb */
