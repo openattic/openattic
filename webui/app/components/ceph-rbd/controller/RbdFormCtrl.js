@@ -353,7 +353,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         $scope.rbd.features = features;
       }
       $scope.rbd.pool = $scope.data.pool.id;
-      $scope.rbd.id = $stateParams.clusterId;
+      $scope.rbd.id = $scope.clusterId;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");
       $scope.submitted = true;
       cephRbdService.save($scope.rbd)
