@@ -125,6 +125,12 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
         state: "cephRbds.detail.details",
         class: "tc_statusTab",
         name: "Status"
+      },
+      statistics: {
+        show: "selection.item",
+        state: "cephRbds.detail.statistics",
+        class: "tc_statisticsTab",
+        name: "Statistics"
       }
     }
   };
@@ -151,13 +157,15 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     $scope.multiSelection = Boolean(items) && items.length > 1;
     $scope.hasSelection = Boolean(item);
 
-    if (!item && !items) {
+    if (!item) {
       $state.go("cephRbds");
       return;
     }
 
-    if (item) {
+    if ($state.current.name === "cephRbds") {
       $scope.changeTab("cephRbds.detail.details");
+    } else {
+      $scope.changeTab($state.current.name);
     }
   });
   $scope.addAction = function () {
