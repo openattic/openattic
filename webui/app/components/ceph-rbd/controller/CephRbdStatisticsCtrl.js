@@ -41,13 +41,6 @@ app.controller("CephRbdStatisticsCtrl", function ($scope, $interval, cephRbdServ
    * Outlines the graphs that will be shown
    */
   $scope.graphs = {
-    exec_time: {
-      name: "Execution time",
-      desc: "",
-      tickFormat: function (d) {
-        return d + " ms";
-      }
-    },
     used_size: {
       name: "Used",
       desc: ""
