@@ -186,7 +186,7 @@ module-apt"
 
     # System packages not available in pip + npm
 
-    apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 nodejs npm
+    apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-m2crypto nodejs npm
     apt-get install -y libjpeg-dev # TODO this is required for openattic-module-nagios
     if [ "$IS_XENIAL" ]
     then
@@ -234,10 +234,11 @@ module-icinga"
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
     systemctl enable postgresql.service
-
-    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 fi
 
+if [ -z "$IS_TRUSTY" ] ; then
+    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
+fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
@@ -249,8 +250,13 @@ EOF
 
 service dbus reload
 
+# Make sure the directory /run/lock/openattic is created with the
+# correct privileges.
+if [ -z "$IS_TRUSTY" ] ; then
+    systemd-tmpfiles --create
+fi
+
 npm install -g bower
-npm install grunt
 npm install -g grunt-cli
 
 
@@ -258,19 +264,19 @@ if [ "$IS_XENIAL" ]
 then
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user pyfiler createdb createuser password 'pyf!l0r';
-create database pyfiler OWNER pyfiler ENCODING 'UTF-8';
+create user openattic createdb createuser password 'DB_PASSWORD';
+create database openattic OWNER openattic ENCODING 'UTF-8';
 EOF
 else
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user pyfiler createdb createuser password 'pyf!l0r';
-create database pyfiler OWNER pyfiler;
+create user openattic createdb createuser password 'DB_PASSWORD';
+create database openattic OWNER openattic;
 EOF
 fi
 
-# echo "drop database pyfiler;" | sudo -u postgres psql
-# echo "create database pyfiler OWNER pyfiler;" | sudo -u postgres psql
+# echo "drop database openattic;" | sudo -u postgres psql
+# echo "create database openattic OWNER openattic;" | sudo -u postgres psql
 
 
 # Using virtualbox, the log file may not be there at this point, so we have to create it manually.
@@ -320,6 +326,9 @@ cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 
 #rtslib
 cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
+
+#RPCD
+ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
 
 # oaconfig install
 

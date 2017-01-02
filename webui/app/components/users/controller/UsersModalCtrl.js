@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,10 +30,21 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.config(["$uibTooltipProvider", function ($uibTooltipProvider) {
-  $uibTooltipProvider.options({
-    "placement": "right",
-    "appendToBody": true
-  });
-}]);
+var app = angular.module("openattic.users");
+app.controller("UsersModalCtrl", function ($scope, UserService, $uibModalInstance, user) {
+  $scope.user = user;
+
+  $scope.generateAuthToken = function () {
+    UserService.generateAuthToken({id: $scope.user.id})
+        .$promise
+        .then(function (res) {
+          $uibModalInstance.close(res.auth_token.token);
+        }, function (error) {
+          console.log("An error occured", error);
+        });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+  };
+});

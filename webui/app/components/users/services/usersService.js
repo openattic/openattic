@@ -49,6 +49,10 @@ app.factory("usersService", function ($resource) {
     current: {
       method: "GET",
       url: globalConfig.API.URL + "users/current"
+    },
+    generateAuthToken: {
+      method: "POST",
+      url: globalConfig.API.URL + "users/:id/gen_new_token"
     }
   });
 });

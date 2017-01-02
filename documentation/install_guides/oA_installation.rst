@@ -12,12 +12,13 @@ or consult your hardware vendor for details.
 Installable packages of |oA| are currently available for the following Linux
 distributions:
 
-* Debian Linux 8 (Jessie)
+* Debian Linux 8 "Jessie"
 * Red Hat Enterprise Linux 7 (RHEL) and derivatives (CentOS 7, Oracle Linux 7
   or Scientific Linux 7)
 * openSUSE Leap 42.1, SUSE Linux Enterprise Server 12 (SLES12) (via the
   openSUSE Build Service)
-* Ubuntu Linux 14.04 LTS (Trusty)
+* Ubuntu 14.04 LTS "Trusty Thar"
+* Ubuntu 16.04 LTS "Xenial Xerus"
 
 .. note::
    |oA| has been designed to be installed on a 64-bit Linux operating system.
@@ -218,6 +219,7 @@ Replace the field ``<distribution>`` with your distribution's short codename:
 
 * ``jessie`` (for Debian 8 "Jessie")
 * ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
+* ``xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
 
 ::
 
@@ -262,6 +264,13 @@ After enabling the apt repository, run the following commands to install the
 
     # apt-get install linux-image-extra-`uname -r`
     # service target restart
+
+.. note::
+  For **Ubuntu 16.04 LTS** some required LVM services may not run after the installation of |oA|.
+  Please enable them by executing::
+
+    # systemctl enable lvm2-lvmetad.socket
+    # systemctl start lvm2-lvmetad.socket
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.
@@ -445,7 +454,7 @@ repositories named ``filesystems:openATTIC``.
   :ref:`basic storage configuration`.
 
 Zypper Repository Configuration
-----------------------------
+-------------------------------
 
 From a web browser, the installation of |oA| on SLES or Leap can be performed
 via "1 Click Install" from the `openSUSE download site

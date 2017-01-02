@@ -72,7 +72,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
     usersService.get({id: $stateParams.user})
         .$promise
         .then(function (res) {
-          if ($scope.user.id === Number($stateParams.user)) {
+          if (angular.isDefined($scope.user) && ($scope.user.id === Number($stateParams.user))) {
             $scope.isCurrentUser = true;
           }
           $scope.user = res;
@@ -94,6 +94,28 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
               console.log("An error occured", error);
             });
       }
+    };
+
+    $scope.generateAuthToken = function () {
+      var modalInstance = $uibModal.open({
+        windowTemplateUrl: "templates/messagebox.html",
+        templateUrl: "templates/users/generate-auth-token.html",
+        controller: "UsersModalCtrl",
+        resolve: {
+          user: function () {
+            return $scope.user;
+          }
+        }
+      });
+      modalInstance.result.then(function (token) {
+        // Display the new token.
+        $scope.user.auth_token.token = token;
+        // Display a message.
+        toasty.success({
+          title: "API authentication token",
+          msg: "The token has been created successfully."
+        });
+      });
     };
   }
 
