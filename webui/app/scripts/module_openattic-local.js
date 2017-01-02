@@ -36,5 +36,6 @@ angular.module("openattic.local", [
   "openattic.pools",
   "openattic.hosts",
   "openattic.oaWizards",
+  "openattic.storageTree",
   "openattic.todowidget"
 ]);
