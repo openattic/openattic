@@ -39,8 +39,19 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       url: "/storage",
       views: {
         "tab-content": {
-          templateUrl: "templates/pools/storage.html",
-          controller : "PoolStorageCtrl"
+          templateUrl: "components/storage-tree/templates/tree.html",
+          controller : "StorageTreeCtrl",
+          resolve    : {
+            storageTree: function ($q, $stateParams, poolsService) {
+              return poolsService.storage({id: $stateParams.pool}).$promise
+                  .then(function (res) {
+                    return res;
+                  }).catch(function () {
+                    console.log("Couldn't load the pool storage tree");
+                    return false;
+                  });
+            }
+          }
         }
       },
       ncyBreadcrumb: {
@@ -246,8 +257,19 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       url: "/storage",
       views: {
         "tab-content": {
-          templateUrl: "templates/volumes/storage.html",
-          controller : "VolumeStorageCtrl"
+          templateUrl: "components/storage-tree/templates/tree.html",
+          controller : "StorageTreeCtrl",
+          resolve    : {
+            storageTree: function ($q, $stateParams, VolumeService) {
+              return VolumeService.storage({id: $stateParams.volume}).$promise
+                  .then(function (res) {
+                    return res;
+                  }).catch(function () {
+                    console.log("Couldn't load the volume storage tree");
+                    return false;
+                  });
+            }
+          }
         }
       },
       ncyBreadcrumb: {
