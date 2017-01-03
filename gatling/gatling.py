@@ -68,6 +68,7 @@ def main():
                       help="Target node. Alias for '--config gatling.conf --config "
                            "conf/<target>.conf'. If --target is specified, --config options are "
                            "ignored.")
+    parser.add_option('-v', '--verbose', default=False, action="store_true", help="Verbose output.")
 
     options, posargs = parser.parse_args()
 
@@ -135,10 +136,12 @@ def main():
 
     # Decide which test runner to use. Jenkins calls gatling with --xml in order to
     # create machine-readable reports; human users will prefer a colorized report.
+    verbosity = int(options.verbose) + 1
+
     if options.xml:
-        runner = partial(xmlrunner.XMLTestRunner, output=options.xml_reports, verbosity=2)
+        runner = partial(xmlrunner.XMLTestRunner, output=options.xml_reports, verbosity=verbosity)
     else:
-        runner = partial(unittest.TextTestRunner)
+        runner = partial(unittest.TextTestRunner, verbosity=verbosity)
 
     # If we don't have any arguments for TestProgram and this doesn't seem to be
     # intentional, discover tests and print individual results.
