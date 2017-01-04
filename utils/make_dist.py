@@ -15,7 +15,8 @@
 """Usage:
     make_dist.py create (release|snapshot) [--revision=<revision>]
         [--source=<source>] [--destination=<destination>]
-        [--adapt-debian-changelog] [--push-changes] [-v|-q|-s]
+        [--adapt-debian-changelog] [--push-changes] [--tag=<tag>]
+        [-v|-q|-s]
     make_dist.py cache push
     make_dist.py (help|-h|--help)
 
@@ -82,6 +83,13 @@ Options:
         be pushed! If the push would create a new head on the remote
         repository, the changes won't get pushed and the execution of the
         script will be aborted.
+
+    --tag=<tag>
+
+        Creates the given Mercurial tag on top of other changes like adapting
+        the `debian/changelog`. Due to the fact that the original source isn't
+        altered, the tag will be lost if it isn't pushed back to the repository
+        using the --push-changes switch.
 
     -v
 
@@ -707,7 +715,8 @@ class DistBuilder(object):
                                         self._tmp_oa_clone_dir)
             self._commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
-        abs_tarball_file_path = self._create_source_tarball(build_basename)
+        if self._args['--tag']:
+            self._process.run(['hg', 'tag', self._args['--tag']], cwd=self._tmp_oa_clone_dir)
 
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
@@ -716,6 +725,8 @@ class DistBuilder(object):
             else:
                 self._warn('Ignoring the --push-changes switch because temporary files of the given'
                            ' source have been comitted.')
+
+        abs_tarball_file_path = self._create_source_tarball(build_basename)
 
         rmtree(self._tmp_oa_clone_dir)
         self._remove_npmrc_prefix()
