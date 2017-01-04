@@ -86,10 +86,13 @@ Options:
 
     --tag=<tag>
 
-        Creates the given Mercurial tag on top of other changes like adapting
-        the `debian/changelog`. Due to the fact that the original source isn't
-        altered, the tag will be lost if it isn't pushed back to the repository
-        using the --push-changes switch.
+        Creates the given Mercurial tag on top of other changes, like for
+        example the adaption of the `debian/changelog`. Due to the fact that
+        the original source is never altered, the tag will be lost if it isn't
+        pushed back to the repository using the --push-changes switch. You
+        should also be aware of the fact that the feature to add tags is
+        supposed to be used on a release to help automating it, thus it's not
+        allowed to create tags which would create an additional head.
 
     -v
 
