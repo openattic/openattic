@@ -23,7 +23,6 @@ import datetime
 import requests
 import ConfigParser
 
-from functools import partial
 from optparse import OptionParser
 from testtools.run import TestProgram
 
@@ -134,14 +133,37 @@ def main():
         def _do_discovery(self, argv, Loader=None):
             return TestProgram._do_discovery(self, argv, Loader=GatlingTestLoader)
 
+    class GatlingTextTestResult(unittest.TextTestResult):
+        def startTest(self, test):
+            if self.showAll:
+                self.stream.write(str(datetime.datetime.now()) + ' -> ')
+            super(GatlingTextTestResult, self).startTest(test)
+
+    class GatlingXMLTestResult(GatlingTextTestResult, xmlrunner._XMLTestResult):
+        pass
+
+    class GatlingXMLTestRunner(xmlrunner.XMLTestRunner):
+        def __init__(self, output='.', outsuffix=None, stream=sys.stderr, descriptions=True,
+                     verbosity=1, elapsed_times=True, resultclass=None):
+            super(GatlingXMLTestRunner, self).__init__(output, outsuffix, stream, descriptions,
+                                                       verbosity, elapsed_times)
+
+            if resultclass:
+                self.resultclass = resultclass
+
+        def _make_result(self):
+            return self.resultclass(self.stream, self.descriptions, self.verbosity,
+                                    self.elapsed_times)
+
     # Decide which test runner to use. Jenkins calls gatling with --xml in order to
     # create machine-readable reports; human users will prefer a colorized report.
     verbosity = int(options.verbose) + 1
 
     if options.xml:
-        runner = partial(xmlrunner.XMLTestRunner, output=options.xml_reports, verbosity=verbosity)
+        runner = GatlingXMLTestRunner(output=options.xml_reports, resultclass=GatlingXMLTestResult,
+                                      verbosity=verbosity)
     else:
-        runner = partial(unittest.TextTestRunner, verbosity=verbosity)
+        runner = unittest.TextTestRunner(resultclass=GatlingTextTestResult, verbosity=verbosity)
 
     # If we don't have any arguments for TestProgram and this doesn't seem to be
     # intentional, discover tests and print individual results.
