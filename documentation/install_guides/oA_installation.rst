@@ -90,7 +90,7 @@ Basic Storage Configuration
 
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
 group or a ZFS zpool) for creating storage volumes. In the following chapters,
-we'll explain how create an LVM volume group or, alternatively, a ZFS zpool.
+we'll explain how to create an LVM volume group or, alternatively, a ZFS zpool.
 
 Configuring storage for |oA| in a reliable and performant way depends on a
 number of factors. See :ref:`storage recommendations` and :ref:`hardware
