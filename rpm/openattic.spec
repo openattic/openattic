@@ -501,7 +501,7 @@ systemctl restart httpd
 # Add nagios user to the ceph group (OP-1320)
 if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
   if ! groups nagios | grep -q ceph ; then
-    groupmems -g ceph -u nagios 
+    groupmems -g ceph -a nagios 
   fi
 fi
 
