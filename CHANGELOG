@@ -4,6 +4,8 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* Backend/QA: Added timestamps to verbose output to map the testcase and to
+  the related openattic.log file entry (OP-1841)
 * Documentation: Added Ubuntu Xenial to the list of distributions provided by
   our repository (OP-1543)
 * Deployment: Improve error messages and handling of errors of make_dist.py
