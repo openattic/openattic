@@ -15,8 +15,7 @@
 """Usage:
     make_dist.py create (release|snapshot) [--revision=<revision>]
         [--source=<source>] [--destination=<destination>]
-        [--adapt-debian-changelog] [--push-changes] [--tag=<tag>]
-        [-v|-q|-s]
+        [--adapt-debian-changelog] [--push-changes] [--tag] [-v|-q|-s]
     make_dist.py cache push
     make_dist.py (help|-h|--help)
 
@@ -37,7 +36,12 @@ Options:
         'snapshot' is the development branch, which actually results in the tip
         of the development branch being used.
 
-        The revision argument will be ignored if a path to a local repository
+        If the --tag switch is used without a revision but with the order to
+        create a 'release', then the latest existing mercurial tag will *not*
+        be used by default, but the 'default' branch. For more information see
+        the documentation of --tag.
+
+        The --revision argument will be ignored if a path to a local repository
         is used as argument for --source and if that repo contains uncommitted
         changes. In that case these uncommited changes are committed in a
         temporary directory to be able include them in the tar archive.
@@ -84,15 +88,18 @@ Options:
         repository, the changes won't get pushed and the execution of the
         script will be aborted.
 
-    --tag=<tag>
+    --tag
 
-        Creates the given Mercurial tag on top of other changes, like for
-        example the adaption of the `debian/changelog`. Due to the fact that
-        the original source is never altered, the tag will be lost if it isn't
-        pushed back to the repository using the --push-changes switch. You
-        should also be aware of the fact that the feature to add tags is
-        supposed to be used on a release to help automating it, thus it's not
-        allowed to create tags which would create an additional head.
+        Creates a Mercurial tag on top of other changes, like for example the
+        adaption of the `debian/changelog`. The tag used will be the VERSION of
+        the `version.txt` of the source.
+
+        Due to the fact that the original source is never altered, but only a
+        temporary copy of it, the tag will be lost if it isn't pushed back to
+        the repository using the --push-changes switch. You should also be
+        aware of the fact that the ability to add tags is supposed to be used
+        on a release. This enables the automation of a release, thus it's not
+        allowed to create tags which would create additional heads.
 
     -v
 
@@ -476,7 +483,10 @@ class DistBuilder(object):
             self._log(msg.format(source, destination_dir))
             return
 
-        self._process.run(['hg', 'clone', source, destination_dir])
+        if self._source_is_path:
+            copytree(source, destination_dir, symlinks=True)
+        else:
+            self._process.run(['hg', 'clone', source, destination_dir])
 
     @staticmethod
     def _strip_mercurial_tag(tag):
@@ -663,7 +673,12 @@ class DistBuilder(object):
         self._retrieve_source(self._source, self._tmp_oa_clone_dir, skip_if_exists=True)
 
         channel = self._get_release_channel()
-        revision = self._args['--revision'] or self._get_revision_by_channel(channel)
+        if self._args['--revision']:
+            revision = self._args['--revision']
+        elif self._args['--tag'] and self._args['release']:
+            revision = 'default'
+        else:
+            revision = self._get_revision_by_channel(channel)
 
         tmp_files_commited = False
         repo_updated = False
@@ -719,7 +734,7 @@ class DistBuilder(object):
             self._commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
         if self._args['--tag']:
-            self._process.run(['hg', 'tag', self._args['--tag']], cwd=self._tmp_oa_clone_dir)
+            self._process.run(['hg', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
 
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
