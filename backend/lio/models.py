@@ -15,10 +15,12 @@
 """
 
 import socket
+
 try:
     import rtslib_fb
 except ImportError:
     import rtslib as rtslib_fb
+
 import os
 
 from os.path   import realpath

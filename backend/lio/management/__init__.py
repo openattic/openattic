@@ -17,10 +17,11 @@ import logging
 import re
 import os
 import os.path
+
 try:
-    import rtslib_fb as rtslib
+    import rtslib_fb
 except ImportError:
-    import rtslib
+    import rtslib as rtslib_fb
 
 from django.db.models import signals
 
@@ -45,7 +46,7 @@ def create_fc_objects(**kwargs):
     unseen_ini_wwns = [ini.wwn for ini in host.initiator_set.filter(type="qla2xxx")]
 
     try:
-        fabric = rtslib.FabricModule("qla2xxx")
+        fabric = rtslib_fb.FabricModule("qla2xxx")
     except KeyError:
         logger.info('There is no FabricModule("qla2xxx")')
         return
@@ -72,7 +73,7 @@ def create_fc_objects(**kwargs):
                 if lio_tgt.wwn == port_wwn:
                     break
             else:
-                rtslib.Target(fabric, port_wwn)
+                rtslib_fb.Target(fabric, port_wwn)
 
     for ini_wwn in unseen_ini_wwns:
         print "Removing unseen initiator", ini_wwn
