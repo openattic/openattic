@@ -16,9 +16,9 @@
 
 import socket
 try:
-    import rtslib_fb as rtslib
+    import rtslib_fb
 except ImportError:
-    import rtslib
+    import rtslib as rtslib_fb
 import os
 
 from os.path   import realpath
@@ -171,7 +171,7 @@ class ProtocolHandler(object):
             # use the first one, if it exists.
             break
         else:
-            lio_tpg = rtslib.TPG(lio_tgt, 1)
+            lio_tpg = rtslib_fb.TPG(lio_tgt, 1)
             if self.module == "iscsi":
                 lio_tpg.set_attribute("authentication",       str(int(False)))
             lio_tpg.set_attribute("generate_node_acls",       str(0))
@@ -199,19 +199,19 @@ class ProtocolHandler(object):
         volume_name = self.hostacl.volume.storageobj.name
         volume_path = self.hostacl.volume.volume.path
         volume_wwn  = self.hostacl.volume.storageobj.uuid
-        lio_root = rtslib.RTSRoot()
+        lio_root = rtslib_fb.RTSRoot()
         for lio_so in lio_root.storage_objects:
             if lio_so.wwn == volume_wwn:
                 break
         else:
             try:
                 # new no-Backstore layout
-                lio_so = rtslib.BlockStorageObject(volume_name, volume_path, volume_wwn)
+                lio_so = rtslib_fb.BlockStorageObject(volume_name, volume_path, volume_wwn)
             except AttributeError:
                 # Old Backstore+StorageObject system. create new backstore...
                 max_idx = max([bs.index for bs in lio_root.backstores] + [0])
-                lio_bs = rtslib.IBlockBackstore(max_idx + 1)
-                lio_so = rtslib.IBlockStorageObject(lio_bs, volume_name, volume_path, gen_wwn=False)
+                lio_bs = rtslib_fb.IBlockBackstore(max_idx + 1)
+                lio_so = rtslib_fb.IBlockStorageObject(lio_bs, volume_name, volume_path, gen_wwn=False)
                 lio_so.wwn = volume_wwn
 
         lio_tpg = tpgctx["tpg"]
@@ -279,7 +279,7 @@ class ProtocolHandler(object):
         if not found:
             lunctx["lun"].delete()
         # Check if we still need the StorageObject, and if not, get rid of it
-        root = rtslib.RTSRoot()
+        root = rtslib_fb.RTSRoot()
         found = False
         for lio_tgt in root.targets:
             for lio_tpg in lio_tgt.tpgs:
@@ -303,7 +303,7 @@ class IscsiHandler(ProtocolHandler):
 
     def get_targets(self):
         """ Yield the target to be used for the volume. """
-        fabric = rtslib.FabricModule(self.module.encode("utf-8"))
+        fabric = rtslib_fb.FabricModule(self.module.encode("utf-8"))
         if not fabric.exists:
             get_dbus_object("/lio").fabric_load(self.module)
 
@@ -320,7 +320,7 @@ class IscsiHandler(ProtocolHandler):
             if lio_tgt.wwn == tgt_wwn:
                 break
         else:
-            lio_tgt = rtslib.Target(fabric, tgt_wwn)
+            lio_tgt = rtslib_fb.Target(fabric, tgt_wwn)
 
         yield ctxupdate(target=lio_tgt, fabric=fabric, module=self.module)
 
@@ -349,7 +349,7 @@ class FcHandler(ProtocolHandler):
 
     def get_targets(self):
         """ Yield all targets for this host (volume doesn't matter). """
-        fabric = rtslib.FabricModule(self.module.encode("utf-8"))
+        fabric = rtslib_fb.FabricModule(self.module.encode("utf-8"))
         if not fabric.exists:
             get_dbus_object("/lio").fabric_load(self.module)
 
