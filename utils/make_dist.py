@@ -77,7 +77,7 @@ Options:
     --push-changes
 
         Pushes the changes that have been made in the temporary repository
-        which is used to create the tarball. This switch is ment to be used on
+        which is used to create the tarball. This switch is meant to be used on
         a release to push changes back to the configured remote repository.
         Those changes include the adaption of the `debian/changelog` as well as
         any Mercurial tags created.
