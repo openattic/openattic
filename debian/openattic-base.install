@@ -43,5 +43,4 @@ debian/default/openattic            /etc/default
 
 bin/oaconfig    /usr/sbin
 bin/oavgmanager /usr/sbin
-bin/backuptime  /usr/share/doc/openattic-base/examples/backuptime
 bin/blkdevzero  /usr/sbin
