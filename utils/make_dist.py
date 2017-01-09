@@ -79,6 +79,7 @@ Options:
         Pushes the changes that have been made in the temporary repository
         which is used to create the tarball. This switch is meant to be used on
         a release to push changes back to the configured remote repository.
+        It's configured in the `.hg/hgrc` of the given source repository.
         Those changes include the adaption of the `debian/changelog` as well as
         any Mercurial tags created.
 
