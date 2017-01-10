@@ -324,11 +324,11 @@ cp -r /usr/lib*/python2.7/*-packages/glib env/lib/python2.7/site-packages/
 cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 
 #rtslib
-if [ "$IS_TRUSTY" ]
+if [ "$IS_XENIAL" ]
 then
-    cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
-else
     cp -r /usr/lib*/python2.7/*-packages/rtslib_fb env/lib/python2.7/site-packages/
+else
+    cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 fi
 
 #RPCD
