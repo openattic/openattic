@@ -305,7 +305,7 @@ elif [ "$IS_TRUSTY" ]
 then
 pip install -r openattic/requirements/ubuntu-14.04.txt
 else
-pip install -r openattic/requirements.txt
+pip install -r openattic/requirements/requirements.txt
 fi
 
 # dbus
