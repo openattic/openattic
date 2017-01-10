@@ -15,6 +15,9 @@ Version 2.0.18, (not released yet):
   file (OP-1821)
 * Installation: Fixed %post scriplet failure in the openattic-module-ceph RPM
   package (OP-1820)
+* Packaging: Added the ability to add mercurial tags to a repository when
+  creating a tarball using make_dist.py (OP-1374)
+
 
 Version 2.0.17, 20. December 2016:
 ----------------------------------
