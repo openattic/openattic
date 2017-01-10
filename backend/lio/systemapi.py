@@ -17,9 +17,9 @@
 import logging
 
 try:
-    import rtslib_fb
+    import rtslib_fb as rtslib
 except ImportError:
-    import rtslib as rtslib_fb
+    import rtslib
 
 from systemd.plugins import logged, BasePlugin, deferredmethod
 from systemd.lockutils import Lockfile
@@ -46,7 +46,7 @@ class SystemD(BasePlugin):
 
         :raise SystemError: If fabric still doesn't exist afterwards.
         """
-        fabric = rtslib_fb.FabricModule(fabric_name.encode("utf-8"))
+        fabric = rtslib.FabricModule(fabric_name.encode("utf-8"))
         if not fabric.exists and hasattr(fabric, 'load'):
             list(fabric.load())  # load() returns a list generator.
 
@@ -82,7 +82,7 @@ class SystemD(BasePlugin):
 
             # the following works for CentOS 7, but will not work anymore for Debian sid and jessie
             try:
-                from rtslib_fb.root import RTSRoot
+                from rtslib.root import RTSRoot
                 root = RTSRoot()
                 root.save_to_file()
                 return
