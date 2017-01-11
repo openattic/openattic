@@ -32,7 +32,9 @@ have configured ``/etc/hosts`` accordingly on both nodes).
 
 Note that these two systems don't necessarily need to have the exact same
 specifications (e.g. hardware, hard disks). However, the version of |oA| and the
-operating system running on these hosts must be identical.
+operating system (and particularly the Django version) running on these hosts
+must be identical.
+
 In the example below, Debian Linux is assumed as the operating system. The path
 names to configuration files and some configuration details (e.g. PostgreSQL or
 firewall configuration) might differ on other platforms.
