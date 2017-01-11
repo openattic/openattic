@@ -1,7 +1,7 @@
 backports.shutil-get-terminal-size==1.0.0
 dateutils==0.6.6
 decorator==4.0.9
-Django==1.8.7
+Django==1.7.11
 django-cors-headers==1.1.0
 django-filter==0.7
 djangorestframework==2.4.3
