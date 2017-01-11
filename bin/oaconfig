@@ -42,8 +42,8 @@ usage () {
 	echo
 	echo "    install      Run this command after you installed new openATTIC modules."
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
-	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
-	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
+	echo "    add-vg       Has been removed. Please use 'oaconfig install'."
+	echo "    add-disk     Has been removed. Please use the LVM command line tool and 'oaconfig install'."
 	echo "    domainjoin   Join a Windows Active Directory Domain."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
@@ -99,29 +99,69 @@ case $1 in
 			service postgresql start
 		fi
 
-		dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
-		if [ -n "$dbu" ]; then
-			echo "Database openattic exists, owned by $dbu"
+		database_ini="/etc/openattic/database.ini"
+		host=$(sed -rn 's/^[ \t]*host[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		if [ "${host}" == 'localhost' ] ; then
+			has_local_database=1
 		else
-			# Initialize database
-			pass=$(openssl rand -hex 10)
-			PGSQL_INI="/etc/openattic/databases/pgsql.ini"
-			sed -i 's/DB_PASSWORD/'$pass'/' $PGSQL_INI
-			if [ $? -ne 0 ]; then
-				echo "Failed to update $PGSQL_INI"
+			has_local_database=0
+		fi
+
+		if (( has_local_database )) ; then
+			# Check if the database role 'openattic' exists and create it if it doesn't exist.
+			sql="SELECT 1 FROM pg_roles WHERE rolname='openattic'"
+			if ! su - postgres -c "psql postgres -tAc \"${sql}\""| grep -q 1 ; then
+				echo "Creating database role \"openattic\""
+				pass=$(openssl rand -hex 10)
+				sed -ri --follow-symlinks \
+				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				if [ $? -ne 0 ]; then
+					echo "Failed to update $database_ini"
+					exit 2
+				fi
+
+				su - postgres -c "psql -c \"CREATE USER openattic WITH PASSWORD '$pass'\""
+				echo "User 'openattic' created"
+			fi
+
+			# Check if database 'openattic' exists and create it if it doesn't.
+			dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
+			if [ -n "$dbu" ]; then
+				echo "Database openattic exists, owned by $dbu"
+			else
+				su - postgres -c "psql -c \"CREATE DATABASE openattic WITH OWNER openattic\""
+
+				hba_conf="/var/lib/pgsql/data/pg_hba.conf"
+				if [ -e ${hba_conf} ] ; then
+					sed -i -e 's/ident$/md5/g' ${hba_conf}
+				fi
+				service postgresql reload
+				service postgresql status
+			fi
+		fi
+
+		# Check if the connection can be established with the database user and password.
+		# Set a new password if the connection cannot be established.
+		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		# We have to have an 'openattic' database already at this point.
+		if ! PGPASSWORD="$password" psql openattic openattic -h "${host}" --no-password -c "\q" ; then
+			if (( has_local_database )) ; then
+				pass=$(openssl rand -hex 10)
+				sed -ri --follow-symlinks \
+				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				if [ $? -ne 0 ]; then
+					echo "Failed to update $database_ini"
+					exit 2
+				fi
+
+				su - postgres -c "psql -c \"ALTER USER openattic WITH PASSWORD '$pass'\""
+				echo "Password of database user openattic and database.ini updated"
+			else
+				echo "ERROR: Couldn't establish a connection to the remote database" \
+					"running on ${host}."
+				echo "       Please review the configuration in file ${database_ini}."
 				exit 2
 			fi
-			su - postgres -c psql << EOT
-create user openattic with password '$pass';
-create database openattic with owner openattic;
-\q
-EOT
-			hba_conf="/var/lib/pgsql/data/pg_hba.conf"
-			if [ -e ${hba_conf} ] ; then
-				sed -i -e 's/ident$/md5/g' ${hba_conf}
-			fi
-			service postgresql reload
-			service postgresql status
 		fi
 		
 		su "$OAUSER" -c 'python manage.py pre_install'
@@ -195,50 +235,12 @@ EOF
 		;;
 
 	add-vg)
-		if [ "$#" != "2" ]; then
-			echo "Usage: $0 $1 <vgname>" >&2
-			exit 1
-		fi
-		if [ ! -f "/etc/openattic/cli.conf" ]; then
-			echo "This command requires oacli to be configured (run $0 install-cli)."
-			exit 1
-		fi
-		HOSTID=`oacli 'ifconfig.Host.current' | grep '^id' | cut -d\' -f2`
-
-		# Check if VG actually exists
-		vgs "$2" > /dev/null || exit 1
-		eval $(LANG=C vgs --units M -o vg_size,vg_uuid,vg_tags --noheadings --nameprefixes --nosuffix "$2")
-		for tag in $(echo "$LVM2_VG_TAGS"|sed s/,/\\n/g)
-		do
-			if [ $tag == "sys" ]; then
-				echo "Volume Group $2 is tagged as sys, aborting."
-				exit 1
-			fi
-		done
-		ROUNDEDMEGS=`awk '{printf "%.0f\n", $1}' <<< $LVM2_VG_SIZE`
-		STOROBJID=`oacli volumes.StorageObject.create 'json:{"name": "'$2'", "megs": "'$ROUNDEDMEGS'", "uuid": "'$LVM2_VG_UUID'", "is_origin": true }' | grep '^id' | cut -d\' -f2`
-		oacli lvm.VolumeGroup.create 'json:{"storageobj": {"app": "volumes", "obj": "StorageObject", "id": '$STOROBJID'}, "host": {"app":"ifconfig", "obj":"Host", "id":'$HOSTID'} }'
+		echo "'add-vg' has been replaced. The input parameter 'vgname' is no longer required. 'oaconfig add-vg' will now search for all existing VG's (without sys tag) and add them to openATTIC."
+		su "$OAUSER" -c 'python manage.py post_install'
 		;;
 
 	add-disk)
-		if [ "$#" != "3" ]; then
-			echo "Usage: $0 $1 <disk> <vgname>" >&2
-			exit 1
-		fi
-		if [ ! -f "/etc/openattic/cli.conf" ]; then
-			echo "This command requires oacli to be configured (run $0 install-cli)."
-			exit 1
-		fi
-		DISK=$2
-		VG=$3
-		pvcreate $DISK
-		VGINFO=$( oacli lvm.VolumeGroup.filter "json:{\"storageobj__name\": \"$VG\"}" )
-		if [ -z "$VGINFO" ]; then
-			vgcreate $VG $DISK
-			$0 add-vg $VG
-		else
-			vgextend $VG $DISK
-		fi
+		echo "'add-disk' has been removed from oaconfig. Please use the LVM command line tools instead. Don't forget to run 'oaconfig install' afterwards."
 		;;
 
 	reload)
@@ -276,11 +278,6 @@ EOF
 		
 		if [ ! -e "$OADIR"/installed_apps.d/*samba ]; then
 			echo "The Samba module must be enabled for this to work."
-			exit 2
-		fi
-		
-		if [ ! -f "/etc/openattic/cli.conf" ]; then
-			echo "This command requires oacli to be configured (run $0 install-cli)."
 			exit 2
 		fi
 		
@@ -406,9 +403,6 @@ EOF
 		sed -i -e 's/^group:.*$/group:          compat winbind/' /etc/nsswitch.conf
 		
 		echo "Restarting Samba and Winbind..."
-		while ! oacli ping ; do
-			sleep 1
-		done
 		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:" "string:"
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart

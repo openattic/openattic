@@ -191,22 +191,21 @@ module-apt"
     if [ "$IS_XENIAL" ]
     then
         apt-get install -y --force-yes nullmailer python-rtslib-fb # FIXME! Needed for newaliases command
-    fi
-    if [ "$IS_TRUSTY" ]
+    elif [ "$IS_TRUSTY" ]
     then
         apt-get install -y --force-yes python-rtslib
+    else
+        # e.g. Debian Jessie
+        apt-get install -y --force-yes python-rtslib-fb
     fi
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
     ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
-    if [ ! "$IS_XENIAL" ]
-    then
-        rm /etc/nagios3/conf.d/localhost_nagios2.cfg # TODO: OP-1066
-    fi
     if [ "$IS_TRUSTY" ]
     then
+        rm /etc/nagios3/conf.d/localhost_nagios2.cfg # TODO: OP-1066
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
         service target restart
     fi
@@ -234,10 +233,11 @@ module-icinga"
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
     systemctl enable postgresql.service
-
-    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
 fi
 
+if [ -z "$IS_TRUSTY" ] ; then
+    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
+fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
@@ -249,8 +249,13 @@ EOF
 
 service dbus reload
 
+# Make sure the directory /run/lock/openattic is created with the
+# correct privileges.
+if [ -z "$IS_TRUSTY" ] ; then
+    systemd-tmpfiles --create
+fi
+
 npm install -g bower
-npm install grunt
 npm install -g grunt-cli
 
 
@@ -319,7 +324,12 @@ cp -r /usr/lib*/python2.7/*-packages/glib env/lib/python2.7/site-packages/
 cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 
 #rtslib
-cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
+if [ "$IS_XENIAL" ]
+then
+    cp -r /usr/lib*/python2.7/*-packages/rtslib_fb env/lib/python2.7/site-packages/
+else
+    cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
+fi
 
 #RPCD
 ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
@@ -375,6 +385,12 @@ grunt build
 popd
 
 EOF
-ip_addr="$(LANG=C /sbin/ifconfig eth0 | egrep -o 'inet addr:[^ ]+' | egrep -o '[0-9.]+')"
-echo -e "# Now run\n. env/bin/activate\npython openattic/backend/manage.py runserver 0.0.0.0:8000\n# and open\nhttp://$ip_addr:8000"
 
+# Display information how to start the webserver.
+echo -e "# Now run\n. env/bin/activate\npython openattic/backend/manage.py runserver 0.0.0.0:8000"
+# Display all IP addresses to access the WebUI.
+echo "# The WebUI is available via:"
+for iface in $(ls /sys/class/net/ | grep ^eth); do
+    ip_addr="$(LANG=C /sbin/ifconfig ${iface} | egrep -o 'inet addr:[^ ]+' | egrep -o '[0-9.]+')"
+    echo "- http://$ip_addr:8000"
+done

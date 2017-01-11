@@ -241,13 +241,29 @@ class NodbQuerySet(QuerySet):
             '{}.iterator should only be access when running tests.'.format(self.__class__))
         return []
 
+    _db = not None  # Make Django 1.8 happy.
+
 
 if django.VERSION[:2] == (1, 6):
     from django.db.models.manager import Manager
     base_manager_class = Manager
-else:
+
+elif django.VERSION[:2] == (1, 7):
     from django.db.models.manager import BaseManager
     base_manager_class = BaseManager.from_queryset(NodbQuerySet)
+
+elif django.VERSION[:2] >= (1, 8):
+    from django.db.models.manager import BaseManager, Manager
+
+
+    class base_manager_class(BaseManager.from_queryset(NodbQuerySet), Manager):
+        """in DRF 3, rest_framework.relations.RelatedField#get_queryset checks:
+
+        >>> isinstance(queryset, Manager)
+
+        This is unfortunate, but we have to inherent from `Manager`, too!
+        """
+        pass
 
 
 class NodbManager(base_manager_class):
@@ -483,21 +499,21 @@ class NodbModel(models.Model):
             elif key.replace('_', '-') in json_result:
                 # '-' is not supported for field names, but used by ceph.
                 return json_result[key.replace('_', '-')]
-            return None
+            raise AttributeError
 
         def handle_field(field):
             """:rtype: list[tuple[str, Any]]"""
-            val = get_val_from_json(field.attname)
-            if isinstance(field, models.ForeignKey):
-                if isinstance(val, int) or isinstance(val, basestring):
-                    return [(field.attname, val)]
-                val = get_val_from_json(field.attname[:-3])
-                if hasattr(val, 'pk'):
-                    return [(field.attname, val.pk)]
-                else:
-                    return []
-            if val is None:
+            try:
+                val = get_val_from_json(field.attname)
+            except AttributeError:
                 return []
+
+            if val is None and not field.null:
+                return []
+
+            if isinstance(field, models.ForeignKey):
+                return [(field.attname, val)]
+
             try:
                 python_val = field.to_python(val)
             except ValidationError as e:
