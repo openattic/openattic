@@ -205,7 +205,6 @@ module-apt"
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
     if [ "$IS_TRUSTY" ]
     then
-        rm /etc/nagios3/conf.d/localhost_nagios2.cfg # TODO: OP-1066
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
         service target restart
     fi
