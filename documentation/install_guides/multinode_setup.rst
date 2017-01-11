@@ -61,7 +61,7 @@ Edit the ``/etc/postgresql/<VERSION>/main/postgresql.conf`` and
 
 	The location of these files might be different on other Linux distributions.
 
-First, set the correct listen addresses within the ``postgres.conf`` file. Add
+First, set the correct listen addresses within the ``postgresql.conf`` file. Add
 **openattic01**'s external IP address to ``listen_addresses`` and uncomment this
 configuration setting::
 
