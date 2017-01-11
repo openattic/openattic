@@ -324,7 +324,12 @@ cp -r /usr/lib*/python2.7/*-packages/glib env/lib/python2.7/site-packages/
 cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 
 #rtslib
-cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
+if [ "$IS_XENIAL" ]
+then
+    cp -r /usr/lib*/python2.7/*-packages/rtslib_fb env/lib/python2.7/site-packages/
+else
+    cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
+fi
 
 #RPCD
 ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
