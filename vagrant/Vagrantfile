@@ -21,8 +21,8 @@ distro_settings = {
         ip_addr: '192.168.10.101'
     },
     'trusty' => {
-        box_name: 'alxgrh/ubuntu-trusty-x86_64',
-        sata_controller_name: 'SATA',
+        box_name: 'ubuntu/trusty64',
+        sata_controller_name: 'SATAController',
         ip_addr: '192.168.10.102'
     },
     'xenial' => {
