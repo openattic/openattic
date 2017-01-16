@@ -54,20 +54,20 @@ app.component("graphCreationComponent", {
   controller: function ($scope, $interval, toasty, graphFactory) {
     var interval;
     var refreshInterval = 60000; // 1min
-    $scope.isLoading = false;
-    var config = $scope.$ctrl.config;
-    graphFactory.initializeGraphConfig(config.graphs);
+    var self = this;
+    this.isLoading = false;
+    graphFactory.initializeGraphConfig(this.config.graphs);
 
     /*
      * Triggers the API with the filterApi and extractValues function if any.
      */
-    $scope.getData = function () {
-      var item = $scope.$ctrl.selection.item;
-      var api = config.api;
+    this.getData = function () {
+      var item = self.selection.items[0];
+      var api = self.config.api;
       if (angular.isUndefined(item)) {
         return;
       }
-      $scope.isLoading = true;
+      self.isLoading = true;
       api.call(angular.isFunction(api.filterApi) ? api.filterApi(item) : undefined)
         .$promise
         .then(function (res) {
@@ -85,7 +85,7 @@ app.component("graphCreationComponent", {
         })
         .finally(function () {
           $interval(function () {
-            $scope.isLoading = false;
+            self.isLoading = false;
           }, 1000, 1);
         });
     };
@@ -93,25 +93,25 @@ app.component("graphCreationComponent", {
     /*
      * Initializes the graphs and the update interval.
      */
-    $scope.init = function () {
-      $scope.getData();
-      $scope.startInterval();
+    this.init = function () {
+      self.getData();
+      self.startInterval();
     };
 
     /*
      * Starts or restarts the interval that refreshes the graphs.
      */
-    $scope.startInterval = function () {
-      $scope.stopInterval();
+    this.startInterval = function () {
+      self.stopInterval();
       interval = $interval(function () {
-        $scope.getData();
+        self.getData();
       }, refreshInterval, false);
     };
 
     /*
      * Stops the interval.
      */
-    $scope.stopInterval = function () {
+    this.stopInterval = function () {
       $interval.cancel(interval);
     };
 
@@ -121,9 +121,9 @@ app.component("graphCreationComponent", {
      */
     $scope.$watch("$ctrl.selection.item", function (newValue) {
       if (newValue !== null) {
-        $scope.init();
+        self.init();
       } else {
-        $scope.stopInterval();
+        self.stopInterval();
       }
     });
 
@@ -132,8 +132,8 @@ app.component("graphCreationComponent", {
      * This happens if you click on another tab, list item or menu item,
      * but not if you deselect your selection.
      */
-    $scope.$on("$destroy", function () {
-      $scope.stopInterval();
-    });
+    this.$onDestroy = function () {
+      self.stopInterval();
+    };
   }
 });
