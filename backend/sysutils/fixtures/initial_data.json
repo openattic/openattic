@@ -42,21 +42,21 @@
         }
     },
     {
-        "pk": 8,
+        "pk": 9,
         "model": "sysutils.initscript",
         "fields": {
             "name": "dbus"
         }
     },
     {
-        "pk": 9,
+        "pk": 10,
         "model": "sysutils.initscript",
         "fields": {
             "name": "ntp"
         }
     },
     {
-        "pk": 10,
+        "pk": 12,
         "model": "sysutils.initscript",
         "fields": {
             "name": "nagios3"
