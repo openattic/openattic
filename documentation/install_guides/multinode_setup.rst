@@ -31,11 +31,13 @@ using their host names, so make sure that DNS is configured correctly (or you
 have configured ``/etc/hosts`` accordingly on both nodes).
 
 Note that these two systems don't necessarily need to have the exact same
-specifications (e.g. hardware, hard disks). However, the version of |oA| running
-on these hosts should be identical. In the example below, Debian Linux is
-assumed as the operating system. The path names to configuration files and some
-configuration details (e.g. PostgreSQL or firewall configuration) might differ
-on other platforms.
+specifications (e.g. hardware, hard disks). However, the version of |oA| and the
+operating system (and particularly the Django version) running on these hosts
+must be identical.
+
+In the example below, Debian Linux is assumed as the operating system. The path
+names to configuration files and some configuration details (e.g. PostgreSQL or
+firewall configuration) might differ on other platforms.
 
 As a first step, you should setup and install these two |oA| hosts as described
 in :ref:`install_guides_index`.
@@ -61,7 +63,7 @@ Edit the ``/etc/postgresql/<VERSION>/main/postgresql.conf`` and
 
 	The location of these files might be different on other Linux distributions.
 
-First, set the correct listen addresses within the ``postgres.conf`` file. Add
+First, set the correct listen addresses within the ``postgresql.conf`` file. Add
 **openattic01**'s external IP address to ``listen_addresses`` and uncomment this
 configuration setting::
 
