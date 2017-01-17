@@ -1,8 +1,8 @@
 <div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.name.$dirty)
     && validation.name.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="volumeName">Name</label>
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="name">Name</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <input type="text" class="form-control tc_volume_name" placeholder="Name..."
+        <input id="name" type="text" class="form-control tc_volume_name" placeholder="Name..."
             ng-model="result.name" name="name" validname uniquename="volume" required autofocus>
         <span class="help-block tc_nameRequired" ng-show="(validation.$submitted || validation.name.$dirty)
             && validation.name.$error.required">This field is required!</span>

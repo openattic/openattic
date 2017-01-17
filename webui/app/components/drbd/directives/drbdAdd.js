@@ -35,13 +35,29 @@ app.directive("drbdAdd", function () {
   return {
     restrict: "E",
     scope: {
-      volumeForm: "=",
+      validation: "=",
       result: "=",
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
     controller: function ($scope) {
-      $scope.data = {};
+      /* Default values */
+      $scope.data = {
+        is_volume_mirroring: false,
+        syncer_rate: "30M",
+        protocol: "C"
+      };
+      /* The result has to look like the following:
+      $scope.result = {
+        remote_pool: {
+          id: 0
+          name: ""
+        },
+        syncer_rate: 0,
+        protocol: "",
+        filesystem: ""
+      };
+      */
     }
   };
 });

@@ -1,12 +1,69 @@
+<!-- Volume Mirroring -->
 <div class="form-group">
     <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <div class="checkbox checkbox-primary">
-            <input type="checkbox"
-                   ng-model="result.is_volumemirroring"
-                   class="tc_volume_is_volumemirroring"
-                   name="volumeMirroring"
-                   id="volumeMirroring">
-            <label for="volumeMirroring">Volume mirroring</label>
+            <input id="volumeMirroring"
+                   ng-model="data.is_volume_mirroring"
+                   class="tc_volume_is_volume_mirroring"
+                   type="checkbox">
+            <label for="volumeMirroring">Volume Mirroring</label>
         </div>
+    </div>
+</div>
+<!-- Remote Pool -->
+<div class="form-group" ng-show="data.is_volume_mirroring"
+    ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty)}">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+        class="control-label"
+        for="protocol">Remote Pool</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select id="remote_pool"
+            name="remote_pool",
+            ng-model="data.remote_pool"
+            class="form-control"
+            required>
+        </select>
+        <span class="help-block" ng-show="(validation.$submitted ||
+            validation.remote_pool.$dirty) && validation.remote_pool.$error.required">
+            This field is required!
+        </span>
+    </div>
+</div>
+<!-- Sync Rate -->
+<div class="form-group" ng-show="data.is_volume_mirroring"
+    ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty)}">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+        class="control-label"
+        for="syncer_rate">Sync Rate</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <input id="syncer_rate"
+            name="syncer_rate",
+            ng-model="data.syncer_rate"
+            class="form-control"
+            type="text"
+            volume-size-format
+            placeholder="e.g., 30M",
+            required>
+        <span class="help-block" ng-show="(validation.$submitted ||
+            validation.syncer_rate.$dirty) && validation.syncer_rate.$error.required">
+            This field is required!
+        </span>
+    </div>
+</div>
+<!-- Protocol -->
+<div class="form-group" ng-show="data.is_volume_mirroring">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+        class="control-label"
+        for="protocol">Protocol</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select id="protocol"
+                name="protocol",
+                ng-model="data.protocol"
+                class="form-control">
+            <option value="" hidden>Choose a protocol</option>
+            <option value="A">Asynchronous</option>
+            <option value="B">Semi-synchronous</option>
+            <option value="C">Synchronous</option>
+        </select>
     </div>
 </div>
