@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.drbd");
-app.directive("drbdVolumeAddForm", function () {
+app.directive("drbdAddForm", function () {
   return {
     restrict: "E",
     scope: {
