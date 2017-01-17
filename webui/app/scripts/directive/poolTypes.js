@@ -100,7 +100,7 @@ app.directive("poolFsSupport", function () {
           $scope.poolValidation.$setValidity("usablesize", pool.usage.free >= 100);
           $scope.fsArray = $scope.fsStatic.slice();
 
-          new poolsService(pool).$filesystems()
+          poolsService(pool).$filesystems()
             .then(function (res) {
               res.lun = "Sth";
               $scope.supported_filesystems = res;
