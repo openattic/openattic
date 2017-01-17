@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.drbd");
-app.directive("drbdAddForm", function () {
+app.directive("drbdAdd", function () {
   return {
     restrict: "E",
     scope: {
@@ -39,7 +39,7 @@ app.directive("drbdAddForm", function () {
       result: "=",
       wizard: "="
     },
-    templateUrl: "components/drbd/templates/add-form.html",
+    templateUrl: "components/drbd/templates/add-drbd.html",
     controller: function ($scope) {
       $scope.data = {};
     }

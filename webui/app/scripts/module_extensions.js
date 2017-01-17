@@ -41,6 +41,7 @@ angular.module("openattic.extensions", [
   "openattic.clusterstatuswidget",
   "openattic.dashboard",
   "openattic.datatable",
+  "openattic.drbd",
   "openattic.graph",
   "openattic.hosts",
   "openattic.navigation",
