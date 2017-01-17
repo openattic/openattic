@@ -11,8 +11,9 @@
     </div>
 </div>
 <!-- Remote Pool -->
-<div class="form-group" ng-show="data.is_volume_mirroring"
-    ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty)}">
+<div class="form-group"
+        ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty)}"
+        ng-show="data.is_volume_mirroring">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
         class="control-label"
         for="protocol">Remote Pool</label>
@@ -23,15 +24,18 @@
             class="form-control"
             required>
         </select>
-        <span class="help-block" ng-show="(validation.$submitted ||
-            validation.remote_pool.$dirty) && validation.remote_pool.$error.required">
+        <span class="help-block"
+                ng-show="(validation.$submitted || validation.remote_pool.$dirty) &&
+                validation.remote_pool.$error.required">
             This field is required!
         </span>
     </div>
 </div>
 <!-- Sync Rate -->
-<div class="form-group" ng-show="data.is_volume_mirroring"
-    ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty)}">
+<div class="form-group"
+        ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
+            validation.syncer_rate.$invalid}"
+        ng-show="data.is_volume_mirroring">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
         class="control-label"
         for="syncer_rate">Sync Rate</label>
@@ -41,12 +45,17 @@
             ng-model="data.syncer_rate"
             class="form-control"
             type="text"
-            volume-size-format
+            drbd-syncer-rate-format
             placeholder="e.g., 30M",
             required>
-        <span class="help-block" ng-show="(validation.$submitted ||
-            validation.syncer_rate.$dirty) && validation.syncer_rate.$error.required">
+        <span class="help-block"
+                ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
+                validation.syncer_rate.$error.required">
             This field is required!
+        </span>
+        <span class="help-block"
+                ng-show="validation.syncer_rate.$error.drbdSyncerRateFormat">
+            This is not a valid value.
         </span>
     </div>
 </div>
