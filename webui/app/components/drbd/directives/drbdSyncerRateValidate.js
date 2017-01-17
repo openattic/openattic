@@ -31,13 +31,20 @@
 "use strict";
 
 var app = angular.module("openattic.drbd");
-app.directive("drbdSyncerRateFormat", function () {
+app.directive("drbdSyncerRateValidate", function () {
   return {
+    // Restrict to an attribute type.
+    restrict: "A",
+    // Element must have ng-model attribute.
     require: "ngModel",
+    // scope = The parent scope
+    // elem  = The element the directive is on
+    // attrs = A dictionary of attributes on the element
+    // ctrl  = The controller for ngModel
     link: function (scope, elm, attrs, ctrl) {
-      ctrl.$validators.drbdSyncerRateFormat = function (value) {
+      ctrl.$validators.drbdSyncerRateValidate = function (value) {
         return RegExp("^\\d+[bkmg]?$", "i").test(value);
       };
     }
   };
-})
+});

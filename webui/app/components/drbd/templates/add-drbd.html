@@ -45,7 +45,7 @@
             ng-model="data.syncer_rate"
             class="form-control"
             type="text"
-            drbd-syncer-rate-format
+            drbd-syncer-rate-validate
             placeholder="e.g., 30M",
             required>
         <span class="help-block"
@@ -54,7 +54,7 @@
             This field is required!
         </span>
         <span class="help-block"
-                ng-show="validation.syncer_rate.$error.drbdSyncerRateFormat">
+                ng-show="validation.syncer_rate.$error.drbdSyncerRateValidate">
             This is not a valid value.
         </span>
     </div>
