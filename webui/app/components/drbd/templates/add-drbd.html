@@ -20,9 +20,9 @@
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <select id="remote_pool"
             name="remote_pool",
-            ng-model="data.remote_pool"
             class="form-control"
-            required>
+            ng-model="data.remote_pool"
+            ng-required="data.is_volume_mirroring">
         </select>
         <span class="help-block"
                 ng-show="(validation.$submitted || validation.remote_pool.$dirty) &&
@@ -42,12 +42,12 @@
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <input id="syncer_rate"
             name="syncer_rate",
-            ng-model="data.syncer_rate"
             class="form-control"
             type="text"
             drbd-syncer-rate-validate
             placeholder="e.g., 30M",
-            required>
+            ng-model="data.syncer_rate"
+            ng-required="data.is_volume_mirroring">
         <span class="help-block"
                 ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
                 validation.syncer_rate.$error.required">
@@ -67,8 +67,9 @@
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <select id="protocol"
                 name="protocol",
+                class="form-control"
                 ng-model="data.protocol"
-                class="form-control">
+                ng-required="data.is_volume_mirroring">
             <option value="" hidden>Choose a protocol</option>
             <option value="A">Asynchronous</option>
             <option value="B">Semi-synchronous</option>
