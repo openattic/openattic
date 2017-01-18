@@ -31,7 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.drbd");
-app.directive("drbdSyncerRateValidate", function () {
+/**
+ * Validate the DRBD synchronization rate value, e.g. 30M.
+ */
+app.directive("drbdSyncRateValidate", function () {
   return {
     // Restrict to an attribute type.
     restrict: "A",
@@ -42,7 +45,7 @@ app.directive("drbdSyncerRateValidate", function () {
     // attrs = A dictionary of attributes on the element
     // ctrl  = The controller for ngModel
     link: function (scope, elm, attrs, ctrl) {
-      ctrl.$validators.drbdSyncerRateValidate = function (value) {
+      ctrl.$validators.drbdSyncRateValidate = function (value) {
         return ctrl.$isEmpty(value) || RegExp("^\\d+[bkmg]?$", "i").test(value);
       };
     }
