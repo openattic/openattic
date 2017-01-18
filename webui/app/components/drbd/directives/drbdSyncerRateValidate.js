@@ -43,7 +43,7 @@ app.directive("drbdSyncerRateValidate", function () {
     // ctrl  = The controller for ngModel
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.drbdSyncerRateValidate = function (value) {
-        return RegExp("^\\d+[bkmg]?$", "i").test(value);
+        return ctrl.$isEmpty(value) || RegExp("^\\d+[bkmg]?$", "i").test(value);
       };
     }
   };
