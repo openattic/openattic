@@ -37,7 +37,22 @@ app.directive("actions", function () {
     templateUrl: "components/datatable/templates/actionmenu.html",
     transclude: true,
     link: function (scope, element, attr, controller, transclude) {
+      var dropdown = element.find(".oa-dropdown-actions");
       var actionsscope = scope.$parent.$new();
+
+      $(dropdown.parent()).on({
+        "show.bs.dropdown": function () {
+          this.closeable = true;
+        },
+        "click": function (e) {
+          var parentTarget = $(e.target).parent();
+          this.closeable= parentTarget.is(":not(ul.dropdown-menu,li.disabled)");
+        },
+        "hide.bs.dropdown": function () {
+          return this.closeable;
+        }
+      });
+
       transclude(actionsscope, function (clone) {
         var i;
         var liElems = clone.filter("li");
