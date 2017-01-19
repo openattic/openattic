@@ -18,22 +18,26 @@ distro_settings = {
     'jessie' => {
         box_name: 'debian/jessie64',
         sata_controller_name: 'SATA Controller',
-        ip_addr: '192.168.10.101'
+        ip_addr: '192.168.10.101',
+        gateway: '192.168.10.1'
     },
     'trusty' => {
         box_name: 'ubuntu/trusty64',
         sata_controller_name: 'SATAController',
-        ip_addr: '192.168.10.102'
+        ip_addr: '192.168.10.102',
+        gateway: '192.168.10.1'
     },
     'xenial' => {
         box_name: 'yk0/ubuntu-xenial',
         sata_controller_name: 'SATA',
-        ip_addr: '192.168.10.103'
+        ip_addr: '192.168.10.103',
+        gateway: '192.168.10.1'
     },
     'malachite' => {
         box_name: 'opensuse/openSUSE-42.1-x86_64',
         sata_controller_name: 'SATA Controller',
-        ip_addr: '192.168.10.104'
+        ip_addr: '192.168.10.104',
+        gateway: '192.168.10.1'
     }
 }
 
@@ -87,6 +91,17 @@ Vagrant.configure(2) do |config|
     # using a specific IP.
     # Needs to be enabled for VirtualBox to be able to use NFS
     config.vm.network 'private_network', ip: distro_settings[distro][:ip_addr]
+
+    # Reconfigure default route, otherwise the NAT interface is used which
+    # is the default in a Vagrant box. This will lead into an incorrect primary
+    # interface configuration in oA. To prevent this, the Host-only adapter
+    # is configured as default route.
+    config.vm.provision "shell",
+        run: "always",
+        inline: "ip route flush 0/0"
+    config.vm.provision "shell",
+        run: "always",
+        inline: "route add default gw #{distro_settings[distro][:gateway]}"
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
