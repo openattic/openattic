@@ -40,7 +40,9 @@ distro_settings = {
 # Get the distribution name to be used.
 distro = ENV['DISTRO']
 unless distro
-    raise NoDistributionSpecified.new
+    #raise NoDistributionSpecified.new
+    #Set the default distribution to openSUSE.
+    distro = "malachite"
 end
 unless distro_settings.has_key? distro
     raise UnknownDistributionSpecified
