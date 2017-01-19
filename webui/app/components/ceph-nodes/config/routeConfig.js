@@ -34,11 +34,11 @@ var app = angular.module("openattic.cephNodes");
 app.config(function ($stateProvider) {
   $stateProvider
       .state("cephNodes", {
-        url          : "/ceph/nodes",
-        views        : {
+        url: "/ceph/nodes",
+        views: {
           "main": {
             templateUrl: "components/ceph-nodes/templates/nodes.html",
-            controller : "CephNodesCtrl"
+            controller: "CephNodesCtrl"
           }
         },
         ncyBreadcrumb: {
