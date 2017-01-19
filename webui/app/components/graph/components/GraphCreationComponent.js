@@ -56,7 +56,10 @@ app.component("graphCreationComponent", {
     var refreshInterval = 60000; // 1min
     var self = this;
     this.isLoading = false;
-    graphFactory.initializeGraphConfig(this.config.graphs);
+
+    this.$onInit = function () {
+      graphFactory.initializeGraphConfig(self.config.graphs);
+    };
 
     /*
      * Triggers the API with the filterApi and extractValues function if any.
