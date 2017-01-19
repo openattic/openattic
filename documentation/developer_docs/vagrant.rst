@@ -79,9 +79,10 @@ Per default, the VM is based on OpenSUSE, but developing |oA| based on an other
 `Vagrant box <https://www.vagrantup.com/docs/boxes.html>`_ is also possible by setting
 the environment variable ``DISTRO``. These distributions are available:
 
-* ``DISTRO=debian`` (for Debian 8 "Jessie")
+* ``DISTRO=jessie`` (for Debian 8 "Jessie")
 * ``DISTRO=trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
 * ``DISTRO=xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
+* ``DISTRO=malachite`` (for openSUSE 42.1 "Malachite")
 
 For example, to run a Xenial VM, run::
 
@@ -117,6 +118,31 @@ Debugging |oA| with PyCharm Community
 
 Please follow the instructions from the `official documentation <https://www.jetbrains.com/help/pycharm/2016.2/remote-debugging.html#6>`_
 
+Execute `oaconfig install`
+--------------------------
+
+It is not possible to execute `oaconfig install` in a Vagrant VM, you have to execute the
+following commands instead.
+
+.. code-block:: shell
+
+    . env/bin/activate
+    cd openattic/backend
+    sudo systemctl reload dbus
+    sudo /home/vagrant/env/bin/python /home/vagrant/openattic/backend/manage.py runsystemd &
+    python manage.py pre_install
+    python manage.py migrate
+    python manage.py loaddata */fixtures/initial_data.json
+    python manage.py createcachetable status_cache
+    python manage.py add-host
+    python manage.py makedefaultadmin
+    python manage.py post_install
+
+On systems based on SysVinit you need to reload the dbus service using the following command.
+
+.. code-block:: shell
+
+    sudo service dbus reload
 
 Troubleshooting
 ---------------
