@@ -118,10 +118,10 @@ Debugging |oA| with PyCharm Community
 
 Please follow the instructions from the `official documentation <https://www.jetbrains.com/help/pycharm/2016.2/remote-debugging.html#6>`_
 
-Execute `oaconfig install`
---------------------------
+Perform an |oA| Base Configuration
+----------------------------------
 
-It is not possible to execute `oaconfig install` in a Vagrant VM, you have to execute the
+It is not possible to execute ``oaconfig install`` in a Vagrant VM, you have to execute the
 following commands instead.
 
 .. code-block:: shell
