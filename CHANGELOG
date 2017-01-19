@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* WebUI: Removed not implemented widgets (OP-1191)
 * Backend/QA: Added timestamps to verbose output to map the testcase and to
   the related openattic.log file entry (OP-1841)
 * Documentation: Added Ubuntu Xenial to the list of distributions provided by
