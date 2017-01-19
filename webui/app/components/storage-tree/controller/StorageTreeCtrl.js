@@ -32,7 +32,6 @@
 
 var app = angular.module("openattic.storageTree");
 app.controller("StorageTreeCtrl", function ($scope, storageTree) {
-  console.log(storageTree);
   $scope.$watch("selection.item", function (item) {
     if (item) {
       $scope.storageTree = storageTree;
