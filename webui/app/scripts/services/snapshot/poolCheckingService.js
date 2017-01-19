@@ -46,11 +46,16 @@ app.factory("poolCheckingService", function (poolsService) {
     if (angular.equals(saved.source, source)) {
       return saved;
     }
-    new poolsService.get(source).$promise.then(function (res) {
-      saved.source = source;
-      saved.pool = res.type;
-    });
+
+    poolsService.get(source)
+        .$promise
+        .then(function (res) {
+          saved.source = source;
+          saved.pool = res.type;
+        });
+
     return saved;
   }
+
   return {get: get};
 });
