@@ -2,11 +2,11 @@
 var helpers = require('../../common.js');
 
 describe('Should add a host and attributes', function(){
-  var hostname = 'protractor_test_host';
-  var hostname2 = 'e2e_test_host';
-  var hostname3 = 'e2e_mul_1';
-  var hostname4 = 'e2e_mul_2';
-  var host = helpers.get_list_element(hostname);
+  var hostPrefix = 'e2e_test_host_';
+  var hostnames = ['single_1', 'single_2', 'multi_1', 'multi_2'].map(function(host){
+    return hostPrefix + host;
+  });
+  var host = helpers.get_list_element(hostnames[0]);
   var iqn = 'iqn.2016-12.org.openattic:storage:disk.sn-a8675309';
 
   beforeAll(function(){
@@ -19,10 +19,10 @@ describe('Should add a host and attributes', function(){
   });
 
   it('should create the test hosts', function(){
-    helpers.create_host(iqn);
-    helpers.create_host(null,null,hostname2);
-    helpers.create_host(null,null,hostname3);
-    helpers.create_host(null,null,hostname4);
+    helpers.create_host(iqn, null, hostnames[0]);
+    for (var i = 1; i < hostnames.length; i++) {
+      helpers.create_host(null,null,hostnames[i]);
+    }
   });
 
   it('should display the created test host', function(){
@@ -32,7 +32,7 @@ describe('Should add a host and attributes', function(){
   it('should not allow adding the same host twice', function(){
     element(by.css('.tc_addHost')).click();
     browser.sleep(400);
-    element(by.model('host.name')).sendKeys('protractor_test_host');
+    element(by.model('host.name')).sendKeys(hostnames[0]);
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_noUniqueName')).getText()).toEqual('The chosen host name is already in use.');
     element(by.css('.tc_backButton')).click();
@@ -50,7 +50,7 @@ describe('Should add a host and attributes', function(){
     expect(element(by.css('.tc_hostEditTitle')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_hostEditTitle')).getText()).toContain('Edit Host:');
     var hostName = element(by.model('host.name'));
-    expect(hostName.getAttribute('value')).toEqual('protractor_test_host');
+    expect(hostName.getAttribute('value')).toEqual(hostnames[0]);
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);
     expect(element.all(by.model('data[key]')).get(0).isDisplayed()).toBe(true);
     element(by.css('.tc_submitButton')).click();
@@ -62,7 +62,7 @@ describe('Should add a host and attributes', function(){
     browser.sleep(400);
     var hostName = element(by.model('host.name'));
     hostName.clear();
-    hostName.sendKeys(hostname2);
+    hostName.sendKeys(hostnames[1]);
     browser.sleep(400);
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     element(by.css('.tc_backButton')).click();
@@ -70,7 +70,7 @@ describe('Should add a host and attributes', function(){
 
   it('should show Name and IQN', function(){
     host.click();
-    expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostname);
+    expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostnames[0]);
     expect(element(by.binding('iscsiIqn.text')).getText()).toEqual(iqn);
   });
 
@@ -81,7 +81,7 @@ describe('Should add a host and attributes', function(){
     element.all(by.model('type.check')).get(0).click();
     element(by.css('.tc_submitButton')).click();
     host.click();
-    expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostname);
+    expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostnames[0]);
     expect(element(by.binding('iscsiIqn.text')).isPresent()).toBe(false);
   });
 
@@ -91,22 +91,23 @@ describe('Should add a host and attributes', function(){
     browser.sleep(400);
     var hostName = element(by.model('host.name'));
     hostName.clear();
-    hostName.sendKeys('renamed_protractor_test_host');
+    hostnames[0] += '_renamed';
+    hostName.sendKeys(hostnames[0]);
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
-    var edited_host = helpers.get_list_element('renamed_protractor_test_host');
+    var edited_host = helpers.get_list_element(hostnames[0]);
     expect(edited_host.isDisplayed()).toBe(true);
   });
 
   it('should delete the test host 1 and 2', function(){
-    helpers.delete_host('renamed_protractor_test_host');
-    helpers.delete_host(hostname2);
+    helpers.delete_host(hostnames[0]);
+    helpers.delete_host(hostnames[1]);
   });
 
   it('should delete the test host 3 and 4 via multi deletion', function(){
-    helpers.search_for('e2e_mul');
-    var host3 = helpers.get_list_element(hostname3);
-    var host4 = helpers.get_list_element(hostname4);
+    helpers.search_for(hostPrefix);
+    var host3 = helpers.get_list_element(hostnames[2]);
+    var host4 = helpers.get_list_element(hostnames[3]);
     expect(host3.isDisplayed()).toBe(true);
     expect(host4.isDisplayed()).toBe(true);
     element(by.model('selection.checkAll')).click();
