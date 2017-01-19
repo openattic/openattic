@@ -14,11 +14,11 @@ describe('Pools panel', function(){
     browser.sleep(400);
   });
 
+  /* Not implemented yet!
   it('should have an add button', function(){
     expect(element(by.css('.tc_addPoolBtn')).isDisplayed()).toBe(true);
     browser.sleep(400);
   });
-
 
   it('should have a delete button', function(){
     element(by.css('.tc_menudropdown')).click();
@@ -26,7 +26,6 @@ describe('Pools panel', function(){
     expect(element(by.css('.tc_deletePoolBtn2')).isDisplayed()).toBe(true);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(400);
-
   });
 
   it('should switch to delete button when selecting a pool', function(){
@@ -39,6 +38,7 @@ describe('Pools panel', function(){
       break;
     }
   });
+  */
 
   it('should display the configured pools', function(){
     for(var key in helpers.configs.pools){
