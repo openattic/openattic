@@ -94,14 +94,6 @@ app.component("graphCreationComponent", {
     };
 
     /*
-     * Initializes the graphs and the update interval.
-     */
-    this.init = function () {
-      self.getData();
-      self.startInterval();
-    };
-
-    /*
      * Starts or restarts the interval that refreshes the graphs.
      */
     this.startInterval = function () {
@@ -124,7 +116,8 @@ app.component("graphCreationComponent", {
      */
     $scope.$watch("$ctrl.selection.item", function (newValue) {
       if (newValue !== null) {
-        self.init();
+        self.getData();
+        self.startInterval();
       } else {
         self.stopInterval();
       }
