@@ -10,6 +10,102 @@
 #  GNU General Public License for more details.
 
 ## Type: string
+## Default:"/usr/bin/python"
+#
+# Python interpreter
+PYTHON="/usr/bin/python"
+
+## Type: string
+## Default:"/usr/share/openattic"
+#
+# Root openattic directory
+OADIR="/usr/share/openattic"
+
+## Type: string
+## Default:"/var/run/openattic_rpcd.pid"
+#
+# RPC Daemon pid file
+RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
+
+## Type: string
+## Default: "openattic:openattic"
+#
+# RPC Daemon user and group
+RPCD_CHUID="openattic:openattic"
+
+## Type: string
+## Default: "/var/log/openattic/openattic_rpcd.log"
+#
+# RPC Daemon log file
+RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
+
+## Type: string
+## Default: "INFO"
+#
+# RPC Daemon loglevel
+RPCD_LOGLEVEL="INFO"
+
+## Type: string
+## Default: "$OADIR/manage.py runrpcd"
+#
+# Options for RPC Daemon
+RPCD_OPTIONS="$OADIR/manage.py runrpcd"
+
+## Type: string
+## Default: ""
+#
+# RPC Daemon certificate
+RPCD_CERTFILE=""
+
+## Type: string
+## Default: ""
+#
+# RPC Daemon keyfile
+RPCD_KEYFILE=""
+
+## Type: string
+## Default: "/var/run/openattic_systemd.pid"
+#
+# System Daemon pid file
+SYSD_PIDFILE="/var/run/openattic_systemd.pid"
+
+## Type: string
+## Default: "/var/log/openattic/openattic_systemd.log"
+#
+# System Daemon log file
+SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
+
+## Type: string
+## Default: "INFO"
+#
+# System Daemon loglevel
+SYSD_LOGLEVEL="INFO"
+
+## Type: string
+## Default: "$OADIR/manage.py runsystemd"
+#
+# System Daemon options
+SYSD_OPTIONS="$OADIR/manage.py runsystemd"
+
+## Type: string
+## Default: "apache2"
+#
+# Name of web service
+WEBSERVER_SERVICE="apache2"
+
+## Type: string
+## Default: "smb nmb"
+#
+# Names of samba services
+SAMBA_SERVICES="smb nmb"
+
+## Type: string
+## Default: "winbind"
+#
+# Name of winbind service
+WINBIND_SERVICE="winbind"
+
+## Type: string
 ## Default: "/run/icinga/icinga.cmd"
 #
 # Path for processing commands submitted by other applications
