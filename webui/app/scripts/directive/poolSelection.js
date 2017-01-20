@@ -42,6 +42,9 @@ app.directive("poolSelection", function () {
       submitted: "=",
       wizard: "="
     },
+    link: function(scope, element, attr) {
+      scope.showUseMax = angular.isDefined(attr.megs);
+    },
     templateUrl: "templates/poolSelection.html",
     controller: function ($scope, PoolService, toasty) {
       $scope.waitingMsg = "Retrieving pool list...";
