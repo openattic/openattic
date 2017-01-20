@@ -1,6 +1,6 @@
 <div class="form-group" ng-class="{'has-error': (submitted || validation.$dirty)
     && validation.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">{{label}}</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <select ng-disabled="!pools" class="form-control tc_pool_selection tc_source_pool" ng-model="pool"
                 ng-options="(pool.name + ' (' + pool.type.name + ', ' +

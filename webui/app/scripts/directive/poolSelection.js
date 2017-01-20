@@ -35,6 +35,7 @@ app.directive("poolSelection", function () {
   return {
     restrict: "E",
     scope: {
+      label: "@",
       pool: "=",
       validation: "=",
       megs: "=",
