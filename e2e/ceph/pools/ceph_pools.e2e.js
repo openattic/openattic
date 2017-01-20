@@ -1,4 +1,6 @@
+'use strict';
 var helpers = require('../../common.js');
+var graphHelpers = require('../../graphCommon.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
 
 describe('should test the ceph pools panel', function(){
@@ -46,6 +48,16 @@ describe('should test the ceph pools panel', function(){
     });
   });
 
+  it('should have a statistic tab when selecting a pool', function(){
+    //choose first element in ceph pools list
+    element.all(by.binding('row.name')).get(0).click();
+    cephPoolProperties.statisticsTab.click();
+    expect(browser.getCurrentUrl()).toContain('/ceph/pools/statistics#more');
+    expect(cephPoolProperties.statisticsTab.isDisplayed()).toBe(true);
+  });
+
+  graphHelpers.testGraphs(cephPoolProperties.statisticGraphsConfig);
+
   var cephCluster = helpers.configs.cephCluster;
   var cephClusterCount = Object.keys(cephCluster).length;
   Object.keys(cephCluster).forEach(function(clusterName){
@@ -78,6 +90,6 @@ describe('should test the ceph pools panel', function(){
   */
 
   afterAll(function(){
-    console.log("ceph_pools -> ceph_pools.e2e.js");
+    console.log('ceph_pools -> ceph_pools.e2e.js');
   });
 });
