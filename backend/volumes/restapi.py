@@ -170,9 +170,22 @@ class PoolSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModel
         return obj.get_status()
 
 
+def poolfilter_excl_host(queryset, value):
+    if not value:
+        return queryset
+
+    result = []
+    for entry in queryset:
+        if entry.host.id != value:
+            result.append(entry)
+
+    return result
+
+
 class PoolFilter(django_filters.FilterSet):
     type = django_filters.CharFilter(name="volumepool__volumepool_type__app_label",
                                      lookup_type="iexact")
+    excl_host = django_filters.NumberFilter(action=poolfilter_excl_host)
 
     class Meta:
         model = models.StorageObject
