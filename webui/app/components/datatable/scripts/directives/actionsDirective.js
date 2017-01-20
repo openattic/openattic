@@ -41,7 +41,7 @@ app.directive("actions", function () {
       var btnGroup = element.find(".btn-group");
       var actionsScope = scope.$parent.$new();
 
-      $(dropdown.parent()).on({
+      dropdown.parent().on({
         "show.bs.dropdown": function () {
           this.closeable = true;
         },
