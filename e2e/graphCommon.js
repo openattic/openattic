@@ -2,6 +2,23 @@
 
 (function(){
   module.exports = {
+    /*
+     * Use this function to run diffrent tests on graphs that were created by the use of the graph creation component.
+     * It will run the follwing tests with help of the given configuration:
+     *  - Count all graphs.
+     *  - Compare the graph positions of each graph.
+     *  - Compare the graph title of each graph.
+     *  - Compare all attributes used in a graph.
+     *
+     * @param {Object[]} graphsConfig - looks like this:
+     *  [
+     *   {
+     *    name: 'Name of the graph',
+     *    attributes: ['used', 'api_attribute_2']
+     *   },
+     *   ...
+     *  ]
+     */
     testGraphs: function(graphsConfig){
       var graphs = element.all(by.repeater('graph in $ctrl.config.graphs'));
 

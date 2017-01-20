@@ -8,6 +8,7 @@ var rbdCommons = function(){
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
   this.clusterSelect = element(by.model('registry.selectedCluster'));
+  this.statisticsTab = element(by.className('tc_statisticsTab'));
 
   this.detailAttributes = [
     'Name',
@@ -16,6 +17,17 @@ var rbdCommons = function(){
     'Size',
     'Object size',
     'Number of objects'
+  ];
+
+  this.statisticGraphsConfig = [
+    {
+      name: 'Used',
+      attributes: ['used_size']
+    },
+    {
+      name: 'Provisioned size',
+      attributes: ['provisioned_size']
+    }
   ];
 
   this.tableHeaders = [
