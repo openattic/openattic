@@ -56,7 +56,7 @@ app.directive("actions", function () {
 
       transclude(actionsScope, function (clone) {
         dropdown.append(clone.filter("li"));
-        btnGroup.append(clone.filter(".btn-primary"));
+        btnGroup.prepend(clone.filter(".btn-primary"));
       });
     }
   };
