@@ -47,7 +47,7 @@ app.directive("actions", function () {
         },
         "click": function (e) {
           var parentTarget = $(e.target).parent();
-          this.closeable= parentTarget.is(":not(ul.dropdown-menu,li.disabled)");
+          this.closeable = parentTarget.is(":not(.btn-group.open,ul.dropdown-menu,li.disabled)");
         },
         "hide.bs.dropdown": function () {
           return this.closeable;
