@@ -42,15 +42,14 @@ app.directive("actions", function () {
       var actionsScope = scope.$parent.$new();
 
       dropdown.parent().on({
-        "show.bs.dropdown": function () {
-          this.closeable = true;
-        },
         "click": function (e) {
-          var parentTarget = $(e.target).parent();
-          this.closeable = parentTarget.is(":not(.btn-group.open,ul.dropdown-menu,li.disabled)");
+          this.closeable = $(e.target).is(".dropdown-menu,li.disabled") ? false : true;
         },
         "hide.bs.dropdown": function () {
-          return this.closeable;
+          var hide = this.closeable;
+
+          this.closeable = true;
+          return hide;
         }
       });
 

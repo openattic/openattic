@@ -175,6 +175,7 @@ fieldset[disabled] .btn-primary.active {
 .dropdown-menu>li.disabled {
   pointer-events: auto;
 }
+.dropdown-menu>li.divider,
 .dropdown-menu>li.disabled a {
   pointer-events: none;
 }
