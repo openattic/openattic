@@ -41,7 +41,7 @@ app.directive("hostForm", function () {
       submit: "=?"
     },
     templateUrl: "components/hosts/templates/add-host-directive.html",
-    controller: function ($scope, $state, HostService, InitiatorService, $q, toasty) {
+    controller: function ($scope, $state, HostService, InitiatorService, $q, Notification) {
       if (!$scope.config) {
         $scope.config = {
           header: true,
@@ -162,10 +162,10 @@ app.directive("hostForm", function () {
       };
 
       $scope.errorOccurred = function (error, title, msg) {
-        toasty.error({
+        Notification.error({
           title: title,
           msg: msg
-        });
+        }, error);
         throw error;
       };
 

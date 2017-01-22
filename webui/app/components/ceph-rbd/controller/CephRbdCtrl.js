@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
-    registryService, cephPoolsService, toasty, tabViewService) {
+    registryService, cephPoolsService, Notification, tabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.rbd = {};
@@ -94,10 +94,10 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 $scope.poolFailure = true;
                 $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
                 $scope.poolFailureError = poolError;
-                toasty.error({
+                Notification.error({
                   title: $scope.poolFailureTitle,
                   msg: "Pool list couldn't be loaded."
-                });
+                }, poolError);
                 throw poolError;
               }
             });
@@ -107,10 +107,10 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
               $scope.rbdFailure = true;
               $scope.rbdFailureTitle = rbdError.status + ": " + rbdError.statusText.toLowerCase();
               $scope.rbdFailureError = rbdError;
-              toasty.error({
+              Notification.error({
                 title: $scope.rbdFailureTitle,
                 msg: "Rbd list couldn't be loaded."
-              });
+              }, rbdError);
             }
             throw rbdError;
           });

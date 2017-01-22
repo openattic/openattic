@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
-    SizeParserService, $filter, toasty, cephClusterService) {
+    SizeParserService, $filter, Notification, cephClusterService) {
   $scope.submitted = false;
   $scope.rbd = {
     name: "",
@@ -258,7 +258,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.data.cluster = res.results[0];
         } else {
           $scope.waitingClusterMsg = "No cluster avialable.";
-          toasty.warning({
+          Notification.warning({
             title: $scope.waitingClusterMsg,
             msg: "You can't create any RBDs with your configuration."
           });
@@ -273,10 +273,10 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         $scope.clusterFailureError = clusterError;
         $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
         $scope.rbdForm.$setValidity("clusterLoading", false);
-        toasty.error({
+        Notification.error({
           title: $scope.clusterFailureTitle,
           msg: "Cluster list couldn't be loaded."
-        });
+        }, clusterError);
       }
       throw clusterError;
     });
@@ -310,7 +310,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
             $scope.data.pool = res.results[0];
           } else {
             $scope.waitingPoolMsg = "No pool aviable.";
-            toasty.warning({
+            Notification.warning({
               title: $scope.waitingPoolMsg,
               msg: "You can't create any RBDs in the selected cluster."
             });
@@ -323,10 +323,10 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
           $scope.poolFailureError = poolError;
           $scope.rbdForm.$setValidity("poolLoading", false);
-          toasty.error({
+          Notification.error({
             title: $scope.poolFailureTitle,
             msg: "Pool list couldn't be loaded."
-          });
+          }, poolError);
           $scope.waitingPoolMsg = "Error: List couldn't be loaded!";
         }
         throw poolError;
@@ -372,11 +372,11 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
               toastMsg = "Could not create the RBD because of " + $filter("json")(error.data);
             }
           }
-          toasty.error({
+          Notification.error({
             title: "Can't create RBD",
             msg: toastMsg,
             timeout: 10000
-          });
+          }, error);
           throw error;
         });
     }

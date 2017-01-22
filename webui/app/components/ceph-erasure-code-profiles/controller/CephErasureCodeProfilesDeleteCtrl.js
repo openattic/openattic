@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephErasureCodeProfiles");
 app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalInstance, cephErasureCodeProfilesService,
-    cluster, profile, toasty) {
+    cluster, profile, Notification) {
   $scope.cluster = cluster;
   $scope.profile = profile;
 
@@ -45,7 +45,7 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
         .$promise
         .then(function () {
           // Trigger toasty message on success
-          toasty.success({
+          Notification.success({
             title: "Erasure code profile deleted",
             msg  : "Erasure code profile '" + $scope.profile.name + "' successfully deleted."
           });
@@ -55,10 +55,10 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
         })
         .catch(function (err) {
           // Trigger toasty on error
-          toasty.error({
+          Notification.error({
             title: "Error",
             msg  : err.data.detail
-          });
+          }, err);
           $scope.cancel();
 
           throw err;

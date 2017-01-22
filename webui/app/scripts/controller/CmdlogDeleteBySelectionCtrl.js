@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $uibModalInstance, $filter, selection,
-    toasty) {
+    Notification) {
   $scope.selectionLength = selection.length;
   $scope.itemText = false;
   if (selection.length === 1) {
@@ -58,7 +58,7 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete log entry",
       msg: "Cancelled"
     });

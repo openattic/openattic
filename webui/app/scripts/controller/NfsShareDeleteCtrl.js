@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibModalInstance, share, toasty) {
+app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibModalInstance, share, Notification) {
   $scope.share = share;
 
   $scope.delete = function () {
@@ -47,7 +47,7 @@ app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibMod
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete share",
       msg: "Cancelled"
     });

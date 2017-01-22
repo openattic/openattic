@@ -42,7 +42,7 @@ app.directive("poolSelection", function () {
       wizard: "="
     },
     templateUrl: "templates/poolSelection.html",
-    controller: function ($scope, PoolService, toasty) {
+    controller: function ($scope, PoolService, Notification) {
       $scope.waitingMsg = "Retrieving pool list...";
       PoolService.query()
         .$promise
@@ -51,10 +51,10 @@ app.directive("poolSelection", function () {
           $scope.waitingMsg = "-- Select a pool --";
         }, function (error) {
           console.log("An error occurred", error);
-          toasty.error({
+          Notification.error({
             title: "Pool list couldn't be loaded",
             msg: "Server failure."
-          });
+          }, error);
           $scope.waitingMsg = "Error: List couldn't be loaded!";
           $scope.validation.$setValidity("loading", false);
         });

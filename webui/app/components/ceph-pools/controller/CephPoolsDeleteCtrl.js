@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection,
-    $q, toasty) {
+    $q, Notification) {
   if ($.isArray(cephPoolSelection)) {
     $scope.cephPools = cephPoolSelection;
   } else {
@@ -67,11 +67,11 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
       $uibModalInstance.close("deleted");
     }, function (error) {
       $uibModalInstance.close("deleted");
-      toasty.error({
+      Notification.error({
         title: "Deletion failure",
         msg: "Couldn't delete Ceph pool.",
         timeout: 10000
-      });
+      }, error);
       throw error;
     });
   };
@@ -79,7 +79,7 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Cancelled deletion",
       msg: "Cancelled Ceph pool deletion"
     });

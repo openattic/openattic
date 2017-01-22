@@ -36,12 +36,15 @@ app.factory("ApiErrorDecoratorService", function ($q, Notification) {
   return {
     decorate: function (error) {
       var preventDefault = error.preventDefault || function() {},
+        errorPrefix,
         notification;
       
       if (error) {
+        errorPrefix = error && error.config && error.config.method && error.config.url &&
+          ['[', [error.config.method, error.config.url].join(': '), ']'].join('');
         notification = new Notification({
             title: 'OpenAttic API Error',
-            msg: ['Failed with ', error.status, ' status.', error.data && error.data.detail].join('')
+            msg: [errorPrefix,'Failed with', error.status, 'status.', error.data && error.data.detail].join(' ')
           })
           .toCancelable()
           .show();

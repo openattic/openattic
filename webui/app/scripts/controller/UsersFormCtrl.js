@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter, $uibModal, toasty) {
+app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter, $uibModal, Notification) {
   var gravatarId = $filter("gravatar")("");
 
   $scope.isCurrentUser = false;
@@ -111,7 +111,7 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
         // Display the new token.
         $scope.user.auth_token.token = token;
         // Display a message.
-        toasty.success({
+        Notification.success({
           title: "API authentication token",
           msg: "The token has been created successfully."
         });

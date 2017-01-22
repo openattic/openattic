@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService, SizeParserService, $uibModalInstance,
-    volume, toasty) {
+    volume, Notification) {
   $scope.volume = volume;
   $scope.input = {
     newsize: "",
@@ -65,7 +65,7 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService,
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Resize volume",
       msg: "Cancelled"
     });

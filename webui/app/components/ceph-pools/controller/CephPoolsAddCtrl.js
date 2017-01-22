@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, toasty, ClusterResource,
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, Notification, ClusterResource,
     cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
@@ -101,7 +101,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
               $scope.data.cluster = $scope.clusters[0];
             } else {
               $scope.waitingClusterMsg = "No cluster avialable.";
-              toasty.warning({
+              Notification.warning({
                 title: $scope.waitingClusterMsg,
                 msg: "You can't create any RBDs with your configuration."
               });
@@ -110,21 +110,21 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         })
         .catch(function (crushError) {
           $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
-          toasty.error({
+          Notification.error({
             title: "Loading failure",
             msg: "Crushmap couldn't be loaded.",
             timeout: 10000
-          });
+          }, crushError);
           throw crushError;
         });
     })
     .catch(function (clusterError) {
       $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
-      toasty.error({
+      Notification.error({
         title: "Loading failure",
         msg: "Cluster list couldn't be loaded.",
         timeout: 10000
-      });
+      }, clusterError);
       throw clusterError;
     });
 
@@ -137,11 +137,11 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           $scope.data.osdCount = res.count;
         })
         .catch(function (osdError) {
-          toasty.error({
+          Notification.error({
             title: "Loading error",
             msg: "OSD's couldn't be loaded.",
             timeout: 10000
-          });
+          }, osdError);
           throw osdError;
         });
       cephErasureCodeProfilesService.get({fsid: cluster.fsid})
@@ -154,11 +154,11 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           }
         })
         .catch(function (osdError) {
-          toasty.error({
+          Notification.error({
             title: "Loading error",
             msg: "Erasure code profiles couldn't be loaded.",
             timeout: 10000
-          });
+          }, osdError);
           throw osdError;
         });
       $scope.data.ruleset = $scope.data.cluster.rules[0];
@@ -243,11 +243,11 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .then(function () {
           goToListView();
         }, function (error) {
-          toasty.error({
+          Notification.error({
             title: "Creation failure",
             msg: "Couldn't create Ceph pool.",
             timeout: 10000
-          });
+          }, error);
           throw error;
         });
     }
