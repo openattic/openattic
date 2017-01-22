@@ -30,27 +30,9 @@
  */
 "use strict";
 
-angular.module("openattic.extensions", [
-  "openattic.notification",
-  "openattic.apidecorator",
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephHosts",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.clusterstatuswidget",
-  "openattic.dashboard",
-  "openattic.datatable",
-  "openattic.graph",
-  "openattic.hosts",
-  "openattic.navigation",
-  "openattic.required",
-  "openattic.sizeparser",
-  "openattic.oaWizards",
-  "openattic.tabView",
-  "openattic.todowidget",
-  "openattic.userinfo",
-  "openattic.users"
-]);
+angular.module("openattic.apidecorator", [
+    "openattic.notification"
+  ])
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push("ApiHttpErrorInterceptor");
+  });
