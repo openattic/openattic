@@ -35,27 +35,6 @@ app.directive("navigation", function () {
   return {
     restrict: "E",
     replace: true,
-    templateUrl: "components/navigation/templates/navigation.html",
-    controller: function ($scope, HostService, toasty) {
-      HostService.query()
-        .$promise
-        .then(function (res) {
-          res.some(function (host) {
-            var version = host.oa_version;
-            if (version) {
-              $scope.oaVersion = "v" + version.package.VERSION;
-            }
-            return version;
-          });
-        })
-        .catch(function (error) {
-          toasty.error({
-            title: error.status,
-            msg: error.detail,
-            timeout: 10000
-          });
-          throw error;
-        });
-    }
+    templateUrl: "components/navigation/templates/navigation.html"
   };
 });
