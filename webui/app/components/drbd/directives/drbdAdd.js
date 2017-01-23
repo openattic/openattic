@@ -36,28 +36,23 @@ app.directive("drbdAdd", function () {
     restrict: "E",
     scope: {
       validation: "=",
-      result: "=",
+      masterData: "=",
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
     controller: function ($scope) {
-      /* Default values */
+      // Default values.
       $scope.data = {
         is_volume_mirroring: false,
         syncer_rate: "30M",
         protocol: "C"
       };
-      /* The result has to look like the following:
-      $scope.result = {
-        remote_pool: {
-          id: 0
-          name: ""
-        },
-        syncer_rate: 0,
-        protocol: "",
-        filesystem: ""
-      };
-      */
+      // Listen to Pool selections. Reload and filter the remote pool list
+      // if a pool has been selected.
+      $scope.$watch("masterData.source_pool", function (pool) {
+        if (!pool)
+          return;
+      });
     }
   };
 });

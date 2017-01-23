@@ -14,7 +14,7 @@
 </div>
 
 <pool-selection name="pool" label="Pool" pool="data.pool" validation="validation.pool" megs="data.megs"
-    wizard="wizard" submitted="validation.$submitted" required="true"></pool-selection>
+    wizard="wizard" submitted="validation.$submitted" required-if="true"></pool-selection>
 
 <div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.megs.$dirty)
     && validation.megs.$invalid}">

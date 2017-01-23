@@ -42,9 +42,10 @@ app.directive("poolSelection", function () {
       megs: "=",
       submitted: "=",
       wizard: "=",
-      required: "="
+      requiredIf: "="
     },
     link: function(scope, element, attr) {
+      // Display the 'Show max.' link if the 'megs' attribute is specified.
       scope.showUseMax = angular.isDefined(attr.megs);
     },
     templateUrl: "templates/poolSelection.html",
@@ -67,11 +68,11 @@ app.directive("poolSelection", function () {
           })
       }
 
-      /* Default values. */
+      // Default values.
       $scope.showUseMax = false;
       $scope.selPoolUsedPercent = 0;
 
-      /* Get the list of pools to be displayed in the selection list. */
+      // Get the list of pools to be shown in the selection list.
       $scope.getPoolList();
 
       $scope.$watch("pool", function (pool) {

@@ -10,7 +10,7 @@
                 name="{{::name}}"
                 id="{{::name}}"
                 ng-model="pool"
-                ng-required="required"
+                ng-required="requiredIf"
                 ng-disabled="!pools"
                 ng-options="(pool.name + ' (' + pool.type.name + ', ' +
                     pool.host.title + ', ' + pool.usage.free_text + ' free)')

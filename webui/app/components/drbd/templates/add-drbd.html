@@ -17,33 +17,33 @@
                 validation="validation.remote_pool"
                 wizard="wizard"
                 submitted="validation.$submitted"
-                required="data.is_volume_mirroring"
-                >
+                required-if="data.is_volume_mirroring"
+                ng-show="data.is_volume_mirroring">
 </pool-selection>
 <!-- Sync Rate -->
 <div class="form-group"
-        ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
-            validation.syncer_rate.$invalid}"
-        ng-show="data.is_volume_mirroring">
+     ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
+        validation.syncer_rate.$invalid}"
+     ng-show="data.is_volume_mirroring">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
-        class="control-label"
-        for="syncer_rate">Sync Rate</label>
+           class="control-label"
+           for="syncer_rate">Sync Rate</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <input id="syncer_rate"
-            name="syncer_rate",
-            class="form-control"
-            type="text"
-            drbd-sync-rate-validate
-            placeholder="e.g., 30M",
-            ng-model="data.syncer_rate"
-            ng-required="data.is_volume_mirroring">
+               name="syncer_rate",
+               class="form-control"
+               type="text"
+               drbd-sync-rate-validate
+               placeholder="e.g., 30M",
+               ng-model="data.syncer_rate"
+               ng-required="data.is_volume_mirroring">
         <span class="help-block"
-                ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
+              ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
                 validation.syncer_rate.$error.required">
             This field is required!
         </span>
         <span class="help-block"
-                ng-show="validation.syncer_rate.$error.drbdSyncRateValidate">
+              ng-show="validation.syncer_rate.$error.drbdSyncRateValidate">
             This is not a valid value.
         </span>
     </div>
@@ -51,8 +51,8 @@
 <!-- Protocol -->
 <div class="form-group" ng-show="data.is_volume_mirroring">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
-        class="control-label"
-        for="protocol">Protocol</label>
+           class="control-label"
+           for="protocol">Protocol</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <select id="protocol"
                 name="protocol",
