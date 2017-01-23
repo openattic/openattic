@@ -148,15 +148,15 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
 
   /**
    * Watches the selection to
-   * - set multiSelection and hasSelection
+   * - set multiSelection and singleSelection
    * - do a tab change or route back to the overview
    */
   $scope.$watchCollection("selection", function (selection) {
     var items = selection.items;
     $scope.multiSelection = items && items.length > 1;
-    $scope.hasSelection = selection.item && items && items.length === 1; // Item isn't changed as fast as items.
+    $scope.singleSelection = selection.item && items && items.length === 1; // Item isn't changed as fast as items.
 
-    if ($scope.hasSelection) {
+    if ($scope.singleSelection) {
       $scope.changeTab("hosts.detail.status");
     } else {
       $state.go("hosts");
@@ -176,7 +176,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
    * It will reload the table then the dialog is closed.
    */
   $scope.deleteAction = function () {
-    if (!$scope.hasSelection && !$scope.multiSelection) {
+    if (!$scope.singleSelection && !$scope.multiSelection) {
       return;
     }
     var modalInstance = $uibModal.open({
