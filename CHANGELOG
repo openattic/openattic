@@ -4,9 +4,23 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
-* Documentation: Added Xenial to the list of distributions provided by our repository (OP-1543)
-* Deployment: Improve error messages and handling of errors of make_dist.py related to debchange (OP-1804)
-* Installation: Changing the database password during oaconfig install now follows the symlink from database.ini to pgsql.ini instead of creating a new file (OP-1821)
+* WebUI: Removed not implemented widgets (OP-1191)
+* Backend/QA: Added timestamps to verbose output to map the testcase and to
+  the related openattic.log file entry (OP-1841)
+* Documentation: Added Ubuntu Xenial to the list of distributions provided by
+  our repository (OP-1543)
+* Deployment: Improve error messages and handling of errors of make_dist.py
+  related to debchange (OP-1804)
+* Installation: Changing the database password during oaconfig install now
+  follows the symlink from database.ini to pgsql.ini instead of creating a new
+  file (OP-1821)
+* Installation: Fixed %post scriplet failure in the openattic-module-ceph RPM
+  package (OP-1820)
+* Installation: Added missing configuration entries to the SUSE sysconfig
+  file (PR#576)
+* Packaging: Added the ability to add mercurial tags to a repository when
+  creating a tarball using make_dist.py (OP-1374)
+* Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
 
 
 Version 2.0.17, 20. December 2016:
