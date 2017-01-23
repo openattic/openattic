@@ -45,11 +45,12 @@ app.directive("actions", function () {
         "click": function (e) {
           this.closeable = $(e.target).is(".dropdown-menu,li.disabled") ? false : true;
         },
-        "hide.bs.dropdown": function () {
-          var hide = this.closeable;
+        "hide.bs.dropdown": function (e) {
+          if(!this.closeable) {
+            e.preventDefault();
+          }
 
           this.closeable = true;
-          return hide;
         }
       });
 
