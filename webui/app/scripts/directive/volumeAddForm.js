@@ -46,13 +46,14 @@ app.directive("volumeAddForm", function () {
       $scope.validation = $scope.volumeForm;
       /* The result has to look like the following:
       $scope.result = {
-        filesystem: "",
+        filesystem: "ext3",
         is_protected: false,
-        megs: 0,
-        name: "",
+        megs: 100,
+        name: "xxx",
         source_pool: {
-          id: 0
-          name: "" // Not needed in backend, but in frontend.
+          id: 2,
+          name: "xxx", // Not needed in backend, but in frontend.
+          host: 3 // Not needed in backend, but in frontend.
         }
       };
       */
@@ -60,7 +61,8 @@ app.directive("volumeAddForm", function () {
         if ($scope.data.pool) {
           $scope.result.source_pool = {
             id: $scope.data.pool.id,
-            name: $scope.data.pool.name
+            name: $scope.data.pool.name,
+            host: $scope.data.pool.host.id
           };
         }
       });
