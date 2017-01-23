@@ -43,15 +43,24 @@ app.directive("drbdAdd", function () {
     controller: function ($scope) {
       // Default values.
       $scope.data = {
-        is_volume_mirroring: false,
+        volume_mirroring: false,
         syncer_rate: "30M",
         protocol: "C"
       };
+
       // Listen to Pool selections. Reload and filter the remote pool list
       // if a pool has been selected.
       $scope.$watch("masterData.source_pool", function (pool) {
         if (!pool)
           return;
+        // ToDo ...
+      });
+
+      // Listen to the event that is fired when a volume has been created.
+      $scope.$on("volumecreate", function (event, volume) {
+        if ($scope.masterData.name == volume.name) {
+          // ToDo...
+        }
       });
     }
   };

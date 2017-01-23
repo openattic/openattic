@@ -56,7 +56,7 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
               $scope.volume = res;
               $scope.state.created = true;
               $scope.state.formatted = $scope.volume.is_filesystemvolume;
-              goToListView();
+              $scope.$broadcast("volumecreate", $scope.volume);
             }, function (error) {
               console.log("An error occured", error);
             });
@@ -75,6 +75,11 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
       }
     }
   };
+
+  // Display the list view after a volume has been created.
+  $scope.$on("volumecreate", function(event, volume) {
+    goToListView();
+  });
 
   $scope.cancelAction = function () {
     goToListView();

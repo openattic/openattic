@@ -3,8 +3,8 @@
     <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <div class="checkbox checkbox-primary">
             <input id="volumeMirroring"
-                   ng-model="data.is_volume_mirroring"
-                   class="tc_volume_is_volume_mirroring"
+                   ng-model="$ctrl.data.volume_mirroring"
+                   class="tc_volume_volume_mirroring"
                    type="checkbox">
             <label for="volumeMirroring">Volume Mirroring</label>
         </div>
@@ -13,18 +13,18 @@
 <!-- Remote Pool -->
 <pool-selection name="remote_pool"
                 label="Remote Pool"
-                pool="data.remote_pool"
+                pool="$ctrl.data.remote_pool"
                 validation="validation.remote_pool"
                 wizard="wizard"
                 submitted="validation.$submitted"
-                required-if="data.is_volume_mirroring"
-                ng-show="data.is_volume_mirroring">
+                required-if="$ctrl.data.volume_mirroring"
+                ng-show="$ctrl.data.volume_mirroring">
 </pool-selection>
 <!-- Sync Rate -->
 <div class="form-group"
      ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
         validation.syncer_rate.$invalid}"
-     ng-show="data.is_volume_mirroring">
+     ng-show="$ctrl.data.volume_mirroring">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
            class="control-label"
            for="syncer_rate">Sync Rate</label>
@@ -35,8 +35,8 @@
                type="text"
                drbd-sync-rate-validate
                placeholder="e.g., 30M",
-               ng-model="data.syncer_rate"
-               ng-required="data.is_volume_mirroring">
+               ng-model="$ctrl.data.syncer_rate"
+               ng-required="$ctrl.data.volume_mirroring">
         <span class="help-block"
               ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
                 validation.syncer_rate.$error.required">
@@ -49,7 +49,7 @@
     </div>
 </div>
 <!-- Protocol -->
-<div class="form-group" ng-show="data.is_volume_mirroring">
+<div class="form-group" ng-show="$ctrl.data.volume_mirroring">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
            class="control-label"
            for="protocol">Protocol</label>
@@ -57,8 +57,8 @@
         <select id="protocol"
                 name="protocol",
                 class="form-control"
-                ng-model="data.protocol"
-                ng-required="data.is_volume_mirroring">
+                ng-model="$ctrl.data.protocol"
+                ng-required="$ctrl.data.volume_mirroring">
             <option value="" hidden>Choose a protocol</option>
             <option value="A">Asynchronous</option>
             <option value="B">Semi-synchronous</option>
