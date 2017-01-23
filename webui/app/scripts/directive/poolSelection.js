@@ -49,22 +49,31 @@ app.directive("poolSelection", function () {
     },
     templateUrl: "templates/poolSelection.html",
     controller: function ($scope, PoolService, toasty) {
-      $scope.waitingMsg = "Retrieving pool list...";
-      PoolService.query()
-        .$promise
-        .then(function (res) {
-          $scope.pools = res;
-          $scope.waitingMsg = "-- Select a pool --";
-        }, function (error) {
-          console.log("An error occurred", error);
-          toasty.error({
-            title: "Pool list couldn't be loaded",
-            msg: "Server failure."
-          });
-          $scope.waitingMsg = "Error: List couldn't be loaded!";
-          $scope.validation.$setValidity("loading", false);
-        });
+      $scope.getPoolList = function (options) {
+        $scope.waitingMsg = "Retrieving pool list...";
+        PoolService.query(options)
+          .$promise
+          .then(function (res) {
+            $scope.pools = res;
+            $scope.waitingMsg = "-- Select a pool --";
+          }, function (error) {
+            console.log("An error occurred", error);
+            toasty.error({
+              title: "Pool list couldn't be loaded",
+              msg: "Server failure."
+            });
+            $scope.waitingMsg = "Error: List couldn't be loaded!";
+            $scope.validation.$setValidity("loading", false);
+          })
+      }
+
+      /* Default values. */
+      $scope.showUseMax = false;
       $scope.selPoolUsedPercent = 0;
+
+      /* Get the list of pools to be displayed in the selection list. */
+      $scope.getPoolList();
+
       $scope.$watch("pool", function (pool) {
         if (pool) {
           $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);
