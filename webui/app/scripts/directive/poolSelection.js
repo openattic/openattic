@@ -35,12 +35,14 @@ app.directive("poolSelection", function () {
   return {
     restrict: "E",
     scope: {
+      name: "@",
       label: "@",
       pool: "=",
       validation: "=",
       megs: "=",
       submitted: "=",
-      wizard: "="
+      wizard: "=",
+      required: "="
     },
     link: function(scope, element, attr) {
       scope.showUseMax = angular.isDefined(attr.megs);
