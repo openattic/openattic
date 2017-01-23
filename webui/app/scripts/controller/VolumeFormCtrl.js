@@ -37,8 +37,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
   $scope.data = {
     sourcePool: null,
     megs: "",
-    mirrorHost: "",
-    mirrorPool: null,
     filesystem: ""
   };
 
@@ -46,12 +44,7 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
 
   $scope.state = {
     created: false,
-    mirrored: false,
     formatted: false
-  };
-  $scope.accordionOpen = {
-    properties: true,
-    mirror: false
   };
 
   $scope.submitAction = function (volumeForm) {
@@ -67,11 +60,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
             }, function (error) {
               console.log("An error occured", error);
             });
-      } else if (!$scope.state.mirrored && $scope.data.mirrorHost !== "") {
-        toasty.warning({
-          title: "Mirror Volume",
-          msg: "Sorry, we haven\'t implemented that yet."
-        });
       } else if (!$scope.state.formatted) {
         new VolumeService({
           id: $scope.volume.id,
