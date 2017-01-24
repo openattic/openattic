@@ -21,6 +21,7 @@ Version 2.0.18, (not released yet):
 * Packaging: Added the ability to add mercurial tags to a repository when
   creating a tarball using make_dist.py (OP-1374)
 * Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
+* Documentation: Adapt Vagrant developer documentation.
 
 
 Version 2.0.17, 20. December 2016:
