@@ -63,11 +63,12 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'EXCEPTION_HANDLER': 'exception.custom_handler',
-    'PAGINATE_BY':        50,  # Only DRF 2
+    'PAGINATE_BY':        50,  # Only DRF 2. Dropdown inputs don't handle pagination.
     'PAGINATE_BY_PARAM': 'pageSize',  # Only DRF 2
     'MAX_PAGINATE_BY':   100,  # Only DRF 2
     'DEFAULT_PAGINATION_CLASS': 'rest.pagination.PageSizePageNumberPagination',  # Only DRF 3
-    'PAGE_SIZE': 10,  # Required by DRF 3
+    'PAGE_SIZE': 50,  # Setting required by DRF 3. Set to 50 to prevent dropdown inputs from being
+                      # truncated, which don't handle pagination.
     'URL_FIELD_NAME':    'url',
 }
 
@@ -140,7 +141,7 @@ else:
         NAGIOS_STATUS_DAT_PATH = "/var/log/nagios/status.dat"
         SAMBA_SERVICE_NAME = "smb"
         LVM_HAVE_YES_OPTION = True
-    elif distro == "Ubuntu":
+    elif distro == "Ubuntu" or distro == "debian":
         SAMBA_SERVICE_NAME = "smbd"
 
 

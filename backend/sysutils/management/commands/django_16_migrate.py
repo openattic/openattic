@@ -63,6 +63,14 @@ def test_ifconfig_0003_host_is_oa_host(cursor):
     stmt = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'ifconfig_host'"
     return "is_oa_host" not in [d['column_name'] for d in execute_and_fetch(cursor, stmt)]
 
+
+def test_taskqueue_0002_taskqueue_description_textfield(cursor):
+    stmt = """SELECT data_type FROM INFORMATION_SCHEMA.COLUMNS
+              WHERE table_name = 'taskqueue_taskqueue' AND column_name = 'description';"""
+    res = execute_and_fetch(cursor, stmt)
+    return len(res) == 1 and res[0]['data_type'] != 'text'
+
+
 # (app, name, test function, SQL statement)
 # * If app and name is None, this migration will always be executed, if test function returns True.
 # * If test function and SQL stmt are None, the migration will only be added to the
@@ -108,6 +116,19 @@ _migrations = [
     ),
     (
         'ceph', u'0002_auto_20161007_1921', None, None
+    ),
+    (
+        'taskqueue', u'0001_initial', None, None
+    ),
+    (
+        'taskqueue', u'0002_taskqueue_description_textfield',
+        test_taskqueue_0002_taskqueue_description_textfield,
+        """
+        BEGIN;
+        ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "description" TYPE text;
+        ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "result" TYPE text;
+        COMMIT;
+        """
     ),
 ]
 
