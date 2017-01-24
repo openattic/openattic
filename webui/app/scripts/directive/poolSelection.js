@@ -35,18 +35,11 @@ app.directive("poolSelection", function () {
   return {
     restrict: "E",
     scope: {
-      name: "@",
-      label: "@",
       pool: "=",
       validation: "=",
       megs: "=",
       submitted: "=",
-      wizard: "=",
-      requiredIf: "="
-    },
-    link: function(scope, element, attr) {
-      // Display the 'Show max.' link if the 'megs' attribute is specified.
-      scope.showUseMax = angular.isDefined(attr.megs);
+      wizard: "="
     },
     templateUrl: "templates/poolSelection.html",
     controller: function ($scope, PoolService, toasty) {
@@ -68,12 +61,9 @@ app.directive("poolSelection", function () {
           })
       }
 
-      // Default values.
-      $scope.showUseMax = false;
-      $scope.selPoolUsedPercent = 0;
-
-      // Get the list of pools to be shown in the selection list.
+      $scope.waitingMsg = "Retrieving pool list...";
       $scope.getPoolList();
+      $scope.selPoolUsedPercent = 0;
 
       $scope.$watch("pool", function (pool) {
         if (pool) {
