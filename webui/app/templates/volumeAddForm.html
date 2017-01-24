@@ -13,8 +13,8 @@
     </div>
 </div>
 
-<pool-selection name="pool" label="Pool" pool="data.pool" validation="validation.pool" megs="data.megs"
-    wizard="wizard" submitted="validation.$submitted" required-if="true"></pool-selection>
+<pool-selection pool="data.pool" validation="validation.pool" megs="data.megs"
+    wizard="wizard" submitted="validation.$submitted"></pool-selection>
 
 <div class="form-group" ng-class="{'has-error': (validation.$submitted || validation.megs.$dirty)
     && validation.megs.$invalid}">
