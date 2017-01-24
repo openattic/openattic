@@ -224,12 +224,6 @@ fieldset[disabled] .btn-primary.active {
 }
 
 /* Modal Table (Task Queue) */
-
-table.task-queue-table {
-  display: block;
-  max-height: 30em;
-  overflow: auto;
-}
 table.task-queue-table thead {
   display: flex;
   flex-flow: row;
@@ -242,7 +236,8 @@ table.task-queue-table thead tr {
 table.task-queue-table tbody {
   display: flex;
   flex-flow: row wrap;
-  overflow: auto;
+  max-height: 26em;
+  overflow: overlay;
 }
 table.task-queue-table tbody tr {
   display: flex;
@@ -253,6 +248,14 @@ table.task-queue-table > * > tr > * {
 }
 table.task-queue-table > * > tr > .oadatatablecheckbox {
   flex: 0;
+}
+ul.task-queue-pagination {
+  display: table;
+  margin: auto;
+  padding-top: 10px;
+}
+div.task-queue-modal-content {
+  min-height: 41.75em;
 }
 
 /* Navbar */

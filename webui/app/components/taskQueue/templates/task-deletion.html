@@ -17,14 +17,14 @@
             and was last modified on {{tasks[0].last_modified | date:'medium'}}.
         </p>
         <p ng-show="tasks.length > 1" class="tc_delete_multiple">
-            You are about to delete multiple tasks.
+            You are about to delete {{::tasks.length}} tasks.
         </p>
         <p class="text-danger tc_run_warn" ng-show="tasks[0].status === 'Running' || task[0].status === 'Not Started'">
             If you delete running tasks, it will abort the execution and won't roll back what has been done so far!
         </p>
         <div ng-show="tasks.length > 1">
             <uib-accordion>
-                <div ng-hide="waiting" uib-accordion-group class="panel-default" is-open="true" heading="Tasks to delete">
+            <div ng-hide="waiting" uib-accordion-group class="panel-default" is-open="true" heading="Tasks to delete ({{::tasks.length}})">
                     <ul>
                         <li ng-repeat="task in tasks">
                             {{task.description}} ({{task.status}}, {{task.last_modified | date:'medium'}})

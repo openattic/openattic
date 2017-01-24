@@ -36,21 +36,31 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   /**
    * Describes and configures all displayed tabs and tables.
    */
+  var defaultTab = {
+    name: null,
+    data: [],
+    page: 1,
+    pageData: [],
+    states: null,
+    count: null,
+    loaded: false,
+    tableSort: {
+      attribute: null,
+      reverse: true
+    },
+    selection: {
+      item: null,
+      items: [],
+      checkAll: false
+    },
+    tableColumns: []
+  };
   $scope.tabs = {
-    pending: {
+    pending: angular.extend({}, defaultTab, {
       name: "Pending",
-      data: [],
       states: ["Running", "Not Started"],
-      count: null,
-      loaded: false,
       tableSort: {
-        attribute: "percent",
-        reverse: true
-      },
-      selection: {
-        item: null,
-        items: [],
-        checkAll: false
+        attribute: "percent"
       },
       tableColumns: [
         {
@@ -75,21 +85,12 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           type: "text"
         }
       ]
-    },
-    failed: {
+    }),
+    failed: angular.extend({}, defaultTab, {
       name: "Failed",
-      data: [],
       states: ["Exception", "Aborted"],
-      count: null,
-      loaded: false,
       tableSort: {
-        attribute: "last_modified",
-        reverse: true
-      },
-      selection: {
-        item: null,
-        items: [],
-        checkAll: false
+        attribute: "last_modified"
       },
       tableColumns: [
         {
@@ -114,21 +115,12 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           attribute: "last_modified"
         }
       ]
-    },
-    finished: {
+    }),
+    finished: angular.extend({}, defaultTab, {
       name: "Finished",
-      data: [],
       states: ["Finished"],
-      count: null,
-      loaded: false,
       tableSort: {
-        attribute: "last_modified",
-        reverse: true
-      },
-      selection: {
-        item: null,
-        items: [],
-        checkAll: false
+        attribute: "last_modified"
       },
       tableColumns: [
         {
@@ -153,15 +145,34 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
           attribute: "last_modified"
         }
       ]
-    }
+    })
   };
+
+  $scope.pageSize = 50;
 
   /**
    * Returns the data of the active tab.
    * @returns {object} - Data of active tab.
    */
   $scope.getActiveTab = function () {
-    return $scope.tabs[Object.keys($scope.tabs)[$scope.modalTabData.active]];
+    return $scope.tabs[Object.keys($scope.tabs)[$scope.modalTabData ? $scope.modalTabData.active : 0]];
+  };
+
+  /**
+   * Will slice out the right ordered data to set the page content of the table.
+   * @param {object} [tab] - Set the page content of this tab object.
+   * @returns {object} the current or the given tab.
+   */
+  $scope.pageChange = function (tab) {
+    tab = tab ? tab : $scope.getActiveTab();
+    var pgNr = tab.page;
+    var pgSize = $scope.pageSize;
+    tab.data = $filter("orderBy")(tab.data, [
+      (tab.tableSort.reverse ? "-" : "+") + tab.tableSort.attribute,
+      "-last_modified"
+    ]);
+    tab.pageData = tab.data.slice((pgNr - 1) * pgSize, pgNr * pgSize);
+    return tab;
   };
 
   /**
@@ -174,6 +185,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       tab.tableSort.reverse = !tab.tableSort.reverse;
     }
     tab.tableSort.attribute = attribute;
+    $scope.pageChange();
   };
 
   /**
@@ -221,7 +233,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     var selection = tab.selection.items.filter(function (id) {
       return data.indexOf(id) !== -1;
     });
-    return $scope.updateSelectedTasks(tab, selection);
+    return $scope.updateSelectedTasks($scope.pageChange(tab), selection);
   };
 
   /**
@@ -258,7 +270,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   $scope.toggleTaskSelection = function (task, $event) {
     var tab = $scope.getActiveTab();
     var items = tab.selection.items;
-    var exists = items.indexOf(task.id);;
+    var exists = items.indexOf(task.id);
     var sorted = [];
     var iPrev = 0;
     var iNow = 0;
@@ -396,7 +408,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
    * Gets task object to the given id.
    * @param {Object} tab - Active tab data.
    * @param {Number} id - Task id.
-   * @return {Object} - Task object.
+   * @return {Object} Task object.
    */
   $scope.getTaskFromId = function (tab, id) {
     return tab.data.filter(function (item) {
@@ -433,14 +445,21 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     });
 
     modalInstance.closed.then(function () {
-      $scope.loadAllTabs();
+      $scope.loadAllTabs(true);
     });
   };
 
   /**
-   * Triggers a refresh over all tabs, but only if there are no pending requests.
+   * Triggers a refresh over all tabs, but only if there are no pending requests and no selection of a task.
+   * @param {Boolean} force - If set a reload will be forced even if there is a selection.
    */
-  $scope.loadAllTabs = function () {
+  $scope.loadAllTabs = function (force) {
+    var tab = $scope.getActiveTab();
+    var items = tab.selection.items;
+    if (!force && items.length > 0) {
+      $scope.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
+      return;
+    }
     taskQueueFetcher.loadOverview().then(function (allTasks) {
       Object.keys($scope.tabs).forEach(function (tabKey) {
         $scope.loadTabTasks(tabKey, allTasks);
@@ -466,7 +485,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
    */
   $scope.$watch("modalTabData.active", function (tabNew, tabOld) {
     if (tabOld !== null && tabNew !== null) {
-      $scope.loadAllTabs();
+      $scope.loadAllTabs(true);
     }
   });
 

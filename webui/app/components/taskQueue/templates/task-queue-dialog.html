@@ -1,14 +1,14 @@
 <div class="openattic-modal-header">
     <span>Background-Tasks</span>
 </div>
-<div class="openattic-modal-content">
+<div class="openattic-modal-content task-queue-modal-content">
     <uib-tabset active="modalTabData.active">
         <uib-tab class="tc_tab_{{tabKey}}" ng-repeat="(tabKey, tab) in tabs" heading="{{tab.name}}
             {{tab.count >= 0 ? ' (' + tab.count + ')' : ''}}" index="$index">
             <p class="tc_loading_{{tabKey}}" ng-hide="tab.loaded">Loading...<p>
-            <p class="tc_no_elements_{{tabKey}}" ng-show="tab.loaded && tab.data.length === 0">
+            <h3 class="tc_no_elements_{{tabKey}}" ng-show="tab.loaded && tab.data.length === 0">
                 There are no {{tabKey}} Tasks.
-            <p>
+            </h3>
             <form class="tc_listing_{{tabKey}}" name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
                 <div class="dataTables_header clearfix">
                     <button type="button" class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
@@ -30,7 +30,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="row in tab.data | orderBy: tab.tableSort.attribute:tab.tableSort.reverse"
+                        <tr ng-repeat="row in tab.pageData"
                             ng-class="{ info: isTaskSelected(row) }">
                             <td class="oadatatablecheckbox">
                                 <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(row)" checklist-model="tab.selection.items"
@@ -47,6 +47,9 @@
                     </tbody>
                 </table>
             </form>
+            <ul uib-pagination ng-show="tab.data.length > pageSize" total-items="tab.data.length" max-size="3"
+                items-per-page="pageSize" ng-model="tab.page" class="task-queue-pagination" ng-change="pageChange()"
+                boundary-link-numbers="true"></ul>
             <!-- Detail view
             <p></p>
             <div class="task-detail panel panel-default" ng-show="tab.selection.item">
