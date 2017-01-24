@@ -44,7 +44,6 @@ app.directive("poolSelection", function () {
     templateUrl: "templates/poolSelection.html",
     controller: function ($scope, PoolService, toasty) {
       $scope.getPoolList = function (options) {
-        $scope.waitingMsg = "Retrieving pool list...";
         PoolService.query(options)
           .$promise
           .then(function (res) {
