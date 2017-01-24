@@ -40,9 +40,10 @@ app.directive("drbdAdd", function () {
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
-    controller: function ($scope) {
+    controller: function ($scope, PoolService, toasty) {
       // Default values.
       $scope.data = {
+        remote_pool: null,
         volume_mirroring: false,
         syncer_rate: "30M",
         protocol: "C"
@@ -53,7 +54,18 @@ app.directive("drbdAdd", function () {
       $scope.$watch("masterData.source_pool", function (pool) {
         if (!pool)
           return;
-        // ToDo ...
+        PoolService.query({ excl_host: pool.host })
+          .$promise
+          .then(function (res) {
+            $scope.remote_pools = res;
+          }, function (error) {
+            console.log("An error occurred", error);
+            toasty.error({
+              title: "Pool list couldn't be loaded",
+              msg: "Server failure."
+            });
+            $scope.validation.$setValidity("loading", false);
+          })
       });
 
       // Listen to the event that is fired when a volume has been created.

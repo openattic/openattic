@@ -36,31 +36,13 @@ app.directive("drbdPoolSelection", function () {
     restrict: "E",
     scope: {
       pool: "=",
+      pools: "=",
       validation: "=",
       wizard: "="
     },
     templateUrl: "components/drbd/templates/pool-selection-drbd.html",
-    controller: function ($scope, PoolService, toasty) {
-      $scope.getPoolList = function (options) {
-        $scope.waitingMsg = "Retrieving pool list...";
-        PoolService.query(options)
-          .$promise
-          .then(function (res) {
-            $scope.pools = res;
-            $scope.waitingMsg = "-- Select a pool --";
-          }, function (error) {
-            console.log("An error occurred", error);
-            toasty.error({
-              title: "Pool list couldn't be loaded",
-              msg: "Server failure."
-            });
-            $scope.waitingMsg = "Error: List couldn't be loaded!";
-            $scope.validation.$setValidity("loading", false);
-          })
-      }
-
-      $scope.waitingMsg = "Retrieving pool list...";
-      $scope.getPoolList();
+    controller: function ($scope) {
+      $scope.waitingMsg = "-- Select a pool --";
     }
   };
 });
