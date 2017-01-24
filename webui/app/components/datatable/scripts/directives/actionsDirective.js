@@ -43,14 +43,9 @@ app.directive("actions", function () {
 
       dropdown.parent().on({
         "click": function (e) {
-          this.closeable = $(e.target).is(".dropdown-menu,li.disabled") ? false : true;
-        },
-        "hide.bs.dropdown": function (e) {
-          if(!this.closeable) {
-            e.preventDefault();
+          if ($(e.target).is(".dropdown-menu,li.divider,li.disabled")) {
+            e.stopPropagation();
           }
-
-          this.closeable = true;
         }
       });
 

@@ -172,19 +172,8 @@ fieldset[disabled] .btn-primary.active {
   color: #ececec;
   background-color: #288cea;
 }
-.dropdown-menu>li.disabled {
-  pointer-events: auto;
-}
-.dropdown-menu>li.divider,
-.dropdown-menu>li.disabled a {
-  pointer-events: none;
-}
 .dataTables_wrapper .dropdown-menu>li.divider {
   cursor: auto;
-}
-.dropdown-menu>li.disabled a,
-.dataTables_wrapper .dropdown-menu>li.disabled {
-  cursor: not-allowed;
 }
 
 /* Grid */
