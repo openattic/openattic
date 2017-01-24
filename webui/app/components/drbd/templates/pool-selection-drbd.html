@@ -1,0 +1,30 @@
+<div class="form-group"
+     ng-class="{'has-error': (submitted || validation.$dirty) && validation.$invalid}">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+           class="control-label"
+           for="remote_pool">Remote Pool</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select id="remote_pool"
+                name="remote_pool"
+                class="form-control tc_remote_pool_selection tc_source_pool"
+                ng-disabled="!pools"
+                ng-model="remote_pool"
+                ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                    pool.host.title + ', ' + pool.usage.free_text + ' free)')
+                    for pool in pools track by pool.id"
+                ng-required>
+            <option class="tc_volumePoolOption"
+                    value=""
+                    ng-bind="waitingMsg">
+            </option>
+        </select>
+        <span class="help-block tc_remotePoolRequired"
+              ng-show="(submitted || validation.$dirty) && validation.$error.required">
+            This field is required!
+        </span>
+        <span class="help-block"
+              ng-show="validation.$error.loading">
+            Pools couldn't be loaded, please contact your administrator for details.
+        </span>
+    </div>
+</div>

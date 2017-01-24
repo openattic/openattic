@@ -11,15 +11,12 @@
     </div>
 </div>
 <!-- Remote Pool -->
-<pool-selection name="remote_pool"
-                label="Remote Pool"
-                pool="$ctrl.data.remote_pool"
-                validation="validation.remote_pool"
-                wizard="wizard"
-                submitted="validation.$submitted"
-                required-if="$ctrl.data.volume_mirroring"
-                ng-show="$ctrl.data.volume_mirroring">
-</pool-selection>
+<drbd-pool-selection pool="$ctrl.data.remote_pool"
+                     validation="validation.remote_pool"
+                     wizard="wizard"
+                     submitted="validation.$submitted"
+                     ng-show="$ctrl.data.volume_mirroring">
+</drbd-pool-selection>
 <!-- Sync Rate -->
 <div class="form-group"
      ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
