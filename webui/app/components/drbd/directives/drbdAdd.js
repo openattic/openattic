@@ -36,7 +36,7 @@ app.directive("drbdAdd", function () {
     restrict: "E",
     scope: {
       validation: "=",
-      masterData: "=",
+      volumeData: "=",
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
@@ -51,7 +51,7 @@ app.directive("drbdAdd", function () {
 
       // Listen to Pool selections. Reload and filter the remote pool list
       // if a pool has been selected.
-      $scope.$watch("masterData.source_pool", function (pool) {
+      $scope.$watch("volumeData.source_pool", function (pool) {
         if (!pool)
           return;
         PoolService.query({ excl_host: pool.host })
@@ -59,7 +59,7 @@ app.directive("drbdAdd", function () {
           .then(function (res) {
             $scope.remote_pools = res;
           }, function (error) {
-            console.log("An error occurred", error);
+            console.log("Failed to load the pool list.", error);
             toasty.error({
               title: "Pool list couldn't be loaded",
               msg: "Server failure."
@@ -88,7 +88,7 @@ app.directive("drbdAdd", function () {
             },
             protocol: $scope.data.protocol,
             syncer_rate: $scope.data.syncer_rate,
-            filesystem: $scope.masterData.filesystem
+            filesystem: $scope.volumeData.filesystem
           })
           .$promise
           .then(function (res) {
@@ -97,7 +97,7 @@ app.directive("drbdAdd", function () {
               msg: "Successfully created the volume mirror."
             });
           }, function (error) {
-            console.log("An error occured while creating the volume mirror.", error);
+            console.log("Failed to create the volume mirror.", error);
             toasty.error({
               title: "Volume Mirror",
               msg: "Failed to create the volume mirror."
