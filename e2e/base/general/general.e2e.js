@@ -41,11 +41,11 @@ describe('General', function(){
   /* Menuitems */
   menuCheck([ //Put here the final menu order
     'dashboard', //has to be there
-    'osds',
-    'rbds',
-    'pools',
-    'nodes',
-    'crushmap'
+    'ceph_osds',
+    'ceph_rbds',
+    'ceph_pools',
+    'ceph_nodes',
+    'ceph_crushmap'
   ]);
 
   it('should check if the openATTIC logo is visible', function(){
