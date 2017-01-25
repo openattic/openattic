@@ -7,6 +7,7 @@ describe('General', function(){
   var menuCheck = function(menu){
     var menuCount = 0;
     var menuItems = element.all(by.css('.tc_menuitem > a'));
+    var url;
 
     menu.forEach(function(name){
       var item = element(by.css('.tc_menuitem_' + name + ' > a'));
@@ -18,9 +19,10 @@ describe('General', function(){
       });
       it('should click ' + item + ' and check the url', function(){
         if(item.isDisplayed()){
+          url = name.replace("_", "/");
           item.click();
           browser.sleep(400);
-          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + name);
+          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + url);
         }
       });
     });
