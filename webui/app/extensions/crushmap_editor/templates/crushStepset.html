@@ -4,7 +4,6 @@
     replica<span ng-show="getRealNum(stepset).max && getRealNum(stepset).max > 1">s on different {{ stepset.acrosstype.name }}s</span>
     <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype.name }}</span>
     in the {{ stepset.take.name }} {{ stepset.take.type_name === 'root' ? 'tree' : stepset.take.type_name }}.
-    <i class="fa fa-pencil" ng-click="editing = !editing"></i>
 </p>
 <span ng-show="editing">
     Place
@@ -23,16 +22,16 @@
             <input type="radio" name="repsz" id="repszPos" ng-model="replicas_source" value="pos" />
             <label for="repszPos">exactly</label>
             <input type="number" class="form-control input-small" id="repszNumPos"
-                ng-disabled="replicas_source != 'pos'"
-                ng-model="replicas_pos" />
+                   ng-disabled="replicas_source != 'pos'"
+                   ng-model="replicas_pos" />
             replicas
         </div>
         <div class="radio form-inline">
             <input type="radio" name="repsz" id="repszNeg" ng-model="replicas_source" value="neg" />
             <label for="repszNeg">all but</label>
             <input type="number" class="form-control input-small" id="repszNumNeg"
-                ng-disabled="replicas_source != 'neg'"
-                ng-model="replicas_neg" />
+                   ng-disabled="replicas_source != 'neg'"
+                   ng-model="replicas_neg" />
             replicas
         </div>
     </div>

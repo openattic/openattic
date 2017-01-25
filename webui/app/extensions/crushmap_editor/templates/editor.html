@@ -25,18 +25,7 @@
                 <h3 class="panel-title pull-left">Physical setup</h3>
 
                 <div class="panel-toolbar" role="menu">
-                    <a ng-click="query()"><i class="fa fa-refresh"></i>Refresh</a>
-
-                    <div class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-plus"></i>Add...
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li ng-repeat="btype in usableTypes"><a ng-bind="btype.name" ng-click="addBucket(btype)"></a></li>
-                        </ul>
-                    </div>
-
-                    <a ng-click="activate()"><i class="fa fa-play-circle-o"></i>Activate</a>
+                    <a ng-click="query()"><i class="fa fa-refresh"></i> Refresh</a>
                 </div>
 
                 <div class="clearfix"></div>
@@ -46,10 +35,9 @@
 
 
 
-                <div class="tree" ui-tree="treeOptions">
-                    <ul ui-tree-nodes="" ng-model="cluster.crushmap.crushmap.buckets">
-                        <li ui-tree-node
-                            ng-repeat="data in cluster.crushmap.crushmap.buckets"
+                <div class="tree">
+                    <ul ng-model="cluster.crushmap.crushmap.buckets">
+                        <li ng-repeat="data in cluster.crushmap.crushmap.buckets"
                             ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
                     </ul>
                 </div>
@@ -67,9 +55,6 @@
 
                 <h3 class="panel-title pull-left">Replication rules</h3>
 
-                <div class="panel-toolbar" role="menu">
-                    <a ng-click="addRuleset()"><i class="fa fa-plus"></i>Add</a>
-                </div>
                 <div class="clearfix"></div>
 
 
@@ -97,13 +82,11 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p><label class="control-label" for="min_size">Minimum</label></p>
-                                        <input type="number" class="form-control" id="min_size" ng-model="activeRuleset.min_size"
-                                               ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
+                                        <span ng-bind="activeRuleset.min_size"></span>
                                     </div>
                                     <div class="col-md-6">
                                         <p><label class="control-label" for="max_size">Maximum</label></p>
-                                        <input type="number" class="form-control" id="max_size" ng-model="activeRuleset.max_size"
-                                               ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
+                                        <span ng-bind="activeRuleset.max_size"></span>
                                     </div>
                                 </div>
                                 <p class="text-danger" style="padding-top: 7px" ng-show="activeRuleset.min_size === 1">
@@ -125,11 +108,6 @@
                                 <ceph-crush-stepset ng-repeat="stepset in stepsets" stepset="stepset" rule="activeRuleset" cluster="cluster"></ceph-crush-stepset>
                             </div>
                         </div>
-                        <button
-                                class="btn btn-default pull-right"
-                                ng-click="addStepset();">
-                            <i class="fa fa-fw fa-plus"></i>
-                        </button>
                     </fieldset>
                 </form>
 

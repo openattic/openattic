@@ -17,7 +17,7 @@
       <select id="manager"
               class="form-control"
               ng-model="input.manager"
-              ng-options="m.name group by m.group for m in data.manager"
+              ng-options="m.name group by m.group for m in data.manager | filter: m.group='Ceph'"
               required
               autofocus>
         <option value="">-- Select a type --</option>
