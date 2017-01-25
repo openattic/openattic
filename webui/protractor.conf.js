@@ -36,30 +36,10 @@ var allSuites = {
   general              : '../e2e/base/general/**/*.e2e.js',
   datatable            : '../e2e/base/datatable/**/*.e2e.js',
   pagination           : '../e2e/base/pagination/**/*.e2e.js',
-  disks                : '../e2e/base/disks/**/*.e2e.js',
-  pools                : '../e2e/base/pools/**/*.e2e.js',
-  volumes              : '../e2e/base/volumes/volumes.e2e.js',
-  volumes_add          : '../e2e/base/volumes/add/**/*.e2e.js',
-  volumes_protection   : '../e2e/base/volumes/protection/**/*.e2e.js',
-  volumes_resize       : '../e2e/base/volumes/resize/**/*.e2e.js',
-  volumes_multi_delete : '../e2e/base/volumes/delete/**/*.e2e.js',
-  snapshot             : '../e2e/base/snapshots/add/**/*.e2e.js',
-  snapshot_clone       : '../e2e/base/snapshots/clone/**/*.e2e.js',
-  http_share           : '../e2e/base/shares/http/*.e2e.js',
-  nfs_share            : '../e2e/base/shares/nfs/*.e2e.js',
-  cifs_share           : '../e2e/base/shares/cifs/*.e2e.js',
-  //TODO: check if "lun" can be deleted due to duplicated content
-  //lun                  : '../e2e/base/shares/lun/*.e2e.js',
-  host_add             : '../e2e/base/hosts/host_add.e2e.js',
-  host_form            : '../e2e/base/hosts/host_form_workflow.e2e.js',
-  host_wwns            : '../e2e/base/hosts/wwn_validation.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
   auth                 : '../e2e/base/auth/*.e2e.js',
   cmdlogs              : '../e2e/base/commandLogs/**/*.e2e.js',
-  fs_wiz_btrfs_nfs     : '../e2e/base/wizards/file/fileStorage_btrfs_nfs.e2e.js',
-  fs_wiz_ext_cifs      : '../e2e/base/wizards/file/fileStorage_ext_cifs.e2e.js',
-  blockStorage         : '../e2e/base/wizards/block/blockStorage.e2e.js',
-  vmStorage_xfs_nfs    : '../e2e/base/wizards/vm/vmStorage_xfs_nfs.e2e.js',
+
   // ceph suites - They only run if a ceph pool is configured.
   ceph_pools           : '../e2e/ceph/pools/ceph_pools.e2e.js',
   ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',
@@ -67,13 +47,7 @@ var allSuites = {
   ceph_osds            : '../e2e/ceph/ceph_osds.e2e.js',
   ceph_rbds            : '../e2e/ceph/rbds/ceph_rbds.e2e.js',
   ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
-  ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js',
-  // zfs suites - They only run if a zpool is configured.
-  fs_wiz_zfs           : '../e2e/zfs/wizards/file/*.e2e.js',
-  zvol_add             : '../e2e/zfs/volumes/zvol.e2e.js',
-  zvol_snapshot        : '../e2e/zfs/snapshots/add/*.e2e.js',
-  zvol_share           : '../e2e/zfs/volumes/zvol_share.e2e.js',
-  blockStorage_zfs     : '../e2e/zfs/wizards/block/blockStorage_zfs.e2e.js'
+  ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js'
 };
 
 var categories = {
