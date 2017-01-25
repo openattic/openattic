@@ -36,13 +36,31 @@ app.directive("drbdPoolSelection", function () {
     restrict: "E",
     scope: {
       pool: "=",
+      poolSize: "=",
       pools: "=",
       validation: "=",
       wizard: "="
     },
     templateUrl: "components/drbd/templates/pool-selection-drbd.html",
     controller: function ($scope) {
+      $scope.validatePoolSize = function () {
+        valid = true;
+        if ($scope.pool && $scope.poolSize)
+          valid = $scope.pool.usage.free > $scope.poolSize;
+        $scope.validation.remote_pool.$setValidity("poolSize", valid);
+      }
+
+      // Default values.
       $scope.waitingMsg = "-- Select a pool --";
+
+      // Ensure that the remote pool is large enough to hold the
+      // requested volume.
+      $scope.$watch("poolSize", function () {
+        $scope.validatePoolSize();
+      });
+      $scope.$watch("pool", function () {
+        $scope.validatePoolSize();
+      });
     }
   };
 });

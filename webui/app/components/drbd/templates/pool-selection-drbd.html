@@ -6,7 +6,7 @@
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <select id="remote_pool"
                 name="remote_pool"
-                class="form-control tc_remote_pool_selection tc_source_pool"
+                class="form-control"
                 ng-disabled="!pools"
                 ng-model="pool"
                 ng-options="(pool.name + ' (' + pool.type.name + ', ' +
@@ -18,9 +18,13 @@
                     ng-bind="waitingMsg">
             </option>
         </select>
-        <span class="help-block tc_remotePoolRequired"
+        <span class="help-block"
               ng-show="(validation.$submitted || validation.remote_pool.$dirty) && validation.remote_pool.$error.required">
             This field is required!
+        </span>
+        <span class="help-block"
+              ng-show="validation.remote_pool.$error.poolSize">
+            The size of the pool must be greater than {{poolSize | bytes:"MiB"}}.
         </span>
         <span class="help-block"
               ng-show="validation.remote_pool.$error.loading">
