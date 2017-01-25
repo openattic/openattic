@@ -40,7 +40,7 @@ app.directive("drbdAdd", function () {
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
-    controller: function ($scope, PoolService, toasty) {
+    controller: function ($scope, PoolService, drbdService, toasty) {
       // Default values.
       $scope.data = {
         remote_pool: null,
@@ -70,9 +70,49 @@ app.directive("drbdAdd", function () {
 
       // Listen to the event that is fired when a volume has been created.
       $scope.$on("volumecreate", function (event, volume) {
-        if ($scope.masterData.name == volume.name) {
-          // ToDo...
-        }
+        if (!$scope.data.volume_mirroring)
+          return;
+        // Create the mirror connection.
+        drbdService.save({
+            source_volume: {
+              id: volume.id
+            },
+            protocol: $scope.data.protocol,
+            syncer_rate: $scope.data.syncer_rate,
+            filesystem: $scope.masterData.filesystem
+          })
+          .$promise
+          .then(function (res) {
+            // Create the mirror volume.
+            drbdService.save({
+                connection_id: connection.id,
+                source_volume: {
+                  id: volume.id
+                },
+                remote_pool: {
+                  id: $scope.data.remote_pool.id
+                }
+              })
+              .$promise
+              .then(function (res) {
+                toasty.success({
+                  title: "xxxx",
+                  msg: "Successfully created the volume mirror."
+                });
+              }, function (error) {
+                console.log("An error occured while creating the mirror volume", error);
+                toasty.error({
+                  title: "xxxx",
+                  msg: "Failed to create the mirror volume."
+                });
+              });
+          }, function (error) {
+            console.log("An error occured while creating the mirror connection", error);
+            toasty.error({
+              title: "xxxx",
+              msg: "Failed to create the mirror connection."
+            });
+          });
       });
     }
   };

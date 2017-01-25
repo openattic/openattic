@@ -30,37 +30,18 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("drbdPoolSelection", function () {
-  return {
-    restrict: "E",
-    scope: {
-      pool: "=",
-      poolSize: "=",
-      pools: "=",
-      validation: "=",
-      wizard: "="
-    },
-    templateUrl: "components/drbd/templates/pool-selection-drbd.html",
-    controller: function ($scope) {
-      $scope.validatePoolSize = function () {
-        var valid = true;
-        if ($scope.pool && $scope.poolSize)
-          valid = $scope.pool.usage.free > $scope.poolSize;
-        $scope.validation.remote_pool.$setValidity("poolSize", valid);
+var app = angular.module("openattic.drbd");
+app.factory("drbdService", function ($resource) {
+  return $resource(globalConfig.API.URL + "mirrors/:id", {
+    id: "@id"
+  }, {
+    update: {method: "PUT"},
+    query: {
+      method: "GET",
+      isArray: true,
+      transformResponse: function (data) {
+        return JSON.parse(data).results;
       }
-
-      // Default values.
-      $scope.waitingMsg = "-- Select a pool --";
-
-      // Ensure that the remote pool is large enough to hold the
-      // requested volume.
-      $scope.$watch("poolSize", function () {
-        $scope.validatePoolSize();
-      });
-      $scope.$watch("pool", function () {
-        $scope.validatePoolSize();
-      });
     }
-  };
+  });
 });
