@@ -1,5 +1,5 @@
 <div class="form-group"
-     ng-class="{'has-error': (submitted || validation.$dirty) && validation.$invalid}">
+     ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty) && validation.remote_pool.$invalid}">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
            class="control-label"
            for="remote_pool">Remote Pool</label>
@@ -19,11 +19,11 @@
             </option>
         </select>
         <span class="help-block tc_remotePoolRequired"
-              ng-show="(submitted || validation.$dirty) && validation.$error.required">
+              ng-show="(validation.$submitted || validation.remote_pool.$dirty) && validation.remote_pool.$error.required">
             This field is required!
         </span>
         <span class="help-block"
-              ng-show="validation.$error.loading">
+              ng-show="validation.remote_pool.$error.loading">
             Pools couldn't be loaded, please contact your administrator for details.
         </span>
     </div>

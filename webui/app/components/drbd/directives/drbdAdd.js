@@ -64,7 +64,7 @@ app.directive("drbdAdd", function () {
               title: "Pool list couldn't be loaded",
               msg: "Server failure."
             });
-            $scope.validation.$setValidity("loading", false);
+            $scope.validation.remote_pool.$setValidity("loading", false);
           })
       });
 
