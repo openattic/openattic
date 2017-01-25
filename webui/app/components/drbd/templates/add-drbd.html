@@ -11,13 +11,42 @@
     </div>
 </div>
 <!-- Remote Pool -->
-<drbd-pool-selection pool="data.remote_pool"
-                     pool-size="volumeData.megs"
-                     pools="remote_pools"
-                     validation="validation"
-                     wizard="wizard"
-                     ng-show="data.volume_mirroring">
-</drbd-pool-selection>
+<div class="form-group"
+     ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty) &&
+        validation.remote_pool.$invalid}"
+     ng-show="data.volume_mirroring">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+           class="control-label"
+           for="remote_pool">Remote Pool</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select id="remote_pool"
+                name="remote_pool"
+                class="form-control"
+                ng-disabled="!remote_pools || !remote_pools.length"
+                ng-model="data.remote_pool"
+                ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                    pool.host.title + ', ' + pool.usage.free_text + ' free)')
+                    for pool in remote_pools track by pool.id"
+                ng-required="data.volume_mirroring">
+            <option value=""
+                    ng-bind="remote_pool_waiting_msg">
+            </option>
+        </select>
+        <span class="help-block"
+              ng-show="(validation.$submitted || validation.remote_pool.$dirty) &&
+                validation.remote_pool.$error.required">
+            This field is required!
+        </span>
+        <span class="help-block"
+              ng-show="validation.remote_pool.$error.poolSize">
+            The size of the pool must be greater than {{volumeData.megs | bytes:"MiB"}}.
+        </span>
+        <span class="help-block"
+              ng-show="validation.remote_pool.$error.loading">
+            Pools couldn't be loaded, please contact your administrator for details.
+        </span>
+    </div>
+</div>
 <!-- Sync Rate -->
 <div class="form-group"
      ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&

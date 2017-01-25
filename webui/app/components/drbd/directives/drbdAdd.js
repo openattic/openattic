@@ -48,24 +48,44 @@ app.directive("drbdAdd", function () {
         syncer_rate: "30M",
         protocol: "C"
       };
+      $scope.remote_pool_waiting_msg = "-- Select a pool --";
+      $scope.remote_pools = []
 
       // Listen to Pool selections. Reload and filter the remote pool list
       // if a pool has been selected.
       $scope.$watch("volumeData.source_pool", function (pool) {
         if (!pool)
           return;
+        $scope.remote_pool_waiting_msg = "Retrieving pool list...";
         PoolService.query({ excl_host: pool.host })
           .$promise
           .then(function (res) {
             $scope.remote_pools = res;
+            $scope.remote_pool_waiting_msg = "-- Select a pool --";
           }, function (error) {
             console.log("Failed to load the pool list.", error);
             toasty.error({
               title: "Pool list couldn't be loaded",
               msg: "Server failure."
             });
+            $scope.remote_pool_waiting_msg = "Error: List couldn't be loaded!";
             $scope.validation.remote_pool.$setValidity("loading", false);
           })
+      });
+
+      // Ensure that the remote pool is large enough to hold the
+      // requested volume.
+      $scope.validatePoolSize = function () {
+        var valid = true;
+        if ($scope.data.remote_pool && $scope.volumeData.megs)
+          valid = $scope.data.remote_pool.usage.free > $scope.volumeData.megs;
+        $scope.validation.remote_pool.$setValidity("poolSize", valid);
+      }
+      $scope.$watch("volumeData.megs", function () {
+        $scope.validatePoolSize();
+      });
+      $scope.$watch("data.remote_pool", function () {
+        $scope.validatePoolSize();
       });
 
       // Listen to the event that is fired when a volume has been created.
