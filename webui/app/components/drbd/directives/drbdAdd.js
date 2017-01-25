@@ -72,10 +72,19 @@ app.directive("drbdAdd", function () {
       $scope.$on("volumecreate", function (event, volume) {
         if (!$scope.data.volume_mirroring)
           return;
-        // Create the mirror connection.
+        // Create the volume mirror.
         drbdService.save({
             source_volume: {
-              id: volume.id
+              id: volume.id,
+              host: {
+                id: volume.host.id
+              }
+            },
+            remote_pool: {
+              id: $scope.data.remote_pool.id,
+              host: {
+                id: $scope.data.remote_pool.host.id
+              }
             },
             protocol: $scope.data.protocol,
             syncer_rate: $scope.data.syncer_rate,
@@ -83,34 +92,15 @@ app.directive("drbdAdd", function () {
           })
           .$promise
           .then(function (res) {
-            // Create the mirror volume.
-            drbdService.save({
-                connection_id: connection.id,
-                source_volume: {
-                  id: volume.id
-                },
-                remote_pool: {
-                  id: $scope.data.remote_pool.id
-                }
-              })
-              .$promise
-              .then(function (res) {
-                toasty.success({
-                  title: "xxxx",
-                  msg: "Successfully created the volume mirror."
-                });
-              }, function (error) {
-                console.log("An error occured while creating the mirror volume", error);
-                toasty.error({
-                  title: "xxxx",
-                  msg: "Failed to create the mirror volume."
-                });
-              });
+            toasty.success({
+              title: "Volume Mirror",
+              msg: "Successfully created the volume mirror."
+            });
           }, function (error) {
-            console.log("An error occured while creating the mirror connection", error);
+            console.log("An error occured while creating the volume mirror.", error);
             toasty.error({
-              title: "xxxx",
-              msg: "Failed to create the mirror connection."
+              title: "Volume Mirror",
+              msg: "Failed to create the volume mirror."
             });
           });
       });
