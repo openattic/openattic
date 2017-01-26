@@ -13,10 +13,6 @@ describe('should test the ceph rbd panel', function(){
     rbdProperties.cephRBDs.click();
   });
 
-  /* Disabled until fixed!
-   *
-   * Disabled because creation takes to long and lets the UI fail.
-   *
   rbdProperties.useWriteablePools(function(cluster, pool){
     it('should create an default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
       rbdProperties.selectClusterAndPool(cluster, pool);
@@ -24,7 +20,6 @@ describe('should test the ceph rbd panel', function(){
       rbdProperties.createRbd(rbdName);
     });
   });
-  */
 
   it('should check the ceph RBDs url', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
@@ -76,6 +71,7 @@ describe('should test the ceph rbd panel', function(){
   it('should have a statistic tab when selecting a rbd', function(){
     //choose first element in ceph rbd list
     element.all(by.binding('row.name')).get(0).click();
+    browser.sleep(60000); // Wait a minute for nagios to create the graph data.
     rbdProperties.statisticsTab.click();
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds/statistics#more');
     expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
@@ -83,10 +79,6 @@ describe('should test the ceph rbd panel', function(){
 
   graphHelpers.testGraphs(rbdProperties.statisticGraphsConfig);
 
-  /* Disabled until fixed!
-   *
-   * Disabled because creation takes to long and lets the UI fail.
-   *
   rbdProperties.useWriteablePools(function(cluster, pool){
     it('should delete the default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
       rbdProperties.selectCluster(cluster);
@@ -94,7 +86,6 @@ describe('should test the ceph rbd panel', function(){
       rbdProperties.deleteRbd(rbdName);
     });
   });
-  */
 
   afterAll(function(){
     console.log('ceph_rbds -> ceph_rbds.e2e.js');

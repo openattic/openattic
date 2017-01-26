@@ -209,7 +209,7 @@ var rbdCommons = function(){
       var cluster = self.clusters[clusterName];
       Object.keys(cluster.pools).forEach(function(poolName){
         var pool = cluster.pools[poolName];
-        if(pool.writable !== false){
+        if(pool.writable === true){
           callback(cluster, pool);
         }
       });
