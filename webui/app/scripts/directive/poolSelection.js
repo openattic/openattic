@@ -42,9 +42,9 @@ app.directive("poolSelection", function () {
       wizard: "="
     },
     templateUrl: "templates/poolSelection.html",
-    controller: function ($scope, PoolService, Notification) {
+    controller: function ($scope, poolsService, Notification) {
       $scope.waitingMsg = "Retrieving pool list...";
-      PoolService.query()
+      poolsService.query()
         .$promise
         .then(function (res) {
           $scope.pools = res;
