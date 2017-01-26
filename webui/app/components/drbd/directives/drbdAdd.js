@@ -40,7 +40,7 @@ app.directive("drbdAdd", function () {
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
-    controller: function ($scope, PoolService, drbdService, toasty) {
+    controller: function ($scope, poolsService, drbdService, toasty) {
       // Default values.
       $scope.data = {
         remote_pool: null,
@@ -57,7 +57,7 @@ app.directive("drbdAdd", function () {
         if (!pool)
           return;
         $scope.remote_pool_waiting_msg = "Retrieving pool list...";
-        PoolService.query({ excl_host: pool.host })
+        poolsService.query({ excl_host: pool.host })
           .$promise
           .then(function (res) {
             $scope.remote_pools = res;
