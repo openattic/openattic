@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -43,7 +43,7 @@ app.factory("ApiErrorDecoratorService", function ($q, Notification) {
         errorPrefix = error && error.config && error.config.method && error.config.url &&
           ['[', [error.config.method, error.config.url].join(': '), ']'].join('');
         notification = new Notification({
-            title: 'OpenAttic API Error',
+            title: 'API Error',
             msg: [errorPrefix,'Failed with', error.status, 'status.', error.data && error.data.detail].join(' ')
           })
           .toCancelable()
