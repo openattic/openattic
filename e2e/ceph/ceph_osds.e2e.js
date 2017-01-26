@@ -1,11 +1,8 @@
 var helpers = require('../common.js');
 
 describe('should test the ceph osd panel', function(){
-
   var cephMenu = element(by.css('.tc_menuitem_ceph > a'));
   var cephOSDs = element(by.css('.tc_submenuitem_ceph_osds'));
-
-
 
   beforeAll(function(){
     helpers.login();
@@ -17,8 +14,7 @@ describe('should test the ceph osd panel', function(){
     'Name',
     'Hostname',
     'Status',
-    'Crush Weight',
-    'Type'
+    'Crush Weight'
   ];
 
   it('should check the ceph OSDs url', function(){

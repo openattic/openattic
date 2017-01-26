@@ -32,11 +32,11 @@
 
 var app = angular.module("openattic");
 app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, cephPoolsService, cephRbdService,
-    HostService, UserService, VolumeService) {
+    HostService, usersService, VolumeService) {
   return {
     restrict: "A",
-    require : "ngModel",
-    link    : function (scope, elem, attrs, ctrl) {
+    require: "ngModel",
+    link: function (scope, elem, attrs, ctrl) {
       var stopTimeout;
       ctrl.model = attrs.uniquename;
       ctrl.field = attrs.name;
@@ -56,46 +56,46 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
           switch (ctrl.model) {
             case "host":
               obj = {
-                model    : HostService,
-                current  : scope.host.id,
+                model: HostService,
+                current: scope.host.id,
                 attribute: "id"
               };
               break;
             case "volume":
               obj = {
-                model    : VolumeService,
-                current  : null, // Has no renaming feature.
+                model: VolumeService,
+                current: null, // Has no renaming feature.
                 attribute: "id"
               };
               break;
             case "user":
               obj = {
-                model    : UserService,
-                current  : scope.user.id,
+                model: usersService,
+                current: scope.user.id,
                 attribute: "id"
               };
               break;
             case "rbd":
               query.id = scope.data.cluster.fsid;
               obj = {
-                model    : cephRbdService,
-                current  : null, // Has no renaming feature.
+                model: cephRbdService,
+                current: null, // Has no renaming feature.
                 attribute: "name"
               };
               break;
             case "ceph-pool":
               query.id = scope.data.cluster.fsid;
               obj = {
-                model    : cephPoolsService,
-                current  : null, // Has no renaming feature.
+                model: cephPoolsService,
+                current: null, // Has no renaming feature.
                 attribute: "name"
               };
               break;
             case "erasure-code-profiles":
               query.fsid = scope.cluster.fsid;
               obj = {
-                model    : cephErasureCodeProfilesService,
-                current  : null, // Has no renaming feature.
+                model: cephErasureCodeProfilesService,
+                current: null, // Has no renaming feature.
                 attribute: "name"
               };
               break;

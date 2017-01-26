@@ -147,17 +147,87 @@ framework to take over existing migrations.
 
 The idea is to execute Django 1.7+ migrations on Django 1.6 by running
 the same SQL command of later Django versions. You just need to generate
-the SQL statements by running ``sqlmigrate`` on a Django 1.7+ installation::
+the SQL statements by running ``sqlmigrate`` on a Django 1.7+ installation.
 
-  ~/openattic/backend$ ./manage.py sqlmigrate ifconfig 0003_host_is_oa_host
+**1. Adding an initial migration**:
+
+When creating a new migration, don't forget to add the "initial" migration, if it doesn't exist.
+Keep in mind that you need need at least Django 1.7::
+
+  ~/openattic/backend$ ./manage.py makemigrations taskqueue
+
+  Migrations for 'taskqueue':
+    0001_initial.py:
+      - Create model TaskQueue
+
+Then, add the ``migrations`` directory to your mercurial clone::
+
+  ~/openattic/backend$ hg add taskqueue/migrations/__init__.py taskqueue/migrations/0001_initial.py
+
+Now, open ``backend/sysutils/management/commands/django_16_migrate.py`` and add the initial migration to the ``_migrations`` array::
+
+  _migrations = [
+      ...
+      (
+          'taskqueue', u'0001_initial', None, None
+      ),
+  ]
+
+**2. Adding a new migration**
+
+Call ``makemigrations`` to create the Django migration, rename your new migration and add it to mercurial::
+
+  ~/openattic/backend$ ./manage.py makemigrations taskqueue
+
+  Migrations for 'taskqueue':
+    0002_auto_20161216_1059.py:
+      - Alter field description on taskqueue
+      - Alter field result on taskqueue
+  ~/openattic/backend/taskqueue/migrations$ mv 0002_auto_20161216_1059.py 0002_taskqueue_description_textfield.py
+  ~/openattic/backend$ hg add taskqueue/migrations/0002_taskqueue_description_textfield.py
+
+Now, call ``sqlmigrate`` to generate the SQL statement needed for migrating older installations. Note
+that the generated SQL should be compatible to all supported Postgres versions::
+
+  ~/openattic/backend$ ./manage.py sqlmigrate taskqueue 0002_taskqueue_description_textfield
   BEGIN;
-  ALTER TABLE "ifconfig_host" ADD COLUMN "is_oa_host" boolean NULL;
-  ALTER TABLE "ifconfig_host" ALTER COLUMN "is_oa_host" DROP DEFAULT;
+  ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "description" TYPE text;
+  ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "result" TYPE text;
   COMMIT;
 
-Then, store these migrations in a list of SQL statements in Python. Afterwards, make sure that
-already applied migrations (by executing ``syncdb``) will never be applied again, as this
-could lead to data loss in future migrations.
+You can now append your generated migration to the ``_migrations`` array in
+``backend/sysutils/management/commands/django_16_migrate.py``::
+
+  _migrations = [
+      ...
+      (
+          'taskqueue', u'0002_taskqueue_description_textfield',
+          test_taskqueue_0002_taskqueue_description_textfield,
+          """
+          BEGIN;
+          ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "description" TYPE text;
+          ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "result" TYPE text;
+          COMMIT;
+          """
+      ),
+  ]
+
+Afterwards, make sure that already applied migrations (by executing ``syncdb``) will never
+be applied again, as this could lead to data loss in future migrations. Thus, create a test
+function named ``test_taskqueue_0002_taskqueue_description_textfield`` which returns ``True``,
+**if and only if** the migration should be applied. For example like this::
+
+  def test_taskqueue_0002_taskqueue_description_textfield(cursor):
+      stmt = """SELECT data_type FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE table_name = 'taskqueue_taskqueue'
+                    AND column_name = 'description';"""
+      res = execute_and_fetch(cursor, stmt)
+      return len(res) == 1 and res[0]['data_type'] != 'text'
+
+Please **review** previous test functions of the same
+database table, as they should still work as expected.
+
+**Manually migrating the database**:
 
 If you want to perform a manual migration from one database to another, please execute these
 Django commands:
