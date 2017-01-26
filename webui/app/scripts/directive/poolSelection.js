@@ -42,9 +42,9 @@ app.directive("poolSelection", function () {
       wizard: "="
     },
     templateUrl: "templates/poolSelection.html",
-    controller: function ($scope, PoolService, toasty) {
+    controller: function ($scope, poolsService, toasty) {
       $scope.getPoolList = function (options) {
-        PoolService.query(options)
+        poolsService.query(options)
           .$promise
           .then(function (res) {
             $scope.pools = res;
