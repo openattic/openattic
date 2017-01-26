@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* WebUI: Show the openATTIC version number on each node (OP-1619)
 * WebUI: Removed not implemented widgets (OP-1191)
 * Backend/QA: Added timestamps to verbose output to map the testcase and to
   the related openattic.log file entry (OP-1841)
@@ -21,6 +22,9 @@ Version 2.0.18, (not released yet):
 * Packaging: Added the ability to add mercurial tags to a repository when
   creating a tarball using make_dist.py (OP-1374)
 * Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
+* Development: Reconfigure default gateway in Vagrant boxes to set the correct
+  primary interface during 'oaconfig install'. (OP-1874)
+* Documentation: Adapt Vagrant developer documentation.
 
 
 Version 2.0.17, 20. December 2016:
