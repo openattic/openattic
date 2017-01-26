@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 describe('CommandLogs', function(){
 
   var systemItem = element(by.css('ul .tc_menuitem_system'));
-  var cmdLogItem = systemItem.element(by.css('ul .tc_submenuitem_system_cmdlogs > a'));
+  var cmdLogItem = systemItem.element(by.css('ul .tc_submenuitem_system_cmdlog > a'));
   systemItem = systemItem.all(by.css(' a')).first();
   var volumename = 'protractor_cmdlog_vol';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -21,7 +21,7 @@ describe('CommandLogs', function(){
   });
 
   it('should display oadatatable', function(){
-    expect(element(by.css('.tc_oadatatable_cmdlogs')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_oadatatable_cmdlog')).isDisplayed()).toBe(true);
   });
 
   it('should have a delete by date button', function(){
