@@ -75,7 +75,7 @@ def test_0002_auto_20170126_1628(cursor):
     stmt1 = """SELECT * FROM nagios_service WHERE description = 'openATTIC RPCd';"""
     stmt2 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
                'check_twraid_unit');"""
-    stmt3 = """DELETE FROM sysutils_initscript WHERE name = 'openattic_rpcd';"""
+    stmt3 = """SELECT * FROM sysutils_initscript WHERE name = 'openattic_rpcd';"""
     return (len(stmt1) or len(stmt2) or len(stmt3)) != 0
 
 
