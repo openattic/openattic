@@ -71,6 +71,14 @@ def test_taskqueue_0002_taskqueue_description_textfield(cursor):
     return len(res) == 1 and res[0]['data_type'] != 'text'
 
 
+def test_0002_auto_20170126_1628():
+    stmt1 = """SELECT * FROM nagios_service WHERE description = 'openATTIC RPCd';"""
+    stmt2 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
+               'check_twraid_unit');"""
+    stmt3 = """DELETE FROM sysutils_initscript WHERE name = 'openattic_rpcd';"""
+    return (len(stmt1) or len(stmt2) or len(stmt3)) != 0
+
+
 # (app, name, test function, SQL statement)
 # * If app and name is None, this migration will always be executed, if test function returns True.
 # * If test function and SQL stmt are None, the migration will only be added to the
@@ -127,6 +135,18 @@ _migrations = [
         BEGIN;
         ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "description" TYPE text;
         ALTER TABLE "taskqueue_taskqueue" ALTER COLUMN "result" TYPE text;
+        COMMIT;
+        """
+    ),
+    (
+        'nagios', u'0002_auto_20170126_1628',
+        test_0002_auto_20170126_1628,
+        """
+        BEGIN;
+        DELETE FROM nagios_service WHERE description = 'openATTIC RPCd';
+        DELETE FROM nagios_command WHERE name in ('check_openattic_rpcd','check_drbd',
+        'check_twraid_unit');
+        DELETE FROM sysutils_initscript WHERE name = 'openattic_rpcd';
         COMMIT;
         """
     ),
