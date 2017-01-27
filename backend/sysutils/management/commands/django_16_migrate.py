@@ -71,7 +71,7 @@ def test_taskqueue_0002_taskqueue_description_textfield(cursor):
     return len(res) == 1 and res[0]['data_type'] != 'text'
 
 
-def test_0002_auto_20170126_1628():
+def test_0002_auto_20170126_1628(cursor):
     stmt1 = """SELECT * FROM nagios_service WHERE description = 'openATTIC RPCd';"""
     stmt2 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
                'check_twraid_unit');"""
