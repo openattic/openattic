@@ -90,6 +90,7 @@ app.directive("drbdAdd", function () {
 
       // Listen to the event that is fired when a volume has been created.
       $scope.$on("volumecreate", function (event, volume) {
+        // Abort immediatelly if volume mirroring is not enabled.
         if (!$scope.data.volume_mirroring)
           return;
         // Create the volume mirror.
