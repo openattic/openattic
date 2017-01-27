@@ -334,8 +334,8 @@ fi
 ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
 
 # Create symlinks for various oA command line tools.
-ln -s /home/vagrant/openattic/bin/blkdevzero /bin/blkdevzero
-ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
+sudo ln -s /home/vagrant/openattic/bin/blkdevzero /bin/blkdevzero
+sudo ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
 
 # oaconfig install
 
