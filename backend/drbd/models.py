@@ -347,24 +347,9 @@ class Endpoint(models.Model):
             return None
 
     def install(self, init_primary):
-        conf = ""
-        # for lowerconn in self.connection.stack_child_set.all():
-        #    conf += render_to_string( "drbd/device.res", {
-        #        'Hostname':   socket.gethostname(),
-        #        'Connection': lowerconn,
-        #        'UpperConn':  self.connection
-        #        } )
-
-        conf += render_to_string("drbd/device.res", {
-            'Hostname':   socket.gethostname(),
-            'Connection': self.connection,
-            'Endpoints':  Endpoint.all_objects.filter(connection=self.connection),
-            'UpperConn':  None
-            })
-
         self.connection.storageobj.lock()
         self.connection.drbd.modprobe()
-        self.connection.drbd.conf_write(self.connection.name, conf)
+        self.connection.drbd.conf_write(self.connection.id)
         self.connection.drbd.createmd(self.connection.name, False)
         self.connection.drbd.wait_for_device(self.volume.volume.path)
         self.connection.drbd.up(self.connection.name, False)
@@ -381,7 +366,7 @@ class Endpoint(models.Model):
             fs_volume.volume.unmount()
 
         self.connection.drbd.down(self.connection.name, False)
-        self.connection.drbd.conf_delete(self.connection.name)
+        self.connection.drbd.conf_delete(self.connection.id)
         self.volume.storageobj.delete()
 
     def uninstall(self):

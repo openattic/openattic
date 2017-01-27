@@ -15,11 +15,15 @@
 """
 
 import os
+import socket
 
 from time import time, sleep
 
 from systemd.procutils import invoke
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
+
+from django.template.loader import render_to_string
+from drbd.models import Connection, Endpoint
 
 
 def stackcmd(resource, stacked, command, options=None):
@@ -141,11 +145,18 @@ class SystemD(BasePlugin):
                                log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @deferredmethod(in_signature="ss")
-    def conf_write(self, resource_name, conf, sender):
-        with open("/etc/drbd.d/%s.res" % resource_name, "wb") as fd:
-            fd.write(unicode(conf).encode("utf-8"))
+    @deferredmethod(in_signature="i")
+    def conf_write(self, connection_id, sender):
+        connection = Connection.objects.get(id=connection_id)
+        with open("/etc/drbd.d/%s.res" % connection.name, "w+") as fd:
+            fd.write(render_to_string("drbd/device.res", {
+                'Hostname':   socket.gethostname(),
+                'Connection': connection,
+                'Endpoints':  Endpoint.all_objects.filter(connection=connection),
+                'UpperConn':  None
+                }).encode("utf-8"))
 
-    @deferredmethod(in_signature="s")
-    def conf_delete(self, resource_name, sender):
-        os.unlink("/etc/drbd.d/%s.res" % resource_name)
+    @deferredmethod(in_signature="i")
+    def conf_delete(self, connection_id, sender):
+        connection = Connection.objects.get(id=connection_id)
+        os.unlink("/etc/drbd.d/%s.res" % connection.name)
