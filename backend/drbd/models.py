@@ -349,7 +349,7 @@ class Endpoint(models.Model):
     def install(self, init_primary):
         self.connection.storageobj.lock()
         self.connection.drbd.modprobe()
-        self.connection.drbd.conf_write(self.connection.id)
+        self.connection.drbd.conf_write(self.connection.name)
         self.connection.drbd.createmd(self.connection.name, False)
         self.connection.drbd.wait_for_device(self.volume.volume.path)
         self.connection.drbd.up(self.connection.name, False)
@@ -366,7 +366,7 @@ class Endpoint(models.Model):
             fs_volume.volume.unmount()
 
         self.connection.drbd.down(self.connection.name, False)
-        self.connection.drbd.conf_delete(self.connection.id)
+        self.connection.drbd.conf_delete(self.connection.name)
         self.volume.storageobj.delete()
 
     def uninstall(self):
