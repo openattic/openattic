@@ -145,9 +145,9 @@ class SystemD(BasePlugin):
                                log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @deferredmethod(in_signature="i")
-    def conf_write(self, connection_id, sender):
-        connection = Connection.objects.get(id=connection_id)
+    @deferredmethod(in_signature="s")
+    def conf_write(self, resource_name, sender):
+        connection = Connection.objects.get(storageobj__name=resource_name)
         with open("/etc/drbd.d/%s.res" % connection.name, "w+") as fd:
             fd.write(render_to_string("drbd/device.res", {
                 'Hostname':   socket.gethostname(),
@@ -156,7 +156,7 @@ class SystemD(BasePlugin):
                 'UpperConn':  None
                 }).encode("utf-8"))
 
-    @deferredmethod(in_signature="i")
-    def conf_delete(self, connection_id, sender):
-        connection = Connection.objects.get(id=connection_id)
+    @deferredmethod(in_signature="s")
+    def conf_delete(self, resource_name, sender):
+        connection = Connection.objects.get(storageobj__name=resource_name)
         os.unlink("/etc/drbd.d/%s.res" % connection.name)
