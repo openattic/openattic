@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import logging
 import requests
 import json
 
@@ -23,11 +24,15 @@ from django.conf import settings
 
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework import status
 
 from ifconfig.models import Host
+from requests.exceptions import HTTPError
 
 from utilities import get_related_model
 from rest.utilities import drf_version, get_request_data
+
+logger = logging.getLogger(__name__)
 
 
 class RequestHandlers(object):
@@ -139,8 +144,22 @@ class RequestHandlers(object):
         current_host = Host.objects.get_current()
         data = dict(get_request_data(request), proxy_host_id=current_host.id)
 
-        response = requests.request(request.method, url, data=json.dumps(data), headers=header)
-
+        # Try to redirect the API request to the remote host. Do not throw an
+        # exception if this call fails, otherwise the whole request fails.
+        # Instead create a response object containing the error message.
+        try:
+            response = requests.request(request.method, url, data=json.dumps(data), headers=header)
+        except Exception, e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Check the response object.
+        if not response.ok:
+            # Get the failure reason by asking the response object itself.
+            try:
+                response.raise_for_status()
+            except HTTPError, e:
+                logger.error(e)
+                return Response({'error': str(e)}, status=response.status_code)
+        # Decode the response content into a JSON object.
         try:
             response_data = response.json()
         except ValueError:
