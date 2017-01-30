@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import logging
 import requests
 import json
 
@@ -25,9 +26,12 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 from ifconfig.models import Host
+from requests.exceptions import HTTPError
 
 from utilities import get_related_model
 from rest.utilities import drf_version, get_request_data
+
+logger = logging.getLogger(__name__)
 
 
 class RequestHandlers(object):
@@ -140,6 +144,12 @@ class RequestHandlers(object):
         data = dict(get_request_data(request), proxy_host_id=current_host.id)
 
         response = requests.request(request.method, url, data=json.dumps(data), headers=header)
+        if not response.ok:
+            # Get the failure reason by asking the response object itself.
+            try:
+                response.raise_for_status()
+            except HTTPError, e:
+                logger.error(e)
 
         try:
             response_data = response.json()
