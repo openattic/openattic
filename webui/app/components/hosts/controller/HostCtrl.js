@@ -86,7 +86,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     // Ensure that the given variable is an object. In some cases it may
     // happen that the Rest-API does not return an object per host, e.g.
     // if the information can not be retrieved from a remote host.
-    if (!angular.isObject(host))
+    if (!angular.isObject(host) || !host.id)
       return;
     host.iscsiIqn = [];
     host.fcWwn = [];
