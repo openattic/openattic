@@ -72,11 +72,14 @@ def test_taskqueue_0002_taskqueue_description_textfield(cursor):
 
 
 def test_0002_auto_20170126_1628(cursor):
-    stmt1 = """SELECT * FROM nagios_service WHERE description = 'openATTIC RPCd';"""
-    stmt2 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
+    stmt1 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
                'check_twraid_unit');"""
-    stmt3 = """SELECT * FROM sysutils_initscript WHERE name = 'openattic_rpcd';"""
-    return (len(stmt1) or len(stmt2) or len(stmt3)) != 0
+    stmt2 = """SELECT * FROM sysutils_initscript WHERE name = 'openattic_rpcd';"""
+
+    res1 = execute_and_fetch(cursor, stmt1)
+    res2 = execute_and_fetch(cursor, stmt2)
+
+    return (len(res1) or len(res2)) != 0
 
 
 # (app, name, test function, SQL statement)
