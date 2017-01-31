@@ -89,13 +89,13 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
         name: "iSCSI/FC"
       },
       storage: {
-        show: "selection.item",
+        show: "selection.item.id",
         state: "volumes.detail.storage",
         class: "tc_storageTab",
         name: "Storage"
       },
       snapshots: {
-        show: "selection.item",
+        show: "selection.item.id",
         state: "volumes.detail.snapshots",
         class: "tc_snapshotTab",
         name: "Snapshots"
@@ -146,7 +146,8 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       return;
     }
 
-    if (item) {
+    // Ensure the selected object is a valid volume object.
+    if (angular.isObject(item) && item.id) {
       $scope.resizeable = item.is_blockvolume === true || item.type.name !== "btrfs subvolume";
       $scope.cloneable = item.type.name !== "zfs";
 
@@ -164,6 +165,9 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       } else {
         $scope.changeTab($state.current.name);
       }
+    } else {
+      // Display the 'Status' tab.
+      $scope.changeTab("volumes.detail.status");
     }
   });
 

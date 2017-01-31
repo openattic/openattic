@@ -54,7 +54,7 @@ app.controller("PoolsCtrl", function ($scope, $state, poolsService, tabViewServi
         name: "Status"
       },
       storage: {
-        show: "selection.item",
+        show: "selection.item.id",
         state: "pools.detail.storage",
         class: "tc_storage_tab",
         name: "Storage"
