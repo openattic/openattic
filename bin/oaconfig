@@ -107,17 +107,17 @@ case $1 in
 			has_local_database=0
 		fi
 
-                db_name=$(sed -rn 's/[ \t]*name[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
-                if [[ -z $db_name ]]; then
-                  echo "ERROR: No database name defined in $database_ini"
-                  exit 1
-                fi
+		db_name=$(sed -rn 's/[ \t]*name[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		if [[ -z $db_name ]]; then
+		  echo "ERROR: No database name defined in $database_ini"
+		  exit 1
+		fi
 
-                db_user=$(sed -rn 's/[ \t]*user[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
-                if [[ -z $db_user ]]; then
-                  echo "ERROR: No database username defined in $database_ini"
-                  exit 1
-                fi
+		db_user=$(sed -rn 's/[ \t]*user[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		if [[ -z $db_user ]]; then
+		  echo "ERROR: No database username defined in $database_ini"
+		  exit 1
+		fi
 
 		if (( has_local_database )) ; then
 			# Check if the database role '$db_user' exists and create it if it doesn't exist.
