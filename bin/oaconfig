@@ -100,20 +100,20 @@ case $1 in
 		fi
 
 		database_ini="/etc/openattic/database.ini"
-		host=$(sed -rn 's/^[ \t]*host[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		host=$(sed -rn 's/^[[:blank:]]*host[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
 		if [ "${host}" == 'localhost' ] ; then
 			has_local_database=1
 		else
 			has_local_database=0
 		fi
 
-		db_name=$(sed -rn 's/[ \t]*name[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		db_name=$(sed -rn 's/[[:blank:]]*name[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
 		if [[ -z $db_name ]]; then
 			echo "ERROR: No database name defined in $database_ini"
 			exit 1
 		fi
 
-		db_user=$(sed -rn 's/[ \t]*user[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		db_user=$(sed -rn 's/[[:blank:]]*user[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
 		if [[ -z $db_user ]]; then
 			echo "ERROR: No database username defined in $database_ini"
 			exit 1
@@ -126,7 +126,7 @@ case $1 in
 				echo "Creating database role \"${db_user}\""
 				pass=$(openssl rand -hex 10)
 				sed -ri --follow-symlinks \
-				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				    "s/(password[[:blank:]]*=[[:blank:]]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
 					echo "Failed to update $database_ini"
 					exit 2
@@ -154,13 +154,13 @@ case $1 in
 
 		# Check if the connection can be established with the database user and password.
 		# Set a new password if the connection cannot be established.
-		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		password=$(sed -rn 's/^[[:blank:]]*password[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
 		# We have to have an '$db_name' database already at this point.
 		if ! PGPASSWORD="$password" psql ${db_name} ${db_user} -h "${host}" --no-password -c "\q" ; then
 			if (( has_local_database )) ; then
 				pass=$(openssl rand -hex 10)
 				sed -ri --follow-symlinks \
-				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				    "s/(password[[:blank:]]*=[[:blank:]]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
 					echo "Failed to update $database_ini"
 					exit 2
