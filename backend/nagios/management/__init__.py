@@ -30,6 +30,9 @@ def create_nagios(**kwargs):
     # Make sure the contacts config exists
     signals.post_save.disconnect(update_conf, sender=Service)
 
+    nagios = get_dbus_object("/nagios")
+    nagios.restart_service()
+
     for servstate in Service.nagstate["servicestatus"]:
         if servstate["service_description"].startswith("Check Ceph"):
             continue
@@ -68,7 +71,6 @@ def create_nagios(**kwargs):
                        description=nagios_settings.CPUTIME_DESCRIPTION, arguments="")
         serv.save()
 
-    nagios = get_dbus_object("/nagios")
     nagios.writeconf()
     nagios.restart_service()
 
