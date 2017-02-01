@@ -185,7 +185,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
    */
   $scope.$watch("tqf.update", function (update, prev) {
     $scope.update = update;
-    if (prev && !update && firstLoad) {
+    if (prev && !update && firstLoad && $scope.modalTabData) {
       firstLoad = false;
       $scope.selectUrgentTab();
     }
@@ -376,7 +376,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     if (!$event.shiftKey) {
       if (exists !== -1) {
         items.splice(exists, 1);
-      } else if ($event.ctrlKey || event.target.tagName === "INPUT") {
+      } else if ($event.ctrlKey || $event.target.tagName === "INPUT") {
         items.push(task.id);
       } else {
         items = [task.id];
