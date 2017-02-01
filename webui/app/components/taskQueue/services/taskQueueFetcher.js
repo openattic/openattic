@@ -74,10 +74,10 @@ app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $r
    * @returns <promise>
    */
   this.loadAllTasks = function (pgnum, loading) {
-    if (loading === undefined) {
+    if (angular.isUndefined(loading)) {
       loading = $q.defer();
     }
-    if (pgnum === undefined) {
+    if (angular.isUndefined(pgnum)) {
       pgnum = 1;
     }
     taskQueueService.get({

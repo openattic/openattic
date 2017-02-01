@@ -236,8 +236,6 @@ table.task-queue-table thead tr {
 table.task-queue-table tbody {
   display: flex;
   flex-flow: row wrap;
-  max-height: 26em;
-  overflow: overlay;
 }
 table.task-queue-table tbody tr {
   display: flex;
@@ -249,13 +247,27 @@ table.task-queue-table > * > tr > * {
 table.task-queue-table > * > tr > .oadatatablecheckbox {
   flex: 0;
 }
+div.task-queue-modal-content {
+  height: 40em;
+}
+div.openattic-modal-content div.modal-scroll {
+  max-height: 26em;
+  overflow: auto;
+  border-bottom: 1px solid #e1e1e1;
+}
+div.task-queue-modal-content div.dataTables_wrapper {
+  margin-bottom: 0;
+}
+div.task-queue-modal-content div.dataTables_wrapper th.oadatatablecheckbox {
+  width: 100%;
+}
+div.task-queue-modal-content div.dataTables_wrapper div.widget-toolbar.tc_refreshBtn{
+  width: 36px;
+}
 ul.task-queue-pagination {
   display: table;
   margin: auto;
   padding-top: 10px;
-}
-div.task-queue-modal-content {
-  min-height: 41.75em;
 }
 
 /* Navbar */

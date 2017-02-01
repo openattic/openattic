@@ -32,9 +32,11 @@
 
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
-  $scope.tasks = taskSelection;
+  $scope.tasks = angular.copy(taskSelection); //Now it can't be changed by a possible current asynchronous call.
   $scope.waiting = false;
   $scope.finishedTasks = 0;
+  var pending = ["Running", "Not Started"];
+  $scope.pendingDeletionFailure = [];
 
   $scope.input = {
     enteredName: "",
@@ -42,7 +44,12 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
   };
 
   /**
-   * Deletes all tasks sequentially and updates how many tasks were successfully deleted.
+   * Deletes all tasks sequentially.
+   * Checks the status of all pending task just before the deletion, if
+   * the task isn't running anymore at that point, it won't be deleted.
+   * Updates how many tasks were processed and failed to delete so far.
+   * If pending tasks are deleted and some of them won't be, the details
+   * will be provided by the dialog.
    * The method calls it self recursively in order to process sequentially.
    * @param {iterator} entries - The iterator contains the remaining tasks.
    */
@@ -54,25 +61,66 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
         $scope.waiting = true;
       }
       task = taskEntry[1];
-      taskQueueService.delete({id: task.id})
-        .$promise
-        .then(function () {
-          $scope.finishedTasks++;
-          $scope.deleteTasks(entries);
-        }, function (error) {
-          error.toasty = {
-            title: "Task deletion failure",
-            msg: "Task " + task.description + "(" + task.id + ") couldn't be deleted.",
-            timeout: 10000
-          };
-          toasty.error(error.toasty);
-          $scope.deleteTasks(entries);
-          throw error;
-        });
+      $scope.finishedTasks++;
+      if (pending.indexOf(task.status) > -1) {
+        taskQueueService.get({id: task.id})
+          .$promise
+          .then(function (res) {
+            if (pending.indexOf(res.status) > -1) {
+              $scope.taskDelete(task, entries);
+            } else {
+              $scope.pendingDeletionFailure.push([task, res]);
+              $scope.deleteTasks(entries);
+            }
+          }, function (error) {
+            toasty.error({
+              title: "Couldn't get task '" + task.description + "'",
+              msg: "Could not get task '" + task.description + "'.",
+              timeout: 10000
+            });
+            $scope.deleteTasks(entries);
+            throw error;
+          });
+      } else {
+        $scope.taskDelete(task, entries);
+      }
     } else {
       $scope.waiting = false;
-      $uibModalInstance.close("deleted");
+      if ($scope.pendingDeletionFailure.length > 0) {
+        toasty.warning({
+          title: "Couldn't delete " + $scope.pendingDeletionFailure.length + " tasks",
+          msg: "More details are shown in the dialog."
+        });
+      } else {
+        $uibModalInstance.close("deleted");
+      }
     }
+  };
+
+  /**
+   * This will close the dialog, if there were moved tasks during deletion.
+   */
+  $scope.closeWithWarnings = function () {
+    $uibModalInstance.close("Deleted without " + $scope.pendingDeletionFailure.length + " moved tasks.");
+  };
+
+  /**
+   * This will delete a task and call deleteTask if successfully deleted the task.
+   */
+  $scope.taskDelete = function (task, entries) {
+    taskQueueService.delete({id: task.id})
+      .$promise
+      .then(function () {
+        $scope.deleteTasks(entries);
+      }, function (error) {
+        toasty.error({
+          title: "Task deletion failure",
+          msg: "Task " + task.description + "(" + task.id + ") couldn't be deleted.",
+          timeout: 10000
+        });
+        $scope.deleteTasks(entries);
+        throw error;
+      });
   };
 
   $scope.cancel = function () {

@@ -44,29 +44,36 @@ app.directive("oaTaskQueue", function () {
         percent: 0,
         tooltip: "No tasks running."
       };
+      var refresh = true;
 
       /**
        * Update all needed parts.
        *
        * Hourglass update:
-       * The hourglass has four different states which will be set according to the percentage of all running tasks in
-       * relation to their count.
+       * The hourglass has four different states which will be set according to
+       * the percentage of all running tasks in relation to their count. If
+       * there are failed task a warn symbol will be present instead of the
+       * hourglass.
        *
        * Tooltip update:
        * The tooltip shows the average percent done over all running tasks.
        *
        * If toasties are needed:
-       * Toasties are created if there is a change between the finalized tasks from the last and the current task
-       * update.
+       * Toasties are created if there is a change between the finalized tasks
+       * from the last and the current task update.
        */
       $scope.updateTaskOverview = function () {
+        if (!refresh) {
+          return;
+        }
         taskQueueFetcher.loadOverview().then(function (allTasks) {
           var ov = $scope.taskOverview;
+          var tasks = allTasks.tasks;
           ov.percent = 0;
-          allTasks.tasks.Running.forEach(function (task) {
+          tasks.Running.forEach(function (task) {
             ov.percent += task.percent;
           });
-          ov.queue = allTasks.tasks.Running.length + allTasks.tasks["Not Started"].length;
+          ov.queue = tasks.Running.length + tasks["Not Started"].length;
           ov.avr = ov.queue !== 0 ? ov.percent / ov.queue : 0;
           ov.icons = ["fa-hourglass-o", "fa-hourglass-start", "fa-hourglass-half", "fa-hourglass-end"];
           ov.icon = ov.queue !== 0 ? ov.icons[Math.floor(ov.avr / 30) + 1] : ov.icons[0];
@@ -77,41 +84,57 @@ app.directive("oaTaskQueue", function () {
             $scope.createNeededToasties(allTasks);
           }
           $scope.taskOverview = ov;
+          ov.failed = tasks.Exception.length + tasks.Aborted.length;
+          if (ov.failed) {
+            ov.icon = "fa-warning text-warning";
+          }
           $scope.taskTimeout = $interval($scope.updateTaskOverview, globalConfig.GUI.defaultTaskReloadTime, 1);
         });
       };
 
       /**
-       * Toasties are created if there is a change between the finalized tasks from the last and the current task
-       * update.
+       * One toasty for each state is created if one or more tasks changed to
+       * final state.
+       * The toasty will sum up all tasks that changed to this state. At max
+       * there will be three toasties.
+       * @param {Object} allTasks
+       * @param {Object[]} allTasks.tasks[<status>]
        */
       $scope.createNeededToasties = function (allTasks) {
         var moved = $scope.getNewFinalTasks(allTasks); //id's
         var tasks = allTasks.tasks;
         if (moved.length !== 0) {
+          var categories = {
+            Finished: {
+              tasks: [],
+              toastType: "success"
+            },
+            Aborted: {
+              tasks: [],
+              toastType: "warning"
+            },
+            Exception: {
+              tasks: [],
+              toastType: "error"
+            }
+          };
           Object.keys(tasks).forEach(function (state) {
             tasks[state].forEach(function (task) {
               if (moved.indexOf(task.id) !== -1) {
-                var toast = {
-                  title: task.status + ": " + task.description,
-                  msg: task.description
-                };
-                if (task.status === "Finished") {
-                  toast.timeout = globalConfig.GUI.defaultToastTimes.success;
-                  toast.msg += " has finished.";
-                  toasty.success(toast);
-                } else if (task.status === "Aborted") {
-                  toast.timeout = globalConfig.GUI.defaultToastTimes.warning;
-                  toast.msg += " was aborted.";
-                  toasty.warning(toast);
-                } else if (task.status === "Exception") {
-                  toast.timeout = globalConfig.GUI.defaultToastTimes.error;
-                  toast.title = "Error: " + task.description;
-                  toast.msg += " has failed.";
-                  toasty.error(toast);
-                }
+                categories[task.status].tasks.push(task);
               }
             });
+          });
+          angular.forEach(categories, function (category, status) {
+            if (category.tasks.length > 0) {
+              toasty[category.toastType]({
+                title: status,
+                msg: category.tasks.map(function (task) {
+                  return task.description;
+                }).join("<br>"),
+                timeout: globalConfig.GUI.defaultToastTimes[category.toastType]
+              });
+            }
           });
         }
       };
@@ -151,12 +174,12 @@ app.directive("oaTaskQueue", function () {
           size: "lg",
           animation: false
         });
-
         taskDialog.opened.then(function () {
+          refresh = false;
           $interval.cancel($scope.taskTimeout);
         });
-
         taskDialog.closed.then(function () {
+          refresh = true;
           $scope.updateTaskOverview();
         });
       };

@@ -33,16 +33,37 @@
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, $state, $filter,
     taskQueueService, $uibModal, $interval, taskQueueFetcher) {
+  var refresh = true; // Will prevent auto refreshing if set to false.
+
+  /* Variables for every tab. */
+  $scope.pageSize = 50;
+
+  $scope.search = "";
+  $scope.searchModelOptions = {
+    updateOn: "default blur",
+    debounce: {
+      "default": 500,
+      "blur": 0
+    }
+  };
+
   /**
    * Describes and configures all displayed tabs and tables.
    */
   var defaultTab = {
     name: null,
     data: [],
-    page: 1,
+    workingData: [],
+    page: {
+      current: 0,
+      last: null,
+      firstItem: 1,
+      lastItem: null,
+      itemLength: 0
+    },
     pageData: [],
     states: null,
-    count: null,
+    count: -1,
     loaded: false,
     tableSort: {
       attribute: null,
@@ -56,11 +77,12 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     tableColumns: []
   };
   $scope.tabs = {
-    pending: angular.extend({}, defaultTab, {
+    pending: angular.extend({}, angular.copy(defaultTab), {
       name: "Pending",
       states: ["Running", "Not Started"],
       tableSort: {
-        attribute: "percent"
+        attribute: "percent",
+        reverse: true
       },
       tableColumns: [
         {
@@ -86,17 +108,23 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         }
       ]
     }),
-    failed: angular.extend({}, defaultTab, {
+    failed: angular.extend({}, angular.copy(defaultTab), {
       name: "Failed",
       states: ["Exception", "Aborted"],
       tableSort: {
-        attribute: "last_modified"
+        attribute: "last_modified",
+        reverse: true
       },
       tableColumns: [
         {
           name: "Name",
           type: "text",
           attribute: "description"
+        },
+        {
+          name: "Reason",
+          type: "text",
+          attribute: "status"
         },
         {
           name: "Created",
@@ -116,11 +144,12 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         }
       ]
     }),
-    finished: angular.extend({}, defaultTab, {
+    finished: angular.extend({}, angular.copy(defaultTab), {
       name: "Finished",
       states: ["Finished"],
       tableSort: {
-        attribute: "last_modified"
+        attribute: "last_modified",
+        reverse: true
       },
       tableColumns: [
         {
@@ -148,7 +177,19 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     })
   };
 
-  $scope.pageSize = 50;
+  var firstLoad = true; // Needed to select a tab after the first load.
+  $scope.tqf = taskQueueFetcher; // Added to scope for $watch.
+  /**
+   * Watches if the task queue fetcher is doing an update and it will select
+   * the tab with the highest priority after the first load.
+   */
+  $scope.$watch("tqf.update", function (update, prev) {
+    $scope.update = update;
+    if (prev && !update && firstLoad) {
+      firstLoad = false;
+      $scope.selectUrgentTab();
+    }
+  });
 
   /**
    * Returns the data of the active tab.
@@ -159,24 +200,75 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   /**
-   * Will slice out the right ordered data to set the page content of the table.
+   * This will search and sort the tasks in a tab and set the current available
+   * tasks for the tab.
+   * After that it will update the selection and update or change the page.
+   * @param {object} [tab] - Set the page content of this tab object.
+   * @returns {object} the current or the given tab.
+   */
+  $scope.updateWorkingData = function (tab) {
+    tab = tab || $scope.getActiveTab();
+    var search = $scope.search.toLowerCase();
+    tab.workingData = search === "" ? tab.data : tab.data.filter(function (e) {
+        return e.description.toLowerCase().match(search);
+      });
+    tab.workingData = $filter("orderBy")(tab.workingData, [
+      (tab.tableSort.reverse ? "-" : "+") + tab.tableSort.attribute,
+      "-last_modified"
+    ]);
+    return $scope.pageChange($scope.updateCompleteSelection(tab));
+  };
+
+  /**
+   * Sets all page content of the table.
+   * The page content is retrieved by slicing it out of the workingData.
+   * The needed pagination values are retrieved out of the workingData in
+   * combination with the current page number and the entry size of each page.
    * @param {object} [tab] - Set the page content of this tab object.
    * @returns {object} the current or the given tab.
    */
   $scope.pageChange = function (tab) {
-    tab = tab ? tab : $scope.getActiveTab();
-    var pgNr = tab.page;
+    tab = tab || $scope.getActiveTab();
+    var page = tab.page;
     var pgSize = $scope.pageSize;
-    tab.data = $filter("orderBy")(tab.data, [
-      (tab.tableSort.reverse ? "-" : "+") + tab.tableSort.attribute,
-      "-last_modified"
-    ]);
-    tab.pageData = tab.data.slice((pgNr - 1) * pgSize, pgNr * pgSize);
+    page.itemLength = tab.workingData.length;
+    page.last = Math.ceil(page.itemLength / pgSize, 0) || 1;
+    page.firstItem = pgSize * page.current;
+    page.lastItem = pgSize * (page.current + 1);
+    if (page.lastItem > page.itemLength) {
+      page.lastItem = page.itemLength;
+    }
+    tab.pageData = tab.workingData.slice(page.firstItem, page.lastItem);
     return tab;
   };
 
   /**
-   * Sets the new sorting attribute and change the order if the attribute is already set.
+   * Updates the entry size of each page and the current page in the current tab.
+   * After that it will update the page, through a page change.
+   * @param {number} size - Sets the new entry size.
+   */
+  $scope.updateEntries = function (size) {
+    $scope.pageSize = size;
+    var tab = $scope.getActiveTab();
+    tab.page.current = Math.ceil((tab.page.firstItem + 1) / size, 0);
+    $scope.pageChange(tab);
+  };
+
+  /**
+   * Updates the search value of each page, the search value will search
+   * through the description of each task in the current tab.
+   * After that it will update the working data.
+   * @param {number} size - Sets the new entry size.
+   */
+  $scope.searchDescriptions = function (search) {
+    $scope.search = search;
+    $scope.updateWorkingData();
+  };
+
+  /**
+   * Sets the new sorting attribute or changes the order of it if it's already
+   * set.
+   * After that it will update the working data.
    * @param {String} attribute
    */
   $scope.order = function (attribute) {
@@ -185,7 +277,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
       tab.tableSort.reverse = !tab.tableSort.reverse;
     }
     tab.tableSort.attribute = attribute;
-    $scope.pageChange();
+    $scope.updateWorkingData(tab);
   };
 
   /**
@@ -215,25 +307,27 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
 
   /**
    * Checks if a specific row is selected or not.
-   * @param {object} row
+   * @param {object} task
    * @returns {boolean} State of the selection.
    */
-  $scope.isTaskSelected = function (row) {
+  $scope.isTaskSelected = function (task) {
     var tab = $scope.getActiveTab();
-    return tab.selection.items.indexOf(row.id) !== -1;
+    return tab.selection.items.indexOf(task.id) !== -1;
   };
 
   /**
-   * Refreshes and updates the selection while a table refresh takes place.
+   * Filters the selection, if all selected tasks are still available.
+   * with the left over selection and the given tab, the selection will be
+   * updated and refreshed.
    * @param {object} tab
    * @returns {object} Updated tab object.
    */
   $scope.updateCompleteSelection = function (tab) {
-    var data = tab.data.map($scope.getTaskId);
+    var data = tab.workingData.map($scope.getTaskId);
     var selection = tab.selection.items.filter(function (id) {
       return data.indexOf(id) !== -1;
     });
-    return $scope.updateSelectedTasks($scope.pageChange(tab), selection);
+    return $scope.updateSelectedTasks(tab, selection);
   };
 
   /**
@@ -246,13 +340,14 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   /**
-   * Refreshes and updates the selection.
+   * Refreshes and updates the selection in the given tab with the given selection.
+   * It will also validate if the check all checkbox has to be activated.
    * @param {object} tab
    * @param {numbers[]} selection
    * @returns {object} Updated tab object.
    */
   $scope.updateSelectedTasks = function (tab, selection) {
-    tab.selection.checkAll = selection.length === tab.data.length;
+    tab.selection.checkAll = selection.length === tab.workingData.length;
     tab.selection.item = selection.length === 1 ? $scope.getTaskFromId(tab, selection[0]) : null;
     tab.selection.items = selection;
     tab.loaded = true;
@@ -262,8 +357,11 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   /**
    * Updates the selection in various ways.
    * It deselects from selection, appends to selection and sets a new selection.
-   * You can do multiple selections by holding down shift on your click on a row.
-   * You can append or remove a selection by holding ctrl down while clicking.
+   * Multiple selections can be achieved by holding down shift on your click on
+   * a row or append tasks separately by holding ctrl down while clicking on a
+   * row or trough clicking into a checkbox. You can remove selections the same
+   * way the difference is that holding ctrl down isn't necessary, while
+   * clicking on a selected row
    * @param {object} task
    * @param {event} $event
    */
@@ -278,14 +376,13 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     if (!$event.shiftKey) {
       if (exists !== -1) {
         items.splice(exists, 1);
-      } else if ($event.ctrlKey) {
+      } else if ($event.ctrlKey || event.target.tagName === "INPUT") {
         items.push(task.id);
       } else {
         items = [task.id];
       }
     } else {
-      sorted = $filter("orderBy")(tab.data, tab.tableSort.attribute, tab.tableSort.reverse);
-      sorted = sorted.map($scope.getTaskId);
+      sorted = angular.copy(tab.workingData).map($scope.getTaskId);
       iPrev = sorted.indexOf(items[items.length - 1]);
       iNow = sorted.indexOf(task.id);
       newItems = iPrev < iNow ? sorted.slice(iPrev + 1, iNow + 1) : sorted.slice(iNow, iPrev);
@@ -307,7 +404,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   $scope.checkAllTasks = function () {
     var tab = $scope.getActiveTab();
     tab.selection.items = tab.selection.checkAll ?
-      tab.data.map($scope.getTaskId) : [];
+      tab.workingData.map($scope.getTaskId) : [];
   };
 
   /**
@@ -343,7 +440,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     tab.count = tab.tempCount;
     if (activeTab) {
       tab.data = tab.tempData;
-      $scope.tabs[tabKey] = $scope.updateCompleteSelection(tab);
+      $scope.tabs[tabKey] = $scope.updateWorkingData(tab);
     }
     $scope.tabs[tabKey] = tab;
     $scope.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
@@ -424,7 +521,7 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     var tab = $scope.getActiveTab();
     var items = tab.selection.items;
     var modalInstance = {};
-    if (!items) {
+    if (items.length === 0) {
       return;
     }
     modalInstance = $uibModal.open({
@@ -439,24 +536,26 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
         }
       }
     });
-
     modalInstance.opened.then(function () {
+      refresh = false;
       $interval.cancel($scope.timeout);
     });
-
     modalInstance.closed.then(function () {
+      refresh = true;
       $scope.loadAllTabs(true);
     });
   };
 
   /**
-   * Triggers a refresh over all tabs, but only if there are no pending requests and no selection of a task.
-   * @param {Boolean} force - If set a reload will be forced even if there is a selection.
+   * Triggers a refresh over all tabs, but only if there are no pending requests
+   * and no selection of a task.
+   * @param {Boolean} force - If set a reload will be forced even if there is a
+   *   selection.
    */
   $scope.loadAllTabs = function (force) {
     var tab = $scope.getActiveTab();
     var items = tab.selection.items;
-    if (!force && items.length > 0) {
+    if (!refresh || !force && items.length > 0) {
       $scope.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
       return;
     }
@@ -468,7 +567,27 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
   };
 
   /**
-   * Stops old timeout if any and sets a new time out which will be triggered in "time" seconds.
+   * Selects the tab with tasks and the highest priority.
+   * This function will only called once.
+   * Priority:
+   * 1. Failed
+   * 2. Pending
+   * 3. Finished
+   */
+  $scope.selectUrgentTab = function () {
+    var setActive = 0;
+    if ($scope.tabs.failed.count > 0) {
+      setActive = 1;
+    } else if ($scope.tabs.pending.count === 0 &&
+        $scope.tabs.finished.count > 0) {
+      setActive = 2;
+    }
+    $scope.modalTabData.active = setActive;
+  };
+
+  /**
+   * Stops old timeout if any and sets a new time out which will be triggered
+   * in "time" seconds.
    * @param {Number} time - Number represents seconds.
    */
   $scope.reloadTaskIn = function (time) {
@@ -487,6 +606,17 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty
     if (tabOld !== null && tabNew !== null) {
       $scope.loadAllTabs(true);
     }
+  });
+
+  /**
+   * Adds a watch for each tab to watch it's page number, in order to change the
+   * page if it does.
+   */
+  angular.forEach($scope.tabs, function (tab, key) {
+    $scope.$watch("tabs." + key + ".page.current", function (pgNr) {
+      $scope.tabs[key].page.current = pgNr;
+      $scope.pageChange();
+    });
   });
 
   /**

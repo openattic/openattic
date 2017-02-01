@@ -10,46 +10,86 @@
                 There are no {{tabKey}} Tasks.
             </h3>
             <form class="tc_listing_{{tabKey}}" name="{{tab.name}}Tasks" role="form" novalidate ng-show="tab.data.length > 0">
+            <div class="dataTables_wrapper">
                 <div class="dataTables_header clearfix">
-                    <button type="button" class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
-                        ng-disabled="tab.selection.items.length === 0" ng-click="taskDeleteAction()">
-                        Delete</button>
+                    <div class="oadatatableactions">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
+                                ng-disabled="tab.selection.items.length === 0" ng-click="taskDeleteAction()">
+                                Delete</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </span>
+                        <input class="form-control" type="search" ng-model="search" ng-change="searchDescriptions(search)" ng-model-options="searchModelOptions" />
+                    </div>
+                    <div class="dataTables_length widget-toolbar">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle tc_entries_dropdown" data-toggle="dropdown"
+                                aria-expanded="false">
+                            {{ pageSize }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu arrow-box-up-right oa-dropdown-menu oa-dropdown-numbers" role="menu">
+                            <li ng-repeat="size in [2, 10, 25, 50, 100]" class="tc_entries_{{size}}" ng-class="{active: size === pageSize}">
+                                <a ng-click="updateEntries(size)" ng-bind="size"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="widget-toolbar tc_refreshBtn">
+                        <a ng-click="loadAllTabs(true)">
+                            <i class="fa fa-lg fa-refresh" ng-hide="update"></i>
+                            <i class="fa fa-spinner fa-spin fa-fw" ng-show="update"></i>
+                        </a>
+                    </div>
                 </div>
 
-                <table class="table table-striped table-bordered table-hover datatable dataTable task-queue-table">
-                    <thead>
-                        <tr>
-                            <th class="oadatatablecheckbox">
-                                <input type="checkbox" class="tc_select_all_{{tabKey}}"
-                                       ng-model="tab.selection.checkAll" ng-change="checkAllTasks()"/>
-                            </th>
-                            <th ng-repeat="col in tab.tableColumns" ng-click="order(col.attribute)"
-                                class="{{orderClass(col.attribute)}} tc-col-{{tabKey}}-{{col.attribute}}"
-                                ng-bind="col.name">
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="row in tab.pageData"
-                            ng-class="{ info: isTaskSelected(row) }">
-                            <td class="oadatatablecheckbox">
-                                <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(row)" checklist-model="tab.selection.items"
-                                       ng-click="toggleTaskSelection(row, $event)" checklist-value="row"/>
-                            </td>
-                            <td ng-click="toggleTaskSelection(row, $event)" ng-repeat="attr in tab.tableColumns">
-                                <span ng-if="attr.type === 'text'" ng-bind="getColumnData(attr, row)"></span>
-                                <span ng-if="attr.type === 'date'" ng-bind="getColumnData(attr, row) | date:'medium'"></span>
-                                <span ng-if="attr.type === 'percent'">
-                                    <uib-progressbar value="getColumnData(attr, row)">{{getColumnData(attr, row)}}%</uib-progressbar>
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="modal-scroll">
+                    <table class="table table-striped table-bordered table-hover datatable dataTable task-queue-table">
+                        <thead>
+                            <tr>
+                                <th class="oadatatablecheckbox">
+                                    <input type="checkbox" class="tc_select_all_{{tabKey}}"
+                                           ng-model="tab.selection.checkAll" ng-change="checkAllTasks()"/>
+                                </th>
+                                <th ng-repeat="col in tab.tableColumns" ng-click="order(col.attribute)"
+                                    class="{{orderClass(col.attribute)}} tc-col-{{tabKey}}-{{col.attribute}}"
+                                    ng-bind="col.name">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="task in tab.pageData" ng-class="{ info: isTaskSelected(task) }">
+                                <td class="oadatatablecheckbox">
+                                    <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(task)"
+                                           ng-click="toggleTaskSelection(task, $event)"/>
+                                </td>
+                                <td ng-click="toggleTaskSelection(task, $event)" ng-repeat="attr in tab.tableColumns">
+                                    <span ng-if="attr.type === 'text'" ng-bind="getColumnData(attr, task)"></span>
+                                    <span ng-if="attr.type === 'date'" ng-bind="getColumnData(attr, task) | date:'medium'"></span>
+                                    <span ng-if="attr.type === 'percent'">
+                                        <uib-progressbar value="getColumnData(attr, task)" class="oaprogress">{{getColumnData(attr, task)}}%</uib-progressbar>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="dataTables_footer tc_datatableFooter">
+                <!-- number of items -->
+                <div class="dataTables_info">
+                    Showing <strong>{{tab.page.lastItem === 0 ? tab.page.firstItem : tab.page.firstItem + 1}}</strong> to <strong>{{tab.page.lastItem}}</strong>
+                    of <strong>{{tab.page.itemLength}}</strong> items
+                </div>
+                <!-- end number of items -->
+
+                <!-- pagination -->
+                <paginator page="tab.page.current" pages="tab.page.last"></paginator>
+                <!-- end pagination -->
+            </div>
             </form>
-            <ul uib-pagination ng-show="tab.data.length > pageSize" total-items="tab.data.length" max-size="3"
-                items-per-page="pageSize" ng-model="tab.page" class="task-queue-pagination" ng-change="pageChange()"
-                boundary-link-numbers="true"></ul>
             <!-- Detail view
             <p></p>
             <div class="task-detail panel panel-default" ng-show="tab.selection.item">
