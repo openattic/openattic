@@ -28,7 +28,6 @@ describe('Pagination', function(){
 
   beforeAll(function(){
     helpers.login();
-
     browser.setLocation('cmdlogs');
     browser.sleep(400);
 
