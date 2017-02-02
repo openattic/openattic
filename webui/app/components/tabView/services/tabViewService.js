@@ -74,3 +74,4 @@ app.service("tabViewService", function ($state) {
     $state.go(goHere, stateJump);
   };
 });
+
