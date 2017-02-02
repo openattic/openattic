@@ -34,4 +34,5 @@ angular.module("openattic.cephRbd", [
   "openattic.cephCluster",
   "openattic.graph",
   "openattic.registry"
+  "openattic.tabView"
 ]);
