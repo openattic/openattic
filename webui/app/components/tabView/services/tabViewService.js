@@ -68,12 +68,9 @@ app.service("tabViewService", function ($state) {
       });
     }
     scope.tabData.active = index;
-    if (!angular.isObject(scope.selection.item))
-      return;
     var stateJump = {};
     stateJump[scope.tabConfig.type] = scope.selection.item[scope.tabConfig.linkedBy];
     stateJump["#"] = scope.tabConfig.jumpTo;
     $state.go(goHere, stateJump);
   };
 });
-

@@ -146,8 +146,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       return;
     }
 
-    // Ensure the selected object is a valid volume object.
-    if (angular.isObject(item) && item.id) {
+    if (item) {
       $scope.resizeable = item.is_blockvolume === true || item.type.name !== "btrfs subvolume";
       $scope.cloneable = item.type.name !== "zfs";
 
@@ -165,9 +164,6 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       } else {
         $scope.changeTab($state.current.name);
       }
-    } else {
-      // Display the 'Status' tab.
-      $scope.changeTab("volumes.detail.status");
     }
   });
 
