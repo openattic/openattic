@@ -6,7 +6,6 @@ describe('should test the ceph rbd creation form', function(){
 
   beforeAll(function(){
     helpers.login();
-    rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
     rbdProperties.addButton.click();
   });

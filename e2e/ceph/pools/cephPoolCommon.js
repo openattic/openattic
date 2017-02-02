@@ -2,8 +2,7 @@
 
 var cephPoolCommons = function(){
   var helpers = require('../../common.js');
-  this.cephMenu = element(by.css('.tc_menuitem_ceph > a'));
-  this.cephPools = element(by.css('.tc_submenuitem_ceph_pools'));
+  this.cephPools = element(by.css('.tc_menuitem_ceph_pools'));
 
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;

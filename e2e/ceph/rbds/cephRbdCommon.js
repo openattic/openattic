@@ -2,8 +2,7 @@
 
 var rbdCommons = function(){
   var helpers = require('../../common.js');
-  this.cephMenu = element(by.css('.tc_menuitem_ceph > a'));
-  this.cephRBDs = element(by.css('.tc_submenuitem_ceph_rbds'));
+  this.cephRBDs = element(by.css('.tc_menuitem_ceph_rbds'));
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;

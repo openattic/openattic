@@ -6,7 +6,6 @@ describe('ceph pool creation form', function(){
 
   beforeAll(function(){
     helpers.login();
-    cephPoolProperties.cephMenu.click();
     cephPoolProperties.cephPools.click();
     cephPoolProperties.addButton.click();
   });
