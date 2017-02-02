@@ -19,6 +19,8 @@ Version 2.0.18, (not released yet):
   package (OP-1820)
 * Installation: Added missing configuration entries to the SUSE sysconfig
   file (PR#576)
+* Installation: Make oaconfig respect the username and database name stored in
+  database.ini to create/connect to a database (PR#599) 
 * Packaging: Added the ability to add mercurial tags to a repository when
   creating a tarball using make_dist.py (OP-1374)
 * Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
