@@ -30,7 +30,6 @@ describe('Pagination', function(){
     helpers.login();
     browser.setLocation('cmdlogs');
     browser.sleep(400);
-
   });
 
   beforeEach(function(){

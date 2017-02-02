@@ -1,10 +1,6 @@
 var helpers = require('../../common.js');
 
 describe('CommandLogs', function(){
-
-  var systemItem = element(by.css('ul .tc_menuitem_system'));
-  var cmdLogItem = systemItem.element(by.css('ul .tc_submenuitem_system_cmdlogs > a'));
-  systemItem = systemItem.all(by.css(' a')).first();
   var volumename = 'protractor_cmdlog_vol';
   var volume = element(by.cssContainingText('tr', volumename));
   var searchField = element(by.model('filterConfig.search'));
@@ -14,9 +10,7 @@ describe('CommandLogs', function(){
     //create a volume to check the lvcreate log entry
     helpers.create_volume(volumename, "lun");
     browser.sleep(400);
-    systemItem.click();
-    browser.sleep(400);
-    cmdLogItem.click();
+    browser.setLocation('cmdlogs');
     browser.sleep(400);
   });
 
