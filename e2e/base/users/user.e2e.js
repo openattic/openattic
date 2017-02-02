@@ -9,10 +9,8 @@ describe('Should add an user', function(){
     firstname: 'Herp',
     lastname: 'Derp',
     email: 'herp.derp@openattic.org'
-  }
+  };
   var user = element(by.cssContainingText('tr', testUser.username));
-  var systemItem = element(by.css('ul .tc_menuitem_system'));
-  var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
   var correctInput = element(by.css('.tc_correctInput'));
   var logout = element(by.css('.tc_logout a'));
   var addBtn = element(by.css('.tc_addUser'));
@@ -20,8 +18,7 @@ describe('Should add an user', function(){
 
   beforeAll(function(){
     helpers.login();
-    systemItem.click();
-    usersItem.click();
+    browser.setLocation('users');
   });
 
   it('should create an user', function(){
@@ -80,10 +77,7 @@ describe('Should add an user', function(){
   });
 
   it('should display an error message if one tries to add an user with already taken username', function(){
-    systemItem.click();
-    browser.sleep(400);
-    usersItem.click();
-    browser.sleep(400);
+
     addBtn.click();
     browser.sleep(400);
     element(by.model('user.username')).sendKeys(testUser.username);
@@ -104,13 +98,6 @@ describe('Should add an user', function(){
   });
 
   it('should delete the "protractor_test_user"', function(){
-    element.all(by.model('username')).sendKeys('openattic');
-    element.all(by.model('password')).sendKeys('openattic');
-    element.all(by.css('input[type="submit"]')).click();
-    systemItem.click();
-    browser.sleep(400);
-    usersItem.click();
-    browser.sleep(400);
     user.click();
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();
