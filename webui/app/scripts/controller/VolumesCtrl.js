@@ -89,13 +89,13 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
         name: "iSCSI/FC"
       },
       storage: {
-        show: "selection.item.id",
+        show: "selection.item",
         state: "volumes.detail.storage",
         class: "tc_storageTab",
         name: "Storage"
       },
       snapshots: {
-        show: "selection.item.id",
+        show: "selection.item",
         state: "volumes.detail.snapshots",
         class: "tc_snapshotTab",
         name: "Snapshots"
