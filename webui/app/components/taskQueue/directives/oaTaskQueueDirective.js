@@ -86,7 +86,7 @@ app.directive("oaTaskQueue", function () {
           $scope.taskOverview = ov;
           ov.failed = tasks.Exception.length + tasks.Aborted.length;
           if (ov.failed) {
-            ov.icon = "fa-warning text-warning";
+            ov.icon = "fa-warning icon-warning";
           }
           $scope.taskTimeout = $interval($scope.updateTaskOverview, globalConfig.GUI.defaultTaskReloadTime, 1);
         });

@@ -20,11 +20,11 @@
             <p ng-show="tasks.length > 1" class="tc_delete_multiple">
                 You are about to delete {{::tasks.length}} tasks.
             </p>
-            <p class="text-danger tc_run_warn" ng-show="tasks[0].status === 'Running' || task[0].status === 'Not Started'">
+            <p class="text-danger tc-run-warn" ng-show="isPendingTask(tasks[0])">
                 If you delete running tasks, it will abort the execution and won't roll back what has been done so far!
             </p>
             <div ng-show="tasks.length > 1">
-                <uib-accordion>
+                <uib-accordion class="tc-tasks-to-delete">
                     <div ng-hide="waiting" uib-accordion-group class="panel-default modal-scroll" is-open="status.open">
                         <uib-accordion-heading>
                             Tasks to delete ({{::tasks.length}}) <i class="pull-right glyphicon"
@@ -62,7 +62,7 @@
         </div>
 
         <div ng-show="!waiting && pendingDeletionFailure.length > 0">
-            <uib-accordion>
+            <uib-accordion class="tc-moved-tasks">
                 <div ng-hide="waiting" uib-accordion-group class="panel-warning modal-scroll" is-open="true">
                     <uib-accordion-heading>
                         Couldn't delete the following {{pendingDeletionFailure.length}} Tasks

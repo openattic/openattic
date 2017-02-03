@@ -60,7 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="task in tab.pageData" ng-class="{ info: isTaskSelected(task) }">
+                            <tr ng-repeat="task in tab.pageData track by task.id" ng-class="{ info: isTaskSelected(task) }">
                                 <td class="oadatatablecheckbox">
                                     <input class="tc_checkboxes" type="checkbox" ng-checked="isTaskSelected(task)"
                                            ng-click="toggleTaskSelection(task, $event)"/>

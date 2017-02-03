@@ -44,6 +44,14 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
   };
 
   /**
+   * To detect a pending task.
+   * @return {boolean}
+   */
+  $scope.isPendingTask = function (task) {
+    return pending.indexOf(task.status) > -1;
+  };
+
+  /**
    * Deletes all tasks sequentially.
    * Checks the status of all pending task just before the deletion, if
    * the task isn't running anymore at that point, it won't be deleted.
@@ -62,11 +70,11 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
       }
       task = taskEntry[1];
       $scope.finishedTasks++;
-      if (pending.indexOf(task.status) > -1) {
+      if ($scope.isPendingTask(task)) {
         taskQueueService.get({id: task.id})
           .$promise
           .then(function (res) {
-            if (pending.indexOf(res.status) > -1) {
+            if ($scope.isPendingTask(res)) {
               $scope.taskDelete(task, entries);
             } else {
               $scope.pendingDeletionFailure.push([task, res]);
