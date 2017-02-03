@@ -53,6 +53,9 @@
           description: {
             name: 'Name'
           },
+          status: {
+            name: 'Reason'
+          },
           created: {
             name: 'Created'
           },
@@ -131,7 +134,7 @@
       multiDelete: 'You are about to delete multiple tasks.'
     },
     element: {
-      warning: element(by.className('tc_run_warn')),
+      warning: element(by.className('tc-run-warn')),
       singleDelete: element(by.className('tc_delete_one')),
       multiDelete: element(by.className('tc_delete_multiple')),
       inputField: element(by.model('input.enteredName')),
@@ -182,8 +185,48 @@
     self.expectDefaultModalElements(false);
   };
 
+  /*
+   * Will delete all tasks.
+   * Expecting the dialog to be closed.
+   */
+  self.deleteAllTasks = function(){
+    self.open();
+    Object.keys(self.dialog.tabs).forEach(function(tabName){ // => [pending, failed, finished]
+      var elements = self.dialog.tabs[tabName].elements;
+      self.changeTab(tabName);
+      elements.listing.isDisplayed().then(function(displayed){
+        if(displayed){ // If at least one task is there the listing is shown.
+          self.deleteTasks(tabName);
+        }
+      });
+    });
+    self.close();
+  };
+
+  /**
+   * Validates the text shown by the tab when you open the task queue.
+   * Expecting the dialog to be closed.
+   * @param {string} tab - Which tab to be expect.
+   * @param {string} tabText - Which text will be expected in the label.
+   */
+  self.validateTabName = function(tabName, tabText){
+    self.open();
+    expect(self.dialog.tabs[tabName].elements.tab.getText()).toBe(tabText);
+    self.close();
+  };
+
+  /**
+   * Validates the text shown by the task queue directive in the header of oa.
+   * Expecting the dialog to be closed.
+   * @param {string} text - Which text will be expected.
+   */
+  self.validateTaskText = function(text){
+    expect(self.taskQueue.getText()).toBe(text);
+  };
+
   /**
    * Waits for all pending tasks to finish, use it with care because it's recursive.
+   * Expecting the dialog to be closed.
    * @param {int} [depth] - Given by the recursive call.
    */
   self.waitForPendingTasks = function(depth){
@@ -207,16 +250,20 @@
    * Triggers an API-Call to create a test task with a specified time.
    * It executes an XMLHttpRequest to the api with the login data provided by configs.js.
    * @param {int} times - One round takes around 1 1/2 seconds.
+   * @param {int} [quantity] - How many task should be created..
    */
-  self.createTask = function(times){
-    browser.executeScript(function(times, configs){
-      var xhr = new XMLHttpRequest();
-      var url = configs.url.split('/');
-      url = url[0] + '//' + configs.username + ':' + configs.password + '@' + url[2];
-      xhr.open('post', url + '/openattic/api/taskqueue/test_task', true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.send(JSON.stringify({times: times}));
-    }, times, helpers.configs);
+  self.createTask = function(times, quantity){
+    quantity = quantity || 1;
+    for(var x = 0; x < quantity; x++){
+      browser.executeScript(function(times, configs){
+        var xhr = new XMLHttpRequest();
+        var url = configs.url.split('/');
+        url = url[0] + '//' + configs.username + ':' + configs.password + '@' + url[2];
+        xhr.open('post', url + '/openattic/api/taskqueue/test_task', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({times: times}));
+      }, times, helpers.configs);
+    }
     browser.sleep(helpers.configs.sleep);
   };
 
@@ -226,6 +273,7 @@
    * @param {String} [taskName] - Name of the task to delete.
    */
   self.deleteTasks = function(tabName, taskName){
+    self.changeTab(tabName);
     var deleteBtn = self.dialog.tabs[tabName].elements.deleteBtn;
     expect(deleteBtn.isEnabled()).toBe(false);
     if(taskName){ // If a singel deletion takes place.
@@ -236,16 +284,21 @@
       self.dialog.tabs[tabName].elements.selectAll.click();
     }
     expect(deleteBtn.isEnabled()).toBe(true);
+    var itemLength = 1;
+    self.dialog.tabs.pending.elements.tab.getText().then(function(s){
+      itemLength = parseInt(s.match(/[0-9]+/)[0], 10);
+    });
     deleteBtn.click();
-    self.handleDeleteForm(tabName);
+    self.handleDeleteForm(tabName, itemLength);
   };
 
   /**
    * Is used to determine if everything is alright while deleting.
    * You should't call self.function from outside.
-   * @param {String} tab - Name of the current tab.
+   * @param {String} tabName - Name of the current tab.
+   * @param {String} itemLength - Count of how many items being deleted.
    */
-  self.handleDeleteForm = function(tab){
+  self.handleDeleteForm = function(tabName, itemLength){
     var dialog = self.deletionDialog;
     var elements = dialog.element;
     var warning = elements.warning;
@@ -253,7 +306,8 @@
     var multiDelete = elements.multiDelete;
     var inputField = elements.inputField;
     var confirmBtn = elements.confirmBtn;
-    var showWarning = tab === 'pending';
+    var showWarning = tabName === 'pending';
+    var items = 1;
     expect(warning.isDisplayed()).toBe(showWarning); // Should only show the warning if you want to delete a pending task.
     if(showWarning){
       expect(warning.getText()).toBe(dialog.text.warning);
@@ -261,6 +315,9 @@
     multiDelete.isDisplayed().then(function(displayed){ // If you delete multiple tasks you the single deletion can't be shown and vice versa.
       expect(singleDelete.isDisplayed()).toBe(!displayed);
     });
+    if(itemLength > 1){
+      expect($$('uib-accordion.tc-tasks-to-delete ul > li').count()).toBe(itemLength);
+    }
     expect(inputField.isDisplayed()).toBe(true);
     inputField.sendKeys('yes');
     expect(confirmBtn.isDisplayed()).toBe(true);
