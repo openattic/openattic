@@ -67,13 +67,13 @@
                 </div>
             </td>
             <td ng-show="columns['Status']"><i class="fa" ng-class="{
-                            'fa-question':             row.status.status == '',
-                            'fa-check':                row.status.status == 'good',
-                            'fa-exclamation-triangle': row.status.status == 'warn',
-                            'fa-bomb':                 row.status.status == 'crit',
-                            'fa-chain-broken':         row.status.status == 'fail',
-                            'fa-lock':                 row.status.status == 'locked'
-                            }"></i></td>
+                'fa-question':                          row.status.status == '',
+                'fa-check':                             row.status.status == 'good',
+                'fa-exclamation-triangle icon-warning': row.status.status == 'warn',
+                'fa-bomb icon-danger':                  row.status.status == 'crit',
+                'fa-chain-broken icon-danger':          row.status.status == 'fail',
+                'fa-lock':                              row.status.status == 'locked'
+                }" uib-tooltip="{{row.status.status | statusText}}"></i></td>
             <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
             <td ng-show="columns['Host']" ng-bind="row.host.title"></td>
         </tr>
