@@ -528,7 +528,7 @@ systemctl enable postgresql
 systemctl start postgresql
 
 %postun pgsql
-if [$1 == 0] ; then
+if [ $1 -eq 0 ] ; then
     echo "Note: removing this package does not delete the"
     echo "corresponding PostgreSQL database by default."
     echo "If you want to drop the openATTIC database and"
