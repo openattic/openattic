@@ -25,6 +25,8 @@ Version 2.0.18, (not released yet):
   database.ini to create/connect to a database (PR#599) 
 * Packaging: Added the ability to add mercurial tags to a repository when
   creating a tarball using make_dist.py (OP-1374)
+* Packaging: Enable to use suffixes for the tarball creation using
+  make_dist.py (OP-1875)
 * Packaging: Confusing message about how to delete the openATTIC database is
   no longer shown when updating the openattic-pgsql package (OP-1537)
 * Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
