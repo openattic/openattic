@@ -6,6 +6,8 @@ Version 2.0.18, (not released yet):
 
 * WebUI: Show the openATTIC version number on each node (OP-1619)
 * WebUI: Removed not implemented widgets (OP-1191)
+* WebUI: Colorize the disk/pool/volume status icons depending on their
+  classification. (OP-1891)
 * Backend/QA: Added timestamps to verbose output to map the testcase and to
   the related openattic.log file entry (OP-1841)
 * Documentation: Added Ubuntu Xenial to the list of distributions provided by
