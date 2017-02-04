@@ -15,7 +15,8 @@
 """Usage:
     make_dist.py create (release|snapshot) [--revision=<revision>]
         [--source=<source>] [--destination=<destination>]
-        [--adapt-debian-changelog] [--push-changes] [--tag] [-v|-q|-s]
+        [--adapt-debian-changelog] [--push-changes] [--tag]
+        [--suffix=<suffix>] [-v|-q|-s]
     make_dist.py cache push
     make_dist.py (help|-h|--help)
 
@@ -105,6 +106,13 @@ Options:
         aware of the fact that the ability to add tags is supposed to be used
         on a release. This enables the automation of a release, thus it's not
         allowed to create tags which would create additional heads.
+
+    --suffix=<suffix>
+
+        If provided, the suffix will be appended to the resulting tarball
+        filename as well as the directory name that the tarball contains. It
+        will be appended to the basename "openattic" but before any version
+        information to maintain compatibility with `debuild`.
 
     -v
 
@@ -527,7 +535,7 @@ class DistBuilder(object):
 
         return tag in matches if matches else False
 
-    def _get_build_basename(self, channel, version):
+    def _get_build_basename(self, channel, version, suffix=''):
         """Return the base name for the given revision.
 
         Depending on the channel, this may either like `openattic-2.0.4` or
@@ -539,7 +547,7 @@ class DistBuilder(object):
         """
         assert channel in ('release', 'snapshot')
 
-        build_basename = 'openattic-{}'.format(version)
+        build_basename = 'openattic{}-{}'.format(suffix, version)
         build_basename += '~' + self._datestring if channel == 'snapshot' else ''
 
         return build_basename
@@ -716,7 +724,7 @@ class DistBuilder(object):
             repo_updated = True
 
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
-        build_basename = self._get_build_basename(channel, version)
+        build_basename = self._get_build_basename(channel, version, self._args['--suffix'])
 
         debchange_installed = bool(find_executable('debchange'))
         enable_debchange = False
