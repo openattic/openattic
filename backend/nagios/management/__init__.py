@@ -34,7 +34,8 @@ def create_nagios(**kwargs):
     nagios.restart_service()
 
     for servstate in Service.nagstate["servicestatus"]:
-        if servstate["service_description"].startswith("Check Ceph"):
+        if servstate["service_description"].startswith("Check Ceph") or \
+           servstate['service_description'] == 'openATTIC RPCd':
             continue
 
         cmdargs = servstate["check_command"].split('!')
