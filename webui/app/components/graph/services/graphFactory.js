@@ -41,8 +41,8 @@ app.service("graphFactory", function (graphConfigService, graphOptionsService) {
    * @param {Object} graphs - looks like this:
    *    {
    *      graph1: {
-   *        name: "name of the graph", // needed
-   *        bindings: ["array_of", "api_attribute_names"], // needed
+   *        name: "name of the graph", // required
+   *        bindings: ["array_of", "api_attribute_names"], // required
    *        yLabel: "y axis label name",
    *        xLabel: "x axis label name",
    *        tickFormat: function (value) {

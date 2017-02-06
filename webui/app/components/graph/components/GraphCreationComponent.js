@@ -80,7 +80,7 @@ app.component("graphCreationComponent", {
         .catch(function (err) {
           if ("detail" in err.data) {
             toasty.error({
-              title: "Error " + err.status + " then loading performance data",
+              title: "Error " + err.status + " when loading performance data",
               msg: err.data.detail
             });
           }

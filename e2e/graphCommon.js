@@ -3,8 +3,8 @@
 (function(){
   module.exports = {
     /*
-     * Use this function to run diffrent tests on graphs that were created by the use of the graph creation component.
-     * It will run the follwing tests with help of the given configuration:
+     * Use this function to run different tests on graphs that were created by the use of the graph creation component.
+     * It will run the following tests with help of the given configuration:
      *  - Count all graphs.
      *  - Compare the graph positions of each graph.
      *  - Compare the graph title of each graph.
