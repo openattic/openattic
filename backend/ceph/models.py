@@ -401,40 +401,42 @@ class CephPool(NodbModel, RadosMixin):
                     return (1 if val is None else -1), obj  # move to start or end.
                 return 0, obj
 
-            for key, value in sorted(diff.items(), key=schwartzian_transform):
-                if key == 'pg_num':
-                    if not insert:
-                        api.osd_pool_set(self.name, "pg_num", value,
-                                         undo_previous_value=original.pg_num)
-                        api.osd_pool_set(self.name, "pgp_num", value,
-                                         undo_previous_value=original.pg_num)
-                elif key == 'cache_mode':
-                    api.osd_tier_cache_mode(self.name, value,
-                                            undo_previous_mode=original.cache_mode)
-                elif key == 'tier_of_id':
-                    if self.tier_of is None:
-                        tier_of_target = original.tier_of
-                        api.osd_tier_remove(tier_of_target.name, self.name)
+            if not insert:
+                for key, value in sorted(diff.items(), key=schwartzian_transform):
+                    if key == 'pg_num':
+                        if not insert:
+                            api.osd_pool_set(self.name, "pg_num", value,
+                                             undo_previous_value=original.pg_num)
+                            api.osd_pool_set(self.name, "pgp_num", value,
+                                             undo_previous_value=original.pg_num)
+                    elif key == 'cache_mode':
+                        api.osd_tier_cache_mode(self.name, value,
+                                                undo_previous_mode=original.cache_mode)
+                    elif key == 'tier_of_id':
+                        if self.tier_of is None:
+                            tier_of_target = original.tier_of
+                            api.osd_tier_remove(tier_of_target.name, self.name)
+                        else:
+                            tier_of_target = self.tier_of
+                            api.osd_tier_add(tier_of_target.name, self.name)
+                    elif key == 'read_tier_id':
+                        if self.read_tier is None:
+                            read_tier_target = original.read_tier
+                            api.osd_tier_remove_overlay(self.name,
+                                                        undo_previous_overlay=read_tier_target.name)
+                        else:
+                            read_tier_target = self.read_tier
+                            api.osd_tier_set_overlay(self.name, read_tier_target.name)
+                    elif self.type == 'replicated' and key not in ['name']:
+                        api.osd_pool_set(self.name, key, value,
+                                         undo_previous_value=getattr(original, key))
+                    elif self.type == 'erasure' and key not in ['name', 'size', 'min_size']:
+                        api.osd_pool_set(self.name, key, value,
+                                         undo_previous_value=getattr(original, key))
                     else:
-                        tier_of_target = self.tier_of
-                        api.osd_tier_add(tier_of_target.name, self.name)
-                elif key == 'read_tier_id':
-                    if self.read_tier is None:
-                        read_tier_target = original.read_tier
-                        api.osd_tier_remove_overlay(self.name,
-                                                    undo_previous_overlay=read_tier_target.name)
-                    else:
-                        read_tier_target = self.read_tier
-                        api.osd_tier_set_overlay(self.name, read_tier_target.name)
-                elif self.type == 'replicated' and key not in ['name']:
-                    api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
-                                                                                        key))
-                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size']:
-                    api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
-                                                                                        key))
-                else:
-                    logger.warning('Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not '
-                                   'supported'.format(key, value, self.id, self.name))
+                        logger.warning(
+                            'Tried to set "{}" to "{}" on pool "{}" aka "{}", which is not '
+                            'supported'.format(key, value, self.id, self.name))
 
             super(CephPool, self).save(*args, **kwargs)
             self._update_nagios_configs()
