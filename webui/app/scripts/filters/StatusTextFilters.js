@@ -37,6 +37,7 @@ app.filter("statusText", function () {
    */
   return function (value) {
     var status = {
+      '': 'Unknown',
       'good': 'Good',
       'warn': 'Warning',
       'crit': 'Critical',
