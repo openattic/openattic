@@ -349,7 +349,7 @@ app.directive("hostForm", function () {
        * @return {string} to bind as html
        */
       $scope.getHelpText = function (format, example) {
-        if (!angular.isString(format) || format === "all") {
+        if (!angular.isString(format) || ["all", "exists"].indexOf(format) > -1) {
           return;
         }
         var validation = $scope.validationText.format[format];
