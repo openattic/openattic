@@ -65,12 +65,12 @@ class SystemD(BasePlugin):
             try:
                 fd = os.open(device, os.O_RDWR | os.O_EXCL)
             except OSError:
-                sleep(0.1)
+                sleep(1)
             else:
                 os.close(fd)
                 return
         import errno
-        raise OSError(errno.EBUSY, 'Device or resource busy', str(device))
+        raise OSError(errno.EBUSY, 'Device or resource busy', device)
 
     @deferredmethod(in_signature="sb")
     def up(self, resource, stacked, sender):
