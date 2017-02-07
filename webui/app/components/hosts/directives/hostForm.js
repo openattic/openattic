@@ -101,7 +101,11 @@ app.directive("hostForm", function () {
             notation: "naa.${16 or 32 characters long hexadecimal number}"
           }
         },
-        exists: "This WWN already exists, please choose another one."
+        exists: function (share) {
+          if (angular.isString(share)) {
+            return "This WWN already exists, please choose another one.".replace("WWN", share.toUpperCase());
+          }
+        }
       };
       $scope.wwns = [];
 
@@ -253,62 +257,73 @@ app.directive("hostForm", function () {
         });
       };
 
+      /**
+       * Will validate if a typed share name is valid or not.
+       *
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} tag.text - Text of the tag field.
+       * @param {string} type - Which share type is used.
+       * @return {boolean}
+       */
       $scope.validShareName = function (tag, type) {
         $scope.wwn[type].current = $scope.validWwn(tag, type);
-        $scope.wwn[type].valid = typeof $scope.wwn[type].current !== "string";
-        if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) !== -1) {
-          $scope.wwn[type].current = "exists";
+        $scope.wwn[type].valid = !angular.isString($scope.wwn[type].current);
+        if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) > -1) {
+          $scope.wwn[type].current = ["exists", $scope.wwn[type].current.format];
           $scope.wwn[type].valid = false;
         }
         return $scope.wwn[type].valid;
       };
 
       /**
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} format - Format of the share.
+       * @param {boolean} valid - Validation condition.
+       * @return {string|object} format code or tag object with format code
+       */
+      var validateShare = function (tag, format, valid) {
+        tag.format = format;
+        return valid ? tag : format;
+      };
+
+      /**
        * Validates the WWN that was typed.
-       * @param {object} tag
-       * @param {string} type
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} tag.text - Text of the tag field.
+       * @param {string} type - Which share type is used.
        * @return {string|object} error code or tag object
        */
       $scope.validWwn = function (tag, type) {
         var wwn = tag.text;
         var usage = $scope.wwn[type].usage;
-        for (var share in usage) {
-          switch (usage[share]) {
+        for (var i in usage) {
+          var share = usage[i];
+          switch (share) {
             case "mac":
               if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
-                if (wwn.match(/^[a-fA-F0-9:]*$/)) {
-                  wwn = wwn.replace(/:/g, "");
-                  if (wwn.length === 16) {
-                    tag.text = wwn.match(/.{2}/g).join(":");
-                    return tag;
-                  }
-                }
-                return "mac";
+                wwn = wwn.replace(/:/g, "");
+                tag.text = wwn.match(/.{2}/g).join(":");
+                return validateShare(tag, share,
+                  wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
               }
               break;
             case "iqn":
-              if (wwn.indexOf("iqn") === 0) {
-                if (wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/)) {
-                  return tag;
-                }
-                return "iqn";
+              if (wwn.indexOf(share) === 0) {
+                return validateShare(tag, share,
+                  wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
               }
               break;
             case "eui":
-              if (wwn.indexOf("eui") === 0) {
-                if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
-                  return tag;
-                }
-                return "eui";
+              if (wwn.indexOf(share) === 0) {
+                return validateShare(tag, share,
+                  wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
               }
               break;
             case "naa":
-              if (wwn.indexOf("naa") === 0) {
+              if (wwn.indexOf(share) === 0) {
                 var ident = wwn.substr(4);
-                if (wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
-                  return tag;
-                }
-                return "naa";
+                return validateShare(tag, share,
+                  wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
               }
               break;
           }
@@ -349,7 +364,7 @@ app.directive("hostForm", function () {
        * @return {string} to bind as html
        */
       $scope.getHelpText = function (format, example) {
-        if (!angular.isString(format) || ["all", "exists"].indexOf(format) > -1) {
+        if (!angular.isString(format) || format === "all") {
           return;
         }
         var validation = $scope.validationText.format[format];

@@ -51,7 +51,7 @@
                                     <span ng-bind-html="getHelpText(format)"></span>
                                 </span>
                             </p>
-                            <p ng-show="wwn[key].current === 'exists'" ng-bind="validationText.exists"></p>
+                            <p ng-show="wwn[key].current[0] === 'exists'" ng-bind="validationText.exists(wwn[key].current[1])"></p>
                         </div>
                     </div>
                 </div>
