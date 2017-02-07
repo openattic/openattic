@@ -348,12 +348,17 @@ class Endpoint(models.Model):
 
     def install(self, init_primary):
         self.connection.storageobj.lock()
+        # Load the kernel module.
         self.connection.drbd.modprobe()
+        # Write the DRBD configuration file.
         self.connection.drbd.conf_write(self.connection.name)
-        self.connection.drbd.createmd(self.connection.name, False)
+        # Wait for the underlying device to become ready.
         self.connection.drbd.wait_for_device(self.volume.volume.path)
+        # Create the DRBD meta data.
+        self.connection.drbd.createmd(self.connection.name, False)
+        # Bring up the DRBD resource.
         self.connection.drbd.up(self.connection.name, False)
-
+        # Mark the DRBD resource as primary if necessary.
         if init_primary:
             self.connection.drbd.primary_overwrite(self.connection.name, False)
 
