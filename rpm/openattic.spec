@@ -530,15 +530,18 @@ systemctl enable postgresql
 systemctl start postgresql
 
 %postun pgsql
-# Datenbank drop
-echo "You need to drop the openattic database & user"
-echo "run the following commands as root"
-echo ""
-echo "su - postgres -c psql"
-echo "postgres=# drop database openattic"
-echo "postgres=# drop user openattic"
-echo "postgres=# \q"
-echo ""
+if [ $1 -eq 0 ] ; then
+    echo "Note: removing this package does not delete the"
+    echo "corresponding PostgreSQL database by default."
+    echo "If you want to drop the openATTIC database and"
+    echo "database user, run the following commands as root:"
+    echo ""
+    echo "su - postgres -c psql"
+    echo "postgres=# drop database openattic"
+    echo "postgres=# drop user openattic"
+    echo "postgres=# \q"
+    echo ""
+fi
 
 %files
 %defattr(-,root,root,-)
