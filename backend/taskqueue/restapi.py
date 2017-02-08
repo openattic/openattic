@@ -20,7 +20,7 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from rest.utilities import get_request_query_params
+from rest.utilities import get_request_query_params, get_request_data
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
@@ -52,6 +52,10 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         # Inspired by rest_framework.mixins.UpdateModelMixin
         self.object = self.get_object()
+        if self.object.status in [TaskQueue.STATUS_FINISHED,
+                                  TaskQueue.STATUS_EXCEPTION,
+                                  TaskQueue.STATUS_ABORTED]:
+            return super(TaskQueueViewSet, self).destroy(request, *args, **kwargs)
 
         self.object.finish_task(None, TaskQueue.STATUS_ABORTED)
 
@@ -63,7 +67,7 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
         if not settings.DEBUG:
             return Response(status=status.HTTP_404_NOT_FOUND)
         from taskqueue.tests import wait
-        times = get_request_query_params(request).get('times', 100)
+        times = get_request_data(request)['times']
         task = wait.delay(times)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -75,21 +75,28 @@ Then, start your browser an open the URL as shown in the last lines of the log o
 Choosing a different Linux distribution
 ---------------------------------------
 
-Per default, the VM is based on OpenSUSE, but developing |oA| based on a ``debian/jessie64``
-`Vagrant box <https://www.vagrantup.com/docs/boxes.html>`_ is also supported, by setting
-the environment variable ``DISTRO``. To run a Debian VM, run::
+Per default, the VM is based on OpenSUSE, but developing |oA| based on an other
+`Vagrant box <https://www.vagrantup.com/docs/boxes.html>`_ is also possible by setting
+the environment variable ``DISTRO``. These distributions are available:
 
-    DISTRO=debian vagrant up
+* ``DISTRO=jessie`` (for Debian 8 "Jessie")
+* ``DISTRO=trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
+* ``DISTRO=xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
+* ``DISTRO=malachite`` (for openSUSE 42.1 "Malachite")
+
+For example, to run a Xenial VM, run::
+
+    DISTRO=xenial vagrant up
 
 or using KVM/libvirt::
 
-    DISTRO=debian vagrant up --provider libvirt
+    DISTRO=xenial vagrant up --provider libvirt
 
 .. note::
     On a Windows host system using Windows Powershell, the environment variable can be
     defined as follows::
 
-        $env:DISTRO="debian"
+        $env:DISTRO="xenial"
         vagrant up
 
 Debugging |oA| with PyCharm Professional
@@ -104,13 +111,32 @@ pointing to ``/home/vagrant/env/bin/python`` on your VM. Then, add
 a few PyCharm extensions, like a Django support or the remote interpreter tools.
 
 Finally, add the |oA| Django Server as a Pycharm `Django server` in the `Run Configurations` using
-your configured remote interpreter.
+your configured remote interpreter and host 0.0.0.0.
 
 Debugging |oA| with PyCharm Community
 -------------------------------------
 
 Please follow the instructions from the `official documentation <https://www.jetbrains.com/help/pycharm/2016.2/remote-debugging.html#6>`_
 
+Perform an |oA| Base Configuration
+----------------------------------
+
+It is not possible to execute ``oaconfig install`` in a Vagrant VM, you have to execute the
+following commands instead.
+
+.. code-block:: shell
+
+    . env/bin/activate
+    cd openattic/backend
+    which systemctl && sudo systemctl reload dbus || sudo service dbus reload
+    sudo /home/vagrant/env/bin/python /home/vagrant/openattic/backend/manage.py runsystemd &
+    python manage.py pre_install
+    python manage.py migrate
+    python manage.py loaddata */fixtures/initial_data.json
+    python manage.py createcachetable status_cache
+    python manage.py add-host
+    python manage.py makedefaultadmin
+    python manage.py post_install
 
 Troubleshooting
 ---------------

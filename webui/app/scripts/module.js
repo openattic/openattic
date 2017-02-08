@@ -42,17 +42,15 @@ angular.module("openattic", [
   "ui.sortable",
   "ui.tree",
   "ngStorage",
-  "openattic.extensions"
+  "openattic.core",
+  "openattic.extensions",
+  "openattic.local",
+  "openattic.ceph"
 ]);
 
 var app = angular.module("openattic");
 // Start configuration
-app.constant("RESPONSIVE", {
-  xs: 0,
-  sm: 768,
-  md: 992,
-  lg: 1200
-});
+
 // End configuration
 
 app.config(function ($httpProvider) {
@@ -60,9 +58,9 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, UserService) {
+app.run(function ($rootScope, usersService) {
   $rootScope.$on("$stateChangeSuccess", function () {
-    UserService.current().$promise.then(function () {
+    usersService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
     }).catch(function () {
       $rootScope.loggedIn = false;
