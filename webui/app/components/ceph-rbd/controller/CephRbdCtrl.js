@@ -64,10 +64,10 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
       cephRbdService
           .get({
-            id      : $scope.registry.selectedCluster.fsid,
-            page    : $scope.filterConfig.page + 1,
+            clusterId: $scope.registry.selectedCluster.fsid,
+            page: $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
-            search  : $scope.filterConfig.search,
+            search: $scope.filterConfig.search,
             ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
           })
           .$promise
