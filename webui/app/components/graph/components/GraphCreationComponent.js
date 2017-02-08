@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.graph");
 app.component("graphCreationComponent", {
-  templateUrl: "components/graph/templates/graphCreation.html",
+  templateUrl: "components/graph/templates/graph-creation.html",
   bindings: {
     /*
      *  config = {
