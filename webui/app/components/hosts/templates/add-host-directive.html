@@ -34,7 +34,7 @@
                      ng-class="{'has-error': hostForm[key].$invalid}" ng-show="type.check">
                     <label ng-class="config.class.label" class="control-label" for="data[key]" ng-bind="type.label"></label>
                     <div ng-class="config.class.field">
-                        <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid WWN"
+                        <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid {{getFormats(key)}}"
                                     ng-model="data[key]"
                                     add-on-space="true"
                                     on-tag-adding="validShareName($tag, key)"

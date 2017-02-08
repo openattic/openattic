@@ -357,6 +357,17 @@ app.directive("hostForm", function () {
         });
       };
 
+      /* Will return a readable String of the available formats.
+       * @param {string} type - Which share type is used.
+       * @return {string}
+       */
+      $scope.getFormats = function (type) {
+        return $scope.wwn[type].usage.reduce(function (last, current, index, usage) {
+          var seperator = index === usage.length - 1 ? " or " : ", ";
+          return last + seperator + current;
+        }).toUpperCase().replace("OR", "or");
+      };
+
       /**
        * Returns the right help text to the template.
        * @param {string} format of the WWN
