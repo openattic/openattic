@@ -212,22 +212,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         name: $scope.pool.name,
         pg_num: $scope.pool.pg_num,
         type: $scope.pool.type,
-        // Default values needed by the API - API update needed
-        // * Should not be needed at any time
-        crush_ruleset: 0,
-        size: 0,
-        // * Should not be needed here at all
-        quota_max_objects: 0,
-        quota_max_bytes: 0,
-        crash_replay_interval: 0,
-        cache_mode: "none",
-        tier_of: null,
-        write_tier: null,
-        read_tier: null,
-        target_max_bytes: 0,
-        hit_set_period: 0,
-        hit_set_count: 0,
-        // Cluster Definition
         id: $scope.clusterId
       };
       if (pool.type === "replicated") {
