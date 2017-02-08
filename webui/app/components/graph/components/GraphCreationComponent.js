@@ -36,9 +36,9 @@ app.component("graphCreationComponent", {
   bindings: {
     /*
      *  config = {
-     *    graphs: {...}, // Described in graphFactory.js. (needed)
+     *    graphs: {...}, // Described in graphFactory.js. (required)
      *    api: {
-     *      call: function () {}, // Function to call the api from the service object. (needed)
+     *      call: function () {}, // Function to call the api from the service object. (required)
      *      filterApi: function (selectedItem) { // Return object that the service function will filter.
      *        return {};
      *      },

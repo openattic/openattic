@@ -71,6 +71,7 @@ describe('should test the ceph rbd panel', function(){
   it('should have a statistic tab when selecting a rbd', function(){
     //choose first element in ceph rbd list
     element.all(by.binding('row.name')).get(0).click();
+    console.log('Wait one minute for nagios to create the graph data.');
     browser.sleep(60000); // Wait a minute for nagios to create the graph data.
     rbdProperties.statisticsTab.click();
     expect(browser.getCurrentUrl()).toContain('/ceph/rbds/statistics#more');
