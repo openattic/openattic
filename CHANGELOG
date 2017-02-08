@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* WebUI: Displays RBD utilization graphs in the RBD details view (OP-1592)
 * WebUI: Show the openATTIC version number on each node (OP-1619)
 * WebUI: Removed not implemented widgets (OP-1191)
 * WebUI: Colorize the disk/pool/volume status icons depending on their
