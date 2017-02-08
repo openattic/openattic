@@ -5,6 +5,8 @@
                 <h3 class="panel-title">Create Volume: {{volume.name}}</h3>
             </div>
             <div class="panel-body">
+                <volume-add-form volume-form="volumeForm" result="volume"></volume-add-form>
+                <!-- Not implemented yet.
                 <uib-accordion>
                     <uib-accordion-group is-open="accordionOpen.properties">
                         <uib-accordion-heading>
@@ -12,7 +14,6 @@
                             <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.properties,
                             'fa fa-angle-down': !accordionOpen.properties}"></i>
                         </uib-accordion-heading>
-                        <volume-add-form volume-form="volumeForm" result="volume"></volume-add-form>
                     </uib-accordion-group>
                     <uib-accordion-group is-open="accordionOpen.mirror" is-disabled="true">
                         <uib-accordion-heading>
@@ -42,6 +43,7 @@
                         </div>
                     </uib-accordion-group>
                 </uib-accordion>
+                -->
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">

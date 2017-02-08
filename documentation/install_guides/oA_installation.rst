@@ -12,12 +12,13 @@ or consult your hardware vendor for details.
 Installable packages of |oA| are currently available for the following Linux
 distributions:
 
-* Debian Linux 8 (Jessie)
+* Debian Linux 8 "Jessie"
 * Red Hat Enterprise Linux 7 (RHEL) and derivatives (CentOS 7, Oracle Linux 7
   or Scientific Linux 7)
 * openSUSE Leap 42.1, SUSE Linux Enterprise Server 12 (SLES12) (via the
   openSUSE Build Service)
-* Ubuntu Linux 14.04 LTS (Trusty)
+* Ubuntu 14.04 LTS "Trusty Thar"
+* Ubuntu 16.04 LTS "Xenial Xerus"
 
 .. note::
    |oA| has been designed to be installed on a 64-bit Linux operating system.
@@ -89,7 +90,7 @@ Basic Storage Configuration
 
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
 group or a ZFS zpool) for creating storage volumes. In the following chapters,
-we'll explain how create an LVM volume group or, alternatively, a ZFS zpool.
+we'll explain how to create an LVM volume group or, alternatively, a ZFS zpool.
 
 Configuring storage for |oA| in a reliable and performant way depends on a
 number of factors. See :ref:`storage recommendations` and :ref:`hardware
@@ -218,6 +219,7 @@ Replace the field ``<distribution>`` with your distribution's short codename:
 
 * ``jessie`` (for Debian 8 "Jessie")
 * ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
+* ``xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
 
 ::
 

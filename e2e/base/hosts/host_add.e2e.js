@@ -68,6 +68,21 @@ describe('Should add a host and attributes', function(){
     element(by.css('.tc_backButton')).click();
   });
 
+  ['Name', 'Primary IP', 'OA Version'].forEach(function(header){
+    it('should display the following table header: ' + header, function(){
+      expect(element(by.cssContainingText('th', header)).isDisplayed()).toBe(true);
+    });
+  });
+
+  it('should show the OA Version', function(){
+    var host = element.all(by.repeater('row in data.results')).filter(function(e){
+      return e.element(by.className('tc-oa-host-version')).getText().then(function(version){
+        return version.match(/^\d+\.\d+\.\d+$/);
+      });
+    }).first().click();
+    expect(element(by.binding('selection.item.oa_version.package.VERSION')).getText()).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+
   it('should show Name and IQN', function(){
     host.click();
     expect(element.all(by.binding('selection.item.name')).get(1).getText()).toEqual(hostnames[0]);

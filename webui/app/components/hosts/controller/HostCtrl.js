@@ -148,17 +148,14 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
 
   /**
    * Watches the selection to
-   * - set multiSelection and hasSelection
+   * - set multiSelection and singleSelection
    * - do a tab change or route back to the overview
    */
-  $scope.$watchCollection("selection", function (selection) {
-    var item = selection.item;
-    var items = selection.items;
+  $scope.$watchCollection("selection.items", function (items) {
+    $scope.multiSelection = items && items.length > 1;
+    $scope.singleSelection = items && items.length === 1;
 
-    $scope.multiSelection = Boolean(items) && items.length > 1;
-    $scope.hasSelection = Boolean(item);
-
-    if (item) {
+    if ($scope.singleSelection) {
       $scope.changeTab("hosts.detail.status");
     } else {
       $state.go("hosts");
@@ -170,33 +167,24 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
   };
 
   $scope.editAction = function () {
-    $state.go("hosts-edit", {host: $scope.selection.item.id});
+    $state.go("hosts-edit", {host: $scope.selection.items[0].id});
   };
 
   /**
-   * Calls deletionDialog with an available selection.
-   */
-  $scope.deleteAction = function () {
-    if (!$scope.hasSelection && !$scope.multiSelection) {
-      return;
-    }
-    var item = $scope.selection.item;
-    var items = $scope.selection.items;
-    $scope.deletionDialog(item ? item : items);
-  };
-
-  /**
-   * Opens the deletion dialog with the given selection.
+   * Opens the deletion dialog with all selected items.
    * It will reload the table then the dialog is closed.
    */
-  $scope.deletionDialog = function (selection) {
+  $scope.deleteAction = function () {
+    if (!$scope.singleSelection && !$scope.multiSelection) {
+      return;
+    }
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/hosts/templates/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
-        hostSelection: function () {
-          return selection;
+        hosts: function () {
+          return $scope.selection.items;
         }
       }
     });

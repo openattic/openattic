@@ -31,16 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.hosts");
-app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, hostSelection, toasty, $q) {
-  /**
-   * Sets the selection to variable name.
-   */
-  if ($.isArray(hostSelection)) {
-    $scope.hosts = hostSelection;
-  } else {
-    $scope.host = hostSelection;
-  }
-
+app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibModalInstance, hosts, toasty, $q) {
+  $scope.hosts = hosts;
   $scope.input = {
     enteredName: "",
     pattern: "yes"
@@ -51,9 +43,6 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstanc
    */
   $scope.delete = function () {
     var hosts = $scope.hosts;
-    if ($scope.host) {
-      hosts = [ $scope.host ];
-    }
     var requests = [];
     hosts.forEach(function (host) {
       var deferred = $q.defer();
@@ -64,8 +53,8 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstanc
       $uibModalInstance.close("deleted");
     }, function (error) {
       toasty.error({
-        title: "Failed to delete host",
-        msg: "Failed to delete host."
+        title: "Error " + error.status + " when deleting host" + hosts.length === 1 ? "" : "s",
+        msg: $filter("json")(error.data)
       });
       $uibModalInstance.close("deleted");
       throw error;
