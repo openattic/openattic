@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService, SizeParserService, $uibModalInstance,
+app.controller("VolumeResizeCtrl", function ($scope, VolumeService, poolsService, SizeParserService, $uibModalInstance,
     volume, toasty) {
   $scope.volume = volume;
   $scope.input = {
@@ -39,7 +39,7 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService,
     resizeForm: ""
   };
 
-  PoolService.get(volume.source_pool)
+  poolsService.get(volume.source_pool)
       .$promise
       .then(function (res) {
         $scope.pool = res;

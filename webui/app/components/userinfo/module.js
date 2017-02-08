@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.userinfo", []);
+angular.module("openattic.userinfo", [
+    "openattic.users"
+]);

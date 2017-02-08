@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("poolCheckingService", function (PoolService) {
+app.factory("poolCheckingService", function (poolsService) {
   var saved = {
     source: "",
     pool: "",
@@ -46,11 +46,16 @@ app.factory("poolCheckingService", function (PoolService) {
     if (angular.equals(saved.source, source)) {
       return saved;
     }
-    new PoolService.get(source).$promise.then(function (res) {
-      saved.source = source;
-      saved.pool = res.type;
-    });
+
+    poolsService.get(source)
+        .$promise
+        .then(function (res) {
+          saved.source = source;
+          saved.pool = res.type;
+        });
+
     return saved;
   }
+
   return {get: get};
 });

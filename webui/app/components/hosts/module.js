@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.hosts", []);
+angular.module("openattic.hosts", [
+  "openattic.tabView"
+]);
