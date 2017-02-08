@@ -49,13 +49,13 @@ var rbdCommons = function(){
     name: {
       name: 'Name',
       testClass: 'tc_rbd_name',
-      model: "rbd.name",
+      model: 'rbd.name',
       displayed: true
     },
     cluster: {
       name: 'Cluster',
       testClass: 'tc_cluster_selection',
-      model: "data.cluster",
+      model: 'data.cluster',
       displayed: true,
       items: {
         clusterSelection: 'tc_rbdClusterOption',
@@ -66,7 +66,7 @@ var rbdCommons = function(){
     pool: {
       name: 'Poolname',
       testClass: 'tc_pool_selection',
-      model: "data.pool",
+      model: 'data.pool',
       displayed: true,
       items: {
         poolSelection: 'tc_rbdPoolOption',
@@ -79,7 +79,7 @@ var rbdCommons = function(){
     size: {
       name: 'Size',
       testClass: 'tc_rbd_size',
-      model: "data.size",
+      model: 'data.size',
       displayed: true,
       items: {
         helpSize: 'tc_sizeRequired'
@@ -88,13 +88,13 @@ var rbdCommons = function(){
     expertSettings: {
       name: 'Expert Settings',
       testClass: 'tc_expertSettings',
-      model: "data.expert",
+      model: 'data.expert',
       displayed: true
     },
     objectSize: {
       name: 'Object size',
       testClass: 'tc_rbd_obj_size',
-      model: "data.obj_size",
+      model: 'data.obj_size',
       displayed: false,
       items: {
         helpSize: 'tc_objSizeRequired'
@@ -143,7 +143,7 @@ var rbdCommons = function(){
   this.isListInSelectBox = function(itemName){
     var item = element(by.model(self.formElements[itemName].model));
     item.click();
-    var listEntries = item.all(by.css("." + self.formElements[itemName].testClass + " option"));
+    var listEntries = item.all(by.css('.' + self.formElements[itemName].testClass + ' option'));
 
     expect(listEntries.count()).toBeGreaterThan(1);
   };
@@ -244,14 +244,20 @@ var rbdCommons = function(){
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
   };
 
-  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
-    rbdObjSize = rbdObjSize || "4.00 MiB";
+  this.fillForm = function(rbdName, size, rbdObjSize){
+    rbdObjSize = rbdObjSize || '4.00 MiB';
+    self.checkCheckboxToBe(self.expertSettings, true);
     self.name.clear();
     self.name.sendKeys(rbdName);
     self.size.clear();
-    self.size.sendKeys(rbdObjSize);
+    self.size.sendKeys(size);
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
+  };
+
+  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
+    rbdObjSize = rbdObjSize || '4.00 MiB';
+    self.fillForm(rbdName, rbdObjSize, rbdObjSize);
     element(by.className('tc_submitButton')).click();
     browser.sleep(helpers.configs.sleep);
 
