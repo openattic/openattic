@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* WebUI: Enabled multiple host deletion (OP-1816)
 * WebUI: Improve RBD creation error messages (OP-1527)
 * WebUI: Fixes WWN duplication error (OP-1842)
 * WebUI: Task-queue UI implementation (OP-1418)
