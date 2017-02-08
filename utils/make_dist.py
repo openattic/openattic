@@ -283,6 +283,8 @@ class DistBuilder(object):
         self._home_dir = os.environ['HOME']
         self._args = args if args else docopt(__doc__)
 
+        if not self._args['--suffix']:
+            self._args['--suffix'] = ''
         if self._args['--destination']:
             destination = os.path.expanduser(self._args['--destination'])
             self._destination_dir = os.path.abspath(destination)
