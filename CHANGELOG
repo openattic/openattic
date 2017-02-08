@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* WebUI: Fixes WWN duplication error (OP-1842)
 * WebUI: Task-queue UI implementation (OP-1418)
 * WebUI/QA: Tests for task-queue implementation (OP-1746)
 * Documentation: Documentation of background task and task-queue
