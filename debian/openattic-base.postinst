@@ -39,6 +39,12 @@ if [ "$1" = "configure" ] ; then
         invoke-rc.d --quiet dbus reload
     fi
 
+    if dpkg --compare-versions "$2" le "2.0.19"; then
+        # Reload systemd to let it know that openattic-rpcd.service has
+        # been removed.
+        which systemctl && systemctl daemon-reload
+    fi
+
     db_input high openattic-base/run-oaconfig-install || true
     db_go
     db_stop
