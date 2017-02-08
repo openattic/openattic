@@ -1,15 +1,8 @@
 var helpers = require('../../common.js');
 
 describe('CommandLogs', function(){
-  var volumename = 'protractor_cmdlog_vol';
-  var volume = element(by.cssContainingText('tr', volumename));
-  var searchField = element(by.model('filterConfig.search'));
-
   beforeAll(function(){
     helpers.login();
-    //create a volume to check the lvcreate log entry
-    helpers.create_volume(volumename, "lun");
-    browser.sleep(400);
     browser.setLocation('cmdlogs');
     browser.sleep(400);
   });
@@ -27,16 +20,7 @@ describe('CommandLogs', function(){
     expect(element(by.css('.tc_deleteBtn')).isDisplayed()).toBe(true);
   });
 
-  it('should contain the lvcreate log entry', function(){
-    searchField.click();
-    browser.sleep(400);
-    searchField.sendKeys(volumename);
-    browser.sleep(400);
-    expect(element(by.cssContainingText('tr', '"' + volumename + '" created')).isDisplayed()).toBe(true);
-  });
-
   afterAll(function(){
-    helpers.delete_volume(volume, volumename);
     console.log('cmdlogs -> cmdLogs.e2e.js');
   });
 });
