@@ -151,10 +151,9 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
    * - set multiSelection and singleSelection
    * - do a tab change or route back to the overview
    */
-  $scope.$watchCollection("selection", function (selection) {
-    var items = selection.items;
+  $scope.$watchCollection("selection.items", function (items) {
     $scope.multiSelection = items && items.length > 1;
-    $scope.singleSelection = selection.item && items && items.length === 1; // Item isn't changed as fast as items.
+    $scope.singleSelection = items && items.length === 1;
 
     if ($scope.singleSelection) {
       $scope.changeTab("hosts.detail.status");
@@ -168,7 +167,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
   };
 
   $scope.editAction = function () {
-    $state.go("hosts-edit", {host: $scope.selection.item.id});
+    $state.go("hosts-edit", {host: $scope.selection.items[0].id});
   };
 
   /**
