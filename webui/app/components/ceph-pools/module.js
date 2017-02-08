@@ -35,5 +35,6 @@ angular.module("openattic.cephPools", [
   "openattic.cephErasureCodeProfiles",
   "openattic.cephOsd",
   "openattic.graph",
-  "openattic.registry"
+  "openattic.registry",
+  "openattic.tabView"
 ]);

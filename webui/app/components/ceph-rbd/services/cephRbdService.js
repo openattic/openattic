@@ -47,6 +47,11 @@ app.factory("cephRbdService", function ($resource) {
     delete: {
       method: "DELETE",
       url: globalConfig.API.URL + "ceph/:clusterId/rbds/:pool/:name"
+    },
+    performancedata: {
+      method: "GET",
+      isArray: true,
+      url: globalConfig.API.URL + "ceph/:clusterId/rbds/:pool/:name/performancedata_rbd"
     }
   });
 });

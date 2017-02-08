@@ -4,7 +4,18 @@ openATTIC Changelog
 Version 2.0.18, (not released yet):
 -----------------------------------
 
+* WebUI: Improve RBD creation error messages (OP-1527)
+* WebUI: Fixes WWN duplication error (OP-1842)
+* WebUI: Task-queue UI implementation (OP-1418)
+* WebUI/QA: Tests for task-queue implementation (OP-1746)
+* Documentation: Documentation of background task and task-queue
+  usage (OP-1747)
+* WebUI: Fixes loading spinner disappearance problem (OP-1495)
+* WebUI: Displays RBD utilization graphs in the RBD details view (OP-1592)
+* WebUI: Show the openATTIC version number on each node (OP-1619)
 * WebUI: Removed not implemented widgets (OP-1191)
+* WebUI: Colorize the disk/pool/volume status icons depending on their
+  classification. (OP-1891)
 * Backend/QA: Added timestamps to verbose output to map the testcase and to
   the related openattic.log file entry (OP-1841)
 * Documentation: Added Ubuntu Xenial to the list of distributions provided by
@@ -18,9 +29,18 @@ Version 2.0.18, (not released yet):
   package (OP-1820)
 * Installation: Added missing configuration entries to the SUSE sysconfig
   file (PR#576)
+* Installation: Make oaconfig respect the username and database name stored in
+  database.ini to create/connect to a database (PR#599) 
 * Packaging: Added the ability to add mercurial tags to a repository when
   creating a tarball using make_dist.py (OP-1374)
+* Packaging: Enable to use suffixes for the tarball creation using
+  make_dist.py (OP-1875)
+* Packaging: Confusing message about how to delete the openATTIC database is
+  no longer shown when updating the openattic-pgsql package (OP-1537)
 * Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
+* Development: Reconfigure default gateway in Vagrant boxes to set the correct
+  primary interface during 'oaconfig install'. (OP-1874)
+* Documentation: Adapt Vagrant developer documentation.
 
 
 Version 2.0.17, 20. December 2016:

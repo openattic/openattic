@@ -36,5 +36,9 @@
             <dt>iSCSI IQNs:</dt>
             <dd ng-repeat="iscsiIqn in selection.item.iscsiIqn" ng-bind="iscsiIqn.text"></dd>
         </dl>
+        <dl class="dl-horizontal" ng-if="selection.item.oa_version">
+            <dt>OA Version:</dt>
+            <dd ng-bind="selection.item.oa_version.package.VERSION"></dd>
+        </dl>
     </div>
 </div>
