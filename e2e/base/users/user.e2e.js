@@ -73,11 +73,10 @@ describe('Should add an user', function(){
   //try to click something and expect that with a successful login the user should be able to click around
   it('should be able to click something now', function(){
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
-    expect(browser.getCurrentUrl()).toContain('/#/volumes');
+    expect(browser.getCurrentUrl()).toContain('/#/ceph/pools');
   });
 
   it('should display an error message if one tries to add an user with already taken username', function(){
-
     addBtn.click();
     browser.sleep(400);
     element(by.model('user.username')).sendKeys(testUser.username);
