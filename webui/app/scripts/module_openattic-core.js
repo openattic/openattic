@@ -42,5 +42,6 @@ angular.module("openattic.core", [
   "openattic.sizeparser",
   "openattic.tabView",
   "openattic.userinfo",
+  "openattic.taskQueue",
   "openattic.users"
 ]);
