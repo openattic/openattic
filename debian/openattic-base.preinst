@@ -11,8 +11,8 @@ case "$1" in
         adduser openattic www-data
         ;;
     upgrade)
-        # Stop the rpcd service if 2.0.18 is upgraded, it is removed with 2.0.19.
-        if dpkg --compare-versions "$2" le "2.0.18"; then
+        # Stop the rpcd service, it is removed with 2.0.19.
+        if dpkg --compare-versions "$2" le "2.0.19"; then
             which systemctl && systemctl stop openattic-rpcd.service || service /etc/init.d/openattic-rpcd stop
         fi
         ;;
