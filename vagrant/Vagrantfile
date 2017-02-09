@@ -5,6 +5,53 @@
 # For more information see https://github.com/vagrant-libvirt/vagrant-libvirt/issues/561
 # ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
 
+class NoDistributionSpecified < Vagrant::Errors::VagrantError
+    error_message "No distribution specified, use the DISTRO environment variable."
+end
+
+class UnknownDistributionSpecified < Vagrant::Errors::VagrantError
+    error_message "The specified distribution is not supported."
+end
+
+# Configuration map for all supported OS.
+distro_settings = {
+    'jessie' => {
+        box_name: 'debian/jessie64',
+        sata_controller_name: 'SATA Controller',
+        ip_addr: '192.168.10.101',
+        gateway: '192.168.10.1'
+    },
+    'trusty' => {
+        box_name: 'ubuntu/trusty64',
+        sata_controller_name: 'SATAController',
+        ip_addr: '192.168.10.102',
+        gateway: '192.168.10.1'
+    },
+    'xenial' => {
+        box_name: 'yk0/ubuntu-xenial',
+        sata_controller_name: 'SATA',
+        ip_addr: '192.168.10.103',
+        gateway: '192.168.10.1'
+    },
+    'malachite' => {
+        box_name: 'opensuse/openSUSE-42.1-x86_64',
+        sata_controller_name: 'SATA Controller',
+        ip_addr: '192.168.10.104',
+        gateway: '192.168.10.1'
+    }
+}
+
+# Get the distribution name to be used.
+distro = ENV['DISTRO']
+unless distro
+    #raise NoDistributionSpecified.new
+    # Set the default distribution to openSUSE.
+    distro = "malachite"
+end
+unless distro_settings.has_key? distro
+    raise UnknownDistributionSpecified
+end
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -14,17 +61,14 @@ Vagrant.configure(2) do |config|
     # For a complete reference, please see the online documentation at
     # https://docs.vagrantup.com.
 
-    # Every Vagrant development environment requires a box. You can search for
-    # boxes at https://atlas.hashicorp.com/search.
-    if ENV['DISTRO'] == 'debian'
-        config.vm.box = 'debian/jessie64' # should work, too!
-    elsif ENV['DISTRO'] == 'xenial'
-        config.vm.box = 'yk0/ubuntu-xenial'
-    elsif ENV['DISTRO'] == 'trusty'
-        config.vm.box = 'alxgrh/ubuntu-trusty-x86_64'
-    else
-        config.vm.box = 'opensuse/openSUSE-42.1-x86_64'
-    end
+    # Set the box to be used in the VM.
+    config.vm.box = distro_settings[distro][:box_name]
+
+    # Set the machine name.
+    config.vm.define "oa_#{distro}"
+
+    # Set the host name.
+    config.vm.hostname = "oa#{distro}"
 
     config.vm.provider :libvirt do |lv|
         # May be necessary to use 'qemu' here on some mainboards where 'kvm' doesn't work through a bug. 'qemu' seems to
@@ -46,7 +90,18 @@ Vagrant.configure(2) do |config|
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
     # Needs to be enabled for VirtualBox to be able to use NFS
-    config.vm.network 'private_network', ip: '192.168.10.101'
+    config.vm.network 'private_network', ip: distro_settings[distro][:ip_addr]
+
+    # Reconfigure default route, otherwise the NAT interface is used which
+    # is the default in a Vagrant box. This will lead into an incorrect primary
+    # interface configuration in oA. To prevent this, the Host-only adapter
+    # is configured as default route.
+    config.vm.provision "shell",
+        run: "always",
+        inline: "ip route flush 0/0"
+    config.vm.provision "shell",
+        run: "always",
+        inline: "route add default gw #{distro_settings[distro][:gateway]}"
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
@@ -66,6 +121,8 @@ Vagrant.configure(2) do |config|
     # Example for VirtualBox:
     #
     config.vm.provider :virtualbox do |vb|
+        # Rename the box.
+        vb.name = "oa_#{distro}_box"
         #   # Display the VirtualBox GUI when booting the machine
         #   vb.gui = true
         vb.memory = '2048'
@@ -109,13 +166,12 @@ Vagrant.configure(2) do |config|
         disk_num = 1
         disk_size = 50 * 1024
         for i in 0..disk_num do
-            file_to_disk = "./disks/box-disk#{i}.vmdk"
+            file_to_disk = "./disks/oa_#{distro}-disk#{i}.vmdk"
             unless File.exist?(file_to_disk)
                 vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
+                vb.customize ['storageattach', :id, '--storagectl', distro_settings[distro][:sata_controller_name], '--port', i + 1,
+                    '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
             end
-            # comment this out after provision -> find solution for this
-            vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', i + 1,
-                          '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
         end
     end
 
@@ -125,8 +181,8 @@ Vagrant.configure(2) do |config|
     end
 
     config.vm.provision :shell, :path => 'install.sh'
-    
-    if Vagrant.has_plugin?('vagrant-cachier') and ENV['DISTRO'] != 'xenial'
+
+    if Vagrant.has_plugin?('vagrant-cachier') and distro != 'xenial'
         # Configure cached packages to be shared between instances of the same base box.
         # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
         config.cache.scope = :box
@@ -144,8 +200,4 @@ Vagrant.configure(2) do |config|
         }
         # For more information please check http://docs.vagrantup.com/v2/synced-folders/basic_usage.html
     end
-    # config.cache.enable :pip
-    config.cache.enable :zypper
-    config.cache.enable :npm
-    config.cache.enable :bower
 end

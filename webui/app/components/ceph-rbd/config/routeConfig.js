@@ -79,6 +79,18 @@ app.config(function ($stateProvider) {
           label: "Add"
         }
       })
+      .state("cephRbds.detail.statistics", {
+        url          : "/statistics",
+        views        : {
+          "tab-content": {
+            controller : "CephRbdStatisticsCtrl",
+            templateUrl: "components/ceph-rbd/templates/statistics.html"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.name}} statistics"
+        }
+      })
       .state("cephRbds.detail.details", {
         url          : "/details",
         views        : {

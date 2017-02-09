@@ -107,10 +107,9 @@ describe('Should add a host and attributes', function(){
     all: [
       'You can use the following formats:\n' +
       'IQN: iqn.$year-$month.$reversedAddress:$definedName\n' +
-      'MAC: 16 characters long hexadecimal number\n' +
       'EUI: eui.${16 characters long hexadecimal number}\n' +
       'NAA: naa.${16 or 32 characters long hexadecimal number}',
-      'You can use the following formats:\n\n' +
+      'You can use the following formats:\n' +
       'MAC: 16 characters long hexadecimal number\n' +
       'EUI: eui.${16 characters long hexadecimal number}\n' +
       'NAA: naa.${16 or 32 characters long hexadecimal number}'
@@ -135,20 +134,24 @@ describe('Should add a host and attributes', function(){
           '" into tag field "' + field + '"', function(){
         sendTag(wwn, field);
         expect(element.all(by.className('tc_wwn_invalid')).get(field).isDisplayed()).toBe(true);
-        expect(element.all(by.className('tc_err_' + key)).get(field).isDisplayed()).toBe(true);
+        if(key === 'all'){
+          expect(element.all(by.className('tc_err_overview')).get(field).isDisplayed()).toBe(true);
+        }else{
+          expect(element(by.className('tc_err_' + key)).isDisplayed()).toBe(true);
+        }
         clearField(field);
       });
-    })
+    });
   };
 
   var tryValid = function(key, field){
     validWwns[key].forEach(function(wwn){
       it('should successfully add a valid tag in a defined format: "' + wwn + '" as "' + key + '" into tag field "'
-          + field + "'", function(){
+          + field + '"', function(){
         sendTag(wwn, field);
         expect(element.all(by.className('tc_wwn_invalid')).get(field).isDisplayed()).toBe(false);
-        if(key === "mac"){
-          wwn = wwn.replace(/:/g, "").match(/.{2}/g).join(":");
+        if(key === 'mac'){
+          wwn = wwn.replace(/:/g, '').match(/.{2}/g).join(':');
         }
         expect(element(by.binding('$getDisplayText()')).getInnerHtml()).toBe(wwn);
         element.all(by.model('data[key]')).get(field).click();
@@ -156,7 +159,7 @@ describe('Should add a host and attributes', function(){
         //element(by.binding('::$$removeTagSymbol')).click();
         clearField(field);
       });
-    })
+    });
   };
 
   var info = function(key, field){
@@ -164,11 +167,14 @@ describe('Should add a host and attributes', function(){
         + field + '"', function(){
       sendTag(invalidWwns[key][0], field);
       expect(element.all(by.className('tc_wwn_invalid')).get(field).isDisplayed()).toBe(true);
-      var error = element.all(by.className('tc_err_' + key)).get(field);
-      expect(error.isDisplayed()).toBe(true);
+      var error = {};
       if(key === 'all'){
+        error = element.all(by.className('tc_err_overview')).get(field);
+        expect(error.isDisplayed()).toBe(true);
         expect(error.getText()).toBe(errorMessages[key][field]);
       }else{
+        error = element(by.className('tc_err_' + key));
+        expect(error.isDisplayed()).toBe(true);
         expect(error.getText()).toBe(errorMessages[key]);
       }
       clearField(field);
@@ -186,10 +192,12 @@ describe('Should add a host and attributes', function(){
   });
 
   Object.keys(invalidWwns).forEach(function(key){
-    info(key, 0);
-    tryInvalid(key, 0);
-    if (key !== 'all'){
-      tryValid(key, 0);
+    if (key !== 'mac'){
+      info(key, 0);
+      tryInvalid(key, 0);
+      if (key !== 'all'){
+        tryValid(key, 0);
+      }
     }
     if (key !== 'iqn'){
       info(key, 1);

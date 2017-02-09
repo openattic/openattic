@@ -19,7 +19,7 @@ if [ -e /etc/default/npcd ] && grep -q 'RUN="no"' /etc/default/npcd; then
 	# Enable npcd
 	sed -i -e 's/RUN="no"/RUN="yes"/' /etc/default/npcd
 fi
-service $NPCD_SERVICE start
+service $NPCD_SERVICE restart
 
 if [ $NAGIOS_RESTART_REQ = "true" ]; then
 	service $NAGIOS_SERVICE restart

@@ -18,9 +18,7 @@ from utilities import is_executable_installed
 try:
     import ceph
 except ImportError:
-    print 'Cannot import app "ceph", disabling app "ceph_deployment"'
-    raise ImportError()
+    raise ImportError('Cannot import app "ceph", disabling app "ceph_deployment"')
 
 if not is_executable_installed('salt'):
-    print '"salt" executable not found, disabling app "ceph_deployment"'
-    raise ImportError()
+    raise ImportError('"salt" executable not found, disabling app "ceph_deployment"')

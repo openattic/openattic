@@ -58,6 +58,7 @@ app.directive("hostForm", function () {
       $scope.wwn = {
         iscsi: {
           current: {},
+          usage: ["iqn", "eui", "naa"],
           valid: true,
           label: "iSCSI IQN",
           desc: "Use iSCSI for sharing",
@@ -65,6 +66,7 @@ app.directive("hostForm", function () {
         },
         qla2xxx: {
           current: {},
+          usage: ["mac", "eui", "naa"],
           valid: true,
           label: "FC WWN",
           desc: "Use Fibre Channel for sharing",
@@ -99,7 +101,11 @@ app.directive("hostForm", function () {
             notation: "naa.${16 or 32 characters long hexadecimal number}"
           }
         },
-        exists: "This WWN already exists, please choose another one."
+        exists: function (share) {
+          if (angular.isString(share)) {
+            return "This WWN already exists, please choose another one.".replace("WWN", share.toUpperCase());
+          }
+        }
       };
       $scope.wwns = [];
 
@@ -251,43 +257,76 @@ app.directive("hostForm", function () {
         });
       };
 
+      /**
+       * Will validate if a typed share name is valid or not.
+       *
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} tag.text - Text of the tag field.
+       * @param {string} type - Which share type is used.
+       * @return {boolean}
+       */
       $scope.validShareName = function (tag, type) {
         $scope.wwn[type].current = $scope.validWwn(tag, type);
-        $scope.wwn[type].valid = typeof $scope.wwn[type].current !== "string";
-        if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) !== -1) {
-          $scope.wwn[type].current = "exists";
+        $scope.wwn[type].valid = !angular.isString($scope.wwn[type].current);
+        if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) > -1) {
+          $scope.wwn[type].current = ["exists", $scope.wwn[type].current.format];
           $scope.wwn[type].valid = false;
         }
         return $scope.wwn[type].valid;
       };
 
+      /**
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} format - Format of the share.
+       * @param {boolean} valid - Validation condition.
+       * @return {string|object} format code or tag object with format code
+       */
+      var validateShare = function (tag, format, valid) {
+        tag.format = format;
+        return valid ? tag : format;
+      };
+
+      /**
+       * Validates the WWN that was typed.
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} tag.text - Text of the tag field.
+       * @param {string} type - Which share type is used.
+       * @return {string|object} error code or tag object
+       */
       $scope.validWwn = function (tag, type) {
         var wwn = tag.text;
-        if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
-          if (wwn.match(/^[a-fA-F0-9:]*$/)) {
-            wwn = wwn.replace(/:/g, "");
-            if (wwn.length === 16) {
-              tag.text = wwn.match(/.{2}/g).join(":");
-              return tag;
-            }
+        var usage = $scope.wwn[type].usage;
+        for (var i in usage) {
+          var share = usage[i];
+          switch (share) {
+            case "mac":
+              if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
+                wwn = wwn.replace(/:/g, "");
+                tag.text = wwn.match(/.{2}/g).join(":");
+                return validateShare(tag, share,
+                  wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
+              }
+              break;
+            case "iqn":
+              if (wwn.indexOf(share) === 0) {
+                return validateShare(tag, share,
+                  wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
+              }
+              break;
+            case "eui":
+              if (wwn.indexOf(share) === 0) {
+                return validateShare(tag, share,
+                  wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
+              }
+              break;
+            case "naa":
+              if (wwn.indexOf(share) === 0) {
+                var ident = wwn.substr(4);
+                return validateShare(tag, share,
+                  wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
+              }
+              break;
           }
-          return "mac";
-        } else if (wwn.indexOf("iqn") === 0 && type === "iscsi") {
-          if (wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/)) {
-            return tag;
-          }
-          return "iqn";
-        } else if (wwn.indexOf("eui") === 0) {
-          if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
-            return tag;
-          }
-          return "eui";
-        } else if (wwn.indexOf("naa") === 0) {
-          var ident = wwn.substr(4);
-          if (wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
-            return tag;
-          }
-          return "naa";
         }
         return "all";
       };
@@ -316,6 +355,36 @@ app.directive("hostForm", function () {
           tag: tag,
           type: "delete"
         });
+      };
+
+      /* Will return a readable String of the available formats.
+       * @param {string} type - Which share type is used.
+       * @return {string}
+       */
+      $scope.getFormats = function (type) {
+        return $scope.wwn[type].usage.reduce(function (last, current, index, usage) {
+          var seperator = index === usage.length - 1 ? " or " : ", ";
+          return last + seperator + current;
+        }).toUpperCase().replace("OR", "or");
+      };
+
+      /**
+       * Returns the right help text to the template.
+       * @param {string} format of the WWN
+       * @param {bool} example if true it will return a comprehensive help text
+       * @return {string} to bind as html
+       */
+      $scope.getHelpText = function (format, example) {
+        if (!angular.isString(format) || format === "all") {
+          return;
+        }
+        var validation = $scope.validationText.format[format];
+        if (!example) {
+          return "<br>" + format.toUpperCase() + ": " + validation.notation;
+        } else {
+          return validation.desc + "<br>" + "For example: " + validation.example + "<br><a target=\"_blank\" href=\"" +
+            validation.link + "\">More information</a>";
+        }
       };
 
       $scope.goBack = function () {

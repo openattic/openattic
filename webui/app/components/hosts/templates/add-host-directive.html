@@ -34,7 +34,7 @@
                      ng-class="{'has-error': hostForm[key].$invalid}" ng-show="type.check">
                     <label ng-class="config.class.label" class="control-label" for="data[key]" ng-bind="type.label"></label>
                     <div ng-class="config.class.field">
-                        <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid WWN"
+                        <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid {{getFormats(key)}}"
                                     ng-model="data[key]"
                                     add-on-space="true"
                                     on-tag-adding="validShareName($tag, key)"
@@ -44,20 +44,14 @@
                                     current-tag-wwn-validation>
                         </tags-input>
                         <div class="help-block tc_wwn_invalid" ng-show="hostForm[key].$error.validTag">
-                            <p class="tc_err_{{format}}" ng-repeat="(format, details) in validationText.format"
-                               ng-show="wwn[key].current === format">
-                                {{details.desc}}<br>
-                                For example: {{details.example}}<br>
-                                <a target="_blank" href="{{details.link}}">More information</a>
-                            </p>
-                            <p class="tc_err_all" ng-show="wwn[key].current === 'all'">
+                            <p class="tc_err_{{wwn[key].current}}" ng-bind-html="getHelpText(wwn[key].current, true)"></p>
+                            <p class="tc_err_overview" ng-show="wwn[key].current === 'all'">
                                 You can use the following formats:
-                                <span class="tc_all_{{format}}" ng-repeat="(format, details) in validationText.format"
-                                      ng-show="(format !== 'iqn' || key === 'iscsi')">
-                                                <br> {{format|uppercase}}: {{details.notation}}
-                                            </span>
+                                <span class="tc_all_{{format}}" ng-repeat="format in wwn[key].usage">
+                                    <span ng-bind-html="getHelpText(format)"></span>
+                                </span>
                             </p>
-                            <p ng-show="wwn[key].current === 'exists'" ng-bind="validationText.exists"></p>
+                            <p ng-show="wwn[key].current[0] === 'exists'" ng-bind="validationText.exists(wwn[key].current[1])"></p>
                         </div>
                     </div>
                 </div>
