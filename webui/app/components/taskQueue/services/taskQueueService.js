@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,28 +30,10 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.factory("cephRbdService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:clusterId/rbds", {
-    clusterId: "@clusterId",
-    pool: "@pool",
-    name: "@name"
-  }, {
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
-    },
-    delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:clusterId/rbds/:pool/:name"
-    },
-    performancedata: {
-      method: "GET",
-      isArray: true,
-      url: globalConfig.API.URL + "ceph/:clusterId/rbds/:pool/:name/performancedata_rbd"
-    }
+var app = angular.module("openattic.taskQueue");
+app.factory("taskQueueService", function ($resource) {
+  return $resource(globalConfig.API.URL + "taskqueue/:id", {
+    id: "@id"
   });
 });
+
