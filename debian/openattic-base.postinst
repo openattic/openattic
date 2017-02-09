@@ -31,8 +31,13 @@ if [ "$1" = "configure" ] ; then
     touch "$RPCD_LOGFILE"
     setperm "$RPCD_LOGFILE" 0640
 
-    update-rc.d openattic-systemd defaults >/dev/null
-    update-rc.d openattic-rpcd    defaults >/dev/null
+    if [ `which systemctl` ]; then
+        systemctl disable openattic-systemd
+        systemctl disable openattic-rpcd
+    else
+        update-rc.d openattic-systemd defaults >/dev/null
+        update-rc.d openattic-rpcd    defaults >/dev/null
+    fi
 
     if [ -x /etc/init.d/apache2 ]; then
         invoke-rc.d --quiet apache2 reload
