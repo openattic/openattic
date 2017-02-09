@@ -61,7 +61,7 @@ app.service("tabViewService", function ($state) {
     scope = $scope;
   };
   this.changeTab = function (goHere, index) {
-    if (index === undefined) {
+    if (angular.isUndefined(index)) {
       Object.keys(scope.tabData.tabs).some(function (tabName, i) {
         index = i;
         return scope.tabData.tabs[tabName].state === goHere;
@@ -71,7 +71,7 @@ app.service("tabViewService", function ($state) {
     if (!angular.isObject(scope.selection.item))
       return;
     var stateJump = {};
-    stateJump[scope.tabConfig.type] = scope.selection.item[scope.tabConfig.linkedBy];
+    stateJump[scope.tabConfig.type] = scope.selection.items[0][scope.tabConfig.linkedBy];
     stateJump["#"] = scope.tabConfig.jumpTo;
     $state.go(goHere, stateJump);
   };

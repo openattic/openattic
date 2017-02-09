@@ -109,6 +109,14 @@ option {
   color: #474544;
 }
 
+/* Icons */
+.icon-warning {
+  color: #f0ad4e;
+}
+.icon-danger {
+  color: #c9302c;
+}
+
 /* Buttons */
 .btn-openattic {
   color: #ececec;
@@ -194,6 +202,8 @@ fieldset[disabled] .btn-primary.active {
 /* Modal */
 .modal-dialog {
   margin: 30px auto !important;
+  height: 90%;
+  overflow: auto;
 }
 .modal .modal-content .openattic-modal-header,
 .modal .modal-content .openattic-modal-content,
@@ -219,6 +229,53 @@ fieldset[disabled] .btn-primary.active {
 .modal .modal-content .openattic-modal-header span {
   display: block;
   font-size: 2em;
+}
+
+/* Modal Table (Task Queue) */
+table.task-queue-table thead {
+  display: flex;
+  flex-flow: row;
+}
+table.task-queue-table thead tr {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+table.task-queue-table tbody {
+  display: flex;
+  flex-flow: row wrap;
+}
+table.task-queue-table tbody tr {
+  display: flex;
+  width: 100%
+}
+table.task-queue-table > * > tr > * {
+  flex: 1;
+}
+table.task-queue-table > * > tr > .oadatatablecheckbox {
+  flex: 0;
+}
+div.task-queue-modal-content {
+  height: 40em;
+}
+div.openattic-modal-content div.modal-scroll {
+  max-height: 26em;
+  overflow: auto;
+  border-bottom: 1px solid #e1e1e1;
+}
+div.task-queue-modal-content div.dataTables_wrapper {
+  margin-bottom: 0;
+}
+div.task-queue-modal-content div.dataTables_wrapper th.oadatatablecheckbox {
+  width: 100%;
+}
+div.task-queue-modal-content div.dataTables_wrapper div.widget-toolbar.tc_refreshBtn{
+  width: 36px;
+}
+ul.task-queue-pagination {
+  display: table;
+  margin: auto;
+  padding-top: 10px;
 }
 
 /* Navbar */
@@ -852,7 +909,7 @@ h6{
 .dataTables_paginate .pagination .last>span {
   border-right: 0;
 }
-.oadatatable div.overlay {
+.oadatatable div.overlay, div.oa-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -861,7 +918,7 @@ h6{
   width: 100%;
   background-color: rgba(30, 30, 30, 0.2);
 }
-.oadatatable div.overlay-content {
+.oadatatable div.overlay-content, div.oa-overlay-content {
   margin: 200px auto;
   width: 50px;
   height: 50px;
