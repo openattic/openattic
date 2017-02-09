@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,37 +30,32 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsStatisticsCtrl", function ($scope, cephPoolsService) {
+var app = angular.module("openattic.cephRbd");
+app.controller("CephRbdStatisticsCtrl", function ($scope, cephRbdService) {
   /*
-   * Configuration for the graph creation component.
+   * Outlines the graphs that will be shown
    */
   $scope.config = {
     graphs: {
-        utilization: {
-          name: "Utilization",
-          bindings: ["max_avail", "num_bytes"],
-          yLabel: "Bytes per sec"
+        used: {
+          name: "Used",
+          bindings: ["used_size"]
         },
-        noo: {
-          name: "Number of Objects",
-          bindings: ["num_objects"],
-          tickFormat: function (d) {
-            return d;
-          }
+        provisionedSize: {
+          name: "Provisioned size",
+          bindings: ["provisioned_size"]
         }
       },
     api: {
-      call: cephPoolsService.performancedata,
-      filterApi: function (pool) {
+      call: cephRbdService.performancedata,
+      filterApi: function (rbd) {
         return {
-          fsid: pool.cluster,
-          filter_pools: pool.name
+          id: rbd.pool.cluster,
+          pool: rbd.pool.name,
+          name: rbd.name
         };
-      },
-      extractValues: function (result, pool) {
-        return result[pool.name];
       }
     }
   };
+
 });

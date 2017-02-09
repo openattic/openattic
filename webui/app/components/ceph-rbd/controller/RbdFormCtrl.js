@@ -353,7 +353,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         $scope.rbd.features = features;
       }
       $scope.rbd.pool = $scope.data.pool.id;
-      $scope.rbd.id = $stateParams.clusterId;
+      $scope.rbd.clusterId = $scope.clusterId;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");
       $scope.submitted = true;
       cephRbdService.save($scope.rbd)
@@ -363,20 +363,23 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           goToListView();
         }, function (error) {
           $scope.submitted = false;
-          var toastMsg = "Could not create the RBD through a server failure.";
-          if (error.status === 400) {
-            if (error.data.size) {
-              var size = error.data.size[0].match(/[0-9]+/)[0];
-              toastMsg = "The size you have choose is to big, choose a size lower than " + $filter("bytes")(size);
-            } else {
-              toastMsg = "Could not create the RBD because of " + $filter("json")(error.data);
-            }
-          }
-          toasty.error({
-            title: "Can't create RBD",
-            msg: toastMsg,
+          var toast = {
+            title: "RBD creation error " + error.status,
+            msg: "",
             timeout: 10000
+          };
+          angular.forEach(error.data, function (val, key) {
+            if (key === "detail") {
+              toast.msg = val + toast.msg;
+            } else {
+              toast.msg += "<br>" + key + ": " + val;
+            }
           });
+          if (error.status === 400 && error.data.size) {
+            var size = error.data.size[0].match(/[0-9]+/)[0];
+            toast.msg = "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + ".";
+          }
+          toasty.error(toast);
           throw error;
         });
     }
