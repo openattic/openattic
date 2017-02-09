@@ -31,25 +31,41 @@
 "use strict";
 
 var app = angular.module("openattic.hosts");
-app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, host, Notification) {
+app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibModalInstance, hosts, Notification, $q) {
     $scope.host = host;
+  $scope.input = {
+    enteredName: "",
+    pattern: "yes"
+  };
 
-    $scope.delete = function () {
-      HostService.delete({id: $scope.host.id})
-          .$promise
-          .then(function () {
-            $uibModalInstance.close("deleted");
-          }, function (error) {
-            console.log("An error occured", error);
-          });
-    };
-
-    $scope.cancel = function () {
-      $uibModalInstance.dismiss("cancel");
-
-      Notification.warning({
-        title: "Delete host",
-        msg: "Cancelled"
+  /**
+   * Deletes all hosts in the selection.
+   */
+  $scope.delete = function () {
+    var hosts = $scope.hosts;
+    var requests = [];
+    hosts.forEach(function (host) {
+      var deferred = $q.defer();
+      HostService.delete({id: host.id}, deferred.resolve, deferred.reject);
+      requests.push(deferred.promise);
+    });
+    $q.all(requests).then(function () {
+      $uibModalInstance.close("deleted");
+    }, function (error) {
+      Notification.error({
+        title: "Error " + error.status + " when deleting host" + hosts.length === 1 ? "" : "s",
+        msg: $filter("json")(error.data)
       });
-    };
-  });
+      $uibModalInstance.close("deleted");
+      throw error;
+    });
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
+    Notification.warning({
+      title: "Cancelled delete host",
+      msg: "Cancelled host delete."
+    });
+  };
+});

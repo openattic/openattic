@@ -128,7 +128,7 @@ following commands instead.
 
     . env/bin/activate
     cd openattic/backend
-    sudo systemctl reload dbus
+    which systemctl && sudo systemctl reload dbus || sudo service dbus reload
     sudo /home/vagrant/env/bin/python /home/vagrant/openattic/backend/manage.py runsystemd &
     python manage.py pre_install
     python manage.py migrate
@@ -137,12 +137,6 @@ following commands instead.
     python manage.py add-host
     python manage.py makedefaultadmin
     python manage.py post_install
-
-On systems based on SysVinit you need to reload the dbus service using the following command.
-
-.. code-block:: shell
-
-    sudo service dbus reload
 
 Troubleshooting
 ---------------

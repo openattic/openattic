@@ -37,13 +37,13 @@
                 </td>
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
                 <td ng-show="columns['Status']"><i class="fa" ng-class="{
-                    'fa-question':             row.status.status == '',
-                    'fa-check':                row.status.status == 'good',
-                    'fa-exclamation-triangle': row.status.status == 'warn',
-                    'fa-bomb':                 row.status.status == 'crit',
-                    'fa-chain-broken':         row.status.status == 'fail',
-                    'fa-lock':                 row.status.status == 'locked'
-                    }"></i></td>
+                    'fa-question':                          row.status.status == '',
+                    'fa-check':                             row.status.status == 'good',
+                    'fa-exclamation-triangle icon-warning': row.status.status == 'warn',
+                    'fa-bomb icon-danger':                  row.status.status == 'crit',
+                    'fa-chain-broken icon-danger':          row.status.status == 'fail',
+                    'fa-lock':                              row.status.status == 'locked'
+                    }" uib-tooltip="{{row.status.status | statusText}}"></i></td>
                 <td ng-show="columns['Size']"   ng-bind="row.size.size | bytes:'MiB'"></td>
                 <td ng-show="columns['Type']"   ng-bind="row.type"></td>
                 <td ng-show="columns['RPM']"    ng-bind="row.rpm"></td>

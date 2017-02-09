@@ -73,7 +73,7 @@ class FileSystem(object):
         from django.contrib.auth.models import User
         from volumes.models import FileSystemProvider
         try:
-            admin = User.objects.get(username="openattic")
+            admin = User.objects.get(username=volumes_settings.ADMIN)
         except User.DoesNotExist:
             admin = User.objects.filter(is_superuser=True)[0]
         vol = FileSystemProvider(storageobj=volume.storageobj, owner=admin, fstype=cls.name,

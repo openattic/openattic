@@ -61,6 +61,16 @@ app.directive("paginator", function () {
         scope.displayNumber = page;
         // TODO: Should be done automatically, we should take a look at it
       };
+
+      /**
+       * This will watch the count of all pages.
+       * The pages count will change if you search for something or
+       * if you change the entries size.
+       * The watch prevents having a wrong page size.
+       */
+      scope.$watch("pages", function () {
+        scope.switchPage(scope.page);
+      });
     }
   };
 });
