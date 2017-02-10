@@ -127,11 +127,10 @@
                 <div class="button-group text-right">
                     <button type="submit"
                             class="btn btn-sm btn-primary tc_submitButton"
-                            ng-disabled="submitted"
+                            ng-disabled="rbdForm.$invalid || rbdForm.$submitted"
                             ng-click="submitAction(rbdForm)">
                         Create
-                        <i class="fa fa-spinner fa-spin fa-fw"
-                           ng-if="submitted"></i>
+                        <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
                     </button>
                     <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
                         Back
