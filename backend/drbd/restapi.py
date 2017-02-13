@@ -196,6 +196,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                         res = self._remote_request(request, host, obj=connection)
                     except HTTPError, e:
                         return Response(e.response.json(), status=e.response.status_code)
+
                 return res
         return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
 
