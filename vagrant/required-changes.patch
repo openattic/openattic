@@ -30,14 +30,16 @@ diff -r 9af3dd6cdd38 backend/peering/models.py
 +    #peer.save()
  
  sysutils.models.post_install.connect(__install_hostkeys, sender=sysutils.models)
-diff -r 7a49c66647d3 backend/settings.py
---- a/backend/settings.py	Thu Jan 26 11:02:35 2017 +0000
-+++ b/backend/settings.py	Thu Jan 26 14:34:01 2017 +0100
-@@ -36,7 +36,7 @@
+diff -r 236d67eb0c5c backend/settings.py
+--- a/backend/settings.py	Sat Feb 11 15:31:45 2017 +0000
++++ b/backend/settings.py	Mon Feb 13 09:43:10 2017 +0100
+@@ -35,8 +35,8 @@
+ else:
      GUI_ROOT = "/usr/share/openattic-gui"
  
- API_ROOT = "/openattic/api"
+-API_ROOT = "/openattic/api"
 -API_OS_USER = 'openattic'
++API_ROOT = ":8000/api"
 +API_OS_USER = 'vagrant'
  
  from ConfigParser import ConfigParser
