@@ -29,7 +29,7 @@ from time import time
 from xml.dom import minidom
 from datetime import datetime
 from StringIO import StringIO
-from os.path import exists
+from os import path
 
 from PIL import Image
 from numpy import array
@@ -114,7 +114,7 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 def _call_rrdtool(args):
     rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in args],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                               cwd=nagios_settings.RRD_BASEDIR)
+                               cwd=nagios_settings.NAGIOS_RRD_BASEDIR)
     out, err = rrdtool.communicate()
     if err:
         logging.error('"' + '" "'.join(args).encode("utf-8") + '"')
@@ -687,12 +687,13 @@ class RRD(object):
         :rtype: RRD
         :raises SystemError: If the RRD related XML file can't be found.
         """
-        xmlpath = nagios_settings.XML_PATH % {
-            "host": host,
-            "serv": service
-        }
+        xmlpath = path.join(nagios_settings.NAGIOS_RRD_BASEDIR,
+                               nagios_settings.NAGIOS_XML_PATH % {
+                                   "host": host,
+                                   "serv": service
+                               })
 
-        if not exists(xmlpath):
+        if not path.exists(xmlpath):
             raise SystemError("XML file '{}' could not be found.".format(xmlpath))
         return RRD(xmlpath)
 
@@ -815,8 +816,8 @@ class Graph(object):
             "--height", str(self.height), "--width", str(self.width),
             "--imgformat", "PNG", "--title", self.title
             ]
-        if nagios_settings.RRDCACHED_SOCKET:
-            self.args.extend(["--daemon", nagios_settings.RRDCACHED_SOCKET])
+        if nagios_settings.NAGIOS_RRDCACHED_SOCKET:
+            self.args.extend(["--daemon", nagios_settings.NAGIOS_RRDCACHED_SOCKET])
         if self.verttitle is None:
             for src in self.sources:
                 if src.unit:

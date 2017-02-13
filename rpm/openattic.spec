@@ -401,7 +401,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
-mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
 mkdir -p %{buildroot}/lib/tmpfiles.d/
@@ -429,9 +428,7 @@ install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
 # Install db file
-install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
-
-ln -s %{_sysconfdir}/%{name}/databases/pgsql.ini %{buildroot}%{_sysconfdir}/openattic/database.ini
+install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
 
 # configure dbus
 install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
@@ -743,8 +740,7 @@ systemctl start smb
 
 %files 	pgsql
 %defattr(-,openattic,openattic,-)
-%config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
-%{_sysconfdir}/%{name}/database.ini
+%config(noreplace) %{_sysconfdir}/%{name}/database.ini
 
 %files release
 %defattr(-,root,root,-)

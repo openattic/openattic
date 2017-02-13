@@ -52,22 +52,10 @@ NAGIOS_CFG_PATH="/etc/nagios3/nagios.cfg"
 NAGIOS_CFG="/etc/nagios3/nagios.cfg"
 
 ## Type: string
-## Default: "/etc/nagios3/conf.d/openattic_contacts.cfg"
-#
-# Defines default contact groups
-NAGIOS_CONTACTS_CFG_PATH="/etc/nagios3/conf.d/openattic_contacts.cfg"
-
-## Type: string
 ## Default: "/etc/nagios3/conf.d"
 #
 # Defines additional services
 NAGIOS_SERVICES_CFG_PATH="/etc/nagios3/conf.d"
-
-## Type: boolean
-## Default: True
-#
-#
-NAGIOS_INCLUDE_HOST_IN_CFG=True
 
 ## Type: string
 ## Default: "nagios"
@@ -99,6 +87,12 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 #
 # Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/pnp4nagios/perfdata"
+#
+# Path to RRDs
+NAGIOS_RRD_BASEDIR="/var/lib/pnp4nagios/perfdata"
 
 ## Type: string
 ## Default: "/var/lib/nagios3"
