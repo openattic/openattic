@@ -4,6 +4,8 @@ openATTIC Changelog
 Version 2.0.19, (not released yet):
 -----------------------------------
 
+* Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
+
 
 Version 2.0.18, 09. February 2017:
 ----------------------------------

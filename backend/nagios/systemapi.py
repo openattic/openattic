@@ -45,7 +45,7 @@ class SystemD(BasePlugin):
         fd = open(nagios_settings.NAGIOS_SERVICES_CFG_PATH + "/openattic.cfg", "wb")
         try:
             fd.write(render_to_string("nagios/services.cfg", {
-                "IncludeHost": nagios_settings.INCLUDE_HOST_IN_CFG,
+                "IncludeHost": True,
                 "Host":     Host.objects.get_current(),
                 "Commands": Command.objects.all(),
                 "Services": Service.objects.filter(command__query_only=False)
@@ -53,7 +53,7 @@ class SystemD(BasePlugin):
         finally:
             fd.close()
         # Contacts
-        fd = open(nagios_settings.CONTACTS_CFG_PATH, "wb")
+        fd = open(nagios_settings.NAGIOS_SERVICES_CFG_PATH + "/openattic_contacts.cfg", "wb")
         try:
             fd.write(render_to_string("nagios/contacts.cfg", {
                 "Admins": User.objects.filter(is_active=True, is_superuser=True).exclude(email=""),
@@ -63,38 +63,38 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="")
     def restart_service(self, sender):
-        invoke([nagios_settings.BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
+        invoke([nagios_settings.NAGIOS_BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
         # Sometimes, reloading Nagios can cause it to not come up due to some strange errors that
         # may or may not be fixed simply through retrying.
         end = time() + 20
         command = "reload"
         while time() < end:
-            service_command(nagios_settings.SERVICE_NAME, command)
+            service_command(nagios_settings.NAGIOS_SERVICE_NAME, command)
             command = "restart"  # only try reload the first time, then restart
             retry = time() + 5
             while time() < retry:
-                if os.path.exists(nagios_settings.STATUS_DAT_PATH):
+                if os.path.exists(nagios_settings.NAGIOS_STATUS_DAT_PATH):
                     return
                 sleep(0.1)
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):
-        return invoke([nagios_settings.BINARY_NAME, "--verify-config",
+        return invoke([nagios_settings.NAGIOS_BINARY_NAME, "--verify-config",
                        nagios_settings.NAGIOS_CFG_PATH])
 
     @method(in_signature="s", out_signature="")
     def schedule_host(self, hostname):
-        with open(nagios_settings.CMD_PATH, "wb") as cmd:
+        with open(nagios_settings.NAGIOS_CMD_PATH, "wb") as cmd:
             cmd.write("[%lu] SCHEDULE_FORCED_HOST_CHECK;%s;%d\n" % (time(), hostname, time()))
 
     @method(in_signature="s", out_signature="")
     def schedule_host_services(self, hostname):
-        with open(nagios_settings.CMD_PATH, "wb") as cmd:
+        with open(nagios_settings.NAGIOS_CMD_PATH, "wb") as cmd:
             cmd.write("[%lu] SCHEDULE_FORCED_HOST_SVC_CHECKS;%s;%d\n" % (time(), hostname, time()))
 
     @method(in_signature="ss", out_signature="")
     def schedule_service(self, hostname, servicedesc):
-        with open(nagios_settings.CMD_PATH, "wb") as cmd:
+        with open(nagios_settings.NAGIOS_CMD_PATH, "wb") as cmd:
             cmd.write("[%lu] SCHEDULE_FORCED_SVC_CHECK;%s;%s;%d\n" % (time(), hostname, servicedesc,
                                                                       time()))
 
