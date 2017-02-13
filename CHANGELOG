@@ -1,8 +1,12 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.18, (not released yet):
+Version 2.0.19, (not released yet):
 -----------------------------------
+
+
+Version 2.0.18, 09. February 2017:
+----------------------------------
 
 * WebUI/QA: Added test that deletes multiple hosts at once (OP-1817)
 * WebUI: Enables the RBD form to create RBDs after reloading (OP-1839)
@@ -121,6 +125,10 @@ Version 2.0.16, 07. November 2016:
 * Backend: Fixed Bug on Ubuntu Trusty preventing deletion of iSCSI targets (OP-722)
 * Backend: Fixed issue breaking the WebUI on Xenial (OP-1689)
 * WebUI: Tabs will be selected as expected (OP-1082)
+* WebUI: Display the Ceph Pool data table even when there are no objects
+  to be displayed, to make the "Create Ceph Pool" button visible (OP-1561)
+* WebUI: Removed confusing "Sorry folks" message displayed during the loading of
+  data tables (OP-1333)
 * Packaging: The python-configobj dependency is moved to the openattic-base
   package (OP-1666)
 * Packaging: Added missing dependency openattic-module-cron in
