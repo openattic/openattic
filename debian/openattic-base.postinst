@@ -28,15 +28,11 @@ if [ "$1" = "configure" ] ; then
     setperm "$OPENATTIC_LOGFILE" 0660
     touch "$SYSD_LOGFILE"
     setperm "$SYSD_LOGFILE" 0640
-    touch "$RPCD_LOGFILE"
-    setperm "$RPCD_LOGFILE" 0640
 
     if [ `which systemctl` ]; then
-        systemctl disable openattic-systemd
-        systemctl disable openattic-rpcd
+        systemctl enable openattic-systemd
     else
         update-rc.d openattic-systemd defaults >/dev/null
-        update-rc.d openattic-rpcd    defaults >/dev/null
     fi
 
     if [ -x /etc/init.d/apache2 ]; then
@@ -45,6 +41,16 @@ if [ "$1" = "configure" ] ; then
 
     if [ -x /etc/init.d/dbus ]; then
         invoke-rc.d --quiet dbus reload
+    fi
+
+    if dpkg --compare-versions "$2" le "2.0.19"; then
+        if [ `which systemctl` ]; then
+            # Disable openattic-rpcd and reload systemd to let it know that openattic-rpcd.service has been removed.
+            systemctl disable openattic-rpcd
+            systemctl daemon-reload
+        else
+            update-rc.d openattic-rpcd defaults >/dev/null
+        fi
     fi
 
     db_input high openattic-base/run-oaconfig-install || true
