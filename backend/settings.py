@@ -131,22 +131,10 @@ except:
     pass
 else:
     if distro in ('Red Hat Enterprise Linux Server', 'CentOS Linux'):
-        NAGIOS_CFG_PATH = "/etc/nagios/nagios.cfg"
-        NAGIOS_CONTACTS_CFG_PATH = "/etc/nagios/conf.d/openattic_contacts.cfg"
-        NAGIOS_RRD_BASEDIR = "/var/lib/pnp4nagios"
-        NAGIOS_RRD_PATH = "/var/lib/pnp4nagios/%(host)s/%(serv)s.rrd"
-        NAGIOS_XML_PATH = "/var/lib/pnp4nagios/%(host)s/%(serv)s.xml"
-        NAGIOS_BINARY_NAME = "nagios"
-        NAGIOS_SERVICE_NAME = "nagios"
-        NAGIOS_STATUS_DAT_PATH = "/var/log/nagios/status.dat"
         SAMBA_SERVICE_NAME = "smb"
         LVM_HAVE_YES_OPTION = True
     elif distro == "Ubuntu" or distro == "debian":
         SAMBA_SERVICE_NAME = "smbd"
-
-
-if exists('/var/run/rrdcached.sock'):
-    NAGIOS_RRDCACHED_SOCKET = '/var/run/rrdcached.sock'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
