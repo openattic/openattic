@@ -6,21 +6,40 @@
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
-  var volumename = '';
-  var volume = element(by.cssContainingText('tr', volumename));
-
+  //TODO: Remove static item names.
   var snapshotname = 'protractor_test_snap';
   var snapshot = element(by.cssContainingText('tr', snapshotname));
 
-  var clonename = "protractor_test_clone";
+  var clonename = 'protractor_test_clone';
   var clone = element(by.cssContainingText('tr', clonename));
 
-  var hostname = "protractor_test_host";
+  var hostname = 'protractor_test_host';
 
   var volumePoolSelect = element(by.model('pool'));
 
-  module.exports = {
+  var helper = {
     configs: configs,
+
+    get_list_element: function(itemName){
+      return element(by.cssContainingText('tr', itemName));
+    },
+
+    delete_selection: function(){
+      element(by.css('.tc_menudropdown')).click();
+      element(by.css('.tc_deleteItem > a')).click();
+      browser.sleep(400);
+      element(by.model('input.enteredName')).sendKeys('yes');
+      element(by.id('bot2-Msg1')).click();
+      browser.sleep(400);
+    },
+
+    search_for: function(query){
+      var search = element.all(by.model('filterConfig.search')).first();
+      search.clear();
+      search.sendKeys(query);
+      browser.sleep(helper.configs.sleep);
+    },
+
     login: function(){
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
@@ -32,7 +51,7 @@
 
     create_volume: function(volumename, type, size, poolName){
       var pool;
-      var size = size == null ? "100MB" : size;
+      size = size == null ? '100MB' : size;
 
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
@@ -50,7 +69,7 @@
       element(by.model('data.megs')).sendKeys(size);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(configs.sleep);
-      expect(element(by.cssContainingText('tr', volumename)).isDisplayed()).toBe(true);
+      expect(helper.get_list_element(volumename).isDisplayed()).toBe(true);
       return pool;
     },
 
@@ -63,14 +82,8 @@
       browser.sleep(400);
       volume.click();
       browser.sleep(400);
-      element(by.css('.tc_menudropdown')).click();
-      browser.sleep(400);
-      element(by.css('.tc_deleteItem > a')).click();
-      browser.sleep(400);
-      element(by.model('input.enteredName')).sendKeys('yes');
-      element(by.id('bot2-Msg1')).click();
-      browser.sleep(600);
-      volume = element(by.cssContainingText('tr', volumename));
+      helper.delete_selection();
+      volume = helper.get_list_element(volumename);
       expect(volume.isPresent()).toBe(false);
     },
 
@@ -122,13 +135,7 @@
     delete_snap_clone: function(){
       clone.click();
       browser.sleep(400);
-      element.all(by.css('.tc_menudropdown')).get(0).click();
-      browser.sleep(400);
-      element(by.css('.tc_deleteItem > a')).click();
-      browser.sleep(400);
-
-      element(by.model('input.enteredName')).sendKeys('yes');
-      element(by.id('bot2-Msg1')).click();
+      helper.delete_selection();
     },
 
     create_host: function(iqn, fc, $hostname){
@@ -149,19 +156,15 @@
       browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
-      expect(element(by.cssContainingText('tr', name)).isDisplayed()).toBe(true);
+      expect(helper.get_list_element(name).isDisplayed()).toBe(true);
     },
 
     delete_host: function($hostname){
       hostsItem.click();
       var name = $hostname ? $hostname : hostname;
-      var host = element(by.cssContainingText('tr', name));
+      var host = helper.get_list_element(name);
       host.click();
-      element(by.css('.tc_menudropdown')).click();
-      element(by.css('.tc_deleteHost > a')).click();
-      browser.sleep(400);
-      element(by.id('bot2-Msg1')).click();
-      browser.sleep(400);
+      helper.delete_selection();
       expect(host.isPresent()).toBe(false);
     },
 
@@ -182,12 +185,12 @@
             expect(block_title).toEqual('iSCSI/Fibre Channel target');
             //console.log(block_title);
           });
-      });
+        });
     },
 
     delete_nfs_share: function(volName, nfsName){
       volumesItem.click();
-      var volume = element(by.cssContainingText('tr', volName));
+      var volume = helper.get_list_element(volName);
       expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
@@ -202,7 +205,7 @@
 
     delete_cifs_share: function(volName, cifsName){
       volumesItem.click();
-      var volume = element(by.cssContainingText('tr', volName));
+      var volume = helper.get_list_element(volName);
       expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
@@ -218,15 +221,16 @@
 
     delete_fc_share: function(volName, hostname){
       volumesItem.click();
-      var volume = element(by.cssContainingText('tr', volName));
+      var volume = helper.get_list_element(volName);
       expect(volume.isPresent()).toBe(true);
       volume.click();
       element(by.css('.tc_iscsi_fcTab')).click();
-      var share = element(by.cssContainingText('tr', hostname))
+      var share = helper.get_list_element(hostname);
       share.click();
       element(by.css('.tc_lunDelete')).click();
       element(by.id('bot2-Msg1')).click();
       expect(share.isPresent()).toBe(false);
-    },
+    }
   };
+  module.exports = helper;
 }());

@@ -12,3 +12,4 @@ system.
   :maxdepth: 2
 
   admin_guide
+  taskqueue
