@@ -35,28 +35,25 @@ var app = angular.module("openattic.apidecorator");
 app.factory("ApiErrorDecoratorService", function ($q, Notification) {
   return {
     decorate: function (error) {
-      var preventDefault = error.preventDefault || function() {},
-        errorPrefix,
-        notification;
-      
+      var errorPrefix;
+      var notification;
+
       if (error) {
         errorPrefix = error && error.config && error.config.method && error.config.url &&
-          ['[', [error.config.method, error.config.url].join(': '), ']'].join('');
+          "[" + [error.config.method, error.config.url].join(": ") + "]";
         notification = new Notification({
-            title: 'API Error',
-            msg: [errorPrefix,'Failed with', error.status, 'status.', error.data && error.data.detail].join(' ')
+            title: "API Error",
+            msg: [errorPrefix, "Failed with", error.status, "status.", error.data && error.data.detail].join(" ")
           })
-          .toCancelable()
           .show();
 
         /**
          * Decorated preventDefault method (in case error previously had preventDefault method defined).
-         * If called, it will additionally to executing decorated method prevent default API error handling execution.
+         * If called, it will prevent a toasty to pop up.
          * @return {void|any}
          */
-        error.preventDefault = function() {
-          notification.cancel.call(notification);
-          return preventDefault.apply(error, arguments);
+        error.preventDefault = function () {
+          notification.cancel();
         };
       }
 
