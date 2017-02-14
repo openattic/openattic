@@ -67,9 +67,8 @@ describe('Host form workflow', function(){
     expect(element(by.css('.tc_backButton')).isPresent()).toBe(true);
   });
 
-  it('should show an error message when hitting the submit button without any data', function(){
-    element(by.css('.tc_submitButton')).click();
-    expect(element(by.css('.tc_hostnameRequired')).isDisplayed()).toBe(true);
+  it('should check if the submit button is disabled when the required fields are empty', function(){
+    element(by.css('.tc_submitButton')).isEnabled().toBe(false);
   });
 
   it('should show an error message when entered name is not valid', function(){
