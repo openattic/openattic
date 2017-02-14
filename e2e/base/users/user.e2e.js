@@ -105,7 +105,7 @@ describe('Should add an user', function(){
       browser.sleep(400);
       var generateBtn = element(by.css('.tc_generate_btn'));
       expect(generateBtn.isDisplayed()).toBe(true);
-      generateBtn.click()
+      generateBtn.click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
   });
