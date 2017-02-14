@@ -99,7 +99,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
     $scope.generateAuthToken = function () {
       var modalInstance = $uibModal.open({
         windowTemplateUrl: "templates/messagebox.html",
-        templateUrl: "templates/users/generate-auth-token.html",
+        templateUrl: "components/users/templates/generate-auth-token.html",
         controller: "UsersModalCtrl",
         resolve: {
           user: function () {
