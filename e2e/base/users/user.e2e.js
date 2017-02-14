@@ -99,6 +99,10 @@ describe('Should add an user', function(){
   });
 
   it('should generate a new authentication token', function(){
+      systemItem.click();
+      browser.sleep(400);
+      usersItem.click();
+      browser.sleep(400);
       user.click();
       browser.sleep(400);
       element(by.css('.tc_editUser')).click();
