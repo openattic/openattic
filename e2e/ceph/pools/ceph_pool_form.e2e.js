@@ -53,7 +53,7 @@ describe('ceph pool creation form', function(){
 
   it('should check if the submit button is disabled when the required fields are empty', function(){
     browser.refresh();
-    cephPoolProperties.formElements.createButton.byClass.isEnabled().toBe(false);
+    expect(cephPoolProperties.formElements.createButton.byClass.isEnabled()).toBe(false);
     browser.refresh();
   });
 

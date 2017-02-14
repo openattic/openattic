@@ -75,7 +75,7 @@ describe('should test the user form', function(){
     element(by.model('user.username')).sendKeys(username);
     element(by.model('user.password')).sendKeys('test');
     name.clear();
-    submitButton.isEnabled().toBe(false);
+    expect(submitButton.isEnabled()).toBe(false);
     expect(element(by.css('.tc_usernameRequired')).isDisplayed()).toBe(true);
   });
 
@@ -83,7 +83,7 @@ describe('should test the user form', function(){
     element(by.model('user.username')).sendKeys(username);
     element(by.model('user.password')).sendKeys('test');
     passwd.clear();
-    submitButton.isEnabled().toBe(false);
+    expect(submitButton.isEnabled()).toBe(false);
     expect(element(by.css('.tc_passwdRequired')).isDisplayed()).toBe(true);
   });
 
@@ -100,7 +100,7 @@ describe('should test the user form', function(){
   it('should check if the submit button is disabled when "Username" and "Password" are without any given input data', function(){
     name.clear();
     passwd.clear();
-    submitButton.isEnabled().toBe(false);
+    expect(submitButton.isEnabled()).toBe(false);
   });
 
   it('should have a submit button', function(){
