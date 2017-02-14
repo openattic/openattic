@@ -30,8 +30,12 @@ def create_nagios(**kwargs):
     # Make sure the contacts config exists
     signals.post_save.disconnect(update_conf, sender=Service)
 
+    nagios = get_dbus_object("/nagios")
+    nagios.restart_service()
+
     for servstate in Service.nagstate["servicestatus"]:
-        if servstate["service_description"].startswith("Check Ceph"):
+        if servstate["service_description"].startswith("Check Ceph") or \
+           servstate['service_description'] == 'openATTIC RPCd':
             continue
 
         cmdargs = servstate["check_command"].split('!')
@@ -68,7 +72,6 @@ def create_nagios(**kwargs):
                        description=nagios_settings.CPUTIME_DESCRIPTION, arguments="")
         serv.save()
 
-    nagios = get_dbus_object("/nagios")
     nagios.writeconf()
     nagios.restart_service()
 
