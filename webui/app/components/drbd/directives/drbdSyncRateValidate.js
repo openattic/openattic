@@ -46,7 +46,24 @@ app.directive("drbdSyncRateValidate", function () {
     // ctrl  = The controller for ngModel
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.drbdSyncRateValidate = function (value) {
-        return ctrl.$isEmpty(value) || RegExp("^\\d+[bkmg]?$", "i").test(value);
+        if (ctrl.$isEmpty(value)) {
+          return false;
+        }
+        // Syncer rate must be in <number>[K|M|G] format.
+        var m = RegExp("^(\\d+)([kmg]?)$", "i").exec(value);
+        if (null === m) {
+          return false;
+        }
+        // Syncer rate must be between 500K and 100M.
+        var exp = { "": 0, "K": 1, "M": 2, "G": 3 };
+        var rate = m[1] * Math.pow(1024, exp[m[2].toUpperCase()]);
+        if (500 * 1024 > rate) {
+          return false;
+        }
+        if (100 * 1024 * 1024 < rate) {
+          return false;
+        }
+        return true;
       };
     }
   };
