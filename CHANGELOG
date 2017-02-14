@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.19, (not released yet):
 -----------------------------------
 
+* Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
 * Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
