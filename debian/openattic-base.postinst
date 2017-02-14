@@ -45,11 +45,12 @@ if [ "$1" = "configure" ] ; then
 
     if dpkg --compare-versions "$2" le "2.0.19"; then
         if [ `which systemctl` ]; then
-            # Disable openattic-rpcd and reload systemd to let it know that openattic-rpcd.service has been removed.
+            # Disable openattic-rpcd and reload systemd to let it know that openattic-rpcd.service
+            # has been removed.
             systemctl disable openattic-rpcd
             systemctl daemon-reload
         else
-            update-rc.d openattic-rpcd defaults >/dev/null
+            update-rc.d openattic-rpcd remove >/dev/null
         fi
     fi
 
