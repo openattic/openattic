@@ -5,6 +5,7 @@ Version 2.0.19, (not released yet):
 -----------------------------------
 
 * Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
+* Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
 
 
 Version 2.0.18, 09. February 2017:
