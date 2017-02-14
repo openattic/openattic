@@ -293,7 +293,6 @@ This package also contains the Nagios check plugins for openATTIC, namely:
  * check_diskstats
  * check_iface_traffic
  * check_openattic_systemd
- * check_openattic_rpcd
 
 %package module-nfs
 Requires:	nfs-utils
@@ -401,6 +400,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
 mkdir -p %{buildroot}/lib/tmpfiles.d/
@@ -412,7 +412,6 @@ rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
 rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
-install -m 755 bin/oacli %{buildroot}%{_bindir}
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 
@@ -551,11 +550,9 @@ fi
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
-%{_bindir}/oacli
 %{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
-/lib/systemd/system/%{name}-rpcd.service
 /lib/systemd/system/%{name}-systemd.service
 /lib/tmpfiles.d/%{name}.conf
 %config %{_sysconfdir}/httpd/conf.d/%{name}.conf
@@ -565,7 +562,6 @@ fi
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
-%doc %{_mandir}/man1/oacli.1.gz
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
@@ -577,10 +573,8 @@ fi
 %{_datadir}/%{name}/oa_auth.py*
 %{_datadir}/%{name}/openattic.wsgi
 %{_datadir}/%{name}/pamauth.py*
-%{_datadir}/%{name}/peering/
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
-%{_datadir}/%{name}/rpcd/
 %{_datadir}/%{name}/serverstats.wsgi
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
@@ -681,15 +675,12 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
-%{_libdir}/nagios/plugins/check_drbd
 %{_libdir}/nagios/plugins/check_drbdstats
 %{_libdir}/nagios/plugins/check_iface_traffic
 %{_libdir}/nagios/plugins/check_lvm_snapshot
 %{_libdir}/nagios/plugins/check_oa_utilization
-%{_libdir}/nagios/plugins/check_openattic_rpcd
 %{_libdir}/nagios/plugins/check_openattic_systemd
 %{_libdir}/nagios/plugins/check_protocol_traffic
-%{_libdir}/nagios/plugins/check_twraid_unit
 %{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios

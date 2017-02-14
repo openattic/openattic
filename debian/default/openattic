@@ -11,14 +11,8 @@
 
 PYTHON="/usr/bin/python"
 OADIR="/usr/share/openattic"
-
-RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
-RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
-RPCD_LOGLEVEL="INFO"
-RPCD_OPTIONS="$OADIR/manage.py runrpcd"
-RPCD_CERTFILE="" #"$OADIR/certs/ssl-cert-snakeoil.pem"
-RPCD_KEYFILE="" #"$OADIR/certs/ssl-cert-snakeoil.key"
+OAUSER="openattic"
+OAGROUP="openattic"
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
 SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
