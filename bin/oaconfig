@@ -363,7 +363,7 @@ EOF
 		kinit "$user"
 		
 		echo "Configuring Samba..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:$realm" "string:$workgroup"
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:$realm" "string:$workgroup" "boolean:false" "int32:0"
 
 		if [ -e /etc/krb5.keytab ]; then
 			echo "Removing old keytab..."
@@ -413,7 +413,7 @@ EOF
 		sed -i -e 's/^group:.*$/group:          compat winbind/' /etc/nsswitch.conf
 		
 		echo "Restarting Samba and Winbind..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:" "string:"
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:" "string:" "boolean:false" "int32:0"
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart
 		done
