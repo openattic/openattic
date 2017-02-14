@@ -401,6 +401,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
 mkdir -p %{buildroot}/lib/tmpfiles.d/
