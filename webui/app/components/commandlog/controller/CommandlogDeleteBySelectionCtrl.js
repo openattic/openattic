@@ -51,6 +51,7 @@ app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogSe
         .then(function () {
           $uibModalInstance.close("cloned");
         }, function (error) {
+          $scope.deleteForm.$submitted = false;
           console.log("An error occured", error);
         });
   };
