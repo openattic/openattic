@@ -154,7 +154,7 @@ class Connection(BlockVolume):
         if m is None:
             raise ValueError(_("syncer rate must be in <number>[K|M|G] format"))
         mult = {
-            '':  1024,
+            '':  1,
             'K': 1024,
             'M': 1024**2,
             'G': 1024**3,
