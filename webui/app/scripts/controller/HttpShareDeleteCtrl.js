@@ -39,8 +39,6 @@ app.controller("HttpShareDeleteCtrl", function ($scope, HttpSharesService, $uibM
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

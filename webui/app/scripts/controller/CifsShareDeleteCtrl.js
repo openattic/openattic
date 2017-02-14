@@ -39,8 +39,6 @@ app.controller("CifsShareDeleteCtrl", function ($scope, CifsSharesService, $uibM
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

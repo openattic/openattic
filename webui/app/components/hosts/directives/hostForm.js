@@ -41,7 +41,7 @@ app.directive("hostForm", function () {
       submit: "=?"
     },
     templateUrl: "components/hosts/templates/add-host-directive.html",
-    controller: function ($scope, $state, HostService, InitiatorService, $q, Notification) {
+    controller: function ($scope, $state, HostService, InitiatorService, $q) {
       if (!$scope.config) {
         $scope.config = {
           header: true,
@@ -116,8 +116,6 @@ app.directive("hostForm", function () {
             .then(function (res) {
               host = res;
               saveShares(changes, host, goBack);
-            }, function (error) {
-              $scope.errorOccurred(error, "Couldn't save", "Couldn't create new host.");
             });
         }
       };
@@ -157,20 +155,8 @@ app.directive("hostForm", function () {
             .$promise
             .then(function () {
               $scope.saveShares($scope.changes, $scope.host, $scope.goBack);
-            }, function (error) {
-              $scope.errorOccurred(error, "Couldn't save", "Couldn't update host.");
             });
-        }, function (error) {
-          $scope.errorOccurred(error, "Couldn't save", "Couldn't update host.");
         });
-      };
-
-      $scope.errorOccurred = function (error, title, msg) {
-        Notification.error({
-          title: title,
-          msg: msg
-        }, error);
-        throw error;
       };
 
       $scope.init = function () {
@@ -180,8 +166,6 @@ app.directive("hostForm", function () {
             res.results.forEach(function (share) {
               $scope.wwns.push(share.wwn);
             });
-          }, function (error) {
-            $scope.errorOccurred(error, "Loading failure", "Couldn't load WWNs.");
           });
 
         if (!$scope.hostId) {
@@ -196,8 +180,6 @@ app.directive("hostForm", function () {
             .$promise
             .then(function (res) {
               $scope.host = res;
-            }, function (error) {
-              $scope.errorOccurred(error, "Loading failure", "Couldn't load host.");
             });
 
           $scope.loadInitiators();
@@ -231,8 +213,6 @@ app.directive("hostForm", function () {
             if ($scope.data.iscsi.length > 0) {
               $scope.wwn.iscsi.check = true;
             }
-          }, function (error) {
-            $scope.errorOccurred(error, "Loading failure", "Couldn't load WWNs of host.");
           });
       };
 
@@ -252,8 +232,6 @@ app.directive("hostForm", function () {
         });
         $q.all(requests).then(function () {
           callback(host);
-        }, function (error) {
-          $scope.errorOccurred(error, "Couldn't save", "Couldn't create or delete WWNs.");
         });
       };
 

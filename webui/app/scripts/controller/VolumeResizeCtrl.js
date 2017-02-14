@@ -56,8 +56,6 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, poolsService
           .$update()
           .then(function () {
             $uibModalInstance.close("resized");
-          }, function (error) {
-            console.log("An error occured", error);
           });
     }
   };

@@ -48,7 +48,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.selection = {};
 
-  if ($scope.cluster.results.length > 0 && typeof $scope.registry.selectedCluster === "undefined") {
+  if ($scope.cluster.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
     $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
@@ -86,7 +86,6 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
           })
           .catch(function (error) {
             $scope.error = error;
-            console.log("An error occurred while loading the ceph pools.", error);
           });
     }
   };

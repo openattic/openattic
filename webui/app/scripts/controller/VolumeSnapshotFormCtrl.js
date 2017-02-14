@@ -81,8 +81,6 @@ app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $sta
           .$save()
           .then(function () {
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
     }
   };

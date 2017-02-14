@@ -39,8 +39,6 @@ app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibMod
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

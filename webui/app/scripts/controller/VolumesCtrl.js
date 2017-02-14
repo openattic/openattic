@@ -127,9 +127,6 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       .$promise
       .then(function (res) {
         $scope.data = res;
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
       });
   }, true);
 
@@ -217,8 +214,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   $scope.protectedMessage = function (item) {
     Notification.warning({
       title: item.name + " is not deletable",
-      msg: "Release the deletion protection in order to be able to delete the volume.",
-      timeout: 6000
+      msg: "Release the deletion protection in order to be able to delete the volume."
     });
   };
 

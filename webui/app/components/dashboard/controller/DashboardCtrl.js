@@ -281,12 +281,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
     var obj = {};
     obj[dashboardKey] = $scope.data;
 
-    dashboardService
-        .save(obj)
-        .$promise
-        .catch(function (err) {
-          throw err;
-        });
+    dashboardService.save(obj);
   };
 
   var setIds = function () {
@@ -390,9 +385,6 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
           } finally {
             $scope.saveDashboard();
           }
-        })
-        .catch(function (error) {
-          throw error;
         });
   };
 

@@ -39,8 +39,6 @@ app.controller("UsersModalCtrl", function ($scope, UserService, $uibModalInstanc
         .$promise
         .then(function (res) {
           $uibModalInstance.close(res.auth_token.token);
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

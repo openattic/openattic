@@ -83,9 +83,6 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
         .$promise
         .then(function (res) {
           $scope.snapshotsData = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 

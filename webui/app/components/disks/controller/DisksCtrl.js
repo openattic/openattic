@@ -76,9 +76,6 @@ app.controller("DisksCtrl", function ($scope, $state, disksService, tabViewServi
     .$promise
     .then(function (res) {
       $scope.data = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
     });
   }, true);
 
@@ -93,9 +90,4 @@ app.controller("DisksCtrl", function ($scope, $state, disksService, tabViewServi
   $scope.$watchCollection("selection.item", function (item) {
     $scope.hasSelection = Boolean(item);
   });
-
-  $scope.createPoolAction = function () {
-    console.log("createPoolAction");
-    $state.go("pools-add", {diskId: $scope.selection.item.id});
-  };
 });

@@ -46,8 +46,6 @@ app.controller("VolumeProtectionCtrl", function ($scope, VolumeService, $uibModa
         .$update()
         .then(function () {
           $uibModalInstance.dismiss("protection set");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

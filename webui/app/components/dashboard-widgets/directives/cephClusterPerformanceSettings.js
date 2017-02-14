@@ -44,9 +44,6 @@ app.directive("cephClusterPerformanceSettings", function () {
             .$promise
             .then(function (res) {
               $scope.cluster = res.results;
-            })
-            .catch(function (error) {
-              throw error;
             });
       };
 

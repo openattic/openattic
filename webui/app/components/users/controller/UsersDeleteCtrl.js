@@ -39,8 +39,6 @@ app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInsta
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

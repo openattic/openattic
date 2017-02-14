@@ -37,14 +37,24 @@ app.factory("ApiErrorDecoratorService", function ($q, Notification) {
     decorate: function (error) {
       var errorPrefix;
       var notification;
+      var message = "";
 
       if (error) {
         errorPrefix = error && error.config && error.config.method && error.config.url &&
-          "[" + [error.config.method, error.config.url].join(": ") + "]";
+          "[" + [error.config.method, error.config.url].join(": ") + "] => " + error.status;
+        angular.forEach(error.data, function (val, key) {
+          if (key === "detail") {
+            message = val + message;
+          } else {
+            message += "<br>" + key + ": " + val;
+          }
+        });
+        message = [errorPrefix, "Failed with", error.status, "status.", error.data && error.data.detail].join(" ") +
+          "<br>" + message;
         notification = new Notification({
-            title: "API Error",
-            msg: [errorPrefix, "Failed with", error.status, "status.", error.data && error.data.detail].join(" ")
-          })
+            title: "API Error: " + error.status + " - \"" + error.statusText + "\"",
+            msg: message
+          }, error)
           .show();
 
         /**

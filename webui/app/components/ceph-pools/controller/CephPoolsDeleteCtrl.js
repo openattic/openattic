@@ -65,14 +65,8 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
     });
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
-    }, function (error) {
+    }, function () {
       $uibModalInstance.close("deleted");
-      Notification.error({
-        title: "Deletion failure",
-        msg: "Couldn't delete Ceph pool.",
-        timeout: 10000
-      }, error);
-      throw error;
     });
   };
 

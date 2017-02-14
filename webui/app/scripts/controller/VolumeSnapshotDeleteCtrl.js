@@ -39,8 +39,6 @@ app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $u
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

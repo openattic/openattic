@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, Notification) {
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal,
+    Notification) {
   var gravatarId = $filter("gravatar")("");
 
   $scope.isCurrentUser = false;
@@ -61,8 +62,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       }
     };
@@ -79,8 +78,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
 
           gravatarId = $filter("gravatar")($scope.user.email);
           $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
-        }, function (error) {
-          console.log("An error occurred", error);
         });
 
     $scope.submitAction = function (userForm) {
@@ -90,8 +87,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       }
     };

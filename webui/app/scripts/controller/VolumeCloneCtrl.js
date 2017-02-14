@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotService, $uibModalInstance, volume, Notification) {
+app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotService, $uibModalInstance, volume,
+    Notification) {
   $scope.volume = volume;
   $scope.clone_obj = {};
 
@@ -50,8 +51,6 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
           .$promise
           .then(function () {
             $uibModalInstance.close("cloned");
-          }, function (error) {
-            console.log("An error occured", error);
           });
     } else {
       VolumeService.clone({
@@ -61,8 +60,6 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
           .$promise
           .then(function () {
             $uibModalInstance.close("cloned");
-          }, function (error) {
-            console.log("An error occured", error);
           });
     }
   };

@@ -64,8 +64,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
               $scope.state.created = true;
               $scope.state.formatted = $scope.volume.is_filesystemvolume;
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       } else if (!$scope.state.mirrored && $scope.data.mirrorHost !== "") {
         Notification.warning({
@@ -81,8 +79,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
             $scope.volume = res;
             $scope.state.formatted = true;
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
       }
     }

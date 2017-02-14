@@ -44,7 +44,7 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
         })
         .$promise
         .then(function () {
-          // Trigger toasty message on success
+          // Trigger notification message on success
           Notification.success({
             title: "Erasure code profile deleted",
             msg  : "Erasure code profile '" + $scope.profile.name + "' successfully deleted."
@@ -52,16 +52,6 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
 
           // Close dialog
           $uibModalInstance.close("deleted");
-        })
-        .catch(function (err) {
-          // Trigger toasty on error
-          Notification.error({
-            title: "Error",
-            msg  : err.data.detail
-          }, err);
-          $scope.cancel();
-
-          throw err;
         });
   };
 

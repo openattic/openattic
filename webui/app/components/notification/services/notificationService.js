@@ -79,12 +79,12 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
    *   @property {Object} toastyOptions toasty compatible options, used when creating a toasty
    *   @property {string} type toasty type
    *   @property {string} type type of the notification
-   * @param  {Object} cancelableError error object whose default notification we want to cancel
+   * @param  {Object} error object whose default notification we want to cancel
    * @return {Notification}       current Notification instance
    */
-  Notification.prototype.show = function (opts, cancelableError) {
-    if (cancelableError && cancelableError.preventDefault) {
-      cancelableError.preventDefault();
+  Notification.prototype.show = function (opts, error) {
+    if (error && error.preventDefault) {
+      error.preventDefault();
     }
     if (angular.isUndefined(this.delay) || this.delay < 5) {
       this.setDelay(5);
@@ -92,6 +92,9 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
     var options = angular.extend({}, TWDEFAULTS.options, this.options, opts);
     this.delayPromise = $timeout(function () {
       toasty[options.type](options);
+      if (angular.isObject(error)) {
+        throw error;
+      }
     }, this.delay);
     return this;
   };
@@ -108,8 +111,8 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
     return this;
   };
 
-  Notification.show = function (opts, cancelableError) {
-    return Notification.prototype.show.call(Notification.prototype, opts, cancelableError);
+  Notification.show = function (opts, error) {
+    return Notification.prototype.show.call(Notification.prototype, opts, error);
   };
 
   /*
@@ -119,9 +122,12 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
     if (["default", "options"].indexOf(key) > -1) {
       return;
     }
-    Notification[key] = function (opts, cancelableError) {
-      var options = angular.extend({}, opts, { type: TWDEFAULTS[key] });
-      return Notification.prototype.show.call(Notification.prototype, options, cancelableError);
+    Notification[key] = function (opts, error) {
+      var options = angular.extend({}, opts, {
+          type: TWDEFAULTS[key],
+          timeout: globalConfig.GUI.defaultNotificationTimes[key]
+        });
+      return Notification.prototype.show.call(Notification.prototype, options, error);
     };
   });
 

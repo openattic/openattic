@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $uibModalInstance, volumeSelection, $q, Notification) {
+app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $uibModalInstance, volumeSelection, $q,
+    Notification) {
   if ($.isArray(volumeSelection)) {
     $scope.volumes = volumeSelection;
   } else {
@@ -61,8 +62,6 @@ app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $uibModalIns
     });
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
-    }, function (error) {
-      console.log("An error occured", error);
     });
   };
 

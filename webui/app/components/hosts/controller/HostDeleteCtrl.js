@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.hosts");
 app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibModalInstance, hosts, Notification, $q) {
-    $scope.host = host;
+  $scope.hosts = hosts;
   $scope.input = {
     enteredName: "",
     pattern: "yes"
@@ -51,13 +51,8 @@ app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibMod
     });
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
-    }, function (error) {
-      Notification.error({
-        title: "Error " + error.status + " when deleting host" + hosts.length === 1 ? "" : "s",
-        msg: $filter("json")(error.data)
-      });
-      $uibModalInstance.close("deleted");
-      throw error;
+    }, function () {
+      $uibModalInstance.close("failed");
     });
   };
 

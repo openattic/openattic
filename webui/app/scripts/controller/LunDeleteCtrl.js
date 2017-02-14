@@ -39,8 +39,6 @@ app.controller("LunDeleteCtrl", function ($scope, LunService, $uibModalInstance,
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

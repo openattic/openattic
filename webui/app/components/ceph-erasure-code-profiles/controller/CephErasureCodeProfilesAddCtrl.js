@@ -60,14 +60,6 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
           });
 
           $uibModalInstance.close(res);
-        })
-        .catch(function (err) {
-          Notification.error({
-            title: "Error",
-            msg  : err.data.detail
-          }, err);
-
-          throw err;
         });
   };
 
@@ -91,9 +83,6 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
               $scope.erasureCodeProfile.ruleset_failure_domain = e.name;
             }
           });
-        })
-        .catch(function (err) {
-          throw err;
         });
   }
 

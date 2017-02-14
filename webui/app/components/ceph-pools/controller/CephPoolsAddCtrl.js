@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, Notification, ClusterResource,
-    cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, Notification,
+    ClusterResource,  cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
     pg_num: 1,
@@ -107,25 +107,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
               });
             }
           }
-        })
-        .catch(function (crushError) {
-          $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
-          Notification.error({
-            title: "Loading failure",
-            msg: "Crushmap couldn't be loaded.",
-            timeout: 10000
-          }, crushError);
-          throw crushError;
         });
-    })
-    .catch(function (clusterError) {
-      $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
-      Notification.error({
-        title: "Loading failure",
-        msg: "Cluster list couldn't be loaded.",
-        timeout: 10000
-      }, clusterError);
-      throw clusterError;
     });
 
   $scope.$watch("data.cluster", function (cluster) {
@@ -135,14 +117,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function (res) {
           $scope.data.osdCount = res.count;
-        })
-        .catch(function (osdError) {
-          Notification.error({
-            title: "Loading error",
-            msg: "OSD's couldn't be loaded.",
-            timeout: 10000
-          }, osdError);
-          throw osdError;
         });
       cephErasureCodeProfilesService.get({fsid: cluster.fsid})
         .$promise
@@ -152,14 +126,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           if ($scope.data.profiles.length === 1) {
             $scope.pool.erasure.profile = $scope.data.profiles[0];
           }
-        })
-        .catch(function (osdError) {
-          Notification.error({
-            title: "Loading error",
-            msg: "Erasure code profiles couldn't be loaded.",
-            timeout: 10000
-          }, osdError);
-          throw osdError;
         });
       $scope.data.ruleset = $scope.data.cluster.rules[0];
     }
@@ -242,13 +208,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function () {
           goToListView();
-        }, function (error) {
-          Notification.error({
-            title: "Creation failure",
-            msg: "Couldn't create Ceph pool.",
-            timeout: 10000
-          }, error);
-          throw error;
         });
     }
   };
