@@ -540,11 +540,11 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
             if blockvolume and type(blockvolume) == Connection:
                 # Add the parameter 'new_size'.
                 data = get_request_data(request)
-                request = self._clone_request_with_new_data(request,
-                    dict(data, new_size=data["megs"]))
+                request = self._clone_request_with_new_data(
+                    request, dict(data, new_size=data["megs"]))
                 # Redirect request.
-                return self._remote_request(request, blockvolume.host,
-                    api_prefix="mirrors", obj=blockvolume)
+                return self._remote_request(request, blockvolume.host, api_prefix="mirrors",
+                                            obj=blockvolume)
 
         return super(VolumeProxyViewSet, self).update(request, args, kwargs)
 
@@ -556,9 +556,9 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
             from drbd.models import Connection
             if blockvolume and type(blockvolume) == Connection:
                 # might be a remote_request
-                return self._remote_request(request, blockvolume.host,
-                    api_prefix="mirrors", obj=blockvolume)
-
+                return self._remote_request(request, blockvolume.host, api_prefix="mirrors",
+                                            obj=blockvolume)
+            
         return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 
