@@ -44,7 +44,6 @@ app.directive("drbdAdd", function () {
       // Default values.
       $scope.data = {
         remote_pool: null,
-        is_mirrored: false,
         syncer_rate: "30M",
         protocol: "C"
       };
