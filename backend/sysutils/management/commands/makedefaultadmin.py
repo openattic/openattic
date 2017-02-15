@@ -14,17 +14,20 @@
  *  GNU General Public License for more details.
 """
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models  import User
+from django.contrib.auth.models import User
 
-class Command( BaseCommand ):
-    help = "If there is no other SuperUser, creates an openattic/openattic default user."
+
+class Command(BaseCommand):
+    help = 'If there is no other SuperUser, creates an openattic/openattic default user.'
 
     def handle(self, **options):
-        if User.objects.filter( is_superuser=True ).count() == 0:
-            admin = User(username="openattic", is_superuser=True, is_staff=True, is_active=True)
-            admin.set_password("openattic")
+        if User.objects.filter(is_superuser=True).count() == 0:
+            oa_username = getattr(settings, "OAUSER")
+            admin = User(username=oa_username, is_superuser=True, is_staff=True, is_active=True)
+            admin.set_password('openattic')
             admin.save()
-            print 'Created default user "openattic" with password "openattic".'
+            print('Created default user "openattic" with password "openattic".')
         else:
-            print "We have an admin already, not creating default user."
+            print('We have an admin already, not creating default user.')

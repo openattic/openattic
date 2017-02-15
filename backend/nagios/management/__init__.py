@@ -30,8 +30,12 @@ def create_nagios(**kwargs):
     # Make sure the contacts config exists
     signals.post_save.disconnect(update_conf, sender=Service)
 
+    nagios = get_dbus_object("/nagios")
+    nagios.restart_service()
+
     for servstate in Service.nagstate["servicestatus"]:
-        if servstate["service_description"].startswith("Check Ceph"):
+        if servstate["service_description"].startswith("Check Ceph") or \
+           servstate['service_description'] == 'openATTIC RPCd':
             continue
 
         cmdargs = servstate["check_command"].split('!')
@@ -62,17 +66,16 @@ def create_nagios(**kwargs):
                            arguments=('!'.join(cmdargs)))
             serv.save()
 
-    cmd = Command.objects.get(name=nagios_settings.CPUTIME_CHECK_CMD)
+    cmd = Command.objects.get(name='check_cputime')
     if Service.objects.filter(host=Host.objects.get_current(), command=cmd).count() == 0:
         serv = Service(host=Host.objects.get_current(), command=cmd,
                        description=nagios_settings.CPUTIME_DESCRIPTION, arguments="")
         serv.save()
 
-    nagios = get_dbus_object("/nagios")
     nagios.writeconf()
     nagios.restart_service()
 
-    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+    cmd = Command.objects.get(name='check_diskstats')
     for bv in BlockVolume.objects.all():
         instance = bv.volume
         ctype = ContentType.objects.get_for_model(instance.__class__)
@@ -84,7 +87,7 @@ def create_nagios(**kwargs):
                       arguments=instance.path)
         srv.save()
 
-    cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
+    cmd = Command.objects.get(name='check_volume_utilization')
     for fsv in FileSystemVolume.objects.all():
         instance = fsv.volume
         ctype = ContentType.objects.get_for_model(instance.__class__)
