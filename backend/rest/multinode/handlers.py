@@ -154,7 +154,7 @@ class RequestHandlers(object):
                 response.raise_for_status()
         except Exception, e:
             logger.error(e)
-            return Response({'error': str(e)}, status=e.response.status_code if e.response else
+            return Response({'detail': str(e)}, status=e.response.status_code if e.response else
                 status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Decode the response content into a JSON object.

@@ -1,4 +1,4 @@
-<div class="panel panel-default" ng-if="!selection.item.error">
+<div class="panel panel-default" ng-if="!selection.item.detail">
     <div class="panel-heading" ng-if="selection.item.name">
         <h3 class="panel-title">Details of {{selection.item.name}}</h3>
     </div>
@@ -42,6 +42,6 @@
         </dl>
     </div>
 </div>
-<div class="alert alert-danger" role="alert" ng-if="selection.item.error">
-    <i class="fa fa-exclamation-triangle"></i> {{selection.item.error}}
+<div class="alert alert-danger" role="alert" ng-if="selection.item.detail">
+    <i class="fa fa-exclamation-triangle"></i> {{selection.item.detail}}
 </div>

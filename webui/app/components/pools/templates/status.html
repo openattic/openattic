@@ -1,4 +1,4 @@
-<div ng-if="!selection.item.error">
+<div ng-if="!selection.item.detail">
     <h2 ng-bind="selection.item.status.text"></h2>
     <ul>
         <li ng-repeat="(flag, desc) in selection.item.status.flags" ng-bind="desc"></li>
@@ -16,6 +16,6 @@
         </ul>
     </div>
 </div>
-<div class="alert alert-danger" role="alert" ng-if="selection.item.error">
-    <i class="fa fa-exclamation-triangle"></i> {{selection.item.error}}
+<div class="alert alert-danger" role="alert" ng-if="selection.item.detail">
+    <i class="fa fa-exclamation-triangle"></i> {{selection.item.detail}}
 </div>
