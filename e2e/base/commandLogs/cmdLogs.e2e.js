@@ -8,7 +8,7 @@ describe('CommandLogs', function(){
   });
 
   it('should display oadatatable', function(){
-    expect(element(by.css('.tc_oadatatable_cmdlogs')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_oadatatable_cmdlog')).isDisplayed()).toBe(true);
   });
 
   it('should have a delete by date button', function(){
