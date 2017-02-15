@@ -20,7 +20,7 @@ describe('Should test oadatatable and its options', function(){
   });
 
   beforeEach(function(){
-    browser.setLocation('cmdlogs');
+    browser.setLocation('commandlog');
   });
 
   var list = [
