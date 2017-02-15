@@ -14,6 +14,7 @@ Version 2.0.19, (not released yet):
 * Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
 * Packaging: Stop and remove openattic-rpcd service when upgrading to version 2.0.19 (OP-1900)
+* Documentation: Updated E2E section (changed test tool versions, OP-1919)
 
 
 Version 2.0.18, 09. February 2017:
