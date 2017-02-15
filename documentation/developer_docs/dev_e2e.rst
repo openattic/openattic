@@ -37,13 +37,15 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor`` (version 3.1.1)
+* ``npm install -g protractor`` (version 4.0.10)
 
 .. note::
-  Protractor version 3.x.x requires Node.js |reg| version 4.x (you can check
+  Protractor version 4.x.x requires Node.js |reg| version 4.x (you can check
   your installed version with ``node -v``).
 
 * ``apt-get install openjdk-7-jre-headless``
+
+* ``webdriver-manager`` version should be 10.3.x
 
 * ``npm install -g jasmine-beforeAll`` (in case this package is not available,
   try ``npm install -g jasmine-before-all``)
