@@ -410,8 +410,6 @@ rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
 install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
 rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
-rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
-rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 

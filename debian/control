@@ -41,7 +41,6 @@ Description: Comprehensive storage management system
   * HTTP
   * LIO (iSCSI, FC)
   * Samba
-  * Apt
   * Nagios
   * FTP
   * Cron
@@ -137,19 +136,6 @@ Description: NFS module for openATTIC
  between UNIX hosts. This package installs a module that allows Volumes to
  be shared using NFS, which is the recommended way not only for UNIXes, but
  also for VMware ESX virtualization hosts.
-
-Package: openattic-module-apt
-Architecture: all
-Depends: ${misc:Depends}, python-apt, openattic-base
-Description: APT module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- Debian's Advanced Package Tool handles installing, upgrading and removing
- programs using packages. It keeps track of installed and available programs
- and automates various procedures. This module extends the User interface
- for a Front End, which allows you to check for available upgrades easily.
 
 Package: openattic-module-samba
 Architecture: all
