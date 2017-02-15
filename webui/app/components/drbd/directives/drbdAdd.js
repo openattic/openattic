@@ -44,7 +44,7 @@ app.directive("drbdAdd", function () {
       // Default values.
       $scope.data = {
         remote_pool: null,
-        volume_mirroring: false,
+        is_mirrored: false,
         syncer_rate: "30M",
         protocol: "C"
       };
@@ -91,7 +91,7 @@ app.directive("drbdAdd", function () {
       // Listen to the event that is fired when a volume has been created.
       $scope.$on("volumecreate", function (event, volume) {
         // Abort immediatelly if volume mirroring is not enabled.
-        if (!$scope.data.volume_mirroring)
+        if (!$scope.data.is_mirrored)
           return;
         // Create the volume mirror.
         drbdService.save({
