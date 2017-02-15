@@ -70,8 +70,9 @@ app.service("tabViewService", function ($state) {
     scope.tabData.active = index;
     // Make sure that the first object in the selection is an object.
     if (!angular.isArray(scope.selection.items) || !scope.selection.items.length ||
-        !angular.isObject(scope.selection.items[0]))
+        !angular.isObject(scope.selection.items[0])) {
       return;
+    }
     var stateJump = {};
     stateJump[scope.tabConfig.type] = scope.selection.items[0][scope.tabConfig.linkedBy];
     stateJump["#"] = scope.tabConfig.jumpTo;
