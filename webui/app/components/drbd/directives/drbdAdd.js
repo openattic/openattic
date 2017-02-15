@@ -53,8 +53,9 @@ app.directive("drbdAdd", function () {
       // Listen to Pool selections. Reload and filter the remote pool list
       // if a pool has been selected.
       $scope.$watch("volumeData.source_pool", function (pool) {
-        if (!pool)
+        if (!pool) {
           return;
+        }
         $scope.remote_pool_waiting_msg = "Retrieving pool list...";
         poolsService.query({ excl_host: pool.host })
           .$promise
@@ -76,8 +77,9 @@ app.directive("drbdAdd", function () {
       // requested volume.
       $scope.validatePoolSize = function () {
         var valid = true;
-        if ($scope.data.remote_pool && $scope.volumeData.megs)
+        if ($scope.data.remote_pool && $scope.volumeData.megs) {
           valid = $scope.data.remote_pool.usage.free > $scope.volumeData.megs;
+        }
         $scope.validation.remote_pool.$setValidity("poolSize", valid);
       }
       $scope.$watch("volumeData.megs", function () {
@@ -90,8 +92,9 @@ app.directive("drbdAdd", function () {
       // Listen to the event that is fired when a volume has been created.
       $scope.$on("volumecreate", function (event, volume) {
         // Abort immediatelly if volume mirroring is not enabled.
-        if (!$scope.data.is_mirrored)
+        if (!$scope.volumeData.is_mirrored) {
           return;
+        }
         // Create the volume mirror.
         drbdService.save({
             source_volume: {
