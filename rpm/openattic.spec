@@ -323,20 +323,6 @@ Samba implements the SMB/CIFS protocol and enables file sharing with hosts
 that run the Microsoft Windows family of operating systems. This package
 provides configuration facilities for Samba Shares.
 
-%package module-twraid
-Requires: %{name}-base
-Requires: cron
-# TODO: List Requirements
-Summary: 3ware RAID module for openATTIC
-
-%description module-twraid
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package installs a module that allows administration of 3ware RAID
-controllers through openATTIC.
-
 %package module-zfs
 Requires:	zfs
 Requires:	kernel-devel
@@ -392,7 +378,6 @@ mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/default/
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -462,8 +447,6 @@ install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconf
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
-
-install -m 644 etc/cron.d/updatetwraid %{buildroot}%{_sysconfdir}/cron.d/
 
 %pre base
 # create openattic user/group  if it does not exist
@@ -717,12 +700,6 @@ systemctl enable nmb
 systemctl start nmb
 systemctl enable smb
 systemctl start smb
-
-%files 	module-twraid
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/09_twraid
-%{_datadir}/%{name}/twraid/
-%config %{_sysconfdir}/cron.d/updatetwraid
 
 %files 	module-zfs
 %defattr(-,root,root,-)

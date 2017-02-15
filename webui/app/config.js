@@ -17,7 +17,6 @@ var globalConfig = {
       "nagios"     : true,
       "nfs"        : true,
       "samba"      : true,
-      "twraid"     : true,
       "zfs"        : true
     },
     "defaultToastTimes": {
