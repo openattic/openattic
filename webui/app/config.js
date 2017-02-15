@@ -13,7 +13,6 @@ var globalConfig = {
       "ipmi"       : true,
       "lvm"        : true,
       "mailaliases": true,
-      "mdraid"     : true,
       "nagios"     : true,
       "nfs"        : true,
       "samba"      : true,
