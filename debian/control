@@ -206,7 +206,6 @@ Description: Nagios module for openATTIC
   * check_diskstats
   * check_iface_traffic
   * check_openattic_systemd
-  * check_openattic_rpcd
 
 Package: openattic-module-drbd
 Architecture: all
