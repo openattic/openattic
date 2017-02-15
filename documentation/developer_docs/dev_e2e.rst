@@ -156,7 +156,7 @@ In order to run our graphical user interface tests, please make sure that your
 and add them to ``e2e/configs.js``.
 
 .. note::
-  For more information have a look at ``e2e/example_config.js``.
+  For more information have a look at ``e2e/configs.js.sample``.
 
 It is important that the first element in this config file is your volume
 group.
