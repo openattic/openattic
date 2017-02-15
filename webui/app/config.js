@@ -3,6 +3,12 @@ var globalConfig = {
     "URL": "/openattic/api/"
   },
   "GUI": {
+    "defaultToastTimes": {
+      "success": 3000,
+      "warning": 6000,
+      "error": 9000
+    },
+    "defaultTaskReloadTime": 5000,
     "defaultDashboard": {
       "boards"  : [{
         "name"   : "Ceph",

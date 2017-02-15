@@ -15,7 +15,8 @@
 """Usage:
     make_dist.py create (release|snapshot) [--revision=<revision>]
         [--source=<source>] [--destination=<destination>]
-        [--adapt-debian-changelog] [--push-changes] [-v|-q|-s]
+        [--adapt-debian-changelog] [--push-changes] [--tag]
+        [--suffix=<suffix>] [-v|-q|-s]
     make_dist.py cache push
     make_dist.py (help|-h|--help)
 
@@ -36,7 +37,12 @@ Options:
         'snapshot' is the development branch, which actually results in the tip
         of the development branch being used.
 
-        The revision argument will be ignored if a path to a local repository
+        If the --tag switch is used without a revision but with the order to
+        create a 'release', then the latest existing mercurial tag will *not*
+        be used by default, but the 'default' branch. For more information see
+        the documentation of --tag.
+
+        The --revision argument will be ignored if a path to a local repository
         is used as argument for --source and if that repo contains uncommitted
         changes. In that case these uncommited changes are committed in a
         temporary directory to be able include them in the tar archive.
@@ -71,17 +77,42 @@ Options:
 
     --push-changes
 
-        Pushes the changes made to the temporary repository which is used to
-        create the tarball. This switch is ment to be used on a release to push
-        changes back to the repository.  Those changes include the adaption of
-        the `debian/changelog` as well as any created Mercurial tags.  This
-        switch will be ignored if the argument to --source is a local path
+        Pushes the changes that have been made in the temporary repository
+        which is used to create the tarball. This switch is meant to be used on
+        a release to push changes back to the configured remote repository.
+        It's configured in the `.hg/hgrc` of the given source repository.
+        Those changes include the adaption of the `debian/changelog` as well as
+        any Mercurial tags created.
+
+        This switch will be ignored if the argument to --source is a local path
         which contains uncommitted changes. If there aren't uncommited changes
-        to the repository, the switch won't be ignored. Be aware of that every
-        commited but not yet pushed change to the local repository is going to
-        be pushed! If the push would create a new head on the remote
-        repository, the changes won't get pushed and the execution of the
-        script will be aborted.
+        to the repository, the switch won't be ignored. Be aware that every
+        committed but unpushed change in the local source repository is going
+        to be pushed when using this switch!
+
+        If the push would create a new head on the remote repository, the
+        changes won't be pushed and the execution of the script will be
+        aborted.
+
+    --tag
+
+        Creates a Mercurial tag on top of other changes, like for example the
+        adaption of the `debian/changelog`. The tag used will be the VERSION of
+        the `version.txt` of the source.
+
+        Due to the fact that the original source is never altered, but only a
+        temporary copy of it, the tag will be lost if it isn't pushed back to
+        the repository using the --push-changes switch. You should also be
+        aware of the fact that the ability to add tags is supposed to be used
+        on a release. This enables the automation of a release, thus it's not
+        allowed to create tags which would create additional heads.
+
+    --suffix=<suffix>
+
+        If provided, the suffix will be appended to the resulting tarball
+        filename as well as the directory name that the tarball contains. It
+        will be appended to the basename "openattic" but before any version
+        information to maintain compatibility with `debuild`.
 
     -v
 
@@ -114,6 +145,7 @@ from datetime import datetime
 from hashlib import md5
 from docopt import docopt
 from urlparse import urlparse
+from distutils.spawn import find_executable
 
 VERBOSITY_SCRIPT = -1
 VERBOSITY_QUIET = 0
@@ -191,12 +223,12 @@ class Process(object):
 
             if exit_on_error:
                 # Print message on exit for the sake of debugging.
-                print('Error occurred, exiting')
+                sys.stderr.write('Error occurred, exiting\n')
                 sys.exit(result.returncode)
 
         return result
 
-    def system(self, args, cwd):
+    def system(self, args, cwd, exit_on_error=None):
         """Make a system call.
 
         The args aren't escaped automatically. Either don't pass user input to this function or
@@ -208,9 +240,14 @@ class Process(object):
         :type cwd: str
         :return:
         """
+        exit_on_error = self.exit_on_error is True and exit_on_error is not False
         self.log_command(args, cwd, self.use_bold)
         os.chdir(cwd)
-        return os.system(' '.join(args))
+        exit_code = os.system(' '.join(args))
+        if exit_code > 0 and exit_on_error:
+            sys.stderr.write('Error occurred, exiting\n')
+            sys.exit(exit_code)
+        return exit_code
 
     def log_command(self, args, cwd='', use_bold=True):
         """Log a command call.
@@ -246,12 +283,15 @@ class DistBuilder(object):
         self._home_dir = os.environ['HOME']
         self._args = args if args else docopt(__doc__)
 
+        if not self._args['--suffix']:
+            self._args['--suffix'] = ''
         if self._args['--destination']:
             destination = os.path.expanduser(self._args['--destination'])
             self._destination_dir = os.path.abspath(destination)
         self._source = self._args['--source']
         self._source_is_path = not DistBuilder.is_url(self._source)
         if self._source_is_path:
+            self._source = os.path.expanduser(self._source)
             self._source = os.path.abspath(self._source)
         self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
         self._tmp_oa_clone_dir = os.path.join(self._tmp_dir, 'openattic')
@@ -288,6 +328,15 @@ class DistBuilder(object):
 
     def _command_exists(self, command):
         return self._process.run(['which', command], exit_on_error=False).success()
+
+    def _rmtree(self, path, **kwargs):
+        force = '' if 'ignore_errors' not in kwargs.keys() else 'f'
+        self._process.log_command(['rm', '-r{}'.format(force), path])
+        rmtree(path, **kwargs)
+
+    def _copytree(self, *args, **kwargs):
+        self._process.log_command(['cp', '-r'] + list(args))
+        copytree(*args, **kwargs)
 
     def _check_dependencies(self, commands):
         """Check the existence of the given commands.
@@ -440,7 +489,7 @@ class DistBuilder(object):
 
         :type message: str
         """
-        sys.stderr.write(message + os.linesep)
+        sys.stderr.write('\033[101;10m{}\033[0m{}'.format(message, os.linesep))
         sys.exit(2)
 
     def _retrieve_source(self, source, destination_dir, skip_if_exists=False):
@@ -463,7 +512,10 @@ class DistBuilder(object):
             self._log(msg.format(source, destination_dir))
             return
 
-        self._process.run(['hg', 'clone', source, destination_dir])
+        if self._source_is_path:
+            self._copytree(source, destination_dir, symlinks=True)
+        else:
+            self._process.run(['hg', 'clone', source, destination_dir])
 
     @staticmethod
     def _strip_mercurial_tag(tag):
@@ -485,7 +537,7 @@ class DistBuilder(object):
 
         return tag in matches if matches else False
 
-    def _get_build_basename(self, channel, version):
+    def _get_build_basename(self, channel, version, suffix=''):
         """Return the base name for the given revision.
 
         Depending on the channel, this may either like `openattic-2.0.4` or
@@ -497,7 +549,7 @@ class DistBuilder(object):
         """
         assert channel in ('release', 'snapshot')
 
-        build_basename = 'openattic-{}'.format(version)
+        build_basename = 'openattic{}-{}'.format(suffix, version)
         build_basename += '~' + self._datestring if channel == 'snapshot' else ''
 
         return build_basename
@@ -521,8 +573,7 @@ class DistBuilder(object):
 
         # Clean up previous versions.
         if isdir(tmp_abs_build_dir):
-            self._process.log_command(['rm', '-r', tmp_abs_build_dir])
-            rmtree(tmp_abs_build_dir)
+            self._rmtree(tmp_abs_build_dir)
         if isfile(abs_tarball_dest_file):
             self._process.log_command(['rm', abs_tarball_dest_file])
             os.remove(abs_tarball_dest_file)
@@ -558,20 +609,18 @@ class DistBuilder(object):
                 log_msg = 'No cache found for {}'
                 self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
                 self._process.run(cache_entry['command'], cwd=webui_dir)
-                copytree(cache_entry['source_dir'], cache_dir)  # Update cache dir.
+                self._copytree(cache_entry['source_dir'], cache_dir)  # Update cache dir.
             else:
                 log_msg = 'Cache found for {}. Copying files...'
                 self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
-                copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
+                self._copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
 
         if cache_used:  # Build the frontend files.
             self._process.run(['grunt', 'build'], cwd=webui_dir)
 
             # Remove no longer required dirs.
-            self._process.log_command(['rm', '-r', bower_components_dir])
-            rmtree(bower_components_dir)
-            self._process.log_command(['rm', '-r', node_modules_dir])
-            rmtree(node_modules_dir)
+            self._rmtree(bower_components_dir)
+            self._rmtree(node_modules_dir)
 
         # Update version.txt.
         data = {
@@ -596,7 +645,7 @@ class DistBuilder(object):
         self._process.run(['tar', options, abs_tarball_dest_file, build_basename],
                           cwd=self._tmp_dir)
 
-        rmtree(tmp_abs_build_dir)  # Remove no longer required temporary folder.
+        self._rmtree(tmp_abs_build_dir)  # Remove no longer required temporary folder.
 
         return abs_tarball_dest_file
 
@@ -645,12 +694,16 @@ class DistBuilder(object):
         self._process.run(['hg', 'pull', '--update'], cwd=self._fe_cache_dir)
 
         if self._source_is_path and isdir(self._tmp_oa_clone_dir):
-            self._process.log_command(['rm', '-r', self._tmp_oa_clone_dir])
-            rmtree(self._tmp_oa_clone_dir)
+            self._rmtree(self._tmp_oa_clone_dir)
         self._retrieve_source(self._source, self._tmp_oa_clone_dir, skip_if_exists=True)
 
         channel = self._get_release_channel()
-        revision = self._args['--revision'] or self._get_revision_by_channel(channel)
+        if self._args['--revision']:
+            revision = self._args['--revision']
+        elif self._args['--tag'] and self._args['release']:
+            revision = 'default'
+        else:
+            revision = self._get_revision_by_channel(channel)
 
         tmp_files_commited = False
         repo_updated = False
@@ -673,13 +726,30 @@ class DistBuilder(object):
             repo_updated = True
 
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
-        build_basename = self._get_build_basename(channel, version)
+        build_basename = self._get_build_basename(channel, version, self._args['--suffix'])
 
-        if (self._args['--adapt-debian-changelog'] or self._is_debian_or_derivative()):
-            if not self._args['--adapt-debian-changelog'] and self._is_debian_or_derivative():
-                self._warn('The --adapt-debian-changelog switch has automatically been enabled for '
-                           'you because you are using Debian or a derivative of it.')
+        debchange_installed = bool(find_executable('debchange'))
+        enable_debchange = False
+        if self._args['--adapt-debian-changelog']:
+            if debchange_installed:
+                enable_debchange = True
+            else:
+                self._fail('`debchange` wasn\'t found, but `--adapt-debian-changelog` has been '
+                           'specified. You may either install the executable (usually in the'
+                           '`devscripts` package) or deactivate the `--adapt-debian-changelog` '
+                           'switch.')
+        elif self._is_debian_or_derivative():
+            if debchange_installed:
+                self._warn('The --adapt-debian-changelog switch has automatically been enabled '
+                           'for you because you are using Debian or a derivative of it.')
+                enable_debchange = True
+            else:
+                self._warn('`debchange` executable wasn\'t found. The `debian/changelog` cannot '
+                           'be adapted without it. You\'ll be able to build the tar archive but '
+                           'you may not be able to create a Debian package with it because of '
+                           'mismatching version information.')
 
+        if enable_debchange:
             debian_channel = 'stable' if channel == 'release' else 'nightly'
             self.adapt_debian_changelog(debian_channel,
                                         version + ('-1' if channel == 'release' else ''),
@@ -688,7 +758,8 @@ class DistBuilder(object):
                                         self._tmp_oa_clone_dir)
             self._commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
-        abs_tarball_file_path = self._create_source_tarball(build_basename)
+        if self._args['--tag']:
+            self._process.run(['hg', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
 
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
@@ -698,7 +769,9 @@ class DistBuilder(object):
                 self._warn('Ignoring the --push-changes switch because temporary files of the given'
                            ' source have been comitted.')
 
-        rmtree(self._tmp_oa_clone_dir)
+        abs_tarball_file_path = self._create_source_tarball(build_basename)
+
+        self._rmtree(self._tmp_oa_clone_dir)
         self._remove_npmrc_prefix()
 
         return abs_tarball_file_path

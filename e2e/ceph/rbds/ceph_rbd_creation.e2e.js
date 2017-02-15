@@ -1,9 +1,11 @@
+'use strict';
+
 var helpers = require('../../common.js');
 var rbdCommons = require('./cephRbdCommon.js');
 
 describe('ceph rbd creation and deletion', function(){
   var rbdProperties = new rbdCommons();
-  var featureRbdName = "e2eFeatures";
+  var featureRbdName = 'e2eFeatures';
 
   beforeAll(function(){
     helpers.login();
@@ -15,7 +17,7 @@ describe('ceph rbd creation and deletion', function(){
   });
 
   var objSizeTests = [
-    [4, "KiB"],
+    [4, 'KiB'],
     [8, 'KiB'],
     [16, 'KiB'],
     [32, 'KiB'],
@@ -34,7 +36,7 @@ describe('ceph rbd creation and deletion', function(){
   rbdProperties.useWriteablePools(function(cluster, pool){
     objSizeTests.forEach(function(sizeArr, index){
       var objSize = sizeArr[0] + '.00 ' + sizeArr[1];
-      var rbdName = "e2eObjectSize" + index;
+      var rbdName = 'e2eObjectSize' + index;
       it('should create a rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
           + '" in cluster "' + cluster.name + '"', function(){
         rbdProperties.selectClusterAndPool(cluster, pool);
@@ -54,7 +56,7 @@ describe('ceph rbd creation and deletion', function(){
       it('should create a rbd with the following expert option case: "[' + testCase + ']" options on pool "' + pool.name
           + '" in cluster "' + cluster.name + '"', function(){
         rbdProperties.selectClusterAndPool(cluster, pool);
-        for (var i=0; i<7; i++){ // uncheck all boxes
+        for (var i = 0; i < 7; i++){ // uncheck all boxes
           rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
         }
         testCase.forEach(function(state, index){ // check the features
@@ -65,7 +67,7 @@ describe('ceph rbd creation and deletion', function(){
       it('should delete created rbd with the following expert option case: "[' + testCase + ']" options on pool "' +
         pool.name + '" in cluster "' + cluster.name + '"', function(){
         rbdProperties.deleteRbd(featureRbdName);
-      })
+      });
     });
   });
 

@@ -1,18 +1,30 @@
-openattic (2.0.16) unstable; urgency=medium
+openattic (2.0.18-1) unstable; urgency=medium
 
-  * New upstream release 2.0.16, see CHANGELOG for details
+  * New upstream release 2.0.18-1, see CHANGELOG for details
+
+ -- openATTIC Build Daemon <info@openattic.org>  Thu, 09 Feb 2017 17:43:45 +0100
+
+openattic (2.0.17-1) unstable; urgency=medium
+
+  * New upstream release 2.0.16-1, see CHANGELOG for details
+
+ -- openATTIC Build Daemon <info@openattic.org>  Tue, 20 Dec 2016 16:37:05 +0100
+
+openattic (2.0.16-1) unstable; urgency=medium
+
+  * New upstream release 2.0.16-1, see CHANGELOG for details
 
  -- openATTIC Build Daemon <info@openattic.org>  Mon, 07 Nov 2016 14:28:26 +0100
 
-openattic (2.0.15) unstable; urgency=medium
+openattic (2.0.15-1) unstable; urgency=medium
 
-  * New upstream release 2.0.15, see CHANGELOG for details
+  * New upstream release 2.0.15-1, see CHANGELOG for details
 
  -- openATTIC Build Daemon <info@openattic.org>  Wed, 12 Oct 2016 12:28:27 +0200
 
-openattic (2.0.14) unstable; urgency=medium
+openattic (2.0.14-1) unstable; urgency=medium
 
-  * New upstream release 2.0.14, see CHANGELOG for details
+  * New upstream release 2.0.14-1, see CHANGELOG for details
 
  -- openATTIC Build Daemon <info@openattic.org>  Mon, 12 Sep 2016 11:49:42 +0200
 
@@ -32,7 +44,7 @@ openattic (2.0.11-1) unstable; urgency=medium
 
   * New upstream release 2.0.11-1, see CHANGELOG for details
 
- -- Stephan MÃ¼ller <stephan@openattic.org>  Fri, 20 May 2016 12:14:05 +0200
+ -- Stephan Müller <stephan@openattic.org>  Fri, 20 May 2016 12:14:05 +0200
 
 openattic (2.0.10-1) unstable; urgency=medium
 
