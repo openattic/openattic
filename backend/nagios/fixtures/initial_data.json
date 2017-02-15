@@ -80,15 +80,7 @@
     }
 },
 {
-    "pk": 11, 
-    "model": "nagios.command", 
-    "fields": {
-        "query_only": true, 
-        "name": "check_openattic_rpcd"
-    }
-},
-{
-    "pk": 12, 
+    "pk": 12,
     "model": "nagios.command", 
     "fields": {
         "query_only": true, 
@@ -96,7 +88,7 @@
     }
 },
 {
-    "pk": 13, 
+    "pk": 13,
     "model": "nagios.command", 
     "fields": {
         "query_only": false, 
@@ -104,7 +96,7 @@
     }
 },
 {
-    "pk": 14, 
+    "pk": 14,
     "model": "nagios.command", 
     "fields": {
         "query_only": false, 
@@ -112,23 +104,7 @@
     }
 },
 {
-    "pk": 15, 
-    "model": "nagios.command", 
-    "fields": {
-        "query_only": false, 
-        "name": "check_drbd"
-    }
-},
-{
-    "pk": 16, 
-    "model": "nagios.command", 
-    "fields": {
-        "query_only": false, 
-        "name": "check_twraid_unit"
-    }
-},
-{
-    "pk": 17, 
+    "pk": 17,
     "model": "nagios.command", 
     "fields": {
         "query_only": false, 
@@ -136,7 +112,7 @@
     }
 },
 {
-    "pk": 18, 
+    "pk": 18,
     "model": "nagios.command", 
     "fields": {
         "query_only": false, 
@@ -494,7 +470,7 @@
     }
 },
 {
-    "pk": 40, 
+    "pk": 40,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "read (-) / write (+)", 
@@ -504,7 +480,7 @@
     }
 },
 {
-    "pk": 44, 
+    "pk": 44,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "%", 
@@ -514,7 +490,7 @@
     }
 },
 {
-    "pk": 45, 
+    "pk": 45,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "Bytes", 
@@ -524,7 +500,7 @@
     }
 },
 {
-    "pk": 46, 
+    "pk": 46,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "%", 
@@ -534,7 +510,7 @@
     }
 },
 {
-    "pk": 47, 
+    "pk": 47,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "Bytes", 
@@ -544,7 +520,7 @@
     }
 },
 {
-    "pk": 48, 
+    "pk": 48,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "Bytes", 
@@ -554,7 +530,7 @@
     }
 },
 {
-    "pk": 49, 
+    "pk": 49,
     "model": "nagios.graph", 
     "fields": {
         "verttitle": "Bytes", 
