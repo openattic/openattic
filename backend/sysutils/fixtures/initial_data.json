@@ -21,13 +21,6 @@
         }
     },
     {
-        "pk": 4,
-        "model": "sysutils.initscript",
-        "fields": {
-            "name": "openattic_rpcd"
-        }
-    },
-    {
         "pk": 5,
         "model": "sysutils.initscript",
         "fields": {
