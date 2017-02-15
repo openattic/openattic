@@ -3,7 +3,7 @@ diff -r 9af3dd6cdd38 backend/nagios/readstatus.py
 +++ b/backend/nagios/readstatus.py	Wed Dec 07 11:10:50 2016 +0100
 @@ -39,8 +39,11 @@
          self.lock = Lock()
- 
+
      def __getitem__(self, name):
 -        self.update()
 -        return self.nagstate[name]
@@ -12,7 +12,7 @@ diff -r 9af3dd6cdd38 backend/nagios/readstatus.py
 +            return self.nagstate[name]
 +        except SystemError:
 +            return []
- 
+
      def __len__(self):
          self.update()
 diff -r 236d67eb0c5c backend/settings.py
@@ -21,14 +21,14 @@ diff -r 236d67eb0c5c backend/settings.py
 @@ -35,8 +35,8 @@
  else:
      GUI_ROOT = "/usr/share/openattic-gui"
- 
+
 -API_ROOT = "/openattic/api"
 -API_OS_USER = 'openattic'
 +API_ROOT = ":8000/api"
 +API_OS_USER = 'vagrant'
- 
+
  from ConfigParser import ConfigParser
- 
+
 @@ -218,7 +218,7 @@
          'file': {
              'level': 'INFO',
