@@ -516,6 +516,21 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     def storage(self, request, *args, **kwargs):
         return self.retrieve(request, 'storage', *args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        data = get_request_data(request)
+        if "drbd" in settings.INSTALLED_APPS and "volume_mirroring" in data:
+            # We need to modify the volume creation if volume mirroring is
+            # activated and a file system should be created on top. This is
+            # necessary because the DRBD app is responsible for the file
+            # system creation in this case.
+            if data['volume_mirroring'] and data['filesystem']:
+                # Create the volume without a file system, this must be done
+                # by the DRBD app later.
+                request = self._clone_request_with_new_data(
+                    request, dict(data, filesystem=""))
+
+        return super(VolumeProxyViewSet, self).create(request, args, kwargs)
+
     def update(self, request, *args, **kwargs):
         if "drbd" in settings.INSTALLED_APPS:
             obj = self.get_object()
