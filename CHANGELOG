@@ -13,6 +13,8 @@ Version 2.0.19, (not released yet):
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
+* WebUI: Display loading spinner icon on form submit to give the user feedback
+  that something is happening in the background (OP-1760)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
 * Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
 * Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
