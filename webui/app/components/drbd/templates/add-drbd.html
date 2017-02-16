@@ -3,7 +3,7 @@
     <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <div class="checkbox checkbox-primary">
             <input id="volumeMirroring"
-                   ng-model="volumeData.is_mirrored"
+                   ng-model="result.is_mirrored"
                    class="tc_volume_is_mirrored"
                    type="checkbox">
             <label for="volumeMirroring">Volume Mirroring</label>
@@ -14,7 +14,7 @@
 <div class="form-group"
      ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty) &&
         validation.remote_pool.$invalid}"
-     ng-show="volumeData.is_mirrored">
+     ng-show="result.is_mirrored">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
            class="control-label"
            for="remote_pool">Remote Pool</label>
@@ -22,14 +22,14 @@
         <select id="remote_pool"
                 name="remote_pool"
                 class="form-control"
-                ng-disabled="!remote_pools || !remote_pools.length"
+                ng-disabled="!data.remote_pools || !data.remote_pools.length"
                 ng-model="data.remote_pool"
                 ng-options="(pool.name + ' (' + pool.type.name + ', ' +
                     pool.host.title + ', ' + pool.usage.free_text + ' free)')
-                    for pool in remote_pools track by pool.id"
-                ng-required="volumeData.is_mirrored">
+                    for pool in data.remote_pools track by pool.id"
+                ng-required="result.is_mirrored">
             <option value=""
-                    ng-bind="remote_pool_waiting_msg">
+                    ng-bind="data.remote_pool_waiting_msg">
             </option>
         </select>
         <span class="help-block"
@@ -39,7 +39,7 @@
         </span>
         <span class="help-block"
               ng-show="validation.remote_pool.$error.poolSize">
-            The size of the pool must be greater than {{volumeData.megs | bytes:"MiB"}}.
+            The size of the pool must be greater than {{result.megs | bytes:"MiB"}}.
         </span>
         <span class="help-block"
               ng-show="validation.remote_pool.$error.loading">
@@ -51,7 +51,7 @@
 <div class="form-group"
      ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
         validation.syncer_rate.$invalid}"
-     ng-show="volumeData.is_mirrored">
+     ng-show="result.is_mirrored">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
            class="control-label"
            for="syncer_rate">Sync Rate</label>
@@ -62,8 +62,8 @@
                type="text"
                drbd-sync-rate-validate
                placeholder="e.g., 30M",
-               ng-model="data.syncer_rate"
-               ng-required="volumeData.is_mirrored">
+               ng-model="result.syncer_rate"
+               ng-required="result.is_mirrored">
         <span class="help-block"
               ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
                 validation.syncer_rate.$error.required">
@@ -76,7 +76,10 @@
     </div>
 </div>
 <!-- Protocol -->
-<div class="form-group" ng-show="volumeData.is_mirrored">
+<div class="form-group"
+     ng-class="{'has-error': (validation.$submitted || validation.protocol.$dirty) &&
+        validation.protocol.$invalid}"
+     ng-show="result.is_mirrored">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
            class="control-label"
            for="protocol">Protocol</label>
@@ -84,12 +87,17 @@
         <select id="protocol"
                 name="protocol",
                 class="form-control"
-                ng-model="data.protocol"
-                ng-required="volumeData.is_mirrored">
+                ng-model="result.protocol"
+                ng-required="result.is_mirrored">
             <option value="" hidden>Choose a protocol</option>
             <option value="A">Asynchronous</option>
             <option value="B">Semi-synchronous</option>
             <option value="C">Synchronous</option>
         </select>
+        <span class="help-block"
+              ng-show="(validation.$submitted || validation.protocol.$dirty) &&
+                validation.protocol.$error.required">
+            This field is required!
+        </span>
     </div>
 </div>

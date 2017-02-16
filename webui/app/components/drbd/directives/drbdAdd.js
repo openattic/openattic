@@ -36,39 +36,39 @@ app.directive("drbdAdd", function () {
     restrict: "E",
     scope: {
       validation: "=",
-      volumeData: "=",
+      result: "=",
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
-    controller: function ($scope, poolsService, drbdService, toasty) {
+    controller: function ($scope, poolsService) {
       // Default values.
       $scope.data = {
         remote_pool: null,
-        syncer_rate: "30M",
-        protocol: "C"
+        remote_pool_waiting_msg: "-- Select a pool --",
+        remote_pools: []
       };
-      $scope.remote_pool_waiting_msg = "-- Select a pool --";
-      $scope.remote_pools = []
 
       // Listen to Pool selections. Reload and filter the remote pool list
       // if a pool has been selected.
-      $scope.$watch("volumeData.source_pool", function (pool) {
+      $scope.$watch("result.source_pool", function (pool) {
         if (!pool) {
+          // Reset list of available remote pools.
+          $scope.data.remote_pools = [];
           return;
         }
-        $scope.remote_pool_waiting_msg = "Retrieving pool list...";
+        $scope.data.remote_pool_waiting_msg = "Retrieving pool list...";
         poolsService.query({ excl_host: pool.host })
           .$promise
           .then(function (res) {
-            $scope.remote_pools = res;
-            $scope.remote_pool_waiting_msg = "-- Select a pool --";
+            $scope.data.remote_pools = res;
+            $scope.data.remote_pool_waiting_msg = "-- Select a pool --";
           }, function (error) {
             console.log("Failed to load the pool list.", error);
             toasty.error({
               title: "Pool list couldn't be loaded",
               msg: "Server failure."
             });
-            $scope.remote_pool_waiting_msg = "Error: List couldn't be loaded!";
+            $scope.data.remote_pool_waiting_msg = "Error: List couldn't be loaded!";
             $scope.validation.remote_pool.$setValidity("loading", false);
           })
       });
@@ -77,55 +77,29 @@ app.directive("drbdAdd", function () {
       // requested volume.
       $scope.validatePoolSize = function () {
         var valid = true;
-        if ($scope.data.remote_pool && $scope.volumeData.megs) {
-          valid = $scope.data.remote_pool.usage.free > $scope.volumeData.megs;
+        if ($scope.data.remote_pool && $scope.result.megs) {
+          valid = $scope.data.remote_pool.usage.free > $scope.result.megs;
         }
         $scope.validation.remote_pool.$setValidity("poolSize", valid);
+        return valid;
       }
-      $scope.$watch("volumeData.megs", function () {
+      $scope.$watch("result.megs", function () {
         $scope.validatePoolSize();
       });
       $scope.$watch("data.remote_pool", function () {
-        $scope.validatePoolSize();
-      });
-
-      // Listen to the event that is fired when a volume has been created.
-      $scope.$on("volumecreate", function (event, volume) {
-        // Abort immediatelly if volume mirroring is not enabled.
-        if (!$scope.volumeData.is_mirrored) {
-          return;
+        // Validate the pool size.
+        var valid = $scope.validatePoolSize();
+        // If it is valid, then store the remote pool in the formular
+        // submit values.
+        if (valid && $scope.data.remote_pool) {
+          $scope.result.remote_pool = {
+            id: $scope.data.remote_pool.id,
+            name: $scope.data.remote_pool.name,
+            host: $scope.data.remote_pool.host.id
+          };
+        } else {
+          delete $scope.result.remote_pool;
         }
-        // Create the volume mirror.
-        drbdService.save({
-            source_volume: {
-              id: volume.id,
-              host: {
-                id: volume.host.id
-              }
-            },
-            remote_pool: {
-              id: $scope.data.remote_pool.id,
-              host: {
-                id: $scope.data.remote_pool.host.id
-              }
-            },
-            protocol: $scope.data.protocol,
-            syncer_rate: $scope.data.syncer_rate,
-            filesystem: $scope.volumeData.filesystem
-          })
-          .$promise
-          .then(function (res) {
-            toasty.success({
-              title: "Volume Mirror",
-              msg: "Successfully created the volume mirror."
-            });
-          }, function (error) {
-            console.log("Failed to create the volume mirror.", error);
-            toasty.error({
-              title: "Volume Mirror",
-              msg: "Failed to create the volume mirror."
-            });
-          });
       });
     }
   };

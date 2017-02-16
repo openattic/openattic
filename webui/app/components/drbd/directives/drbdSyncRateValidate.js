@@ -47,7 +47,7 @@ app.directive("drbdSyncRateValidate", function () {
     link: function (scope, elm, attrs, ctrl) {
       ctrl.$validators.drbdSyncRateValidate = function (value) {
         if (ctrl.$isEmpty(value)) {
-          return false;
+          return true;
         }
         // Syncer rate must be in <number>[K|M|G] format.
         var m = RegExp("^(\\d+)([KMG]?)$").exec(value);

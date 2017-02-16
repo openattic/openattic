@@ -64,6 +64,8 @@ app.directive("volumeAddForm", function () {
             name: $scope.data.pool.name,
             host: $scope.data.pool.host.id
           };
+        } else {
+          delete $scope.result.source_pool;
         }
       });
       $scope.$watch("data.megs", function (megs) {

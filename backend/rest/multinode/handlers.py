@@ -27,7 +27,6 @@ from rest_framework.request import Request
 from rest_framework import status
 
 from ifconfig.models import Host
-from requests.exceptions import HTTPError
 
 from utilities import get_related_model
 from rest.utilities import drf_version, get_request_data
