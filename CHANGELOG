@@ -9,6 +9,7 @@ Version 2.0.19, (not released yet):
 * Backend: Removed RPC API files and RPCD module (OP-1253)
 * Backend: Removed all RPCD and RPC API dependencies (OP-1254, OP-1761)
 * Backend: The IPMI module has been removed (OP-1772)
+* Backend: The twraid module has been removed (OP-1774)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
 * Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
