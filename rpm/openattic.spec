@@ -236,18 +236,6 @@ mail redirection for certain users. This package contains an openATTIC module
 which automatically alters this file to match the users configured in the
 openATTIC database.
 
-%package module-mdraid
-Requires: mdadm
-Requires: %{name}-base
-Summary: MDRAID module for openATTIC
-
-%description module-mdraid
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for MD-RAID, the common Linux software RAID.
-
 %package  module-nagios
 Requires: bc
 Requires:	nagios
@@ -623,11 +611,6 @@ systemctl start lvm2-lvmetad
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/mailaliases/
 %{_datadir}/%{name}/installed_apps.d/50_mailaliases
-
-%files module-mdraid
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/mdraid/
-%{_datadir}/%{name}/installed_apps.d/09_mdraid
 
 %files module-nagios
 %defattr(-,root,root,-)
