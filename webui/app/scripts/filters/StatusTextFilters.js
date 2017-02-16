@@ -37,15 +37,17 @@ app.filter("statusText", function () {
    */
   return function (value) {
     var status = {
-      '': 'Unknown',
-      'good': 'Good',
-      'warn': 'Warning',
-      'crit': 'Critical',
-      'fail': 'Failed',
-      'locked': 'Locked'
+      "": "Unknown",
+      "good": "Good",
+      "warn": "Warning",
+      "crit": "Critical",
+      "fail": "Failed",
+      "locked": "Locked"
     };
-    if (!(value in status))
+    if (!(value in status)) {
       return value;
+    }
+
     return status[value];
   };
 });

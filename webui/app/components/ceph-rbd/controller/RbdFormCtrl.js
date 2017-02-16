@@ -33,7 +33,6 @@
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
     SizeParserService, $filter, toasty, cephClusterService) {
-  $scope.submitted = false;
   $scope.rbd = {
     name: "",
     size: 0,
@@ -355,14 +354,13 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       $scope.rbd.pool = $scope.data.pool.id;
       $scope.rbd.clusterId = $scope.clusterId;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");
-      $scope.submitted = true;
       cephRbdService.save($scope.rbd)
         .$promise
         .then(function (res) {
           $scope.rbd = res;
           goToListView();
         }, function (error) {
-          $scope.submitted = false;
+          $scope.rbdForm.$submitted = false;
           var toast = {
             title: "RBD creation error " + error.status,
             msg: "",

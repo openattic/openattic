@@ -197,6 +197,7 @@ app.directive("hostForm", function () {
             .then(function (res) {
               $scope.host = res;
             }, function (error) {
+              $scope.hostForm.$submitted = false;
               $scope.errorOccurred(error, "Loading failure", "Couldn't load host.");
             });
 
