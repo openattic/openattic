@@ -8,12 +8,14 @@ Version 2.0.19, (not released yet):
 * Backend: Removed peering module (OP-1252)
 * Backend: Removed RPC API files and RPCD module (OP-1253)
 * Backend: Removed all RPCD and RPC API dependencies (OP-1254, OP-1761)
+* Backend: The IPMI module has been removed (OP-1772)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
 * Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
 * Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
 * Packaging: Stop and remove openattic-rpcd service when upgrading to version 2.0.19 (OP-1900)
+* Documentation: Updated E2E section (changed test tool versions, OP-1919)
 
 
 Version 2.0.18, 09. February 2017:
