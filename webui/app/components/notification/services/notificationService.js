@@ -91,6 +91,9 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
     }
     var options = angular.extend({}, TWDEFAULTS.options, this.options, opts);
     this.delayPromise = $timeout(function () {
+      if (angular.isUndefined(options.timeout)) {
+        options.timeout = globalConfig.GUI.defaultNotificationTimes[options.type];
+      }
       toasty[options.type](options);
       if (angular.isObject(error)) {
         throw error;

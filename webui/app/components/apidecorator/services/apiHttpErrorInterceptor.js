@@ -35,25 +35,23 @@ var app = angular.module("openattic.apidecorator");
 app.factory("ApiErrorDecoratorService", function ($q, Notification) {
   return {
     decorate: function (error) {
-      var errorPrefix;
+      var simpleMsg;
       var notification;
-      var message = "";
+      var detalMsg = "";
 
       if (error) {
-        errorPrefix = error && error.config && error.config.method && error.config.url &&
-          "[" + [error.config.method, error.config.url].join(": ") + "] => " + error.status;
+        simpleMsg = error && error.config && error.config.method && error.config.url &&
+          "[" + error.config.method + ": " + error.config.url + "] => " + error.status;
         angular.forEach(error.data, function (val, key) {
           if (key === "detail") {
-            message = val + message;
+            detalMsg = val + detalMsg;
           } else {
-            message += "<br>" + key + ": " + val;
+            detalMsg += "<br>" + key + ": " + val;
           }
         });
-        message = [errorPrefix, "Failed with", error.status, "status.", error.data && error.data.detail].join(" ") +
-          "<br>" + message;
         notification = new Notification({
-            title: "API Error: " + error.status + " - \"" + error.statusText + "\"",
-            msg: message
+            title: error.status + " - " + error.statusText,
+            msg: detalMsg || simpleMsg
           }, error)
           .show();
 
