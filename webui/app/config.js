@@ -4,7 +4,6 @@ var globalConfig = {
   },
   "GUI": {
     "activeModules"   : {
-      "apt"        : true,
       "btrfs"      : true,
       "ceph"       : false,
       "cron"       : true,
