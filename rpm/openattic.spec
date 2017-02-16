@@ -189,19 +189,6 @@ commonly used for disk images or software repositories.
 This package installs a module which allows you to share volumes or
 subdirectories using Apache2.
 
-%package module-ipmi
-Requires: %{name}-base
-#require freeipmi oder OpenIPMI ??
-Summary:  IPMI module for openATTIC
-
-%description module-ipmi
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-IPMI can be used to query a set of sensors installed in the system. This
-module displays the current state of these sensors in the openATTIC GUI.
-
 %package module-lio
 Requires: %{name}-base
 Requires:	python-rtslib
@@ -635,11 +622,6 @@ fi
 %post module-http
 systemctl daemon-reload
 systemctl restart httpd
-
-%files module-ipmi
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/50_ipmi
-%{_datadir}/%{name}/ipmi/
 
 %files module-lio
 %defattr(-,root,root,-)

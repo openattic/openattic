@@ -10,7 +10,6 @@ var globalConfig = {
       "cron"       : true,
       "drbd"       : true,
       "http"       : true,
-      "ipmi"       : true,
       "lvm"        : true,
       "mailaliases": true,
       "mdraid"     : true,
