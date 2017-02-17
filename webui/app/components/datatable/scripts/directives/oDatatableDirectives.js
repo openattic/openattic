@@ -47,8 +47,8 @@ app.directive("oadatatable", function () {
         element.find(".oadatatableactions").append(clone.filter("actions"));
         element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
-          scope.columns[$(item).text()] = $(item).attr("disabled") === undefined;
-          if (item.attributes.sortfield !== undefined) {
+          scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
+          if (item.attributes.sortfield) {
             scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
           }
         });
@@ -184,6 +184,9 @@ app.directive("oadatatable", function () {
       });
 
       $scope.$watch("data", function () {
+        if (!$scope.data.count) {
+          return;
+        }
         $scope.selection.items = [];
         $scope.firstEntry = ($scope.filterConfig.page * $scope.filterConfig.entries) + 1;
         $scope.lastEntry = ($scope.filterConfig.page + 1) * $scope.filterConfig.entries;
