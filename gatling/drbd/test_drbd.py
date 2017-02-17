@@ -50,15 +50,13 @@ class DrbdTests(object):
         Create a Connection via /api/volumes and check that its Endpoints are
         created correctly.
         """
-        vol_data = {
-                "megs": self.volumesize,
-                "name": "gatling_drbd_vol1",
-                "source_pool": self._get_pool(),
-                "remote_pool": self._get_remote_pool(),
-                "is_mirrored": True,
-                "syncer_rate": "25M",
-                "protocol": "C"
-            }
+        vol_data = {"megs": self.volumesize,
+                    "name": "gatling_drbd_vol1",
+                    "source_pool": self._get_pool(),
+                    "remote_pool": self._get_remote_pool(),
+                    "is_mirrored": True,
+                    "syncer_rate": "25M",
+                    "protocol": "C"}
         mirror_res = self.send_request("POST", "volumes", data=vol_data)
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
@@ -110,6 +108,29 @@ class DrbdTests(object):
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
         self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
         self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+
+    def test_create_with_filesystem_get_delete_via_volumes(self):
+        """
+        Create a connection via /api/volumes and format its /dev/drbdX with EXT4.
+        """
+        vol_data = {"megs": self.volumesize,
+                    "name": "gatling_drbd_vol1",
+                    "source_pool": self._get_pool(),
+                    "remote_pool": self._get_remote_pool(),
+                    "is_mirrored": True,
+                    "syncer_rate": "25M",
+                    "protocol": "C",
+                    "filesystem": "ext4"}
+        mirror_res = self.send_request("POST", "volumes", data=vol_data)
+        mirror = mirror_res["response"]
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
+
+        # Check if the filesystem is created on top of the drbd connection.
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "ext4")
 
     def test_create_resize_get_delete(self):
         """ Create a connection with 1000MB volumes and resize it to 2000MB. """
