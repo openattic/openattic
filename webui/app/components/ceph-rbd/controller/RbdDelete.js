@@ -67,7 +67,7 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
     }, function () {
-      $uibModalInstance.close("failed");
+      $scope.deleteForm.$submitted = false;
     });
   };
 

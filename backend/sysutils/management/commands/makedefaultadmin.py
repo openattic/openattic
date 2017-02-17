@@ -14,12 +14,20 @@
  *  GNU General Public License for more details.
 """
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 
-from twraid.procutils import query_ctls, update_database
 
 class Command(BaseCommand):
-    help = "Updates the TWRAID status database."
+    help = 'If there is no other SuperUser, creates an openattic/openattic default user.'
 
     def handle(self, **options):
-        update_database(query_ctls(int(options["verbosity"])))
+        if User.objects.filter(is_superuser=True).count() == 0:
+            oa_username = getattr(settings, "OAUSER")
+            admin = User(username=oa_username, is_superuser=True, is_staff=True, is_active=True)
+            admin.set_password('openattic')
+            admin.save()
+            print('Created default user "openattic" with password "openattic".')
+        else:
+            print('We have an admin already, not creating default user.')

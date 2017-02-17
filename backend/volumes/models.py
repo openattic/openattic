@@ -884,7 +884,7 @@ class BlockVolume(AbstractVolume):
     def perfdata(self):
         if not HAVE_NAGIOS:
             return None
-        cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+        cmd = Command.objects.get(name='check_diskstats')
         try:
             serv = Service.objects.get(command=cmd, target_type=self.volume_type, target_id=self.id)
         except Service.DoesNotExist:
@@ -933,7 +933,7 @@ class BlockVolume(AbstractVolume):
 
 if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
-        cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+        cmd = Command.objects.get(name='check_diskstats')
         ctype = ContentType.objects.get_for_model(instance.__class__)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() \
                 != 0:
@@ -1022,7 +1022,7 @@ class FileSystemVolume(AbstractVolume):
 if HAVE_NAGIOS:
     def __create_service_for_filesystemvolume(instance, **kwargs):
         ctype = ContentType.objects.get_for_model(instance.__class__)
-        cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
+        cmd = Command.objects.get(name='check_volume_utilization')
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() \
                 != 0:
             return

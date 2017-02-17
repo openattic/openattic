@@ -50,6 +50,8 @@ app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogSe
         .$promise
         .then(function () {
           $uibModalInstance.close("cloned");
+        }, function () {
+          $scope.deleteForm.$submitted = false;
         });
   };
 

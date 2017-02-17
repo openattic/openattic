@@ -83,7 +83,7 @@
                                 <input class="form-control" type="text" ng-model="user.auth_token.token"
                                     name="authtoken" id="userAuthToken" readonly>
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" uib-tooltip="Generate"
+                                    <button class="btn btn-default tc_generate_btn" type="button" uib-tooltip="Generate"
                                         ng-click="generateAuthToken()">
                                         <i class="icon-prepend fa fa-refresh"></i>
                                     </button>
@@ -131,8 +131,12 @@
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">
-                    <button type="submit" class="btn btn-sm btn-primary tc_submitButton" ng-click="submitAction(userForm)">
+                    <button type="submit"
+                            class="btn btn-sm btn-primary tc_submitButton"
+                            ng-click="submitAction(userForm)"
+                            ng-disabled="userForm.$invalid || userForm.$submitted">
                         Submit
+                        <i class="fa fa-spinner fa-spin fa-fw" ng-if="userForm.$submitted"></i>
                     </button>
                     <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
                         Back

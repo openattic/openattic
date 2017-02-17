@@ -83,6 +83,9 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
               $scope.erasureCodeProfile.ruleset_failure_domain = e.name;
             }
           });
+        })
+        .catch(function (err) {
+          $scope.addForm.$submitted = false;
         });
   }
 

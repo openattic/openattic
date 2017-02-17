@@ -107,7 +107,11 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
               });
             }
           }
+        .catch(function () {
+          $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
         });
+    .catch(function () {
+      $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
     });
 
   $scope.$watch("data.cluster", function (cluster) {
@@ -208,6 +212,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function () {
           goToListView();
+        }, function () {
+          $scope.poolForm.$submitted = false;
         });
     }
   };

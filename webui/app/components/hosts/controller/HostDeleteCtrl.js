@@ -52,6 +52,7 @@ app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibMod
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
     }, function () {
+      $scope.deleteForm.$submitted = false;
       $uibModalInstance.close("failed");
     });
   };

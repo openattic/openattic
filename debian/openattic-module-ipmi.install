@@ -1,2 +1,0 @@
-backend/ipmi  /usr/share/openattic
-backend/installed_apps.d/50_ipmi /usr/share/openattic/installed_apps.d

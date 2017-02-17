@@ -352,13 +352,15 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.rbd = res;
           goToListView();
         }, function (error) {
-          $scope.submitted = false;
+          $scope.rbdForm.$submitted = false;
           if (error.status === 400 && error.data.size) {
             var size = error.data.size[0].match(/[0-9]+/)[0];
+            error.preventDefault();
             Notification.error({
               title: "RBD creation error " + error.status,
               msg: "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + "."
             }, error);
+            throw error;
           }
         });
     }

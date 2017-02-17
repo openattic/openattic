@@ -39,6 +39,8 @@ app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInsta
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
+        }, function () {
+          $scope.deleteForm.$submitted = false;
         });
   };
 

@@ -363,12 +363,17 @@ class Endpoint(models.Model):
             })
 
         self.connection.storageobj.lock()
+        # Load the kernel module.
         self.connection.drbd.modprobe()
+        # Write the DRBD resource configuration file.
         self.connection.drbd.conf_write(self.connection.name, conf)
-        self.connection.drbd.createmd(self.connection.name, False)
+        # Wait for the underlying volume to become ready.
         self.connection.drbd.wait_for_device(self.volume.volume.path)
+        # Create the DRBD meta data.
+        self.connection.drbd.createmd(self.connection.name, False)
+        # Bring the DRBD resource up (shortcut for attach, syncer and connect).
         self.connection.drbd.up(self.connection.name, False)
-
+        # Mark the DRBD resource as primary if necessary.
         if init_primary:
             self.connection.drbd.primary_overwrite(self.connection.name, False)
 
@@ -380,8 +385,11 @@ class Endpoint(models.Model):
         if fs_volume:
             fs_volume.volume.unmount()
 
+        # Bring the DRBD resource down (shortcut for disconnect and detach).
         self.connection.drbd.down(self.connection.name, False)
+        # Remove the DRBD resource configuration file.
         self.connection.drbd.conf_delete(self.connection.name)
+        # Delete the underlying volume.
         self.volume.storageobj.delete()
 
     def uninstall(self):

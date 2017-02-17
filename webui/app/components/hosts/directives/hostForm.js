@@ -180,6 +180,8 @@ app.directive("hostForm", function () {
             .$promise
             .then(function (res) {
               $scope.host = res;
+            }, function (error) {
+              $scope.hostForm.$submitted = false;
             });
 
           $scope.loadInitiators();
