@@ -32,8 +32,6 @@
 
 var app = angular.module("openattic.users");
 app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, toasty) {
-  var gravatarId = $filter("gravatar")("");
-
   $scope.isCurrentUser = false;
 
   var goToListView = function () {
@@ -52,7 +50,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
       "is_superuser": false,
       "is_staff": false
     };
-    $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
 
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
@@ -77,9 +74,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             $scope.isCurrentUser = true;
           }
           $scope.user = res;
-
-          gravatarId = $filter("gravatar")($scope.user.email);
-          $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
         }, function (error) {
           console.log("An error occurred", error);
         });
