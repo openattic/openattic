@@ -257,8 +257,6 @@ class Connection(BlockVolume):
         self.drbd.resize(self.name, False)
 
     def resize_local_storage_device(self, new_size):
-        if self.storageobj.filesystemvolume_or_none:
-            raise NotSupportedError("Resizing a formatted DRBD connection is not implemented yet.")
         if self.status != "Connected":
             raise NotSupportedError("Can only resize DRBD volumes in 'Connected' state, current "
                                     "state is '%s'" % self.status)
