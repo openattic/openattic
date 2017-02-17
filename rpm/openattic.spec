@@ -189,19 +189,6 @@ commonly used for disk images or software repositories.
 This package installs a module which allows you to share volumes or
 subdirectories using Apache2.
 
-%package module-ipmi
-Requires: %{name}-base
-#require freeipmi oder OpenIPMI ??
-Summary:  IPMI module for openATTIC
-
-%description module-ipmi
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-IPMI can be used to query a set of sensors installed in the system. This
-module displays the current state of these sensors in the openATTIC GUI.
-
 %package module-lio
 Requires: %{name}-base
 Requires:	python-rtslib
@@ -248,18 +235,6 @@ Mail Transfer Agents use a file named /etc/aliases in order to configure
 mail redirection for certain users. This package contains an openATTIC module
 which automatically alters this file to match the users configured in the
 openATTIC database.
-
-%package module-mdraid
-Requires: mdadm
-Requires: %{name}-base
-Summary: MDRAID module for openATTIC
-
-%description module-mdraid
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for MD-RAID, the common Linux software RAID.
 
 %package  module-nagios
 Requires: bc
@@ -323,20 +298,6 @@ Samba implements the SMB/CIFS protocol and enables file sharing with hosts
 that run the Microsoft Windows family of operating systems. This package
 provides configuration facilities for Samba Shares.
 
-%package module-twraid
-Requires: %{name}-base
-Requires: cron
-# TODO: List Requirements
-Summary: 3ware RAID module for openATTIC
-
-%description module-twraid
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package installs a module that allows administration of 3ware RAID
-controllers through openATTIC.
-
 %package module-zfs
 Requires:	zfs
 Requires:	kernel-devel
@@ -392,7 +353,6 @@ mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/default/
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -410,8 +370,6 @@ rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
 install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
 rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
-rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
-rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 
@@ -462,8 +420,6 @@ install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconf
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
-
-install -m 644 etc/cron.d/updatetwraid %{buildroot}%{_sysconfdir}/cron.d/
 
 %pre base
 # create openattic user/group  if it does not exist
@@ -636,11 +592,6 @@ fi
 systemctl daemon-reload
 systemctl restart httpd
 
-%files module-ipmi
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/50_ipmi
-%{_datadir}/%{name}/ipmi/
-
 %files module-lio
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_lio
@@ -660,11 +611,6 @@ systemctl start lvm2-lvmetad
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/mailaliases/
 %{_datadir}/%{name}/installed_apps.d/50_mailaliases
-
-%files module-mdraid
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/mdraid/
-%{_datadir}/%{name}/installed_apps.d/09_mdraid
 
 %files module-nagios
 %defattr(-,root,root,-)
@@ -717,12 +663,6 @@ systemctl enable nmb
 systemctl start nmb
 systemctl enable smb
 systemctl start smb
-
-%files 	module-twraid
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/09_twraid
-%{_datadir}/%{name}/twraid/
-%config %{_sysconfdir}/cron.d/updatetwraid
 
 %files 	module-zfs
 %defattr(-,root,root,-)

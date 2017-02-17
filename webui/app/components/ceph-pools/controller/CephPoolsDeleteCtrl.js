@@ -66,6 +66,7 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
     }, function (error) {
+      $scope.deleteForm.$submitted = false;
       $uibModalInstance.close("deleted");
       toasty.error({
         title: "Deletion failure",

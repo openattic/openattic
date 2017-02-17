@@ -21,8 +21,7 @@ Recommends:
  openattic-module-btrfs,
  openattic-module-lvm,
  openattic-gui
-Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
- openattic-module-ipmi,
+Suggests: python-django-rosetta, lsscsi,
  openattic-module-zfs
 Description: Comprehensive storage management system
  openATTIC is a storage management system based upon Open Source tools with
@@ -41,7 +40,6 @@ Description: Comprehensive storage management system
   * HTTP
   * LIO (iSCSI, FC)
   * Samba
-  * Apt
   * Nagios
   * FTP
   * Cron
@@ -138,19 +136,6 @@ Description: NFS module for openATTIC
  be shared using NFS, which is the recommended way not only for UNIXes, but
  also for VMware ESX virtualization hosts.
 
-Package: openattic-module-apt
-Architecture: all
-Depends: ${misc:Depends}, python-apt, openattic-base
-Description: APT module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- Debian's Advanced Package Tool handles installing, upgrading and removing
- programs using packages. It keeps track of installed and available programs
- and automates various procedures. This module extends the User interface
- for a Front End, which allows you to check for available upgrades easily.
-
 Package: openattic-module-samba
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, samba, samba-common-bin,
@@ -240,17 +225,6 @@ Description: HTTP module for openATTIC
  This package installs a module which allows you to share volumes or
  subdirectories using Apache2.
 
-Package: openattic-module-ipmi
-Architecture: all
-Depends: ${misc:Depends}, ipmitool, openattic-base
-Description: IPMI module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- IPMI can be used to query a set of sensors installed in the system. This
- module displays the current state of these sensors in the openATTIC GUI.
-
 Package: openattic-module-mailaliases
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, mail-transport-agent
@@ -263,17 +237,6 @@ Description: MailAliases module for openATTIC
  mail redirection for certain users. This package contains an openATTIC module
  which automatically alters this file to match the users configured in the
  openATTIC database.
-
-Package: openattic-module-twraid
-Architecture: all
-Depends: ${misc:Depends}, openattic-base, tw-cli, cron
-Description: 3ware RAID module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- This package installs a module that allows administration of 3ware RAID
- controllers through openATTIC.
 
 Package: openattic-module-lio
 Architecture: all
@@ -338,13 +301,3 @@ Description: Ceph deployment and management module for openATTIC
  distributed storage system designed to provide excellent performance,
  reliability, and scalability. It is based on the "DeepSea" collection of Salt
  files (https://github.com/SUSE/DeepSea).
-
-Package: openattic-module-mdraid
-Architecture: all
-Depends: ${misc:Depends}, openattic-base, mdadm
-Description: MDRAID module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- This package includes support for MD-RAID, the common Linux software RAID.

@@ -54,6 +54,7 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
           $uibModalInstance.close("deleted");
         })
         .catch(function (err) {
+          $scope.deleteForm.$submitted = false;
           // Trigger toasty on error
           toasty.error({
             title: "Error",
