@@ -506,15 +506,36 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     def create(self, request, *args, **kwargs):
         data = get_request_data(request)
         if "drbd" in settings.INSTALLED_APPS and "is_mirrored" in data:
-            # We need to modify the volume creation if volume mirroring is
-            # activated and a file system should be created on top. This is
-            # necessary because the DRBD app is responsible for the file
-            # system creation in this case.
-            if data['is_mirrored'] and data['filesystem']:
-                # Create the volume without a file system, this must be done
-                # by the DRBD app later.
-                request = self._clone_request_with_new_data(
+            # We need to split and redirect the creation of a mirrored
+            # volume. First the volume must be created, but without a
+            # file system. After that the DRBD connection and file system,
+            # if specified, are created by the DRBD app.
+            if data['is_mirrored']:
+                # 1. Create the volume without a file system.
+                new_request = self._clone_request_with_new_data(
                     request, dict(data, filesystem=""))
+                response = super(VolumeProxyViewSet, self).create(
+                    new_request, args, kwargs)
+                if not status.is_success(response.status_code):
+                    return response
+                # 2. Create the DRBD connection and the file system if specified.
+                # Get the host where the source volume is located and build
+                # the request object with the required arguments.
+                current_host = Host.objects.get_current()
+                new_request = self._clone_request_with_new_data(
+                    request, dict(data, source_volume={
+                        'id': response.data['id'],
+                        'host': {
+                            'id': current_host.id
+                        }
+                    }, remote_pool= {
+                        'id': data['remote_pool']['id'],
+                        'host': {
+                            'id': data['remote_pool']['host']
+                        }
+                    }))
+                return self._remote_request(new_request, current_host,
+                                            api_prefix="mirrors")
 
         return super(VolumeProxyViewSet, self).create(request, args, kwargs)
 
