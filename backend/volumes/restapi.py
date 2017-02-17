@@ -535,12 +535,12 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                 # 2. Create the DRBD connection and the file system if specified.
                 # Get the host where the source volume is located and build
                 # the request object with the required arguments.
-                current_host = Host.objects.get_current()
+                vol_host = Host.objects.get(id=response.data['host']['id'])
                 new_request = self._clone_request_with_new_data(
                     request, dict(data, source_volume={
                         'id': response.data['id'],
                         'host': {
-                            'id': current_host.id
+                            'id': vol_host.id
                         }
                     }, remote_pool= {
                         'id': data['remote_pool']['id'],
@@ -548,7 +548,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                             'id': data['remote_pool']['host']
                         }
                     }))
-                return self._remote_request(new_request, current_host,
+                return self._remote_request(new_request, vol_host,
                                             api_prefix="mirrors")
 
         return super(VolumeProxyViewSet, self).create(request, args, kwargs)
