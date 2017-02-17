@@ -53,9 +53,7 @@ class DrbdTests(object):
         vol_data = {
                 "megs": self.volumesize,
                 "name": "gatling_drbd_vol1",
-                "source_pool": {
-                    "id": source_pool_id
-                },
+                "source_pool": self._get_pool(),
                 "remote_pool": self._get_remote_pool(),
                 "is_mirrored": True,
                 "syncer_rate": "25M",
