@@ -29,6 +29,7 @@ from rest.restapi import ContentTypeSerializer
 from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
+from ifconfig.models import Host
 
 from rest.utilities import get_request_query_params, mk_method_field_params, get_request_data, \
     ToNativeToRepresentationMixin, drf_version
