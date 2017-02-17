@@ -522,19 +522,19 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
         if "drbd" in settings.INSTALLED_APPS and "is_mirrored" in data:
             # We need to split and redirect the creation of a mirrored
             # volume. First the volume must be created, but without a
-            # file system. After that the DRBD connection and file system
-            # are created by the DRBD app .
+            # file system. After that the DRBD connection and file system,
+            # if specified, are created by the DRBD app.
             if data['is_mirrored']:
-                # Create the volume without a file system, this must be done
-                # by the DRBD app later on top of the DRBD block device if
-                # a file system was specified.
+                # 1. Create the volume without a file system.
                 new_request = self._clone_request_with_new_data(
                     request, dict(data, filesystem=""))
                 response = super(VolumeProxyViewSet, self).create(
                     new_request, args, kwargs)
                 if not status.is_success(response.status_code):
                     return response
-                # Create the DRBD connection and eventually the file system.
+                # 2. Create the DRBD connection and the file system if specified.
+                # Get the host where the source volume is located and build
+                # the request object with the required arguments.
                 current_host = Host.objects.get_current()
                 new_request = self._clone_request_with_new_data(
                     request, dict(data, source_volume={
