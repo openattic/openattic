@@ -67,8 +67,10 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
     }, function (error) {
+      $scope.deleteForm.$submitted = false;
+
+      // TODO Toasy on error!
       console.log("An error occured", error);
-      $uibModalInstance.close("deleted");
     });
   };
 

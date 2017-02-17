@@ -6,7 +6,7 @@ describe('should test the user form', function(){
   var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
 
   var name = element(by.model('user.username'));
-  var passwd = element(by.model('user.email'));
+  var passwd = element(by.model('user.password'));
 
   var username = 'herpderp';
   var submitButton = element(by.css('.tc_submitButton'));
@@ -71,16 +71,19 @@ describe('should test the user form', function(){
     expect(element(by.id('userSuperuser')).isPresent()).toBe(true);
   });
 
-  it('should show an error message when hitting the submit button without any input datat for field "Username"', function(){
+  it('should check if the submit button is disabled and an error is displayed when the "Username" is empty', function(){
+    element(by.model('user.username')).sendKeys(username);
     element(by.model('user.password')).sendKeys('test');
-    submitButton.click();
-
+    name.clear();
+    expect(submitButton.isEnabled()).toBe(false);
     expect(element(by.css('.tc_usernameRequired')).isDisplayed()).toBe(true);
   });
 
-  it('should show an error message when hitting the submit button without any input datat for field "Password"', function(){
+  it('should check if the submit button is disabled and an error is displayed when the "Password" is empty', function(){
     element(by.model('user.username')).sendKeys(username);
-    submitButton.click();
+    element(by.model('user.password')).sendKeys('test');
+    passwd.clear();
+    expect(submitButton.isEnabled()).toBe(false);
     expect(element(by.css('.tc_passwdRequired')).isDisplayed()).toBe(true);
   });
 
@@ -94,13 +97,10 @@ describe('should test the user form', function(){
     expect(element(by.css('.tc_emailNotValid')).isDisplayed()).toBe(true);
   });
 
-  it('should show error messages for "Username" and "Password" when hitting the submit button without any given input data', function(){
+  it('should check if the submit button is disabled when "Username" and "Password" are without any given input data', function(){
     name.clear();
     passwd.clear();
-    submitButton.click();
-    expect(element(by.css('.tc_usernameRequired')).isDisplayed()).toBe(true);
-    expect(element(by.css('.tc_passwdRequired')).isDisplayed()).toBe(true);
-
+    expect(submitButton.isEnabled()).toBe(false);
   });
 
   it('should have a submit button', function(){

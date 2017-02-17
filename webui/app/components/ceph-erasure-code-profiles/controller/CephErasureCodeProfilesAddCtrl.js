@@ -93,6 +93,7 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
           });
         })
         .catch(function (err) {
+          $scope.addForm.$submitted = false;
           throw err;
         });
   }

@@ -52,6 +52,7 @@ app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibMod
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
     }, function (error) {
+      $scope.deleteForm.$submitted = false;
       toasty.error({
         title: "Error " + error.status + " when deleting host" + hosts.length === 1 ? "" : "s",
         msg: $filter("json")(error.data)

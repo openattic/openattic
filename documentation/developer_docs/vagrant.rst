@@ -38,7 +38,7 @@ like shared folders::
 .. note::
 
 	If you experience an error while trying to install ``vagrant-libvirt``, you might need to
-	install the ``libvirt-dev`` package.
+	install the ``libvirt-dev`` and ``gcc`` package.
 
 
 Starting the Virtual Machine
@@ -71,6 +71,13 @@ virtual machine at ``~/openattic``::
 
 Then, start your browser an open the URL as shown in the last lines of the log output of
 ``vagrant up``.
+
+
+.. note::
+
+	If you experience an error while trying to run ``vagrant up --provider libvirt``, you might need to
+	restart ``libvirtd`` service.
+
 
 Choosing a different Linux distribution
 ---------------------------------------
