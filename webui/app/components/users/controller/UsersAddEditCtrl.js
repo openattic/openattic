@@ -32,6 +32,7 @@
 
 var app = angular.module("openattic.users");
 app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, toasty) {
+  $scope.currentUser = null;
   $scope.isCurrentUser = false;
 
   var goToListView = function () {
@@ -67,10 +68,16 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
   } else {
     $scope.editing = true;
 
+    usersService.current()
+        .$promise
+        .then(function (res) {
+          $scope.currentUser = res;
+        });
+
     usersService.get({id: $stateParams.user})
         .$promise
         .then(function (res) {
-          if (angular.isDefined($scope.user) && ($scope.user.id === Number($stateParams.user))) {
+          if ($scope.currentUser !== null && $scope.currentUser.id === Number($stateParams.user)) {
             $scope.isCurrentUser = true;
           }
           $scope.user = res;
