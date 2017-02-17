@@ -40,6 +40,7 @@ app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInsta
         .then(function () {
           $uibModalInstance.close("deleted");
         }, function (error) {
+          $scope.deleteForm.$submitted = false;
           console.log("An error occured", error);
         });
   };

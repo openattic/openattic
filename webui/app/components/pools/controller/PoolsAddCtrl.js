@@ -52,6 +52,7 @@ app.controller("PoolsAddCtrl", function ($scope, $state, $stateParams, poolsServ
       $scope.pool = poolsService.save($scope.pool, function () {
         goToListView();
       }, function (error) {
+        $scope.poolForm.$submitted = false;
         console.log("An error occured", error);
       });
     }

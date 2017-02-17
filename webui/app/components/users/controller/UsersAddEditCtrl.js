@@ -62,6 +62,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .then(function () {
               goToListView();
             }, function (error) {
+              $scope.userForm.$submitted = false;
               console.log("An error occured", error);
             });
       }
@@ -91,6 +92,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .then(function () {
               goToListView();
             }, function (error) {
+              $scope.userForm.$submitted = false;
               console.log("An error occured", error);
             });
       }
