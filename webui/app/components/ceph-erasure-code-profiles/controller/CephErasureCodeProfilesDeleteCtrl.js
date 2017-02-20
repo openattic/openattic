@@ -53,7 +53,7 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
           // Close dialog
           $uibModalInstance.close("deleted");
         })
-        .catch(function (err) {
+        .catch(function () {
           $scope.deleteForm.$submitted = false;
           $scope.cancel();
         });

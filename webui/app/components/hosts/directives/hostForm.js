@@ -180,7 +180,7 @@ app.directive("hostForm", function () {
             .$promise
             .then(function (res) {
               $scope.host = res;
-            }, function (error) {
+            }, function () {
               $scope.hostForm.$submitted = false;
             });
 
@@ -277,35 +277,37 @@ app.directive("hostForm", function () {
         var wwn = tag.text;
         var usage = $scope.wwn[type].usage;
         for (var i in usage) {
-          var share = usage[i];
-          switch (share) {
-            case "mac":
-              if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
-                wwn = wwn.replace(/:/g, "");
-                tag.text = wwn.match(/.{2}/g).join(":");
-                return validateShare(tag, share,
-                  wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
-              }
-              break;
-            case "iqn":
-              if (wwn.indexOf(share) === 0) {
-                return validateShare(tag, share,
-                  wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
-              }
-              break;
-            case "eui":
-              if (wwn.indexOf(share) === 0) {
-                return validateShare(tag, share,
-                  wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
-              }
-              break;
-            case "naa":
-              if (wwn.indexOf(share) === 0) {
-                var ident = wwn.substr(4);
-                return validateShare(tag, share,
-                  wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
-              }
-              break;
+          if (usage.hasOwnProperty(i)) {
+            var share = usage[i];
+            switch (share) {
+              case "mac":
+                if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
+                  wwn = wwn.replace(/:/g, "");
+                  tag.text = wwn.match(/.{2}/g).join(":");
+                  return validateShare(tag, share,
+                    wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
+                }
+                break;
+              case "iqn":
+                if (wwn.indexOf(share) === 0) {
+                  return validateShare(tag, share,
+                    wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
+                }
+                break;
+              case "eui":
+                if (wwn.indexOf(share) === 0) {
+                  return validateShare(tag, share,
+                    wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
+                }
+                break;
+              case "naa":
+                if (wwn.indexOf(share) === 0) {
+                  var ident = wwn.substr(4);
+                  return validateShare(tag, share,
+                    wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
+                }
+                break;
+            }
           }
         }
         return "all";

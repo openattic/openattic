@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, Notification,
-    ClusterResource,  cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibModal, Notification,
+    ClusterResource, cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
     pg_num: 1,
@@ -107,10 +107,10 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
               });
             }
           }
-        .catch(function () {
+        }).catch(function () {
           $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
         });
-    .catch(function () {
+    }).catch(function () {
       $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
     });
 
