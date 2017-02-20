@@ -31,8 +31,9 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, toasty) {
-  $scope.currentUser = null;
+app.controller("UsersAddEditCtrl", function ($filter, $q, $scope, $state, $stateParams, $uibModal, toasty,
+    usersService) {
+  var promises = [];
   $scope.isCurrentUser = false;
 
   var goToListView = function () {
@@ -68,21 +69,19 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
   } else {
     $scope.editing = true;
 
-    usersService.current()
-        .$promise
-        .then(function (res) {
-          $scope.currentUser = res;
-        });
+    promises.push(
+        usersService.current().$promise
+    );
+    promises.push(
+        usersService.get({id: $stateParams.user}).$promise
+    );
 
-    usersService.get({id: $stateParams.user})
-        .$promise
+    $q.all(promises)
         .then(function (res) {
-          if ($scope.currentUser !== null && $scope.currentUser.id === Number($stateParams.user)) {
+          if (res[0].id === Number($stateParams.user)) {
             $scope.isCurrentUser = true;
           }
-          $scope.user = res;
-        }, function (error) {
-          console.log("An error occurred", error);
+          $scope.user = res[1];
         });
 
     $scope.submitAction = function (userForm) {
