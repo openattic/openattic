@@ -50,7 +50,7 @@ class LvTestScenario(GatlingTestCase):
            vg["type"]["model"] != "volumegroup":
             print "VG not found"
             print vg["name"]
-            raise SkipTest("VG not found")
+            raise SkipTest("VG <%s> not found" % vg_name)
 
         return vg
 
