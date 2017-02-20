@@ -40,8 +40,8 @@ class LvTestScenario(GatlingTestCase):
             raise SkipTest(e.message)
 
         if res["count"] != 1:
-            raise SkipTest("REST api returned no or more than one object(s). But only one is "
-                           "expected.")
+            raise SkipTest("Failed to request VG <%s>. The REST API returned no or more "
+                           "than one object(s). But only one is expected." % vg_name)
 
         vg = res["response"][0]
 
