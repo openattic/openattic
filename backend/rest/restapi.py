@@ -17,14 +17,15 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 
 from rest import relations
-from rest.utilities import mk_method_field_params, get_request_data, drf_version
+from rest.utilities import mk_method_field_params, get_request_data, drf_version, \
+    NoCacheModelViewSet, NoCacheReadOnlyModelViewSet
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -35,7 +36,7 @@ class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
         model = ContentType
 
 
-class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
+class ContentTypeViewSet(NoCacheReadOnlyModelViewSet):
     queryset = ContentType.objects.all()
     serializer_class = ContentTypeSerializer
 
@@ -68,7 +69,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 # ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(NoCacheModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff',

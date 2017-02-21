@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 from django.utils.functional import cached_property
-from rest_framework import serializers, viewsets, status
+from rest_framework import serializers, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
@@ -23,6 +23,7 @@ from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
+from rest.utilities import NoCacheModelViewSet
 
 from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params, \
     drf_version
@@ -52,7 +53,7 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
         return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
 
 
-class ClusterViewSet(viewsets.ModelViewSet):
+class ClusterViewSet(NoCacheModelViewSet):
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
     filter_fields = ('name',)

@@ -15,10 +15,10 @@
 import django_filters
 from ifconfig.models import Host
 
-from rest_framework import serializers, viewsets, status
+from rest_framework import serializers
 
 from rest import relations
-from rest.utilities import DeleteCreateMixin
+from rest.utilities import DeleteCreateMixin, NoCacheModelViewSet
 
 from volumes.models import StorageObject
 from lio.models import HostACL, Initiator
@@ -55,7 +55,7 @@ class HostACLFilter(django_filters.FilterSet):
         model  = HostACL
         fields = ['volume', 'host']
 
-class HostACLViewSet(viewsets.ModelViewSet):
+class HostACLViewSet(NoCacheModelViewSet):
     queryset         = HostACL.objects.all()
     serializer_class = HostACLSerializer
     filter_class     = HostACLFilter
@@ -78,7 +78,7 @@ class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'host', 'wwn', 'type')
 
 
-class InitiatorViewSet(viewsets.ModelViewSet):
+class InitiatorViewSet(NoCacheModelViewSet):
     queryset         = Initiator.objects.all()
     serializer_class = InitiatorSerializer
     filter_fields = ('host', 'wwn', 'type')

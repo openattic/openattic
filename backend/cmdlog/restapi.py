@@ -14,7 +14,7 @@
 
 import django_filters
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework_bulk.generics import BulkDestroyAPIView
 
 from rest import relations
@@ -23,7 +23,7 @@ from datetime import datetime
 
 from cmdlog import models
 
-from rest.utilities import get_request_query_params
+from rest.utilities import get_request_query_params, NoCacheModelViewSet
 
 
 class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
@@ -44,7 +44,7 @@ class LogEntryFilter(django_filters.FilterSet):
         fields = ['exitcode', 'start_datetime', 'end_datetime']
 
 
-class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
+class LogEntryViewSet(NoCacheModelViewSet, BulkDestroyAPIView):
     queryset = models.LogEntry.objects.all()
     serializer_class = LogEntrySerializer
     search_fields = ('command', 'text')
