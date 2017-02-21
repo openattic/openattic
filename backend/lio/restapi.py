@@ -28,7 +28,7 @@ from rest.multinode.handlers import RequestHandlers
 
 class HostACLSerializer(DeleteCreateMixin, serializers.HyperlinkedModelSerializer):
     """ Serializer for a HostACL. """
-    url         = serializers.HyperlinkedIdentityField(view_name="lun-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="lun-detail")
     volume = relations.HyperlinkedRelatedField(view_name="volume-detail",
                                                source="volume.storageobj",
                                                queryset=StorageObject.objects.all())
@@ -52,25 +52,26 @@ class HostACLFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
 
     class Meta:
-        model  = HostACL
+        model = HostACL
         fields = ['volume', 'host']
 
+
 class HostACLViewSet(NoCacheModelViewSet):
-    queryset         = HostACL.objects.all()
+    queryset = HostACL.objects.all()
     serializer_class = HostACLSerializer
-    filter_class     = HostACLFilter
+    filter_class = HostACLFilter
 
 
 class HostACLProxyViewSet(RequestHandlers, HostACLViewSet):
-    queryset    = HostACL.all_objects.all()
-    api_prefix  = 'luns'
+    queryset = HostACL.all_objects.all()
+    api_prefix = 'luns'
     host_filter = 'volume__storageobj__host'
-    model       = HostACL
+    model = HostACL
 
 
 class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Initiator. """
-    url         = serializers.HyperlinkedIdentityField(view_name="initiator-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="initiator-detail")
     host = relations.HyperlinkedRelatedField(view_name="host-detail", queryset=Host.objects.all())
 
     class Meta:
@@ -79,7 +80,7 @@ class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class InitiatorViewSet(NoCacheModelViewSet):
-    queryset         = Initiator.objects.all()
+    queryset = Initiator.objects.all()
     serializer_class = InitiatorSerializer
     filter_fields = ('host', 'wwn', 'type')
 

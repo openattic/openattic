@@ -73,8 +73,6 @@ class TaskQueueViewSet(NoCacheModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
-
 class TaskQueueLocationMixin(object):
     """
     This mixin adds a "Taskqueue-Location" HTTP-header pointing to the `_task_queue` attribute of

@@ -440,7 +440,7 @@ class VolumeViewSet(NoCacheModelViewSet):
             "queryset": origin.snapshot_storageobject_set.all(),
             "origin":   origin
             }
-        if drf_version() >= (3,0):
+        if drf_version() >= (3, 0):
             # Don't perform any conversions in `initialize_request`:
             attributes['initialize_request'] = lambda self, request, *args, **kwargs: request
 
@@ -530,7 +530,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                         'host': {
                             'id': current_host.id
                         }
-                    }, remote_pool= {
+                    }, remote_pool={
                         'id': data['remote_pool']['id'],
                         'host': {
                             'id': data['remote_pool']['host']
@@ -568,7 +568,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                 # might be a remote_request
                 return self._remote_request(request, blockvolume.host, api_prefix="mirrors",
                                             obj=blockvolume)
-            
+
         return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 

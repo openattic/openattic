@@ -15,7 +15,6 @@
 """
 from django.utils.functional import cached_property
 from rest_framework import serializers, status
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 
@@ -168,7 +167,7 @@ class CephPoolSerializer(NodbSerializer):
                     field: ['Erasure coded pools need ' + field]
                     for field
                     in ['erasure_code_profile']
-                    if not field in data or data[field] is None
+                    if field not in data or data[field] is None
                 }
         if errors:
             raise serializers.ValidationError(errors)
@@ -280,7 +279,8 @@ class CephOsdViewSet(NodbViewSet):
 
     @list_route()
     def balance_histogram(self, request, *args, **kwargs):
-        """Generates a NVD3.js compatible json for displaying the osd balance histogram of a cluster."""
+        """Generates a NVD3.js compatible json for displaying the osd balance histogram of a
+        cluster."""
         values = [{'label': osd.name, 'value': osd.utilization}
                   for osd in CephOsd.objects.all().order_by('utilization')]
 
@@ -305,7 +305,8 @@ class CephPgSerializer(NodbSerializer):
 class CephPgViewSet(NodbViewSet):
     """Represents a Ceph Placement Group.
 
-    Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the backend performance
+    Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the
+    backend performance
     considerably.
 
     """

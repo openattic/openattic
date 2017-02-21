@@ -29,7 +29,7 @@ from rest.utilities import mk_method_field_params, get_request_data, drf_version
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
-    if drf_version() >= (3,0):
+    if drf_version() >= (3, 0):
         name = serializers.CharField()  # in DRF 3, `name` is no longer automatically generated.
 
     class Meta:
