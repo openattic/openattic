@@ -243,6 +243,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .then(function () {
           goToListView();
         }, function (error) {
+          $scope.poolForm.$submitted = false;
           toasty.error({
             title: "Creation failure",
             msg: "Couldn't create Ceph pool.",

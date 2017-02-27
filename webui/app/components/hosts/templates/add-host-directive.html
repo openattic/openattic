@@ -34,7 +34,7 @@
                      ng-class="{'has-error': hostForm[key].$invalid}" ng-show="type.check">
                     <label ng-class="config.class.label" class="control-label" for="data[key]" ng-bind="type.label"></label>
                     <div ng-class="config.class.field">
-                        <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid WWN"
+                        <tags-input name="{{key}}" class="tags-input-home" placeholder="Add a valid {{getFormats(key)}}"
                                     ng-model="data[key]"
                                     add-on-space="true"
                                     on-tag-adding="validShareName($tag, key)"
@@ -51,7 +51,7 @@
                                     <span ng-bind-html="getHelpText(format)"></span>
                                 </span>
                             </p>
-                            <p ng-show="wwn[key].current === 'exists'" ng-bind="validationText.exists"></p>
+                            <p ng-show="wwn[key].current[0] === 'exists'" ng-bind="validationText.exists(wwn[key].current[1])"></p>
                         </div>
                     </div>
                 </div>
@@ -59,8 +59,12 @@
         </div>
         <div class="panel-footer" ng-if="config.header">
             <div class="button-group text-right">
-                <button type="submit" class="btn btn-sm btn-primary tc_submitButton" ng-click="submitAction(hostForm)">
+                <button type="submit"
+                        class="btn btn-sm btn-primary tc_submitButton"
+                        ng-click="submitAction(hostForm)"
+                        ng-disabled="hostForm.$invalid || hostForm.$submitted">
                     Submit
+                    <i class="fa fa-spinner fa-spin fa-fw" ng-if="hostForm.$submitted"></i>
                 </button>
                 <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="goBack()">
                     Back

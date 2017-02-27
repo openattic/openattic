@@ -62,6 +62,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .then(function () {
               goToListView();
             }, function (error) {
+              $scope.userForm.$submitted = false;
               console.log("An error occured", error);
             });
       }
@@ -91,6 +92,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .then(function () {
               goToListView();
             }, function (error) {
+              $scope.userForm.$submitted = false;
               console.log("An error occured", error);
             });
       }
@@ -99,7 +101,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
     $scope.generateAuthToken = function () {
       var modalInstance = $uibModal.open({
         windowTemplateUrl: "templates/messagebox.html",
-        templateUrl: "templates/users/generate-auth-token.html",
+        templateUrl: "components/users/templates/generate-auth-token.html",
         controller: "UsersModalCtrl",
         resolve: {
           user: function () {

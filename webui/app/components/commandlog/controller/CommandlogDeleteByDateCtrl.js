@@ -57,6 +57,7 @@ app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService
         .then(function () {
           $uibModalInstance.close("deleted");
         }, function (error) {
+          $scope.pickDateForm.$submitted = false;
           console.log("An error occured", error);
         });
   };

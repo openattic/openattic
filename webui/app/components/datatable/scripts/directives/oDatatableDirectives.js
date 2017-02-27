@@ -47,8 +47,8 @@ app.directive("oadatatable", function () {
         element.find(".oadatatableactions").append(clone.filter("actions"));
         element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
-          scope.columns[$(item).text()] = $(item).attr("disabled") === undefined;
-          if (item.attributes.sortfield !== undefined) {
+          scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
+          if (item.attributes.sortfield) {
             scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
           }
         });
@@ -66,12 +66,18 @@ app.directive("oadatatable", function () {
       }
       $scope.store = $localStorage.datatables[tableName];
 
+      /**
+       * Evaluates on any digest!
+       * It will be true if the API-call will match the last word of any active table.
+       * If true a loading sign will appear.
+       */
       $scope.$watch(function () {
-        if (!angular.equals(tableName, $state.current.name)) {
+        if (!$state.includes(tableName)) {
           return false;
         }
-
-        return $http.pendingRequests.length > 0;
+        return $http.pendingRequests.some(function (req) {
+          return Boolean(req.url.match(tableName.match(/[^.]+$/)));
+        });
       }, function (value) {
         $scope.waiting = value;
       });
@@ -178,6 +184,9 @@ app.directive("oadatatable", function () {
       });
 
       $scope.$watch("data", function () {
+        if (!$scope.data.count) {
+          return;
+        }
         $scope.selection.items = [];
         $scope.firstEntry = ($scope.filterConfig.page * $scope.filterConfig.entries) + 1;
         $scope.lastEntry = ($scope.filterConfig.page + 1) * $scope.filterConfig.entries;

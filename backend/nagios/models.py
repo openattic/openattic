@@ -65,7 +65,7 @@ class Service(models.Model):
     command = models.ForeignKey(Command)
     arguments = models.CharField(max_length=500, blank=True, default='')
 
-    nagstate = NagiosState(nagios_settings.STATUS_DAT_PATH)
+    nagstate = NagiosState(nagios_settings.NAGIOS_STATUS_DAT_PATH)
     objects = HostDependentManager()
     all_objects = models.Manager()
 
@@ -127,14 +127,7 @@ class Service(models.Model):
     @property
     def rrd(self):
         servname = re.sub('[^\w\d_-]', '_', self.description.strip()).encode("UTF-8")
-        xmlpath = nagios_settings.XML_PATH % {
-            'host': self.hostname,
-            'serv': servname
-            }
-        if not exists(xmlpath):
-            raise SystemError("XML file '{}' could not be found.".format(xmlpath))
-
-        return RRD(xmlpath)
+        return RRD.get_rrd(self.hostname, servname)
 
     @property
     def last_check(self):

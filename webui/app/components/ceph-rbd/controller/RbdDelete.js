@@ -58,7 +58,7 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     $scope.rbds.forEach(function (rbd) {
       var deferred = $q.defer();
       cephRbdService.delete({
-        id: clusterId,
+        clusterId: clusterId,
         pool: rbd.pool.name,
         name: rbd.name
       }, deferred.resolve, deferred.reject);
@@ -67,8 +67,10 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
     }, function (error) {
+      $scope.deleteForm.$submitted = false;
+
+      // TODO Toasy on error!
       console.log("An error occured", error);
-      $uibModalInstance.close("deleted");
     });
   };
 
