@@ -41,7 +41,11 @@ def custom_handler(exc, context=None):
 
     # If the default handler can't find a suitable exception response try the custom ones
     if isinstance(exc, ValidationError):
-        return Response(exc, status=status.HTTP_400_BAD_REQUEST)
+        if hasattr(exc, 'error_dict'):
+            # An error dictionary must be handled different, otherwise the origin
+            # error message will not be processed and submitted.
+            return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        return Response(str(exc), status=status.HTTP_400_BAD_REQUEST)
 
     if isinstance(exc, NotSupportedError):
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
