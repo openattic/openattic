@@ -107,7 +107,14 @@ class GatlingTestCase(unittest.TestCase):
                 url = "%s/%s" % (url, prefixes["detail_route"])
 
             res = requests.request(method, url, data=json.dumps(data), headers=header)
-            res.raise_for_status()
+
+            try:
+                res.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                # Modify the error message and re-raise the exception.
+                raise requests.exceptions.HTTPError("%s content: %s" % (str(e), res.text),
+                                                    response=e.response,
+                                                    request=e.request)
             res = json.loads(res.text)
 
             return {"response": res,
@@ -123,7 +130,14 @@ class GatlingTestCase(unittest.TestCase):
                 res = requests.request(method, url, data=json.dumps(data), headers=header)
             else:
                 res = requests.request(method, url, headers=header)
-            res.raise_for_status()
+
+            try:
+                res.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                # Modify the error message and re-raise the exception.
+                raise requests.exceptions.HTTPError("%s content: %s" % (str(e), res.text),
+                                                    response=e.response,
+                                                    request=e.request)
 
             # For method DELETE no json object could be decoded, so just return the response
             # otherwise return the result dict
