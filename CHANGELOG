@@ -12,7 +12,7 @@ Markdown.
 
 * WebUI: Fixes the RBD utilization graphs (OP-1945)
 * WebUI: Fixes ceph pagination issue (OP-1925)
-* Backend: Removed oacli (OP-1249)
+* Backend: Removed ``oacli`` (OP-1249)
 * Backend: Removed peering module (OP-1252)
 * Backend: Removed RPC API files and RPCD module (OP-1253)
 * Backend: The pkgapt module has been removed (OP-1531)
@@ -25,11 +25,11 @@ Markdown.
   that something is happening in the background (OP-1760)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
 * Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
-* Installation: Remove symlink from /etc/openattic/databases/pgsql.ini
+* Installation: Remove symlink from ``/etc/openattic/databases/pgsql.ini``
   (OP-1822)
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
-* Packaging: Stop and remove openattic-rpcd service when upgrading to version
-  2.0.19 (OP-1900)
+* Packaging: Stop and remove ``openattic-rpcd`` service when upgrading to
+  version 2.0.19 (OP-1900)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
 
 
@@ -55,33 +55,33 @@ Markdown.
   the related openattic.log file entry (OP-1841)
 * Documentation: Added Ubuntu Xenial to the list of distributions provided by
   our repository (OP-1543)
-* Deployment: Improve error messages and handling of errors of make_dist.py
-  related to debchange (OP-1804)
+* Deployment: Improve error messages and handling of errors of ``make_dist.py``
+  related to ``debchange`` (OP-1804)
 * Installation: Changing the database password during oaconfig install now
-  follows the symlink from database.ini to pgsql.ini instead of creating a new
-  file (OP-1821)
-* Installation: Fixed %post scriplet failure in the openattic-module-ceph RPM
-  package (OP-1820)
+  follows the symlink from ``database.ini`` to ``pgsql.ini`` instead of
+  creating a new file (OP-1821)
+* Installation: Fixed ``%post`` scriplet failure in the openattic-module-ceph
+  RPM package (OP-1820)
 * Installation: Added missing configuration entries to the SUSE sysconfig
   file (PR#576)
-* Installation: Make oaconfig respect the username and database name stored in
-  database.ini to create/connect to a database (PR#599) 
+* Installation: Make ``oaconfig`` respect the username and database name stored
+  in ``database.ini`` to create/connect to a database (PR#599) 
 * Packaging: Added the ability to add mercurial tags to a repository when
-  creating a tarball using make_dist.py (OP-1374)
+  creating a tarball using ``make_dist.py`` (OP-1374)
 * Packaging: Enable to use suffixes for the tarball creation using
-  make_dist.py (OP-1875)
+  ``make_dist.py`` (OP-1875)
 * Packaging: Confusing message about how to delete the openATTIC database is
-  no longer shown when updating the openattic-pgsql package (OP-1537)
+  no longer shown when updating the ``openattic-pgsql`` package (OP-1537)
 * Development: Fix rtslib import warnings in Vagrant Xenial boxes. (OP-1858)
 * Development: Reconfigure default gateway in Vagrant boxes to set the correct
-  primary interface during 'oaconfig install'. (OP-1874)
+  primary interface during ``oaconfig install``. (OP-1874)
 * Documentation: Adapt Vagrant developer documentation.
 
 
 [2.0.17] - 2016-12-20
 ---------------------
 
-* Backend: RPC API dependencies removed in oaconfig (OP-1255)
+* Backend: RPC API dependencies removed in ``oaconfig`` (OP-1255)
 * Backend: Infinite hanging librados calls are avoided by separated Apache
   processes with timeouts (OP-1340)
 * Backend: Fixed creation of NFS and Samba shares on Ubuntu Xenial
@@ -93,16 +93,16 @@ Markdown.
 * Backend: Fix Nagios scripts to get the volume usage statistics working
   again (OP-1403)
 * Backend: Fixed compatibility issues in our Ceph module on Xenial (OP-1763)
-* Backend: Fixed calls to systemd (not oA systemd) (OP-1769)
+* Backend: Fixed calls to ``systemd`` (not oA systemd) (OP-1769)
 * Backend: Fixed truncated dropdown inputs on Xenial (OP-1788)
-* Backend: Use `reload-or-restart` instead of plain `reload` for restarting
+* Backend: Use ``reload-or-restart`` instead of plain ``reload`` for restarting
   services on systemd-based operating systems (OP-984).
-* Backend: Change taskqueue description and result fields to `TextField`
+* Backend: Change taskqueue description and result fields to ``TextField``
   (OP-1755)
-* Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
+* Installation: Fixed Apache redirect from ``/`` to ``/openattic`` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
-  OADIR variable. Thanks to Ricardo Marques. (PR#522)
+  ``OADIR`` variable. Thanks to Ricardo Marques. (PR#522)
 * WebUI: Display and generate a user's API auth token. (OP-815)
 * WebUI: Render the Disks/Pools/Volumes indication of size in the
   frontend (OP-1115)
@@ -120,15 +120,16 @@ Markdown.
   (OP-1786)
 * WebUI/QA: E2E adjustments related to OP-1786 (OP-1787)
 * WebUI/QA: Try to disable all columns and expect not to succeed (OP-1718)
-* WebUI/QA: refactored cmdlog e2e tests (OP-1797)
-* Installation: Fix Permission denied: '/usr/bin/pip' for Vagrant development
+* WebUI/QA: Refactored cmdlog e2e tests (OP-1797)
+* Installation: Fix Permission denied: ``/usr/bin/pip`` for Vagrant development
   environment using SUSE Leap (OP-1715)
 * Installation: New database instances are created using a random password.
   This change applies to RPM packages only. (OP-1438)
-* Installation: Improved error message for problems with database.ini (OP-1739)
+* Installation: Improved error message for problems with ``database.ini``
+  (OP-1739)
 * Installation: Fix a bug with recreation of the database (OP-1757)
-* Installation: Properly restart npcd in `oaconfig install` on distributions
-  using systemd (OP-1688)
+* Installation: Properly restart ``npcd`` in ``oaconfig install`` on
+  distributions using systemd (OP-1688)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 * Development: Fix storage controller issue with the Vagrant Debian box.
 * Development: Fix patch file which is customizing settings in a Vagrant VM.
@@ -139,20 +140,21 @@ Markdown.
 [2.0.16] - 2016-11-07
 ---------------------
 
-* Backend: The REST API 'host' resource returns the openATTIC version (in
-  version.txt) if the host is an openATTIC host (OP-553)
-* Backend: The REST API 'host' resource returns the installed Django apps if
+* Backend: The REST API ``host`` resource returns the openATTIC version (in
+  ``version.txt``) if the host is an openATTIC host (OP-553)
+* Backend: The REST API ``host`` resource returns the installed Django apps if
   the host is an openATTIC host (OP-1023)
 * Backend: Removed ID parameter from volume update view (OP-1473)
 * Backend: Salt minions keys can now be accepted via our REST API (OP-1601)
-* Backend: Reverted NAGIOS_PLUGIN_DIR on SUSE back to `/usr/lib/nagios/plugins`
+* Backend: Reverted ``NAGIOS_PLUGIN_DIR`` on SUSE back to
+  ``/usr/lib/nagios/plugins``
 * Backend: The backend does no longer print the whole traceback into the
   logfile if the XML file of an RRD file is not found (OP-1632)
 * Backend: Django migration files aren't checked by Flake8 anymore (OP-1638)
-* Backend: Added reading and writing of the `policy.cfg` of DeepSea REST API
+* Backend: Added reading and writing of the ``policy.cfg`` of DeepSea REST API
   (OP-1617)
-* Backend: The is_oa_host field is set to True for oA hosts by 'oaconfig
-  add-host' (OP-1665)
+* Backend: The ``is_oa_host`` field is set to ``True`` for oA hosts by
+  ``oaconfig add-host`` (OP-1665)
 * Backend: Added database migrations for Django 1.6 (OP-1649)
 * Backend: Fixed Bug on Ubuntu Trusty preventing deletion of iSCSI targets
   (OP-722)
@@ -162,10 +164,10 @@ Markdown.
   to be displayed, to make the "Create Ceph Pool" button visible (OP-1561)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
-* Packaging: The python-configobj dependency is moved to the openattic-base
-  package (OP-1666)
-* Packaging: Added missing dependency openattic-module-cron in
-  openattic-module-lvm (OP-1664)
+* Packaging: The ``python-configobj`` dependency is moved to the
+  ``openattic-base`` package (OP-1666)
+* Packaging: Added missing dependency ``openattic-module-cron`` in
+  ``openattic-module-lvm`` (OP-1664)
 
 
 [2.0.15] - 2016-10-12
@@ -176,8 +178,8 @@ Markdown.
   lvm and nagios (OP-838)
 * Backend: Performance data for non existing Ceph clusters is no longer
   returned (OP-1406)
-* Backend: The used_size of an RBD is now given by the
-  'get_rbd_performance_data' task and not directly from the RbdApi. This
+* Backend: The ``used_size`` of an RBD is now given by the
+  ``get_rbd_performance_data`` task and not directly from the RbdApi. This
   should prevent the 504 error that sometimes occurred by getting RBDs
   (OP-1411)
 * Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
@@ -189,21 +191,21 @@ Markdown.
 * Backend: Fixed code-style for the following Django apps: samba, sysutils,
   nfs, cmdlog, ifconfig and http (OP-1503, OP-1505, OP-1506, OP-1511, OP-1517,
   OP-1519)
-* Backend: The 'check_cephpool' Nagios plugin does return the correct outputs
+* Backend: The ``check_cephpool`` Nagios plugin does return the correct outputs
   and exit codes (per the Nagios plugin development guidelines) in error and
   success case now (OP-1521)
-* Backend: The Nagios plugins 'check_cephcluster' and 'check_cephpool' are
-  now ending with the correct exit codes (as per the Nagios plugin development
+* Backend: The Nagios plugins ``check_cephcluster`` and ``check_cephpool`` are
+  now exiting with the correct exit codes (as per the Nagios plugin development
   guidelines: https://nagios-plugins.org/doc/guidelines.html#AEN78) for
   invalid arguments (OP-1522)
 * Backend: Moved general graphbuilder functionalities (get RRD, get Graph,
   get sources list) from the Ceph to the Nagios module (OP-1542)
 * Backend: Fixed browsable REST API for Ceph Pools (OP-1549)
-* Backend: The 'check_cephcluster' Nagios plugin does log into the
-  openattic.log logfile if the conf file and/or the keyring do not exist or
+* Backend: The ``check_cephcluster`` Nagios plugin does log into the
+  ``openattic.log`` logfile if the conf file and/or the keyring do not exist or
   are not accessible (OP-1572)
 * Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
-* Backend: Use `osd metadata` instead of `osd tree` to get the hostname
+* Backend: Use ``osd metadata`` instead of ``osd tree`` to get the hostname
   of Ceph OSDs (OP-1573)
 * Backend: Added read-only REST API returning 
   `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
@@ -213,41 +215,40 @@ Markdown.
   resources (OP-1569)
 * Backend: Fixed internal server error when creating invalid Erasure Code
   Profiles or deleting used ones (OP-1578)
-* Backend/Installation: Fixed misleading debug message during `oaconfig
-  install` (OP-1580)
-* Backend: The `check_cephcluster` plugin now prints the correct message and
+* Backend/Installation: Fixed misleading debug message during ``oaconfig
+  install`` (OP-1580)
+* Backend: The ``check_cephcluster`` plugin now prints the correct message and
   returns the correct exit code in case of an error (OP-1586)
-* Backend: Fixed `oaconfig install` on CentOS 7 (OP-1368)  
-* Backend: Fixed HEALTH_ERR not handled in `ceph.models.Pool#get_status`
+* Backend: Fixed ``oaconfig install`` on CentOS 7 (OP-1368)  
+* Backend: Fixed ``HEALTH_ERR`` not handled in ``ceph.models.Pool#get_status``
   (OP-1593)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added functionality to delete existing erasure code
   profiles (OP-1297)
 * WebUI: Added functionality to add erasure code profiles when creating
   new Ceph pools (OP-1298)
-* WebUI: Added performance data to the extended view of a ceph
-  pool (OP-1405)
-* WebUI: Bugfix - It's no longer possible to remove his own
-  privileges (OP-1497)
+* WebUI: Added performance data to the extended view of a ceph pool (OP-1405)
+* WebUI: It's no longer possible to remove one's own privileges
+  (OP-1497)
 * WebUI:  Show Salt Minions plus DeepSea Pillar Data (OP-1571)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
-* Installation: Fixed `NAGIOS_PLUGIN_DIR` path in in the SUSE sysconfig
+* Installation: Fixed ``NAGIOS_PLUGIN_DIR`` path in in the SUSE sysconfig
   file to point to the Icinga plugin directory. Thanks to Abhishek
   Lekshmanan. (PR-457)
 * Packaging/Installation: Fixed installation issues on Ubuntu 16.04
   (OP-1012, OP-1484, OP-1494)
 * Packaging/Installation: fixed permission problems for Nagios plugins that
-  require writing to `openattic.log` or reading the Ceph key ring and
+  require writing to ``openattic.log`` or reading the Ceph key ring and
   configuration (OP-1320)
-* Packaging/Installation: Added `openattic-module-ceph-deployment` RPM and
+* Packaging/Installation: Added ``openattic-module-ceph-deployment`` RPM and
   DEB Packages for the DeepSea integration backend module. (OP-1566)
-* Packaging: Fixes a bug with piped tarball paths to
-  `build_deb_packages.py` (OP-1536)
+* Packaging: Fixes a bug with piped tarball paths to ``build_deb_packages.py``
+  (OP-1536)
 * Packaging: Allow to override the default GPG key or disable the signing
-  completely using `build_deb_packages.py` (OP-1435)
+  completely using ``build_deb_packages.py`` (OP-1435)
 * Packaging: Separated the Ceph related Nagios commands into their own
-  configuration file 'openattic-ceph.cfg' (OP-1548)
+  configuration file ``openattic-ceph.cfg`` (OP-1548)
 * Documentation: Updated Vagrant installation instructions (OP-1467),
   added chapter about customizing the WebUI (OP-1541).
 * Documentation: Updated Ceph installation chapter, emphasizing the requirement
@@ -260,7 +261,8 @@ Markdown.
 * Documentation: Improved the Debian/Ubuntu package installation chapter by
   removing some duplicate content and clarifying how to enable the nightly
   builds. (OP-1603)
-  
+
+
 [2.0.14] - 2016-09-12
 ---------------------
 
@@ -268,19 +270,19 @@ Markdown.
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
 * Backend: Added a task queue module to track long-running commands (OP-1360)
 * Backend: Properly handle optional attributes of Ceph pools (OP-1416)
-* Backend: Fixed broken call to `ceph/<fsid>/osds on
+* Backend: Fixed broken call to ``ceph/<fsid>/osds`` on
   http://demo.openattic.org (OP-1453)
 * Monitoring: Fixed compatibility of the Ceph pool plugin with
   Django 1.6 (OP-1393)
 * WebUI: Implemented a widget which displays the current state of the
   Ceph cluster (OP-85)
 * WebUI: Create and delete ceph pools (OP-1299)
-* WebUI: If quicklogin is defined in config.js, the username and password will
-  be predefined (OP-1386)
-* WebUI: Replaced malhar-angular-dashboard with a gridster based
-  implemenation (OP-1485)
-* WebUI: Allow sorting storage volumes by additional fields `Used`, `Status`,
-  `Type` and `Created`. Thanks to Tahaa Karim. (OP-1427)
+* WebUI: If quicklogin is defined in ``config.js``, the username and password
+  will be predefined (OP-1386)
+* WebUI: Replaced malhar-angular-dashboard with a gridster based implementation
+  (OP-1485)
+* WebUI: Allow sorting storage volumes by additional fields "Used", "Status",
+  "Type" and "Created". Thanks to Tahaa Karim. (OP-1427)
 * WebUI/QA: Extended E2E test configuration by ceph pools and suite path
   filter (OP-1339)
 * WebUI/QA: Added screenshot and error log functionality (OP-1375)
@@ -291,34 +293,36 @@ Markdown.
 * WebUI/QA: Fix the timing problems with in the RBD creation test (OP-1471)
 * WebUI/QA: Make e2e outDir and cephCluster attribute optional (OP-1474)
 * WebUI/QA: Add sleeps for the rbd creation and deletion in e2e tests (OP-1489)
-* Installation: `oaconfig version` now displays both the openATTIC and Django
+* Installation: ``oaconfig version`` now displays both the openATTIC and Django
   version numbers. Thanks to Brandon Keep. (OP-516)
-* Installation: The `openattic-gui` RPM and DEB packages now take care of
-  installing an `index.html` file in the Apache document root directory that
+* Installation: The ``openattic-gui`` RPM and DEB packages now take care of
+  installing an ``index.html`` file in the Apache document root directory that
   performs a redirect to the WebUI. Previously, this task was performed by
-  `oaconfig install`. Thanks to Brandon Keep. (OP-959)
+  ``oaconfig install``. Thanks to Brandon Keep. (OP-959)
 * Development: Add Vagrantfile to easily set up a development environment
   (OP-1423)
 * Documentation: Added instructions on how to set up a development system
   with Vagrant (OP-1439)
-* Packaging: make_dist.py doesn't delete anything in the home directory
+* Packaging: ``make_dist.py`` doesn't delete anything in the home directory
   anymore (OP-1371)
-* Packaging: Simplified the usage of make_dist.py and prevented
-  `build_deb_packages.py` from hanging indefinitely (OP-1431)
-* Packaging: Fixed a bug where folder names had to be `openattic` to be
-  correctly packaged using `make_dist.py` (OP-1447 and OP-1449)
-* Packaging: Added a script `utils/build_rpm.sh` to the repository that
-  converts a source tar archive created by `make_dist.py` into installable
-  RPM packages (using `rpm/openattic.spec`) (OP-1117)
+* Packaging: Simplified the usage of ``make_dist.py`` and prevented
+  ``build_deb_packages.py`` from hanging indefinitely (OP-1431)
+* Packaging: Fixed a bug where folder names had to be ``openattic`` to be
+  correctly packaged using ``make_dist.py`` (OP-1447 and OP-1449)
+* Packaging: Added a script ``utils/build_rpm.sh`` to the repository that
+  converts a source tar archive created by ``make_dist.py`` into installable
+  RPM packages (using ``rpm/openattic.spec``) (OP-1117)
 
 
 [2.0.13] - 2016-07-28
 ---------------------
 
-Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, you
-  need to delete existing perfomance data by running 
-  `rm /var/lib/pnp4nagios/perfdata/<host_name>/Check_CephCluster_*`. Keep in mind
-  that collected performance data for your Ceph clusters will be lost.
+.. note::
+  Due to an incompatible change in our ``check_cephcluster`` Nagios plugin,
+  you need to delete existing perfomance data by running 
+  ``rm /var/lib/pnp4nagios/perfdata/<host_name>/Check_CephCluster_*``.
+  Keep in mind that collected performance data for your Ceph clusters will be
+  lost.
 
 * Backend: Added a REST API (userprofiles) to store user preferences
   (key/value pairs) (OP-756)
@@ -327,11 +331,11 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Backend: General Ceph RBD improvements (OP-1309, OP-1302, OP-1305 and OP-1133)
 * Backend: Improved compatibility with Ceph Hammer (OP-1303)
 * Backend: Fixed RBDs with same name in multiple pools (OP-1313)
-* Backend: Fixed `ceph df` missing a newly created pool (OP-1282)
+* Backend: Fixed ``ceph df`` missing a newly created pool (OP-1282)
 * Backend: Optimized calls to librados (OP-1321)
 * Backend: Added Ceph pool Nagios monitoring (OP-1292)
-* Backend: The check_cephcluster Nagios plugin contains another value 
-  'exec_time'. It represents the run time of the cluster check. (OP-1307)
+* Backend: The ``check_cephcluster`` Nagios plugin contains another value 
+  ``exec_time``. It represents the run time of the cluster check. (OP-1307)
 * WebUI: Wizards automatically setting the share path (OP-590)
 * WebUI: Make the oA API URL configurable (OP-989)
 * WebUI: Deletion of a RBD or multiple RBDs (OP-1032)
@@ -339,8 +343,8 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI: Sortable RBD table and a cleaned up details view (OP-1309)
 * WebUI: Added a welcome message to the login screen (OP-1310)
 * WebUI: Enable cluster selection in the RBD creation form (OP-1314)
-* WebUI: Added grunt task "grunt inspect --force" to check the quality of your
-  JavaScript code (OP-1332)
+* WebUI: Added grunt task ``grunt inspect --force`` to check the quality of
+  your JavaScript code (OP-1332)
 * WebUI: Replacing the "Sorry folks" messages with loading messages (OP-1333)
 * WebUI: Add form throws toasty error message in case of a pool list loading
   failure. (OP-1357)
@@ -348,14 +352,14 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI/QA: Restructured wizard tests with help of a page object (OP-1356)
 * WebUI/QA: Includes cluster selection tests in the RBD creation form tests
   (OP-1367)
-* Packaging: Removed dependency on python-simplejson from RPM and DEB packages
-  (OP-1106)
-* Packaging: Remove backend/.style.yapf from the RPM buildroot instead of
+* Packaging: Removed dependency on ``python-simplejson`` from RPM and DEB
+  packages (OP-1106)
+* Packaging: Remove ``backend/.style.yapf`` from the RPM buildroot instead of
   packaging it (OP-1141)
-* Packaging: Added version.txt to the openattic-base RPM and DEB files
+* Packaging: Added ``version.txt`` to the ``openattic-base`` RPM and DEB files
   (OP-1267)
 * Packaging: Fixed building tar archives from a local hg repository (OP-1312)
-* Packaging: Enabled relative paths for make_dist.py (OP-1324)
+* Packaging: Enabled relative paths for ``make_dist.py`` (OP-1324)
 * Packaging: Fixed automatic debian changelog adaption (OP-1288)
 * Packaging: Fix building debian snapshot packages on Ubuntu 16.04 (OP-1372)
 
@@ -369,7 +373,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Backend: Added modifying requests to Ceph pools (OP-1170, OP-1172)
 * Backend: Added Ceph Pool snapshots to the REST API (OP-1242)
 * Backend: Added support for Ceph cache tiering (OP-1184)
-* Backend: Added field 'host' to Disks REST API resource (OP-1195)
+* Backend: Added field ``host`` to Disks REST API resource (OP-1195)
 * Backend: Added API call to activate and deactivate Ceph OSDs (OP-1212)
 * Backend: Added Ceph RBD REST Collection (OP-1214)
 * Backend: Added a Nagios plugin to monitor basic performance data of a Ceph
@@ -378,17 +382,18 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Backend: Added a basic infrastructure to create Nagios service definitions
   for known Ceph clusters (OP-1235)
 * Backend: Added CephFS REST Collection (OP-1245)
-* Backend: Cleaned up 'NAGIOS_SERVICES_CFG_PATH' backend setting. This setting
-  will now be defined in the correct config files (openattic, openattic.RedHat,
-  openattic.SUSE) only - no other duplicates or default values (OP-1247)
+* Backend: Cleaned up ``NAGIOS_SERVICES_CFG_PATH`` backend setting. This
+  setting will now be defined in the correct config files (openattic,
+  openattic.RedHat, openattic.SUSE) only - no other duplicates or default
+  values (OP-1247)
 * Backend: Nagios services for Ceph clusters could now be created by
-  'oaconfig install' (OP-1261)
+  ``oaconfig install`` (OP-1261)
 * Backend: Fixed listing of OSDs. Thanks to Luke Jing Yuan (OP-1266)
 * Backend: Add functionality to remove existing Ceph cluster Nagios
 * configuration files (OP-1276)
 * Backend: Restarting the Nagios service is separated from the configuration
   creation now (OP-1280)
-* Backend: Fixed internal server error in `/api/volumes`, if an `lvm` snapshot
+* Backend: Fixed internal server error in ``/api/volumes``, if an LVM snapshot
   doesn't have a usage in percent (OP-1111)
 * WebUI: Added WWN validation (OP-475)
 * WebUI: Amend host views to better fit in in openATTIC (OP-479)
@@ -406,14 +411,15 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI/QA: Added WWN validation tests (OP-1278)
 * Packaging: Adapted the build scripts to be able to create tarballs from
   different sources and revisions (OP-1118)
-* Packaging: Amended the create arguments of make_dist.py from 'stable' and
-  'unstable' to 'release' and 'snapshot' (OP-1233)
+* Packaging: Amended the create arguments of ``make_dist.py`` from ``stable``
+  and ``unstable`` to ``release`` and ``snapshot`` (OP-1233)
 * Packaging: Amended the build scripts to not require existing mercurial tags
   anymore (OP-1234)
-* Packaging: Changed dependency of the 'openattic-gui' package from 'openattic-
-  base' to 'openattic' (OP-1137)
-* Packaging: Updated the dependencies on `ceph-common` to be of version 10.0.0
-  (aka "Jewel") or higher (OP-1268)
+* Packaging: Changed dependency of the ``openattic-gui`` package from
+  ``openattic-base`` to ``openattic`` (OP-1137)
+* Packaging: Updated the dependencies on ``ceph-common`` to be of version
+  10.0.0 (aka "Jewel") or higher (OP-1268)
+
 
 [2.0.11] - 2016-05-20
 ---------------------
@@ -431,37 +437,37 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI/QA: added test cases for datatable (OP-818)
 * WebUI/QA: Added test case for hostname in pool dropdown (OP-973)
 * WebUI/QA: Test for the hostnames of the pools in the volume form (OP-1059)
-* WebUI/QA: Added tests which check the correct description
-  for each volume type (OP-1159)
+* WebUI/QA: Added tests which check the correct description for each volume
+  type (OP-1159)
 * WebUI/QA: Test to verify that snapshot size is hidden while creating a
   snapshot on a zfs or btrfs (OP-1162)
 * WebUI/QA: Added E2E test cases for Ceph OSDs Panel (OP-1176)
 * WebUI/QA: Removed obsolete E2E tests due to OP-597 (OP-1185)
 * WebUI/QA: Adapted datatable tests due to OP-597 (OP-1186)
 * WebUI/QA: Speed up multiple volume deletion test (OP-1187)
-* WebUI/QA: Refactors the multiple sequential volume creation
-  and deletion test (OP-1190)
-* Backend: Disks (falsely displayed) are removed from the volume
-  management (OP-597)
+* WebUI/QA: Refactors the multiple sequential volume creation and deletion
+  test (OP-1190)
+* Backend: Disks (falsely displayed) are removed from the volume management
+  (OP-597)
 * Backend: Removed simplejson dependency (OP-783)
 * Backend: Fixed "close_connection is superseded by close_old_connections.
   close_connection()" RemovedInDjango18Warning (OP-809)
-* Backend: Exported Ceph osd details in the REST API as `/api/ceph/<fsid>/osds`
-  (OP-1035)
+* Backend: Exported Ceph osd details in the REST API as
+  ``/api/ceph/<fsid>/osds`` (OP-1035)
 * Backend: Added BTRFS grow functionality (OP-1093)
-* Backend: Added two missing parameters 'delete' and 'id', added in OP-736,
+* Backend: Added two missing parameters ``delete`` and ``id``, added in OP-736,
   to dbus-send Samba writeconf calls (OP-1113)
-* Backend: Fixed compatibility issue with Ceph Jewel when running `oaconfig
-  install` (OP-1079) (thanks to Abhishek Lekshmanan for the patch)
-* Backend: Fixed warnings from the Ceph module when calling `oaconfig install`
+* Backend: Fixed compatibility issue with Ceph Jewel when running ``oaconfig
+  install`` (OP-1079) (thanks to Abhishek Lekshmanan for the patch)
+* Backend: Fixed warnings from the Ceph module when calling ``oaconfig install``
   (OP-1121)
 * Backend: Added licence headers for nodb files (OP-1125)
 * Backend: Switched to Django logging functionality for enhanced logging
   quality (OP-1126)
 * Backend: Added searching, filtering and ordering to nested viewsets (OP-1090,
   OP-1129, OP-1142)
-* Backend: Fixed crash caused by unexpected output of `ceph osd dump` in the
-  `hit_set_params` field (OP-1130)
+* Backend: Fixed crash caused by unexpected output of ``ceph osd dump`` in the
+  ``hit_set_params`` field (OP-1130)
 * Backend: Provided a detail page for Ceph pools via the REST API (OP-1071)
 * Backend: Revised the Ceph pool listing (OP-1135)
 * Backend: Added Ceph status values to Ceph cluster REST API resource (OP-1146)
@@ -470,12 +476,12 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   Eric Jackson)
 * Backend: Let the Ceph module check for keyring permissions and log permission
   problems (thanks to Eric Jackson)
-* Backend/Installation: Fixed update_disks() method that is called during
-  "oaconfig install", so that all hard disks attached to a system are being
+* Backend/Installation: Fixed ``update_disks()`` method that is called during
+  ``oaconfig install``, so that all hard disks attached to a system are being
   found, and not just the first 16 disks (thanks to IRC user "SNMPGuy" for
   reporting this) (OP-1136)
-* Installation: Enabled logrotate configuration for openattic.log (OP-1124)
-* Installation: Added instructions to create `openattic.log` with correct
+* Installation: Enabled logrotate configuration for ``openattic.log`` (OP-1124)
+* Installation: Added instructions to create ``openattic.log`` with correct
   permissions when installing packages (OP-1132)
 * Documentation: Added styleguide for E2E tests (OP-1015)
 * Documentation: Added note about extra package which needs to be installed
@@ -497,6 +503,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Documentation: Added chapter about how to work on the documentation to the
   Developer Docs.
 
+
 [2.0.10] - 2016-04-20
 ---------------------
 
@@ -508,7 +515,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI: Accordion header is now clickalbe (OP-1064)
 * WebUI: Add d3, nvd3 and angular-nvd3 (OP-1074)
 * WebUI: Ceph pool data table (OP-867)
-* WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
+* WebUI/QA: Refactor and add tests to ``volume_resize.e2e.js`` (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
 * WebUI/QA: Ceph menu related e2e tests (OP-945)
@@ -526,21 +533,22 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
 * Backend: Fixed bug - removing an Ext3/Ext4/XFS filesystem volume that exports
-  an nfs share didn't work properly (OP-736)
+  an NFS share didn't work properly (OP-736)
 * Backend/Gatling: Cleaned up Gatling (OP-1025)
-* Installation: "oaconfig install" now skips all LVM volume groups tagged with
-  "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
-  add-vg <volume group> so that it aborts if the VG does not exist or is tagged
-  as "sys". Updated the installation documentation and replaced "@sys" with
-  "sys" (LVM strips the @-sign from the tag)
+* Installation: ``oaconfig install`` now skips all LVM volume groups tagged with
+  ``sys``, so they won't be added to the oA database (OP-564). Fixed ``oaconfig
+  add-vg <volume group>`` so that it aborts if the VG does not exist or is
+  tagged as ``sys``. Updated the installation documentation and replaced
+  ``@sys`` with ``sys`` (LVM strips the @-sign from the tag)
 * Installation: Fixed deprecation warning when importing rtslib on systems that
   ship rtslib-fb (e.g. EL7) (OP-953)
 * Installation: marked openattic.repo in the RPM subpackage openattic-release
   as a configuration file, to protect it from getting mangled by RPM updates
   (OP-987)
 * Installation: Updated RPM and DEB packaging to include the new "nodb" Python
-  modules, added dependency on the "python-rados" package (OP-1021)
+  modules, added dependency on the ``python-rados`` package (OP-1021)
 * Documentation: Added Gatling document to openATTIC documentation (OP-894)
+
 
 [2.0.9] - 2016-03-16
 --------------------
@@ -548,11 +556,11 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI: Review licenses of bower packages and NPM modules (OP-857)
 * WebUI: Update versions of bower dependencies (OP-904)
 * WebUI: Update versions of npm packages (OP-906)
-* WebUI/QA: Refactored "volumes add" E2E tests (OP-921)
-* Installation: Removed "oaconfig install <package>" functionality, as it
+* WebUI/QA: Refactored ``volumes add`` E2E tests (OP-921)
+* Installation: Removed ``oaconfig install <package>`` functionality, as it
   wasn't portable and package installation should rather be performed by
-  the dedicated OS tools (e.g. apt-get or yum) (OP-659)
-* Installation: Fixed error in "oaconfig install" that resulted in an
+  the dedicated OS tools (e.g. ``apt-get`` or ``yum``) (OP-659)
+* Installation: Fixed error in ``oaconfig install`` that resulted in an
   incomplete installation ("This command requires oacli to be
   configured") (OP-950)
 * Monitoring: Removed hard-code path names in the openATTIC Nagios plugins,
@@ -560,28 +568,30 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   options for Nagios-specific settings (OP-842) (thanks to Eric Jackson for
   the patch)
 * Installation: The Nagios plugins now use the distribution's default
-  directory /var/lib/nagios on EL7 to store runtime information (as
-  configured via the setting NAGIOS_STATE_DIR in
-  /etc/(default|sysconfig)/openattic) instead of /var/lib/nagios3 (which is
-  the default in Debian). Removed directory /var/lib/nagios3 from the
-  openattic-module-nagios RPM package.
+  directory ``/var/lib/nagios`` on EL7 to store runtime information (as
+  configured via the setting ``NAGIOS_STATE_DIR`` in
+  ``/etc/(default|sysconfig)/openattic``) instead of ``/var/lib/nagios3``
+  (which is the default in Debian). Removed directory ``/var/lib/nagios3``
+  from the ``openattic-module-nagios`` RPM package.
 * Installation: Added missing package dependencies (bc, nagios-plugins-tcp)
-  to the openattic-plugin-monitoring RPM so that the "check_openattic_*"
+  to the ``openattic-plugin-monitoring`` RPM so that the ``check_openattic_*``
   Nagios plugins actually work on EL7 (OP-976, OP-977)
-* Installation: The Nagios plugins now read /etc/(default|sysconfig)/openattic
-  to obtain distribution-specific configuration options (esp. path names).
-  This makes them more portable across distributions and resolves most the
-  issues observed on EL7 and SLES12 (except for the pnp4nagios configuration,
-  which still requires manual intervention on EL7) (OP-820).
-* Installation: added tmpfiles.d/openattic.conf to the RPM package to
-  re-create /var/lock/openattic after a reboot (OP-738)
-* Installation: Added missing pnp4nagios config files to openattic-module-
-  nagios RPM (OP-983)
-* Installation: Added /etc/openattic to the openattic-base RPM (OP-982)
+* Installation: The Nagios plugins now read
+  ``/etc/(default|sysconfig)/openattic``to obtain distribution-specific
+  configuration options (esp. path names). This makes them more portable across
+  distributions and resolves most the issues observed on EL7 and SLES12 (except
+  for the pnp4nagios configuration, which still requires manual intervention on
+  EL7). (OP-820)
+* Installation: added ``tmpfiles.d/openattic.conf`` to the RPM package to
+  re-create ``/var/lock/openattic`` after a reboot (OP-738)
+* Installation: Added missing pnp4nagios config files to
+  ``openattic-module-nagios`` RPM (OP-983)
+* Installation: Added ``/etc/openattic`` to the ``openattic-base`` RPM (OP-982)
 * Documentation: Improved the EL7 installation instructions, added note
   about pnp4nagios configuration (OP-981)
 * Documentation: Restructured and refined the installation instructions
 * Documentation: Added trade mark notice
+
 
 [2.0.8] - 2016-03-01
 --------------------
@@ -604,10 +614,10 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI/QA: Adjusted E2E tests with volume protection for OP-869 (OP-870)
 * WebUI/QA: Adapted E2E tests related to OP-339 - Allow deletion of multiple
   volumes (OP-871)
-* WebUI/QA: re-added commandlog check ('lvcreate') for specific volume (see
-* OP-873)
+* WebUI/QA: re-added commandlog check (``lvcreate``) for specific volume
+  (OP-873)
 * WebUI/QA: fixed snapshot test related to OP-817 (OP-881)
-* WebUI/QA: extended all storage tab tests by checking the url OP-891 - related
+* WebUI/QA: extended all storage tab tests by checking the URL OP-891 - related
   to OP-817 (OP-891)
 * WebUI/QA: extended general e2e tests by checking the url when menu entry has
   been clicked (OP-897)
@@ -616,8 +626,8 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI: Show a delete button if multiple volumes are selected (OP-884)
 * WebUI/QA: Adapt OP-884-related e2e tests (OP-916)
 * Backend: added copyright/license header to gatling files (OP-844)
-* Backend/Gatling: Removed colorizer.py from the Gatling API test framework due
-  to licensing concerns (OP-924)
+* Backend/Gatling: Removed ``colorizer.py`` from the Gatling API test framework
+  due to licensing concerns (OP-924)
 * Documentation: updated documentation (section e2e, OP-910)
 * Installation: Adding distro specific settings for monitoring (OP-842)
   (thanks to Eric Jackson for the contribution)
@@ -626,12 +636,12 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   needs to be configured manually for the performance graphs to be displayed.
   (OP-820)
 * Installation: Updated and improved the installation and content of the
-  default configuration file /etc/default/openattic (OP-920)
+  default configuration file ``/etc/default/openattic`` (OP-920)
 * Packaging: Included the build scripts into the official repository. They can
   be used to create a tar archive and with that, the corresponding Debian or
   RPM packages. (OP-892)
-* Packaging: Introduced a new command line switch for build_deb_packages.py to
-  update a local repository with the newly built packages (OP-948)
+* Packaging: Introduced a new command line switch for ``build_deb_packages.py``
+  to update a local repository with the newly built packages (OP-948)
 * Installation: Trimmed down the list of required Nagios plugins in the RPM
   package (OP-942)
 
@@ -652,6 +662,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Documentation: added sections about authentication in general and how you
   can get the authentication token of your own openattic user (OP-860).
 
+
 [2.0.6] - 2016-01-19
 --------------------
 
@@ -664,39 +675,41 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * WebUI/QA: check fullscreen mode (see OP-700 / OP-811)
 * WebUI/QA: updated VM Storage wizard e2e (see OP-843)
 * WebUI/QA: added wizard e2e test based on zfs/iscsi (see OP-628)
-* Installation: Added cron to the requirements of the openattic-module-twraid
-  RPM subpackage (OP-845)
+* Installation: Added cron to the requirements of the
+  ``openattic-module-twraid`` RPM subpackage (OP-845)
 * Backend: The authentication token of a user is now obtainable by correct
   username and password if the user is not logged in (OP-841)
 * Code cleanup: Updated date in copyright headers (OP-836)
 * Documentation: fixed package name and added protractor version
   (section E2E), see OP-847
 
+
 [2.0.5] - 2015-12-15
 --------------------
 
 * Installation: Removed dependency on the djextdirect Python module from the
-  RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
+  RPM and DEB packages, removed obsolete file ``backend/rpcd/extdirect.py``
   (OP-784)
 * Installation: Added call to start and enable the rpcbind service before
-  starting the NFS server in the openattic-module-nfs RPM package (OP-786)
+  starting the NFS server in the ``openattic-module-nfs`` RPM package (OP-786)
 * Installation: Removed obsolete dependency on the Oxygen icon set from the
   RPM package dependencies (OP-787)
 * Installation: Make sure to start and enable Samba when installing the
-  openattic-module-samba RPM on RHEL7 and derivatives (OP-788)
+  ``openattic-module-samba`` RPM on RHEL7 and derivatives (OP-788)
 * Installation: Updated the RPM package installation to no longer install all
   files as owned by the openattic user (OP-819)
-* Packaging: added openattic-module-lio to the openattic meta RPM package
-  dependencies, moved dependency on python-rtslib from the openattic-base
-  package to the openattic-module-lio RPM, as it's the only one that requires
-  it (and to be in line with dependencies defined by the DEB packages).
-* Backend: added loading of kernel modules "target_core_iblock" and
-  "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
-  loaded" error observed on CentOS 7 (OP-722).
+* Packaging: added ``openattic-module-lio`` to the openattic meta RPM package
+  dependencies, moved dependency on ``python-rtslib`` from the
+  ``openattic-base`` package to the ``openattic-module-lio`` RPM, as it's the
+  only one that requires it (and to be in line with dependencies defined by the
+  DEB packages).
+* Backend: added loading of kernel modules ``target_core_iblock`` and
+  ``target_core_pscsi`` to the LIO backend, to fix a ``fabric iscsi not
+  loaded`` error observed on CentOS 7 (OP-722).
 * Backend: Added RESTful API functionality to grow unformatted DRBD
   connections and related Gatling API tests (OP-667 / OP-707)
 * Web UI: Fixed full screen mode. (OP-700)
-* Web UI: Snapshots are sortable by 'create date' now (OP-814)
+* Web UI: Snapshots are sortable by "create date" now (OP-814)
 * Web UI/QA: added e2e test for bugfix OP-748 (Clicking the openATTIC icon
   on the login page bypasses the login prompt)
 * Web UI/QA: added e2e test for OP-542 (relates to bug OP-597 -> Raw hard Disks
@@ -716,6 +729,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   icons
 * WebUI/QA: fixed user e2e test which did not work properly in chromium anymore
   (see OP-821)
+
 
 [2.0.4] - 2015-11-17
 --------------------
@@ -744,6 +758,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   updated E2E test documentation
 * Documentation: Improved the readability of the openATTIC documentation
 
+
 [2.0.3] - 2015-10-16
 --------------------
 
@@ -759,34 +774,35 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   delete action (OP-683)
 * Installation: Fixed lots of "user/group does not exist" warnings that ocurred
   when installing the EL7 RPMs (OP-536)
-* Installation: Moved log files into /var/log/openattic and created a
-  logrotate.conf file (OP-660, OP-661)
-* Installation: Removed /var/log/openattic_vgmanager from the Debian packages
-  (OP-663)
-* Installation: Fixed RPM dependencies: all modules depend on "openattic-base"
-  now, removed openattic-base dependency from the "openattic" meta package.
+* Installation: Moved log files into ``/var/log/openattic`` and created a
+  ``logrotate.conf`` file (OP-660, OP-661)
+* Installation: Removed ``/var/log/openattic_vgmanager`` from the Debian
+  packages (OP-663)
+* Installation: Fixed RPM dependencies: all modules depend on ``openattic-base``
+  now, removed openattic-base dependency from the ``openattic`` meta package.
 * Documentation: Updated the installation and development system setup
   chapters.
+
 
 [2.0.2] - 2015-09-09
 --------------------
 
 * API: Merged the formerly separate REST API test suite into the
-  openATTIC code base (subdirectory "gatling").
+  openATTIC code base (subdirectory ``gatling``).
 * Web UI: Merged the formerly separate Web UI into the openATTIC code base
-  (subdirectory "webui").
+  (subdirectory ``webui``).
 * Documentation: Created an initial version of the 2.0 documentation (derived
   from the 1.2 docs) and added it to the openATTIC code base (subdirectory
-  "documentation") (OP-502).
-* Added Ceph module and created openattic-module-ceph installation package
+  ``documentation``) (OP-502).
+* Added Ceph module and created ``openattic-module-ceph`` installation package
   (OP-623, OP-624).
 * Installation: Fixed RPM installation error ("semanage: command not found)
   (OP-571).
-* Installation: created "openattic-release" RPM package, to simplify the
+* Installation: created ``openattic-release`` RPM package, to simplify the
   installation process (OP-537).
 * Web UI: Fixed some UI usability issues, e.g. "When deleting a volume,
   pressing "Enter" after confirming the volume name cancels the delete action"
-  (OP-565), "Pressing "Enter" in the volume resize dialoge cancels the
+  (OP-565), "Pressing "Enter" in the volume resize dialogue cancels the
   intended action" (OP-601).
 * WebUI: Heavily extended the UI test suite.
 * WebUI: Added missing Volume Resize option (OP-425).
@@ -797,23 +813,24 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
   reporting).
 * Web UI: Fixed a login problem with a newly created user (OP-615, thanks to
   Felix Netzel for reporting).
-* Installation: Fixed an issue with `oaconfig restart/reload` on RHEL 7 and
+* Installation: Fixed an issue with ``oaconfig restart/reload`` on RHEL 7 and
   derivatives (OP-572).
 * Installation: Fixed "semanage: command not found" error during RPM upgrade
   (OP-571).
 * WebUI: Unified the types of the checkboxes of the cluster status widget
   (OP-566).
-* Installation: Fixed a missing "python-djangorestframework" dependency for
+* Installation: Fixed a missing ``python-djangorestframework`` dependency for
   Ubuntu 14.04 (OP-510).
 * Installation: Overhauled the EL7 RPM packages. RPM packages are now signed
   with GPG.
 * Adding iSCSI LUNs now only works for hosts that have iqn/wwn attributes
   (OP-469).
 * WebUI: Added performance graph to the Dashboard.
-* Installation: Fixed oaconfig failure when /etc/aliases is missing (thanks
+* Installation: Fixed oaconfig failure when ``/etc/aliases`` is missing (thanks
   to Thomas Schweikle for reporting).
-* Installation: Added --allow-broken-hostname option to allow "oaconfig
-  install" to proceed without a correctly-configured FQDN (OP-501).
+* Installation: Added ``--allow-broken-hostname`` option to allow ``oaconfig
+  install`` to proceed without a correctly-configured FQDN (OP-501).
+
 
 [2.0.1] - 2015-07-10
 --------------------
@@ -827,10 +844,12 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Improved robustness of share creation and deletion.
 * Removed support for FTP and TFTP.
 
+
 [1.2.1] - 2014-11-24
 --------------------
 
 * Fixed mapping a LUN to multiple initiators.
+
 
 [1.2.0] - 2014-08-12
 --------------------
@@ -863,6 +882,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Added resize functionality for DRBD connections.
 * Fixed error when deleting a volume that has snapshots.
 
+
 [1.1.1] - 2014-04-01
 --------------------
 
@@ -870,6 +890,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Fixed exception caused by querying an LV that has not yet been fully created.
 * Fixed LVM VG detection (detected VGs did not show up in the GUI).
 * Fixed DRBD mirror plugin for the Volume Options GUI.
+
 
 [1.1.0] - 2014-03-09
 --------------------
@@ -892,6 +913,7 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Added DRBD module.
 * Added function to automatically wipe old metadata from newly created volumes.
 * Added auto-create function for PeerHost and APIKey entries.
+
 
 [1.0.7] - 2013-05-22
 --------------------
@@ -931,10 +953,12 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Removed NTP and Proxy modules.
 * Changed "oaconfig install" to be completely non-interactive.
 
+
 [0.7.4] - 2012-03-07
 --------------------
 
 * Fixed the Nagios syncdb hook which caused the initial syncdb to fail.
+
 
 [0.7.3] - 2012-03-05
 --------------------
