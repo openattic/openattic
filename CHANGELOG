@@ -1,8 +1,14 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.19, (not released yet):
------------------------------------
+All notable changes to this project will be documented in this file.
+
+The format is inspired by the `Keep a Changelog <http://keepachangelog.com/>`_
+project, with the exception of using reStructuredText for markup instead of
+Markdown.
+
+[2.0.19] - unreleased
+---------------------
 
 * WebUI: Fixes the RBD utilization graphs (OP-1945)
 * WebUI: Fixes ceph pagination issue (OP-1925)
@@ -19,14 +25,16 @@ Version 2.0.19, (not released yet):
   that something is happening in the background (OP-1760)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
 * Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
-* Installation: Remove symlink from /etc/openattic/databases/pgsql.ini (OP-1822)
+* Installation: Remove symlink from /etc/openattic/databases/pgsql.ini
+  (OP-1822)
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
-* Packaging: Stop and remove openattic-rpcd service when upgrading to version 2.0.19 (OP-1900)
+* Packaging: Stop and remove openattic-rpcd service when upgrading to version
+  2.0.19 (OP-1900)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
 
 
-Version 2.0.18, 09. February 2017:
-----------------------------------
+[2.0.18] - 2017-02-09
+---------------------
 
 * WebUI/QA: Added test that deletes multiple hosts at once (OP-1817)
 * WebUI: Enables the RBD form to create RBDs after reloading (OP-1839)
@@ -70,8 +78,8 @@ Version 2.0.18, 09. February 2017:
 * Documentation: Adapt Vagrant developer documentation.
 
 
-Version 2.0.17, 20. December 2016:
-----------------------------------
+[2.0.17] - 2016-12-20
+---------------------
 
 * Backend: RPC API dependencies removed in oaconfig (OP-1255)
 * Backend: Infinite hanging librados calls are avoided by separated Apache
@@ -89,7 +97,8 @@ Version 2.0.17, 20. December 2016:
 * Backend: Fixed truncated dropdown inputs on Xenial (OP-1788)
 * Backend: Use `reload-or-restart` instead of plain `reload` for restarting
   services on systemd-based operating systems (OP-984).
-* Backend: Change taskqueue description and result fields to `TextField` (OP-1755)
+* Backend: Change taskqueue description and result fields to `TextField`
+  (OP-1755)
 * Installation: Fixed Apache redirect from `/` to `/openattic` on Ubuntu
   Xenial (OP-1672)
 * Installation: Replaced hard-coded paths in systemd unit files with
@@ -107,7 +116,8 @@ Version 2.0.17, 20. December 2016:
 * WebUI: Display tooltips again (OP-1749)
 * WebUI: Remove the OSD selection (OP-1615)
 * WebUI: Prevent the disabling of all columns in oA-datatables (OP-1158)
-* WebUI: Validate the right WWN formats in the selected host share method (OP-1786)
+* WebUI: Validate the right WWN formats in the selected host share method
+  (OP-1786)
 * WebUI/QA: E2E adjustments related to OP-1786 (OP-1787)
 * WebUI/QA: Try to disable all columns and expect not to succeed (OP-1718)
 * WebUI/QA: refactored cmdlog e2e tests (OP-1797)
@@ -117,7 +127,8 @@ Version 2.0.17, 20. December 2016:
   This change applies to RPM packages only. (OP-1438)
 * Installation: Improved error message for problems with database.ini (OP-1739)
 * Installation: Fix a bug with recreation of the database (OP-1757)
-* Installation: Properly restart npcd in `oaconfig install` on distributions using systemd (OP-1688)
+* Installation: Properly restart npcd in `oaconfig install` on distributions
+  using systemd (OP-1688)
 * Documentation: Applied some fixes contributed by Ricardo Marques (PR#523)
 * Development: Fix storage controller issue with the Vagrant Debian box.
 * Development: Fix patch file which is customizing settings in a Vagrant VM.
@@ -125,8 +136,8 @@ Version 2.0.17, 20. December 2016:
 * Documentation: Added chapter about multinode setup (OP-1045) 
 
 
-Version 2.0.16, 07. November 2016:
-----------------------------------
+[2.0.16] - 2016-11-07
+---------------------
 
 * Backend: The REST API 'host' resource returns the openATTIC version (in
   version.txt) if the host is an openATTIC host (OP-553)
@@ -138,25 +149,27 @@ Version 2.0.16, 07. November 2016:
 * Backend: The backend does no longer print the whole traceback into the
   logfile if the XML file of an RRD file is not found (OP-1632)
 * Backend: Django migration files aren't checked by Flake8 anymore (OP-1638)
-* Backend: Added reading and writing of the `policy.cfg` of DeepSea REST API (OP-1617)
+* Backend: Added reading and writing of the `policy.cfg` of DeepSea REST API
+  (OP-1617)
 * Backend: The is_oa_host field is set to True for oA hosts by 'oaconfig
   add-host' (OP-1665)
 * Backend: Added database migrations for Django 1.6 (OP-1649)
-* Backend: Fixed Bug on Ubuntu Trusty preventing deletion of iSCSI targets (OP-722)
+* Backend: Fixed Bug on Ubuntu Trusty preventing deletion of iSCSI targets
+  (OP-722)
 * Backend: Fixed issue breaking the WebUI on Xenial (OP-1689)
 * WebUI: Tabs will be selected as expected (OP-1082)
 * WebUI: Display the Ceph Pool data table even when there are no objects
   to be displayed, to make the "Create Ceph Pool" button visible (OP-1561)
-* WebUI: Removed confusing "Sorry folks" message displayed during the loading of
-  data tables (OP-1333)
+* WebUI: Removed confusing "Sorry folks" message displayed during the loading
+  of data tables (OP-1333)
 * Packaging: The python-configobj dependency is moved to the openattic-base
   package (OP-1666)
 * Packaging: Added missing dependency openattic-module-cron in
   openattic-module-lvm (OP-1664)
 
 
-Version 2.0.15, 12. October 2016:
----------------------------------
+[2.0.15] - 2016-10-12
+---------------------
 
 * Backend: Improved custom error messages in the REST API (OP-497)
 * Backend: Code cleanup (PEP8) for the following apps: DRBD, volumes,
@@ -202,10 +215,11 @@ Version 2.0.15, 12. October 2016:
   Profiles or deleting used ones (OP-1578)
 * Backend/Installation: Fixed misleading debug message during `oaconfig
   install` (OP-1580)
-* Backend: The `check_cephcluster` plugin now prints the correct message and 
+* Backend: The `check_cephcluster` plugin now prints the correct message and
   returns the correct exit code in case of an error (OP-1586)
 * Backend: Fixed `oaconfig install` on CentOS 7 (OP-1368)  
-* Backend: Fixed HEALTH_ERR not handled in `ceph.models.Pool#get_status` (OP-1593)
+* Backend: Fixed HEALTH_ERR not handled in `ceph.models.Pool#get_status`
+  (OP-1593)
 * WebUI: Blockstorage wizard can create a new host (OP-1150)
 * WebUI: Added functionality to delete existing erasure code
   profiles (OP-1297)
@@ -244,11 +258,11 @@ Version 2.0.15, 12. October 2016:
 * Documentation: Fixed bug in the SUSE installation instructions (thanks to
   Kenneth Wimer for reporting this).
 * Documentation: Improved the Debian/Ubuntu package installation chapter by
-  removing some duplicate content and clarifying how to enable the nightly builds.
-  (OP-1603)
+  removing some duplicate content and clarifying how to enable the nightly
+  builds. (OP-1603)
   
-Version 2.0.14, 12. September 2016:
------------------------------------
+[2.0.14] - 2016-09-12
+---------------------
 
 * Backend: Removed unused module 'Clustering' (OP-1251)
 * Backend: Fixed rtslib deprecation warning in LIO backend (OP-953)
@@ -298,8 +312,8 @@ Version 2.0.14, 12. September 2016:
   RPM packages (using `rpm/openattic.spec`) (OP-1117)
 
 
-Version 2.0.13, 28. July 2016:
-------------------------------
+[2.0.13] - 2016-07-28
+---------------------
 
 Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, you
   need to delete existing perfomance data by running 
@@ -346,8 +360,8 @@ Notice: Due to an incompatible change in our check_cephcluster Nagios plugin, yo
 * Packaging: Fix building debian snapshot packages on Ubuntu 16.04 (OP-1372)
 
 
-Version 2.0.12, 23. June 2016:
-------------------------------
+[2.0.12] - 2016-06-23
+---------------------
 
 * Backend: Added possiblility to create erasure-coded Ceph pools in the
   REST API (OP-546)
@@ -401,8 +415,8 @@ Version 2.0.12, 23. June 2016:
 * Packaging: Updated the dependencies on `ceph-common` to be of version 10.0.0
   (aka "Jewel") or higher (OP-1268)
 
-Version 2.0.11, 20. May 2016:
------------------------------
+[2.0.11] - 2016-05-20
+---------------------
 
 * WebUI: Extended the pool selection box by the hostname of the pool (OP-973)
 * WebUI: Extend the volume creation form by all supported filesystems
@@ -419,8 +433,8 @@ Version 2.0.11, 20. May 2016:
 * WebUI/QA: Test for the hostnames of the pools in the volume form (OP-1059)
 * WebUI/QA: Added tests which check the correct description
   for each volume type (OP-1159)
-* WebUI/QA: Test to verify that snapshot size is hidden while creating a snapshot
-  on a zfs or btrfs (OP-1162)
+* WebUI/QA: Test to verify that snapshot size is hidden while creating a
+  snapshot on a zfs or btrfs (OP-1162)
 * WebUI/QA: Added E2E test cases for Ceph OSDs Panel (OP-1176)
 * WebUI/QA: Removed obsolete E2E tests due to OP-597 (OP-1185)
 * WebUI/QA: Adapted datatable tests due to OP-597 (OP-1186)
@@ -483,8 +497,8 @@ Version 2.0.11, 20. May 2016:
 * Documentation: Added chapter about how to work on the documentation to the
   Developer Docs.
 
-Version 2.0.10, 20. Apr 2016:
------------------------------
+[2.0.10] - 2016-04-20
+---------------------
 
 * WebUI: Show an error message if javascript is disabled (OP-580)
 * WebUI: Remove Smartadmin and added a new openATTIC theme (OP-585)
@@ -528,8 +542,8 @@ Version 2.0.10, 20. Apr 2016:
   modules, added dependency on the "python-rados" package (OP-1021)
 * Documentation: Added Gatling document to openATTIC documentation (OP-894)
 
-Version 2.0.9, 16. Mar 2016:
-----------------------------
+[2.0.9] - 2016-03-16
+--------------------
 
 * WebUI: Review licenses of bower packages and NPM modules (OP-857)
 * WebUI: Update versions of bower dependencies (OP-904)
@@ -569,8 +583,8 @@ Version 2.0.9, 16. Mar 2016:
 * Documentation: Restructured and refined the installation instructions
 * Documentation: Added trade mark notice
 
-Version 2.0.8, 1. Mar 2016:
----------------------------
+[2.0.8] - 2016-03-01
+--------------------
 
 * WebUI: Allow deletion of multiple volumes (OP-339)
 * WebUI: Display first and last name instead of username (OP-792)
@@ -622,11 +636,12 @@ Version 2.0.8, 1. Mar 2016:
   package (OP-942)
 
 
-Version 2.0.7, 19. Jan 2016:
-----------------------------
+[2.0.7] - 2016-01-19
+--------------------
 
 * WebUI: Fixed jshint and jscs errors (OP-826)
-* WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
+* WebUI/QA: extended host e2e test in order to check the correct title (see
+  OP-855)
 * Backend: Added possibility to see the own authentication token via
   http://<openattic-host>/openattic/api/users or
   http://<openattic-host>/openattic/api/users/<user-id> views
@@ -637,8 +652,8 @@ Version 2.0.7, 19. Jan 2016:
 * Documentation: added sections about authentication in general and how you
   can get the authentication token of your own openattic user (OP-860).
 
-Version 2.0.6, 19. Jan 2016:
-----------------------------
+[2.0.6] - 2016-01-19
+--------------------
 
 * WebUI: Added grunt-jscs v2.5.0 (OP-832)
 * WebUI: Updated grunt-contrib-jshint from 0.6.4 to 0.11.3 (OP-825)
@@ -657,8 +672,8 @@ Version 2.0.6, 19. Jan 2016:
 * Documentation: fixed package name and added protractor version
   (section E2E), see OP-847
 
-Version 2.0.5, 15. Dec 2015:
-----------------------------
+[2.0.5] - 2015-12-15
+--------------------
 
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
@@ -702,8 +717,8 @@ Version 2.0.5, 15. Dec 2015:
 * WebUI/QA: fixed user e2e test which did not work properly in chromium anymore
   (see OP-821)
 
-Version 2.0.4, 17. Nov 2015:
-----------------------------
+[2.0.4] - 2015-11-17
+--------------------
 
 * Web UI: Fixed scripts created by the API Recorder (OP-608, OP-657, OP-712)
 * Web UI: Created E2E tests for enabled/disabled storage tabs depending on the
@@ -729,8 +744,8 @@ Version 2.0.4, 17. Nov 2015:
   updated E2E test documentation
 * Documentation: Improved the readability of the openATTIC documentation
 
-Version 2.0.3, 16. Oct 2015:
-----------------------------
+[2.0.3] - 2015-10-16
+--------------------
 
 * API/Backend: Created DRBD REST-API that supports creating and deleting
   mirrored volumes (OP-216).
@@ -750,10 +765,11 @@ Version 2.0.3, 16. Oct 2015:
   (OP-663)
 * Installation: Fixed RPM dependencies: all modules depend on "openattic-base"
   now, removed openattic-base dependency from the "openattic" meta package.
-* Documentation: Updated the installation and development system setup chapters.
+* Documentation: Updated the installation and development system setup
+  chapters.
 
-Version 2.0.2, 09 Sep 2015:
----------------------------
+[2.0.2] - 2015-09-09
+--------------------
 
 * API: Merged the formerly separate REST API test suite into the
   openATTIC code base (subdirectory "gatling").
@@ -799,8 +815,8 @@ Version 2.0.2, 09 Sep 2015:
 * Installation: Added --allow-broken-hostname option to allow "oaconfig
   install" to proceed without a correctly-configured FQDN (OP-501).
 
-Version 2.0.1, 10 July 2015:
-----------------------------
+[2.0.1] - 2015-07-10
+--------------------
 
 * Added support for the "Restore previous versions" Windows Explorer feature.
 * Improved robustness of the LIO module.
@@ -811,13 +827,13 @@ Version 2.0.1, 10 July 2015:
 * Improved robustness of share creation and deletion.
 * Removed support for FTP and TFTP.
 
-Version 1.2.1, 24 November 2014:
---------------------------------
+[1.2.1] - 2014-11-24
+--------------------
 
 * Fixed mapping a LUN to multiple initiators.
 
-Version 1.2.0, 12 August 2014:
-------------------------------
+[1.2.0] - 2014-08-12
+--------------------
 
 * Fixed LVM snapshots being zeroed after creation.
 * Added ZFS snapshots.
@@ -847,16 +863,17 @@ Version 1.2.0, 12 August 2014:
 * Added resize functionality for DRBD connections.
 * Fixed error when deleting a volume that has snapshots.
 
-Version 1.1.1, 01 April 2014:
----------------------------------
+[1.1.1] - 2014-04-01
+--------------------
 
 * Fixed Volume Management refresh to also refresh the root objects.
 * Fixed exception caused by querying an LV that has not yet been fully created.
 * Fixed LVM VG detection (detected VGs did not show up in the GUI).
 * Fixed DRBD mirror plugin for the Volume Options GUI.
 
-Version 1.1.0, 09 March 2014:
----------------------------------
+[1.1.0] - 2014-03-09
+--------------------
+
 * Improved Nagios disk load graphs.
 * Added support for scheduled snapshots.
 * Added Host and HostGroup management.
@@ -876,9 +893,8 @@ Version 1.1.0, 09 March 2014:
 * Added function to automatically wipe old metadata from newly created volumes.
 * Added auto-create function for PeerHost and APIKey entries.
 
-
-Version 1.0.7, 22 May 2013:
----------------------------------
+[1.0.7] - 2013-05-22
+--------------------
 
 * Replaced SSMTP module with mailaliases module.
 * Added double-click edit feature to most grid panels.
@@ -915,14 +931,12 @@ Version 1.0.7, 22 May 2013:
 * Removed NTP and Proxy modules.
 * Changed "oaconfig install" to be completely non-interactive.
 
-
-Version 0.7.4, 07 March 2012:
------------------------------
+[0.7.4] - 2012-03-07
+--------------------
 
 * Fixed the Nagios syncdb hook which caused the initial syncdb to fail.
 
-
-Version 0.7.3, 05 March 2012:
------------------------------
+[0.7.3] - 2012-03-05
+--------------------
 
 * First release.
