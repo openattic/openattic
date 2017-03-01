@@ -39,13 +39,21 @@ def custom_handler(exc, context=None):
     if response:
         return response
 
-    # If the default handler can't find a suitable exception response try the custom ones
+    # If the default handler can't find a suitable exception response try the custom ones.
+    # Note, HTTP 400 errors should be used when a functionality does not exist for the called
+    # object, e.g. a file system does not support shrinking or growing. Internal backend issues,
+    # e.g. where the user is not responsible for, must use the HTTP 500 error.
+
     if isinstance(exc, ValidationError):
+        # By default the ValidationError exception should be called with an error dictionary
+        # containing the error messages for each erroneous field.
         if hasattr(exc, 'error_dict'):
-            # An error dictionary must be handled different, otherwise the origin
-            # error message will not be processed and submitted.
+            # An error dictionary must be handled different, otherwise the origin error message(s)
+            # will not be processed correct by the Django framework and will finally not submitted
+            # to the API caller.
             return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
-        return Response(str(exc), status=status.HTTP_400_BAD_REQUEST)
+        # Handle exceptions that are raised with an single error message string.
+        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     if isinstance(exc, NotSupportedError):
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
