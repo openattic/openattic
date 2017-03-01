@@ -76,6 +76,7 @@ app.controller("UsersAddEditCtrl", function ($filter, $q, $scope, $state, $state
         usersService.get({id: $stateParams.user}).$promise
     );
 
+    // Use $q.all to wait until all promises have been resolved
     $q.all(promises)
         .then(function (res) {
           if (res[0].id === Number($stateParams.user)) {
