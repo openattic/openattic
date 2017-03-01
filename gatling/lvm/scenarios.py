@@ -35,13 +35,13 @@ class LvTestScenario(GatlingTestCase):
     @classmethod
     def _get_vg_by_name(cls, vg_name):
         try:
-            res = cls.send_request("GET", "pools", search_param=("name=%s" % vg_name))
+            res = cls.send_request("GET", "pools", search_param=("name={}".format(vg_name)))
         except HTTPError as e:
             raise SkipTest(e.message)
 
         if res["count"] != 1:
-            raise SkipTest("Failed to request VG <%s>. The REST API returned no or more "
-                           "than one object(s). But only one is expected." % vg_name)
+            raise SkipTest("Failed to request VG <{}>. The REST API returned no or more "
+                           "than one object(s). But only one is expected.".format(vg_name))
 
         vg = res["response"][0]
 
@@ -50,7 +50,7 @@ class LvTestScenario(GatlingTestCase):
            vg["type"]["model"] != "volumegroup":
             print "VG not found"
             print vg["name"]
-            raise SkipTest("VG <%s> not found" % vg_name)
+            raise SkipTest("VG <{}> not found".format(vg_name))
 
         return vg
 

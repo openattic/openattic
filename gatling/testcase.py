@@ -112,7 +112,7 @@ class GatlingTestCase(unittest.TestCase):
                 res.raise_for_status()
             except requests.exceptions.HTTPError as e:
                 # Modify the error message and re-raise the exception.
-                raise requests.exceptions.HTTPError("%s content: %s" % (str(e), res.text),
+                raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
                                                     response=e.response,
                                                     request=e.request)
             res = json.loads(res.text)
@@ -135,7 +135,7 @@ class GatlingTestCase(unittest.TestCase):
                 res.raise_for_status()
             except requests.exceptions.HTTPError as e:
                 # Modify the error message and re-raise the exception.
-                raise requests.exceptions.HTTPError("%s content: %s" % (str(e), res.text),
+                raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
                                                     response=e.response,
                                                     request=e.request)
 
