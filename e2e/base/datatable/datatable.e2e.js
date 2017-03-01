@@ -1,13 +1,12 @@
 var helpers = require('../../common.js');
 
 var columnListButton = element(by.css('.tc_columnBtn'));
-var protectionListItem = element(by.cssContainingText('.tc_columnItem', 'Protection'));
-var protectionColumn = element(by.cssContainingText('th', 'Protection'));
+var idListItem = element(by.cssContainingText('.tc_columnItem', 'ID'));
+var idColumn = element(by.cssContainingText('th', 'ID'));
 var searchField = element.all(by.model('filterConfig.search')).get(0);
 var entriesDropDown = element(by.css('.tc_entries_dropdown'));
-var volumeRowElements = element.all(by.css('.tc_volumeRowName'));
+var poolRowElements = element.all(by.css('.tc_cephPoolTable tbody tr'));
 
-var checkboxes = element.all(by.css('.tc_checkboxes'));
 var selectAllCheckbox = element(by.model('selection.checkAll'));
 var allSelected = element(by.css('.oadatatablecheckbox .ng-not-empty'));
 var noneSelected = element(by.css('.oadatatablecheckbox .ng-empty'));
@@ -20,7 +19,7 @@ describe('Should test oadatatable and its options', function(){
   });
 
   beforeEach(function(){
-    browser.setLocation('commandlog');
+    browser.setLocation('ceph/pools');
   });
 
   var list = [
@@ -93,10 +92,6 @@ describe('Should test oadatatable and its options', function(){
     expect(element.all(by.model('checked')).get(0).isDisplayed()).toBe(true);
   });
 
-  it('should check the number of checkboxes (select all checkbox not included)', function(){
-    expect(volumeRowElements.count()).toEqual(checkboxes.count());
-  });
-
   it('should have a "select all" checkbox', function(){
     expect(selectAllCheckbox.isDisplayed()).toBe(true);
   });
@@ -140,19 +135,19 @@ describe('Should test oadatatable and its options', function(){
 
   it('should no longer display a column when deselected', function(){
     columnListButton.click();
-    protectionListItem.click();
-    expect(protectionColumn.isDisplayed()).toBe(false);
+    idListItem.click();
+    expect(idColumn.isDisplayed()).toBe(false);
   });
 
   it('should no longer display a column when deselected after reloading the page', function(){
     browser.refresh();
-    expect(protectionColumn.isDisplayed()).toBe(false);
+    expect(idColumn.isDisplayed()).toBe(false);
   });
 
-  it('should put the protection column back in', function(){
+  it('should put the host column back in', function(){
     columnListButton.click();
-    protectionListItem.click();
-    expect(protectionColumn.isDisplayed()).toBe(true);
+    idListItem.click();
+    expect(idColumn.isDisplayed()).toBe(true);
   });
 
   /**
@@ -180,15 +175,15 @@ describe('Should test oadatatable and its options', function(){
       });
   });
 
-  it('should filter for the volumename', function(){
+  it('should filter for the poolname', function(){
     searchField.click();
-    searchField.clear().sendKeys(volumename);
-    expect(volumeRowElements.count()).toBe(1);
+    searchField.clear().sendKeys('default.rgw.data.root');
+    expect(poolRowElements.count()).toBe(1);
   });
 
   it('should clear the filter search field and display max. 10 elements', function(){
     searchField.clear();
-    expect(volumeRowElements.count()).toBeGreaterThan(1);
+    expect(poolRowElements.count()).toBeGreaterThan(1);
   });
 
   it('should have "10" as default max. listed elements per page', function(){
@@ -198,12 +193,12 @@ describe('Should test oadatatable and its options', function(){
   it('should display only two elements when this number of displayed elements has been selected', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_2')).click();
-    expect(volumeRowElements.count()).toBe(2);
+    expect(poolRowElements.count()).toBe(2);
   });
 
   it('should still display only two elements after reloading the page', function(){
     browser.refresh();
-    expect(volumeRowElements.count()).toBe(2);
+    expect(poolRowElements.count()).toBe(2);
   });
 
   it('should adapt table information of listed entries', function(){
@@ -213,7 +208,7 @@ describe('Should test oadatatable and its options', function(){
   it('should go back to max. 10 elements per page', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_10')).click();
-    expect(volumeRowElements.count()).toBeGreaterThan(2);
+    expect(poolRowElements.count()).toBeGreaterThan(2);
   });
 
   afterAll(function(){
