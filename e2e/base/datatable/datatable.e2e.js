@@ -23,11 +23,15 @@ describe('Should test oadatatable and its options', function(){
   });
 
   var list = [
-    'Command',
-    'Text',
-    'Exitcode',
-    'Host',
-    'Endtime'
+    'Name',
+    'ID',
+    'Used',
+    'Placement groups',
+    'Replica size',
+    'Erasure code profile',
+    'Last Change',
+    'Type',
+    'Crush ruleset'
   ];
 
   it('should display the datatable header', function(){
