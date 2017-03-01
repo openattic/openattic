@@ -61,7 +61,7 @@ app.controller("CommandlogCtrl", function ($scope, $state, commandlogService, $u
   }, true);
 
   $scope.$watchCollection("selection.items", function (items) {
-    if (angular.isDefinied(items)) {
+    if (items) {
       $scope.hasSelection = items.length > 0;
     }
   });
