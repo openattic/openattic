@@ -1,8 +1,8 @@
 var helpers = require('../../common.js');
 
 var columnListButton = element(by.css('.tc_columnBtn'));
-var idListItem = element(by.cssContainingText('.tc_columnItem', 'ID'));
-var idColumn = element(by.cssContainingText('th', 'ID'));
+var typeListItem = element(by.cssContainingText('.tc_columnItem', 'Type'));
+var typeColumn = element(by.cssContainingText('th', 'Type'));
 var searchField = element.all(by.model('filterConfig.search')).get(0);
 var entriesDropDown = element(by.css('.tc_entries_dropdown'));
 var poolRowElements = element.all(by.css('.tc_cephPoolTable tbody tr'));
@@ -139,19 +139,19 @@ describe('Should test oadatatable and its options', function(){
 
   it('should no longer display a column when deselected', function(){
     columnListButton.click();
-    idListItem.click();
-    expect(idColumn.isDisplayed()).toBe(false);
+    typeListItem.click();
+    expect(typeColumn.isDisplayed()).toBe(false);
   });
 
   it('should no longer display a column when deselected after reloading the page', function(){
     browser.refresh();
-    expect(idColumn.isDisplayed()).toBe(false);
+    expect(typeColumn.isDisplayed()).toBe(false);
   });
 
-  it('should put the host column back in', function(){
+  it('should put the type column back in', function(){
     columnListButton.click();
-    idListItem.click();
-    expect(idColumn.isDisplayed()).toBe(true);
+    typeListItem.click();
+    expect(typeColumn.isDisplayed()).toBe(true);
   });
 
   /**
