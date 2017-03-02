@@ -98,6 +98,9 @@ describe('Should add an user', function(){
   });
 
   it('should delete the "protractor_test_user"', function(){
+    element.all(by.model('username')).sendKeys('openattic');
+    element.all(by.model('password')).sendKeys('openattic');
+    element.all(by.css('input[type="submit"]')).click();
     browser.setLocation('users');
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();
