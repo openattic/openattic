@@ -33,7 +33,7 @@
 var app = angular.module("openattic.users");
 app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal,
     Notification) {
-  var gravatarId = $filter("gravatar")("");
+  var promises = [];
 
   $scope.isCurrentUser = false;
 
@@ -53,7 +53,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
       "is_superuser": false,
       "is_staff": false
     };
-    $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
 
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
@@ -70,16 +69,20 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
   } else {
     $scope.editing = true;
 
-    usersService.get({id: $stateParams.user})
-        .$promise
+    promises.push(
+        usersService.current().$promise
+    );
+    promises.push(
+        usersService.get({id: $stateParams.user}).$promise
+    );
+
+    // Use $q.all to wait until all promises have been resolved
+    $q.all(promises)
         .then(function (res) {
-          if (angular.isDefined($scope.user) && ($scope.user.id === Number($stateParams.user))) {
+          if (res[0].id === Number($stateParams.user)) {
             $scope.isCurrentUser = true;
           }
-          $scope.user = res;
-
-          gravatarId = $filter("gravatar")($scope.user.email);
-          $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
+          $scope.user = res[1];
         });
 
     $scope.submitAction = function (userForm) {
