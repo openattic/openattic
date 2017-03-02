@@ -74,6 +74,7 @@ describe('Should add an user', function(){
   it('should be able to click something now', function(){
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     expect(browser.getCurrentUrl()).toContain('/#/ceph/pools');
+    browser.setLocation('users');
   });
 
   it('should display an error message if one tries to add an user with already taken username', function(){
