@@ -98,7 +98,7 @@ describe('Should add an user', function(){
   });
 
   it('should delete the "protractor_test_user"', function(){
-    user.click();
+    browser.setLocation('users');
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(400);
