@@ -23,6 +23,10 @@ Version 2.0.19, (not released yet):
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
 * Packaging: Stop and remove openattic-rpcd service when upgrading to version 2.0.19 (OP-1900)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
+* Testing/QA: Improve Gatling tests to be able to execute them in a Vagrant
+  box by making the API root part of the base URL configurable. Additionally
+  more information are displayed if a test case fails. This could help to
+  identify the problem. (OP-1927)
 
 
 Version 2.0.18, 09. February 2017:
