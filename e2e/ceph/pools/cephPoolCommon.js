@@ -10,6 +10,7 @@ var cephPoolCommons = function(){
 
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.statusTab = element(by.css('.tc_statusTab'));
+  this.statisticsTab = element(by.className('tc_statisticsTab'));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
 
   // Describes the attributes seen in the detail tab.
@@ -56,6 +57,17 @@ var cephPoolCommons = function(){
     {
       name: 'Crush ruleset',
       displayed: true
+    }
+  ];
+
+  this.statisticGraphsConfig = [
+    {
+      name: 'Utilization',
+      attributes: ['max_avail', 'num_bytes']
+    },
+    {
+      name: 'Number of Objects',
+      attributes: ['num_objects']
     }
   ];
 

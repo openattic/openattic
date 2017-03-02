@@ -1,7 +1,7 @@
 var helpers = require('../common.js');
 
 describe('should test the ceph osd panel', function(){
-  var cephOSDs = element(by.css('.tc_menuitem_ceph_pools'));
+  var cephOSDs = element(by.css('.tc_menuitem_ceph_osds'));
 
   beforeAll(function(){
     helpers.login();
