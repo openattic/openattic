@@ -138,7 +138,9 @@ describe('Should test oadatatable and its options', function(){
   });
 
   it('should no longer display a column when deselected', function(){
+    // Clear cache
     browser.executeScript('window.localStorage.clear();');
+    browser.refresh();
     columnListButton.click();
     typeListItem.click();
     expect(typeColumn.isDisplayed()).toBe(false);
