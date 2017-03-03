@@ -233,7 +233,7 @@ class GatlingTestCase(unittest.TestCase):
                           str(err_response.exception).lower())
         else:
             self.assertIn("500 Server Error: Internal Server Error".lower(),
-                             str(err_response.exception).lower())
+                          str(err_response.exception).lower())
 
         self.assertEqual(err_response.exception.response.status_code, status_code)
 
