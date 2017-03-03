@@ -43,15 +43,17 @@ app.directive("poolSelection", function () {
     },
     templateUrl: "templates/poolSelection.html",
     controller: function ($scope, poolsService) {
-      poolsService.query()
-        .$promise
-        .then(function (res) {
-          $scope.pools = res;
-          $scope.waitingMsg = "-- Select a pool --";
-        }, function () {
-          $scope.waitingMsg = "Error: List couldn't be loaded!";
-          $scope.validation.$setValidity("loading", false);
-        });
+      $scope.getPoolList = function (options) {
+        poolsService.query(options)
+          .$promise
+          .then(function (res) {
+            $scope.pools = res;
+            $scope.waitingMsg = "-- Select a pool --";
+          }, function () {
+            $scope.waitingMsg = "Error: List couldn't be loaded!";
+            $scope.validation.$setValidity("loading", false);
+          });
+      };
 
       $scope.waitingMsg = "Retrieving pool list...";
       $scope.getPoolList();
