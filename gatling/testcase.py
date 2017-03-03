@@ -232,11 +232,12 @@ class GatlingTestCase(unittest.TestCase):
         self.assertEqual(err_response.exception.response.status_code, status_code)
 
         # Validate the response message.
+        expected_message = expected_message.lower()
         detailed_err = err_response.exception.response.json()[field]
         if type(detailed_err) == list:
-            message = str(detailed_err[0])
+            message = str(detailed_err[0]).lower()
         else:
-            message = detailed_err
+            message = detailed_err.lower()
 
         if fuzzy:
             self.assertIn(expected_message, message)
