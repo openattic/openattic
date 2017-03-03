@@ -47,8 +47,6 @@ app.controller("VolumeNfsSharesFormCtrl", function ($scope, $state, $stateParams
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       }
     };

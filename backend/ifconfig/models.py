@@ -435,7 +435,7 @@ if "nagios" in settings.INSTALLED_APPS:
         from nagios.models import Command, Service
         from nagios.conf import settings as nagios_settings
         from django.contrib.contenttypes.models import ContentType
-        cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
+        cmd = Command.objects.get(name='check_protocol_traffic')
         ctype = ContentType.objects.get_for_model(instance.__class__)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
             return

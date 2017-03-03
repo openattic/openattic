@@ -1,3 +1,0 @@
-backend/twraid /usr/share/openattic
-etc/cron.d/updatetwraid /etc/cron.d
-backend/installed_apps.d/09_twraid /usr/share/openattic/installed_apps.d

@@ -47,8 +47,6 @@ app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $fil
       .$promise
       .then(function (res) {
         $scope.hosts = $filter("initiatorsonly")(res);
-      }, function (error) {
-        console.log("An error occurred", error);
       });
 
   $scope.$watch("share.host", function (host) {
@@ -60,8 +58,6 @@ app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $fil
           .$promise
           .then(function (res) {
             $scope.haz_initiator = (res.count > 0);
-          }, function (error) {
-            console.log("An error occured", error);
           });
     }
   });
@@ -73,8 +69,6 @@ app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $fil
           .$promise
           .then(function () {
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
     }
   };

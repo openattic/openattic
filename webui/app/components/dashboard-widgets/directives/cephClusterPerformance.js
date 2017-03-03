@@ -209,9 +209,6 @@ app.directive("cephClusterPerformance", function () {
                 $scope.graph.data.push(e);
               });
             })
-            .catch(function (error) {
-              throw error;
-            })
             .finally(function () {
               $interval(function () {
                 $scope.isLoading = false;

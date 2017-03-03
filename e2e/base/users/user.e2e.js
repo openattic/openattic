@@ -98,6 +98,22 @@ describe('Should add an user', function(){
     expect(element(by.css('.tc_usernameinfo')).getText()).toEqual(testUser.firstname + ' ' + testUser.lastname);
   });
 
+  it('should generate a new authentication token', function(){
+      systemItem.click();
+      browser.sleep(400);
+      usersItem.click();
+      browser.sleep(400);
+      user.click();
+      browser.sleep(400);
+      element(by.css('.tc_editUser')).click();
+      browser.sleep(400);
+      var generateBtn = element(by.css('.tc_generate_btn'));
+      expect(generateBtn.isDisplayed()).toBe(true);
+      generateBtn.click();
+      browser.sleep(400);
+      element(by.id('bot2-Msg1')).click();
+  });
+
   it('should logout protractor_test_user', function(){
     logout.click();
     expect(browser.getCurrentUrl()).toContain('/#/login');

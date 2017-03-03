@@ -9,6 +9,9 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+OAUSER="openattic"
+OAGROUP="openattic"
+
 ## Type: string
 ## Default:"/usr/bin/python"
 #
@@ -20,48 +23,6 @@ PYTHON="/usr/bin/python"
 #
 # Root openattic directory
 OADIR="/usr/share/openattic"
-
-## Type: string
-## Default:"/var/run/openattic_rpcd.pid"
-#
-# RPC Daemon pid file
-RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
-
-## Type: string
-## Default: "openattic:openattic"
-#
-# RPC Daemon user and group
-RPCD_CHUID="openattic:openattic"
-
-## Type: string
-## Default: "/var/log/openattic/openattic_rpcd.log"
-#
-# RPC Daemon log file
-RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
-
-## Type: string
-## Default: "INFO"
-#
-# RPC Daemon loglevel
-RPCD_LOGLEVEL="INFO"
-
-## Type: string
-## Default: "$OADIR/manage.py runrpcd"
-#
-# Options for RPC Daemon
-RPCD_OPTIONS="$OADIR/manage.py runrpcd"
-
-## Type: string
-## Default: ""
-#
-# RPC Daemon certificate
-RPCD_CERTFILE=""
-
-## Type: string
-## Default: ""
-#
-# RPC Daemon keyfile
-RPCD_KEYFILE=""
 
 ## Type: string
 ## Default: "/var/run/openattic_systemd.pid"
@@ -126,22 +87,10 @@ NAGIOS_CFG_PATH="/etc/icinga/icinga.cfg"
 NAGIOS_CFG="/etc/icinga/icinga.cfg"
 
 ## Type: string
-## Default: "/etc/icinga/conf.d/openattic_contacts.cfg"
-#
-# Defines default contact groups
-NAGIOS_CONTACTS_CFG_PATH="/etc/icinga/conf.d/openattic_contacts.cfg"
-
-## Type: string
 ## Default: "/etc/icinga/conf.d"
 #
 # Defines additional services
 NAGIOS_SERVICES_CFG_PATH="/etc/icinga/conf.d"
-
-## Type: boolean
-## Default: True
-#
-#
-NAGIOS_INCLUDE_HOST_IN_CFG=True
 
 ## Type: string
 ## Default: "icinga"
@@ -173,6 +122,12 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 #
 # Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/pnp4nagios/perfdata"
+#
+# Path to RRDs
+NAGIOS_RRD_BASEDIR="/var/lib/pnp4nagios/perfdata"
 
 ## Type: string
 ## Default: "/var/lib/icinga"

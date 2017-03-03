@@ -35,7 +35,7 @@ app.directive("oaTaskQueue", function () {
   return {
     restrict: "A",
     templateUrl: "components/taskQueue/templates/oa-task-queue-directive.html",
-    controller: function ($scope, toasty, $uibModal, $resource, taskQueueService, $interval, $http, taskQueueFetcher) {
+    controller: function ($scope, Notification, $uibModal, $interval, taskQueueFetcher) {
       $scope.taskOverview = {
         firstUpdate: true,
         avr: 0,
@@ -93,10 +93,10 @@ app.directive("oaTaskQueue", function () {
       };
 
       /**
-       * One toasty for each state is created if one or more tasks changed to
+       * One notification for each state is created if one or more tasks changed to
        * final state.
-       * The toasty will sum up all tasks that changed to this state. At max
-       * there will be three toasties.
+       * The notification will sum up all tasks that changed to this state. At max
+       * there will be three notifications.
        * @param {Object} allTasks
        * @param {Object[]} allTasks.tasks[<status>]
        */
@@ -127,12 +127,11 @@ app.directive("oaTaskQueue", function () {
           });
           angular.forEach(categories, function (category, status) {
             if (category.tasks.length > 0) {
-              toasty[category.toastType]({
+              Notification[category.toastType]({
                 title: status,
                 msg: category.tasks.map(function (task) {
                   return task.description;
-                }).join("<br>"),
-                timeout: globalConfig.GUI.defaultToastTimes[category.toastType]
+                }).join("<br>")
               });
             }
           });

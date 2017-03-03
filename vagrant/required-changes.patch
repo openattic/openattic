@@ -3,7 +3,7 @@ diff -r 9af3dd6cdd38 backend/nagios/readstatus.py
 +++ b/backend/nagios/readstatus.py	Wed Dec 07 11:10:50 2016 +0100
 @@ -39,8 +39,11 @@
          self.lock = Lock()
- 
+
      def __getitem__(self, name):
 -        self.update()
 -        return self.nagstate[name]
@@ -12,36 +12,23 @@ diff -r 9af3dd6cdd38 backend/nagios/readstatus.py
 +            return self.nagstate[name]
 +        except SystemError:
 +            return []
- 
+
      def __len__(self):
          self.update()
-diff -r 9af3dd6cdd38 backend/peering/models.py
---- a/backend/peering/models.py	Wed Dec 07 10:57:09 2016 +0100
-+++ b/backend/peering/models.py	Wed Dec 07 11:10:50 2016 +0100
-@@ -108,8 +108,8 @@
-                  active=True)
-     key.full_clean()
-     key.save()
--    peer = PeerHost(host=localhost, base_url=("http://__:%s@%s:31234/" % (key.apikey, localhost.name)))
--    peer.full_clean()
--    peer.save()
-+    #peer = PeerHost(host=localhost, base_url=("http://__:%s@%s:31234/" % (key.apikey, localhost.name)))
-+    #peer.full_clean()
-+    #peer.save()
- 
- sysutils.models.post_install.connect(__install_hostkeys, sender=sysutils.models)
-diff -r 7a49c66647d3 backend/settings.py
---- a/backend/settings.py	Thu Jan 26 11:02:35 2017 +0000
-+++ b/backend/settings.py	Thu Jan 26 14:34:01 2017 +0100
-@@ -36,7 +36,7 @@
+diff -r 236d67eb0c5c backend/settings.py
+--- a/backend/settings.py	Sat Feb 11 15:31:45 2017 +0000
++++ b/backend/settings.py	Mon Feb 13 09:43:10 2017 +0100
+@@ -35,8 +35,8 @@
+ else:
      GUI_ROOT = "/usr/share/openattic-gui"
- 
- API_ROOT = "/openattic/api"
+
+-API_ROOT = "/openattic/api"
 -API_OS_USER = 'openattic'
++API_ROOT = ":8000/api"
 +API_OS_USER = 'vagrant'
- 
+
  from ConfigParser import ConfigParser
- 
+
 @@ -218,7 +218,7 @@
          'file': {
              'level': 'INFO',

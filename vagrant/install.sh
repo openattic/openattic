@@ -88,6 +88,13 @@ then
     # zypper --non-interactive up
 fi
 
+# Create the system user and group 'openattic'.
+if ! getent passwd openattic ; then
+	groupadd --system openattic
+	useradd --system --gid openattic --home /var/lib/openattic --shell /bin/bash \
+	    --comment "openATTIC system user" openattic
+fi
+
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
 if [ "${DISABLE_CEPH_REPO}" == false ] ; then
@@ -329,9 +336,6 @@ then
 else
     cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 fi
-
-#RPCD
-ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
 
 # Create symlinks for various oA command line tools.
 sudo ln -s /home/vagrant/openattic/bin/blkdevzero /bin/blkdevzero

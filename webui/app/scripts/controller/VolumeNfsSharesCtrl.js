@@ -66,9 +66,6 @@ app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService
         .$promise
         .then(function (res) {
           $scope.nfsData = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 
