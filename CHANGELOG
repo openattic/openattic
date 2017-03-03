@@ -35,6 +35,7 @@ Version 2.0.19, (not released yet):
   identify the problem. (OP-1927)
 * Development: Add system user/group 'openattic' in Vagrant boxes to be
   able to run Gatling unit tests. (OP-1960)
+* Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
 * Development: Create various directories in a Vagrant box that are required
   at runtime. (OP-1964)
 
