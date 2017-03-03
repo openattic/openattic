@@ -55,9 +55,6 @@ app.directive("volumestatwidget", function () {
             $scope.volumes.push(res[i]);
           }
         }
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
       });
 
       $scope.volumeStatusMsg = function (volume) {

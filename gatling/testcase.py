@@ -228,18 +228,16 @@ class GatlingTestCase(unittest.TestCase):
         fuzzy = kwargs.get("fuzzy", False)
         status_code = kwargs.get("status_code", 400)
 
-        if status_code == 400:
-            self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
-        else:
-            self.assertEqual(str(err_response.exception), "500 Server Error: Internal Server Error")
-
+        # Validate the response status code.
         self.assertEqual(err_response.exception.response.status_code, status_code)
 
+        # Validate the response message.
+        expected_message = expected_message.lower()
         detailed_err = err_response.exception.response.json()[field]
         if type(detailed_err) == list:
-            message = str(detailed_err[0])
+            message = str(detailed_err[0]).lower()
         else:
-            message = detailed_err
+            message = detailed_err.lower()
 
         if fuzzy:
             self.assertIn(expected_message, message)

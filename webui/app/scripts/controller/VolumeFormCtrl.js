@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizeParserService, toasty) {
+app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizeParserService, Notification) {
   $scope.volume = {};
 
   $scope.data = {
@@ -56,9 +56,7 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
               $scope.volume = res;
               $scope.state.created = true;
               $scope.state.formatted = $scope.volume.is_filesystemvolume;
-              $scope.$broadcast("volumecreate", $scope.volume);
-            }, function (error) {
-              console.log("An error occured", error);
+              goToListView();
             });
       } else if (!$scope.state.formatted) {
         new VolumeService({
@@ -69,17 +67,10 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
             $scope.volume = res;
             $scope.state.formatted = true;
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
       }
     }
   };
-
-  // Display the list view after a volume has been created.
-  $scope.$on("volumecreate", function(event, volume) {
-    goToListView();
-  });
 
   $scope.cancelAction = function () {
     goToListView();

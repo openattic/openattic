@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,20 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.userinfo");
-app.directive("userinfo", function () {
-  return {
-    restrict: "A",
-    templateUrl: "components/userinfo/templates/userinfo.html",
-    controller: function ($rootScope, usersService) {
-      usersService.current()
-      .$promise
-      .then(function (res) {
-        $rootScope.user = res;
-      })
-      .catch(function (error) {
-        error.preventDefault(); // Prevents notification from opening.
-      });
-    }
-  };
-});
+angular.module("openattic.apidecorator", [
+    "openattic.notification"
+  ])
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push("ApiHttpErrorInterceptor");
+  });

@@ -47,7 +47,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
                   .then(function (res) {
                     return res;
                   }).catch(function () {
-                    console.log("Couldn't load the pool storage tree");
                     return false;
                   });
             }
@@ -265,7 +264,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
                   .then(function (res) {
                     return res;
                   }).catch(function () {
-                    console.log("Couldn't load the volume storage tree");
                     return false;
                   });
             }

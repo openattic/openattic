@@ -34,18 +34,16 @@ var app = angular.module("openattic.cephOsd");
 app.config(function ($stateProvider) {
   $stateProvider
       .state("cephOsds", {
-        url          : "/ceph/osds",
-        views        : {
+        url: "/ceph/osds",
+        views: {
           "main": {
             templateUrl: "components/ceph-osd/templates/listing.html",
-            controller : "CephOsdCtrl",
-            resolve    : {
+            controller: "CephOsdCtrl",
+            resolve: {
               clusterData: function ($q, cephClusterService) {
                 return cephClusterService.get().$promise
                     .then(function (res) {
                       return res;
-                    }).catch(function () {
-                      console.log("No Ceph cluster available");
                     });
               }
             }
@@ -56,7 +54,7 @@ app.config(function ($stateProvider) {
         }
       })
       .state("cephOsds.detail", {
-        views        : {
+        views: {
           "tab": {templateUrl: "components/ceph-osd/templates/tab.html"}
         },
         ncyBreadcrumb: {
@@ -64,8 +62,8 @@ app.config(function ($stateProvider) {
         }
       })
       .state("cephOsds.detail.status", {
-        url          : "/status",
-        views        : {
+        url: "/status",
+        views: {
           "tab-content": {templateUrl: "components/ceph-osd/templates/status.html"}
         },
         ncyBreadcrumb: {

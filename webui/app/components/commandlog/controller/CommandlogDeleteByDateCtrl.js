@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.commandlog");
-app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService, $uibModalInstance, toasty) {
+app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService, $uibModalInstance, Notification) {
   $scope.datePicker = {
     opened: false,
     maxDate: null,
@@ -56,16 +56,15 @@ app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
+        }, function () {
           $scope.pickDateForm.$submitted = false;
-          console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete log entry",
       msg: "Cancelled"
     });
