@@ -92,7 +92,7 @@ fi
 if ! getent passwd openattic ; then
 	groupadd --system openattic
 	useradd --system --gid openattic --home /var/lib/openattic --shell /bin/bash \
-	    --comment "openATTIC system user" openattic
+	    --create-home --comment "openATTIC system user" openattic
 fi
 
 # Installing Ceph
