@@ -126,7 +126,7 @@ app.directive("oaTaskQueue", function () {
             });
           });
           angular.forEach(categories, function (category, status) {
-            if (category.tasks.length > 0) {
+            if (category.tasks.length > 0 && category.toastType !== "success") {
               Notification[category.toastType]({
                 title: status,
                 msg: category.tasks.map(function (task) {
