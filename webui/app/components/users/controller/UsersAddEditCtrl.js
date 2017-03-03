@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal,
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, $q,
     Notification) {
   var promises = [];
 
