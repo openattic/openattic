@@ -88,6 +88,13 @@ then
     # zypper --non-interactive up
 fi
 
+# Create the system user and group 'openattic'.
+if ! getent passwd openattic ; then
+	groupadd --system openattic
+	useradd --system --gid openattic --home /var/lib/openattic --shell /bin/bash \
+	    --comment "openATTIC system user" openattic
+fi
+
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
 if [ "${DISABLE_CEPH_REPO}" == false ] ; then
