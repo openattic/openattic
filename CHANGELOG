@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.19, (not released yet):
 -----------------------------------
 
+* WebUI: Disables successful task queue notifications (OP-1961)
 * WebUI: Automatically show toasties and throw API errors.
   Thanks to Uroš Lates for his contribution. (OP-1631)
 * WebUI: Fixes the RBD utilization graphs (OP-1945)
