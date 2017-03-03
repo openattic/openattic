@@ -5,7 +5,7 @@ Version 2.0.19, (not released yet):
 -----------------------------------
 
 * WebUI: Automatically show toasties and throw API errors.
-  Thanks to Uro≈° Lates for his contribution. (OP-1631)
+  Thanks to Uroö Lates for his contribution. (OP-1631)
 * WebUI: Fixes the RBD utilization graphs (OP-1945)
 * WebUI: Fixes ceph pagination issue (OP-1925)
 * Backend: Removed oacli (OP-1249)
@@ -17,6 +17,8 @@ Version 2.0.19, (not released yet):
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
+* Backend: Handle ValidationError exception correct, otherwise the error
+  message isn't forwarded to the API caller. (OP-1956)
 * WebUI: Display loading spinner icon on form submit to give the user feedback
   that something is happening in the background (OP-1760)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
