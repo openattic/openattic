@@ -229,9 +229,11 @@ class GatlingTestCase(unittest.TestCase):
         status_code = kwargs.get("status_code", 400)
 
         if status_code == 400:
-            self.assertEqual(str(err_response.exception), "400 Client Error: Bad Request")
+            self.assertIn("400 Client Error: Bad Request".lower(),
+                          str(err_response.exception).lower())
         else:
-            self.assertEqual(str(err_response.exception), "500 Server Error: Internal Server Error")
+            self.assertIn("500 Server Error: Internal Server Error".lower(),
+                             str(err_response.exception).lower())
 
         self.assertEqual(err_response.exception.response.status_code, status_code)
 
