@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.19, (not released yet):
 -----------------------------------
 
+* WebUI: Readded the missing $q injection (OP-1965)
 * WebUI: Disables successful task queue notifications (OP-1961)
 * WebUI: Automatically show toasties and throw API errors.
   Thanks to Uroš Lates for his contribution. (OP-1631)
