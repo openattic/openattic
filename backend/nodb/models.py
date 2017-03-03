@@ -26,6 +26,7 @@ from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
 from django.utils.functional import cached_property
+from django.db.migrations import AlterField
 
 logger = logging.getLogger(__name__)
 
@@ -605,3 +606,11 @@ class JsonField(Field):
     @property
     def empty_values(self):
         return [u'', [], {}]
+
+
+class AlterNoDBField(AlterField):
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        pass
+
+    def describe(self):
+        return "Alter NoDB field {} on {}".format(self.name, self.model_name)
