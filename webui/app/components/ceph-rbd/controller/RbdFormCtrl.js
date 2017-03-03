@@ -32,7 +32,8 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
-    SizeParserService, $filter, toasty, cephClusterService) {
+    SizeParserService, $filter, Notification, cephClusterService) {
+  $scope.submitted = false;
   $scope.rbd = {
     name: "",
     size: 0,
@@ -189,7 +190,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     var power = 0;
     if (size !== null && size !== 0) {
       power =  Math.round(Math.log(size) / Math.log(2));
-      if (typeof jump === "number") {
+      if (angular.isNumber(jump)) {
         power += jump;
       }
     }
@@ -257,7 +258,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.data.cluster = res.results[0];
         } else {
           $scope.waitingClusterMsg = "No cluster avialable.";
-          toasty.warning({
+          Notification.warning({
             title: $scope.waitingClusterMsg,
             msg: "You can't create any RBDs with your configuration."
           });
@@ -272,12 +273,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         $scope.clusterFailureError = clusterError;
         $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
         $scope.rbdForm.$setValidity("clusterLoading", false);
-        toasty.error({
-          title: $scope.clusterFailureTitle,
-          msg: "Cluster list couldn't be loaded."
-        });
       }
-      throw clusterError;
     });
 
   $scope.waitingPoolMsg = "Select a cluster first";
@@ -309,7 +305,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
             $scope.data.pool = res.results[0];
           } else {
             $scope.waitingPoolMsg = "No pool aviable.";
-            toasty.warning({
+            Notification.warning({
               title: $scope.waitingPoolMsg,
               msg: "You can't create any RBDs in the selected cluster."
             });
@@ -322,13 +318,8 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
           $scope.poolFailureError = poolError;
           $scope.rbdForm.$setValidity("poolLoading", false);
-          toasty.error({
-            title: $scope.poolFailureTitle,
-            msg: "Pool list couldn't be loaded."
-          });
           $scope.waitingPoolMsg = "Error: List couldn't be loaded!";
         }
-        throw poolError;
       });
   };
 
@@ -354,6 +345,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       $scope.rbd.pool = $scope.data.pool.id;
       $scope.rbd.clusterId = $scope.clusterId;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");
+      $scope.submitted = true;
       cephRbdService.save($scope.rbd)
         .$promise
         .then(function (res) {
@@ -361,24 +353,14 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
           goToListView();
         }, function (error) {
           $scope.rbdForm.$submitted = false;
-          var toast = {
-            title: "RBD creation error " + error.status,
-            msg: "",
-            timeout: 10000
-          };
-          angular.forEach(error.data, function (val, key) {
-            if (key === "detail") {
-              toast.msg = val + toast.msg;
-            } else {
-              toast.msg += "<br>" + key + ": " + val;
-            }
-          });
           if (error.status === 400 && error.data.size) {
             var size = error.data.size[0].match(/[0-9]+/)[0];
-            toast.msg = "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + ".";
+            Notification.error({
+              title: "RBD creation error " + error.status,
+              msg: "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + "."
+            }, error);
+            throw error;
           }
-          toasty.error(toast);
-          throw error;
         });
     }
   };

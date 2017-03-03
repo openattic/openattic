@@ -31,6 +31,7 @@
 "use strict";
 
 angular.module("openattic.core", [
+  "openattic.apidecorator",
   "openattic.apirecorder",
   "openattic.auth",
   "openattic.commandlog",
@@ -38,6 +39,7 @@ angular.module("openattic.core", [
   "openattic.datatable",
   "openattic.graph",
   "openattic.navigation",
+  "openattic.notification",
   "openattic.required",
   "openattic.sizeparser",
   "openattic.tabView",

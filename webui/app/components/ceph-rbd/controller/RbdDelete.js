@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, clusterId, $q,
-    toasty) {
+    Notification) {
   if ($.isArray(rbdSelection)) {
     $scope.rbds = rbdSelection;
   } else {
@@ -66,18 +66,15 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     });
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
-    }, function (error) {
+    }, function () {
       $scope.deleteForm.$submitted = false;
-
-      // TODO Toasy on error!
-      console.log("An error occured", error);
     });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete RBD",
       msg: "Cancelled"
     });

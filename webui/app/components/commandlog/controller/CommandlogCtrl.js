@@ -57,14 +57,11 @@ app.controller("CommandlogCtrl", function ($scope, $state, commandlogService, $u
         .$promise
         .then(function (res) {
           $scope.data = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 
   $scope.$watchCollection("selection.items", function (items) {
-    if (items !== undefined) {
+    if (items) {
       $scope.hasSelection = items.length > 0;
     }
   });

@@ -4,6 +4,11 @@ openATTIC Changelog
 Version 2.0.19, (not released yet):
 -----------------------------------
 
+* WebUI: Disables successful task queue notifications (OP-1961)
+* WebUI: Automatically show toasties and throw API errors.
+  Thanks to Uroš Lates for his contribution. (OP-1631)
+* WebUI: Fixes the RBD utilization graphs (OP-1945)
+* WebUI: Fixes ceph pagination issue (OP-1925)
 * Backend: Removed oacli (OP-1249)
 * Backend: Removed peering module (OP-1252)
 * Backend: Removed RPC API files and RPCD module (OP-1253)
@@ -13,6 +18,8 @@ Version 2.0.19, (not released yet):
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
+* Backend: Handle ValidationError exception correct, otherwise the error
+  message isn't forwarded to the API caller. (OP-1956)
 * WebUI: Display loading spinner icon on form submit to give the user feedback
   that something is happening in the background (OP-1760)
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
@@ -21,6 +28,12 @@ Version 2.0.19, (not released yet):
 * WebUI: Fix bug when generating a new user API token. (OP-1914)
 * Packaging: Stop and remove openattic-rpcd service when upgrading to version 2.0.19 (OP-1900)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
+* Testing/QA: Improve Gatling tests to be able to execute them in a Vagrant
+  box by making the API root part of the base URL configurable. Additionally
+  more information are displayed if a test case fails. This could help to
+  identify the problem. (OP-1927)
+* Development: Add system user/group 'openattic' in Vagrant boxes to be
+  able to run Gatling unit tests. (OP-1960)
 
 
 Version 2.0.18, 09. February 2017:

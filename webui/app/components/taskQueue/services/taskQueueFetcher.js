@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $rootScope, $q, toasty) {
+app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $rootScope, $q) {
   this.taskTimeout = {};
   this.tasks = {
     "Running": [],
@@ -70,7 +70,6 @@ app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $r
 
   /**
    * Loads all tasks.
-   * @throws <toasty> - If a fetch fails.
    * @returns <promise>
    */
   this.loadAllTasks = function (pgnum, loading) {
@@ -97,15 +96,6 @@ app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $r
             oldTasks: self.oldTasks
           });
         }
-      })
-      .catch(function (error) {
-        error.toasty = {
-          title: "Background task loading failure",
-          msg: "Background tasks page " + pgnum + " couldn't be loaded.",
-          timeout: globalConfig.GUI.defaultToastTimes.error
-        };
-        toasty.error(error.toasty);
-        throw error;
       });
     return loading.promise;
   };
