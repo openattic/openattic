@@ -31,9 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersAddEditCtrl", function ($filter, $q, $scope, $state, $stateParams, $uibModal, toasty,
-    usersService) {
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal,
+    Notification) {
   var promises = [];
+
   $scope.isCurrentUser = false;
 
   var goToListView = function () {
@@ -60,9 +61,8 @@ app.controller("UsersAddEditCtrl", function ($filter, $q, $scope, $state, $state
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
+            }, function () {
               $scope.userForm.$submitted = false;
-              console.log("An error occured", error);
             });
       }
     };
@@ -92,9 +92,8 @@ app.controller("UsersAddEditCtrl", function ($filter, $q, $scope, $state, $state
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
+            }, function () {
               $scope.userForm.$submitted = false;
-              console.log("An error occured", error);
             });
       }
     };
@@ -114,7 +113,7 @@ app.controller("UsersAddEditCtrl", function ($filter, $q, $scope, $state, $state
         // Display the new token.
         $scope.user.auth_token.token = token;
         // Display a message.
-        toasty.success({
+        Notification.success({
           title: "API authentication token",
           msg: "The token has been created successfully."
         });

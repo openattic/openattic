@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeProtectionCtrl", function ($scope, VolumeService, $uibModalInstance, volume, toasty) {
+app.controller("VolumeProtectionCtrl", function ($scope, VolumeService, $uibModalInstance, volume, Notification) {
   $scope.volume = volume;
   $scope.dialogSet = "Set";
   if (volume.is_protected) {
@@ -46,15 +46,13 @@ app.controller("VolumeProtectionCtrl", function ($scope, VolumeService, $uibModa
         .$update()
         .then(function () {
           $uibModalInstance.dismiss("protection set");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Set volume protection",
       msg: "Cancelled"
     });

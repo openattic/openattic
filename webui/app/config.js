@@ -16,10 +16,12 @@ var globalConfig = {
       "samba"      : true,
       "zfs"        : true
     },
-    "defaultToastTimes": {
+    "defaultNotificationTimes": {
+      "error": 7000,
+      "info": 5000,
       "success": 3000,
-      "warning": 6000,
-      "error": 9000
+      "wait": 4000,
+      "warning": 6000
     },
     "defaultTaskReloadTime": 5000,
     "defaultDashboard": {

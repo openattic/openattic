@@ -55,12 +55,7 @@ app.directive("wizard", function () {
       $scope.addFc = function (fc, host) {
         $scope.useThisHost(host);
         if (fc.create) {
-          LunService.save(fc)
-            .$promise
-            .then(function () {
-            }, function (error) {
-              console.log("An error occured", error);
-            });
+          LunService.save(fc);
         }
       };
       $scope.isActiveTab = function (index) {
@@ -89,23 +84,13 @@ app.directive("wizard", function () {
                     if ($scope.input.cifs.create) {
                       $scope.input.cifs.volume = {"id": res.id};
                       $scope.input.cifs.path = res.path;
-                      CifsSharesService.save($scope.input.cifs)
-                          .$promise
-                          .then(function () {
-                          }, function (error) {
-                            console.log("An error occured", error);
-                          });
+                      CifsSharesService.save($scope.input.cifs);
                     }
 
                     if ($scope.input.nfs.create) {
                       $scope.input.nfs.volume = {"id": res.id};
                       $scope.input.nfs.path = res.path;
-                      NfsSharesService.save($scope.input.nfs)
-                          .$promise
-                          .then(function () {
-                          }, function (error) {
-                            console.log("An error occured", error);
-                          });
+                      NfsSharesService.save($scope.input.nfs);
                     }
                   } else if ("iscsi_fc" in $scope.input) {
                     $scope.input.iscsi_fc.volume = {id: res.id};
@@ -119,9 +104,6 @@ app.directive("wizard", function () {
                       $scope.addFc($scope.input.iscsi_fc);
                     }
                   }
-                })
-                .catch(function (error) {
-                  console.log("An error occured", error);
                 })
                 .then(function () {
                   $scope.selectSelector();

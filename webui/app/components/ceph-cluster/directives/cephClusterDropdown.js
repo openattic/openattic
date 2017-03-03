@@ -44,7 +44,6 @@ app.directive("cephClusterDropdown", function (cephClusterService) {
           })
           .catch(function (error) {
             scope.error = error;
-            console.log("No Ceph cluster available");
           });
     });
   }
