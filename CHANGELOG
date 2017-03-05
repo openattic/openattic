@@ -35,23 +35,26 @@ Changed
 * Development: Change API URL in a Vagrant box setup. (OP-1913)
 * Development: Create various directories in a Vagrant box that are required
   at runtime. (OP-1964)
-* Development: Add system user/group 'openattic' in Vagrant boxes to be
+* Development: Add system user/group ``openattic`` in Vagrant boxes to be
   able to run Gatling unit tests. (OP-1960)
 * Testing/QA: Improve Gatling tests to be able to execute them in a Vagrant
   box by making the API root part of the base URL configurable. Additionally
   more information are displayed if a test case fails. This could help to
   identify the problem. (OP-1927)
+* Installation: Removed symlink from ``/etc/openattic/databases/pgsql.ini``
+  (OP-1822)
 
 Fixed
 ~~~~~
-* WebUI: Fixes the RBD utilization graphs (OP-1945)
-* WebUI: Fixes ceph pagination issue (OP-1925)
-* WebUI: Fix bug when generating a new user API token. (OP-1914)
+* WebUI: Fixed the RBD utilization graphs (OP-1945)
+* WebUI: Fixed ceph pagination issue (OP-1925)
+* WebUI: Fixed bug when generating a new user API token. (OP-1914)
 * WebUI: Readded the missing $q injection (OP-1965)
 * Backend: Wait until the LV is ready when creating a DRBD resource. (OP-1898)
 * Backend: Handle ValidationError exception correct, otherwise the error
   message isn't forwarded to the API caller. (OP-1956)
 * Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
+* Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
 
 Removed
 ~~~~~~~
@@ -63,9 +66,6 @@ Removed
 * Backend: The IPMI module has been removed (OP-1772)
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
-* Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
-* Installation: Removed symlink from ``/etc/openattic/databases/pgsql.ini``
-  (OP-1822)
 
 
 [2.0.18] - 2017-02-09
