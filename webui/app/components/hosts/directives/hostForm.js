@@ -41,7 +41,7 @@ app.directive("hostForm", function () {
       submit: "=?"
     },
     templateUrl: "components/hosts/templates/add-host-directive.html",
-    controller: function ($scope, $state, HostService, InitiatorService, $q, toasty) {
+    controller: function ($scope, $state, HostService, InitiatorService, $q) {
       if (!$scope.config) {
         $scope.config = {
           header: true,
@@ -116,8 +116,6 @@ app.directive("hostForm", function () {
             .then(function (res) {
               host = res;
               saveShares(changes, host, goBack);
-            }, function (error) {
-              $scope.errorOccurred(error, "Couldn't save", "Couldn't create new host.");
             });
         }
       };
@@ -157,20 +155,8 @@ app.directive("hostForm", function () {
             .$promise
             .then(function () {
               $scope.saveShares($scope.changes, $scope.host, $scope.goBack);
-            }, function (error) {
-              $scope.errorOccurred(error, "Couldn't save", "Couldn't update host.");
             });
-        }, function (error) {
-          $scope.errorOccurred(error, "Couldn't save", "Couldn't update host.");
         });
-      };
-
-      $scope.errorOccurred = function (error, title, msg) {
-        toasty.error({
-          title: title,
-          msg: msg
-        });
-        throw error;
       };
 
       $scope.init = function () {
@@ -180,8 +166,6 @@ app.directive("hostForm", function () {
             res.results.forEach(function (share) {
               $scope.wwns.push(share.wwn);
             });
-          }, function (error) {
-            $scope.errorOccurred(error, "Loading failure", "Couldn't load WWNs.");
           });
 
         if (!$scope.hostId) {
@@ -196,9 +180,8 @@ app.directive("hostForm", function () {
             .$promise
             .then(function (res) {
               $scope.host = res;
-            }, function (error) {
+            }, function () {
               $scope.hostForm.$submitted = false;
-              $scope.errorOccurred(error, "Loading failure", "Couldn't load host.");
             });
 
           $scope.loadInitiators();
@@ -232,8 +215,6 @@ app.directive("hostForm", function () {
             if ($scope.data.iscsi.length > 0) {
               $scope.wwn.iscsi.check = true;
             }
-          }, function (error) {
-            $scope.errorOccurred(error, "Loading failure", "Couldn't load WWNs of host.");
           });
       };
 
@@ -253,8 +234,6 @@ app.directive("hostForm", function () {
         });
         $q.all(requests).then(function () {
           callback(host);
-        }, function (error) {
-          $scope.errorOccurred(error, "Couldn't save", "Couldn't create or delete WWNs.");
         });
       };
 
@@ -298,35 +277,37 @@ app.directive("hostForm", function () {
         var wwn = tag.text;
         var usage = $scope.wwn[type].usage;
         for (var i in usage) {
-          var share = usage[i];
-          switch (share) {
-            case "mac":
-              if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
-                wwn = wwn.replace(/:/g, "");
-                tag.text = wwn.match(/.{2}/g).join(":");
-                return validateShare(tag, share,
-                  wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
-              }
-              break;
-            case "iqn":
-              if (wwn.indexOf(share) === 0) {
-                return validateShare(tag, share,
-                  wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
-              }
-              break;
-            case "eui":
-              if (wwn.indexOf(share) === 0) {
-                return validateShare(tag, share,
-                  wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
-              }
-              break;
-            case "naa":
-              if (wwn.indexOf(share) === 0) {
-                var ident = wwn.substr(4);
-                return validateShare(tag, share,
-                  wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
-              }
-              break;
+          if (usage.hasOwnProperty(i)) {
+            var share = usage[i];
+            switch (share) {
+              case "mac":
+                if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
+                  wwn = wwn.replace(/:/g, "");
+                  tag.text = wwn.match(/.{2}/g).join(":");
+                  return validateShare(tag, share,
+                    wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
+                }
+                break;
+              case "iqn":
+                if (wwn.indexOf(share) === 0) {
+                  return validateShare(tag, share,
+                    wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
+                }
+                break;
+              case "eui":
+                if (wwn.indexOf(share) === 0) {
+                  return validateShare(tag, share,
+                    wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
+                }
+                break;
+              case "naa":
+                if (wwn.indexOf(share) === 0) {
+                  var ident = wwn.substr(4);
+                  return validateShare(tag, share,
+                    wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
+                }
+                break;
+            }
           }
         }
         return "all";

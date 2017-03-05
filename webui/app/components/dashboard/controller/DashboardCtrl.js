@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.dashboard");
-app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardService) {
+app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashboardService) {
   // Basic configuration
   var dashboardKey = "oa_dashboard";
 
@@ -101,7 +101,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       $scope.data.settings.activeBoard = idx;
 
       // Will be saved automatically by watcher
-      toasty.success({
+      Notification.success({
         title: "Dashboard added",
         msg  : "Dashboard '" + data.name + "' successfully created."
       });
@@ -125,7 +125,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       $scope.dashboard.name = data.name;
 
       $scope.saveDashboard();
-      toasty.success({
+      Notification.success({
         title: "Dashboard edited",
         msg  : "Dashboard '" + $scope.dashboard.name + "' successfully edited."
       });
@@ -148,7 +148,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       $scope.dashboard.widgets = [];
 
       $scope.saveDashboard();
-      toasty.success({
+      Notification.success({
         title: "Dashboard cleared",
         msg  : "Dashboard '" + $scope.dashboard.name + "' successfully cleared."
       });
@@ -181,7 +181,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       if (idx === 0) {
         $scope.saveDashboard();
       }
-      toasty.success({
+      Notification.success({
         title: "Dashboard deleted",
         msg  : "Dashboard '" + $scope.dashboard.name + "' successfully deleted."
       });
@@ -212,7 +212,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       });
 
       $scope.saveDashboard();
-      toasty.success({
+      Notification.success({
         title: "Widget added",
         msg  : "Widget '" + data.name + "' successfully created."
       });
@@ -241,7 +241,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       $scope.dashboard.widgets[idx].settings = data.settings;
 
       $scope.saveDashboard();
-      toasty.success({
+      Notification.success({
         title: "Widget edited",
         msg  : "Widget '" + name + "' successfully edited."
       });
@@ -265,7 +265,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
       updateIds($scope.dashboard.widgets, idx);
 
       $scope.saveDashboard();
-      toasty.success({
+      Notification.success({
         title: "Widget deleted",
         msg  : "Widget '" + name + "' successfully deleted."
       });
@@ -281,12 +281,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
     var obj = {};
     obj[dashboardKey] = $scope.data;
 
-    dashboardService
-        .save(obj)
-        .$promise
-        .catch(function (err) {
-          throw err;
-        });
+    dashboardService.save(obj);
   };
 
   var setIds = function () {
@@ -390,9 +385,6 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, toasty, dashboardSe
           } finally {
             $scope.saveDashboard();
           }
-        })
-        .catch(function (error) {
-          throw error;
         });
   };
 

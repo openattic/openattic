@@ -36,7 +36,7 @@ var app = angular.module("openattic");
  *   text is copied into the clipboard.
  * @param {string} oaClipboardText An alternative text. Default is 'text'.
  */
-app.directive("oaClipboard", function (toasty) {
+app.directive("oaClipboard", function (Notification) {
   return {
     restrict: "A",
     scope: {
@@ -75,7 +75,7 @@ app.directive("oaClipboard", function (toasty) {
         // Note, the scope is not updated automatically because we are inside
         // a click event, so we need to do this ourself.
         scope.$apply(function () {
-          toasty(toastyOptions.msg, toastyOptions.type);
+          Notification[toastyOptions.type](toastyOptions);
         });
       });
     }

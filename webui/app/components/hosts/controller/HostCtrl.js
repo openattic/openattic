@@ -50,8 +50,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .$promise
       .then(function (res) {
         $scope.shares = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
       });
   };
 
@@ -60,8 +58,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .$promise
       .then(function (res) {
         $scope.devices = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
       });
   };
 
@@ -76,9 +72,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .then(function (res) {
         res.results.forEach($scope.amendHosts);
         $scope.data = res;
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
       });
   };
 

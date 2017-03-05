@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizeParserService, toasty) {
+app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizeParserService, Notification) {
   $scope.volume = {};
 
   $scope.data = {
@@ -64,11 +64,9 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
               $scope.state.created = true;
               $scope.state.formatted = $scope.volume.is_filesystemvolume;
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       } else if (!$scope.state.mirrored && $scope.data.mirrorHost !== "") {
-        toasty.warning({
+        Notification.warning({
           title: "Mirror Volume",
           msg: "Sorry, we haven\'t implemented that yet."
         });
@@ -81,8 +79,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
             $scope.volume = res;
             $scope.state.formatted = true;
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
       }
     }

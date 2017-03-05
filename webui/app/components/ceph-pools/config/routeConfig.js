@@ -45,7 +45,6 @@ app.config(function ($stateProvider) {
                     .then(function (res) {
                       return res;
                     }).catch(function () {
-                      console.log("No Ceph cluster available");
                       return false;
                     });
               }

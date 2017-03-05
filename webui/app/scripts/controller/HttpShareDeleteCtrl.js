@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HttpShareDeleteCtrl", function ($scope, HttpSharesService, $uibModalInstance, share, toasty) {
+app.controller("HttpShareDeleteCtrl", function ($scope, HttpSharesService, $uibModalInstance, share, Notification) {
   $scope.share = share;
 
   $scope.delete = function () {
@@ -39,15 +39,13 @@ app.controller("HttpShareDeleteCtrl", function ($scope, HttpSharesService, $uibM
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete share",
       msg: "Cancelled"
     });
