@@ -113,22 +113,22 @@ describe('Should add an user', function(){
     browser.sleep(400);
   });
 
-  it('should not show the "protractor_test_user" anymore', function(){
-    expect(user.isPresent()).toBe(false);
-    //expect that we are still on the users panel
-    expect(browser.getCurrentUrl()).toContain('/#/users');
-  });
+  //it('should not show the "protractor_test_user" anymore', function(){
+  //  expect(user.isPresent()).toBe(false);
+  //  //expect that we are still on the users panel
+  //  expect(browser.getCurrentUrl()).toContain('/#/users');
+  //});
 
   //to make sure that the user is deleted, try to login again
-  //it('should make sure that the user really does not exist anymore', function(){
-  //  logout.click();
-  //  expect(browser.getCurrentUrl()).toContain('/#/login');
-  //  element.all(by.model('username')).sendKeys(testUser.username);
-  //  element.all(by.model('password')).sendKeys(testUser.userpasswd);
-  //  element.all(by.css('input[type="submit"]')).click();
-  //  expect(correctInput.isDisplayed()).toBe(true);
-  //  expect(correctInput.getText()).toBe('The given credentials are not correct.');
-  //});
+  it('should make sure that the user really does not exist anymore', function(){
+    logout.click();
+    expect(browser.getCurrentUrl()).toContain('/#/login');
+    element.all(by.model('username')).sendKeys(testUser.username);
+    element.all(by.model('password')).sendKeys(testUser.userpasswd);
+    element.all(by.css('input[type="submit"]')).click();
+    expect(correctInput.isDisplayed()).toBe(true);
+    expect(correctInput.getText()).toBe('The given credentials are not correct.');
+  });
 
   afterAll(function(){
     console.log('users -> user.e2e.js');
