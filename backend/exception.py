@@ -72,7 +72,7 @@ def validate_input_fields(input_data, expected_fields):
 
     for field in expected_fields:
         if field not in input_data:
-            missing_fields[field] = "This field is required"
+            missing_fields[field] = ["This field is required"]
 
     if len(missing_fields) > 0:
         raise ValidationError(missing_fields)
