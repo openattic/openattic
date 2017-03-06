@@ -102,7 +102,6 @@ describe('Should add an user', function(){
     element.all(by.model('password')).sendKeys(testUser.userpasswd);
     element.all(by.css('input[type="submit"]')).click();
     browser.setLocation('users');
-    browser.sleep(400);
     user.click();
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();
@@ -110,7 +109,6 @@ describe('Should add an user', function(){
     element(by.css('.tc_deleteUser > a')).click();
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
-    browser.sleep(400);
   });
 
   //it('should not show the "protractor_test_user" anymore', function(){
