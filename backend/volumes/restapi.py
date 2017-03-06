@@ -545,7 +545,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                     }, remote_pool= {
                         'id': data['remote_pool']['id'],
                         'host': {
-                            'id': data['remote_pool']['host']
+                            'id': data['remote_pool']['host']['id']
                         }
                     }))
                 return self._remote_request(new_request, vol_host,
