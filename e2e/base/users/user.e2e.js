@@ -113,13 +113,13 @@ describe('Should add an user', function(){
     browser.sleep(400);
   });
 
-  //it('should not show the "protractor_test_user" anymore', function(){
-  //  expect(user.isPresent()).toBe(false);
-  //  //expect that we are still on the users panel
-  //  expect(browser.getCurrentUrl()).toContain('/#/users');
-  //});
-  //
-  ////to make sure that the user is deleted, try to login again
+  it('should not show the "protractor_test_user" anymore', function(){
+    expect(user.isPresent()).toBe(false);
+    //expect that we are still on the users panel
+    expect(browser.getCurrentUrl()).toContain('/#/users');
+  });
+
+  //to make sure that the user is deleted, try to login again
   //it('should make sure that the user really does not exist anymore', function(){
   //  logout.click();
   //  expect(browser.getCurrentUrl()).toContain('/#/login');
