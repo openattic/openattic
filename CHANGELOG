@@ -24,7 +24,7 @@ Added
 * WebUI: Display loading spinner icon on form submit to give the user feedback
   that something is happening in the background (OP-1760)
 * WebUI: Automatically show toasty notifications for API errors.
-  Thanks to Uro≈° Lates for the contribution. (OP-1631)
+  Thanks to Uroö Lates for the contribution. (OP-1631)
 
 Changed
 ~~~~~~~
@@ -43,6 +43,7 @@ Changed
   identify the problem. (OP-1927)
 * Installation: Removed symlink from ``/etc/openattic/databases/pgsql.ini``
   (OP-1822)
+* Documentation: Restructured and improved format of the CHANGELOG (OP-1911)
 
 Fixed
 ~~~~~
