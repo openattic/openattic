@@ -536,7 +536,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                 # Get the host where the source volume is located and build
                 # the request object with the required arguments.
                 vol_host = Host.objects.get(id=response.data['host']['id'])
-                remote_request = self._clone_request_with_new_data(
+                new_request = self._clone_request_with_new_data(
                     request, dict(data, source_volume={
                         'id': response.data['id'],
                         'host': {
@@ -548,10 +548,8 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                             'id': data['remote_pool']['host']['id']
                         }
                     }))
-                remote_response = self._remote_request(remote_request, vol_host,
-                                                       api_prefix="mirrors")
-                # Finally return the response of the 'master' volume.
-                return response
+                return self._remote_request(new_request, vol_host,
+                                            api_prefix="mirrors")
 
         return super(VolumeProxyViewSet, self).create(request, args, kwargs)
 
