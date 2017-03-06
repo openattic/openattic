@@ -23,6 +23,14 @@ Recommends:
  openattic-gui
 Suggests: python-django-rosetta, lsscsi,
  openattic-module-zfs
+Conflicts: openattic-module-apt (<< 2.0.19),
+ openattic-module-ipmi (<< 2.0.19),
+ openattic-module-mdraid (<< 2.0.19),
+ openattic-module-twraid (<< 2.0.19)
+Replaces: openattic-module-apt (<< 2.0.19),
+ openattic-module-ipmi (<< 2.0.19),
+ openattic-module-mdraid (<< 2.0.19),
+ openattic-module-twraid (<< 2.0.19)
 Description: Comprehensive storage management system
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
