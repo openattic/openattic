@@ -180,6 +180,9 @@ fieldset[disabled] .btn-primary.active {
   color: #ececec;
   background-color: #288cea;
 }
+.dataTables_wrapper .dropdown-menu>li.divider {
+  cursor: auto;
+}
 
 /* Grid */
 .container,
