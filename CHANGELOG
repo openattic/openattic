@@ -4,6 +4,7 @@ openATTIC Changelog
 Version 2.0.19, (not released yet):
 -----------------------------------
 
+* WebUI: Readded the missing $q injection (OP-1965)
 * WebUI: Disables successful task queue notifications (OP-1961)
 * WebUI: Automatically show toasties and throw API errors.
   Thanks to Uroš Lates for his contribution. (OP-1631)
@@ -34,6 +35,9 @@ Version 2.0.19, (not released yet):
   identify the problem. (OP-1927)
 * Development: Add system user/group 'openattic' in Vagrant boxes to be
   able to run Gatling unit tests. (OP-1960)
+* Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
+* Development: Create various directories in a Vagrant box that are required
+  at runtime. (OP-1964)
 
 
 Version 2.0.18, 09. February 2017:

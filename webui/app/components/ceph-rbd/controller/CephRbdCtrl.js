@@ -162,12 +162,6 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     });
   };
 
-  $scope.addAction = function () {
-    $state.go("rbds-add", {
-      clusterId: $scope.registry.selectedCluster.fsid
-    });
-  };
-
   $scope.deleteAction = function () {
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;

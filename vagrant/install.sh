@@ -92,8 +92,14 @@ fi
 if ! getent passwd openattic ; then
 	groupadd --system openattic
 	useradd --system --gid openattic --home /var/lib/openattic --shell /bin/bash \
-	    --comment "openATTIC system user" openattic
+	    --create-home --comment "openATTIC system user" openattic
 fi
+
+# Create various directories that are normally created by the Debian/RPM packages.
+# openattic-module-http:
+mkdir -p /var/lib/openattic/http/volumes
+# openattic-module-nfs:
+mkdir -p /var/lib/openattic/nfs_dummy
 
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
