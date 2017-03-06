@@ -29,6 +29,8 @@ Added
 Changed
 ~~~~~~~
 * WebUI: Disabled successful task queue notifications (OP-1961)
+* WebUI: Dropdown button should not close when user clicks on a disabled option
+  Thanks to David Díaz for the contribution. (OP-940)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
 * Packaging: Stop and remove ``openattic-rpcd`` service when upgrading to
   version 2.0.19 (OP-1900)
