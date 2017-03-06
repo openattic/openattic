@@ -120,15 +120,15 @@ describe('Should add an user', function(){
   //});
 
   //to make sure that the user is deleted, try to login again
-  it('should make sure that the user really does not exist anymore', function(){
-    logout.click();
-    expect(browser.getCurrentUrl()).toContain('/#/login');
-    element.all(by.model('username')).sendKeys(testUser.username);
-    element.all(by.model('password')).sendKeys(testUser.userpasswd);
-    element.all(by.css('input[type="submit"]')).click();
-    expect(correctInput.isDisplayed()).toBe(true);
-    expect(correctInput.getText()).toBe('The given credentials are not correct.');
-  });
+  //it('should make sure that the user really does not exist anymore', function(){
+  //  logout.click();
+  //  expect(browser.getCurrentUrl()).toContain('/#/login');
+  //  element.all(by.model('username')).sendKeys(testUser.username);
+  //  element.all(by.model('password')).sendKeys(testUser.userpasswd);
+  //  element.all(by.css('input[type="submit"]')).click();
+  //  expect(correctInput.isDisplayed()).toBe(true);
+  //  expect(correctInput.getText()).toBe('The given credentials are not correct.');
+  //});
 
   afterAll(function(){
     console.log('users -> user.e2e.js');
