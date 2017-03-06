@@ -63,7 +63,8 @@ class DrbdTests(object):
         mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
                         headers=mirror_res["headers"])
-        # Check if there are to endpoints (volumes) related to this drbd mirror.
+
+        # Check if there are to endpoints (volumes) related to this DRBD mirror.
         upper_id = "upper__id=%s" % mirror_res["response"]["volume"]["id"]
         endpoints_res = self.send_request("GET", "volumes", search_param=upper_id)
         self.assertEqual(endpoints_res["count"], 2, msg="number of endpoints is not equal 2")
@@ -125,10 +126,12 @@ class DrbdTests(object):
         mirror_res = self.send_request("POST", "volumes", data=vol_data)
         mirror = mirror_res["response"]
         time.sleep(self.sleeptime)
+        # Use the DRBD connection URL for cleanup.
+        mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
                         headers=mirror_res["headers"])
 
-        # Check if the filesystem is created on top of the drbd connection.
+        # Check if the filesystem is created on top of the DRBD connection.
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
         self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
         self.assertEqual(mirror_vol_res["response"]["type"]["name"], "ext4")
