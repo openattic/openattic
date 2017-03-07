@@ -15,8 +15,9 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume(volumename, "lun");
-    helpers.create_snapshot(volume);
+    helpers.create_volume(volumename, 'lun');
+    var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
+    helpers.create_snapshot(volume, snapshotname);
   });
 
   it('should not allow spaces or additional characters', function(){
@@ -36,31 +37,16 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     expect(element(by.css('.tc_oadatatable_snapshots')).isPresent()).toBe(true);
   });
 
-  it('should create a clone of the created snapshot', function(){
-    expect(volume.isDisplayed()).toBe(true);
-    expect(snapshot.isDisplayed()).toBe(true);
-
-    snapMenuBtn.click();
-    browser.sleep(400);
-    element(by.css('.tc_snap_clone')).click();
-    browser.sleep(400);
-    element(by.model('clone_obj.name')).sendKeys(clonename);
-    element(by.id('bot2-Msg1')).click();
-    browser.sleep(800);
-  });
-
-  it('should display the clone in the volumes list', function(){
-    browser.sleep(600);
-    expect(clone.isDisplayed()).toBe(true);
+  it('should create a clone of the created snapshot and verify the creation', function(){
+    helpers.create_snap_clone(volume, snapshotname, clonename);
   });
 
   it('should delete the clone volume', function(){
-    expect(clone.isDisplayed()).toBe(true);
     helpers.delete_volume(clone, clonename);
   });
 
   afterAll(function(){
-    helpers.delete_snapshot(volume);
+    helpers.delete_snapshot(volume, snapshotname);
     helpers.delete_volume(volume, volumename);
     console.log('snapshot_clone -> block_vol_snapshot_clone.e2e.js');
   });

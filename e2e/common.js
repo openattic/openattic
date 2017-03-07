@@ -5,16 +5,6 @@
   var configs = require('./configs.js');
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
-
-  //TODO: Remove static item names.
-  var snapshotname = 'protractor_test_snap';
-  var snapshot = element(by.cssContainingText('tr', snapshotname));
-
-  var clonename = 'protractor_test_clone';
-  var clone = element(by.cssContainingText('tr', clonename));
-
-  var hostname = 'protractor_test_host';
-
   var volumePoolSelect = element(by.model('pool'));
 
   var helper = {
@@ -87,7 +77,12 @@
       expect(volume.isPresent()).toBe(false);
     },
 
-    create_snapshot: function(volume){
+    /**
+     * Will create snapshot of the given volume.
+     * @param {element} volume - Where to create the snapshot.
+     * @param {string} snapshotName - The name of snapshot.
+     */
+    create_snapshot: function(volume, snapshotName){
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
@@ -97,52 +92,73 @@
       browser.sleep(400);
       element(by.id('snap.name')).clear();
       browser.sleep(400);
-      element(by.model('snap.name')).sendKeys(snapshotname);
+      element(by.model('snap.name')).sendKeys(snapshotName);
       browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
+      browser.sleep(helper.configs.sleep);
+      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      expect(snapshot.isDisplayed()).toBe(true);
     },
 
-    delete_snapshot: function(volume){
+    /**
+     * Will delete snapshot of the given volume.
+     * @param {element} volume - Where to find the snapshot.
+     * @param {string} snapshotName - The name of snapshot.
+     */
+    delete_snapshot: function(volume, snapshotName){
+      expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
       browser.sleep(400);
-      expect(snapshot.isPresent()).toBe(true);
+      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      expect(snapshot.isDisplayed()).toBe(true);
       snapshot.click();
       browser.sleep(400);
       element(by.css('.tc_deleteSnapItem')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
       browser.sleep(400);
+      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      expect(snapshot.isPresent()).toBe(false);
     },
 
-    create_snap_clone: function(volume){
+    /**
+     * Will creates volume clone out of snapshot of the given volume.
+     * @param {element} volume - Where to create the snapshot clone.
+     * @param {string} snapshotName - The name of snapshot.
+     * @param {string} cloneName - The name of clone.
+     */
+    create_snap_clone: function(volume, snapshotName, cloneName){
+      expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
       browser.sleep(400);
+      var snapshot = element(by.cssContainingText('tr', snapshotName));
       expect(snapshot.isDisplayed()).toBe(true);
       snapshot.click();
       element.all(by.css('.tc_menudropdown')).get(1).click();
       browser.sleep(400);
       element(by.css('.tc_snap_clone')).click();
       browser.sleep(400);
-      element(by.model('clone_obj.name')).sendKeys(clonename);
+      element(by.model('clone_obj.name')).sendKeys(cloneName);
       element(by.id('bot2-Msg1')).click();
-      browser.sleep(800);
+      browser.sleep(helper.configs.sleep);
+      var clone = element(by.cssContainingText('tr', cloneName));
+      expect(clone.isDisplayed()).toBe(true);
     },
 
-    delete_snap_clone: function(){
-      clone.click();
-      browser.sleep(400);
-      helper.delete_selection();
-    },
-
-    create_host: function(iqn, fc, $hostname){
+    /**
+     * Creates a host with the given name and optinal an iqn or a fc name.
+     * @param {string} hostname - Name of the host.
+     * @param {string} [iqn] - Name of the IQN.
+     * @param {string} [fc] - Name of the FC.
+     */
+    create_host: function(hostname, iqn, fc){
       element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
-      var name = $hostname ? $hostname : hostname;
-      element(by.model('host.name')).sendKeys(name);
+      element(by.model('host.name')).sendKeys(hostname);
       if(iqn){
         element.all(by.model('type.check')).get(0).click();
         element.all(by.model('data[key]')).get(0).click();
@@ -156,13 +172,16 @@
       browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
-      expect(helper.get_list_element(name).isDisplayed()).toBe(true);
+      expect(helper.get_list_element(hostname).isDisplayed()).toBe(true);
     },
 
-    delete_host: function($hostname){
+    /**
+     * Deletes the host with the given name.
+     * @param {string} hostname - Name of the host.
+     */
+    delete_host: function(hostname){
       hostsItem.click();
-      var name = $hostname ? $hostname : hostname;
-      var host = helper.get_list_element(name);
+      var host = helper.get_list_element(hostname);
       host.click();
       helper.delete_selection();
       expect(host.isPresent()).toBe(false);

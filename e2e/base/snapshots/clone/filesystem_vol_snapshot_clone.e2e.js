@@ -1,17 +1,17 @@
 var helpers = require('../../../common.js');
 
-describe('should create a clone volume of a snapshot (base: filesystem volume)', function(){
-
-  var clonename = "protractor_clone";
+describe('creates a clone filesystem volume from a snapshot', function(){
+  var snapname = 'protractor_snap_to_clone_fs';
+  var clonename = 'protractor_filesystem_clone';
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
   var volumename = 'protractor_clone_fsVol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume(volumename, "xfs");
-    helpers.create_snapshot(volume);
-    helpers.create_snap_clone(volume);
+    helpers.create_volume(volumename, 'xfs');
+    helpers.create_snapshot(volume, snapname);
+    helpers.create_snap_clone(volume, snapname, clonename);
     browser.sleep(800);
   });
 
@@ -20,11 +20,12 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
     expect(clone.isDisplayed()).toBe(true);
   });
 
+  it('should delete the clone volume', function(){
+    helpers.delete_volume(clone, clonename);
+  });
+
   afterAll(function(){
-    helpers.delete_snap_clone();
-    browser.sleep(600);
-    helpers.delete_snapshot(volume);
-    browser.sleep(600);
+    helpers.delete_snapshot(volume, snapname);
     helpers.delete_volume(volume, volumename);
     console.log('snapshot_clone -> filesystem_vol_snapshot_clone.e2e.js');
   });

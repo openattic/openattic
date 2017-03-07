@@ -17,7 +17,7 @@ describe('iSCSI/Fibre Channel target', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_host(iqn1, null, hostname1);
+    helpers.create_host(hostname1, iqn1);
   });
 
   it('should verify the created host', function(){
