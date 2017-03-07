@@ -152,7 +152,7 @@ class RequestHandlers(object):
             if not response.ok:
                 response.raise_for_status()
         except Exception, e:
-            logger.error(e)
+            logger.exception(e)
             return Response({'detail': str(e)}, status=e.response.status_code if
                 e.response.status_code else status.HTTP_500_INTERNAL_SERVER_ERROR)
 
