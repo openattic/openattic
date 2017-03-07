@@ -144,6 +144,7 @@ class NoCacheAPIView(APIView):
         response = super(NoCacheAPIView, self).dispatch(request, *args, **kwargs)
 
         if request.method == 'GET':
+            # TODO: if Django >= 1.8.8 replace it with django.utils.cache.add_never_cache_headers
             response['Cache-Control'] = 'no-cache'
 
         return response
