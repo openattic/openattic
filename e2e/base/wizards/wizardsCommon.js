@@ -2,6 +2,7 @@
 
 var wizardCommon = function(){
   var self = this;
+  var helpers = require('../../common.js');
 
   this.wizardOverviewBtn = element(by.className('tc_wizardOverview'));
   this.previousBtn = element(by.className('tc_previousBtn'));
@@ -18,6 +19,7 @@ var wizardCommon = function(){
   this.configs = require('../../configs.js');
 
   this.openWizard = function(wizardName){
+    browser.sleep(helpers.configs.sleep);
     element.all(by.className('tc_wizardTitle')).filter(function(wizard){
       return wizard.getText().then(function(text){
         return text === wizardName;
@@ -115,7 +117,7 @@ var wizardCommon = function(){
     var address = element(by.id('nfsaddress'));
     var options = element(by.id('nfsoptions'));
 
-    browser.sleep(400);
+    browser.sleep(helpers.configs.sleep);
     expect(address.isPresent()).toBe(true);
     expect(element(by.id('nfsoptions')).isDisplayed()).toBe(true);
     expect(options.getAttribute('value')).toEqual('rw,no_subtree_check,no_root_squash');
@@ -160,13 +162,41 @@ var wizardCommon = function(){
 
   this.configurationExecution = function(pageTitle){
     //Step 3 - Done
-
-    browser.sleep(400);
+    browser.sleep(helpers.configs.sleep);
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual(pageTitle);
     expect(self.nextBtn.getText()).toEqual('Done');
     self.nextBtn.click();
-    browser.sleep(400);
+    browser.sleep(helpers.configs.sleep);
     expect(browser.getCurrentUrl()).toContain('/openattic/#');
+    self.checkWizardTitles();
+  };
+
+  this.checkWizardTitles = function(){
+    var wizards = element.all(by.repeater('wizard in wizards'))
+      .then(function(wizards){
+        wizards[0].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(title){
+          expect(title).toEqual('File Storage');
+          //console.log(title);
+        });
+
+        wizards[1].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(vm_title){
+          expect(vm_title).toEqual('VM Storage');
+          //console.log(vm_title);
+        });
+
+        wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
+          expect(block_title).toEqual('iSCSI/Fibre Channel target');
+          //console.log(block_title);
+        });
+      });
+  };
+
+  this.handleFirstPage = function(pageTitle, poolType, volName, size, fsType){
+    self.creationPageElementCheck(pageTitle);
+    self.creationPageValidationTests();
+    self.creationPagePoolSelection(poolType);
+    self.creationPageInputTests();
+    self.creationFromFill(volName, size, fsType);
   };
 };
 

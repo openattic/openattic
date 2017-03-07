@@ -21,11 +21,7 @@ describe('VM Storage Wizard', function(){
   });
 
   it('should test step 1 and fill it out and go to the next step', function(){
-    wizardProperties.creationPageElementCheck('VM Storage Step 1 - Create Volume');
-    wizardProperties.creationPageValidationTests();
-    wizardProperties.creationPagePoolSelection('volume group');
-    wizardProperties.creationPageInputTests();
-    wizardProperties.creationFromFill(volumeName, '100MB', 'xfs');
+    wizardProperties.handleFirstPage('VM Storage Step 1 - Create Volume', 'volume group', volumeName, '100MB', 'xfs');
   });
 
   it('should test step 2 and fill it out and go to the last step', function(){
@@ -36,8 +32,6 @@ describe('VM Storage Wizard', function(){
 
   it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
     wizardProperties.configurationExecution('VM Storage Step 3 - Save configuration');
-
-    helpers.check_wizard_titles();
   });
   //<-- end wizard --->
 
