@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("LunDeleteCtrl", function ($scope, LunService, $uibModalInstance, lun, toasty) {
+app.controller("LunDeleteCtrl", function ($scope, LunService, $uibModalInstance, lun, Notification) {
   $scope.lun = lun;
 
   $scope.delete = function () {
@@ -39,15 +39,13 @@ app.controller("LunDeleteCtrl", function ($scope, LunService, $uibModalInstance,
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete LUN",
       msg: "Cancelled"
     });

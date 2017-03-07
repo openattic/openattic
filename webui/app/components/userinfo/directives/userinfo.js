@@ -41,8 +41,8 @@ app.directive("userinfo", function () {
       .then(function (res) {
         $rootScope.user = res;
       })
-      .catch(function () {
-        console.log("an error occured");
+      .catch(function (error) {
+        error.preventDefault(); // Prevents notification from opening.
       });
     }
   };

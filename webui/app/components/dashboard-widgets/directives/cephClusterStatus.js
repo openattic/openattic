@@ -56,9 +56,6 @@ app.directive("cephClusterStatus", function () {
             .then(function (res) {
               $scope.processData(res);
             })
-            .catch(function (error) {
-              throw error;
-            })
             .finally(function () {
               $interval(function () {
                 $scope.isLoading = false;
@@ -100,9 +97,6 @@ app.directive("cephClusterStatus", function () {
                 .$promise
                 .then(function (res) {
                   cluster.summary = res.health.summary;
-                })
-                .catch(function (error) {
-                  throw error;
                 });
           });
         }

@@ -31,8 +31,9 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, toasty) {
-  var gravatarId = $filter("gravatar")("");
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, $q,
+    Notification) {
+  var promises = [];
 
   $scope.isCurrentUser = false;
 
@@ -52,7 +53,6 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
       "is_superuser": false,
       "is_staff": false
     };
-    $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
 
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
@@ -61,27 +61,28 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
+            }, function () {
               $scope.userForm.$submitted = false;
-              console.log("An error occured", error);
             });
       }
     };
   } else {
     $scope.editing = true;
 
-    usersService.get({id: $stateParams.user})
-        .$promise
+    promises.push(
+        usersService.current().$promise
+    );
+    promises.push(
+        usersService.get({id: $stateParams.user}).$promise
+    );
+
+    // Use $q.all to wait until all promises have been resolved
+    $q.all(promises)
         .then(function (res) {
-          if (angular.isDefined($scope.user) && ($scope.user.id === Number($stateParams.user))) {
+          if (res[0].id === Number($stateParams.user)) {
             $scope.isCurrentUser = true;
           }
-          $scope.user = res;
-
-          gravatarId = $filter("gravatar")($scope.user.email);
-          $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
-        }, function (error) {
-          console.log("An error occurred", error);
+          $scope.user = res[1];
         });
 
     $scope.submitAction = function (userForm) {
@@ -91,9 +92,8 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
+            }, function () {
               $scope.userForm.$submitted = false;
-              console.log("An error occured", error);
             });
       }
     };
@@ -113,7 +113,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
         // Display the new token.
         $scope.user.auth_token.token = token;
         // Display a message.
-        toasty.success({
+        Notification.success({
           title: "API authentication token",
           msg: "The token has been created successfully."
         });

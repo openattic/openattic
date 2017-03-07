@@ -57,9 +57,6 @@ app.controller("UsersCtrl", function ($scope, $state, usersService, $uibModal) {
         .$promise
         .then(function (res) {
           $scope.data = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 

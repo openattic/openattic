@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, toasty, $state, $filter,
-    taskQueueService, $uibModal, $interval, taskQueueFetcher) {
+app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filter, $uibModal, $interval,
+    taskQueueFetcher) {
   var refresh = true; // Will prevent auto refreshing if set to false.
 
   /* Variables for every tab. */

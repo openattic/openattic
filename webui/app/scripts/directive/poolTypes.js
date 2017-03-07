@@ -122,9 +122,6 @@ app.directive("poolFsSupport", function () {
                 } else {
                   $scope.filesystem = "";
                 }
-              })
-              .catch(function (error) {
-                console.log("An error occured", error);
               });
         } else {
           if ($scope.poolValidation) {

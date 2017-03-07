@@ -51,7 +51,7 @@ app.component("graphCreationComponent", {
     config: "<",
     selection: "="
   },
-  controller: function ($scope, $interval, toasty, graphFactory) {
+  controller: function ($scope, $interval, graphFactory) {
     var interval;
     var refreshInterval = 60000; // 1min
     var self = this;
@@ -76,15 +76,6 @@ app.component("graphCreationComponent", {
         .then(function (res) {
           var values = angular.isFunction(api.extractValues) ? api.extractValues(res, item) : res;
           graphFactory.setUpGraphs(values);
-        })
-        .catch(function (err) {
-          if ("detail" in err.data) {
-            toasty.error({
-              title: "Error " + err.status + " when loading performance data",
-              msg: err.data.detail
-            });
-          }
-          throw err;
         })
         .finally(function () {
           $interval(function () {

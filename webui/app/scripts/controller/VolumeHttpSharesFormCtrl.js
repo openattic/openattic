@@ -50,8 +50,6 @@ app.controller("VolumeHttpSharesFormCtrl", function ($scope, $state, $stateParam
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       }
     };

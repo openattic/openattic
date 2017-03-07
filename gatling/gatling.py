@@ -76,7 +76,7 @@ def main():
     if options.target:
         conf.read([
             os.path.join(basedir, "gatling.conf"),
-            os.path.join(basedir, "conf", "%s.conf" % options.target)
+            os.path.join(basedir, "conf", "{}.conf".format(options.target))
         ])
     elif options.config:
         conf.read(options.config)
@@ -85,6 +85,7 @@ def main():
 
     try:
         host_name = conf.get("options", "host_name")
+        api_root = conf.get("options", "api_root")
         username = conf.get("options", "admin")
         password = conf.get("options", "password")
     except ConfigParser.NoOptionError, e:
@@ -92,7 +93,7 @@ def main():
               "in your Gatling config file.".format(e.option)
         return 1
 
-    base_url = "http://" + host_name + "/openattic/api/"
+    base_url = "http://{}{}".format(host_name, api_root)
 
     user = requests.request("GET", "{}users?username={}".format(base_url, username),
                             auth=(username, password))

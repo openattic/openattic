@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,35 +30,6 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("poolSelection", function () {
-  return {
-    restrict: "E",
-    scope: {
-      pool: "=",
-      validation: "=",
-      megs: "=",
-      submitted: "=",
-      wizard: "="
-    },
-    templateUrl: "templates/poolSelection.html",
-    controller: function ($scope, poolsService) {
-      $scope.waitingMsg = "Retrieving pool list...";
-      poolsService.query()
-        .$promise
-        .then(function (res) {
-          $scope.pools = res;
-          $scope.waitingMsg = "-- Select a pool --";
-        }, function () {
-          $scope.waitingMsg = "Error: List couldn't be loaded!";
-          $scope.validation.$setValidity("loading", false);
-        });
-      $scope.selPoolUsedPercent = 0;
-      $scope.$watch("pool", function (pool) {
-        if (pool) {
-          $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);
-        }
-      });
-    }
-  };
-});
+angular.module("openattic.notification", [
+  "angular-toasty"
+]);

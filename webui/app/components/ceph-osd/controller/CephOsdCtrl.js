@@ -47,7 +47,7 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
   $scope.selection = {};
 
-  if ($scope.cluster.results.length > 0 && typeof $scope.registry.selectedCluster === "undefined") {
+  if ($scope.cluster.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
     $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
@@ -75,7 +75,6 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
           })
           .catch(function (error) {
             $scope.error = error;
-            console.log("An error occurred while loading the ceph osds.", error);
           });
     }
   };
