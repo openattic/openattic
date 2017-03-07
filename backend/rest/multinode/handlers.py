@@ -27,7 +27,6 @@ from rest_framework.request import Request
 from rest_framework import status
 
 from ifconfig.models import Host
-from requests.exceptions import HTTPError
 
 from utilities import get_related_model
 from rest.utilities import drf_version, get_request_data
@@ -153,9 +152,9 @@ class RequestHandlers(object):
             if not response.ok:
                 response.raise_for_status()
         except Exception, e:
-            logger.error(e)
-            return Response({'detail': str(e)}, status=e.response.status_code if e.response else
-                status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.exception(e)
+            return Response({'detail': str(e)}, status=e.response.status_code if
+                e.response.status_code else status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Decode the response content into a JSON object.
         try:
