@@ -47,7 +47,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
         ctrl.$setValidity("uniquename", true);
         $timeout.cancel(stopTimeout);
 
-        if (modelValue === "" || typeof modelValue === "undefined") {
+        if (modelValue === "" || angular.isUndefined(modelValue)) {
           return;
         }
         stopTimeout = $timeout(function () {
@@ -76,7 +76,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               };
               break;
             case "rbd":
-              query.id = scope.data.cluster.fsid;
+              query.clusterId = scope.data.cluster.fsid;
               obj = {
                 model: cephRbdService,
                 current: null, // Has no renaming feature.
@@ -101,7 +101,10 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               break;
 
             default:
-              console.log("Error: Service not implemented yet.");
+              Notification.warning({
+                title: "Service not implemened",
+                msg: "Please add the Service to 'UniqueName.js'."
+              });
               return;
           }
           var resCheck = function (res) {
@@ -114,10 +117,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
           query[ctrl.field] = modelValue;
           obj.model.query(query)
               .$promise
-              .then(resCheck)
-              .catch(function (error) {
-                console.log("An error occurred", error);
-              });
+              .then(resCheck);
         }, 300);
       });
     }

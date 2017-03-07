@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInstance, user, toasty) {
+app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInstance, user, Notification) {
   $scope.user = user;
 
   $scope.delete = function () {
@@ -39,15 +39,15 @@ app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInsta
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
+        }, function () {
+          $scope.deleteForm.$submitted = false;
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete user",
       msg: "Cancelled"
     });

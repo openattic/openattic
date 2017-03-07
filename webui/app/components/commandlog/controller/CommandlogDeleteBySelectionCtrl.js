@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.commandlog");
 app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogService, $uibModalInstance, $filter,
-    selection, toasty) {
+    selection, Notification) {
   $scope.selectionLength = selection.length;
   $scope.itemText = false;
   if (selection.length === 1) {
@@ -50,15 +50,15 @@ app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogSe
         .$promise
         .then(function () {
           $uibModalInstance.close("cloned");
-        }, function (error) {
-          console.log("An error occured", error);
+        }, function () {
+          $scope.deleteForm.$submitted = false;
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete log entry",
       msg: "Cancelled"
     });

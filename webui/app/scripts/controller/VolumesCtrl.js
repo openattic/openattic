@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, toasty,
+app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, Notification,
     tabViewService) {
   $scope.data = {};
 
@@ -127,9 +127,6 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       .$promise
       .then(function (res) {
         $scope.data = res;
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
       });
   }, true);
 
@@ -219,10 +216,9 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.protectedMessage = function (item) {
-    toasty.warning({
+    Notification.warning({
       title: item.name + " is not deletable",
-      msg: "Release the deletion protection in order to be able to delete the volume.",
-      timeout: 6000
+      msg: "Release the deletion protection in order to be able to delete the volume."
     });
   };
 
