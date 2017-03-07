@@ -142,7 +142,10 @@ class DeleteCreateMixin(object):
 class NoCacheAPIView(APIView):
     def dispatch(self, request, *args, **kwargs):
         response = super(NoCacheAPIView, self).dispatch(request, *args, **kwargs)
-        response['Cache-Control'] = 'no-cache'
+
+        if request.method == 'GET':
+            response['Cache-Control'] = 'no-cache'
+
         return response
 
 
