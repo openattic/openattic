@@ -37,17 +37,21 @@ app.directive("actions", function () {
     templateUrl: "components/datatable/templates/actionmenu.html",
     transclude: true,
     link: function (scope, element, attr, controller, transclude) {
-      var actionsscope = scope.$parent.$new();
-      transclude(actionsscope, function (clone) {
-        var i;
-        var liElems = clone.filter("li");
-        for (i = 0; i < liElems.length; i++) {
-          element.find(".oa-dropdown-actions").append(liElems[i]);
+      var dropdown = element.find(".oa-dropdown-actions");
+      var btnGroup = element.find(".btn-group");
+      var actionsScope = scope.$parent.$new();
+
+      dropdown.parent().on({
+        "click": function (e) {
+          if ($(e.target).is(".dropdown-menu,li.divider,li.disabled")) {
+            e.stopPropagation();
+          }
         }
-        var aElems = clone.filter(".btn-primary");
-        for (i = aElems.length - 1; i >= 0; --i) {
-          element.find(".btn-group").prepend(aElems[i]);
-        }
+      });
+
+      transclude(actionsScope, function (clone) {
+        dropdown.append(clone.filter("li"));
+        btnGroup.prepend(clone.filter(".btn-primary"));
       });
     }
   };
