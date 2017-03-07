@@ -45,7 +45,7 @@ class LvTestScenario(GatlingTestCase):
 
         vg = res["response"][0]
 
-        if ("name", "type") not in vg or \
+        if ("name" and "type") not in vg or \
                 vg["name"] != vg_name or \
                 vg["type"]["app_label"] != "lvm" or \
                 vg["type"]["model"] != "volumegroup":
