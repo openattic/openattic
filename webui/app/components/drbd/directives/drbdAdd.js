@@ -102,7 +102,9 @@ app.directive("drbdAdd", function () {
           $scope.result.remote_pool = {
             id: $scope.data.remote_pool.id,
             name: $scope.data.remote_pool.name,
-            host: $scope.data.remote_pool.host.id
+            host: {
+              id: $scope.data.remote_pool.host.id
+            }
           };
         } else {
           delete $scope.result.remote_pool;
