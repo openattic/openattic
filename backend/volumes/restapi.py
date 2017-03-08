@@ -171,13 +171,13 @@ class PoolSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModel
         return obj.get_status()
 
 
-def poolfilter_excl_host(queryset, value):
-    if not value:
+def poolfilter_excl_host(queryset, host_id):
+    if not host_id:
         return queryset
 
     result = []
     for entry in queryset:
-        if entry.host.id != value:
+        if entry.host.id != host_id:
             result.append(entry)
 
     return result
