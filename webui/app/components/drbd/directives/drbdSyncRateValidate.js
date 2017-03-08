@@ -44,7 +44,7 @@ app.directive("drbdSyncRateValidate", function () {
     // elem  = The element the directive is on
     // attrs = A dictionary of attributes on the element
     // ctrl  = The controller for ngModel
-    link: function (scope, elm, attrs, ctrl) {
+    link: function (scope, elem, attrs, ctrl) {
       ctrl.$validators.drbdSyncRateValidate = function (value) {
         if (ctrl.$isEmpty(value)) {
           return true;

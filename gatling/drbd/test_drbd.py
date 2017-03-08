@@ -47,7 +47,7 @@ class DrbdTests(object):
 
     def test_create_get_delete_via_volumes(self):
         """
-        Create a Connection via /api/volumes and check that its Endpoints are
+        Create a connection via /api/volumes and check that its endpoints are
         created correctly.
         """
         vol_data = {"megs": self.volumesize,
