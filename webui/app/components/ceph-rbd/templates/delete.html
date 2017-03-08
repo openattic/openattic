@@ -4,35 +4,39 @@
 </div>
 <div class="openattic-modal-content">
     <!-- single rbd -->
-    <p ng-if="rbd">
-        You are about to delete the RBD <strong>{{rbd.name}}</strong>.
-    </p>
-    <p ng-if="rbd">
-        Be aware that you will <strong>lose all data</strong>
-        in that RBD and that this operation <strong>cannot be undone</strong>.
-    </p>
-    <p ng-if="rbd">
-        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
+    <div ng-if="rbds.length === 1">
+        <p>
+            You are about to delete the RBD <strong>{{rbd.name}}</strong>.
+        </p>
+        <p>
+            Be aware that you will <strong>lose all data</strong>
+            in that RBD and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <p>
+            To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+    </div>
     <!-- end single rbd -->
 
     <!-- multiple rbds -->
-    <p ng-if="!rbd && rbds">
-        You are about to delete multiple RBDs.
-    </p>
-    <p ng-if="!rbd && rbds">
-        Be aware that you will <strong>lose all data</strong>
-        in the RBDs and that this operation <strong>cannot be undone</strong>.
-    </p>
-    <span class="text-danger" ng-if="!rbd && rbds">The following RBDs will be deleted:</span>
-    <ul class="text-danger" ng-if="!rbd && rbds">
-        <li ng-repeat="rad in rbds">
-            {{rad.name}} ({{rad.size | bytes}})
-        </li>
-    </ul>
-    <p ng-if="!rbd && rbds">
-        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
+    <div ng-if="rbds.length > 1">
+        <p>
+            You are about to delete multiple RBDs.
+        </p>
+        <p>
+            Be aware that you will <strong>lose all data</strong>
+            in the RBDs and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <span class="text-danger">The following RBDs will be deleted:</span>
+        <ul class="text-danger">
+            <li ng-repeat="rad in rbds">
+                {{rad.name}} ({{rad.size | bytes}})
+            </li>
+        </ul>
+        <p>
+            To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+    </div>
     <!-- end multiple rbds -->
 
     <form name="deleteForm" role="form" novalidate>

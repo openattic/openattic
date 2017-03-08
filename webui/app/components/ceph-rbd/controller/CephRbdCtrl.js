@@ -166,19 +166,13 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
-    var item = $scope.selection.item;
-    var items = $scope.selection.items;
-    $scope.deletionDialog(item ? item : items);
-  };
-
-  $scope.deletionDialog = function (selection) {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/ceph-rbd/templates/delete.html",
       controller: "RbdDelete",
       resolve: {
         rbdSelection: function () {
-          return selection;
+          return $scope.selection.items;
         },
         clusterId: function () {
           return $scope.registry.selectedCluster.fsid;

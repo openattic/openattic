@@ -33,11 +33,7 @@
 var app = angular.module("openattic");
 app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, clusterId, $q,
     Notification) {
-  if ($.isArray(rbdSelection)) {
-    $scope.rbds = rbdSelection;
-  } else {
-    $scope.rbd = rbdSelection;
-  }
+  $scope.rbds = rbdSelection;
 
   $scope.input = {
     enteredName: "",
@@ -45,15 +41,6 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
   };
 
   $scope.delete = function () {
-    if ($scope.rbd) {
-      $scope.rbds = [ $scope.rbd ];
-    }
-    if ($scope.rbds) {
-      $scope.deleteRbds();
-    }
-  };
-
-  $scope.deleteRbds = function () {
     var requests = [];
     $scope.rbds.forEach(function (rbd) {
       var deferred = $q.defer();
