@@ -148,13 +148,12 @@ class RequestHandlers(object):
         # Instead create a response object containing the error message.
         try:
             response = requests.request(request.method, url, data=json.dumps(data), headers=header)
-            # Check the response object.
-            if not response.ok:
-                response.raise_for_status()
+            response.raise_for_status()
         except Exception, e:
             logger.exception(e)
-            return Response({'detail': str(e)}, status=e.response.status_code if
-                e.response.status_code else status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'detail': str(e)}, status=e.response.status_code
+                            if isinstance(e.response, requests.Response)
+                            else status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Decode the response content into a JSON object.
         try:
