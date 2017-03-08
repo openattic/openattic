@@ -54,7 +54,7 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, poolsService
         megs: SizeParserService.parseInt($scope.input.newsize)
       })
           .$update()
-          .then(function (res) {
+          .then(function () {
             $uibModalInstance.close("resized");
           });
     }

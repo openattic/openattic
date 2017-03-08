@@ -40,7 +40,7 @@ app.factory("drbdService", function ($resource) {
       method: "GET",
       isArray: true,
       transformResponse: function (data) {
-        return JSON.parse(data).results;
+        return angular.fromJson(data).results;
       }
     }
   });
