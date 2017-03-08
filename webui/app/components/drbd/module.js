@@ -31,5 +31,6 @@
 "use strict";
 
 angular.module("openattic.drbd", [
+	"openattic.hosts",
 	"openattic.pools"
 ]);

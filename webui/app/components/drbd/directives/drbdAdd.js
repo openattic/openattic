@@ -40,18 +40,26 @@ app.directive("drbdAdd", function () {
       wizard: "="
     },
     templateUrl: "components/drbd/templates/drbd-add.html",
-    controller: function ($scope, poolsService) {
+    controller: function ($scope, poolsService, HostService, $filter) {
       // Default values.
       $scope.data = {
+        mirroring_enabled: false,
         remote_pool: null,
         remote_pool_waiting_msg: "-- Select a pool --",
         remote_pools: []
       };
 
-      /**
-       * Listen to Pool selections. Reload and filter the remote pool list
-       * if a pool has been selected.
-       */
+      // Check if we are running a multinode setup. If this is the case, then show
+      // the 'Volume Mirroring' checkbox.
+      HostService.query()
+        .$promise
+        .then(function (res) {
+          var oahosts = $filter("oahostsonly")(res);
+          $scope.data.mirroring_enabled = oahosts.length >= 2;
+        });
+
+      // Listen to Pool selections. Reload and filter the remote pool list
+      // if a pool has been selected.
       $scope.$watch("result.source_pool", function (pool) {
         if (!pool) {
           // Reset list of available remote pools.

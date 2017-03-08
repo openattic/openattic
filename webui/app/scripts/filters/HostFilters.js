@@ -46,3 +46,15 @@ app.filter("initiatorsonly", function (InitiatorService) {
     return initiators;
   };
 });
+app.filter("oahostsonly", function () {
+  return function (hosts) {
+    var result = [];
+    angular.forEach(hosts, function (host) {
+      // Check if 'oa_version' is an object. In this case the given host is an oA host.
+      if (angular.isObject(host.oa_version)) {
+        result.push(host);
+      }
+    });
+    return result;
+  };
+});
