@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.drbd", []);
+angular.module("openattic.drbd", [
+	"openattic.pools"
+]);
