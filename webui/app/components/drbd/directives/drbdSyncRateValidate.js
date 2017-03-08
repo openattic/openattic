@@ -51,11 +51,16 @@ app.directive("drbdSyncRateValidate", function () {
         }
         // Syncer rate must be in <number>[K|M|G] format.
         var m = RegExp("^(\\d+)([KMG]?)$").exec(value);
-        if (null === m) {
+        if (m === null) {
           return false;
         }
         // Syncer rate must be between 500K and 100M.
-        var exp = { "": 0, "K": 1, "M": 2, "G": 3 };
+        var exp = {
+          "": 0,
+          "K": 1,
+          "M": 2,
+          "G": 3
+        };
         var rate = m[1] * Math.pow(1024, exp[m[2]]);
         if (500 * 1024 > rate) {
           return false;

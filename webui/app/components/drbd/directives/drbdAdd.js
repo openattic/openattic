@@ -67,7 +67,7 @@ app.directive("drbdAdd", function () {
           }, function () {
             $scope.data.remote_pool_waiting_msg = "Error: List couldn't be loaded!";
             $scope.validation.remote_pool.$setValidity("loading", false);
-          })
+          });
       });
 
       /**
@@ -81,7 +81,7 @@ app.directive("drbdAdd", function () {
         }
         $scope.validation.remote_pool.$setValidity("poolSize", valid);
         return valid;
-      }
+      };
       $scope.$watch("result.megs", function () {
         $scope.validatePoolSize();
       });
