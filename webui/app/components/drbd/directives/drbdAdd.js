@@ -48,8 +48,10 @@ app.directive("drbdAdd", function () {
         remote_pools: []
       };
 
-      // Listen to Pool selections. Reload and filter the remote pool list
-      // if a pool has been selected.
+      /**
+       * Listen to Pool selections. Reload and filter the remote pool list
+       * if a pool has been selected.
+       */
       $scope.$watch("result.source_pool", function (pool) {
         if (!pool) {
           // Reset list of available remote pools.
@@ -62,19 +64,16 @@ app.directive("drbdAdd", function () {
           .then(function (res) {
             $scope.data.remote_pools = res;
             $scope.data.remote_pool_waiting_msg = "-- Select a pool --";
-          }, function (error) {
-            console.log("Failed to load the pool list.", error);
-            toasty.error({
-              title: "Pool list couldn't be loaded",
-              msg: "Server failure."
-            });
+          }, function () {
             $scope.data.remote_pool_waiting_msg = "Error: List couldn't be loaded!";
             $scope.validation.remote_pool.$setValidity("loading", false);
           })
       });
 
-      // Ensure that the remote pool is large enough to hold the
-      // requested volume.
+      /**
+       * Ensure that the remote pool is large enough to hold the
+       * requested volume.
+       */
       $scope.validatePoolSize = function () {
         var valid = true;
         if ($scope.data.remote_pool && $scope.result.megs) {
