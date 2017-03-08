@@ -1,4 +1,4 @@
-<div class="panel panel-default" ng-if="!selection.item.detail">
+<div class="panel panel-default">
     <div class="panel-heading" ng-if="selection.item.name">
         <h3 class="panel-title">Details of {{selection.item.name}}</h3>
     </div>
@@ -41,7 +41,4 @@
             <dd ng-bind="selection.item.oa_version.package.VERSION"></dd>
         </dl>
     </div>
-</div>
-<div class="alert alert-danger" role="alert" ng-if="selection.item.detail">
-    <i class="fa fa-exclamation-triangle"></i> {{selection.item.detail}}
 </div>
