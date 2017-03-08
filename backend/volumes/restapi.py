@@ -176,6 +176,7 @@ def poolfilter_excl_host(queryset, host_id):
         return queryset
 
     result = []
+    # It's not possible to use queryset.filter() here, so we have to do it on our own.
     for entry in queryset:
         if entry.host.id != host_id:
             result.append(entry)
