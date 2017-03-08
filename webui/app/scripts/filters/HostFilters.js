@@ -46,6 +46,9 @@ app.filter("initiatorsonly", function (InitiatorService) {
     return initiators;
   };
 });
+/**
+ * Get a list of hosts that are oA hosts.
+ */
 app.filter("oahostsonly", function () {
   return function (hosts) {
     var result = [];
