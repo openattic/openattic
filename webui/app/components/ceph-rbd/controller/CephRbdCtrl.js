@@ -54,6 +54,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
   $scope.getRbdList = function () {
     if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
+      $scope.selection.items = []; // Removes any selection.
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];
