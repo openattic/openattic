@@ -24,10 +24,10 @@ from django.conf import settings
 
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status
 
 from ifconfig.models import Host
 
+from exception import NotSupportedError
 from utilities import get_related_model
 from rest.utilities import drf_version, get_request_data
 
@@ -150,10 +150,8 @@ class RequestHandlers(object):
             response = requests.request(request.method, url, data=json.dumps(data), headers=header)
             response.raise_for_status()
         except Exception, e:
-            logger.exception(e)
-            return Response({'detail': str(e)}, status=e.response.status_code
-                            if isinstance(e.response, requests.Response)
-                            else status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Let the custom error handler do the job to create the response.
+            raise NotSupportedError(e)
 
         # Decode the response content into a JSON object.
         try:
