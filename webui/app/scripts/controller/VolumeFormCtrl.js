@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizeParserService, Notification) {
+app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService) {
   $scope.volume = {};
 
   $scope.data = {
