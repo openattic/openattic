@@ -14,7 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import logging
 import requests
 import json
 
@@ -27,11 +26,8 @@ from rest_framework.request import Request
 
 from ifconfig.models import Host
 
-from exception import NotSupportedError
 from utilities import get_related_model
 from rest.utilities import drf_version, get_request_data
-
-logger = logging.getLogger(__name__)
 
 
 class RequestHandlers(object):
@@ -143,17 +139,8 @@ class RequestHandlers(object):
         current_host = Host.objects.get_current()
         data = dict(get_request_data(request), proxy_host_id=current_host.id)
 
-        # Try to redirect the API request to the remote host. Do not throw an
-        # exception if this call fails, otherwise the whole request fails.
-        # Instead create a response object containing the error message.
-        try:
-            response = requests.request(request.method, url, data=json.dumps(data), headers=header)
-            response.raise_for_status()
-        except Exception, e:
-            # Let the custom error handler do the job to create the response.
-            raise NotSupportedError(e)
+        response = requests.request(request.method, url, data=json.dumps(data), headers=header)
 
-        # Decode the response content into a JSON object.
         try:
             response_data = response.json()
         except ValueError:
