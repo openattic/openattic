@@ -51,6 +51,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fixed some e2e styling issues (OP-1992)
 * WebUI: Fixed inconsistent state of rbd datatable actions (OP-1954)
 * WebUI: Fixed the RBD utilization graphs (OP-1945)
 * WebUI: Fixed ceph pagination issue (OP-1925)
