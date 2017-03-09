@@ -1,7 +1,7 @@
 var helpers = require('../../../common.js');
 
 describe('creates a clone filesystem volume from a snapshot', function(){
-  var snapname = 'protractor_snap_to_clone_fs';
+  var snapshotname = 'protractor_snap_to_clone_fs';
   var clonename = 'protractor_filesystem_clone';
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
   var volumename = 'protractor_clone_fsVol';
@@ -10,8 +10,8 @@ describe('creates a clone filesystem volume from a snapshot', function(){
   beforeAll(function(){
     helpers.login();
     helpers.create_volume(volumename, 'xfs');
-    helpers.create_snapshot(volume, snapname);
-    helpers.create_snap_clone(volume, snapname, clonename);
+    helpers.create_snapshot(volume, snapshotname);
+    helpers.create_snap_clone(volume, snapshotname, clonename);
     browser.sleep(800);
   });
 
@@ -25,7 +25,7 @@ describe('creates a clone filesystem volume from a snapshot', function(){
   });
 
   afterAll(function(){
-    helpers.delete_snapshot(volume, snapname);
+    helpers.delete_snapshot(volume, snapshotname);
     helpers.delete_volume(volume, volumename);
     console.log('snapshot_clone -> filesystem_vol_snapshot_clone.e2e.js');
   });

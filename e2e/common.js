@@ -124,7 +124,7 @@
     },
 
     /**
-     * Will creates volume clone out of snapshot of the given volume.
+     * Creates volume clone out of snapshot of the given volume.
      * @param {element} volume - Where to create the snapshot clone.
      * @param {string} snapshotName - The name of snapshot.
      * @param {string} cloneName - The name of clone.
