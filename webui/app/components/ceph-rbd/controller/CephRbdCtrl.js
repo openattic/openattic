@@ -140,7 +140,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     $scope.getRbdList();
   }, true);
 
-  $scope.$watch("selection.items", function (items) {
+  $scope.$watchCollection("selection.items", function (items) {
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
 
