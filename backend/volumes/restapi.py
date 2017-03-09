@@ -526,11 +526,12 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
             # file system. After that the DRBD connection and file system,
             # if specified, are created by the DRBD app.
             if data['is_mirrored']:
-                source_host = Host.objects.get(id=data['source_pool']['host'])
+                source_pool = models.StorageObject.all_objects.get(id=data["source_pool"]["id"])
+                remote_pool = models.StorageObject.all_objects.get(id=data["remote_pool"]["id"])
                 # 1. Create the volume without a file system.
                 new_request = self._clone_request_with_new_data(
                     request, dict(data, filesystem="", is_mirrored=False))
-                response = self._remote_request(new_request, source_host, api_prefix="volumes")
+                response = self._remote_request(new_request, source_pool.host, api_prefix="volumes")
                 if not status.is_success(response.status_code):
                     return response
                 # 2. Create the DRBD connection and the file system if specified.
@@ -540,16 +541,15 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                     request, dict(data, source_volume={
                         'id': response.data['id'],
                         'host': {
-                            'id': source_host.id
+                            'id': source_pool.host.id
                         }
                     }, remote_pool= {
-                        'id': data['remote_pool']['id'],
+                        'id': remote_pool.id,
                         'host': {
-                            'id': data['remote_pool']['host']['id']
+                            'id': remote_pool.host.id
                         }
                     }))
-                return self._remote_request(new_request, source_host,
-                                            api_prefix="mirrors")
+                return self._remote_request(new_request, source_pool.host, api_prefix="mirrors")
 
         return super(VolumeProxyViewSet, self).create(request, args, kwargs)
 
