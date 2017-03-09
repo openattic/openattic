@@ -51,6 +51,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Fixed inconsistent state of rbd datatable actions (OP-1954)
 * WebUI: Fixed the RBD utilization graphs (OP-1945)
 * WebUI: Fixed ceph pagination issue (OP-1925)
 * WebUI: Fixed bug when generating a new user API token. (OP-1914)
