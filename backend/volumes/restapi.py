@@ -581,7 +581,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                 # might be a remote_request
                 return self._remote_request(request, blockvolume.host, api_prefix="mirrors",
                                             obj=blockvolume)
-            
+
         return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 
