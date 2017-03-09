@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../common.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
 

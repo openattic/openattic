@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 
 describe('Should map a LUN to an host', function(){
@@ -6,7 +8,7 @@ describe('Should map a LUN to an host', function(){
   var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
 
-  var volumename = "protractor_iscsiMap_vol";
+  var volumename = 'protractor_iscsiMap_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
   var iscsiShareTab = function(){
@@ -23,7 +25,7 @@ describe('Should map a LUN to an host', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume(volumename, "lun");
+    helpers.create_volume(volumename, 'lun');
   });
 
   it('should add the host with iqn as attribute', function(){

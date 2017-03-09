@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 
 describe('should create a clone volume of a snapshot (base: filesystem volume)', function(){

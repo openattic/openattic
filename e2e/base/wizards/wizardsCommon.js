@@ -21,8 +21,8 @@ var wizardCommon = function(){
     element.all(by.className('tc_wizardTitle')).filter(function(wizard){
       return wizard.getText().then(function(text){
         return text === wizardName;
-      })
-    }).first().click()
+      });
+    }).first().click();
   };
 
   this.creationPageElementCheck = function(pageTitle){
@@ -145,11 +145,11 @@ var wizardCommon = function(){
   };
 
   this.shareCreateFc = function(hostname, iscsi){
-    if (!iscsi) {
+    if(!iscsi){
       //select host
       var hostSelect = element(by.model('input.iscsi_fc.host'));
       hostSelect.element(by.cssContainingText('option', hostname)).click();
-    } else {
+    }else{
       element(by.className('tc_create_host')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element.all(by.model('type.check')).get(0).click();

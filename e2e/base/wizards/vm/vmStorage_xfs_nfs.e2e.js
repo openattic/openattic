@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 var wizardsCommon = require('../wizardsCommon.js');
 

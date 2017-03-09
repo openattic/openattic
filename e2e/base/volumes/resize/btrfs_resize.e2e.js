@@ -1,4 +1,7 @@
+'use strict';
+
 var helpers = require('../../../common.js');
+
 describe('Btrfs resize', function(){
   var volumename = 'e2e_pool';
   var subvolumename = 'e2e_volume';
@@ -41,7 +44,7 @@ describe('Btrfs resize', function(){
   it('subvolume: should have a disabled resize menu entry', function(){
     subvolume.click();
     actionMenu.click();
-    expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe("Resize");
+    expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe('Resize');
   });
 
   afterAll(function(){
