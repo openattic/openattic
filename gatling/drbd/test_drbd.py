@@ -228,11 +228,11 @@ class DrbdTests(object):
                           data={"megs": self.growsize})
         
         # Check if resize (grow) was successful
-        #time.sleep(self.sleeptime)
-        #mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
-        #self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
-        #self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
-        #self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+        time.sleep(self.sleeptime)
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
+        self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
 
     def test_create_shrink_delete(self):
         """ Create a connection with 1000MB volumes, try to shrink it to 500MB and check if it
