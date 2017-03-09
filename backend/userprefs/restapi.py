@@ -16,14 +16,14 @@
 
 import json
 
-from rest_framework import serializers, status, viewsets, mixins
+from rest_framework import serializers, status, mixins
 from rest_framework.response import Response
 
 from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
 from rest.utilities import drf_version, get_request_query_params, mk_method_field_params, \
-    get_request_data, ToNativeToRepresentationMixin
+    get_request_data, ToNativeToRepresentationMixin, NoCacheReadOnlyModelViewSet
 
 
 class UserPreferenceSerializer(ToNativeToRepresentationMixin,
@@ -56,7 +56,7 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         return dict(user_pref_ser.data)
 
 
-class UserProfileViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
+class UserProfileViewSet(NoCacheReadOnlyModelViewSet, mixins.CreateModelMixin,
                          mixins.DestroyModelMixin):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
