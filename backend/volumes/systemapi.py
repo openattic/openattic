@@ -133,7 +133,7 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="si")
     def xfs_resize(self, mountpoint, megs, sender):
-        invoke(["xfs_growfs", "-D", megs, mountpoint])
+        invoke(["xfs_growfs", mountpoint])
 
     @deferredmethod(in_signature="ss")
     def xfs_set_uuid(self, devpath, uuid, sender):
