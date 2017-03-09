@@ -28,6 +28,8 @@ Added
 
 Changed
 ~~~~~~~
+* Backend: REST API response header do now contain 'Cache-Control: no-cache'
+  option (OP-1402)
 * WebUI: Disabled successful task queue notifications (OP-1961)
 * WebUI: Dropdown button should not close when user clicks on a disabled option
   Thanks to David Díaz for the contribution. (OP-940)
