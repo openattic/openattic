@@ -45,11 +45,10 @@ class LvTestScenario(GatlingTestCase):
 
         vg = res["response"][0]
 
-        if vg["name"] != vg_name or \
-           vg["type"]["app_label"] != "lvm" or \
-           vg["type"]["model"] != "volumegroup":
-            print "VG not found"
-            print vg["name"]
+        if not ("name" in vg and "type" in vg) or \
+                vg["name"] != vg_name or \
+                vg["type"]["app_label"] != "lvm" or \
+                vg["type"]["model"] != "volumegroup":
             raise SkipTest("VG <{}> not found".format(vg_name))
 
         return vg
