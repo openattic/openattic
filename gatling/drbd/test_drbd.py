@@ -228,7 +228,7 @@ class DrbdTests(object):
                           data={"megs": self.growsize})
         
         # Check if resize (grow) was successful
-        time.sleep(self.sleeptime)
+        time.sleep(2 * self.sleeptime)
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
         self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
         self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
