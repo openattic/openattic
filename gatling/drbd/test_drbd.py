@@ -59,6 +59,32 @@ class DrbdTests(object):
                     "protocol": "C"}
         mirror_res = self.send_request("POST", "volumes", data=vol_data)
         time.sleep(self.sleeptime)
+
+        # Use the DRBD connection URL for cleanup.
+        mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
+
+        # Check if there are to endpoints (volumes) related to this DRBD mirror.
+        upper_id = "upper__id=%s" % mirror_res["response"]["volume"]["id"]
+        endpoints_res = self.send_request("GET", "volumes", search_param=upper_id)
+        self.assertEqual(endpoints_res["count"], 2, msg="number of endpoints is not equal 2")
+
+    def test_remote_create_get_delete_via_volumes(self):
+        """
+        Create a connection via /api/volumes and check that its endpoints are
+        created correctly.
+        """
+        vol_data = {"megs": self.volumesize,
+                    "name": "gatling_drbd_vol1",
+                    "source_pool": self._get_remote_pool(),
+                    "remote_pool": self._get_pool(),
+                    "is_mirrored": True,
+                    "syncer_rate": "510K",
+                    "protocol": "A"}
+        mirror_res = self.send_request("POST", "volumes", data=vol_data)
+        time.sleep(self.sleeptime)
+
         # Use the DRBD connection URL for cleanup.
         mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
