@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 from ifconfig.models import Host
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -23,7 +23,7 @@ from nagios.models import Service, Graph
 from rest import relations
 
 from rest.multinode.handlers import RequestHandlers
-from rest.utilities import mk_method_field_params
+from rest.utilities import mk_method_field_params, NoCacheReadOnlyModelViewSet
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
@@ -69,7 +69,7 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
             return None
 
 
-class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
+class ServiceViewSet(NoCacheReadOnlyModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     filter_fields = ('host__name', 'description')

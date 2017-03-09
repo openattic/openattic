@@ -19,7 +19,7 @@ import django_filters
 from django.db.models import Q
 from django.conf import settings
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework import status
@@ -27,6 +27,7 @@ from rest_framework import status
 from rest import relations
 from rest.restapi import ContentTypeSerializer
 from rest.multinode.handlers import RequestHandlers
+from rest.utilities import NoCacheModelViewSet
 
 from volumes import models
 from ifconfig.models import Host
@@ -101,7 +102,7 @@ class DiskFilter(django_filters.FilterSet):
         fields = ['name']
 
 
-class DiskViewSet(viewsets.ModelViewSet):
+class DiskViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(physicalblockdevice__isnull=False)
     serializer_class = DiskSerializer
     filter_class = DiskFilter
@@ -194,7 +195,7 @@ class PoolFilter(django_filters.FilterSet):
         fields = ['name', 'uuid', 'createdate']
 
 
-class PoolViewSet(viewsets.ModelViewSet):
+class PoolViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
     serializer_class = PoolSerializer
     filter_class = PoolFilter
@@ -366,7 +367,7 @@ class SnapshotSerializer(VolumeSerializer):
                   'status')
 
 
-class SnapshotViewSet(viewsets.ModelViewSet):
+class SnapshotViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(snapshot__isnull=False)
     serializer_class = SnapshotSerializer
     filter_fields = ('name', 'uuid', 'createdate', 'snapshot')
@@ -400,7 +401,7 @@ class SnapshotProxyViewSet(RequestHandlers, SnapshotViewSet):
         return self.retrieve(request, 'clone', *args, **kwargs)
 
 
-class VolumeViewSet(viewsets.ModelViewSet):
+class VolumeViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
     filter_fields = ('name', 'uuid', 'createdate')
@@ -453,7 +454,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
             "queryset": origin.snapshot_storageobject_set.all(),
             "origin":   origin
             }
-        if drf_version() >= (3,0):
+        if drf_version() >= (3, 0):
             # Don't perform any conversions in `initialize_request`:
             attributes['initialize_request'] = lambda self, request, *args, **kwargs: request
 
