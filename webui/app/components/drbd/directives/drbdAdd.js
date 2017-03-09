@@ -39,7 +39,7 @@ app.directive("drbdAdd", function () {
       result: "=",
       wizard: "="
     },
-    templateUrl: "components/drbd/templates/drbd-add.html",
+    templateUrl: "components/drbd/templates/add-drbd.html",
     controller: function ($scope, poolsService, HostService, $filter) {
       // Default values.
       $scope.data = {
