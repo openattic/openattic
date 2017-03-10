@@ -91,9 +91,9 @@
                 ng-model="result.protocol"
                 ng-required="result.is_mirrored">
             <option value="" hidden>-- Choose a protocol --</option>
-            <option value="A">Asynchronous</option>
-            <option value="B">Semi-synchronous</option>
-            <option value="C">Synchronous</option>
+            <option value="A">Asynchronous (A)</option>
+            <option value="B">Semi-synchronous (B)</option>
+            <option value="C">Synchronous (C)</option>
         </select>
         <span class="help-block"
               ng-show="(validation.$submitted || validation.protocol.$dirty) &&

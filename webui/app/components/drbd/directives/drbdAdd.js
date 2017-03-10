@@ -48,6 +48,8 @@ app.directive("drbdAdd", function () {
         remote_pool_waiting_msg: "-- Select a pool --",
         remote_pools: []
       };
+      $scope.result.protocol = "C";
+      $scope.result.syncer_rate = "30M";
 
       // Check if we are running a multinode setup. If this is the case, then show
       // the 'Volume Mirroring' checkbox.
