@@ -18,6 +18,11 @@ Requires:	%{name}-module-nfs
 Requires:	%{name}-module-samba
 Requires:	%{name}-pgsql
 
+# These subpackages have been removed in 2.0.19 (OP#1968)
+Obsoletes: %{name}-module-ipmi <= 2.0.18
+Obsoletes: %{name}-module-mdraid <= 2.0.18
+Obsoletes: %{name}-module-twraid <= 2.0.18
+
 %description
 openATTIC is a storage management system based upon Open Source tools with
 a comprehensive user interface that allows you to create, share and backup

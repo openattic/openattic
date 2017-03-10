@@ -14,12 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 
 from ifconfig import models
 from rest import relations
 from rest.multinode.handlers import RequestHandlers
-from rest.utilities import mk_method_field_params
+from rest.utilities import mk_method_field_params, NoCacheModelViewSet
 
 
 class IPAddressSerializer(serializers.ModelSerializer):
@@ -82,7 +82,7 @@ class HostGroupSerializer(serializers.ModelSerializer):
         model = models.HostGroup
 
 
-class IPAddressViewSet(viewsets.ModelViewSet):
+class IPAddressViewSet(NoCacheModelViewSet):
     queryset = models.IPAddress.all_objects.all()
     serializer_class = IPAddressSerializer
 
@@ -93,7 +93,7 @@ class IPAddressProxyViewSet(RequestHandlers, IPAddressViewSet):
     host_filter = "device"
 
 
-class NetDeviceViewSet(viewsets.ModelViewSet):
+class NetDeviceViewSet(NoCacheModelViewSet):
     queryset = models.NetDevice.all_objects.all()
     serializer_class = NetDeviceSerializer
 
@@ -103,7 +103,7 @@ class NetDeviceProxyViewSet(RequestHandlers, NetDeviceViewSet):
     model = models.NetDevice
 
 
-class HostViewSet(viewsets.ModelViewSet):
+class HostViewSet(NoCacheModelViewSet):
     queryset = models.Host.objects.all()
     serializer_class = HostSerializer
     filter_fields = ('name',)
@@ -115,7 +115,7 @@ class HostProxyViewSet(RequestHandlers, HostViewSet):
     model = models.Host
 
 
-class HostGroupViewSet(viewsets.ModelViewSet):
+class HostGroupViewSet(NoCacheModelViewSet):
     queryset = models.HostGroup.objects.all()
     serializer_class = HostGroupSerializer
 

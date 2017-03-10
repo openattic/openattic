@@ -18,6 +18,8 @@ from collections import defaultdict
 import django
 from django.http.request import QueryDict # Docstring
 from rest_framework.serializers import Serializer
+from rest_framework.views import APIView
+from rest_framework import viewsets
 
 
 def drf_version():
@@ -136,3 +138,21 @@ class DeleteCreateMixin(object):
             attrs = self.update_validated_data(attrs)
             return super(DeleteCreateMixin, self).restore_object(attrs, instance)
 
+
+class NoCacheAPIView(APIView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super(NoCacheAPIView, self).dispatch(request, *args, **kwargs)
+
+        if request.method == 'GET':
+            # TODO: if Django >= 1.8.8 replace it with django.utils.cache.add_never_cache_headers
+            response['Cache-Control'] = 'no-cache'
+
+        return response
+
+
+class NoCacheModelViewSet(viewsets.ModelViewSet, NoCacheAPIView):
+    pass
+
+
+class NoCacheReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet, NoCacheAPIView):
+    pass

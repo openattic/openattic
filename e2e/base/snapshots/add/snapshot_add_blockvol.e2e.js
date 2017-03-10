@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 
 describe('Should create a Snapshot', function(){
