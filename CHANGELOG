@@ -75,6 +75,8 @@ Removed
 * Backend: The IPMI module has been removed (OP-1772)
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
+* Installation: Ensure removal of obsolete RPM/DEB packages during update
+  from a previous version (OP-1968)
 
 
 [2.0.18] - 2017-02-09
