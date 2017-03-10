@@ -18,14 +18,14 @@ from rest import relations
 
 from requests.exceptions import HTTPError
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import status
 
 from drbd.models import Connection
 from exception import validate_input_fields
 from ifconfig.models import Host
-from rest.utilities import get_request_data, mk_method_field_params
+from rest.utilities import get_request_data, mk_method_field_params, NoCacheModelViewSet
 from volumes.models import StorageObject
 
 from rest.multinode.handlers import RequestHandlers
@@ -47,7 +47,7 @@ class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_status()
 
 
-class DrbdConnectionViewSet(viewsets.ModelViewSet):
+class DrbdConnectionViewSet(NoCacheModelViewSet):
     """ Viewset for DRBD connection """
 
     queryset = Connection.objects.all()

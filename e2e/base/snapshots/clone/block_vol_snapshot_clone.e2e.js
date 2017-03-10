@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 
 describe('should create a clone volume of a snapshot (base: blockvolume)', function(){
@@ -28,7 +30,7 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     browser.sleep(400);
     element(by.css('.tc_snap_clone')).click();
     browser.sleep(400);
-    var test = "öasdf 123";
+    var test = 'öasdf 123';
     element(by.model('clone_obj.name')).sendKeys(test);
     browser.sleep(400);
     expect(element(by.css('.tc_cloneNoValidName')).isDisplayed()).toBe(true);

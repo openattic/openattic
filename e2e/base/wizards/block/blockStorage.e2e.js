@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 var wizardsCommon = require('../wizardsCommon.js');
 
@@ -7,12 +9,12 @@ describe('iSCSI/Fibre Channel target', function(){
   var volume1 = element(by.cssContainingText('tr', volumeName1));
   var volumeName2 = 'protractor_wizard_blockvol2';
   var volume2 = element(by.cssContainingText('tr', volumeName2));
-  var hostname1 = "protractor_block_host1";
-  var hostname2 = "protractor_blockWizard_host2";
+  var hostname1 = 'protractor_block_host1';
+  var hostname2 = 'protractor_blockWizard_host2';
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var hostItem = element(by.css('ul .tc_menuitem_hosts > a'));
-  var iqn1 = "iqn.1991-05.com.microsoft:protractor_block_host1";
-  var iqn2 = "iqn.1991-05.com.microsoft:protractor_blockWizard_host2";
+  var iqn1 = 'iqn.1991-05.com.microsoft:protractor_block_host1';
+  var iqn2 = 'iqn.1991-05.com.microsoft:protractor_blockWizard_host2';
   var menu = element.all(by.css('ul .tc_menuitem > a'));
 
   beforeAll(function(){
@@ -56,7 +58,7 @@ describe('iSCSI/Fibre Channel target', function(){
   });
   //<-- end wizard --->
 
-  it('should have created a lun with a fc share', function() {
+  it('should have created a lun with a fc share', function(){
     //check if lun exists
     volumesItem.click();
     expect(volume1.isPresent()).toBe(true);
@@ -90,7 +92,7 @@ describe('iSCSI/Fibre Channel target', function(){
   });
   //<-- end wizard --->
 
-  it('should have created a lun with a fc share', function() {
+  it('should have created a lun with a fc share', function(){
     //check if lun exists
     volumesItem.click();
     expect(volume2.isPresent()).toBe(true);

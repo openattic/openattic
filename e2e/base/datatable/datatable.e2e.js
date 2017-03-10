@@ -1,16 +1,18 @@
+'use strict';
+
 var helpers = require('../../common.js');
 
-var volumename = "protractor_volume_datatable";
+var volumename = 'protractor_volume_datatable';
 var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
-var secondVolumeName = "protractor_secondVol";
+var secondVolumeName = 'protractor_secondVol';
 var secondVolume = element.all(by.cssContainingText('tr', secondVolumeName)).get(0);
 
-var thirdVolumeName = "protractor_thirdVol";
+var thirdVolumeName = 'protractor_thirdVol';
 var thirdVolume = element.all(by.cssContainingText('tr', thirdVolumeName)).get(0);
 
-var firstSnapName = "protractor_test_snap";
-var secSnapName = "second_ptor_snap";
+var firstSnapName = 'protractor_test_snap';
+var secSnapName = 'second_ptor_snap';
 
 var snap1 = element.all(by.css('.tc_snapRowName')).get(0);
 var snap2 = element.all(by.css('.tc_snapRowName')).get(1);
@@ -111,7 +113,7 @@ describe('Should test oadatatable and its options', function(){
 
   it('should display page 1', function(){
     element(by.model('displayNumber')).getAttribute('value').then(function(pageNumber){
-      expect(pageNumber).toBe("1");
+      expect(pageNumber).toBe('1');
     });
   });
 
@@ -153,8 +155,8 @@ describe('Should test oadatatable and its options', function(){
     browser.sleep(400);
     var options = element.all(by.repeater('(text, checked) in columns'))
       .then(function(options){
-        a = 0;
-        for(option in options){
+        var a = 0;
+        for(var option in options){
           options[option].element(by.css('.tc_columnItem')).evaluate('text').then(function(label){
             expect(label).toEqual(list[a]);
             //check: console.log("label: " + label + " list: " + list[a]);
@@ -243,7 +245,7 @@ describe('Should test oadatatable and its options', function(){
   });
 
   afterAll(function(){
-    console.log("datatable -> datatable.e2e.js -> volume based");
+    console.log('datatable -> datatable.e2e.js -> volume based');
   });
 });
 
@@ -267,7 +269,7 @@ describe('snapshot tab based datatable tests', function(){
     browser.sleep(400);
     element(by.id('snap.name')).clear();
     //we need a 60 sec sleep here in order to get a new create date when testing the sort functionality
-    console.log("wait 60 sec i.o. to get a different create date");
+    console.log('wait 60 sec i.o. to get a different create date');
     browser.sleep(60000);
     element(by.model('snap.name')).sendKeys(secSnapName);
     browser.sleep(400);
@@ -323,6 +325,6 @@ describe('snapshot tab based datatable tests', function(){
     helpers.delete_volume(volume, volumename);
     helpers.delete_volume(secondVolume, secondVolumeName);
     helpers.delete_volume(thirdVolume, thirdVolumeName);
-    console.log("datatable -> datatable.e2e.js -> snapshot based");
+    console.log('datatable -> datatable.e2e.js -> snapshot based');
   });
 });
