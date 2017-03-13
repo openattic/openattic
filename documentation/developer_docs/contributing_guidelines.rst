@@ -227,6 +227,11 @@ function named ``test_taskqueue_0002_taskqueue_description_textfield`` which ret
 Please **review** previous test functions of the same
 database table, as they should still work as expected.
 
+.. warning::
+
+  Remember to add all migrations to ``django_16_migrate.py``, otherwise updating from Django 1.6
+  to Django 1.7 won't work anymore.
+
 **Manually migrating the database**:
 
 If you want to perform a manual migration from one database to another, please execute these
