@@ -76,6 +76,7 @@ Removed
 * Backend: The IPMI module has been removed (OP-1772)
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
+* Backend: Fix creation of erasure coded ceph pools (OP-1885)
 * Installation: Ensure removal of obsolete RPM/DEB packages during update
   from a previous version (OP-1968)
 
