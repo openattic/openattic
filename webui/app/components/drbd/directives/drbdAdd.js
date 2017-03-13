@@ -53,11 +53,10 @@ app.directive("drbdAdd", function () {
 
       // Check if we are running a multinode setup. If this is the case, then show
       // the 'Volume Mirroring' checkbox.
-      HostService.query()
+      HostService.query({ is_oa_host: "True" })
         .$promise
         .then(function (res) {
-          var oahosts = $filter("oahostsonly")(res);
-          $scope.data.mirroring_enabled = oahosts.length >= 2;
+          $scope.data.mirroring_enabled = res.length >= 2;
         });
 
       // Listen to Pool selections. Reload and filter the remote pool list
