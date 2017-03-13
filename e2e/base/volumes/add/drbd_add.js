@@ -16,16 +16,11 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should have a mirrored checkbox', function(){
-    	drbdCommon.check_mirrored_checkbox();
+    	expect(drbdCommon.mirroredCheckbox.isPresent()).toBe(true);
     });
 
     it('should create a mirrored volume w/o filesystem', function(){
     	drbdCommon.create_mirrored_volume(volumename, 'lun', '100mb', '10M', 'A');
-        browser.sleep(helpers.configs.sleep);
-    });
-
-    it('should display the "drbd01" volume w/o filesystem in the volume panel', function(){
-        drbdCommon.mirrored_volume_exists("connection")
     });
 
     it('should delete the "drbd01" volume w/o filesystem', function(){
@@ -46,11 +41,6 @@ describe('Should add an mirrored volume', function(){
 
     it('should create a mirrored volume with filesystem', function(){
     	drbdCommon.create_mirrored_volume(volumename, 'ext4', '200MB');
-        browser.sleep(helpers.configs.sleep);
-    });
-
-    it('should display the "drbd01" volume with filesystem in the volume panel', function(){
-        drbdCommon.mirrored_volume_exists("ext4")
     });
 
     it('should delete the "drbd01" volume with filesystem', function(){

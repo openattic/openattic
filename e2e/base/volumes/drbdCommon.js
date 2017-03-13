@@ -5,15 +5,11 @@ var helpers = require('../../common.js');
     var pool = helpers.configs.pools['vg01'];
     var remotePool = helpers.configs.pools['vg02'];
     var volumePoolSelect = element(by.model('pool'));
-    var mirrored = element(by.model('result.is_mirrored'));
+    var mirroredCheckbox = element(by.model('result.is_mirrored'));
     var remotePoolSelect = element(by.model('data.remote_pool'));
-    var volume = element(by.cssContainingText('tr', volumename));
-    var typeColumn = volume.element(by.model('row.type.name'));
 
     var drbdCommon = {
-        check_mirrored_checkbox: function() {
-            expect(mirrored.isPresent()).toBe(true);
-        },
+        mirroredCheckbox: mirroredCheckbox,
 
 		create_mirrored_volume: function(name, type, size, syncerRate, protocol) {
 		    type = type == null ? 'lun' : type;
@@ -35,7 +31,7 @@ var helpers = require('../../common.js');
             element(by.id(type)).click();
 
             // Select the 'Volume Mirroring' checkbox.
-            mirrored.click();
+            mirroredCheckbox.click();
 
             // Select the remote pool.
             remotePoolSelect.click();
@@ -50,12 +46,11 @@ var helpers = require('../../common.js');
 
             // Press the 'Submit' button.
             element(by.css('.tc_submitButton')).click();
-		},
 
-        mirrored_volume_exists: function(type) {
-            expect(volume.isDisplayed()).toBe(true);
-            expect(typeColumn).toEqual(type);
-        }
+            // Is the mirrored volume created?
+            browser.sleep(helpers.configs.sleep);
+            expect(helpers.get_list_element(name).isDisplayed()).toBe(true);
+		}
 	};
     module.exports = drbdCommon;
 }());
