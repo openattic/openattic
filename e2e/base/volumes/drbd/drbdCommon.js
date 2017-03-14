@@ -10,18 +10,19 @@ var helpers = require('../../../common.js');
 	var volumePoolEl = element(by.model('pool'));
 	var mirroredEl = element(by.model('result.is_mirrored'));
 	var remotePoolEl = element(by.model('data.remote_pool'));
-	var syncerRateEl = element(by.model('result.syncer_rate'));
+	var syncRateEl = element(by.model('result.syncer_rate'));
 	var protocolEl = element(by.model('result.protocol'));
 
 	var drbdCommon = {
 		volumeName: volumeName,
 		volume: volume,
 
-		create_volume: function(name, type, size, syncerRate, protocol) {
-			type = type == null ? 'lun' : type;
-			size = size == null ? '100MB' : size;
-			syncerRate = syncerRate == null ? '30M' : syncerRate;
-			protocol = protocol == null ? 'C' : protocol;
+		create_volume: function(name, options) {
+			options.type = options.type == undefined ? 'lun' : options.type;
+			options.size = options.size == undefined ? '100MB' : options.size;
+			options.syncrate = options.syncrate == undefined ? '30M' : options.syncrate;
+			options.protocol = options.protocol == undefined ? 'C' : options.protocol;
+			options.validate = options.validate == undefined ? true : options.validate;
 
 			volumesItem.click();
 			element(by.css('oadatatable .tc_add_btn')).click();
@@ -34,10 +35,10 @@ var helpers = require('../../../common.js');
 				' (volume group,')).click();
 
 			// Set the volume size.
-			element(by.model('data.megs')).sendKeys(size);
+			element(by.model('data.megs')).sendKeys(options.size);
 
 			// Select the type.
-			element(by.id(type)).click();
+			element(by.id(options.type)).click();
 
 			// Select the 'Volume Mirroring' checkbox.
 			expect(mirroredEl.isPresent()).toBe(true);
@@ -48,18 +49,21 @@ var helpers = require('../../../common.js');
 				' (volume group,')).click();
 
 			// Set the syncer rate.
-			syncerRateEl.clear();
-			syncerRateEl.sendKeys(syncerRate);
+			syncRateEl.clear();
+			syncRateEl.sendKeys(options.syncrate);
 
 			// Select the protocol.
-			protocolEl.element(by.cssContainingText('option', '(' + protocol + ')')).click();
+			protocolEl.element(by.cssContainingText('option', '(' + options.protocol +
+				')')).click();
 
 			// Press the 'Submit' button.
 			element(by.css('.tc_submitButton')).click();
 
 			// Is the mirrored volume created?
-			browser.sleep(helpers.configs.sleep);
-			expect(helpers.get_list_element(name).isDisplayed()).toBe(true);
+			if (options.validate) {
+				browser.sleep(helpers.configs.sleep);
+				expect(helpers.get_list_element(name).isDisplayed()).toBe(true);
+			}
 		}
 	};
 	module.exports = drbdCommon;

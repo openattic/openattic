@@ -65,12 +65,12 @@
                placeholder="e.g., 30M",
                ng-model="result.syncer_rate"
                ng-required="result.is_mirrored">
-        <span class="help-block"
+        <span class="help-block tc_syncRateRequired"
               ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
                 validation.syncer_rate.$error.required">
             This field is required!
         </span>
-        <span class="help-block"
+        <span class="help-block tc_invalidSyncRate"
               ng-show="validation.syncer_rate.$error.drbdSyncRateValidate">
             The sync rate must be between 500K and 100M.
         </span>
@@ -95,7 +95,7 @@
             <option value="B">Semi-synchronous (B)</option>
             <option value="C">Synchronous (C)</option>
         </select>
-        <span class="help-block"
+        <span class="help-block tc_protocolRequired"
               ng-show="(validation.$submitted || validation.protocol.$dirty) &&
                 validation.protocol.$error.required">
             This field is required!
