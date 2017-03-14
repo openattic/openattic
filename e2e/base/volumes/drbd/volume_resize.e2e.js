@@ -20,6 +20,7 @@ describe('Should resize a mirrored volume', function(){
 		element(by.css('.tc_resize_btn')).click();
 		expect(submit_button.isDisplayed()).toBe(true);
 		expect(cancel_button.isDisplayed()).toBe(true);
+		cancel_button.click();
 	});
 
 	afterAll(function(){

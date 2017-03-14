@@ -30,8 +30,8 @@ var helpers = require('../../../common.js');
 			element(by.model('result.name')).sendKeys(name);
 
 			// Select the pool.
-			volumePoolEl.click();
-			element.all(by.cssContainingText('option', pool.name + ' (volume group,')).get(0).click();
+			volumePoolEl.element(by.cssContainingText('option', pool.name +
+				' (volume group,')).click();
 
 			// Set the volume size.
 			element(by.model('data.megs')).sendKeys(size);
@@ -44,16 +44,15 @@ var helpers = require('../../../common.js');
 			mirroredEl.click();
 
 			// Select the remote pool.
-			remotePoolEl.click();
-			element.all(by.cssContainingText('option', remotePool.name + ' (volume group,')).get(0).click();
+			remotePoolEl.element(by.cssContainingText('option', remotePool.name +
+				' (volume group,')).click();
 
 			// Set the syncer rate.
 			syncerRateEl.clear();
 			syncerRateEl.sendKeys(syncerRate);
 
 			// Select the protocol.
-			protocolEl.click();
-			element.all(by.cssContainingText('option', '(' + protocol + ')')).get(0).click();
+			protocolEl.element(by.cssContainingText('option', '(' + protocol + ')')).click();
 
 			// Press the 'Submit' button.
 			element(by.css('.tc_submitButton')).click();
