@@ -64,7 +64,6 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.getPoolList = function () {
     if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
-      $scope.selection.items = []; // Removes any selection.
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];
