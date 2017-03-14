@@ -10,10 +10,6 @@ describe('Should resize a mirrored volume', function(){
 		drbdCommon.create_volume(drbdCommon.volumeName, 'xfs', '500mb');
 	});
 
-	beforeEach(function(){
-		browser.refresh();
-	});
-
 	it('should have a resize button instead of a clone button', function(){
 		drbdCommon.volume.click();
 		expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(true);

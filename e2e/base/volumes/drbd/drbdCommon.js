@@ -1,5 +1,5 @@
 'use strict';
-var helpers = require('../../common.js');
+var helpers = require('../../../common.js');
 
 (function(){
 	var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
@@ -7,9 +7,11 @@ var helpers = require('../../common.js');
 	var volume = element(by.cssContainingText('tr', volumeName));
 	var pool = helpers.configs.pools['vg01'];
 	var remotePool = helpers.configs.pools['vg02'];
-	var volumePoolSelect = element(by.model('pool'));
-	var mirroredCheckbox = element(by.model('result.is_mirrored'));
-	var remotePoolSelect = element(by.model('data.remote_pool'));
+	var volumePoolEl = element(by.model('pool'));
+	var mirroredEl = element(by.model('result.is_mirrored'));
+	var remotePoolEl = element(by.model('data.remote_pool'));
+	var syncerRateEl = element(by.model('result.syncer_rate'));
+	var protocolEl = element(by.model('result.protocol'));
 
 	var drbdCommon = {
 		volumeName: volumeName,
@@ -28,7 +30,7 @@ var helpers = require('../../common.js');
 			element(by.model('result.name')).sendKeys(name);
 
 			// Select the pool.
-			volumePoolSelect.click();
+			volumePoolEl.click();
 			element.all(by.cssContainingText('option', pool.name + ' (volume group,')).get(0).click();
 
 			// Set the volume size.
@@ -38,18 +40,19 @@ var helpers = require('../../common.js');
 			element(by.id(type)).click();
 
 			// Select the 'Volume Mirroring' checkbox.
-			expect(mirroredCheckbox.isPresent()).toBe(true);
-			mirroredCheckbox.click();
+			expect(mirroredEl.isPresent()).toBe(true);
+			mirroredEl.click();
 
 			// Select the remote pool.
-			remotePoolSelect.click();
+			remotePoolEl.click();
 			element.all(by.cssContainingText('option', remotePool.name + ' (volume group,')).get(0).click();
 
 			// Set the syncer rate.
-			element(by.model('result.syncer_rate')).sendKeys(syncerRate);
+			syncerRateEl.clear();
+			syncerRateEl.sendKeys(syncerRate);
 
 			// Select the protocol.
-			protocolSelect.click();
+			protocolEl.click();
 			element.all(by.cssContainingText('option', '(' + protocol + ')')).get(0).click();
 
 			// Press the 'Submit' button.
