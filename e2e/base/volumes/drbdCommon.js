@@ -2,55 +2,64 @@
 var helpers = require('../../common.js');
 
 (function(){
-    var pool = helpers.configs.pools['vg01'];
-    var remotePool = helpers.configs.pools['vg02'];
-    var volumePoolSelect = element(by.model('pool'));
-    var mirroredCheckbox = element(by.model('result.is_mirrored'));
-    var remotePoolSelect = element(by.model('data.remote_pool'));
+	var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+	var volumeName = 'drbd01';
+	var volume = element(by.cssContainingText('tr', volumename));
+	var pool = helpers.configs.pools['vg01'];
+	var remotePool = helpers.configs.pools['vg02'];
+	var volumePoolSelect = element(by.model('pool'));
+	var mirroredCheckbox = element(by.model('result.is_mirrored'));
+	var remotePoolSelect = element(by.model('data.remote_pool'));
 
-    var drbdCommon = {
-        mirroredCheckbox: mirroredCheckbox,
+	var drbdCommon = {
+		volumeName: volumeName,
+		volume: volume,
+		mirroredCheckbox: mirroredCheckbox,
 
-		create_mirrored_volume: function(name, type, size, syncerRate, protocol) {
-		    type = type == null ? 'lun' : type;
-		    size = size == null ? '100MB' : size;
-		    syncerRate = syncerRate == null ? '30M' : syncerRate;
-		    protocol = protocol == null ? 'C' : protocol;
+		create_volume: function(name, type, size, syncerRate, protocol) {
+			type = type == null ? 'lun' : type;
+			size = size == null ? '100MB' : size;
+			syncerRate = syncerRate == null ? '30M' : syncerRate;
+			protocol = protocol == null ? 'C' : protocol;
 
-		    // Set the volume name.
-            element(by.model('result.name')).sendKeys(name);
+			volumesItem.click();
+			element(by.css('oadatatable .tc_add_btn')).click();
 
-            // Select the pool.
-            volumePoolSelect.click();
-            element.all(by.cssContainingText('option', pool.name + ' (volume group,')).get(0).click();
+			// Set the volume name.
+			element(by.model('result.name')).sendKeys(name);
 
-            // Set the volume size.
-            element(by.model('data.megs')).sendKeys(size);
+			// Select the pool.
+			volumePoolSelect.click();
+			element.all(by.cssContainingText('option', pool.name + ' (volume group,')).get(0).click();
 
-            // Select the type.
-            element(by.id(type)).click();
+			// Set the volume size.
+			element(by.model('data.megs')).sendKeys(size);
 
-            // Select the 'Volume Mirroring' checkbox.
-            mirroredCheckbox.click();
+			// Select the type.
+			element(by.id(type)).click();
 
-            // Select the remote pool.
-            remotePoolSelect.click();
-            element.all(by.cssContainingText('option', remotePool.name + ' (volume group,')).get(0).click();
+			// Select the 'Volume Mirroring' checkbox.
+			expect(drbdCommon.mirroredCheckbox.isPresent()).toBe(true);
+			mirroredCheckbox.click();
 
-            // Set the syncer rate.
-            element(by.model('result.syncer_rate')).sendKeys(syncerRate);
+			// Select the remote pool.
+			remotePoolSelect.click();
+			element.all(by.cssContainingText('option', remotePool.name + ' (volume group,')).get(0).click();
 
-            // Select the protocol.
-            protocolSelect.click();
-            element.all(by.cssContainingText('option', '(' + protocol + ')')).get(0).click();
+			// Set the syncer rate.
+			element(by.model('result.syncer_rate')).sendKeys(syncerRate);
 
-            // Press the 'Submit' button.
-            element(by.css('.tc_submitButton')).click();
+			// Select the protocol.
+			protocolSelect.click();
+			element.all(by.cssContainingText('option', '(' + protocol + ')')).get(0).click();
 
-            // Is the mirrored volume created?
-            browser.sleep(helpers.configs.sleep);
-            expect(helpers.get_list_element(name).isDisplayed()).toBe(true);
+			// Press the 'Submit' button.
+			element(by.css('.tc_submitButton')).click();
+
+			// Is the mirrored volume created?
+			browser.sleep(helpers.configs.sleep);
+			expect(helpers.get_list_element(name).isDisplayed()).toBe(true);
 		}
 	};
-    module.exports = drbdCommon;
+	module.exports = drbdCommon;
 }());

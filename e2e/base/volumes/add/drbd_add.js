@@ -2,29 +2,16 @@ var helpers = require('../../../common.js');
 var drbdCommon = require('../drbdCommon.js');
 
 describe('Should add an mirrored volume', function(){
-    var volumename = 'drbd01';
-	var volume = element(by.cssContainingText('tr', volumename));
-
     beforeAll(function(){
         helpers.login();
     });
 
-    beforeEach(function(){
-        element(by.css('ul .tc_menuitem_volumes > a')).click();
-        var addBtn = element(by.css('oadatatable .tc_add_btn'));
-        addBtn.click();
-    });
-
-    it('should have a mirrored checkbox', function(){
-    	expect(drbdCommon.mirroredCheckbox.isPresent()).toBe(true);
-    });
-
     it('should create a mirrored volume w/o filesystem', function(){
-    	drbdCommon.create_mirrored_volume(volumename, 'lun', '100mb', '10M', 'A');
+    	drbdCommon.create_mirrored_volume(drbdCommon.volumeName, 'lun', '100mb', '10M', 'A');
     });
 
     it('should delete the "drbd01" volume w/o filesystem', function(){
-        volume.click();
+        drbdCommon.volume.click();
         browser.sleep(400);
         element(by.css('.tc_menudropdown')).click();
         browser.sleep(400);
@@ -36,15 +23,15 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should not show the "drbd01" volume w/o filesystem anymore', function(){
-        expect(volume.isPresent()).toBe(false);
+        expect(drbdCommon.volume.isPresent()).toBe(false);
     });
 
     it('should create a mirrored volume with filesystem', function(){
-    	drbdCommon.create_mirrored_volume(volumename, 'ext4', '200MB');
+    	drbdCommon.create_volume(drbdCommon.volumeName, 'ext4', '200MB', '30M', 'C');
     });
 
     it('should delete the "drbd01" volume with filesystem', function(){
-        volume.click();
+        drbdCommon.volume.click();
         browser.sleep(400);
         element(by.css('.tc_menudropdown')).click();
         browser.sleep(400);
@@ -56,7 +43,7 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should not show the "drbd01" volume with filesystem anymore', function(){
-        expect(volume.isPresent()).toBe(false);
+        expect(drbdCommon.volume.isPresent()).toBe(false);
     });
 
     afterAll(function(){

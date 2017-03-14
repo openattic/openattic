@@ -2,13 +2,13 @@ var helpers = require('../../../common.js');
 var drbdCommon = require('../drbdCommon.js');
 
 describe('Should resize a mirrored volume', function(){
-	var volumename = 'drbd01';
-	var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 	var actionMenu = element(by.css('.tc_menudropdown'));
+	var submit_button = element(by.id('bot2-Msg1'));
+  	var cancel_button = element(by.id('bot1-Msg1'));
 
 	beforeAll(function(){
 		helpers.login();
-		drbdCommon.create_mirrored_volume(volumename, 'xfs', '500mb');
+		drbdCommon.create_volume(drbdCommon.volumeName, 'xfs', '500mb');
 		browser.sleep(400);
 	});
 
@@ -16,22 +16,16 @@ describe('Should resize a mirrored volume', function(){
 		browser.refresh();
 	});
 
-	it('volume: should have a resize button instead of a clone button', function(){
-		volume.click();
+	it('should have a resize button instead of a clone button', function(){
+		drbdCommon.volume.click();
 		expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(true);
 		expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(false);
 	});
 
-	it('volume: should not have a disabled resize menu entry', function(){
-		volume.click();
-		actionMenu.click();
-		expect(element.all(by.css('.oa-dropdown-actions li.disabled a')).count()).toBe(0);
-	});
-
-	it('subvolume: should have a disabled resize menu entry', function(){
-		subvolume.click();
-		actionMenu.click();
-		expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe("Resize");
+	it('should have a resize and a cancel button', function(){
+		element(by.css('.tc_resize_btn')).click();
+		expect(submit_button.isDisplayed()).toBe(true);
+		expect(cancel_button.isDisplayed()).toBe(true);
 	});
 
 	afterAll(function(){
