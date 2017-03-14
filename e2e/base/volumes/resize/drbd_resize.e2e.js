@@ -2,7 +2,6 @@ var helpers = require('../../../common.js');
 var drbdCommon = require('../drbdCommon.js');
 
 describe('Should resize a mirrored volume', function(){
-	var actionMenu = element(by.css('.tc_menudropdown'));
 	var submit_button = element(by.id('bot2-Msg1'));
   	var cancel_button = element(by.id('bot1-Msg1'));
 
