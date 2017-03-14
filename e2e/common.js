@@ -80,9 +80,9 @@
     /**
      * Will create snapshot of the given volume.
      * @param {element} volume - Where to create the snapshot.
-     * @param {string} snapshotName - The name of snapshot.
+     * @param {string} snapshotname - The name of snapshot.
      */
-    create_snapshot: function(volume, snapshotName){
+    create_snapshot: function(volume, snapshotname){
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
@@ -92,26 +92,26 @@
       browser.sleep(400);
       element(by.id('snap.name')).clear();
       browser.sleep(400);
-      element(by.model('snap.name')).sendKeys(snapshotName);
+      element(by.model('snap.name')).sendKeys(snapshotname);
       browser.sleep(400);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(helper.configs.sleep);
-      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      var snapshot = element(by.cssContainingText('tr', snapshotname));
       expect(snapshot.isDisplayed()).toBe(true);
     },
 
     /**
      * Will delete snapshot of the given volume.
      * @param {element} volume - Where to find the snapshot.
-     * @param {string} snapshotName - The name of snapshot.
+     * @param {string} snapshotname - The name of snapshot.
      */
-    delete_snapshot: function(volume, snapshotName){
+    delete_snapshot: function(volume, snapshotname){
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
       browser.sleep(400);
-      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      var snapshot = element(by.cssContainingText('tr', snapshotname));
       expect(snapshot.isDisplayed()).toBe(true);
       snapshot.click();
       browser.sleep(400);
@@ -119,33 +119,33 @@
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
       browser.sleep(400);
-      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      var snapshot = element(by.cssContainingText('tr', snapshotname));
       expect(snapshot.isPresent()).toBe(false);
     },
 
     /**
      * Creates volume clone out of snapshot of the given volume.
      * @param {element} volume - Where to create the snapshot clone.
-     * @param {string} snapshotName - The name of snapshot.
-     * @param {string} cloneName - The name of clone.
+     * @param {string} snapshotname - The name of snapshot.
+     * @param {string} clonename - The name of clone.
      */
-    create_snap_clone: function(volume, snapshotName, cloneName){
+    create_snap_clone: function(volume, snapshotname, clonename){
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
       browser.sleep(400);
-      var snapshot = element(by.cssContainingText('tr', snapshotName));
+      var snapshot = element(by.cssContainingText('tr', snapshotname));
       expect(snapshot.isDisplayed()).toBe(true);
       snapshot.click();
       element.all(by.css('.tc_menudropdown')).get(1).click();
       browser.sleep(400);
       element(by.css('.tc_snap_clone')).click();
       browser.sleep(400);
-      element(by.model('clone_obj.name')).sendKeys(cloneName);
+      element(by.model('clone_obj.name')).sendKeys(clonename);
       element(by.id('bot2-Msg1')).click();
       browser.sleep(helper.configs.sleep);
-      var clone = element(by.cssContainingText('tr', cloneName));
+      var clone = element(by.cssContainingText('tr', clonename));
       expect(clone.isDisplayed()).toBe(true);
     },
 
