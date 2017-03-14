@@ -38,11 +38,7 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
   });
 
   it('should test step 1 and fill it out and go to the next step', function(){
-    wizardProperties.creationPageElementCheck('iSCSI/Fibre Channel target Step 1 - Create Volume');
-    wizardProperties.creationPageValidationTests();
-    wizardProperties.creationPagePoolSelection('zpool');
-    wizardProperties.creationPageInputTests();
-    wizardProperties.creationFromFill(volumeName1, '100MB');
+    wizardProperties.handleFirstPage('iSCSI/Fibre Channel target Step 1 - Create Volume', 'zpool', volumeName1, '100MB');
   });
 
   it('should test step 2 and fill it out and go to the last step', function(){
@@ -53,8 +49,6 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
 
   it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
     wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
-
-    helpers.check_wizard_titles();
   });
   //<-- end wizard --->
 
@@ -76,8 +70,7 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
   });
 
   it('should test step 1 and fill it out and go to the next step', function(){
-    wizardProperties.creationPagePoolSelection('zpool');
-    wizardProperties.creationFromFill(volumeName2, '100MB');
+    wizardProperties.handleFirstPage('iSCSI/Fibre Channel target Step 1 - Create Volume', 'zpool', volumeName2, '100MB');
   });
 
   it('should test step 2 and fill it out and go to the last step', function(){
@@ -87,8 +80,6 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
 
   it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
     wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
-
-    helpers.check_wizard_titles();
   });
   //<-- end wizard --->
 

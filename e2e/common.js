@@ -187,26 +187,6 @@
       expect(host.isPresent()).toBe(false);
     },
 
-    check_wizard_titles: function(){
-      var wizards = element.all(by.repeater('wizard in wizards'))
-        .then(function(wizards){
-          wizards[0].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(title){
-            expect(title).toEqual('File Storage');
-            //console.log(title);
-          });
-
-          wizards[1].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(vm_title){
-            expect(vm_title).toEqual('VM Storage');
-            //console.log(vm_title);
-          });
-
-          wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
-            expect(block_title).toEqual('iSCSI/Fibre Channel target');
-            //console.log(block_title);
-          });
-        });
-    },
-
     delete_nfs_share: function(volName, nfsName){
       volumesItem.click();
       var volume = helper.get_list_element(volName);
