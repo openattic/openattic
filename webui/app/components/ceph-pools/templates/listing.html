@@ -60,6 +60,7 @@
         <tbody>
             <tr ng-repeat="row in data.results"
                 ng-class="{ info: isRowSelected(row) }"
+                class="clickable"
                 ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available">
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
