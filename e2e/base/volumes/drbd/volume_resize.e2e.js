@@ -28,6 +28,6 @@ describe('Should resize a mirrored volume', function(){
 
 	afterAll(function(){
 		helpers.delete_volume(drbdCommon.volume, drbdCommon.volumeName);
-		console.log('volumes_resize -> drbd_resize.e2e.js');
+		console.log('volumes_drbd -> volume_resize.e2e.js');
 	});
 });

@@ -31,6 +31,6 @@ describe('Should add an mirrored volume', function(){
     });
 
     afterAll(function(){
-        console.log('volumes_add -> volumes_add_drbd.e2e.js');
+        console.log('volumes_drbd -> volume_add.e2e.js');
     });
 });
