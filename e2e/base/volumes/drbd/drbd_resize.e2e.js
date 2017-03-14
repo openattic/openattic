@@ -1,5 +1,5 @@
 var helpers = require('../../../common.js');
-var drbdCommon = require('../drbdCommon.js');
+var drbdCommon = require('./drbdCommon.js');
 
 describe('Should resize a mirrored volume', function(){
 	var submit_button = element(by.id('bot2-Msg1'));

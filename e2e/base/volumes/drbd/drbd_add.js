@@ -1,5 +1,5 @@
 var helpers = require('../../../common.js');
-var drbdCommon = require('../drbdCommon.js');
+var drbdCommon = require('./drbdCommon.js');
 
 describe('Should add an mirrored volume', function(){
     beforeAll(function(){
