@@ -53,6 +53,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fixed random fails in wizard tests (OP-1969)
 * WebUI/QA: Fixed random fails in the task queue test (OP-1970)
 * WebUI/QA: Fixed some e2e styling issues (OP-1992)
 * WebUI: Fixed inconsistent state of rbd datatable actions (OP-1954)
