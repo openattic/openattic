@@ -28,6 +28,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Only use the items array in the ceph pool and rbd deletion process (OP-1981)
 * WebUI/QA: Removed static names from common.js (OP-1971)
 * Backend: REST API response header do now contain 'Cache-Control: no-cache'
   option (OP-1402)
