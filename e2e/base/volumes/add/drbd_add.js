@@ -7,19 +7,11 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should create a mirrored volume w/o filesystem', function(){
-    	drbdCommon.create_mirrored_volume(drbdCommon.volumeName, 'lun', '100mb', '10M', 'A');
+    	drbdCommon.create_volume(drbdCommon.volumeName, 'lun', '100mb', '10M', 'A');
     });
 
     it('should delete the "drbd01" volume w/o filesystem', function(){
-        drbdCommon.volume.click();
-        browser.sleep(400);
-        element(by.css('.tc_menudropdown')).click();
-        browser.sleep(400);
-        element(by.css('.tc_deleteItem')).click();
-        browser.sleep(400);
-        element(by.model('input.enteredName')).sendKeys('yes');
-        element(by.id('bot2-Msg1')).click();
-        browser.sleep(400);
+        helpers.delete_volume(drbdCommon.volume, drbdCommon.volumeName);
     });
 
     it('should not show the "drbd01" volume w/o filesystem anymore', function(){
@@ -31,15 +23,7 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should delete the "drbd01" volume with filesystem', function(){
-        drbdCommon.volume.click();
-        browser.sleep(400);
-        element(by.css('.tc_menudropdown')).click();
-        browser.sleep(400);
-        element(by.css('.tc_deleteItem')).click();
-        browser.sleep(400);
-        element(by.model('input.enteredName')).sendKeys('yes');
-        element(by.id('bot2-Msg1')).click();
-        browser.sleep(400);
+        helpers.delete_volume(drbdCommon.volume, drbdCommon.volumeName);
     });
 
     it('should not show the "drbd01" volume with filesystem anymore', function(){

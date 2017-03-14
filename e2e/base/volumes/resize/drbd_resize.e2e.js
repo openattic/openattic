@@ -9,7 +9,6 @@ describe('Should resize a mirrored volume', function(){
 	beforeAll(function(){
 		helpers.login();
 		drbdCommon.create_volume(drbdCommon.volumeName, 'xfs', '500mb');
-		browser.sleep(400);
 	});
 
 	beforeEach(function(){
@@ -29,7 +28,7 @@ describe('Should resize a mirrored volume', function(){
 	});
 
 	afterAll(function(){
-		helpers.delete_volume(volume, volumename);
+		helpers.delete_volume(drbdCommon.volume, drbdCommon.volumeName);
 		console.log('volumes_resize -> drbd_resize.e2e.js');
 	});
 });

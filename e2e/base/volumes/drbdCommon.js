@@ -4,7 +4,7 @@ var helpers = require('../../common.js');
 (function(){
 	var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
 	var volumeName = 'drbd01';
-	var volume = element(by.cssContainingText('tr', volumename));
+	var volume = element(by.cssContainingText('tr', volumeName));
 	var pool = helpers.configs.pools['vg01'];
 	var remotePool = helpers.configs.pools['vg02'];
 	var volumePoolSelect = element(by.model('pool'));
@@ -14,7 +14,6 @@ var helpers = require('../../common.js');
 	var drbdCommon = {
 		volumeName: volumeName,
 		volume: volume,
-		mirroredCheckbox: mirroredCheckbox,
 
 		create_volume: function(name, type, size, syncerRate, protocol) {
 			type = type == null ? 'lun' : type;
@@ -39,7 +38,7 @@ var helpers = require('../../common.js');
 			element(by.id(type)).click();
 
 			// Select the 'Volume Mirroring' checkbox.
-			expect(drbdCommon.mirroredCheckbox.isPresent()).toBe(true);
+			expect(mirroredCheckbox.isPresent()).toBe(true);
 			mirroredCheckbox.click();
 
 			// Select the remote pool.
