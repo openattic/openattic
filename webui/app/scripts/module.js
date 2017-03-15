@@ -63,7 +63,7 @@ app.run(function ($rootScope, usersService) {
     usersService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
     }).catch(function (error) {
-      error.preventDefault(); // Prevents notification from opening.
+      error.preventDefault(401); // Prevents notification on 401 from opening.
       $rootScope.loggedIn = false;
     });
   });
