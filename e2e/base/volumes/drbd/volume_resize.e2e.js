@@ -22,6 +22,7 @@ describe('Should resize a mirrored volume', function(){
 		resize_button.click();
 		expect(submit_button.isDisplayed()).toBe(true);
 		expect(cancel_button.isDisplayed()).toBe(true);
+		// No need to test the resizing in general, this is done by the Gatling tests.
 		cancel_button.click();
 	});
 
