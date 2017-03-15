@@ -1,14 +1,16 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 
 describe('Should map a LUN to an host', function(){
 
   var hostSelect = element(by.model('share.host'));
-  var hostname = "protractor_test_host";
+  var hostname = 'protractor_map_lun_host';
   var host = element(by.cssContainingText('tr', hostname));
 
-  var volumename = "protractor_iscsiMap_vol";
+  var volumename = 'protractor_iscsiMap_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-  var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
+  var iqn = 'iqn.1991-05.com.microsoft:' + hostname;
   var iscsiShareTab = function(){
     element(by.css('ul .tc_menuitem_volumes > a')).click();
     browser.sleep(400);
@@ -23,11 +25,11 @@ describe('Should map a LUN to an host', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume(volumename, "lun");
+    helpers.create_volume(volumename, 'lun');
   });
 
   it('should add the host with iqn as attribute', function(){
-    helpers.create_host(iqn);
+    helpers.create_host(hostname, iqn);
     browser.sleep(400);
     expect(host.isPresent()).toBe(true);
   });
@@ -62,7 +64,7 @@ describe('Should map a LUN to an host', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    helpers.delete_host();
+    helpers.delete_host(hostname);
     console.log('lun -> map_lun.e2e.js');
   });
 

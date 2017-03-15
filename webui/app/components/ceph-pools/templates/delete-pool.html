@@ -4,35 +4,39 @@
 </div>
 <div class="openattic-modal-content">
     <!-- single cephPool -->
-    <p ng-if="cephPool">
-        You are about to delete the Ceph pool <strong>{{cephPool.name}}</strong>.
-    </p>
-    <p ng-if="cephPool">
-        Be aware that you will <strong>lose all data</strong>
-        in that Ceph pool and that this operation <strong>cannot be undone</strong>.
-    </p>
-    <p ng-if="cephPool">
-        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
+    <div ng-if="cephPools.length === 1">
+        <p>
+            You are about to delete the Ceph pool <strong>{{cephPool.name}}</strong>.
+        </p>
+        <p>
+            Be aware that you will <strong>lose all data</strong>
+            in that Ceph pool and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <p>
+            To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+    </div>
     <!-- end single cephPool -->
 
     <!-- multiple cephPools -->
-    <p ng-if="!cephPool && cephPools">
-        You are about to delete multiple Ceph pools.
-    </p>
-    <p ng-if="!cephPool && cephPools">
-        Be aware that you will <strong>lose all data</strong>
-        in the Ceph pools and that this operation <strong>cannot be undone</strong>.
-    </p>
-    <span class="text-danger" ng-if="!cephPool && cephPools">The following Ceph pools will be deleted:</span>
-    <ul class="text-danger" ng-if="!cephPool && cephPools">
-        <li ng-repeat="cephPool in cephPools">
-            {{cephPool.name}} ({{cephPool.num_bytes | bytes}})
-        </li>
-    </ul>
-    <p ng-if="!cephPool && cephPools">
-        To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
-    </p>
+    <div ng-if="cephPools.length > 1">
+        <p>
+            You are about to delete multiple Ceph pools.
+        </p>
+        <p>
+            Be aware that you will <strong>lose all data</strong>
+            in the Ceph pools and that this operation <strong>cannot be undone</strong>.
+        </p>
+        <span class="text-danger">The following Ceph pools will be deleted:</span>
+        <ul class="text-danger">
+            <li ng-repeat="cephPool in cephPools">
+                {{cephPool.name}} ({{cephPool.num_bytes | bytes}})
+            </li>
+        </ul>
+        <p>
+            To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+        </p>
+    </div>
     <!-- end multiple cephPools -->
 
     <form name="deleteForm" role="form" novalidate>

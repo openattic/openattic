@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../../common.js');
 var wizardsCommon = require('../wizardsCommon.js');
 
@@ -7,17 +9,17 @@ describe('iSCSI/Fibre Channel target', function(){
   var volume1 = element(by.cssContainingText('tr', volumeName1));
   var volumeName2 = 'protractor_wizard_blockvol2';
   var volume2 = element(by.cssContainingText('tr', volumeName2));
-  var hostname1 = "protractor_block_host1";
-  var hostname2 = "protractor_blockWizard_host2";
+  var hostname1 = 'protractor_block_host1';
+  var hostname2 = 'protractor_blockWizard_host2';
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var hostItem = element(by.css('ul .tc_menuitem_hosts > a'));
-  var iqn1 = "iqn.1991-05.com.microsoft:protractor_block_host1";
-  var iqn2 = "iqn.1991-05.com.microsoft:protractor_blockWizard_host2";
+  var iqn1 = 'iqn.1991-05.com.microsoft:protractor_block_host1';
+  var iqn2 = 'iqn.1991-05.com.microsoft:protractor_blockWizard_host2';
   var menu = element.all(by.css('ul .tc_menuitem > a'));
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_host(iqn1, null, hostname1);
+    helpers.create_host(hostname1, iqn1);
   });
 
   it('should verify the created host', function(){
@@ -36,11 +38,7 @@ describe('iSCSI/Fibre Channel target', function(){
   });
 
   it('should test step 1 and fill it out and go to the next step', function(){
-    wizardProperties.creationPageElementCheck('iSCSI/Fibre Channel target Step 1 - Create Volume');
-    wizardProperties.creationPageValidationTests();
-    wizardProperties.creationPagePoolSelection('volume group');
-    wizardProperties.creationPageInputTests();
-    wizardProperties.creationFromFill(volumeName1, '100MB');
+    wizardProperties.handleFirstPage('iSCSI/Fibre Channel target Step 1 - Create Volume', 'volume group', volumeName1, '100MB');
   });
 
   it('should test step 2 and fill it out and go to the last step', function(){
@@ -51,12 +49,10 @@ describe('iSCSI/Fibre Channel target', function(){
 
   it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
     wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
-
-    helpers.check_wizard_titles();
   });
   //<-- end wizard --->
 
-  it('should have created a lun with a fc share', function() {
+  it('should have created a lun with a fc share', function(){
     //check if lun exists
     volumesItem.click();
     expect(volume1.isPresent()).toBe(true);
@@ -74,8 +70,7 @@ describe('iSCSI/Fibre Channel target', function(){
   });
 
   it('should test step 1 and fill it out and go to the next step', function(){
-    wizardProperties.creationPagePoolSelection('volume group');
-    wizardProperties.creationFromFill(volumeName2, '100MB');
+    wizardProperties.handleFirstPage('iSCSI/Fibre Channel target Step 1 - Create Volume', 'volume group', volumeName2, '100MB');
   });
 
   it('should test step 2 and fill it out and go to the last step', function(){
@@ -85,12 +80,10 @@ describe('iSCSI/Fibre Channel target', function(){
 
   it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
     wizardProperties.configurationExecution('iSCSI/Fibre Channel target Step 3 - Save configuration');
-
-    helpers.check_wizard_titles();
   });
   //<-- end wizard --->
 
-  it('should have created a lun with a fc share', function() {
+  it('should have created a lun with a fc share', function(){
     //check if lun exists
     volumesItem.click();
     expect(volume2.isPresent()).toBe(true);

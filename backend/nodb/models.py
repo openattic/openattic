@@ -605,3 +605,17 @@ class JsonField(Field):
     @property
     def empty_values(self):
         return [u'', [], {}]
+
+try:
+    from django.db.migrations import AlterField
+
+    class AlterNoDBField(AlterField):
+        def database_forwards(self, app_label, schema_editor, from_state, to_state):
+            pass
+
+        def describe(self):
+            return "Alter NoDB field {} on {}".format(self.name, self.model_name)
+except ImportError:
+    # Django 1.6 does not have an AlterField, but it also doesn't use the Django 1.7+ migrations, so
+    # no need to do anything here.
+    pass

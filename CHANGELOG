@@ -28,6 +28,8 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Only use the items array in the ceph pool and rbd deletion process (OP-1981)
+* WebUI/QA: Removed static names from common.js (OP-1971)
 * Backend: REST API response header do now contain 'Cache-Control: no-cache'
   option (OP-1402)
 * WebUI: Disabled successful task queue notifications (OP-1961)
@@ -51,6 +53,10 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fixed random fails in wizard tests (OP-1969)
+* WebUI/QA: Fixed random fails in the task queue test (OP-1970)
+* WebUI/QA: Fixed some e2e styling issues (OP-1992)
+* WebUI: Fixed inconsistent state of rbd datatable actions (OP-1954)
 * WebUI: Fixed the RBD utilization graphs (OP-1945)
 * WebUI: Fixed ceph pagination issue (OP-1925)
 * WebUI: Fixed bug when generating a new user API token. (OP-1914)
@@ -60,7 +66,8 @@ Fixed
   message isn't forwarded to the API caller. (OP-1956)
 * Backend: The validation error message must be added as an array per field
   name. (OP-1978)
-* Installation: Fixed domain join - wrong order on oaconfig script (OP-1209)
+* Installation: Fixed domain join - wrong order on ``oaconfig`` script (OP-1209)
+* Installation: fixed location of the Nagios ``status.dat`` file on EL7 (OP-1955)
 * Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
 
 Removed
@@ -73,6 +80,9 @@ Removed
 * Backend: The IPMI module has been removed (OP-1772)
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
+* Backend: Fix creation of erasure coded ceph pools (OP-1885)
+* Installation: Ensure removal of obsolete RPM/DEB packages during update
+  from a previous version (OP-1968)
 
 
 [2.0.18] - 2017-02-09

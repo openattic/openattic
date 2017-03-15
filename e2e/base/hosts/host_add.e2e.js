@@ -19,9 +19,9 @@ describe('Should add a host and attributes', function(){
   });
 
   it('should create the test hosts', function(){
-    helpers.create_host(iqn, null, hostnames[0]);
-    for (var i = 1; i < hostnames.length; i++) {
-      helpers.create_host(null,null,hostnames[i]);
+    helpers.create_host(hostnames[0], iqn);
+    for (var i = 1; i < hostnames.length; i++){
+      helpers.create_host(hostnames[i]);
     }
   });
 
