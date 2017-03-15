@@ -31,6 +31,7 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should delete the "drbd01" volume w/o filesystem', function(){
+    	browser.sleep(helpers.configs.sleep);
         helpers.delete_volume(drbdCommon.volume, drbdCommon.volumeName);
     });
 
@@ -43,6 +44,7 @@ describe('Should add an mirrored volume', function(){
     });
 
     it('should delete the "drbd01" volume with filesystem', function(){
+    	browser.sleep(helpers.configs.sleep);
         helpers.delete_volume(drbdCommon.volume, drbdCommon.volumeName);
     });
 
