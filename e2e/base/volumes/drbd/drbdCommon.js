@@ -6,7 +6,7 @@ var helpers = require('../../../common.js');
 	var volumeName = 'drbd01';
 	var volume = element(by.cssContainingText('tr', volumeName));
 	var pool = helpers.configs.pools['vg01'];
-	var remotePool = helpers.configs.pools['vg02'];
+	var remotePool = helpers.configs.pools['vg04'];
 	var volumePoolEl = element(by.model('pool'));
 	var mirroredEl = element(by.model('result.is_mirrored'));
 	var remotePoolEl = element(by.model('data.remote_pool'));
@@ -45,7 +45,6 @@ var helpers = require('../../../common.js');
 			mirroredEl.click();
 
 			// Select the remote pool.
-			browser.sleep(helpers.configs.sleep);
 			remotePoolEl.element(by.cssContainingText('option', remotePool.name +
 				' (volume group,')).click();
 
