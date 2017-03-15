@@ -386,7 +386,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
             $scope.saveDashboard();
           }
         }).catch(function (error) {
-          error.preventDefault(401);
+          error.ignoreStatusCode(401);
         });
   };
 

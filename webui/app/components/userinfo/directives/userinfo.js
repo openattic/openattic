@@ -42,7 +42,7 @@ app.directive("userinfo", function () {
         $rootScope.user = res;
       })
       .catch(function (error) {
-        error.preventDefault(401); // Prevents notification on 401 from opening.
+        error.ignoreStatusCode(401);
       });
     }
   };

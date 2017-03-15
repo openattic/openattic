@@ -58,11 +58,28 @@ app.factory("ApiErrorDecoratorService", function ($q, Notification) {
         /**
          * Decorated preventDefault method (in case error previously had preventDefault method defined).
          * If called, it will prevent a toasty to pop up.
-         * @param {int} [htmlStatusCode] - Only prevent notification on this status code.
          */
-        error.preventDefault = function (htmlStatusCode) {
-          if (angular.isUndefined(htmlStatusCode) || this.status === htmlStatusCode) {
-            notification.cancel();
+        error.preventDefault = function () {
+          notification.cancel();
+        };
+
+        /**
+         * If called, it will prevent a toasty to pop up on a specific status code.
+         * @param {int} htmlStatusCode
+         */
+        error.ignoreStatusCode = function (htmlStatusCode) {
+          if (this.status === htmlStatusCode) {
+            this.preventDefault();
+          }
+        };
+
+        /**
+         * If called, it will prevent a toasty to pop up on a specific status codes.
+         * @param {int[]} htmlStatusCodes
+         */
+        error.ignoreStatusCodes = function (htmlStatusCodes) {
+          if (htmlStatusCodes.indexOf(this.status) !== -1) {
+            this.preventDefault();
           }
         };
       }
