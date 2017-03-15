@@ -830,7 +830,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                 task.delete()
 
             if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
-                disk_usage = latest_task.json_result
+                disk_usage, _exec_time = latest_task.json_result
 
         self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
 
