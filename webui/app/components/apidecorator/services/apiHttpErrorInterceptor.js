@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.apidecorator");
 
-app.factory("ApiErrorDecoratorService", function ($q, Notification) {
+app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
   return {
     decorate: function (error) {
       var simpleMsg;
@@ -40,6 +40,7 @@ app.factory("ApiErrorDecoratorService", function ($q, Notification) {
       var detalMsg = "";
 
       if (error) {
+        $log.error(error);
         simpleMsg = error && error.config && error.config.method && error.config.url &&
           "[" + error.config.method + ": " + error.config.url + "] => " + error.status;
         angular.forEach(error.data, function (val, key) {

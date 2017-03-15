@@ -95,9 +95,6 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
         options.timeout = globalConfig.GUI.defaultNotificationTimes[options.type];
       }
       toasty[options.type](options);
-      if (angular.isObject(error)) {
-        throw error;
-      }
     }, this.delay);
     return this;
   };

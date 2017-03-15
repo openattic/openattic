@@ -359,7 +359,6 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
               title: "RBD creation error " + error.status,
               msg: "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + "."
             }, error);
-            throw error;
           }
         });
     }
