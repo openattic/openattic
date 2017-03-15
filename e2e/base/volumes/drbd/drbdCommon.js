@@ -45,6 +45,7 @@ var helpers = require('../../../common.js');
 			mirroredEl.click();
 
 			// Select the remote pool.
+			browser.sleep(helpers.configs.sleep);
 			remotePoolEl.element(by.cssContainingText('option', remotePool.name +
 				' (volume group,')).click();
 
