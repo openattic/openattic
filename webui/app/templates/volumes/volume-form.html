@@ -6,44 +6,7 @@
             </div>
             <div class="panel-body">
                 <volume-add-form volume-form="volumeForm" result="volume"></volume-add-form>
-                <!-- Not implemented yet.
-                <uib-accordion>
-                    <uib-accordion-group is-open="accordionOpen.properties">
-                        <uib-accordion-heading>
-                            Volume Properties
-                            <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.properties,
-                            'fa fa-angle-down': !accordionOpen.properties}"></i>
-                        </uib-accordion-heading>
-                    </uib-accordion-group>
-                    <uib-accordion-group is-open="accordionOpen.mirror" is-disabled="true">
-                        <uib-accordion-heading>
-                            <div style="color: #BDBDBD;">
-                                Volume Mirroring - <i><b>Coming Soon...</b></i>
-                            <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.mirror,
-                            'fa fa-angle-down': !accordionOpen.mirror}"></i></div>
-                        </uib-accordion-heading>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Mirror Host</label>
-                            <div class="col-md-10">
-                                <select class="form-control" ng-model="data.mirrorHost" id="mirror-host"
-                                        ng-options="host.name for host in hosts track by host.name"
-                                        title="Coming soon...">
-                                    <option value="">-- Select a host --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Mirror Pool</label>
-                            <div class="col-md-10">
-                                <select class="form-control" ng-model="data.mirrorPool" ng-options="
-                                pool.name for pool in pools track by pool.name">
-                                    <option value="">-- Select a host --</option>
-                                </select>
-                            </div>
-                        </div>
-                    </uib-accordion-group>
-                </uib-accordion>
-                -->
+                <drbd-add validation="volumeForm" result="volume"></drbd-add>
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">

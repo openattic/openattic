@@ -5,7 +5,7 @@
         <select ng-disabled="!pools" class="form-control tc_pool_selection tc_source_pool" ng-model="pool"
                 ng-options="(pool.name + ' (' + pool.type.name + ', ' +
                 pool.host.title + ', ' + pool.usage.free_text + ' free)')
-                for pool in pools track by pool.id" name="pool" required>
+                for pool in pools track by pool.id" id="pool" name="pool" required>
             <option class="tc_volumePoolOption" value="" ng-bind="waitingMsg"></option>
         </select>
         <div ng-show="pool" class="progress-bar-outer clearfix">
@@ -16,7 +16,10 @@
                     {{pool.usage.used_text}} of
                     {{pool.usage.size_text}} used</span>
                 <span class="pull-right tc_poolAvailableSize">
-                    {{pool.usage.free_text}} free - <a ng-click="megs = pool.usage.free + 'MB'">use max</a>
+                    {{pool.usage.free_text}} free
+                    <a ng-click="megs = pool.usage.free + 'MB'" uib-tooltip="Use max.">
+                        <i class="fa fa-arrows-h"></i>
+                    </a>
                 </span>
         </div>
         <span class="help-block tc_poolRequired" ng-show="(submitted || validation.$dirty)

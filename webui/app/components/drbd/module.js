@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,19 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.filter("initiatorsonly", function (InitiatorService) {
-  return function (hosts) {
-    var initiators = [];
-    angular.forEach(hosts, function (host) {
-      InitiatorService.filter({host: host.id})
-        .$promise
-        .then(function (res) {
-          if (res.count > 0) {
-            initiators.push(host);
-          }
-        });
-    });
-    return initiators;
-  };
-});
+angular.module("openattic.drbd", [
+	"openattic.hosts",
+	"openattic.pools"
+]);

@@ -45,6 +45,56 @@ class DrbdTests(object):
         endpoints_res = self.send_request("GET", "volumes", search_param=upper_id)
         self.assertEqual(endpoints_res["count"], 2, msg="number of endpoints is not equal 2")
 
+    def test_create_get_delete_via_volumes(self):
+        """
+        Create a connection via /api/volumes and check that its endpoints are
+        created correctly.
+        """
+        vol_data = {"megs": self.volumesize,
+                    "name": "gatling_drbd_vol1",
+                    "source_pool": self._get_pool(),
+                    "remote_pool": self._get_remote_pool(),
+                    "is_mirrored": True,
+                    "syncer_rate": "25M",
+                    "protocol": "C"}
+        mirror_res = self.send_request("POST", "volumes", data=vol_data)
+        time.sleep(self.sleeptime)
+
+        # Use the DRBD connection URL for cleanup.
+        mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
+
+        # Check if there are to endpoints (volumes) related to this DRBD mirror.
+        upper_id = "upper__id=%s" % mirror_res["response"]["volume"]["id"]
+        endpoints_res = self.send_request("GET", "volumes", search_param=upper_id)
+        self.assertEqual(endpoints_res["count"], 2, msg="number of endpoints is not equal 2")
+
+    def test_remote_create_get_delete_via_volumes(self):
+        """
+        Create a connection via /api/volumes and check that its endpoints are
+        created correctly.
+        """
+        vol_data = {"megs": self.volumesize,
+                    "name": "gatling_drbd_vol1",
+                    "source_pool": self._get_remote_pool(),
+                    "remote_pool": self._get_pool(),
+                    "is_mirrored": True,
+                    "syncer_rate": "510K",
+                    "protocol": "A"}
+        mirror_res = self.send_request("POST", "volumes", data=vol_data)
+        time.sleep(self.sleeptime)
+
+        # Use the DRBD connection URL for cleanup.
+        mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
+
+        # Check if there are to endpoints (volumes) related to this DRBD mirror.
+        upper_id = "upper__id=%s" % mirror_res["response"]["volume"]["id"]
+        endpoints_res = self.send_request("GET", "volumes", search_param=upper_id)
+        self.assertEqual(endpoints_res["count"], 2, msg="number of endpoints is not equal 2")
+
     def test_remote_create_get_delete(self):
         """ Create a Connection for a volume located on the remote host. """
         # Create a volume on the remote host
@@ -86,6 +136,31 @@ class DrbdTests(object):
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
         self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
         self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+
+    def test_create_with_filesystem_get_delete_via_volumes(self):
+        """
+        Create a connection via /api/volumes and format its /dev/drbdX with EXT4.
+        """
+        vol_data = {"megs": self.volumesize,
+                    "name": "gatling_drbd_vol1",
+                    "source_pool": self._get_pool(),
+                    "remote_pool": self._get_remote_pool(),
+                    "is_mirrored": True,
+                    "syncer_rate": "25M",
+                    "protocol": "C",
+                    "filesystem": "ext4"}
+        mirror_res = self.send_request("POST", "volumes", data=vol_data)
+        mirror = mirror_res["response"]
+        time.sleep(self.sleeptime)
+        # Use the DRBD connection URL for cleanup.
+        mirror_res["cleanup_url"] = mirror_res["response"]["volume"]["url"]
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
+
+        # Check if the filesystem is created on top of the DRBD connection.
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "ext4")
 
     def test_create_resize_get_delete(self):
         """ Create a connection with 1000MB volumes and resize it to 2000MB. """
@@ -148,20 +223,16 @@ class DrbdTests(object):
                 raise SystemError("Status of DRBD connection %s is degraded." %
                                   mirror["volume"]["title"])
 
-        with self.assertRaises(requests.exceptions.HTTPError) as err:
-            # Resize drbd mirror
-            self.send_request("PUT", "mirrors", obj_id=mirror["id"],
-                              data={"new_size": self.growsize})
-
-        expected_err_message = "Resizing a formatted DRBD connection is not implemented yet."
-        self.check_exception_messages(err, expected_err_message)
-
+        # Resize drbd mirror
+        self.send_request("PUT", "volumes", obj_id=mirror["volume"]["id"],
+                          data={"megs": self.growsize})
+        
         # Check if resize (grow) was successful
-        # time.sleep(self.sleeptime)
-        # mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
-        # self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
-        # self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
-        # self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+        time.sleep(2 * self.sleeptime)
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
+        self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
 
     def test_create_shrink_delete(self):
         """ Create a connection with 1000MB volumes, try to shrink it to 500MB and check if it

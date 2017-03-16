@@ -154,7 +154,7 @@ class Connection(BlockVolume):
         if m is None:
             raise ValueError(_("syncer rate must be in <number>[K|M|G] format"))
         mult = {
-            '':  1024,
+            '':  1,
             'K': 1024,
             'M': 1024**2,
             'G': 1024**3,
@@ -257,8 +257,6 @@ class Connection(BlockVolume):
         self.drbd.resize(self.name, False)
 
     def resize_local_storage_device(self, new_size):
-        if self.storageobj.filesystemvolume_or_none:
-            raise NotSupportedError("Resizing a formatted DRBD connection is not implemented yet.")
         if self.status != "Connected":
             raise NotSupportedError("Can only resize DRBD volumes in 'Connected' state, current "
                                     "state is '%s'" % self.status)
@@ -347,26 +345,11 @@ class Endpoint(models.Model):
             return None
 
     def install(self, init_primary):
-        conf = ""
-        # for lowerconn in self.connection.stack_child_set.all():
-        #    conf += render_to_string( "drbd/device.res", {
-        #        'Hostname':   socket.gethostname(),
-        #        'Connection': lowerconn,
-        #        'UpperConn':  self.connection
-        #        } )
-
-        conf += render_to_string("drbd/device.res", {
-            'Hostname':   socket.gethostname(),
-            'Connection': self.connection,
-            'Endpoints':  Endpoint.all_objects.filter(connection=self.connection),
-            'UpperConn':  None
-            })
-
         self.connection.storageobj.lock()
         # Load the kernel module.
         self.connection.drbd.modprobe()
         # Write the DRBD resource configuration file.
-        self.connection.drbd.conf_write(self.connection.name, conf)
+        self.connection.drbd.conf_write(self.connection.name)
         # Wait for the underlying volume to become ready.
         self.connection.drbd.wait_for_device(self.volume.volume.path)
         # Create the DRBD meta data.

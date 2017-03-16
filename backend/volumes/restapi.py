@@ -172,9 +172,23 @@ class PoolSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModel
         return obj.get_status()
 
 
+def poolfilter_excl_host(queryset, host_id):
+    if not host_id:
+        return queryset
+
+    result = []
+    # It's not possible to use queryset.filter() here, so we have to do it on our own.
+    for entry in queryset:
+        if entry.host.id != host_id:
+            result.append(entry)
+
+    return result
+
+
 class PoolFilter(django_filters.FilterSet):
     type = django_filters.CharFilter(name="volumepool__volumepool_type__app_label",
                                      lookup_type="iexact")
+    excl_host = django_filters.NumberFilter(action=poolfilter_excl_host)
 
     class Meta:
         model = models.StorageObject
@@ -513,31 +527,30 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
             # file system. After that the DRBD connection and file system,
             # if specified, are created by the DRBD app.
             if data['is_mirrored']:
+                source_pool = models.StorageObject.all_objects.get(id=data["source_pool"]["id"])
+                remote_pool = models.StorageObject.all_objects.get(id=data["remote_pool"]["id"])
                 # 1. Create the volume without a file system.
                 new_request = self._clone_request_with_new_data(
-                    request, dict(data, filesystem=""))
-                response = super(VolumeProxyViewSet, self).create(
-                    new_request, args, kwargs)
+                    request, dict(data, filesystem="", is_mirrored=False))
+                response = self._remote_request(new_request, source_pool.host, api_prefix="volumes")
                 if not status.is_success(response.status_code):
                     return response
                 # 2. Create the DRBD connection and the file system if specified.
                 # Get the host where the source volume is located and build
                 # the request object with the required arguments.
-                current_host = Host.objects.get_current()
                 new_request = self._clone_request_with_new_data(
                     request, dict(data, source_volume={
                         'id': response.data['id'],
                         'host': {
-                            'id': current_host.id
+                            'id': source_pool.host.id
                         }
-                    }, remote_pool={
-                        'id': data['remote_pool']['id'],
+                    }, remote_pool= {
+                        'id': remote_pool.id,
                         'host': {
-                            'id': data['remote_pool']['host']['id']
+                            'id': remote_pool.host.id
                         }
                     }))
-                return self._remote_request(new_request, current_host,
-                                            api_prefix="mirrors")
+                return self._remote_request(new_request, source_pool.host, api_prefix="mirrors")
 
         return super(VolumeProxyViewSet, self).create(request, args, kwargs)
 
