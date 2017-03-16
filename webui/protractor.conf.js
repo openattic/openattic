@@ -43,6 +43,7 @@ var allSuites = {
   volumes_protection   : '../e2e/base/volumes/protection/**/*.e2e.js',
   volumes_resize       : '../e2e/base/volumes/resize/**/*.e2e.js',
   volumes_multi_delete : '../e2e/base/volumes/delete/**/*.e2e.js',
+  volumes_drbd         : '../e2e/base/volumes/drbd/**/*.e2e.js',
   snapshot             : '../e2e/base/snapshots/add/**/*.e2e.js',
   snapshot_clone       : '../e2e/base/snapshots/clone/**/*.e2e.js',
   http_share           : '../e2e/base/shares/http/*.e2e.js',
@@ -60,6 +61,9 @@ var allSuites = {
   fs_wiz_ext_cifs      : '../e2e/base/wizards/file/fileStorage_ext_cifs.e2e.js',
   blockStorage         : '../e2e/base/wizards/block/blockStorage.e2e.js',
   vmStorage_xfs_nfs    : '../e2e/base/wizards/vm/vmStorage_xfs_nfs.e2e.js',
+  task_queue_directive : '../e2e/base/taskqueue/task_queue_directive.e2e.js',
+  task_queue_dialog    : '../e2e/base/taskqueue/task_queue_dialog.e2e.js',
+  task_queue_deletion  : '../e2e/base/taskqueue/task_queue_deletion.e2e.js',
   // ceph suites - They only run if a ceph pool is configured.
   ceph_pools           : '../e2e/ceph/pools/ceph_pools.e2e.js',
   ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',

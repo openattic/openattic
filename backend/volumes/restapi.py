@@ -19,7 +19,7 @@ import django_filters
 from django.db.models import Q
 from django.conf import settings
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework import status
@@ -27,8 +27,10 @@ from rest_framework import status
 from rest import relations
 from rest.restapi import ContentTypeSerializer
 from rest.multinode.handlers import RequestHandlers
+from rest.utilities import NoCacheModelViewSet
 
 from volumes import models
+from ifconfig.models import Host
 
 from rest.utilities import get_request_query_params, mk_method_field_params, get_request_data, \
     ToNativeToRepresentationMixin, drf_version
@@ -100,7 +102,7 @@ class DiskFilter(django_filters.FilterSet):
         fields = ['name']
 
 
-class DiskViewSet(viewsets.ModelViewSet):
+class DiskViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(physicalblockdevice__isnull=False)
     serializer_class = DiskSerializer
     filter_class = DiskFilter
@@ -170,16 +172,30 @@ class PoolSerializer(ToNativeToRepresentationMixin, serializers.HyperlinkedModel
         return obj.get_status()
 
 
+def poolfilter_excl_host(queryset, host_id):
+    if not host_id:
+        return queryset
+
+    result = []
+    # It's not possible to use queryset.filter() here, so we have to do it on our own.
+    for entry in queryset:
+        if entry.host.id != host_id:
+            result.append(entry)
+
+    return result
+
+
 class PoolFilter(django_filters.FilterSet):
     type = django_filters.CharFilter(name="volumepool__volumepool_type__app_label",
                                      lookup_type="iexact")
+    excl_host = django_filters.NumberFilter(action=poolfilter_excl_host)
 
     class Meta:
         model = models.StorageObject
         fields = ['name', 'uuid', 'createdate']
 
 
-class PoolViewSet(viewsets.ModelViewSet):
+class PoolViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
     serializer_class = PoolSerializer
     filter_class = PoolFilter
@@ -351,7 +367,7 @@ class SnapshotSerializer(VolumeSerializer):
                   'status')
 
 
-class SnapshotViewSet(viewsets.ModelViewSet):
+class SnapshotViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(snapshot__isnull=False)
     serializer_class = SnapshotSerializer
     filter_fields = ('name', 'uuid', 'createdate', 'snapshot')
@@ -385,7 +401,7 @@ class SnapshotProxyViewSet(RequestHandlers, SnapshotViewSet):
         return self.retrieve(request, 'clone', *args, **kwargs)
 
 
-class VolumeViewSet(viewsets.ModelViewSet):
+class VolumeViewSet(NoCacheModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
     filter_fields = ('name', 'uuid', 'createdate')
@@ -438,7 +454,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
             "queryset": origin.snapshot_storageobject_set.all(),
             "origin":   origin
             }
-        if drf_version() >= (3,0):
+        if drf_version() >= (3, 0):
             # Don't perform any conversions in `initialize_request`:
             attributes['initialize_request'] = lambda self, request, *args, **kwargs: request
 
@@ -503,6 +519,58 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     def storage(self, request, *args, **kwargs):
         return self.retrieve(request, 'storage', *args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        data = get_request_data(request)
+        if "drbd" in settings.INSTALLED_APPS and "is_mirrored" in data:
+            # We need to split and redirect the creation of a mirrored
+            # volume. First the volume must be created, but without a
+            # file system. After that the DRBD connection and file system,
+            # if specified, are created by the DRBD app.
+            if data['is_mirrored']:
+                source_pool = models.StorageObject.all_objects.get(id=data["source_pool"]["id"])
+                remote_pool = models.StorageObject.all_objects.get(id=data["remote_pool"]["id"])
+                # 1. Create the volume without a file system.
+                new_request = self._clone_request_with_new_data(
+                    request, dict(data, filesystem="", is_mirrored=False))
+                response = self._remote_request(new_request, source_pool.host, api_prefix="volumes")
+                if not status.is_success(response.status_code):
+                    return response
+                # 2. Create the DRBD connection and the file system if specified.
+                # Get the host where the source volume is located and build
+                # the request object with the required arguments.
+                new_request = self._clone_request_with_new_data(
+                    request, dict(data, source_volume={
+                        'id': response.data['id'],
+                        'host': {
+                            'id': source_pool.host.id
+                        }
+                    }, remote_pool= {
+                        'id': remote_pool.id,
+                        'host': {
+                            'id': remote_pool.host.id
+                        }
+                    }))
+                return self._remote_request(new_request, source_pool.host, api_prefix="mirrors")
+
+        return super(VolumeProxyViewSet, self).create(request, args, kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if "drbd" in settings.INSTALLED_APPS:
+            obj = self.get_object()
+            blockvolume = obj.blockvolume_or_none
+
+            from drbd.models import Connection
+            if blockvolume and type(blockvolume) == Connection:
+                # Add the parameter 'new_size'.
+                data = get_request_data(request)
+                request = self._clone_request_with_new_data(
+                    request, dict(data, new_size=data["megs"]))
+                # Redirect request.
+                return self._remote_request(request, blockvolume.host, api_prefix="mirrors",
+                                            obj=blockvolume)
+
+        return super(VolumeProxyViewSet, self).update(request, args, kwargs)
+
     def destroy(self, request, *args, **kwargs):
         if "drbd" in settings.INSTALLED_APPS:
             obj = self.get_object()
@@ -513,6 +581,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
                 # might be a remote_request
                 return self._remote_request(request, blockvolume.host, api_prefix="mirrors",
                                             obj=blockvolume)
+
         return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 

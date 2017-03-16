@@ -66,9 +66,6 @@ app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesServi
         .$promise
         .then(function (res) {
           $scope.cifsData = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 

@@ -38,7 +38,7 @@ like shared folders::
 .. note::
 
 	If you experience an error while trying to install ``vagrant-libvirt``, you might need to
-	install the ``libvirt-dev`` package.
+	install the ``libvirt-dev`` and ``gcc`` package.
 
 
 Starting the Virtual Machine
@@ -71,6 +71,13 @@ virtual machine at ``~/openattic``::
 
 Then, start your browser an open the URL as shown in the last lines of the log output of
 ``vagrant up``.
+
+
+.. note::
+
+	If you experience an error while trying to run ``vagrant up --provider libvirt``, you might need to
+	restart ``libvirtd`` service.
+
 
 Choosing a different Linux distribution
 ---------------------------------------
@@ -128,7 +135,7 @@ following commands instead.
 
     . env/bin/activate
     cd openattic/backend
-    sudo systemctl reload dbus
+    which systemctl && sudo systemctl reload dbus || sudo service dbus reload
     sudo /home/vagrant/env/bin/python /home/vagrant/openattic/backend/manage.py runsystemd &
     python manage.py pre_install
     python manage.py migrate
@@ -137,12 +144,6 @@ following commands instead.
     python manage.py add-host
     python manage.py makedefaultadmin
     python manage.py post_install
-
-On systems based on SysVinit you need to reload the dbus service using the following command.
-
-.. code-block:: shell
-
-    sudo service dbus reload
 
 Troubleshooting
 ---------------

@@ -42,7 +42,7 @@ app.directive("poolFsSupport", function () {
       poolValidation: "="
     },
     templateUrl: "templates/poolTypes.html",
-    controller: function ($scope, PoolService) {
+    controller: function ($scope, poolsService) {
       $scope.supported_filesystems = {};
       $scope.state = {formatted: false};
 
@@ -100,28 +100,29 @@ app.directive("poolFsSupport", function () {
           $scope.poolValidation.$setValidity("usablesize", pool.usage.free >= 100);
           $scope.fsArray = $scope.fsStatic.slice();
 
-          new PoolService(pool).$filesystems()
-            .then(function (res) {
-              res.lun = "Sth";
-              $scope.supported_filesystems = res;
-              var supportedFs = Object.keys(res);
-              for (var key in $scope.filesystems) {
-                if (supportedFs.indexOf(key) === -1) {
-                  delete $scope.supported_filesystems[key];
-                  var notAvail = $scope.fsArray.indexOf(key);
-                  if (notAvail !== -1) {
-                    $scope.fsArray.splice(notAvail, 1);
+          poolsService.filesystems({
+            id: pool.id
+          })
+              .$promise
+              .then(function (res) {
+                res.lun = "Sth";
+                $scope.supported_filesystems = res;
+                var supportedFs = Object.keys(res);
+                for (var key in $scope.filesystems) {
+                  if (supportedFs.indexOf(key) === -1) {
+                    delete $scope.supported_filesystems[key];
+                    var notAvail = $scope.fsArray.indexOf(key);
+                    if (notAvail !== -1) {
+                      $scope.fsArray.splice(notAvail, 1);
+                    }
                   }
                 }
-              }
-              if ($scope.fsArray.length > 0) {
-                $scope.filesystem = $scope.fsArray[0];
-              } else {
-                $scope.filesystem = "";
-              }
-            }, function (error) {
-              console.log("An error occured", error);
-            });
+                if ($scope.fsArray.length > 0) {
+                  $scope.filesystem = $scope.fsArray[0];
+                } else {
+                  $scope.filesystem = "";
+                }
+              });
         } else {
           if ($scope.poolValidation) {
             $scope.poolValidation.$setValidity("usablesize", true);

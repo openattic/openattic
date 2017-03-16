@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
 """
 from django.conf import settings
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -20,7 +20,7 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from rest.utilities import get_request_query_params
+from rest.utilities import get_request_query_params, get_request_data, NoCacheModelViewSet
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class TaskQueueSerializer(serializers.ModelSerializer):
         exclude = ('task',)
 
 
-class TaskQueueViewSet(viewsets.ModelViewSet):
+class TaskQueueViewSet(NoCacheModelViewSet):
     """This API provides access to long running tasks."""
 
     serializer_class = TaskQueueSerializer
@@ -52,6 +52,10 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         # Inspired by rest_framework.mixins.UpdateModelMixin
         self.object = self.get_object()
+        if self.object.status in [TaskQueue.STATUS_FINISHED,
+                                  TaskQueue.STATUS_EXCEPTION,
+                                  TaskQueue.STATUS_ABORTED]:
+            return super(TaskQueueViewSet, self).destroy(request, *args, **kwargs)
 
         self.object.finish_task(None, TaskQueue.STATUS_ABORTED)
 
@@ -63,12 +67,10 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
         if not settings.DEBUG:
             return Response(status=status.HTTP_404_NOT_FOUND)
         from taskqueue.tests import wait
-        times = get_request_query_params(request).get('times', 100)
+        times = get_request_data(request)['times']
         task = wait.delay(times)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 class TaskQueueLocationMixin(object):

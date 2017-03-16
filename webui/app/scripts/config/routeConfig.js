@@ -35,85 +35,22 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
   $urlRouterProvider.otherwise("/dashboard");
 
   $stateProvider
-    .state("disks", {
-      url: "/disks",
-      views: {
-        "main": {
-          templateUrl: "templates/disks.html",
-          controller : "DiskCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Disks"
-      }
-    })
-    .state("disks.detail", {
-      url: "/:disk",
-      views: {
-        "tab": {templateUrl: "templates/disks/tab.html"}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("disks.detail.status", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "templates/disks/status.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Status"
-      }
-    })
-    .state("pools", {
-      url: "/pools",
-      views: {
-        "main": {
-          templateUrl: "templates/pools.html",
-          controller : "PoolCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Pools"
-      }
-    })
-    .state("pools-add", {
-      url: "/pools/add/:diskId",
-      views: {
-        "main": {
-          templateUrl: "templates/pools/pool-form.html",
-          controller : "PoolFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        parent: "pools",
-        label: "Add"
-      }
-    })
-    .state("pools.detail", {
-      url: "/:pool",
-      views: {
-        "tab": {templateUrl: "templates/pools/tab.html"}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("pools.detail.status", {
-      url: "/status",
-      views: {
-        "tab-content": {templateUrl: "templates/pools/status.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Status"
-      }
-    })
     .state("pools.detail.storage", {
       url: "/storage",
       views: {
         "tab-content": {
-          templateUrl: "templates/pools/storage.html",
-          controller : "PoolStorageCtrl"
+          templateUrl: "components/storage-tree/templates/tree.html",
+          controller: "StorageTreeCtrl",
+          resolve: {
+            storageTree: function ($q, $stateParams, poolsService) {
+              return poolsService.storage({id: $stateParams.pool}).$promise
+                  .then(function (res) {
+                    return res;
+                  }).catch(function () {
+                    return false;
+                  });
+            }
+          }
         }
       },
       ncyBreadcrumb: {
@@ -134,7 +71,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "main": {
           templateUrl: "templates/volumes.html",
-          controller : "VolumeCtrl"
+          controller: "VolumeCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -146,7 +83,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "main": {
           templateUrl: "templates/volumes/volume-form.html",
-          controller : "VolumeFormCtrl"
+          controller: "VolumeFormCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -177,7 +114,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/statistics.html",
-          controller : "VolumeStatisticsCtrl"
+          controller: "VolumeStatisticsCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -207,7 +144,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/cifs.html",
-          controller : "VolumeCifsSharesCtrl"
+          controller: "VolumeCifsSharesCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -219,7 +156,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/cifs-form.html",
-          controller : "VolumeCifsSharesFormCtrl"
+          controller: "VolumeCifsSharesFormCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -232,7 +169,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/cifs-form.html",
-          controller : "VolumeCifsSharesFormCtrl"
+          controller: "VolumeCifsSharesFormCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -245,7 +182,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/nfs.html",
-          controller : "VolumeNfsSharesCtrl"
+          controller: "VolumeNfsSharesCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -257,7 +194,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/nfs-form.html",
-          controller : "VolumeNfsSharesFormCtrl"
+          controller: "VolumeNfsSharesFormCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -270,7 +207,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/luns.html",
-          controller : "VolumeLunCtrl"
+          controller: "VolumeLunCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -282,7 +219,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/lun-form.html",
-          controller : "VolumeLunFormCtrl"
+          controller: "VolumeLunFormCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -295,7 +232,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/http.html",
-          controller : "VolumeHttpSharesCtrl"
+          controller: "VolumeHttpSharesCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -307,7 +244,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/http-form.html",
-          controller : "VolumeHttpSharesFormCtrl"
+          controller: "VolumeHttpSharesFormCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -319,8 +256,18 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       url: "/storage",
       views: {
         "tab-content": {
-          templateUrl: "templates/volumes/storage.html",
-          controller : "VolumeStorageCtrl"
+          templateUrl: "components/storage-tree/templates/tree.html",
+          controller: "StorageTreeCtrl",
+          resolve: {
+            storageTree: function ($q, $stateParams, VolumeService) {
+              return VolumeService.storage({id: $stateParams.volume}).$promise
+                  .then(function (res) {
+                    return res;
+                  }).catch(function () {
+                    return false;
+                  });
+            }
+          }
         }
       },
       ncyBreadcrumb: {
@@ -332,7 +279,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/snapshots.html",
-          controller : "VolumeSnapshotsCtrl"
+          controller: "VolumeSnapshotsCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -344,50 +291,12 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       views: {
         "tab-content": {
           templateUrl: "templates/volumes/snapshot-form.html",
-          controller : "VolumeSnapshotFormCtrl"
+          controller: "VolumeSnapshotFormCtrl"
         }
       },
       ncyBreadcrumb: {
         label: "Add",
         parent: "volumes.detail.snapshots"
-      }
-    })
-    .state("users", {
-      url: "/users",
-      views: {
-        "main": {
-          templateUrl: "templates/users.html",
-          controller : "UserCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Users"
-      }
-    })
-    .state("users-add", {
-      url: "/users/add",
-      views: {
-        "main": {
-          templateUrl: "templates/users/user-form.html",
-          controller : "UserFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Add",
-        parent: "users"
-      }
-    })
-    .state("users-edit", {
-      url: "/users/edit/:user",
-      views: {
-        "main": {
-          templateUrl: "templates/users/user-form.html",
-          controller : "UserFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Edit {{user.username}}",
-        parent: "users"
       }
     })
     .state("apikeys", {
@@ -399,18 +308,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       },
       ncyBreadcrumb: {
         label: "Apikeys"
-      }
-    })
-    .state("cmdlogs", {
-      url: "/cmdlogs",
-      views: {
-        "main": {
-          templateUrl: "templates/cmdlogs.html",
-          controller : "CmdlogCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Command logs"
       }
     })
     .state("crushmap", {

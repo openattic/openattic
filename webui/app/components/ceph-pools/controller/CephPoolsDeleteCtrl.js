@@ -32,12 +32,8 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection,
-    $q, toasty) {
-  if ($.isArray(cephPoolSelection)) {
-    $scope.cephPools = cephPoolSelection;
-  } else {
-    $scope.cephPool = cephPoolSelection;
-  }
+    $q, Notification) {
+  $scope.cephPools = cephPoolSelection;
 
   $scope.input = {
     enteredName: "",
@@ -45,15 +41,6 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
   };
 
   $scope.delete = function () {
-    if ($scope.cephPool) {
-      $scope.cephPools = [ $scope.cephPool ];
-    }
-    if ($scope.cephPools) {
-      $scope.deletePools();
-    }
-  };
-
-  $scope.deletePools = function () {
     var requests = [];
     $scope.cephPools.forEach(function (cephPool) {
       var deferred = $q.defer();
@@ -65,21 +52,16 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
     });
     $q.all(requests).then(function () {
       $uibModalInstance.close("deleted");
-    }, function (error) {
+    }, function () {
+      $scope.deleteForm.$submitted = false;
       $uibModalInstance.close("deleted");
-      toasty.error({
-        title: "Deletion failure",
-        msg: "Couldn't delete Ceph pool.",
-        timeout: 10000
-      });
-      throw error;
     });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Cancelled deletion",
       msg: "Cancelled Ceph pool deletion"
     });

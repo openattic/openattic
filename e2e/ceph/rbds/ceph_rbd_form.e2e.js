@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../common.js');
 var rbdCommons = require('./cephRbdCommon.js');
 
@@ -83,13 +85,13 @@ describe('should test the ceph rbd creation form', function(){
     it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
       expect(element(by.className(e.testClass)).isDisplayed()).toBe(e.displayed);
     });
-    for(item in e.items){
+    for(var item in e.items){
       isItemPresent(item, e.items[item]);
     }
   };
 
   var changeSize = function(inputField, io, fieldName){
-    it('should change the input ' + io.input + ' to ' + io.output + ' in "' + fieldName + "'", function(){
+    it('should change the input ' + io.input + ' to ' + io.output + ' in "' + fieldName + '"', function(){
       //rdb should be preselected
       rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
       inputField.click();
@@ -113,11 +115,11 @@ describe('should test the ceph rbd creation form', function(){
   // After OP-1339 create a more detailed test for cluster and pool names.
 
   objSizeInput.forEach(function(io){
-    changeSize(rbdProperties.objSize, io, "Object size")
+    changeSize(rbdProperties.objSize, io, 'Object size');
   });
 
   sizeInput.forEach(function(io){
-    changeSize(rbdProperties.size, io, "Size")
+    changeSize(rbdProperties.size, io, 'Size');
   });
 
   rbdProperties.expandedFeatureCases.forEach(function(testCase){
@@ -125,7 +127,7 @@ describe('should test the ceph rbd creation form', function(){
     var values = rbdProperties.formElements.features.items;
     it('should test the following case: [' + testCase + ']',function(){
       rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
-      for (var i=0; i<7; i++){ // uncheck all boxes
+      for (var i = 0; i < 7; i++){ // uncheck all boxes
         rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
       }
       testCase.forEach(function(state, index){ // check the features

@@ -14,12 +14,14 @@
  *  GNU General Public License for more details.
 """
 
-from rest_framework import serializers, viewsets
+import django_filters
+
+from rest_framework import serializers
 
 from ifconfig import models
 from rest import relations
 from rest.multinode.handlers import RequestHandlers
-from rest.utilities import mk_method_field_params
+from rest.utilities import mk_method_field_params, NoCacheModelViewSet
 
 
 class IPAddressSerializer(serializers.ModelSerializer):
@@ -82,7 +84,7 @@ class HostGroupSerializer(serializers.ModelSerializer):
         model = models.HostGroup
 
 
-class IPAddressViewSet(viewsets.ModelViewSet):
+class IPAddressViewSet(NoCacheModelViewSet):
     queryset = models.IPAddress.all_objects.all()
     serializer_class = IPAddressSerializer
 
@@ -93,7 +95,7 @@ class IPAddressProxyViewSet(RequestHandlers, IPAddressViewSet):
     host_filter = "device"
 
 
-class NetDeviceViewSet(viewsets.ModelViewSet):
+class NetDeviceViewSet(NoCacheModelViewSet):
     queryset = models.NetDevice.all_objects.all()
     serializer_class = NetDeviceSerializer
 
@@ -103,10 +105,33 @@ class NetDeviceProxyViewSet(RequestHandlers, NetDeviceViewSet):
     model = models.NetDevice
 
 
-class HostViewSet(viewsets.ModelViewSet):
+def hostfilter_is_oa_host(queryset, is_oa_host):
+    """
+    The BooleanFilter coming with django-filter 0.7 does not support the features
+    required to filter none-oA hosts because for those hosts the 'is_oa_host' field
+    is not set to False. The BooleanFilter does not support the 'lookup_expr' and
+    'exclude' arguments to filter such hosts.
+    """
+    result = []
+    for entry in queryset:
+        if bool(entry.is_oa_host) == bool(is_oa_host):
+            result.append(entry)
+    return result
+
+
+class HostFilter(django_filters.FilterSet):
+    #is_oa_host = django_filters.BooleanFilter(name="is_oa_host", lookup_expr='isnull', exclude=True)
+    is_oa_host = django_filters.BooleanFilter(action=hostfilter_is_oa_host)
+
+    class Meta:
+        model = models.Host
+        fields = ['name']
+
+
+class HostViewSet(NoCacheModelViewSet):
     queryset = models.Host.objects.all()
     serializer_class = HostSerializer
-    filter_fields = ('name',)
+    filter_class = HostFilter
     search_fields = ('name',)
 
 
@@ -115,7 +140,7 @@ class HostProxyViewSet(RequestHandlers, HostViewSet):
     model = models.Host
 
 
-class HostGroupViewSet(viewsets.ModelViewSet):
+class HostGroupViewSet(NoCacheModelViewSet):
     queryset = models.HostGroup.objects.all()
     serializer_class = HostGroupSerializer
 

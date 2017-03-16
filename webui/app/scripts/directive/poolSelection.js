@@ -42,23 +42,23 @@ app.directive("poolSelection", function () {
       wizard: "="
     },
     templateUrl: "templates/poolSelection.html",
-    controller: function ($scope, PoolService, toasty) {
-      $scope.waitingMsg = "Retrieving pool list...";
-      PoolService.query()
-        .$promise
-        .then(function (res) {
-          $scope.pools = res;
-          $scope.waitingMsg = "-- Select a pool --";
-        }, function (error) {
-          console.log("An error occurred", error);
-          toasty.error({
-            title: "Pool list couldn't be loaded",
-            msg: "Server failure."
+    controller: function ($scope, poolsService) {
+      $scope.getPoolList = function (options) {
+        poolsService.query(options)
+          .$promise
+          .then(function (res) {
+            $scope.pools = res;
+            $scope.waitingMsg = "-- Select a pool --";
+          }, function () {
+            $scope.waitingMsg = "Error: List couldn't be loaded!";
+            $scope.validation.$setValidity("loading", false);
           });
-          $scope.waitingMsg = "Error: List couldn't be loaded!";
-          $scope.validation.$setValidity("loading", false);
-        });
+      };
+
+      $scope.waitingMsg = "Retrieving pool list...";
+      $scope.getPoolList();
       $scope.selPoolUsedPercent = 0;
+
       $scope.$watch("pool", function (pool) {
         if (pool) {
           $scope.selPoolUsedPercent = parseFloat(pool.usage.used_pcnt).toFixed(2);

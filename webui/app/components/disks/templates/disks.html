@@ -1,0 +1,58 @@
+<oadatatable data="data" class="oadatatable tc_oadatatable_disks" filter-config="filterConfig" selection="selection">
+    <!-- Not implemented yet.
+    <actions>
+        <a class="btn btn-sm btn-primary tc_createPoolBtn" type="button"
+           ng-class="{disabled: !hasSelection}" ng-click="createPoolAction()">
+            <i class="fa fa-fw fa-plus"></i>Create pool...
+        </a>
+        <li ng-class="{disabled: !hasSelection}" max-selected=1>
+            <a ng-click="createPoolAction()">
+                <i class="fa fa-fw fa-plus"></i>Create pool...
+            </a>
+        </li>
+    </actions>
+    -->
+    <table class="datatable table table-striped table-bordered table-hover dataTable">
+        <thead>
+            <tr>
+                <th class="oadatatablecheckbox" ng-if="selection.available">
+                    <input type="checkbox" ng-model="selection.checkAll"/>
+                </th>
+                <th sortfield="name" sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
+                <th sortfield="status.status" sortheaderclass ng-show="columns['Status']">Status</th>
+                <th sortfield="size.size" sortheaderclass ng-show="columns['Size']">Size</th>
+                <th sortfield="type" sortheaderclass ng-show="columns['Type']">Type</th>
+                <th sortfield="rpm" sortheaderclass ng-show="columns['RPM']" disable-column="xs">RPM</th>
+                <th sortfield="model" sortheaderclass ng-show="columns['Model']" disable-column="sm,xs">Model</th>
+                <th sortfield="serial" sortheaderclass ng-show="columns['Serial']" disable-column="xs">Serial</th>
+                <th sortfield="host.title" sortheaderclass ng-show="columns['Host']">Host</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data.results | orderBy:filterConfig.sortfield:filterConfig.sortorder=='DESC'"
+                ng-class="{ info: isRowSelected(row) }"
+                ng-click="toggleSelection(row, $event)">
+                <td ng-if="selection.available">
+                    <input type="checkbox" checklist-model="selection.items" checklist-value="row" />
+                </td>
+                <td ng-show="columns['Name']" ng-bind="row.name"></td>
+                <td ng-show="columns['Status']"><i class="fa" ng-class="{
+                    'fa-question':                          row.status.status == '',
+                    'fa-check':                             row.status.status == 'good',
+                    'fa-exclamation-triangle icon-warning': row.status.status == 'warn',
+                    'fa-bomb icon-danger':                  row.status.status == 'crit',
+                    'fa-chain-broken icon-danger':          row.status.status == 'fail',
+                    'fa-lock':                              row.status.status == 'locked'
+                    }" uib-tooltip="{{row.status.status | statusText}}"></i></td>
+                <td ng-show="columns['Size']"   ng-bind="row.size.size | bytes:'MiB'"></td>
+                <td ng-show="columns['Type']"   ng-bind="row.type"></td>
+                <td ng-show="columns['RPM']"    ng-bind="row.rpm"></td>
+                <td ng-show="columns['Model']"  ng-bind="row.model"></td>
+                <td ng-show="columns['Serial']" ng-bind="row.serial"></td>
+                <td ng-show="columns['Host']"   ng-bind="row.host.title"></td>
+            </tr>
+        </tbody>
+    </table>
+</oadatatable>
+<div id="more" ui-view="tab">
+</div>

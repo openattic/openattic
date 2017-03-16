@@ -9,7 +9,7 @@ describe('Should add an user', function(){
     firstname: 'Herp',
     lastname: 'Derp',
     email: 'herp.derp@openattic.org'
-  }
+  };
   var user = element(by.cssContainingText('tr', testUser.username));
   var systemItem = element(by.css('ul .tc_menuitem_system'));
   var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
@@ -96,6 +96,22 @@ describe('Should add an user', function(){
 
   it('should show the first and last name of the current user in the left panel', function(){
     expect(element(by.css('.tc_usernameinfo')).getText()).toEqual(testUser.firstname + ' ' + testUser.lastname);
+  });
+
+  it('should generate a new authentication token', function(){
+    systemItem.click();
+    browser.sleep(400);
+    usersItem.click();
+    browser.sleep(400);
+    user.click();
+    browser.sleep(400);
+    element(by.css('.tc_editUser')).click();
+    browser.sleep(400);
+    var generateBtn = element(by.css('.tc_generate_btn'));
+    expect(generateBtn.isDisplayed()).toBe(true);
+    generateBtn.click();
+    browser.sleep(400);
+    element(by.id('bot2-Msg1')).click();
   });
 
   it('should logout protractor_test_user', function(){

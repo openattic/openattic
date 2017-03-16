@@ -39,7 +39,7 @@ app.directive("apiRecorder", function () {
         "</i> API-Recorder",
       "</a>"
     ].join(""),
-    controller: function ($scope, ApiRecorderService, toasty, $uibModal) {
+    controller: function ($scope, ApiRecorderService, Notification, $uibModal) {
       $scope.isRecording = ApiRecorderService.isRecording;
       $scope.handleClick = function () {
         if (!ApiRecorderService.isRecording()) {
@@ -56,7 +56,7 @@ app.directive("apiRecorder", function () {
           ];
           var cmds = ApiRecorderService.stopRecording();
           if (cmds.length === 0) {
-            toasty.warning({
+            Notification.warning({
               title: "API Recorder",
               msg: "Did not capture any API requests."
             });

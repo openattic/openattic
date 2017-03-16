@@ -88,6 +88,19 @@ then
     # zypper --non-interactive up
 fi
 
+# Create the system user and group 'openattic'.
+if ! getent passwd openattic ; then
+	groupadd --system openattic
+	useradd --system --gid openattic --home /var/lib/openattic --shell /bin/bash \
+	    --create-home --comment "openATTIC system user" openattic
+fi
+
+# Create various directories that are normally created by the Debian/RPM packages.
+# openattic-module-http:
+mkdir -p /var/lib/openattic/http/volumes
+# openattic-module-nfs:
+mkdir -p /var/lib/openattic/nfs_dummy
+
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
 if [ "${DISABLE_CEPH_REPO}" == false ] ; then
@@ -330,8 +343,9 @@ else
     cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
 fi
 
-#RPCD
-ln -s /usr/lib*/python2.7/*-packages/M2Crypto env/lib/python2.7/site-packages/M2Crypto
+# Create symlinks for various oA command line tools.
+sudo ln -s /home/vagrant/openattic/bin/blkdevzero /bin/blkdevzero
+sudo ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
 
 # oaconfig install
 

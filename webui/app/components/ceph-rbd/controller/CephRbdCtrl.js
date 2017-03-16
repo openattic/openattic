@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
-    registryService, cephPoolsService, toasty, tabViewService) {
+    registryService, cephPoolsService, Notification, tabViewService) {
   $scope.registry = registryService;
   $scope.cluster = clusterData;
   $scope.rbd = {};
@@ -48,7 +48,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
   $scope.selection = {};
 
-  if ($scope.cluster.results.length > 0 && typeof $scope.registry.selectedCluster === "undefined") {
+  if ($scope.cluster.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
     $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
@@ -64,10 +64,10 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
       cephRbdService
           .get({
-            id      : $scope.registry.selectedCluster.fsid,
-            page    : $scope.filterConfig.page + 1,
+            clusterId: $scope.registry.selectedCluster.fsid,
+            page: $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
-            search  : $scope.filterConfig.search,
+            search: $scope.filterConfig.search,
             ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
           })
           .$promise
@@ -94,11 +94,6 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 $scope.poolFailure = true;
                 $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
                 $scope.poolFailureError = poolError;
-                toasty.error({
-                  title: $scope.poolFailureTitle,
-                  msg: "Pool list couldn't be loaded."
-                });
-                throw poolError;
               }
             });
           })
@@ -107,12 +102,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
               $scope.rbdFailure = true;
               $scope.rbdFailureTitle = rbdError.status + ": " + rbdError.statusText.toLowerCase();
               $scope.rbdFailureError = rbdError;
-              toasty.error({
-                title: $scope.rbdFailureTitle,
-                msg: "Rbd list couldn't be loaded."
-              });
             }
-            throw rbdError;
           });
     }
   };
@@ -125,6 +115,12 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
         state: "cephRbds.detail.details",
         class: "tc_statusTab",
         name: "Status"
+      },
+      statistics: {
+        show: "selection.item",
+        state: "cephRbds.detail.statistics",
+        class: "tc_statisticsTab",
+        name: "Statistics"
       }
     }
   };
@@ -144,27 +140,21 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     $scope.getRbdList();
   }, true);
 
-  $scope.$watchCollection("selection", function (selection) {
-    var item = selection.item;
-    var items = selection.items;
+  $scope.$watchCollection("selection.items", function (items) {
+    $scope.multiSelection = items && items.length > 1;
+    $scope.hasSelection = items && items.length === 1;
 
-    $scope.multiSelection = Boolean(items) && items.length > 1;
-    $scope.hasSelection = Boolean(item);
-
-    if (!item && !items) {
+    if (!items || items.length !== 1) {
       $state.go("cephRbds");
       return;
     }
 
-    if (item) {
+    if ($state.current.name === "cephRbds") {
       $scope.changeTab("cephRbds.detail.details");
+    } else {
+      $scope.changeTab($state.current.name);
     }
   });
-  $scope.addAction = function () {
-    $state.go("rbds-add", {
-      clusterId: $scope.registry.selectedCluster.fsid
-    });
-  };
 
   $scope.addAction = function () {
     $state.go("rbds-add", {
@@ -176,19 +166,13 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
-    var item = $scope.selection.item;
-    var items = $scope.selection.items;
-    $scope.deletionDialog(item ? item : items);
-  };
-
-  $scope.deletionDialog = function (selection) {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/ceph-rbd/templates/delete.html",
       controller: "RbdDelete",
       resolve: {
         rbdSelection: function () {
-          return selection;
+          return $scope.selection.items;
         },
         clusterId: function () {
           return $scope.registry.selectedCluster.fsid;

@@ -18,6 +18,11 @@ Requires:	%{name}-module-nfs
 Requires:	%{name}-module-samba
 Requires:	%{name}-pgsql
 
+# These subpackages have been removed in 2.0.19 (OP#1968)
+Obsoletes: %{name}-module-ipmi <= 2.0.18
+Obsoletes: %{name}-module-mdraid <= 2.0.18
+Obsoletes: %{name}-module-twraid <= 2.0.18
+
 %description
 openATTIC is a storage management system based upon Open Source tools with
 a comprehensive user interface that allows you to create, share and backup
@@ -189,19 +194,6 @@ commonly used for disk images or software repositories.
 This package installs a module which allows you to share volumes or
 subdirectories using Apache2.
 
-%package module-ipmi
-Requires: %{name}-base
-#require freeipmi oder OpenIPMI ??
-Summary:  IPMI module for openATTIC
-
-%description module-ipmi
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-IPMI can be used to query a set of sensors installed in the system. This
-module displays the current state of these sensors in the openATTIC GUI.
-
 %package module-lio
 Requires: %{name}-base
 Requires:	python-rtslib
@@ -249,18 +241,6 @@ mail redirection for certain users. This package contains an openATTIC module
 which automatically alters this file to match the users configured in the
 openATTIC database.
 
-%package module-mdraid
-Requires: mdadm
-Requires: %{name}-base
-Summary: MDRAID module for openATTIC
-
-%description module-mdraid
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for MD-RAID, the common Linux software RAID.
-
 %package  module-nagios
 Requires: bc
 Requires:	nagios
@@ -293,7 +273,6 @@ This package also contains the Nagios check plugins for openATTIC, namely:
  * check_diskstats
  * check_iface_traffic
  * check_openattic_systemd
- * check_openattic_rpcd
 
 %package module-nfs
 Requires:	nfs-utils
@@ -323,20 +302,6 @@ storage space on demand.
 Samba implements the SMB/CIFS protocol and enables file sharing with hosts
 that run the Microsoft Windows family of operating systems. This package
 provides configuration facilities for Samba Shares.
-
-%package module-twraid
-Requires: %{name}-base
-Requires: cron
-# TODO: List Requirements
-Summary: 3ware RAID module for openATTIC
-
-%description module-twraid
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package installs a module that allows administration of 3ware RAID
-controllers through openATTIC.
 
 %package module-zfs
 Requires:	zfs
@@ -393,7 +358,6 @@ mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/default/
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -401,7 +365,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
-mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
 mkdir -p %{buildroot}/lib/tmpfiles.d/
@@ -411,9 +375,6 @@ rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
 install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
 rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
-rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
-rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
-install -m 755 bin/oacli %{buildroot}%{_bindir}
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 
@@ -429,9 +390,7 @@ install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.
 install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
 # Install db file
-install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/databases/pgsql.ini
-
-ln -s %{_sysconfdir}/%{name}/databases/pgsql.ini %{buildroot}%{_sysconfdir}/openattic/database.ini
+install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
 
 # configure dbus
 install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
@@ -466,8 +425,6 @@ install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconf
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
-
-install -m 644 etc/cron.d/updatetwraid %{buildroot}%{_sysconfdir}/cron.d/
 
 %pre base
 # create openattic user/group  if it does not exist
@@ -530,15 +487,18 @@ systemctl enable postgresql
 systemctl start postgresql
 
 %postun pgsql
-# Datenbank drop
-echo "You need to drop the openattic database & user"
-echo "run the following commands as root"
-echo ""
-echo "su - postgres -c psql"
-echo "postgres=# drop database openattic"
-echo "postgres=# drop user openattic"
-echo "postgres=# \q"
-echo ""
+if [ $1 -eq 0 ] ; then
+    echo "Note: removing this package does not delete the"
+    echo "corresponding PostgreSQL database by default."
+    echo "If you want to drop the openATTIC database and"
+    echo "database user, run the following commands as root:"
+    echo ""
+    echo "su - postgres -c psql"
+    echo "postgres=# drop database openattic"
+    echo "postgres=# drop user openattic"
+    echo "postgres=# \q"
+    echo ""
+fi
 
 %files
 %defattr(-,root,root,-)
@@ -551,11 +511,9 @@ echo ""
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
-%{_bindir}/oacli
 %{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
-/lib/systemd/system/%{name}-rpcd.service
 /lib/systemd/system/%{name}-systemd.service
 /lib/tmpfiles.d/%{name}.conf
 %config %{_sysconfdir}/httpd/conf.d/%{name}.conf
@@ -565,7 +523,6 @@ echo ""
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
-%doc %{_mandir}/man1/oacli.1.gz
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
@@ -577,10 +534,8 @@ echo ""
 %{_datadir}/%{name}/oa_auth.py*
 %{_datadir}/%{name}/openattic.wsgi
 %{_datadir}/%{name}/pamauth.py*
-%{_datadir}/%{name}/peering/
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
-%{_datadir}/%{name}/rpcd/
 %{_datadir}/%{name}/serverstats.wsgi
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
@@ -642,11 +597,6 @@ echo ""
 systemctl daemon-reload
 systemctl restart httpd
 
-%files module-ipmi
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/50_ipmi
-%{_datadir}/%{name}/ipmi/
-
 %files module-lio
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_lio
@@ -667,11 +617,6 @@ systemctl start lvm2-lvmetad
 %{_datadir}/%{name}/mailaliases/
 %{_datadir}/%{name}/installed_apps.d/50_mailaliases
 
-%files module-mdraid
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/mdraid/
-%{_datadir}/%{name}/installed_apps.d/09_mdraid
-
 %files module-nagios
 %defattr(-,root,root,-)
 %config %{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
@@ -681,15 +626,12 @@ systemctl start lvm2-lvmetad
 %config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
-%{_libdir}/nagios/plugins/check_drbd
 %{_libdir}/nagios/plugins/check_drbdstats
 %{_libdir}/nagios/plugins/check_iface_traffic
 %{_libdir}/nagios/plugins/check_lvm_snapshot
 %{_libdir}/nagios/plugins/check_oa_utilization
-%{_libdir}/nagios/plugins/check_openattic_rpcd
 %{_libdir}/nagios/plugins/check_openattic_systemd
 %{_libdir}/nagios/plugins/check_protocol_traffic
-%{_libdir}/nagios/plugins/check_twraid_unit
 %{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
@@ -727,12 +669,6 @@ systemctl start nmb
 systemctl enable smb
 systemctl start smb
 
-%files 	module-twraid
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/09_twraid
-%{_datadir}/%{name}/twraid/
-%config %{_sysconfdir}/cron.d/updatetwraid
-
 %files 	module-zfs
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/30_zfs
@@ -740,8 +676,7 @@ systemctl start smb
 
 %files 	pgsql
 %defattr(-,openattic,openattic,-)
-%config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
-%{_sysconfdir}/%{name}/database.ini
+%config(noreplace) %{_sysconfdir}/%{name}/database.ini
 
 %files release
 %defattr(-,root,root,-)

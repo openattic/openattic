@@ -41,7 +41,7 @@ app.directive("hostForm", function () {
       submit: "=?"
     },
     templateUrl: "components/hosts/templates/add-host-directive.html",
-    controller: function ($scope, $state, HostService, InitiatorService, $q, toasty) {
+    controller: function ($scope, $state, HostService, InitiatorService, $q) {
       if (!$scope.config) {
         $scope.config = {
           header: true,
@@ -101,7 +101,11 @@ app.directive("hostForm", function () {
             notation: "naa.${16 or 32 characters long hexadecimal number}"
           }
         },
-        exists: "This WWN already exists, please choose another one."
+        exists: function (share) {
+          if (angular.isString(share)) {
+            return "This WWN already exists, please choose another one.".replace("WWN", share.toUpperCase());
+          }
+        }
       };
       $scope.wwns = [];
 
@@ -112,8 +116,6 @@ app.directive("hostForm", function () {
             .then(function (res) {
               host = res;
               saveShares(changes, host, goBack);
-            }, function (error) {
-              $scope.errorOccurred(error, "Couldn't save", "Couldn't create new host.");
             });
         }
       };
@@ -153,20 +155,8 @@ app.directive("hostForm", function () {
             .$promise
             .then(function () {
               $scope.saveShares($scope.changes, $scope.host, $scope.goBack);
-            }, function (error) {
-              $scope.errorOccurred(error, "Couldn't save", "Couldn't update host.");
             });
-        }, function (error) {
-          $scope.errorOccurred(error, "Couldn't save", "Couldn't update host.");
         });
-      };
-
-      $scope.errorOccurred = function (error, title, msg) {
-        toasty.error({
-          title: title,
-          msg: msg
-        });
-        throw error;
       };
 
       $scope.init = function () {
@@ -176,8 +166,6 @@ app.directive("hostForm", function () {
             res.results.forEach(function (share) {
               $scope.wwns.push(share.wwn);
             });
-          }, function (error) {
-            $scope.errorOccurred(error, "Loading failure", "Couldn't load WWNs.");
           });
 
         if (!$scope.hostId) {
@@ -192,8 +180,8 @@ app.directive("hostForm", function () {
             .$promise
             .then(function (res) {
               $scope.host = res;
-            }, function (error) {
-              $scope.errorOccurred(error, "Loading failure", "Couldn't load host.");
+            }, function () {
+              $scope.hostForm.$submitted = false;
             });
 
           $scope.loadInitiators();
@@ -227,8 +215,6 @@ app.directive("hostForm", function () {
             if ($scope.data.iscsi.length > 0) {
               $scope.wwn.iscsi.check = true;
             }
-          }, function (error) {
-            $scope.errorOccurred(error, "Loading failure", "Couldn't load WWNs of host.");
           });
       };
 
@@ -248,69 +234,80 @@ app.directive("hostForm", function () {
         });
         $q.all(requests).then(function () {
           callback(host);
-        }, function (error) {
-          $scope.errorOccurred(error, "Couldn't save", "Couldn't create or delete WWNs.");
         });
       };
 
+      /**
+       * Will validate if a typed share name is valid or not.
+       *
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} tag.text - Text of the tag field.
+       * @param {string} type - Which share type is used.
+       * @return {boolean}
+       */
       $scope.validShareName = function (tag, type) {
         $scope.wwn[type].current = $scope.validWwn(tag, type);
-        $scope.wwn[type].valid = typeof $scope.wwn[type].current !== "string";
-        if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) !== -1) {
-          $scope.wwn[type].current = "exists";
+        $scope.wwn[type].valid = !angular.isString($scope.wwn[type].current);
+        if ($scope.wwn[type].valid && $scope.wwns.indexOf(tag.text) > -1) {
+          $scope.wwn[type].current = ["exists", $scope.wwn[type].current.format];
           $scope.wwn[type].valid = false;
         }
         return $scope.wwn[type].valid;
       };
 
       /**
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} format - Format of the share.
+       * @param {boolean} valid - Validation condition.
+       * @return {string|object} format code or tag object with format code
+       */
+      var validateShare = function (tag, format, valid) {
+        tag.format = format;
+        return valid ? tag : format;
+      };
+
+      /**
        * Validates the WWN that was typed.
-       * @param {object} tag
-       * @param {string} type
+       * @param {object} tag - Tag item in tag input field.
+       * @param {string} tag.text - Text of the tag field.
+       * @param {string} type - Which share type is used.
        * @return {string|object} error code or tag object
        */
       $scope.validWwn = function (tag, type) {
         var wwn = tag.text;
         var usage = $scope.wwn[type].usage;
-        for (var share in usage) {
-          switch (usage[share]) {
-            case "mac":
-              if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
-                if (wwn.match(/^[a-fA-F0-9:]*$/)) {
+        for (var i in usage) {
+          if (usage.hasOwnProperty(i)) {
+            var share = usage[i];
+            switch (share) {
+              case "mac":
+                if (wwn.match(/^[a-fA-F0-9:]{3}/)) {
                   wwn = wwn.replace(/:/g, "");
-                  if (wwn.length === 16) {
-                    tag.text = wwn.match(/.{2}/g).join(":");
-                    return tag;
-                  }
+                  tag.text = wwn.match(/.{2}/g).join(":");
+                  return validateShare(tag, share,
+                    wwn.match(/^[a-fA-F0-9]*$/) && wwn.length === 16);
                 }
-                return "mac";
-              }
-              break;
-            case "iqn":
-              if (wwn.indexOf("iqn") === 0) {
-                if (wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/)) {
-                  return tag;
+                break;
+              case "iqn":
+                if (wwn.indexOf(share) === 0) {
+                  return validateShare(tag, share,
+                    wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
                 }
-                return "iqn";
-              }
-              break;
-            case "eui":
-              if (wwn.indexOf("eui") === 0) {
-                if (wwn.match(/^eui\.[0-9A-Fa-f]{16}$/)) {
-                  return tag;
+                break;
+              case "eui":
+                if (wwn.indexOf(share) === 0) {
+                  return validateShare(tag, share,
+                    wwn.match(/^eui\.[0-9A-Fa-f]{16}$/));
                 }
-                return "eui";
-              }
-              break;
-            case "naa":
-              if (wwn.indexOf("naa") === 0) {
-                var ident = wwn.substr(4);
-                if (wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16)) {
-                  return tag;
+                break;
+              case "naa":
+                if (wwn.indexOf(share) === 0) {
+                  var ident = wwn.substr(4);
+                  return validateShare(tag, share,
+                    wwn.match(/^naa\.[0-9A-Fa-f]+$/) && (ident.length === 32 || ident.length === 16));
                 }
-                return "naa";
-              }
-              break;
+                break;
+            }
           }
         }
         return "all";
@@ -340,6 +337,17 @@ app.directive("hostForm", function () {
           tag: tag,
           type: "delete"
         });
+      };
+
+      /* Will return a readable String of the available formats.
+       * @param {string} type - Which share type is used.
+       * @return {string}
+       */
+      $scope.getFormats = function (type) {
+        return $scope.wwn[type].usage.reduce(function (last, current, index, usage) {
+          var seperator = index === usage.length - 1 ? " or " : ", ";
+          return last + seperator + current;
+        }).toUpperCase().replace("OR", "or");
       };
 
       /**

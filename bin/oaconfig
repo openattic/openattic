@@ -20,7 +20,6 @@ do
 done
 
 cd $OADIR
-OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
 	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin version"
@@ -100,36 +99,48 @@ case $1 in
 		fi
 
 		database_ini="/etc/openattic/database.ini"
-		host=$(sed -rn 's/^[ \t]*host[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
+		host=$(sed -rn 's/^[[:blank:]]*host[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
 		if [ "${host}" == 'localhost' ] ; then
 			has_local_database=1
 		else
 			has_local_database=0
 		fi
 
+		db_name=$(sed -rn 's/[[:blank:]]*name[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
+		if [[ -z $db_name ]]; then
+			echo "ERROR: No database name defined in $database_ini"
+			exit 1
+		fi
+
+		db_user=$(sed -rn 's/[[:blank:]]*user[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
+		if [[ -z $db_user ]]; then
+			echo "ERROR: No database username defined in $database_ini"
+			exit 1
+		fi
+
 		if (( has_local_database )) ; then
-			# Check if the database role 'openattic' exists and create it if it doesn't exist.
-			sql="SELECT 1 FROM pg_roles WHERE rolname='openattic'"
+			# Check if the database role '$db_user' exists and create it if it doesn't exist.
+			sql="SELECT 1 FROM pg_roles WHERE rolname='${db_user}'"
 			if ! su - postgres -c "psql postgres -tAc \"${sql}\""| grep -q 1 ; then
-				echo "Creating database role \"openattic\""
+				echo "Creating database role \"${db_user}\""
 				pass=$(openssl rand -hex 10)
 				sed -ri --follow-symlinks \
-				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				    "s/(password[[:blank:]]*=[[:blank:]]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
 					echo "Failed to update $database_ini"
 					exit 2
 				fi
 
-				su - postgres -c "psql -c \"CREATE USER openattic WITH PASSWORD '$pass'\""
-				echo "User 'openattic' created"
+				su - postgres -c "psql -c \"CREATE USER ${db_user} WITH PASSWORD '$pass'\""
+				echo "User '${db_user}' created"
 			fi
 
-			# Check if database 'openattic' exists and create it if it doesn't.
-			dbu=$(su - postgres -c "psql --list" | awk -F'|' ' /openattic/ { print $2 }')
+			# Check if database '${db_name}' exists and create it if it doesn't.
+			dbu=$(su - postgres -c "psql --list" | awk -F'|' " /${db_name}/ { print \$2 }")
 			if [ -n "$dbu" ]; then
-				echo "Database openattic exists, owned by $dbu"
+				echo "Database ${db_name} exists, owned by $dbu"
 			else
-				su - postgres -c "psql -c \"CREATE DATABASE openattic WITH OWNER openattic\""
+				su - postgres -c "psql -c \"CREATE DATABASE ${db_name} WITH OWNER ${db_user}\""
 
 				hba_conf="/var/lib/pgsql/data/pg_hba.conf"
 				if [ -e ${hba_conf} ] ; then
@@ -142,20 +153,20 @@ case $1 in
 
 		# Check if the connection can be established with the database user and password.
 		# Set a new password if the connection cannot be established.
-		password=$(sed -rn 's/^[ \t]*password[ \t]*=[ \t]*(.*)[ \t]*/\1/p' $database_ini)
-		# We have to have an 'openattic' database already at this point.
-		if ! PGPASSWORD="$password" psql openattic openattic -h "${host}" --no-password -c "\q" ; then
+		password=$(sed -rn 's/^[[:blank:]]*password[[:blank:]]*=[[:blank:]]*(.*)[[:blank:]]*/\1/p' $database_ini)
+		# We have to have an '$db_name' database already at this point.
+		if ! PGPASSWORD="$password" psql ${db_name} ${db_user} -h "${host}" --no-password -c "\q" ; then
 			if (( has_local_database )) ; then
 				pass=$(openssl rand -hex 10)
 				sed -ri --follow-symlinks \
-				    "s/(password[ \t]*=[ \t]*)(.*)/\1${pass}/g" $database_ini
+				    "s/(password[[:blank:]]*=[[:blank:]]*)(.*)/\1${pass}/g" $database_ini
 				if [ $? -ne 0 ]; then
 					echo "Failed to update $database_ini"
 					exit 2
 				fi
 
-				su - postgres -c "psql -c \"ALTER USER openattic WITH PASSWORD '$pass'\""
-				echo "Password of database user openattic and database.ini updated"
+				su - postgres -c "psql -c \"ALTER USER ${db_user} WITH PASSWORD '$pass'\""
+				echo "Password of database user ${db_user} and database.ini updated"
 			else
 				echo "ERROR: Couldn't establish a connection to the remote database" \
 					"running on ${host}."
@@ -165,9 +176,7 @@ case $1 in
 		fi
 		
 		su "$OAUSER" -c 'python manage.py pre_install'
-		
-		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
-		
+
 		if [ "$#" -gt 1 ]; then
 			shift
 			echo "Please use your operating system's package manager"
@@ -224,8 +233,7 @@ EOF
 		done
 		
 		su "$OAUSER" -c 'python manage.py post_install'
-		
-		python manage.py install-cli
+
 		echo "Completed successfully."
 		;;
 	
@@ -245,19 +253,16 @@ EOF
 
 	reload)
 		service openattic-systemd restart
-		service openattic-rpcd restart
 		service "${WEBSERVER_SERVICE}" reload
 		;;
 
 	start|stop|restart|force-reload)
 		service openattic-systemd $1
-		service openattic-rpcd $1
 		service "${WEBSERVER_SERVICE}" $1
 		;;
 
 	status)
 		service openattic-systemd status || /bin/true
-		service openattic-rpcd status    || /bin/true
 		service "${WEBSERVER_SERVICE}" status || /bin/true
 		;;
 

@@ -11,6 +11,7 @@ var cephPoolCommons = function(){
 
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.statusTab = element(by.css('.tc_statusTab'));
+  this.statisticsTab = element(by.className('tc_statisticsTab'));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
 
   // Describes the attributes seen in the detail tab.
@@ -60,13 +61,24 @@ var cephPoolCommons = function(){
     }
   ];
 
+  this.statisticGraphsConfig = [
+    {
+      name: 'Utilization',
+      attributes: ['max_avail', 'num_bytes']
+    },
+    {
+      name: 'Number of Objects',
+      attributes: ['num_objects']
+    }
+  ];
+
   // Describes the form elements.
   this.formElements = {
     name: {
       name: 'Name',
       byClass: element(by.className('tc_pool_name')),
       byModel: element(by.model('pool.name')),
-      type: "text",
+      type: 'text',
       displayed: true,
       items: {
         required: element(by.className('tc_nameRequired')),
@@ -79,7 +91,7 @@ var cephPoolCommons = function(){
       byClass: element.all(by.className('tc_cluster_selection')),
       byModel: element(by.model('data.cluster')),
       displayed: true,
-      type: "select",
+      type: 'select',
       items: {
         clusterSelection: element(by.className('tc_clusterOption')),
         helpCluster: element(by.className('tc_clusterRequired')),
@@ -91,7 +103,7 @@ var cephPoolCommons = function(){
       byClass: element.all(by.className('tc_poolTypes_selection')),
       byModel: element(by.model('pool.type')),
       displayed: true,
-      type: "select",
+      type: 'select',
       items: {
         typeSelection: element(by.className('tc_poolTypesOption')),
         required: element(by.className('tc_typeRequired'))
@@ -103,7 +115,7 @@ var cephPoolCommons = function(){
       byModel: element(by.model('pool.pg_num')),
       displayed: false,
       displayedIf: 'replicated',
-      type: "number",
+      type: 'number',
       items: {
         helpPgnum: element(by.className('tc_pgNumRequired'))
       }
@@ -112,7 +124,7 @@ var cephPoolCommons = function(){
       name: 'Replica size',
       byClass: element(by.className('tc_pool_size')),
       byModel: element(by.model('pool.replicated.size')),
-      type: "number",
+      type: 'number',
       displayed: false,
       displayedIf: 'replicated',
       items: {
@@ -123,7 +135,7 @@ var cephPoolCommons = function(){
       name: 'Expert settings',
       byClass: element(by.className('tc_expertSettings')),
       byModel: element(by.model('data.expert')),
-      type: "checkbox",
+      type: 'checkbox',
       displayed: false,
       displayedIf: 'replicated'
     },
@@ -133,7 +145,7 @@ var cephPoolCommons = function(){
       byModel: element(by.model('data.ruleset')),
       displayed: false,
       displayedIf: 'replicatedExpert',
-      type: "select",
+      type: 'select',
       items: {
         crushSelection: element(by.className('tc_crushSetOption')),
         helpRuleReq: element(by.className('tc_crushSetRequired')),
@@ -144,7 +156,7 @@ var cephPoolCommons = function(){
       name: 'Erasure code profile',
       byClass: element.all(by.className('tc_erasureProfiles_selection')),
       byModel: element(by.model('pool.erasure.profile')),
-      type: "select",
+      type: 'select',
       displayed: false,
       displayedIf: 'erasure',
       items: {
@@ -155,13 +167,13 @@ var cephPoolCommons = function(){
     backButton: {
       name: 'Back',
       byClass: element(by.className('tc_backButton')),
-      type: "button",
+      type: 'button',
       displayed: true
     },
     createButton: {
       name: 'Create',
       byClass: element(by.className('tc_submitButton')),
-      type: "button",
+      type: 'button',
       displayed: true
     }
   };
@@ -170,20 +182,20 @@ var cephPoolCommons = function(){
     header: {
       text: 'Create Ceph pool:',
       where: 'header',
-      byClass: element(by.className("tc_formHeadline"))
+      byClass: element(by.className('tc_formHeadline'))
     }
   };
 
   this.isListInSelectBox = function(e){
     if(e.displayedIf === 'replicated'){
-      self.formElements.types.byModel.sendKeys("Replicated");
+      self.formElements.types.byModel.sendKeys('Replicated');
       self.formElements.name.byModel.click();
     }else if(e.displayedIf === 'replicatedExpert'){
-      self.formElements.types.byModel.sendKeys("Replicated");
+      self.formElements.types.byModel.sendKeys('Replicated');
       self.formElements.name.byModel.click();
       self.checkCheckboxToBe(self.formElements.expertSetting.byModel, true);
     }else if(e.displayedIf === 'erasure'){
-      self.formElements.types.byModel.sendKeys("Erasure");
+      self.formElements.types.byModel.sendKeys('Erasure');
       self.formElements.name.byModel.click();
     }
     e.byClass.click();

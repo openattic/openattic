@@ -35,14 +35,14 @@ app.directive("userinfo", function () {
   return {
     restrict: "A",
     templateUrl: "components/userinfo/templates/userinfo.html",
-    controller: function ($rootScope, UserService) {
-      UserService.current()
+    controller: function ($rootScope, usersService) {
+      usersService.current()
       .$promise
       .then(function (res) {
         $rootScope.user = res;
       })
-      .catch(function () {
-        console.log("an error occured");
+      .catch(function (error) {
+        error.preventDefault(); // Prevents notification from opening.
       });
     }
   };

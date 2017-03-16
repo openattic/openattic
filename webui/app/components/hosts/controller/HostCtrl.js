@@ -50,8 +50,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .$promise
       .then(function (res) {
         $scope.shares = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
       });
   };
 
@@ -60,8 +58,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .$promise
       .then(function (res) {
         $scope.devices = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
       });
   };
 
@@ -76,13 +72,16 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .then(function (res) {
         res.results.forEach($scope.amendHosts);
         $scope.data = res;
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
       });
   };
 
   $scope.amendHosts = function (host) {
+    // Ensure that the given variable is an object. In some cases it may
+    // happen that the Rest-API does not return an object per host, e.g.
+    // if the information can not be retrieved from a remote host.
+    if (!angular.isObject(host) || !host.id) {
+      return;
+    }
     host.iscsiIqn = [];
     host.fcWwn = [];
     var shares = $scope.shares.filter(function (share) {
@@ -146,9 +145,16 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
     $scope.updateData();
   }, true);
 
-  $scope.$watch("selection.item", function (selitem) {
-    $scope.hasSelection = Boolean(selitem);
-    if (selitem) {
+  /**
+   * Watches the selection to
+   * - set multiSelection and singleSelection
+   * - do a tab change or route back to the overview
+   */
+  $scope.$watchCollection("selection.items", function (items) {
+    $scope.multiSelection = items && items.length > 1;
+    $scope.singleSelection = items && items.length === 1;
+
+    if ($scope.singleSelection) {
       $scope.changeTab("hosts.detail.status");
     } else {
       $state.go("hosts");
@@ -160,11 +166,15 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
   };
 
   $scope.editAction = function () {
-    $state.go("hosts-edit", {host: $scope.selection.item.id});
+    $state.go("hosts-edit", {host: $scope.selection.items[0].id});
   };
 
+  /**
+   * Opens the deletion dialog with all selected items.
+   * It will reload the table then the dialog is closed.
+   */
   $scope.deleteAction = function () {
-    if (!$scope.selection.item) {
+    if (!$scope.singleSelection && !$scope.multiSelection) {
       return;
     }
     var modalInstance = $uibModal.open({
@@ -172,8 +182,8 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       templateUrl: "components/hosts/templates/delete-host.html",
       controller: "HostDeleteCtrl",
       resolve: {
-        host: function () {
-          return $scope.selection.item;
+        hosts: function () {
+          return $scope.selection.items;
         }
       }
     });

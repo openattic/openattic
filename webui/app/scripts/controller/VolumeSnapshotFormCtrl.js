@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic");
 app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $stateParams, VolumeService,
-    VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService) {
+    VolumeSnapshotService, poolsService, SizeParserService, poolCheckingService) {
   var goToListView = function () {
     $state.go("volumes.detail.snapshots", {"#": "more"});
   };
@@ -53,7 +53,7 @@ app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $sta
 
   $scope.megs = item.usage.size_text;
 
-  $scope.pool = new PoolService.get($scope.selection.item.source_pool);
+  $scope.pool = new poolsService.get($scope.selection.item.source_pool);
 
   $scope.$watchGroup(["source", "selection.item"], function (newVal) {
     var source = newVal[0];
@@ -81,8 +81,6 @@ app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $sta
           .$save()
           .then(function () {
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
     }
   };

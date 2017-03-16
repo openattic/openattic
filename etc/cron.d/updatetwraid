@@ -1,3 +1,0 @@
-PATH=/usr/sbin:/usr/bin:/sbin:/bin
-
-*/5 * * * * root cd /usr/share/openattic && ./manage.py updatetwraid -v0

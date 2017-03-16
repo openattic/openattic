@@ -14,10 +14,10 @@
 
 import django_filters
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 
 from rest import relations
-from rest.utilities import DeleteCreateMixin
+from rest.utilities import DeleteCreateMixin, NoCacheModelViewSet
 
 from volumes.models import StorageObject
 from http.models import Export
@@ -54,7 +54,7 @@ class HttpShareFilter(django_filters.FilterSet):
         fields = ['volume']
 
 
-class HttpShareViewSet(viewsets.ModelViewSet):
+class HttpShareViewSet(NoCacheModelViewSet):
     queryset = Export.objects.all()
     serializer_class = HttpShareSerializer
     filter_class = HttpShareFilter

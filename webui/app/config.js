@@ -4,22 +4,26 @@ var globalConfig = {
   },
   "GUI": {
     "activeModules"   : {
-      "apt"        : true,
       "btrfs"      : true,
       "ceph"       : false,
       "cron"       : true,
       "drbd"       : true,
       "http"       : true,
-      "ipmi"       : true,
       "lvm"        : true,
       "mailaliases": true,
-      "mdraid"     : true,
       "nagios"     : true,
       "nfs"        : true,
       "samba"      : true,
-      "twraid"     : true,
       "zfs"        : true
     },
+    "defaultNotificationTimes": {
+      "error": 7000,
+      "info": 5000,
+      "success": 3000,
+      "wait": 4000,
+      "warning": 6000
+    },
+    "defaultTaskReloadTime": 5000,
     "defaultDashboard": {
       "boards"  : [{
         "name"   : "Default",
