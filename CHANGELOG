@@ -25,6 +25,7 @@ Added
   that something is happening in the background (OP-1760)
 * WebUI: Automatically show toasty notifications for API errors.
   Thanks to Uroš Lates for the contribution. (OP-1631)
+* WebUI: Added DRBD support. (OP-1201)
 
 Changed
 ~~~~~~~
