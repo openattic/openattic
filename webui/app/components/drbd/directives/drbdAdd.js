@@ -40,7 +40,7 @@ app.directive("drbdAdd", function () {
       wizard: "="
     },
     templateUrl: "components/drbd/templates/add-drbd.html",
-    controller: function ($scope, poolsService, HostService, $filter) {
+    controller: function ($scope, poolsService, HostService) {
       // Default values.
       $scope.data = {
         mirroring_enabled: false,
