@@ -66,6 +66,7 @@ Fixed
   message isn't forwarded to the API caller. (OP-1956)
 * Backend: The validation error message must be added as an array per field
   name. (OP-1978)
+* Backend: Fixed Ceph RBD disk usage value (OP-2008)
 * Installation: Fixed domain join - wrong order on ``oaconfig`` script (OP-1209)
 * Installation: fixed location of the Nagios ``status.dat`` file on EL7 (OP-1955)
 * Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
