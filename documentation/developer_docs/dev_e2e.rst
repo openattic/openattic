@@ -37,7 +37,7 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor`` (version 4.0.10)
+* ``npm install -g protractor@4.0.10``
 
 .. note::
   Protractor version 4.x.x requires Node.js |reg| version 4.x (you can check
