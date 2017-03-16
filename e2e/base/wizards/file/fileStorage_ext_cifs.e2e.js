@@ -29,11 +29,7 @@ describe('Wizard panel', function(){
   });
 
   it('should test step 1 and fill it out and go to the next step', function(){
-    wizardProperties.creationPageElementCheck('File Storage Step 1 - Create Volume');
-    wizardProperties.creationPageValidationTests();
-    wizardProperties.creationPagePoolSelection('volume group');
-    wizardProperties.creationPageInputTests();
-    wizardProperties.creationFromFill(volumeName, '100MB', 'ext4');
+    wizardProperties.handleFirstPage('File Storage Step 1 - Create Volume', 'volume group', volumeName, '100MB', 'ext4');
   });
 
   it('should test step 2 and fill it out and go to the last step', function(){
@@ -44,8 +40,6 @@ describe('Wizard panel', function(){
 
   it('should test step 3 and hit done to create everything set so far and close the wizard', function(){
     wizardProperties.configurationExecution('File Storage Step 3 - Save configuration');
-
-    helpers.check_wizard_titles();
   });
   //<-- end wizard --->
 

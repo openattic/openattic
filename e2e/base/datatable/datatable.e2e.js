@@ -36,11 +36,10 @@ describe('Should test oadatatable and its options', function(){
   beforeAll(function(){
     helpers.login();
     browser.executeScript('window.localStorage.clear();');
-    helpers.create_volume(volumename, "lun");
-    helpers.create_volume(secondVolumeName, "xfs");
-    helpers.create_volume(thirdVolumeName, "ext4");
-
-    helpers.create_snapshot(volume);
+    helpers.create_volume(volumename, 'lun');
+    helpers.create_volume(secondVolumeName, 'xfs');
+    helpers.create_volume(thirdVolumeName, 'ext4');
+    helpers.create_snapshot(volume, firstSnapName);
   });
 
   beforeEach(function(){

@@ -160,19 +160,13 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
-    var item = $scope.selection.item;
-    var items = $scope.selection.items;
-    $scope.deletionDialog(item ? item : items);
-  };
-
-  $scope.deletionDialog = function (selection) {
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "components/ceph-pools/templates/delete-pool.html",
       controller: "CephPoolsDeleteCtrl",
       resolve: {
         cephPoolSelection: function () {
-          return selection;
+          return $scope.selection.items;
         }
       }
     });

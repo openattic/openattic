@@ -31,14 +31,12 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizeParserService, Notification) {
+app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService) {
   $scope.volume = {};
 
   $scope.data = {
     sourcePool: null,
     megs: "",
-    mirrorHost: "",
-    mirrorPool: null,
     filesystem: ""
   };
 
@@ -46,12 +44,7 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
 
   $scope.state = {
     created: false,
-    mirrored: false,
     formatted: false
-  };
-  $scope.accordionOpen = {
-    properties: true,
-    mirror: false
   };
 
   $scope.submitAction = function (volumeForm) {
@@ -65,11 +58,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, SizePa
               $scope.state.formatted = $scope.volume.is_filesystemvolume;
               goToListView();
             });
-      } else if (!$scope.state.mirrored && $scope.data.mirrorHost !== "") {
-        Notification.warning({
-          title: "Mirror Volume",
-          msg: "Sorry, we haven\'t implemented that yet."
-        });
       } else if (!$scope.state.formatted) {
         new VolumeService({
           id: $scope.volume.id,

@@ -15,13 +15,13 @@ describe('ceph pool creation', function(){
   var pgnumTests = [
     1,
     5,
-    10,
-    50,
-    100,
-    500,
-    1000,
-    5000,
-    10000
+    10
+    // 50,
+    // 100,
+    // 500,
+    // 1000,
+    // 5000,
+    // 10000
   ];
 
   var deletePool = function(cephPoolName){

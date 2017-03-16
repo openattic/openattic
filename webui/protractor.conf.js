@@ -43,6 +43,7 @@ var allSuites = {
   volumes_protection   : '../e2e/base/volumes/protection/**/*.e2e.js',
   volumes_resize       : '../e2e/base/volumes/resize/**/*.e2e.js',
   volumes_multi_delete : '../e2e/base/volumes/delete/**/*.e2e.js',
+  volumes_drbd         : '../e2e/base/volumes/drbd/**/*.e2e.js',
   snapshot             : '../e2e/base/snapshots/add/**/*.e2e.js',
   snapshot_clone       : '../e2e/base/snapshots/clone/**/*.e2e.js',
   http_share           : '../e2e/base/shares/http/*.e2e.js',

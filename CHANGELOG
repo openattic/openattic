@@ -25,12 +25,16 @@ Added
   that something is happening in the background (OP-1760)
 * WebUI: Automatically show toasty notifications for API errors.
   Thanks to Uroš Lates for the contribution. (OP-1631)
+* WebUI: Added DRBD support. (OP-1201)
 
 Changed
 ~~~~~~~
+* WebUI: Only use the items array in the ceph pool and rbd deletion process (OP-1981)
+* WebUI/QA: Removed static names from common.js (OP-1971)
 * Backend: REST API response header do now contain 'Cache-Control: no-cache'
   option (OP-1402)
 * WebUI: Disabled successful task queue notifications (OP-1961)
+* WebUI: Changed mouse cursor to "pointer" over clickable rows (OP-1893)
 * WebUI: Dropdown button should not close when user clicks on a disabled option
   Thanks to David Díaz for the contribution. (OP-940)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
@@ -51,6 +55,8 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fixed random fails in wizard tests (OP-1969)
+* WebUI/QA: Fixed random fails in the task queue test (OP-1970)
 * WebUI/QA: Fixed some e2e styling issues (OP-1992)
 * WebUI: Fixed inconsistent state of rbd datatable actions (OP-1954)
 * WebUI: Fixed the RBD utilization graphs (OP-1945)
@@ -62,6 +68,7 @@ Fixed
   message isn't forwarded to the API caller. (OP-1956)
 * Backend: The validation error message must be added as an array per field
   name. (OP-1978)
+* Backend: Fixed Ceph RBD disk usage value (OP-2008)
 * Installation: Fixed domain join - wrong order on ``oaconfig`` script (OP-1209)
 * Installation: fixed location of the Nagios ``status.dat`` file on EL7 (OP-1955)
 * Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
@@ -76,6 +83,7 @@ Removed
 * Backend: The IPMI module has been removed (OP-1772)
 * Backend: The mdraid module has been removed (OP-1773)
 * Backend: The twraid module has been removed (OP-1774)
+* Backend: Fix creation of erasure coded ceph pools (OP-1885)
 * Installation: Ensure removal of obsolete RPM/DEB packages during update
   from a previous version (OP-1968)
 

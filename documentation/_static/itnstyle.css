@@ -1,5 +1,4 @@
 body {
-    border-top: 5px solid #288cea;
     font-family: "Source Sans Pro", sans-serif;
     font-size: 16px;
     color: #373737;
@@ -32,7 +31,6 @@ a, a:visited {
 
 a.external, a.external:visited {
     padding-left: 15px;
-    background:url(images/red-arrow.png) no-repeat left 50% transparent;
 }
 
 a.headerlink {
@@ -80,7 +78,6 @@ div.related li.right {
 }
 
 pre, div.seealso {
-    background-color: #EEEEEE;
     border-color: #CCCCCC;
 }
 

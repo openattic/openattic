@@ -129,6 +129,9 @@ _migrations = [
         'ceph', u'0002_auto_20161007_1921', None, None
     ),
     (
+        'ceph', u'0003_allow_blanks_in_cephpool', None, None
+    ),
+    (
         'taskqueue', u'0001_initial', None, None
     ),
     (
