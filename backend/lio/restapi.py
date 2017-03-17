@@ -18,7 +18,8 @@ from ifconfig.models import Host
 from rest_framework import serializers
 
 from rest import relations
-from rest.utilities import DeleteCreateMixin, NoCacheModelViewSet
+from rest.utilities import DeleteCreateMixin
+from rest.restapi import NoCacheModelViewSet
 
 from volumes.models import StorageObject
 from lio.models import HostACL, Initiator

@@ -23,7 +23,8 @@ from datetime import datetime
 
 from cmdlog import models
 
-from rest.utilities import get_request_query_params, NoCacheModelViewSet
+from rest.utilities import get_request_query_params
+from rest.restapi import NoCacheModelViewSet
 
 
 class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
