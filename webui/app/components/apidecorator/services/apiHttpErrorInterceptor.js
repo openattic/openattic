@@ -65,20 +65,10 @@ app.factory("ApiErrorDecoratorService", function ($q, Notification) {
 
         /**
          * If called, it will prevent a toasty to pop up on a specific status code.
-         * @param {int} htmlStatusCode
+         * @param {int} statusCode
          */
-        error.ignoreStatusCode = function (htmlStatusCode) {
-          if (this.status === htmlStatusCode) {
-            this.preventDefault();
-          }
-        };
-
-        /**
-         * If called, it will prevent a toasty to pop up on a specific status codes.
-         * @param {int[]} htmlStatusCodes
-         */
-        error.ignoreStatusCodes = function (htmlStatusCodes) {
-          if (htmlStatusCodes.indexOf(this.status) !== -1) {
+        error.ignoreStatusCode = function (statusCode) {
+          if (this.status === statusCode) {
             this.preventDefault();
           }
         };
