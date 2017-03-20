@@ -13,9 +13,9 @@ describe('Btrfs resize', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume(volumename, "btrfs", "500mb");
+    helpers.create_volume(volumename, 'btrfs', '500mb');
     browser.sleep(helpers.configs.sleep);
-    helpers.create_volume(subvolumename, "btrfs", "200mb", volumename);
+    helpers.create_volume(subvolumename, 'btrfs', '200mb', volumename);
     element(by.css('ul .tc_menuitem_volumes > a')).click();
   });
 
