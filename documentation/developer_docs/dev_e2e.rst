@@ -37,7 +37,7 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor`` (version 4.0.10)
+* ``npm install -g protractor@4.0.10``
 
 .. note::
   Protractor version 4.x.x requires Node.js |reg| version 4.x (you can check
@@ -419,7 +419,7 @@ To set a breakpoint use ``browser.pause()`` in your code.
 After your test pauses, go to the terminal window where you started the test.
 
 You can type ``c`` and hit enter to continue to the next command
-or you can type ``rep`` to enter the interactive mode, here you can type
+or you can type ``repl`` to enter the interactive mode, here you can type
 commands that will be executed in the test browser.
 
 To continue the test execution press ``ctrl + c``.

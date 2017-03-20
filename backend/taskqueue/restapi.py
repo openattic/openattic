@@ -20,7 +20,8 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from rest.utilities import get_request_query_params, get_request_data, NoCacheModelViewSet
+from rest.utilities import get_request_query_params, get_request_data
+from rest.restapi import NoCacheModelViewSet
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):

@@ -21,7 +21,8 @@ from rest_framework import serializers
 from ifconfig import models
 from rest import relations
 from rest.multinode.handlers import RequestHandlers
-from rest.utilities import mk_method_field_params, NoCacheModelViewSet
+from rest.utilities import mk_method_field_params
+from rest.restapi import NoCacheModelViewSet
 
 
 class IPAddressSerializer(serializers.ModelSerializer):

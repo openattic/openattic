@@ -29,6 +29,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Prevent the dashboard from notifying on a 401 request (OP-1997)
 * WebUI: Using $log.error instead of throw on API errors (OP-2003)
 * WebUI: Only use the items array in the ceph pool and rbd deletion process (OP-1981)
 * WebUI/QA: Removed static names from common.js (OP-1971)
@@ -56,6 +57,8 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fix random fails in various tests (OP-1974)
+* WebUI: Fixed selection of zero items after deletion in a table (OP-1980)
 * WebUI/QA: Fixed random fails in wizard tests (OP-1969)
 * WebUI/QA: Fixed random fails in the task queue test (OP-1970)
 * WebUI/QA: Fixed some e2e styling issues (OP-1992)

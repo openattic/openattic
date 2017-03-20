@@ -184,7 +184,7 @@ app.directive("oadatatable", function () {
       });
 
       $scope.$watch("data", function () {
-        if (!$scope.data.count) {
+        if (angular.isUndefined($scope.data.count)) {
           return;
         }
         $scope.selection.items = [];
