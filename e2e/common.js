@@ -10,19 +10,32 @@
   var helper = {
     configs: configs,
 
+    /**
+     * Will select the item with the given name and return the first match.
+     * @return {element}
+     */
     get_list_element: function(itemName){
       return element(by.cssContainingText('tr', itemName));
     },
 
-    delete_selection: function(){
-      element(by.css('.tc_menudropdown')).click();
+    /**
+     * Will delete the selected items, using the default test classes for this.
+     * @param {number} [dropdown] - which dropdown to get
+     */
+    delete_selection: function(dropdown){
+      dropdown = dropdown || 0;
+      element.all(by.css('.tc_menudropdown')).get(dropdown).click();
       element(by.css('.tc_deleteItem > a')).click();
-      browser.sleep(400);
+      browser.sleep(helper.configs.sleep);
       element(by.model('input.enteredName')).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
-      browser.sleep(400);
+      browser.sleep(helper.configs.sleep);
     },
 
+    /**
+     * Will search for the given query.
+     * @param {string} query
+     */
     search_for: function(query){
       var search = element.all(by.model('filterConfig.search')).first();
       search.clear();
@@ -65,13 +78,11 @@
 
     delete_volume: function(volume, volumename){
       volumesItem.click();
-      browser.sleep(400);
+      browser.sleep(configs.sleep);
       element(by.css('.tc_entries_dropdown')).click();
-      browser.sleep(400);
       element(by.css('.tc_entries_100')).click();
-      browser.sleep(400);
       volume.click();
-      browser.sleep(400);
+      browser.sleep(configs.sleep);
       helper.delete_selection();
       volume = helper.get_list_element(volumename);
       expect(volume.isPresent()).toBe(false);
