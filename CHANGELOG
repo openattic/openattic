@@ -29,6 +29,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Prevent the dashboard from notifying on a 401 request (OP-1997)
 * WebUI: Using $log.error instead of throw on API errors (OP-2003)
 * WebUI: Only use the items array in the ceph pool and rbd deletion process (OP-1981)
 * WebUI/QA: Removed static names from common.js (OP-1971)
