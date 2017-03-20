@@ -57,6 +57,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Fixed selection of zero items after deletion in a table (OP-1980)
 * WebUI/QA: Fixed random fails in wizard tests (OP-1969)
 * WebUI/QA: Fixed random fails in the task queue test (OP-1970)
 * WebUI/QA: Fixed some e2e styling issues (OP-1992)
