@@ -60,7 +60,7 @@ app.controller("AuthCtrl", function ($scope, $rootScope, $state, authService) {
       $rootScope.user = res;
       $state.go("dashboard");
     }, function (error) {
-      error.preventDefault();
+      error.ignoreStatusCode(401);
       $scope.loginFailed = true;
     });
   };
