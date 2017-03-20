@@ -10,10 +10,6 @@
   var helper = {
     configs: configs,
 
-    /**
-     * Will select the item with the given name and return the first match.
-     * @return {element}
-     */
     get_list_element: function(itemName){
       return element(by.cssContainingText('tr', itemName));
     },
@@ -32,10 +28,6 @@
       browser.sleep(helper.configs.sleep);
     },
 
-    /**
-     * Will search for the given query.
-     * @param {string} query
-     */
     search_for: function(query){
       var search = element.all(by.model('filterConfig.search')).first();
       search.clear();
