@@ -25,15 +25,13 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from rest import relations
-from rest.restapi import ContentTypeSerializer
+from rest.restapi import ContentTypeSerializer, NoCacheModelViewSet
 from rest.multinode.handlers import RequestHandlers
-from rest.utilities import NoCacheModelViewSet
-
+from rest.utilities import get_request_query_params, mk_method_field_params, get_request_data, \
+    ToNativeToRepresentationMixin, drf_version
 from volumes import models
 from ifconfig.models import Host
 
-from rest.utilities import get_request_query_params, mk_method_field_params, get_request_data, \
-    ToNativeToRepresentationMixin, drf_version
 
 # filter queryset by...
 # * is not a physical block device and

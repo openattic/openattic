@@ -14,7 +14,8 @@
 from django.core import validators
 from rest_framework import serializers
 
-from rest.utilities import ToNativeToRepresentationMixin, drf_version, NoCacheModelViewSet
+from rest.utilities import ToNativeToRepresentationMixin, drf_version
+from rest.restapi import NoCacheModelViewSet
 
 try:
     from rest_framework.fields import WritableField

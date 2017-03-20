@@ -23,7 +23,8 @@ from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
 from rest.utilities import drf_version, get_request_query_params, mk_method_field_params, \
-    get_request_data, ToNativeToRepresentationMixin, NoCacheReadOnlyModelViewSet
+    get_request_data, ToNativeToRepresentationMixin
+from rest.restapi import NoCacheReadOnlyModelViewSet
 
 
 class UserPreferenceSerializer(ToNativeToRepresentationMixin,

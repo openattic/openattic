@@ -22,7 +22,7 @@ from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
-from rest.utilities import NoCacheModelViewSet
+from rest.restapi import NoCacheModelViewSet
 
 from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params, \
     drf_version

@@ -18,14 +18,34 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
+from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
+from rest_framework.views import APIView
 
 from rest import relations
-from rest.utilities import mk_method_field_params, get_request_data, drf_version, \
-    NoCacheModelViewSet, NoCacheReadOnlyModelViewSet
+from rest.utilities import mk_method_field_params, get_request_data, drf_version
+
+
+class NoCacheAPIView(APIView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super(NoCacheAPIView, self).dispatch(request, *args, **kwargs)
+
+        if request.method == 'GET':
+            # TODO: if Django >= 1.8.8 replace it with django.utils.cache.add_never_cache_headers
+            response['Cache-Control'] = 'no-cache'
+
+        return response
+
+
+class NoCacheModelViewSet(viewsets.ModelViewSet, NoCacheAPIView):
+    pass
+
+
+class NoCacheReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet, NoCacheAPIView):
+    pass
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):

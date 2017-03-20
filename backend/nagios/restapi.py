@@ -23,7 +23,8 @@ from nagios.models import Service, Graph
 from rest import relations
 
 from rest.multinode.handlers import RequestHandlers
-from rest.utilities import mk_method_field_params, NoCacheReadOnlyModelViewSet
+from rest.utilities import mk_method_field_params
+from rest.restapi import NoCacheReadOnlyModelViewSet
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
