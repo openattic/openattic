@@ -13,7 +13,8 @@ The installation can be broken down into the following steps:
 #) :ref:`basic storage configuration`
 
 #) openATTIC installation:
-    * :ref:`installation on debian/ubuntu linux` 
+    * :ref:`installation on debian linux`
+    * :ref:`installation on ubuntu linux`
     * :ref:`installation on red hat enterprise linux (and derivatives)`
     * :ref:`installation on suse linux enterprise server and opensuse leap`
 
