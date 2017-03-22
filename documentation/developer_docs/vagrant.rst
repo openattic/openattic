@@ -41,6 +41,18 @@ like shared folders::
 	install the ``libvirt-dev`` and ``gcc`` package.
 
 
+Network preparation
+-------------------
+
+In order to enable internet access for your Vagrant box you need to enable IP forwarding and NAT
+on your host system:
+
+.. code-block:: shell
+
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    iptables -t nat -A POSTROUTING -s 192.168.10.0/24 \! -d 192.168.10.0/24 -j MASQUERADE
+
+
 Starting the Virtual Machine
 ----------------------------
 
