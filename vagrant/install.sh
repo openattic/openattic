@@ -235,6 +235,7 @@ module-icinga"
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/icinga/conf.d/openattic_static.cfg
     ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg /etc/icinga/objects/openattic.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg /etc/icinga/objects/openattic-ceph.cfg
 
     # System packages not available in pip + npm
 
@@ -252,6 +253,8 @@ if [ -z "$IS_TRUSTY" ] ; then
 fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
+
+#cp /home/vagrant/openattic/backend/nagios/plugins/check_ceph* /usr/lib/nagios/plugins
 
 sudo -i -u vagrant bash -e << EOF
 pushd openattic
@@ -369,6 +372,7 @@ if [ "$IS_SUSE" ]
 then
     # TODO: looks weird, but it's required.
     echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
+    echo cfg_file=/etc/icinga/objects/openattic-ceph.cfg >> /etc/icinga/icinga.cfg
     systemctl start icinga.service
 fi
 
