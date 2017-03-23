@@ -54,6 +54,7 @@ Changed
 * Installation: Removed symlink from ``/etc/openattic/databases/pgsql.ini``
   (OP-1822)
 * Documentation: Restructured and improved format of the CHANGELOG (OP-1911)
+* Documentation: Add network preparation howto for Vagrant boxes. (OP-2004)
 
 Fixed
 ~~~~~

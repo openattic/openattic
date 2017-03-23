@@ -13,7 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+import logging
 import socket
 try:
     import rtslib_fb as rtslib
@@ -21,15 +21,13 @@ except ImportError:
     import rtslib
 import os
 
-from os.path   import realpath
+from os.path import realpath
 
-from django.db   import models
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.db import models
 
 from systemd import get_dbus_object
 from systemd.helpers import Transaction
-from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
+from ifconfig.models import Host, IPAddress, getHostDependentManagerClass
 from volumes.models  import BlockVolume
 
 # This import is not actually needed for the name, but since Django only imports
@@ -56,6 +54,8 @@ import filesystemproxy
 #         └───────────────> Host (Initiator) <───────────┴───────┘
 #
 #
+
+logger = logging.getLogger(__name__)
 
 
 pre_install     = models.signals.Signal()
@@ -237,7 +237,11 @@ class ProtocolHandler(object):
             if lio_acl.node_wwn == initr_wwn:
                 break
         else:
-            lio_acl = lio_tpg.node_acl(initr_wwn)
+            try:
+                lio_acl = lio_tpg.node_acl(initr_wwn)
+            except rtslib.RTSLibError:
+                logger.error('Failed to get acl: {}'.format(initr_wwn))
+                raise
         yield ctxupdate(initiatorctx, acl=lio_acl)
 
     def get_mapped_luns(self, aclctx):

@@ -204,7 +204,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'openATTIC.tex', u'openATTIC Documentation',
-   u'it-novum GmbH', 'manual'),
+   u'SUSE Linux GmbH', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -234,7 +234,7 @@ latex_logo = '_static/images/openattic.pdf'
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'openattic', u'openATTIC Documentation',
-     [u'it-novum GmbH'], 1)
+     [u'SUSE Linux GmbH'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -248,7 +248,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'openATTIC', u'openATTIC Documentation',
-   u'it-novum GmbH', 'openATTIC', 'Comprehensive storage management system.',
+   u'SUSE Linux GmbH', 'openATTIC', 'Comprehensive storage management system.',
    'Miscellaneous'),
 ]
 
