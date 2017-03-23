@@ -13,8 +13,8 @@ describe('iSCSI/Fibre Channel target Wizard', function(){
   var hostname2 = 'protractor_zblock_host2';
   var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var hostItem = element(by.css('ul .tc_menuitem_hosts > a'));
-  var iqn1 = 'iqn.1991-05.com.microsoft:protractor_zfs_host1';
-  var iqn2 = 'iqn.1991-05.com.microsoft:protractor_zblock_host2';
+  var iqn1 = 'iqn.1991-05.com.microsoft:protractor-zfs-host1';
+  var iqn2 = 'iqn.1991-05.com.microsoft:protractor-zblock-host2';
   var menu = element.all(by.css('ul .tc_menuitem > a'));
 
   beforeAll(function(){
