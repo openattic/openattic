@@ -22,7 +22,7 @@ var cephPoolCommons = function(){
     'Placement Groups',
     'Type',
     'Last change',
-    'pg_placement_num'
+    'Placement groups for placement'
   ];
 
   // Description of headers in the table.
