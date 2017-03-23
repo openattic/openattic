@@ -254,8 +254,6 @@ fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
-#cp /home/vagrant/openattic/backend/nagios/plugins/check_ceph* /usr/lib/nagios/plugins
-
 sudo -i -u vagrant bash -e << EOF
 pushd openattic
 ! hg import vagrant/required-changes.patch --no-commit
