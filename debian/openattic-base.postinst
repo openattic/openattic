@@ -47,10 +47,10 @@ if [ "$1" = "configure" ] ; then
         if [ `which systemctl` ]; then
             # Disable openattic-rpcd and reload systemd to let it know that openattic-rpcd.service
             # has been removed.
-            systemctl disable openattic-rpcd
+            systemctl disable openattic-rpcd || true
             systemctl daemon-reload
         else
-            update-rc.d openattic-rpcd remove >/dev/null
+            update-rc.d openattic-rpcd remove >/dev/null || true
         fi
     fi
 
