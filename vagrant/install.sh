@@ -214,8 +214,9 @@ module-apt"
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg  /etc/nagios-plugins/config/openattic-ceph.cfg
     if [ "$IS_TRUSTY" ]
     then
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
@@ -235,6 +236,7 @@ module-icinga"
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/icinga/conf.d/openattic_static.cfg
     ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg /etc/icinga/objects/openattic.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg /etc/icinga/objects/openattic-ceph.cfg
 
     # System packages not available in pip + npm
 
@@ -369,6 +371,7 @@ if [ "$IS_SUSE" ]
 then
     # TODO: looks weird, but it's required.
     echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
+    echo cfg_file=/etc/icinga/objects/openattic-ceph.cfg >> /etc/icinga/icinga.cfg
     systemctl start icinga.service
 fi
 
