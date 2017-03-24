@@ -19,6 +19,9 @@ To describe their impact on the project, changes are grouped as follows:
 [2.0.19] - unreleased
 ---------------------
 
+[2.0.19] - 2017-03-24
+---------------------
+
 Added
 ~~~~~
 * WebUI: Display loading spinner icon on form submit to give the user feedback
