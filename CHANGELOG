@@ -21,7 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
-* Development: Added Ceph support to the Vagrant configuration
+* Development: Added Ceph support to the Vagrant configuration (OP-2048)
 
 Fixed
 ~~~~~
@@ -137,7 +137,7 @@ Changed
 * Installation: Added missing configuration entries to the SUSE sysconfig
   file (PR#576)
 * Installation: Make ``oaconfig`` respect the username and database name stored
-  in ``database.ini`` to create/connect to a database (PR#599) 
+  in ``database.ini`` to create/connect to a database (PR#599)
 * Installation: Changing the database password during ``oaconfig install`` now
   follows the symlink from ``database.ini`` to ``pgsql.ini`` instead of
   creating a new file (OP-1821)
@@ -169,7 +169,7 @@ Added
 * WebUI: Display and generate a user's API auth token. (OP-815)
 * WebUI: Add a button to the API Recorder dialog to copy the Python script
   into clipboard. (OP-1706)
-* Documentation: Added chapter about multinode setup (OP-1045) 
+* Documentation: Added chapter about multinode setup (OP-1045)
 
 Changed
 ~~~~~~~
@@ -289,7 +289,7 @@ Added
 * WebUI: Show Salt Minions plus DeepSea Pillar Data (OP-1571)
 * Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
-* Backend: Added read-only REST API returning 
+* Backend: Added read-only REST API returning
   `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
@@ -340,8 +340,8 @@ Fixed
   (OP-1411)
 * Backend: The empty values at the end of the performance data collections
   are filtered now (OP-1470)
-* Backend: Fixed compatibility issues with Django 1.8 and Django REST 
-  Framework 3 (OP-1210, OP-1490, OP-1486) 
+* Backend: Fixed compatibility issues with Django 1.8 and Django REST
+  Framework 3 (OP-1210, OP-1490, OP-1486)
 * Backend: The ``check_cephpool`` Nagios plugin does return the correct outputs
   and exit codes (per the Nagios plugin development guidelines) in error and
   success case now (OP-1521)
@@ -353,7 +353,7 @@ Fixed
 * Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
 * Backend: Nagios config files including a dot (.) in filename are now
   deleted too (OP-1534)
-* Backend: Fixed two Internal Server Errors when accessing Ceph 
+* Backend: Fixed two Internal Server Errors when accessing Ceph
   resources (OP-1569)
 * Backend: Fixed internal server error when creating invalid Erasure Code
   Profiles or deleting used ones (OP-1578)
@@ -361,7 +361,7 @@ Fixed
   install`` (OP-1580)
 * Backend: The ``check_cephcluster`` plugin now prints the correct message and
   returns the correct exit code in case of an error (OP-1586)
-* Backend: Fixed ``oaconfig install`` on CentOS 7 (OP-1368)  
+* Backend: Fixed ``oaconfig install`` on CentOS 7 (OP-1368)
 * Backend: Fixed ``HEALTH_ERR`` not handled in ``ceph.models.Pool#get_status``
   (OP-1593)
 * Installation: Fixed ``NAGIOS_PLUGIN_DIR`` path in in the SUSE sysconfig
@@ -467,7 +467,7 @@ Added
 * Backend: Added the performance data (in JSON) of a Ceph cluster to the REST
   API (OP-1279)
 * Backend: Added Ceph pool Nagios monitoring (OP-1292)
-* Backend: The ``check_cephcluster`` Nagios plugin contains another value 
+* Backend: The ``check_cephcluster`` Nagios plugin contains another value
   ``exec_time``. It represents the run time of the cluster check. (OP-1307)
 * WebUI/QA: RBD form, table, details, creation and deletion tests (OP-1338)
 * Packaging: Added ``version.txt`` to the ``openattic-base`` RPM and DEB files
