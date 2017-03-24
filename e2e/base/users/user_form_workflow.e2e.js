@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('should test the user form', function(){
   var name = element(by.model('user.username'));
-  var passwd = element(by.model('user.email'));
+  var passwd = element(by.model('user.password'));
 
   var username = 'herpderp';
   var submitButton = element(by.css('.tc_submitButton'));
