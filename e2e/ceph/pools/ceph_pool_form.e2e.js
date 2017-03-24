@@ -50,12 +50,9 @@ describe('ceph pool creation form', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/pools/add');
   });
 
-  it('should show required field errors if the submit button is clicked without editing anything', function(){
+  it('should check if the submit button is disabled when the required fields are empty', function(){
     browser.refresh();
-    cephPoolProperties.formElements.createButton.byClass.click();
-
-    expect(cephPoolProperties.formElements.name.items.required.isDisplayed()).toBe(true);
-    expect(cephPoolProperties.formElements.types.items.required.isDisplayed()).toBe(true);
+    expect(cephPoolProperties.formElements.createButton.byClass.isEnabled()).toBe(false);
     browser.refresh();
   });
 
