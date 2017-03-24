@@ -16,8 +16,17 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[2.0.19] - unreleased
+[2.0.20] - unreleased
 ---------------------
+
+Added
+~~~~~
+* Development: Added Ceph support to the Vagrant configuration
+
+Fixed
+~~~~~
+* Installation: fixed "OAUSER: unbound variable" error during update on EL7
+  (OP-2046)
 
 [2.0.19] - 2017-03-24
 ---------------------
@@ -79,8 +88,6 @@ Fixed
 * Backend: Fixed Ceph RBD disk usage value (OP-2008)
 * Installation: Fixed domain join - wrong order on ``oaconfig`` script (OP-1209)
 * Installation: fixed location of the Nagios ``status.dat`` file on EL7 (OP-1955)
-* Installation: fixed "OAUSER: unbound variable" error during update on EL7
-  (OP-2046)
 * Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
 
 Removed
