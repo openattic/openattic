@@ -1,3 +1,9 @@
+openattic (2.0.19-1) unstable; urgency=medium
+
+  * New upstream release 2.0.19-1, see CHANGELOG for details
+
+ -- openATTIC Build Daemon <info@openattic.org>  Fri, 24 Mar 2017 16:23:00 +0100
+
 openattic (2.0.18-1) unstable; urgency=medium
 
   * New upstream release 2.0.18-1, see CHANGELOG for details
