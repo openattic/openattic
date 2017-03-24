@@ -63,8 +63,6 @@ app.controller("VolumeCifsSharesFormCtrl", function ($scope, $state, $stateParam
           .$promise
           .then(function () {
             goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
           });
       }
     };
@@ -79,8 +77,6 @@ app.controller("VolumeCifsSharesFormCtrl", function ($scope, $state, $stateParam
         .$promise
         .then(function (res) {
           $scope.share = res;
-        }, function (error) {
-          console.log("An error occurred", error);
         });
 
     $scope.submitAction = function (shareForm) {
@@ -90,8 +86,6 @@ app.controller("VolumeCifsSharesFormCtrl", function ($scope, $state, $stateParam
             .$promise
             .then(function () {
               goToListView();
-            }, function (error) {
-              console.log("An error occured", error);
             });
       }
     };

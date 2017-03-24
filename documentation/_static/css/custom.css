@@ -1,0 +1,111 @@
+.navbar-inverse {
+  background-color: #FFF;
+  border-color: #777
+}
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+  color: #288CEA;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #777;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+  color: #288CEA;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: #777;
+}
+
+a {
+  color: #288CEA;
+}
+
+a:hover, a:focus {
+  color: #777;
+  outline: none;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+  color: #288CEA;
+  background-color: #FFF;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+  background-color: #FFF;
+  color: #777
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  color: #288CEA;
+}
+
+.dropdown-menu > li > a {
+  color: #777;
+}
+
+#logo {
+  margin-top: 16px;
+}
+
+/* PNA Adaptions */
+
+body {
+	font-size: 14px;
+}
+
+#content {
+	max-width: 700px;
+}
+
+h1, .h1 {
+	line-height: 1.2em;
+	font-size: 28px;
+}
+
+p {
+	margin-bottom: 0.5em;
+	line-height: 1.5em;
+}
+
+blockquote {
+	font-size: 14px;
+	margin-bottom: 0.5em;
+	background-color: rgba(245, 245, 245, 0.52);
+}
+
+.metadata p:first-of-type:before {
+	display: block;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+}
+
+.navbar .container {
+	max-width: 850px;
+}
+
+.navbar .navbar-right {
+	display: none;
+}
+
+.navbar-header button.navbar-toggle {
+	background-color: #2e9fff;
+	border: none;
+}
+
+.navbar-header button.navbar-toggle:hover,
+.navbar-header button.navbar-toggle:focus {
+	background-color: #337AB7;
+}
+
+@media (max-width: 767px) {
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover,
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {
+	color: #288CEA;
+}
+

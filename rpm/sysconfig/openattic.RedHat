@@ -11,14 +11,8 @@
 
 PYTHON="/usr/bin/python"
 OADIR="/usr/share/openattic"
-
-RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
-RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
-RPCD_LOGLEVEL="INFO"
-RPCD_OPTIONS="$OADIR/manage.py runrpcd"
-RPCD_CERTFILE=""
-RPCD_KEYFILE=""
+OAUSER="openattic"
+OAGROUP="openattic"
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
 SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
@@ -39,8 +33,8 @@ NAGIOS_CMD_PATH="/var/spool/nagios/cmd/nagios.cmd"
 ## Default: "/var/log/nagios/status.dat"
 #
 # The file that stores the current status, comment, and downtime information.
-NAGIOS_STATUS_DAT_PATH="/var/log/nagios/status.dat"
-NAGIOS_STATUS_DAT="/var/log/nagios/status.dat"
+NAGIOS_STATUS_DAT_PATH="/var/spool/nagios/status.dat"
+NAGIOS_STATUS_DAT="/var/spool/nagios/status.dat"
 
 ## Type: string
 ## Default: "/etc/nagios/nagios.cfg"
@@ -50,22 +44,10 @@ NAGIOS_CFG_PATH="/etc/nagios/nagios.cfg"
 NAGIOS_CFG="/etc/nagios/nagios.cfg"
 
 ## Type: string
-## Default: "/etc/nagios/conf.d/openattic_contacts.cfg"
-#
-# Defines default contact groups
-NAGIOS_CONTACTS_CFG_PATH="/etc/nagios/conf.d/openattic_contacts.cfg"
-
-## Type: string
 ## Default: "/etc/nagios/conf.d"
 #
 # Defines additional services
 NAGIOS_SERVICES_CFG_PATH="/etc/nagios/conf.d"
-
-## Type: boolean
-## Default: True
-#
-#
-NAGIOS_INCLUDE_HOST_IN_CFG=True
 
 ## Type: string
 ## Default: "nagios"
@@ -97,6 +79,12 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 #
 # Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/pnp4nagios"
+#
+# Path to RRDs
+NAGIOS_RRD_BASEDIR="/var/lib/pnp4nagios"
 
 ## Type: string
 ## Default: "/var/log/nagios"

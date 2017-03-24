@@ -16,12 +16,13 @@
 import socket
 import django_filters
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
 from rest import relations
 from rest.utilities import DeleteCreateMixin
+from rest.restapi import NoCacheModelViewSet
 
 from volumes.models import StorageObject
 from samba.models import Share
@@ -59,7 +60,7 @@ class SambaShareFilter(django_filters.FilterSet):
         fields = ['volume']
 
 
-class SambaShareViewSet(viewsets.ModelViewSet):
+class SambaShareViewSet(NoCacheModelViewSet):
     queryset = Share.objects.all()
     serializer_class = SambaShareSerializer
     filter_class = SambaShareFilter

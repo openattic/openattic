@@ -3,7 +3,7 @@
         <a class="btn btn-sm btn-primary tc_addUser" type="button" ng-click="addAction()" ng-hide="hasSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary" type="button" ng-click="editAction()" ng-show="hasSelection">
+        <a class="btn btn-sm btn-primary tc_editUser" type="button" ng-click="editAction()" ng-show="hasSelection">
             <i class="fa fa-fw fa-pencil"></i>Edit
         </a>
         <li>
@@ -38,7 +38,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
+        <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" class="clickable" ng-click="toggleSelection(row, $event)">
             <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
             <td ng-show="columns['Username']">
                 <a ui-sref="users-edit({user:row.id})" ng-bind="row.username"></a>

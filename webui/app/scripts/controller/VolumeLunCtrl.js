@@ -66,9 +66,6 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal)
         .$promise
         .then(function (res) {
           $scope.lunData = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
   $scope.addLunAction = function () {

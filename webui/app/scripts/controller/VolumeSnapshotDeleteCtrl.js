@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $uibModalInstance, snap, toasty) {
+app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $uibModalInstance, snap, Notification) {
   $scope.snap = snap;
 
   $scope.delete = function () {
@@ -39,15 +39,13 @@ app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $u
         .$promise
         .then(function () {
           $uibModalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    toasty.warning({
+    Notification.warning({
       title: "Delete snapshot",
       msg: "Cancelled"
     });

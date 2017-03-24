@@ -204,9 +204,20 @@
   };
 
   /**
-   * Validates the text shown by the tab when you open the task queue.
+   * Validates which tab is opened by the task queue.
    * Expecting the dialog to be closed.
    * @param {string} tab - Which tab to be expect.
+   */
+  self.validateDisplayedTab = function(tabName, tabText){
+    self.open();
+    expect(self.dialog.tabs[tabName].elements.deleteBtn.isDisplayed()).toBe(true);
+    self.close();
+  };
+
+  /**
+   * Validates the text shown by the given tab when you open the task queue.
+   * Expecting the dialog to be closed.
+   * @param {string} tab - Which tab text to get.
    * @param {string} tabText - Which text will be expected in the label.
    */
   self.validateTabName = function(tabName, tabText){
@@ -230,12 +241,11 @@
    * @param {int} [depth] - Given by the recursive call.
    */
   self.waitForPendingTasks = function(depth){
-    browser.sleep(helpers.configs.sleep);
+    browser.sleep(helpers.configs.sleep * 3);
     if(!depth){
       self.open(); // Opens the dialog at first call.
+      self.changeTab('pending');
       depth = 1;
-    }else{
-      self.changeTab('pending'); // Updates the pending view.
     }
     self.dialog.tabs.pending.elements.tab.getText().then(function(s){
       if(parseInt(s.match(/[0-9]+/)[0], 10) === 0){

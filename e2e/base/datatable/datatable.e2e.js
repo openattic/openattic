@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../common.js');
 
 var columnListButton = element(by.css('.tc_columnBtn'));
@@ -88,7 +90,7 @@ describe('Should test oadatatable and its options', function(){
 
   it('should display page 1', function(){
     element(by.model('displayNumber')).getAttribute('value').then(function(pageNumber){
-      expect(pageNumber).toBe("1");
+      expect(pageNumber).toBe('1');
     });
   });
 
@@ -126,8 +128,8 @@ describe('Should test oadatatable and its options', function(){
     browser.sleep(400);
     var options = element.all(by.repeater('(text, checked) in columns'))
       .then(function(options){
-        a = 0;
-        for(option in options){
+        var a = 0;
+        for(var option in options){
           options[option].element(by.css('.tc_columnItem')).evaluate('text').then(function(label){
             expect(label).toEqual(list[a]);
             //check: console.log("label: " + label + " list: " + list[a]);
@@ -219,6 +221,6 @@ describe('Should test oadatatable and its options', function(){
   });
 
   afterAll(function(){
-    console.log("datatable -> datatable.e2e.js -> volume based");
+    console.log('datatable -> datatable.e2e.js -> volume based');
   });
 });

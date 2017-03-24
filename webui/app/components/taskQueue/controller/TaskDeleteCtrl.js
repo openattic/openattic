@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q, toasty) {
+app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q,
+    Notification) {
   $scope.tasks = angular.copy(taskSelection); //Now it can't be changed by a possible current asynchronous call.
   $scope.waiting = false;
   $scope.finishedTasks = 0;
@@ -80,14 +81,8 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
               $scope.pendingDeletionFailure.push([task, res]);
               $scope.deleteTasks(entries);
             }
-          }, function (error) {
-            toasty.error({
-              title: "Couldn't get task '" + task.description + "'",
-              msg: "Could not get task '" + task.description + "'.",
-              timeout: 10000
-            });
+          }, function () {
             $scope.deleteTasks(entries);
-            throw error;
           });
       } else {
         $scope.taskDelete(task, entries);
@@ -95,7 +90,7 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
     } else {
       $scope.waiting = false;
       if ($scope.pendingDeletionFailure.length > 0) {
-        toasty.warning({
+        Notification.warning({
           title: "Couldn't delete " + $scope.pendingDeletionFailure.length + " tasks",
           msg: "More details are shown in the dialog."
         });
@@ -121,13 +116,12 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
       .then(function () {
         $scope.deleteTasks(entries);
       }, function (error) {
-        toasty.error({
+        Notification.error({
           title: "Task deletion failure",
           msg: "Task " + task.description + "(" + task.id + ") couldn't be deleted.",
           timeout: 10000
-        });
+        }, error);
         $scope.deleteTasks(entries);
-        throw error;
       });
   };
 

@@ -50,8 +50,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .$promise
       .then(function (res) {
         $scope.shares = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
       });
   };
 
@@ -60,8 +58,6 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .$promise
       .then(function (res) {
         $scope.devices = res.results;
-      }, function (error) {
-        console.log("An error occurred", error);
       });
   };
 
@@ -76,13 +72,16 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal, Ini
       .then(function (res) {
         res.results.forEach($scope.amendHosts);
         $scope.data = res;
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
       });
   };
 
   $scope.amendHosts = function (host) {
+    // Ensure that the given variable is an object. In some cases it may
+    // happen that the Rest-API does not return an object per host, e.g.
+    // if the information can not be retrieved from a remote host.
+    if (!angular.isObject(host) || !host.id) {
+      return;
+    }
     host.iscsiIqn = [];
     host.fcWwn = [];
     var shares = $scope.shares.filter(function (share) {

@@ -17,25 +17,46 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
+from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
+from rest_framework.views import APIView
 
 from rest import relations
 from rest.utilities import mk_method_field_params, get_request_data, drf_version
 
 
+class NoCacheAPIView(APIView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super(NoCacheAPIView, self).dispatch(request, *args, **kwargs)
+
+        if request.method == 'GET':
+            # TODO: if Django >= 1.8.8 replace it with django.utils.cache.add_never_cache_headers
+            response['Cache-Control'] = 'no-cache'
+
+        return response
+
+
+class NoCacheModelViewSet(viewsets.ModelViewSet, NoCacheAPIView):
+    pass
+
+
+class NoCacheReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet, NoCacheAPIView):
+    pass
+
+
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
-    if drf_version() >= (3,0):
+    if drf_version() >= (3, 0):
         name = serializers.CharField()  # in DRF 3, `name` is no longer automatically generated.
 
     class Meta:
         model = ContentType
 
 
-class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
+class ContentTypeViewSet(NoCacheReadOnlyModelViewSet):
     queryset = ContentType.objects.all()
     serializer_class = ContentTypeSerializer
 
@@ -68,7 +89,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 # ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(NoCacheModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff',

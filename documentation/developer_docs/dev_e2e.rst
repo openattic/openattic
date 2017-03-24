@@ -37,13 +37,15 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor`` (version 3.1.1)
+* ``npm install -g protractor@4.0.10``
 
 .. note::
-  Protractor version 3.x.x requires Node.js |reg| version 4.x (you can check
+  Protractor version 4.x.x requires Node.js |reg| version 4.x (you can check
   your installed version with ``node -v``).
 
 * ``apt-get install openjdk-7-jre-headless``
+
+* ``webdriver-manager`` version should be 10.3.x
 
 * ``npm install -g jasmine-beforeAll`` (in case this package is not available,
   try ``npm install -g jasmine-before-all``)
@@ -156,7 +158,7 @@ In order to run our graphical user interface tests, please make sure that your
 and add them to ``e2e/configs.js``.
 
 .. note::
-  For more information have a look at ``e2e/example_config.js``.
+  For more information have a look at ``e2e/configs.js.sample``.
 
 It is important that the first element in this config file is your volume
 group.
@@ -417,7 +419,7 @@ To set a breakpoint use ``browser.pause()`` in your code.
 After your test pauses, go to the terminal window where you started the test.
 
 You can type ``c`` and hit enter to continue to the next command
-or you can type ``rep`` to enter the interactive mode, here you can type
+or you can type ``repl`` to enter the interactive mode, here you can type
 commands that will be executed in the test browser.
 
 To continue the test execution press ``ctrl + c``.

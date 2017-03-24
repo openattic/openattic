@@ -31,16 +31,14 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersModalCtrl", function ($scope, UserService, $uibModalInstance, user) {
+app.controller("UsersModalCtrl", function ($scope, usersService, $uibModalInstance, user) {
   $scope.user = user;
 
   $scope.generateAuthToken = function () {
-    UserService.generateAuthToken({id: $scope.user.id})
+    usersService.generateAuthToken({id: $scope.user.id})
         .$promise
         .then(function (res) {
           $uibModalInstance.close(res.auth_token.token);
-        }, function (error) {
-          console.log("An error occured", error);
         });
   };
 

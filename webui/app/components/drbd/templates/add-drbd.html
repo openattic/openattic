@@ -1,0 +1,104 @@
+<!-- Volume Mirroring -->
+<div class="form-group"
+     ng-show="data.mirroring_enabled">
+    <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
+        <div class="checkbox checkbox-primary">
+            <input id="volumeMirroring"
+                   ng-model="result.is_mirrored"
+                   class="tc_volume_is_mirrored"
+                   type="checkbox">
+            <label for="volumeMirroring">Volume Mirroring</label>
+        </div>
+    </div>
+</div>
+<!-- Remote Pool -->
+<div class="form-group"
+     ng-class="{'has-error': (validation.$submitted || validation.remote_pool.$dirty) &&
+        validation.remote_pool.$invalid}"
+     ng-show="result.is_mirrored">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+           class="control-label"
+           for="remote_pool">Remote Pool</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select id="remote_pool"
+                name="remote_pool"
+                class="form-control"
+                ng-disabled="!data.remote_pools || !data.remote_pools.length"
+                ng-model="data.remote_pool"
+                ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                    pool.host.title + ', ' + pool.usage.free_text + ' free)')
+                    for pool in data.remote_pools track by pool.id"
+                ng-required="result.is_mirrored">
+            <option value=""
+                    ng-bind="data.remote_pool_waiting_msg">
+            </option>
+        </select>
+        <span class="help-block"
+              ng-show="(validation.$submitted || validation.remote_pool.$dirty) &&
+                validation.remote_pool.$error.required">
+            This field is required!
+        </span>
+        <span class="help-block"
+              ng-show="validation.remote_pool.$error.poolSize">
+            The size of the pool must be greater than {{result.megs | bytes:"MiB"}}.
+        </span>
+        <span class="help-block"
+              ng-show="validation.remote_pool.$error.loading">
+            Pools couldn't be loaded, please contact your administrator for details.
+        </span>
+    </div>
+</div>
+<!-- Sync Rate -->
+<div class="form-group"
+     ng-class="{'has-error': (validation.$submitted || validation.syncer_rate.$dirty) &&
+        validation.syncer_rate.$invalid}"
+     ng-show="result.is_mirrored">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+           class="control-label"
+           for="syncer_rate">Sync Rate</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <input id="syncer_rate"
+               name="syncer_rate",
+               class="form-control"
+               type="text"
+               drbd-sync-rate-validate
+               placeholder="e.g., 30M",
+               ng-model="result.syncer_rate"
+               ng-required="result.is_mirrored">
+        <span class="help-block tc_syncRateRequired"
+              ng-show="(validation.$submitted || validation.syncer_rate.$dirty) &&
+                validation.syncer_rate.$error.required">
+            This field is required!
+        </span>
+        <span class="help-block tc_invalidSyncRate"
+              ng-show="validation.syncer_rate.$error.drbdSyncRateValidate">
+            The sync rate must be between 500K and 100M.
+        </span>
+    </div>
+</div>
+<!-- Protocol -->
+<div class="form-group"
+     ng-class="{'has-error': (validation.$submitted || validation.protocol.$dirty) &&
+        validation.protocol.$invalid}"
+     ng-show="result.is_mirrored">
+    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'"
+           class="control-label"
+           for="protocol">Protocol</label>
+    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+        <select id="protocol"
+                name="protocol",
+                class="form-control"
+                ng-model="result.protocol"
+                ng-required="result.is_mirrored">
+            <option value="" hidden>-- Choose a protocol --</option>
+            <option value="A">Asynchronous (A)</option>
+            <option value="B">Semi-synchronous (B)</option>
+            <option value="C">Synchronous (C)</option>
+        </select>
+        <span class="help-block tc_protocolRequired"
+              ng-show="(validation.$submitted || validation.protocol.$dirty) &&
+                validation.protocol.$error.required">
+            This field is required!
+        </span>
+    </div>
+</div>

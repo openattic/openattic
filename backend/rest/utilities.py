@@ -13,9 +13,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from collections import defaultdict
 
-import django
+# Don't import Views, otherwise you get a circular import in pagination.PageSizePageNumberPagination
 from django.http.request import QueryDict # Docstring
 from rest_framework.serializers import Serializer
 
@@ -135,4 +134,3 @@ class DeleteCreateMixin(object):
         def restore_object(self, attrs, instance=None):  # DRF 2
             attrs = self.update_validated_data(attrs)
             return super(DeleteCreateMixin, self).restore_object(attrs, instance)
-

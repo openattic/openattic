@@ -244,41 +244,42 @@ class CephPool(NodbModel, RadosMixin):
     cluster = models.ForeignKey(CephCluster, editable=False, null=True, blank=True)
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=100, choices=[('replicated', 'replicated'),
-                                                     ('erasure', 'erasure')])
+                                                     ('erasure', 'erasure')], blank=True)
     erasure_code_profile = models.ForeignKey("CephErasureCodeProfile", null=True, default=None,
                                              blank=True)
-    last_change = models.IntegerField(editable=False)
-    quota_max_objects = models.IntegerField()
-    quota_max_bytes = models.IntegerField()
+    last_change = models.IntegerField(editable=False, blank=True)
+    quota_max_objects = models.IntegerField(blank=True)
+    quota_max_bytes = models.IntegerField(blank=True)
     full = models.BooleanField(default=None, editable=False)
-    pg_num = models.IntegerField()
-    pgp_num = models.IntegerField(editable=False)
+    pg_num = models.IntegerField(blank=True)
+    pgp_num = models.IntegerField(editable=False, blank=True)
     size = models.IntegerField(help_text='Replica size', blank=True, null=True, editable=True)
     min_size = models.IntegerField(help_text='Replica size', blank=True, null=True, editable=True)
-    crush_ruleset = models.IntegerField()
-    crash_replay_interval = models.IntegerField()
-    num_bytes = models.IntegerField(editable=False)
-    num_objects = models.IntegerField(editable=False)
-    max_avail = models.IntegerField(editable=False)
-    kb_used = models.IntegerField(editable=False)
-    stripe_width = models.IntegerField(editable=False)
+    crush_ruleset = models.IntegerField(blank=True)
+    crash_replay_interval = models.IntegerField(blank=True)
+    num_bytes = models.IntegerField(editable=False, blank=True)
+    num_objects = models.IntegerField(editable=False, blank=True)
+    max_avail = models.IntegerField(editable=False, blank=True)
+    kb_used = models.IntegerField(editable=False, blank=True)
+    stripe_width = models.IntegerField(editable=False, blank=True)
     cache_mode = models.CharField(max_length=100, choices=[(c, c) for c in
                                                            'none|writeback|forward|readonly|'
-                                                           'readforward|readproxy'.split('|')])
+                                                           'readforward|readproxy'.split(
+                                                               '|')], blank=True)
     tier_of = models.ForeignKey("CephPool", null=True, default=None, blank=True,
                                 related_name='related_tier_of')
     write_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True,
                                    related_name='related_write_tier')
     read_tier = models.ForeignKey("CephPool", null=True, default=None, blank=True,
                                   related_name='related_read_tier')
-    target_max_bytes = models.IntegerField()
-    hit_set_period = models.IntegerField()
-    hit_set_count = models.IntegerField()
-    hit_set_params = JsonField(base_type=dict, editable=False)
-    tiers = JsonField(base_type=list, editable=False)
-    flags = JsonField(base_type=list, editable=False)
+    target_max_bytes = models.IntegerField(blank=True)
+    hit_set_period = models.IntegerField(blank=True)
+    hit_set_count = models.IntegerField(blank=True)
+    hit_set_params = JsonField(base_type=dict, editable=False, blank=True)
+    tiers = JsonField(base_type=list, editable=False, blank=True)
+    flags = JsonField(base_type=list, editable=False, blank=True)
 
-    pool_snaps = JsonField(base_type=list, editable=False)
+    pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -426,10 +427,10 @@ class CephPool(NodbModel, RadosMixin):
                     else:
                         read_tier_target = self.read_tier
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
-                elif self.type == 'replicated' and key not in ['name']:
+                elif self.type == 'replicated' and key not in ['name'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
-                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size']:
+                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
                 else:
@@ -829,7 +830,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                 task.delete()
 
             if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
-                disk_usage = latest_task.json_result
+                disk_usage, _exec_time = latest_task.json_result
 
         self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
 

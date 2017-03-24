@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filter, $uibModal, toasty, ClusterResource,
-    cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibModal, Notification,
+    ClusterResource, cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
     pg_num: 1,
@@ -101,31 +101,17 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
               $scope.data.cluster = $scope.clusters[0];
             } else {
               $scope.waitingClusterMsg = "No cluster avialable.";
-              toasty.warning({
+              Notification.warning({
                 title: $scope.waitingClusterMsg,
                 msg: "You can't create any RBDs with your configuration."
               });
             }
           }
-        })
-        .catch(function (crushError) {
+        }).catch(function () {
           $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
-          toasty.error({
-            title: "Loading failure",
-            msg: "Crushmap couldn't be loaded.",
-            timeout: 10000
-          });
-          throw crushError;
         });
-    })
-    .catch(function (clusterError) {
+    }).catch(function () {
       $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
-      toasty.error({
-        title: "Loading failure",
-        msg: "Cluster list couldn't be loaded.",
-        timeout: 10000
-      });
-      throw clusterError;
     });
 
   $scope.$watch("data.cluster", function (cluster) {
@@ -135,14 +121,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function (res) {
           $scope.data.osdCount = res.count;
-        })
-        .catch(function (osdError) {
-          toasty.error({
-            title: "Loading error",
-            msg: "OSD's couldn't be loaded.",
-            timeout: 10000
-          });
-          throw osdError;
         });
       cephErasureCodeProfilesService.get({fsid: cluster.fsid})
         .$promise
@@ -152,14 +130,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
           if ($scope.data.profiles.length === 1) {
             $scope.pool.erasure.profile = $scope.data.profiles[0];
           }
-        })
-        .catch(function (osdError) {
-          toasty.error({
-            title: "Loading error",
-            msg: "Erasure code profiles couldn't be loaded.",
-            timeout: 10000
-          });
-          throw osdError;
         });
       $scope.data.ruleset = $scope.data.cluster.rules[0];
     }
@@ -212,22 +182,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         name: $scope.pool.name,
         pg_num: $scope.pool.pg_num,
         type: $scope.pool.type,
-        // Default values needed by the API - API update needed
-        // * Should not be needed at any time
-        crush_ruleset: 0,
-        size: 0,
-        // * Should not be needed here at all
-        quota_max_objects: 0,
-        quota_max_bytes: 0,
-        crash_replay_interval: 0,
-        cache_mode: "none",
-        tier_of: null,
-        write_tier: null,
-        read_tier: null,
-        target_max_bytes: 0,
-        hit_set_period: 0,
-        hit_set_count: 0,
-        // Cluster Definition
         id: $scope.clusterId
       };
       if (pool.type === "replicated") {
@@ -242,13 +196,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $filt
         .$promise
         .then(function () {
           goToListView();
-        }, function (error) {
-          toasty.error({
-            title: "Creation failure",
-            msg: "Couldn't create Ceph pool.",
-            timeout: 10000
-          });
-          throw error;
+        }, function () {
+          $scope.poolForm.$submitted = false;
         });
     }
   };

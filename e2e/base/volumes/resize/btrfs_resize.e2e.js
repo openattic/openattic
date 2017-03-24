@@ -1,7 +1,10 @@
+'use strict';
+
 var helpers = require('../../../common.js');
+
 describe('Btrfs resize', function(){
-  var volumename = 'e2e_pool';
-  var subvolumename = 'e2e_volume';
+  var volumename = 'e2e_btrfs_pool';
+  var subvolumename = 'e2e_btrfs_resize_volume';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var subvolume = element.all(by.cssContainingText('tr', volumename)).get(1);
   var submit_button = element(by.id('bot2-Msg1'));
@@ -10,9 +13,9 @@ describe('Btrfs resize', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume(volumename, "btrfs", "500mb");
-    browser.sleep(400);
-    helpers.create_volume(subvolumename, "btrfs", "200mb", volumename);
+    helpers.create_volume(volumename, 'btrfs', '500mb');
+    browser.sleep(helpers.configs.sleep);
+    helpers.create_volume(subvolumename, 'btrfs', '200mb', volumename);
     element(by.css('ul .tc_menuitem_volumes > a')).click();
   });
 
@@ -41,7 +44,7 @@ describe('Btrfs resize', function(){
   it('subvolume: should have a disabled resize menu entry', function(){
     subvolume.click();
     actionMenu.click();
-    expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe("Resize");
+    expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe('Resize');
   });
 
   afterAll(function(){

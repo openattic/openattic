@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephErasureCodeProfiles");
 app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInstance, cephErasureCodeProfilesService,
-    cluster, osd, toasty) {
+    cluster, osd, Notification) {
   $scope.cluster = cluster;
   $scope.osdCount = osd;
   $scope.erasureCodeProfile = {
@@ -54,20 +54,12 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
         })
         .$promise
         .then(function (res) {
-          toasty.success({
+          Notification.success({
             title: "Erasure code profile created",
             msg  : "Erasure code profile '" + $scope.erasureCodeProfile.name + "' successfully created."
           });
 
           $uibModalInstance.close(res);
-        })
-        .catch(function (err) {
-          toasty.error({
-            title: "Error",
-            msg  : err.data.detail
-          });
-
-          throw err;
         });
   };
 
@@ -92,8 +84,8 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
             }
           });
         })
-        .catch(function (err) {
-          throw err;
+        .catch(function () {
+          $scope.addForm.$submitted = false;
         });
   }
 

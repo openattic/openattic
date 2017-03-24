@@ -62,7 +62,8 @@ app.run(function ($rootScope, usersService) {
   $rootScope.$on("$stateChangeSuccess", function () {
     usersService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
-    }).catch(function () {
+    }).catch(function (error) {
+      error.ignoreStatusCode(401);
       $rootScope.loggedIn = false;
     });
   });

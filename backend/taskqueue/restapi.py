@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
 """
 from django.conf import settings
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -21,6 +21,7 @@ from rest_framework.reverse import reverse
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
 from rest.utilities import get_request_query_params, get_request_data
+from rest.restapi import NoCacheModelViewSet
 
 
 class TaskQueueSerializer(serializers.ModelSerializer):
@@ -33,7 +34,7 @@ class TaskQueueSerializer(serializers.ModelSerializer):
         exclude = ('task',)
 
 
-class TaskQueueViewSet(viewsets.ModelViewSet):
+class TaskQueueViewSet(NoCacheModelViewSet):
     """This API provides access to long running tasks."""
 
     serializer_class = TaskQueueSerializer
@@ -71,8 +72,6 @@ class TaskQueueViewSet(viewsets.ModelViewSet):
         task = wait.delay(times)
         serializer = self.get_serializer(task)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 class TaskQueueLocationMixin(object):

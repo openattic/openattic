@@ -190,7 +190,7 @@ app.service("lineChartService", function () {
       for (i = 0; i < maxGraphValues; i++) {
         // fill empty data with 0
         if (graphOptions.xaxis.mode === "time") {
-          graphDataset[graphNumber].data.push([graphData[0][0], 0]); // TODO ggf besser loesen bei time mode
+          graphDataset[graphNumber].data.push([graphData[0][0], 0]); // TODO solve it in a better way
         } else {
           graphDataset[graphNumber].data.push([i * (graphOptions.xaxis.max / (maxGraphValues - 1)), 0]);
         }
@@ -216,7 +216,7 @@ app.service("lineChartService", function () {
           if (activeState[graphNumber] || typeof activeState[graphNumber] === "undefined") {
             data.push([graphData[i][0], graphData[i][1]]);
           } else {
-            data.push([graphData[i][0], -1]); // TODO iwas sinnvolles statt -1
+            data.push([graphData[i][0], -1]); // TODO put in something useful instead of -1
 
             // Cache
             cache[graphNumber].data.push([graphData[i][0], graphData[i][1]]);
@@ -411,7 +411,7 @@ app.service("lineChartService", function () {
     graphDataset[id].label = "";
     graphDataset[id].data.forEach(function (element) {
       cache[id].data.push([element[0], element[1]]); // Copy current graph values
-      element[1] = -1; // TODO iwas sinnvolles statt -1
+      element[1] = -1; // TODO put in something useful instead of -1
     });
   };
 

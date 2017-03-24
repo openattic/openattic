@@ -16,10 +16,11 @@
 
 import django_filters
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 
 from rest import relations
 from rest.utilities import DeleteCreateMixin
+from rest.restapi import NoCacheModelViewSet
 
 from volumes.models import StorageObject
 from nfs.models import Export
@@ -55,7 +56,7 @@ class NfsShareFilter(django_filters.FilterSet):
         fields = ['volume']
 
 
-class NfsShareViewSet(viewsets.ModelViewSet):
+class NfsShareViewSet(NoCacheModelViewSet):
     queryset = Export.objects.all()
     serializer_class = NfsShareSerializer
     filter_class = NfsShareFilter

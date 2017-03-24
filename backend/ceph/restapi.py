@@ -14,8 +14,7 @@
  *  GNU General Public License for more details.
 """
 from django.utils.functional import cached_property
-from rest_framework import serializers, viewsets, status
-from rest_framework.request import Request
+from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 
@@ -23,6 +22,7 @@ from ceph.models import *
 
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
+from rest.restapi import NoCacheModelViewSet
 
 from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params, \
     drf_version
@@ -52,7 +52,7 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
         return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
 
 
-class ClusterViewSet(viewsets.ModelViewSet):
+class ClusterViewSet(NoCacheModelViewSet):
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
     filter_fields = ('name',)
@@ -167,7 +167,7 @@ class CephPoolSerializer(NodbSerializer):
                     field: ['Erasure coded pools need ' + field]
                     for field
                     in ['erasure_code_profile']
-                    if not field in data or data[field] is None
+                    if field not in data or data[field] is None
                 }
         if errors:
             raise serializers.ValidationError(errors)
@@ -279,7 +279,8 @@ class CephOsdViewSet(NodbViewSet):
 
     @list_route()
     def balance_histogram(self, request, *args, **kwargs):
-        """Generates a NVD3.js compatible json for displaying the osd balance histogram of a cluster."""
+        """Generates a NVD3.js compatible json for displaying the osd balance histogram of a
+        cluster."""
         values = [{'label': osd.name, 'value': osd.utilization}
                   for osd in CephOsd.objects.all().order_by('utilization')]
 
@@ -304,7 +305,8 @@ class CephPgSerializer(NodbSerializer):
 class CephPgViewSet(NodbViewSet):
     """Represents a Ceph Placement Group.
 
-    Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the backend performance
+    Typical filter arguments are `?osd_id=0` or `?pool_name=cephfs_data`. Filtering can improve the
+    backend performance
     considerably.
 
     """

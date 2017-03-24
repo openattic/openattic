@@ -61,7 +61,6 @@ app.controller("CephNodesCtrl", function ($scope, cephNodesService) {
         })
         .catch(function (error) {
           $scope.error = error;
-          throw error;
         });
   };
 

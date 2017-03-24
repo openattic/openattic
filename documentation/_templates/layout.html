@@ -1,4 +1,3 @@
-{# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {%- block doctype -%}
 <!DOCTYPE html>
 {%- endblock %}
@@ -67,7 +66,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset={{ encoding }}" />
-        {{ metatags }}
+
         {%- if not embedded and docstitle %}
           {%- set titlesuffix = " &mdash; "|safe + docstitle|e %}
         {%- else %}
@@ -76,129 +75,116 @@
         {%- block htmltitle %}
         <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
         {%- endblock %}
-        <!-- typo3 resources -->
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/typo3temp/stylesheet_8282b3f5d2.css?1421247949" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/typo3conf/ext/np_oasite/Resources/Public/css/colorbox.css?1404984552" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/typo3conf/ext/fontawesome/Resources/Public/Library/font-awesome/css/font-awesome.min.css?1404658804" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/typo3conf/ext/nn_address/Resources/Public/Css/default.css?1407929709" media="all">
-        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Oswald" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/fileadmin/templates/font/font-awesome-4.1.0/css/font-awesome.min.css?1421952751" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/fileadmin/templates/css/bootstrap.min.css?1392312282" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/fileadmin/templates/css/screen.css?1425539348" media="all">
-        <link rel="stylesheet" type="text/css" href="http://openattic.org/fileadmin/templates//css/community.css?1425552572" media="all">
-        <script src="http://openattic.org/typo3temp/javascript_9a38f34785.js?1417602865" type="text/javascript"></script>
-        <!-- end typo3 resources -->
+
+        <!-- css -->
         <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" />
         <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
         <link rel="stylesheet" href="{{ pathto('_static/typo3_main.css', 1) }}" type="text/css" />
         <link rel="stylesheet" href="{{ pathto('_static/itnstyle.css', 1) }}" type="text/css" />
-        {%- for cssfile in css_files %}
-        <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css" />
-        {%- endfor %}
-        {%- if not embedded %}
-          <script type="text/javascript">
-            var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:    '{{ url_root }}',
-              VERSION:     'snapshot',
-              COLLAPSE_INDEX: false,
-              FILE_SUFFIX: '{{ '' if no_search_suffix else file_suffix }}',
-              HAS_SOURCE:  {{ has_source|lower }}
-            };
-          </script>
-          {%- for scriptfile in script_files %}
-          <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
-          {%- endfor %}
-          {%- if use_opensearch %}
-            <link rel="search" type="application/opensearchdescription+xml"
-                  title="{% trans docstitle=docstitle|e %}Search within {{ docstitle }}{% endtrans %}"
-                  href="{{ pathto('_static/opensearch.xml', 1) }}"/>
-          {%- endif %}
-          {%- if favicon %}
-            <link rel="shortcut icon" href="_static/images/openattic.ico"/>
-          {%- endif %}
-        {%- endif %}
-        {%- block linktags %}
-          {%- if hasdoc('about') %}
-          <link rel="author" title="{{ _('About these documents') }}" href="{{ pathto('about') }}" />
-          {%- endif %}
-          {%- if hasdoc('genindex') %}
-          <link rel="index" title="{{ _('Index') }}" href="{{ pathto('genindex') }}" />
-          {%- endif %}
-          {%- if hasdoc('search') %}
-          <link rel="search" title="{{ _('Search') }}" href="{{ pathto('search') }}" />
-          {%- endif %}
-          {%- if hasdoc('copyright') %}
-          <link rel="copyright" title="{{ _('Copyright') }}" href="{{ pathto('copyright') }}" />
-          {%- endif %}
-          <link rel="top" title="{{ docstitle|e }}" href="{{ pathto('index') }}" />
-          {%- if parents %}
-          <link rel="up" title="{{ parents[-1].title|striptags|e }}" href="{{ parents[-1].link|e }}" />
-          {%- endif %}
-          {%- if next %}
-          <link rel="next" title="{{ next.title|striptags|e }}" href="{{ next.link|e }}" />
-          {%- endif %}
-          {%- if prev %}
-          <link rel="prev" title="{{ prev.title|striptags|e }}" href="{{ prev.link|e }}" />
-          {%- endif %}
-        {%- endblock %}
-        {%- block extrahead %} {% endblock %}
-        <link rel="stylesheet" href="_static/itnstyle.css" />
-        <script type="text/javascript">
-            var _gaq = _gaq || [];
-                _gaq.push(['_setAccount', 'UA-8202349-5']);
-                _gaq.push(['_setDomainName', 'openattic.org']);
-                _gaq.push(['_gat._anonymizeIp']);
-                _gaq.push(['_trackPageview']);
-                (function() {
-                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                        ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
-                            'http://www') + '.google-analytics.com/ga.js';
-                    var s = document.getElementsByTagName('script')[0];
-                        s.parentNode.insertBefore(ga, s);
-                   }
-                )();
+        <link rel="stylesheet" href="{{ pathto('_static/css/bootstrap.min.css', 1) }}" type="text/css">
+        <link rel="stylesheet" href="{{ pathto('_static/css/rst.css', 1) }}" type="text/css">
+        <link rel="stylesheet" href="{{ pathto('_static/css/code.css', 1) }}" type="text/css">
+        <link rel="stylesheet" href="{{ pathto('_static/css/colorbox.css', 1) }}" type="text/css">
+        <link rel="stylesheet" href="{{ pathto('_static/css/theme.css', 1) }}" type="text/css">
+        <link rel="stylesheet" href="{{ pathto('_static/css/custom.css', 1) }}" type="text/css">
+
+        <!-- favicon -->
+        <link rel="icon" href="{{ pathto('_static/images/openattic_favicon.png', 1) }}" sizes="32x32">
+
+    {%- block linktags %}
+      {%- if hasdoc('about') %}
+        <link rel="author" title="{{ _('About these documents') }}" href="{{ pathto('about') }}" />
+      {%- endif %}
+      {%- if hasdoc('genindex') %}
+        <link rel="index" title="{{ _('Index') }}" href="{{ pathto('genindex') }}" />
+      {%- endif %}
+      {%- if hasdoc('search') %}
+        <link rel="search" title="{{ _('Search') }}" href="{{ pathto('search') }}" />
+      {%- endif %}
+      {%- if hasdoc('copyright') %}
+        <link rel="copyright" title="{{ _('Copyright') }}" href="{{ pathto('copyright') }}" />
+      {%- endif %}
+        <link rel="top" title="{{ docstitle|e }}" href="{{ pathto('index') }}" />
+      {%- if parents %}
+        <link rel="up" title="{{ parents[-1].title|striptags|e }}" href="{{ parents[-1].link|e }}" />
+      {%- endif %}
+      {%- if next %}
+        <link rel="next" title="{{ next.title|striptags|e }}" href="{{ next.link|e }}" />
+      {%- endif %}
+      {%- if prev %}
+        <link rel="prev" title="{{ prev.title|striptags|e }}" href="{{ prev.link|e }}" />
+      {%- endif %}
+    {%- endblock %}
+    {%- block extrahead %} {% endblock %}
+
+        <!-- javascript -->
+        <script src="{{ pathto('_static/js/jquery.min.js', 1) }}"></script>
+        <script src="{{ pathto('_static/js/bootstrap.min.js', 1) }}"></script>
+        <!--[if lt IE 9]><script src="{{ pathto('_static/js/html5.js', 1) }}"></script><![endif]-->
+        <script async="" src="//www.google-analytics.com/analytics.js"></script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-68510807-1', 'auto');
+            ga('set', 'anonymizeIp', true);
+            ga('send', 'pageview');
         </script>
     </head>
     <body>
-        <!-- typo3 template header -->
-        <header id="header">
+        <!-- navigation -->
+        <nav class="navbar navbar-inverse navbar-static-top">
             <div class="container">
-                <a href="http://openattic.org" class="branding"><img src="http://openattic.org/fileadmin/templates/img/logo.png" alt="openATTIC"></a>
-                <div class="callus"><i class="fa fa-phone"></i>+49 661 103-14762</div>
-            </div>
-            <nav class="navbar navbar-default">
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                    </div>
-                    <div class="collapse navbar-collapse" id="mainmenu">
-                        <button class="popover-btn searchbtn" data-toggle="popover" data-placement="bottom">
-                            <img src="http://openattic.org/fileadmin/templates/img/oa_search-community.png" class="search">
-                        </button>
-                        <div class="searchcontainer">
-                            <form class="" action="/?id=80" method="post">
-                                <input autocomplete="off" class="search-field" name="tx_indexedsearch[sword]" type="text" placeholder="Enter search query&hellip;" value=""/>
-                                <input name="tx_indexedsearch[submit_button]" value="Search" type="hidden" />
-                            </form>
-                        </div>
-                        <ul class="nav navbar-nav pull-right">
-                            <li><a href="http://openattic.org/features.html" data-targetuid="107">Features</a></li>
-                            <li><a href="http://blog.openattic.org/" data-targetuid="113">Blog</a></li>
-                            <li><a href="http://download.openattic.org/" data-targetuid="59">Download</a></li>
-                            <li class="active"><a href="http://docs.openattic.org/2.0/" data-targetuid="108">Documentation</a></li>
-                            <li><a href="http://openattic.org/get-involved.html" data-targetuid="61">Get Involved</a></li>
-                            <li><a href="http://openattic.org/support.html" data-targetuid="110">Support</a></li>
-                        </ul>
-                    </div>
+                <div class="navbar-header">
+                    <button type="button"
+                            class="navbar-toggle collapsed"
+                            data-toggle="collapse"
+                            data-target="#bs-navbar"
+                            aria-controls="bs-navbar"
+                            aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://openattic.org">
+                        <img src="{{ pathto('_static/images/openattic_small.png', 1) }}" alt="openATTIC" id="logo">
+                    </a>
                 </div>
-            </nav>
-        </header>
-        <!-- END HEADER -->
+                <!-- /.navbar-header -->
+
+                <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+                    <ul class="nav navbar-nav">
+                        <li><a href="http://openattic.org/features.html">Features</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://openattic.org/blog/">Blog</a></li>
+                                <li><a href="http://openattic.org/archive.html">Archive</a></li>
+                                <li><a href="http://openattic.org/categories/index.html">Tags</a></li>
+                                <li><a href="http://openattic.org/authors/index.html">Authors</a></li>
+                                <li><a href="http://openattic.org/rss.xml">RSS feed</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="http://openattic.org/download.html">Download</a></li>
+                        <li><a href="http://docs.openattic.org/2.0/">Documentation</a></li>
+                        <li><a href="http://openattic.org/media.html">Media</a></li>
+                        <li><a href="http://openattic.org/get-involved.html">Getting Involved</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="index.rst" id="sourcelink">Source</a></li>
+                    </ul>
+                </div>
+          <!-- /.navbar-collapse -->
+            </div>
+        <!-- /.container -->
+        </nav>
+        <!-- navigation:end -->
+
         <section id="main">
             <div class="container">
                 <!-- end typo3 template header -->
@@ -226,64 +212,13 @@
                     </div>
                     {%- endblock %}
                     <!-- typo3 template footer -->
-                </section>
-            </div>
-        </div>
-        <!-- BEGIN HEADER -->
-        <footer id="footer">
-            <div class="footer-top">
-                <div class="container">
-                    <!--  CONTENT ELEMENT, uid:281/gridelements_pi1 [begin] -->
-                    <div id="c281" class="csc-default">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <!--  CONTENT ELEMENT, uid:280/text [begin] -->
-                                <div id="c280" class="csc-default">
-                                    <!--  Text: [begin] -->
-                                    <p class="bodytext"><b>it-novum GmbH</b></p>
-                                    <p class="bodytext">Edelzeller Straße 44<br />36043 Fulda, Germany&nbsp;</p>
-                                    <!--  Text: [end] -->
-                                </div>
-                                <!--  CONTENT ELEMENT, uid:280/text [end] -->
-                            </div>
-                            <div class="col-md-6">
-                            </div>
-                            <div class="col-md-3">
-                                <!--  CONTENT ELEMENT, uid:278/text [begin] -->
-                                <div id="c278" class="csc-default community-button">
-                                    <!--  Text: [begin] -->
-                                    <p class="bodytext">&nbsp;</p>
-                                    <p class="bodytext"><a href="http://www.openattic.com/support.html" title="Öffnet internen Link im aktuellen Fenster" target="_top" class="internal-link"><i class="icon-user"></i> Enterprise Support</a></p>
-                                    <!--  Text: [end] -->
-                                </div>
-                                <!--  CONTENT ELEMENT, uid:278/text [end] -->
-                            </div>
-                        </div>
-                    </div>
-                    <!--  CONTENT ELEMENT, uid:281/gridelements_pi1 [end] -->
                 </div>
+
+                <!-- footer -->
+                <footer id="footer">
+                  © 2017 <a href="mailto:info@openattic.org">openATTIC</a>
+                </footer>
             </div>
-            <div class="footer-bottom">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="socialicons">
-                                <ul>
-                                    <li class="tw_btn"><a href="https://twitter.com/openattic" target="_blank">twitter</a></li>
-                                    <li class="gplus_btn"><a href="https://plus.google.com/107882477755470147423/posts" target="_blank">google plus</a></li>
-                                    <li class="cr_btn"><a href="http://www.code-rausch.com/" target="_blank">code rausch</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6 footer-legal">
-                            <ul><li><a href="http://www.openattic.com/index.php?id=91" target="_top">Contact</a><span class="separator"></span></li><li><a href="http://www.openattic.com/index.php?id=39" target="_top">Legal Information / Disclaimer</a></li></ul>
-                        </div>
-                        <div class="col-md-3">
-                            <p class="text-right">copyright &copy; 2015 &middot; it novum GmbH</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        </section>
     </body>
 </html>

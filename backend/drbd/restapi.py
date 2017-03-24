@@ -18,7 +18,7 @@ from rest import relations
 
 from requests.exceptions import HTTPError
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -26,6 +26,7 @@ from drbd.models import Connection
 from exception import validate_input_fields
 from ifconfig.models import Host
 from rest.utilities import get_request_data, mk_method_field_params
+from rest.restapi import NoCacheModelViewSet
 from volumes.models import StorageObject
 
 from rest.multinode.handlers import RequestHandlers
@@ -47,7 +48,7 @@ class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_status()
 
 
-class DrbdConnectionViewSet(viewsets.ModelViewSet):
+class DrbdConnectionViewSet(NoCacheModelViewSet):
     """ Viewset for DRBD connection """
 
     queryset = Connection.objects.all()
@@ -174,11 +175,11 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             if host == Host.objects.get_current():
                 # Step 1: Call second host to grow his endpoint, if the request was not forwarded by
                 # sencondary host
-                if "proxy_host_id" not in get_request_data(request):
-                    try:
+                try:
+                    if len(connection.get_storage_devices()) > 1:
                         self._remote_request(request, connection.peerhost, obj=connection)
-                    except HTTPError, e:
-                        return Response(e.response.json(), status=e.response.status_code)
+                except HTTPError, e:
+                    return Response(e.response.json(), status=e.response.status_code)
 
                 # Step 2: Resize local endpoint and connection
                 return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
@@ -196,6 +197,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                         res = self._remote_request(request, host, obj=connection)
                     except HTTPError, e:
                         return Response(e.response.json(), status=e.response.status_code)
+
                 return res
         return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
 

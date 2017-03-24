@@ -54,7 +54,7 @@ app.controller("PoolsCtrl", function ($scope, $state, poolsService, tabViewServi
         name: "Status"
       },
       storage: {
-        show: "selection.item",
+        show: "selection.item.id",
         state: "pools.detail.storage",
         class: "tc_storage_tab",
         name: "Storage"
@@ -88,9 +88,6 @@ app.controller("PoolsCtrl", function ($scope, $state, poolsService, tabViewServi
         .$promise
         .then(function (res) {
           $scope.data = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 
@@ -110,12 +107,4 @@ app.controller("PoolsCtrl", function ($scope, $state, poolsService, tabViewServi
   $scope.$watchCollection("selection.item", function (item) {
     $scope.hasSelection = Boolean(item);
   });
-
-  $scope.addAction = function () {
-    console.log(["addAction", arguments]);
-  };
-
-  $scope.deleteAction = function () {
-    console.log(["deleteAction", arguments]);
-  };
 });

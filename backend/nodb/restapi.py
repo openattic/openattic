@@ -12,9 +12,10 @@
  *  GNU General Public License for more details.
 """
 from django.core import validators
-from rest_framework import serializers, viewsets
+from rest_framework import serializers
 
 from rest.utilities import ToNativeToRepresentationMixin, drf_version
+from rest.restapi import NoCacheModelViewSet
 
 try:
     from rest_framework.fields import WritableField
@@ -51,7 +52,7 @@ else:
                 (nodb.models.JsonField, JsonField)])
 
 
-class NodbViewSet(viewsets.ModelViewSet):
+class NodbViewSet(NoCacheModelViewSet):
 
     def __init__(self, **kwargs):
         super(NodbViewSet, self).__init__(**kwargs)

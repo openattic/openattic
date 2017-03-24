@@ -66,9 +66,6 @@ app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesServi
         .$promise
         .then(function (res) {
           $scope.httpData = res;
-        })
-        .catch(function (error) {
-          console.log("An error occurred", error);
         });
   }, true);
 
