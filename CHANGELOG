@@ -76,6 +76,8 @@ Fixed
 * Backend: Fixed Ceph RBD disk usage value (OP-2008)
 * Installation: Fixed domain join - wrong order on ``oaconfig`` script (OP-1209)
 * Installation: fixed location of the Nagios ``status.dat`` file on EL7 (OP-1955)
+* Installation: fixed "OAUSER: unbound variable" error during update on EL7
+  (OP-2046)
 * Development: Remove useless code which breaks Gatling unit tests. (OP-1963)
 
 Removed
