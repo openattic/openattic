@@ -30,7 +30,7 @@ WINBIND_SERVICE="winbind"
 NAGIOS_CMD_PATH="/var/spool/nagios/cmd/nagios.cmd"
 
 ## Type: string
-## Default: "/var/log/nagios/status.dat"
+## Default: "/var/spool/nagios/status.dat"
 #
 # The file that stores the current status, comment, and downtime information.
 NAGIOS_STATUS_DAT_PATH="/var/spool/nagios/status.dat"
