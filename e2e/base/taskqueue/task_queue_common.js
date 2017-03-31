@@ -137,7 +137,7 @@
       warning: element(by.className('tc-run-warn')),
       singleDelete: element(by.className('tc_delete_one')),
       multiDelete: element(by.className('tc_delete_multiple')),
-      inputField: element(by.model('input.enteredName')),
+      inputField: element(by.model('$ctrl.input.enteredName')),
       confirmBtn: element(by.className('tc-tab-del-confirm'))
     }
   };

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,34 +30,4 @@
  */
 "use strict";
 
-var app = angular.module("openattic.hosts");
-app.controller("HostDeleteCtrl", function ($scope, $filter, HostService, $uibModalInstance, hosts, Notification, $q) {
-  $scope.hosts = hosts;
-
-  /**
-   * Deletes all hosts in the selection.
-   */
-  $scope.delete = function () {
-    var hosts = $scope.hosts;
-    var requests = [];
-    hosts.forEach(function (host) {
-      var deferred = $q.defer();
-      HostService.delete({id: host.id}, deferred.resolve, deferred.reject);
-      requests.push(deferred.promise);
-    });
-    $q.all(requests).then(function () {
-      $uibModalInstance.close("deleted");
-    }, function () {
-      $scope.deleteForm.$submitted = false;
-      $uibModalInstance.close("failed");
-    });
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-    Notification.warning({
-      title: "Cancelled delete host",
-      msg: "Cancelled host delete."
-    });
-  };
-});
+angular.module("openattic.oadeleteconfirmationmodal", []);
