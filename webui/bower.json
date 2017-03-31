@@ -10,6 +10,7 @@
   "dependencies": {
     "angular": "1.5.3",
     "angular-bootstrap": "2.5.0",
+    "angular-bootstrap-toggle": "0.1.2",
     "angular-breadcrumb": "0.4.1",
     "angular-gridster": "0.13.9",
     "angular-md5": "0.1.10",

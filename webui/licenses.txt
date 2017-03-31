@@ -5,6 +5,7 @@ bower packages
 --------------
 angular                           1.5.3               MIT                         https://github.com/angular/bower-angular/tree/v1.5.3
 angular-bootstrap                 2.5.0               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/2.5.0
+angular-bootstrap-toggle          0.1.2               MIT                         https://github.com/ziscloud/angular-bootstrap-toggle/tree/v0.1.2
 angular-breadcrumb                0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
 angular-gridster                  0.13.9              MIT                         https://github.com/ManifestWebDesign/angular-gridster/tree/v0.13.9
 angular-md5                       0.1.10              MIT                         https://github.com/gdi2290/angular-md5/tree/v0.1.10

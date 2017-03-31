@@ -41,6 +41,7 @@ angular.module("openattic", [
   "ui.bootstrap",
   "ui.router",
   "ui.sortable",
+  "ui.toggle",
   "ui.tree",
   "openattic.core",
   "openattic.extensions",

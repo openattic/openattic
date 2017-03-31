@@ -71,8 +71,21 @@ option {
 .no-margin {
   margin: 0;
 }
+.margin-right-md {
+  margin-right:15px
+}
 .no-padding {
   padding: 0;
+}
+.no-border {
+  border: 0px;
+  box-shadow: 0px 0px 0px
+}
+.no-wrap {
+  white-space: nowrap;
+}
+.strikethrough {
+  text-decoration: line-through;
 }
 
 /* Branding */
@@ -1096,6 +1109,20 @@ tags-input .tags {
 }
 .tree li:last-child::before {
   height: 30px;
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+}
+
+.toggle, .toggle-on, .toggle-off {
+  border-radius: 20px;
+}
+
+.toggle .toggle-handle {
+  border-radius: 20px;
 }
 
 /* CSS Fix */

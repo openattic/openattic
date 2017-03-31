@@ -50,6 +50,7 @@ var allSuites = {
   ceph_rbds            : '../e2e/ceph/rbds/ceph_rbds.e2e.js',
   ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
   ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js',
+  ceph_iscsi           : '../e2e/ceph/iscsi/*.e2e.js'
 };
 
 var categories = {
@@ -80,7 +81,7 @@ exports.config = {
     defaultTimeoutInterval: 360000
   },
   framework: 'jasmine2',
-
+  allScriptsTimeout: 60000,
   suites: suites,
 
   onPrepare: function(){
