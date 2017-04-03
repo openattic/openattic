@@ -250,7 +250,7 @@ var rbdCommons = function(){
     rbd.click();
     element(by.css('.tc_menudropdown')).click();
     element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('input.enteredName')).sendKeys('yes');
+    element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
     element(by.id('bot2-Msg1')).click();
     browser.sleep(helpers.configs.sleep);
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);

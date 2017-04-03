@@ -35,11 +35,6 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
     $q, Notification) {
   $scope.cephPools = cephPoolSelection;
 
-  $scope.input = {
-    enteredName: "",
-    pattern: "yes"
-  };
-
   $scope.delete = function () {
     var requests = [];
     $scope.cephPools.forEach(function (cephPool) {
