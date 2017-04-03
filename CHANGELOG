@@ -23,6 +23,10 @@ Added
 ~~~~~
 * Development: Added Ceph support to the Vagrant configuration (OP-2048)
 
+Changed
+~~~~~~~
+* Improved style of iSCSI iqn and fibre channel wwn inputs (OP-1959)
+
 Fixed
 ~~~~~
 * Installation: fixed "OAUSER: unbound variable" error during update on EL7
@@ -36,7 +40,7 @@ Added
 * WebUI: Display loading spinner icon on form submit to give the user feedback
   that something is happening in the background (OP-1760)
 * WebUI: Automatically show toasty notifications for API errors.
-  Thanks to Uroš Lates for the contribution. (OP-1631)
+  Thanks to Uroï¿½ Lates for the contribution. (OP-1631)
 * WebUI: Added DRBD support. (OP-1201)
 
 Changed
@@ -50,7 +54,7 @@ Changed
 * WebUI: Disabled successful task queue notifications (OP-1961)
 * WebUI: Changed mouse cursor to "pointer" over clickable rows (OP-1893)
 * WebUI: Dropdown button should not close when user clicks on a disabled option
-  Thanks to David Díaz for the contribution. (OP-940)
+  Thanks to David Dï¿½az for the contribution. (OP-940)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
 * Packaging: Stop and remove ``openattic-rpcd`` service when upgrading to
   version 2.0.19 (OP-1900)
