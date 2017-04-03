@@ -31,6 +31,7 @@ Fixed
 ~~~~~
 * Installation: fixed "OAUSER: unbound variable" error during update on EL7
   (OP-2046)
+* WebUI: Prevents browser freezing when session expires (OP-1779)
 
 [2.0.19] - 2017-03-24
 ---------------------
