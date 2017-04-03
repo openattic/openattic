@@ -58,10 +58,10 @@ Starting the Virtual Machine
 
 The |oA| source code repository contains a Vagrant configuration file that
 performs the necessary steps to get you started. Follow the instructions
-outlined in :ref:`developer_hg_howto` on how to create your own fork and
-local Mercurial repository.
+outlined in :ref:`developer_git_howto` on how to create your own fork and
+local git repository.
 
-Navigate to the ``vagrant`` subdirectory of your local Mercurial clone and run this command to
+Navigate to the ``vagrant`` subdirectory of your local git clone and run this command to
 start your VM::
 
     vagrant up
