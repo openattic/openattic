@@ -31,28 +31,32 @@
 "use strict";
 
 var app = angular.module("openattic.required");
-app.directive("required", function ($document) {
+app.directive("required", function ($document, $timeout) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
-      var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
-      if (labelNode) {
-        var labelElement = angular.element(labelNode);
-        labelElement.append("<span class=\"required\"> *</span>");
-      }
+      $timeout(function() {
+        var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
+        if (labelNode) {
+          var labelElement = angular.element(labelNode);
+          labelElement.append("<span class=\"required\"> *</span>");
+        }
+      });
     }
   };
 });
 
-app.directive("ngRequired", function ($document) {
+app.directive("ngRequired", function ($document, $timeout) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
-      var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
-      if (labelNode) {
-        var labelElement = angular.element(labelNode);
-        labelElement.append("<span class=\"required\"> *</span>");
-      }
+      $timeout(function() {
+        var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
+        if (labelNode) {
+          var labelElement = angular.element(labelNode);
+          labelElement.append("<span class=\"required\"> *</span>");
+        }
+      });
     }
   };
 });
