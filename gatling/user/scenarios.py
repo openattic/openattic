@@ -41,15 +41,18 @@ class UserTestScenario(GatlingTestCase):
                 cls.send_request("DELETE", "users", obj_id=entry["id"])
 
     @classmethod
-    def _create_test_user(cls):
-        user = {"username": cls.username,
+    def _create_test_user(cls, username=None, is_superuser=True):
+        if not username:
+            username = cls.username
+
+        user = {"username": username,
                 "password": "init",
                 "email": "gatling_test@test.com",
                 "first_name": "gatling_test",
                 "last_name": "gatling_user",
                 "is_active": True,
                 "is_staff": True,
-                "is_superuser": True}
+                "is_superuser": is_superuser}
 
         try:
             res = cls.send_request("POST", "users", data=user)
