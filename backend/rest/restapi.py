@@ -117,8 +117,9 @@ class UserViewSet(NoCacheModelViewSet):
             # error response. An user can only generate a token for another user if the other user
             # does not already have an authentication token.
             if request.user != user:
-                return Response("You can't refresh the authentication token of another user. Only "
-                                "the user '%s' is able to refresh his token." % user.username,
+                return Response({'detail': 'You can\'t refresh the authentication token of another '
+                                           'user. Only the user \'{}\' is able to refresh his '
+                                           'token.'.format(user.username)},
                                 status=status.HTTP_403_FORBIDDEN)
             token.delete()
 

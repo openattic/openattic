@@ -98,9 +98,9 @@ class UserPrefsTestCase(UserTestScenario):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_request("GET", obj_id=profile["response"][0]["id"],
                               auth_token=testuser_auth_token)
-        self.assertEqual(err.exception.response.status_code, 401)
-        self.assertEqual(str(err.exception.response.json()), "You are not allowed to access other "
-                                                             "users profiles")
+
+        self.check_exception_messages(
+            err, self.error_messages['test_try_to_get_preference_of_another_user'], status_code=401)
 
     def test_try_to_delete_preference_of_another_user(self):
         """ Try to delete a preference for another user and see if it fails. """
@@ -118,6 +118,7 @@ class UserPrefsTestCase(UserTestScenario):
             self.send_request("DELETE", obj_id=res["response"]["id"],
                               auth_token=testuser_auth_token,
                               data={"settings": [self.test_preference.keys()[0]]})
-        self.assertEqual(err.exception.response.status_code, 401)
-        self.assertEqual(str(err.exception.response.json()), "You are not allowed to delete "
-                                                             "preferences of other users")
+
+        self.check_exception_messages(
+            err, self.error_messages['test_try_to_delete_preference_of_another_user'],
+            status_code=401)

@@ -59,10 +59,10 @@ class AuthTokenTestCase(UserTestScenario, TokenAuthTestScenario):
         with self.assertRaises(requests.HTTPError) as err:
             # try to refresh auth token by default user
             self.send_request("POST", ["users", "gen_new_token"], obj_id=self.testuser["id"])
-        self.assertEqual(err.exception.response.status_code, 403)
-        self.assertEqual(str(err.exception.response.json()),
-                         "You can't refresh the authentication token of another user. Only the "
-                         "user 'gatling_testuser' is able to refresh his token.")
+
+        self.check_exception_messages(
+            err, self.error_messages['test_create_refresh_auth_token_for_testuser'],
+            status_code=403)
 
     def test_create_auth_token_for_testuser_and_self_refresh(self):
         """ Try to create the auth token by the default user and refresh it by the testuser. """
@@ -90,9 +90,8 @@ class AuthTokenTestCase(UserTestScenario, TokenAuthTestScenario):
             self.send_request("POST", ["users", "gen_new_token"], obj_id=self.testuser["id"],
                               auth_token="wrongauthenticationtoken")
 
-        err_message = err.exception.response.json()
-        self.assertEqual(err.exception.response.status_code, 401)
-        self.assertIn("Invalid token", err_message["detail"])
+        self.check_exception_messages(
+            err, self.error_messages['test_auth_token_self_refresh_wrong_token'], status_code=401)
 
 
 class UserManagementTestCase(UserTestScenario):
