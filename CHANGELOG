@@ -34,6 +34,8 @@ Fixed
 ~~~~~
 * Installation: fixed "OAUSER: unbound variable" error during update on EL7
   (OP-2046)
+* Backend: Fixed "Systemd did not respond to DBus ping" error on SUSE
+  (BNC#1032263)
 * WebUI: Prevents browser freezing when session expires (OP-1779)
 * WebUI: Disallow underscores in IQN WWNs (OP-1669)
 * Documentation: Updated developer documentation for git (OP-2054)
