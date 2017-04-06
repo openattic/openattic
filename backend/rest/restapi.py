@@ -17,12 +17,10 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 from rest_framework.views import APIView
 
 from rest import relations
@@ -121,13 +119,13 @@ class UserViewSet(NoCacheModelViewSet):
             if request.user != user:
                 return Response("You can't refresh the authentication token of another user. Only "
                                 "the user '%s' is able to refresh his token." % user.username,
-                                status=HTTP_403_FORBIDDEN)
+                                status=status.HTTP_403_FORBIDDEN)
             token.delete()
 
         Token.objects.create(user=user)
 
         user_ret = UserSerializer(user, many=False, context={"request": request})
-        return Response(user_ret.data, status=HTTP_201_CREATED)
+        return Response(user_ret.data, status=status.HTTP_201_CREATED)
 
     @list_route()
     def current(self, request, *args, **kwargs):
@@ -146,7 +144,7 @@ class UserViewSet(NoCacheModelViewSet):
         user.save()
 
         user_ret = UserSerializer(user, context={"request": request})
-        return Response(user_ret.data, status=HTTP_201_CREATED)
+        return Response(user_ret.data, status=status.HTTP_201_CREATED)
 
 
 RESTAPI_VIEWSETS = [
