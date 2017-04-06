@@ -436,7 +436,7 @@ install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}%{_sysconfdir}/sysconfig
 install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
 
 # configure dbus
-install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+install -m 644 etc/dbus-1/system.d/openattic.conf.SUSE %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
