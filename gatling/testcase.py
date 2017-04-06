@@ -17,6 +17,8 @@ import unittest
 import requests
 import json
 
+from requests.auth import HTTPBasicAuth
+
 
 class GatlingTestCase(unittest.TestCase):
 
@@ -106,15 +108,7 @@ class GatlingTestCase(unittest.TestCase):
             if prefixes["detail_route"]:
                 url = "%s/%s" % (url, prefixes["detail_route"])
 
-            res = requests.request(method, url, data=json.dumps(data), headers=header)
-
-            try:
-                res.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                # Modify the error message and re-raise the exception.
-                raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
-                                                    response=e.response,
-                                                    request=e.request)
+            res = cls._do_request(method, url, header, data=data, auth=auth)
             res = json.loads(res.text)
 
             return {"response": res,
@@ -126,18 +120,7 @@ class GatlingTestCase(unittest.TestCase):
             if "search_param" in kwargs:
                 url = "%s?%s" % (url, kwargs["search_param"])
 
-            if data:
-                res = requests.request(method, url, data=json.dumps(data), headers=header)
-            else:
-                res = requests.request(method, url, headers=header)
-
-            try:
-                res.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                # Modify the error message and re-raise the exception.
-                raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
-                                                    response=e.response,
-                                                    request=e.request)
+            res = cls._do_request(method, url, header, data=data, auth=auth)
 
             # For method DELETE no json object could be decoded, so just return the response
             # otherwise return the result dict
@@ -423,3 +406,39 @@ class GatlingTestCase(unittest.TestCase):
                 return "%s%s/%s" % (cls.base_url, prefixes["detail_route"], str(obj_id))
         else:
             return "%s%s/%s" % (cls.base_url, prefixes["api_prefix"], str(obj_id))
+
+    @classmethod
+    def _do_request(cls, method, url, headers, data=None, auth=None):
+        """
+        Helper function to send the request to the REST API.
+
+        :param method: HTTP method of the request
+        :type method: str
+        :param url: Request url
+        :type url: str
+        :param headers: Request headers
+        :type headers: dict[str, str]
+        :param data: Request data
+        :type data: dict[str, Any]
+        :param auth: Basic auth object of username and password
+        :type auth: requests.HTTPBasicAuth
+        :return: Returns the response of the request
+        :rtype: requests.response
+
+        """
+        if data:
+            data = json.dumps(data)
+
+        if auth:
+            res = requests.request(method, url, headers=headers, data=data, auth=auth)
+        else:
+            res = requests.request(method, url, headers=headers, data=data)
+
+        try:
+            res.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            # Modify the error message and re-raise the exception.
+            raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
+                                                response=e.response,
+                                                request=e.request)
+        return res
