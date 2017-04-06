@@ -146,6 +146,21 @@ class UserViewSet(NoCacheModelViewSet):
         user_ret = UserSerializer(user, context={"request": request})
         return Response(user_ret.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        self.object = self.get_object()
+        data = get_request_data(request)
+
+        serializer = self.get_serializer(self.object, data=data, partial=partial)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if 'password' in data:
+            self.object.set_password(data['password'])
+        self.object = serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 RESTAPI_VIEWSETS = [
     ('users', UserViewSet),
