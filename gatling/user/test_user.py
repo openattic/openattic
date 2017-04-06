@@ -93,3 +93,69 @@ class AuthTokenTestCase(UserTestScenario, TokenAuthTestScenario):
         err_message = err.exception.response.json()
         self.assertEqual(err.exception.response.status_code, 401)
         self.assertIn("Invalid token", err_message["detail"])
+
+
+class UserManagementTestCase(UserTestScenario):
+
+    def test_password_must_not_be_returned(self):
+        """ Check if password is not included in the user response object. """
+        res = self.send_request('GET', 'users', username=self.testuser['username'],
+                                password=self.testuser['password'], obj_id=self.testuser['id'])
+        self.assertNotIn('password', res['response'])
+
+    def test_set_new_password_for_own_user(self):
+        """ Try to refresh the password of the current testuser. """
+        # try to get the user list with the current password
+        self.send_request('GET', 'users', username=self.testuser['username'],
+                          password=self.testuser['password'])
+
+        # reset the password of the current testuser
+        initial_pass = self.testuser['password']
+        self.testuser['password'] = 'new_pass'
+        self.send_request('PUT', 'users', username=self.testuser['username'], password=initial_pass,
+                          obj_id=self.testuser['id'], data=self.testuser)
+
+        # try to get the user list with the new password
+        self.send_request('GET', 'users', username=self.testuser['username'],
+                          password=self.testuser['password'])
+
+    def test_set_new_password_for_other_user_by_admin_user(self):
+        """ Try to refresh the password of an user by an adminitrator. """
+        # create a second test user
+        testuser_2 = self._create_test_user('testuser_2')
+        self.addCleanup(requests.request, 'DELETE', testuser_2['cleanup_url'],
+                        headers=testuser_2['headers'])
+        testuser_2 = testuser_2['response']
+
+        # reset the password of the second test user by 'testuser'
+        testuser_2['password'] = 'new_pass'
+        self.send_request('PUT', 'users', username=self.testuser['username'],
+                          password=self.testuser['password'], obj_id=testuser_2['id'],
+                          data=testuser_2)
+
+        # try to get the user list by 'testuser_2' using the new password
+        self.send_request('GET', 'users', username=testuser_2['username'],
+                          password=testuser_2['password'])
+
+    def test_set_new_password_by_user_without_admin_privileges(self):
+        """ Try to refresh the password on an user by another user how is not an administrator. """
+        # create the second test user (without administrator privileges)
+        testuser_2 = self._create_test_user('testuser_2', False)
+        self.addCleanup(requests.request, 'DELETE', testuser_2['cleanup_url'],
+                        headers=testuser_2['headers'])
+        testuser_2 = testuser_2['response']
+
+        # try to reset the password of the default user 'gatling_testuser'
+        old_pass = self.testuser['password']
+        self.testuser['password'] = 'new_pass'
+        with self.assertRaises(requests.HTTPError) as err:
+            self.send_request('PUT', 'users', username=testuser_2['username'],
+                              password=testuser_2['password'], obj_id=self.testuser['id'],
+                              data=self.testuser)
+
+        self.check_exception_messages(
+            err, self.error_messages['test_set_new_password_by_user_without_admin_privileges'],
+            status_code=403)
+
+        # try to get the user list by default user 'gatling_testuser' using the old password
+        self.send_request('GET', 'users', username=self.testuser['username'], password=old_pass)

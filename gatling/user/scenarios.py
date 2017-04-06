@@ -61,3 +61,11 @@ class UserTestScenario(GatlingTestCase):
 
         res['response']['password'] = 'init'
         return res
+
+    @property
+    def error_messages(self):
+        return {
+            'test_set_new_password_by_user_without_admin_privileges':
+                'You can\'t set the user data of another user ({}). Administrator privileges are '
+                'required.'.format(self.testuser['username'])
+        }
