@@ -164,9 +164,10 @@ class UserViewSet(NoCacheModelViewSet):
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response('You can\'t set the user data of another user ({}). Administrator '
-                        'privileges are required.'.format(self.object.username),
-                        status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {'detail': 'You can\'t set the user data of another user ({}). Administrator '
+                       'privileges are required.'.format(self.object.username)},
+            status=status.HTTP_403_FORBIDDEN)
 
 
 RESTAPI_VIEWSETS = [
