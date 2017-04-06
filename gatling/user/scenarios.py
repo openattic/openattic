@@ -74,6 +74,6 @@ class UserTestScenario(GatlingTestCase):
             'test_try_to_delete_preference_of_another_user':
                 'You are not allowed to delete preferences of other users',
             'test_set_new_password_by_user_without_admin_privileges':
-                'You can\'t set the user data of another user ({}). Administrator privileges are '
-                'required.'.format(self.testuser['username'])
+                'Administrator privileges are required for updating the data of user {}.'
+                    .format(self.testuser['username'])
         }
