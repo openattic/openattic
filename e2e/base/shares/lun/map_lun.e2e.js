@@ -5,7 +5,7 @@ var helpers = require('../../../common.js');
 describe('Should map a LUN to an host', function(){
 
   var hostSelect = element(by.model('share.host'));
-  var hostname = 'protractor_map_lun_host';
+  var hostname = 'protractor-map-lun-host';
   var host = element(by.cssContainingText('tr', hostname));
 
   var volumename = 'protractor_iscsiMap_vol';
