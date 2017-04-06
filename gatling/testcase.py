@@ -46,7 +46,8 @@ class GatlingTestCase(unittest.TestCase):
             raise unittest.SkipTest("%s tests disabled in configuration" % section)
 
     @classmethod
-    def send_request(cls, method, prefixes=None, auth_token=None, *args, **kwargs):
+    def send_request(cls, method, prefixes=None, auth_token=None, username=None, password=None,
+                     *args, **kwargs):
         """
         Sends a request to openATTICs REST API and returns the response
 
@@ -77,6 +78,12 @@ class GatlingTestCase(unittest.TestCase):
                                  the defined one in the config. The request will be send with
                                  with this authentication token instead of the token defined in
                                  the config.
+        :param username (str): Optional parameter. For another needed username than the one defined
+                               in the config. Note: if username + password AND auth_token are given
+                               username and password will be used for the request.
+        :param password (str): Optional parameter. For another needed password than the one defined
+                               in the config. Note: if username + password AND auth_token are given
+                               username and password will be used for the request.
         :param args: None
         :param kwargs:  obj_id (int)      -> Object id to get a specific object by GET request.
                         data (dict)       -> Data for creating a new object by POST request.
@@ -94,13 +101,20 @@ class GatlingTestCase(unittest.TestCase):
                 objects a dictionary {"response": api_response, "count": sum of returned objects}
         """
         prefixes = cls._get_sturctured_prefixes(prefixes)
-        header = cls.get_auth_header(auth_token)
         url = "%s%s" % (cls.base_url, prefixes["api_prefix"])
 
         if "obj_id" in kwargs:
             url = "%s/%s" % (url, str(kwargs["obj_id"]))
 
+        header = dict()
         header["content-type"] = "application/json"
+        auth = None
+
+        if not (username and password):
+            header.update(cls.get_auth_header(auth_token))
+        else:
+            auth = HTTPBasicAuth(username, password)
+
         data = kwargs.get("data", None)
 
         # POST, PUT
