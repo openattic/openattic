@@ -47,7 +47,7 @@ class GatlingTestCase(unittest.TestCase):
 
     @classmethod
     def send_request(cls, method, prefixes=None, auth_token=None, username=None, password=None,
-                     *args, **kwargs):
+                     data=None, obj_id=None, search_param=None):
         """
         Sends a request to openATTICs REST API and returns the response
 
@@ -84,13 +84,11 @@ class GatlingTestCase(unittest.TestCase):
         :param password (str): Optional parameter. For another needed password than the one defined
                                in the config. Note: if username + password AND auth_token are given
                                username and password will be used for the request.
-        :param args: None
-        :param kwargs:  obj_id (int)      -> Object id to get a specific object by GET request.
-                        data (dict)       -> Data for creating a new object by POST request.
-                        search_param (str)-> Search param, e.g.: "name=vol_name" to search for a
-                                             specific volume.
-                                             It generates the following url:
-                                             http://host/openattic/api/volumes?name=vol_name
+        :param data (dict): Data for creating a new object by POST request.
+        :param obj_id (int): Object id to get a specific object by GET request.
+        :param search_param (str): Search param, e.g.: "name=vol_name" to search for a specific
+                                   volume. It generates the following url:
+                                   http://host/openattic/api/volumes?name=vol_name
         :return: In case of:
             -   POST and PUT requests: A dictionary {"response": api_response, "count": 1,
                 "cleanup_url": cleanup_url, "headers": creation headers}
@@ -101,13 +99,13 @@ class GatlingTestCase(unittest.TestCase):
                 objects a dictionary {"response": api_response, "count": sum of returned objects}
         """
         prefixes = cls._get_sturctured_prefixes(prefixes)
-        url = "%s%s" % (cls.base_url, prefixes["api_prefix"])
+        url = '{}{}'.format(cls.base_url, prefixes['api_prefix'])
 
-        if "obj_id" in kwargs:
-            url = "%s/%s" % (url, str(kwargs["obj_id"]))
+        if obj_id:
+            url = '{}/{}'.format(url, obj_id)
 
         header = dict()
-        header["content-type"] = "application/json"
+        header['content-type'] = 'application/json'
         auth = None
 
         if not (username and password):
@@ -115,24 +113,22 @@ class GatlingTestCase(unittest.TestCase):
         else:
             auth = HTTPBasicAuth(username, password)
 
-        data = kwargs.get("data", None)
-
         # POST, PUT
-        if method in ["POST", "PUT"]:
-            if prefixes["detail_route"]:
-                url = "%s/%s" % (url, prefixes["detail_route"])
+        if method in ['POST', 'PUT']:
+            if prefixes['detail_route']:
+                url = '{}/{}'.format(url, prefixes['detail_route'])
 
             res = cls._do_request(method, url, header, data=data, auth=auth)
             res = json.loads(res.text)
 
-            return {"response": res,
-                    "count": 1,
-                    "cleanup_url": cls._get_cleanup_url(res["id"], prefixes),
-                    "headers": header}
+            return {'response': res,
+                    'count': 1,
+                    'cleanup_url': cls._get_cleanup_url(res['id'], prefixes),
+                    'headers': header}
         # GET, DELETE
-        elif method in ["GET", "DELETE"]:
-            if "search_param" in kwargs:
-                url = "%s?%s" % (url, kwargs["search_param"])
+        elif method in ['GET', 'DELETE']:
+            if search_param:
+                url = '{}?{}'.format(url, search_param)
 
             res = cls._do_request(method, url, header, data=data, auth=auth)
 
@@ -141,20 +137,20 @@ class GatlingTestCase(unittest.TestCase):
             try:
                 res = json.loads(res.text)
             except:
-                return {"response": res}
+                return {'response': res}
             else:
-                if "obj_id" in kwargs:
-                    header["content-type"] = "application/json"
-                    return {"response": res,
-                            "count": 1,
-                            "cleanup_url": url,
-                            "headers": header}
+                if obj_id:
+                    header['content-type'] = 'application/json'
+                    return {'response': res,
+                            'count': 1,
+                            'cleanup_url': url,
+                            'headers': header}
                 else:
-                    return {"response": res["results"],
-                            "count": res["count"]}
+                    return {'response': res['results'],
+                            'count': res['count']}
         else:
-            print "Unknown request method '%s'" % method
-            raise unittest.SkipTest("Unknown request method '%s'" % method)
+            print('Unknown request method \'{}\''.format(method))
+            raise unittest.SkipTest('Unknown request method \'{}\''.format(method))
 
     @classmethod
     def get_auth_header(cls, auth_token=None):
