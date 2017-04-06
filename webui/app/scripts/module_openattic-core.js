@@ -40,6 +40,7 @@ angular.module("openattic.core", [
   "openattic.graph",
   "openattic.navigation",
   "openattic.notification",
+  "openattic.oadeleteconfirmationmodal",
   "openattic.required",
   "openattic.sizeparser",
   "openattic.tabView",

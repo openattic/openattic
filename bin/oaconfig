@@ -19,6 +19,21 @@ do
 	[ -f $settings ] && . $settings
 done
 
+if [[ -z $OAUSER ]]; then
+	echo "ERROR: OAUSER is not defined. Please check your configuration."
+	exit 1
+fi
+
+if [[ -z $OADIR ]]; then
+	echo "ERROR: OADIR is not defined. Please check your configuration."
+	exit 1
+fi
+
+if ! [[ -e $OADIR ]]; then
+	echo "ERROR: $OADIR does not exist. Please check your installation."
+	exit 1
+fi
+
 cd $OADIR
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then

@@ -521,7 +521,7 @@ fi
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/installed_apps.d
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/default/%{name}
+%config %{_sysconfdir}/default/%{name}
 %doc %{_mandir}/man1/oaconfig.1.gz
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/

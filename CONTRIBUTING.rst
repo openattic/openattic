@@ -31,8 +31,8 @@ account by various means. Using real names is preferred.
 Submitting Patches
 ------------------
 
-The openATTIC source code is managed using the Mercurial distributed source
-control management tool <https://www.mercurial-scm.org/>. The code repository
+The openATTIC source code is managed using the git distributed source
+control management tool <https://www.git-scm.com/>. The code repository
 is publicly hosted on BitBucket <https://bitbucket.org/openattic/openattic/>.
 
 This project tracks patch provenance and licensing using the Developer
