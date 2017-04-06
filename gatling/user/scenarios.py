@@ -30,7 +30,7 @@ class UserTestScenario(GatlingTestCase):
 
     @classmethod
     def setUp(cls):
-        cls.testuser = cls._create_test_user()
+        cls.testuser = cls._create_test_user()['response']
 
     @classmethod
     def tearDown(cls):
@@ -56,6 +56,5 @@ class UserTestScenario(GatlingTestCase):
         except HTTPError as e:
             raise SkipTest(e.message)
 
-        res = res["response"]
-        res["password"] = "init"
+        res['response']['password'] = 'init'
         return res
