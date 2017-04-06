@@ -147,12 +147,11 @@ class UserViewSet(NoCacheModelViewSet):
         user_ret = UserSerializer(user, context={"request": request})
         return Response(user_ret.data, status=status.HTTP_201_CREATED)
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request, partial=False, *args, **kwargs):
         self.object = self.get_object()
         req_user = request.user
 
         if self.object == req_user or req_user.is_superuser:
-            partial = kwargs.pop('partial', False)
             data = get_request_data(request)
 
             serializer = self.get_serializer(self.object, data=data, partial=partial)
