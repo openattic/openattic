@@ -66,14 +66,14 @@ def test(arguments):
 test_arguments = (
     ('create release', 'The revision is supposed to be the latest existing tag, not the tip!'),
     ('create release --revision=v2.0.7-1', ''),
-    ('create release --revision=default --destination=/tmp/some/dir', ''),
-    ('create release --revision=development --adapt-debian-changelog', ''),
+    ('create release --revision=origin/stable --destination=/tmp/some/dir', ''),
+    ('create release --revision=origin/master --adapt-debian-changelog', ''),
     ('create release --source={}'.format(cli_args['--oa-dir']), ''),
-    ('create release --source={} --revision=development'.format(cli_args['--oa-dir']), ''),
-    ('create snapshot', 'The snapshot is created out of the tip of development branch.'),
+    ('create release --source={} --revision=origin/master'.format(cli_args['--oa-dir']), ''),
+    ('create snapshot', 'The snapshot is created out of the tip of master branch.'),
     ('create snapshot --revision=v2.0.7-1', ''),
-    ('create snapshot --revision=default', ''),
-    ('create snapshot --revision=development --adapt-debian-changelog', ''),
+    ('create snapshot --revision=origin/stable', ''),
+    ('create snapshot --revision=origin/master --adapt-debian-changelog', ''),
     ('create snapshot --source={}'.format(cli_args['--oa-dir']), ''),
 )
 
