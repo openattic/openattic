@@ -7,7 +7,7 @@ Please see :ref:`developer_contribute` for details on the process of how to
 contribute code changes.
 
 The following recommendations should be considered when working on the |oA|
-Code Base.
+code base.
 
 While adhering to these guidelines may sound more work in the first place,
 following them has multiple benefits:
@@ -40,6 +40,8 @@ tracking them:
 * Every bug fix or notable change made to a release branch must be accompanied
   by a `JIRA issue <https://tracker.openattic.org/>`_. The issue ID must be
   mentioned in the commit message and pull request.
+* Pull requests must be accompanied with a corresponding ``CHANGELOG`` entry that
+  documents the change.
 * New features and other larger changes also require a related JIRA issue that
   provides detailed background information about the change.
 * Code and the related changes to the documentation should be committed
@@ -73,12 +75,6 @@ have different expectations on how and where you document your changes:
   potential changes in behaviour, new features or important bug and security
   fixes. They primarily consult the official documentation, release notes and
   the ``CHANGELOG``.
-
-.. note::
-  Note that you should not update the ``CHANGELOG`` directly. Instead, add a
-  note to your pull request that includes the text that should be added to the
-  ``CHANGELOG`` by the developer that merges your pull request. See chapter
-  :ref:`merging_pull_requests` for details.
 
 Changes that should be user-visibly documented in the ``CHANGELOG``, release
 notes or documentation include:
@@ -166,14 +162,9 @@ pull request on BitBucket:
     description should also include a text suitable for inclusion into the
     ``CHANGELOG``, describing the change from an end-user perspective.
 #.  After the pull request has been reviewed and approved, you perform the
-    merge into the main development branch using the BitBucket Merge
-    functionality.
-#.  If the merge was successful, update the ``CHANGELOG`` in the
-    ``development`` branch based on the description provided by the developer
-    that submitted the pull request. This can be performed by using the
-    built-in editor on BitBucket.
-#.  Close the feature branch that this pull request has been merged from, by
-    using the BitBucket web frontend.
+    merge into the ``master`` branch using the BitBucket merge functionality.
+#.  Use a "merge" commit, not a "squash" commit for merging pull requests via
+    BitBucket.
 
 Error Handling in Python
 ------------------------
