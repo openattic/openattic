@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import logging
+
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
@@ -25,6 +27,8 @@ from rest_framework.views import APIView
 
 from rest import relations
 from rest.utilities import mk_method_field_params, get_request_data, drf_version
+
+logger = logging.getLogger(__name__)
 
 
 class NoCacheAPIView(APIView):
@@ -117,9 +121,10 @@ class UserViewSet(NoCacheModelViewSet):
             # error response. An user can only generate a token for another user if the other user
             # does not already have an authentication token.
             if request.user != user:
-                return Response({'detail': 'You can\'t refresh the authentication token of another '
-                                           'user. Only the user \'{}\' is able to refresh his '
-                                           'token.'.format(user.username)},
+                logger.warning('User action canceled: user \'{}\' tried to refresh the '
+                               'authentication token of user \'{}\'.'.format(request.user, user))
+                return Response({'detail': 'You are not allowed to refresh the authentication '
+                                           'token another user.'},
                                 status=status.HTTP_403_FORBIDDEN)
             token.delete()
 

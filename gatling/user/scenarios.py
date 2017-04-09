@@ -66,8 +66,7 @@ class UserTestScenario(GatlingTestCase):
     def error_messages(self):
         return {
             'test_create_refresh_auth_token_for_testuser':
-                'You can\'t refresh the authentication token of another user. Only the user \'{}\' '
-                'is able to refresh his token.'.format(self.testuser['username']),
+                'You are not allowed to refresh the authentication token another user.',
             'test_auth_token_self_refresh_wrong_token': 'Invalid token',
             'test_try_to_get_preference_of_another_user':
                 'You are not allowed to access other users profiles',
