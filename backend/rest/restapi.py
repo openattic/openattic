@@ -124,7 +124,7 @@ class UserViewSet(NoCacheModelViewSet):
                 logger.warning('User action canceled: user \'{}\' tried to refresh the '
                                'authentication token of user \'{}\'.'.format(request.user, user))
                 return Response({'detail': 'You are not allowed to refresh the authentication '
-                                           'token another user.'},
+                                           'token of another user.'},
                                 status=status.HTTP_403_FORBIDDEN)
             token.delete()
 
