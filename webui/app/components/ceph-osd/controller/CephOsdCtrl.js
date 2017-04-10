@@ -63,7 +63,7 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
       cephOsdService
           .get({
-            id      : $scope.registry.selectedCluster.fsid,
+            fsid    : $scope.registry.selectedCluster.fsid,
             page    : $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
             search  : $scope.filterConfig.search,

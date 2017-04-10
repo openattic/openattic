@@ -117,7 +117,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
   $scope.$watch("data.cluster", function (cluster) {
     if (cluster) {
       $scope.clusterId = cluster.fsid;
-      cephOsdService.get({id: cluster.fsid})
+      cephOsdService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
           $scope.data.osdCount = res.count;
