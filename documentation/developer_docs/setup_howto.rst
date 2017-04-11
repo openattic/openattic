@@ -53,11 +53,13 @@ based on the latest commit in the ``default`` branch.
     ``/etc/apache2/conf-available/openattic.conf``:
 
     * Replace the path ``/usr/share/openattic`` with ``/srv/openattic/backend``
+
     * Add the following directive::
 
         <Directory /srv/openattic>
             Require all granted
         </Directory>
+
     * Adapt the ``WSGIScriptAlias`` paths to your local clone::
 
         WSGIScriptAlias /openattic/serverstats /srv/openattic/backend/serverstats.wsgi
