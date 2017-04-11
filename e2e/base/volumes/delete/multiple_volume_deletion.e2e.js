@@ -48,7 +48,7 @@ describe('Volumes delete', function(){
     // Delete all volumes.
     deleteBtn.click();
     browser.sleep(400);
-    element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
+    element(by.model('input.enteredName')).sendKeys('yes');
     element(by.id('bot2-Msg1')).click();
     browser.sleep(helpers.configs.sleep);
 
