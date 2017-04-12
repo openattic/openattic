@@ -47,7 +47,10 @@ documentation/_build
 vagrant/.vagrant/
 vagrant/disks/
 vagrant-ceph/
-virtualenv/*
+
+virtualenv/
+venv/
+env/
 
 # VS Code
 .vscode
