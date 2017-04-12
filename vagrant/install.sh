@@ -111,7 +111,7 @@ if [ "${DISABLE_CEPH_REPO}" == false ] ; then
     fi
 
     if [ "$IS_SUSE" ] ; then
-        if zypper repos filesystems_ceph_jewel >/dev/null; then
+        if ! zypper repos filesystems_ceph_jewel >/dev/null; then
             zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
             zypper --gpg-auto-import-keys --non-interactive ref
         fi
@@ -155,7 +155,7 @@ EOF
 fi
 if [ "$IS_SUSE" ]
 then
-    if zypper repos filesystems_openATTIC >/dev/null; then
+    if ! zypper repos filesystems_openATTIC >/dev/null; then
         zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC/openSUSE_Leap_42.1/filesystems:openATTIC.repo
         zypper --gpg-auto-import-keys --non-interactive ref
     fi
