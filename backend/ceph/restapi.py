@@ -38,42 +38,10 @@ class CrushmapVersionSerializer(serializers.ModelSerializer):
         return obj.get_tree()
 
 
-class ClusterSerializer(serializers.HyperlinkedModelSerializer):
-    """ Serializer for a Ceph Cluster. """
-    url = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
-    crushmap = serializers.SerializerMethodField(*mk_method_field_params('crushmap'))
-
-    class Meta:
-        model = Cluster
-        fields = ('url', 'id', 'name', 'crushmap',
-                  'auth_cluster_required', 'auth_client_required', 'auth_service_required')
-
-    def get_crushmap(self, obj):
-        return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
-
-
-class ClusterViewSet(NoCacheModelViewSet):
-    queryset = Cluster.objects.all()
-    serializer_class = ClusterSerializer
-    filter_fields = ('name',)
-    search_fields = ('name',)
-
-    def update(self, request, *args, **kwargs):
-        cluster = self.get_object()
-
-        if "crushmap" in get_request_data(request):
-            cluster.set_crushmap(get_request_data(request)["crushmap"])
-
-        cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
-
-        return Response(cluster_ser.data)
-
-
 class CephClusterSerializer(NodbSerializer):
 
     class Meta:
         model = CephCluster
-
 
 class CephClusterViewSet(NodbViewSet):
     """
@@ -81,6 +49,7 @@ class CephClusterViewSet(NodbViewSet):
 
     This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
     ```/api/ceph/<fsid>/osds```, ```/api/ceph/<fsid>/status```,
+    ```/api/ceph/<fsid>/crushmap```,
     ```/api/ceph/<fsid>/performancedata``` and ```/api/ceph/<fsid>/performancedata_pools```.
     """
 
@@ -112,6 +81,11 @@ class CephClusterViewSet(NodbViewSet):
 
         performance_data = CephPool.get_performance_data(fsid, filter_data)
         return Response(performance_data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def crushmap(self, request, *args, **kwargs):
+        data = CrushmapVersionSerializer(self.get_object().get_crushmap(), many=False, read_only=True).data
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class CephPoolSerializer(NodbSerializer):
@@ -375,5 +349,4 @@ class CephFsViewSet(NodbViewSet):
 
 
 RESTAPI_VIEWSETS = [
-    ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
 ]
