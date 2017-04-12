@@ -30,8 +30,6 @@ reports/
 
 nagios/_readstatus.so
 
-installed_apps.d
-
 # From openattic-gui
 webui/.tmp
 webui/node_modules
