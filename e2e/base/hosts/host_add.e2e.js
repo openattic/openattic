@@ -126,7 +126,7 @@ describe('Should add a host and attributes', function(){
     expect(host3.isDisplayed()).toBe(true);
     expect(host4.isDisplayed()).toBe(true);
     element(by.model('selection.checkAll')).click();
-    helpers.delete_selection();
+    helpers.delete_selection(undefined, '$ctrl');
     expect(host3.isPresent()).toBe(false);
     expect(host4.isPresent()).toBe(false);
   });
