@@ -179,10 +179,10 @@ To enable ZFS support in |oA|, you also need to install the additional
 ``openattic-module-zfs`` package and run ``oaconfig install`` to register the
 newly created zpool.
 
-.. _installation on debian/ubuntu linux:
+.. _installation on debian linux:
 
-Installation on Debian/Ubuntu Linux
-===================================
+Installation on Debian Linux
+============================
 
 We provide installable DEB packages of |oA| via apt package repositories from
 http://apt.openattic.org .
@@ -214,31 +214,23 @@ Enabling the |oA| Apt Package Repository
 ----------------------------------------
 
 In order to add the |oA| apt repository, create a file named
-``/etc/apt/sources.list.d/openattic.list``, and put the following lines into it.
-Replace the field ``<distribution>`` with your distribution's short codename:
+``/etc/apt/sources.list.d/openattic.list``, and put the following lines into it::
 
-* ``jessie`` (for Debian 8 "Jessie")
-* ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
-* ``xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
-
-::
-
-  deb     http://apt.openattic.org/ <distribution>   main
-  deb-src http://apt.openattic.org/ <distribution>   main
+  deb     http://apt.openattic.org/ jessie  main
+  deb-src http://apt.openattic.org/ jessie  main
 
 Enabling Nightly Builds
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-In addition to the offical releases, we also provide nightly builds, built off
+In addition to the official releases, we also provide nightly builds, built off
 the current "default" branch that will eventually become the next official |oA|
 release.
 
 To enable the nightly repo, the file ``/etc/apt/sources.list.d/openattic.list``
-needs to be expanded to look as follows. Again, please replace ``<distribution>`` with your
-distribution's code name as outlined above::
+needs to be expanded to look as follows::
 
-  deb     http://apt.openattic.org/ <distribution>   main
-  deb-src http://apt.openattic.org/ <distribution>   main
+  deb     http://apt.openattic.org/ jessie   main
+  deb-src http://apt.openattic.org/ jessie   main
   deb     http://apt.openattic.org/ nightly  main
   deb-src http://apt.openattic.org/ nightly  main
 
@@ -256,21 +248,98 @@ After enabling the apt repository, run the following commands to install the
   distribution's default ``index.html`` page in the Apache web server's
   document root with a redirect page to the |oA| web interface.
 
+Proceed with the installation by following the steps outlined in
+:ref:`post-installation configuration`.
+
+.. _installation on ubuntu linux:
+
+Installation on Ubuntu Linux
+============================
+
+We provide installable DEB packages of |oA| via apt package repositories from
+http://apt.openattic.org .
+
+.. note::
+  Before proceeding with the |oA| installation, make sure that you have
+  followed the steps outlined in :ref:`base operating system installation` and
+  :ref:`basic storage configuration`.
+
+Importing the |oA| Keyfile
+--------------------------
+
+The |oA| packages are signed using a cryptographic key. You can import the
+public GPG key from the download site using the following command:
+
+::
+
+  $ sudo apt-key adv --fetch-keys http://apt.openattic.org/A7D3EAFA.txt
+
+The GPG key's fingerprint can be verified with ``apt-key finger`` and should
+look as follows::
+
+  pub   2048R/A7D3EAFA 2012-03-05
+        Key fingerprint = 9A91 1EDD 45A2 4B25 9C39  E7D4 1D5C D44D A7D3 EAFA
+  uid                  Business Critical Computing <is-bcc@it-novum.com>
+  sub   2048R/A99076EE 2012-03-05
+
+Enabling the |oA| Apt Package Repository
+----------------------------------------
+
+In order to add the |oA| apt repository, run the following command for adding the |oA| repository.
+
+.. note::
+  The command ``lsb_release -cs`` will return the correct code name of your distribution.
+
+  * ``trusty`` (for Ubuntu 14.04 LTS "Trusty Thar")
+  * ``xenial`` (for Ubuntu 16.04 LTS "Xenial Xerus")
+
+::
+
+  $ sudo add-apt-repository "deb http://apt.openattic.org/ $(lsb_release -cs) main"
+
+Enabling Nightly Builds
+~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the official releases, we also provide nightly builds, built off
+the current "default" branch that will eventually become the next official |oA|
+release.
+
+To enable the nightly repo, run the following command::
+
+  $ sudo add-apt-repository "deb http://apt.openattic.org/ $(lsb_release -cs) main"
+  $ sudo add-apt-repository "deb http://apt.openattic.org/ nightly main"
+
+Package Installation
+--------------------
+
+After enabling the apt repository, run the following commands to install the
+|oA| DEB packages.
+
 .. note::
   For **Ubuntu 14.04 LTS** it is necessary to install some extra package in
   order to get the ``lio-utils`` package working which is used by
-  ``openattic-module-lio`` (installed by the base openattic package). You may
+  ``openattic-module-lio`` (installed by the base |oA| package). You may
   need to restart the target service as well::
 
-    # apt-get install linux-image-extra-`uname -r`
-    # service target restart
+    $ sudo apt-get install linux-image-extra-$(uname -r)
+    $ sudo service target restart
+
+Now, install |oA|::
+
+  $ sudo apt-get update
+  $ sudo apt-get install openattic
+
+.. note::
+  Installation of the ``openattic-gui`` package will replace the
+  distribution's default ``index.html`` page in the Apache web server's
+  document root with a redirect page to the |oA| web interface.
 
 .. note::
   For **Ubuntu 16.04 LTS** some required LVM services may not run after the installation of |oA|.
   Please enable them by executing::
 
-    # systemctl enable lvm2-lvmetad.socket
-    # systemctl start lvm2-lvmetad.socket
+    $ sudo systemctl enable lvm2-lvmetad.socket
+    $ sudo systemctl start lvm2-lvmetad.socket
 
 Proceed with the installation by following the steps outlined in
 :ref:`post-installation configuration`.
