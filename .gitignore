@@ -47,6 +47,6 @@ gatling/test/reports/
 
 documentation/_build
 vagrant/.vagrant/
-vagrant/disks/*
+vagrant/disks/
 vagrant-ceph/
 virtualenv/*
