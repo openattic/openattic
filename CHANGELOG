@@ -25,6 +25,7 @@ Added
 * Development: Support for 'variable' id attribute on 'required' directive (OP-1993)
 * Development: Added delete confirmation modal component (OP-2013)
 * WebUI: Improved javascript error handling by notifying the user via toasty error messages (OP-1926)
+* Documentation: Split installation instructions for Debian and Ubuntu, to make use of Ubuntu's `add-apt-repository`
 
 Changed
 ~~~~~~~
