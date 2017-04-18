@@ -29,6 +29,8 @@ Added
   error messages (OP-1926)
 * Documentation: Split installation instructions for Debian and Ubuntu, to make
   use of Ubuntu's `add-apt-repository`
+* Documentation: Instructions to backport commits into a stable release branch
+  (OP-2063)
 
 Changed
 ~~~~~~~
