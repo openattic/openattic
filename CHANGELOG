@@ -39,6 +39,7 @@ Fixed
   (BNC#1032263)
 * WebUI: Prevents browser freezing when session expires (OP-1779)
 * WebUI: Disallow underscores in IQN WWNs (OP-1669)
+* WebUI: Fix incomplete delete confirmation message (OP-2061)
 * Documentation: Updated developer documentation for git (OP-2054)
 
 [2.0.19] - 2017-03-24
