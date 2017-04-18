@@ -1,15 +1,18 @@
+[MASTER]
+init-hook='import sys; sys.path.extend(["backend", "gatling", "utils"])'
+load-plugins=pylint_django
+
 [FORMAT]
-max-line-length=120
+max-line-length=100
 
 [TYPECHECK]
 generated-members=objects,id,_meta,DoesNotExist
 
 [MESSAGES CONTROL]
-disable=E1101,E1102,E1103,W0142,C0111,C0103,R0201,W0613,W0212,W0232,R0903
+disable=E1101,E1102,E1103,W0142,C0111,C0103,R0201,W0613,W0212,W0232,R0903,W5101
 
 [DESIGN]
 max-public-methods=100
 
 [REPORTS]
 reports=y
-include-ids=y
