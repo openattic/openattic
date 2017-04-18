@@ -58,10 +58,13 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, usersService) {
-  $rootScope.$on("$stateChangeSuccess", function () {
+app.run(function ($rootScope, usersService, $state) {
+  $rootScope.$on("$stateChangeSuccess", function (event, toState) {
     usersService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
+      if (toState.name === "login") {
+        $state.go("dashboard");
+      }
     }).catch(function (error) {
       error.ignoreStatusCode(401);
       $rootScope.loggedIn = false;
