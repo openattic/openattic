@@ -50,3 +50,6 @@ vagrant/.vagrant/
 vagrant/disks/
 vagrant-ceph/
 virtualenv/*
+
+# VS Code
+.vscode
