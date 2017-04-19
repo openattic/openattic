@@ -31,6 +31,7 @@ Changed
 ~~~~~~~
 * WebUI: Upgrade angular-bootstrap to the newer major version 2.5.0 (OP-1888)
 * WebUI: Improved style of iSCSI iqn and fibre channel wwn inputs (OP-1959)
+* Backend: Improved logging by adding PID, Process Name and Current Version
 
 Fixed
 ~~~~~
