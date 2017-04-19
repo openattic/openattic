@@ -408,11 +408,4 @@ popd
 
 EOF
 
-# Display information how to start the webserver.
-echo -e "# Now run\n. env/bin/activate\npython openattic/backend/manage.py runserver 0.0.0.0:8000"
-# Display all IP addresses to access the WebUI.
-echo "# The WebUI is available via:"
-for iface in $(ls /sys/class/net/ | grep ^eth); do
-    ip_addr="$(LANG=C /sbin/ifconfig ${iface} | egrep -o 'inet addr:[^ ]+' | egrep -o '[0-9.]+')"
-    echo "- http://$ip_addr:8000"
-done
+echo -e "# Now run\n. openattic/vagrant/run-oa-ui.sh"
