@@ -170,22 +170,6 @@ class NodbQuerySet(QuerySet):
     def __getitem__(self, index):
         return self._filtered_data[index]
 
-    def __getattribute__(self, attr_name):
-        try:  # Just return own attributes.
-            own_attr = super(NodbQuerySet, self).__getattribute__(attr_name)
-        except AttributeError:
-            pass
-        else:
-            return own_attr
-
-        if attr_name in vars(self) or attr_name in vars(NodbQuerySet):
-            attr = self.oInstance.__getattribute__(attr_name)
-            return attr
-
-        msg = 'Call to an attribute `{}` of {} which isn\'t intended to be accessed directly.'
-        msg = msg.format(attr_name, self.__class__)
-        raise AttributeError(msg)
-
     def _clone(self, klass=None, setup=False, **kwargs):
         my_clone = NodbQuerySet(self.model, context=self._context)
         my_clone._query = self._query.clone()
