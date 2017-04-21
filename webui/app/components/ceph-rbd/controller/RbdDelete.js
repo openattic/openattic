@@ -35,11 +35,6 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
     Notification) {
   $scope.rbds = rbdSelection;
 
-  $scope.input = {
-    enteredName: "",
-    pattern: "yes"
-  };
-
   $scope.delete = function () {
     var requests = [];
     $scope.rbds.forEach(function (rbd) {

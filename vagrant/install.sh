@@ -78,7 +78,7 @@ then
     apt-get update -y
     apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
 
-    apt-get install -y mercurial git build-essential python-dev lsb-release
+    apt-get install -y git build-essential python-dev lsb-release
 fi
 
 if [ "$IS_SUSE" ]
@@ -111,8 +111,10 @@ if [ "${DISABLE_CEPH_REPO}" == false ] ; then
     fi
 
     if [ "$IS_SUSE" ] ; then
-        zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
-        zypper --gpg-auto-import-keys --non-interactive ref
+        if ! zypper repos filesystems_ceph_jewel >/dev/null; then
+            zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+            zypper --gpg-auto-import-keys --non-interactive ref
+        fi
     fi
 fi
 
@@ -153,8 +155,10 @@ EOF
 fi
 if [ "$IS_SUSE" ]
 then
-    zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC/openSUSE_Leap_42.1/filesystems:openATTIC.repo
-    zypper --gpg-auto-import-keys --non-interactive ref
+    if ! zypper repos filesystems_openATTIC >/dev/null; then
+        zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC/openSUSE_Leap_42.1/filesystems:openATTIC.repo
+        zypper --gpg-auto-import-keys --non-interactive ref
+    fi
 fi
 
 # Setting up the development environment
@@ -214,8 +218,9 @@ module-apt"
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg  /etc/nagios-plugins/config/openattic-ceph.cfg
     if [ "$IS_TRUSTY" ]
     then
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
@@ -229,16 +234,19 @@ then
     OA_PACKAGES="$OA_PACKAGES
 module-icinga"
     ZYP_PACKAGES="$(echo -e "$OA_PACKAGES" | xargs -I SUB echo openattic-SUB)"
-    DEPS="$(zypper --non-interactive install  --dry-run $ZYP_PACKAGES | grep -A 1 'NEW packages are going to be installed' | tail -n 1)"
-    zypper --quiet --non-interactive install $(echo $DEPS | tr " " "\n" | grep -v -e openattic -e apache -e python)
+    ! DEPS="$(LANG=C zypper --non-interactive install --dry-run $ZYP_PACKAGES | grep -A 1 'NEW packages are going to be installed' | tail -n 1 | tr " " "\n" | grep -v -e openattic -e apache -e python)"
+    if [ -n "$DEPS" ] ; then
+        zypper --non-interactive install $DEPS
+    fi
 
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
     ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/icinga/conf.d/openattic_static.cfg
     ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg /etc/icinga/objects/openattic.cfg
+    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg /etc/icinga/objects/openattic-ceph.cfg
 
     # System packages not available in pip + npm
 
-    zypper --quiet --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
+    zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
     # python-dbus  python-gobject-2
     #zypper --non-interactive install -y libjpeg-dev # interestingly this is required for openattic-module-nagios
     systemctl restart postgresql.service
@@ -255,7 +263,7 @@ ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/sys
 
 sudo -i -u vagrant bash -e << EOF
 pushd openattic
-! hg import vagrant/required-changes.patch --no-commit
+! git apply vagrant/required-changes.patch
 popd
 EOF
 
@@ -369,6 +377,7 @@ if [ "$IS_SUSE" ]
 then
     # TODO: looks weird, but it's required.
     echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
+    echo cfg_file=/etc/icinga/objects/openattic-ceph.cfg >> /etc/icinga/icinga.cfg
     systemctl start icinga.service
 fi
 
@@ -399,11 +408,4 @@ popd
 
 EOF
 
-# Display information how to start the webserver.
-echo -e "# Now run\n. env/bin/activate\npython openattic/backend/manage.py runserver 0.0.0.0:8000"
-# Display all IP addresses to access the WebUI.
-echo "# The WebUI is available via:"
-for iface in $(ls /sys/class/net/ | grep ^eth); do
-    ip_addr="$(LANG=C /sbin/ifconfig ${iface} | egrep -o 'inet addr:[^ ]+' | egrep -o '[0-9.]+')"
-    echo "- http://$ip_addr:8000"
-done
+echo -e "# Now run\n. openattic/vagrant/run-oa-ui.sh"

@@ -177,12 +177,16 @@ class ZfsFileSystemTestCase(TestCase):
             zpool = mock.MagicMock()
             zpool.storageobj.name = "honky"
 
-            fs = Zfs(zpool, None)
+            volume = mock.MagicMock()
+            volume.fullname = "honky"
+            volume.storageobj.snapshot = None
+
+            fs = Zfs(zpool, volume)
             fs.destroy()
 
             self.assertTrue( mock_get_dbus_object().zpool_destroy.called)
             self.assertEqual(mock_get_dbus_object().zpool_destroy.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().zpool_destroy.call_args[0], ("honky",))
+            self.assertEqual(mock_get_dbus_object().zpool_destroy.call_args[0], ("honky", "/media/honky"))
 
     def test_mount(self):
         with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object, \
@@ -206,13 +210,16 @@ class ZfsFileSystemTestCase(TestCase):
 
             volume = mock.MagicMock()
             volume.fullname = "honky"
+            volume.storageobj.snapshot = None
+            volume.storageobj.name = "honky"
 
             fs = Zfs(volume, volume)
             fs.unmount()
 
             self.assertTrue( mock_get_dbus_object().zfs_unmount.called)
             self.assertEqual(mock_get_dbus_object().zfs_unmount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().zfs_unmount.call_args[0], ("honky",))
+            self.assertEqual(mock_get_dbus_object().zfs_unmount.call_args[0],
+                             ("honky", "/media/honky"))
 
             self.assertFalse(mock_volumes_get_dbus_object().fs_unmount.called)
 

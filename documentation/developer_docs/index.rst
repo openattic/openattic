@@ -31,7 +31,7 @@ application), wants to perform an action, the following happens:
 If you would like to contribute to the |oA| project, you need to prepare a
 development environment first.
 
-Follow the outlined steps to :ref:`developer_hg_howto`.
+Follow the outlined steps to :ref:`developer_git_howto`.
 
 Next, follow the instructions on :ref:`developer_vagrant_howto` or :ref:`developer_setup_howto`.
 Then code away, implementing whatever changes you want to make.
@@ -53,7 +53,7 @@ documentation.
 .. toctree::
   :maxdepth: 2
 
-  mercurial
+  git
   vagrant
   setup_howto
   contribute

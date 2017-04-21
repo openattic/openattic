@@ -29,9 +29,9 @@ based on the latest commit in the ``default`` branch.
 
       # apt-mark hold 'openattic-.*'
 
-#.  Install Mercurial and Git::
+#.  Install Git::
 
-      # apt-get install mercurial git
+      # apt-get install git
 
 #.  Install Node.JS and the Node Package Manager ``npm``::
 
@@ -44,27 +44,30 @@ based on the latest commit in the ``default`` branch.
       # npm install -g grunt-cli
 
 #.  Go to the ``/srv`` directory, and create a local clone of your |oA| fork
-    there, using the current ``development`` branch as the basis::
+    there, using the current ``master`` branch as the basis::
 
       # cd /srv
-      # hg clone -u development https://hg@bitbucket.org/<Your user name>/openattic
+      # git clone https://bitbucket.org/<Your user name>/openattic.git
+      # git checkout master
 
 #.  Customize the Apache configuration by editing
     ``/etc/apache2/conf-available/openattic.conf``:
 
     * Replace the path ``/usr/share/openattic`` with ``/srv/openattic/backend``
+
     * Add the following directive::
 
         <Directory /srv/openattic>
             Require all granted
         </Directory>
+
     * Adapt the ``WSGIScriptAlias`` paths to your local clone::
 
         WSGIScriptAlias /openattic/serverstats /srv/openattic/backend/serverstats.wsgi
         WSGIScriptAlias /openattic             /srv/openattic/backend/openattic.wsgi
 
 #.  In file ``/etc/default/openattic``, change the ``OADIR`` variable to point
-    to the local Mercurial clone::
+    to the local git clone::
 
       OADIR="/srv/openattic/backend"
 

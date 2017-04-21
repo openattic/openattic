@@ -20,6 +20,7 @@ import re
 import dbus
 
 from systemd  import dbus_to_python, get_dbus_object
+from utilities import is_executable_installed
 
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
@@ -50,7 +51,7 @@ class Zfs(FileSystem):
 
     @classmethod
     def check_installed(cls):
-        return os.path.exists("/sbin/zfs")
+        return is_executable_installed('zfs')
 
     @classmethod
     def format_blockvolume(cls, volume, options):
