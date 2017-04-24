@@ -69,7 +69,7 @@ class UserTestScenario(GatlingTestCase):
                 'You are not allowed to refresh the authentication token of another user.',
             'test_auth_token_self_refresh_wrong_token': 'Invalid token',
             'test_try_to_get_preference_of_another_user':
-                'You are not allowed to access other users profiles',
+                'You are not allowed to access profiles of other users',
             'test_try_to_delete_preference_of_another_user':
                 'You are not allowed to delete preferences of other users',
             'test_set_new_password_by_user_without_admin_privileges':
