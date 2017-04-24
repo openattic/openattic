@@ -41,6 +41,7 @@ Fixed
 
 Added
 ~~~~~
+* Backend: Added the functionality to reset the password of an user (OP-589)
 * Development: Added Ceph support to the Vagrant configuration (OP-2048)
 * Development: Support for 'variable' id attribute on 'required' directive
   (OP-1993)
