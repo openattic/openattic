@@ -166,6 +166,25 @@ pull request on BitBucket:
 #.  Use a "merge" commit, not a "squash" commit for merging pull requests via
     BitBucket.
 
+Backport commits
+----------------
+
+The following steps should be performed when you want to backport a fix to a
+stable release branch:
+
+#.  Ensure that the commits you want to backport exists on master
+    (original pull request is merged to master)
+#.  Update your upstream repo:
+    ``git fetch upstream``
+#.  Create a branch from the stable release branch:
+    ``git checkout -b OP-<issue_id>-backport upstream/2.x``
+#.  Cherry pick the commits, using -x option:
+    ``git cherry-pick -x <sha-1>``
+#.  Adapt the CHANGELOG
+#.  Run all tests
+#.  Submit a pull request to the ``2.x`` stable release branch
+    (title should be prefixed with "[2.x]")
+
 Error Handling in Python
 ------------------------
 
