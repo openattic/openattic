@@ -439,10 +439,7 @@ class GatlingTestCase(unittest.TestCase):
         if data:
             data = json.dumps(data)
 
-        if auth:
-            res = requests.request(method, url, headers=headers, data=data, auth=auth)
-        else:
-            res = requests.request(method, url, headers=headers, data=data)
+        res = requests.request(method, url, headers=headers, data=data, auth=auth)
 
         try:
             res.raise_for_status()
