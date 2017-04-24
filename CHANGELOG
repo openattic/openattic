@@ -49,6 +49,7 @@ Changed
 * WebUI: Improved style of iSCSI iqn and fibre channel wwn inputs (OP-1959)
 * Backend: Stop spamming the log with ``Skipping /etc/ceph/ceph.client.admin.keyring, permission
   denied`` (OP-2066)
+* Backend: Improved logging by adding PID, Process Name and Current Version
 
 Fixed
 ~~~~~
