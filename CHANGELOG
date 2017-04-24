@@ -16,6 +16,20 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.0.0] - unreleased
+---------------------
+
+In general, this release focuses on the 3.0 refactoring and cleanup epic (OP-2071)
+
+Added
+~~~~~
+
+Changed
+~~~~~~~
+
+Fixed
+~~~~~
+
 [2.0.20] - unreleased
 ---------------------
 
