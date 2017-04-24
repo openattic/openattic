@@ -29,6 +29,8 @@ import rbd
 
 logger = logging.getLogger(__name__)
 
+logged_skipped_keyrings = set()
+
 
 class Keyring(object):
     """
@@ -38,6 +40,7 @@ class Keyring(object):
         """
         Sets keyring filename and username
         """
+        global logged_skipped_keyrings
         self.filename = None
         self.username = None
 
@@ -48,6 +51,7 @@ class Keyring(object):
             logger.debug("Selected keyring {}".format(self.filename))
         else:
             logger.error("No usable keyring")
+            logged_skipped_keyrings.clear()
             raise RuntimeError("Check keyring permissions")
 
         self._username()
@@ -57,11 +61,17 @@ class Keyring(object):
         """
         Check permissions on keyrings, set last usable keyring
         """
+        global logged_skipped_keyrings
         for keyring in keyrings:
             if os.access(keyring, os.R_OK):
                 self.filename = keyring
             else:
-                logger.info("Skipping {}, permission denied".format(keyring))
+                message = "Skipping {}, permission denied".format(keyring)
+                if keyring in logged_skipped_keyrings:
+                    logger.debug(message)
+                else:
+                    logger.info(message)
+                    logged_skipped_keyrings.add(keyring)
 
     def _username(self):
         """
