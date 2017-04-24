@@ -35,37 +35,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
   $urlRouterProvider.otherwise("/dashboard");
 
   $stateProvider
-    .state("pools.detail.storage", {
-      url: "/storage",
-      views: {
-        "tab-content": {
-          templateUrl: "components/storage-tree/templates/tree.html",
-          controller: "StorageTreeCtrl",
-          resolve: {
-            storageTree: function ($q, $stateParams, poolsService) {
-              return poolsService.storage({id: $stateParams.pool}).$promise
-                  .then(function (res) {
-                    return res;
-                  }).catch(function () {
-                    return false;
-                  });
-            }
-          }
-        }
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Storage"
-      }
-    })
-    .state("pools.detail.cephpool", {
-      url: "/cephpool",
-      views: {
-        "tab-content": {templateUrl: "templates/pools/cephpool.html"}
-      },
-      ncyBreadcrumb: {
-        label: "{{selection.item.name}} Cephpool"
-      }
-    })
     .state("apikeys", {
       url: "/apikeys",
       views: {
