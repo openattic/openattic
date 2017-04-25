@@ -44,7 +44,6 @@ angular.module("openattic", [
   "ngStorage",
   "openattic.core",
   "openattic.extensions",
-  "openattic.local",
   "openattic.ceph"
 ]);
 
