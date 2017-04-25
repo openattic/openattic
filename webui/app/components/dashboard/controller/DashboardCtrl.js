@@ -76,16 +76,20 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
     "group"  : "Ceph"
   }];
 
+  var composeDialogConfig = function (data) {
+    return {
+      controller: "DashboardComposeCtrl",
+      templateUrl: "components/dashboard/templates/dashboard-compose-dialog.html",
+      windowTemplateUrl: "templates/messagebox.html",
+      resolve: {
+        data: angular.isUndefined(data) ? {} : data
+      }
+    };
+  };
+
   // functions
   $scope.addDashboard = function () {
-    var modalInstance = $uibModal.open({
-      controller       : "DashboardAddCtrl",
-      templateUrl      : "components/dashboard/templates/add-dashboard.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
-        data: {}
-      }
-    });
+    var modalInstance = $uibModal.open(composeDialogConfig());
 
     modalInstance.result.then(function (data) {
       var idx = $scope.data.boards.length;
@@ -109,17 +113,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.editDashboard = function () {
-    var modalInstance = $uibModal.open({
-      controller       : "DashboardEditCtrl",
-      templateUrl      : "components/dashboard/templates/edit-dashboard.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
-        data: {
-          "type": "dashboard",
-          "name": $scope.dashboard.name
-        }
-      }
-    });
+    var modalInstance = $uibModal.open(composeDialogConfig({
+        "type": "dashboard",
+        "name": $scope.dashboard.name
+      }));
 
     modalInstance.result.then(function (data) {
       $scope.dashboard.name = data.name;
@@ -189,17 +186,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.addWidget = function () {
-    var modalInstance = $uibModal.open({
-      controller       : "DashboardAddCtrl",
-      templateUrl      : "components/dashboard/templates/add-widget.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
-        data: {
-          "manager" : $scope.manager,
-          "settings": {}
-        }
-      }
-    });
+    var modalInstance = $uibModal.open(composeDialogConfig({
+        "manager" : $scope.manager,
+        "settings": {}
+      }));
 
     modalInstance.result.then(function (data) {
       var idx = $scope.dashboard.widgets.length;
@@ -220,20 +210,13 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.editWidget = function (idx, name) {
-    var modalInstance = $uibModal.open({
-      controller       : "DashboardEditCtrl",
-      templateUrl      : "components/dashboard/templates/edit-widget.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
-        data: {
-          "type"           : "widget",
-          "name"           : name,
-          "manager"        : $scope.manager,
-          "selectedManager": $scope.dashboard.widgets[idx].manager,
-          "settings"       : $scope.dashboard.widgets[idx].settings
-        }
-      }
-    });
+    var modalInstance = $uibModal.open(composeDialogConfig({
+        "type"           : "widget",
+        "name"           : name,
+        "manager"        : $scope.manager,
+        "selectedManager": $scope.dashboard.widgets[idx].manager,
+        "settings"       : $scope.dashboard.widgets[idx].settings
+      }));
 
     modalInstance.result.then(function (data) {
       $scope.dashboard.widgets[idx].name = data.name;
