@@ -55,6 +55,7 @@ Fixed
 ~~~~~
 * Installation: fixed "OAUSER: unbound variable" error during update on EL7
   (OP-2046)
+* Installation: Fixed config file location in the SUSE systemd service (OP-2067)
 * Backend: Fixed "Systemd did not respond to DBus ping" error on SUSE
   (BNC#1032263)
 * Backend: Removed ``__getattribute__`` of ``NodbQuerySet``, cause of strange exceptions (OP-2068)
