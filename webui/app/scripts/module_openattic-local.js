@@ -31,8 +31,5 @@
 "use strict";
 
 angular.module("openattic.local", [
-  "openattic.clusterstatuswidget",
-  "openattic.oaWizards",
-  "openattic.storageTree",
-  "openattic.todowidget"
+  "openattic.storageTree"
 ]);

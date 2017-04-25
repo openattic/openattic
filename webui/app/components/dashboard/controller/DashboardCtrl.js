@@ -59,14 +59,6 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.manager = [{
-    "name"   : "openATTIC cluster status",
-    "manager": "openattic-cluster-status",
-    "group"  : "Local storage"
-  }, {
-    "name"   : "openATTIC wizards",
-    "manager": "openattic-wizards",
-    "group"  : "Local storage"
-  }, {
     "name"   : "Ceph cluster status",
     "manager": "ceph-cluster-status",
     "group"  : "Ceph"
