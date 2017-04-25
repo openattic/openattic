@@ -35,7 +35,7 @@ app.directive("required", function ($document, $timeout) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
-      $timeout(function() {
+      $timeout(function () {
         var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
         if (labelNode) {
           var labelElement = angular.element(labelNode);
@@ -50,7 +50,7 @@ app.directive("ngRequired", function ($document, $timeout) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
-      $timeout(function() {
+      $timeout(function () {
         var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
         if (labelNode) {
           var labelElement = angular.element(labelNode);
