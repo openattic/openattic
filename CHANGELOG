@@ -24,6 +24,7 @@ Added
 
 Changed
 ~~~~~~~
+* Backend: Corrected num_bytes unit in check_cephpool Nagios plugin (OP-1532)
 
 Fixed
 ~~~~~
