@@ -58,7 +58,7 @@ class UserPrefsTestCase(UserTestScenario):
 
         # Create and delete a preference
         res = self.send_request("POST", data=self.test_preference)
-        self.send_request("DELETE", obj_id=res["response"]["id"], headers=res["headers"],
+        self.send_request("DELETE", obj_id=res["response"]["id"],
                           data={"settings": [self.test_preference.keys()[0]]})
 
         # Check if it is deleted

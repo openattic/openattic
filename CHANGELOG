@@ -52,7 +52,6 @@ Added
 * Documentation: Instructions to backport commits into a stable release branch
   (OP-2063)
 
-
 Changed
 ~~~~~~~
 * WebUI: Upgrade angular-bootstrap to the newer major version 2.5.0 (OP-1888)
