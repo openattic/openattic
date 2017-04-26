@@ -19,8 +19,7 @@ import netifaces
 import netaddr
 import logging
 
-from os.path import join, exists, isfile
-from configobj import ConfigObj
+from os.path import join, exists
 
 from django.conf import settings
 from django.db import models
@@ -68,6 +67,10 @@ def statfile(devname, fname):
 
 
 class HostManager(models.Manager):
+    def __init__(self, *args, **kwargs):
+        logger.info('Current Version: {}'.format(settings.VERSION_CONF['package']['VERSION']))
+        super(HostManager, self).__init__(*args, **kwargs)
+
     def get_current(self):
         try:
             return self.get(name=socket.getfqdn())
@@ -110,18 +113,7 @@ class Host(models.Model):
     @property
     def oa_version(self):
         if self.is_oa_host:
-            oa_dir = settings.BASE_DIR
-
-            if str.endswith(oa_dir, "/backend"):
-                oa_dir = str.rsplit(oa_dir, "/", 1)[0]
-
-            version_file = oa_dir + "/version.txt"
-            if isfile(version_file):
-                return ConfigObj(version_file)
-
-            logger.error("The 'version.txt' file could not be found or is not readable. "
-                         "Please have a look at your openATTIC ({}) directory."
-                         .format(oa_dir))
+            return settings.VERSION_CONF
 
     @staticmethod
     def insert_current_host():
