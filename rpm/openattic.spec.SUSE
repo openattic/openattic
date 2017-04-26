@@ -457,7 +457,7 @@ for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
     ln -s "%{_datadir}/%{name}/nagios/plugins/$NAGPLUGIN" "%{buildroot}%{nagios_plugindir}/$NAGPLUGIN"
 done
 
-install -m 444 etc/systemd/*.service %{buildroot}%{_unitdir}
+install -m 444 etc/systemd/%{name}-systemd.service.SUSE %{buildroot}%{_unitdir}/%{name}-systemd.service
 ln -s %{_sbindir}/service %{buildroot}%{_sbindir}/rcopenattic-systemd
 install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_prefix}/lib/tmpfiles.d/
 
