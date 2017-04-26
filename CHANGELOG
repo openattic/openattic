@@ -39,6 +39,7 @@ Fixed
   (OP-2046)
 * Backend: Fixed "Systemd did not respond to DBus ping" error on SUSE
   (BNC#1032263)
+* Backend: Removed ``__getattribute__`` of ``NodbQuerySet``, cause of strange exceptions (OP-2068)
 * WebUI: Prevents browser freezing when session expires (OP-1779)
 * WebUI: Disallow underscores in IQN WWNs (OP-1669)
 * WebUI: Fix incomplete delete confirmation message (OP-2061)
