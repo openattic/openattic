@@ -16,38 +16,45 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[2.0.20] - unreleased
+[2.0.20] - 2017-04-26
 ---------------------
 
 Added
 ~~~~~
 * Development: Added Ceph support to the Vagrant configuration (OP-2048)
-* Development: Support for 'variable' id attribute on 'required' directive (OP-1993)
+* Development: Support for 'variable' id attribute on 'required' directive
+  (OP-1993)
 * Development: Added delete confirmation modal component (OP-2013)
-* WebUI: Improved javascript error handling by notifying the user via toasty error messages (OP-1926)
-* Documentation: Split installation instructions for Debian and Ubuntu, to make use of Ubuntu's `add-apt-repository`
+* WebUI: Improved javascript error handling by notifying the user via toasty
+  error messages (OP-1926)
+* Documentation: Split installation instructions for Debian and Ubuntu, to make
+  use of Ubuntu's `add-apt-repository`
 
 Changed
 ~~~~~~~
 * WebUI: Upgrade angular-bootstrap to the newer major version 2.5.0 (OP-1888)
 * WebUI: Improved style of iSCSI iqn and fibre channel wwn inputs (OP-1959)
-* Backend: Stop spamming the log with ``Skipping /etc/ceph/ceph.client.admin.keyring, permission
-  denied`` (OP-2066)
+* Backend: Stop spamming the log with ``Skipping
+  /etc/ceph/ceph.client.admin.keyring, permission denied`` (OP-2066)
 * Backend: Improved logging by adding PID, Process Name and Current Version
+  (OP-2065)
 
 Fixed
 ~~~~~
 * Installation: fixed "OAUSER: unbound variable" error during update on EL7
   (OP-2046)
-* Installation: Fixed config file location in the SUSE systemd service (OP-2067)
+* Installation: Fixed config file location in the SUSE systemd service
+  (OP-2067)
 * Backend: Fixed "Systemd did not respond to DBus ping" error on SUSE
   (BNC#1032263)
-* Backend: Removed ``__getattribute__`` of ``NodbQuerySet``, cause of strange exceptions (OP-2068)
+* Backend: Removed ``__getattribute__`` of ``NodbQuerySet``, cause of strange
+  exceptions (OP-2068)
 * WebUI: Prevents browser freezing when session expires (OP-1779)
 * WebUI: Disallow underscores in IQN WWNs (OP-1669)
 * WebUI: Fix incomplete delete confirmation message (OP-2061)
 * Documentation: Updated developer documentation for git (OP-2054)
 * Packaging: make_dist.py: Fixed building of non-local git branches (OP-2106)
+* Development: Fixed Django unit tests (OP-1983)
 
 [2.0.19] - 2017-03-24
 ---------------------
