@@ -59,7 +59,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.manager = [{
-    "name"   : "Ceph osd status",
+    "name"   : "Ceph OSD status",
     "manager": "ceph-osd-status",
     "group"  : "Ceph"
   }, {

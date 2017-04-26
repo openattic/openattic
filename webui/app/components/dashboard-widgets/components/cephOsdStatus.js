@@ -95,12 +95,12 @@ app.component("cephOsdStatus", {
         },
         data: [
           {
-            name: "Online",
+            name: "up",
             description: "up",
             value: healthy
           },
           {
-            name: "Offline",
+            name: "down",
             description: "down",
             value: unhealthy
           }
@@ -129,7 +129,7 @@ app.component("cephOsdStatus", {
     this.nvd3Colorize = function (osdState) {
       var success = "#5cb85c";
       var danger = "#d9534f";
-      return osdState.name === "Online" ? success : danger;
+      return osdState.name === "up" ? success : danger;
     };
 
     this.startInterval = function () {
