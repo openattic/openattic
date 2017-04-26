@@ -14,23 +14,18 @@
   Table
   Typo
 
-  ClusterStatus
   Login
   Statistics
 
   ApiRecorder
   Caret
   Datatables
-  EasyPieChart
   FlexElement
   Graph
   Gridster
   Progressbar
-  SmallerStat
   TagForm
   Trees
-  Widgets
-  Wizards
   CSS Fix
 /*
 
@@ -683,48 +678,6 @@ h6{
 
 /*************************************************************/
 
-/* ClusterStatus */
-.cluster-status .col-lg-1, .cluster-status .col-lg-10, .cluster-status .col-lg-11, .cluster-status .col-lg-12,
-.cluster-status .col-lg-2, .cluster-status .col-lg-3, .cluster-status .col-lg-4, .cluster-status .col-lg-5,
-.cluster-status .col-lg-6, .cluster-status .col-lg-7, .cluster-status .col-lg-8, .cluster-status .col-lg-9,
-.cluster-status .col-md-1, .cluster-status .col-md-10, .cluster-status .col-md-11, .cluster-status .col-md-12,
-.cluster-status .col-md-2, .cluster-status .col-md-3, .cluster-status .col-md-4, .cluster-status .col-md-5,
-.cluster-status .col-md-6, .cluster-status .col-md-7, .cluster-status .col-md-8, .cluster-status .col-md-9,
-.cluster-status .col-sm-1, .cluster-status .col-sm-10, .cluster-status .col-sm-11, .cluster-status .col-sm-12,
-.cluster-status .col-sm-2, .cluster-status .col-sm-3, .cluster-status .col-sm-4, .cluster-status .col-sm-5,
-.cluster-status .col-sm-6, .cluster-status .col-sm-7, .cluster-status .col-sm-8, .cluster-status .col-sm-9,
-.cluster-status .col-xs-1, .cluster-status .col-xs-10, .cluster-status .col-xs-11, .cluster-status .col-xs-12,
-.cluster-status .col-xs-2, .cluster-status .col-xs-3, .cluster-status .col-xs-4, .cluster-status .col-xs-5,
-.cluster-status .col-xs-6, .cluster-status .col-xs-7, .cluster-status .col-xs-8, .cluster-status .col-xs-9 {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.cluster-status {
-  padding-top: 20px;
-}
-.cluster-status .graph-form {
-  margin: -15px;
-  margin-bottom: 15px;
-  padding: 15px;
-  border-bottom: 1px solid #d1d1d1;
-}
-.cluster-status .graph-form li {
-  float: left;
-  margin-right: 50px;
-}
-.cluster-status flot .legend {
-  margin-left: 10px;
-}
-.cluster-status .progress {
-  margin-bottom: 0;
-}
-.cluster-status .easy-pie-chart {
-  height: 50px;
-}
-.cluster-status .smaller-stat {
-  margin-top: 10px;
-}
-
 /* Login */
 .login {
   height: 100%;
@@ -934,39 +887,6 @@ h6{
   background-color: rgba(30, 30, 30, 0);
 }
 
-/* EasyPieChart */
-.easy-pie-chart {
-  display: inline-block;
-  position: relative;
-  vertical-align: middle;
-}
-.easy-pie-chart .percent {
-  color: #444;
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  margin-top: -7px;
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  text-align: center;
-}
-.easy-pie-chart .percent:after {
-  content: " %";
-}
-.easy-pie-title {
-  display: inline-block;
-  margin: 10px 6px 0;
-  font-size: 12px;
-  font-weight: 400;
-  text-transform: uppercase;
-  width: 100px;
-  height: 19px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 /* FlexElement */
 /* Container */
 .flex-container {
@@ -1008,11 +928,6 @@ h6{
 .flex-item-7 { -webkit-flex: 7; -moz-flex: 7; -ms-flex: 7; flex: 7; padding: 0 10px; }
 .flex-item-8 { -webkit-flex: 8; -moz-flex: 8; -ms-flex: 8; flex: 8; padding: 0 10px; }
 .flex-item-9 { -webkit-flex: 9; -moz-flex: 9; -ms-flex: 9; flex: 9; padding: 0 10px; }
-
-/* Graph */
-.panel-body.graph {
-  text-align: center;
-}
 
 /* Gridster */
 .gridster {
@@ -1074,30 +989,6 @@ h6{
   width: 100%;
   color: black;
   font-weight: normal;
-}
-
-/* SmallerStat */
-.smaller-stat {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.smaller-stat li {
-  margin-top: 3px;
-  margin-right: 0;
-}
-.smaller-stat li:first-child {
-  margin-top: 8px;
-}
-.smaller-stat span.label {
-  width: 40px;
-  display: block;
-  text-align: left;
-  opacity: .5;
-  cursor: default;
-}
-.smaller-stat span.label:hover {
-  opacity: 1;
 }
 
 tags-input .tags {
@@ -1181,173 +1072,6 @@ tags-input .tags {
 }
 .tree li:last-child::before {
   height: 30px;
-}
-
-/* Widgets */
-.widget {
-  margin: 0 1em 1em 0;
-  background-color: #fff;
-  border: 1px solid #d4d4d4;
-  border-radius: 0px;
-  position: relative;
-  height: 100%;
-}
-.widget .widget-header {
-  overflow: hidden;
-}
-.widget .widget-content {
-  padding: 0 10px;
-  overflow: hidden;
-}
-.widget .widget-ew-resizer {
-  position: absolute;
-  width: 5px;
-  right: -2px;
-  height: 100%;
-  top: 0;
-  cursor: ew-resize;
-}
-.widget .widget-resizer-marquee{
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.5);
-  position:absolute;
-  top:0;
-  left:0;
-  z-index:2
-}
-/* Wizards */
-#wizard .pager {
-  margin: 0;
-  margin-bottom: 10px;
-}
-#wizard .form-actions {
-  padding: 13px 14px 15px;
-  background: rgba(249,249,249,.9);
-  margin: 25px -30px -25px;
-}
-#wizard .form-actions,
-#wizard .no-padding .form .form-actions {
-  border-top: 1px solid rgba(0,0,0,.1);
-  display: block;
-  text-align: right;
-}
-#wizard .wizard-nav-items-4 {
-  left: 0;
-}
-#wizard .wizard-nav-items-3 {
-  left: 15%;
-}
-#wizard .wizard-nav-items-2 {
-  left: 25%;
-}
-#wizard .wizard-nav-btn {
-  margin-bottom: 10px !important;
-  margin-left: 5px !important;
-}
-#wizard .wizard-default {
-  cursor: default;
-}
-#wizard .wizard-pointer {
-  cursor: pointer;
-}
-.widget .wizard-selector {
-  margin-top: -20px;
-}
-.wizard-selector-lower-row {
-  margin-top: 20px;
-}
-.wizard-selector .flex-item-1 {
-  min-width: 220px;
-}
-.bootstrapWizard {
-  display: block;
-  list-style: none;
-  padding: 0;
-  position: relative;
-  width: 100%;
-}
-.bootstrapWizard li {
-  display: block;
-  float: left;
-  width: 25%;
-  text-align: center;
-  padding-left: 0;
-}
-.bootstrapWizard li.active .step, .bootstrapWizard li.active.complete .step {
-  background: #0091d9;
-  color: #fff;
-  font-weight: 700;
-  padding: 7px 13px;
-  font-size: 15px;
-  border-radius: 50%;
-  border: 3px solid #55606E;
-}
-.bootstrapWizard li .step {
-  background: #B2B5B9;
-  color: #fff;
-  display: inline;
-  font-size: 15px;
-  font-weight: 700;
-  padding: 7px 13px;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  line-height: normal;
-  position: relative;
-  text-align: center;
-  z-index: 2;
-  transition: all .1s linear 0s;
-}
-.bootstrapWizard li.active .title, .bootstrapWizard li.complete .title {
-  color: #2B3D53;
-}
-.bootstrapWizard li .title {
-  position: static;
-  margin-top: 20px;
-}
-.bootstrapWizard li .title {
-  color: #bfbfbf;
-  display: block;
-  font-size: 13px;
-  line-height: 15px;
-  max-width: 100%;
-  table-layout: fixed;
-  text-align: center;
-  top: 20px;
-  word-wrap: break-word;
-  z-index: 104;
-}
-.bootstrapWizard li:before {
-  border-top: 3px solid #55606E;
-  content: "";
-  display: block;
-  font-size: 0;
-  overflow: hidden;
-  position: relative;
-  top: 11px;
-  right: 1px;
-  width: 100%;
-  z-index: 1;
-}
-.bootstrapWizard li:first-child:before {
-  left: 50%;
-  max-width: 50%;
-}
-.bootstrapWizard li:last-child:before {
-  max-width: 50%;
-  width: 50%;
-}
-.bootstrapWizard a:active,
-.bootstrapWizard a:focus,
-.bootstrapWizard a:hover {
-  text-decoration: none;
-}
-.bootstrapWizard li.prevtab .step, .bootstrapWizard li.prevtab.complete .step {
-  background-color: #0aa66e;
-  color: #ffffff;
-  font-weight: 700;
-  padding: 7px 13px;
-  font-size: 15px;
-  border-radius: 50%;
-  border: 3px solid #55606E;
 }
 
 /* CSS Fix */
