@@ -15,14 +15,14 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
 Name: openattic
-Version: 2.0.19
+Version: 2.0.20
 Release: 0
 Summary: Comprehensive Storage Management System
 Group: System Environment/Libraries
 License: GPL-2.0
 URL: http://www.openattic.org
 BuildArch: noarch
-Source:	%{name}-%{version}-ses4.tar.bz2
+Source:	%{name}-%{version}.tar.bz2
 BuildRequires: -post-build-checks
 %if 0%{?suse_version} >= 1210
 BuildRequires: systemd-rpm-macros
@@ -371,7 +371,7 @@ storage space on demand.
 This package configures the PostgreSQL database for openATTIC.
 
 %prep
-%setup -q -n %{name}-%{version}-ses4
+%setup -q
 
 %build
 
@@ -436,7 +436,7 @@ install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}%{_sysconfdir}/sysconfig
 install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
 
 # configure dbus
-install -m 644 etc/dbus-1/system.d/openattic.conf.SUSE %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+install -m 644 etc/dbus-1/system.d/%{name}.conf.SUSE %{buildroot}%{_sysconfdir}/dbus-1/system.d/%{name}.conf
 
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
