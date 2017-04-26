@@ -17,7 +17,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
 [3.0.0] - unreleased
----------------------
+--------------------
 
 In general, this release focuses on the 3.0 refactoring and cleanup epic (OP-2071)
 
@@ -33,6 +33,13 @@ Changed
 * Backend: Salt minions information is now populated using Salt-API (OP-1889)
 * WebUI: re-enabled the minions and pillar data listing (OP-1889)
 * WebUI: Renames osd service cluster id to fsid (OP-2110)
+
+Removed
+~~~~~~~
+* WebUI: Removed all local-storage functionalities of openATTIC (OP-2073).
+
+* For more information, why we drop the local-storage support, see:
+  https://www.openattic.org/posts/implementing-a-more-scalable-storage-management-framework-in-openattic-30/
 
 Fixed
 ~~~~~
