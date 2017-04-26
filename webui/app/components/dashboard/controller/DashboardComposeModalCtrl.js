@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.dashboard");
-app.controller("DashboardComposeCtrl", function ($scope, $uibModalInstance, data) {
+app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance, data) {
   $scope.data = angular.copy(data);
   $scope.editMode = angular.isString(data.name);
   if (!$scope.editMode) {

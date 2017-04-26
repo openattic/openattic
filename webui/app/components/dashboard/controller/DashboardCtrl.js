@@ -76,10 +76,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
     "group"  : "Ceph"
   }];
 
-  var composeDialogConfig = function (data) {
+  var composeModalConfig = function (data) {
     return {
-      controller: "DashboardComposeCtrl",
-      templateUrl: "components/dashboard/templates/dashboard-compose-dialog.html",
+      controller: "DashboardComposeModalCtrl",
+      templateUrl: "components/dashboard/templates/dashboard-compose-modal.html",
       windowTemplateUrl: "templates/messagebox.html",
       resolve: {
         data: angular.isUndefined(data) ? {} : data
@@ -89,7 +89,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   // functions
   $scope.addDashboard = function () {
-    var modalInstance = $uibModal.open(composeDialogConfig());
+    var modalInstance = $uibModal.open(composeModalConfig());
 
     modalInstance.result.then(function (data) {
       var idx = $scope.data.boards.length;
@@ -113,7 +113,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.editDashboard = function () {
-    var modalInstance = $uibModal.open(composeDialogConfig({
+    var modalInstance = $uibModal.open(composeModalConfig({
         "type": "dashboard",
         "name": $scope.dashboard.name
       }));
@@ -186,7 +186,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.addWidget = function () {
-    var modalInstance = $uibModal.open(composeDialogConfig({
+    var modalInstance = $uibModal.open(composeModalConfig({
         "manager" : $scope.manager,
         "settings": {}
       }));
@@ -210,7 +210,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   };
 
   $scope.editWidget = function (idx, name) {
-    var modalInstance = $uibModal.open(composeDialogConfig({
+    var modalInstance = $uibModal.open(composeModalConfig({
         "type"           : "widget",
         "name"           : name,
         "manager"        : $scope.manager,
