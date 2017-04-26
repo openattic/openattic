@@ -42,6 +42,7 @@ Fixed
 * WebUI: Disallow underscores in IQN WWNs (OP-1669)
 * WebUI: Fix incomplete delete confirmation message (OP-2061)
 * Documentation: Updated developer documentation for git (OP-2054)
+* Packaging: make_dist.py: Fixed building of non-local git branches (OP-2106)
 
 [2.0.19] - 2017-03-24
 ---------------------

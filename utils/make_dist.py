@@ -371,6 +371,7 @@ class DistBuilder(object):
 
     def _git_reset_hard(self, revision, cwd=None):
         for cmd in [['git', 'fetch'],
+                    ['git', 'checkout', revision],
                     ['git', 'reset', '--hard', revision],
                     ['git', 'clean', '-dfx']]:
             self._process.run(cmd, cwd=cwd)
