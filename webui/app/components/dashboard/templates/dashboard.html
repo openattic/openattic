@@ -76,6 +76,8 @@
         </openattic-cluster-status>
         <openattic-wizards widget="widget" ng-if="widget.manager.manager === 'openattic-wizards'">
         </openattic-wizards>
+        <ceph-osd-status settings="widget.settings" ng-if="widget.manager.manager === 'ceph-osd-status'">
+        </ceph-osd-status>
         <ceph-cluster-status widget="widget" ng-if="widget.manager.manager === 'ceph-cluster-status'">
         </ceph-cluster-status>
         <ceph-cluster-performance widget="widget" ng-if="widget.manager.manager === 'ceph-cluster-performance'">
