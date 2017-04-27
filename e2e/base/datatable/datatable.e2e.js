@@ -221,6 +221,6 @@ describe('Should test oadatatable and its options', function(){
   });
 
   afterAll(function(){
-    console.log('datatable -> datatable.e2e.js -> volume based');
+    console.log('datatable -> datatable.e2e.js -> ceph pool based');
   });
 });
