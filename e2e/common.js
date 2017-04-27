@@ -18,12 +18,16 @@
      * Will delete the selected items, using the default test classes for this.
      * @param {number} [dropdown] - which dropdown to get
      */
-    delete_selection: function(dropdown){
+    delete_selection: function(dropdown, controllerName){
       dropdown = dropdown || 0;
       element.all(by.css('.tc_menudropdown')).get(dropdown).click();
       element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(helper.configs.sleep);
-      element(by.model('input.enteredName')).sendKeys('yes');
+      var enteredNameInput = 'input.enteredName';
+      if (controllerName) {
+        enteredNameInput = controllerName + '.' + enteredNameInput;
+      }
+      element(by.model(enteredNameInput)).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
       browser.sleep(helper.configs.sleep);
     },
@@ -186,7 +190,7 @@
       hostsItem.click();
       var host = helper.get_list_element(hostname);
       host.click();
-      helper.delete_selection();
+      helper.delete_selection(undefined, '$ctrl');
       expect(host.isPresent()).toBe(false);
     },
 

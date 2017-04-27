@@ -4,7 +4,7 @@ openATTIC webui licenses
 bower packages
 --------------
 angular                           1.5.3               MIT                         https://github.com/angular/bower-angular/tree/v1.5.3
-angular-bootstrap                 1.3.2               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/1.3.2
+angular-bootstrap                 2.5.0               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/2.5.0
 angular-breadcrumb                0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
 angular-flot                      0.0.16              MIT                         https://github.com/develersrl/angular-flot/tree/v0.0.16
 angular-gridster                  0.13.9              MIT                         https://github.com/ManifestWebDesign/angular-gridster/tree/v0.13.9

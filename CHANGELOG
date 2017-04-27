@@ -16,6 +16,48 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[2.0.20] - 2017-04-26
+---------------------
+
+Added
+~~~~~
+* Development: Added Ceph support to the Vagrant configuration (OP-2048)
+* Development: Support for 'variable' id attribute on 'required' directive
+  (OP-1993)
+* Development: Added delete confirmation modal component (OP-2013)
+* WebUI: Improved javascript error handling by notifying the user via toasty
+  error messages (OP-1926)
+* Documentation: Split installation instructions for Debian and Ubuntu, to make
+  use of Ubuntu's `add-apt-repository`
+* Documentation: Instructions to backport commits into a stable release branch
+  (OP-2063)
+
+Changed
+~~~~~~~
+* WebUI: Upgrade angular-bootstrap to the newer major version 2.5.0 (OP-1888)
+* WebUI: Improved style of iSCSI iqn and fibre channel wwn inputs (OP-1959)
+* Backend: Stop spamming the log with ``Skipping
+  /etc/ceph/ceph.client.admin.keyring, permission denied`` (OP-2066)
+* Backend: Improved logging by adding PID, Process Name and Current Version
+  (OP-2065)
+
+Fixed
+~~~~~
+* Installation: fixed "OAUSER: unbound variable" error during update on EL7
+  (OP-2046)
+* Installation: Fixed config file location in the SUSE systemd service
+  (OP-2067)
+* Backend: Fixed "Systemd did not respond to DBus ping" error on SUSE
+  (BNC#1032263)
+* Backend: Removed ``__getattribute__`` of ``NodbQuerySet``, cause of strange
+  exceptions (OP-2068)
+* WebUI: Prevents browser freezing when session expires (OP-1779)
+* WebUI: Disallow underscores in IQN WWNs (OP-1669)
+* WebUI: Fix incomplete delete confirmation message (OP-2061)
+* Documentation: Updated developer documentation for git (OP-2054)
+* Packaging: make_dist.py: Fixed building of non-local git branches (OP-2106)
+* Development: Fixed Django unit tests (OP-1983)
+
 [2.0.19] - 2017-03-24
 ---------------------
 
@@ -24,7 +66,7 @@ Added
 * WebUI: Display loading spinner icon on form submit to give the user feedback
   that something is happening in the background (OP-1760)
 * WebUI: Automatically show toasty notifications for API errors.
-  Thanks to Uroš Lates for the contribution. (OP-1631)
+  Thanks to Uroï¿½ Lates for the contribution. (OP-1631)
 * WebUI: Added DRBD support. (OP-1201)
 
 Changed
@@ -38,7 +80,7 @@ Changed
 * WebUI: Disabled successful task queue notifications (OP-1961)
 * WebUI: Changed mouse cursor to "pointer" over clickable rows (OP-1893)
 * WebUI: Dropdown button should not close when user clicks on a disabled option
-  Thanks to David Díaz for the contribution. (OP-940)
+  Thanks to David Dï¿½az for the contribution. (OP-940)
 * Documentation: Updated E2E section (changed test tool versions, OP-1919)
 * Packaging: Stop and remove ``openattic-rpcd`` service when upgrading to
   version 2.0.19 (OP-1900)
@@ -125,7 +167,7 @@ Changed
 * Installation: Added missing configuration entries to the SUSE sysconfig
   file (PR#576)
 * Installation: Make ``oaconfig`` respect the username and database name stored
-  in ``database.ini`` to create/connect to a database (PR#599) 
+  in ``database.ini`` to create/connect to a database (PR#599)
 * Installation: Changing the database password during ``oaconfig install`` now
   follows the symlink from ``database.ini`` to ``pgsql.ini`` instead of
   creating a new file (OP-1821)
@@ -157,7 +199,7 @@ Added
 * WebUI: Display and generate a user's API auth token. (OP-815)
 * WebUI: Add a button to the API Recorder dialog to copy the Python script
   into clipboard. (OP-1706)
-* Documentation: Added chapter about multinode setup (OP-1045) 
+* Documentation: Added chapter about multinode setup (OP-1045)
 
 Changed
 ~~~~~~~
@@ -277,7 +319,7 @@ Added
 * WebUI: Show Salt Minions plus DeepSea Pillar Data (OP-1571)
 * Backend: Added Nagios plugin to collect performance data of RBDs (OP-1444)
 * Backend: Added support for Ubuntu 16.04 in our Vagrantfile (OP-1492)
-* Backend: Added read-only REST API returning 
+* Backend: Added read-only REST API returning
   `DeepSea <https://github.com/SUSE/DeepSea>`_ minions (OP-1469)
 * WebUI/QA: Blockstorage wizard host creation tests (OP-1496)
 * WebUI/QA: Adds missing condition to filter test categories (OP-1551)
@@ -328,8 +370,8 @@ Fixed
   (OP-1411)
 * Backend: The empty values at the end of the performance data collections
   are filtered now (OP-1470)
-* Backend: Fixed compatibility issues with Django 1.8 and Django REST 
-  Framework 3 (OP-1210, OP-1490, OP-1486) 
+* Backend: Fixed compatibility issues with Django 1.8 and Django REST
+  Framework 3 (OP-1210, OP-1490, OP-1486)
 * Backend: The ``check_cephpool`` Nagios plugin does return the correct outputs
   and exit codes (per the Nagios plugin development guidelines) in error and
   success case now (OP-1521)
@@ -341,7 +383,7 @@ Fixed
 * Backend: Fixed creation of Ceph erasure code profiles (OP-1574)
 * Backend: Nagios config files including a dot (.) in filename are now
   deleted too (OP-1534)
-* Backend: Fixed two Internal Server Errors when accessing Ceph 
+* Backend: Fixed two Internal Server Errors when accessing Ceph
   resources (OP-1569)
 * Backend: Fixed internal server error when creating invalid Erasure Code
   Profiles or deleting used ones (OP-1578)
@@ -349,7 +391,7 @@ Fixed
   install`` (OP-1580)
 * Backend: The ``check_cephcluster`` plugin now prints the correct message and
   returns the correct exit code in case of an error (OP-1586)
-* Backend: Fixed ``oaconfig install`` on CentOS 7 (OP-1368)  
+* Backend: Fixed ``oaconfig install`` on CentOS 7 (OP-1368)
 * Backend: Fixed ``HEALTH_ERR`` not handled in ``ceph.models.Pool#get_status``
   (OP-1593)
 * Installation: Fixed ``NAGIOS_PLUGIN_DIR`` path in in the SUSE sysconfig
@@ -455,7 +497,7 @@ Added
 * Backend: Added the performance data (in JSON) of a Ceph cluster to the REST
   API (OP-1279)
 * Backend: Added Ceph pool Nagios monitoring (OP-1292)
-* Backend: The ``check_cephcluster`` Nagios plugin contains another value 
+* Backend: The ``check_cephcluster`` Nagios plugin contains another value
   ``exec_time``. It represents the run time of the cluster check. (OP-1307)
 * WebUI/QA: RBD form, table, details, creation and deletion tests (OP-1338)
 * Packaging: Added ``version.txt`` to the ``openattic-base`` RPM and DEB files

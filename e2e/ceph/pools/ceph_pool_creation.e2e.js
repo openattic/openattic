@@ -28,7 +28,7 @@ describe('ceph pool creation', function(){
     cephPool.click();
     element(by.css('.tc_menudropdown')).click();
     element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('input.enteredName')).sendKeys('yes');
+    element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
     element(by.id('bot2-Msg1')).click();
     expect(cephPool.isPresent()).toBe(false);
   };

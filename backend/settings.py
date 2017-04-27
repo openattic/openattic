@@ -13,6 +13,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import sys
+
+from configobj import ConfigObj
 
 PROJECT_ROOT = None
 PROJECT_URL  = '/openattic'
@@ -23,7 +26,8 @@ PROJECT_URL  = '/openattic'
 DATA_ROOT = "/var/lib/openattic"
 import os
 
-from os.path import join, dirname, abspath, exists
+from os.path import join, dirname, abspath, exists, isfile
+
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
     PROJECT_ROOT = dirname(abspath(__file__))
 
@@ -193,13 +197,37 @@ except NameError:
         except IOError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
+
+def read_version():
+    oa_dir = BASE_DIR
+
+    if str.endswith(oa_dir, "/backend"):
+        oa_dir = str.rsplit(oa_dir, "/", 1)[0]
+
+    version_file = oa_dir + "/version.txt"
+    assert isfile(version_file)
+    return ConfigObj(version_file)
+VERSION_CONF = read_version()
+
+
+
+def log_prefix():
+    pid = os.getpid()
+    try:
+        arg = (arg for arg in sys.argv if 'python' not in arg and 'manage.py' not in arg).next()
+    except StopIteration:  # may happen, if you run a python repl manually.
+        arg = sys.argv[0]
+    return '{} {}'.format(pid, arg)
+
+
 # Set logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'oa': {
-            'format': '%(asctime)s - %(levelname)s - %(name)s#%(funcName)s - %(message)s'
+            'format': '%(asctime)s {} %(levelname)s %(name)s#%(funcName)s - %(message)s'.format(
+                log_prefix())
         }
     },
     'handlers': {

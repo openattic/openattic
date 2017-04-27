@@ -30,16 +30,16 @@ Options:
 
     --revision=<revision>
 
-        A valid mercurial revision. An existing mercurial tag for 'release'.
+        A valid git revision. An existing git tag for 'release'.
 
         If no revision is provided, the defaults are used. The default for
-        'release' is the latest existing mercurial tag. The default for
-        'snapshot' is the development branch, which actually results in the tip
-        of the development branch being used.
+        'release' is the latest existing git tag. The default for
+        'snapshot' is the master branch, which actually results in the tip
+        of the master branch being used.
 
         If the --tag switch is used without a revision but with the order to
-        create a 'release', then the latest existing mercurial tag will *not*
-        be used by default, but the 'default' branch. For more information see
+        create a 'release', then the latest existing git tag will *not*
+        be used by default, but the 'stable' branch. For more information see
         the documentation of --tag.
 
         The --revision argument will be ignored if a path to a local repository
@@ -49,8 +49,8 @@ Options:
 
     --source=<source>  [default: https://bitbucket.org/openattic/openattic]
 
-        The source to be used. Either an URL to a Mercurial repository or local
-        path to a Mercurial repository.
+        The source to be used. Either an URL to a git repository or local
+        path to a git repository.
 
         If a local path is used, uncommited changes will be automatically
         committed and used to create the tarball. Because of that the
@@ -80,9 +80,9 @@ Options:
         Pushes the changes that have been made in the temporary repository
         which is used to create the tarball. This switch is meant to be used on
         a release to push changes back to the configured remote repository.
-        It's configured in the `.hg/hgrc` of the given source repository.
+        It's configured in the git config of the given source repository.
         Those changes include the adaption of the `debian/changelog` as well as
-        any Mercurial tags created.
+        any git tags created.
 
         This switch will be ignored if the argument to --source is a local path
         which contains uncommitted changes. If there aren't uncommited changes
@@ -96,7 +96,7 @@ Options:
 
     --tag
 
-        Creates a Mercurial tag on top of other changes, like for example the
+        Creates a git tag on top of other changes, like for example the
         adaption of the `debian/changelog`. The tag used will be the VERSION of
         the `version.txt` of the source.
 
@@ -352,25 +352,29 @@ class DistBuilder(object):
 
     def _get_latest_tag_of_rev(self):
         """Return the latest global tag of the currently activated revision."""
-        result = self._process.run(['hg', 'parents', '--template', '{latesttag}'],
-                                   cwd=self._tmp_oa_clone_dir)
+        result = self._process.run(['git' 'describe' '--tags', '--abbrev=0'],
+                             cwd=self._tmp_oa_clone_dir)
         return result.stdout
 
     def __get_all_tags(self, source_dir):
-        """Retrieve all tags of the specified mercurial source directory.
+        """Retrieve all tags of the specified git source directory.
 
         This function returns the latest tags independent from the currently activated revision
         of the given `source_dir`.
 
-        :param source_dir: A path to a mercurial source directory
+        :param source_dir: A path to a git source directory
         :type source_dir: str
         :return: A list of tags
         """
-        self._process.run(['hg', 'pull'], cwd=source_dir)
-        tags = self._process.run(['hg', 'tags'], cwd=source_dir).stdout.split('\n')
-        tags = map(lambda e: re.split(r'\s+', e)[0], tags)
+        self._process.run(['git', 'fetch'], cwd=source_dir)
+        return self._process.run(['git', 'tag', '-l'], cwd=source_dir).stdout.splitlines()
 
-        return tags
+    def _git_reset_hard(self, revision, cwd=None):
+        for cmd in [['git', 'fetch'],
+                    ['git', 'checkout', revision],
+                    ['git', 'reset', '--hard', revision],
+                    ['git', 'clean', '-dfx']]:
+            self._process.run(cmd, cwd=cwd)
 
     @staticmethod
     def _get_md5_of_file(file_name):
@@ -386,10 +390,9 @@ class DistBuilder(object):
 
     def _get_latest_existing_tag(self, strip_tag=False):
         tags = self.__get_all_tags(self._tmp_oa_clone_dir)
-        tags.remove('tip')  # We're looking for the latest _labeled_ tag. So we exclude 'tip'.
         tags = filter(None, tags)  # Remove every item that evaluates to False.
         latest_tag = self._sort_version_number_desc(tags)[0]
-        latest_tag = self._strip_mercurial_tag(latest_tag) if strip_tag else latest_tag
+        latest_tag = self._strip_git_tag(latest_tag) if strip_tag else latest_tag
 
         return latest_tag
 
@@ -399,7 +402,7 @@ class DistBuilder(object):
         It returns the VERSION of the version.txt file in the repository. The version returned
         depends on the given revision.
 
-        :param revision: A valid mercurial revision
+        :param revision: A valid git revision
         :type revision: str
         :type update_allowed: bool
         :return: The version of the `version.txt`
@@ -409,7 +412,7 @@ class DistBuilder(object):
             # Update to the given revision before determining the upcoming version. Don't do this if
             # the source is a path, because that one is for creating tarballs to be tested before
             # releasing them.
-            self._process.run(['hg', 'update', revision], cwd=self._tmp_oa_clone_dir)
+            self._process.run(['git', 'checkout', revision], cwd=self._tmp_oa_clone_dir)
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -431,15 +434,15 @@ class DistBuilder(object):
         This function provides the default revision for calls of this script which do NOT provide a
         revision argument, so that the revision has to be determined automatically.
 
-        If the channel is 'release', the revision will resolve to the latest existing mercurial tag.
-        If it's 'snapshot' it will resolve to the tip of the default branch.
+        If the channel is 'release', the revision will resolve to the latest existing git tag.
+        If it's 'snapshot' it will resolve to the tip of the stable branch.
 
         :param channel: 'release' | 'snapshot'
         :type channel: str
-        :return: A valid mercurial revision
+        :return: A valid git revision
         """
         assert channel in ('release', 'snapshot')
-        return self._get_latest_existing_tag() if channel == 'release' else 'default'
+        return self._get_latest_existing_tag() if channel == 'release' else 'origin/stable'
 
     def _remove_npmrc_prefix(self):
         """Remove the `prefix` variable from the `~/.npmrc` file."""
@@ -515,10 +518,10 @@ class DistBuilder(object):
         if self._source_is_path:
             self._copytree(source, destination_dir, symlinks=True)
         else:
-            self._process.run(['hg', 'clone', source, destination_dir])
+            self._process.run(['git', 'clone', source, destination_dir])
 
     @staticmethod
-    def _strip_mercurial_tag(tag):
+    def _strip_git_tag(tag):
         """Strip the given tag to a version-only format.
 
         It omits the 'v' prefix and '-1' suffix. The latter is only used by packaging systems and
@@ -526,13 +529,13 @@ class DistBuilder(object):
 
         :param tag:
         :type tag: str
-        :return: `None` or the stripped mercurial tag
+        :return: `None` or the stripped git tag
         """
         hits = re.findall(r'v?([^\-]+)(-\d)?', tag)
         return hits[0][0] if hits else None  # Return first hit of first group or None.
 
     def _is_existing_tag(self, tag):
-        result = self._process.run(['hg', 'tags'], cwd=self._tmp_oa_clone_dir)
+        result = self._process.run(['git', 'tag', '-l'], cwd=self._tmp_oa_clone_dir)
         matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
 
         return tag in matches if matches else False
@@ -578,9 +581,13 @@ class DistBuilder(object):
             self._process.log_command(['rm', abs_tarball_dest_file])
             os.remove(abs_tarball_dest_file)
 
-        self._process.run(['hg', 'archive', '-t', 'files', tmp_abs_build_dir, '-X', '.hg*'],
+        # /destination/path/
+        # Otherwise, this command will do something different
+        tmp_abs_build_dir = tmp_abs_build_dir if tmp_abs_build_dir.endswith('/') \
+            else tmp_abs_build_dir + '/'
+        self._process.run(['git', 'checkout-index', '-a', '-f', '--prefix=' + tmp_abs_build_dir],
                           cwd=self._tmp_oa_clone_dir)
-        self._process.run(['hg', 'pull', '--update'], cwd=self._fe_cache_dir)
+        self._process.run(['git', 'pull'], cwd=self._fe_cache_dir)
 
         cache = [{
             'name': 'npm',
@@ -658,7 +665,7 @@ class DistBuilder(object):
         :type repo_dir: str
         :return: The long hash of the current changeset
         """
-        result = self._process.run(['hg', '--debug', 'id', '-i'], cwd=repo_dir)
+        result = self._process.run(['git', 'rev-parse', 'HEAD'], cwd=repo_dir)
         return result.stdout.strip()
 
     def _commit_changes(self, commit_msg, repo_dir, user='Build Scripts', exit_on_error=False):
@@ -669,12 +676,14 @@ class DistBuilder(object):
         :type exit_on_error: bool
         :rtype: ProcessResult
         """
-        return self._process.run(['hg', 'ci', '-A', '-m', commit_msg, '-u', user],
+        self._process.run(['git', 'add', '--all'])
+        return self._process.run(['git', 'commit', '-s', '-a', '-m', commit_msg],
                                  cwd=repo_dir,
                                  exit_on_error=exit_on_error)
 
     def _push_changes(self, repo_dir):
-        return self._process.system(['hg', 'push'], cwd=repo_dir)
+        self._process.system(['git', 'push'], cwd=repo_dir)
+        return self._process.system(['git', 'push', '--tags'], cwd=repo_dir)
 
     def _get_release_channel(self):
         return 'release' if self._args['release'] else 'snapshot'
@@ -691,7 +700,7 @@ class DistBuilder(object):
         self._set_npmrc_prefix()
 
         self._retrieve_source(DistBuilder.OA_CACHE_REPO_URL, self._fe_cache_dir, skip_if_exists=True)
-        self._process.run(['hg', 'pull', '--update'], cwd=self._fe_cache_dir)
+        self._process.run(['git', 'pull'], cwd=self._fe_cache_dir)
 
         if self._source_is_path and isdir(self._tmp_oa_clone_dir):
             self._rmtree(self._tmp_oa_clone_dir)
@@ -701,7 +710,7 @@ class DistBuilder(object):
         if self._args['--revision']:
             revision = self._args['--revision']
         elif self._args['--tag'] and self._args['release']:
-            revision = 'default'
+            revision = 'origin/stable'
         else:
             revision = self._get_revision_by_channel(channel)
 
@@ -717,12 +726,10 @@ class DistBuilder(object):
                                'tarball. If I updated to the given revision, these changes '
                                'wouldn\'t be included in the tar archive anymore.')
                 else:
-                    for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
-                        self._process.run(cmd, cwd=self._tmp_oa_clone_dir)
+                    self._git_reset_hard(revision, self._tmp_oa_clone_dir)
                     repo_updated = True
         else:
-            for cmd in [['hg', 'pull'], ['hg', 'update', '--clean', '-r', revision]]:
-                self._process.run(cmd, cwd=self._tmp_oa_clone_dir)
+            self._git_reset_hard(revision, self._tmp_oa_clone_dir)
             repo_updated = True
 
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
@@ -759,7 +766,7 @@ class DistBuilder(object):
             self._commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
         if self._args['--tag']:
-            self._process.run(['hg', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
+            self._process.run(['git', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
 
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
@@ -803,7 +810,7 @@ class DistBuilder(object):
             distribution = 'unstable'
         else:
             newversion = version + '~' + pkgdate
-            msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate, hg_id)
+            msg = 'Automatic build based on the state in Git as of %s (%s)' % (pkgdate, hg_id)
             distribution = 'nightly'
 
         # Adapt the `debian/changelog` file via `debchange`.

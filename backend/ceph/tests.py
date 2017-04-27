@@ -416,5 +416,8 @@ class CephPoolSerializerTest(TestCase):
             for key in pool.keys():
                 obj = {k: v for k, v in pool.items() if k != key}
                 s = CephPoolSerializer(data=obj)
-                self.assertFalse(s.is_valid(), 'key={} pool={}'.format(key, obj))
-                self.assertIn(key, s.errors)
+                if key in ['size', 'min_size', 'name', 'erasure_code_profile']:
+                    self.assertFalse(s.is_valid(), 'key={} pool={}'.format(key, obj))
+                    self.assertIn(key, s.errors)
+                else:
+                    self.assertTrue(s.is_valid(), 'pool={} errors={}'.format(pool, s.errors))

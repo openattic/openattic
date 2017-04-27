@@ -13,7 +13,7 @@
                            class="form-control" required autofocus
                            uib-tooltip="{{fieldRequired}}"
                            tooltip-class="tc_usernameRequired"
-                           tooltip-trigger="none"
+                           tooltip-trigger="'none'"
                            tooltip-is-open="(submitted || loginForm.username.$dirty)&& loginForm.username.$error.required">
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
                           ng-show="(submitted || loginForm.username.$dirty) && loginForm.username.$invalid"></span>
@@ -27,7 +27,7 @@
                            class="form-control" required
                            uib-tooltip="{{fieldRequired}}"
                            tooltip-class="tc_passwdRequired"
-                           tooltip-trigger="none"
+                           tooltip-trigger="'none'"
                            tooltip-is-open="(submitted || loginForm.password.$dirty) && loginForm.password.$error.required">
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
                           ng-show="(submitted || loginForm.password.$dirty) && loginForm.password.$invalid"></span>
@@ -37,7 +37,7 @@
                 <input type="submit" class="btn btn-openattic btn-block" value="login"
                        uib-tooltip="{{correctInput}}"
                        tooltip-class="tc_correctInput"
-                       tooltip-trigger="none"
+                       tooltip-trigger="'none'"
                        tooltip-is-open="submitted && loginFailed && (!loginForm.username.$error.required && !loginForm.password.$error.required)">
             </form>
         </div>

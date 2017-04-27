@@ -38,7 +38,7 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.factory("AuthHttpInterceptor", function ($q, $injector) {
+app.factory("AuthHttpInterceptor", function ($q, $injector, $rootScope) {
   return {
     request: function (config) {
       // Give the backend a clue that we're using AJAX here...
@@ -50,6 +50,7 @@ app.factory("AuthHttpInterceptor", function ($q, $injector) {
       // so we need to get $state via the $injector.
       var $state = $injector.get("$state");
       if (rejection.status === 401) {
+        $rootScope.user = null;
         $state.go("login");
       }
       return $q.reject(rejection);

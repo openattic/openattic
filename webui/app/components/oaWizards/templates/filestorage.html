@@ -21,7 +21,7 @@
                     </div><br /><br />
                     <form name="$parent.contentForm2" role="form" class="form-horizontal" novalidate>
                         <uib-accordion close-others="false">
-                            <uib-accordion-group is-open="input.cifs.create">
+                            <div uib-accordion-group is-open="input.cifs.create">
                                 <uib-accordion-heading>
                                     CIFS
                                     <i class="pull-right" ng-class="{'fa fa-angle-up': input.cifs.create,
@@ -98,8 +98,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </uib-accordion-group>
-                            <uib-accordion-group is-open="input.nfs.create">
+                            </div>
+                            <div uib-accordion-group is-open="input.nfs.create">
                                 <uib-accordion-heading>
                                     NFS
                                     <i class="pull-right" ng-class="{'fa fa-angle-up': input.nfs.create,
@@ -136,7 +136,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </uib-accordion-group>
+                            </div>
                         </uib-accordion>
                     </form>
                 </div>

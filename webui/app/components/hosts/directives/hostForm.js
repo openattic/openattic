@@ -291,7 +291,7 @@ app.directive("hostForm", function () {
               case "iqn":
                 if (wwn.indexOf(share) === 0) {
                   return validateShare(tag, share,
-                    wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-_\.]+)*$/));
+                    wwn.match(/^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-\.]+)*$/));
                 }
                 break;
               case "eui":

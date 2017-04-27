@@ -16,6 +16,7 @@
 import mock
 
 from django.test import TestCase
+from exception import NotSupportedError
 
 from volumes.filesystems import FileSystem, get_by_name
 
@@ -81,6 +82,7 @@ class FileSystemTestCase(TestCase):
 
             fs = get_by_name("ext2")(volume)
             fs.shrink(100000, 10000)
+            fs.post_shrink(100000, 100000)
 
             self.assertTrue(mock_get_dbus_object().fs_unmount.called)
             self.assertEqual(mock_get_dbus_object().fs_unmount.call_count, 1)
@@ -209,9 +211,9 @@ class FileSystemTestCase(TestCase):
 
     def test_e3fs_check_type(self):
         from volumes.filesystems.extfs import Ext3
-        self.assertTrue(Ext3.check_type("""/dev/vgfaithdata/linux: sticky Linux rev 1.0 ext3
-                        filesystem data, UUID=40275826-df77-49e3-9686-2f46dd8e2052, volume name
-                        "linux" (needs journal recovery) (large files)"""))
+        self.assertTrue(Ext3.check_type("/dev/vgfaithdata/linux: sticky Linux rev 1.0 ext3"
+                        " filesystem data, UUID=40275826-df77-49e3-9686-2f46dd8e2052, volume name"
+                        " \"linux\" (needs journal recovery) (large files)"))
 
     def test_xfs_format(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
@@ -249,7 +251,7 @@ class FileSystemTestCase(TestCase):
                                                                             "mziegler", "users"))
 
     def test_xfs_shrink(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(NotSupportedError):
             fs = get_by_name("xfs")(None)
             fs.shrink(100000, 10000)
 
