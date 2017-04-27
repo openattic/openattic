@@ -7,6 +7,10 @@ describe('General', function(){
   var menuCheck = function(menu){
     var menuCount = 0;
     var menuItems = element.all(by.css('.tc_menuitem > a'));
+<<<<<<< HEAD
+=======
+    var url;
+>>>>>>> Added test suites from branding-ses4 branch
 
     menu.forEach(function(name){
       var item = element(by.css('.tc_menuitem_' + name + ' > a'));
@@ -18,16 +22,24 @@ describe('General', function(){
       });
       it('should click ' + item + ' and check the url', function(){
         if(item.isDisplayed()){
+<<<<<<< HEAD
           if(name != 'system' && name != 'ceph'){
             item.click();
             browser.sleep(400);
             expect(browser.getCurrentUrl()).toContain('/openattic/#/' + name);
           }
+=======
+          url = name.replace("_", "/");
+          item.click();
+          browser.sleep(400);
+          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + url);
+>>>>>>> Added test suites from branding-ses4 branch
         }
       });
     });
   };
 
+<<<<<<< HEAD
   var subitemCheck = function(dropdown){
     var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
     var menuCount = 0;
@@ -59,6 +71,8 @@ describe('General', function(){
   };
 
 
+=======
+>>>>>>> Added test suites from branding-ses4 branch
   beforeAll(function(){
     helpers.login();
   });
@@ -74,6 +88,7 @@ describe('General', function(){
   /* Menuitems */
   menuCheck([ //Put here the final menu order
     'dashboard', //has to be there
+<<<<<<< HEAD
     'disks',
     'pools',
     'volumes',
@@ -118,14 +133,28 @@ describe('General', function(){
     ]
   });
 
+=======
+    'ceph_osds',
+    'ceph_rbds',
+    'ceph_pools',
+    'ceph_nodes',
+    'ceph_crushmap'
+  ]);
+
+>>>>>>> Added test suites from branding-ses4 branch
   it('should check if the openATTIC logo is visible', function(){
     expect(oaLogo.isDisplayed()).toBe(true);
   });
 
   it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
     //click somewhere else to change the url
+<<<<<<< HEAD
     element(by.css('.tc_menuitem_pools > a')).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
+=======
+    element(by.css('.tc_menuitem_ceph_osds > a')).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/ceph/osds');
+>>>>>>> Added test suites from branding-ses4 branch
     oaLogo.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
   });

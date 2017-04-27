@@ -19,6 +19,7 @@ describe('should test the login', function(){
     expect(browser.getCurrentUrl()).toContain('#/dashboard');
   });
 
+<<<<<<< HEAD
   it('should go to dashboard when already logged in', function(){
     browser.get(configs.url);
     expect(browser.getCurrentUrl()).toContain('#/dashboard');
@@ -27,6 +28,11 @@ describe('should test the login', function(){
   it('should click any menu entry', function(){
     element(by.css('ul .tc_menuitem_volumes > a')).click();
     expect(browser.getCurrentUrl()).toContain('#/volumes');
+=======
+  it('should click any menu entry', function(){
+    element(by.css('ul .tc_menuitem_ceph_osds > a')).click();
+    expect(browser.getCurrentUrl()).toContain('#/ceph/osds');
+>>>>>>> Added test suites from branding-ses4 branch
   });
 
   it('should logout again', function(){
