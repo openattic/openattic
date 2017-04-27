@@ -8,6 +8,7 @@ var typeColumn = element(by.cssContainingText('th', 'Type'));
 var searchField = element.all(by.model('filterConfig.search')).get(0);
 var entriesDropDown = element(by.css('.tc_entries_dropdown'));
 var poolRowElements = element.all(by.css('.tc_cephPoolTable tbody tr'));
+var poolCount = poolRowElements.count();
 
 var selectAllCheckbox = element(by.model('selection.checkAll'));
 var allSelected = element(by.css('.oadatatablecheckbox .ng-not-empty'));
@@ -187,12 +188,12 @@ describe('Should test oadatatable and its options', function(){
   it('should filter for the poolname', function(){
     searchField.click();
     searchField.clear().sendKeys('default.rgw.data.root');
-    expect(poolRowElements.count()).toBe(1);
+    expect(poolCount).toBe(1);
   });
 
   it('should clear the filter search field and display max. 10 elements', function(){
     searchField.clear();
-    expect(poolRowElements.count()).toBeGreaterThan(1);
+    expect(poolCount).toBeGreaterThan(1);
   });
 
   it('should have "10" as default max. listed elements per page', function(){
@@ -202,12 +203,12 @@ describe('Should test oadatatable and its options', function(){
   it('should display only two elements when this number of displayed elements has been selected', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_2')).click();
-    expect(poolRowElements.count()).toBe(2);
+    expect(poolCount).toBe(2);
   });
 
   it('should still display only two elements after reloading the page', function(){
     browser.refresh();
-    expect(poolRowElements.count()).toBe(2);
+    expect(poolCount).toBe(2);
   });
 
   it('should adapt table information of listed entries', function(){
@@ -217,7 +218,7 @@ describe('Should test oadatatable and its options', function(){
   it('should go back to max. 10 elements per page', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_10')).click();
-    expect(poolRowElements.count()).toBeGreaterThan(2);
+    expect(poolCount).toBeGreaterThan(2);
   });
 
   afterAll(function(){
