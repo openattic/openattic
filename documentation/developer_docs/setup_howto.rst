@@ -38,11 +38,6 @@ based on the latest commit in the ``default`` branch.
       # apt-get install nodejs npm
       # ln -s /usr/bin/nodejs /usr/bin/node
 
-#.  Install Bower and Grunt (to build the Web UI)::
-
-      # npm install -g bower
-      # npm install -g grunt-cli
-
 #.  Go to the ``/srv`` directory, and create a local clone of your |oA| fork
     there, using the current ``master`` branch as the basis::
 
@@ -74,14 +69,17 @@ based on the latest commit in the ``default`` branch.
 #.  Now build the Web UI::
 
       # cd /srv/openattic/webui
-      # npm install
-      # bower install --allow-root
-      # grunt build
+      # npm run build
 
     If you intend to make changes to the web interface, it may be useful to
     run ``grunt dev`` as a background task, which watches the project
     directory for any changed files and triggers an automatic rebuild of the
     web interface code (including the jshint output), if required.
+
+    In some rare cases there might be a problem with "just" updating the frontend
+    dependencies and rebuilding the frontend files. In this case, it helps to delete
+    all dependecies. The ``npm run rebuild`` command does that and then executes
+    the ``npm run build`` process.
 
 #.  Run ``oaconfig install`` and start |oA| by running ``oaconfig start``.
 
