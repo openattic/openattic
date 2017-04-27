@@ -29,6 +29,8 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Redirect to dashboard when an authenticated user navigates to login page.
+  Thanks to Raúl Vega for the contribution. (OP-2029)
 
 [2.0.20] - 2017-04-26
 ---------------------
