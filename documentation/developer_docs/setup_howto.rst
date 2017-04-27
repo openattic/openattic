@@ -75,6 +75,12 @@ based on the latest commit in the ``default`` branch.
     run ``grunt dev`` as a background task, which watches the project
     directory for any changed files and triggers an automatic rebuild of the
     web interface code (including the jshint output), if required.
+    Grunt will not include the eslint output, because the provided
+    configuration is there to help **you** develop the UI.
+    It gives you useful hints and tips how to provide code that is highly
+    maintainable and forward-thinking.
+    To see the hints and tips you have to enable eslint checking in your
+    develop environment.
 
     In some rare cases there might be a problem with "just" updating the frontend
     dependencies and rebuilding the frontend files. In this case, it helps to delete
