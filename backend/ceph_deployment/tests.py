@@ -10,211 +10,383 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
 from django.test import TestCase
+from mock import mock
+from requests import ConnectionError
 
-from ceph_deployment.deepsea import Glob, generate_globs, GlobSolution, PolicyCfg
-
-
-def g(single_string):
-    return Glob.from_string(single_string)
-
-
-def gs(strings):
-    """Generate a GlobSolution for `strings`"""
-    if isinstance(strings, list):
-        return GlobSolution({g(s) for s in strings})
-    else:
-        return GlobSolution(g(strings))
+from ceph_deployment import DeepSea
+from ceph_deployment.conf import settings
+from rest_client import RequestException, BadResponseFormatException
 
 
-def fzs(*args):
-    """
-    Generate a set of frozensets of args. This is needed, because set cannot be a member of a set.
+class DeepSeaTestCase(TestCase):
+    def setUp(self):
+        settings.SALT_API_USERNAME = 'hello'
+        settings.SALT_API_PASSWORD = 'world'
+        settings.SALT_API_EAUTH = 'auto'
 
-    >>> fzs({'a', 'b'}, 'c') == {frozenset({'a', 'b'}), frozenset({'c'})}
-    """
-    return {frozenset(s) if isinstance(s, set) else frozenset({s}) for s in args}
+    def test_deepsea_singleton(self):
+        api = DeepSea.instance()
+        api2 = DeepSea.instance()
+        self.assertEqual(api, api2)
 
+    def test_deepsea_service_online(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {'return': 'Welcome'}
+            mock_requests_session().get.return_value = resp
 
-def gs_set_to_str_set(gss):
-    """
-    Converts a set of glob solutions to a set of frozensets of strings. This is needed, because
-    there is no way to generate a complex Glob from a complex glob
+            api = DeepSea()
+            self.assertTrue(api.is_service_online())
 
-    >>> gs_set_to_str_set({gs('a'), gs('b', 'c')}) == {frozenset({'a'}, frozenset{'b', 'c'})}
-    """
-    return set(map(GlobSolution.str_set, gss))
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
+    def test_deepsea_service_offline_response_format_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {'no_return': 'Welcome'}
+            mock_requests_session().get.return_value = resp
 
-class GlobTestCase(TestCase):
-    def test_glob_base(self):
-        self.assertEqual(len({g(''), g('')}), 1)
+            api = DeepSea()
+            self.assertFalse(api.is_service_online())
 
-        star = Glob([(Glob.T_Any,)])
-        self.assertEqual(star + star, star)
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
-    def test_string(self):
-        self.assertEqual(g('abc'), Glob([(1, 'a'), (1, 'b'), (1, 'c')]))
-        self.assertEqual(g(''), Glob([]))
-        self.assertEqual(str(g('aa')), 'aa')
+    def test_deepsea_service_offline_request_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp = mock.MagicMock()
+            resp.ok = False
+            resp.status_code = 404
+            mock_requests_session().get.return_value = resp
 
-    def test_glob_merges(self):
-        self.assertEqual(g('aa').commonsuffix(g('aba')), Glob([(1, 'a')]))
+            api = DeepSea()
+            self.assertFalse(api.is_service_online())
 
-        self.assertEqual(str(g('aa').merge_any(g('ab'))), '*')
-        self.assertEqual(map(str, g('a').merge_one(g('b'))), ['?'])
-        self.assertEqual(map(str, g('a').merge_range(g('b'))), ['[ab]'])
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
-        self.assertEqual(set(map(str, g('aa').merge_all(g('ab')))), {'a[ab]', 'a*', 'a?'})
-        self.assertEqual(map(str, g('').merge_all(g('a'))), ['*'])
-        self.assertEqual(set(map(str, g('a').merge_all(g('bc')))),  {'[ab]*', '*', '?*'})
+    def test_deepsea_service_offline_connection_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            mock_requests_session().get.side_effect = ConnectionError()
 
-        self.assertEqual(gs_set_to_str_set(g('a').merge(g('bc'), [])), fzs('*', '?*', '[ab]*'))
-        self.assertEqual(gs_set_to_str_set(g('a').merge(g('bc'), ['ac'])), fzs({'a', 'bc'}))
+            api = DeepSea()
+            self.assertFalse(api.is_service_online())
 
-    def test_globs_merge(self):
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
-        self.assertEqual(gs_set_to_str_set(gs('a').merge_solutions(gs('b'), [])),
-                         fzs('*', '?', '[ab]'))
-        self.assertEqual(gs_set_to_str_set(gs('a').merge_solutions(gs('b'), ['c'])),
-                         fzs('[ab]'))
+    def test_deepsea_login_success(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = resp
 
-        self.assertEqual(gs_set_to_str_set(gs(['ab', 'bc']).merge_solutions(gs('ac'), [])),
-                         fzs({'ab', '*c'},
-                             {'ab', '?c'},
-                             {'a*', 'bc'},
-                             {'a?', 'bc'}))
+            api = DeepSea()
+            api._login()
 
-        with self.assertRaises(ValueError):
-            gs(['ab', 'bc']).merge_solutions(gs('ac'), ['ac'])
-        self.assertEqual(gs_set_to_str_set(gs(['a', 'bb']).merge_solutions(gs('ccc'),
-                                                                           ['ab', 'ac', 'bc'])),
-                         fzs({'a', 'bb', 'ccc'}))
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertEqual(mock_requests_session().post.call_args[1]['data'],
+                             {'username': 'hello', 'password': 'world', 'eauth': 'auto'})
+            self.assertTrue(api._is_logged_in())
+            self.assertEqual(api.token, 'validtoken')
 
-        one_any = Glob([(Glob.T_One,), (Glob.T_Any, )])
-        one_one_any = Glob([(Glob.T_One,), (Glob.T_One,), (Glob.T_Any, )])
-        self.assertEqual(gs_set_to_str_set(one_any.merge(one_one_any, [])), fzs('?*'))
+    def test_deepsea_login_fail_401(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp = mock.MagicMock()
+            resp.ok = False
+            resp.status_code = 401
+            mock_requests_session().post.return_value = resp
 
-    def test_gen_globs(self):
-        self.assertEqual(generate_globs(['a', 'b', 'c'], []), frozenset(['*']))
-        self.assertEqual(generate_globs(['a', 'b', 'c'], ['d']), frozenset(['[a-c]']))
-        self.assertEqual(generate_globs(['a', 'b', 'd'], ['c']), frozenset(['[abd]']))
-        self.assertEqual(generate_globs(['data1', 'data2', 'data3'], ['admin']),
-                         frozenset(['data*']))
-        self.assertEqual(generate_globs(['data1', 'data2', 'data3'], ['admin', 'data4']),
-                         frozenset(['data[1-3]']))
-        self.assertEqual(generate_globs(['data1', 'data2', 'data3'], ['admin', 'data1x']),
-                         frozenset(['data?']))
-        self.assertEqual(generate_globs(['ab', 'bc', 'ac'], ['bb']),
-                         frozenset(['ab', '*c']))
+            api = DeepSea()
+            with self.assertRaises(RequestException) as context:
+                api._login()
 
-        with self.assertRaises(ValueError):
-            generate_globs(['a', 'b'], ['a'])
+            self.assertEqual(context.exception.status_code, 401)
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertEqual(mock_requests_session().post.call_args[1]['data'],
+                             {'username': 'hello', 'password': 'world', 'eauth': 'auto'})
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
-        self.assertEqual(generate_globs(['x1x', 'x2x', 'x3x'], ['xxx']), frozenset(['x[1-3]x']))
-        self.assertEqual(generate_globs(['x1y3z', 'x2y2z', 'x3y1z'], ['xxyzz']),
-                         frozenset(['x[1-3]y[1-3]z']))
-        wl = ['data1', 'data2', 'mon1', 'mon2', 'mon3', 'igw1', 'igw2']
-        bl = ['client1', 'client2', 'admin1', 'admin2', 'rgw1', 'rgw2']
+    def test_deepsea_login_connection_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            mock_requests_session().post.side_effect = ConnectionError()
 
-        self.assertEqual(generate_globs(wl, bl), frozenset(['[dim][ago][ntw]*', 'data1']))
+            api = DeepSea()
+            with self.assertRaises(RequestException) as context:
+                api._login()
 
+            self.assertEqual(context.exception.status_code, None)
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertEqual(mock_requests_session().post.call_args[1]['data'],
+                             {'username': 'hello', 'password': 'world', 'eauth': 'auto'})
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
-class PolicyCfgTestCase(TestCase):
-    files = [("""
-# cluster assignment
-cluster-ceph/cluster/*.sls
-#cluster-unassigned/cluster/client*.sls
+    def test_deepsea_login_response_format_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': {'invalidtoken': 'validtoken'}
+            }
+            mock_requests_session().post.return_value = resp
 
-# Hardware Profile
-#2Dsk2GB-1/cluster/data*.sls
-2Disk2GB-1/cluster/data*.sls
-#2Dsk2GB-1/stack/default/ceph/minions/data*.ceph.yml
-2Disk2GB-1/stack/default/ceph/minions/data*.ceph.yml
+            api = DeepSea()
+            with self.assertRaises(BadResponseFormatException):
+                api._login()
 
-# Common configuration
-config/stack/default/global.yml
-config/stack/default/ceph/cluster.yml
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertEqual(mock_requests_session().post.call_args[1]['data'],
+                             {'username': 'hello', 'password': 'world', 'eauth': 'auto'})
+            self.assertFalse(api._is_logged_in())
+            self.assertEqual(api.token, None)
 
-# Role assignment
-role-master/cluster/admin*.sls
-role-admin/cluster/mon*.sls
-#role-admin/cluster/igw*.sls
-#role-admin/cluster/data*.sls
-role-admin/cluster/admin*.sls
-#role-igw/cluster/igw*.sls
-role-mon/cluster/mon*.sls
-#role-mds/cluster/mon[12]*.sls
+    def test_deepsea_keys_success(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            login_resp = mock.MagicMock()
+            login_resp.ok = True
+            login_resp.status_code = 200
+            login_resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = login_resp
 
-# Default stuff
-role-mon/stack/default/ceph/minions/mon*.yml
-""", ['data1', 'data2', 'admin', 'mon1', 'mon2']), ("""
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': {
+                    'minions': ['minion1', 'minion2'],
+                    'minions_pre': ['minion3'],
+                    'minions_denied': [],
+                    'minions_rejected': ['minion4']
+                }
+            }
+            mock_requests_session().get.return_value = resp
 
-# Cluster assignment
-cluster-ceph/cluster/*.sls
-cluster-unassigned/cluster/client*.sls
-# Hardware Profile
-2Disk2GB-1/cluster/data*.sls
-2Disk2GB-1/stack/default/ceph/minions/data*.ceph.yml
-# Common configuration
-config/stack/default/global.yml
-config/stack/default/ceph/cluster.yml
-# Role assignment
-role-master/cluster/admin*.sls
-role-admin/cluster/mon*.sls
-role-admin/cluster/igw*.sls
-role-admin/cluster/data*.sls
-role-igw/cluster/igw*.sls
-role-rgw/cluster/rgw*.sls
-role-mon/cluster/mon*.sls
-role-mds/cluster/mon[12]*.sls
-role-mon/stack/default/ceph/minions/mon*.yml""", ['client1', 'client2', 'data1', 'data2', 'admin1',
-                                                  'admin2', 'mon1', 'mon2', 'mon3', 'igw1', 'igw2',
-                                                  'rgw1', 'rgw2'])
-    ]
-    hw_profiles = ['2Disk2GB-1', 'other_profile']
+            api = DeepSea()
+            res = api.key_list()
 
-    def test_identity(self):
-        for content, minion_names in PolicyCfgTestCase.files:
-            generated = str(
-                PolicyCfg(content.splitlines(False), minion_names, PolicyCfgTestCase.hw_profiles))
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertTrue(api._is_logged_in())
+            self.assertEqual(res, {
+                'minions': ['minion1', 'minion2'],
+                'minions_pre': ['minion3'],
+                'minions_denied': [],
+                'minions_rejected': ['minion4']
+            })
 
-            self.assertEqual(
-                PolicyCfg(generated.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles),
-                PolicyCfg(content.splitlines(), minion_names, PolicyCfgTestCase.hw_profiles))
+    def test_deepsea_keys_unauthorized(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            login_resp = mock.MagicMock()
+            login_resp.ok = True
+            login_resp.status_code = 200
+            login_resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
 
-    def test_attributes(self):
-        hw = PolicyCfgTestCase.hw_profiles
-        content, minion_names = PolicyCfgTestCase.files[0]
-        lines = content.splitlines(False)
-        for cfg in [PolicyCfg(lines, minion_names, hw),
-                    PolicyCfg(str(PolicyCfg(lines, minion_names, hw)).splitlines(), minion_names,
-                              hw)]:
-            self.assertEqual(dict(cfg.cluster_assignment), {'ceph': set(minion_names)})
-            self.assertEqual(dict(cfg.hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
-            self.assertEqual(dict(cfg.role_assigments),
-                             {
-                                 'master': {'admin'},
-                                 'admin': {'admin', 'mon1', 'mon2'},
-                                 'mon': {'mon1', 'mon2'},
-                             })
+            mock_requests_session().post.side_effect = [
+                login_resp, login_resp
+            ]
 
-        content, minion_names = PolicyCfgTestCase.files[1]
-        lines = content.splitlines(False)
-        for cfg in [PolicyCfg(lines, minion_names, hw),
-                    PolicyCfg(str(PolicyCfg(lines, minion_names, hw)).splitlines(), minion_names,
-                              hw)]:
-            self.assertEqual(dict(cfg.cluster_assignment), {'ceph': set(minion_names),
-                                                            'unassigned': {'client1', 'client2'}})
-            self.assertEqual(dict(cfg.hardware_profiles), {'2Disk2GB-1': {'data1', 'data2'}})
-            self.assertEqual(dict(cfg.role_assigments),
-                             {
-                                 'master': {'admin1', 'admin2'},
-                                 'admin': {'igw1', 'igw2', 'mon1', 'mon2', 'mon3', 'data1',
-                                           'data2'},
-                                 'igw': {'igw1', 'igw2'},
-                                 'rgw': {'rgw1', 'rgw2'},
-                                 'mon': {'mon1', 'mon2', 'mon3'},
-                                 'mds': {'mon1', 'mon2'},
-                             })
+            resp_un = mock.MagicMock()
+            resp_un.ok = False
+            resp_un.status_code = 401
+
+            resp_ok = mock.MagicMock()
+            resp_ok.ok = True
+            resp_ok.status_code = 200
+            resp_ok.json.return_value = {
+                'return': {
+                    'minions': ['minion1', 'minion2'],
+                    'minions_pre': ['minion3'],
+                    'minions_denied': [],
+                    'minions_rejected': ['minion4']
+                }
+            }
+            mock_requests_session().get.side_effect = [resp_un, resp_ok]
+
+            api = DeepSea()
+            res = api.key_list()
+
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertEqual(res, {
+                'minions': ['minion1', 'minion2'],
+                'minions_pre': ['minion3'],
+                'minions_denied': [],
+                'minions_rejected': ['minion4']
+            })
+
+    def test_deepsea_keys_login_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            login_resp = mock.MagicMock()
+            login_resp.ok = True
+            login_resp.status_code = 200
+            login_resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+
+            login_resp_err = mock.MagicMock()
+            login_resp_err.ok = False
+            login_resp_err.status_code = 503
+
+            mock_requests_session().post.side_effect = [
+                login_resp, login_resp_err
+            ]
+
+            resp_un = mock.MagicMock()
+            resp_un.ok = False
+            resp_un.status_code = 401
+
+            mock_requests_session().get.side_effect = [resp_un]
+
+            api = DeepSea()
+            with self.assertRaises(RequestException) as context:
+                api.key_list()
+
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertEqual(context.exception.status_code, 503)
+
+    def test_deepsea_keys_response_format_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            login_resp = mock.MagicMock()
+            login_resp.ok = True
+            login_resp.status_code = 200
+            login_resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = login_resp
+
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': {
+                    'minions': ['minion1', 'minion2'],
+                    'minions_denied': [],
+                    'minions_rejected': ['minion4']
+                }
+            }
+            mock_requests_session().get.return_value = resp
+
+            api = DeepSea()
+            with self.assertRaises(BadResponseFormatException) as context:
+                api.key_list()
+
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertTrue(api._is_logged_in())
+            self.assertEqual(str(context.exception),
+                             "key minions_pre is not in dict {'minions_rejected': ['minion4'], "
+                             "'minions_denied': [], 'minions': ['minion1', 'minion2']}")
+
+    def test_deepsea_keys_response_format_error_2(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            login_resp = mock.MagicMock()
+            login_resp.ok = True
+            login_resp.status_code = 200
+            login_resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = login_resp
+
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': {
+                    'minions': ['minion1', 'minion2'],
+                    'minions_pre': 'minion3',
+                    'minions_denied': [],
+                    'minions_rejected': ['minion4']
+                }
+            }
+            mock_requests_session().get.return_value = resp
+
+            api = DeepSea()
+            with self.assertRaises(BadResponseFormatException) as context:
+                api.key_list()
+
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertTrue(mock_requests_session().get.called)
+            self.assertTrue(api._is_logged_in())
+            self.assertEqual(str(context.exception), "minion3 is not an array")
+
+    def test_deepsea_pillar_items_success(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            login_resp = mock.MagicMock()
+            login_resp.ok = True
+            login_resp.status_code = 200
+            login_resp.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': [{
+                    'minion1': {
+                        'roles': ['storage', 'mon', 'igw'],
+                        'public_address': '10.1.0.1',
+                        'public_network': '10.1.0.0/24',
+                        'cluster_network': '10.1.0.0/24',
+                        'fsid': 'aaabbb',
+                        'mon_host': ['10.1.0.1'],
+                        'mon_initial_members': ['minion1']
+                    },
+                    'minion2': {
+                        'roles': ['storage', 'rgw'],
+                        'public_network': '10.1.0.0/24',
+                        'cluster_network': '10.1.0.0/24',
+                        'fsid': 'aaabbb',
+                        'mon_host': ['10.1.0.1'],
+                        'mon_initial_members': ['minion1']
+                    }
+                }]
+            }
+            mock_requests_session().post.side_effect = [login_resp, resp]
+
+            api = DeepSea()
+            res = api.pillar_items()
+
+            self.assertTrue(mock_requests_session().post.called)
+            self.assertTrue(api._is_logged_in())
+            self.assertEqual(res, {
+                'minion1': {
+                    'roles': ['storage', 'mon', 'igw'],
+                    'public_address': '10.1.0.1',
+                    'public_network': '10.1.0.0/24',
+                    'cluster_network': '10.1.0.0/24',
+                    'fsid': 'aaabbb',
+                    'mon_host': ['10.1.0.1'],
+                    'mon_initial_members': ['minion1']
+                },
+                'minion2': {
+                    'roles': ['storage', 'rgw'],
+                    'public_network': '10.1.0.0/24',
+                    'cluster_network': '10.1.0.0/24',
+                    'fsid': 'aaabbb',
+                    'mon_host': ['10.1.0.1'],
+                    'mon_initial_members': ['minion1']
+                }
+            })
