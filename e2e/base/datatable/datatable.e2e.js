@@ -221,7 +221,7 @@ describe('Should test oadatatable and its options', function(){
   it('should go back to max. 10 elements per page', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_10')).click();
-    expect(poolCount).toBeGreaterThan(0);
+    expect(poolRowElements.count()).toBeGreaterThan(0);
   });
 
   afterAll(function(){
