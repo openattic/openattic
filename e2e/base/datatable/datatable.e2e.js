@@ -189,7 +189,7 @@ describe('Should test oadatatable and its options', function(){
   it('should filter for the poolname', function(){
     searchField.click();
     searchField.clear().sendKeys('default.rgw.data.root');
-    expect(poolCount).toBe(1);
+    expect(poolRowElements.count()).toBe(1);
   });*/
 
   it('should clear the filter search field and display max. 10 elements', function(){
