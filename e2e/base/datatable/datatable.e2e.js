@@ -8,7 +8,6 @@ var typeColumn = element(by.cssContainingText('th', 'Type'));
 var searchField = element.all(by.model('filterConfig.search')).get(0);
 var entriesDropDown = element(by.css('.tc_entries_dropdown'));
 var poolRowElements = element.all(by.css('.tc_cephPoolTable tbody tr'));
-var poolCount = poolRowElements.count();
 
 var selectAllCheckbox = element(by.model('selection.checkAll'));
 var allSelected = element(by.css('.oadatatablecheckbox .ng-not-empty'));
@@ -195,7 +194,7 @@ describe('Should test oadatatable and its options', function(){
 
   it('should clear the filter search field and display max. 10 elements', function(){
     searchField.clear();
-    expect(poolCount).toBeGreaterThan(0);
+    expect(poolRowElements.count()).toBeGreaterThan(0);
   });
 
   it('should have "10" as default max. listed elements per page', function(){
@@ -205,16 +204,18 @@ describe('Should test oadatatable and its options', function(){
   it('should display less than three elements when this number of displayed elements has been selected', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_2')).click();
-    expect(poolCount).toBeLessThan(3);
+    expect(poolRowElements.count()).toBeLessThan(3);
   });
 
   it('should still display only two elements after reloading the page', function(){
     browser.refresh();
-    expect(poolCount).toBeLessThan(3);
+    expect(poolRowElements.count()).toBeLessThan(3);
   });
 
   it('should adapt table information of listed entries', function(){
-    expect(element(by.css('.dataTables_info')).getText()).toContain('Showing ' + poolCount + ' to 2 of');
+    poolRowElements.count().then(function(countPools){
+      expect(element(by.css('.dataTables_info')).getText()).toContain('Showing ' + countPools + ' to ' + countPools + ' of ' + countPools + ' items');
+    });
   });
 
   it('should go back to max. 10 elements per page', function(){
