@@ -33,7 +33,7 @@ var config = require('../e2e/configs.js');
 
 var allSuites = {
   // base suites - They should always be able to run.
-  general              : '../e2e/base/general/**/*.e2e.js',
+  general              : '../e2e/base/general/**/general.e2e.js',
   datatable            : '../e2e/base/datatable/**/*.e2e.js',
   pagination           : '../e2e/base/pagination/**/*.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
