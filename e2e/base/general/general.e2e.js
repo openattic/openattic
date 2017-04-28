@@ -91,12 +91,14 @@ describe('General', function(){
       osds: element(by.css('.tc_submenuitem_ceph_osds')),
       rbds: element(by.css('.tc_submenuitem_ceph_rbds')),
       pools: element(by.css('.tc_submenuitem_ceph_pools')),
+      nodes: element(by.css('.tc_submenuitem_ceph_nodes')),
       crushmap: element(by.css('.tc_submenuitem_ceph_crushmap'))
     },
     order: [
       'osds',
       'rbds',
       'pools',
+      'nodes',
       'crushmap'
     ]
   });
