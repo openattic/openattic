@@ -768,6 +768,8 @@ class DistBuilder(object):
         if self._args['--tag']:
             self._process.run(['git', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
 
+        abs_tarball_file_path = self._create_source_tarball(build_basename)
+
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
             if not tmp_files_commited:
@@ -775,8 +777,6 @@ class DistBuilder(object):
             else:
                 self._warn('Ignoring the --push-changes switch because temporary files of the given'
                            ' source have been comitted.')
-
-        abs_tarball_file_path = self._create_source_tarball(build_basename)
 
         self._rmtree(self._tmp_oa_clone_dir)
         self._remove_npmrc_prefix()
