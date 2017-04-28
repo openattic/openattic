@@ -12,10 +12,22 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf import settings
+from ceph_deployment.models.ceph_minion import CephMinion
+from nodb.restapi import NodbSerializer, NodbViewSet
 
-SALT_API_HOST = getattr(settings, 'SALT_API_HOST', 'salt')
-SALT_API_PORT = getattr(settings, 'SALT_API_PORT', 8000)
-SALT_API_USERNAME = getattr(settings, 'SALT_API_USERNAME', 'admin')
-SALT_API_PASSWORD = getattr(settings, 'SALT_API_PASSWORD', 'admin')
-SALT_API_EAUTH = getattr(settings, 'SALT_API_EAUTH', 'auto')
+
+class CephMinionSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephMinion
+
+
+class CephMinionViewSet(NodbViewSet):
+    """
+    Ceph Minions
+    """
+
+    serializer_class = CephMinionSerializer
+
+    def get_queryset(self):
+        return CephMinion.objects.all()

@@ -23,9 +23,13 @@ In general, this release focuses on the 3.0 refactoring and cleanup epic (OP-207
 
 Added
 ~~~~~
+* Backend: Generic REST client support classes (OP-1889)
+* Backend: Salt REST API support (OP-1889)
 
 Changed
 ~~~~~~~
+* Backend: Salt minions information is now populated using Salt-API (OP-1889)
+* WebUI: re-enabled the minions and pillar data listing (OP-1889)
 
 Fixed
 ~~~~~

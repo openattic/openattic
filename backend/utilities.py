@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 import logging
+import inspect
 from collections import defaultdict
 from distutils.spawn import find_executable
 from importlib import import_module
@@ -117,3 +118,12 @@ def is_executable_installed(executable):
     if find_executable(executable):
         return True
     return any([path.isfile(path.join(root, executable)) for root in ['/sbin', '/usr/sbin']])
+
+
+def in_unittest():
+    current_stack = inspect.stack()
+    for stack_frame in current_stack:
+        for program_line in stack_frame[4]:
+            if "unittest" in program_line:
+                return True
+    return False
