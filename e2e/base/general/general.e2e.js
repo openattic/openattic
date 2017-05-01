@@ -58,6 +58,29 @@ describe('General', function(){
     });
   };
 
+  var notificationsCheck = function(){
+    var api_recorder = element(by.css('.tc_api-recorder'));
+    var notification_icon = element(by.css('.dropdown-notifications'));
+
+    it('should have recent notifications', function(){
+      api_recorder.click();
+      api_recorder.click();
+      notification_icon.click();
+      expect(element(by.css('.dropdown-notifications .notification')).isDisplayed()).toBe(true);
+      notification_icon.click();
+    });
+
+
+    it('should remove all recent notifications', function(){
+      notification_icon.click();
+      element(by.css('.dropdown-toolbar-actions a')).click();
+      notification_icon.click();
+      expect(element(by.css('.dropdown-notifications .notification')).isPresent()).toBe(false);
+      expect(element(by.css('.dropdown-notifications .dropdown-footer')).isDisplayed()).toBe(true);
+    });
+  }
+
+
   beforeAll(function(){
     helpers.login();
   });
@@ -95,6 +118,8 @@ describe('General', function(){
       'commandlog'
     ]
   });
+
+  notificationsCheck();
 
   it('should check if the openATTIC logo is visible', function(){
     expect(oaLogo.isDisplayed()).toBe(true);

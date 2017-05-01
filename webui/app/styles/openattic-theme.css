@@ -1160,3 +1160,43 @@ uib-accordion .panel-title,
 .noscript p {
   color: #777;
 }
+
+/* Notifications */
+
+.notification div.img-circle {
+  width: 50px;
+  height: 50px;
+}
+.notification.info div.img-circle {
+  background-color: #5bc0de;
+}
+.notification.error div.img-circle {
+  background-color: #d9534f;
+}
+.notification.success div.img-circle {
+  background-color: #5cb85c;
+}
+.notification.warning div.img-circle {
+  background-color: #f0ad4e;
+}
+
+.notification .icon {
+  background-repeat: no-repeat;
+  background-image: url('../images/notification-icons.png') !important;
+  height: 36px;
+  width: 36px;
+  position: absolute;
+  margin: 7px;
+}
+.notification.info .icon {
+  background-position: -36px 0;
+}
+.notification.error .icon {
+  background-position: -108px 0;
+}
+.notification.success .icon {
+  background-position: 0 0;
+}
+.notification.warning .icon {
+  background-position: -72px 0;
+}

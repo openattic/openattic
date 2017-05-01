@@ -21,6 +21,7 @@
     "angular-ui-sortable": "0.14.0",
     "angular-ui-tree": "2.15.0",
     "bootstrap": "3.3.6",
+    "bootstrap-notifications": "1.0.1",
     "d3": "3.5.17",
     "fontawesome": "4.5.0",
     "jquery": "2.2.3",
@@ -36,6 +37,7 @@
   "resolutions": {
     "angular": "1.5.3",
     "angular-ui-sortable": "0.14.0",
+    "jquery": "2.2.3",
     "requirejs": "2.2.0"
   }
 }
