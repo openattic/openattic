@@ -30,7 +30,7 @@ class UserTestScenario(GatlingTestCase):
 
     @classmethod
     def setUp(cls):
-        cls.testuser = cls._create_test_user()
+        cls.testuser = cls._create_test_user()['response']
 
     @classmethod
     def tearDown(cls):
@@ -41,21 +41,38 @@ class UserTestScenario(GatlingTestCase):
                 cls.send_request("DELETE", "users", obj_id=entry["id"])
 
     @classmethod
-    def _create_test_user(cls):
-        user = {"username": cls.username,
+    def _create_test_user(cls, username=None, is_superuser=True):
+        if not username:
+            username = cls.username
+
+        user = {"username": username,
                 "password": "init",
                 "email": "gatling_test@test.com",
                 "first_name": "gatling_test",
                 "last_name": "gatling_user",
                 "is_active": True,
                 "is_staff": True,
-                "is_superuser": True}
+                "is_superuser": is_superuser}
 
         try:
             res = cls.send_request("POST", "users", data=user)
         except HTTPError as e:
             raise SkipTest(e.message)
 
-        res = res["response"]
-        res["password"] = "init"
+        res['response']['password'] = 'init'
         return res
+
+    @property
+    def error_messages(self):
+        return {
+            'test_create_refresh_auth_token_for_testuser':
+                'You are not allowed to refresh the authentication token of another user.',
+            'test_auth_token_self_refresh_wrong_token': 'Invalid token',
+            'test_try_to_get_preference_of_another_user':
+                'You are not allowed to access profiles of other users',
+            'test_try_to_delete_preference_of_another_user':
+                'You are not allowed to delete preferences of other users',
+            'test_set_new_password_by_user_without_admin_privileges':
+                'Administrator privileges are required for updating the data of user {}.'
+                    .format(self.testuser['username'])
+        }

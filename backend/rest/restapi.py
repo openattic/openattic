@@ -14,19 +14,21 @@
  *  GNU General Public License for more details.
 """
 
+import logging
+
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 from rest_framework.views import APIView
 
 from rest import relations
 from rest.utilities import mk_method_field_params, get_request_data, drf_version
+
+logger = logging.getLogger(__name__)
 
 
 class NoCacheAPIView(APIView):
@@ -119,15 +121,17 @@ class UserViewSet(NoCacheModelViewSet):
             # error response. An user can only generate a token for another user if the other user
             # does not already have an authentication token.
             if request.user != user:
-                return Response("You can't refresh the authentication token of another user. Only "
-                                "the user '%s' is able to refresh his token." % user.username,
-                                status=HTTP_403_FORBIDDEN)
+                logger.warning('User action canceled: user \'{}\' tried to refresh the '
+                               'authentication token of user \'{}\'.'.format(request.user, user))
+                return Response({'detail': 'You are not allowed to refresh the authentication '
+                                           'token of another user.'},
+                                status=status.HTTP_403_FORBIDDEN)
             token.delete()
 
         Token.objects.create(user=user)
 
         user_ret = UserSerializer(user, many=False, context={"request": request})
-        return Response(user_ret.data, status=HTTP_201_CREATED)
+        return Response(user_ret.data, status=status.HTTP_201_CREATED)
 
     @list_route()
     def current(self, request, *args, **kwargs):
@@ -146,7 +150,29 @@ class UserViewSet(NoCacheModelViewSet):
         user.save()
 
         user_ret = UserSerializer(user, context={"request": request})
-        return Response(user_ret.data, status=HTTP_201_CREATED)
+        return Response(user_ret.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, partial=False, *args, **kwargs):
+        self.object = self.get_object()
+        req_user = request.user
+
+        if self.object == req_user or req_user.is_superuser:
+            data = get_request_data(request)
+
+            serializer = self.get_serializer(self.object, data=data, partial=partial)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            if 'password' in data:
+                self.object.set_password(data['password'])
+            self.object = serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            {'detail': 'Administrator privileges are required for updating the data of user {}.'
+                .format(self.object.username)},
+            status=status.HTTP_403_FORBIDDEN)
 
 
 RESTAPI_VIEWSETS = [
