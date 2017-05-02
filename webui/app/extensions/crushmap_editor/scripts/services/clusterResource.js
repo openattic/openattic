@@ -40,7 +40,8 @@ app.factory("ClusterResource", function ($resource) {
       method: "GET",
       isArray: true,
       transformResponse: function (data) {
-        return JSON.parse(data).results;
+        var res = angular.fromJson(data);
+        return res && res.results || [];
       }
     }
   });
