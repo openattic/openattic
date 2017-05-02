@@ -32,6 +32,7 @@ Changed
 * Backend: Corrected num_bytes unit in check_cephpool Nagios plugin (OP-1532)
 * Backend: Salt minions information is now populated using Salt-API (OP-1889)
 * WebUI: re-enabled the minions and pillar data listing (OP-1889)
+* WebUI: Renames osd service cluster id to fsid (OP-2110)
 
 Fixed
 ~~~~~
