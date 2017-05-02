@@ -8,6 +8,7 @@
   Modal
   Navbar
   Navs
+  Notifications
   Pagination
   Panel
   Table
@@ -426,6 +427,11 @@ ul.task-queue-pagination {
 .nav-tabs-openattic>li.active>a:hover {
   border: 0!important;
   border-bottom: 3px solid #288cea!important;
+}
+
+/* Notifications */
+#toasty .toast.toasty-theme-bootstrap {
+  opacity: 1
 }
 
 /* Pagination */
