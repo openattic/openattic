@@ -52,7 +52,7 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
         });
         notification = new Notification({
             title: error.status + " - " + error.statusText,
-            msg: detalMsg || simpleMsg
+            msg: detailMsg || simpleMsg
           }, error)
           .show();
 
