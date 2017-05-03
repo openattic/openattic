@@ -3,7 +3,7 @@
 <div ng-show="cluster.results.length > 0">
     <div class="panel panel-default" ng-show="error">
         <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
+            <h3 class="panel-title">Couldn't connect to Ceph cluster</h3>
         </div>
         <div class="panel-body">
             Ceph pool resource could not be loaded. Make sure that the ceph module is installed.
@@ -12,7 +12,7 @@
 
     <div class="panel panel-default" ng-show="!error && !pools.$resolved">
         <div class="panel-heading">
-            <h3 class="panel-title">Sorry folks...</h3>
+            <h3 class="panel-title">Loading...</h3>
         </div>
         <div class="panel-body">
             Ceph pools are loading...
@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<oadatatable ng-show="!error" data="pools"
+<oadatatable ng-show="!error && pools.results" data="pools"
         class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
