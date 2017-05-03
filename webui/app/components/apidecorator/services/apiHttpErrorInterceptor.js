@@ -37,7 +37,7 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
     decorate: function (error) {
       var simpleMsg;
       var notification;
-      var detalMsg = "";
+      var detailMsg = "";
 
       if (error) {
         $log.error(error);
@@ -45,9 +45,9 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
           "[" + error.config.method + ": " + error.config.url + "] => " + error.status;
         angular.forEach(error.data, function (val, key) {
           if (key === "detail") {
-            detalMsg = val + detalMsg;
+            detailMsg = val + detailMsg;
           } else {
-            detalMsg += "<br>" + key + ": " + val;
+            detailMsg += "<br>" + key + ": " + val;
           }
         });
         notification = new Notification({
