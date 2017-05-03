@@ -70,6 +70,8 @@ Fixed
 * WebUI: Fix incomplete delete confirmation message (OP-2061)
 * Documentation: Updated developer documentation for git (OP-2054)
 * Packaging: make_dist.py: Fixed building of non-local git branches (OP-2106)
+* Packaging: Fix error that prevented to use local sources
+  to create tar archives using make_dist.py (OP-2140)
 * Development: Fixed Django unit tests (OP-1983)
 
 [2.0.19] - 2017-03-24
