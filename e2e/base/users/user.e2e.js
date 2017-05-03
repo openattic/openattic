@@ -54,7 +54,7 @@ describe('Should add an user', function(){
   it('should verify that if the "already in use" error message is still working', function(){
     element(by.model('user.username')).clear().sendKeys('openattic');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
-    element(by.css('.tc_backButton')).click();
+    element(by.css('.tc_backButton')).click().then(helpers.check_form);
   });
 
   //logout first
@@ -93,8 +93,10 @@ describe('Should add an user', function(){
   });
 
   it('should logout protractor_test_user', function(){
-    logout.click();
-    expect(browser.getCurrentUrl()).toContain('/#/login');
+    logout.click().then(function(){
+      helpers.check_form();
+      expect(browser.getCurrentUrl()).toContain('/#/login');
+    });
   });
 
   it('should delete the "protractor_test_user"', function(){
