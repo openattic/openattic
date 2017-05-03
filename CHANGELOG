@@ -40,6 +40,8 @@ Fixed
   Thanks to Raúl Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
+* Packaging: Fix error that prevented to use local sources to create tar
+  archives using make_dist.py (OP-2140)
 
 [2.0.20] - 2017-04-26
 ---------------------

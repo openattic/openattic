@@ -515,7 +515,7 @@ class DistBuilder(object):
             self._log(msg.format(source, destination_dir))
             return
 
-        if self._source_is_path:
+        if not DistBuilder.is_url(source):
             self._copytree(source, destination_dir, symlinks=True)
         else:
             self._process.run(['git', 'clone', source, destination_dir])
