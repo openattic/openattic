@@ -1,10 +1,6 @@
 var helpers = require('../../common.js');
 
 describe('Pagination', function(){
-
-  var systemItem = element(by.css('.tc_menuitem_system > a'));
-  var cmdlogs = element(by.css('.tc_submenuitem_system_cmdlog > a'));
-
   var firstPage = element(by.css('.pagination .first'));
   var prevPage = element(by.css('.pagination .prev'));
   var inputPage = element(by.css('.pagination.paginate-input > input'));
@@ -32,8 +28,7 @@ describe('Pagination', function(){
 
   beforeAll(function(){
     helpers.login();
-    systemItem.click();
-    cmdlogs.click();
+    browser.setLocation('commandlog');
     browser.sleep(400);
   });
 

@@ -9,7 +9,6 @@ describe('should test the ceph pools panel', function(){
 
   beforeAll(function(){
     helpers.login();
-    cephPoolProperties.cephMenu.click();
     cephPoolProperties.cephPools.click();
   });
 

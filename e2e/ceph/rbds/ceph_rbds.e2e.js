@@ -9,7 +9,6 @@ describe('should test the ceph rbd panel', function(){
 
   beforeAll(function(){
     helpers.login();
-    rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
   });
 

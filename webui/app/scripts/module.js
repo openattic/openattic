@@ -36,15 +36,14 @@ angular.module("openattic", [
   "ncy-angular-breadcrumb",
   "ngResource",
   "ngSanitize",
+  "ngStorage",
   "ngTagsInput",
   "ui.bootstrap",
   "ui.router",
   "ui.sortable",
   "ui.tree",
-  "ngStorage",
   "openattic.core",
   "openattic.extensions",
-  "openattic.local",
   "openattic.ceph"
 ]);
 

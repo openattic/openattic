@@ -2,8 +2,7 @@
 
 var rbdCommons = function(){
   var helpers = require('../../common.js');
-  this.cephMenu = element(by.css('.tc_menuitem_ceph > a'));
-  this.cephRBDs = element(by.css('.tc_submenuitem_ceph_rbds'));
+  this.cephRBDs = element(by.css('.tc_menuitem_ceph_rbds'));
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
@@ -209,7 +208,7 @@ var rbdCommons = function(){
       var cluster = self.clusters[clusterName];
       Object.keys(cluster.pools).forEach(function(poolName){
         var pool = cluster.pools[poolName];
-        if(pool.writable === true){
+        if(pool.writable !== false){
           callback(cluster, pool);
         }
       });

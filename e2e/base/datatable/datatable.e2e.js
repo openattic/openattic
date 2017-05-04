@@ -2,31 +2,13 @@
 
 var helpers = require('../../common.js');
 
-var volumename = 'protractor_volume_datatable';
-var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-
-var secondVolumeName = 'protractor_secondVol';
-var secondVolume = element.all(by.cssContainingText('tr', secondVolumeName)).get(0);
-
-var thirdVolumeName = 'protractor_thirdVol';
-var thirdVolume = element.all(by.cssContainingText('tr', thirdVolumeName)).get(0);
-
-var firstSnapName = 'protractor_test_snap';
-var secSnapName = 'second_ptor_snap';
-
-var snap1 = element.all(by.css('.tc_snapRowName')).get(0);
-var snap2 = element.all(by.css('.tc_snapRowName')).get(1);
-
-var created = element.all(by.cssContainingText('th', 'Created')).get(1);
 var columnListButton = element(by.css('.tc_columnBtn'));
-var protectionListItem = element(by.cssContainingText('.tc_columnItem', 'Protection'));
-var protectionColumn = element(by.cssContainingText('th', 'Protection'));
+var typeListItem = element(by.cssContainingText('.tc_columnItem', 'Type'));
+var typeColumn = element(by.cssContainingText('th', 'Type'));
 var searchField = element.all(by.model('filterConfig.search')).get(0);
 var entriesDropDown = element(by.css('.tc_entries_dropdown'));
-var volumeRowElements = element.all(by.css('.tc_volumeRowName'));
-var snapshotTab = element(by.css('.tc_snapshotTab'));
+var poolRowElements = element.all(by.css('.tc_cephPoolTable tbody tr'));
 
-var checkboxes = element.all(by.css('.tc_checkboxes'));
 var selectAllCheckbox = element(by.model('selection.checkAll'));
 var allSelected = element(by.css('.oadatatablecheckbox .ng-not-empty'));
 var noneSelected = element(by.css('.oadatatablecheckbox .ng-empty'));
@@ -36,26 +18,22 @@ describe('Should test oadatatable and its options', function(){
   beforeAll(function(){
     helpers.login();
     browser.executeScript('window.localStorage.clear();');
-    helpers.create_volume(volumename, 'lun');
-    helpers.create_volume(secondVolumeName, 'xfs');
-    helpers.create_volume(thirdVolumeName, 'ext4');
-    helpers.create_snapshot(volume, firstSnapName);
   });
 
   beforeEach(function(){
-    element(by.css('.tc_menuitem_volumes > a')).click();
+    browser.setLocation('ceph/pools');
   });
 
   var list = [
     'Name',
-    'Size',
+    'ID',
     'Used',
-    'Status',
-    'Protection',
+    'Placement groups',
+    'Replica size',
+    'Erasure code profile',
+    'Last Change',
     'Type',
-    'Path',
-    'Host',
-    'Created'
+    'Crush ruleset'
   ];
 
   it('should display the datatable header', function(){
@@ -120,10 +98,6 @@ describe('Should test oadatatable and its options', function(){
     expect(element.all(by.model('checked')).get(0).isDisplayed()).toBe(true);
   });
 
-  it('should check the number of checkboxes (select all checkbox not included)', function(){
-    expect(volumeRowElements.count()).toEqual(checkboxes.count());
-  });
-
   it('should have a "select all" checkbox', function(){
     expect(selectAllCheckbox.isDisplayed()).toBe(true);
   });
@@ -166,20 +140,23 @@ describe('Should test oadatatable and its options', function(){
   });
 
   it('should no longer display a column when deselected', function(){
+    // Clear cache
+    browser.executeScript('window.localStorage.clear();');
+    browser.refresh();
     columnListButton.click();
-    protectionListItem.click();
-    expect(protectionColumn.isDisplayed()).toBe(false);
+    typeListItem.click();
+    expect(typeColumn.isDisplayed()).toBe(false);
   });
 
   it('should no longer display a column when deselected after reloading the page', function(){
     browser.refresh();
-    expect(protectionColumn.isDisplayed()).toBe(false);
+    expect(typeColumn.isDisplayed()).toBe(false);
   });
 
-  it('should put the protection column back in', function(){
+  it('should put the type column back in', function(){
     columnListButton.click();
-    protectionListItem.click();
-    expect(protectionColumn.isDisplayed()).toBe(true);
+    typeListItem.click();
+    expect(typeColumn.isDisplayed()).toBe(true);
   });
 
   /**
@@ -207,123 +184,47 @@ describe('Should test oadatatable and its options', function(){
       });
   });
 
-  it('should filter for the volumename', function(){
+  /* TODO: we should create a dedicated pool for that i.o. to make
+     sure it works on every system!
+  it('should filter for the poolname', function(){
     searchField.click();
-    searchField.clear().sendKeys(volumename);
-    expect(volumeRowElements.count()).toBe(1);
-  });
+    searchField.clear().sendKeys('default.rgw.data.root');
+    expect(poolRowElements.count()).toBe(1);
+  });*/
 
   it('should clear the filter search field and display max. 10 elements', function(){
     searchField.clear();
-    expect(volumeRowElements.count()).toBeGreaterThan(1);
+    expect(poolRowElements.count()).toBeGreaterThan(0);
   });
 
   it('should have "10" as default max. listed elements per page', function(){
     expect(entriesDropDown.getText()).toEqual('10');
   });
 
-  it('should display only two elements when this number of displayed elements has been selected', function(){
+  it('should display less than three elements when this number of displayed elements has been selected', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_2')).click();
-    expect(volumeRowElements.count()).toBe(2);
+    expect(poolRowElements.count()).toBeLessThan(3);
   });
 
   it('should still display only two elements after reloading the page', function(){
     browser.refresh();
-    expect(volumeRowElements.count()).toBe(2);
+    expect(poolRowElements.count()).toBeLessThan(3);
   });
 
   it('should adapt table information of listed entries', function(){
-    expect(element(by.css('.dataTables_info')).getText()).toContain('Showing 1 to 2 of');
+    poolRowElements.count().then(function(countPools){
+      expect(element(by.css('.dataTables_info')).getText()).toContain('Showing ' + countPools + ' to ' + countPools + ' of ' + countPools + ' items');
+    });
   });
 
   it('should go back to max. 10 elements per page', function(){
     entriesDropDown.click();
     element(by.css('.tc_entries_10')).click();
-    expect(volumeRowElements.count()).toBeGreaterThan(2);
+    expect(poolRowElements.count()).toBeGreaterThan(0);
   });
 
   afterAll(function(){
-    console.log('datatable -> datatable.e2e.js -> volume based');
-  });
-});
-
-//TODO break this into two separate files
-describe('snapshot tab based datatable tests', function(){
-
-  beforeEach(function(){
-    volume.click();
-    snapshotTab.click();
-  });
-
-  //all actions below take place within snapshot tab
-  it('should have a "Created" column header which is clickable', function(){
-    expect(created.isDisplayed()).toBe(true);
-    browser.sleep(400);
-  });
-
-  it('should add another snapshot in order to test the create-date sort function', function(){
-    expect(volume.isDisplayed()).toBe(true);
-    element(by.css('.tc_snapshotAdd')).click();
-    browser.sleep(400);
-    element(by.id('snap.name')).clear();
-    //we need a 60 sec sleep here in order to get a new create date when testing the sort functionality
-    console.log('wait 60 sec i.o. to get a different create date');
-    browser.sleep(60000);
-    element(by.model('snap.name')).sendKeys(secSnapName);
-    browser.sleep(400);
-    element(by.css('.tc_submitButton')).click();
-    browser.sleep(400);
-    expect(element.all(by.css('.tc_snapRowName')).count()).toBe(2);
-  });
-
-  it('should check the current sort order', function(){
-    //check the current sort order (based on name) before clicking the sort button
-    expect(snap1.getText()).toEqual(firstSnapName);
-    browser.sleep(400);
-    expect(snap2.getText()).toEqual(secSnapName);
-    browser.sleep(400);
-  });
-
-  it('should check the result after clicking "create" once', function(){
-    created.click();
-    browser.sleep(400);
-    //sort order shoult not change. Considering the create date the order is already correct
-    expect(snap1.getText()).toEqual(firstSnapName);
-    browser.sleep(400);
-    expect(snap2.getText()).toEqual(secSnapName);
-    browser.sleep(400);
-  });
-
-  it('should click the sort button again to get the new sort order', function(){
-    created.click();
-    //should now have a new sort order
-    expect(snap1.getText()).toEqual(secSnapName);
-    expect(snap2.getText()).toEqual(firstSnapName);
-  });
-
-  it('should still have the new sort order after reloading the page', function(){
-    browser.refresh();
-    volume.click();
-    snapshotTab.click();
-    expect(snap1.getText()).toEqual(secSnapName);
-    expect(snap2.getText()).toEqual(firstSnapName);
-  });
-
-  it('should put the oldest snapshot first', function(){
-    created.click();
-    browser.sleep(400);
-    //should be in the original state again
-    expect(snap1.getText()).toEqual(firstSnapName);
-    browser.sleep(400);
-    expect(snap2.getText()).toEqual(secSnapName);
-  });
-
-  afterAll(function(){
-    browser.sleep(400);
-    helpers.delete_volume(volume, volumename);
-    helpers.delete_volume(secondVolume, secondVolumeName);
-    helpers.delete_volume(thirdVolume, thirdVolumeName);
-    console.log('datatable -> datatable.e2e.js -> snapshot based');
+    console.log('datatable -> datatable.e2e.js -> ceph pool based');
   });
 });

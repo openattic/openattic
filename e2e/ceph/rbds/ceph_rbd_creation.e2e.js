@@ -12,7 +12,6 @@ describe('ceph rbd creation and deletion', function(){
   });
 
   beforeEach(function(){
-    rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
     browser.sleep(helpers.configs.sleep);
   });

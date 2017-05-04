@@ -3,52 +3,16 @@ var globalConfig = {
     "URL": "/openattic/api/"
   },
   "GUI": {
-    "activeModules"   : {
-      "btrfs"      : true,
-      "ceph"       : false,
-      "cron"       : true,
-      "drbd"       : true,
-      "http"       : true,
-      "lvm"        : true,
-      "mailaliases": true,
-      "nagios"     : true,
-      "nfs"        : true,
-      "samba"      : true,
-      "zfs"        : true
-    },
     "defaultNotificationTimes": {
       "error": 7000,
       "info": 5000,
       "success": 3000,
       "wait": 4000,
       "warning": 6000
-    },
+    },  
     "defaultTaskReloadTime": 5000,
     "defaultDashboard": {
       "boards"  : [{
-        "name"   : "Default",
-        "widgets": [{
-          "name"    : "openATTIC cluster status",
-          "manager" : {
-            "name"   : "openATTIC cluster status",
-            "manager": "openattic-cluster-status",
-            "group"  : "Local storage"
-          },
-          "settings": {},
-          "minSizeX": 3,
-          "minSizeY": 3
-        }, {
-          "name"    : "openATTIC wizards",
-          "manager" : {
-            "name"   : "openATTIC wizards",
-            "manager": "openattic-wizards",
-            "group"  : "Local storage"
-          },
-          "settings": {},
-          "minSizeX": 3,
-          "minSizeY": 3
-        }]
-      }, {
         "name"   : "Ceph",
         "widgets": [{
           "name"    : "Ceph Status",

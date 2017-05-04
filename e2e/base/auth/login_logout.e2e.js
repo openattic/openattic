@@ -25,8 +25,8 @@ describe('should test the login', function(){
   });
 
   it('should click any menu entry', function(){
-    element(by.css('ul .tc_menuitem_volumes > a')).click();
-    expect(browser.getCurrentUrl()).toContain('#/volumes');
+    element(by.css('ul .tc_menuitem_ceph_osds > a')).click();
+    expect(browser.getCurrentUrl()).toContain('#/ceph/osds');
   });
 
   it('should logout again', function(){
