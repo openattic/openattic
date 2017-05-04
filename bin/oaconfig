@@ -37,7 +37,7 @@ fi
 cd $OADIR
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install restart reload status dbdump domainjoin version"
+	MYCOMMANDS="install restart reload status dbdump version"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -55,7 +55,6 @@ usage () {
 	echo "Valid commands are:"
 	echo
 	echo "    install      Run this command after you installed new openATTIC modules."
-	echo "    domainjoin   Join a Windows Active Directory Domain."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
@@ -260,154 +259,6 @@ EOF
 
 	rootshell|shell)
 		python manage.py shell
-		;;
-
-	domainjoin)
-		if grep -qP '^\d+$' <<<"$HOSTNAME" ; then
-			echo "Your hostname is invalid because it consists of numbers only. (Consider adding a - somewhere.)"
-			exit 2
-		fi
-		
-		if grep -qP '^[\w\d\-]{16,}$' <<<"$HOSTNAME" ; then
-			echo "Your hostname is too long (must be max. 15 characters)."
-			exit 2
-		fi
-		
-		if [ ! -e "$OADIR"/installed_apps.d/*samba ]; then
-			echo "The Samba module must be enabled for this to work."
-			exit 2
-		fi
-		
-		if ! which smbd > /dev/null; then
-			echo "smbd not found."
-			exit 2
-		fi
-		
-		if ! which nmbd > /dev/null; then
-			echo "nmbd not found."
-			exit 2
-		fi
-		
-		if ! which winbindd > /dev/null; then
-			echo "winbindd not found."
-			exit 2
-		fi
-		
-		function lower () {
-			sed 's/./\l&/g' <<<$1
-		}
-		function upper () {
-			sed 's/./\u&/g' <<<$1
-		}
-		
-		hostname="`lower $HOSTNAME`"
-		netbios="`upper $HOSTNAME`"
-		machacc="$netbios\$"
-		
-		if [ "$#" -lt 3 ]; then
-			echo "Usage: $0 domainjoin <user> <domain> [<workgroup>]"
-			exit 2
-		fi
-		
-		user="$2"
-		domain="`lower $3`"
-		realm="`upper $3`"
-		
-		if [ "$#" = 4 ]; then
-			workgroup="`upper $4`"
-		else
-			workgroup="`upper $domain`"
-		fi
-		
-		echo "User:            $user"
-		echo "Domain:          $domain"
-		echo "Realm:           $realm"
-		echo "Workgroup:       $workgroup"
-		echo "Machine Account: $machacc"
-		
-		if [ "`hostname --fqdn`" != "$hostname.$domain" ]; then
-			echo "Your FQDN seems wrong. Make sure /etc/hosts and /etc/hostname are correct."
-			echo "The command 'hostname --fqdn' must return '$hostname.$domain' to pass this test."
-			exit 1
-		fi
-		
-		apt-get install -y openattic-auth-kerberos
-		
-		echo "Updating krb5.conf..."
-		<<EOF cat > /etc/krb5.conf
-[libdefaults]
-	default_realm = $realm
-	default_keytab_name = /etc/krb5.keytab
-	default_tkt_enctypes = rc4-hmac des-cbc-crc des-cbc-md5
-	default_tgs_enctypes = rc4-hmac des-cbc-crc des-cbc-md5
-
-[domain_realm]
-	.$domain = $realm
-	$domain = $realm
-EOF
-		
-		echo "Probing Kerberos..."
-		kinit "$user"
-		
-		echo "Configuring Samba..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:$realm" "string:$workgroup"
-
-		if [ -e /etc/krb5.keytab ]; then
-			echo "Removing old keytab..."
-			rm /etc/krb5.keytab
-		fi
-		echo "Joining Domain..."
-		net ads join -k
-		net ads keytab -k create
-		net ads keytab -k add HTTP
-		net ads keytab -k add HTTPS
-		
-		chmod g+r /etc/krb5.keytab
-		chgrp openattic /etc/krb5.keytab
-		
-		kdestroy
-		
-		echo "Logging in as $machacc (this may fail a couple of times)..."
-		while ! kinit -k "$machacc"; do
-			sleep 1
-		done
-		
-		<<EOF cat > /etc/pam.d/openattic
-account [default=bad success=ok user_unknown=ignore service_err=ignore system_err=ignore] pam_krb5.so ignore_root
-
-auth            sufficient      pam_krb5.so ccache=/tmp/krb5cc_%u use_first_pass
-auth            required        pam_deny.so
-
-session         optional        pam_krb5.so ignore_root
-EOF
-		
-		echo "Configuring openATTIC..."
-		<<EOF cat > /etc/openattic/domain.ini
-[domain]
-realm = $realm
-workgroup = $workgroup
-
-[kerberos]
-enabled = True
-
-[pam]
-enabled = True
-EOF
-		$0 reload
-		
-		echo "Configuring libnss..."
-		sed -i -e 's/^passwd:.*$/passwd:         compat winbind/' /etc/nsswitch.conf
-		sed -i -e 's/^group:.*$/group:          compat winbind/' /etc/nsswitch.conf
-		
-		echo "Restarting Samba and Winbind..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "boolean:false" "int32:0" "string:" "string:"
-		for SERVICE in $SAMBA_SERVICES; do
-			service $SERVICE restart
-		done
-		service "$WINBIND_SERVICE" restart
-		
-		echo "To see if it worked, let's try 'getent passwd \"$user\"':"
-		getent passwd "$user"
 		;;
 
 	dbshell)
