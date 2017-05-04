@@ -92,10 +92,22 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
           "settings": $scope.data.settings
         };
       }
-    } else if ($scope.data.type === "widget") {
-      $scope.input = {
-        settings: $scope.data.settings
-      };
+    } else {
+      if ($scope.data.type === "widget") {
+        $scope.input = {
+          settings: $scope.data.settings
+        };
+        $scope.$watch("input.manager", function (manager) {
+          if (!manager) {
+            return;
+          }
+          $scope.input.name = manager.name;
+        });
+      } else {
+        $scope.input = {
+          name: "Dashboard"
+        };
+      }
     }
   };
 
