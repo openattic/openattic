@@ -116,3 +116,53 @@ class DeepSea(RestClient):
         minions = [aggregate_dict(data, hostname=hostname) for (hostname, data) in out.iteritems()]
         minions = zip_by_keys(('hostname', key_aggr), ('hostname', minions))
         return minions
+
+    @RestClient.api_post('/', resp_structure='return[0] > *')
+    @RestClient.requires_login
+    def iscsi_interfaces(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_iscsi.interfaces'
+        })
+        interfaces = response['return'][0]
+        return [{'hostname': k, 'interfaces': v} for k, v in interfaces.items()]
+
+    @RestClient.api_post('/', resp_structure='return[0] > (?pools[*] & ?portals[*] & ?targets[*] '
+                                             '& ?auth[*])')
+    @RestClient.requires_login
+    def iscsi_config(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_iscsi.config'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/')
+    @RestClient.requires_login
+    def iscsi_save(self, lrbd_json, request='return[*]'):
+        response = request({
+            'client': 'runner', 'fun': 'ui_iscsi.save', 'data': lrbd_json
+        })
+        return response['return'][0] is None
+
+    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.requires_login
+    def iscsi_status(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_iscsi.status'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.requires_login
+    def iscsi_deploy(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_iscsi.deploy'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.requires_login
+    def iscsi_undeploy(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_iscsi.undeploy'
+        })
+        return response['return'][0]
