@@ -568,6 +568,7 @@ fi
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
 %{_datadir}/%{name}/ceph_deployment/
+%{_datadir}/%{name}/rest_client.py*
 
 %files gui
 %defattr(-,root,root,-)
