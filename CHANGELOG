@@ -34,6 +34,7 @@ Changed
 * WebUI: re-enabled the minions and pillar data listing (OP-1889)
 * WebUI: Renames osd service cluster id to fsid (OP-2110)
 * WebUI/QA: Adapted tests (OP-2092)
+* WebUI: Combined add/edit controller and templates of widgets and dashboards (OP-2111)
 
 Removed
 ~~~~~~~
@@ -45,7 +46,7 @@ Removed
 Fixed
 ~~~~~
 * WebUI: Redirect to dashboard when an authenticated user navigates to login page.
-  Thanks to RaÃºl Vega for the contribution. (OP-2029)
+  Thanks to Raúl Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * Packaging: Fix error that prevented to use local sources to create tar
