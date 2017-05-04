@@ -3,7 +3,6 @@
 (function(){
 
   var configs = require('./configs.js');
-  var volumePoolSelect = element(by.model('pool'));
 
   var helper = {
     configs: configs,
