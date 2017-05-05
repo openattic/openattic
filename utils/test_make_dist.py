@@ -23,9 +23,8 @@ Options:
 import os
 import tempfile
 import docopt
-from make_dist import Process, VERBOSITY_VERBOSE
+from make_dist import process_run
 
-process = Process(verbosity=VERBOSITY_VERBOSE)
 cli_args = docopt.docopt(__doc__)
 cli_args['--oa-dir'] = os.path.abspath(cli_args['--oa-dir'])
 
@@ -37,7 +36,7 @@ def get_abs_script_path():
 
 def extract_tar(tarball):
     tmpdir = tempfile.gettempdir()
-    process.run(['tar', 'xf', tarball, '-C', tmpdir])
+    process_run(['tar', 'xf', tarball, '-C', tmpdir])
     normalized_path = os.path.normpath(tarball)
     basename = os.path.splitext(os.path.splitext(os.path.basename(normalized_path))[0])[0]
     return os.path.join(tmpdir, basename)
@@ -48,7 +47,7 @@ def test(arguments):
         argument, hint = elem
         if hint:
             print('Hint: {}'.format(hint))
-        result = process.run(['/usr/bin/python', get_abs_script_path()] + argument.split(' '))
+        result = process_run(['/usr/bin/python', get_abs_script_path()] + argument.split(' '))
         last_line = result.stdout.strip().split('\n')[-1]
         tarball_path = last_line.split(' ')[-1].strip()
         tempdir = extract_tar(tarball_path)
