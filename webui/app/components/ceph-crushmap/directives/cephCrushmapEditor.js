@@ -30,14 +30,14 @@
  */
 "use strict";
 
-var app = angular.module("openattic.extensions");
-app.directive("cephCrushMapEditor", function () {
+var app = angular.module("openattic.cephCrushmap");
+app.directive("cephCrushmapEditor", function () {
   return {
     restrict: "E",
-    templateUrl: "extensions/crushmap_editor/templates/editor.html",
-    controller: function ($scope, $timeout, ClusterResource, Notification) {
+    templateUrl: "components/ceph-crushmap/templates/editor.html",
+    controller: function ($scope, $timeout, cephCrushmapService, Notification) {
       $scope.query = function () {
-        $scope.clusters = ClusterResource.query(function (clusters) {
+        $scope.clusters = cephCrushmapService.query(function (clusters) {
           $scope.cluster = clusters[0];
           $scope.usableTypes = $scope.cluster.crushmap.crushmap.types.filter(function (btype) {
             return btype.type_id > 1; // *users* aren't supposed to add hosts or OSDs
@@ -47,7 +47,7 @@ app.directive("cephCrushMapEditor", function () {
       $scope.query();
 
       $scope.activate = function () {
-        ClusterResource.update({id: $scope.cluster.id}, {crushmap: $scope.cluster.crushmap.crushmap});
+        cephCrushmapService.update({id: $scope.cluster.id}, {crushmap: $scope.cluster.crushmap.crushmap});
       };
 
       $scope.setActiveRuleset = function (activeRuleset) {
