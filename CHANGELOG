@@ -26,6 +26,7 @@ Added
 * Backend: Added the functionality to reset the password of an user (OP-589)
 * Backend: Generic REST client support classes (OP-1889)
 * Backend: Salt REST API support (OP-1889)
+* WebUI: Introduce a set of commands to build the frontend (OP-1752)
 
 Changed
 ~~~~~~~
