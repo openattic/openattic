@@ -214,7 +214,7 @@ describe('Should test oadatatable and its options', function(){
 
   it('should adapt table information of listed entries', function(){
     poolRowElements.count().then(function(countPools){
-      expect(element(by.css('.dataTables_info')).getText()).toContain('Showing ' + countPools + ' to ' + countPools + ' of ' + countPools + ' items');
+      expect(element(by.css('.dataTables_info')).getText()).toContain('Showing 1 to ' + countPools + ' of ');
     });
   });
 
