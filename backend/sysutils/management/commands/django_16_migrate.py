@@ -79,11 +79,22 @@ def test_0002_auto_20170126_1628(cursor):
     res1 = execute_and_fetch(cursor, stmt1)
     res2 = execute_and_fetch(cursor, stmt2)
 
-    return (len(res1) or len(res2)) != 0
+    return len(res1) or len(res2)
 
 
 def test_sysutils_0002_delete_initscript(cursor):
     return _table_exists('sysutils_initscript', cursor)
+
+
+def test_ceph_deployment_remove_CephMinion(cursor):
+    return _table_exists('ceph_deployment_cephminion', cursor)
+
+
+def test_nagios_remove_traditional_fixtures(cursor):
+    if len(execute_and_fetch(cursor, """SELECT * FROM nagios_graph;""")):
+        return True
+    return len(execute_and_fetch(cursor, """SELECT * FROM nagios_command
+                                            WHERE id in (8, 9, 10, 13, 14, 17, 18);"""))
 
 
 # (app, name, test function, SQL statement)
@@ -203,7 +214,28 @@ _migrations = [
         DROP TABLE "sysutils_initscript" CASCADE;
         COMMIT;
         """
-    )
+    ),
+    (
+        'ceph_deployment', u'0002_remove_CephMinion',
+        test_ceph_deployment_remove_CephMinion,
+        """
+        BEGIN;
+        ALTER TABLE "ceph_deployment_cephminion" DROP COLUMN "cluster_id" CASCADE;
+        DROP TABLE "ceph_deployment_cephminion" CASCADE;
+        COMMIT;
+        """
+    ),
+    (
+        'nagios', u'0003_remove_traditional_fixtures',
+        test_nagios_remove_traditional_fixtures,
+        """
+        BEGIN;
+        DELETE FROM nagios_graph;
+        DELETE FROM nagios_service WHERE nagios_service.command_id IN (8, 9, 10, 13, 14, 17, 18);
+        DELETE FROM nagios_command WHERE id in (8, 9, 10, 13, 14, 17, 18);
+        COMMIT;
+        """
+    ),
 ]
 
 
