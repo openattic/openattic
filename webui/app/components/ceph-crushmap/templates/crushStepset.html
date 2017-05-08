@@ -3,7 +3,6 @@
     replica<span ng-show="getRealNum(stepset).max && getRealNum(stepset).max > 1">s on different {{ stepset.acrosstype.name }}s</span>
     <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype.name }}</span>
     in the {{ stepset.take.name }} {{ stepset.take.type_name === 'root' ? 'tree' : stepset.take.type_name }}.
-    <i class="fa fa-pencil" ng-click="editing = !editing"></i>
 </p>
 <span ng-show="editing">
     Place
@@ -42,7 +41,7 @@
             {{ stepset.acrosstype.name }}s <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li ng-repeat="btype in cluster.crushmap.crushmap.types" role="presentation">
+            <li ng-repeat="btype in cluster.crushmap.types" role="presentation">
                 <a role="menuitem" ng-click="stepset.acrosstype = btype">{{ btype.name }}s</a>
             </li>
         </ul>
