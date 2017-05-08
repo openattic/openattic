@@ -39,6 +39,7 @@ Changed
 
 Removed
 ~~~~~~~
+* Backend/QA: Removed all local-stroage related Gatling tests (OP-2119)
 * WebUI: Removed all local-storage functionalities of openATTIC (OP-2073)
 * WebUI/QA: Removed all unnecessary local storage tests of openATTIC (OP-2092)
 * For more information, why we drop the local-storage support, see:
