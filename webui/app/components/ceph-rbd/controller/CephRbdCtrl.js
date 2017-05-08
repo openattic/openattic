@@ -48,7 +48,8 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
   $scope.selection = {};
 
-  if ($scope.cluster.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
+  if (angular.isObject($scope.cluster) && $scope.cluster.results.length > 0 &&
+      angular.isUndefined($scope.registry.selectedCluster)) {
     $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
