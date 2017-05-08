@@ -42,7 +42,7 @@ def distro_settings(distro_specific=['/etc/default/openattic', '/etc/sysconfig/o
                 for line in f:
                     line = line.rstrip()
                     if line and not line.startswith('#'):
-                        key, value = line.split('=')
+                        key, value = line.split('=', 1)
                         value = value.strip('"\'')
                         logger.debug("Setting %s=%s", key, value)
                         _settings[key] = value
