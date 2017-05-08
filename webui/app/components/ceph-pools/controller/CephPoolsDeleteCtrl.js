@@ -36,20 +36,22 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
   $scope.cephPools = cephPoolSelection;
 
   $scope.delete = function () {
-    var requests = [];
-    $scope.cephPools.forEach(function (cephPool) {
-      var deferred = $q.defer();
-      cephPoolsService.delete({
-        id: cephPool.cluster,
-        poolId: cephPool.id
-      }, deferred.resolve, deferred.reject);
-      requests.push(deferred.promise);
-    });
-    $q.all(requests).then(function () {
-      $uibModalInstance.close("deleted");
-    }, function () {
-      $scope.deleteForm.$submitted = false;
-      $uibModalInstance.close("deleted");
+    return $q(function (resolve, reject) {
+      var requests = [];
+      $scope.cephPools.forEach(function (cephPool) {
+        var deferred = $q.defer();
+        cephPoolsService.delete({
+          id: cephPool.cluster,
+          poolId: cephPool.id
+        }, deferred.resolve, deferred.reject);
+        requests.push(deferred.promise);
+      });
+      $q.all(requests).then(function () {
+        resolve();
+        $uibModalInstance.close("deleted");
+      }, function () {
+        reject();
+      });
     });
   };
 
