@@ -35,27 +35,35 @@ app.directive("cephCrushmapEditor", function () {
   return {
     restrict: "E",
     templateUrl: "components/ceph-crushmap/templates/editor.html",
-    controller: function ($scope, $timeout, cephCrushmapService, Notification) {
+    controller: function ($scope, $timeout, cephCrushmapService, clusterData, Notification, registryService) {
+      $scope.cluster = clusterData;
+      $scope.registry = registryService;
+      $scope.repsize = 3;
+
+      if ($scope.cluster.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
+        $scope.registry.selectedCluster = $scope.cluster.results[0];
+      }
+
       $scope.query = function () {
-        $scope.clusters = cephCrushmapService.query(function (clusters) {
-          $scope.cluster = clusters[0];
-          $scope.usableTypes = $scope.cluster.crushmap.crushmap.types.filter(function (btype) {
-            return btype.type_id > 1; // *users* aren't supposed to add hosts or OSDs
+        cephCrushmapService
+          .get({fsid: $scope.registry.selectedCluster.fsid})
+          .$promise
+          .then(function (res) {
+            $scope.cluster = res;
+            $scope.usableTypes = $scope.cluster.crushmap.types.filter(function (btype) {
+              return btype.type_id > 1; // *users* aren't supposed to add hosts or OSDs
+            });
+          })
+          .catch(function (error) {
+            $scope.error = error;
           });
-        });
       };
       $scope.query();
-
-      $scope.activate = function () {
-        cephCrushmapService.update({id: $scope.cluster.id}, {crushmap: $scope.cluster.crushmap.crushmap});
-      };
 
       $scope.setActiveRuleset = function (activeRuleset) {
         $scope.activeRuleset = activeRuleset;
       };
       $scope.setActiveRuleset(null);
-
-      $scope.repsize = 3;
 
       $scope.findNodeByName = function (name) {
         var node = null;
@@ -66,11 +74,11 @@ app.directive("cephCrushmapEditor", function () {
             item.items.map(iterfn);
           }
         };
-        $scope.cluster.crushmap.crushmap.buckets.map(iterfn);
+        $scope.cluster.crushmap.buckets.map(iterfn);
         return node;
       };
       $scope.findTypeByName = function (name) {
-        return $scope.cluster.crushmap.crushmap.types.find(function (item) {
+        return $scope.cluster.crushmap.types.find(function (item) {
           return item.name === name;
         });
       };
@@ -188,10 +196,10 @@ app.directive("cephCrushmapEditor", function () {
         };
 
         rendersteps = (activeRuleset ? activeRuleset.steps.slice() : []);
-        resetNodes($scope.cluster.crushmap.crushmap.buckets);
+        resetNodes($scope.cluster.crushmap.buckets);
         while (rendersteps.length > 0) {
           prevStepCount = rendersteps.length;
-          renderNodes(rendersteps, $scope.cluster.crushmap.crushmap.buckets, false);
+          renderNodes(rendersteps, $scope.cluster.crushmap.buckets, false);
           if (rendersteps.length >= prevStepCount) {
             // Safety measure: renderNodes should consume a coupl'a steps. If it
             // didn't, something seems to be wrong.
@@ -251,89 +259,6 @@ app.directive("cephCrushmapEditor", function () {
         return {
           min: step.num
         };
-      };
-
-      $scope.addBucket = function (btype) {
-        $scope.cluster.crushmap.crushmap.buckets.unshift({
-          $editing: true,
-          id: new Date().toJSON(),
-          alg: "straw",
-          hash: "rjenkins",
-          items: [],
-          name: "New " + btype.name,
-          type_id: btype.type_id,
-          type_name: btype.name,
-          weight: 0
-        });
-      };
-
-      $scope.deleteBucket = function (bucket) {
-        // See if there are any hosts in the bucket's subtree
-        var hasHosts = false;
-        var iterfn = function (item) {
-          if (item.type_id <= 1) {
-            hasHosts = true;
-          } else {
-            item.items.map(iterfn);
-          }
-        };
-        bucket.items.map(iterfn);
-        if (hasHosts) {
-          Notification.warning({
-            title: "Bucket is not empty",
-            msg: "The " + bucket.name + " " + (bucket.type_name === "root" ? "tree" : bucket.type_name) +
-                 " still contains some hosts. Please move the hosts away first.",
-            timeout: 6000
-          });
-        } else {
-          iterfn = function (items) {
-            var matches = items.filter(function (subitem) {
-              return subitem.id === bucket.id;
-            });
-            if (matches.length > 0) {
-              items.splice(items.indexOf(matches[0]), 1);
-            } else {
-              items.map(function (subitem) {
-                iterfn(subitem.items);
-              });
-            }
-          };
-          iterfn($scope.cluster.crushmap.crushmap.buckets);
-        }
-      };
-
-      $scope.addRuleset = function () {
-        $scope.cluster.crushmap.crushmap.rules.push({
-          type: 1,
-          max_size: 5,
-          min_size: 3,
-          rule_id: new Date().toJSON(),
-          rule_name: "New Rule",
-          ruleset: new Date().toJSON(),
-          steps: [{
-            op: "take",
-            item: -1,
-            item_name: "default"
-          }, {
-            op: "chooseleaf_firstn",
-            num: 0,
-            type: "host"
-          }, {
-            op: "emit"
-          }]
-        });
-      };
-
-      $scope.addStepset = function () {
-        $scope.stepsets.push({
-          take: $scope.findNodeByName("default"),
-          acrosstype: $scope.findTypeByName("host"),
-          num: 0
-        });
-      };
-
-      $scope.deleteRuleset = function (ruleset) {
-        $scope.cluster.crushmap.crushmap.rules.splice($scope.cluster.crushmap.crushmap.rules.indexOf(ruleset), 1);
       };
     }
   };

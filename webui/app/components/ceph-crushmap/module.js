@@ -30,4 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.cephCrushmap", []);
+angular.module("openattic.cephCrushmap", [
+  "openattic.cephCluster"
+]);
