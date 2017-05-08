@@ -407,6 +407,9 @@ def __loadmods__():
 __loadmods__()
 
 
+# In `backend/nagios/conf/distro.py` there's basically the same parser, but used for a slightly
+# different purpose. This is just to mention that this code is somewhat duplicated. This comment may
+# be removed if the nagios module is removed.
 def get_config(filename):
     result = {}
     with open(filename, "r") as f:

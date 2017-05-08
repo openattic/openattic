@@ -14,9 +14,6 @@
 import logging
 import os
 
-if os.environ.get("DJANGO_SETTINGS_MODULE"):
-    from django.conf import settings
-
 
 def distro_settings(distro_specific=['/etc/default/openattic', '/etc/sysconfig/openattic']):
     """
@@ -25,6 +22,15 @@ def distro_settings(distro_specific=['/etc/default/openattic', '/etc/sysconfig/o
 
     Returns a dict for non-Django environments
     Sets settings object for Django environments
+    
+    The parser functionality is basiclly the same as in `backend/settings.py`. This code can safely
+    be removed if Nagios/Icinga is replaced by another monitoring system/tool as the code in
+    `backend/settings.py` imports settings into the global settings variable but this function is
+    only used to retrieve distribution specific settings for Nagios/Icinga checks like paths and
+    does not write to the global settings variable anymore.
+
+    Note that the settings in the above specified files are also used in `oaconfig` and imported
+    as shell variables.
     """
     logger = logging.getLogger(__name__)
 
@@ -40,7 +46,5 @@ def distro_settings(distro_specific=['/etc/default/openattic', '/etc/sysconfig/o
                         value = value.strip('"\'')
                         logger.debug("Setting %s=%s", key, value)
                         _settings[key] = value
-                        if os.environ.get("DJANGO_SETTINGS_MODULE"):
-                            setattr(settings, key, value)
 
     return _settings
