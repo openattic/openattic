@@ -31,22 +31,25 @@
 "use strict";
 
 var app = angular.module("openattic.dashboardWidgets");
-app.directive("cephClusterStatus", function () {
-  return {
-    restrict   : "E",
-    scope      : true,
-    controller : function ($scope, $interval, cephClusterService) {
-      var promise;
-      $scope.data = {};
-      $scope.isLoading = false;
-      $scope.warnCollapsed = true;
-      $scope.errCollapsed = true;
+app.component("cephHealth", {
+  templateUrl: "components/dashboard-widgets/templates/ceph-cluster-health.html",
+  controller: function ($scope, $interval, cephClusterService) {
+    var self = this;
+    var promise;
+    self.data = {};
+    self.isLoading = false;
+    self.summaryCollapsed = true;
+    self.messages = {
+      ok: undefined,
+      warn: undefined,
+      err: undefined,
+      unknown: undefined
+    };
 
-      // Functions
-      var init = function () {
-        $scope.getData();
-        $scope.startInterval();
-      };
+    self.init = function () {
+      self.getData();
+      self.startInterval();
+    };
 
       $scope.getData = function () {
         $scope.isLoading = true;
@@ -121,9 +124,7 @@ app.directive("cephClusterStatus", function () {
         $scope.stopInterval();
       });
 
-      // init
-      init();
-    },
-    templateUrl: "components/dashboard-widgets/templates/ceph-cluster-status.html"
-  };
+    // init
+    self.init();
+  }
 });
