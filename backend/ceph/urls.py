@@ -16,6 +16,7 @@ from django.conf.urls import patterns, url, include
 from rest_framework import routers
 
 from ceph.restapi import *
+from ceph.views import proxy_view
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'osds', CephOsdViewSet, 'osd')
@@ -31,4 +32,6 @@ cluster_router.register(r'ceph', CephClusterViewSet, 'ceph')
 urlpatterns = patterns('',
                        url(r'^api/', include(cluster_router.urls, namespace='api'), name='ceph'),
                        url(r'^api/ceph/[a-zA-Z0-9-]+/', include(router.urls, namespace='api/ceph/'), name='details'),
+
+                       url('^api/rgw/(?P<path>.*)', proxy_view),
                        )
