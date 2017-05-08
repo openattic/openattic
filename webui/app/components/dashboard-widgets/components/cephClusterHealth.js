@@ -51,78 +51,145 @@ app.component("cephHealth", {
       self.startInterval();
     };
 
-      $scope.getData = function () {
-        $scope.isLoading = true;
-        cephClusterService
-            .get()
-            .$promise
-            .then(function (res) {
-              $scope.processData(res);
-            })
-            .finally(function () {
-              $interval(function () {
-                $scope.isLoading = false;
-              }, 1000, 1);
-            });
-      };
-
-      $scope.processData = function (data) {
-        $scope.data = {
-          "count"  : 0,
-          "ok"     : [],
-          "warn"   : [],
-          "err"    : [],
-          "unknown": []
-        };
-        $scope.data.count = data.count;
-        angular.forEach(data.results, function (element) {
-          switch (element.health) {
-            case "HEALTH_OK":
-              $scope.data.ok.push(element);
-              break;
-            case "HEALTH_WARN":
-              $scope.data.warn.push(element);
-              break;
-            case "HEALTH_ERR":
-              $scope.data.err.push(element);
-              break;
-
-            default:
-              $scope.data.unknown.push(element);
-              break;
-          }
-        });
-
-        if ($scope.data.warn.length > 0 || $scope.data.err.length > 0) {
-          angular.forEach($scope.data.warn.concat($scope.data.err), function (cluster) {
-            cephClusterService
-                .status({fsid: cluster.fsid})
-                .$promise
-                .then(function (res) {
-                  cluster.summary = res.health.summary;
-                });
+    self.getData = function () {
+      self.isLoading = true;
+      cephClusterService
+          .get()
+          .$promise
+          .then(function (res) {
+            self.processData(res);
+            self.processSummaries();
+            self.processMessages();
+          })
+          .finally(function () {
+            $interval(function () {
+              self.isLoading = false;
+            }, 1000, 1);
           });
-        }
-      };
+    };
 
-      $scope.startInterval = function () {
-        // stops any running interval to avoid two intervals running at the same time
-        $scope.stopInterval();
-
-        // store the interval promise
-        promise = $interval(function () {
-          $scope.getData();
-        }, 5000, false);
-      };
-
-      $scope.stopInterval = function () {
-        $interval.cancel(promise);
-      };
-
-      // Event-Handler
-      $scope.$on("$destroy", function () {
-        $scope.stopInterval();
+    self.processData = function (data) {
+      angular.extend(data, {
+        ok: [],
+        warn: [],
+        err: [],
+        unknown: []
       });
+      angular.forEach(data.results, function (element) {
+        switch (element.health) {
+          case "HEALTH_OK":
+            data.ok.push(element);
+            break;
+          case "HEALTH_WARN":
+            data.warn.push(element);
+            break;
+          case "HEALTH_ERR":
+            data.err.push(element);
+            break;
+          default:
+            data.unknown.push(element);
+            break;
+        }
+      });
+      self.data = data;
+    };
+
+    self.processSummaries = function () {
+      var data = self.data;
+      if (data.warn.length > 0 || data.err.length > 0) {
+        angular.forEach(data.warn.concat(data.err), function (cluster) {
+          cephClusterService
+              .status({fsid: cluster.fsid})
+              .$promise
+              .then(function (res) {
+                var summaries = res.health.summary;
+                cluster.summary = {
+                  warn: self.filterSummary(summaries, "HEALTH_WARN"),
+                  err: self.filterSummary(summaries, "HEALTH_ERR")
+                };
+                self.processMessages();
+              });
+        });
+      }
+    };
+
+    self.filterSummary = function (summaries, severity) {
+      return summaries.filter(function (summary) {
+        return summary.severity === severity;
+      });
+    };
+
+    self.processMessages = function () {
+      angular.forEach(self.data, function (clusters, attribute) {
+        if (angular.isArray(clusters)) {
+          self.messages[attribute] = self.clusterMessage(attribute);
+        }
+      });
+    };
+
+    self.clusterMessage = function (attribute) {
+      var data = self.data[attribute];
+      var count = data.length;
+      if (count === 0) {
+        return;
+      }
+      var counting = self.getCountErrosAndWarnings(attribute);
+      var messages = { //Cluster "xyz" is + the following text - or - x clusters are + the following text
+        ok: "up and running",
+        warn: "not operating correctly with ",
+        err: "is operating with ",
+        unknown: "is in an unknown error state"
+      };
+      var msg = [
+          count > 1 ? count + " clusters are" : "Cluster \"" + data[0].name + "\" is",
+          messages[attribute]
+        ].join(" ");
+      if (attribute === "err") {
+        msg += [
+          counting.err === 1 ? "an error" : counting.err + " errors",
+          counting.warn > 0 ? "and " : ""
+        ].join(" ");
+      }
+      if (["err", "warn"].indexOf(attribute) !== -1) {
+        msg += counting.warn === 1 ? "a warning" : counting.warn + " warnings";
+      }
+      return msg;
+    };
+
+    self.getCountErrosAndWarnings = function (attribute) {
+      if (["err", "warn"].indexOf(attribute) === -1) {
+        return {};
+      }
+      var clusters = self.data[attribute];
+      var counting = {
+        warn: 0,
+        err: 0
+      };
+      angular.forEach(clusters, function (cluster) {
+        if (cluster.summary) {
+          counting.warn += cluster.summary.warn.length;
+          counting.err += cluster.summary.err.length;
+        }
+      });
+      return counting;
+    };
+
+    self.startInterval = function () {
+      // stops any running interval to avoid two intervals running at the same time
+      self.stopInterval();
+      promise = $interval(function () {
+        self.getData();
+      }, 500000, false); // for testing only
+    };
+
+    self.stopInterval = function () {
+      $interval.cancel(promise);
+    };
+
+    // Event-Handler
+    $scope.$on("$destroy", function () {
+      $scope.stopInterval();
+    });
 
     // init
     self.init();
