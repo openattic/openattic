@@ -42,6 +42,8 @@ from systemd.helpers import Transaction
 from taskqueue.models import TaskQueue
 from utilities import aggregate_dict, zip_by_keys
 
+from ceph_deployment.models.iscsi_target import iSCSITarget
+
 logger = logging.getLogger(__name__)
 
 
@@ -886,6 +888,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             self._update_nagios_configs()
 
     def delete(self, using=None):
+        targets = iSCSITarget.objects.all().filter(images__name=self.name).count()
+        if targets > 0:
+            raise Exception('There are iSCSI targets using image {}'.format(self.name))
         api = self.rbd_api()
         api.remove(self.pool.name, self.name)
         self._update_nagios_configs()

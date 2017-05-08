@@ -81,6 +81,8 @@ class NodbQuerySet(QuerySet):
         self._context = context
         self._current = 0
         self._query = NoDbQuery()
+        self._result_cache = None
+        self._prefetch_related_lookups = False
 
     @cached_property
     def _max(self):
