@@ -359,6 +359,9 @@ class MonApi(object):
     def _args_to_argdict(**kwargs):
         return {k: v for (k, v) in kwargs.iteritems() if v is not None}
 
+    def osd_crush_dump(self):
+        return self._call_mon_command('osd crush dump')
+
     @undoable
     def osd_erasure_code_profile_set(self, name, profile=None):
         """
