@@ -37,6 +37,7 @@ Changed
 * WebUI: Renames osd service cluster id to fsid (OP-2110)
 * WebUI/QA: Adapted tests (OP-2092)
 * WebUI: Combined add/edit controller and templates of widgets and dashboards (OP-2111)
+* API: Convert Postgres based Crushmap API to NoDB (OP-1273)
 
 Removed
 ~~~~~~~
