@@ -29,7 +29,7 @@ Added
 * Backend: Implemented a RGW Admin Ops API proxy (OP-1612)
 * Backend: Made `backend/settings.py` variables' adaptable (OP-2156)
 * WebUI: Introduce a set of commands to build the frontend (OP-1752)
-* WebUI: Display a warning dialog if there are unsaved changes on a form (OP-1732)
+* WebUI: Display a warning dialog if there are unsaved changes and the view is changed (OP-1732)
 
 Changed
 ~~~~~~~
