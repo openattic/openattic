@@ -405,3 +405,27 @@ def __loadmods__():
     modprobe('rosetta')
 
 __loadmods__()
+
+
+# In `backend/nagios/conf/distro.py` there's basically the same parser, but used for a slightly
+# different purpose. This is just to mention that this code is somewhat duplicated. This comment may
+# be removed if the nagios module is removed.
+def get_config(filename):
+    result = {}
+    with open(filename, "r") as f:
+        print('Reading file {}'.format(filename))
+        for line in f:
+            line = line.rstrip()
+            if line and not line.startswith('#'):
+                key, value = line.split('=', 1)
+                value = value.strip('"\'')
+                result[key] = value
+    return result
+
+# Add or replace additional configuration variables
+custom_settings = ('/etc/default/openattic', '/etc/sysconfig/openattic')
+for settings_file in custom_settings:
+    if not os.access(settings_file, os.R_OK):
+        continue
+    for key, value in get_config(settings_file).items():
+        globals()[key] = value
