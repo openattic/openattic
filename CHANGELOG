@@ -27,6 +27,7 @@ Added
 * Backend: Generic REST client support classes (OP-1889)
 * Backend: Salt REST API support (OP-1889)
 * Backend: Implemented a RGW Admin Ops API proxy (OP-1612)
+* Backend: Made `backend/settings.py` variables' adaptable (OP-2156)
 * WebUI: Introduce a set of commands to build the frontend (OP-1752)
 
 Changed
