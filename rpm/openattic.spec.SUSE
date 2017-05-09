@@ -117,6 +117,7 @@ Requires:	udisks2
 Requires:	vlan
 Requires:	wget
 Requires:	xfsprogs
+Requires:	logrotate
 Requires(pre): shadow
 Summary: Basic requirements for openATTIC
 
