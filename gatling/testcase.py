@@ -22,6 +22,9 @@ from requests.auth import HTTPBasicAuth
 
 class GatlingTestCase(unittest.TestCase):
 
+    conf = None
+    base_url = ''
+
     @classmethod
     def require_config(cls, section, *options):
         """
