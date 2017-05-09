@@ -33,3 +33,4 @@ docopt==0.6.2
 image==1.5.3
 pyyaml
 configobj
+requests-aws==0.1.8
