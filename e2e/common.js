@@ -43,6 +43,15 @@
       element.all(by.css('input[type="submit"]')).click();
 
       browser.sleep(configs.sleep);
+    },
+
+    check_form: function(){
+      var oaCheckFormOk = element(by.css('.oa-check-form-ok'));
+      oaCheckFormOk.isPresent().then(function(result){
+        if(result){
+          oaCheckFormOk.click();
+        }
+      });
     }
   };
   module.exports = helper;
