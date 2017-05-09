@@ -42,18 +42,20 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout, cephCrushmapServi
     $scope.registry.selectedCluster = $scope.clusters.results[0];
   }
 
-  $scope.query = function () {
-    cephCrushmapService
-      .get({fsid: $scope.registry.selectedCluster.fsid})
-      .$promise
-      .then(function (res) {
-        $scope.cluster = res;
-      })
-      .catch(function (error) {
-        $scope.error = error;
-      });
+  $scope.getCrushmap = function () {
+    if ($scope.clusters.results.length > 0 && $scope.registry.selectedCluster) {
+      cephCrushmapService
+        .get({fsid: $scope.registry.selectedCluster.fsid})
+        .$promise
+        .then(function (res) {
+          $scope.cluster = res;
+        })
+        .catch(function (error) {
+          $scope.error = error;
+        });
+    }
   };
-  $scope.query();
+  $scope.getCrushmap();
 
   $scope.setActiveRuleset = function (activeRuleset) {
     $scope.activeRuleset = activeRuleset;

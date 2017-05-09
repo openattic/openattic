@@ -1,4 +1,6 @@
-<div class="panel panel-default" ng-show="!error && cluster == 'null'">
+<ceph-cluster-dropdown cluster="clusters" registry="registry" get-data="getCrushmap()"></ceph-cluster-dropdown>
+
+<div class="panel panel-default" ng-show="!error && cluster === null">
     <div class="panel-heading">
         <h3 class="panel-title">Loading...</h3>
     </div>
@@ -7,7 +9,7 @@
     </div>
 </div>
 
-<div class="panel panel-default" ng-show="error && error.statusText == 'NOT FOUND'">
+<div class="panel panel-default" ng-show="error && error.statusText === 'NOT FOUND'">
     <div class="panel-heading">
         <h3 class="panel-title">Error</h3>
     </div>
@@ -16,14 +18,14 @@
     </div>
 </div>
 
-<div class="row" ng-show="!error && cluster != 'null'">
+<div class="row" ng-show="!error && cluster !== null">
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title pull-left">Physical setup</h3>
 
                 <div class="panel-toolbar" role="menu">
-                    <a ng-click="query()"><i class="fa fa-refresh"></i> Refresh</a>
+                    <a ng-click="getCrushmap()"><i class="fa fa-refresh"></i> Refresh</a>
                 </div>
 
                 <div class="clearfix"></div>
