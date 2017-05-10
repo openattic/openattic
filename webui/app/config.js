@@ -3,13 +3,14 @@ var globalConfig = {
     "URL": "/openattic/api/"
   },
   "GUI": {
+    "uiTimeout": 30000,
     "defaultNotificationTimes": {
       "error": 7000,
       "info": 5000,
       "success": 3000,
       "wait": 4000,
       "warning": 6000
-    },  
+    },
     "defaultTaskReloadTime": 5000,
     "defaultDashboard": {
       "boards"  : [{
