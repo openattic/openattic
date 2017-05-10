@@ -65,14 +65,13 @@ class ContentTypeViewSet(NoCacheReadOnlyModelViewSet):
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
     auth_token = serializers.SerializerMethodField(*mk_method_field_params('auth_token'))
     profile = relations.HyperlinkedIdentityField(view_name='userprofile-detail')
 
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'is_active',
-                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token',
+                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'auth_token',
                   'profile')
 
     def get_auth_token(self, obj):
@@ -97,14 +96,6 @@ class UserViewSet(NoCacheModelViewSet):
     filter_fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff',
                      'is_superuser')
     search_fields = ('username', 'first_name', 'last_name', 'email')
-
-    @detail_route()
-    def volumes(self, request, *args, **kwargs):
-        from volumes.restapi import FileSystemVolumeSerializer
-        user = self.get_object()
-        vols = user.filesystemvolume_set.all()
-        serializer = FileSystemVolumeSerializer(vols, many=True, context={'request': request})
-        return Response(serializer.data)
 
     @detail_route(["post", "put"])
     def gen_new_token(self, request, *args, **kwargs):
