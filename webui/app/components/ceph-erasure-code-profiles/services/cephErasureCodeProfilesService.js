@@ -44,7 +44,7 @@ app.factory("cephErasureCodeProfilesService", function ($resource) {
       }
     },
     getfailureDomains: {
-      url: globalConfig.API.URL + "cephclusters",
+      url: globalConfig.API.URL + "ceph/:fsid/crushmap",
       method: "GET"
     }
   });

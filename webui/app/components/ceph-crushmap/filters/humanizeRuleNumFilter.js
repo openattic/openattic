@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.cephCrushmap");
 app.filter("humanizeRuleNum", function (humanizeIntFilter) {
   var getRealNum = function (activeRuleset, step) {
     if (!step) {

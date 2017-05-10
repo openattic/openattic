@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,11 +30,29 @@
  */
 "use strict";
 
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd"
-]);
+var app = angular.module("openattic.cephCrushmap");
+app.config(function ($stateProvider) {
+  $stateProvider
+    .state("crushmap", {
+      url: "/ceph/crushmap",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-crushmap/templates/crushmap.html",
+          controller : "CephCrushmapCtrl",
+          resolve    : {
+            clusterData: function ($q, cephClusterService) {
+              return cephClusterService.get().$promise
+                .then(function (res) {
+                  return res;
+                }).catch(function () {
+                  return false;
+                });
+            }
+          }
+        }
+      },
+      ncyBreadcrumb: {
+        label: "CRUSH Map Editor"
+      }
+    });
+});

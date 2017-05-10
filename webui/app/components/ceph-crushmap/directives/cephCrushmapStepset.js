@@ -30,11 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.extensions");
-app.directive("cephCrushStepset", function () {
+var app = angular.module("openattic.cephCrushmap");
+app.directive("cephCrushmapStepset", function () {
   return {
     restrict: "E",
-    templateUrl: "extensions/crushmap_editor/templates/crushStepset.html",
+    templateUrl: "components/ceph-crushmap/templates/crushStepset.html",
     scope: {
       "stepset": "=",
       "rule": "=",

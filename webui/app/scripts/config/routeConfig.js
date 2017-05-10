@@ -45,16 +45,5 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       ncyBreadcrumb: {
         label: "Apikeys"
       }
-    })
-    .state("crushmap", {
-      url: "/ceph/crushmap",
-      views: {
-        "main": {
-          templateUrl: "templates/crushmap.html"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "CRUSH Map Editor"
-      }
     });
 });

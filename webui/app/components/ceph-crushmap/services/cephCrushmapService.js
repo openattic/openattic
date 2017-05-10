@@ -30,19 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.factory("ClusterResource", function ($resource) {
-  return $resource(globalConfig.API.URL + "cephclusters/:id", {
-    id: "@id"
-  }, {
-    update: {method: "PUT"},
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        var res = angular.fromJson(data);
-        return res && res.results || [];
-      }
-    }
-  });
+var app = angular.module("openattic.cephCrushmap");
+app.factory("cephCrushmapService", function ($resource) {
+  return $resource(globalConfig.API.URL + "ceph/:fsid/crushmap", {
+    fsid: "@fsid"
+  }, {});
 });
