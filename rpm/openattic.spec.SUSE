@@ -15,7 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
 Name: openattic
-Version: 2.0.20
+Version: 3.0.0
 Release: 0
 Summary: Comprehensive Storage Management System
 Group: System Environment/Libraries
@@ -41,20 +41,26 @@ BuildRequires: postgresql-server
 BuildRequires: pnp4nagios
 BuildRequires: pnp4nagios-icinga
 BuildRequires: rsync
-#Requires:	%{name}-module-cron
-#Requires:	%{name}-module-http
-Requires:	%{name}-module-lio
-#Requires:	%{name}-module-lvm
-#Requires:	%{name}-module-mailaliases
 Requires:	%{name}-module-icinga
-Requires:	%{name}-module-nfs
-Requires:	%{name}-module-samba
 Requires:	%{name}-pgsql
 
 # These subpackages have been removed in 2.0.19 (OP#1968)
 Obsoletes: %{name}-module-ipmi <= 2.0.18
 Obsoletes: %{name}-module-mdraid <= 2.0.18
 Obsoletes: %{name}-module-twraid <= 2.0.18
+
+# These subpackages have been removed in 3.0.0 (OP#2127)
+Obsoletes: %{name}-module-btrfs <= 3.0.0
+Obsoletes: %{name}-module-cron <= 3.0.0
+Obsoletes: %{name}-module-drbd <= 3.0.0
+Obsoletes: %{name}-module-http <= 3.0.0
+Obsoletes: %{name}-module-lio <= 3.0.0
+Obsoletes: %{name}-module-lvm <= 3.0.0
+Obsoletes: %{name}-module-mailaliases <= 3.0.0
+Obsoletes: %{name}-module-nfs <= 3.0.0
+Obsoletes: %{name}-module-samba <= 3.0.0
+Obsoletes: %{name}-module-volumes <= 3.0.0
+Obsoletes: %{name}-module-zfs <= 3.0.0
 
 # OpenATTIC and Crowbar's apache configurations conflict with each other,
 # and in any case we (SUSE) don't support installing openATTIC on a Crowbar
@@ -75,16 +81,7 @@ your installation exactly to your needs and embed openATTIC in your existing
 data center infrastructure.
 
 This metapackage installs the most common set of openATTIC modules along
-with the basic requirements. Those modules are:
-
-  * LVM
-  * NFS
-  * HTTP
-  * LIO (iSCSI, FC)
-  * Samba
-  * Nagios
-  * Cron
-  * MailAliases (EMail configuration)
+with the basic requirements.
 
 Upstream URL: http://www.openattic.org
 
@@ -120,6 +117,7 @@ Requires:	udisks2
 Requires:	vlan
 Requires:	wget
 Requires:	xfsprogs
+Requires:	logrotate
 Requires(pre): shadow
 Summary: Basic requirements for openATTIC
 
@@ -175,113 +173,6 @@ distributed storage system designed to provide excellent performance,
 reliability, and scalability. It is based on the "DeepSea" collection of Salt
 files (https://github.com/SUSE/DeepSea).
 
-%package module-btrfs
-Requires:	btrfsprogs
-Requires: %{name}-base = %{version}
-Summary: BTRFS module for openATTIC
-
-%description module-btrfs
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for BTRFS, a new copy on write filesystem for
-Linux aimed at implementing advanced features while focusing on fault
-tolerance, repair and easy administration.
-
-%package module-cron
-Requires: cron
-Requires: %{name}-base = %{version}
-Summary: Cron module for openATTIC
-
-%description module-cron
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-Cron is a service that provides scheduled task execution. This package
-provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
-
-%package module-drbd
-Requires:	drbd
-Requires: %{name}-base = %{version}
-Summary: DRBD module for openATTIC
-
-%description module-drbd
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-LINBIT's Distributed Replicated Block Device is a data replication tool that
-mirrors volumes to another openATTIC host in a block oriented fashion. It is
-often referred to as RAID-1 over IP.
-
-This module provides the groundwork for building high availability clusters
-using openATTIC.
-
-%package module-http
-Requires:	apache2
-Requires: %{name}-base = %{version}
-Summary: HTTP module for openATTIC
-
-%description module-http
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-The Hypertext Transfer Protocol is not only used for serving web sites, but
-can also be used for serving other files in a read-only fashion. This is
-commonly used for disk images or software repositories.
-
-This package installs a module which allows you to share volumes or
-subdirectories using Apache2.
-
-%package module-lio
-Requires: %{name}-base = %{version}
-Requires: python-rtslib
-# Welche Pakte werden hierfür benötigt
-Summary:  LIO module for openATTIC
-
-%description module-lio
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for the LIO Linux SCSI Target, which allows
-users to configure FibreChannel, FCoE and iSCSI targets over the openATTIC
-user interface.
-
-%package module-lvm
-Requires:	lvm2
-Requires: %{name}-base = %{version}
-Summary: LVM module for openATTIC
-
-%description module-lvm
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-Handles partitioning of physical disks into volumes using the Linux Logical
-Volume Manager. LVM supports enterprise level volume management of disk
-and disk subsystems by grouping arbitrary disks into volume groups. The
-total capacity of volume groups can be allocated to logical volumes, which
-are accessed as regular block devices.
-
-%package module-mailaliases
-Requires: %{name}-base = %{version}
-Requires:	smtp_daemon
-Summary: MailAliases module for openATTIC
-
-%description module-mailaliases
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-Mail Transfer Agents use a file named /etc/aliases in order to configure
-mail redirection for certain users. This package contains an openATTIC module
-which automatically alters this file to match the users configured in the
-openATTIC database.
-
 %package  module-icinga
 Requires:	icinga
 Requires:	monitoring-plugins-common
@@ -309,53 +200,7 @@ module which automatically configures service checks for your configured
 volumes and shares, measures performance data, and provides you with an
 intuitive user interface to view the graphs.
 
-This package also contains the Nagios check plugins for openATTIC, namely:
- * check_diskstats
- * check_iface_traffic
- * check_openattic_systemd
-
-%package module-nfs
-Requires:	nfs-kernel-server
-Requires: %{name}-base = %{version}
-Summary: NFS module for openATTIC
-
-%description module-nfs
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-Network File System is the most widely used mechanism for sharing files
-between UNIX hosts. This package installs a module that allows Volumes to
-be shared using NFS, which is the recommended way not only for UNIXes, but
-also for VMware ESX virtualization hosts.
-
-%package module-samba
-Requires: %{name}-base = %{version}
-Requires:	samba
-Summary: Samba module for openATTIC
-
-%description module-samba
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-Samba implements the SMB/CIFS protocol and enables file sharing with hosts
-that run the Microsoft Windows family of operating systems. This package
-provides configuration facilities for Samba Shares.
-
-%package module-zfs
-Requires:	zfs
-Requires: %{name}-base = %{version}
-Summary: ZFS module for openATTIC
-
-%description module-zfs
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for ZFS, a pooled file system designed for
-maximum data integrity, supporting data snapshots, multiple copies, and data
-checksums. It depends on zfsonlinux, the native Linux port of ZFS.
+This package also contains the Nagios check plugin 'check_openattic_systemd'.
 
 %package pgsql
 Requires: postgresql
@@ -380,8 +225,6 @@ This package configures the PostgreSQL database for openATTIC.
 # Build up target directory structure
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/openattic-gui
-mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/http/volumes
-mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
@@ -391,7 +234,6 @@ mkdir -p %{buildroot}%{nagios_plugindir}
 mkdir -p %{buildroot}%{icinga_sysconfdir}/objects/
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/apache2/conf.d/
-mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
@@ -409,10 +251,7 @@ rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
 install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
 rm -rf %{buildroot}%{_datadir}/%{name}/.style.yapf
 rm -rf %{buildroot}%{_datadir}/%{name}/.pep8
-rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
-rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
-install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 install -d 755 %{buildroot}%{_libdir}/nagios/plugins
 #install -m 755 backend/nagios/plugins/check_cephcluster %{buildroot}%{_libdir}/nagios/plugins
 #install -m 755 backend/nagios/plugins/check_cephpool %{buildroot}%{_libdir}/nagios/plugins
@@ -438,8 +277,6 @@ install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
 # configure dbus
 install -m 644 etc/dbus-1/system.d/%{name}.conf.SUSE %{buildroot}%{_sysconfdir}/dbus-1/system.d/%{name}.conf
 
-install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
-
 install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
 touch %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
 
@@ -462,7 +299,6 @@ ln -s %{_sbindir}/service %{buildroot}%{_sbindir}/rcopenattic-systemd
 install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_prefix}/lib/tmpfiles.d/
 
 # openATTIC httpd config
-install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/apache2/conf.d/
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/apache2/conf.d/
 
 %if 0%{?suse_version} >= 1020
@@ -550,7 +386,6 @@ fi
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %ghost %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
-%{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
 %{_unitdir}/%{name}-systemd.service
@@ -570,9 +405,7 @@ fi
 %{_datadir}/%{name}/cmdlog/
 %{_datadir}/%{name}/ifconfig/
 %{_datadir}/%{name}/__init__.py*
-%{_datadir}/%{name}/installed_apps.d/20_volumes
 %{_datadir}/%{name}/installed_apps.d/60_taskqueue
-%{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
 %{_datadir}/%{name}/nodb/
 %{_datadir}/%{name}/oa_auth.py*
@@ -580,7 +413,6 @@ fi
 %{_datadir}/%{name}/pamauth.py*
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
-%{_datadir}/%{name}/serverstats.wsgi
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
@@ -590,14 +422,8 @@ fi
 %{_datadir}/%{name}/userprefs/
 %{_datadir}/%{name}/version.txt
 %{_datadir}/%{name}/views.py*
-%{_datadir}/%{name}/volumes/
 %{_datadir}/%{name}/exception.py*
 %{_datadir}/%{name}/utilities.py*
-
-%files module-btrfs
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/10_btrfs
-%{_datadir}/%{name}/btrfs/
 
 %files module-ceph
 %defattr(-,root,root,-)
@@ -618,63 +444,13 @@ fi
 %{_datadir}/%{name}-gui
 /srv/www/htdocs/index.html
 
-%files module-cron
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/09_cron
-%{_datadir}/%{name}/cron/
-
-%files module-drbd
-%defattr(-,root,root,-)
-%config %{_sysconfdir}/modprobe.d/drbd.conf
-%{_datadir}/%{name}/drbd/
-%{_datadir}/%{name}/installed_apps.d/60_drbd
-
-%files module-http
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/http/
-%{_datadir}/%{name}/installed_apps.d/60_http
-%config %{_sysconfdir}/apache2/conf.d/openattic-volumes.conf
-%defattr(-,openattic,openattic,-)
-%{_localstatedir}/lib/%{name}/http/
-
-%post module-http
-systemctl try-restart apache2
-
-%files module-lio
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/60_lio
-%{_datadir}/%{name}/lio/
-
-%files module-lvm
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/lvm/
-%{_datadir}/%{name}/installed_apps.d/10_lvm
-
-%post module-lvm
-systemctl enable lvm2-lvmetad
-systemctl start lvm2-lvmetad
-
-%files module-mailaliases
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/mailaliases/
-%{_datadir}/%{name}/installed_apps.d/50_mailaliases
-
 %files module-icinga
-#/etc/pnp4nagios/check_commands/check_diskstats.cfg
 #/etc/pnp4nagios/check_commands/check_all_disks.cfg
 %defattr(-,root,root,-)
 %config %{icinga_sysconfdir}/objects/openattic_plugins.cfg
 %config %{icinga_sysconfdir}/objects/openattic_static.cfg
 %config %{icinga_sysconfdir}/objects/openattic_contacts.cfg
-%{nagios_plugindir}/check_cputime
-%{nagios_plugindir}/check_diskstats
-%{nagios_plugindir}/check_drbdstats
-%{nagios_plugindir}/check_iface_traffic
-%{nagios_plugindir}/check_lvm_snapshot
-%{nagios_plugindir}/check_oa_utilization
 %{nagios_plugindir}/check_openattic_systemd
-%{nagios_plugindir}/check_protocol_traffic
-%{nagios_plugindir}/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
 %attr(0644, -, -) %{_datadir}/%{name}/nagios/restapi.py
@@ -689,35 +465,6 @@ sed -i '/^# You can specify individual object/a \
 cfg_file=%{icinga_sysconfdir}/objects/openattic_plugins.cfg\
 cfg_file=%{icinga_sysconfdir}/objects/openattic_static.cfg' \
         %{icinga_sysconfdir}/icinga.cfg
-
-%files 	module-nfs
-%defattr(-,openattic,openattic,-)
-%{_localstatedir}/lib/%{name}/nfs_dummy/
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/60_nfs
-%{_datadir}/%{name}/nfs/
-
-%post module-nfs
-systemctl enable rpcbind
-systemctl enable nfsserver
-systemctl start rpcbind
-systemctl start nfsserver
-
-%files 	module-samba
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/60_samba
-%{_datadir}/%{name}/samba/
-
-%post module-samba
-systemctl enable nmb
-systemctl start nmb
-systemctl enable smb
-systemctl start smb
-
-%files 	module-zfs
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/30_zfs
-%{_datadir}/%{name}/zfs/
 
 %files 	pgsql
 %defattr(-,openattic,openattic,-)
