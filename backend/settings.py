@@ -251,10 +251,6 @@ LOGGING = {
 __domconf__ = ConfigParser()
 
 #   set defaults...
-__domconf__.add_section("domain")
-__domconf__.set("domain", "realm", "")
-__domconf__.set("domain", "workgroup", "")
-
 __domconf__.add_section("pam")
 __domconf__.set("pam", "service", "openattic")
 __domconf__.set("pam", "enabled", "no")
@@ -290,13 +286,6 @@ if __domconf__.getboolean("kerberos", "enabled"):
     AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.RemoteUserBackend')
 if __domconf__.getboolean("database", "enabled"):
     AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
-
-HAVE_KERBEROS = __domconf__.getboolean("kerberos", "enabled")
-
-if __domconf__.get("domain", "realm"):
-    SAMBA_DOMAIN = __domconf__.get("domain", "realm")
-if __domconf__.get("domain", "workgroup"):
-    SAMBA_WORKGROUP = __domconf__.get("domain", "workgroup")
 
 # Group used for authorization. (If a user is in this group, they get superuser
 # privileges when they login, if they don't have them already.)
