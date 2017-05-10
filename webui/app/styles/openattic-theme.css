@@ -533,6 +533,12 @@ ul.task-queue-pagination {
 .panel-dashboard .max-height {
   height: 100%;
 }
+.panel-dashboard .max-height.alert-is-shown {
+  height: 85%;
+}
+.panel-dashboard .alert {
+  margin-bottom: 0;
+}
 .panel-openattic {
   border: 1px solid #d1d1d1;
   border-top: 0;
@@ -928,6 +934,24 @@ h6{
 .flex-item-7 { -webkit-flex: 7; -moz-flex: 7; -ms-flex: 7; flex: 7; padding: 0 10px; }
 .flex-item-8 { -webkit-flex: 8; -moz-flex: 8; -ms-flex: 8; flex: 8; padding: 0 10px; }
 .flex-item-9 { -webkit-flex: 9; -moz-flex: 9; -ms-flex: 9; flex: 9; padding: 0 10px; }
+
+/* Graph */
+nvd3 .nvd3.nv-pie path {
+  fill-opacity: 1;
+  stroke: none;
+}
+
+nvd3 .nvd3.nv-pie .nv-pie-title {
+  fill: inherit;
+}
+
+nvd3.errorState {
+  fill: #d9534f; /* Bootstrap danger */
+}
+
+nvd3.okState {
+  fill: #5cb85c; /* Bootstrap success */
+}
 
 /* Gridster */
 .gridster {
