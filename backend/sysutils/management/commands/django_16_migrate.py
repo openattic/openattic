@@ -82,6 +82,10 @@ def test_0002_auto_20170126_1628(cursor):
     return (len(res1) or len(res2)) != 0
 
 
+def test_sysutils_0002_delete_initscript(cursor):
+    return _table_exists('sysutils_initscript', cursor)
+
+
 # (app, name, test function, SQL statement)
 # * If app and name is None, this migration will always be executed, if test function returns True.
 # * If test function and SQL stmt are None, the migration will only be added to the
@@ -186,6 +190,18 @@ _migrations = [
         ALTER TABLE "ceph_crushmapversion" DROP COLUMN "edited_at" CASCADE;
         ALTER TABLE "ceph_crushmapversion" DROP COLUMN "epoch" CASCADE;
         DROP TABLE "ceph_cluster" CASCADE;
+        """
+    ),
+    (
+        'sysutils', u'0001_initial', None, None
+    ),
+    (
+        'sysutils', u'0002_delete_initscript',
+        test_sysutils_0002_delete_initscript,
+        """
+        BEGIN;
+        DROP TABLE "sysutils_initscript" CASCADE;
+        COMMIT;
         """
     )
 ]
