@@ -137,8 +137,8 @@ app.component("cephHealth", {
       var messages = { //Cluster "xyz" is + the following text - or - x clusters are + the following text
         ok: "up and running",
         warn: "not operating correctly with ",
-        err: "is operating with ",
-        unknown: "is in an unknown error state"
+        err: "operating with ",
+        unknown: "in an unknown error state"
       };
       var msg = [
           count > 1 ? count + " clusters are" : "Cluster \"" + data[0].name + "\" is",
