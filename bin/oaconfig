@@ -220,9 +220,9 @@ EOF
 		then
 		    if [ "$DJANGO_FAKE_INITIAL" ]
 		    then
-		        su "$OAUSER" -c "python manage.py migrate --fake-initial"
+		        su "$OAUSER" -c "python manage.py migrate --fake-initial --noinput"
 		    else
-		        su "$OAUSER" -c "python manage.py migrate"
+		        su "$OAUSER" -c "python manage.py migrate --noinput"
 		    fi
 			su "$OAUSER" -c "python manage.py loaddata */fixtures/initial_data.json"
 		else

@@ -156,6 +156,38 @@ _migrations = [
         COMMIT;
         """
     ),
+    (
+        'ceph', u'0004_rm_models_based_on_storageobj',
+        lambda cursor: _table_exists('ceph_osd', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cluster" DROP COLUMN "storageobject_ptr_id" CASCADE;
+        ALTER TABLE "ceph_entity" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_image" DROP COLUMN "blockvolume_ptr_id" CASCADE;
+        ALTER TABLE "ceph_image" DROP COLUMN "rbd_pool_id" CASCADE;
+        ALTER TABLE "ceph_mds" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_mds" DROP COLUMN "host_id" CASCADE;
+        ALTER TABLE "ceph_mon" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_mon" DROP COLUMN "host_id" CASCADE;
+        ALTER TABLE "ceph_osd" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_osd" DROP COLUMN "journal_id" CASCADE;
+        ALTER TABLE "ceph_osd" DROP COLUMN "volume_id" CASCADE;
+        ALTER TABLE "ceph_pool" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_pool" DROP COLUMN "volumepool_ptr_id" CASCADE;
+        DROP TABLE "ceph_entity" CASCADE;
+        DROP TABLE "ceph_image" CASCADE;
+        DROP TABLE "ceph_mds" CASCADE;
+        DROP TABLE "ceph_mon" CASCADE;
+        DROP TABLE "ceph_osd" CASCADE;
+        DROP TABLE "ceph_pool" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "author_id" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "created_at" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "edited_at" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "epoch" CASCADE;
+        DROP TABLE "ceph_cluster" CASCADE;
+        """
+    )
 ]
 
 
