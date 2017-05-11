@@ -451,6 +451,7 @@ fi
 %config %{icinga_sysconfdir}/objects/openattic_static.cfg
 %config %{icinga_sysconfdir}/objects/openattic_contacts.cfg
 %{nagios_plugindir}/check_openattic_systemd
+%{nagios_plugindir}/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
 %attr(0644, -, -) %{_datadir}/%{name}/nagios/restapi.py
