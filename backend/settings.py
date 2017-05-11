@@ -345,6 +345,7 @@ INSTALLED_APPS = [
     'rest',
     'systemd',
     'sysutils',
+    'volumes',
 ]
 
 INSTALLED_MODULES = []

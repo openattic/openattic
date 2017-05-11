@@ -362,16 +362,7 @@ sudo ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
 
 pushd openattic/backend/
 
-python manage.py pre_install
-if [ "$IS_TRUSTY" ]
-then
-    python manage.py syncdb --noinput
-else
-    python manage.py migrate
-fi
-python manage.py loaddata */fixtures/initial_data.json
-python manage.py createcachetable status_cache
-python manage.py add-host
+python manage.py install --pre-install
 
 popd
 EOF
@@ -396,8 +387,7 @@ sudo -i -u vagrant bash -e << EOF
 
 pushd openattic/backend/
 
-python manage.py makedefaultadmin
-python manage.py post_install
+python manage.py install --post-install
 
 popd
 
