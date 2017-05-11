@@ -405,6 +405,7 @@ fi
 %config %{_sysconfdir}/nagios/conf.d/%{name}_static.cfg
 %config %{_sysconfdir}/nagios/conf.d/%{name}_contacts.cfg
 %{_libdir}/nagios/plugins/check_openattic_systemd
+%{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
 
