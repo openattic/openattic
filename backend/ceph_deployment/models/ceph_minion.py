@@ -53,5 +53,5 @@ class CephMinion(NodbModel):
         for minion in minions:
             minion['cluster_id'] = minion['fsid'] if 'fsid' in minion else None
 
-        return [CephMinion(**CephMinion.make_model_args(host, ['public_address', 'storage']))
+        return [CephMinion(**CephMinion.make_model_args(host, ['public_address', 'storage', 'public_network', 'cluster_network', 'roles', 'mon_initial_members', 'mon_host']))
                 for host in minions]

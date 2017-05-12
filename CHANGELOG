@@ -43,6 +43,7 @@ Changed
 * WebUI: Renames osd service cluster id to fsid (OP-2110)
 * WebUI/QA: Adapted tests (OP-2092)
 * WebUI: Combined add/edit controller and templates of widgets and dashboards (OP-2111)
+* WebUI: Improved Ceph health widget (OP-1738)
 * API: Convert Postgres based Crushmap API to NoDB (OP-1273)
 * WebUI: The WebUI no longer depends on the DB API endpoint (OP-2145)
 

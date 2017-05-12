@@ -30,7 +30,6 @@ def create_nagios(**kwargs):
     signals.post_save.disconnect(update_conf, sender=Service)
 
     nagios = get_dbus_object("/nagios")
-    nagios.restart_service()
 
     for servstate in Service.nagstate["servicestatus"]:
         if servstate["service_description"].startswith("Check Ceph") or \
@@ -64,12 +63,6 @@ def create_nagios(**kwargs):
                            description=servstate["service_description"], command=cmd,
                            arguments=('!'.join(cmdargs)))
             serv.save()
-
-    cmd = Command.objects.get(name='check_cputime')
-    if Service.objects.filter(host=Host.objects.get_current(), command=cmd).count() == 0:
-        serv = Service(host=Host.objects.get_current(), command=cmd,
-                       description=nagios_settings.CPUTIME_DESCRIPTION, arguments="")
-        serv.save()
 
     nagios.writeconf()
     nagios.restart_service()

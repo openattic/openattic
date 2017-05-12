@@ -17,6 +17,7 @@ import logging
 
 import django
 import itertools
+import operator
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -80,6 +81,8 @@ class NodbQuerySet(QuerySet):
         self._context = context
         self._current = 0
         self._query = NoDbQuery()
+        self._result_cache = None
+        self._prefetch_related_lookups = False
 
     @cached_property
     def _max(self):
@@ -105,13 +108,19 @@ class NodbQuerySet(QuerySet):
 
         def filter_impl(keys, value, obj):
             assert keys
-            if not hasattr(obj, keys[0]):
+            if isinstance(obj, dict):
+                if keys[0] not in obj:
+                    raise AttributeError(
+                        'Attribute {} does not exist in dict'.format(keys[0]))
+            elif not hasattr(obj, keys[0]):
                 raise AttributeError(
                     'Attribute {} does not exist for {}'.format(keys[0], obj.__class__))
-            attr = getattr(obj, keys[0], None)
+            attr = obj[keys[0]] if isinstance(obj, dict) else getattr(obj, keys[0], None)
             if attr is None:
                 return value is None
-            elif isinstance(attr, models.Model):
+            elif isinstance(attr, list):
+                return reduce(operator.or_, [filter_impl(keys[1:], value, e) for e in attr], False)
+            elif isinstance(attr, models.Model) or isinstance(attr, dict):
                 return filter_impl(keys[1:], value, attr)
             else:
                 modifier = keys[1] if len(keys) > 1 else "exact"

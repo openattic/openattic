@@ -1,0 +1,19 @@
+<oa-delete-confirmation-modal title="{{ (iscsiTargets.length > 1) ? 'Delete iSCSI targets' : 'Delete iSCSI target' }}"
+                           on-confirm="delete()" on-cancel="cancel()">
+  <div ng-if="iscsiTargets.length === 1">
+    <p>
+      You are about to delete the iSCSI target <strong>{{iscsiTargets[0].targetId}}</strong>.
+    </p>
+  </div>
+  <div ng-if="iscsiTargets.length > 1">
+    <p>
+      You are about to delete multiple iSCSI targets.
+    </p>
+    <span class="text-danger">The following iSCSI targets will be deleted:</span>
+      <ul class="text-danger">
+        <li ng-repeat="iscsiTarget in iscsiTargets">
+          {{iscsiTarget.targetId}}
+        </li>
+      </ul>
+  </div>
+</oa-delete-confirmation-modal>

@@ -328,8 +328,8 @@ if [ $1 -eq 0 ] ; then
     echo "database user, run the following commands as root:"
     echo ""
     echo "su - postgres -c psql"
-    echo "postgres=# drop database openattic"
-    echo "postgres=# drop user openattic"
+    echo "postgres=# drop database openattic;"
+    echo "postgres=# drop user openattic;"
     echo "postgres=# \q"
     echo ""
 fi
@@ -405,6 +405,7 @@ fi
 %config %{_sysconfdir}/nagios/conf.d/%{name}_static.cfg
 %config %{_sysconfdir}/nagios/conf.d/%{name}_contacts.cfg
 %{_libdir}/nagios/plugins/check_openattic_systemd
+%{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
 
