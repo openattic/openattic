@@ -31,9 +31,11 @@ Added
 * WebUI: Introduce a set of commands to build the frontend (OP-1752)
 * WebUI: Added OSD status widget (OP-1937)
 * WebUI: Add API timeouts to the UI (OP-1544)
-* WebUI: Display a warning dialog if there are unsaved changes and the view is changed (OP-1732)
-  Thanks to Tiago Melo for the contribution.
+* WebUI: Display a warning dialog if there are unsaved changes and the view is changed.
+  Thanks to Tiago Melo for the contribution. (OP-1732)
 * WebUI: Add expression support to the ngRequired directive.
+* WebUI: Added a list of the recent notifications.
+  Thanks to Tiago Melo for the contribution. (OP-1989)
 
 Changed
 ~~~~~~~
