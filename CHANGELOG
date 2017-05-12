@@ -33,6 +33,8 @@ Added
 * WebUI: Add API timeouts to the UI (OP-1544)
 * WebUI: Display a warning dialog if there are unsaved changes and the view is changed.
   Thanks to Tiago Melo for the contribution. (OP-1732)
+* WebUI: Added a new navbar entry to show recent notifications
+  Thanks to Tiago Melo for the contribution. (OP-1989)
 * WebUI: Add expression support to the ngRequired directive.
 * WebUI: Added a list of the recent notifications.
   Thanks to Tiago Melo for the contribution. (OP-1989)
