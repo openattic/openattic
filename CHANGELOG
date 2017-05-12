@@ -23,11 +23,13 @@ In general, this release focuses on the 3.0 refactoring and cleanup epic (OP-207
 
 Added
 ~~~~~
+* Backend: Ceph iSCSI targets management REST Api (OP-2133)
 * Backend: Added the functionality to reset the password of an user (OP-589)
 * Backend: Generic REST client support classes (OP-1889)
 * Backend: Salt REST API support (OP-1889)
 * Backend: Implemented a RGW Admin Ops API proxy (OP-1612)
 * Backend: Made `backend/settings.py` variables' adaptable (OP-2156)
+* WebUI: Ceph iSCSI targets management (OP-2134)
 * WebUI: Introduce a set of commands to build the frontend (OP-1752)
 * WebUI: Added OSD status widget (OP-1937)
 * WebUI: Add API timeouts to the UI (OP-1544)
