@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,12 +30,31 @@
  */
 "use strict";
 
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephIscsi",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd"
-]);
+var app = angular.module("openattic.cephIscsi");
+app.value("CEPH_ISCSI_TARGET_ADVANCED_SETTINGS", [
+    {
+      property: "tpg_default_cmdsn_depth",
+      help: "Default CmdSN (Command Sequence Number) depth. Limits the amount of requests that an iSCSI initiator " +
+      "can have outstanding at any moment"
+    },
+    {
+      property: "tpg_default_erl",
+      help: "Default error recovery level"
+    },
+    {
+      property: "tpg_login_timeout",
+      help: "Login timeout value in seconds"
+    },
+    {
+      property: "tpg_netif_timeout",
+      help: "NIC failure timeout in seconds"
+    },
+    {
+      property: "tpg_prod_mode_write_protect",
+      help: "If set to 1, prevent writes to LUNs"
+    },
+    {
+      property: "tpg_t10_pi",
+      help: ""
+    }
+  ]);

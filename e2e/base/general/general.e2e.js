@@ -77,6 +77,7 @@ describe('General', function(){
     'ceph_rbds',
     'ceph_pools',
     'ceph_nodes',
+    'ceph_iscsi',
     'ceph_crushmap',
     'system'
   ]);

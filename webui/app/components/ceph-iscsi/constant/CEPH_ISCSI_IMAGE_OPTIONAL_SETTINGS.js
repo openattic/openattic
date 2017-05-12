@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,12 +30,22 @@
  */
 "use strict";
 
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephIscsi",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd"
-]);
+var app = angular.module("openattic.cephIscsi");
+app.value("CEPH_ISCSI_IMAGE_OPTIONAL_SETTINGS", [
+    {
+      property: "uuid",
+      help: ""
+    },
+    {
+      property: "retries",
+      help: ""
+    },
+    {
+      property: "sleep",
+      help: ""
+    },
+    {
+      property: "retry_errors",
+      help: ""
+    }
+  ]);
