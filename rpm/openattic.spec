@@ -367,6 +367,7 @@ fi
 %{_datadir}/%{name}/pamauth.py*
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
+%{_datadir}/%{name}/rest_client.py*
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
@@ -392,7 +393,6 @@ fi
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
 %{_datadir}/%{name}/ceph_deployment/
-%{_datadir}/%{name}/rest_client.py*
 
 %files gui
 %defattr(-,root,root,-)
