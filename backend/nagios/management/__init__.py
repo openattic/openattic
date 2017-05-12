@@ -30,7 +30,6 @@ def create_nagios(**kwargs):
     signals.post_save.disconnect(update_conf, sender=Service)
 
     nagios = get_dbus_object("/nagios")
-    nagios.restart_service()
 
     for servstate in Service.nagstate["servicestatus"]:
         if servstate["service_description"].startswith("Check Ceph") or \
