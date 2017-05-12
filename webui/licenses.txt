@@ -5,11 +5,10 @@ bower packages
 --------------
 angular                           1.5.3               MIT                         https://github.com/angular/bower-angular/tree/v1.5.3
 angular-bootstrap                 2.5.0               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/2.5.0
+angular-bootstrap-toggle          0.1.2               MIT                         https://github.com/ziscloud/angular-bootstrap-toggle/tree/v0.1.2
 angular-breadcrumb                0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
-angular-flot                      0.0.16              MIT                         https://github.com/develersrl/angular-flot/tree/v0.0.16
 angular-gridster                  0.13.9              MIT                         https://github.com/ManifestWebDesign/angular-gridster/tree/v0.13.9
 angular-md5                       0.1.10              MIT                         https://github.com/gdi2290/angular-md5/tree/v0.1.10
-angular-mocks                     1.5.3               MIT                         https://github.com/angular/bower-angular-mocks/tree/v1.5.3
 angular-nvd3                      1.0.8               MIT                         https://github.com/krispo/angular-nvd3/tree/v1.0.8
 angular-resource                  1.5.3               MIT                         https://github.com/angular/bower-angular-resource/tree/v1.5.3
 angular-sanitize                  1.5.3               MIT                         https://github.com/angular/bower-angular-sanitize/tree/v1.5.3
@@ -18,14 +17,12 @@ angular-ui-router                 0.2.18              MIT                       
 angular-ui-sortable               0.14.0              MIT                         https://github.com/angular-ui/ui-sortable/tree/v0.14.0
 angular-ui-tree                   2.15.0              MIT                         https://github.com/JimLiu/angular-ui-tree/tree/v2.15.0
 bootstrap                         3.3.6               MIT                         https://github.com/twbs/bootstrap/tree/v3.3.6
+bootstrap-notifications           1.0.1               MIT                         https://github.com/skywalkapps/bootstrap-notifications/tree/v1.0.1
 d3                                3.5.17              BSD-3-Clause                https://github.com/mbostock-bower/d3-bower/tree/v3.5.17
 fontawesome                       4.5.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.5.0
-javascript-detect-element-resize  0.5.3               MIT                         https://github.com/sdecima/javascript-detect-element-resize/tree/v0.5.3
 jquery                            2.2.3               MIT                         https://github.com/jquery/jquery-dist/tree/2.2.3
-jquery.easy-pie-chart             2.1.6               MIT                         https://github.com/rendro/easy-pie-chart/tree/2.1.6
-jquery-flot                       0.8.3               MIT                         https://github.com/flot/flot/tree/v0.8.3
 jquery-ui                         1.11.4              MIT                         https://github.com/components/jqueryui/tree/1.11.4
-lodash                            4.11.0              MIT                         https://github.com/lodash/lodash/tree/4.11.0
+ngstorage                         0.3.10              MIT                         https://github.com/gsklee/ngStorage/tree/0.3.10
 ng-tags-input                     3.0.0               MIT                         https://github.com/mbenford/ngTagsInput-bower/tree/v3.0.0
 nvd3                              1.8.4               Apache-2.0                  https://github.com/novus/nvd3/tree/v1.8.4
 requirejs                         2.2.0               MIT, BSD-3-Clause           https://github.com/jrburke/requirejs-bower/tree/2.2.0

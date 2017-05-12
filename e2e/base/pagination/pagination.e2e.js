@@ -1,9 +1,10 @@
 var helpers = require('../../common.js');
+var UserTable = require('../users/UserTable.js');
+var UserForm = require('../users/UserForm.js');
 
 describe('Pagination', function(){
-
-  var systemItem = element(by.css('.tc_menuitem_system > a'));
-  var cmdlogs = element(by.css('.tc_submenuitem_system_cmdlog > a'));
+  var userTable = new UserTable();
+  var userForm = new UserForm();
 
   var firstPage = element(by.css('.pagination .first'));
   var prevPage = element(by.css('.pagination .prev'));
@@ -12,6 +13,8 @@ describe('Pagination', function(){
   var lastPage = element(by.css('.pagination .last'));
 
   var lastPageNumber = element(by.css('.pagination.paginate-input .paginate_of b'));
+
+  var numUsersToCreate = 10;
 
   var currentPage = function(){
     return inputPage.getAttribute('value');
@@ -32,8 +35,14 @@ describe('Pagination', function(){
 
   beforeAll(function(){
     helpers.login();
-    systemItem.click();
-    cmdlogs.click();
+    browser.setLocation('users');
+    for (var i=0;i<numUsersToCreate;i++) {
+      userTable.removeUserIfExists('e2e_user_'+i);
+      userTable.addUser();
+      userForm.username.sendKeys('e2e_user_'+i);
+      userForm.password.sendKeys('password');
+      userForm.submit();
+    }
     browser.sleep(400);
   });
 
@@ -147,6 +156,9 @@ describe('Pagination', function(){
   });
 
   afterAll(function(){
+    for (var i=0;i<numUsersToCreate;i++) {
+      userTable.removeUserIfExists('e2e_user_'+i);
+    }
     console.log('pagination -> pagination.e2e.js');
   });
 });

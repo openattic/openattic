@@ -17,6 +17,8 @@ import unittest
 import requests
 import json
 
+from requests.auth import HTTPBasicAuth
+
 
 class GatlingTestCase(unittest.TestCase):
 
@@ -44,7 +46,8 @@ class GatlingTestCase(unittest.TestCase):
             raise unittest.SkipTest("%s tests disabled in configuration" % section)
 
     @classmethod
-    def send_request(cls, method, prefixes=None, auth_token=None, *args, **kwargs):
+    def send_request(cls, method, prefixes=None, auth_token=None, username=None, password=None,
+                     data=None, obj_id=None, search_param=None):
         """
         Sends a request to openATTICs REST API and returns the response
 
@@ -75,13 +78,17 @@ class GatlingTestCase(unittest.TestCase):
                                  the defined one in the config. The request will be send with
                                  with this authentication token instead of the token defined in
                                  the config.
-        :param args: None
-        :param kwargs:  obj_id (int)      -> Object id to get a specific object by GET request.
-                        data (dict)       -> Data for creating a new object by POST request.
-                        search_param (str)-> Search param, e.g.: "name=vol_name" to search for a
-                                             specific volume.
-                                             It generates the following url:
-                                             http://host/openattic/api/volumes?name=vol_name
+        :param username (str): Optional parameter. For another needed username than the one defined
+                               in the config. Note: if username + password AND auth_token are given
+                               username and password will be used for the request.
+        :param password (str): Optional parameter. For another needed password than the one defined
+                               in the config. Note: if username + password AND auth_token are given
+                               username and password will be used for the request.
+        :param data (dict): Data for creating a new object by POST request.
+        :param obj_id (int): Object id to get a specific object by GET request.
+        :param search_param (str): Search param, e.g.: "name=vol_name" to search for a specific
+                                   volume. It generates the following url:
+                                   http://host/openattic/api/volumes?name=vol_name
         :return: In case of:
             -   POST and PUT requests: A dictionary {"response": api_response, "count": 1,
                 "cleanup_url": cleanup_url, "headers": creation headers}
@@ -92,72 +99,58 @@ class GatlingTestCase(unittest.TestCase):
                 objects a dictionary {"response": api_response, "count": sum of returned objects}
         """
         prefixes = cls._get_sturctured_prefixes(prefixes)
-        header = cls.get_auth_header(auth_token)
-        url = "%s%s" % (cls.base_url, prefixes["api_prefix"])
+        url = '{}{}'.format(cls.base_url, prefixes['api_prefix'])
 
-        if "obj_id" in kwargs:
-            url = "%s/%s" % (url, str(kwargs["obj_id"]))
+        if obj_id:
+            url = '{}/{}'.format(url, obj_id)
 
-        header["content-type"] = "application/json"
-        data = kwargs.get("data", None)
+        header = dict()
+        header['content-type'] = 'application/json'
+        auth = None
+
+        if not (username and password):
+            header.update(cls.get_auth_header(auth_token))
+        else:
+            auth = HTTPBasicAuth(username, password)
 
         # POST, PUT
-        if method in ["POST", "PUT"]:
-            if prefixes["detail_route"]:
-                url = "%s/%s" % (url, prefixes["detail_route"])
+        if method in ['POST', 'PUT']:
+            if prefixes['detail_route']:
+                url = '{}/{}'.format(url, prefixes['detail_route'])
 
-            res = requests.request(method, url, data=json.dumps(data), headers=header)
-
-            try:
-                res.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                # Modify the error message and re-raise the exception.
-                raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
-                                                    response=e.response,
-                                                    request=e.request)
+            res = cls._do_request(method, url, header, data=data, auth=auth)
             res = json.loads(res.text)
 
-            return {"response": res,
-                    "count": 1,
-                    "cleanup_url": cls._get_cleanup_url(res["id"], prefixes),
-                    "headers": header}
+            return {'response': res,
+                    'count': 1,
+                    'cleanup_url': cls._get_cleanup_url(res['id'], prefixes),
+                    'headers': header}
         # GET, DELETE
-        elif method in ["GET", "DELETE"]:
-            if "search_param" in kwargs:
-                url = "%s?%s" % (url, kwargs["search_param"])
+        elif method in ['GET', 'DELETE']:
+            if search_param:
+                url = '{}?{}'.format(url, search_param)
 
-            if data:
-                res = requests.request(method, url, data=json.dumps(data), headers=header)
-            else:
-                res = requests.request(method, url, headers=header)
-
-            try:
-                res.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                # Modify the error message and re-raise the exception.
-                raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
-                                                    response=e.response,
-                                                    request=e.request)
+            res = cls._do_request(method, url, header, data=data, auth=auth)
 
             # For method DELETE no json object could be decoded, so just return the response
             # otherwise return the result dict
             try:
                 res = json.loads(res.text)
             except:
-                return {"response": res}
+                return {'response': res}
             else:
-                if "obj_id" in kwargs:
-                    header["content-type"] = "application/json"
-                    return {"response": res,
-                            "count": 1,
-                            "cleanup_url": url,
-                            "headers": header}
+                if obj_id:
+                    header['content-type'] = 'application/json'
+                    return {'response': res,
+                            'count': 1,
+                            'cleanup_url': url,
+                            'headers': header}
                 else:
-                    return {"response": res["results"],
-                            "count": res["count"]}
+                    return {'response': res['results'],
+                            'count': res['count']}
         else:
-            print "Unknown request method '%s'" % method
-            raise unittest.SkipTest("Unknown request method '%s'" % method)
+            print('Unknown request method \'{}\''.format(method))
+            raise unittest.SkipTest('Unknown request method \'{}\''.format(method))
 
     @classmethod
     def get_auth_header(cls, auth_token=None):
@@ -191,20 +184,6 @@ class GatlingTestCase(unittest.TestCase):
         res = requests.post(request_url, data={"username": username, "password": password})
         res.raise_for_status()
         return res.json()["token"]
-
-    @classmethod
-    def delete_old_existing_gatling_volumes(cls):
-        """
-        Searches for old existing gatling volumes that were not deleted correctly by the last test
-        case and removes them.
-
-        :return: None
-        """
-        for name in ["gatling_volume", "gatling_clone", "volume_snapshot_made_by_gatling"]:
-            res = cls.send_request("GET", "volumes", search_param=("name=%s" % name))
-            if res["count"] > 0:
-                for vol in res["response"]:
-                    cls.send_request("DELETE", "volumes", obj_id=vol["id"])
 
     def check_exception_messages(self, err_response, expected_message, **kwargs):
         """
@@ -243,133 +222,6 @@ class GatlingTestCase(unittest.TestCase):
             self.assertIn(expected_message, message)
         else:
             self.assertEqual(expected_message, message)
-
-    def check_volume_properties(self, vol, max_size=None):
-        """
-        Checks the volume specific properties.
-
-        :param vol (dict): Response dictionary given by the REST api.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the
-                               volume.
-        :return:  None
-        """
-        vol_res = self._check_base_properties(vol, max_size)
-
-        self.assertNotIn("snapshot", vol_res)
-
-        if self.fstype is None:
-            self.assertIn(vol_res["path"], ["/dev/%s/gatling_volume" % self._get_pool()["name"],
-                                            "/dev/zvol/%s/gatling_volume" %
-                                            self._get_pool()["name"]])
-        else:
-            if self.fstype == "btrfs":
-                self.assertEqual(vol_res["path"], "/media/gatling_btrfs/gatling_volume")
-            elif self.fstype == "zfs":
-                self.assertEqual(vol_res["path"], "/media/%s/gatling_volume" %
-                                 self._get_pool()["name"])
-            else:
-                self.assertEqual(vol_res["path"], "/media/gatling_volume")
-
-    def check_snapshot_properties(self, snap, vol_id, max_size=None):
-        """
-        Checks the snapshot specific properties.
-
-        :param snap (dict): Response dictionary given by the REST api.
-        :param vol_id (int): ID of the related volume.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the
-                               snapshot.
-        :return: None
-        """
-        snap_res = self._check_base_properties(snap, max_size)
-
-        self.assertIn("snapshot", snap_res)
-        self.assertIn("id", snap_res["snapshot"])
-        self.assertIn("source_pool", snap_res)
-        self.assertIn("id", snap_res["source_pool"])
-        self.assertEqual(snap_res["source_pool"]["id"], self._get_pool()["id"])
-        self.assertEqual(snap_res["snapshot"]["id"], vol_id)
-
-        if self.fstype is None:
-            self.assertIn(snap_res["path"],
-                          ["/dev/%s/volume_snapshot_made_by_gatling" %
-                           self._get_pool()["name"],
-                           "/dev/zvol/%s/gatling_volume@volume_snapshot_made_by_gatling" %
-                           self._get_pool()["name"]])
-        else:
-            self.assertIn(snap_res["path"],
-                          ["/media/volume_snapshot_made_by_gatling",
-                           "/media/gatling_volume/.snapshots/volume_snapshot_made_by_gatling",
-                           ("/media/%s/.snapshots/volume_snapshot_made_by_gatling" %
-                            self._get_pool()["name"])])
-
-    def check_clone_properties(self, clone, max_size=None):
-        """
-        Checks the clone specific properties.
-
-        :param clone (dict): Response dictionary given by the REST api.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the
-                               clone.
-        :return: None
-        """
-        clone_res = self._check_base_properties(clone, max_size)
-
-        self.assertIn("source_pool", clone_res)
-        self.assertIn("id", clone_res["source_pool"])
-        self.assertEqual(clone_res["source_pool"]["id"], self._get_pool()["id"])
-
-        if "snapshot" in clone_res:
-            self.assertIsNone(clone_res["snapshot"])
-
-        if self.fstype is None:
-            self.assertIn(clone_res["path"], ["/dev/%s/gatling_clone" % self._get_pool()["name"],
-                                              "/dev/zvol/%s/gatling_clone" %
-                                              self._get_pool()["name"]])
-        else:
-            self.assertEqual(clone_res["path"], "/media/gatling_clone")
-
-    def _check_base_properties(self, vol, max_size):
-        """
-        Checks the general properties belonging to a volume, snapshot or clone like size, status or
-        is_volumepool.
-
-        :param vol (dict): Response dictionary given by the REST api.
-        :param max_size (int): Allowed maximum size of the volume. If max_size is None the
-                               smallsize is taken instead.
-        :return: The "response" key value of the given dictionary.
-        """
-        if not max_size:
-            max_size = self.smallsize
-
-        self.assertIn("response", vol)
-        vol_res = vol["response"]
-
-        self.assertIn("id", vol_res)
-        self.assertIn("is_filesystemvolume", vol_res)
-        self.assertIn("path", vol_res)
-        self.assertIn("is_volumepool", vol_res)
-        self.assertIn("is_blockvolume", vol_res)
-        self.assertIn("usage", vol_res)
-        self.assertIn("size", vol_res["usage"])
-        self.assertIn("status", vol_res)
-        self.assertIn("status", vol_res["status"])
-        self.assertFalse(vol_res["is_volumepool"])
-        self.assertLessEqual(vol_res["usage"]["size"], max_size)
-        self.assertIn(vol_res["status"]["status"], ["good", "locked"])
-
-        if self.fstype is None:
-            self.assertTrue(vol_res["is_blockvolume"])
-            self.assertFalse(vol_res["is_filesystemvolume"])
-        else:
-            self.assertIn("type", vol_res)
-            self.assertIn("name", vol_res["type"])
-            self.assertTrue(vol_res["is_filesystemvolume"])
-
-            if self.fstype == "btrfs":
-                self.assertEqual(vol_res["type"]["name"], "btrfs subvolume")
-            else:
-                self.assertEqual(vol_res["type"]["name"], self.fstype)
-
-        return vol_res
 
     @classmethod
     def _get_sturctured_prefixes(cls, prefixes):
@@ -423,3 +275,36 @@ class GatlingTestCase(unittest.TestCase):
                 return "%s%s/%s" % (cls.base_url, prefixes["detail_route"], str(obj_id))
         else:
             return "%s%s/%s" % (cls.base_url, prefixes["api_prefix"], str(obj_id))
+
+    @classmethod
+    def _do_request(cls, method, url, headers, data=None, auth=None):
+        """
+        Helper function to send the request to the REST API.
+
+        :param method: HTTP method of the request
+        :type method: str
+        :param url: Request url
+        :type url: str
+        :param headers: Request headers
+        :type headers: dict[str, str]
+        :param data: Request data
+        :type data: dict[str, Any]
+        :param auth: Basic auth object of username and password
+        :type auth: requests.HTTPBasicAuth
+        :return: Returns the response of the request
+        :rtype: requests.response
+
+        """
+        if data:
+            data = json.dumps(data)
+
+        res = requests.request(method, url, headers=headers, data=data, auth=auth)
+
+        try:
+            res.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            # Modify the error message and re-raise the exception.
+            raise requests.exceptions.HTTPError("{} content: {}".format(str(e), res.text),
+                                                response=e.response,
+                                                request=e.request)
+        return res

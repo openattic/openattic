@@ -55,18 +55,6 @@ SYSD_OPTIONS="$OADIR/manage.py runsystemd"
 WEBSERVER_SERVICE="apache2"
 
 ## Type: string
-## Default: "smb nmb"
-#
-# Names of samba services
-SAMBA_SERVICES="smb nmb"
-
-## Type: string
-## Default: "winbind"
-#
-# Name of winbind service
-WINBIND_SERVICE="winbind"
-
-## Type: string
 ## Default: "/run/icinga/icinga.cmd"
 #
 # Path for processing commands submitted by other applications

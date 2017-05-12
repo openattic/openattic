@@ -19,9 +19,14 @@ describe('should test the login', function(){
     expect(browser.getCurrentUrl()).toContain('#/dashboard');
   });
 
+  it('should go to dashboard when already logged in', function(){
+    browser.get(configs.url);
+    expect(browser.getCurrentUrl()).toContain('#/dashboard');
+  });
+
   it('should click any menu entry', function(){
-    element(by.css('ul .tc_menuitem_volumes > a')).click();
-    expect(browser.getCurrentUrl()).toContain('#/volumes');
+    element(by.css('ul .tc_menuitem_ceph_osds > a')).click();
+    expect(browser.getCurrentUrl()).toContain('#/ceph/osds');
   });
 
   it('should logout again', function(){

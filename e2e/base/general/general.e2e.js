@@ -7,6 +7,7 @@ describe('General', function(){
   var menuCheck = function(menu){
     var menuCount = 0;
     var menuItems = element.all(by.css('.tc_menuitem > a'));
+    var url;
 
     menu.forEach(function(name){
       var item = element(by.css('.tc_menuitem_' + name + ' > a'));
@@ -17,12 +18,11 @@ describe('General', function(){
         }
       });
       it('should click ' + item + ' and check the url', function(){
-        if(item.isDisplayed()){
-          if(name != 'system' && name != 'ceph'){
-            item.click();
-            browser.sleep(400);
-            expect(browser.getCurrentUrl()).toContain('/openattic/#/' + name);
-          }
+        if(item.isDisplayed() && name != 'system'){
+          url = name.replace("_", "/");
+          item.click();
+          browser.sleep(400);
+          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + url);
         }
       });
     });
@@ -58,6 +58,28 @@ describe('General', function(){
     });
   };
 
+  var notificationsCheck = function(){
+    var api_recorder = element(by.css('.tc_api-recorder'));
+    var notification_icon = element(by.css('.dropdown-notifications'));
+
+    it('should have recent notifications', function(){
+      api_recorder.click();
+      api_recorder.click();
+      notification_icon.click();
+      expect(element(by.css('.dropdown-notifications .notification')).isDisplayed()).toBe(true);
+      notification_icon.click();
+    });
+
+
+    it('should remove all recent notifications', function(){
+      notification_icon.click();
+      element(by.css('.dropdown-toolbar-actions a')).click();
+      notification_icon.click();
+      expect(element(by.css('.dropdown-notifications .notification')).isPresent()).toBe(false);
+      expect(element(by.css('.dropdown-notifications .dropdown-footer')).isDisplayed()).toBe(true);
+    });
+  }
+
 
   beforeAll(function(){
     helpers.login();
@@ -74,32 +96,14 @@ describe('General', function(){
   /* Menuitems */
   menuCheck([ //Put here the final menu order
     'dashboard', //has to be there
-    'disks',
-    'pools',
-    'volumes',
-    'ceph',
-    'hosts',
-    'system' //has to be there
+    'ceph_osds',
+    'ceph_rbds',
+    'ceph_pools',
+    'ceph_nodes',
+    'ceph_iscsi',
+    'ceph_crushmap',
+    'system'
   ]);
-
-  /* Ceph and its subitems */
-  subitemCheck({
-    name: 'ceph',
-    item: element(by.css('.tc_menuitem_ceph > a')),
-    url: '/openattic/#/ceph/',
-    subitems: {
-      osds: element(by.css('.tc_submenuitem_ceph_osds')),
-      rbds: element(by.css('.tc_submenuitem_ceph_rbds')),
-      pools: element(by.css('.tc_submenuitem_ceph_pools')),
-      crushmap: element(by.css('.tc_submenuitem_ceph_crushmap'))
-    },
-    order: [
-      'osds',
-      'rbds',
-      'pools',
-      'crushmap'
-    ]
-  });
 
   /* System and its subitems */
   subitemCheck({
@@ -116,14 +120,16 @@ describe('General', function(){
     ]
   });
 
+  notificationsCheck();
+
   it('should check if the openATTIC logo is visible', function(){
     expect(oaLogo.isDisplayed()).toBe(true);
   });
 
   it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
     //click somewhere else to change the url
-    element(by.css('.tc_menuitem_pools > a')).click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
+    element(by.css('.tc_menuitem_ceph_osds > a')).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/ceph/osds');
     oaLogo.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
   });

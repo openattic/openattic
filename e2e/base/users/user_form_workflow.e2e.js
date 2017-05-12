@@ -1,32 +1,26 @@
 var helpers = require('../../common.js');
 
 describe('should test the user form', function(){
-
-  var systemItem = element(by.css('ul .tc_menuitem_system'));
-  var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
-
   var name = element(by.model('user.username'));
   var passwd = element(by.model('user.password'));
 
   var username = 'herpderp';
   var submitButton = element(by.css('.tc_submitButton'));
 
-
   beforeAll(function(){
     helpers.login();
-
   });
 
   beforeEach(function(){
-    systemItem.click();
-    usersItem.click();
-    element(by.css('.tc_addUser')).click();
+    browser.setLocation('users').then(function(){
+      helpers.check_form();
+      element(by.css('.tc_addUser')).click();
+    });
   });
 
   it('Should have the title "Create User:"', function(){
     expect(element(by.css('.tc_userAddTitle')).getText()).toEqual('Create User:');
   });
-
 
   it('should have a "Username" input field', function(){
     expect(name.isDisplayed()).toBe(true);
@@ -57,8 +51,7 @@ describe('should test the user form', function(){
   });
 
   it('should not have a checkbox title "Is active", while editing the own profile', function(){
-    systemItem.click();
-    usersItem.click();
+    browser.setLocation('users');
     element(by.cssContainingText('tr', 'openattic')).element(by.css('a')).click();
     expect(element(by.id('userActive')).isPresent()).toBe(false);
   });
@@ -115,6 +108,25 @@ describe('should test the user form', function(){
     var backButton = element(by.css('.tc_backButton'));
     backButton.click();
     expect(element(by.css('.tc_oadatatable_users')).isDisplayed()).toBe(true);
+  });
+
+  it('should dismiss form validation and stay on same view', function(){
+    element(by.model('user.username')).sendKeys(username);
+    element(by.model('user.password')).sendKeys('test');
+    element(by.css('.tc_menuitem_ceph_pools')).click().then(function(){
+      element(by.css('.oa-check-form-cancel')).click();
+      expect(element(by.css('.oa-check-form-cancel')).isPresent()).toBe(false);
+      expect(browser.getCurrentUrl()).toContain('/#/users/add');
+    });
+  });
+
+  it('should confirm form validation and change view', function(){
+    element(by.model('user.username')).sendKeys(username);
+    element(by.model('user.password')).sendKeys('test');
+    element(by.css('.tc_menuitem_ceph_pools')).click().then(function(){
+      element(by.css('.oa-check-form-ok')).click();
+      expect(browser.getCurrentUrl()).toContain('/#/ceph/pools');
+    });
   });
 
   afterAll(function(){

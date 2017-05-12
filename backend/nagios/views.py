@@ -29,8 +29,6 @@ from django.views.decorators.cache import never_cache
 from nagios.models import Service, Graph
 from nagios.graphbuilder import Graph as GraphBuilder, parse
 
-from volumes.models import StorageObject
-
 
 @never_cache
 def graph(request, service_id, srcidx):
@@ -145,33 +143,3 @@ def graph(request, service_id, srcidx):
             builder.title = dbgraph.title
 
     return HttpResponse(builder.get_image(), content_type="image/png")
-
-
-@never_cache
-def storageobj_graph(request, storageobj_id, graph_title):
-    """ Return a graph image for a given StorageObject.
-
-        Using this view, the client does not have to care about which service
-        delivers the graph they're looking for, and whether or not the graph
-        is configured in the openATTIC database or a native RRD graph. This
-        view takes a volume and a graph title and searches for the first graph
-        that looks promising.
-
-        Arguments taken by this view are the same as for the `graph' view.
-    """
-    storageobj = get_object_or_404(StorageObject, pk=storageobj_id)
-    for volume in (storageobj.filesystemvolume_or_none, storageobj.blockvolume_or_none):
-        if volume is None:
-            continue
-        ct = ContentType.objects.get_for_model(type(volume))
-        # check all services that collect data for the volume
-        for service in Service.objects.filter(target_id=volume.id, target_type=ct):
-            # look for Graph configs in the oA database
-            for servicegraph in Graph.objects.filter(command=service.command, title=graph_title):
-                return graph(request, service.id, servicegraph.id)
-            # if none found, check if the rrd contains the graph as a plain variable
-            for (srcid, title) in service.rrd.source_labels.items():
-                if title == graph_title:
-                    return graph(request, service.id, srcid)
-
-    raise Http404("Graph not found")

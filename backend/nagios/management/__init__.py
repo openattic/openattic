@@ -20,7 +20,6 @@ from django.db.models import signals
 from systemd import get_dbus_object
 from nagios.conf import settings as nagios_settings
 from ifconfig.models import Host
-from volumes.models import BlockVolume, FileSystemVolume
 
 import sysutils.models
 from nagios.models import Service, Command, update_conf
@@ -31,7 +30,6 @@ def create_nagios(**kwargs):
     signals.post_save.disconnect(update_conf, sender=Service)
 
     nagios = get_dbus_object("/nagios")
-    nagios.restart_service()
 
     for servstate in Service.nagstate["servicestatus"]:
         if servstate["service_description"].startswith("Check Ceph") or \
@@ -66,39 +64,8 @@ def create_nagios(**kwargs):
                            arguments=('!'.join(cmdargs)))
             serv.save()
 
-    cmd = Command.objects.get(name='check_cputime')
-    if Service.objects.filter(host=Host.objects.get_current(), command=cmd).count() == 0:
-        serv = Service(host=Host.objects.get_current(), command=cmd,
-                       description=nagios_settings.CPUTIME_DESCRIPTION, arguments="")
-        serv.save()
-
     nagios.writeconf()
     nagios.restart_service()
-
-    cmd = Command.objects.get(name='check_diskstats')
-    for bv in BlockVolume.objects.all():
-        instance = bv.volume
-        ctype = ContentType.objects.get_for_model(instance.__class__)
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() \
-                != 0:
-            continue
-        srv = Service(host=instance.host, target=instance, command=cmd,
-                      description=nagios_settings.LV_PERF_DESCRIPTION % unicode(instance),
-                      arguments=instance.path)
-        srv.save()
-
-    cmd = Command.objects.get(name='check_volume_utilization')
-    for fsv in FileSystemVolume.objects.all():
-        instance = fsv.volume
-        ctype = ContentType.objects.get_for_model(instance.__class__)
-        print type(instance), instance, instance.id
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() \
-                != 0:
-            continue
-        srv = Service(host=instance.host, target=instance, command=cmd,
-                      description=nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance),
-                      arguments=instance.storageobj.uuid)
-        srv.save()
 
     update_conf()
     signals.post_save.connect(update_conf, sender=Service)

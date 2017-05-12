@@ -74,12 +74,25 @@ def test_taskqueue_0002_taskqueue_description_textfield(cursor):
 def test_0002_auto_20170126_1628(cursor):
     stmt1 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
                'check_twraid_unit');"""
-    stmt2 = """SELECT * FROM sysutils_initscript WHERE name = 'openattic_rpcd';"""
 
     res1 = execute_and_fetch(cursor, stmt1)
-    res2 = execute_and_fetch(cursor, stmt2)
 
-    return (len(res1) or len(res2)) != 0
+    return len(res1)
+
+
+def test_sysutils_0002_delete_initscript(cursor):
+    return _table_exists('sysutils_initscript', cursor)
+
+
+def test_ceph_deployment_remove_CephMinion(cursor):
+    return _table_exists('ceph_deployment_cephminion', cursor)
+
+
+def test_nagios_remove_traditional_fixtures(cursor):
+    if len(execute_and_fetch(cursor, """SELECT * FROM nagios_graph;""")):
+        return True
+    return len(execute_and_fetch(cursor, """SELECT * FROM nagios_command
+                                            WHERE id in (8, 9, 10, 13, 14, 17, 18);"""))
 
 
 # (app, name, test function, SQL statement)
@@ -153,6 +166,71 @@ _migrations = [
         DELETE FROM nagios_command WHERE name in ('check_openattic_rpcd','check_drbd',
         'check_twraid_unit');
         DELETE FROM sysutils_initscript WHERE name = 'openattic_rpcd';
+        COMMIT;
+        """
+    ),
+    (
+        'ceph', u'0004_rm_models_based_on_storageobj',
+        lambda cursor: _table_exists('ceph_osd', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cluster" DROP COLUMN "storageobject_ptr_id" CASCADE;
+        ALTER TABLE "ceph_entity" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_image" DROP COLUMN "blockvolume_ptr_id" CASCADE;
+        ALTER TABLE "ceph_image" DROP COLUMN "rbd_pool_id" CASCADE;
+        ALTER TABLE "ceph_mds" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_mds" DROP COLUMN "host_id" CASCADE;
+        ALTER TABLE "ceph_mon" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_mon" DROP COLUMN "host_id" CASCADE;
+        ALTER TABLE "ceph_osd" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_osd" DROP COLUMN "journal_id" CASCADE;
+        ALTER TABLE "ceph_osd" DROP COLUMN "volume_id" CASCADE;
+        ALTER TABLE "ceph_pool" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_pool" DROP COLUMN "volumepool_ptr_id" CASCADE;
+        DROP TABLE "ceph_entity" CASCADE;
+        DROP TABLE "ceph_image" CASCADE;
+        DROP TABLE "ceph_mds" CASCADE;
+        DROP TABLE "ceph_mon" CASCADE;
+        DROP TABLE "ceph_osd" CASCADE;
+        DROP TABLE "ceph_pool" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "author_id" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "cluster_id" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "created_at" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "edited_at" CASCADE;
+        ALTER TABLE "ceph_crushmapversion" DROP COLUMN "epoch" CASCADE;
+        DROP TABLE "ceph_cluster" CASCADE;
+        """
+    ),
+    (
+        'sysutils', u'0001_initial', None, None
+    ),
+    (
+        'sysutils', u'0002_delete_initscript',
+        test_sysutils_0002_delete_initscript,
+        """
+        BEGIN;
+        DROP TABLE "sysutils_initscript" CASCADE;
+        COMMIT;
+        """
+    ),
+    (
+        'ceph_deployment', u'0002_remove_CephMinion',
+        test_ceph_deployment_remove_CephMinion,
+        """
+        BEGIN;
+        ALTER TABLE "ceph_deployment_cephminion" DROP COLUMN "cluster_id" CASCADE;
+        DROP TABLE "ceph_deployment_cephminion" CASCADE;
+        COMMIT;
+        """
+    ),
+    (
+        'nagios', u'0003_remove_traditional_fixtures',
+        test_nagios_remove_traditional_fixtures,
+        """
+        BEGIN;
+        DELETE FROM nagios_graph;
+        DELETE FROM nagios_service WHERE nagios_service.command_id IN (8, 9, 10, 13, 14, 17, 18);
+        DELETE FROM nagios_command WHERE id in (8, 9, 10, 13, 14, 17, 18);
         COMMIT;
         """
     ),

@@ -96,6 +96,9 @@ if ! getent passwd openattic ; then
 fi
 
 # Create various directories that are normally created by the Debian/RPM packages.
+# openattic-base
+mkdir -p -m 0755 /var/lock/openattic
+chown vagrant: /var/lock/openattic
 # openattic-module-http:
 mkdir -p /var/lib/openattic/http/volumes
 # openattic-module-nfs:

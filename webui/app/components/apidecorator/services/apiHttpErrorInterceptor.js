@@ -37,23 +37,34 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
     decorate: function (error) {
       var simpleMsg;
       var notification;
-      var detalMsg = "";
+      var detailMsg = "";
 
       if (error) {
         $log.error(error);
+        var notificationConfig = {
+          title: error.status === -1 ? "No API response" : error.status + " - " + error.statusText
+        };
         simpleMsg = error && error.config && error.config.method && error.config.url &&
           "[" + error.config.method + ": " + error.config.url + "] => " + error.status;
+        if (error.status === -1) {  // Rejected because of a timeout.
+          simpleMsg = [
+            "The openATTIC REST API didn't respond in time.",
+            "Please see the openattic log file for possible errors."
+          ].join("<br>");
+          angular.extend(notificationConfig, {
+            timeout: false,
+            clickToClose: true
+          });
+        }
         angular.forEach(error.data, function (val, key) {
           if (key === "detail") {
-            detalMsg = val + detalMsg;
+            detailMsg = val + detailMsg;
           } else {
-            detalMsg += "<br>" + key + ": " + val;
+            detailMsg += "<br>" + key + ": " + val;
           }
         });
-        notification = new Notification({
-            title: error.status + " - " + error.statusText,
-            msg: detalMsg || simpleMsg
-          }, error)
+        notificationConfig.msg = detailMsg || simpleMsg;
+        notification = new Notification(notificationConfig, error)
           .show();
 
         /**

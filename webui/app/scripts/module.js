@@ -36,15 +36,15 @@ angular.module("openattic", [
   "ncy-angular-breadcrumb",
   "ngResource",
   "ngSanitize",
+  "ngStorage",
   "ngTagsInput",
   "ui.bootstrap",
   "ui.router",
   "ui.sortable",
+  "ui.toggle",
   "ui.tree",
-  "ngStorage",
   "openattic.core",
   "openattic.extensions",
-  "openattic.local",
   "openattic.ceph"
 ]);
 
@@ -58,10 +58,13 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, usersService) {
-  $rootScope.$on("$stateChangeSuccess", function () {
+app.run(function ($rootScope, usersService, $state) {
+  $rootScope.$on("$stateChangeSuccess", function (event, toState) {
     usersService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
+      if (toState.name === "login") {
+        $state.go("dashboard");
+      }
     }).catch(function (error) {
       error.ignoreStatusCode(401);
       $rootScope.loggedIn = false;

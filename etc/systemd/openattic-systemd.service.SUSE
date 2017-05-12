@@ -1,0 +1,12 @@
+[Unit]
+Description=openATTIC System Exec Daemon
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/openattic
+ExecStart=/usr/bin/python -- ${OADIR}/manage.py runsystemd -l ${SYSD_LOGFILE}
+PIDFile=${SYSD_PIDFILE}
+
+[Install]
+WantedBy=multi-user.target

@@ -40,7 +40,7 @@ module.exports = function (grunt) {
     dist: "dist/",
     name: "openattic-web",
     applicationFiles: [
-      "<%= buildConfig.src %>scripts/module_extensions.js",
+      "<%= buildConfig.src %>scripts/*.js",
       "<%= buildConfig.src %>scripts/**/module.js",
       "<%= buildConfig.src %>scripts/services/*.js",
       "<%= buildConfig.src %>scripts/**/*.js",
@@ -159,7 +159,7 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.src,
-              src: ["bower_components/**", "fonts/**", "images/**"],
+              src: ["bower_components/**", "images/**"],
               dest: buildConfig.dist
             },
             {

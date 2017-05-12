@@ -66,4 +66,4 @@ diff -r 9af3dd6cdd38 webui/app/config.js
 +    "URL": "/api/"
    },
    "GUI": {
-     "activeModules"   : {
+     "uiTimeout": 30000,

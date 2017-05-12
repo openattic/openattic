@@ -13,6 +13,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import sys
+
+from configobj import ConfigObj
 
 PROJECT_ROOT = None
 PROJECT_URL  = '/openattic'
@@ -23,7 +26,8 @@ PROJECT_URL  = '/openattic'
 DATA_ROOT = "/var/lib/openattic"
 import os
 
-from os.path import join, dirname, abspath, exists
+from os.path import join, dirname, abspath, exists, isfile
+
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
     PROJECT_ROOT = dirname(abspath(__file__))
 
@@ -193,13 +197,37 @@ except NameError:
         except IOError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
+
+def read_version():
+    oa_dir = BASE_DIR
+
+    if str.endswith(oa_dir, "/backend"):
+        oa_dir = str.rsplit(oa_dir, "/", 1)[0]
+
+    version_file = oa_dir + "/version.txt"
+    assert isfile(version_file)
+    return ConfigObj(version_file)
+VERSION_CONF = read_version()
+
+
+
+def log_prefix():
+    pid = os.getpid()
+    try:
+        arg = (arg for arg in sys.argv if 'python' not in arg and 'manage.py' not in arg).next()
+    except StopIteration:  # may happen, if you run a python repl manually.
+        arg = sys.argv[0]
+    return '{} {}'.format(pid, arg)
+
+
 # Set logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'oa': {
-            'format': '%(asctime)s - %(levelname)s - %(name)s#%(funcName)s - %(message)s'
+            'format': '%(asctime)s {} %(levelname)s %(name)s#%(funcName)s - %(message)s'.format(
+                log_prefix())
         }
     },
     'handlers': {
@@ -223,10 +251,6 @@ LOGGING = {
 __domconf__ = ConfigParser()
 
 #   set defaults...
-__domconf__.add_section("domain")
-__domconf__.set("domain", "realm", "")
-__domconf__.set("domain", "workgroup", "")
-
 __domconf__.add_section("pam")
 __domconf__.set("pam", "service", "openattic")
 __domconf__.set("pam", "enabled", "no")
@@ -262,13 +286,6 @@ if __domconf__.getboolean("kerberos", "enabled"):
     AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.RemoteUserBackend')
 if __domconf__.getboolean("database", "enabled"):
     AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
-
-HAVE_KERBEROS = __domconf__.getboolean("kerberos", "enabled")
-
-if __domconf__.get("domain", "realm"):
-    SAMBA_DOMAIN = __domconf__.get("domain", "realm")
-if __domconf__.get("domain", "workgroup"):
-    SAMBA_WORKGROUP = __domconf__.get("domain", "workgroup")
 
 # Group used for authorization. (If a user is in this group, they get superuser
 # privileges when they login, if they don't have them already.)
@@ -377,3 +394,27 @@ def __loadmods__():
     modprobe('rosetta')
 
 __loadmods__()
+
+
+# In `backend/nagios/conf/distro.py` there's basically the same parser, but used for a slightly
+# different purpose. This is just to mention that this code is somewhat duplicated. This comment may
+# be removed if the nagios module is removed.
+def get_config(filename):
+    result = {}
+    with open(filename, "r") as f:
+        print('Reading file {}'.format(filename))
+        for line in f:
+            line = line.rstrip()
+            if line and not line.startswith('#'):
+                key, value = line.split('=', 1)
+                value = value.strip('"\'')
+                result[key] = value
+    return result
+
+# Add or replace additional configuration variables
+custom_settings = ('/etc/default/openattic', '/etc/sysconfig/openattic')
+for settings_file in custom_settings:
+    if not os.access(settings_file, os.R_OK):
+        continue
+    for key, value in get_config(settings_file).items():
+        globals()[key] = value

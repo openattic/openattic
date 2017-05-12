@@ -47,7 +47,8 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
   $scope.selection = {};
 
-  if ($scope.cluster.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
+  if (angular.isObject($scope.cluster) && $scope.cluster.results.length > 0 &&
+      angular.isUndefined($scope.registry.selectedCluster)) {
     $scope.registry.selectedCluster = $scope.cluster.results[0];
   }
 
@@ -63,7 +64,7 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
       cephOsdService
           .get({
-            id      : $scope.registry.selectedCluster.fsid,
+            fsid    : $scope.registry.selectedCluster.fsid,
             page    : $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
             search  : $scope.filterConfig.search,

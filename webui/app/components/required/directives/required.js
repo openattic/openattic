@@ -35,7 +35,7 @@ app.directive("required", function ($document, $timeout) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
-      $timeout(function() {
+      $timeout(function () {
         var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
         if (labelNode) {
           var labelElement = angular.element(labelNode);
@@ -46,15 +46,31 @@ app.directive("required", function ($document, $timeout) {
   };
 });
 
-app.directive("ngRequired", function ($document, $timeout) {
+/**
+ * @name ngRequired
+ * @restrict A
+ * @description
+ *
+ * This directive adds a '*' sign to the label of the associated form field to visualize that
+ * the field is required.
+ *
+ * An optional expression can be set. If the expression is truthy, then the '*' sign is added
+ * to the label of the form field.
+ */
+app.directive("ngRequired", function ($document, $timeout, $compile) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
-      $timeout(function() {
+      $timeout(function () {
         var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
         if (labelNode) {
           var labelElement = angular.element(labelNode);
-          labelElement.append("<span class=\"required\"> *</span>");
+          var spanElement = angular.element("<span class=\"required\"> *</span>");
+          labelElement.append(spanElement);
+          if (attrs.ngRequired) {
+            spanElement.attr("ng-if", attrs.ngRequired);
+            $compile(spanElement)(scope);
+          }
         }
       });
     }

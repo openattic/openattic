@@ -35,4 +35,5 @@ angular.module("openattic.apidecorator", [
   ])
   .config(function ($httpProvider) {
     $httpProvider.interceptors.push("ApiHttpErrorInterceptor");
+    $httpProvider.interceptors.push("ApiHttpTimeoutInterceptor");
   });

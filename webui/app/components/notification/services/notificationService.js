@@ -46,7 +46,7 @@ app.value("TWDEFAULTS", {
   }
 });
 
-app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
+app.factory("Notification", function ($timeout, toasty, TWDEFAULTS, $localStorage) {
   /**
    * Notification class used as UI presentational widget to show API errors.
    * @param {Object} config configuration object with properties
@@ -60,6 +60,58 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
     this.delay = 5;
     this.options = angular.extend({}, TWDEFAULTS.options, config);
     return this;
+  };
+
+  /**
+   * Array with the last shown notifications
+   */
+  if (!$localStorage.notifications) {
+    $localStorage.notifications = [];
+  }
+  var recent = $localStorage.notifications;
+
+  /**
+   * Method to be called when there is a new notification
+   */
+  var notify = null;
+
+  /**
+   * Method used for subscribing to notifications
+   * @param {method} callback the method to be called
+   */
+  Notification.subscribe = function (callback) {
+    notify = callback;
+    notify(recent);
+  };
+
+  /**
+   * Method used to remove all current saved notifications
+   */
+  Notification.removeAll = function () {
+    recent = [];
+    $localStorage.notifications = [];
+    notify(recent);
+  };
+
+  /**
+   * Method used for saving a shown notification (check show() method).
+   * @param {Object} notification
+   */
+  var save = function (notification) {
+    /* string representation of the Date object so it can be directly compared
+    with the timestamps parsed from localStorage */
+    notification.timestamp = (new Date()).toJSON();
+
+    recent.push(notification);
+    while (recent.length > 10) {
+      recent.shift();
+    }
+
+    $localStorage.notifications = recent;
+
+    if (notify) {
+      notify(recent);
+    }
   };
 
   /**
@@ -94,6 +146,7 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
       if (angular.isUndefined(options.timeout)) {
         options.timeout = globalConfig.GUI.defaultNotificationTimes[options.type];
       }
+      save(options);
       toasty[options.type](options);
     }, this.delay);
     return this;
@@ -124,9 +177,9 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS) {
     }
     Notification[key] = function (opts, error) {
       var options = angular.extend({}, opts, {
-          type: TWDEFAULTS[key],
-          timeout: globalConfig.GUI.defaultNotificationTimes[key]
-        });
+        type: TWDEFAULTS[key],
+        timeout: globalConfig.GUI.defaultNotificationTimes[key]
+      });
       return Notification.prototype.show.call(Notification.prototype, options, error);
     };
   });

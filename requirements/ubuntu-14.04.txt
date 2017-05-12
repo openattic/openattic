@@ -34,3 +34,4 @@ image==1.5.3
 pyyaml
 ipaddr
 configobj
+requests-aws==0.1.8

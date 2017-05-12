@@ -34,26 +34,6 @@ def open_testdata(name):
     return open(os.path.join(os.path.dirname(__file__), name))
 
 
-class ClusterTestCase(TestCase):
-    def test_get_recommended_pg_num(self):
-        with mock.patch("ceph.models.Cluster.osd_set") as mock_osd_set:
-            c = ceph.models.Cluster()
-            # small setups
-            mock_osd_set.count.return_value = 2
-            self.assertEqual(c.get_recommended_pg_num(3), 128)
-            mock_osd_set.count.return_value = 3
-            self.assertEqual(c.get_recommended_pg_num(3), 128)
-
-            # the example from the Ceph docs
-            mock_osd_set.count.return_value = 200
-            self.assertEqual(c.get_recommended_pg_num(3), 8192)
-
-            # make sure the rounding step doesn't round up a power of two to
-            # the next power of two above it, but keeps it unaltered
-            mock_osd_set.count.return_value = 8192
-            self.assertEqual(c.get_recommended_pg_num(100), 8192)
-
-
 class KeyringTestCase(TestCase):
     def test_keyring_succeeds(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \

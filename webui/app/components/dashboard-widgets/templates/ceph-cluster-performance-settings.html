@@ -10,7 +10,7 @@
   </select>
 </div>
 
-<div class="form-group">
+<div class="form-group" ng-if="input.manager.manager === 'ceph-cluster-performance'">
   <label for="perfData" class="control-label">Performance data options</label>
   <select id="perfData"
           name="perfData"

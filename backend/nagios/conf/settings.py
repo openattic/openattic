@@ -15,9 +15,6 @@
 import os
 
 from django.conf import settings
-from .distro import distro_settings
-
-distro_settings()
 
 LV_UTIL_DESCRIPTION = "Utilization for %s"
 LV_PERF_DESCRIPTION = "Disk stats for %s"

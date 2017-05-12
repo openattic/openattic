@@ -34,9 +34,9 @@ var app = angular.module("openattic.oadeleteconfirmationmodal");
 app.component("oaDeleteConfirmationModal", {
   templateUrl: "components/oa-delete-confirmation-modal/templates/oa-delete-confirmation-modal.html",
   bindings: {
-    title: '@',
-    onConfirm: '&',
-    onCancel: '&'
+    title: "@",
+    onConfirm: "&",
+    onCancel: "&"
   },
   transclude: true,
   controller: function () {

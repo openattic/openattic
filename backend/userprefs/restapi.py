@@ -76,7 +76,7 @@ class UserProfileViewSet(NoCacheReadOnlyModelViewSet, mixins.CreateModelMixin,
         profile = self.get_object()
 
         if profile.user != request.user:
-            return Response("You are not allowed to delete preferences of other users",
+            return Response({'detail': 'You are not allowed to delete preferences of other users'},
                             status=status.HTTP_401_UNAUTHORIZED)
 
         settings = get_request_data(request)["settings"]
@@ -115,7 +115,7 @@ class UserProfileViewSet(NoCacheReadOnlyModelViewSet, mixins.CreateModelMixin,
         profile = self.get_object()
 
         if profile.user != request.user:
-            return Response("You are not allowed to access other users profiles",
+            return Response({'detail': 'You are not allowed to access profiles of other users'},
                             status=status.HTTP_401_UNAUTHORIZED)
 
         profile_ser = self.get_serializer(profile, many=False)

@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibModal, Notification,
-    ClusterResource, cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
+    cephCrushmapService, cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
   $scope.pool = {
     name: "",
     pg_num: 1,
@@ -78,38 +78,24 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
   cephClusterService.get()
     .$promise
     .then(function (clusters) {
-      ClusterResource.get()
-        .$promise
-        .then(function (crushmaps) {
-          $scope.clusters = clusters.results;
-          $scope.clusters.forEach(function (cluster) {
-            var crushmap = crushmaps.results.filter(function (crush) {
-              return crush.name === cluster.name;
-            });
-            if (crushmap.length > 0) {
-              cluster.rules = crushmap[0].crushmap.crushmap.rules;
-            }
+      $scope.clusters = clusters.results;
+      $scope.waitingClusterMsg = "-- Select a cluster --";
+      $scope.clusters.forEach(function (cluster) {
+        if (cluster.fsid === $scope.clusterId) {
+          $scope.data.cluster = cluster;
+        }
+      });
+      if (!$scope.data.cluster) {
+        if (clusters.count > 0) {
+          $scope.data.cluster = $scope.clusters[0];
+        } else {
+          $scope.waitingClusterMsg = "No cluster available.";
+          Notification.warning({
+            title: $scope.waitingClusterMsg,
+            msg: "You can't create any RBDs with your configuration."
           });
-          $scope.waitingClusterMsg = "-- Select a cluster --";
-          $scope.clusters.forEach(function (cluster) {
-            if (cluster.fsid === $scope.clusterId) {
-              $scope.data.cluster = cluster;
-            }
-          });
-          if (!$scope.data.cluster) {
-            if (clusters.count > 0) {
-              $scope.data.cluster = $scope.clusters[0];
-            } else {
-              $scope.waitingClusterMsg = "No cluster avialable.";
-              Notification.warning({
-                title: $scope.waitingClusterMsg,
-                msg: "You can't create any RBDs with your configuration."
-              });
-            }
-          }
-        }).catch(function () {
-          $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
-        });
+        }
+      }
     }).catch(function () {
       $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
     });
@@ -117,7 +103,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
   $scope.$watch("data.cluster", function (cluster) {
     if (cluster) {
       $scope.clusterId = cluster.fsid;
-      cephOsdService.get({id: cluster.fsid})
+      cephOsdService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
           $scope.data.osdCount = res.count;
@@ -131,7 +117,14 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
             $scope.pool.erasure.profile = $scope.data.profiles[0];
           }
         });
-      $scope.data.ruleset = $scope.data.cluster.rules[0];
+      cephCrushmapService.get({fsid: cluster.fsid})
+        .$promise
+        .then(function (res) {
+          $scope.data.cluster.rules = res.crushmap.rules;
+          $scope.data.ruleset = $scope.data.cluster.rules[0];
+        }).catch(function () {
+          $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
+        });
     }
   });
 
@@ -143,10 +136,10 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
       $scope.data.expert = true;
     }
     if (min) {
-      $scope.replicaSizeError = "Your replica size is to small. To use this rule a replica size of at least " + min +
+      $scope.replicaSizeError = "Your replica size is too small. To use this rule a replica size of at least " + min +
         " is needed.";
     } else if (max) {
-      $scope.replicaSizeError = "Your replica size is to big. To use this rule a replica size of at most " + max +
+      $scope.replicaSizeError = "Your replica size is too big. To use this rule a replica size of at most " + max +
         " is needed.";
     }
   };

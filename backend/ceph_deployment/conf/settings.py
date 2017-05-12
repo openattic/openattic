@@ -14,4 +14,8 @@
 
 from django.conf import settings
 
-DEEPSEA_PILLAR_ROOT = getattr(settings, 'DEEPSEA_PILLAR_ROOT', '/srv/pillar/ceph/')
+SALT_API_HOST = getattr(settings, 'SALT_API_HOST', 'salt')
+SALT_API_PORT = getattr(settings, 'SALT_API_PORT', 8000)
+SALT_API_USERNAME = getattr(settings, 'SALT_API_USERNAME', 'admin')
+SALT_API_PASSWORD = getattr(settings, 'SALT_API_PASSWORD', 'admin')
+SALT_API_EAUTH = getattr(settings, 'SALT_API_EAUTH', 'auto')
