@@ -39,10 +39,20 @@ app.component("oaDeleteConfirmationModal", {
     onCancel: "&"
   },
   transclude: true,
-  controller: function () {
+  controller: function ($scope) {
+    var self = this;
     this.input = {
       enteredName: "",
       pattern: "yes"
+    };
+    this.confirm = function () {
+      self.onConfirm()
+        .then(function () {
+          $scope.deleteForm.$submitted = true;
+        }, function () {
+          $scope.deleteForm.$submitted = false;
+        }
+      );
     };
   }
 });
