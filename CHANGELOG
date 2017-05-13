@@ -68,6 +68,7 @@ Fixed
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * WebUI: Remove checkbox column in Ceph Nodes. (OP-2150)
+* WebUI: Re-enable 'Submit' button on oaDeleteConfirmationModal after failure from server (OP-2114)
 * Packaging: Fix error that prevented to use local sources to create tar
   archives using make_dist.py (OP-2140)
 
