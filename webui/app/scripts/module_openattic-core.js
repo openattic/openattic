@@ -42,6 +42,7 @@ angular.module("openattic.core", [
   "openattic.notification",
   "openattic.oadeleteconfirmationmodal",
   "openattic.required",
+  "openattic.shared",
   "openattic.sizeparser",
   "openattic.tabView",
   "openattic.userinfo",
