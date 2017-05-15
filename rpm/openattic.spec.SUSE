@@ -146,7 +146,9 @@ storage space on demand.
 This package includes the Web UI based on AngularJS/Bootstrap.
 
 %package module-ceph
+Requires: ceph-common >= 10.0.0
 Requires: %{name}-base = %{version}
+Requires: %{name}-module-icinga = %{version}
 Requires: python-requests-aws
 Summary: Ceph module for openATTIC
 

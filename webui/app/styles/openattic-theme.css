@@ -1193,6 +1193,7 @@ uib-accordion .panel-title,
 .notification div.img-circle {
   width: 50px;
   height: 50px;
+  position: relative;
 }
 .notification.info div.img-circle {
   background-color: #5bc0de;

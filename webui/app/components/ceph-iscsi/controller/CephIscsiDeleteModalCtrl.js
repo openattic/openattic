@@ -37,24 +37,25 @@ app.controller("CephIscsiDeleteModalCtrl", function ($scope, cephIscsiService, $
   $scope.deleteFormSubmitted = false;
 
   $scope.delete = function () {
-    var targetIds = [];
-    $scope.iscsiTargets.forEach(function (isciTarget) {
-      targetIds.push(isciTarget.targetId);
-    });
-    cephIscsiService.bulk_delete({
-      fsid: fsid,
-      targetIds: targetIds
-    })
-    .$promise
-    .then(function () {
-      $uibModalInstance.close("deleted");
-      Notification.success({
-        msg: $scope.iscsiTargets.length > 1 ? "Targets have been deleted" : "Target has been deleted"
+    return $q(function (resolve, reject) {
+      var targetIds = [];
+      $scope.iscsiTargets.forEach(function (isciTarget) {
+        targetIds.push(isciTarget.targetId);
       });
-    }, function () {
-      // See https://tracker.openattic.org/browse/OP-2114
-      $scope.deleteForm.$submitted = false;
-      $uibModalInstance.close("deleted");
+      cephIscsiService.bulk_delete({
+        fsid: fsid,
+        targetIds: targetIds
+      })
+      .$promise
+      .then(function () {
+        resolve();
+        $uibModalInstance.close("deleted");
+        Notification.success({
+          msg: $scope.iscsiTargets.length > 1 ? "Targets have been deleted" : "Target has been deleted"
+        });
+      }, function () {
+        reject();
+      });
     });
   };
 

@@ -36,20 +36,23 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
   $scope.rbds = rbdSelection;
 
   $scope.delete = function () {
-    var requests = [];
-    $scope.rbds.forEach(function (rbd) {
-      var deferred = $q.defer();
-      cephRbdService.delete({
-        clusterId: clusterId,
-        pool: rbd.pool.name,
-        name: rbd.name
-      }, deferred.resolve, deferred.reject);
-      requests.push(deferred.promise);
-    });
-    $q.all(requests).then(function () {
-      $uibModalInstance.close("deleted");
-    }, function () {
-      $scope.deleteForm.$submitted = false;
+    return $q(function (resolve, reject) {
+      var requests = [];
+      $scope.rbds.forEach(function (rbd) {
+        var deferred = $q.defer();
+        cephRbdService.delete({
+          clusterId: clusterId,
+          pool: rbd.pool.name,
+          name: rbd.name
+        }, deferred.resolve, deferred.reject);
+        requests.push(deferred.promise);
+      });
+      $q.all(requests).then(function () {
+        resolve();
+        $uibModalInstance.close("deleted");
+      }, function () {
+        reject();
+      });
     });
   };
 

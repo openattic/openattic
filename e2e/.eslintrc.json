@@ -1,0 +1,23 @@
+{
+  "plugins": [
+    "protractor"
+  ],
+  "env": {
+    "browser": true,
+    "protractor": true,
+    "jquery": true,
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "quotes": [2, "single"],
+    "semi": [2, "always"],
+    "strict": [2, "global"],
+    "space-infix-ops": [2, {"int32Hint": true}],
+    "space-before-blocks": [2, "never"],
+    "space-before-function-paren": [2, "never"],
+    "space-in-parens": [2, "never"],
+    "no-trailing-spaces": [2, { "skipBlankLines": false }],
+    "indent": [2, 2]
+  },
+}
