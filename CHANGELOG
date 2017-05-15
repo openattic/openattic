@@ -41,6 +41,7 @@ Added
 * WebUI: Added eslint configuration for best practice angular development (OP-2130)
 * WebUI: Added a list of the recent notifications.
   Thanks to Tiago Melo for the contribution. (OP-1989)
+* WebUI/QA: Added eslint configuration for e2e tests (OP-2148)
 
 Changed
 ~~~~~~~
