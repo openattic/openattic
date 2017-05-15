@@ -1,0 +1,69 @@
+{
+  "extends": [
+    "angular"
+  ],
+  "rules": {
+    // Check for possible errors
+    "angular/avoid-scope-typos": 1,
+    "angular/module-getter": 0,
+    "angular/module-setter": 2,
+
+    // Best practices
+    "angular/component-limit": 2,
+    "angular/controller-as-route": 0,
+    "angular/controller-as-vm": 0,
+    "angular/controller-as": 2,
+    "angular/deferred": 0,
+    "angular/di-unused": 2,
+    "angular/directive-restrict": 0,
+    "angular/empty-controller": 2,
+    "angular/no-controller": 0,
+    "angular/no-inline-template": 0,
+    "angular/no-run-logic": 1,
+    "angular/no-services": 0,
+    "angular/on-watch": 2,
+    "angular/prefer-component": 2,
+
+    // Forbid deprecated angular features
+    "angular/no-cookiestore": 2, // Use $cookie instead
+    "angular/no-directive-replace": 2,
+    "angular/no-http-callback": 2, // Use promises instead
+
+    // Naming
+    "angular/controller-name": [2,"/^[A-Z].*Ctrl$/"],
+    "angular/component-name": [2,"/^[a-z].*$/"],
+    "angular/directive-name": [2,"/^[a-z].*$/"],
+    "angular/factory-name": [2,"/^[a-z].*$/"],
+    "angular/service-name": [2,"/^[a-z].*$/"],
+    "angular/file-name": 0,
+    "angular/filter-name": [2,"/^[a-z].*$/"],
+    "angular/module-name": [2,"/^openattic.[a-z].*$/"],
+
+    // Conventions,
+    "angular/di-order": 0, // Order injections alphabetically
+    "angular/di": [2,"function"], // Only inject through function parameters
+    "angular/function-type": [2,"anonymous"],
+    "angular/module-dependency-order": 0,
+    "angular/no-service-method": 1,
+    "angular/one-dependency-per-line": 0,
+
+    // Wrapper
+    "angular/angularelement": 2,
+    "angular/definedundefined": 2,
+    "angular/document-service": 2,
+    "angular/foreach": 2,
+    "angular/interval-service": 2,
+    "angular/json-functions": 2,
+    "angular/log": 2,
+    "angular/no-angular-mock": 0,
+    "angular/no-jquery-angularelement": 2,
+    "angular/timeout-service": 2,
+    "angular/typecheck-array": 2,
+    "angular/typecheck-date": 2,
+    "angular/typecheck-function": 2,
+    "angular/typecheck-number": 2,
+    "angular/typecheck-object": 2,
+    "angular/typecheck-string": 2,
+    "angular/window-service": 2
+  }
+}

@@ -74,7 +74,9 @@ based on the latest commit in the ``default`` branch.
     If you intend to make changes to the web interface, it may be useful to
     run ``grunt dev`` as a background task, which watches the project
     directory for any changed files and triggers an automatic rebuild of the
-    web interface code (including the jshint output), if required.
+    web interface code (including the ``jshint`` output), if required.
+    Grunt will not include the ``eslint`` output, because the provided
+    configuration is there to help **you** develop the UI.
 
     In some rare cases there might be a problem with "just" updating the frontend
     dependencies and rebuilding the frontend files. In this case, it helps to delete
@@ -94,6 +96,29 @@ automatically adapt to the new directory and use the code located therein.
 See chapters :ref:`developer_contribute` and
 :ref:`developer_contributing_guidelines` for further details on how to prepare
 your code contributions for upstream inclusion.
+
+How to use eslint in your developer environment
+-----------------------------------------------
+
+Our ``eslint`` configuration gives you useful hints and tips how to provide
+``angularJS`` code that is highly maintainable and forward-thinking.
+To see the hints and tips you have to install ``eslint`` and the plugin
+for ``angularJS`` globally::
+
+  # npm install -g eslint eslint-config-angular eslint-plugin-angular
+
+To `simply use it<http://eslint.org/docs/user-guide/command-line-interface>`_
+from the command line you can do the following::
+
+  % cd <clone>/webui
+  % eslint <path>
+
+Or with `vim<http://www.vim.org/>`_ without `Syntastic
+<https://github.com/vim-syntastic/syntastic>`_::
+
+  :!eslint %
+
+For all IDEs ``eslint`` can be installed as a plugin, if not already enabled.
 
 How to get the authentication token for your own user
 -----------------------------------------------------
