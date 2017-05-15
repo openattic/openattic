@@ -38,6 +38,7 @@ Added
 * WebUI: Added a new navbar entry to show recent notifications
   Thanks to Tiago Melo for the contribution. (OP-1989)
 * WebUI: Add expression support to the ngRequired directive.
+* WebUI: Added eslint configuration for best practice angular development (OP-2130)
 * WebUI: Added a list of the recent notifications.
   Thanks to Tiago Melo for the contribution. (OP-1989)
 
