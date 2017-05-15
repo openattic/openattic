@@ -16,8 +16,8 @@ from django.test import TestCase
 from mock import mock
 from requests import ConnectionError
 
+from django.conf import settings
 from ceph_deployment import DeepSea
-from ceph_deployment.conf import settings
 from ceph_deployment.lrbd_conf import LRBDConf, LRBDUi
 from ceph_deployment.models.iscsi_target import iSCSITarget
 from rest_client import RequestException, BadResponseFormatException

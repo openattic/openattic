@@ -349,6 +349,12 @@ INSTALLED_APPS = [
 
 INSTALLED_MODULES = []
 
+SALT_API_HOST = 'salt'
+SALT_API_PORT = 8000
+SALT_API_USERNAME = 'admin'
+SALT_API_PASSWORD = 'admin'
+SALT_API_EAUTH = 'auto'
+
 def __loadmods__():
     def modprobe( modname ):
         """ Try to import the named module, and if that works add it to INSTALLED_APPS. """

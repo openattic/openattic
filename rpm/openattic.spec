@@ -103,6 +103,7 @@ Requires: ceph-common >= 10.0.0
 Requires: %{name}-base
 Requires: %{name}-module-nagios
 Requires: python-rados
+Requires: python-requests-aws
 Summary: Ceph module for openATTIC
 
 %description module-ceph
@@ -116,7 +117,6 @@ designed to provide excellent performance, reliability, and scalability.
 %package module-ceph-deployment
 Requires: ceph-common >= 10.0.0
 Requires: %{name}-module-ceph
-Requires: deepsea
 Summary: Ceph deployment and management module for openATTIC
 
 %description module-ceph-deployment
@@ -367,6 +367,7 @@ fi
 %{_datadir}/%{name}/pamauth.py*
 %{_datadir}/%{name}/processors.py*
 %{_datadir}/%{name}/rest/
+%{_datadir}/%{name}/rest_client.py*
 %{_datadir}/%{name}/settings.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
@@ -392,7 +393,6 @@ fi
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
 %{_datadir}/%{name}/ceph_deployment/
-%{_datadir}/%{name}/rest_client.py*
 
 %files gui
 %defattr(-,root,root,-)

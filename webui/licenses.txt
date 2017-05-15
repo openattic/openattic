@@ -17,6 +17,7 @@ angular-ui-router                 0.2.18              MIT                       
 angular-ui-sortable               0.14.0              MIT                         https://github.com/angular-ui/ui-sortable/tree/v0.14.0
 angular-ui-tree                   2.15.0              MIT                         https://github.com/JimLiu/angular-ui-tree/tree/v2.15.0
 bootstrap                         3.3.6               MIT                         https://github.com/twbs/bootstrap/tree/v3.3.6
+bootstrap-notifications           1.0.1               MIT                         https://github.com/skywalkapps/bootstrap-notifications/tree/v1.0.1
 d3                                3.5.17              BSD-3-Clause                https://github.com/mbostock-bower/d3-bower/tree/v3.5.17
 fontawesome                       4.5.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.5.0
 jquery                            2.2.3               MIT                         https://github.com/jquery/jquery-dist/tree/2.2.3

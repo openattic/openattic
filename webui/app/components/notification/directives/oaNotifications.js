@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 Tiago Melo <tspmelo@gmail.com>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,38 +30,20 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, clusterId, $q,
-    Notification) {
-  $scope.rbds = rbdSelection;
+var app = angular.module("openattic.notification");
+app.directive("oaNotifications", function () {
+  return {
+    templateUrl: "components/notification/templates/oa-notifications.html",
+    controller: function ($scope, Notification) {
+      $scope.notifications = [];
 
-  $scope.delete = function () {
-    return $q(function (resolve, reject) {
-      var requests = [];
-      $scope.rbds.forEach(function (rbd) {
-        var deferred = $q.defer();
-        cephRbdService.delete({
-          clusterId: clusterId,
-          pool: rbd.pool.name,
-          name: rbd.name
-        }, deferred.resolve, deferred.reject);
-        requests.push(deferred.promise);
+      Notification.subscribe(function (notifications) {
+        $scope.notifications = notifications;
       });
-      $q.all(requests).then(function () {
-        resolve();
-        $uibModalInstance.close("deleted");
-      }, function () {
-        reject();
-      });
-    });
-  };
 
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-
-    Notification.warning({
-      title: "Delete RBD",
-      msg: "Cancelled"
-    });
+      $scope.removeAll = function () {
+        Notification.removeAll();
+      };
+    }
   };
 });

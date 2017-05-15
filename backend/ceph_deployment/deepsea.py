@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 import logging
-from ceph_deployment.conf import settings
+from django.conf import settings
 from utilities import aggregate_dict, zip_by_keys
 from rest_client import RestClient, RequestException
 

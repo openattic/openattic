@@ -16,24 +16,34 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.0.0] - unreleased
+[3.0.0] - 2017-05-15
 --------------------
 
-In general, this release focuses on the 3.0 refactoring and cleanup epic (OP-2071)
+In general, this release focuses on the 3.0 refactoring and cleanup epic
+(OP-2071)
 
 Added
 ~~~~~
+* Backend: Ceph iSCSI targets management REST Api (OP-2133)
 * Backend: Added the functionality to reset the password of an user (OP-589)
 * Backend: Generic REST client support classes (OP-1889)
 * Backend: Salt REST API support (OP-1889)
 * Backend: Implemented a RGW Admin Ops API proxy (OP-1612)
 * Backend: Made `backend/settings.py` variables' adaptable (OP-2156)
+* WebUI: Ceph iSCSI targets management (OP-2134)
 * WebUI: Introduce a set of commands to build the frontend (OP-1752)
 * WebUI: Added OSD status widget (OP-1937)
 * WebUI: Add API timeouts to the UI (OP-1544)
-* WebUI: Display a warning dialog if there are unsaved changes and the view is changed (OP-1732)
-  Thanks to Tiago Melo for the contribution.
+* WebUI: Display a warning dialog if there are unsaved changes and the view is
+  changed. Thanks to Tiago Melo for the contribution. (OP-1732)
+* WebUI: Added a new navbar entry to show recent notifications
+  Thanks to Tiago Melo for the contribution. (OP-1989)
 * WebUI: Add expression support to the ngRequired directive.
+* WebUI: Added eslint configuration for best practice angular development
+  (OP-2130)
+* WebUI: Added a list of the recent notifications. Thanks to Tiago Melo for the
+  contribution. (OP-1989)
+* WebUI/QA: Added eslint configuration for e2e tests (OP-2148)
 
 Changed
 ~~~~~~~
@@ -42,7 +52,8 @@ Changed
 * WebUI: re-enabled the minions and pillar data listing (OP-1889)
 * WebUI: Renames osd service cluster id to fsid (OP-2110)
 * WebUI/QA: Adapted tests (OP-2092)
-* WebUI: Combined add/edit controller and templates of widgets and dashboards (OP-2111)
+* WebUI: Combined add/edit controller and templates of widgets and dashboards
+  (OP-2111)
 * WebUI: Improved Ceph health widget (OP-1738)
 * API: Convert Postgres based Crushmap API to NoDB (OP-1273)
 * WebUI: The WebUI no longer depends on the DB API endpoint (OP-2145)
@@ -57,11 +68,13 @@ Removed
 
 Fixed
 ~~~~~
-* WebUI: Redirect to dashboard when an authenticated user navigates to login page.
-  Thanks to Ra�l Vega for the contribution. (OP-2029)
+* WebUI: Redirect to dashboard when an authenticated user navigates to login
+  page. Thanks to Raúl Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * WebUI: Remove checkbox column in Ceph Nodes. (OP-2150)
+* WebUI: Re-enable 'Submit' button on oaDeleteConfirmationModal after failure
+  from server (OP-2114)
 * Packaging: Fix error that prevented to use local sources to create tar
   archives using make_dist.py (OP-2140)
 
