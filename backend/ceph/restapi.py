@@ -309,6 +309,7 @@ class CephRbdViewSet(NodbViewSet):
     filter_fields = ("name",)
     serializer_class = CephRbdSerializer
     lookup_value_regex = r'[^/@]+/[^/]+'
+    search_fields = ('name', 'pool__name')
 
     def __init__(self, **kwargs):
         super(CephRbdViewSet, self).__init__(**kwargs)
