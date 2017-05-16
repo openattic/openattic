@@ -188,7 +188,7 @@ app.component("cephHealth", {
 
     // Event-Handler
     $scope.$on("$destroy", function () {
-      $scope.stopInterval();
+      self.stopInterval();
     });
 
     // init
