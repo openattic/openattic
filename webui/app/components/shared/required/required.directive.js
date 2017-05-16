@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.required");
+var app = angular.module("openattic.shared");
 app.directive("required", function ($document, $timeout) {
   return {
     restrict: "A",

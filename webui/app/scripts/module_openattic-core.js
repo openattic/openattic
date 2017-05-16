@@ -40,7 +40,6 @@ angular.module("openattic.core", [
   "openattic.graph",
   "openattic.navigation",
   "openattic.notification",
-  "openattic.required",
   "openattic.shared",
   "openattic.sizeparser",
   "openattic.tabView",
