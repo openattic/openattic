@@ -30,10 +30,10 @@
  */
 "use strict";
 
-var app = angular.module("openattic.datatable");
+var app = angular.module("openattic.shared");
 app.directive("showhidecolumns", function () {
   return {
     restrict: "E",
-    templateUrl: "components/datatable/templates/showhidecolumnsmenu.html"
+    templateUrl: "components/shared/oadatatable/showhidecolumns.directive.html"
   };
 });

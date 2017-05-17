@@ -30,11 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.datatable");
+var app = angular.module("openattic.shared");
 app.directive("paginator", function () {
   return {
     restrict: "E",
-    templateUrl: "components/datatable/templates/pagination.html",
+    templateUrl: "components/shared/oadatatable/paginator.directive.html",
     scope: {
       page: "=",
       pages: "="

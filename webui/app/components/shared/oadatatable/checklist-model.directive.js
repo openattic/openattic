@@ -35,7 +35,7 @@
  * Downloaded from https://github.com/vitalets/checklist-model
  */
 
-var app = angular.module("openattic.datatable");
+var app = angular.module("openattic.shared");
 app.directive("checklistModel", function ($parse, $compile) {
   // contains
   var contains = function (arr, item) {
