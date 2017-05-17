@@ -31,6 +31,7 @@ Removed
 Fixed
 ~~~~~
 WebUI: Changes default widget config to point to the right widget (OP-2203)
+WebUI: Resolves error in health widget (OP-2191)
 
 [3.0.0] - 2017-05-15
 --------------------
@@ -85,7 +86,7 @@ Removed
 Fixed
 ~~~~~
 * WebUI: Redirect to dashboard when an authenticated user navigates to login
-  page. Thanks to Raúl Vega for the contribution. (OP-2029)
+  page. Thanks to Raï¿½l Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * WebUI: Remove checkbox column in Ceph Nodes. (OP-2150)
