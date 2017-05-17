@@ -14,7 +14,7 @@
 import logging
 
 from deepsea import DeepSea
-from ceph_deployment.lrbd_conf import LRBDConf, LRBDUi
+from ceph_iscsi.lrbd_conf import LRBDConf, LRBDUi
 from nodb.models import NodbModel, JsonField
 from django.db import models
 
