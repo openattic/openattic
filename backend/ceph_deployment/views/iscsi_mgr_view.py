@@ -14,7 +14,7 @@
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from ceph_deployment.deepsea import DeepSea
+from deepsea import DeepSea
 
 
 @api_view(['GET'])

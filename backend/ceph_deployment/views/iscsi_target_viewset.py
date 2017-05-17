@@ -16,7 +16,7 @@ import logging
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 
-from ceph_deployment.deepsea import DeepSea
+from deepsea import DeepSea
 from ceph_deployment.lrbd_conf import LRBDUi
 from ceph_deployment.models.iscsi_target import iSCSITarget
 from ceph.restapi import FsidContext
