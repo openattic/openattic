@@ -2,6 +2,7 @@
 
 var helpers = require('../../common.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
+var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
 
 describe('ceph pool creation', function(){
   var cephPoolProperties = new cephPoolCommon();
@@ -24,12 +25,9 @@ describe('ceph pool creation', function(){
   ];
 
   var deletePool = function(cephPoolName){
-    var cephPool = element(by.cssContainingText('tr', cephPoolName));
+    var cephPool = helpers.search_for_element(cephPoolName);
     cephPool.click();
-    element(by.css('.tc_menudropdown')).click();
-    element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
-    element(by.id('bot2-Msg1')).click();
+    helpers.delete_selection(undefined, '$ctrl');
     expect(cephPool.isPresent()).toBe(false);
   };
 
@@ -44,8 +42,8 @@ describe('ceph pool creation', function(){
     pgnum.clear();
     pgnum.sendKeys(poolPgnum);
     create.click();
-    browser.sleep(helpers.configs.sleep);
-    var cephPool = element(by.cssContainingText('tr', poolName));
+    taskQueueHelpers.waitForPendingTasks();
+    var cephPool = helpers.search_for_element(poolName);
     expect(cephPool.isDisplayed()).toBe(true);
 
     cephPool.click();
