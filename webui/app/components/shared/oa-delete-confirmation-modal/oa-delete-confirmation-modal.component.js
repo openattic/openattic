@@ -30,9 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.oadeleteconfirmationmodal");
+var app = angular.module("openattic.shared");
 app.component("oaDeleteConfirmationModal", {
-  templateUrl: "components/oa-delete-confirmation-modal/templates/oa-delete-confirmation-modal.html",
+  templateUrl: "components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html",
   bindings: {
     title: "@",
     onConfirm: "&",
