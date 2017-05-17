@@ -44,7 +44,6 @@ angular.module("openattic", [
   "ui.toggle",
   "ui.tree",
   "openattic.core",
-  "openattic.extensions",
   "openattic.ceph"
 ]);
 
