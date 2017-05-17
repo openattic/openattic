@@ -12,17 +12,7 @@ describe('ceph pool creation', function(){
     cephPoolProperties.cephPools.click();
   });
 
-  var pgnumTests = [
-    1,
-    5,
-    10
-    // 50,
-    // 100,
-    // 500,
-    // 1000,
-    // 5000,
-    // 10000
-  ];
+  var pgnumTests = [16, 64];
 
   var deletePool = function(cephPoolName){
     var cephPool = helpers.search_for_element(cephPoolName);
