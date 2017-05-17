@@ -33,6 +33,11 @@
       search.sendKeys(query);
     },
 
+    search_for_element: function(query){
+      helper.search_for(query);
+      return helper.get_list_element(query);
+    },
+
     login: function(){
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
