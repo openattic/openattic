@@ -13,7 +13,7 @@
 """
 import logging
 
-from ceph_deployment.deepsea import DeepSea
+from deepsea import DeepSea
 from ceph_deployment.lrbd_conf import LRBDConf, LRBDUi
 from nodb.models import NodbModel, JsonField
 from django.db import models

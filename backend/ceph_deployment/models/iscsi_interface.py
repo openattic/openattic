@@ -13,7 +13,7 @@
 """
 from django.db import models
 from nodb.models import NodbModel, JsonField
-from ceph_deployment.deepsea import DeepSea
+from deepsea import DeepSea
 
 
 class iSCSIInterface(NodbModel):
