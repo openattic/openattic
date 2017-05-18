@@ -424,3 +424,9 @@ def __loadmods__():
     modprobe('rosetta')
 
 __loadmods__()
+
+# This enables developers and test systems to override settings in a non-versioned file.
+try:
+    from settings_local import *
+except ImportError:
+    pass
