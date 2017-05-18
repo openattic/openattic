@@ -21,6 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend: Adds search field to the API for RBDs (OP-2199)
 
 Changed
 ~~~~~~~
