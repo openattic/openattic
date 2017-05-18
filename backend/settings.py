@@ -18,17 +18,17 @@ import sys
 from configobj import ConfigObj
 
 PROJECT_ROOT = None
-PROJECT_URL  = '/openattic'
+PROJECT_URL = '/openattic'
 # the following is needed in gunicorn, because it doesn't set SCRIPT_URL and PATH_INFO
 # fyi: SCRIPT_URL=/filer/lvm/ PATH_INFO=/lvm/ would allow for Django to auto-detect the path
-#FORCE_SCRIPT_NAME = PROJECT_URL
+# FORCE_SCRIPT_NAME = PROJECT_URL
 
 DATA_ROOT = "/var/lib/openattic"
 import os
 
 from os.path import join, dirname, abspath, exists, isfile
 
-if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
+if not PROJECT_ROOT or not exists(PROJECT_ROOT):
     PROJECT_ROOT = dirname(abspath(__file__))
 
 BASE_DIR = PROJECT_ROOT
@@ -67,14 +67,15 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'EXCEPTION_HANDLER': 'exception.custom_handler',
-    'PAGINATE_BY':        50,  # Only DRF 2. Dropdown inputs don't handle pagination.
+    'PAGINATE_BY': 50,  # Only DRF 2. Dropdown inputs don't handle pagination.
     'PAGINATE_BY_PARAM': 'pageSize',  # Only DRF 2
-    'MAX_PAGINATE_BY':   100,  # Only DRF 2
+    'MAX_PAGINATE_BY': 100,  # Only DRF 2
     'DEFAULT_PAGINATION_CLASS': 'rest.pagination.PageSizePageNumberPagination',  # Only DRF 3
     'PAGE_SIZE': 50,  # Setting required by DRF 3. Set to 50 to prevent dropdown inputs from being
-                      # truncated, which don't handle pagination.
-    'URL_FIELD_NAME':    'url',
+    # truncated, which don't handle pagination.
+    'URL_FIELD_NAME': 'url',
 }
+
 
 def read_database_configs(configfile):
     # Reads the database configuration of an INI file
@@ -91,15 +92,16 @@ def read_database_configs(configfile):
 
     for sec in conf.sections():
         databases[sec] = {
-            "ENGINE":   conf.get(sec, "engine"),
-            "NAME":     conf.get(sec, "name"),
-            "USER":     conf.get(sec, "user"),
+            "ENGINE": conf.get(sec, "engine"),
+            "NAME": conf.get(sec, "name"),
+            "USER": conf.get(sec, "user"),
             "PASSWORD": conf.get(sec, "password"),
-            "HOST":     conf.get(sec, "host"),
-            "PORT":     conf.get(sec, "port"),
+            "HOST": conf.get(sec, "host"),
+            "PORT": conf.get(sec, "port"),
         }
 
     return databases
+
 
 DATABASES = read_database_configs('/etc/openattic/database.ini')
 
@@ -130,6 +132,7 @@ LVM_LOG_COMMANDS = False
 # Auto-Configure distro defaults
 try:
     import platform
+
     distro, version, codename = platform.linux_distribution()
 except:
     pass
@@ -172,7 +175,7 @@ MEDIA_ROOT = join(PROJECT_ROOT, 'htdocs')
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = PROJECT_URL + '/static/'
 
-STATIC_URL  = PROJECT_URL + '/staticfiles/'
+STATIC_URL = PROJECT_URL + '/staticfiles/'
 STATIC_ROOT = "/var/lib/openattic/static"
 STATICFILES_DIRS = (MEDIA_ROOT,)
 
@@ -190,12 +193,15 @@ except NameError:
     except IOError:
         try:
             from random import choice
-            SECRET_KEY = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+
+            SECRET_KEY = ''.join(
+                [choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
             secret = file(SECRET_FILE, 'w')
             secret.write(SECRET_KEY)
             secret.close()
         except IOError:
-            Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
+            Exception(
+                'Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
 
 def read_version():
@@ -207,8 +213,9 @@ def read_version():
     version_file = oa_dir + "/version.txt"
     assert isfile(version_file)
     return ConfigObj(version_file)
-VERSION_CONF = read_version()
 
+
+VERSION_CONF = read_version()
 
 
 def log_prefix():
@@ -268,7 +275,6 @@ __domconf__.set("authz", "group", "")
 #   now read the actual config, if it exists. If it doesn't, the defaults are fine,
 #   so we don't need to care about whether or not this works.
 __domconf__.read("/etc/openattic/domain.ini")
-
 
 # A PAM authentication service to query with our user data.
 # If this does not succeed, openATTIC will fall back to its
@@ -350,6 +356,7 @@ def get_config(filename):
                 result[key] = value
     return result
 
+
 # Add or replace additional configuration variables
 custom_settings = ('/etc/default/openattic', '/etc/sysconfig/openattic')
 for settings_file in custom_settings:
@@ -379,16 +386,17 @@ INSTALLED_APPS = [
 
 INSTALLED_MODULES = []
 
+
 def __loadmods__():
-    def modprobe( modname ):
+    def modprobe(modname):
         """ Try to import the named module, and if that works add it to INSTALLED_APPS. """
         try:
-            __import__( modname )
+            __import__(modname)
         except ImportError:
             pass
         else:
-            INSTALLED_MODULES.append( modname )
-            INSTALLED_APPS.append( modname )
+            INSTALLED_MODULES.append(modname)
+            INSTALLED_APPS.append(modname)
 
     import re
     rgx = re.compile("^(?P<idx>\d\d)_(?P<name>\w+)$")
@@ -411,7 +419,8 @@ def __loadmods__():
             else:
                 return cmp(a, b)
 
-    mods = [dir for dir in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ) if not dir.startswith('.')]
+    mods = [dir for dir in os.listdir(join(PROJECT_ROOT, "installed_apps.d")) if
+            not dir.startswith('.')]
     mods.sort(cmp=modnamecmp)
     for name in mods:
         m = rgx.match(name)
@@ -423,7 +432,9 @@ def __loadmods__():
     modprobe('django_extensions')
     modprobe('rosetta')
 
+
 __loadmods__()
+
 
 # This enables developers and test systems to override settings in a non-versioned file.
 try:
