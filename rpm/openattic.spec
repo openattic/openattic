@@ -386,7 +386,9 @@ fi
 %defattr(-,root,root,-)
 %config %{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
 %{_datadir}/%{name}/installed_apps.d/60_ceph
+%{_datadir}/%{name}/installed_apps.d/60_ceph_radosgw
 %{_datadir}/%{name}/ceph/
+%{_datadir}/%{name}/ceph_radosgw/
 %{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cephrbd
