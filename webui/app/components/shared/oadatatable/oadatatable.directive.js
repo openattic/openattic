@@ -30,12 +30,12 @@
  */
 "use strict";
 
-var app = angular.module("openattic.datatable");
+var app = angular.module("openattic.shared");
 app.directive("oadatatable", function () {
   return {
     restrict: "E",
     transclude: true,
-    templateUrl: "components/datatable/templates/datatable.html",
+    templateUrl: "components/shared/oadatatable/oadatatable.directive.html",
     scope: {
       selection: "=",
       data: "=",

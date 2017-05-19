@@ -30,13 +30,29 @@
  */
 "use strict";
 
-var app = angular.module("openattic.datatable");
-app.directive("sortfield", function () {
+var app = angular.module("openattic.shared");
+app.directive("actions", function () {
   return {
-    link: function (scope, element, attr) {
-      if (typeof attr.sortdefault !== "undefined") {
-        scope.sortByField(attr.sortfield || element.text().toLowerCase(), (attr.sortorder || "ASC").toUpperCase());
-      }
+    restrict: "E",
+    templateUrl: "components/shared/oadatatable/actions.directive.html",
+    transclude: true,
+    link: function (scope, element, attr, controller, transclude) {
+      var dropdown = element.find(".oa-dropdown-actions");
+      var btnGroup = element.find(".btn-group");
+      var actionsScope = scope.$parent.$new();
+
+      dropdown.parent().on({
+        "click": function (e) {
+          if ($(e.target).is(".dropdown-menu,li.divider,li.disabled")) {
+            e.stopPropagation();
+          }
+        }
+      });
+
+      transclude(actionsScope, function (clone) {
+        dropdown.append(clone.filter("li"));
+        btnGroup.prepend(clone.filter(".btn-primary"));
+      });
     }
   };
 });
