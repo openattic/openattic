@@ -369,6 +369,7 @@ fi
 %{_datadir}/%{name}/rest/
 %{_datadir}/%{name}/rest_client.py*
 %{_datadir}/%{name}/settings.py*
+%{_datadir}/%{name}/deepsea.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
 %{_datadir}/%{name}/taskqueue/
