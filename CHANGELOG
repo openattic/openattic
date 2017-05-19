@@ -34,8 +34,9 @@ Removed
 
 Fixed
 ~~~~~
-WebUI: Changes default widget config to point to the right widget (OP-2203)
-WebUI: Resolves error in health widget (OP-2191)
+* WebUI: Rephrases "Sorry Folks" message to be useful (OP-2210)
+* WebUI: Changes default widget config to point to the right widget (OP-2203)
+* WebUI: Resolves error in health widget (OP-2191)
 
 [3.0.0] - 2017-05-15
 --------------------
