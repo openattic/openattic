@@ -198,7 +198,8 @@ class _Request(object):
 
 
 class RestClient(object):
-    def __init__(self, host, port):
+    def __init__(self, host, port, client_name=None):
+        self.client_name = client_name if client_name else ''
         self.base_url = 'http://{}:{}'.format(host, port)
         logger.debug("REST service base URL: %s", self.base_url)
         self.headers = {'Accept': 'application/json'}
@@ -237,38 +238,46 @@ class RestClient(object):
         return func_wrapper
 
     def get(self, path):
-        logger.debug('REST API GET req: %s', path)
+        logger.debug('%s REST API GET req: %s', self.client_name, path)
         try:
             resp = self.session.get('{}{}'.format(self.base_url, path), headers=self.headers)
             if resp.ok:
-                logger.debug("REST API GET res status: %s content: %s", resp.status_code,
-                             resp.json())
+                logger.debug("%s REST API GET res status: %s content: %s", self.client_name,
+                             resp.status_code, resp.json())
                 return resp.json()
             else:
-                logger.error("REST API failed GET req status: %s", resp.status_code)
-                raise RequestException("REST API failed request with status code {}"
-                                       .format(resp.status_code), resp.status_code)
+                logger.error("%s REST API failed GET req status: %s", self.client_name,
+                             resp.status_code)
+                raise RequestException("{} REST API failed request with status code {}"
+                                       .format(self.client_name, resp.status_code),
+                                       resp.status_code)
         except ConnectionError:
-            logger.error("REST API failed GET, connection error")
-            raise RequestException("REST API is offline", None)
+            logger.error("%s REST API failed GET, connection error", self.client_name)
+            raise RequestException("{} REST API cannot be reached. Please check your "
+                                   "configuration and that the API endpoint is accessible"
+                                   .format(self.client_name), None)
 
     def post(self, path, data=None):
-        logger.debug('REST API POST req: %s data: %s', path, data)
+        logger.debug('%s REST API POST req: %s data: %s', self.client_name, path, data)
         try:
             resp = self.session.post('{}{}'.format(self.base_url, path), headers=self.headers,
                                      data=data)
 
             if resp.ok:
-                logger.debug("REST API POST res status: %s content: %s", resp.status_code,
-                             resp.json())
+                logger.debug("%s REST API POST res status: %s content: %s", self.client_name,
+                             resp.status_code, resp.json())
                 return resp.json()
             else:
-                logger.error("REST API POST failed req status: %s", resp.status_code)
-                raise RequestException("REST API failed request with status code {}"
-                                       .format(resp.status_code), resp.status_code)
+                logger.error("%s REST API POST failed req status: %s", self.client_name,
+                             resp.status_code)
+                raise RequestException("{} REST API failed request with status code {}"
+                                       .format(self.client_name, resp.status_code),
+                                       resp.status_code)
         except ConnectionError:
-            logger.error("REST API failed POST, connection error")
-            raise RequestException("REST API is offline", None)
+            logger.error("%s REST API failed POST, connection error", self.client_name)
+            raise RequestException("{} REST API cannot be reached. Please check your "
+                                   "configuration and that the API endpoint is accessible"
+                                   .format(self.client_name), None)
 
     @staticmethod
     def api_get(path, resp_structure=None):
