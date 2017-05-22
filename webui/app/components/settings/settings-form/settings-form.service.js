@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,20 +30,22 @@
  */
 "use strict";
 
-angular.module("openattic.core", [
-  "openattic.apidecorator",
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.commandlog",
-  "openattic.dashboard",
-  "openattic.graph",
-  "openattic.navigation",
-  "openattic.notification",
-  "openattic.settings",
-  "openattic.shared",
-  "openattic.sizeparser",
-  "openattic.tabView",
-  "openattic.userinfo",
-  "openattic.taskQueue",
-  "openattic.users"
-]);
+var app = angular.module("openattic.settings");
+app.factory("settingsFormService", function ($resource) {
+  return $resource(globalConfig.API.URL + "settings",
+    {},
+    {
+    checkDeepSeaConnection: {
+      method: "GET",
+      url: globalConfig.API.URL + "settings/check_deepsea_connection"
+    },
+    checkRgwConnection: {
+      method: "GET",
+      url: globalConfig.API.URL + "settings/check_rgw_connection"
+    },
+    getRgwConfiguration: {
+      method: "GET",
+      url: globalConfig.API.URL + "settings/get_rgw_configuration"
+    }
+  });
+});
