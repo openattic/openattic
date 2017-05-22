@@ -318,9 +318,8 @@ def _commit_changes(commit_msg, repo_dir):
     :type repo_dir: str
     :rtype: ProcessResult
     """
-    process_run(['git', 'add', '--all'])
-    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg],
-                       cwd=repo_dir)
+    process_run(['git', 'add', '--all'], cwd=repo_dir)
+    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg], cwd=repo_dir)
 
 
 def _push_changes(repo_dir):
