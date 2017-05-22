@@ -38,6 +38,8 @@ Fixed
 * WebUI: Rephrases "Sorry Folks" message to be useful (OP-2210)
 * WebUI: Changes default widget config to point to the right widget (OP-2203)
 * WebUI: Resolves error in health widget (OP-2191)
+* Packaging: Re-added `volumes` directory to the base package (OP-2166)
+* Backend: Fixed `oaconfig install` on Django 1.7+ installations (OP-2166, OP-2169)
 
 [3.0.0] - 2017-05-15
 --------------------
