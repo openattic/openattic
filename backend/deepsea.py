@@ -31,7 +31,7 @@ class DeepSea(RestClient):
         return DeepSea._instance
 
     def __init__(self):
-        super(DeepSea, self).__init__(settings.SALT_API_HOST, settings.SALT_API_PORT)
+        super(DeepSea, self).__init__(settings.SALT_API_HOST, settings.SALT_API_PORT, 'Salt')
         self.token = None
 
     def _is_logged_in(self):
