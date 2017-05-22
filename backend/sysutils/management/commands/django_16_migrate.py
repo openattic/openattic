@@ -234,6 +234,43 @@ _migrations = [
         COMMIT;
         """
     ),
+    (
+        'ceph', u'0001_squashed_0004_rm_models_based_on_storageobj', None, None
+    ),
+    (
+        'volumes', u'0002_remove',
+        lambda cursor: _table_exists('volumes_volumepool', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "volumes_diskdevice" DROP COLUMN "host_id" CASCADE;
+        ALTER TABLE "volumes_diskdevice" DROP COLUMN "physicalblockdevice_ptr_id" CASCADE;
+        ALTER TABLE "volumes_filesystemprovider" DROP COLUMN "filesystemvolume_ptr_id" CASCADE;
+        ALTER TABLE "volumes_filesystemvolume" DROP COLUMN "owner_id" CASCADE;
+        ALTER TABLE "volumes_filesystemvolume" DROP COLUMN "volume_type_id" CASCADE;
+        ALTER TABLE "volumes_genericdisk" DROP COLUMN "disk_device_id" CASCADE;
+        ALTER TABLE "volumes_physicalblockdevice" DROP COLUMN "device_type_id" CASCADE;
+        ALTER TABLE "volumes_physicalblockdevice" DROP COLUMN "storageobj_id" CASCADE;
+        ALTER TABLE "volumes_storageobject" DROP COLUMN "source_pool_id" CASCADE;
+        ALTER TABLE "volumes_volumepool" DROP COLUMN "storageobj_id" CASCADE;
+        ALTER TABLE "volumes_volumepool" DROP COLUMN "volumepool_type_id" CASCADE;
+        DROP TABLE "volumes_diskdevice" CASCADE;
+        DROP TABLE "volumes_filesystemprovider" CASCADE;
+        DROP TABLE "volumes_filesystemvolume" CASCADE;
+        DROP TABLE "volumes_physicalblockdevice" CASCADE;
+        DROP TABLE "volumes_volumepool" CASCADE;
+
+        ALTER TABLE "volumes_blockvolume" DROP COLUMN "storageobj_id" CASCADE;
+        ALTER TABLE "volumes_blockvolume" DROP COLUMN "volume_type_id" CASCADE;
+        ALTER TABLE "volumes_storageobject" DROP COLUMN "snapshot_id" CASCADE;
+        ALTER TABLE "volumes_storageobject" DROP COLUMN "upper_id" CASCADE;
+
+        ALTER TABLE "volumes_genericdisk" DROP COLUMN "blockvolume_ptr_id" CASCADE;
+        DROP TABLE "volumes_storageobject" CASCADE;
+        DROP TABLE "volumes_blockvolume" CASCADE;
+        DROP TABLE IF EXISTS "volumes_genericdisk" CASCADE ;
+        COMMIT;
+        """
+    ),
 ]
 
 
