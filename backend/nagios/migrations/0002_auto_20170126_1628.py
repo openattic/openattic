@@ -14,5 +14,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL('DELETE FROM nagios_service WHERE description = \'openATTIC RPCd\';'),
         migrations.RunSQL('DELETE FROM nagios_command WHERE name in (\'check_openattic_rpcd\','
                           '\'check_drbd\', \'check_twraid_unit\');'),
-        migrations.RunSQL('DELETE FROM sysutils_initscript WHERE name = \'openattic_rpcd\';')
+        # Removed, cause it fails, if sysutils.migrations.0002_delete_initscript was already
+        # applied.
+        # migrations.RunSQL('DELETE FROM sysutils_initscript WHERE name = \'openattic_rpcd\';')
     ]
