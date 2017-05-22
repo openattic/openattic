@@ -22,8 +22,7 @@ from django import VERSION
 from django.core.management import BaseCommand, call_command
 from django.core.management import CommandError
 from django.core.management.commands import syncdb
-from django.db import DEFAULT_DB_ALIAS, connection
-from django.db.migrations.state import InvalidBasesError
+from django.db import DEFAULT_DB_ALIAS
 
 try:
     from django.db.backends.util import CursorWrapper  # For type checking.
@@ -70,6 +69,7 @@ class Command(BaseCommand):
         if VERSION[:2] >= (1, 8):
             call_command('migrate', '--fake-initial', '--noinput')
         elif VERSION[:2] == (1, 7):
+            from django.db.migrations.state import InvalidBasesError
             old_stdin = sys.stdin
             try:
                 # "no" is the answer to
