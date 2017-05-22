@@ -18,7 +18,7 @@ from rest_framework.decorators import list_route
 
 from deepsea import DeepSea
 from ceph_iscsi.lrbd_conf import LRBDUi
-from ceph_iscsi.models.iscsi_target import iSCSITarget
+from ceph_iscsi.models import iSCSITarget
 from ceph.restapi import FsidContext
 from nodb.restapi import NodbSerializer, NodbViewSet
 

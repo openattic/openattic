@@ -43,7 +43,7 @@ from taskqueue.models import TaskQueue
 from utilities import aggregate_dict, zip_by_keys
 
 try:
-    from ceph_deployment.models.iscsi_target import iSCSITarget
+    from ceph_iscsi.models import iSCSITarget
 except ImportError:
     iSCSITarget = None
 from rest_client import RequestException

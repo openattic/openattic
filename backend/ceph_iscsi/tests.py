@@ -17,7 +17,7 @@ from mock import mock
 
 from deepsea import DeepSea
 from ceph_iscsi.lrbd_conf import LRBDConf, LRBDUi
-from ceph_iscsi.models.iscsi_target import iSCSITarget
+from ceph_iscsi.models import iSCSITarget
 
 
 class DeepSeaTestCase(TestCase):

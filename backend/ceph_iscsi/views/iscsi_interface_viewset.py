@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
 """
 
-from ceph_iscsi.models.iscsi_interface import iSCSIInterface
+from ceph_iscsi.models import iSCSIInterface
 from ceph.restapi import FsidContext
 from nodb.restapi import NodbSerializer, NodbViewSet
 
