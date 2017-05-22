@@ -433,7 +433,9 @@ fi
 %files module-ceph
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph
+%{_datadir}/%{name}/installed_apps.d/60_ceph_radosgw
 %{_datadir}/%{name}/ceph/
+%{_datadir}/%{name}/ceph_radosgw/
 %{nagios_plugindir}/check_cephcluster
 %{nagios_plugindir}/check_cephpool
 %{nagios_plugindir}/check_cephrbd
