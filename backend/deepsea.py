@@ -135,9 +135,9 @@ class DeepSea(RestClient):
         })
         return response['return'][0]
 
-    @RestClient.api_post('/')
+    @RestClient.api_post('/', resp_structure='return[*]')
     @RestClient.requires_login
-    def iscsi_save(self, lrbd_json, request='return[*]'):
+    def iscsi_save(self, lrbd_json, request=None):
         response = request({
             'client': 'runner', 'fun': 'ui_iscsi.save', 'data': lrbd_json
         })
