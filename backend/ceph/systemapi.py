@@ -236,12 +236,13 @@ class SystemD(BasePlugin):
             with fsid_context(cluster.fsid):
                 for pool in CephPool.objects.all():
                     for rbd in CephRbd.objects.filter(pool__name=pool.name):
-                        rbd_file_name = "cephrbd_{}_{}_{}.cfg".format(cluster.fsid, pool.name,
-                                                                      rbd.name)
-                        rbd_services = [self._gen_service_data(
-                            rbd.__class__.__name__,
-                            "{} {} {}".format(cluster.fsid, pool.name, rbd.name), 30)]
-                        self._write_services_to_file(rbd_file_name, rbd_services)
+                        if 'fast-diff' in rbd.features:
+                            rbd_file_name = "cephrbd_{}_{}_{}.cfg".format(cluster.fsid, pool.name,
+                                                                          rbd.name)
+                            rbd_services = [self._gen_service_data(
+                                rbd.__class__.__name__,
+                                "{} {} {}".format(cluster.fsid, pool.name, rbd.name), 30)]
+                            self._write_services_to_file(rbd_file_name, rbd_services)
 
     def _gen_service_data(self, service_instance_name, service_arguments, check_interval):
         class _CephService(object):
