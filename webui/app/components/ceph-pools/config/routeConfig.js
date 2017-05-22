@@ -38,17 +38,17 @@ app.config(function ($stateProvider) {
         views        : {
           "main": {
             templateUrl: "components/ceph-pools/templates/listing.html",
-            controller : "CephPoolsCtrl",
-            resolve    : {
-              clusterData: function ($q, cephClusterService) {
-                return cephClusterService.get().$promise
-                    .then(function (res) {
-                      return res;
-                    }).catch(function () {
-                      return false;
-                    });
-              }
-            }
+            controller : "CephPoolsCtrl"
+          }
+        },
+        resolve      : {
+          clusterData: function ($q, cephClusterService) {
+            return cephClusterService.get().$promise
+                .then(function (res) {
+                  return res;
+                }).catch(function () {
+                  return false;
+                });
           }
         },
         ncyBreadcrumb: {
