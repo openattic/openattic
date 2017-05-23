@@ -35,6 +35,8 @@ Changed
 * WebUI: Required field symbol color changed to red (OP-2215)
 * WebUI/QA: More useful ceph pool tests (OP-2205)
 * WebUI: Disable the "striping" feature when creating RBD images (OP-2240)
+* WebUI: Display a user friendly help text in the GUI for the monitoring of RBDs 
+  without 'fast-diff' feature (OP-2223)
 * WebUI: iSCSI - Only allow to use RBD images with (kernel module) compatible 
   features (OP-2232)
 * Installation: Moveed DB migration code from ``oaconfig install`` to a Django
