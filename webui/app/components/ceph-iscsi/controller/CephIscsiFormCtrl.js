@@ -177,6 +177,21 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
     $scope.model.portals.splice(index, 1);
   };
 
+  var unsupportedRbdFeatures = [
+    "deep-flatten",
+    "exclusive-lock",
+    "object-map",
+    "journaling",
+    "fast-diff",
+    "data-pool"
+  ];
+
+  var containsUnsupportedFeature = function (features) {
+    return features.some(function (feature) {
+      return unsupportedRbdFeatures.indexOf(feature) !== -1;
+    });
+  };
+
   $scope.allImages = [];
   cephRbdService.get({
       clusterId: $scope.fsid
@@ -192,6 +207,7 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
               $scope.allImages.push({
                 name: rbd.name,
                 pool: pool.name,
+                hasUnsupportedFeature: containsUnsupportedFeature(rbd.features),
                 settings: {}
               });
               return true;
