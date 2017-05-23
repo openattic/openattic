@@ -71,7 +71,7 @@ describe('should test the ceph pools panel', function(){
           browser.sleep(800);
           expect(clusterSelect.getText()).toContain(cluster.name);
         }
-        expect(element(by.cssContainingText('tr', pool.name)).isDisplayed()).toBe(true);
+        expect(helpers.search_for_element(pool.name).isDisplayed()).toBe(true);
       });
     });
   });
