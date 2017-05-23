@@ -49,6 +49,7 @@ Fixed
   (OP-2166, OP-2169)
 * Packaging: Fix re-introduced bug with retrieval of local paths in
   make_dist.py (OP-2224)
+* Packaging: Fix internal commit functionality of make_dist.py (OP-2227)
 
 [3.0.0] - 2017-05-15
 --------------------
