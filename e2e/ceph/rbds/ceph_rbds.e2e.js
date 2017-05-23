@@ -16,7 +16,7 @@ describe('should test the ceph rbd panel', function(){
     it('should create an default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
       rbdProperties.selectClusterAndPool(cluster, pool);
       var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
-      rbdProperties.createRbd(rbdName);
+      rbdProperties.createRbd(rbdName, '4.00 MiB', [0, 0, 0, 1, 1, 0, 1]);
     });
   });
 
@@ -67,14 +67,16 @@ describe('should test the ceph rbd panel', function(){
     });
   });
 
-  it('should have a statistic tab when selecting a rbd', function(){
-    //choose first element in ceph rbd list
-    element.all(by.binding('row.name')).get(0).click();
-    console.log('Wait one minute for nagios to create the graph data.');
-    browser.sleep(60000); // Wait a minute for nagios to create the graph data.
-    rbdProperties.statisticsTab.click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rbds/statistics#more');
-    expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
+  rbdProperties.useWriteablePools(function(cluster, pool){
+    it('should have a statistic tab when selecting a rbd', function(){
+      // Select the created rbd
+      helpers.get_list_element('e2e_' + pool.name + '_' + cluster.name).click();
+      console.log('Wait one minute for nagios to create the graph data.');
+      browser.sleep(60000); // Wait a minute for nagios to create the graph data.
+      rbdProperties.statisticsTab.click();
+      expect(browser.getCurrentUrl()).toContain('/ceph/rbds/statistics#more');
+      expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
+    });
   });
 
   graphHelpers.testGraphs(rbdProperties.statisticGraphsConfig);

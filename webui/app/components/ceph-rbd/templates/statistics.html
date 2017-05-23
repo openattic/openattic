@@ -1,5 +1,17 @@
 <div>
   <div class="row">
-    <graph-creation-component config="config" selection="selection"></graph-creation-component>
+    <graph-creation-component config="config" selection="selection" ng-if="fastDiff"></graph-creation-component>
+
+    <div class="col-lg-12" ng-if="!fastDiff">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">No graphs available</h3>
+        </div>
+        <div class="panel-body">
+          The 'fast-diff' feature has not been set for this RBD. Due to performance reasons it's not possible to generate monitoring graphs at all without enabling the (fast-diff) feature.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
