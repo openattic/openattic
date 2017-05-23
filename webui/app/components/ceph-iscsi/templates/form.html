@@ -133,9 +133,12 @@
               </button>
               <ul class="dropdown-menu scrollable-menu pull-right" uib-dropdown-menu
                   aria-labelledby="simple-dropdown">
-                <li ng-repeat="currentImage in availableImages()">
+                <li ng-repeat="currentImage in availableImages()"
+                    ng-class="{disabled: currentImage.hasUnsupportedFeature}">
                   <a ng-click="addImageAction(currentImage)"
-                     class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}</a>
+                     class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}
+                    <span ng-if="currentImage.hasUnsupportedFeature">(unsupported)</span>
+                  </a>
                 </li>
               </ul>
             </span>
