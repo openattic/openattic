@@ -53,6 +53,8 @@ def main():
         parser.print_usage()
         sys.exit(3)
 
+    # TODO: assert 'fast-diff' in CephRBD.objects.get(pool__name=..., image_name=...).features
+
     if len(TaskQueue.filter_by_definition_and_status(get_rbd_performance_data(
             args[0], args[1], args[2]), [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) \
             == 0:
