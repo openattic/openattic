@@ -28,6 +28,8 @@ Added
 
 Changed
 ~~~~~~~
+* Backend: The monitoring of RBDs without 'fast-diff' feature has been
+  disabled due to performance reasons (OP-2141)
 * WebUI: Required field symbol color changed to red (OP-2215)
 * Installation: Moveed DB migration code from ``oaconfig install`` to a Django
   command (OP-2160)
