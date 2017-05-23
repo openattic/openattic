@@ -33,6 +33,7 @@ Changed
 * Backend: Improved REST clients' error message on connection error (OP-2209)
 * Backend: Moved iSCSI management code from ceph_deployment to its own module (OP-2192)
 * WebUI: Required field symbol color changed to red (OP-2215)
+* WebUI/QA: More useful ceph pool tests (OP-2205)
 * Installation: Moveed DB migration code from ``oaconfig install`` to a Django
   command (OP-2160)
 
