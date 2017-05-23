@@ -397,6 +397,8 @@ fi
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
 %{_datadir}/%{name}/ceph_deployment/
+%{_datadir}/%{name}/installed_apps.d/60_ceph_iscsi
+%{_datadir}/%{name}/ceph_iscsi/
 
 %files gui
 %defattr(-,root,root,-)

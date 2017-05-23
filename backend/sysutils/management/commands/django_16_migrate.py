@@ -271,6 +271,9 @@ _migrations = [
         COMMIT;
         """
     ),
+    (
+        'ceph_iscsi', u'0001_initial', None, None
+    ),
 ]
 
 
