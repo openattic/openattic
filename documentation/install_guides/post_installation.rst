@@ -144,7 +144,7 @@ This is an example for the directly configured Rados Gateway credentials::
 
    If your Rados Gateway admin resource isn't configured to use the default
    value ``admin`` (e.g. http://host:80/admin), you will need to also set the
-   RGW_API_ADMIN_RESOURCE option appropriately.
+   ``RGW_API_ADMIN_RESOURCE`` option appropriately.
 
 You can obtain these credentials by issuing the ``radosgw-admin`` command like
 so::
@@ -153,7 +153,16 @@ so::
 
 On the other hand, if you have a Ceph cluster managed or deployed by DeepSea,
 |oA| is capable of obtaining the Rados Gateway credentials by using DeepSeas'
-REST API. You would need to set the following variables::
+REST API.
+
+To enable the REST API of DeepSea you would have to issue the following command
+on the Salt master node::
+
+  salt-call state.apply ceph.salt-api
+
+Afterwards, you would need to set the following variables to their
+corresponding values for |oA| to be able to talk to DeepSea and obtain the
+Rados Gateway credentials::
 
   SALT_API_HOST="salt"
   SALT_API_PORT=8000
