@@ -16,11 +16,11 @@ var globalConfig = {
       "boards"  : [{
         "name"   : "Ceph",
         "widgets": [{
-          "name"    : "Ceph Status",
+          "name"    : "Ceph Health",
           "manager" : {
-            "name"   : "Ceph Cluster Status",
-            "manager": "ceph-cluster-status",
-            "group"  : "ceph"
+            "name"   : "Ceph Health",
+            "manager": "ceph-health",
+            "group"  : "Ceph"
           },
           "settings": {}
         }]

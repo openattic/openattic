@@ -95,13 +95,13 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       desc: "Layering",
       helpText: "",
       requires: null,
-      excludes: "stripingv2"
+      excludes: null
     },
     "stripingv2": {
-      desc: "Striping",
-      helpText: "",
-      requires: null,
-      excludes: "layering"
+      desc: "Striping (currently unsupported)",
+      helpText: "This feature is currently unsupported.",
+      requires: "unsupported",
+      excludes: null
     },
     "exclusive-lock": {
       desc: "Exclusive lock",

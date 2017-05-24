@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 import imp
-from ceph_deployment.deepsea import DeepSea
+from deepsea import DeepSea
 from utilities import in_unittest
 
 try:

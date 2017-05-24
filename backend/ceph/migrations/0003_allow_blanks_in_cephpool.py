@@ -12,6 +12,10 @@ class Migration(migrations.Migration):
         ('ceph', '0002_auto_20161007_1921'),
     ]
 
+    run_before = [
+        ('volumes', '0002_remove'),
+    ]
+
     operations = [
         migrations.AlterField(
             model_name='cephpool',

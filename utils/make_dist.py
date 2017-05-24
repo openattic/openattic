@@ -318,9 +318,8 @@ def _commit_changes(commit_msg, repo_dir):
     :type repo_dir: str
     :rtype: ProcessResult
     """
-    process_run(['git', 'add', '--all'])
-    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg],
-                       cwd=repo_dir)
+    process_run(['git', 'add', '--all'], cwd=repo_dir)
+    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg], cwd=repo_dir)
 
 
 def _push_changes(repo_dir):
@@ -519,7 +518,7 @@ class DistBuilder(object):
             log.info(msg.format(source, destination_dir))
             return
 
-        if is_url(self._source):
+        if is_url(source):
             process_run(['git', 'clone', source, destination_dir])
         else:
             _copytree(source, destination_dir, symlinks=True)

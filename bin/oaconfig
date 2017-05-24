@@ -185,59 +185,22 @@ case $1 in
 				exit 2
 			fi
 		fi
-		
-		su "$OAUSER" -c 'python manage.py pre_install'
 
-		if service openattic-systemd status >/dev/null; then
-			# restart the daemons so they don't keep any locks open
-			$0 reload
-		fi
-		
-		# Initialize the schema so our daemons can start
-		DJANGO_MIGRATE="$(su "$OAUSER" -c 'python - << EOF
-from django import VERSION
-print "1" if VERSION[:2] > (1, 6) else ""
-EOF
-'
-)"
-		DJANGO_FAKE_INITIAL="$(su "$OAUSER" -c 'python - << EOF
-from django import VERSION
-print "1" if VERSION[:2] >= (1, 8) else ""
-EOF
-'
-)"
-		if [ "$DJANGO_MIGRATE" ]
-		then
-		    if [ "$DJANGO_FAKE_INITIAL" ]
-		    then
-		        su "$OAUSER" -c "python manage.py migrate --fake-initial --noinput"
-		    else
-		        su "$OAUSER" -c "python manage.py migrate --noinput"
-		    fi
-			su "$OAUSER" -c "python manage.py loaddata */fixtures/initial_data.json"
-		else
-			su "$OAUSER" -c 'python manage.py syncdb --noinput'
-			su "$OAUSER" -c 'python manage.py django_16_migrate'
-		fi
+        # Stop the daemons so they don't keep any locks open
+        # Also, pre-install may need to run DROP DATABASE
+        $0 stop
 
-		
-		# Create the status_cache table, ignoring failures (those mean we did this before)
-		su "$OAUSER" -c 'python manage.py createcachetable status_cache >/dev/null 2>/dev/null' || /bin/true
-		
-		su "$OAUSER" -c 'python manage.py add-host'
-		
-		# (re)start the daemons
-		$0 reload
-		
-		su "$OAUSER" -c 'python manage.py makedefaultadmin'
-		
+        su "$OAUSER" -c 'python manage.py install --pre-install'
+
+        $0 start
+
 		# Run the hook scripts to initialize modules
 		shopt -s nullglob
 		for hook in $OADIR/*/bin/oaconfig-install.sh; do
 			source $hook
 		done
 		
-		su "$OAUSER" -c 'python manage.py post_install'
+		su "$OAUSER" -c 'python manage.py install --post-install'
 
 		echo "Completed successfully."
 		;;

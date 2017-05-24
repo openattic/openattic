@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
         ('ceph', '0003_allow_blanks_in_cephpool'),
     ]
 
+    run_before = [
+        ('volumes', '0002_remove'),
+    ]
+
     operations = [
         migrations.RemoveField(
             model_name='cluster',

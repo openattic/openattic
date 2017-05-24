@@ -9,14 +9,8 @@
   </div>
 </div>
 
-<div class="panel panel-default" ng-show="!error && !iscsi.$resolved">
-  <div class="panel-heading">
-    <h3 class="panel-title"><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Loading...</h3>
-  </div>
-  <div class="panel-body">
-    iSCSI targets are loading...
-  </div>
-</div>
+<oa-loading-panel message="iSCSI targets are loading..."
+                  ng-show="!error && !iscsi.$resolved"></oa-loading-panel>
 
 <oadatatable ng-show="!error && iscsi.results" data="iscsi" class="oadatatable tc_cephIscsiTable"
              filter-config="filterConfig" selection="selection" special="deployed">

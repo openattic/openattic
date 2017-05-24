@@ -9,7 +9,9 @@
   </div>
 </div>
 
-<oadatatable ng-if="!error"
+<oa-loading-panel message="Nodes are loading..." ng-show="!error && !data.$resolved"></oa-loading-panel>
+
+<oadatatable ng-show="!error && data.results"
              class="oadatatable tc_cephNodesTable"
              data="data"
              filter-config="filterConfig"

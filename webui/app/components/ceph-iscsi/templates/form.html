@@ -9,14 +9,8 @@
     </div>
   </div>
 
-  <div class="panel panel-default" ng-show="targetId && !error && !model.$resolved">
-    <div class="panel-heading">
-      <h3 class="panel-title"><i class="fa fa-spinner fa-spin fa-fw"></i> Loading...</h3>
-    </div>
-    <div class="panel-body">
-        iSCSI target "{{ targetId }}" is loading...
-    </div>
-  </div>
+  <oa-loading-panel message="iSCSI target '{{ targetId }}' is loading..."
+                    ng-show="targetId && !error && !model.$resolved"></oa-loading-panel>
 
   <form ng-show="!targetId || (!error && model.$resolved)" name="iscsiForm" role="form" class="form-horizontal" novalidate>
     <div class="panel panel-default">
@@ -139,9 +133,12 @@
               </button>
               <ul class="dropdown-menu scrollable-menu pull-right" uib-dropdown-menu
                   aria-labelledby="simple-dropdown">
-                <li ng-repeat="currentImage in availableImages()">
+                <li ng-repeat="currentImage in availableImages()"
+                    ng-class="{disabled: currentImage.hasUnsupportedFeature}">
                   <a ng-click="addImageAction(currentImage)"
-                     class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}</a>
+                     class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}
+                    <span ng-if="currentImage.hasUnsupportedFeature">(unsupported)</span>
+                  </a>
                 </li>
               </ul>
             </span>

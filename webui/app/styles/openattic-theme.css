@@ -1228,3 +1228,7 @@ uib-accordion .panel-title,
 .notification.warning .icon {
   background-position: -72px 0;
 }
+
+.required {
+  color: #d04437;
+}

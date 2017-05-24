@@ -3,6 +3,40 @@ var helpers = require('../../common.js');
 describe('General', function(){
 
   var oaLogo = element(by.css('.tc_logo_component a'));
+  var menuItems = [ //Put here the final menu order
+    'dashboard', //has to be there
+    'ceph_osds',
+    'ceph_rbds',
+    'ceph_pools',
+    'ceph_nodes',
+    'ceph_iscsi',
+    'ceph_crushmap',
+    'ceph_rgw',
+    'system'
+  ];
+  var subMenusItems = [{
+    name: 'ceph_rgw',
+    item: element(by.css('.tc_menuitem_ceph_rgw > a')),
+    url: '/openattic/#/ceph/rgw/',
+    subitems: {
+      users: element(by.css('.tc_submenuitem_ceph_rgw_users')),
+    },
+    order: [
+      'users'
+    ]
+  },{
+    name: 'system',
+    item: element(by.css('.tc_menuitem_system > a')),
+    url: '/openattic/#/',
+    subitems: {
+      users: element(by.css('.tc_submenuitem_system_users')),
+      commandlog: element(by.css('.tc_submenuitem_system_cmdlog'))
+    },
+    order: [
+      'users',
+      'commandlog'
+    ]
+  }];
 
   var menuCheck = function(menu){
     var menuCount = 0;
@@ -18,7 +52,7 @@ describe('General', function(){
         }
       });
       it('should click ' + item + ' and check the url', function(){
-        if(item.isDisplayed() && name != 'system'){
+        if(item.isDisplayed() && !subMenusItems.some(function(item) { return item.name === name; })){
           url = name.replace("_", "/");
           item.click();
           browser.sleep(400);
@@ -28,32 +62,34 @@ describe('General', function(){
     });
   };
 
-  var subitemCheck = function(dropdown){
-    var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
-    var menuCount = 0;
+  var subitemCheck = function(subitems){
+    subitems.forEach(function(dropdown) {
+      var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
+      var menuCount = 0;
 
-    it('should have subitems under the ' + dropdown.name + ' menu item', function(){
-      if(dropdown.item.isDisplayed()){
-        dropdown.item.click();
-        expect(subitems.count()).toBeGreaterThan(0);
-      }
-    });
-
-    dropdown.order.forEach(function(item){
-      it('should have ' + dropdown.name + ' subitem ' + item + ' in the right order', function(){
-        if(dropdown.item.isDisplayed()){
+      it('should have subitems under the ' + dropdown.name + ' menu item', function () {
+        if (dropdown.item.isDisplayed()) {
           dropdown.item.click();
-          expect(dropdown.subitems[item].getText()).toEqual(subitems.get(menuCount).getText());
-          menuCount++;
+          expect(subitems.count()).toBeGreaterThan(0);
         }
       });
-      it('should click ' + dropdown.name + ' subitem ' + item + ' and check the url', function(){
-        if(dropdown.item.isDisplayed()){
-          browser.refresh();
-          dropdown.item.click();
-          dropdown.subitems[item].click();
-          expect(browser.getCurrentUrl()).toContain(dropdown.url + item);
-        }
+
+      dropdown.order.forEach(function (item) {
+        it('should have ' + dropdown.name + ' subitem ' + item + ' in the right order', function () {
+          if (dropdown.item.isDisplayed()) {
+            dropdown.item.click();
+            expect(dropdown.subitems[item].getText()).toEqual(subitems.get(menuCount).getText());
+            menuCount++;
+          }
+        });
+        it('should click ' + dropdown.name + ' subitem ' + item + ' and check the url', function () {
+          if (dropdown.item.isDisplayed()) {
+            browser.refresh();
+            dropdown.item.click();
+            dropdown.subitems[item].click();
+            expect(browser.getCurrentUrl()).toContain(dropdown.url + item);
+          }
+        });
       });
     });
   };
@@ -94,31 +130,10 @@ describe('General', function(){
   });
 
   /* Menuitems */
-  menuCheck([ //Put here the final menu order
-    'dashboard', //has to be there
-    'ceph_osds',
-    'ceph_rbds',
-    'ceph_pools',
-    'ceph_nodes',
-    'ceph_iscsi',
-    'ceph_crushmap',
-    'system'
-  ]);
+  menuCheck(menuItems);
 
   /* System and its subitems */
-  subitemCheck({
-    name: 'system',
-    item: element(by.css('.tc_menuitem_system > a')),
-    url: '/openattic/#/',
-    subitems: {
-      users: element(by.css('.tc_submenuitem_system_users')),
-      commandlog: element(by.css('.tc_submenuitem_system_cmdlog'))
-    },
-    order: [
-      'users',
-      'commandlog'
-    ]
-  });
+  subitemCheck(subMenusItems);
 
   notificationsCheck();
 

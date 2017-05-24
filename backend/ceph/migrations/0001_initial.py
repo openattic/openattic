@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
         ('ifconfig', '0002_auto_20160329_1248'),
     ]
 
+    run_before = [
+        ('volumes', '0002_remove'),
+    ]
+
     operations = [
         migrations.CreateModel(
             name='CephCluster',
