@@ -25,6 +25,8 @@ Added
 Changed
 ~~~~~~~
 * Backend: Corrected num_bytes unit in check_cephpool Nagios plugin (OP-1532)
+* Backend/WebUI: The monitoring of RBDs without 'fast-diff' feature has been
+  disabled due to performance reasons (OP-2141, OP-2223)
 
 Fixed
 ~~~~~
