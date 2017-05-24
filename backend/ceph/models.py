@@ -866,6 +866,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
 
+            if insert:
+                self.features = original.features
+
             for key, value in diff.items():
                 if key == 'size':
                     assert not insert
