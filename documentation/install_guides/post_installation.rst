@@ -136,6 +136,7 @@ This is an example for the directly configured Rados Gateway credentials::
 
   RGW_API_HOST="ceph-1"
   RGW_API_PORT=80
+  RGW_API_SCHEME="http"
   RGW_API_ACCESS_KEY="VFEG733GBY0DJCIV6NK0"
   RGW_API_SECRET_KEY="lJzPbZYZTv8FzmJS5eiiZPHxlT2LMGOMW8ZAeOAq"
 
