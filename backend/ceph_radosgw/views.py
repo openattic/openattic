@@ -11,21 +11,25 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-import requests
 import json
 from django.http import HttpResponse
-from django.conf import settings
-from awsauth import S3Auth
+from deepsea import DeepSea
 
-RGW_HOST = getattr(settings, 'RGW_HOST', '')
-RGW_PORT = getattr(settings, 'RGW_PORT', '')
-RGW_ACCESS_KEY = getattr(settings, 'RGW_ACCESS_KEY', '')
-RGW_SECRET_KEY = getattr(settings, 'RGW_SECRET_KEY', '')
-RGW_ADMIN_RESOURCE = getattr(settings, 'RGW_ADMIN_RESOURCE', 'admin')
+from ceph_radosgw import radosgw
+from ceph_radosgw.conf import settings
 
 
-def proxy_view(request, path, headers=None):
-    if not all((RGW_HOST, RGW_PORT, RGW_ACCESS_KEY, RGW_SECRET_KEY)):
+def proxy_view(request, path):
+
+    # Credentials have been given manually, they'll be preferably used.
+    if radosgw.has_static_credentials():
+        credentials = radosgw.STATIC_CREDENTIALS
+
+    # Salt API credentials are given to be able to retrieve the RGW API credentials.
+    elif radosgw.has_salt_api_credentials():
+        credentials = DeepSea.instance().get_rgw_api_credentials()
+
+    else:
         content = {
             'Code': 'ConfigurationIncomplete',
             'Message': 'Rados Gateway seems to be either unconfigured or misconfigured. '
@@ -35,11 +39,5 @@ def proxy_view(request, path, headers=None):
         response['Content-Type'] = 'application/json'
         return response
 
-    params = request.GET.copy()
-    s3auth = S3Auth(RGW_ACCESS_KEY, RGW_SECRET_KEY, service_url='{}:{}'.format(RGW_HOST, RGW_PORT))
-    url = 'http://{}:{}/{}'.format(RGW_HOST, RGW_PORT, RGW_ADMIN_RESOURCE + '/' + path)
-    response = requests.request(request.method, url, data=request.body, params=params,
-                                headers=headers, auth=s3auth)
-    proxy_response = HttpResponse(response.content, status=response.status_code)
-
-    return proxy_response
+    content, status_code = radosgw.get_rgw_api_response(request, path, credentials)
+    return HttpResponse(content, status=status_code)

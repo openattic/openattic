@@ -17,6 +17,7 @@ import logging
 from django.conf import settings
 from utilities import aggregate_dict, zip_by_keys
 from rest_client import RestClient, RequestException
+from urlparse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -166,3 +167,18 @@ class DeepSea(RestClient):
             'client': 'runner', 'fun': 'ui_iscsi.undeploy'
         })
         return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0] > (urls[*] & access_key & secret_key)')
+    @RestClient.requires_login
+    def get_rgw_api_credentials(self, request=None):
+        response = request({'client': 'runner', 'fun': 'ui_rgw.credentials'})
+        response_json = response['return'][0]
+        parsed_url = urlparse(response_json['urls'][0])  # Uses the first returned host
+
+        return {
+            'scheme': parsed_url.scheme,
+            'host': parsed_url.hostname,
+            'port': parsed_url.port,
+            'access_key': response_json['access_key'],
+            'secret_key': response_json['secret_key']
+        }
