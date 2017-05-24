@@ -145,6 +145,11 @@ This is an example for the directly configured Rados Gateway credentials::
    value ``admin`` (e.g. http://host:80/admin), you will need to also set the
    RGW_API_ADMIN_RESOURCE option appropriately. The default is ``admin``.
 
+You can obtain these credentials by issuing the ``radosgw-admin`` command like
+so::
+
+  radosgw-admin user info --uid=admin
+
 On the other hand, if you have a Ceph cluster managed or deployed by DeepSea,
 |oA| is capable of obtaining the Rados Gateway credentials by using DeepSeas'
 REST API. You would need to set the following variables::
