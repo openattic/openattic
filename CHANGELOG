@@ -40,7 +40,7 @@ Changed
   without 'fast-diff' feature (OP-2223)
 * WebUI: iSCSI - Only allow to use RBD images with (kernel module) compatible 
   features (OP-2232)
-* Installation: Moveed DB migration code from ``oaconfig install`` to a Django
+* Installation: Moved DB migration code from ``oaconfig install`` to a Django
   command (OP-2160)
 
 Removed
