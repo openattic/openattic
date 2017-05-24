@@ -115,3 +115,46 @@ The packages should automatically install any additionally required packages.
 The last step is to recreate your |oA| configuration::
 
   # oaconfig install
+
+Rados Gateway management features
+---------------------------------
+
+If you want to enable the Rados Gateway management features, you will need to
+configure the credentials manually. You can do so in the distribution specific
+configuration files in either ``/etc/default/openattic`` for Debian-based
+distributions or in ``/etc/sysconfig/openattic`` for RedHat-based
+distributions.  |oA| supports both, retrieving the credentials from DeepSea or
+having directly configured credentials for the Rados Gateway.
+
+.. caution::
+
+  The two configuration files mentioned above are used in Python as well as
+  Bash. Therefore the files needs to be in a format which Bash can understand
+  and thus it's not possible to have spaces before or after the equal signs!
+
+This is an example for the directly configured Rados Gateway credentials::
+
+  RGW_API_HOST="pn-ceph-1"
+  RGW_API_PORT=80
+  RGW_API_ACCESS_KEY="VFEG733GBY0DJCIV6NK0"
+  RGW_API_SECRET_KEY="lJzPbZYZTv8FzmJS5eiiZPHxlT2LMGOMW8ZAeOAq"
+
+.. note::
+
+   If your Rados Gateway admin resource isn't configured to use the default
+   value ``admin`` (e.g. http://host:80/admin), you will need to also set the
+   RGW_API_ADMIN_RESOURCE option appropriately. The default is ``admin``.
+
+On the other hand, if you have a Ceph cluster managed or deployed by DeepSea,
+|oA| is capable of obtaining the Rados Gateway credentials by using DeepSeas'
+REST API. You would need to set the following variables::
+
+  SALT_API_HOST="pn-ceph-1"
+  SALT_API_PORT=8000
+  SALT_API_USERNAME="admin"
+  SALT_API_PASSWORD="admin"
+
+.. note::
+
+  You might want to override the authentication mechanism by setting the
+  ``SALT_API_EAUTH`` variable to another value. It's default is ``auto``.
