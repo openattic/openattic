@@ -811,7 +811,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     def set_disk_usage(self, objects, field_names):
         self.used_size = None
 
-        if 'fast-diff' in self.features:
+        if self.features is None or 'fast-diff' in self.features:
             fsid = self.pool.cluster.fsid
             pool_name = self.pool.name
 
