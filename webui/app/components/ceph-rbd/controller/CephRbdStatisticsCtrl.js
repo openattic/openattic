@@ -33,6 +33,13 @@
 var app = angular.module("openattic.cephRbd");
 app.controller("CephRbdStatisticsCtrl", function ($scope, cephRbdService) {
   /*
+   * If the user selects another item, check if fast-diff is activated
+   */
+  $scope.$watch("selection.item", function () {
+    $scope.fastDiff = $scope.selection.item.features.indexOf("fast-diff") > 0;
+  });
+
+  /*
    * Outlines the graphs that will be shown
    */
   $scope.config = {

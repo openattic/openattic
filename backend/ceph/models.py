@@ -809,30 +809,34 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
     @bulk_attribute_setter(['used_size'])
     def set_disk_usage(self, objects, field_names):
-        fsid = self.pool.cluster.fsid
-        pool_name = self.pool.name
+        self.used_size = None
 
-        if len(TaskQueue.filter_by_definition_and_status(
+        if self.features is None or 'fast-diff' in self.features:
+            fsid = self.pool.cluster.fsid
+            pool_name = self.pool.name
+
+            if len(TaskQueue.filter_by_definition_and_status(
+                    ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
+                    [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) == 0:
+                ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
+
+            tasks = TaskQueue.filter_by_definition_and_status(
                 ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
-                [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) == 0:
-            ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
+                [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
+            tasks = list(tasks)
+            disk_usage = dict()
 
-        tasks = TaskQueue.filter_by_definition_and_status(
-            ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
-            [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
-        tasks = list(tasks)
-        disk_usage = dict()
+            if len(tasks) > 0:
+                latest_task = tasks.pop()
 
-        if len(tasks) > 0:
-            latest_task = tasks.pop()
+                for task in tasks:
+                    task.delete()
 
-            for task in tasks:
-                task.delete()
+                if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
+                    disk_usage, _exec_time = latest_task.json_result
 
-            if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
-                disk_usage, _exec_time = latest_task.json_result
-
-        self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
+            if 'used_size' in disk_usage:
+                self.used_size = disk_usage['used_size']
 
     def save(self, *args, **kwargs):
         """
@@ -861,6 +865,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
+
+            if insert:
+                self.features = original.features
 
             for key, value in diff.items():
                 if key == 'size':
