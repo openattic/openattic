@@ -122,9 +122,9 @@ Rados Gateway management features
 If you want to enable the Rados Gateway management features, you will need to
 configure the credentials manually. You can do so in the distribution specific
 configuration files in either ``/etc/default/openattic`` for Debian-based
-distributions or in ``/etc/sysconfig/openattic`` for RedHat-based
-distributions.  |oA| supports both, retrieving the credentials from DeepSea or
-having directly configured credentials for the Rados Gateway.
+distributions or in ``/etc/sysconfig/openattic`` for RedHat-based distributions
+as well as SUSE Linux.  |oA| supports both, retrieving the credentials from
+DeepSea or having directly configured credentials for the Rados Gateway.
 
 .. caution::
 
