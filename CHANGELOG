@@ -16,7 +16,10 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.0.1] - unreleased
+[3.1.1] - Not released yet
+--------------------------
+
+[3.1.0] - 2017-05-24
 --------------------
 
 Added
@@ -33,7 +36,8 @@ Changed
 * Backend: The monitoring of RBDs without 'fast-diff' feature has been disabled
   due to performance reasons (OP-2141)
 * Backend: Improved REST clients' error message on connection error (OP-2209)
-* Backend: Moved iSCSI management code from ceph_deployment to its own module (OP-2192)
+* Backend: Moved iSCSI management code from ceph_deployment to its own module 
+  (OP-2192)
 * WebUI: Required field symbol color changed to red (OP-2215)
 * WebUI/QA: More useful ceph pool tests (OP-2205)
 * WebUI: Disable the "striping" feature when creating RBD images (OP-2240)
@@ -43,9 +47,6 @@ Changed
   features (OP-2232)
 * Installation: Moved DB migration code from ``oaconfig install`` to a Django
   command (OP-2160)
-
-Removed
-~~~~~~~
 
 Fixed
 ~~~~~
@@ -112,7 +113,7 @@ Removed
 Fixed
 ~~~~~
 * WebUI: Redirect to dashboard when an authenticated user navigates to login
-  page. Thanks to Ra�l Vega for the contribution. (OP-2029)
+  page. Thanks to Raúl Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * WebUI: Remove checkbox column in Ceph Nodes. (OP-2150)
