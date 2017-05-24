@@ -129,7 +129,7 @@ DeepSea or having directly configured credentials for the Rados Gateway.
 .. caution::
 
   The two configuration files mentioned above are used in Python as well as
-  Bash. Therefore the files needs to be in a format which Bash can understand
+  Bash. Therefore the files need to be in a format which Bash can understand
   and thus it's not possible to have spaces before or after the equal signs!
 
 This is an example for the directly configured Rados Gateway credentials::
