@@ -108,13 +108,14 @@ describe('ceph rgw', function(){
     cephRgwCommons.editUser(testUser2.user_id);
     cephRgwCommons.addSubuserBtn.click();
     browser.sleep(400);
-    element(by.model('subuser.subuser')).sendKeys("swift");
+    element(by.model('subuser.subuser')).sendKeys('swift');
     browser.sleep(400);
-    element(by.model('subuser.permissions')).element(by.cssContainingText('option', 'read')).click();
+    element(by.model('subuser.permissions')).all(by.cssContainingText(
+      'option', 'read')).first().click();
     browser.sleep(400);
     element(by.model('subuser.generate_secret')).click();
     browser.sleep(400);
-    cephRgwCommons.submitBtn.click();
+    cephRgwCommons.submitSubuserBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
@@ -123,12 +124,12 @@ describe('ceph rgw', function(){
     cephRgwCommons.editUser(testUser2.user_id);
     cephRgwCommons.addSubuserBtn.click();
     browser.sleep(400);
-    element(by.model('subuser.subuser')).sendKeys("swift");
+    element(by.model('subuser.subuser')).sendKeys('swift');
     browser.sleep(400);
     expect(element(by.css('.tc_subuserNotUnique')).isDisplayed()).toBe(true);
-    element(by.css('.tc_cancelButton')).click();
+    cephRgwCommons.cancelSubuserBtn.click();
     browser.sleep(400);
-    element(by.css('.tc_backButton')).click();
+    cephRgwCommons.backBtn.click();
   });
 
   it('should add a new S3 keys', function(){
@@ -136,19 +137,19 @@ describe('ceph rgw', function(){
     // Add key for the user.
     cephRgwCommons.addS3KeyBtn.click();
     browser.sleep(400);
-    element(by.model('key.user')).element(by.cssContainingText('option',
-      testUser2.user_id)).click();
+    element(by.model('key.user')).all(by.cssContainingText('option',
+      testUser2.user_id)).first().click();
     browser.sleep(400);
     element(by.model('key.access_key')).sendKeys('xyz123');
     browser.sleep(400);
     element(by.model('key.secret_key')).sendKeys('thisismysecret');
     browser.sleep(400);
-    cephRgwCommons.submitBtn.click();
+    cephRgwCommons.submitS3KeyBtn.click();
     // Add key for the subuser.
     cephRgwCommons.addS3KeyBtn.click();
     browser.sleep(400);
     element(by.model('key.user')).element(by.cssContainingText('option',
-      testUser2.user_id + ":swift")).click();
+      testUser2.user_id + ':swift')).click();
     browser.sleep(400);
     // This fails because of a bug in the RGW Admin Ops REST interface.
     // element(by.model('key.generate_key')).click();
@@ -156,7 +157,7 @@ describe('ceph rgw', function(){
     browser.sleep(400);
     element(by.model('key.secret_key')).sendKeys('xxxxxxxxxxxxxx');
     browser.sleep(400);
-    cephRgwCommons.submitBtn.click();
+    cephRgwCommons.submitS3KeyBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
@@ -170,7 +171,7 @@ describe('ceph rgw', function(){
     browser.sleep(400);
     element(by.model('cap.perm')).element(by.cssContainingText('option', '*')).click();
     browser.sleep(400);
-    cephRgwCommons.submitBtn.click();
+    cephRgwCommons.submitCapBtn.click();
     // Add 'metadata:write' capability.
     cephRgwCommons.addCapBtn.click();
     browser.sleep(400);
@@ -178,7 +179,7 @@ describe('ceph rgw', function(){
     browser.sleep(400);
     element(by.model('cap.perm')).element(by.cssContainingText('option', 'write')).click();
     browser.sleep(400);
-    cephRgwCommons.submitBtn.click();
+    cephRgwCommons.submitCapBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
