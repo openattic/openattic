@@ -26,6 +26,7 @@ STATIC_CREDENTIALS = {
     'port': settings.RGW_API_PORT,
     'access_key': settings.RGW_API_ACCESS_KEY,
     'secret_key': settings.RGW_API_SECRET_KEY,
+    'scheme': settings.RGW_API_SCHEME,
 }
 
 
@@ -35,14 +36,15 @@ def has_salt_api_credentials():
 
 
 def get_rgw_api_response(request, path, credentials):
+    # Fall back to user configuration if value for port or scheme isn't provided by DeepSea.
+    credentials['port'] = credentials['port'] or settings.RGW_API_PORT
+    credentials['scheme'] = credentials['scheme'] or settings.RGW_API_SCHEME
+
     params = request.GET.copy()
     s3auth = S3Auth(credentials['access_key'],
                     credentials['secret_key'],
                     service_url='{}:{}'.format(credentials['host'], credentials['port']))
-    if not credentials['host'].startswith('http'):
-        credentials['host'] = 'http://' + credentials['host']
-    url = '{}:{}/{}'.format(credentials['host'],
-                            credentials['port'],
-                            settings.RGW_API_ADMIN_RESOURCE + '/' + path)
+    url = '{}://{}:{}/{}'.format(credentials['scheme'], credentials['host'], credentials['port'],
+                                 settings.RGW_API_ADMIN_RESOURCE + '/' + path)
     response = requests.request(request.method, url, data=request.body, params=params, auth=s3auth)
     return response.content, response.status_code

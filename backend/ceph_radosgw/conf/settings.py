@@ -20,6 +20,7 @@ RGW_API_PORT = getattr(settings, 'RGW_API_PORT', 80)
 RGW_API_ACCESS_KEY = getattr(settings, 'RGW_API_ACCESS_KEY', '')
 RGW_API_SECRET_KEY = getattr(settings, 'RGW_API_SECRET_KEY', '')
 RGW_API_ADMIN_RESOURCE = getattr(settings, 'RGW_API_ADMIN_RESOURCE', 'admin')
+RGW_API_SCHEME = getattr(settings, 'RGW_API_SCHEME', 'http')
 
 SALT_API_HOST = getattr(settings, 'SALT_API_HOST', '')
 SALT_API_PORT = getattr(settings, 'SALT_API_PORT', '')

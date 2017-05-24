@@ -28,8 +28,6 @@ def proxy_view(request, path):
     # Salt API credentials are given to be able to retrieve the RGW API credentials.
     elif radosgw.has_salt_api_credentials():
         credentials = DeepSea.instance().get_rgw_api_credentials()
-        # As long as DeepSea doesn't provide port, we'll use DeepSea pre-defined default.
-        credentials['port'] = settings.RGW_API_PORT
 
     else:
         content = {
