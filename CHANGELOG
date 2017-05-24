@@ -21,11 +21,12 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend: Obtain Rados Gateway credentials from DeepSea to enable
+  the RGW proxy (OP-2154)
 * Backend: Adds search field to the API for RBDs (OP-2199)
 * Development: Allow developers and test systems to override
   `backend/settings.py` (OP-2207)
 * WebUI: Add Object Gateway user management. (OP-762)
-
 
 Changed
 ~~~~~~~
