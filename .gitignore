@@ -8,6 +8,7 @@
 *~
 e2e/configs.js
 .pc/
+settings_local.py
 
 .secret.txt
 .idea

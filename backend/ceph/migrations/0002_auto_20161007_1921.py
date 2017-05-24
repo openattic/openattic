@@ -10,6 +10,10 @@ class Migration(migrations.Migration):
         ('ceph', '0001_initial'),
     ]
 
+    run_before = [
+        ('volumes', '0002_remove'),
+    ]
+
     operations = [
         migrations.AlterField(
             model_name='cepherasurecodeprofile',

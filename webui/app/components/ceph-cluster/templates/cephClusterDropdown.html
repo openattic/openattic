@@ -1,6 +1,6 @@
 <div class="panel panel-default" ng-show="error">
     <div class="panel-heading">
-        <h3 class="panel-title">Sorry folks...</h3>
+        <h3 class="panel-title">Couldn't connect to Ceph cluster</h3>
     </div>
     <div class="panel-body">
         Ceph resource could not be loaded. Make sure that the ceph module is installed.
@@ -18,10 +18,10 @@
 
 <div class="panel panel-default" ng-show="!error && cluster.results.length === 0">
     <div class="panel-heading">
-        <h3 class="panel-title">Sorry folks...</h3>
+        <h3 class="panel-title">No Ceph cluster found</h3>
     </div>
     <div class="panel-body">
-        No Ceph cluster available.
+        Please check your openATTIC/Ceph configuration.
     </div>
 </div>
 

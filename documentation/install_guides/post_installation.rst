@@ -115,3 +115,56 @@ The packages should automatically install any additionally required packages.
 The last step is to recreate your |oA| configuration::
 
   # oaconfig install
+
+Rados Gateway management features
+---------------------------------
+
+If you want to enable the Rados Gateway management features, you will need to
+configure the credentials manually. You can do so in the distribution specific
+configuration files in either ``/etc/default/openattic`` for Debian-based
+distributions or in ``/etc/sysconfig/openattic`` for RedHat-based distributions
+as well as SUSE Linux.  |oA| supports both, retrieving the credentials from
+DeepSea or having directly configured credentials for the Rados Gateway.
+
+.. caution::
+
+  The two configuration files mentioned above are used in Python as well as
+  Bash. Therefore the files need to be in a format which Bash can understand
+  and thus it's not possible to have spaces before or after the equal signs!
+
+This is an example for the directly configured Rados Gateway credentials::
+
+  RGW_API_HOST="ceph-1"
+  RGW_API_PORT=80
+  RGW_API_SCHEME="http"
+  RGW_API_ACCESS_KEY="VFEG733GBY0DJCIV6NK0"
+  RGW_API_SECRET_KEY="lJzPbZYZTv8FzmJS5eiiZPHxlT2LMGOMW8ZAeOAq"
+
+.. note::
+
+   If your Rados Gateway admin resource isn't configured to use the default
+   value ``admin`` (e.g. http://host:80/admin), you will need to also set the
+   ``RGW_API_ADMIN_RESOURCE`` option appropriately.
+
+You can obtain these credentials by issuing the ``radosgw-admin`` command like
+so::
+
+  radosgw-admin user info --uid=admin
+
+On the other hand, if you have a Ceph cluster managed or deployed by DeepSea,
+|oA| is capable of obtaining the Rados Gateway credentials by using DeepSeas'
+REST API.
+
+To enable the REST API of DeepSea you would have to issue the following command
+on the Salt master node::
+
+  salt-call state.apply ceph.salt-api
+
+Afterwards, you would need to set the following variables to their
+corresponding values for |oA| to be able to talk to DeepSea and obtain the
+Rados Gateway credentials::
+
+  SALT_API_HOST="salt"
+  SALT_API_PORT=8000
+  SALT_API_USERNAME="admin"
+  SALT_API_PASSWORD="admin"

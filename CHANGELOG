@@ -16,6 +16,47 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.1.0] - 2017-05-24
+--------------------
+
+Added
+~~~~~
+* Backend: Obtain Rados Gateway credentials from DeepSea to enable
+  the RGW proxy (OP-2154)
+* Backend: Adds search field to the API for RBDs (OP-2199)
+* Development: Allow developers and test systems to override
+  `backend/settings.py` (OP-2207)
+* WebUI: Add Object Gateway user management. (OP-762)
+
+Changed
+~~~~~~~
+* Backend: The monitoring of RBDs without 'fast-diff' feature has been disabled
+  due to performance reasons (OP-2141)
+* Backend: Improved REST clients' error message on connection error (OP-2209)
+* Backend: Moved iSCSI management code from ceph_deployment to its own module 
+  (OP-2192)
+* WebUI: Required field symbol color changed to red (OP-2215)
+* WebUI/QA: More useful ceph pool tests (OP-2205)
+* WebUI: Disable the "striping" feature when creating RBD images (OP-2240)
+* WebUI: Display a user friendly help text in the GUI for the monitoring of RBDs 
+  without 'fast-diff' feature (OP-2223)
+* WebUI: iSCSI - Only allow to use RBD images with (kernel module) compatible 
+  features (OP-2232)
+* Installation: Moved DB migration code from ``oaconfig install`` to a Django
+  command (OP-2160)
+
+Fixed
+~~~~~
+* WebUI: Rephrases "Sorry Folks" message to be useful (OP-2210)
+* WebUI: Changes default widget config to point to the right widget (OP-2203)
+* WebUI: Resolves error in health widget (OP-2191)
+* Packaging: Re-added `volumes` directory to the base package (OP-2166)
+* Backend: Fixed `oaconfig install` on Django 1.7+ installations 
+  (OP-2166, OP-2169)
+* Packaging: Fix re-introduced bug with retrieval of local paths in
+  make_dist.py (OP-2224)
+* Packaging: Fix internal commit functionality of make_dist.py (OP-2227)
+
 [3.0.0] - 2017-05-15
 --------------------
 

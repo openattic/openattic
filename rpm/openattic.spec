@@ -369,6 +369,7 @@ fi
 %{_datadir}/%{name}/rest/
 %{_datadir}/%{name}/rest_client.py*
 %{_datadir}/%{name}/settings.py*
+%{_datadir}/%{name}/deepsea.py*
 %{_datadir}/%{name}/systemd/
 %{_datadir}/%{name}/sysutils/
 %{_datadir}/%{name}/taskqueue/
@@ -377,6 +378,7 @@ fi
 %{_datadir}/%{name}/userprefs/
 %{_datadir}/%{name}/version.txt
 %{_datadir}/%{name}/views.py*
+%{_datadir}/%{name}/volumes/
 %{_datadir}/%{name}/exception.py*
 %{_datadir}/%{name}/utilities.py*
 
@@ -384,7 +386,9 @@ fi
 %defattr(-,root,root,-)
 %config %{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
 %{_datadir}/%{name}/installed_apps.d/60_ceph
+%{_datadir}/%{name}/installed_apps.d/60_ceph_radosgw
 %{_datadir}/%{name}/ceph/
+%{_datadir}/%{name}/ceph_radosgw/
 %{_libdir}/nagios/plugins/check_cephcluster
 %{_libdir}/nagios/plugins/check_cephpool
 %{_libdir}/nagios/plugins/check_cephrbd
@@ -393,6 +397,8 @@ fi
 %defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
 %{_datadir}/%{name}/ceph_deployment/
+%{_datadir}/%{name}/installed_apps.d/60_ceph_iscsi
+%{_datadir}/%{name}/ceph_iscsi/
 
 %files gui
 %defattr(-,root,root,-)

@@ -44,18 +44,14 @@ module.exports = function (grunt) {
       "<%= buildConfig.src %>scripts/**/module.js",
       "<%= buildConfig.src %>scripts/services/*.js",
       "<%= buildConfig.src %>scripts/**/*.js",
-      "<%= buildConfig.src %>components/**/module.js",
+      "<%= buildConfig.src %>components/**/*module.js",
       "<%= buildConfig.src %>components/services/*.js",
-      "<%= buildConfig.src %>components/**/*.js",
-      "<%= buildConfig.src %>extensions/**/module.js",
-      "<%= buildConfig.src %>extensions/services/*.js",
-      "<%= buildConfig.src %>extensions/**/*.js"
+      "<%= buildConfig.src %>components/**/*.js"
     ],
     watchFiles: [
       "<%= buildConfig.src %>*.tpl.html",
       "<%= buildConfig.src %>scripts/**/*.js",
-      "<%= buildConfig.src %>components/**/*.js",
-      "<%= buildConfig.src %>extensions/**/*.js"
+      "<%= buildConfig.src %>components/**/*.js"
     ]
   };
 
@@ -109,8 +105,7 @@ module.exports = function (grunt) {
         },
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
-          "<%= buildConfig.src %>components/{,**/}*.js",
-          "<%= buildConfig.src %>extensions/{,**/}*.js"
+          "<%= buildConfig.src %>components/{,**/}*.js"
         ]
       },
 
@@ -121,8 +116,7 @@ module.exports = function (grunt) {
         },
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
-          "<%= buildConfig.src %>components/{,**/}*.js",
-          "<%= buildConfig.src %>extensions/{,**/}*.js"
+          "<%= buildConfig.src %>components/{,**/}*.js"
         ]
       },
 

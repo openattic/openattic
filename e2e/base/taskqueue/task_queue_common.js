@@ -241,7 +241,7 @@
    * @param {int} [depth] - Given by the recursive call.
    */
   self.waitForPendingTasks = function(depth){
-    browser.sleep(helpers.configs.sleep * 3);
+    browser.sleep(helpers.configs.sleep);
     if(!depth){
       self.open(); // Opens the dialog at first call.
       self.changeTab('pending');

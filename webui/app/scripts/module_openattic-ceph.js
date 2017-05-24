@@ -37,5 +37,6 @@ angular.module("openattic.ceph", [
   "openattic.cephIscsi",
   "openattic.cephOsd",
   "openattic.cephPools",
-  "openattic.cephRbd"
+  "openattic.cephRbd",
+  "openattic.cephRgw"
 ]);

@@ -137,18 +137,13 @@ var rbdCommons = function(){
   this.creationClusterSelect = element(by.model(this.formElements.cluster.model));
 
   this.featureCases = [ // 0 = unchecked; 1 = checked; -1= disabled; 2=true or false should not matter
-    //all cases without layering and striping
-    [2, 0, 0, 0, -1, -1, -1],
-    [2, 0, 0, 1, 0, 2, -1],
-    [2, 0, 0, 1, 1, 2, 2],
-    //all cases with layering enabled
+    // TODO: Uncomment it when OP-2217 is fixed, to create a featureless RBD.
+    //[2, 2, -1, 0, -1, -1, -1],
+    // TODO: Remove the following two lines when OP-2217 is fixed.
+    [1, 2, -1, 0, -1, -1, -1],
     [2, 1, -1, 0, -1, -1, -1],
-    [2, 1, -1, 1, 0, 2, -1],
-    [2, 1, -1, 1, 1, 2, 2],
-    //all cases with striping enabled
-    [2, -1, 1, 0, -1, -1, -1],
-    [2, -1, 1, 1, 0, 2, -1],
-    [2, -1, 1, 1, 1, 2, 2]
+    [2, 2, -1, 1, 0, 2, -1],
+    [2, 2, -1, 1, 1, 2, 2],
   ];
 
   this.isListInSelectBox = function(itemName){

@@ -16,7 +16,7 @@ import logging
 from django.db import models
 
 from ceph.models import CephCluster
-from ceph_deployment.deepsea import DeepSea
+from deepsea import DeepSea
 from nodb.models import JsonField, NodbModel
 
 logger = logging.getLogger(__name__)
