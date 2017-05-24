@@ -171,7 +171,7 @@ class DeepSea(RestClient):
     @RestClient.api_post('/', resp_structure='return[0] > (urls[*] & access_key & secret_key)')
     @RestClient.requires_login
     def get_rgw_api_credentials(self, request=None):
-        response = request({'client': 'runner', 'fun': 'ui-rgw.credentials'})
+        response = request({'client': 'runner', 'fun': 'ui_rgw.credentials'})
         response_json = response['return'][0]
         parsed_url = urlparse(response_json['urls'][0])  # Uses the first returned host
 
