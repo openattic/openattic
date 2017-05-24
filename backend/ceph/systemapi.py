@@ -236,7 +236,7 @@ class SystemD(BasePlugin):
             with fsid_context(cluster.fsid):
                 for pool in CephPool.objects.all():
                     for rbd in CephRbd.objects.filter(pool__name=pool.name):
-                        if 'fast-diff' in rbd.features:
+                        if rbd.features is None or 'fast-diff' in rbd.features:
                             rbd_file_name = "cephrbd_{}_{}_{}.cfg".format(cluster.fsid, pool.name,
                                                                           rbd.name)
                             rbd_services = [self._gen_service_data(
