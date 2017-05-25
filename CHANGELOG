@@ -19,6 +19,10 @@ To describe their impact on the project, changes are grouped as follows:
 [3.1.1] - Not released yet
 --------------------------
 
+Changed
+~~~~~~~
+* WebUI: Upgrade angular-ui-router to version 1.0.3 (OP-2221)
+
 [3.1.0] - 2017-05-24
 --------------------
 
@@ -113,7 +117,7 @@ Removed
 Fixed
 ~~~~~
 * WebUI: Redirect to dashboard when an authenticated user navigates to login
-  page. Thanks to RaÃºl Vega for the contribution. (OP-2029)
+  page. Thanks to Raúl Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * WebUI: Remove checkbox column in Ceph Nodes. (OP-2150)
