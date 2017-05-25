@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,12 +30,12 @@
  */
 "use strict";
 
-var app = angular.module("openattic.tabView");
+var app = angular.module("openattic.shared");
 /**
  * You need to define some things in order to use it correctly and well, here is an short example and explanation
  * how to use it in a controller (look at the directive for an directive usage example):
  *
- *   $scope.tabData = {
+ *   tabData = {
  *      active: 0, // Can be left as it is.
  *      tabs: {
  *        <name for internal use>: {
@@ -47,37 +47,29 @@ var app = angular.module("openattic.tabView");
  *        ...
  *      }
  *    };
- *   $scope.tabConfig = {
+ *   tabConfig = {
  *      type: "<route name for the state>",
  *      linkedBy: "<attribute child of $scope.selection.item>",
  *      jumpTo: "<css id of the content element>"
  *    };
- *   tabViewService.setScope($scope); // Update the internal scope.
- *   $scope.changeTab = tabViewService.changeTab; // Only get the definition the function.
  */
-// @deprecated - oaTabSetService should be used
-app.service("tabViewService", function ($state) {
-  var scope = {};
-  this.setScope = function ($scope) {
-    scope = $scope;
-  };
-  this.changeTab = function (goHere, index) {
+app.service("oaTabSetService", function ($state) {
+  this.changeTab = function (goHere, tabData, tabConfig, selection, index) {
     if (angular.isUndefined(index)) {
-      Object.keys(scope.tabData.tabs).some(function (tabName, i) {
+      Object.keys(tabData.tabs).some(function (tabName, i) {
         index = i;
-        return scope.tabData.tabs[tabName].state === goHere;
+        return tabData.tabs[tabName].state === goHere;
       });
     }
-    scope.tabData.active = index;
+    tabData.active = index;
     // Make sure that the first object in the selection is an object.
-    if (!angular.isArray(scope.selection.items) || !scope.selection.items.length ||
-        !angular.isObject(scope.selection.items[0])) {
+    if (!angular.isArray(selection.items) || !selection.items.length ||
+        !angular.isObject(selection.items[0])) {
       return;
     }
     var stateJump = {};
-    stateJump[scope.tabConfig.type] = scope.selection.items[0][scope.tabConfig.linkedBy];
-    stateJump["#"] = scope.tabConfig.jumpTo;
+    stateJump[tabConfig.type] = selection.items[0][tabConfig.linkedBy];
+    stateJump["#"] = tabConfig.jumpTo;
     $state.go(goHere, stateJump);
   };
 });
-
