@@ -42,8 +42,7 @@ def create_interfaces(**kwargs):
     try:
         host = Host.objects.get_current()
     except Host.DoesNotExist:
-        host = Host(name=socket.gethostname())
-        host.save()
+        host = Host.insert_current_host()
 
     vlans = dbus_to_python(get_dbus_object("/ifconfig").get_vconfig())
 

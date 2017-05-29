@@ -19,6 +19,8 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import ProgrammingError
 from django.db import connection
+from django.db import models
+
 try:
     from django.db.backends.util import CursorWrapper  # For type checking.
 except ImportError:
@@ -77,7 +79,7 @@ def test_0002_auto_20170126_1628(cursor):
 
     res1 = execute_and_fetch(cursor, stmt1)
 
-    return len(res1)
+    return bool(len(res1))
 
 
 def test_sysutils_0002_delete_initscript(cursor):
@@ -95,12 +97,96 @@ def test_nagios_remove_traditional_fixtures(cursor):
                                             WHERE id in (8, 9, 10, 13, 14, 17, 18);"""))
 
 
+class SqlMigration(object):
+
+    def __init__(self, app, name, test, stmt):
+        """
+        :type app: str | unicode | None
+        :type name: str | unicode | None
+        :type test: None | (CursorWrapper) -> bool
+        :type stmt: str | unicode | None
+        """
+        self.app = app
+        self.name = name
+        self.test = test
+        self.stmt = stmt
+
+    def should_run(self, django_migrations_exists, cursor):
+
+        if self.app is None:
+            return True
+        if self.name is not None and (django_migrations_exists
+                                 and django_migration_already_inserted(self.app, self.name, cursor)):
+            logger.info('Migration already applied: {}.{}'.format(self.app, self.name))
+            return False
+        apps = settings.INSTALLED_APPS
+        if self.app not in apps:
+            logger.info('App not installed: {}.{}'.format(self.app, self.name))
+            return False
+        return True
+
+    def migrate_one(self, cursor):
+
+        if (self.test is None) != (self.stmt is None):
+            raise ProgrammingError('{} != {}'.format(self.test is None, self.stmt is None))
+
+        if self.test is not None and self.test(cursor) and self.stmt is not None:
+            logger.info('Running migration {}.{}'.format(self.app, self.name))
+            cursor.execute(self.stmt)
+        elif self.name is None and self.test is not None and not self.test(cursor):
+            logger.info('Skipping migration {}.{}'.format(self.app, self.name))
+        elif self.test is not None and not self.test(cursor):
+            logger.info('Skipping and inserting migration {}.{}'.format(self.app, self.name))
+        elif self.test is None:
+            logger.info('Faking migration {}.{}'.format(self.app, self.name))
+
+        if self.app is not None and self.name is not None:
+            insert_into_django_migrations(self.app, unicode(self.name), cursor)
+
+
+class FixLocalhostMigration(SqlMigration):
+    app = 'ifconfig'
+    name = '0004_fix_current_host_localhost'
+
+    def __init__(self):
+        return
+
+    def test(self, cursor):
+        stmt = """SELECT * FROM ifconfig_host WHERE name = 'localhost'"""
+        return bool(len(execute_and_fetch(cursor, stmt)))
+
+    def migrate_one(self, cursor):
+        import ifconfig.models as ifconfig
+
+        # This class needs to stay as it is for all eternity:
+        class Host(models.Model):
+            id = models.IntegerField(primary_key=True)
+            name = models.CharField(max_length=63, unique=True)
+            is_oa_host = models.NullBooleanField()
+
+            class Meta:
+                app_label = 'ifconfig'
+                managed = False
+
+        hosts = {h.name: h for h in Host.objects.filter(is_oa_host=True)}
+
+        if not 'localhost' in hosts or ifconfig.get_host_name() in hosts:
+            return
+
+        if len(hosts) > 1:
+            raise ValueError('Database inconsistency. Please flush the openATTIC database.')
+
+        host = hosts['localhost']
+        host.name = ifconfig.get_host_name()
+        host.save()
+
+
 # (app, name, test function, SQL statement)
 # * If app and name is None, this migration will always be executed, if test function returns True.
 # * If test function and SQL stmt are None, the migration will only be added to the
 #   django_migrations DB table.
 _migrations = [
-    (
+    SqlMigration(
         None, None,
         lambda cursor: not _table_exists('django_migrations', cursor),
         """
@@ -113,10 +199,10 @@ _migrations = [
         );
         """
     ),
-    (
+    SqlMigration(
         'ifconfig', u'0001_initial', None, None
     ),
-    (
+    SqlMigration(
         'ifconfig', u'0002_auto_20160329_1248',
         test_ifconfig_0002_auto_20160329_1248,
         """
@@ -125,7 +211,7 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'ifconfig', u'0003_host_is_oa_host',
         test_ifconfig_0003_host_is_oa_host,
         """
@@ -135,19 +221,19 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'ceph', u'0001_initial', None, None
     ),
-    (
+    SqlMigration(
         'ceph', u'0002_auto_20161007_1921', None, None
     ),
-    (
+    SqlMigration(
         'ceph', u'0003_allow_blanks_in_cephpool', None, None
     ),
-    (
+    SqlMigration(
         'taskqueue', u'0001_initial', None, None
     ),
-    (
+    SqlMigration(
         'taskqueue', u'0002_taskqueue_description_textfield',
         test_taskqueue_0002_taskqueue_description_textfield,
         """
@@ -157,7 +243,7 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'nagios', u'0002_auto_20170126_1628',
         test_0002_auto_20170126_1628,
         """
@@ -169,7 +255,7 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'ceph', u'0004_rm_models_based_on_storageobj',
         lambda cursor: _table_exists('ceph_osd', cursor),
         """
@@ -201,10 +287,10 @@ _migrations = [
         DROP TABLE "ceph_cluster" CASCADE;
         """
     ),
-    (
+    SqlMigration(
         'sysutils', u'0001_initial', None, None
     ),
-    (
+    SqlMigration(
         'sysutils', u'0002_delete_initscript',
         test_sysutils_0002_delete_initscript,
         """
@@ -213,7 +299,7 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'ceph_deployment', u'0002_remove_CephMinion',
         test_ceph_deployment_remove_CephMinion,
         """
@@ -223,7 +309,7 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'nagios', u'0003_remove_traditional_fixtures',
         test_nagios_remove_traditional_fixtures,
         """
@@ -234,10 +320,10 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'ceph', u'0001_squashed_0004_rm_models_based_on_storageobj', None, None
     ),
-    (
+    SqlMigration(
         'volumes', u'0002_remove',
         lambda cursor: _table_exists('volumes_volumepool', cursor),
         """
@@ -271,9 +357,10 @@ _migrations = [
         COMMIT;
         """
     ),
-    (
+    SqlMigration(
         'ceph_iscsi', u'0001_initial', None, None
     ),
+    FixLocalhostMigration()
 ]
 
 
@@ -286,55 +373,23 @@ class Command(BaseCommand):
         migrate_all()
 
 
+
 def get_migrations(cursor):
     django_migrations_exists = _table_exists('django_migrations', cursor)
 
-    def should_run(migration):
-
-        app, name, test, stmt = migration
-        if app is None:
-            return True
-        if name is not None and (django_migrations_exists
-                                 and django_migration_already_inserted(app, name, cursor)):
-            logger.info('Migration already applied: {}.{}'.format(app, name))
-            return False
-        apps = settings.INSTALLED_APPS
-        if app not in apps:
-            logger.info('App not installed: {}.{}'.format(app, name))
-            return False
-        return True
-
-    return filter(should_run, _migrations)
+    return [migration for migration in _migrations if
+            migration.should_run(django_migrations_exists, cursor)]
 
 
 def migrate_all():
     with closing(connection.cursor()) as cursor:  # type: CursorWrapper
         migrations = get_migrations(cursor)
         for migration in migrations:
-            migrate_one(migration, cursor)
+            migration.migrate_one(cursor)
 
-        if any([test is not None and test(cursor) for _, _, test, _ in migrations]):
+        if any([migration.test is not None and migration.test(cursor) for migration in migrations]):
             raise ProgrammingError('After applying all migrations, all test '
                                    'functions must return false.')
-
-
-def migrate_one(migration, cursor):
-    app, name, test, stmt = migration
-    if (test is None) != (stmt is None):
-        raise ProgrammingError('{} != {}'.format(test is None, stmt is None))
-
-    if test is not None and test(cursor) and stmt is not None:
-        logger.info('Running migration {}.{}'.format(app, name))
-        cursor.execute(stmt)
-    elif name is None and test is not None and not test(cursor):
-        logger.info('Skipping migration {}.{}'.format(app, name))
-    elif test is not None and not test(cursor):
-        logger.info('Skipping and inserting migration {}.{}'.format(app, name))
-    elif test is None:
-        logger.info('Faking migration {}.{}'.format(app, name))
-
-    if app is not None and name is not None:
-        insert_into_django_migrations(app, unicode(name), cursor)
 
 
 def insert_into_django_migrations(app, name, cursor):
