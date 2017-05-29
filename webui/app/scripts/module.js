@@ -57,11 +57,11 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, usersService, $state) {
-  $rootScope.$on("$stateChangeSuccess", function (event, toState) {
+app.run(function ($rootScope, usersService, $state, $transitions) {
+  $transitions.onSuccess({}, function (trans) {
     usersService.current().$promise.then(function () {
       $rootScope.loggedIn = true;
-      if (toState.name === "login") {
+      if (trans.to().name === "login") {
         $state.go("dashboard");
       }
     }).catch(function (error) {

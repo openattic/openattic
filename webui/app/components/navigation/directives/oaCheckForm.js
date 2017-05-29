@@ -31,51 +31,47 @@
 "use strict";
 
 var app = angular.module("openattic.navigation");
-app.directive("oaCheckForm", function ($uibModal, $state) {
+app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
 
   var registerListener = function (scope) {
-    scope.$on("$stateChangeStart",
-      function (event, toState, toParams, fromState, fromParams) {
-        //skipCheckForm - used to skip validation when user already confirmed
-        if (fromParams.skipCheckForm) {
-          return;
+    scope.cancelTrans = $transitions.onStart({}, function (trans) {
+      var isDirty = false;
+      scope.oaCheckForm.forEach(function (element) {
+        if (!element.$submitted && element.$dirty) {
+          isDirty = true;
         }
+      }, this);
 
-        var isDirty = false;
-        scope.oaCheckForm.forEach(function (element) {
-          if (!element.$submitted && element.$dirty) {
-            isDirty = true;
-          }
-        }, this);
+      if (!isDirty) {
+        scope.cancelTrans();
+        return;
+      }
 
-        if (!isDirty) {
-          return;
+      /**
+       * prevents the  state change and ask the user
+       * if he wants to dismiss the changes
+       */
+      trans.abort();
+
+      var modalInstance = $uibModal.open({
+        animation: true,
+        ariaLabelledBy: "modal-title-bottom",
+        ariaDescribedBy: "modal-body-bottom",
+        templateUrl: "components/navigation/templates/oa-check-form.html",
+        controller: function ($scope) {
+          $scope.ok = function () {
+            scope.cancelTrans();
+            modalInstance.close();
+            $state.go(trans.to().name, trans.params());
+          };
+
+          $scope.cancel = function () {
+            modalInstance.dismiss("cancel");
+          };
         }
-
-        /**
-         * prevents the  state change and ask the user
-         * if he wants to dismiss the changes
-         */
-        event.preventDefault();
-
-        var modalInstance = $uibModal.open({
-          animation: true,
-          ariaLabelledBy: "modal-title-bottom",
-          ariaDescribedBy: "modal-body-bottom",
-          templateUrl: "components/navigation/templates/oa-check-form.html",
-          controller: function ($scope) {
-            $scope.ok = function () {
-              modalInstance.close();
-              fromParams.skipCheckForm = true;
-              $state.go(toState.name, toParams);
-            };
-
-            $scope.cancel = function () {
-              modalInstance.dismiss("cancel");
-            };
-          }
-        });
       });
+
+    });
   };
 
   return {

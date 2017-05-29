@@ -38,15 +38,15 @@ app.config(function ($stateProvider) {
         views        : {
           "main": {
             templateUrl: "components/ceph-rbd/templates/listing.html",
-            controller : "CephRbdCtrl",
-            resolve    : {
-              clusterData: function ($q, cephClusterService) {
-                return cephClusterService.get().$promise
-                    .then(function (res) {
-                      return res;
-                    });
-              }
-            }
+            controller : "CephRbdCtrl"
+          }
+        },
+        resolve      : {
+          clusterData: function ($q, cephClusterService) {
+            return cephClusterService.get().$promise
+                .then(function (res) {
+                  return res;
+                });
           }
         },
         ncyBreadcrumb: {
