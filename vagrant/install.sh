@@ -359,6 +359,10 @@ sudo ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
 
 pushd openattic/backend/
 
+# Cleanup existing *.pyc files which might cause unexpected problems (e.g. when
+# switching between branches).
+find * -name '*.pyc' | xargs rm
+
 python manage.py pre_install
 if [ "$IS_TRUSTY" ]
 then
