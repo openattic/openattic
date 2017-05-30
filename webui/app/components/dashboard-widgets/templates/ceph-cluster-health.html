@@ -29,7 +29,8 @@
       <i class="fa fa-caret-down" ng-if="$ctrl.summaryCollapsed"></i>
       <i class="fa fa-caret-up" ng-if="!$ctrl.summaryCollapsed"></i>
     </div>
-    <div class="indent ceph-summary" ng-if="!$ctrl.summaryCollapsed" ng-repeat="cluster in $ctrl.data.warn.concat($ctrl.data.err)">
+    <div class="indent ceph-summary" ng-if="!$ctrl.summaryCollapsed"
+      ng-repeat="cluster in $ctrl.data.warn.concat($ctrl.data.err)">
       <p> On cluster "<span ng-bind="cluster.name"></span>" with fsid "<span ng-bind="cluster.fsid"></span>"
       </p>
       <div class="alert alert-danger">
