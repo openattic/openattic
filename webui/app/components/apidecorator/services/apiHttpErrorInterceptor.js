@@ -56,13 +56,15 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
             clickToClose: true
           });
         }
-        angular.forEach(error.data, function (val, key) {
-          if (key === "detail") {
-            detailMsg = val + detailMsg;
-          } else {
-            detailMsg += "<br>" + key + ": " + val;
-          }
-        });
+        if (angular.isObject(error.data)) {
+          angular.forEach(error.data, function (val, key) {
+            if (key === "detail") {
+              detailMsg = val + detailMsg;
+            } else {
+              detailMsg += "<br>" + key + ": " + val;
+            }
+          });
+        }
         notificationConfig.msg = detailMsg || simpleMsg;
         notification = new Notification(notificationConfig, error)
           .show();
