@@ -2,6 +2,7 @@
 
 <div class="flex-container flex-column">
   <div class="flex-item bg-info" ng-if="$ctrl.messages.unknown">
+    <i class="fa fa-question-circle fa-2x"></i>
     <strong ng-bind="$ctrl.messages.unknown"></strong>
     <br>
     <ng-pluralize count="$ctrl.data.unknown.length"
@@ -15,14 +16,15 @@
   </div>
 
   <div class="flex-item bg-success bg-success" ng-if="$ctrl.messages.ok">
+    <i class="fa fa-check-circle fa-2x"></i>
     <strong ng-bind="$ctrl.messages.ok"></strong>
   </div>
 
   <div class="flex-item clickable" ng-if="$ctrl.messages.warn || $ctrl.messages.err"
     ng-click="$ctrl.summaryCollapsed = !$ctrl.summaryCollapsed"
     ng-class="{'bg-danger': $ctrl.messages.err, 'bg-warning': $ctrl.messages.warn}">
-    <strong ng-bind="$ctrl.messages.err"></strong>
-    <strong ng-bind="$ctrl.messages.warn"></strong>
+    <i class="fa fa-2x" ng-class="{'fa-bomb': $ctrl.messages.err, 'fa-warning': $ctrl.messages.warn}"></i>
+    <strong ng-bind="$ctrl.messages.err || $ctrl.messages.warn"></strong>
     <div class="pull-right">
       <i class="fa fa-caret-down" ng-if="$ctrl.summaryCollapsed"></i>
       <i class="fa fa-caret-up" ng-if="!$ctrl.summaryCollapsed"></i>

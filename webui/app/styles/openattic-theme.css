@@ -549,6 +549,10 @@ ul.task-queue-pagination {
 .panel-dashboard .max-height.alert-is-shown {
   height: 85%;
 }
+.panel-dashboard .fa-2x{
+  vertical-align: middle;
+  margin-right: 0.5em;
+}
 .panel-dashboard .alert {
   margin-bottom: 0;
 }
