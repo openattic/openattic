@@ -23,6 +23,11 @@ Changed
 ~~~~~~~
 * WebUI: Upgrade angular-ui-router to version 1.0.3 (OP-2221)
 
+Fixed
+~~~~~
+* Backend: Fix an issue in a multinode setup caused by an newer DRF
+  version in Ubuntu 16.04.(OP-2138)
+
 [3.1.0] - 2017-05-24
 --------------------
 
@@ -117,7 +122,7 @@ Removed
 Fixed
 ~~~~~
 * WebUI: Redirect to dashboard when an authenticated user navigates to login
-  page. Thanks to Raúl Vega for the contribution. (OP-2029)
+  page. Thanks to Raï¿½l Vega for the contribution. (OP-2029)
 * WebUI: Removed confusing "Sorry folks" message displayed during the loading
   of data tables (OP-1333)
 * WebUI: Remove checkbox column in Ceph Nodes. (OP-2150)
