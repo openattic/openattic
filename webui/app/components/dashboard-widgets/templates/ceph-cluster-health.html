@@ -33,14 +33,14 @@
       ng-repeat="cluster in $ctrl.data.warn.concat($ctrl.data.err)">
       <p> On cluster "<span ng-bind="cluster.name"></span>" with fsid "<span ng-bind="cluster.fsid"></span>"
       </p>
-      <div class="alert alert-danger">
-      <ul class="fa-ul ceph-health-error-listing">
+      <div ng-if="cluster.summary.err.length" class="alert alert-danger">
+        <ul class="fa-ul ceph-health-error-listing">
           <li ng-repeat="err in cluster.summary.err">
             <i class="fa-li fa fa-bomb"></i> {{err.summary}}
           </li>
         </ul>
       </div>
-      <div class="alert alert-warning">
+      <div ng-if="cluster.summary.warn.length" class="alert alert-warning">
         <ul class="fa-ul ceph-health-warning-listing">
           <li ng-repeat="warn in cluster.summary.warn">
             <i class="fa-li fa fa-warning"></i> {{warn.summary}}
