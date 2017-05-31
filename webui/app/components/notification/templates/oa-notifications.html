@@ -20,7 +20,7 @@
                 </div>
                 <div class="media-body">
                     <strong class="notification-title">{{value.title}}</strong>
-                    <p class="notification-desc">{{value.msg}}</p>
+                    <p class="notification-desc" ng-bind-html="value.msg"></p>
                     <div class="notification-meta">
                         <small class="timestamp">{{value.timestamp | date: 'medium'}}</small>
                     </div>
