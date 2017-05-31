@@ -166,24 +166,13 @@ var rbdCommons = function(){
   this.expandFeatureCases = function(list){
     var expandCriteria = list.indexOf(2);
     if(expandCriteria === -1){
-      return null;
+      return [list];
     }
     var clone1 = list.slice();
     var clone2 = list.slice();
-    var clones = [];
     clone1[expandCriteria] = 0;
     clone2[expandCriteria] = 1;
-    [clone1, clone2].forEach(function(clone){
-      var clonedClones = self.expandFeatureCases(clone);
-      if(clonedClones){
-        clonedClones.forEach(function(clone){
-          clones.push(clone);
-        });
-      }else{
-        clones.push(clone);
-      }
-    });
-    return clones;
+    return self.expandFeatureCases(clone1).concat(self.expandFeatureCases(clone2));
   };
 
   this.checkFeature = function(e, state){
