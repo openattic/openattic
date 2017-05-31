@@ -27,6 +27,10 @@ Fixed
 ~~~~~
 * Backend: Fix an issue in a multinode setup caused by an newer DRF
   version in Ubuntu 16.04.(OP-2138)
+* Backend: Disable CSRF tokens for RGW proxy if token authentication is
+  used (OP-2284)
+* Backend: Make rest_client.py throw exceptions in the exptected format
+  (OP-2284/OP-2281)
 * WebUI: Improved rendering output of notification messages (OP-2278).
 
 [3.1.0] - 2017-05-24
