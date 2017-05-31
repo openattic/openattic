@@ -17,7 +17,6 @@ from deepsea import DeepSea
 from rest_framework.decorators import api_view
 
 from ceph_radosgw import radosgw
-from ceph_radosgw.conf import settings
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
