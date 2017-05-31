@@ -133,7 +133,7 @@ class GatlingTestCase(unittest.TestCase):
                 "count": 1, "cleanup_url": cleanup_url, "headers": creation headers}. For a list of
                 objects a dictionary {"response": api_response, "count": sum of returned objects}
         """
-        prefixes = cls._get_sturctured_prefixes(prefixes)
+        prefixes = cls._get_structured_prefixes(prefixes)
         url = '{}{}'.format(cls.base_url, prefixes['api_prefix'])
 
         if obj_id:
@@ -259,7 +259,7 @@ class GatlingTestCase(unittest.TestCase):
             self.assertEqual(expected_message, message)
 
     @classmethod
-    def _get_sturctured_prefixes(cls, prefixes):
+    def _get_structured_prefixes(cls, prefixes):
         """
         Helper function to transfer the array of prefixes into a dictionary that contains the keys
         api_prefix, detail_route and cleanup_route and the related values if given.
