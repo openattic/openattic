@@ -24,6 +24,7 @@ class GatlingTestCase(unittest.TestCase):
 
     conf = None
     base_url = ''
+    api_prefix = ''
 
     @classmethod
     def require_config(cls, section, *options):
@@ -47,6 +48,37 @@ class GatlingTestCase(unittest.TestCase):
         cls.require_config(section, "enabled")
         if not cls.conf.getboolean(section, "enabled"):
             raise unittest.SkipTest("%s tests disabled in configuration" % section)
+
+    @classmethod
+    def send_api_request(cls, method, url_suffix=None, data=None, params=None, headers=None):
+        """
+        Provides more control for requests compared to send_request().
+
+        This method is ment to be used for API calls where Django isn't involved and thus, the
+        results do not match a specific pattern. For Django specific requests use the
+        `send_request()` method.
+
+        :param method: Either POST, PUT, DELETE or GET
+        :param url_suffix: Suffix for the URL
+        :param data: Data for the body of the request
+        :param params: Parameters for the request
+        :param headers: Headers of the request
+        :return:
+        """
+        url = cls.base_url + cls.api_prefix + ('/' + url_suffix if url_suffix else '')
+
+        if not headers:
+            headers = {}
+
+        if 'content-type' not in headers:
+            headers['content-type'] = 'application/json'
+
+        headers.update(cls.get_auth_header())  # Always authenticate
+
+        if method.upper() in ['POST', 'GET', 'PUT', 'DELETE']:
+            return cls._do_request(method, url, headers, data=data, params=params)
+        else:
+            raise NotImplementedError('Unknown request method \'{}\''.format(method))
 
     @classmethod
     def send_request(cls, method, prefixes=None, auth_token=None, username=None, password=None,
@@ -243,9 +275,9 @@ class GatlingTestCase(unittest.TestCase):
         }
 
         if not prefixes:
-            try:
+            if cls.api_prefix:
                 structured_prefixes["api_prefix"] = cls.api_prefix
-            except:
+            else:
                 raise unittest.SkipTest("Can't find api_prefix for this testcase.")
         elif isinstance(prefixes, basestring):
             structured_prefixes["api_prefix"] = prefixes
@@ -280,7 +312,7 @@ class GatlingTestCase(unittest.TestCase):
             return "%s%s/%s" % (cls.base_url, prefixes["api_prefix"], str(obj_id))
 
     @classmethod
-    def _do_request(cls, method, url, headers, data=None, auth=None):
+    def _do_request(cls, method, url, headers, data=None, auth=None, params=None):
         """
         Helper function to send the request to the REST API.
 
@@ -301,7 +333,7 @@ class GatlingTestCase(unittest.TestCase):
         if data:
             data = json.dumps(data)
 
-        res = requests.request(method, url, headers=headers, data=data, auth=auth)
+        res = requests.request(method, url, headers=headers, data=data, auth=auth, params=params)
 
         try:
             res.raise_for_status()
