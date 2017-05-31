@@ -2,6 +2,7 @@
 
 var rbdCommons = function(){
   var helpers = require('../../common.js');
+  var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
   this.cephRBDs = element(by.css('.tc_menuitem_ceph_rbds'));
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.clusters = helpers.configs.cephCluster;
@@ -239,14 +240,9 @@ var rbdCommons = function(){
   });
 
   this.deleteRbd = function(rbdName){
-    var rbd = element(by.cssContainingText('tr', rbdName));
+    var rbd = helpers.get_list_element(rbdName).click();
     expect(rbd.isDisplayed()).toBe(true);
-    rbd.click();
-    element(by.css('.tc_menudropdown')).click();
-    element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
-    element(by.id('bot2-Msg1')).click();
-    browser.sleep(helpers.configs.sleep);
+    helpers.delete_selection(undefined, '$ctrl');
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
   };
 
@@ -265,12 +261,11 @@ var rbdCommons = function(){
     rbdObjSize = rbdObjSize || '4.00 MiB';
     self.fillForm(rbdName, rbdObjSize, rbdObjSize);
     element(by.className('tc_submitButton')).click();
-    browser.sleep(helpers.configs.sleep);
+    taskQueueHelpers.waitForPendingTasks();
 
-    var rbd = element(by.cssContainingText('tr', rbdName));
+    var rbd = helpers.search_for_element(rbdName);
     expect(rbd.isDisplayed()).toBe(true);
     rbd.click();
-    browser.sleep(helpers.configs.sleep);
 
     expect(element(by.binding('selection.item.obj_size')).getText()).toBe(rbdObjSize);
     if(rbdFeatureCase){
