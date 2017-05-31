@@ -88,16 +88,18 @@
                     </div>
                 </div>
                 <!-- Max. buckets -->
-                <div class="form-group" ng-class="{'has-error': (submitted || userForm.max_buckets.$dirty) &&
+                <div class="form-group"
+                     ng-class="{'has-error': (submitted || userForm.max_buckets.$dirty) &&
                         userForm.max_buckets.$invalid}">
                     <label class="col-sm-3 control-label" for="max_buckets">Max. buckets</label>
                     <div class="col-sm-9">
-                        <input class="form-control tc_rbd_size"
+                        <input class="form-control"
                                type="number"
                                name="max_buckets"
                                id="max_buckets"
                                ng-model="user.max_buckets"
-                               placeholder="e.g., 1000">
+                               placeholder="e.g., 1000"
+                               min="0">
                     </div>
                 </div>
                 <!-- Suspended -->
@@ -117,9 +119,10 @@
                     </div>
                 </div>
                 <!-- Subusers -->
+                <legend ng-show="editing">Subusers</legend>
                 <div class="form-group"
                      ng-show="editing">
-                    <label class="col-sm-3 control-label" for="subusers">Subusers</label>
+                    <label class="col-sm-3 control-label" for="subusers">&nbsp;</label>
                     <input type="hidden" ng-model="user.subusers[0]" id="subusers">
                     <div class="col-sm-9">
                         <span ng-if="!user.subusers || user.subusers.length === 0"
@@ -164,9 +167,10 @@
                                 <i class="fa fa-fw fa-plus"></i>Add subuser
                             </button>
                         </span>
-                        <hr>
                     </div>
                 </div>
+                <!-- Keys -->
+                <legend ng-show="editing">Keys</legend>
                 <!-- S3 keys -->
                 <div class="form-group"
                      ng-show="editing">
@@ -256,12 +260,12 @@
                             </button>
                         </span>
                         -->
-                        <hr>
                     </div>
                 </div>
                 <!-- Capabilities -->
+                <legend>Capabilities</legend>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="caps">Capabilities</label>
+                    <label class="col-sm-3 control-label" for="caps">&nbsp;</label>
                     <input type="hidden" ng-model="user.caps[0]" id="caps">
                     <div class="col-sm-9">
                         <span ng-if="!user.caps || user.caps.length === 0"
@@ -375,6 +379,94 @@
                             <span class="help-block tc_secret_keyRequired"
                                   ng-show="userForm.secret_key.$dirty && userForm.secret_key.$error.required">
                                 This field is required!
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+                <!-- User quota -->
+                <fieldset ng-show="editing">
+                    <legend>User quota</legend>
+                    <!-- Enabled -->
+                    <div class="form-group" ng-show="editing">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox"
+                                       ng-model="user.user_quota.enabled"
+                                       name="user_quota_enabled"
+                                       id="user_quota_enabled">
+                                <label for="user_quota_enabled">
+                                    Enabled
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Maximum size -->
+                    <div class="form-group"
+                         ng-class="{'has-error': userForm.user_quota_max_size.$invalid}"
+                         ng-show="editing && user.user_quota.enabled">
+                        <label class="col-sm-3 control-label" for="user_quota_max_size">
+                            Maximum size
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox"
+                                       ng-model="user.user_quota.max_size_unlimited"
+                                       name="user_quota_max_size_unlimited"
+                                       id="user_quota_max_size_unlimited">
+                                <label for="user_quota_max_size_unlimited">
+                                    Unlimited
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input class="form-control"
+                                   type="text"
+                                   placeholder="e.g., 1G..."
+                                   ng-model="user.user_quota.max_size"
+                                   ng-show="!user.user_quota.max_size_unlimited"
+                                   ng-required="editing && user.user_quota.enabled &&
+                                       !user.user_quota.max_size_unlimited"
+                                   name="user_quota_max_size"
+                                   id="user_quota_max_size"
+                                   ceph-rgw-quota-max-size-validate>
+                            <span class="help-block tc_invalidUserQuotaMaxSize"
+                                  ng-show="userForm.user_quota_max_size.$invalid">
+                                The value is not valid.
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Maximum objects -->
+                    <div class="form-group"
+                         ng-class="{'has-error': userForm.user_quota_max_objects.$invalid}"
+                         ng-show="editing && user.user_quota.enabled">
+                        <label class="col-sm-3 control-label" for="user_quota_max_objects">
+                            Maximum objects
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox"
+                                       ng-model="user.user_quota.max_objects_unlimited"
+                                       name="user_quota_max_objects_unlimited"
+                                       id="user_quota_max_objects_unlimited">
+                                <label for="user_quota_max_objects_unlimited">
+                                    Unlimited
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input class="form-control"
+                                   type="number"
+                                   placeholder="e.g., 500..."
+                                   ng-model="user.user_quota.max_objects"
+                                   ng-show="!user.user_quota.max_objects_unlimited"
+                                   ng-required="editing && user.user_quota.enabled &&
+                                       !user.user_quota.max_objects_unlimited"
+                                   name="user_quota_max_objects"
+                                   id="user_quota_max_objects"
+                                   min="0">
+                            <span class="help-block tc_invalidUserQuotaMaxObjects"
+                                  ng-show="userForm.user_quota_max_objects.$invalid">
+                                The value is not valid.
                             </span>
                         </div>
                     </div>

@@ -32,12 +32,26 @@
 
 var app = angular.module("openattic.cephRgw");
 app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams, $uibModal,
-    cephRgwHelpersService, cephRgwUserService) {
+    $q, $filter, cephRgwHelpersService, cephRgwUserService) {
   $scope.user = {
     "subusers": [],
     "keys": [],
     "swift_keys": [],
-    "caps": []
+    "caps": [],
+    "bucket_quota": {
+      "enabled": false,
+      "max_size": "",
+      "max_size_unlimited": true,
+      "max_objects": "",
+      "max_objects_unlimited": true
+    },
+    "user_quota": {
+      "enabled": false,
+      "max_size": "",
+      "max_size_unlimited": true,
+      "max_objects": "",
+      "max_objects_unlimited": true
+    }
   };
   $scope.error = false;
   $scope.requests = [];
@@ -49,7 +63,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       $scope.submitted = true;
       if (userForm.$valid === true) {
         // Create a new user.
-        var args = _getPutArgs();
+        var args = _getUserPutArgs();
         cephRgwUserService.put(args, undefined)
           .$promise
           .then(function () {
@@ -85,17 +99,49 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
     $scope.editing = true;
 
     // Load the user data.
-    cephRgwUserService.get({"uid": $stateParams.user_id})
-      .$promise
+    var requests = [];
+    requests.push(
+      cephRgwUserService.get({
+        "uid": $stateParams.user_id
+      }).$promise);
+    requests.push(
+      cephRgwUserService.getQuota({
+        "uid": $stateParams.user_id,
+        "quota-type": "user"
+      }).$promise
+    );
+    $q.all(requests)
       .then(function (res) {
         // Map capabilities.
         var mapPerm = {"read, write": "*"};
-        angular.forEach(res.caps, function (cap) {
+        angular.forEach(res[0].caps, function (cap) {
           if (cap.perm in mapPerm) {
             cap.perm = mapPerm[cap.perm];
           }
         });
-        $scope.user = res;
+        // Set the user information.
+        $scope.user = res[0];
+        // Append the user quota.
+        $scope.user.user_quota = res[1];
+        if ($scope.user.user_quota.max_size_kb === -1) {
+          $scope.user.user_quota.max_size = "";
+          $scope.user.user_quota.max_size_unlimited = true;
+        } else {
+          $scope.user.user_quota.max_size = $filter("bytes")(
+            $scope.user.user_quota.max_size_kb, {
+              "inUnit": "K",
+              "outPrecision": 0,
+              "separator": "",
+              "shortPrefixes": true
+            });
+          $scope.user.user_quota.max_size_unlimited = false;
+        }
+        if ($scope.user.user_quota.max_objects === -1) {
+          $scope.user.user_quota.max_objects = "";
+          $scope.user.user_quota.max_objects_unlimited = true;
+        } else {
+          $scope.user.user_quota.max_objects_unlimited = false;
+        }
       })
       .catch(function (error) {
         $scope.error = error;
@@ -103,14 +149,19 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
 
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
-      // Check if the general user information is modified. If this is
-      // the case, then add another request that modifies that data via
-      // RGW Admin Ops API call.
-      if (userForm.$dirty === true) {
-        var args = _getPostArgs(userForm);
+      // Check if the general user settings have been modified.
+      if (_isUserDirty(userForm)) {
+        var postArgs = _getUserPostArgs(userForm);
         _addRequest(function (args) {
           return cephRgwUserService.post(args, undefined).$promise;
-        }, [args]);
+        }, [postArgs]);
+      }
+      // Check if user quota has been modified.
+      if (_isUserQuotaDirty(userForm)) {
+        var putArgs = _getUserQuotaPutArgs(userForm);
+        _addRequest(function (args) {
+          return cephRgwUserService.putQuota(args, undefined).$promise;
+        }, [putArgs]);
       }
       // Execute all requests (RGW Admin Ops API call) in sequential order.
       var fn = function (request) {
@@ -134,6 +185,20 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         $scope.goToListView();
       }
     };
+
+    $scope.$watch("user.user_quota.max_size_unlimited", function (checked) {
+      // Reset an invalid value to ensure that the form is not blocked.
+      if (checked && $scope.userForm.user_quota_max_size.$invalid) {
+        $scope.user.user_quota.max_size = "";
+      }
+    });
+
+    $scope.$watch("user.user_quota.max_objects_unlimited", function (checked) {
+      // Reset an invalid value to ensure that the form is not blocked.
+      if (checked && $scope.userForm.user_quota_max_objects.$invalid) {
+        $scope.user.user_quota.max_objects = "";
+      }
+    });
   }
 
   /**
@@ -195,7 +260,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
    * user is created.
    * @private
    */
-  var _getPutArgs = function () {
+  var _getUserPutArgs = function () {
     var caps = [];
     angular.forEach($scope.user.caps, function (cap) {
       caps.push(cap.type + "=" + cap.perm.replace(" ", ""));
@@ -238,34 +303,122 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   };
 
   /**
-   * Helper function to get the arguments for the POST request when the user
-   * configuration is modified.
-   * @param userForm The user formular.
+   * Check if the user settings have been modified.
+   * @param userForm The HTML formular.
+   * @return Returns TRUE if the user settings have been modified.
    * @private
    */
-  var _getPostArgs = function (userForm) {
+  var _isUserDirty = function (userForm) {
+    var names = [
+      "display_name",
+      "email",
+      "max_buckets",
+      "suspended"
+    ];
+    var dirty = names.some(function (name) {
+      return userForm[name].$dirty;
+    });
+    return dirty;
+  };
+
+  /**
+   * Helper function to get the arguments for the POST request when the user
+   * configuration has been modified.
+   * @param userForm The HTML formular.
+   * @private
+   */
+  var _getUserPostArgs = function (userForm) {
+    var map = [{
+      "formName": "display_name",
+      "srcName": "display_name",
+      "dstName": "display-name"
+    }, {
+      "formName": "email",
+      "srcName": "email",
+      "dstName": "email"
+    }, {
+      "formName": "max_buckets",
+      "srcName": "max_buckets",
+      "dstName": "max-buckets"
+    }, {
+      "formName": "suspended",
+      "srcName": "suspended",
+      "dstName": "suspended",
+      "convertFn": function (value) {
+        return Boolean(value);
+      }
+    }];
     var args = {
       "uid": $scope.user.user_id
     };
-    if (userForm.display_name.$dirty === true) {
-      angular.extend(args, {
-        "display-name": $scope.user.display_name
-      });
+    angular.forEach(map, function (item) {
+      if (userForm[item.formName].$dirty === true) {
+        var value = $scope.user[item.srcName];
+        if (angular.isFunction(item.convertFn)) {
+          value = item.convertFn.apply(this, [value]);
+        }
+        args[item.dstName] = value;
+      }
+    });
+    return args;
+  };
+
+  /**
+   * Check if the user quota has been modified.
+   * @param userForm The HTML formular.
+   * @return Returns TRUE if the user quota has been modified.
+   * @private
+   */
+  var _isUserQuotaDirty = function (userForm) {
+    var names = [
+      "user_quota_enabled",
+      "user_quota_max_size",
+      "user_quota_max_size_unlimited",
+      "user_quota_max_objects",
+      "user_quota_max_objects_unlimited"
+    ];
+    var dirty = names.some(function (name) {
+      return userForm[name].$dirty;
+    });
+    return dirty;
+  };
+
+  /**
+   * Helper function to get the arguments for the PUT request when the user
+   * quota configuration has been modified.
+   * @param userForm The HTML formular.
+   * @private
+   */
+  var _getUserQuotaPutArgs = function (userForm) {
+    var args = {
+      "uid": $scope.user.user_id,
+      "quota-type": "user"
+    };
+    if (userForm.user_quota_enabled.$dirty === true) {
+      args.enabled = $scope.user.user_quota.enabled;
     }
-    if (userForm.email.$dirty === true) {
-      angular.extend(args, {
-        "email": $scope.user.email
-      });
+    if ((userForm.user_quota_max_size_unlimited.$dirty === true) ||
+        (userForm.user_quota_max_size.$dirty === true)) {
+      if ($scope.user.user_quota.max_size_unlimited) {
+        args["max-size-kb"] = -1;
+      } else {
+        // Convert the given value to bytes.
+        var bytes = $filter("toBytes")($scope.user.user_quota.max_size);
+        // Finally convert the value to KiB.
+        args["max-size-kb"] = $filter("bytes")(bytes, {
+          "outPrecision": 0,
+          "outUnit": "KiB",
+          "appendUnit": false
+        });
+      }
     }
-    if (userForm.max_buckets.$dirty === true) {
-      angular.extend(args, {
-        "max-buckets": $scope.user.max_buckets
-      });
-    }
-    if (userForm.suspended.$dirty === true) {
-      angular.extend(args, {
-        "suspended": Boolean($scope.user.suspended)
-      });
+    if ((userForm.user_quota_max_objects_unlimited.$dirty === true) ||
+        (userForm.user_quota_max_objects.$dirty === true)) {
+      if ($scope.user.user_quota.max_objects_unlimited) {
+        args["max-objects"] = -1;
+      } else {
+        args["max-objects"] = $scope.user.user_quota.max_objects;
+      }
     }
     return args;
   };
