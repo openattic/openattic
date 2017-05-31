@@ -97,6 +97,10 @@ def test_nagios_remove_traditional_fixtures(cursor):
                                             WHERE id in (8, 9, 10, 13, 14, 17, 18);"""))
 
 
+def test_ceph_0005_cephpool_percent_used(cursor):
+    return _column_exists('ceph_cephpool', 'percent_used', cursor)
+
+
 class SqlMigration(object):
 
     def __init__(self, app, name, test, stmt):
@@ -360,7 +364,16 @@ _migrations = [
     SqlMigration(
         'ceph_iscsi', u'0001_initial', None, None
     ),
-    FixLocalhostMigration()
+    FixLocalhostMigration(),
+    SqlMigration(
+        'ceph', u'0005_cephpool_percent_used',
+        test_ceph_0005_cephpool_percent_used,
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "percent_used" double precision NOT NULL;
+        COMMIT;
+        """
+    )
 ]
 
 
@@ -426,3 +439,10 @@ def _table_exists(table_name, cursor):
               WHERE table_name = %s;"""
     res = execute_and_fetch(cursor, stmt, [table_name])
     return len(res) > 0 and res[0]['table_name'] == table_name
+
+
+def _column_exists(table_name, column_name, cursor):
+    stmt = """SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS
+              WHERE table_name = %s;"""
+    res = execute_and_fetch(cursor, stmt, [table_name])
+    return column_name not in [d['column_name'] for d in res]
