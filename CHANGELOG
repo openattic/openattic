@@ -27,6 +27,7 @@ Fixed
 ~~~~~
 * Backend: Fix an issue in a multinode setup caused by an newer DRF
   version in Ubuntu 16.04.(OP-2138)
+* WebUI: Improved rendering output of notification messages (OP-2278).
 
 [3.1.0] - 2017-05-24
 --------------------
