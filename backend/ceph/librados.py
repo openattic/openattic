@@ -743,7 +743,7 @@ class MonApi(object):
         return self._call_mon_command('health')
 
     def df(self):
-        return self._call_mon_command('df')
+        return self._call_mon_command('df', self._args_to_argdict(detail='detail'))
 
     def _call_mon_command(self, cmd, argdict=None, output_format='json', timeout=30):
         return call_librados(self.fsid,
