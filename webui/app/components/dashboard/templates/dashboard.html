@@ -7,7 +7,7 @@
       </select>
     </div>
 
-    <div class="btn-toolbar pull-right">
+    <div class="btn-toolbar pull-right" ng-if="dashboard.name !== 'Grafana'">
       <div class="btn-group">
         <a class="btn btn-sm btn-primary tc_add_widget" type="button" ng-click="addWidget()">
           <i class="fa fa-fw fa-plus"></i>Add Widget
@@ -53,7 +53,9 @@
   </form>
 </div>
 
-<div gridster="gridsterOptions">
+<grafana ng-if="dashboard.name === 'Grafana'"></grafana>
+
+<div gridster="gridsterOptions" ng-if="dashboard.name !== 'Grafana'">
   <div gridster-item="widget" ng-repeat="widget in dashboard.widgets">
     <div id="widget_{{widget.id}}"
          class="panel panel-dashboard panel-openattic">
