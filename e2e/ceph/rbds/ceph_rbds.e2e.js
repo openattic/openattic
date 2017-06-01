@@ -13,8 +13,8 @@ describe('should test the ceph rbd panel', function(){
   });
 
   rbdProperties.useWriteablePools(function(cluster, pool){
-    it('should create an default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
-      rbdProperties.selectClusterAndPool(cluster, pool);
+    it('should create a rbd with default settings on ' + pool.name + ' in cluster ' + cluster.name, function(){
+      rbdProperties.selectClusterAndPool(cluster.name, pool.name);
       var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
       rbdProperties.createRbd(rbdName, null, rbdProperties.defaultFeatureCase);
     });
@@ -82,8 +82,8 @@ describe('should test the ceph rbd panel', function(){
   graphHelpers.testGraphs(rbdProperties.statisticGraphsConfig);
 
   rbdProperties.useWriteablePools(function(cluster, pool){
-    it('should delete the default rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
-      rbdProperties.selectCluster(cluster);
+    it('should delete the created rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
+      rbdProperties.selectCluster(cluster.name);
       var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
       rbdProperties.deleteRbd(rbdName);
     });

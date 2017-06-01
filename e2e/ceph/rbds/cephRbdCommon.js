@@ -198,17 +198,24 @@ var rbdCommons = function(){
     return self.expandFeatureCases(clone1).concat(self.expandFeatureCases(clone2));
   };
 
-  this.checkFeature = function(e, state){
-    e.getAttribute('checked').then(function(checked){
-      if(state === 1 && !checked || state === 0 && checked){
-        e.click();
-      }
-      if(state === 1){
-        expect(e.getAttribute('checked')).toBe('true');
-      }else{
-        expect(e.getAttribute('checked')).toBe(null);
-      }
+  this.selectFeatures = function(features){
+    self.checkCheckboxToBe(self.expertSettings, true);
+    var keys = Object.keys(self.formElements.features.items);
+    var values = self.formElements.features.items;
+    for (var i = 0; i < 7; i++){ // deselect all boxes
+      self.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
+    }
+    features.forEach(function(state, index){ // select the features
+      self.checkCheckboxToBe(element(by.className(values[keys[index]])), state === 1);
     });
+    features.forEach(function(state, index){ // control feature states
+      self.controlFeatureState(element(by.className(values[keys[index]])), state);
+    });
+  };
+
+  this.controlFeatureState = function(e, state){
+    expect(e.getAttribute('checked')).toBe(state === 1 ? 'true' : null);
+    expect(e.getAttribute('disabled')).toBe(state === -1 ? 'true' : null);
   };
 
   this.useWriteablePools = function(callback){
@@ -223,22 +230,19 @@ var rbdCommons = function(){
     });
   };
 
-  /*
-   Selects cluster if a selection is available in the listing.
-   */
-  this.selectCluster = function(cluster){
+  this.selectCluster = function(clusterName){
     if(self.clusterCount > 1){
-      self.clusterSelect.sendKeys(cluster.name);
-      expect(self.clusterSelect.getText()).toContain(cluster.name);
+      self.clusterSelect.sendKeys(clusterName);
+      expect(self.clusterSelect.getText()).toContain(clusterName);
     }
   };
 
-  this.selectClusterAndPool = function(cluster, pool){
-    self.selectCluster(cluster);
+  this.selectClusterAndPool = function(clusterName, poolName){
+    self.selectCluster(clusterName);
     self.addButton.click();
     self.checkCheckboxToBe(self.expertSettings, true);
-    self.poolSelect.sendKeys(pool.name);
-    expect(self.poolSelect.getText()).toContain(pool.name);
+    self.poolSelect.sendKeys(poolName);
+    expect(self.poolSelect.getText()).toContain(poolName);
   };
 
   var self = this;
@@ -258,7 +262,7 @@ var rbdCommons = function(){
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
   };
 
-  this.fillForm = function(rbdName, size, rbdObjSize){
+  this.fillForm = function(rbdName, size, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
     self.checkCheckboxToBe(self.expertSettings, true);
     self.name.clear();
@@ -267,11 +271,14 @@ var rbdCommons = function(){
     self.size.sendKeys(size);
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
+    if(featureCase){
+      self.selectFeatures(featureCase);
+    }
   };
 
-  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
+  this.createRbd = function(rbdName, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.fillForm(rbdName, rbdObjSize, rbdObjSize);
+    self.fillForm(rbdName, rbdObjSize, rbdObjSize, featureCase);
     element(by.className('tc_submitButton')).click();
     taskQueueHelpers.waitForPendingTasks();
 
@@ -280,11 +287,13 @@ var rbdCommons = function(){
     rbd.click();
 
     expect(element(by.binding('selection.item.obj_size')).getText()).toBe(rbdObjSize);
-    if(rbdFeatureCase){
+    if(featureCase){
       var keys = Object.keys(self.formElements.features.items);
-      rbdFeatureCase.forEach(function(state, index){ // check the features
+      featureCase.forEach(function(state, index){ // check the features
         if(state === 1){
           expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
+        } else {
+          expect(element(by.cssContainingText('dd', keys[index])).isPresent()).toBe(false);
         }
       });
     }
