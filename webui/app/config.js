@@ -24,9 +24,12 @@ var globalConfig = {
           },
           "settings": {}
         }]
+      }, {
+        "name"   : "Grafana",
+        "widgets": []
       }],
       "settings": {
-        "activeBoard": 0,
+        "activeBoard": 1,
         "locked"     : false
       }
     },
