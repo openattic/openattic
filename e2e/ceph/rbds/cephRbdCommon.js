@@ -147,6 +147,29 @@ var rbdCommons = function(){
     [2, 2, -1, 1, 1, 2, 2],
   ];
 
+  this.convertFeatureObjectToFeatureArray = function(feature){
+    return [
+      feature.deepFlatten,
+      feature.layering,
+      feature.striping,
+      feature.exclusiveLock,
+      feature.objectMap,
+      feature.journaling,
+      feature.fastDiff
+    ];
+  };
+
+  // Works on every operating system that was tested
+  this.defaultFeatureCase = this.convertFeatureObjectToFeatureArray({
+    deepFlatten: 1,
+    layering: 1,
+    striping: -1,
+    exclusiveLock: 1,
+    objectMap: 1,
+    journaling: 0,
+    fastDiff: 1
+  });
+
   this.isListInSelectBox = function(itemName){
     var item = element(by.model(self.formElements[itemName].model));
     item.click();
