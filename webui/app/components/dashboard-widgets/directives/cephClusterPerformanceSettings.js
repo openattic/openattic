@@ -43,7 +43,12 @@ app.directive("cephClusterPerformanceSettings", function () {
             .get()
             .$promise
             .then(function (res) {
-              $scope.cluster = res.results;
+              var results = res.results;
+              var settings = $scope.input.settings;
+              $scope.cluster = results;
+              if (results.length === 1 && !settings.cluster) {
+                settings.cluster = results[0];
+              }
             });
       };
 
