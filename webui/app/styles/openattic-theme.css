@@ -669,6 +669,19 @@ table.datatable thead .sorting_desc:after {
   min-height: .01%;
 }
 
+.table-no-background>thead {
+  background: none;
+}
+.table-no-background>thead>tr>th {
+  border-bottom: 1px solid #ddd;
+}
+.table-no-background>tbody>tr>td {
+  height: 50px;
+  vertical-align: middle;
+  border-top: 0px;
+  border-bottom: 1px solid #ddd;
+}
+
 /* Typo */
 a {
   color: #288cea;
