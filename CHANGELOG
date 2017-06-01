@@ -32,6 +32,7 @@ Fixed
 * Backend: Make rest_client.py throw exceptions in the expected format
   (OP-2284/OP-2281)
 * WebUI: Improved rendering output of notification messages (OP-2278).
+* Packaging: Adapt `build_deb_packages` to the changes made in `make_dist` for 3.0
 
 [3.1.0] - 2017-05-24
 --------------------
