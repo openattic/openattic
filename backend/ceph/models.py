@@ -238,6 +238,16 @@ def fsid_context(fsid):
         NodbManager.set_nodb_context(previous_context)
 
 
+def get_ceph_version(version_file='/usr/bin/ceph', version_variable='CEPH_GIT_NICE_VER'):
+    try:
+        version_line = [line for line in open(version_file) if line.startswith(version_variable)]
+        version = version_line[0].split('=', 1)[1].strip().replace('"', '').split('.')
+    except Exception:
+        version = [10, 0, 0]
+
+    return version
+
+
 class CephPool(NodbModel, RadosMixin):
 
     id = models.IntegerField(primary_key=True, editable=False)
