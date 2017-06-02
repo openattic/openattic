@@ -471,6 +471,94 @@
                         </div>
                     </div>
                 </fieldset>
+                <!-- Bucket quota -->
+                <fieldset ng-show="editing">
+                    <legend>Bucket quota</legend>
+                    <!-- Enabled -->
+                    <div class="form-group" ng-show="editing">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox"
+                                       ng-model="user.bucket_quota.enabled"
+                                       name="bucket_quota_enabled"
+                                       id="bucket_quota_enabled">
+                                <label for="bucket_quota_enabled">
+                                    Enabled
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Maximum size -->
+                    <div class="form-group"
+                         ng-class="{'has-error': userForm.bucket_quota_max_size.$invalid}"
+                         ng-show="editing && user.bucket_quota.enabled">
+                        <label class="col-sm-3 control-label" for="bucket_quota_max_size">
+                            Maximum size
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox"
+                                       ng-model="user.bucket_quota.max_size_unlimited"
+                                       name="bucket_quota_max_size_unlimited"
+                                       id="bucket_quota_max_size_unlimited">
+                                <label for="bucket_quota_max_size_unlimited">
+                                    Unlimited
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input class="form-control"
+                                   type="text"
+                                   placeholder="e.g., 1G..."
+                                   ng-model="user.bucket_quota.max_size"
+                                   ng-show="!user.bucket_quota.max_size_unlimited"
+                                   ng-required="editing && user.bucket_quota.enabled &&
+                                       !user.bucket_quota.max_size_unlimited"
+                                   name="bucket_quota_max_size"
+                                   id="bucket_quota_max_size"
+                                   ceph-rgw-quota-max-size-validate>
+                            <span class="help-block tc_invalidBucketQuotaMaxSize"
+                                  ng-show="userForm.bucket_quota_max_size.$invalid">
+                                The value is not valid.
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Maximum objects -->
+                    <div class="form-group"
+                         ng-class="{'has-error': userForm.bucket_quota_max_objects.$invalid}"
+                         ng-show="editing && user.bucket_quota.enabled">
+                        <label class="col-sm-3 control-label" for="bucket_quota_max_objects">
+                            Maximum objects
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="checkbox checkbox-primary">
+                                <input type="checkbox"
+                                       ng-model="user.bucket_quota.max_objects_unlimited"
+                                       name="bucket_quota_max_objects_unlimited"
+                                       id="bucket_quota_max_objects_unlimited">
+                                <label for="bucket_quota_max_objects_unlimited">
+                                    Unlimited
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input class="form-control"
+                                   type="number"
+                                   placeholder="e.g., 500..."
+                                   ng-model="user.bucket_quota.max_objects"
+                                   ng-show="!user.bucket_quota.max_objects_unlimited"
+                                   ng-required="editing && user.bucket_quota.enabled &&
+                                       !user.bucket_quota.max_objects_unlimited"
+                                   name="bucket_quota_max_objects"
+                                   id="bucket_quota_max_objects"
+                                   min="0">
+                            <span class="help-block tc_invalidBucketQuotaMaxObjects"
+                                  ng-show="userForm.bucket_quota_max_objects.$invalid">
+                                The value is not valid.
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">

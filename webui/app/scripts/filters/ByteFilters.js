@@ -148,7 +148,7 @@ app.filter("toBytes", function () {
       "YB": Math.pow(base, 8),
       "YiB": Math.pow(base, 8)
     };
-    var m = RegExp("^(\\d+)(B|K(B|iB)?|M(B|iB)?|G(B|iB)?|T(B|iB)?|P(B|iB)?|" +
+    var m = RegExp("^(\\d+)\\s*(B|K(B|iB)?|M(B|iB)?|G(B|iB)?|T(B|iB)?|P(B|iB)?|" +
       "E(B|iB)?|Z(B|iB)?|Y(B|iB)?)?$").exec(value);
     if (m === null) {
       return value;

@@ -101,13 +101,14 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
     // Load the user data.
     var requests = [];
     requests.push(
+      // Load the user information.
       cephRgwUserService.get({
         "uid": $stateParams.user_id
       }).$promise);
     requests.push(
+      // Load the user/bucket quota.
       cephRgwUserService.getQuota({
-        "uid": $stateParams.user_id,
-        "quota-type": "user"
+        "uid": $stateParams.user_id
       }).$promise
     );
     $q.all(requests)
@@ -122,18 +123,16 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         // Set the user information.
         $scope.user = res[0];
         // Append the user quota.
-        $scope.user.user_quota = res[1];
-        if ($scope.user.user_quota.max_size_kb === -1) {
+        $scope.user.user_quota = res[1].user_quota;
+        // !!! Attention !!!
+        // The returned object contains other attributes depending on the ceph version:
+        // 10.2.6: max_size_kb
+        // 12.0.3: max_size
+        if ((res[1].user_quota.max_size_kb === -1) || (res[1].user_quota.max_size <= -1)) {
           $scope.user.user_quota.max_size = "";
           $scope.user.user_quota.max_size_unlimited = true;
         } else {
-          $scope.user.user_quota.max_size = $filter("bytes")(
-            $scope.user.user_quota.max_size_kb, {
-              "inUnit": "K",
-              "outPrecision": 0,
-              "separator": "",
-              "shortPrefixes": true
-            });
+          $scope.user.user_quota.max_size = $scope.user.user_quota.max_size_kb + "K";
           $scope.user.user_quota.max_size_unlimited = false;
         }
         if ($scope.user.user_quota.max_objects === -1) {
@@ -141,6 +140,25 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           $scope.user.user_quota.max_objects_unlimited = true;
         } else {
           $scope.user.user_quota.max_objects_unlimited = false;
+        }
+        // Append the bucket quota.
+        // !!! Attention !!!
+        // The returned object contains other attributes depending on the ceph version:
+        // 10.2.6: max_size_kb
+        // 12.0.3: max_size
+        $scope.user.bucket_quota = res[1].bucket_quota;
+        if ((res[1].bucket_quota.max_size_kb === -1) || (res[1].bucket_quota.max_size <= -1)) {
+          $scope.user.bucket_quota.max_size = "";
+          $scope.user.bucket_quota.max_size_unlimited = true;
+        } else {
+          $scope.user.bucket_quota.max_size = $scope.user.bucket_quota.max_size_kb + "K";
+          $scope.user.bucket_quota.max_size_unlimited = false;
+        }
+        if ($scope.user.bucket_quota.max_objects === -1) {
+          $scope.user.bucket_quota.max_objects = "";
+          $scope.user.bucket_quota.max_objects_unlimited = true;
+        } else {
+          $scope.user.bucket_quota.max_objects_unlimited = false;
         }
       })
       .catch(function (error) {
@@ -151,17 +169,24 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       $scope.submitted = true;
       // Check if the general user settings have been modified.
       if (_isUserDirty(userForm)) {
-        var postArgs = _getUserPostArgs(userForm);
+        var userArgs = _getUserPostArgs(userForm);
         _addRequest(function (args) {
           return cephRgwUserService.post(args, undefined).$promise;
-        }, [postArgs]);
+        }, [userArgs]);
       }
       // Check if user quota has been modified.
       if (_isUserQuotaDirty(userForm)) {
-        var putArgs = _getUserQuotaPutArgs(userForm);
+        var userQuotaArgs = _getUserQuotaPutArgs(userForm);
         _addRequest(function (args) {
           return cephRgwUserService.putQuota(args, undefined).$promise;
-        }, [putArgs]);
+        }, [userQuotaArgs]);
+      }
+      // Check if bucket quota has been modified.
+      if (_isBucketQuotaDirty(userForm)) {
+        var bucketQuotaArgs = _getBucketQuotaPutArgs(userForm);
+        _addRequest(function (args) {
+          return cephRgwUserService.putQuota(args, undefined).$promise;
+        }, [bucketQuotaArgs]);
       }
       // Execute all requests (RGW Admin Ops API call) in sequential order.
       var fn = function (request) {
@@ -197,6 +222,20 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       // Reset an invalid value to ensure that the form is not blocked.
       if (checked && $scope.userForm.user_quota_max_objects.$invalid) {
         $scope.user.user_quota.max_objects = "";
+      }
+    });
+
+    $scope.$watch("user.bucket_quota.max_size_unlimited", function (checked) {
+      // Reset an invalid value to ensure that the form is not blocked.
+      if (checked && $scope.userForm.bucket_quota_max_size.$invalid) {
+        $scope.user.bucket_quota.max_size = "";
+      }
+    });
+
+    $scope.$watch("user.bucket_quota.max_objects_unlimited", function (checked) {
+      // Reset an invalid value to ensure that the form is not blocked.
+      if (checked && $scope.userForm.bucket_quota_max_objects.$invalid) {
+        $scope.user.bucket_quota.max_objects = "";
       }
     });
   }
@@ -370,17 +409,33 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
    * @private
    */
   var _isUserQuotaDirty = function (userForm) {
-    var names = [
+    return [
       "user_quota_enabled",
       "user_quota_max_size",
       "user_quota_max_size_unlimited",
       "user_quota_max_objects",
       "user_quota_max_objects_unlimited"
-    ];
-    var dirty = names.some(function (name) {
+    ].some(function (name) {
       return userForm[name].$dirty;
     });
-    return dirty;
+  };
+
+  /**
+   * Check if the bucket quota has been modified.
+   * @param userForm The HTML formular.
+   * @return Returns TRUE if the bucket quota has been modified.
+   * @private
+   */
+  var _isBucketQuotaDirty = function (userForm) {
+    return [
+      "bucket_quota_enabled",
+      "bucket_quota_max_size",
+      "bucket_quota_max_size_unlimited",
+      "bucket_quota_max_objects",
+      "bucket_quota_max_objects_unlimited"
+    ].some(function (name) {
+      return userForm[name].$dirty;
+    });
   };
 
   /**
@@ -418,6 +473,46 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         args["max-objects"] = -1;
       } else {
         args["max-objects"] = $scope.user.user_quota.max_objects;
+      }
+    }
+    return args;
+  };
+
+  /**
+   * Helper function to get the arguments for the PUT request when the bucket
+   * quota configuration has been modified.
+   * @param userForm The HTML formular.
+   * @private
+   */
+  var _getBucketQuotaPutArgs = function (userForm) {
+    var args = {
+      "uid": $scope.user.user_id,
+      "quota-type": "bucket"
+    };
+    if (userForm.bucket_quota_enabled.$dirty === true) {
+      args.enabled = $scope.user.bucket_quota.enabled;
+    }
+    if ((userForm.bucket_quota_max_size_unlimited.$dirty === true) ||
+        (userForm.bucket_quota_max_size.$dirty === true)) {
+      if ($scope.user.bucket_quota.max_size_unlimited) {
+        args["max-size-kb"] = -1;
+      } else {
+        // Convert the given value to bytes.
+        var bytes = $filter("toBytes")($scope.user.bucket_quota.max_size);
+        // Finally convert the value to KiB.
+        args["max-size-kb"] = $filter("bytes")(bytes, {
+          "outPrecision": 0,
+          "outUnit": "KiB",
+          "appendUnit": false
+        });
+      }
+    }
+    if ((userForm.bucket_quota_max_objects_unlimited.$dirty === true) ||
+        (userForm.bucket_quota_max_objects.$dirty === true)) {
+      if ($scope.user.bucket_quota.max_objects_unlimited) {
+        args["max-objects"] = -1;
+      } else {
+        args["max-objects"] = $scope.user.bucket_quota.max_objects;
       }
     }
     return args;
