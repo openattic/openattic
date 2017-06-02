@@ -23,6 +23,7 @@ Changed
 ~~~~~~~
 * WebUI: Upgrade angular-ui-router to version 1.0.3 (OP-2221)
 * Installation: Don't allow localhost as the host name for the local host (OP-2258)
+* Monitoring: replaced deprecated configuration variable names (OP-2288)
 
 Fixed
 ~~~~~
