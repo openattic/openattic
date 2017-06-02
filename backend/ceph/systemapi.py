@@ -251,7 +251,7 @@ class SystemD(BasePlugin):
                 self.description = desc
                 self.arguments = args
                 self.active = True
-                self.normal_check_interval = check_interval
+                self.check_interval = check_interval
 
                 command = self._CephCommand(command_name)
                 self.command = command
