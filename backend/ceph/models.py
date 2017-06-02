@@ -195,7 +195,7 @@ class CephCluster(NodbModel, RadosMixin):
                 self.performance_data_options = sources
 
             except SystemError as e:
-                logger.error('Set performance_data_options failed: {}'.format(e.message))
+                logger.error('Set performance_data_options failed: {}'.format(str(e)))
 
     @staticmethod
     def get_performance_data(fsid, filter=None):
