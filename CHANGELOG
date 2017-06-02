@@ -34,6 +34,10 @@ Fixed
 * WebUI: Improved rendering output of notification messages (OP-2278).
 * Packaging: Adapt `build_deb_packages` to the changes made in `make_dist` for 3.0
 
+Added
+~~~~~
+* WebUI: Added status icons in front of cluster health status in health widget (OP-2178)
+
 [3.1.0] - 2017-05-24
 --------------------
 
