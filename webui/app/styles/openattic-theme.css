@@ -233,6 +233,9 @@ fieldset[disabled] .btn-primary.active {
 .modal .modal-content .openattic-modal-content p {
   margin-bottom: 10px;
 }
+.modal .modal-content .openattic-modal-content legend {
+  font-size: 1.833em;
+}
 .modal .modal-content .openattic-modal-footer {
   border-top: 1px solid #cccccc;
   border-radius: 0 0 5px 5px;
@@ -240,7 +243,7 @@ fieldset[disabled] .btn-primary.active {
 }
 .modal .modal-content .openattic-modal-header span {
   display: block;
-  font-size: 2em;
+  font-size: 16px; /* Same as .panel-title */
 }
 
 /* Modal Table (Task Queue) */
