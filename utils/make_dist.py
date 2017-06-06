@@ -16,19 +16,19 @@
     make_dist.py create (release|snapshot) [--revision=<revision>]
         [--source=<source>] [--destination=<destination>]
         [--adapt-debian-changelog] [--push-changes] [--tag]
-        [--suffix=<suffix>] [-v|-q|-s]
-    make_dist.py cache push
-    make_dist.py (help|-h|--help)
+        [--sign] [--suffix=<suffix>] [-v|-q|-s]
+   make_dist.py cache push
+   make_dist.py (help|-h|--help)
 
-Create a tarball out of a specific revision to be used as source for package
-managers to create debs, rpms, etc.
+   Create a tarball out of a specific revision to be used as source for package
+   managers to create debs, rpms, etc.
 
-This script always prints errors to STDERR. This behaviour can't be turned
-of by any switch provided.
+   This script always prints errors to STDERR. This behaviour can't be turned off
+   by any switch provided.
 
-Options:
+   Options:
 
-    --revision=<revision>
+   --revision=<revision>
 
         A valid git revision. An existing git tag for 'release'.
 
@@ -47,7 +47,7 @@ Options:
         changes. In that case these uncommited changes are committed in a
         temporary directory to be able include them in the tar archive.
 
-    --source=<source>  [default: https://bitbucket.org/openattic/openattic]
+   --source=<source>  [default: https://bitbucket.org/openattic/openattic]
 
         The source to be used. Either an URL to a git repository or local
         path to a git repository.
@@ -58,12 +58,12 @@ Options:
         The local repository is never altered, only a temporary copy of it will
         be adapted.
 
-    --destination=<destination>  [default: ~/src]
+   --destination=<destination>  [default: ~/src]
 
         The destination for the tar archive to be created in. If the given
         directory or subdirectories don't exist, they will be created.
 
-    --adapt-debian-changelog
+   --adapt-debian-changelog
 
         If enabled, the `debian/changelog` is updated using `debchange`.
 
@@ -75,7 +75,7 @@ Options:
         script is run on Debian or Ubuntu, the switch will automatically be
         enabled for your convenience. A proper warning is displayed.
 
-    --push-changes
+   --push-changes
 
         Pushes the changes that have been made in the temporary repository
         which is used to create the tarball. This switch is meant to be used on
@@ -94,7 +94,7 @@ Options:
         changes won't be pushed and the execution of the script will be
         aborted.
 
-    --tag
+   --tag
 
         Creates a git tag on top of other changes, like for example the
         adaption of the `debian/changelog`. The tag used will be the VERSION of
@@ -107,24 +107,34 @@ Options:
         on a release. This enables the automation of a release, thus it's not
         allowed to create tags which would create additional heads.
 
-    --suffix=<suffix>
+   --sign
+
+        Cryptographically sign the resulting tarball using GPG. Creates a
+        detached signature file `<tarball>.sig` in the same directory where
+        the tarball has been created.
+        
+        Note that using this option requires a working GPG configuration.
+        GPG will ask for the the secret key's passphrase, if you're not using
+        something like `gpg-agent` for managing the secret key.
+
+   --suffix=<suffix>
 
         If provided, the suffix will be appended to the resulting tarball
         filename as well as the directory name that the tarball contains. It
         will be appended to the basename "openattic" but before any version
         information to maintain compatibility with `debuild`.
 
-    -v
+   -v
 
         Enables the verbose mode. Prints the output of every command called to
         stdout.
 
-    -q
+   -q
 
         Enables the quiet mode. No output except for the success message and
         path to the created tar archive.
 
-    -s
+   -s
 
         Enables the script mode which prints the absolute path of the tarball
         at the end of the tarball creation to stdout.
@@ -732,6 +742,9 @@ class DistBuilder(object):
                             'given source have been committed.')
 
         abs_tarball_file_path = self._create_source_tarball(build_basename)
+
+        if self._args['--sign']:
+            process_run(['gpg', '--detach-sign', abs_tarball_file_path])
 
         _rmtree(self._tmp_oa_clone_dir)
         self._remove_npmrc_prefix()
