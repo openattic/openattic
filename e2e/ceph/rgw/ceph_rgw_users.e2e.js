@@ -116,12 +116,9 @@ describe('ceph rgw', function(){
     cephRgwCommons.addSubuserBtn.click();
     browser.sleep(400);
     element(by.model('subuser.subuser')).sendKeys('swift');
-    browser.sleep(400);
     element(by.model('subuser.permissions')).all(by.cssContainingText(
       'option', 'read')).first().click();
-    browser.sleep(400);
     element(by.model('subuser.generate_secret')).click();
-    browser.sleep(400);
     cephRgwCommons.submitSubuserBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
@@ -132,7 +129,6 @@ describe('ceph rgw', function(){
     cephRgwCommons.addSubuserBtn.click();
     browser.sleep(400);
     element(by.model('subuser.subuser')).sendKeys('swift');
-    browser.sleep(400);
     expect(element(by.css('.tc_subuserNotUnique')).isDisplayed()).toBe(true);
     cephRgwCommons.cancelSubuserBtn.click();
     browser.sleep(400);
@@ -146,24 +142,18 @@ describe('ceph rgw', function(){
     browser.sleep(400);
     element(by.model('key.user')).all(by.cssContainingText('option',
       testUser2.user_id)).first().click();
-    browser.sleep(400);
     element(by.model('key.access_key')).sendKeys('xyz123');
-    browser.sleep(400);
     element(by.model('key.secret_key')).sendKeys('thisismysecret');
-    browser.sleep(400);
     cephRgwCommons.submitS3KeyBtn.click();
     // Add key for the subuser.
     cephRgwCommons.addS3KeyBtn.click();
     browser.sleep(400);
     element(by.model('key.user')).element(by.cssContainingText('option',
       testUser2.user_id + ':swift')).click();
-    browser.sleep(400);
     // This fails because of a bug in the RGW Admin Ops REST interface.
     // element(by.model('key.generate_key')).click();
     element(by.model('key.access_key')).sendKeys('aaaaaaaaaaaaaa');
-    browser.sleep(400);
     element(by.model('key.secret_key')).sendKeys('xxxxxxxxxxxxxx');
-    browser.sleep(400);
     cephRgwCommons.submitS3KeyBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
@@ -175,17 +165,13 @@ describe('ceph rgw', function(){
     cephRgwCommons.addCapBtn.click();
     browser.sleep(400);
     element(by.model('cap.type')).element(by.cssContainingText('option', 'users')).click();
-    browser.sleep(400);
     element(by.model('cap.perm')).element(by.cssContainingText('option', '*')).click();
-    browser.sleep(400);
     cephRgwCommons.submitCapBtn.click();
     // Add 'metadata:write' capability.
     cephRgwCommons.addCapBtn.click();
     browser.sleep(400);
     element(by.model('cap.type')).element(by.cssContainingText('option', 'metadata')).click();
-    browser.sleep(400);
     element(by.model('cap.perm')).element(by.cssContainingText('option', 'write')).click();
-    browser.sleep(400);
     cephRgwCommons.submitCapBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
@@ -193,201 +179,151 @@ describe('ceph rgw', function(){
 
   it('should not display user quota max. size/objects', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     expect(userQuotaEnabled.isSelected()).toBe(false);
-    browser.sleep(400);
     expect(element(by.model('user.user_quota.max_size')).isDisplayed()).toBe(false);
-    browser.sleep(400);
     expect(element(by.model('user.user_quota.max_objects')).isDisplayed()).toBe(false);
-    browser.sleep(400);
     cephRgwCommons.backBtn.click();
   });
 
   it('should set user quota', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     userQuotaEnabled.click();
-    browser.sleep(400);
     // Maximum size
     expect(userQuotaMaxSizeUnlimited.isSelected()).toBeTruthy();
-    browser.sleep(400);
     userQuotaMaxSizeUnlimited.click();
-    browser.sleep(400);
     var maxSize = element(by.model('user.user_quota.max_size'));
     expect(maxSize.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('100M');
-    browser.sleep(400);
     // Maximum objects
     expect(userQuotaMaxObjectsUnlimited.isSelected()).toBeTruthy();
-    browser.sleep(400);
     userQuotaMaxObjectsUnlimited.click();
-    browser.sleep(400);
     var maxObjects = element(by.model('user.user_quota.max_objects'));
     expect(maxObjects.isDisplayed()).toBe(true);
     maxObjects.clear();
     maxObjects.sendKeys('500');
-    browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
 
   it('should not accept incorrect user quota max. size', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     var maxSize = element(by.model('user.user_quota.max_size'));
-    var maxSizeErrMsg = element(by.css('.tc_invalidUserQuotaMaxSize'));
+    var maxSizeInvalidErrMsg = element(by.css('.tc_invalidUserQuotaMaxSize'));
+    var maxSizeRequiredErrMsg = element(by.css('.tc_requiredUserQuotaMaxSize'));
+    maxSize.clear();
+    maxSize.sendKeys('abc');
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('100');
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(true);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('10H');
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(true);
     userQuotaMaxSizeUnlimited.click();
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(false);
+    expect(maxSizeRequiredErrMsg.isDisplayed()).toBe(false);
     userQuotaMaxSizeUnlimited.click();
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxSizeRequiredErrMsg.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('10K');
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(false);
     cephRgwCommons.submitBtn.click();
   });
 
   it('should not accept incorrect user quota max. objects', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     var maxObjects = element(by.model('user.user_quota.max_objects'));
-    var maxObjectsErrMsg = element(by.css('.tc_invalidUserQuotaMaxObjects'));
+    var maxObjectsInvalidErrMsg = element(by.css('.tc_invalidUserQuotaMaxObjects'));
+    var maxObjectsRequiredErrMsg = element(by.css('.tc_requiredUserQuotaMaxObjects'));
     maxObjects.clear();
-    maxObjects.sendKeys('xyz');
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(true);
+    maxObjects.sendKeys('xyz'); // Not possible because of number input.
+    expect(maxObjectsRequiredErrMsg.isDisplayed()).toBe(true);
     maxObjects.clear();
     maxObjects.sendKeys('-100');
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxObjectsInvalidErrMsg.isDisplayed()).toBe(true);
     userQuotaMaxObjectsUnlimited.click();
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxObjectsInvalidErrMsg.isDisplayed()).toBe(false);
+    expect(maxObjectsRequiredErrMsg.isDisplayed()).toBe(false);
     userQuotaMaxObjectsUnlimited.click();
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxObjectsRequiredErrMsg.isDisplayed()).toBe(true);
     maxObjects.clear();
     maxObjects.sendKeys('1234');
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxObjectsInvalidErrMsg.isDisplayed()).toBe(false);
     cephRgwCommons.submitBtn.click();
   });
 
   it('should not display bucket quota max. size/objects', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     expect(bucketQuotaEnabled.isSelected()).toBe(false);
-    browser.sleep(400);
     expect(element(by.model('user.bucket_quota.max_size')).isDisplayed()).toBe(false);
-    browser.sleep(400);
     expect(element(by.model('user.bucket_quota.max_objects')).isDisplayed()).toBe(false);
-    browser.sleep(400);
     cephRgwCommons.backBtn.click();
   });
 
   it('should set bucket quota', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     bucketQuotaEnabled.click();
-    browser.sleep(400);
     // Maximum size
     expect(bucketQuotaMaxSizeUnlimited.isSelected()).toBeTruthy();
-    browser.sleep(400);
     bucketQuotaMaxSizeUnlimited.click();
-    browser.sleep(400);
     var maxSize = element(by.model('user.bucket_quota.max_size'));
     expect(maxSize.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('1G');
-    browser.sleep(400);
     // Maximum objects
     expect(bucketQuotaMaxObjectsUnlimited.isSelected()).toBeTruthy();
-    browser.sleep(400);
     bucketQuotaMaxObjectsUnlimited.click();
-    browser.sleep(400);
     var maxObjects = element(by.model('user.bucket_quota.max_objects'));
     expect(maxObjects.isDisplayed()).toBe(true);
     maxObjects.clear();
     maxObjects.sendKeys('10000');
-    browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
 
   it('should not accept incorrect bucket quota max. size', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     var maxSize = element(by.model('user.bucket_quota.max_size'));
-    var maxSizeErrMsg = element(by.css('.tc_invalidBucketQuotaMaxSize'));
+    var maxSizeInvalidErrMsg = element(by.css('.tc_invalidBucketQuotaMaxSize'));
+    var maxSizeRequiredErrMsg = element(by.css('.tc_requiredBucketQuotaMaxSize'));
+    maxSize.clear();
+    maxSize.sendKeys('xyz');
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('1023');
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(true);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('5L');
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(true);
     bucketQuotaMaxSizeUnlimited.click();
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(false);
+    expect(maxSizeRequiredErrMsg.isDisplayed()).toBe(false);
     bucketQuotaMaxSizeUnlimited.click();
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxSizeRequiredErrMsg.isDisplayed()).toBe(true);
     maxSize.clear();
     maxSize.sendKeys('500 M');
-    browser.sleep(400);
-    expect(maxSizeErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxSizeInvalidErrMsg.isDisplayed()).toBe(false);
     cephRgwCommons.submitBtn.click();
   });
 
   it('should not accept incorrect bucket quota max. objects', function(){
     cephRgwCommons.editUser(testUser2.user_id);
-    browser.sleep(400);
     var maxObjects = element(by.model('user.bucket_quota.max_objects'));
-    var maxObjectsErrMsg = element(by.css('.tc_invalidBucketQuotaMaxObjects'));
+    var maxObjectsInvalidErrMsg = element(by.css('.tc_invalidBucketQuotaMaxObjects'));
+    var maxObjectsRequiredErrMsg = element(by.css('.tc_requiredBucketQuotaMaxObjects'));
     maxObjects.clear();
-    maxObjects.sendKeys('abc');
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(true);
+    maxObjects.sendKeys('abc'); // Not possible because of number input.
+    expect(maxObjectsRequiredErrMsg.isDisplayed()).toBe(true);
     maxObjects.clear();
     maxObjects.sendKeys('-1');
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxObjectsInvalidErrMsg.isDisplayed()).toBe(true);
     bucketQuotaMaxObjectsUnlimited.click();
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxObjectsInvalidErrMsg.isDisplayed()).toBe(false);
+    expect(maxObjectsRequiredErrMsg.isDisplayed()).toBe(false);
     bucketQuotaMaxObjectsUnlimited.click();
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(true);
-    browser.sleep(400);
+    expect(maxObjectsRequiredErrMsg.isDisplayed()).toBe(true);
     maxObjects.clear();
     maxObjects.sendKeys('0815');
-    browser.sleep(400);
-    expect(maxObjectsErrMsg.isDisplayed()).toBe(false);
-    browser.sleep(400);
+    expect(maxObjectsInvalidErrMsg.isDisplayed()).toBe(false);
     cephRgwCommons.submitBtn.click();
   });
 

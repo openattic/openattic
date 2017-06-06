@@ -118,6 +118,7 @@ app.filter("toBytes", function () {
   /**
    * Convert the given value into bytes.
    * @param {string} value The value to be converted, e.g. 1024B, 10M, 300KiB or 1ZB.
+   * @returns Returns the given value in bytes without any appended unit.
    */
   return function (value) {
     var base = 1024;

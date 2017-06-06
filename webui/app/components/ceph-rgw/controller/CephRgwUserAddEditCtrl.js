@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRgw");
 app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams, $uibModal,
-    $q, $filter, cephRgwHelpersService, cephRgwUserService) {
+    $q, $filter, $window, $timeout, cephRgwHelpersService, cephRgwUserService) {
   $scope.user = {
     "subusers": [],
     "keys": [],
@@ -60,7 +60,6 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
     $scope.editing = false;
 
     $scope.submitAction = function (userForm) {
-      $scope.submitted = true;
       if (userForm.$valid === true) {
         // Create a new user.
         var args = _getUserPutArgs();
@@ -166,7 +165,6 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       });
 
     $scope.submitAction = function (userForm) {
-      $scope.submitted = true;
       // Check if the general user settings have been modified.
       if (_isUserDirty(userForm)) {
         var userArgs = _getUserPostArgs(userForm);
@@ -238,6 +236,21 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         $scope.user.bucket_quota.max_objects = "";
       }
     });
+
+    /**
+     * Select the specified input field when the checkbox is unchecked.
+     * @param checked The status of the checkbox.
+     * @param id The HTML ID of the input field that should be focused.
+     */
+    $scope.onChangeUnlimited = function (checked, id) {
+      var element = $window.document.getElementById(id);
+      if (element && !checked) {
+        $timeout(function () {
+          element.focus();
+          element.select();
+        });
+      }
+    };
   }
 
   /**
