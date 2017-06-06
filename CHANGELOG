@@ -41,6 +41,7 @@ Fixed
 Added
 ~~~~~
 * WebUI: Added status icons in front of cluster health status in health widget (OP-2178)
+* Packaging: Added `--sign` option to `make_dist.py` to sign tarballs with GPG (OP-2124)
 
 [3.1.0] - 2017-05-24
 --------------------
