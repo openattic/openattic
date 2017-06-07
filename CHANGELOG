@@ -36,6 +36,7 @@ Fixed
   (OP-2284/OP-2281)
 * Backend: Added missing `volumes.models` module (Django 1.7) (OP-2300)
 * Backend: Fix ugly DeprecationWarning (OP-1764)
+* Backend: Fixed broken dashboard, if `rbd ls` hangs (OP-2294)
 * WebUI: Improved rendering output of notification messages (OP-2278).
 * Packaging: Adapt `build_deb_packages` to the changes made in `make_dist` for 3.0
 
