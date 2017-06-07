@@ -556,7 +556,7 @@ ul.task-queue-pagination {
   vertical-align: middle;
   margin-right: 0.5em;
 }
-.panel-dashboard .alert {
+.panel-dashboard .alert.bottom-margin-zero {
   margin-bottom: 0;
 }
 .panel-openattic {
