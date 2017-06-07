@@ -25,6 +25,7 @@ import ConfigParser
 
 from optparse import OptionParser
 from testtools.run import TestProgram
+from xmlrunner.xmlrunner import _XMLTestResult
 
 
 def main():
@@ -140,7 +141,7 @@ def main():
                 self.stream.write(str(datetime.datetime.now()) + ' -> ')
             super(GatlingTextTestResult, self).startTest(test)
 
-    class GatlingXMLTestResult(GatlingTextTestResult):
+    class GatlingXMLTestResult(_XMLTestResult):
         pass
 
     class GatlingXMLTestRunner(xmlrunner.XMLTestRunner):
