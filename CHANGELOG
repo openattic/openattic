@@ -42,9 +42,12 @@ Fixed
 * Backend: 'oaconfig install' does no longer fail if a Ceph cluster is inaccessible 
   while updating the Nagios configs (OP-2291)
 * Backend: Fixed broken dashboard, if `rbd ls` hangs (OP-2294)
+* Backend/QA: Fixed Gatling tests to be used with newest versions of 
+  xmlrunner (OP-2266/OP-2305)
 * WebUI: Improved rendering output of notification messages (OP-2278)
 * WebUI: Health widget will not show empty alerts (OP-2263)
 * Packaging: Adapt `build_deb_packages` to the changes made in `make_dist` for 3.0
+
 
 Added
 ~~~~~
