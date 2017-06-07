@@ -301,7 +301,19 @@ class LibradosTest(TestCase):
             "type_id": 3,
             "children": [-17]
         }""")] * 2
-        osd_tree_mock.return_value = {'nodes': tree}
+        stray = [{
+            'id': 5,
+            'name': 'osd.5',
+            "type": "osd",
+            "type_id": 0,
+            "crush_weight": 0,
+            "depth": 2,
+            "exists": 1,
+            "status": "down",
+            "reweight": 0,
+            "primary_affinity": 1
+        }] * 2
+        osd_tree_mock.return_value = {'nodes': tree, 'stray': stray}
         api = ceph.librados.MonApi('')
         res = api.osd_list()
         self.assertEqual(res, [
@@ -315,6 +327,16 @@ class LibradosTest(TestCase):
                 "status": "up",
                 "reweight": 1,
                 "primary_affinity": 1,
+            }, {
+                'id': 5,
+                'name': 'osd.5',
+                "type": "osd",
+                "type_id": 0,
+                "crush_weight": 0,
+                "exists": 1,
+                "status": "down",
+                "reweight": 0,
+                "primary_affinity": 1
             }
         ])
 
