@@ -186,11 +186,17 @@ class CephCluster(NodbModel, RadosMixin):
                         sources["performancedata_pools"] = RRD.get_sources_list(
                             curr_host, "Check_CephPool_{}_{}".format(self.fsid, pools[0].name))
 
-                    rbds = CephRbd.objects.all()
-                    if len(rbds) > 0:
-                        sources["performancedata_rbds"] = RRD.get_sources_list(
-                            curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
-                                                                       rbds[0].name))
+                    try:
+                        rbds = CephRbd.objects.all()
+                        if len(rbds) > 0:
+                            sources["performancedata_rbds"] = RRD.get_sources_list(
+                                curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
+                                                                           rbds[0].name))
+                    except librados.ExternalCommandError:
+                        # Don't break the cluster list, if too many, OSDs are down, as this would
+                        # kill our Dashboard.
+                        logger.exception('Failed to get RBDs')
+                        # pass
 
                 self.performance_data_options = sources
 
