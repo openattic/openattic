@@ -53,6 +53,8 @@ Added
 ~~~~~
 * WebUI: Added status icons in front of cluster health status in health widget (OP-2178)
 * WebUI: Show the required field symbol in the RBD form (OP-2204)
+* WebUI: Add user/bucket quota support to Object Gateway (RGW) user management UI
+  (OP-766 and OP-767).
 * Packaging: Added `--sign` option to `make_dist.py` to sign tarballs with GPG (OP-2124)
 
 [3.1.0] - 2017-05-24
