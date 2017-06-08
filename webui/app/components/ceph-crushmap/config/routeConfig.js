@@ -38,17 +38,17 @@ app.config(function ($stateProvider) {
       views: {
         "main": {
           templateUrl: "components/ceph-crushmap/templates/crushmap.html",
-          controller : "CephCrushmapCtrl",
-          resolve    : {
-            clusterData: function ($q, cephClusterService) {
-              return cephClusterService.get().$promise
-                .then(function (res) {
-                  return res;
-                }).catch(function () {
-                  return false;
-                });
-            }
-          }
+          controller : "CephCrushmapCtrl"
+        }
+      },
+      resolve: {
+        clusterData: function ($q, cephClusterService) {
+          return cephClusterService.get().$promise
+            .then(function (res) {
+              return res;
+            }).catch(function () {
+              return false;
+            });
         }
       },
       ncyBreadcrumb: {

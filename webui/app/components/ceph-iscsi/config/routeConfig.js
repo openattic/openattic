@@ -38,17 +38,17 @@ app.config(function ($stateProvider) {
       views: {
         "main": {
           templateUrl: "components/ceph-iscsi/templates/listing.html",
-          controller: "CephIscsiCtrl",
-          resolve: {
-            clusterData: function ($q, cephClusterService) {
-              return cephClusterService.get().$promise
-                .then(function (res) {
-                  return res;
-                }).catch(function () {
-                  console.log("No Ceph cluster available");
-                });
-            }
-          }
+          controller: "CephIscsiCtrl"
+        }
+      },
+      resolve: {
+        clusterData: function ($q, cephClusterService) {
+          return cephClusterService.get().$promise
+            .then(function (res) {
+              return res;
+            }).catch(function () {
+              console.log("No Ceph cluster available");
+            });
         }
       },
       ncyBreadcrumb: {

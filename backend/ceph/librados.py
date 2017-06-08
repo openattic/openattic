@@ -672,14 +672,15 @@ class MonApi(object):
         def unique_list_of_dicts(l):
             return reduce(lambda x, y: x if y in x else x + [y], l, [])
 
-        nodes = self.osd_tree()["nodes"]
+        tree = self.osd_tree()
+        nodes = tree['nodes']
+        if 'stray' in tree:
+            nodes += tree['stray']
         for node in nodes:
             if u'depth' in node:
                 del node[u'depth']
         nodes = unique_list_of_dicts(nodes)
-        return list(unique_list_of_dicts([v
-                                          for (k, v) in product(nodes, nodes)
-                    if v["type"] == "osd" and "children" in k and v["id"] in k["children"]]))
+        return list(unique_list_of_dicts([node for node in nodes if node['type'] == 'osd']))
 
     def osd_tree(self):
         """Does not return a tree, but a directed graph with multiple roots.
@@ -746,7 +747,7 @@ class MonApi(object):
         return self._call_mon_command('health')
 
     def df(self):
-        return self._call_mon_command('df')
+        return self._call_mon_command('df', self._args_to_argdict(detail='detail'))
 
     def _call_mon_command(self, cmd, argdict=None, output_format='json', timeout=30):
         return call_librados(self.fsid,

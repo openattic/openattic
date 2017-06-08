@@ -59,7 +59,7 @@ import unittest
 import shutil
 import docopt
 from os.path import isdir, isfile, basename
-from make_dist import Process
+from make_dist import process_run, log_command
 from ConfigParser import SafeConfigParser
 from datetime import datetime
 
@@ -78,7 +78,6 @@ class ParsingError(Exception):
 
 class DebPackageBuilder(object):
     def __init__(self, args):
-        self._process = Process()
         self._datetime = datetime.utcnow().strftime('%Y%m%d%H%M')
         self._args = args
 
@@ -188,12 +187,12 @@ class DebPackageBuilder(object):
             cmd = ['reprepro', '--basedir', self._args['--publish'], 'remove', release_channel]
             cmd += obsolete_packages
 
-            self._process.run(cmd)
+            process_run(cmd)
 
         # Publish packages.
         cmd = ['reprepro', '--basedir', self._args['--publish'], 'include', release_channel,
                changes_filename]
-        self._process.run(cmd, cwd=pkgdir)
+        process_run(cmd, cwd=pkgdir)
 
     def extract_tarball(self, tarball_file_path, destination):
         """Extract a tarball and return the path to it's files.
@@ -217,7 +216,7 @@ class DebPackageBuilder(object):
 
         # Extract the tarball to a temporary folder.
         tmpdir = tempfile.mkdtemp()
-        self._process.run(['tar', 'xf', tarball_file_path, '-C', tmpdir])
+        process_run(['tar', 'xf', tarball_file_path, '-C', tmpdir])
 
         dir_content = filter(isdir, glob.glob(os.path.join(tmpdir, '*')))
         files = filter(isfile, dir_content)
@@ -235,10 +234,10 @@ class DebPackageBuilder(object):
             shutil.rmtree(destination)
 
         shutil.move(source, destination)
-        self._process.log_command(['mv', source, destination])
+        log_command(['mv', source, destination])
 
         shutil.rmtree(tmpdir)
-        self._process.log_command(['rm', '-r', tmpdir])
+        log_command(['rm', '-r', tmpdir])
 
         return destination
 
@@ -277,7 +276,7 @@ class DebPackageBuilder(object):
 
         build_dir = DebPackageBuilder.get_empty_build_dir()
         tarball_source_dir = self.extract_tarball(tarball_file_path, build_dir)
-        self._process.log_command(['cp', tarball_file_path, build_dir])
+        log_command(['cp', tarball_file_path, build_dir])
         shutil.copy(tarball_file_path, build_dir)
         shutil.move(os.path.join(build_dir, basename(tarball_file_path)),
                     os.path.join(build_dir, self.determine_deb_tarball_filename(tarball_file_path)))
@@ -285,13 +284,13 @@ class DebPackageBuilder(object):
         # It's possible that debuild asks for user input. It seems that this behaviour cannot be
         # disabled, so the system call seems to be necessary at this point, to show the user that
         # debuild asks for input.
-        self._process.system(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
+        process_run(['debuild', '-us', '-uc', '-sa'], cwd=tarball_source_dir)
 
         changes_filename = basename(glob.glob(os.path.join(build_dir, '*.changes'))[0])
         # Sign the changes file.
         print self._args
         if not self._args['--no-signing']:
-            self._process.run(['debsign', '-k', self._args['--gpg-key-id'], changes_filename],
+            process_run(['debsign', '-k', self._args['--gpg-key-id'], changes_filename],
                               build_dir)
 
         print 'The packages have been created in %s' % build_dir

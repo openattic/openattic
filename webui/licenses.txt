@@ -13,7 +13,7 @@ angular-nvd3                      1.0.8               MIT                       
 angular-resource                  1.5.3               MIT                         https://github.com/angular/bower-angular-resource/tree/v1.5.3
 angular-sanitize                  1.5.3               MIT                         https://github.com/angular/bower-angular-sanitize/tree/v1.5.3
 angular-toasty                    1.0.5               MIT                         https://github.com/Salakar/angular-toasty/tree/1.0.5
-angular-ui-router                 0.2.18              MIT                         https://github.com/angular-ui/angular-ui-router-bower/tree/0.2.18
+angular-ui-router                 1.0.3               MIT                         https://github.com/angular-ui/angular-ui-router-bower/tree/1.0.3
 angular-ui-sortable               0.14.0              MIT                         https://github.com/angular-ui/ui-sortable/tree/v0.14.0
 angular-ui-tree                   2.15.0              MIT                         https://github.com/JimLiu/angular-ui-tree/tree/v2.15.0
 bootstrap                         3.3.6               MIT                         https://github.com/twbs/bootstrap/tree/v3.3.6

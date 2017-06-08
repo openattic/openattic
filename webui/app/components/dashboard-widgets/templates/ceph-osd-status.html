@@ -1,8 +1,8 @@
 <i class="fa fa-spinner fa-spin overlay" ng-show="$ctrl.isLoading"></i>
-<div class="alert alert-warning" ng-if="$ctrl.cluster.osdmap.osdmap.nearfull">
+<div class="alert alert-warning bottom-margin-zero" ng-if="$ctrl.cluster.osdmap.osdmap.nearfull">
   <i class="fa fa-warning bg-warning"></i> <strong>Cluster is near full!</strong>
 </div>
-<div class="alert alert-danger" ng-if="$ctrl.cluster.osdmap.osdmap.full">
+<div class="alert alert-danger bottom-margin-zero" ng-if="$ctrl.cluster.osdmap.osdmap.full">
   <i class="fa fa-bomb bg-danger"></i> <strong>Your cluster is full!</strong>
 </div>
 <div class="max-height" ng-class="{'alert-is-shown': $ctrl.isAnyAlertShown()}">
