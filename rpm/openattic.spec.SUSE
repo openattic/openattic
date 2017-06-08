@@ -22,7 +22,7 @@ Group: System Environment/Libraries
 License: GPL-2.0
 URL: http://www.openattic.org
 BuildArch: noarch
-Source:	%{name}-%{version}.tar.bz2
+Source:	%{name}-ses5-%{version}.tar.bz2
 BuildRequires: -post-build-checks
 %if 0%{?suse_version} >= 1210
 BuildRequires: systemd-rpm-macros
@@ -218,7 +218,7 @@ storage space on demand.
 This package configures the PostgreSQL database for openATTIC.
 
 %prep
-%setup -q
+%setup -q -n %{name}-ses5-%{version}
 
 %build
 
