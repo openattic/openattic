@@ -54,11 +54,7 @@ class UserTestScenario(GatlingTestCase):
                 "is_staff": True,
                 "is_superuser": is_superuser}
 
-        try:
-            res = cls.send_request("POST", "users", data=user)
-        except HTTPError as e:
-            raise SkipTest(e.message)
-
+        res = cls.send_request("POST", "users", data=user)
         res['response']['password'] = 'init'
         return res
 

@@ -22,7 +22,7 @@ from collections import OrderedDict
 from django.conf import settings
 
 from rest_framework.response import Response
-from rest_framework.request import Request
+from rest_framework.request import clone_request
 
 from ifconfig.models import Host
 
@@ -208,21 +208,8 @@ class RequestHandlers(object):
         return {'Authorization': 'Token %s' % auth_token}
 
     def _clone_request_with_new_data(self, request, data):
-        clone = Request(request=request._request,
-                        parsers=request.parsers,
-                        authenticators=request.authenticators,
-                        negotiator=request.negotiator,
-                        parser_context=request.parser_context)
+        clone = clone_request(request, request.method)
         clone._data = data
-        clone._files = request._files
-        clone._content_type = request._content_type
-        clone._stream = request._stream
-        clone._method = request._method
-        if hasattr(request, '_user'):
-            clone._user = request._user
-        if hasattr(request, '_auth'):
-            clone._auth = request._auth
-        if hasattr(request, '_authenticator'):
-            clone._authenticator = request._authenticator
-
+        if hasattr(clone, '_full_data'):
+            clone._full_data = data
         return clone

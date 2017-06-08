@@ -34,6 +34,14 @@ var app = angular.module("openattic.cephRgw");
 app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
   return $resource(globalConfig.API.URL + "rgw/user", {
   }, {
+    getQuota: {
+      method: "GET",
+      url: globalConfig.API.URL + "rgw/user?quota"
+    },
+    putQuota: {
+      method: "PUT",
+      url: globalConfig.API.URL + "rgw/user?quota"
+    },
     put: {
       method: "PUT"
     },
