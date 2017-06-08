@@ -35,3 +35,5 @@ pyyaml
 ipaddr
 configobj
 requests-aws==0.1.8
+testtools==2.3.0
+xmlrunner=1.7.7

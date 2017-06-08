@@ -66,6 +66,18 @@ def statfile(devname, fname):
         return None
 
 
+def get_host_name():
+    fqdn = socket.getfqdn()
+    if fqdn != 'localhost':
+        return fqdn
+    fqdn = socket.gethostname()
+    if fqdn != 'localhost':
+        return fqdn
+
+    raise ValueError('Unable to determine fully qualified domain name (FQDN) or host name. Please '
+                     'check your host name configuration before proceeding with the installation.')
+
+
 class HostManager(models.Manager):
     def __init__(self, *args, **kwargs):
         logger.info('Current Version: {}'.format(settings.VERSION_CONF['package']['VERSION']))
@@ -73,15 +85,9 @@ class HostManager(models.Manager):
 
     def get_current(self):
         try:
-            return self.get(name=socket.getfqdn())
+            return self.get(name=get_host_name())
         except Host.DoesNotExist:
-            try:
-                return self.get(name=socket.gethostname())
-            except Host.DoesNotExist:
-                if not self.exists():  # The Hosts model is empty.
-                    return Host.insert_current_host()
-                else:
-                    raise
+            return Host.insert_current_host()
 
 
 class Host(models.Model):
@@ -117,8 +123,7 @@ class Host(models.Model):
 
     @staticmethod
     def insert_current_host():
-        fqdn = socket.getfqdn()
-        host = Host(name=fqdn, is_oa_host=True)
+        host = Host(name=get_host_name(), is_oa_host=True)
         host.save()
         return host
 

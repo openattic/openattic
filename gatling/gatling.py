@@ -25,6 +25,7 @@ import ConfigParser
 
 from optparse import OptionParser
 from testtools.run import TestProgram
+from xmlrunner.xmlrunner import _XMLTestResult
 
 
 def main():
@@ -140,7 +141,7 @@ def main():
                 self.stream.write(str(datetime.datetime.now()) + ' -> ')
             super(GatlingTextTestResult, self).startTest(test)
 
-    class GatlingXMLTestResult(GatlingTextTestResult, xmlrunner._XMLTestResult):
+    class GatlingXMLTestResult(_XMLTestResult):
         pass
 
     class GatlingXMLTestRunner(xmlrunner.XMLTestRunner):
@@ -171,12 +172,8 @@ def main():
     if not posargs and "--" not in sys.argv:
         posargs = ["discover", "-v"]
 
-    # Instantiate another GatlingTestLoader to be used when discovery is *not* active.
-    loader = GatlingTestLoader()
-
     starttime = datetime.datetime.now()
-    prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner,
-                              testLoader=loader, exit=False)
+    prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner, exit=False)
     endtime = datetime.datetime.now()
 
     cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)

@@ -155,7 +155,7 @@ class Service(models.Model):
             return "Unknown"
 
     @property
-    def normal_check_interval(self):
+    def check_interval(self):
         return 5
 
 
