@@ -730,6 +730,7 @@ h6{
   margin-top: 0;
   margin-bottom: 30px;
 }
+.login .btn-password,
 .login .form-control {
   color: #ececec;
   background-color: #555555;

@@ -34,6 +34,12 @@
                                 <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
                                 <input class="form-control" type="password" placeholder="Password..."
                                        ng-model="user.password" name="password" id="userPassword" required>
+                                <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            oa-password-button="userPassword">
+                                    </button>
+                                </span>
                             </div>
                                 <span class="help-block tc_passwdRequired" ng-show="(submitted ||userForm.password.$dirty)
                                 && userForm.password.$error.required">

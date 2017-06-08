@@ -96,13 +96,16 @@
                     <div class="input-group">
                         <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
                         <input class="form-control"
-                               type="text"
+                               type="password"
                                placeholder="Secret key..."
                                ng-model="subuser.secret_key"
                                ng-required="!editing && !subuser.generate_secret"
                                name="secret_key"
                                id="secret_key">
                         <span class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-default"
+                                    oa-password-button="secret_key">
                             <button type="button"
                                     class="btn btn-default"
                                     uib-tooltip="Copy to clipboard"
