@@ -56,6 +56,7 @@ Added
 * WebUI: Add user/bucket quota support to Object Gateway (RGW) user management UI
   (OP-766 and OP-767).
 * Packaging: Added `--sign` option to `make_dist.py` to sign tarballs with GPG (OP-2124)
+* Backend/QA: Created basic Gatling tests for the RGW proxy implementation (OP-2153)
 
 [3.1.0] - 2017-05-24
 --------------------
