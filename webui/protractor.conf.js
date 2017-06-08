@@ -51,6 +51,7 @@ var allSuites = {
   ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
   ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js',
   ceph_iscsi           : '../e2e/ceph/iscsi/*.e2e.js',
+  ceph_nfs             : '../e2e/ceph/nfs/*.e2e.js',
   ceph_rgw             : '../e2e/ceph/rgw/*.e2e.js'
 };
 
