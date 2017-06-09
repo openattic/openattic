@@ -27,6 +27,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Harden RBD statistics watcher function (OP-2310)
 
 [3.1.1] - 2017-06-08
 --------------------
