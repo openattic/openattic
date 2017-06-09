@@ -82,6 +82,10 @@ def test_0002_auto_20170126_1628(cursor):
     return (len(res1) or len(res2)) != 0
 
 
+def test_ceph_0005_cephpool_percent_used(cursor):
+    return _column_exists('ceph_cephpool', 'percent_used', cursor)
+
+
 # (app, name, test function, SQL statement)
 # * If app and name is None, this migration will always be executed, if test function returns True.
 # * If test function and SQL stmt are None, the migration will only be added to the
@@ -156,6 +160,15 @@ _migrations = [
         COMMIT;
         """
     ),
+    (
+        'ceph', u'0005_cephpool_percent_used',
+        test_ceph_0005_cephpool_percent_used,
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "percent_used" double precision NOT NULL;
+        COMMIT;
+        """
+    )
 ]
 
 
@@ -253,3 +266,10 @@ def _table_exists(table_name, cursor):
               WHERE table_name = %s;"""
     res = execute_and_fetch(cursor, stmt, [table_name])
     return len(res) > 0 and res[0]['table_name'] == table_name
+
+
+def _column_exists(table_name, column_name, cursor):
+    stmt = """SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS
+              WHERE table_name = %s;"""
+    res = execute_and_fetch(cursor, stmt, [table_name])
+    return column_name not in [d['column_name'] for d in res]
