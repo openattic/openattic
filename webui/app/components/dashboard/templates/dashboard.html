@@ -80,6 +80,8 @@
         </ceph-osd-status>
         <ceph-health ng-if="widget.manager.manager === 'ceph-health'">
         </ceph-health>
+        <ceph-mon-status settings="widget.settings" ng-if="widget.manager.manager === 'ceph-mon-status'">
+        </ceph-mon-status>
         <ceph-cluster-performance widget="widget" ng-if="widget.manager.manager === 'ceph-cluster-performance'">
         </ceph-cluster-performance>
       </div>
