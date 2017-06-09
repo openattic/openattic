@@ -39,8 +39,9 @@ tracking them:
   code.
 * Every bug fix or notable change made to a release branch must be accompanied
   by a `JIRA issue <https://tracker.openattic.org/>`_. The issue ID must be
-  mentioned in the commit message and pull request.
-* Pull requests must be accompanied with a corresponding ``CHANGELOG`` entry that
+  mentioned in the summary of the commit message and pull request in the
+  following format: ``<summary> (OP-xxxx)``.
+* Pull requests must be accompanied by a suggested ``CHANGELOG`` entry that
   documents the change.
 * New features and other larger changes also require a related JIRA issue that
   provides detailed background information about the change.
