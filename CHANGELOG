@@ -21,7 +21,8 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
-* WebUI: Add ability to show/hide passwords (OP-2242).
+* WebUI: Add ability to show/hide passwords (OP-2242)
+* WebUI: Created MON widget (OP-1933)
 
 Changed
 ~~~~~~~
