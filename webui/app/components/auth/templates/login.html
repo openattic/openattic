@@ -23,12 +23,20 @@
                 <!-- password -->
                 <div class="form-group has-feedback"
                      ng-class="{'has-error': (submitted || loginForm.password.$dirty) && loginForm.password.$invalid}">
-                    <input name="password" type="password" ng-model="password" placeholder="Enter your password..."
-                           class="form-control" required
-                           uib-tooltip="{{fieldRequired}}"
-                           tooltip-class="tc_passwdRequired"
-                           tooltip-trigger="'none'"
-                           tooltip-is-open="(submitted || loginForm.password.$dirty) && loginForm.password.$error.required">
+                    <div class="input-group">
+                        <input id="password" name="password" type="password" ng-model="password" placeholder="Enter your password..."
+                               class="form-control" required
+                               uib-tooltip="{{fieldRequired}}"
+                               tooltip-class="tc_passwdRequired"
+                               tooltip-trigger="'none'"
+                               tooltip-is-open="(submitted || loginForm.password.$dirty) && loginForm.password.$error.required">
+                        <span class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-default btn-password"
+                                    oa-password-button="password">
+                            </button>
+                        </span>
+                    </div>
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
                           ng-show="(submitted || loginForm.password.$dirty) && loginForm.password.$invalid"></span>
                 </div>
