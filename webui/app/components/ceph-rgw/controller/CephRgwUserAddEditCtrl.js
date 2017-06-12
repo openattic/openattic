@@ -58,6 +58,11 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
 
   if (!$stateParams.user_id) {
     $scope.editing = false;
+    angular.extend($scope.user, {
+      generate_key: true,
+      access_key: "",
+      secret_key: ""
+    });
 
     $scope.submitAction = function (userForm) {
       if (userForm.$valid === true) {
