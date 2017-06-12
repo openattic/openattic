@@ -448,6 +448,8 @@ fi
 %{_datadir}/%{name}/ceph_deployment/
 %{_datadir}/%{name}/installed_apps.d/60_ceph_iscsi
 %{_datadir}/%{name}/ceph_iscsi/
+%{_datadir}/%{name}/installed_apps.d/60_ceph_nfs
+%{_datadir}/%{name}/ceph_nfs/
 
 %files gui
 %defattr(-,root,root,-)
