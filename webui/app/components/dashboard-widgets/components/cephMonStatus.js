@@ -41,7 +41,7 @@ app.component("cephMonStatus", {
     var self = this;
     this.isLoading = false;
 
-    this.startInterval = function () {
+    this.$onInit = function () {
       self.updateClusterInformation();
       updateInterval = $interval(function () {
         self.updateClusterInformation();
@@ -195,9 +195,9 @@ app.component("cephMonStatus", {
     });
 
     // Event-Handler
-    $scope.$on("$destroy", function () {
+    this.$onDestroy = function () {
       $interval.cancel(updateInterval);
-    });
+    };
 
     $scope.$on("gridster-resized", function () {
       self.nvd3api.update();
@@ -206,7 +206,5 @@ app.component("cephMonStatus", {
     $scope.$on("gridster-item-transition-end", function () {
       self.nvd3api.update();
     });
-
-    this.startInterval();
   }
 });
