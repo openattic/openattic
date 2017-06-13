@@ -50,8 +50,26 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           label: "Object Gateway users"
         }
-      })
-      .state("ceph-rgw-user-add", {
+      }).state("ceph-rgw-users.detail", {
+      views        : {
+        "tab": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUsersTab.html"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    }).state("ceph-rgw-users.detail.details", {
+        url: "/details",
+        views: {
+          "tab-content": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwUsersDetails.html"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.user_id}} details"
+        }
+      }).state("ceph-rgw-user-add", {
         url: "/ceph/rgw/users/add",
         views: {
           "main": {

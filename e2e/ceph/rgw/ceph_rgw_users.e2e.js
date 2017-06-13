@@ -99,7 +99,15 @@ describe('ceph rgw', function(){
   });
 
   it('should display the "herpderp" in the users panel', function(){
-    expect(element(by.cssContainingText('tr', testUser1.user_id)).isDisplayed()).toBe(true);
+    expect(helpers.get_list_element(testUser1.user_id).isDisplayed()).toBe(true);
+  });
+
+  it('should display the details of "herpderp"', function(){
+    helpers.get_list_element(testUser1.user_id).click();
+    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
+    cephRgwCommons.detailAttributes.forEach(function(attr){
+      expect(element(by.cssContainingText('dt', attr + ':')).isDisplayed()).toBe(true);
+    });
   });
 
   it('should check if user/bucket quota is set for "herpderp"', function(){
