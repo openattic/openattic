@@ -5,63 +5,83 @@ var rbdCommons = require('./cephRbdCommon.js');
 
 describe('ceph rbd creation and deletion', function(){
   var rbdProperties = new rbdCommons();
-  var featureRbdName = 'e2eFeatures';
+  var namePrefix = 'e2e_rbd';
+
+  var objSizeTests = [
+    [4, 'KiB'],
+    [4, 'MiB'],
+    [32, 'MiB']
+  ];
+
+  /**
+   * Will run a full rbd creation test.
+   *
+   * @param {object} rbdConfig
+   * @param {string} rbdConfig.clusterName
+   * @param {string} rbdConfig.poolName
+   * @param {string} rbdConfig.rbdName
+   * @param {string} rbdConfig.objSize
+   * @param {number[]} rbdConfig.features
+   */
+  var fullRbdCreation = function(rbdConfig){
+    var desc = [
+      'should create "' + rbdConfig.rbdName + '" rbd',
+      rbdConfig.features ? 'with the following expert option case: "[' + rbdConfig.features + ']" options' : '',
+      rbdConfig.objSize ? 'with a object size of "' + rbdConfig.objSize + '"' : '',
+      'on pool "' + rbdConfig.poolName + '"',
+      'on cluster "' + rbdConfig.clusterName + '"'
+    ].join(' ');
+    it(desc, function(){
+      rbdProperties.selectClusterAndPool(rbdConfig.clusterName, rbdConfig.poolName);
+      rbdProperties.createRbd(rbdConfig.rbdName, rbdConfig.objSize, rbdConfig.features);
+    });
+  };
+
+  /**
+   * Will run a full rbd deletion test.
+   *
+   * @param {object} rbdConfig
+   * @param {string} rbdConfig.clusterName
+   * @param {string} rbdConfig.poolName
+   * @param {string} rbdConfig.rbdName
+   */
+  var fullRbdDeletion = function(rbdConfig){
+    var desc = [
+      'should delete "' + rbdConfig.rbdName + '" rbd',
+      'on pool "' + rbdConfig.poolName + '"',
+      'on cluster "' + rbdConfig.clusterName + '"'
+    ].join(' ');
+    it(desc, function(){
+      rbdProperties.deleteRbd(rbdConfig.rbdName);
+    });
+  };
 
   beforeAll(function(){
     helpers.login();
   });
 
+  /**
+   * To prevent getting stuck anywhere.
+   */
   beforeEach(function(){
     rbdProperties.cephRBDs.click();
     browser.sleep(helpers.configs.sleep);
   });
 
-  var objSizeTests = [
-    [4, 'KiB'],
-    [8, 'KiB'],
-    [16, 'KiB'],
-    [32, 'KiB'],
-    [64, 'KiB'],
-    [128, 'KiB'],
-    [256, 'KiB'],
-    [512, 'KiB'],
-    [1, 'MiB'],
-    [2, 'MiB'],
-    [4, 'MiB'],
-    [8, 'MiB'],
-    [16, 'MiB'],
-    [32, 'MiB']
-  ];
-
   rbdProperties.useWriteablePools(function(cluster, pool){
-    objSizeTests.forEach(function(sizeArr, index){
-      var objSize = sizeArr[0] + '.00 ' + sizeArr[1];
-      var rbdName = 'e2eObjectSize' + index;
-      it('should create a rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
-          + '" in cluster "' + cluster.name + '"', function(){
-        rbdProperties.selectClusterAndPool(cluster.name, pool.name);
-        rbdProperties.createRbd(rbdName, objSize);
-      });
-      it('should delete created rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
-        + '" in cluster "' + cluster.name + '"', function(){
-        rbdProperties.deleteRbd(rbdName);
-      });
-    });
-  });
-
-  rbdProperties.useWriteablePools(function(cluster, pool){
-    rbdProperties.expandedFeatureCases.forEach(function(testCase){
-      var keys = Object.keys(rbdProperties.formElements.features.items);
-      var values = rbdProperties.formElements.features.items;
-      it('should create a rbd with the following expert option case: "[' + testCase + ']" options on pool "' + pool.name
-          + '" in cluster "' + cluster.name + '"', function(){
-        rbdProperties.selectClusterAndPool(cluster.name, pool.name);
-        rbdProperties.createRbd(featureRbdName, null, testCase);
-      });
-      it('should delete created rbd with the following expert option case: "[' + testCase + ']" options on pool "' +
-        pool.name + '" in cluster "' + cluster.name + '"', function(){
-        rbdProperties.deleteRbd(featureRbdName);
-      });
+    // Use the case with the least, default and the most options.
+    var testCases = rbdProperties.expandedFeatureCases;
+    [testCases[0], rbdProperties.defaultFeatureCase, testCases[testCases.length - 1]].forEach(function(features, index){
+      var objSizeArr = objSizeTests[index];
+      var rbdConfig = {
+        clusterName: cluster.name,
+        poolName: pool.name,
+        rbdName: [namePrefix, index, features.join('')].join('_'),
+        objSize: objSizeArr[0] + '.00 ' + objSizeArr[1],
+        features: features
+      };
+      fullRbdCreation(rbdConfig);
+      fullRbdDeletion(rbdConfig);
     });
   });
 
