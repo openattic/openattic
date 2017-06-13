@@ -33,6 +33,7 @@ Fixed
 ~~~~~
 * WebUI: Harden RBD statistics watcher function (OP-2310)
 * Development: Fix requirement files (OP-2316)
+* WebUI: Restrict RBD form to replicated pools (OP-2314)
 
 
 [3.1.1] - 2017-06-08
