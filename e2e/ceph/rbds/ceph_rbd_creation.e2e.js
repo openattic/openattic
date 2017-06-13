@@ -39,7 +39,7 @@ describe('ceph rbd creation and deletion', function(){
       var rbdName = 'e2eObjectSize' + index;
       it('should create a rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
           + '" in cluster "' + cluster.name + '"', function(){
-        rbdProperties.selectClusterAndPool(cluster, pool);
+        rbdProperties.selectClusterAndPool(cluster.name, pool.name);
         rbdProperties.createRbd(rbdName, objSize);
       });
       it('should delete created rbd with a specific object size: "' + objSize + '" object and rbd size on pool "' + pool.name
@@ -55,13 +55,7 @@ describe('ceph rbd creation and deletion', function(){
       var values = rbdProperties.formElements.features.items;
       it('should create a rbd with the following expert option case: "[' + testCase + ']" options on pool "' + pool.name
           + '" in cluster "' + cluster.name + '"', function(){
-        rbdProperties.selectClusterAndPool(cluster, pool);
-        for (var i = 0; i < 7; i++){ // uncheck all boxes
-          rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
-        }
-        testCase.forEach(function(state, index){ // check the features
-          rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
-        });
+        rbdProperties.selectClusterAndPool(cluster.name, pool.name);
         rbdProperties.createRbd(featureRbdName, null, testCase);
       });
       it('should delete created rbd with the following expert option case: "[' + testCase + ']" options on pool "' +

@@ -2,6 +2,7 @@
 
 var rbdCommons = function(){
   var helpers = require('../../common.js');
+  var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
   this.cephRBDs = element(by.css('.tc_menuitem_ceph_rbds'));
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.clusters = helpers.configs.cephCluster;
@@ -146,6 +147,29 @@ var rbdCommons = function(){
     [2, 2, -1, 1, 1, 2, 2],
   ];
 
+  this.convertFeatureObjectToFeatureArray = function(feature){
+    return [
+      feature.deepFlatten,
+      feature.layering,
+      feature.striping,
+      feature.exclusiveLock,
+      feature.objectMap,
+      feature.journaling,
+      feature.fastDiff
+    ];
+  };
+
+  // Works on every operating system that was tested
+  this.defaultFeatureCase = this.convertFeatureObjectToFeatureArray({
+    deepFlatten: 1,
+    layering: 1,
+    striping: -1,
+    exclusiveLock: 1,
+    objectMap: 1,
+    journaling: 0,
+    fastDiff: 1
+  });
+
   this.isListInSelectBox = function(itemName){
     var item = element(by.model(self.formElements[itemName].model));
     item.click();
@@ -165,37 +189,33 @@ var rbdCommons = function(){
   this.expandFeatureCases = function(list){
     var expandCriteria = list.indexOf(2);
     if(expandCriteria === -1){
-      return null;
+      return [list];
     }
     var clone1 = list.slice();
     var clone2 = list.slice();
-    var clones = [];
     clone1[expandCriteria] = 0;
     clone2[expandCriteria] = 1;
-    [clone1, clone2].forEach(function(clone){
-      var clonedClones = self.expandFeatureCases(clone);
-      if(clonedClones){
-        clonedClones.forEach(function(clone){
-          clones.push(clone);
-        });
-      }else{
-        clones.push(clone);
-      }
-    });
-    return clones;
+    return self.expandFeatureCases(clone1).concat(self.expandFeatureCases(clone2));
   };
 
-  this.checkFeature = function(e, state){
-    e.getAttribute('checked').then(function(checked){
-      if(state === 1 && !checked || state === 0 && checked){
-        e.click();
-      }
-      if(state === 1){
-        expect(e.getAttribute('checked')).toBe('true');
-      }else{
-        expect(e.getAttribute('checked')).toBe(null);
-      }
+  this.selectFeatures = function(features){
+    self.checkCheckboxToBe(self.expertSettings, true);
+    var keys = Object.keys(self.formElements.features.items);
+    var values = self.formElements.features.items;
+    for (var i = 0; i < 7; i++){ // deselect all boxes
+      self.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
+    }
+    features.forEach(function(state, index){ // select the features
+      self.checkCheckboxToBe(element(by.className(values[keys[index]])), state === 1);
     });
+    features.forEach(function(state, index){ // control feature states
+      self.controlFeatureState(element(by.className(values[keys[index]])), state);
+    });
+  };
+
+  this.controlFeatureState = function(e, state){
+    expect(e.getAttribute('checked')).toBe(state === 1 ? 'true' : null);
+    expect(e.getAttribute('disabled')).toBe(state === -1 ? 'true' : null);
   };
 
   this.useWriteablePools = function(callback){
@@ -210,22 +230,19 @@ var rbdCommons = function(){
     });
   };
 
-  /*
-   Selects cluster if a selection is available in the listing.
-   */
-  this.selectCluster = function(cluster){
+  this.selectCluster = function(clusterName){
     if(self.clusterCount > 1){
-      self.clusterSelect.sendKeys(cluster.name);
-      expect(self.clusterSelect.getText()).toContain(cluster.name);
+      self.clusterSelect.sendKeys(clusterName);
+      expect(self.clusterSelect.getText()).toContain(clusterName);
     }
   };
 
-  this.selectClusterAndPool = function(cluster, pool){
-    self.selectCluster(cluster);
+  this.selectClusterAndPool = function(clusterName, poolName){
+    self.selectCluster(clusterName);
     self.addButton.click();
     self.checkCheckboxToBe(self.expertSettings, true);
-    self.poolSelect.sendKeys(pool.name);
-    expect(self.poolSelect.getText()).toContain(pool.name);
+    self.poolSelect.sendKeys(poolName);
+    expect(self.poolSelect.getText()).toContain(poolName);
   };
 
   var self = this;
@@ -239,18 +256,13 @@ var rbdCommons = function(){
   });
 
   this.deleteRbd = function(rbdName){
-    var rbd = element(by.cssContainingText('tr', rbdName));
+    var rbd = helpers.get_list_element(rbdName).click();
     expect(rbd.isDisplayed()).toBe(true);
-    rbd.click();
-    element(by.css('.tc_menudropdown')).click();
-    element(by.css('.tc_deleteItem > a')).click();
-    element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
-    element(by.id('bot2-Msg1')).click();
-    browser.sleep(helpers.configs.sleep);
+    helpers.delete_selection(undefined, '$ctrl');
     expect(element(by.cssContainingText('tr', rbdName)).isPresent()).toBe(false);
   };
 
-  this.fillForm = function(rbdName, size, rbdObjSize){
+  this.fillForm = function(rbdName, size, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
     self.checkCheckboxToBe(self.expertSettings, true);
     self.name.clear();
@@ -259,25 +271,29 @@ var rbdCommons = function(){
     self.size.sendKeys(size);
     self.objSize.clear();
     self.objSize.sendKeys(rbdObjSize);
+    if(featureCase){
+      self.selectFeatures(featureCase);
+    }
   };
 
-  this.createRbd = function(rbdName, rbdObjSize, rbdFeatureCase){
+  this.createRbd = function(rbdName, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.fillForm(rbdName, rbdObjSize, rbdObjSize);
+    self.fillForm(rbdName, rbdObjSize, rbdObjSize, featureCase);
     element(by.className('tc_submitButton')).click();
-    browser.sleep(helpers.configs.sleep);
+    taskQueueHelpers.waitForPendingTasks();
 
-    var rbd = element(by.cssContainingText('tr', rbdName));
+    var rbd = helpers.search_for_element(rbdName);
     expect(rbd.isDisplayed()).toBe(true);
     rbd.click();
-    browser.sleep(helpers.configs.sleep);
 
     expect(element(by.binding('selection.item.obj_size')).getText()).toBe(rbdObjSize);
-    if(rbdFeatureCase){
+    if(featureCase){
       var keys = Object.keys(self.formElements.features.items);
-      rbdFeatureCase.forEach(function(state, index){ // check the features
+      featureCase.forEach(function(state, index){ // check the features
         if(state === 1){
           expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
+        } else {
+          expect(element(by.cssContainingText('dd', keys[index])).isPresent()).toBe(false);
         }
       });
     }
