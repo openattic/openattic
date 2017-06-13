@@ -26,6 +26,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI/QA: Refactored RBD common library (OP-2286)
 
 Fixed
 ~~~~~
