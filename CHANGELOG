@@ -16,6 +16,26 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.1.2] - unreleased
+--------------------
+
+Added
+~~~~~
+* WebUI: Add ability to show/hide passwords (OP-2242)
+* WebUI: Created MON widget (OP-1933)
+
+Changed
+~~~~~~~
+* WebUI/QA: Refactored RBD common library (OP-2286)
+* WebUI/QA: Reduced RBD creations in RBD creation suite (OP-2287)
+
+Fixed
+~~~~~
+* WebUI: Harden RBD statistics watcher function (OP-2310)
+* Development: Fix requirement files (OP-2316)
+* WebUI: Restrict RBD form to replicated pools (OP-2314)
+
+
 [3.1.1] - 2017-06-08
 --------------------
 

@@ -173,9 +173,17 @@
                ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['password'].$dirty) && iscsiForm['password'].$invalid}">
             <label class="col-sm-3 control-label" for="password">Password</label>
             <div class="col-sm-9">
-              <input type="password" class="form-control" name="password"
-                     id="password"
-                     ng-model="model.authentication.password" required>
+              <div class="input-group">
+                <input type="password" class="form-control" name="password"
+                       id="password"
+                       ng-model="model.authentication.password" required>
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default"
+                          oa-password-button="password">
+                  </button>
+                </span>
+              </div>
               <span class="help-block" ng-show="iscsiForm.$submitted || iscsiForm['password'].$dirty">
                 <span class="tc_passwordRequired" ng-show="iscsiForm['password'].$error.required">Required field</span>
               </span>
@@ -258,8 +266,16 @@
                  ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['mutualPassword'+$index].$dirty) && iscsiForm['mutualPassword'+$index].$invalid}">
               <label class="col-sm-3 control-label" for="mutualPassword">Mutual password</label>
               <div class="col-sm-9">
-                <input type="password" class="form-control" name="mutualPassword" id="mutualPassword"
-                       ng-model="model.authentication.mutualPassword" required>
+                <div class="input-group">
+                  <input type="password" class="form-control" name="mutualPassword" id="mutualPassword"
+                         ng-model="model.authentication.mutualPassword" required>
+                  <span class="input-group-btn">
+                    <button type="button"
+                            class="btn btn-default"
+                            oa-password-button="mutualPassword">
+                    </button>
+                  </span>
+                </div>
                 <span class="help-block"
                       ng-show="iscsiForm.$submitted || iscsiForm['mutualPassword'].$dirty">
                     <span class="tc_mutualPasswordRequired" ng-show="iscsiForm['mutualPassword'].$error.required">Required field</span>
@@ -304,8 +320,16 @@
                  ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['discoveryPassword'].$dirty) && iscsiForm['discoveryPassword'].$invalid}">
               <label class="col-sm-3 control-label" for="discoveryPassword">Discovery password</label>
               <div class="col-sm-9">
-                <input type="password" class="form-control" name="discoveryPassword" id="discoveryPassword"
-                       ng-model="model.authentication.discoveryPassword" required>
+                <div class="input-group">
+                  <input type="password" class="form-control" name="discoveryPassword" id="discoveryPassword"
+                         ng-model="model.authentication.discoveryPassword" required>
+                  <span class="input-group-btn">
+                    <button type="button"
+                            class="btn btn-default"
+                            oa-password-button="discoveryPassword">
+                    </button>
+                  </span>
+                </div>
                 <span class="help-block"
                       ng-show="iscsiForm.$submitted || iscsiForm['discoveryPassword'].$dirty">
                   <span class="tc_discoveryPasswordRequired"
@@ -354,8 +378,16 @@
                      ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['discoveryMutualPassword'].$dirty) && iscsiForm['discoveryMutualPassword'].$invalid}">
                   <label class="col-sm-3 control-label" for="discoveryMutualPassword">Discovery mutual password</label>
                   <div class="col-sm-9">
-                    <input type="password" class="form-control" name="discoveryMutualPassword" id="discoveryMutualPassword"
-                           ng-model="model.authentication.discoveryMutualPassword" required>
+                    <div class="input-group">
+                      <input type="password" class="form-control" name="discoveryMutualPassword" id="discoveryMutualPassword"
+                             ng-model="model.authentication.discoveryMutualPassword" required>
+                      <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-default"
+                                oa-password-button="discoveryMutualPassword">
+                        </button>
+                      </span>
+                    </div>
                     <span class="help-block"
                           ng-show="iscsiForm.$submitted || iscsiForm['discoveryMutualPassword'].$dirty">
                       <span class="tc_discoveryMutualPasswordRequired"

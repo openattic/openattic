@@ -174,7 +174,7 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
     """
 
     serializer_class = CephPoolSerializer
-    filter_fields = ("name",)
+    filter_fields = ("name", "type",)
     search_fields = ("name",)
 
     def __init__(self, **kwargs):

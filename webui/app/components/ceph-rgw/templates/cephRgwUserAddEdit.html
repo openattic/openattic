@@ -335,7 +335,7 @@
                             <div class="input-group">
                                 <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
                                 <input class="form-control"
-                                       type="text"
+                                       type="password"
                                        placeholder="Access key..."
                                        ng-model="user.access_key"
                                        ng-readonly="editing"
@@ -343,6 +343,10 @@
                                        name="access_key"
                                        id="access_key">
                                 <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            oa-password-button="access_key">
+                                    </button>
                                     <button type="button"
                                             class="btn btn-default"
                                             uib-tooltip="Copy to clipboard"
@@ -367,13 +371,17 @@
                             <div class="input-group">
                                 <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
                                 <input class="form-control"
-                                       type="text"
+                                       type="password"
                                        placeholder="Secret key..."
                                        ng-model="user.secret_key"
                                        ng-required="!editing && !user.generate_key"
                                        name="secret_key"
                                        id="secret_key">
                                 <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            oa-password-button="secret_key">
+                                    </button>
                                     <button type="button"
                                             class="btn btn-default"
                                             uib-tooltip="Copy to clipboard"
