@@ -107,13 +107,13 @@ for ``angularJS`` globally::
 
   # npm install -g eslint eslint-config-angular eslint-plugin-angular
 
-To `simply use it<http://eslint.org/docs/user-guide/command-line-interface>`_
+To `simply use it <http://eslint.org/docs/user-guide/command-line-interface>`_
 from the command line you can do the following::
 
   % cd <clone>/webui
   % eslint <path>
 
-Or with `vim<http://www.vim.org/>`_ without `Syntastic
+Or with `vim <http://www.vim.org/>`_ without `Syntastic
 <https://github.com/vim-syntastic/syntastic>`_::
 
   :!eslint %
