@@ -14,7 +14,10 @@
  *  GNU General Public License for more details.
 """
 
+import inspect
+import itertools
 import logging
+import re
 import requests
 from requests import ConnectionError
 
@@ -22,9 +25,10 @@ logger = logging.getLogger(__name__)
 
 
 class RequestException(Exception):
-    def __init__(self, message, status_code):
+    def __init__(self, message, status_code, content=None):
         super(RequestException, self).__init__(message)
         self.status_code = status_code
+        self.content = content
 
 
 class BadResponseFormatException(RequestException):
@@ -49,8 +53,8 @@ class _ResponseValidator(object):
     Level      ::=  Path | Path '&' Level
     Path       ::=  Step | Step '>'+ Path
     Step       ::=  Key  | '?' Key | '*' | '(' Level ')'
-    Key        ::=  <string> | <string> Array
-    Array      ::=  '[' <int> ']' | '[' '*' ']'
+    Key        ::=  <string> | Array+
+    Array      ::=  '[' <int> ']' | '[' '*' ']' | '[' '+' ']'
 
     The symbols enclosed in ' ' are tokens of the language, and the + symbol denotes repetition of
     of the preceding token at least once.
@@ -67,13 +71,21 @@ class _ResponseValidator(object):
 
     Example 2:
         Validator args:
+            structure = "[*]"
+            response = [...]
+
+        In the above example the structure will validate against any response that is an
+        array of any size.
+
+    Example 3:
+        Validator args:
             structure = "return[*]"
             response = { 'return': [....] }
 
         In the above example the structure will validate against any response that contains a key
         named "return" in the root of the response dictionary and its value is an array.
 
-    Example 3:
+    Example 4:
         Validator args:
             structure = "return[0] > token"
             response = { 'return': [ { 'token': .... } ] }
@@ -82,7 +94,17 @@ class _ResponseValidator(object):
         named "return" in the root of the response dictionary and its value is an array, and
         the first element of the array is a dictionary that contains the key 'token'.
 
-    Example 4:
+    Example 5:
+        Validator args:
+            structure = "return[0][*] > key1"
+            response = { 'return': [ [ { 'key1': ... } ], ...] }
+
+        In the above example the structure will validate against any response that contains a key
+        named "return" in the root of the response dictionary where its value is an array, and the
+        first value of this array is also an array where all it's values must be a dictionary
+        containing a key named "key1".
+
+    Example 6:
         Validator args:
             structure = "return > (key1[*] & key2 & ?key3 > subkey)"
             response = { 'return': { 'key1': [...], 'key2: .... } ] }
@@ -92,7 +114,7 @@ class _ResponseValidator(object):
         must contain a key named "key1" that is an array, a key named "key2", and optionaly a key
         named "key3" that is a dictionary that contains a key named "subkey".
 
-    Example 5:
+    Example 7:
         Validator args:
             structure = "return >> roles[*]"
             response = { 'return': { 'key1': { 'roles': [...] }, 'key2': { 'roles': [...] } } }
@@ -111,14 +133,14 @@ class _ResponseValidator(object):
         if structure is None:
             return
 
-        _ResponseValidator.__validate_level(structure, response)
+        _ResponseValidator._validate_level(structure, response)
 
     @staticmethod
-    def __validate_level(level, resp):
-        if not isinstance(resp, dict):
-            raise BadResponseFormatException("{} is not a dict".format(resp))
+    def _validate_level(level, resp):
+        if not isinstance(resp, dict) and not isinstance(resp, list):
+            raise BadResponseFormatException("{} is neither a dict or a list".format(resp))
 
-        paths = _ResponseValidator.__parse_level_paths(level)
+        paths = _ResponseValidator._parse_level_paths(level)
         for path in paths:
             path_sep = path.find('>')
             if path_sep != -1:
@@ -132,33 +154,61 @@ class _ResponseValidator(object):
                 continue
             elif key == '':  # check all keys
                 for k in resp.keys():
-                    _ResponseValidator.__validate_key(k, level_next, resp)
+                    _ResponseValidator._validate_key(k, level_next, resp)
             else:
-                _ResponseValidator.__validate_key(key, level_next, resp)
+                _ResponseValidator._validate_key(key, level_next, resp)
 
     @staticmethod
-    def __validate_key(key, level_next, resp):
+    def _validate_array(array_seq, level_next, resp):
+        if array_seq:
+            if not isinstance(resp, list):
+                raise BadResponseFormatException("{} is not an array".format(resp))
+            if array_seq[0].isdigit():
+                idx = int(array_seq[0])
+                if len(resp) <= idx:
+                    raise BadResponseFormatException(
+                        "length of array {} is lower than the index {}".format(resp, idx))
+                _ResponseValidator._validate_array(array_seq[1:], level_next,
+                                                   resp[idx])
+            elif array_seq[0] == '*':
+                for r in resp:
+                    _ResponseValidator._validate_array(array_seq[1:], level_next, r)
+            elif array_seq[0] == '+':
+                if len(resp) < 1:
+                    raise BadResponseFormatException("array should not be empty")
+                for r in resp:
+                    _ResponseValidator._validate_array(array_seq[1:], level_next, r)
+            else:
+                raise Exception("Response structure is invalid: only <int> | '*' are allowed as"
+                                " array index arguments")
+        else:
+            if level_next:
+                _ResponseValidator._validate_level(level_next, resp)
+
+    @staticmethod
+    def _validate_key(key, level_next, resp):
         array_access = [a.strip() for a in key.split("[")]
         key = array_access[0]
-        optional = key[0] == '?'
-        if optional:
-            key = key[1:]
-        if key not in resp:
+        if key:
+            optional = key[0] == '?'
             if optional:
-                return
-            raise BadResponseFormatException("key {} is not in dict {}".format(key, resp))
-        resp_next = resp[key]
+                key = key[1:]
+            if key not in resp:
+                if optional:
+                    return
+                raise BadResponseFormatException("key {} is not in dict {}".format(key, resp))
+            resp_next = resp[key]
+        else:
+            resp_next = resp
         if len(array_access) > 1:
-            if not isinstance(resp_next, list):
-                raise BadResponseFormatException("{} is not an array".format(resp_next))
-            if array_access[1][:-1].isdigit():
-                resp_next = resp_next[int(array_access[1][:-1])]
-
-        if level_next is not None:
-            _ResponseValidator.__validate_level(level_next, resp_next)
+            _ResponseValidator._validate_array([a[0:-1] for a in array_access[1:]], level_next,
+                                               resp_next)
+        else:
+            if level_next:
+                _ResponseValidator._validate_level(level_next, resp_next)
 
     @staticmethod
-    def __parse_level_paths(level):
+    def _parse_level_paths(level):
         level = level.strip()
         if level[0] == '(':
             level = level[1:]
@@ -181,35 +231,60 @@ class _ResponseValidator(object):
 
 
 class _Request(object):
-    def __init__(self, method, path, rest_client, resp_structure):
+    def __init__(self, method, path, path_params, rest_client, resp_structure):
         self.method = method
         self.path = path
+        self.path_params = path_params
         self.rest_client = rest_client
         self.resp_structure = resp_structure
 
-    def __call__(self, data=None):
-        if self.method == "get":
-            resp = self.rest_client.get(self.path)
-        else:
-            resp = self.rest_client.post(self.path, data)
+    def _gen_path(self):
+        new_path = self.path
+        matches = re.finditer(r'\{(\w+?)\}', self.path)
+        for match in matches:
+            if match:
+                param_key = match.group(1)
+                if param_key in self.path_params:
+                    new_path = new_path.replace(match.group(0), self.path_params[param_key])
+                else:
+                    raise RequestException('Invalid path. Param "{}" was not specified'
+                                           .format(param_key), None)
+        return new_path
 
+    def __call__(self, req_data=None, method=None, params=None, data=None, raw_content=False):
+        method = method if method else self.method
+        if not method:
+            raise Exception('No HTTP request method specified')
+        if req_data:
+            if method == 'get':
+                if params:
+                    raise Exception('Ambiguous source of GET params')
+                params = req_data
+            else:
+                if data:
+                    raise Exception('Ambiguous source of {} data'.format(method.upper()))
+                data = req_data
+        resp = self.rest_client.do_request(method, self._gen_path(), params, data, raw_content)
+        if raw_content and self.resp_structure:
+            raise Exception("Cannot validate reponse in raw format")
         _ResponseValidator.validate(self.resp_structure, resp)
         return resp
 
 
 class RestClient(object):
-    def __init__(self, host, port, client_name=None):
+    def __init__(self, host, port, client_name=None, ssl=False, auth=None):
         self.client_name = client_name if client_name else ''
-        self.base_url = 'http://{}:{}'.format(host, port)
+        self.base_url = 'http{}://{}:{}'.format('s' if ssl else '', host, port)
         logger.debug("REST service base URL: %s", self.base_url)
         self.headers = {'Accept': 'application/json'}
+        self.auth = auth
         self.session = requests.Session()
 
     def _login(self, request=None):
         pass
 
     def _is_logged_in(self):
-        return True
+        pass
 
     def _reset_login(self):
         pass
@@ -231,67 +306,76 @@ class RestClient(object):
                     if isinstance(e, BadResponseFormatException):
                         raise e
                     retries -= 1
-                    if e.status_code != 401 or retries == 0:
+                    if e.status_code not in  [401, 403] or retries == 0:
                         raise e
                     self._reset_login()
-
         return func_wrapper
 
-    def get(self, path):
-        logger.debug('%s REST API GET req: %s', self.client_name, path)
+    def do_request(self, method, path, params=None, data=None, raw_content=False):
+        url = '{}{}'.format(self.base_url, path)
+        logger.debug('%s REST API %s req: %s data: %s', self.client_name, method.upper(),
+                     path, data)
         try:
-            resp = self.session.get('{}{}'.format(self.base_url, path), headers=self.headers)
-            if resp.ok:
-                logger.debug("%s REST API GET res status: %s content: %s", self.client_name,
-                             resp.status_code, resp.json())
-                return resp.json()
+            if method.lower() == 'get':
+                resp = self.session.get(url, headers=self.headers, params=params, auth=self.auth)
+            elif method.lower() == 'post':
+                resp = self.session.post(url, headers=self.headers, params=params, data=data,
+                                         auth=self.auth)
+            elif method.lower() == 'put':
+                resp = self.session.put(url, headers=self.headers, params=params, data=data,
+                                        auth=self.auth)
+            elif method.lower() == 'delete':
+                resp = self.session.delete(url, headers=self.headers, params=params, data=data,
+                                           auth=self.auth)
             else:
-                logger.error("%s REST API failed GET req status: %s", self.client_name,
-                             resp.status_code)
+                raise RequestException('Method "{}" not supported'.format(method.upper()), None)
+            if resp.ok:
+                logger.debug("%s REST API %s res status: %s content: %s", self.client_name,
+                             method.upper(), resp.status_code, resp.text)
+                if raw_content:
+                    return resp.content
+                return resp.json() if resp.text else None
+            else:
+                logger.error("%s REST API failed %s req status: %s", self.client_name,
+                             method.upper(), resp.status_code)
                 raise RequestException("{} REST API failed request with status code {}"
                                        .format(self.client_name, resp.status_code),
-                                       resp.status_code)
+                                       resp.status_code, resp.content)
         except ConnectionError:
-            logger.error("%s REST API failed GET, connection error", self.client_name)
-            raise RequestException("{} REST API cannot be reached. Please check your "
-                                   "configuration and that the API endpoint is accessible"
-                                   .format(self.client_name), None)
-
-    def post(self, path, data=None):
-        logger.debug('%s REST API POST req: %s data: %s', self.client_name, path, data)
-        try:
-            resp = self.session.post('{}{}'.format(self.base_url, path), headers=self.headers,
-                                     data=data)
-
-            if resp.ok:
-                logger.debug("%s REST API POST res status: %s content: %s", self.client_name,
-                             resp.status_code, resp.json())
-                return resp.json()
-            else:
-                logger.error("%s REST API POST failed req status: %s", self.client_name,
-                             resp.status_code)
-                raise RequestException("{} REST API failed request with status code {}"
-                                       .format(self.client_name, resp.status_code),
-                                       resp.status_code)
-        except ConnectionError:
-            logger.error("%s REST API failed POST, connection error", self.client_name)
+            logger.error("%s REST API failed %s, connection error", self.client_name,
+                         method.upper())
             raise RequestException("{} REST API cannot be reached. Please check your "
                                    "configuration and that the API endpoint is accessible"
                                    .format(self.client_name), None)
 
     @staticmethod
-    def api_get(path, resp_structure=None):
-        def call_decorator(func):
-            def func_wrapper(self):
-                return func(self, request=_Request("get", path, self, resp_structure))
-            return func_wrapper
-        return call_decorator
-
-    @staticmethod
-    def api_post(path, resp_structure=None):
+    def api(path, **api_kwargs):
         def call_decorator(func):
             def func_wrapper(self, *args, **kwargs):
-                return func(self, *args, request=_Request("post", path, self, resp_structure),
+                method = api_kwargs.get('method', None)
+                resp_structure = api_kwargs.get('resp_structure', None)
+                args_name = inspect.getargspec(func).args
+                args_dict = dict(itertools.izip(args_name[1:], args))
+                for key, val in kwargs:
+                    args_dict[key] = val
+                return func(self, *args, request=_Request(method, path, args_dict, self,
+                                                          resp_structure),
                             **kwargs)
             return func_wrapper
         return call_decorator
+
+    @staticmethod
+    def api_get(path, resp_structure=None):
+        return RestClient.api(path, method='get', resp_structure=resp_structure)
+
+    @staticmethod
+    def api_post(path, resp_structure=None):
+        return RestClient.api(path, method='post', resp_structure=resp_structure)
+
+    @staticmethod
+    def api_put(path, resp_structure=None):
+        return RestClient.api(path, method='put', resp_structure=resp_structure)
+
+    @staticmethod
+    def api_delete(path, resp_structure=None):
+        return RestClient.api(path, method='delete', resp_structure=resp_structure)
