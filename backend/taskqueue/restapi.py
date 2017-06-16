@@ -20,11 +20,11 @@ from rest_framework.reverse import reverse
 
 from taskqueue.models import TaskQueue
 from nodb.restapi import JsonField
-from rest.utilities import get_request_query_params, get_request_data
+from rest.utilities import get_request_query_params, get_request_data, ToNativeToRepresentationMixin
 from rest.restapi import NoCacheModelViewSet
 
 
-class TaskQueueSerializer(serializers.ModelSerializer):
+class TaskQueueSerializer(ToNativeToRepresentationMixin, serializers.ModelSerializer):
     status = serializers.CharField(source='status_name')
     estimated = serializers.DateTimeField(read_only=True)
     result = JsonField(source='json_result')
@@ -32,6 +32,13 @@ class TaskQueueSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = TaskQueue
         exclude = ('task',)
+
+    def to_native(self, instance):
+        repr = super(TaskQueueSerializer, self).to_native(instance)
+        if instance:
+            assert not set(instance.metadata).intersection(set(repr))  # Update, but don't overwrite
+            repr.update(instance.metadata)
+        return repr
 
 
 class TaskQueueViewSet(NoCacheModelViewSet):

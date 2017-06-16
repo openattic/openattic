@@ -120,6 +120,17 @@ class TaskQueue(Model):
         current = datetime.datetime.now()
         return self.created + divide_timedelta((current - self.created), (float(self.percent) / 100.0))
 
+    @property
+    def metadata(self):
+        task_val = json.loads(self.task)
+        task = deserialize_task(task_val)
+        try:
+            return task.metadata()
+        except ImportError:
+            logger.exception('Failed to find task={} taskqueue={}'.format(task.func_reference,
+                                                                          self.id))
+            return {}
+
     def finish_with_exception(self, e):
         """:type e: Exception"""
         self.finish_task(str(e), TaskQueue.STATUS_EXCEPTION)
@@ -229,7 +240,10 @@ class Task(object):
 
     @cached_property
     def wrapper(self):
-        """:rtype: TaskFactory"""
+        """
+        :rtype: TaskFactory
+        :raise ImportError: raised, if task doesn't exist.
+        """
         module_name, func_name = self.func_reference.rsplit('.', 1)
         m = __import__(module_name, fromlist=[func_name], level=0)
         return getattr(m, func_name)
@@ -241,6 +255,9 @@ class Task(object):
 
     def percent(self):
         return self.wrapper.percent(*self.args, **self.kwargs)
+
+    def metadata(self):
+        return self.wrapper.metadata(*self.args, **self.kwargs)
 
     def __unicode__(self):
         return u'{} with {}, {}'.format(self.func_reference, self.args, self.kwargs)
@@ -275,7 +292,7 @@ class TaskFactory(object):
     >>> assert isinstance(inc.delay(42), TaskQueue)
     >>> assert isinstance(inc.call_now(42), 43)
     """
-    def __init__(self, func, percent=None, description=None):
+    def __init__(self, func, percent=None, description=None, metadata=None):
         """
         This instance is kind of static. Don't store anything volatile.
         :type description: str | unicode | None
@@ -283,6 +300,7 @@ class TaskFactory(object):
         self._orig_func = func
         self._percent = percent
         self._description = description
+        self._metadata = metadata
 
     def __call__(self, *args, **kwargs):
         return self.mk_task(args, kwargs)
@@ -321,6 +339,12 @@ class TaskFactory(object):
             logger.warning('percent={} is value wrong. {}'.format(value, self._orig_func))
         return max(min(value, 100), 0)
 
+    def metadata(self, *args, **kwargs):
+        if self._metadata:
+            return self._metadata(*args, **kwargs)
+        else:
+            return {}
+
 
 def task(*args, **kwargs):
     """
@@ -350,7 +374,11 @@ def chain_percent(values, total_count=None):
     return (current_tasks_percent + first_percent / float(total_count)) * 100
 
 
-@task(percent=chain_percent)
+def chain_metadata(values, total_count=None):
+    return {'length': total_count if total_count else len(values)}
+
+
+@task(percent=chain_percent, metadata=chain_metadata)
 def chain(values, total_count=None):
     """
     Created a new task that executes all given tasks, one after another.
