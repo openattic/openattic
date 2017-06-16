@@ -13,24 +13,21 @@
 """
 import json
 from django.http import HttpResponse
-from deepsea import DeepSea
 from rest_framework.decorators import api_view
-
-from ceph_radosgw import radosgw
+from ceph_radosgw.rgw_client import RGWClient
+from rest_client import RequestException
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def proxy_view(request, path):
 
-    # Credentials have been given manually, they'll be preferably used.
-    if radosgw.has_static_credentials():
-        credentials = radosgw.STATIC_CREDENTIALS
-
-    # Salt API credentials are given to be able to retrieve the RGW API credentials.
-    elif radosgw.has_salt_api_credentials():
-        credentials = DeepSea.instance().get_rgw_api_credentials()
-
-    else:
+    try:
+        result = RGWClient.admin_instance().proxy(request.method, path, request.GET.copy(),
+                                                  request.body)
+        return HttpResponse(result, 200)
+    except RequestException as e:
+        return HttpResponse(e.content, e.status_code)
+    except RGWClient.NoCredentialsException:
         content = {
             'Code': 'ConfigurationIncomplete',
             'Message': 'Rados Gateway seems to be either unconfigured or misconfigured. '
@@ -39,6 +36,3 @@ def proxy_view(request, path):
         response = HttpResponse(json.dumps(content), status=500)
         response['Content-Type'] = 'application/json'
         return response
-
-    content, status_code = radosgw.get_rgw_api_response(request, path, credentials)
-    return HttpResponse(content, status=status_code)
