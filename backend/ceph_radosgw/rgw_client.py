@@ -85,20 +85,22 @@ class RGWClient(RestClient):
     def __init__(self, userid, access_key, secret_key, host=None, port=None, ssl=False):
         if not RGWClient._host:
             RGWClient._load_settings()
-
-        self.userid = userid
         host = host if host else RGWClient._host
         port = port if port else RGWClient._port
         ssl = ssl if ssl else RGWClient._ssl
 
-        s3auth = S3Auth(access_key, secret_key)
+        self.userid = userid
+        self.service_url = '{}:{}'.format(host, port)
+
+        s3auth = S3Auth(access_key, secret_key, service_url=self.service_url)
         super(RGWClient, self).__init__(host, port, 'RGW', ssl, s3auth)
 
     def _reset_login(self):
         if self.userid != RGWClient._SYSTEM_USERID:
             logger.info("Fetching new keys for user: %s", self.userid)
             keys = RGWClient.admin_instance().get_user_keys(self.userid)
-            self.auth = S3Auth(keys['access_key'], keys['secret_key'])
+            self.auth = S3Auth(keys['access_key'], keys['secret_key'],
+                               service_url=self.service_url)
         else:
             raise Exception('Authentication failed for the "{}" user: wrong credentials'
                             .format(self.userid))
