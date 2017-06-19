@@ -3,7 +3,6 @@
 var CephRgwCommons = function(){
   var helpers = require('../../common.js');
 
-  this.addBtn = element(by.css('.tc_addUser'));
   this.submitBtn = element(by.css('.tc_submitButton'));
   this.backBtn = element(by.css('.tc_backButton'));
   this.addSubuserBtn = element(by.css('.tc_addSubuserButton'));
@@ -14,11 +13,16 @@ var CephRgwCommons = function(){
   this.addCapBtn = element(by.css('.tc_addCapButton'));
   this.submitCapBtn = element(by.css('.tc_submitCapButton'));
 
+  this.addUser = function() {
+    element(by.css('.tc_addUser')).click();
+    browser.sleep(helpers.configs.sleep);
+  };
+
   this.editUser = function(uid){
     element(by.cssContainingText('tr', uid)).click();
     element(by.css('.tc_menudropdown')).click();
     element(by.css('.tc_editUser > a')).click();
     browser.sleep(helpers.configs.sleep);
-  }
+  };
 };
 module.exports = CephRgwCommons;

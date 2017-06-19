@@ -49,7 +49,7 @@ app.directive("cephRgwQuotaMaxSizeValidate", function ($filter) {
         if (ctrl.$isEmpty(value)) {
           return true;
         }
-        var m = RegExp("^(\\d+)\\s*(B|K(B|iB)?|M(B|iB)?|G(B|iB)?|T(B|iB)?)?$").exec(value);
+        var m = RegExp("^(\\d+)\\s*(B|K(B|iB)?|M(B|iB)?|G(B|iB)?|T(B|iB)?)?$", "i").exec(value);
         if (m === null) {
           return false;
         }

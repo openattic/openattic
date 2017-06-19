@@ -66,15 +66,28 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
 
     $scope.submitAction = function (userForm) {
       if (userForm.$valid === true) {
-        // Create a new user.
-        var args = _getUserPutArgs();
-        cephRgwUserService.put(args, undefined)
-          .$promise
-          .then(function () {
-            $state.go("ceph-rgw-users");
-          }, function () {
-            userForm.$submitted = false;
-          });
+        // Get the arguments to create the user.
+        var userArgs = _getUserPutArgs(userForm);
+        _addRequest(function (args) {
+          return cephRgwUserService.put(args, undefined).$promise;
+        }, [userArgs]);
+        // Check if user quota has been modified.
+        if (_isUserQuotaDirty(userForm)) {
+          var userQuotaArgs = _getUserQuotaPutArgs(userForm);
+          _addRequest(function (args) {
+            return cephRgwUserService.putQuota(args, undefined).$promise;
+          }, [userQuotaArgs]);
+        }
+        // Check if bucket quota has been modified.
+        if (_isBucketQuotaDirty(userForm)) {
+          var bucketQuotaArgs = _getBucketQuotaPutArgs(userForm);
+          _addRequest(function (args) {
+            return cephRgwUserService.putQuota(args, undefined).$promise;
+          }, [bucketQuotaArgs]);
+        }
+        // Process all requests (including the creation of the user and
+        // additional RGW Admin Ops API calls).
+        _doSubmitAction(userForm);
       }
     };
 
@@ -83,7 +96,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       // Reset the validity flag by default.
       $scope.userForm.user_id.$setValidity("uniqueuserid", true);
       // Exit immediately if user ID is empty.
-      if (!angular.isString(uid) || !uid.length) {
+      if (!angular.isString(uid) || uid === "") {
         return;
       }
       cephRgwUserService.query({"uid": uid})
@@ -191,27 +204,8 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           return cephRgwUserService.putQuota(args, undefined).$promise;
         }, [bucketQuotaArgs]);
       }
-      // Execute all requests (RGW Admin Ops API call) in sequential order.
-      var fn = function (request) {
-        var promise = request.getPromiseFn.apply(this, request.args);
-        promise.then(function () {
-          // Remove the successful request.
-          $scope.requests.shift();
-          // Execute another request?
-          if ($scope.requests.length > 0) {
-            fn($scope.requests[0]);
-          } else {
-            $scope.goToListView();
-          }
-        }, function () {
-          userForm.$submitted = false;
-        });
-      };
-      if ($scope.requests.length > 0) {
-        fn($scope.requests[0]);
-      } else {
-        $scope.goToListView();
-      }
+      // Process all requests.
+      _doSubmitAction(userForm);
     };
 
     $scope.$watch("user.user_quota.max_size_unlimited", function (checked) {
@@ -270,6 +264,34 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
    */
   $scope.cancelAction = function () {
     $scope.goToListView();
+  };
+
+  /**
+   * Helper function that executes all requests.
+   * @param userForm The HTML formular.
+   */
+  var _doSubmitAction = function (userForm) {
+    var fn = function (request) {
+      var promise = request.getPromiseFn.apply(this, request.args);
+      promise.then(function () {
+        // Remove the successful request.
+        $scope.requests.shift();
+        // Execute another request?
+        if ($scope.requests.length > 0) {
+          fn($scope.requests[0]);
+        } else {
+          $scope.goToListView();
+        }
+      }, function () {
+        userForm.$submitted = false;
+      });
+    };
+    // Process all requests (RGW Admin Ops API calls) in sequential order.
+    if ($scope.requests.length > 0) {
+      fn($scope.requests[0]);
+    } else {
+      $scope.goToListView();
+    }
   };
 
   /**
@@ -418,6 +440,13 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       }
     });
     return args;
+  };
+
+  /**
+   * Helper method to mark the formular as dirty.
+   */
+  var _markFormAsDirty = function () {
+    $scope.userForm.$setDirty();
   };
 
   /**
@@ -695,7 +724,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   };
 
   /**
-   * Add a request will be executed when the 'Submit' button is pressed.
+   * Add a request which will be executed when clicking the 'Submit'-button.
    * @param fn The function that builds the promise.
    * @param args The function arguments.
    * @private
@@ -729,6 +758,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           $scope.user.subusers[index] = subuser;
           break;
       }
+      _markFormAsDirty();
     });
   };
 
@@ -745,6 +775,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
     });
     // Finally remove the subuser itself.
     $scope.user.subusers.splice(index, 1);
+    _markFormAsDirty();
   };
 
   $scope.addViewS3Key = function (index) {
@@ -762,12 +793,14 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           });
           break;
       }
+      _markFormAsDirty();
     });
   };
 
   $scope.removeS3Key = function (index) {
     _addRequest(_getPromiseByType, ["s3key", "delete", $scope.user.keys[index]]);
     $scope.user.keys.splice(index, 1);
+    _markFormAsDirty();
   };
 
   $scope.addViewSwiftKey = function (index) {
@@ -783,6 +816,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           });
           break;
       }
+      _markFormAsDirty();
     });
   };
 
@@ -790,6 +824,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   $scope.removeSwiftKey = function (index) {
     _addRequest(_getPromiseByType, ["swiftkey", "delete", $scope.user.swift_keys[index]]);
     $scope.user.swift_keys.splice(index, 1);
+    _markFormAsDirty();
   };
   */
 
@@ -802,11 +837,13 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           $scope.user.caps.push(angular.copy(result.data));
           break;
       }
+      _markFormAsDirty();
     });
   };
 
   $scope.removeCapability = function (index) {
     _addRequest(_getPromiseByType, ["caps", "delete", $scope.user.caps[index]]);
     $scope.user.caps.splice(index, 1);
+    _markFormAsDirty();
   };
 });
