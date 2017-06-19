@@ -27,7 +27,8 @@
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
                 <th ng-show="columns['Hostname']" sortfield="hostname" sortheaderclass>Hostname</th>
                 <th ng-show="columns['Status']" sortfield="status" sortheaderclass>Status</th>
-                <th ng-show="columns['Crush Weight']">Crush Weight</th>
+                <th ng-show="columns['Storage Backend']" sortfield="osd_objectstore" sortheaderclass>Storage Backend</th>
+                <th ng-show="columns['Crush Weight']" sortfield="crush_weight" sortheaderclass>Crush Weight</th>
             </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
                 <td ng-show="columns['Hostname']" ng-bind="row.hostname"></td>
                 <td ng-show="columns['Status']" ng-bind="row.status"></td>
+                <td ng-show="columns['Storage Backend']" ng-bind="row.osd_objectstore"></td>
                 <td ng-show="columns['Crush Weight']" ng-bind="row.crush_weight"></td>
             </tr>
         </tbody>

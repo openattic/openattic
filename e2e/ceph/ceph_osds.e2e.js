@@ -12,6 +12,7 @@ describe('should test the ceph osd panel', function(){
     'Name',
     'Hostname',
     'Status',
+    'Storage Backend',
     'Crush Weight'
   ];
 
