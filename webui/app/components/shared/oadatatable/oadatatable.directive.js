@@ -107,9 +107,14 @@ app.directive("oadatatable", function () {
       $scope.$watchCollection("columns", function (cols, oldCols) {
         if (firstColCall) {
           firstColCall = false;
-          if (!$scope.store.columns) {
-            $scope.store.columns = cols;
+          if (angular.isDefined($scope.store.columns)) {
+            angular.forEach($scope.store.columns, function (value, key) {
+              if (angular.isDefined(cols[key])) {
+                cols[key] = value;
+              }
+            });
           }
+          $scope.store.columns = cols;
           $scope.columns = $scope.store.columns;
         } else {
           var allowed = Object.keys(cols).some(function (colName) {
