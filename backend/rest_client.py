@@ -25,10 +25,13 @@ logger = logging.getLogger(__name__)
 
 
 class RequestException(Exception):
-    def __init__(self, message, status_code, content=None):
+    def __init__(self, message, status_code=None, content=None, conn_errno=None,
+                 conn_strerror=None):
         super(RequestException, self).__init__(message)
         self.status_code = status_code
         self.content = content
+        self.conn_errno = conn_errno
+        self.conn_strerror = conn_strerror
 
 
 class BadResponseFormatException(RequestException):
@@ -341,12 +344,28 @@ class RestClient(object):
                 raise RequestException("{} REST API failed request with status code {}"
                                        .format(self.client_name, resp.status_code),
                                        resp.status_code, resp.content)
-        except ConnectionError:
-            logger.error("%s REST API failed %s, connection error", self.client_name,
-                         method.upper())
-            raise RequestException("{} REST API cannot be reached. Please check your "
-                                   "configuration and that the API endpoint is accessible"
-                                   .format(self.client_name), None)
+        except ConnectionError as ex:
+            match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
+            if match:
+                errno = match.group(1)
+                strerror = match.group(2)
+                logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
+                             self.client_name, method.upper(), errno, strerror)
+            else:
+                errno = "n/a"
+                strerror = "n/a"
+                logger.error("%s REST API failed %s, connection error.",
+                             self.client_name, method.upper())
+
+            if errno != "n/a":
+                ex_msg = ("{} REST API cannot be reached: {} [errno {}]. Please check "
+                          "your configuration and that the API endpoint is accessible"
+                          .format(self.client_name, strerror, errno))
+            else:
+                ex_msg = ("{} REST API cannot be reached. Please check "
+                          "your configuration and that the API endpoint is accessible"
+                          .format(self.client_name))
+            raise RequestException(ex_msg, conn_errno=errno, conn_strerror=strerror)
 
     @staticmethod
     def api(path, **api_kwargs):
