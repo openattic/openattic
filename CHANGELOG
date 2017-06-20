@@ -31,6 +31,8 @@ Changed
 * WebUI/QA: Reduced RBD creations in RBD creation suite (OP-2287)
 * WebUI: Improve iSCSI state descriptions and icons (OP-2320)
 * WebUI: Edit iSCSI target by clicking on target id (OP-2247)
+* WebUI: If some column was added/renamed, openATTIC should display the new 
+  table column (OP-2112)
 
 Fixed
 ~~~~~
