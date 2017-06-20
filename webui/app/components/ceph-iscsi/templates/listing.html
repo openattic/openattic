@@ -75,7 +75,12 @@
       <td ng-if="selection.available">
         <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
       </td>
-      <td ng-show="columns['Target']" ng-bind="row.targetId"></td>
+      <td ng-show="columns['Target']">
+        <a ui-sref="cephIscsi-edit({
+                      fsid: row.fsid,
+                      targetId: row.targetId
+                    })" ng-bind="row.targetId"></a>
+      </td>
       <td ng-show="columns['State']">
         <span ng-if="special.status === true">
           <span ng-if="special.$resolved === false">

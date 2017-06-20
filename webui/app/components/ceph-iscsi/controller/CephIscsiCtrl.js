@@ -131,6 +131,7 @@ app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $ui
           angular.forEach($scope.iscsi.results, function (target) {
             target.ALL_ISCSI_IMAGE_SETTINGS = ALL_ISCSI_IMAGE_SETTINGS;
             target.CEPH_ISCSI_TARGET_ADVANCED_SETTINGS = CEPH_ISCSI_TARGET_ADVANCED_SETTINGS;
+            target.fsid = $scope.registry.selectedCluster.fsid;
           });
         })
         .catch(function (error) {
