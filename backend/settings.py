@@ -41,6 +41,8 @@ else:
 API_ROOT = "/openattic/api"
 API_OS_USER = 'openattic'
 
+DISABLE_CSRF_FOR_API_PATH = []
+
 from ConfigParser import ConfigParser
 
 DEBUG = True
@@ -54,7 +56,7 @@ LVM_CHOWN_GROUP = "users"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oa_auth.ExtendedBasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'oa_auth.CsrfExemptSessionAuthentication',  # Disables CSRF for paths in DISABLE_CSRF_FOR_API_PATH
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (

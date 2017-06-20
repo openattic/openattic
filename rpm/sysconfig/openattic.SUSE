@@ -128,3 +128,18 @@ NAGIOS_STATE_DIR="/var/lib/icinga"
 #
 # Location of the Nagios plugin directory
 NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"
+
+# Host of the Grafana instance which shall be used by openATTIC.
+#GRAFANA_API_HOST="localhost"
+
+# Default port necessary as DeepSea doesn't provide one. Also, 80 is the default port of DeepSea.
+#GRAFANA_API_PORT="3000"
+
+# The username to log into Grafana.
+#GRAFANA_API_USERNAME="admin"
+
+# The password to log into Grafana.
+#GRAFANA_API_PASSWORD="admin"
+
+# The HTTP Scheme to be used. Either 'http' or 'https'.
+#GRAFANA_API_SCHEME="http"
