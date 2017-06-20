@@ -199,7 +199,7 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
     .$promise
     .then(function (rbds) {
       cephPoolsService.get({
-        id: $scope.fsid
+        fsid: $scope.fsid
       }).$promise.then(function (pools) {
         angular.forEach(rbds.results, function (rbd) {
           pools.results.some(function (pool) {
