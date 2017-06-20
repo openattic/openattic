@@ -27,7 +27,9 @@ describe('ceph rgw', function(){
   var userQuotaMaxObjects = element(by.model('user.user_quota.max_objects'));
   var bucketQuotaEnabled = element(by.model('user.bucket_quota.enabled'));
   var bucketQuotaMaxSizeUnlimited = element(by.model('user.bucket_quota.max_size_unlimited'));
+  var bucketQuotaMaxSize = element(by.model('user.bucket_quota.max_size'));
   var bucketQuotaMaxObjectsUnlimited = element(by.model('user.bucket_quota.max_objects_unlimited'));
+  var bucketQuotaMaxObjects = element(by.model('user.bucket_quota.max_objects'));
 
   beforeAll(function(){
     helpers.login();
@@ -52,7 +54,7 @@ describe('ceph rgw', function(){
     expect(userQuotaMaxObjects.isDisplayed()).toBe(false);
     // Enable user quota.
     userQuotaEnabled.click();
-     // The 'Unlimited size' and 'Unlimited objects' checkboxes should be visible
+    // The 'Unlimited size' and 'Unlimited objects' checkboxes should be visible
     // and selected. The input fields should be hidden.
     expect(userQuotaMaxSizeUnlimited.isSelected()).toBe(true);
     expect(userQuotaMaxObjectsUnlimited.isSelected()).toBe(true);
@@ -60,10 +62,24 @@ describe('ceph rgw', function(){
     expect(userQuotaMaxObjects.isDisplayed()).toBe(false);
     // Disable 'Unlimited objects'.
     userQuotaMaxObjectsUnlimited.click();
-     // The 'Unlimited objects' input field should be visible now.
+    // The 'Maximum objects' input field should be visible now.
     expect(userQuotaMaxObjects.isDisplayed()).toBe(true);
     userQuotaMaxObjects.clear();
     userQuotaMaxObjects.sendKeys('4815162342');
+    // Enable bucket quota.
+    bucketQuotaEnabled.click();
+    // The 'Unlimited size' and 'Unlimited objects' checkboxes should be visible
+    // and selected. The input fields should be hidden.
+    expect(bucketQuotaMaxSizeUnlimited.isSelected()).toBe(true);
+    expect(bucketQuotaMaxObjectsUnlimited.isSelected()).toBe(true);
+    expect(bucketQuotaMaxSize.isDisplayed()).toBe(false);
+    expect(bucketQuotaMaxObjects.isDisplayed()).toBe(false);
+    // Disable 'Unlimited size'.
+    bucketQuotaMaxSizeUnlimited.click();
+    // The 'Maximum size' input field should be visible now.
+    expect(bucketQuotaMaxSize.isDisplayed()).toBe(true);
+    bucketQuotaMaxSize.clear();
+    bucketQuotaMaxSize.sendKeys('10 GiB');
     cephRgwCommons.submitBtn.click();
   });
 
@@ -71,17 +87,20 @@ describe('ceph rgw', function(){
     expect(element(by.cssContainingText('tr', testUser1.user_id)).isDisplayed()).toBe(true);
   });
 
-  /**
-   * Does not work with Jenkins jobs, but on a local test system.
-  it('should check if user quota is set for "herpderp"', function(){
+  it('should check if user/bucket quota is set for "herpderp"', function(){
     cephRgwCommons.editUser(testUser1.user_id);
+    // Check user quota.
     expect(userQuotaEnabled.isSelected()).toBe(true);
     expect(userQuotaMaxSizeUnlimited.isSelected()).toBe(true);
     expect(userQuotaMaxObjectsUnlimited.isSelected()).toBe(false);
     expect(userQuotaMaxObjects.getAttribute('value')).toEqual('4815162342');
+    // Check bucket quota. Note, the size is displayed in Kilobyte.
+    expect(bucketQuotaEnabled.isSelected()).toBe(true);
+    expect(bucketQuotaMaxSizeUnlimited.isSelected()).toBe(false);
+    expect(bucketQuotaMaxSize.getAttribute('value')).toEqual('10485760K');
+    expect(bucketQuotaMaxObjectsUnlimited.isSelected()).toBe(true);
     element(by.css('.tc_backButton')).click();
   });
-  */
 
   it('should check the user ID already taken error message', function(){
     cephRgwCommons.addUser();

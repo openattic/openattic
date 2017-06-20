@@ -488,39 +488,30 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   /**
    * Helper function to get the arguments for the PUT request when the user
    * quota configuration has been modified.
-   * @param userForm The HTML formular.
    * @private
    */
-  var _getUserQuotaPutArgs = function (userForm) {
+  var _getUserQuotaPutArgs = function () {
     var args = {
       "uid": $scope.user.user_id,
-      "quota-type": "user"
+      "quota-type": "user",
+      "enabled": $scope.user.user_quota.enabled
     };
-    if (userForm.user_quota_enabled.$dirty === true) {
-      args.enabled = $scope.user.user_quota.enabled;
+    if ($scope.user.user_quota.max_size_unlimited) {
+      args["max-size-kb"] = -1;
+    } else {
+      // Convert the given value to bytes.
+      var bytes = $filter("toBytes")($scope.user.user_quota.max_size);
+      // Finally convert the value to KiB.
+      args["max-size-kb"] = $filter("bytes")(bytes, {
+        "outPrecision": 0,
+        "outUnit": "KiB",
+        "appendUnit": false
+      });
     }
-    if ((userForm.user_quota_max_size_unlimited.$dirty === true) ||
-        (userForm.user_quota_max_size.$dirty === true)) {
-      if ($scope.user.user_quota.max_size_unlimited) {
-        args["max-size-kb"] = -1;
-      } else {
-        // Convert the given value to bytes.
-        var bytes = $filter("toBytes")($scope.user.user_quota.max_size);
-        // Finally convert the value to KiB.
-        args["max-size-kb"] = $filter("bytes")(bytes, {
-          "outPrecision": 0,
-          "outUnit": "KiB",
-          "appendUnit": false
-        });
-      }
-    }
-    if ((userForm.user_quota_max_objects_unlimited.$dirty === true) ||
-        (userForm.user_quota_max_objects.$dirty === true)) {
-      if ($scope.user.user_quota.max_objects_unlimited) {
-        args["max-objects"] = -1;
-      } else {
-        args["max-objects"] = $scope.user.user_quota.max_objects;
-      }
+    if ($scope.user.user_quota.max_objects_unlimited) {
+      args["max-objects"] = -1;
+    } else {
+      args["max-objects"] = $scope.user.user_quota.max_objects;
     }
     return args;
   };
@@ -528,39 +519,30 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   /**
    * Helper function to get the arguments for the PUT request when the bucket
    * quota configuration has been modified.
-   * @param userForm The HTML formular.
    * @private
    */
-  var _getBucketQuotaPutArgs = function (userForm) {
+  var _getBucketQuotaPutArgs = function () {
     var args = {
       "uid": $scope.user.user_id,
-      "quota-type": "bucket"
+      "quota-type": "bucket",
+      "enabled": $scope.user.bucket_quota.enabled
     };
-    if (userForm.bucket_quota_enabled.$dirty === true) {
-      args.enabled = $scope.user.bucket_quota.enabled;
+    if ($scope.user.bucket_quota.max_size_unlimited) {
+      args["max-size-kb"] = -1;
+    } else {
+      // Convert the given value to bytes.
+      var bytes = $filter("toBytes")($scope.user.bucket_quota.max_size);
+      // Finally convert the value to KiB.
+      args["max-size-kb"] = $filter("bytes")(bytes, {
+        "outPrecision": 0,
+        "outUnit": "KiB",
+        "appendUnit": false
+      });
     }
-    if ((userForm.bucket_quota_max_size_unlimited.$dirty === true) ||
-        (userForm.bucket_quota_max_size.$dirty === true)) {
-      if ($scope.user.bucket_quota.max_size_unlimited) {
-        args["max-size-kb"] = -1;
-      } else {
-        // Convert the given value to bytes.
-        var bytes = $filter("toBytes")($scope.user.bucket_quota.max_size);
-        // Finally convert the value to KiB.
-        args["max-size-kb"] = $filter("bytes")(bytes, {
-          "outPrecision": 0,
-          "outUnit": "KiB",
-          "appendUnit": false
-        });
-      }
-    }
-    if ((userForm.bucket_quota_max_objects_unlimited.$dirty === true) ||
-        (userForm.bucket_quota_max_objects.$dirty === true)) {
-      if ($scope.user.bucket_quota.max_objects_unlimited) {
-        args["max-objects"] = -1;
-      } else {
-        args["max-objects"] = $scope.user.bucket_quota.max_objects;
-      }
+    if ($scope.user.bucket_quota.max_objects_unlimited) {
+      args["max-objects"] = -1;
+    } else {
+      args["max-objects"] = $scope.user.bucket_quota.max_objects;
     }
     return args;
   };
