@@ -29,6 +29,7 @@ Changed
 * WebUI/QA: Refactored RBD common library (OP-2286)
 * WebUI/QA: Reduced RBD creations in RBD creation suite (OP-2287)
 * WebUI: Improve iSCSI state descriptions and icons (OP-2320)
+* WebUI: Edit iSCSI target by clicking on target id (OP-2247)
 
 Fixed
 ~~~~~
