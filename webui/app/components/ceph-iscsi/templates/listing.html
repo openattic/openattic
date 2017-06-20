@@ -81,14 +81,14 @@
           <span ng-if="special.$resolved === false">
             <i class="fa fa-spinner fa-spin fa-fw"></i> Stopping...
           </span>
-          <span ng-if="special.$resolved === true">Active</span>
+          <span ng-if="special.$resolved === true">Running</span>
         </span>
         <span ng-if="special.status === false">
           <span ng-if="special.$resolved === false">
             <i class="fa fa-spinner fa-spin fa-fw"></i> Starting...
           </span>
           <span ng-if="special.$resolved === true">
-            <i class="fa fa-chain-broken icon-danger"></i> Inactive
+            <i class="fa fa-angle-double-down fa-lg icon-danger"></i> Stopped
           </span>
         </span>
       </td>
