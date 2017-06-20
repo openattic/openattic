@@ -18,7 +18,7 @@ import json
 import logging
 
 from rest_framework import exceptions
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 
 from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
@@ -128,3 +128,11 @@ class RequestAuthentication(BasicAuthentication):
             raise exceptions.PermissionDenied(err.args[0])
 
         return (user, None)
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        if any(map(request.path.startswith, settings.DISABLE_CSRF_FOR_API_PATH)):
+            pass  # Disable CSRF validation.
+        else:
+            return super(CsrfExemptSessionAuthentication, self).enforce_csrf(request)
