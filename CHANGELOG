@@ -23,6 +23,7 @@ Added
 ~~~~~
 * WebUI: Add ability to show/hide passwords (OP-2242)
 * WebUI: Created MON widget (OP-1933)
+* Backend: Added OS errno to the REST Client connection error message (OP-2303)
 
 Changed
 ~~~~~~~
