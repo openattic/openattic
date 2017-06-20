@@ -58,6 +58,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
 
   if (!$stateParams.user_id) {
     $scope.editing = false;
+
     angular.extend($scope.user, {
       generate_key: true,
       access_key: "",
@@ -92,22 +93,32 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
     };
 
     // Check if user_id already exists.
-    $scope.$watch("user.user_id", function (uid) {
-      // Reset the validity flag by default.
-      $scope.userForm.user_id.$setValidity("uniqueuserid", true);
-      // Exit immediately if user ID is empty.
-      if (!angular.isString(uid) || uid === "") {
+    $scope.$watch("user.user_id", function (newValue, oldValue) {
+      if (!angular.isString(newValue) || (newValue === "") || (newValue === oldValue)) {
+        // Reset the validity flag.
+        if (newValue === "" || angular.isUndefined(newValue)) {
+          $scope.userForm.user_id.$setValidity("uniqueuserid", true);
+        }
         return;
       }
-      cephRgwUserService.query({"uid": uid})
-        .$promise
+      // Cancel a pending request.
+      if (angular.isObject($scope.uidQueryRequest)) {
+        $scope.uidQueryRequest.reject();
+      }
+      // Create a new request.
+      $scope.uidQueryRequest = $q.defer();
+      cephRgwUserService.query({
+        "uid": newValue
+      }, $scope.uidQueryRequest.resolve, $scope.uidQueryRequest.reject);
+      $q.when($scope.uidQueryRequest.promise)
         .then(function (res) {
+          delete $scope.uidQueryRequest;
           $scope.userForm.user_id.$setValidity("uniqueuserid", res.length === 0);
         })
         .catch(function (error) {
           // Do not display the error toasty if the user does not exist (the Admin Ops API
           // returns a 404 in this case).
-          if (error.status === 404) {
+          if (angular.isObject(error) && (error.status === 404)) {
             error.preventDefault();
           }
         });

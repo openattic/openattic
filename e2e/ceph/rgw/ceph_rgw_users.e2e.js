@@ -6,13 +6,13 @@ var CephRgwCommons = require('./cephRgwCommon.js');
 describe('ceph rgw', function(){
   var cephRgwCommons = new CephRgwCommons();
   var testUser1 = {
-    user_id: 'herpderp',
+    user_id: 'e2e_herpderp',
     display_name: 'Herp Derp',
     email: 'herp.derp@openattic.org',
     max_buckets: 1234
   };
   var testUser2 = {
-    user_id: 'tuxdoe',
+    user_id: 'e2e_tuxdoe',
     display_name: 'Tux Doe',
     email: 'tux.doe@openattic.org',
     max_buckets: 2,
@@ -31,13 +31,28 @@ describe('ceph rgw', function(){
   var bucketQuotaMaxObjectsUnlimited = element(by.model('user.bucket_quota.max_objects_unlimited'));
   var bucketQuotaMaxObjects = element(by.model('user.bucket_quota.max_objects'));
 
+  var addUser = function() {
+    cephRgwCommons.addUser();
+    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/add');
+  };
+
+  var editUser = function(uid) {
+    cephRgwCommons.editUser(uid);
+    expect(browser.getCurrentUrl()).toMatch('/ceph/rgw/users/edit/' + uid);
+  };
+
   beforeAll(function(){
     helpers.login();
-    browser.setLocation('ceph/rgw/users');
+  });
+
+  beforeEach(function(){
+    element(by.css('.tc_menuitem_ceph_rgw')).click();
+    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
+    browser.sleep(helpers.configs.sleep);
   });
 
   it('should create user "herpderp"', function(){
-    cephRgwCommons.addUser();
+    addUser();
     element(by.model('user.user_id')).sendKeys(testUser1.user_id);
     element(by.model('user.display_name')).sendKeys(testUser1.display_name);
     element(by.model('user.email')).sendKeys(testUser1.email);
@@ -88,7 +103,7 @@ describe('ceph rgw', function(){
   });
 
   it('should check if user/bucket quota is set for "herpderp"', function(){
-    cephRgwCommons.editUser(testUser1.user_id);
+    editUser(testUser1.user_id);
     // Check user quota.
     expect(userQuotaEnabled.isSelected()).toBe(true);
     expect(userQuotaMaxSizeUnlimited.isSelected()).toBe(true);
@@ -103,9 +118,10 @@ describe('ceph rgw', function(){
   });
 
   it('should check the user ID already taken error message', function(){
-    cephRgwCommons.addUser();
+    addUser();
     element(by.model('user.user_id')).sendKeys(testUser1.user_id);
-    browser.sleep(2000);
+    // Wait some time until the user ID has been validated via REST API call.
+    browser.sleep(helpers.configs.sleep);
     expect(element(by.css('.tc_userIdNotUnique')).isDisplayed()).toBe(true);
     element(by.css('.tc_backButton')).click();
     element(by.css('.tc_leaveButton')).click();
@@ -118,7 +134,7 @@ describe('ceph rgw', function(){
   });
 
   it('should create user "tuxdoe"', function(){
-    cephRgwCommons.addUser();
+    addUser();
     element(by.model('user.user_id')).sendKeys(testUser2.user_id);
     element(by.model('user.display_name')).sendKeys(testUser2.display_name);
     element(by.model('user.email')).sendKeys(testUser2.email);
@@ -137,7 +153,7 @@ describe('ceph rgw', function(){
   });
 
   it('should modify the user "tuxdoe"', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     var displayName = element(by.model('user.display_name'));
     displayName.clear();
     displayName.sendKeys('Tux Doe Jr.');
@@ -156,7 +172,7 @@ describe('ceph rgw', function(){
   });
 
   it('should add a new subuser', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     cephRgwCommons.addSubuserBtn.click();
     browser.sleep(400);
     element(by.model('subuser.subuser')).sendKeys('swift');
@@ -171,7 +187,7 @@ describe('ceph rgw', function(){
   });
 
   it('should check the subuser ID already taken error message', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     cephRgwCommons.addSubuserBtn.click();
     browser.sleep(400);
     element(by.model('subuser.subuser')).sendKeys('swift');
@@ -182,7 +198,7 @@ describe('ceph rgw', function(){
   });
 
   it('should add a new S3 keys', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     // Add key for the user.
     cephRgwCommons.addS3KeyBtn.click();
     browser.sleep(400);
@@ -208,7 +224,7 @@ describe('ceph rgw', function(){
   });
 
   it('should add a new capability', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     // Add 'users:*' capability.
     cephRgwCommons.addCapBtn.click();
     browser.sleep(400);
@@ -226,7 +242,7 @@ describe('ceph rgw', function(){
   });
 
   it('should not display user quota max. size/objects', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     expect(userQuotaEnabled.isSelected()).toBe(false);
     expect(element(by.model('user.user_quota.max_size')).isDisplayed()).toBe(false);
     expect(element(by.model('user.user_quota.max_objects')).isDisplayed()).toBe(false);
@@ -234,7 +250,7 @@ describe('ceph rgw', function(){
   });
 
   it('should set user quota', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     userQuotaEnabled.click();
     // Maximum size
     expect(userQuotaMaxSizeUnlimited.isSelected()).toBe(true);
@@ -254,7 +270,7 @@ describe('ceph rgw', function(){
   });
 
   it('should not accept incorrect user quota max. size', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     var maxSizeInvalidErrMsg = element(by.css('.tc_invalidUserQuotaMaxSize'));
     var maxSizeRequiredErrMsg = element(by.css('.tc_requiredUserQuotaMaxSize'));
     userQuotaMaxSize.clear();
@@ -278,7 +294,7 @@ describe('ceph rgw', function(){
   });
 
   it('should not accept incorrect user quota max. objects', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     var maxObjectsInvalidErrMsg = element(by.css('.tc_invalidUserQuotaMaxObjects'));
     var maxObjectsRequiredErrMsg = element(by.css('.tc_requiredUserQuotaMaxObjects'));
     userQuotaMaxObjects.clear();
@@ -299,7 +315,7 @@ describe('ceph rgw', function(){
   });
 
   it('should not display bucket quota max. size/objects', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     expect(bucketQuotaEnabled.isSelected()).toBe(false);
     expect(element(by.model('user.bucket_quota.max_size')).isDisplayed()).toBe(false);
     expect(element(by.model('user.bucket_quota.max_objects')).isDisplayed()).toBe(false);
@@ -307,7 +323,7 @@ describe('ceph rgw', function(){
   });
 
   it('should set bucket quota', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     bucketQuotaEnabled.click();
     // Maximum size
     expect(bucketQuotaMaxSizeUnlimited.isSelected()).toBe(true);
@@ -327,7 +343,7 @@ describe('ceph rgw', function(){
   });
 
   it('should not accept incorrect bucket quota max. size', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     var maxSize = element(by.model('user.bucket_quota.max_size'));
     var maxSizeInvalidErrMsg = element(by.css('.tc_invalidBucketQuotaMaxSize'));
     var maxSizeRequiredErrMsg = element(by.css('.tc_requiredBucketQuotaMaxSize'));
@@ -352,7 +368,7 @@ describe('ceph rgw', function(){
   });
 
   it('should not accept incorrect bucket quota max. objects', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     var maxObjects = element(by.model('user.bucket_quota.max_objects'));
     var maxObjectsInvalidErrMsg = element(by.css('.tc_invalidBucketQuotaMaxObjects'));
     var maxObjectsRequiredErrMsg = element(by.css('.tc_requiredBucketQuotaMaxObjects'));
@@ -374,7 +390,7 @@ describe('ceph rgw', function(){
   });
 
   it('should delete all S3 keys', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     // Delete all keys.
     element.all(by.css('.tc_deleteS3KeyButton')).count().then(function(count) {
       for (; count > 0; count--) {
@@ -388,14 +404,14 @@ describe('ceph rgw', function(){
   });
 
   it('should delete a subuser', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     element.all(by.css('.tc_deleteSubuserButton')).get(0).click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
 
   it('should delete a capability', function(){
-    cephRgwCommons.editUser(testUser2.user_id);
+    editUser(testUser2.user_id);
     element.all(by.css('.tc_deleteCapButton')).get(0).click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();

@@ -43,7 +43,9 @@
                                   userForm.user_id.$error.required">
                             This field is required!
                         </span>
-                        <span class="help-block tc_userIdNotUnique" ng-show="userForm.user_id.$error.uniqueuserid">
+                        <span class="help-block tc_userIdNotUnique"
+                              ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
+                                  userForm.user_id.$error.uniqueuserid">
                             The chosen user ID is already in use.
                         </span>
                     </div>
