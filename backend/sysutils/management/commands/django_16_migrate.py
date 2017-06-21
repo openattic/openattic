@@ -373,7 +373,10 @@ _migrations = [
         ALTER TABLE "ceph_cephpool" ADD COLUMN "percent_used" double precision NOT NULL;
         COMMIT;
         """
-    )
+    ),
+    SqlMigration(
+        'ceph_nfs', u'0001_initial', None, None
+    ),
 ]
 
 

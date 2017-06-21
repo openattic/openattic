@@ -144,3 +144,32 @@ class RGWClient(RestClient):
         logger.debug("proxying method=%s path=%s params=%s data=%s", method, path, params, data)
         return self._proxy_request(RGWClient._SYSTEM_USERID, path, method, params, data)
 
+    @RestClient.requires_login
+    @RestClient.api_get('/', resp_structure='[1][*] > Name')
+    def get_buckets(self, request=None):
+        response = request({
+            'format': 'json'
+        })
+        return [bucket['Name'] for bucket in response[1]]
+
+    @RestClient.requires_login
+    @RestClient.api_get('/{bucket_name}')
+    def bucket_exists(self, bucket_name, userid, request=None):
+        try:
+            request()
+            my_buckets = self.get_buckets()
+            if bucket_name not in my_buckets:
+                raise RequestException('Bucket "{}" belongs to other user'.format(bucket_name),
+                                       403)
+            return True
+        except RequestException as e:
+            if e.status_code == 404:
+                return False
+            else:
+                raise e
+
+    @RestClient.requires_login
+    @RestClient.api_put('/{bucket_name}')
+    def create_bucket(self, bucket_name, request=None):
+        logger.info("Creating bucket: %s", bucket_name)
+        request()
