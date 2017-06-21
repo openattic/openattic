@@ -59,37 +59,66 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   if (!$stateParams.user_id) {
     $scope.editing = false;
 
+    angular.extend($scope.user, {
+      generate_key: true,
+      access_key: "",
+      secret_key: ""
+    });
+
     $scope.submitAction = function (userForm) {
       if (userForm.$valid === true) {
-        // Create a new user.
-        var args = _getUserPutArgs();
-        cephRgwUserService.put(args, undefined)
-          .$promise
-          .then(function () {
-            $state.go("ceph-rgw-users");
-          }, function () {
-            userForm.$submitted = false;
-          });
+        // Get the arguments to create the user.
+        var userArgs = _getUserPutArgs(userForm);
+        _addRequest(function (args) {
+          return cephRgwUserService.put(args, undefined).$promise;
+        }, [userArgs]);
+        // Check if user quota has been modified.
+        if (_isUserQuotaDirty(userForm)) {
+          var userQuotaArgs = _getUserQuotaPutArgs(userForm);
+          _addRequest(function (args) {
+            return cephRgwUserService.putQuota(args, undefined).$promise;
+          }, [userQuotaArgs]);
+        }
+        // Check if bucket quota has been modified.
+        if (_isBucketQuotaDirty(userForm)) {
+          var bucketQuotaArgs = _getBucketQuotaPutArgs(userForm);
+          _addRequest(function (args) {
+            return cephRgwUserService.putQuota(args, undefined).$promise;
+          }, [bucketQuotaArgs]);
+        }
+        // Process all requests (including the creation of the user and
+        // additional RGW Admin Ops API calls).
+        _doSubmitAction(userForm);
       }
     };
 
     // Check if user_id already exists.
-    $scope.$watch("user.user_id", function (uid) {
-      // Reset the validity flag by default.
-      $scope.userForm.user_id.$setValidity("uniqueuserid", true);
-      // Exit immediately if user ID is empty.
-      if (!angular.isString(uid) || !uid.length) {
+    $scope.$watch("user.user_id", function (newValue, oldValue) {
+      if (!angular.isString(newValue) || (newValue === "") || (newValue === oldValue)) {
+        // Reset the validity flag.
+        if (newValue === "" || angular.isUndefined(newValue)) {
+          $scope.userForm.user_id.$setValidity("uniqueuserid", true);
+        }
         return;
       }
-      cephRgwUserService.query({"uid": uid})
-        .$promise
+      // Cancel a pending request.
+      if (angular.isObject($scope.uidQueryRequest)) {
+        $scope.uidQueryRequest.reject();
+      }
+      // Create a new request.
+      $scope.uidQueryRequest = $q.defer();
+      cephRgwUserService.query({
+        "uid": newValue
+      }, $scope.uidQueryRequest.resolve, $scope.uidQueryRequest.reject);
+      $q.when($scope.uidQueryRequest.promise)
         .then(function (res) {
+          delete $scope.uidQueryRequest;
           $scope.userForm.user_id.$setValidity("uniqueuserid", res.length === 0);
         })
         .catch(function (error) {
           // Do not display the error toasty if the user does not exist (the Admin Ops API
           // returns a 404 in this case).
-          if (error.status === 404) {
+          if (angular.isObject(error) && (error.status === 404)) {
             error.preventDefault();
           }
         });
@@ -186,27 +215,8 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           return cephRgwUserService.putQuota(args, undefined).$promise;
         }, [bucketQuotaArgs]);
       }
-      // Execute all requests (RGW Admin Ops API call) in sequential order.
-      var fn = function (request) {
-        var promise = request.getPromiseFn.apply(this, request.args);
-        promise.then(function () {
-          // Remove the successful request.
-          $scope.requests.shift();
-          // Execute another request?
-          if ($scope.requests.length > 0) {
-            fn($scope.requests[0]);
-          } else {
-            $scope.goToListView();
-          }
-        }, function () {
-          userForm.$submitted = false;
-        });
-      };
-      if ($scope.requests.length > 0) {
-        fn($scope.requests[0]);
-      } else {
-        $scope.goToListView();
-      }
+      // Process all requests.
+      _doSubmitAction(userForm);
     };
 
     $scope.$watch("user.user_quota.max_size_unlimited", function (checked) {
@@ -265,6 +275,34 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
    */
   $scope.cancelAction = function () {
     $scope.goToListView();
+  };
+
+  /**
+   * Helper function that executes all requests.
+   * @param userForm The HTML formular.
+   */
+  var _doSubmitAction = function (userForm) {
+    var fn = function (request) {
+      var promise = request.getPromiseFn.apply(this, request.args);
+      promise.then(function () {
+        // Remove the successful request.
+        $scope.requests.shift();
+        // Execute another request?
+        if ($scope.requests.length > 0) {
+          fn($scope.requests[0]);
+        } else {
+          $scope.goToListView();
+        }
+      }, function () {
+        userForm.$submitted = false;
+      });
+    };
+    // Process all requests (RGW Admin Ops API calls) in sequential order.
+    if ($scope.requests.length > 0) {
+      fn($scope.requests[0]);
+    } else {
+      $scope.goToListView();
+    }
   };
 
   /**
@@ -416,6 +454,13 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   };
 
   /**
+   * Helper method to mark the formular as dirty.
+   */
+  var _markFormAsDirty = function () {
+    $scope.userForm.$setDirty();
+  };
+
+  /**
    * Check if the user quota has been modified.
    * @param userForm The HTML formular.
    * @return Returns TRUE if the user quota has been modified.
@@ -454,39 +499,30 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   /**
    * Helper function to get the arguments for the PUT request when the user
    * quota configuration has been modified.
-   * @param userForm The HTML formular.
    * @private
    */
-  var _getUserQuotaPutArgs = function (userForm) {
+  var _getUserQuotaPutArgs = function () {
     var args = {
       "uid": $scope.user.user_id,
-      "quota-type": "user"
+      "quota-type": "user",
+      "enabled": $scope.user.user_quota.enabled
     };
-    if (userForm.user_quota_enabled.$dirty === true) {
-      args.enabled = $scope.user.user_quota.enabled;
+    if ($scope.user.user_quota.max_size_unlimited) {
+      args["max-size-kb"] = -1;
+    } else {
+      // Convert the given value to bytes.
+      var bytes = $filter("toBytes")($scope.user.user_quota.max_size);
+      // Finally convert the value to KiB.
+      args["max-size-kb"] = $filter("bytes")(bytes, {
+        "outPrecision": 0,
+        "outUnit": "KiB",
+        "appendUnit": false
+      });
     }
-    if ((userForm.user_quota_max_size_unlimited.$dirty === true) ||
-        (userForm.user_quota_max_size.$dirty === true)) {
-      if ($scope.user.user_quota.max_size_unlimited) {
-        args["max-size-kb"] = -1;
-      } else {
-        // Convert the given value to bytes.
-        var bytes = $filter("toBytes")($scope.user.user_quota.max_size);
-        // Finally convert the value to KiB.
-        args["max-size-kb"] = $filter("bytes")(bytes, {
-          "outPrecision": 0,
-          "outUnit": "KiB",
-          "appendUnit": false
-        });
-      }
-    }
-    if ((userForm.user_quota_max_objects_unlimited.$dirty === true) ||
-        (userForm.user_quota_max_objects.$dirty === true)) {
-      if ($scope.user.user_quota.max_objects_unlimited) {
-        args["max-objects"] = -1;
-      } else {
-        args["max-objects"] = $scope.user.user_quota.max_objects;
-      }
+    if ($scope.user.user_quota.max_objects_unlimited) {
+      args["max-objects"] = -1;
+    } else {
+      args["max-objects"] = $scope.user.user_quota.max_objects;
     }
     return args;
   };
@@ -494,39 +530,30 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   /**
    * Helper function to get the arguments for the PUT request when the bucket
    * quota configuration has been modified.
-   * @param userForm The HTML formular.
    * @private
    */
-  var _getBucketQuotaPutArgs = function (userForm) {
+  var _getBucketQuotaPutArgs = function () {
     var args = {
       "uid": $scope.user.user_id,
-      "quota-type": "bucket"
+      "quota-type": "bucket",
+      "enabled": $scope.user.bucket_quota.enabled
     };
-    if (userForm.bucket_quota_enabled.$dirty === true) {
-      args.enabled = $scope.user.bucket_quota.enabled;
+    if ($scope.user.bucket_quota.max_size_unlimited) {
+      args["max-size-kb"] = -1;
+    } else {
+      // Convert the given value to bytes.
+      var bytes = $filter("toBytes")($scope.user.bucket_quota.max_size);
+      // Finally convert the value to KiB.
+      args["max-size-kb"] = $filter("bytes")(bytes, {
+        "outPrecision": 0,
+        "outUnit": "KiB",
+        "appendUnit": false
+      });
     }
-    if ((userForm.bucket_quota_max_size_unlimited.$dirty === true) ||
-        (userForm.bucket_quota_max_size.$dirty === true)) {
-      if ($scope.user.bucket_quota.max_size_unlimited) {
-        args["max-size-kb"] = -1;
-      } else {
-        // Convert the given value to bytes.
-        var bytes = $filter("toBytes")($scope.user.bucket_quota.max_size);
-        // Finally convert the value to KiB.
-        args["max-size-kb"] = $filter("bytes")(bytes, {
-          "outPrecision": 0,
-          "outUnit": "KiB",
-          "appendUnit": false
-        });
-      }
-    }
-    if ((userForm.bucket_quota_max_objects_unlimited.$dirty === true) ||
-        (userForm.bucket_quota_max_objects.$dirty === true)) {
-      if ($scope.user.bucket_quota.max_objects_unlimited) {
-        args["max-objects"] = -1;
-      } else {
-        args["max-objects"] = $scope.user.bucket_quota.max_objects;
-      }
+    if ($scope.user.bucket_quota.max_objects_unlimited) {
+      args["max-objects"] = -1;
+    } else {
+      args["max-objects"] = $scope.user.bucket_quota.max_objects;
     }
     return args;
   };
@@ -690,7 +717,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   };
 
   /**
-   * Add a request will be executed when the 'Submit' button is pressed.
+   * Add a request which will be executed when clicking the 'Submit'-button.
    * @param fn The function that builds the promise.
    * @param args The function arguments.
    * @private
@@ -724,6 +751,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           $scope.user.subusers[index] = subuser;
           break;
       }
+      _markFormAsDirty();
     });
   };
 
@@ -740,6 +768,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
     });
     // Finally remove the subuser itself.
     $scope.user.subusers.splice(index, 1);
+    _markFormAsDirty();
   };
 
   $scope.addViewS3Key = function (index) {
@@ -757,12 +786,14 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           });
           break;
       }
+      _markFormAsDirty();
     });
   };
 
   $scope.removeS3Key = function (index) {
     _addRequest(_getPromiseByType, ["s3key", "delete", $scope.user.keys[index]]);
     $scope.user.keys.splice(index, 1);
+    _markFormAsDirty();
   };
 
   $scope.addViewSwiftKey = function (index) {
@@ -778,6 +809,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           });
           break;
       }
+      _markFormAsDirty();
     });
   };
 
@@ -785,6 +817,7 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   $scope.removeSwiftKey = function (index) {
     _addRequest(_getPromiseByType, ["swiftkey", "delete", $scope.user.swift_keys[index]]);
     $scope.user.swift_keys.splice(index, 1);
+    _markFormAsDirty();
   };
   */
 
@@ -797,11 +830,13 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
           $scope.user.caps.push(angular.copy(result.data));
           break;
       }
+      _markFormAsDirty();
     });
   };
 
   $scope.removeCapability = function (index) {
     _addRequest(_getPromiseByType, ["caps", "delete", $scope.user.caps[index]]);
     $scope.user.caps.splice(index, 1);
+    _markFormAsDirty();
   };
 });

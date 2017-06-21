@@ -4,9 +4,9 @@
 </div>
 <form name="form" role="form" class="form-horizontal" novalidate>
     <div class="openattic-modal-content">
-        <!-- User ID -->
+        <!-- Username -->
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="user_id">User ID</label>
+            <label class="col-sm-3 control-label" for="user_id">Username</label>
             <div class="col-sm-9">
                 <div class="input-group">
                     <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
@@ -19,16 +19,16 @@
                 </div>
             </div>
         </div>
-        <!-- Subuser ID -->
+        <!-- Subuser -->
         <div class="form-group"
              ng-class="{'has-error': form.subuser.$dirty && form.subuser.$invalid}">
-            <label class="col-sm-3 control-label" for="subuser">Subuser ID</label>
+            <label class="col-sm-3 control-label" for="subuser">Subuser</label>
             <div class="col-sm-9">
                 <div class="input-group">
                     <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
                     <input class="form-control"
                            type="text"
-                           placeholder="Subuser ID..."
+                           placeholder="Subuser..."
                            ng-model="subuser.subuser"
                            ng-readonly="editing"
                            ng-required="!editing"
@@ -77,8 +77,6 @@
                     <div class="checkbox checkbox-primary">
                         <input type="checkbox"
                                ng-model="subuser.generate_secret"
-                               ng-true-value="1"
-                               ng-false-value="0"
                                name="generate_secret"
                                id="generate_secret">
                         <label for="generate_secret">
@@ -110,7 +108,7 @@
                                     class="btn btn-default"
                                     uib-tooltip="Copy to clipboard"
                                     oa-clipboard oa-clipboard-target="secret_key"
-                                    oa-clipboard-text="Secret key">
+                                    oa-clipboard-text="secret key">
                                 <i class="icon-prepend fa fa-clipboard"></i>
                             </button>
                         </span>

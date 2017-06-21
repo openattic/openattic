@@ -37,7 +37,11 @@ app.controller("CephRgwUserAddEditS3KeyModalCtrl", function ($scope, $uibModalIn
 
   if (!angular.isNumber(index)) {
     $scope.editing = false;
-    $scope.key = {};
+    $scope.key = {
+      generate_key: true,
+      access_key: "",
+      secret_key: ""
+    };
 
     $scope.submitAction = function (form) {
       if (form.$valid === true) {

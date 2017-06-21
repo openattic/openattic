@@ -123,40 +123,40 @@ app.filter("toBytes", function () {
   return function (value) {
     var base = 1024;
     var units = {
-      "B": 1,
-      "K": Math.pow(base, 1),
-      "KB": Math.pow(base, 1),
-      "KiB": Math.pow(base, 1),
-      "M": Math.pow(base, 2),
-      "MB": Math.pow(base, 2),
-      "MiB": Math.pow(base, 2),
-      "G": Math.pow(base, 3),
-      "GB": Math.pow(base, 3),
-      "GiB": Math.pow(base, 3),
-      "T": Math.pow(base, 4),
-      "TB": Math.pow(base, 4),
-      "TiB": Math.pow(base, 4),
-      "P": Math.pow(base, 5),
-      "PB": Math.pow(base, 5),
-      "PiB": Math.pow(base, 5),
-      "E": Math.pow(base, 6),
-      "EB": Math.pow(base, 6),
-      "EiB": Math.pow(base, 6),
-      "Z": Math.pow(base, 7),
-      "ZB": Math.pow(base, 7),
-      "ZiB": Math.pow(base, 7),
-      "Y": Math.pow(base, 8),
-      "YB": Math.pow(base, 8),
-      "YiB": Math.pow(base, 8)
+      "b": 1,
+      "k": Math.pow(base, 1),
+      "kb": Math.pow(base, 1),
+      "kib": Math.pow(base, 1),
+      "m": Math.pow(base, 2),
+      "mb": Math.pow(base, 2),
+      "mib": Math.pow(base, 2),
+      "g": Math.pow(base, 3),
+      "gb": Math.pow(base, 3),
+      "gib": Math.pow(base, 3),
+      "t": Math.pow(base, 4),
+      "tb": Math.pow(base, 4),
+      "tib": Math.pow(base, 4),
+      "p": Math.pow(base, 5),
+      "pb": Math.pow(base, 5),
+      "pib": Math.pow(base, 5),
+      "e": Math.pow(base, 6),
+      "eb": Math.pow(base, 6),
+      "eib": Math.pow(base, 6),
+      "z": Math.pow(base, 7),
+      "zb": Math.pow(base, 7),
+      "zib": Math.pow(base, 7),
+      "y": Math.pow(base, 8),
+      "yb": Math.pow(base, 8),
+      "yib": Math.pow(base, 8)
     };
     var m = RegExp("^(\\d+)\\s*(B|K(B|iB)?|M(B|iB)?|G(B|iB)?|T(B|iB)?|P(B|iB)?|" +
-      "E(B|iB)?|Z(B|iB)?|Y(B|iB)?)?$").exec(value);
+      "E(B|iB)?|Z(B|iB)?|Y(B|iB)?)?$", "i").exec(value);
     if (m === null) {
       return value;
     }
     var bytes = m[1];
     if (angular.isString(m[2])) {
-      bytes = bytes * units[m[2]];
+      bytes = bytes * units[m[2].toLowerCase()];
     }
     return bytes;
   };
