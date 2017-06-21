@@ -240,7 +240,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
     $state.go("cephRbds");
   };
 
-  $scope.clusterId = $stateParams.clusterId;
+  $scope.fsid = $stateParams.fsid;
 
   $scope.waitingClusterMsg = "Retrieving cluster list...";
   cephClusterService.get()
@@ -249,7 +249,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
       $scope.clusters = res.results;
       $scope.waitingClusterMsg = "-- Select a cluster --";
       $scope.clusters.forEach(function (cluster) {
-        if (cluster.fsid === $scope.clusterId) {
+        if (cluster.fsid === $scope.fsid) {
           $scope.data.cluster = cluster;
         }
       });
@@ -280,7 +280,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   $scope.getCephPools = function () {
     $scope.waitingPoolMsg = "Retrieving pool list...";
     cephPoolsService.get({
-        fsid: $scope.clusterId,
+        fsid: $scope.fsid,
         type: "replicated"
       })
       .$promise
@@ -326,7 +326,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
 
   $scope.$watch("data.cluster", function (cluster) {
     if (cluster) {
-      $scope.clusterId = cluster.fsid;
+      $scope.fsid = cluster.fsid;
       $scope.getCephPools();
     }
   });
@@ -344,7 +344,7 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
         $scope.rbd.features = features;
       }
       $scope.rbd.pool = $scope.data.pool.id;
-      $scope.rbd.clusterId = $scope.clusterId;
+      $scope.rbd.fsid = $scope.fsid;
       $scope.rbd.size = SizeParserService.parseInt($scope.data.size, "b");
       $scope.submitted = true;
       cephRbdService.save($scope.rbd)
