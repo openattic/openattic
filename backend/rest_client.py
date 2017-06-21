@@ -345,12 +345,18 @@ class RestClient(object):
                                        .format(self.client_name, resp.status_code),
                                        resp.status_code, resp.content)
         except ConnectionError as ex:
-            match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
-            if match:
-                errno = match.group(1)
-                strerror = match.group(2)
-                logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
-                             self.client_name, method.upper(), errno, strerror)
+            if len(ex.args) > 1:
+                match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
+                if match:
+                    errno = match.group(1)
+                    strerror = match.group(2)
+                    logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
+                                 self.client_name, method.upper(), errno, strerror)
+                else:
+                    errno = "n/a"
+                    strerror = "n/a"
+                    logger.error("%s REST API failed %s, connection error.",
+                                 self.client_name, method.upper())
             else:
                 errno = "n/a"
                 strerror = "n/a"
