@@ -44,6 +44,8 @@ Changed
 * WebUI: Edit iSCSI target by clicking on target id (OP-2247)
 * WebUI: If some column was added/renamed, openATTIC should display the new 
   table column (OP-2112)
+* WebUI: Various improvements in the RGW usermanagement UI, e.g. notify user
+  about unsaved changes (OP-2255), preselect 'Generate key' and 'Generate secret'.
 * Backend: RadosGW Proxy refactoring (OP-2326)
 * Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342) 
 
