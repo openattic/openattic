@@ -45,6 +45,7 @@ Changed
 * WebUI: If some column was added/renamed, openATTIC should display the new 
   table column (OP-2112)
 * Backend: RadosGW Proxy refactoring (OP-2326)
+* Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342) 
 
 Fixed
 ~~~~~
