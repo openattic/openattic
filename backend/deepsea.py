@@ -42,12 +42,10 @@ class DeepSea(RestClient):
         self.token = None
 
     @RestClient.api_get('/', resp_structure='return')
+    @RestClient.requires_login
     def is_service_online(self, request=None):
-        try:
-            response = request()
-            return response['return'] == 'Welcome'
-        except RequestException:
-            return False
+        response = request()
+        return response['return'] == 'Welcome'
 
     @RestClient.api_post('/login', resp_structure='return[0] > token')
     def _login(self, request=None):
