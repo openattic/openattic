@@ -345,7 +345,7 @@ class RestClient(object):
                                        .format(self.client_name, resp.status_code),
                                        resp.status_code, resp.content)
         except ConnectionError as ex:
-            if len(ex.args) > 1:
+            if len(ex.args) > 0:
                 match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
                 if match:
                     errno = match.group(1)
