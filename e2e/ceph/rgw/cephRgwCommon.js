@@ -13,13 +13,21 @@ var CephRgwCommons = function(){
   this.addCapBtn = element(by.css('.tc_addCapButton'));
   this.submitCapBtn = element(by.css('.tc_submitCapButton'));
 
+  this.detailAttributes = [
+    'Username',
+    'Full name',
+    'Email address',
+    'Suspended',
+    'Maximum buckets'
+  ];
+
   this.addUser = function() {
     element(by.css('.tc_addUser')).click();
     browser.sleep(helpers.configs.sleep);
   };
 
   this.editUser = function(uid){
-    element(by.cssContainingText('tr', uid)).click();
+    helpers.get_list_element(uid).click();
     element(by.css('.tc_menudropdown')).click();
     element(by.css('.tc_editUser > a')).click();
     browser.sleep(helpers.configs.sleep);

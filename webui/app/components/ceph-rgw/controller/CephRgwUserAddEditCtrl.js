@@ -150,44 +150,9 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         });
         // Set the user information.
         $scope.user = res[0];
-        // Append the user quota.
+        // Append the user/bucket quota.
         $scope.user.user_quota = res[1].user_quota;
-        // !!! Attention !!!
-        // The returned object contains other attributes depending on the ceph version:
-        // 10.2.6: max_size_kb
-        // 12.0.3: max_size
-        if ((res[1].user_quota.max_size_kb === -1) || (res[1].user_quota.max_size <= -1)) {
-          $scope.user.user_quota.max_size = "";
-          $scope.user.user_quota.max_size_unlimited = true;
-        } else {
-          $scope.user.user_quota.max_size = $scope.user.user_quota.max_size_kb + "K";
-          $scope.user.user_quota.max_size_unlimited = false;
-        }
-        if ($scope.user.user_quota.max_objects === -1) {
-          $scope.user.user_quota.max_objects = "";
-          $scope.user.user_quota.max_objects_unlimited = true;
-        } else {
-          $scope.user.user_quota.max_objects_unlimited = false;
-        }
-        // Append the bucket quota.
-        // !!! Attention !!!
-        // The returned object contains other attributes depending on the ceph version:
-        // 10.2.6: max_size_kb
-        // 12.0.3: max_size
         $scope.user.bucket_quota = res[1].bucket_quota;
-        if ((res[1].bucket_quota.max_size_kb === -1) || (res[1].bucket_quota.max_size <= -1)) {
-          $scope.user.bucket_quota.max_size = "";
-          $scope.user.bucket_quota.max_size_unlimited = true;
-        } else {
-          $scope.user.bucket_quota.max_size = $scope.user.bucket_quota.max_size_kb + "K";
-          $scope.user.bucket_quota.max_size_unlimited = false;
-        }
-        if ($scope.user.bucket_quota.max_objects === -1) {
-          $scope.user.bucket_quota.max_objects = "";
-          $scope.user.bucket_quota.max_objects_unlimited = true;
-        } else {
-          $scope.user.bucket_quota.max_objects_unlimited = false;
-        }
       })
       .catch(function (error) {
         $scope.error = error;

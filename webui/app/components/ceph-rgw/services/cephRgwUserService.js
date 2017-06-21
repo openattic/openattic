@@ -36,7 +36,45 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
   }, {
     getQuota: {
       method: "GET",
-      url: globalConfig.API.URL + "rgw/user?quota"
+      url: globalConfig.API.URL + "rgw/user?quota",
+      transformResponse: function (data) {
+        var result = angular.fromJson(data);
+        // !!! Attention !!!
+        // The returned object contains other attributes depending on the ceph version:
+        // 10.2.6: max_size_kb
+        // 12.0.3: max_size
+        if (angular.isObject(result.user_quota)) {
+          if ((result.user_quota.max_size_kb === -1) || (result.user_quota.max_size <= -1)) {
+            result.user_quota.max_size = "";
+            result.user_quota.max_size_unlimited = true;
+          } else {
+            result.user_quota.max_size = result.user_quota.max_size_kb + "K";
+            result.user_quota.max_size_unlimited = false;
+          }
+          if (result.user_quota.max_objects === -1) {
+            result.user_quota.max_objects = "";
+            result.user_quota.max_objects_unlimited = true;
+          } else {
+            result.user_quota.max_objects_unlimited = false;
+          }
+        }
+        if (angular.isObject(result.user_quota)) {
+          if ((result.bucket_quota.max_size_kb === -1) || (result.bucket_quota.max_size <= -1)) {
+            result.bucket_quota.max_size = "";
+            result.bucket_quota.max_size_unlimited = true;
+          } else {
+            result.bucket_quota.max_size = result.bucket_quota.max_size_kb + "K";
+            result.bucket_quota.max_size_unlimited = false;
+          }
+          if (result.bucket_quota.max_objects === -1) {
+            result.bucket_quota.max_objects = "";
+            result.bucket_quota.max_objects_unlimited = true;
+          } else {
+            result.bucket_quota.max_objects_unlimited = false;
+          }
+        }
+        return result;
+      }
     },
     putQuota: {
       method: "PUT",
