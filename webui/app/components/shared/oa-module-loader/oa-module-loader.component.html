@@ -1,0 +1,16 @@
+<oa-loading-panel message="Module is loading..."
+                  ng-show="!$ctrl.moduleAvailable.$resolved"></oa-loading-panel>
+
+<span ng-if="$ctrl.moduleAvailable.$resolved">
+  <span ng-transclude ng-if="$ctrl.moduleAvailable.available"></span>
+  <span ng-if="!$ctrl.moduleAvailable.available">
+    <div uib-alert class="alert-warning">
+      <ng-include src="$ctrl.getErrorTemplate($ctrl.moduleAvailable.reason)"></ng-include>
+      <span ng-if="$ctrl.moduleAvailable.message">
+        <hr>
+        {{ $ctrl.moduleAvailable.message }}
+      </span>
+      <span class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})</span>
+    </div>
+  </span>
+</span>
