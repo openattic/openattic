@@ -32,6 +32,14 @@ class DeepSeaTestCase(TestCase):
 
     def test_deepsea_service_online(self):
         with mock.patch("requests.Session") as mock_requests_session:
+            resp_post = mock.MagicMock()
+            resp_post.ok = True
+            resp_post.status_code = 200
+            resp_post.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = resp_post
+
             resp = mock.MagicMock()
             resp.ok = True
             resp.status_code = 200
@@ -42,11 +50,18 @@ class DeepSeaTestCase(TestCase):
             self.assertTrue(api.is_service_online())
 
             self.assertTrue(mock_requests_session().get.called)
-            self.assertFalse(api._is_logged_in())
-            self.assertEqual(api.token, None)
+            self.assertTrue(api._is_logged_in())
 
     def test_deepsea_service_offline_response_format_error(self):
         with mock.patch("requests.Session") as mock_requests_session:
+            resp_post = mock.MagicMock()
+            resp_post.ok = True
+            resp_post.status_code = 200
+            resp_post.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = resp_post
+
             resp = mock.MagicMock()
             resp.ok = True
             resp.status_code = 200
@@ -54,36 +69,51 @@ class DeepSeaTestCase(TestCase):
             mock_requests_session().get.return_value = resp
 
             api = DeepSea()
-            self.assertFalse(api.is_service_online())
+            with self.assertRaises(BadResponseFormatException):
+                api.is_service_online()
 
             self.assertTrue(mock_requests_session().get.called)
-            self.assertFalse(api._is_logged_in())
-            self.assertEqual(api.token, None)
+            self.assertTrue(api._is_logged_in())
 
     def test_deepsea_service_offline_request_error(self):
         with mock.patch("requests.Session") as mock_requests_session:
+            resp_post = mock.MagicMock()
+            resp_post.ok = True
+            resp_post.status_code = 200
+            resp_post.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = resp_post
+
             resp = mock.MagicMock()
             resp.ok = False
             resp.status_code = 404
             mock_requests_session().get.return_value = resp
 
             api = DeepSea()
-            self.assertFalse(api.is_service_online())
+            with self.assertRaises(RequestException):
+                api.is_service_online()
 
             self.assertTrue(mock_requests_session().get.called)
-            self.assertFalse(api._is_logged_in())
-            self.assertEqual(api.token, None)
+            self.assertTrue(api._is_logged_in())
 
     def test_deepsea_service_offline_connection_error(self):
         with mock.patch("requests.Session") as mock_requests_session:
+            resp_post = mock.MagicMock()
+            resp_post.ok = True
+            resp_post.status_code = 200
+            resp_post.json.return_value = {
+                'return': [{'token': 'validtoken'}]
+            }
+            mock_requests_session().post.return_value = resp_post
             mock_requests_session().get.side_effect = ConnectionError()
 
             api = DeepSea()
-            self.assertFalse(api.is_service_online())
+            with self.assertRaises(RequestException):
+                api.is_service_online()
 
             self.assertTrue(mock_requests_session().get.called)
-            self.assertFalse(api._is_logged_in())
-            self.assertEqual(api.token, None)
+            self.assertTrue(api._is_logged_in())
 
     def test_deepsea_login_success(self):
         with mock.patch("requests.Session") as mock_requests_session:
