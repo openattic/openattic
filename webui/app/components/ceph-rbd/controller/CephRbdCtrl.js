@@ -65,7 +65,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
       cephRbdService
           .get({
-            clusterId: $scope.registry.selectedCluster.fsid,
+            fsid: $scope.registry.selectedCluster.fsid,
             page: $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
             search: $scope.filterConfig.search,
@@ -159,7 +159,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
   $scope.addAction = function () {
     $state.go("rbds-add", {
-      clusterId: $scope.registry.selectedCluster.fsid
+      fsid: $scope.registry.selectedCluster.fsid
     });
   };
 
@@ -175,7 +175,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
         rbdSelection: function () {
           return $scope.selection.items;
         },
-        clusterId: function () {
+        fsid: function () {
           return $scope.registry.selectedCluster.fsid;
         }
       }

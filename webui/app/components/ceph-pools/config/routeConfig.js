@@ -72,7 +72,7 @@ app.config(function ($stateProvider) {
           }
         },
         params: {
-          clusterId: null
+          fsid: null
         },
         ncyBreadcrumb: {
           parent: "cephPools",

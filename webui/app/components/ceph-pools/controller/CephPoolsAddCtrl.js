@@ -72,7 +72,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
     $state.go("cephPools");
   };
 
-  $scope.clusterId = $stateParams.clusterId;
+  $scope.fsid = $stateParams.fsid;
 
   $scope.waitingClusterMsg = "Retrieving cluster list...";
   cephClusterService.get()
@@ -81,7 +81,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
       $scope.clusters = clusters.results;
       $scope.waitingClusterMsg = "-- Select a cluster --";
       $scope.clusters.forEach(function (cluster) {
-        if (cluster.fsid === $scope.clusterId) {
+        if (cluster.fsid === $scope.fsid) {
           $scope.data.cluster = cluster;
         }
       });
@@ -102,7 +102,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
 
   $scope.$watch("data.cluster", function (cluster) {
     if (cluster) {
-      $scope.clusterId = cluster.fsid;
+      $scope.fsid = cluster.fsid;
       cephOsdService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
@@ -175,7 +175,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
         name: $scope.pool.name,
         pg_num: $scope.pool.pg_num,
         type: $scope.pool.type,
-        fsid: $scope.clusterId
+        fsid: $scope.fsid
       };
       if (pool.type === "replicated") {
         pool.min_size = 1; // No need for this here - API update needed.
