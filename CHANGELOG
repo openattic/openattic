@@ -34,6 +34,7 @@ Added
 * Backend: Task metadata support in the TaskQueue (OP-2324)
 * Backend: REST Client class improvements (OP-2325)
 * Backend: NFS-Ganesha management implementation (OP-2196)
+* Backend: Added 'osd_objectstore' to the OSD model (OP-2333)
 
 Changed
 ~~~~~~~
