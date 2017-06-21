@@ -636,6 +636,7 @@ class CephOsd(NodbModel, RadosMixin):
     type = models.CharField(max_length=100, editable=False)
     hostname = models.CharField(max_length=256, editable=False)
     in_state = models.IntegerField()
+    osd_objectstore = models.CharField(max_length=15, editable=False, null=True)
 
     # from pg dump
     kb = models.IntegerField(editable=False)
