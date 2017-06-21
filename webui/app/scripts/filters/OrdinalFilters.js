@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,14 +30,22 @@
  */
 "use strict";
 
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephIscsi",
-  "openattic.cephNfs",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.cephRgw"
-]);
+var app = angular.module("openattic");
+
+app.filter("ordinal", function () {
+  /**
+   * Return the ordinal value of a number:
+   * i.e 1->1st, 2->2nd, etc.
+   */
+  return function (value) {
+    var num = parseInt(value, 10);
+    if (isNaN(num)) {
+      return value;
+    }
+    return value + (Math.floor(num / 10) === 1 ? "th"
+      : (num % 10 === 1 ? "st"
+        : (num % 10 === 2 ? "nd"
+          : (num % 10 === 3 ? "rd"
+            : "th"))));
+  };
+});

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,14 +30,26 @@
  */
 "use strict";
 
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephIscsi",
-  "openattic.cephNfs",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.cephRgw"
-]);
+var app = angular.module("openattic");
+
+app.filter("cephNfsState", function () {
+
+  return function (value) {
+    if (value === "STARTING") {
+      return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Starting...</span>";
+    }
+    if (value === "STOPPING") {
+      return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Stopping...</span>";
+    }
+    if (value === "ACTIVE") {
+      return "<span> Running</span>";
+    }
+    if (value === "INACTIVE") {
+      return "<i class=\"fa fa-angle-double-down fa-lg icon-danger\"></i><span> Stopped</span>";
+    }
+    if (value === "LOADING") {
+      return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Loading...</span>";
+    }
+    return "<span>Unknown</span>";
+  };
+});

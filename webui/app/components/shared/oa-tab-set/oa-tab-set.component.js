@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,27 +30,20 @@
  */
 "use strict";
 
-var app = angular.module("openattic.tabView");
-/**
- * In order to use the directive correctly and well, you first have to set up your controller as explained in the
- * tabViewService. To use it in the template you just have to add the following:
- *
- *   <tab-view tab-data="tabData" tab-config="tabConfig" selection="selection"></tab-view>
- */
-// @deprecated - oaTabSet should be used
-app.directive("tabView", function () {
-  return {
-    restrict: "E",
-    scope: {
-      tabData: "=",
-      tabConfig: "=",
-      selection: "=",
-      super: "="
-    },
-    templateUrl: "components/tabView/templates/tabset.html",
-    controller: function ($scope, tabViewService) {
-      Object.keys($scope.tabData.tabs).forEach(function (tabName) {
-        var tab = $scope.tabData.tabs[tabName];
+var app = angular.module("openattic.shared");
+app.component("oaTabSet", {
+  templateUrl: "components/shared/oa-tab-set/oa-tab-set.component.html",
+  bindings: {
+    tabData: "=",
+    tabConfig: "=",
+    selection: "="
+  },
+  controller: function (oaTabSetService) {
+    var self = this;
+
+    self.$onInit = function () {
+      Object.keys(self.tabData.tabs).forEach(function (tabName) {
+        var tab = self.tabData.tabs[tabName];
         if (!tab.show) {
           tab.show = "true";
         }
@@ -61,8 +54,10 @@ app.directive("tabView", function () {
           throw "Error wrong tab format in " + tab;
         }
       });
-      tabViewService.setScope($scope);
-      $scope.changeTab = tabViewService.changeTab;
-    }
-  };
+    };
+
+    self.changeTab = function (state, index) {
+      oaTabSetService.changeTab(state, self.tabData, self.tabConfig, self.selection, index);
+    };
+  }
 });
