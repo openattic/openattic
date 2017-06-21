@@ -23,6 +23,13 @@ Added
 ~~~~~
 * WebUI: Add ability to show/hide passwords (OP-2242)
 * WebUI: Created MON widget (OP-1933)
+* WebUI: NFS-Ganesha user interface (OP-2195)
+* WebUI/Development: Added an angular service to simplify the interaction with 
+  background tasks (OP-2349)
+* WebUI/Development: Added an angular filter that returns the ordinal value of 
+  a number (OP-2350)
+* WebUI/Development: Added the oaTabSet component that deprecates oaTabView 
+  directive (OP-2351)
 * Backend: Added OS errno to the REST Client connection error message (OP-2303)
 * Backend: Task metadata support in the TaskQueue (OP-2324)
 * Backend: REST Client class improvements (OP-2325)
