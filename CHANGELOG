@@ -24,6 +24,8 @@ Added
 * WebUI: Add ability to show/hide passwords (OP-2242)
 * WebUI: Created MON widget (OP-1933)
 * Backend: Added OS errno to the REST Client connection error message (OP-2303)
+* Backend: Task metadata support in the TaskQueue (OP-2324)
+* Backend: REST Client class improvements (OP-2325)
 
 Changed
 ~~~~~~~
@@ -33,6 +35,7 @@ Changed
 * WebUI: Edit iSCSI target by clicking on target id (OP-2247)
 * WebUI: If some column was added/renamed, openATTIC should display the new 
   table column (OP-2112)
+* Backend: RadosGW Proxy refactoring (OP-2326)
 
 Fixed
 ~~~~~
