@@ -24,6 +24,7 @@ Added
 * WebUI: Add ability to show/hide passwords (OP-2242)
 * WebUI: Created MON widget (OP-1933)
 * WebUI: NFS-Ganesha user interface (OP-2195)
+* WebUI: Adds backend storage column to OSD table (OP-2346)
 * WebUI/Development: Added an angular service to simplify the interaction with 
   background tasks (OP-2349)
 * WebUI/Development: Added an angular filter that returns the ordinal value of 
