@@ -26,6 +26,7 @@ Added
 * Backend: Added OS errno to the REST Client connection error message (OP-2303)
 * Backend: Task metadata support in the TaskQueue (OP-2324)
 * Backend: REST Client class improvements (OP-2325)
+* Backend: NFS-Ganesha management implementation (OP-2196)
 
 Changed
 ~~~~~~~
