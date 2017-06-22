@@ -74,6 +74,12 @@ option {
 .margin-right-md {
   margin-right:15px
 }
+.margin-right-sm {
+  margin-right:10px
+}
+.margin-bottom-md {
+  margin-bottom:15px
+}
 .no-padding {
   padding: 0;
 }
@@ -667,6 +673,19 @@ table.datatable thead .sorting_desc:after {
   overflow-x: auto;
   margin-bottom: 0;
   min-height: .01%;
+}
+
+.table-no-background>thead {
+  background: none;
+}
+.table-no-background>thead>tr>th {
+  border-bottom: 1px solid #ddd;
+}
+.table-no-background>tbody>tr>td {
+  height: 50px;
+  vertical-align: middle;
+  border-top: 0px;
+  border-bottom: 1px solid #ddd;
 }
 
 /* Typo */

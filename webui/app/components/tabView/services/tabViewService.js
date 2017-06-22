@@ -55,6 +55,7 @@ var app = angular.module("openattic.tabView");
  *   tabViewService.setScope($scope); // Update the internal scope.
  *   $scope.changeTab = tabViewService.changeTab; // Only get the definition the function.
  */
+// @deprecated - oaTabSetService should be used
 app.service("tabViewService", function ($state) {
   var scope = {};
   this.setScope = function ($scope) {

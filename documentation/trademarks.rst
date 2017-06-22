@@ -14,6 +14,9 @@ countries.
 "Red Hat Linux" and "CentOS" are trademarks of Red Hat, Inc. in the U.S. and
 other countries.
 
+"openSUSE", "SUSE" and the SUSE and openSUSE logo are trademarks of SUSE IP
+Development Limited or its subsidiaries or affiliates.
+
 "VMware" is a trademark or registered trademark of VMware, Inc. in the United
 States and/or other jurisdictions.
 

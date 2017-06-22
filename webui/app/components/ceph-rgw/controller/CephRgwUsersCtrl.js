@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRgw");
-app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwUserService) {
+app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwUserService,
+    tabViewService) {
   $scope.users = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -42,6 +43,25 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
     sortorder: null
   };
   $scope.selection = {};
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      status: {
+        show: "selection.item",
+        state: "ceph-rgw-users.detail.details",
+        class: "tc_statusTab",
+        name: "Details"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "ceph-rgw-users",
+    linkedBy: "user_id",
+    jumpTo: "more"
+  };
+
+  tabViewService.setScope($scope);
+  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newVal) {
     if (newVal.entries === null) {
@@ -65,6 +85,26 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
   $scope.$watchCollection("selection.items", function (items) {
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
+
+    if (!items || items.length !== 1) {
+      $state.go("ceph-rgw-users");
+      return;
+    }
+
+    // Load the user/bucket quota of the selected user.
+    cephRgwUserService.getQuota({"uid": items[0].user_id})
+      .$promise
+      .then(function (res) {
+        // Append the user/bucket quota.
+        items[0].user_quota = res.user_quota;
+        items[0].bucket_quota = res.bucket_quota;
+      });
+
+    if ($state.current.name === "ceph-rgw-users") {
+      $scope.changeTab("ceph-rgw-users.detail.details");
+    } else {
+      $scope.changeTab($state.current.name);
+    }
   });
 
   $scope.addAction = function () {

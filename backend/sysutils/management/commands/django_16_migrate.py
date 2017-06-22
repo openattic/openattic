@@ -101,6 +101,10 @@ def test_ceph_0005_cephpool_percent_used(cursor):
     return _column_exists('ceph_cephpool', 'percent_used', cursor)
 
 
+def test_ceph_0006_cephosd_osd_objectstore(cursor):
+    return _column_exists('ceph_cephosd', 'osd_objectstore', cursor)
+
+
 class SqlMigration(object):
 
     def __init__(self, app, name, test, stmt):
@@ -371,6 +375,19 @@ _migrations = [
         """
         BEGIN;
         ALTER TABLE "ceph_cephpool" ADD COLUMN "percent_used" double precision NOT NULL;
+        COMMIT;
+        """
+    ),
+    SqlMigration(
+        'ceph_nfs', u'0001_initial', None, None
+    ),
+    SqlMigration(
+        'ceph', u'0006_cephosd_osd_objectstore',
+        test_ceph_0006_cephosd_osd_objectstore,
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephosd" ADD COLUMN "osd_objectstore" varchar(15) NULL;
+        ALTER TABLE "ceph_cephosd" ALTER COLUMN "osd_objectstore" DROP DEFAULT;
         COMMIT;
         """
     )

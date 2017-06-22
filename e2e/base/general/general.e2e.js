@@ -10,6 +10,7 @@ describe('General', function(){
     'ceph_pools',
     'ceph_nodes',
     'ceph_iscsi',
+    'ceph_nfs',
     'ceph_crushmap',
     'ceph_rgw',
     'system'

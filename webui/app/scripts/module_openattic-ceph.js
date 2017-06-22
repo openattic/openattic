@@ -35,6 +35,7 @@ angular.module("openattic.ceph", [
   "openattic.cephErasureCodeProfiles",
   "openattic.cephNodes",
   "openattic.cephIscsi",
+  "openattic.cephNfs",
   "openattic.cephOsd",
   "openattic.cephPools",
   "openattic.cephRbd",

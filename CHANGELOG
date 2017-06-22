@@ -16,18 +16,43 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.1.2] - unreleased
+[3.2.0] - unreleased
 --------------------
 
 Added
 ~~~~~
 * WebUI: Add ability to show/hide passwords (OP-2242)
 * WebUI: Created MON widget (OP-1933)
+* WebUI: NFS-Ganesha user interface (OP-2195)
+* WebUI: Adds backend storage column to OSD table (OP-2346)
+* WebUI: Add status page to RGW user management (OP-2292)
+* WebUI: Gracefully handle not properly configured NFS module (OP-2337)
+* WebUI/Development: Added an angular service to simplify the interaction with 
+  background tasks (OP-2349)
+* WebUI/Development: Added an angular filter that returns the ordinal value of 
+  a number (OP-2350)
+* WebUI/Development: Added the oaTabSet component that deprecates oaTabView 
+  directive (OP-2351)
+* Backend: Added OS errno to the REST Client connection error message (OP-2303)
+* Backend: Task metadata support in the TaskQueue (OP-2324)
+* Backend: REST Client class improvements (OP-2325)
+* Backend: NFS-Ganesha management implementation (OP-2196)
+* Backend: Added 'osd_objectstore' to the OSD model (OP-2333)
+* Backend: ceph_nfs module status service (OP-2336)
 
 Changed
 ~~~~~~~
 * WebUI/QA: Refactored RBD common library (OP-2286)
 * WebUI/QA: Reduced RBD creations in RBD creation suite (OP-2287)
+* WebUI: Improve iSCSI state descriptions and icons (OP-2320)
+* WebUI: Edit iSCSI target by clicking on target id (OP-2247)
+* WebUI: If some column was added/renamed, openATTIC should display the new 
+  table column (OP-2112)
+* WebUI: Replaces id with fsid in pools service and usage (OP-2121)
+* WebUI: Various improvements in the RGW usermanagement UI, e.g. notify user
+  about unsaved changes (OP-2255), preselect 'Generate key' and 'Generate secret'.
+* Backend: RadosGW Proxy refactoring (OP-2326)
+* Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342) 
 
 Fixed
 ~~~~~

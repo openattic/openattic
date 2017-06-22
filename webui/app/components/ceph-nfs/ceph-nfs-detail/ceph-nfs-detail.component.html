@@ -1,0 +1,62 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title tc_panelTitle">Details of {{ $ctrl.selection.item.host }}:{{ $ctrl.selection.item.path }}</h3>
+  </div>
+  <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt>Host:</dt>
+      <dd ng-bind="$ctrl.selection.item.host"></dd>
+      <dt>Storage Backend:</dt>
+      <dd ng-bind="$ctrl.getFsalDesc($ctrl.selection.item.fsal)"></dd>
+      <span ng-if="$ctrl.selection.item.fsal === 'RGW'">
+        <dt>Object Gateway User:</dt>
+        <dd ng-bind="$ctrl.selection.item.rgwUserId"></dd>
+      </span>
+      <dt ng-bind="$ctrl.selection.item.fsal === 'RGW' ? 'Bucket:' : 'Ceph Path:'"></dt>
+      <dd ng-bind="$ctrl.selection.item.path"></dd>
+      <span ng-if="$ctrl.selection.item.tag">
+        <dt>NFS Tag:</dt>
+        <dd ng-bind="$ctrl.selection.item.tag"></dd>
+      </span>
+      <dt>NFS Protocol:</dt>
+      <dd ng-repeat="protocol in $ctrl.selection.item.protocols" ng-bind="protocol"></dd>
+      <span ng-if="$ctrl.selection.item.pseudo">
+        <dt>Pseudo:</dt>
+        <dd ng-bind="$ctrl.selection.item.pseudo"></dd>
+      </span>
+      <dt>Access Type:</dt>
+      <dd>
+        {{ $ctrl.selection.item.accessType }} - {{ $ctrl.getAccessTypeHelp($ctrl.selection.item.accessType) }}
+      </dd>
+      <dt>Squash:</dt>
+      <dd ng-bind="$ctrl.selection.item.squash"></dd>
+      <dt>Transports:</dt>
+      <dd ng-repeat="transport in $ctrl.selection.item.transports" ng-bind="transport"></dd>
+    </dl>
+
+    <span ng-repeat="clientBlock in $ctrl.selection.item.clientBlocks">
+      <hr>
+      <dl class="dl-horizontal" >
+        <dt>Clients:</dt>
+        <dd ng-repeat="client in clientBlock.clients" ng-bind="client"></dd>
+        <dt>Access Type:</dt>
+        <dd ng-if="clientBlock.accessType">
+          {{ clientBlock.accessType }} - {{ $ctrl.getAccessTypeHelp(clientBlock.accessType) }}
+        </dd>
+        <dd ng-if="!clientBlock.accessType && $ctrl.selection.item.accessType">
+          {{ $ctrl.selection.item.accessType }} <span class="text-muted">(inherited from global config)</span>
+        </dd>
+        <dt>Squash:</dt>
+        <dd ng-if="clientBlock.squash" ng-bind="clientBlock.squash"></dd>
+        <dd ng-if="!clientBlock.squash && $ctrl.selection.item.squash">
+          {{ $ctrl.selection.item.squash }} <span class="text-muted">(inherited from global config)</span>
+        </dd>
+      </dl>
+    </span>
+
+    <legend><i class="fa fa-book" aria-hidden="true"></i> How to use</legend>
+    <p>To mount this NFS export, run the following command:</p>
+    <p><kbd ng-bind="$ctrl.getMountCommand()"></kbd></p>
+
+  </div>
+</div>
