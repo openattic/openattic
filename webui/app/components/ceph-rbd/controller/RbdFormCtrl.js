@@ -280,7 +280,8 @@ app.controller("RbdFormCtrl", function ($scope, $state, $stateParams, cephRbdSer
   $scope.getCephPools = function () {
     $scope.waitingPoolMsg = "Retrieving pool list...";
     cephPoolsService.get({
-        id: $scope.clusterId
+        fsid: $scope.clusterId,
+        type: "replicated"
       })
       .$promise
       .then(function (res) {

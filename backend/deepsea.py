@@ -42,12 +42,10 @@ class DeepSea(RestClient):
         self.token = None
 
     @RestClient.api_get('/', resp_structure='return')
+    @RestClient.requires_login
     def is_service_online(self, request=None):
-        try:
-            response = request()
-            return response['return'] == 'Welcome'
-        except RequestException:
-            return False
+        response = request()
+        return response['return'] == 'Welcome'
 
     @RestClient.api_post('/login', resp_structure='return[0] > token')
     def _login(self, request=None):
@@ -168,17 +166,76 @@ class DeepSea(RestClient):
         })
         return response['return'][0]
 
-    @RestClient.api_post('/', resp_structure='return[0] > (urls[*] & access_key & secret_key)')
+    @RestClient.api_post('/', resp_structure='return[0] > (urls[+] & access_key & secret_key &'
+                                             '             user_id & success)')
     @RestClient.requires_login
     def get_rgw_api_credentials(self, request=None):
         response = request({'client': 'runner', 'fun': 'ui_rgw.credentials'})
         response_json = response['return'][0]
+        if not response_json['success']:
+            return None
         parsed_url = urlparse(response_json['urls'][0])  # Uses the first returned host
-
         return {
             'scheme': parsed_url.scheme,
             'host': parsed_url.hostname,
             'port': parsed_url.port,
             'access_key': response_json['access_key'],
-            'secret_key': response_json['secret_key']
+            'secret_key': response_json['secret_key'],
+            'user_id': response_json['user_id']
         }
+
+    @RestClient.api_post('/', resp_structure='return[0][*] > (host & exports[*] > (export_id'
+                                             '& path & ?pseudo & ?access_type & fsal > name)')
+    @RestClient.requires_login
+    def nfs_get_exports(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_ganesha.get_exports'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0] > (success & ?message)')
+    @RestClient.requires_login
+    def nfs_save_exports(self, exports, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_ganesha.save_exports', 'exports': exports
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0][*]')
+    @RestClient.requires_login
+    def nfs_get_hosts(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_ganesha.get_hosts'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0][*]')
+    @RestClient.requires_login
+    def nfs_get_fsals_available(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_ganesha.get_fsals_available'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/')
+    @RestClient.requires_login
+    def nfs_deploy_exports(self, minion=None, request=None):
+        request({
+            'client': 'runner', 'fun': 'ui_ganesha.deploy_exports', 'minion': minion
+        })
+
+    @RestClient.api_post('/', resp_structure='return[0] >> (active & ?message & ?exports)')
+    @RestClient.requires_login
+    def nfs_status_exports(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_ganesha.status_exports'
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.requires_login
+    def nfs_stop_exports(self, minion=None, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'ui_ganesha.stop_exports', 'minion': minion
+        })
+        return response['return'][0]

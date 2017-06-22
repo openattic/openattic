@@ -37,7 +37,10 @@ app.controller("CephRgwUserAddEditSubuserModalCtrl", function ($scope, $uibModal
 
   if (!angular.isNumber(index)) {
     $scope.editing = false;
-    $scope.subuser = {};
+    $scope.subuser = {
+      generate_secret: true,
+      secret_key: ""
+    };
 
     $scope.submitAction = function (form) {
       if (form.$valid === true) {

@@ -37,6 +37,7 @@ var app = angular.module("openattic.tabView");
  *
  *   <tab-view tab-data="tabData" tab-config="tabConfig" selection="selection"></tab-view>
  */
+// @deprecated - oaTabSet should be used
 app.directive("tabView", function () {
   return {
     restrict: "E",

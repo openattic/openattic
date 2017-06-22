@@ -67,6 +67,7 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
 
   $scope.extendedSettings = [
     "ceph-cluster-performance",
+    "ceph-mon-status",
     "ceph-osd-status"
   ];
 

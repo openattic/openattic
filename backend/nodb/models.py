@@ -164,6 +164,7 @@ class NodbQuerySet(QuerySet):
         return filtered
 
     def __iter__(self):
+        self._current = 0
         return self
 
     def __len__(self):

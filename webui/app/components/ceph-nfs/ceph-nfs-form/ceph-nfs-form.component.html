@@ -1,0 +1,268 @@
+<div class="col-sm-12 col-lg-6">
+
+  <div class="panel panel-default" ng-show="$ctrl.isEditMode() && $ctrl.error">
+    <div class="panel-heading">
+      <h3 class="panel-title">Couldn't load NFS export</h3>
+    </div>
+    <div class="panel-body">
+      NFS export could not be loaded.
+    </div>
+  </div>
+
+  <oa-loading-panel message="NFS export is loading..."
+                    ng-show="$ctrl.isEditMode() && !error && !$ctrl.model.$resolved"></oa-loading-panel>
+
+  <form ng-show="!$ctrl.isEditMode() || (!$ctrl.error && $ctrl.model.$resolved)" name="nfsForm"
+        role="form" class="form-horizontal" novalidate oa-check-form>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">NFS export {{ $ctrl.getId() }}</h3>
+      </div>
+
+      <div class="panel-body">
+
+        <!-- Host -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.host.$dirty) && nfsForm.host.$invalid}">
+          <label class="col-sm-3 control-label" for="host">Host</label>
+          <div class="col-sm-9">
+            <select class="form-control"
+                    ng-model="$ctrl.model.host"
+                    ng-options="host for host in $ctrl.allHosts"
+                    name="host"
+                    id="host"
+                    required>
+              <option value="">-- Select the host --</option>
+            </select>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.host.$dirty">
+              <span class="tc_hostRequired" ng-show="nfsForm.host.$error.required">Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- FSAL -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.fsal.$dirty) && nfsForm.fsal.$invalid}">
+          <label class="col-sm-3 control-label" for="fsal">Storage Backend</label>
+          <div class="col-sm-9">
+            <select class="form-control"
+                    ng-model="$ctrl.model.fsal"
+                    ng-options="fsal.value as fsal.descr for fsal in $ctrl.allFsals"
+                    name="fsal"
+                    id="fsal"
+                    ng-change="$ctrl.fsalChangeHandler()"
+                    required>
+              <option value="">-- Select the storage backend --</option>
+            </select>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.fsal.$dirty">
+              <span class="tc_fsalRequired" ng-show="nfsForm.fsal.$error.required">Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- RGW user -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.rgwUserId.$dirty) && nfsForm.rgwUserId.$invalid}"
+             ng-if="$ctrl.model.fsal === 'RGW'">
+          <label class="col-sm-3 control-label" for="rgwUserId">Object Gateway User</label>
+          <div class="col-sm-9">
+            <select class="form-control"
+                    ng-model="$ctrl.model.rgwUserId"
+                    ng-options="rgwUserId for rgwUserId in $ctrl.allRgwUsers"
+                    name="rgwUserId"
+                    id="rgwUserId"
+                    ng-change="$ctrl.rgwUserIdChangeHandler()"
+                    required>
+              <option value="">-- Select the object gateway user --</option>
+            </select>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.rgwUserId.$dirty">
+              <span class="tc_rgwUserIdRequired" ng-show="nfsForm.rgwUserId.$error.required">Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Path -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.path.$dirty) && nfsForm.path.$invalid}"
+             ng-if="$ctrl.model.fsal === 'CEPH'">
+          <label class="col-sm-3 control-label" for="path">Ceph Path</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="path" id="path"
+                   ng-model="$ctrl.model.path"
+                   autocomplete="off"
+                   uib-typeahead="path for path in $ctrl.getPathTypeahead($viewValue)"
+                   typeahead-focus-first="false"
+                   ng-blur="$ctrl.getPathTypeahead($ctrl.model.path, true); $ctrl.pathChangeHandler()"
+                   ng-change="$ctrl.pathChangeHandler()"
+                   required>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.path.$dirty">
+              <span class="tc_pathRequired" ng-show="nfsForm.path.$error.required">Required field</span>
+            </span>
+            <span class="help-block" ng-show="nfsForm.path.$valid && $ctrl.isNewDirectory">
+              <span class="tc_newDirectoryInfo">New directory will be created</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Bucket -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.bucket.$dirty) && nfsForm.bucket.$invalid}"
+             ng-if="$ctrl.model.fsal === 'RGW'">
+          <label class="col-sm-3 control-label" for="bucket">Bucket</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="bucket" id="bucket"
+                   ng-model="$ctrl.model.bucket"
+                   autocomplete="off"
+                   uib-typeahead="bucket for bucket in $ctrl.getBucketTypeahead($viewValue)"
+                   typeahead-focus-first="false"
+                   ng-blur="$ctrl.getBucketTypeahead($ctrl.model.bucket, true); $ctrl.bucketChangeHandler()"
+                   ng-change="$ctrl.bucketChangeHandler()"
+                   required>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.bucket.$dirty">
+              <span class="tc_bucketRequired" ng-show="nfsForm.bucket.$error.required">Required field</span>
+            </span>
+            <span class="help-block" ng-show="nfsForm.bucket.$valid && $ctrl.isNewBucket">
+              <span class="tc_newBucketInfo">New bucket will be created</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Tag -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="tag">NFS Tag</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="tag" id="tag" ng-model="$ctrl.model.tag">
+          </div>
+        </div>
+
+        <!-- NFS Protocol -->
+        <div class="form-group"
+             ng-class="{'has-error':
+                          (nfsForm.$submitted || nfsForm.protocolNfsv3.$dirty || nfsForm.protocolNfsv4.$dirty)
+                          && (nfsForm.protocolNfsv3.$invalid || nfsForm.protocolNfsv4.$invalid)}">
+          <label class="col-sm-3 control-label" for="protocols">NFS Protocol</label>
+          <div class="col-sm-9">
+            <input type="hidden" name="protocols" id="protocols" required>
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.model.protocolNfsv3" name="protocolNfsv3"
+                     id="protocolNfsv3" ng-required="!$ctrl.model.protocolNfsv3 && !$ctrl.model.protocolNfsv4">
+              <label for="protocolNfsv3">NFSv3</label>
+            </div>
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.model.protocolNfsv4" name="protocolNfsv4"
+                     id="protocolNfsv4" ng-required="!$ctrl.model.protocolNfsv3 && !$ctrl.model.protocolNfsv4">
+              <label for="protocolNfsv4">NFSv4</label>
+            </div>
+            <span class="help-block"
+                  ng-show="nfsForm.$submitted || nfsForm.protocolNfsv3.$dirty || nfsForm.protocolNfsv4.$dirty">
+              <span class="tc_nfsProtocolRequired"
+                    ng-show="nfsForm.protocolNfsv3.$error.required || nfsForm.protocolNfsv4.$error.required">
+                Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Pseudo -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.pseudo.$dirty) && nfsForm.pseudo.$invalid}"
+             ng-if="$ctrl.model.protocolNfsv4">
+          <label class="col-sm-3 control-label" for="pseudo">Pseudo</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="pseudo" id="pseudo"
+                   ng-model="$ctrl.model.pseudo" required>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.pseudo.$dirty">
+              <span class="tc_pseudoRequired" ng-show="nfsForm.pseudo.$error.required">Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Access Type -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.accessType.$dirty) && nfsForm.accessType.$invalid}">
+          <label class="col-sm-3 control-label" for="accessType">Access Type</label>
+          <div class="col-sm-9">
+            <select class="form-control"
+                    ng-model="$ctrl.model.accessType"
+                    ng-options="accessType.value as accessType.value for accessType in $ctrl.cephNfsAccessType"
+                    name="accessType"
+                    id="accessType"
+                    required>
+              <option value="">-- Select the access type --</option>
+            </select>
+            <span class="help-block" ng-show="nfsForm.accessType.$valid">{{ $ctrl.getAccessTypeHelp($ctrl.model.accessType) }}</span>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.accessType.$dirty">
+              <span class="tc_accessTypeRequired" ng-show="nfsForm.accessType.$error.required">Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Squash -->
+        <div class="form-group"
+             ng-class="{'has-error': (nfsForm.$submitted || nfsForm.squash.$dirty) && nfsForm.squash.$invalid}">
+          <label class="col-sm-3 control-label" for="squash">Squash</label>
+          <div class="col-sm-9">
+            <select class="form-control"
+                    ng-model="$ctrl.model.squash"
+                    ng-options="squash for squash in $ctrl.cephNfsSquash"
+                    name="squash"
+                    id="squash"
+                    required>
+              <option value="">-- Select what kind of user id squashing is performed --</option>
+            </select>
+            <span class="help-block" ng-show="nfsForm.$submitted || nfsForm.squash.$dirty">
+              <span class="tc_squashRequired" ng-show="nfsForm.squash.$error.required">Required field</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Transport Protocol -->
+        <div class="form-group"
+             ng-class="{'has-error':
+                          (nfsForm.$submitted || nfsForm.transportUDP.$dirty || nfsForm.transportTCP.$dirty)
+                          && (nfsForm.transportUDP.$invalid || nfsForm.transportTCP.$invalid)}">
+          <label class="col-sm-3 control-label" for="transports">Transport Protocol</label>
+          <div class="col-sm-9">
+            <input type="hidden" name="transports" id="transports" required>
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.model.transportUDP" name="transportUDP"
+                     id="transportUDP" ng-required="!$ctrl.model.transportUDP && !$ctrl.model.transportTCP">
+              <label for="transportUDP">UDP</label>
+            </div>
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.model.transportTCP" name="transportTCP"
+                     id="transportTCP" ng-required="!$ctrl.model.transportUDP && !$ctrl.model.transportTCP">
+              <label for="transportTCP">TCP</label>
+            </div>
+            <span class="help-block"
+                  ng-show="nfsForm.$submitted || nfsForm.transportUDP.$dirty || nfsForm.transportTCP.$dirty">
+              <span class="tc_transportProtocolRequired"
+                    ng-show="nfsForm.transportUDP.$error.required || nfsForm.transportTCP.$error.required">
+                Required field</span>
+            </span>
+            <hr>
+          </div>
+        </div>
+
+        <!-- Client Blocks -->
+        <ceph-nfs-form-client client-blocks="$ctrl.model.clientBlocks" form="nfsForm"
+                              access-type="$ctrl.model.accessType" squash="$ctrl.model.squash">
+        </ceph-nfs-form-client>
+
+      </div>
+
+      <div class="panel-footer">
+        <div class="button-group text-right">
+          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
+                  ng-disabled="nfsForm.$invalid || nfsForm.$submitted"
+                  ng-click="$ctrl.submitAction()">
+            Submit
+            <i class="fa fa-spinner fa-spin fa-fw" ng-if="nfsForm.$submitted"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
+            Back
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

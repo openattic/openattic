@@ -75,7 +75,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
       cephPoolsService
           .get({
-            id      : $scope.registry.selectedCluster.fsid,
+            fsid    : $scope.registry.selectedCluster.fsid,
             page    : $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
             search  : $scope.filterConfig.search,

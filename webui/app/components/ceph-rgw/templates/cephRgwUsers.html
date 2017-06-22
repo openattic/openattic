@@ -38,8 +38,8 @@
         <thead>
             <tr>
                 <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
-                <th sortfield="user_id"      sortheaderclass ng-show="columns['User ID']" sortdir="ASC" sortdefault>User ID</th>
-                <th sortfield="display_name" sortheaderclass ng-show="columns['Display name']">Display name</th>
+                <th sortfield="user_id"      sortheaderclass ng-show="columns['Username']" sortdir="ASC" sortdefault>Username</th>
+                <th sortfield="display_name" sortheaderclass ng-show="columns['Full name']">Full name</th>
                 <th sortfield="email"        sortheaderclass ng-show="columns['Email address']">Email address</th>
                 <th sortfield="suspended"    sortheaderclass ng-show="columns['Suspended']">Suspended</th>
                 <th sortfield="max_buckets"  sortheaderclass ng-show="columns['Max. buckets']">Max. buckets</th>
@@ -48,10 +48,10 @@
         <tbody>
             <tr ng-repeat="row in data.results" ng-class="{info: isRowSelected(row)}" class="clickable" ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
-                <td ng-show="columns['User ID']">
+                <td ng-show="columns['Username']">
                     <a ui-sref="ceph-rgw-user-edit({user_id:row.user_id})" ng-bind="row.user_id"></a>
                 </td>
-                <td ng-show="columns['Display name']"  ng-bind="row.display_name"></td>
+                <td ng-show="columns['Full name']"  ng-bind="row.display_name"></td>
                 <td ng-show="columns['Email address']" ng-bind="row.email"></td>
                 <td ng-show="columns['Suspended']"><i class="fa fa-check fa-fw" ng-show="row.suspended"></i></td>
                 <td ng-show="columns['Max. buckets']"  ng-bind="row.max_buckets"></td>
@@ -59,3 +59,5 @@
         </tbody>
     </table>
 </oadatatable>
+<div id="more" ui-view="tab">
+</div>

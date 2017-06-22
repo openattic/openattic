@@ -125,18 +125,7 @@ describe('should test the ceph rbd creation form', function(){
     var keys = Object.keys(rbdProperties.formElements.features.items);
     var values = rbdProperties.formElements.features.items;
     it('should test the following case: [' + testCase + ']',function(){
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
-      for (var i = 0; i < 7; i++){ // uncheck all boxes
-        rbdProperties.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
-      }
-      testCase.forEach(function(state, index){ // check the features
-        rbdProperties.checkFeature(element(by.className(values[keys[index]])), state);
-      });
-      testCase.forEach(function(state, index){ //check if features that should be disabled are disabled
-        if(state === -1){
-          expect(element(by.className(values[keys[index]])).isEnabled()).toBe(false);
-        }
-      });
+      rbdProperties.selectFeatures(testCase);
     });
   });
 

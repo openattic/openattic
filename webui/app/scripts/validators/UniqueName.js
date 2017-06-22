@@ -70,7 +70,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               };
               break;
             case "ceph-pool":
-              query.id = scope.data.cluster.fsid;
+              query.fsid = scope.data.cluster.fsid;
               obj = {
                 model: cephPoolsService,
                 current: null, // Has no renaming feature.

@@ -40,7 +40,7 @@ var CephIscsiTable = function(){
   this.clickRowByTargetId = function(targetId){
     this.filterInput.clear().sendKeys(targetId);
     expect(this.rows.get(0).getText()).toBe(targetId);
-    this.rows.get(0).click()
+    element(by.cssContainingText('tr', targetId)).click();
     expect(this.detailsTab.isDisplayed()).toBe(true);
   };
 
@@ -57,7 +57,7 @@ var CephIscsiTable = function(){
   this.removeTargetIfExists = function (targetId) {
     browser.findElements(by.binding('row.targetId')).then(function () {
       element(by.model('filterConfig.search')).clear().sendKeys(targetId);
-      element.all(by.binding('row.targetId')).get(0).click();
+      element(by.cssContainingText('tr', targetId)).click();
       element(by.css('.tc_menudropdown')).click();
       element(by.css('.tc_deleteItem')).click();
       element(by.model('$ctrl.input.enteredName')).sendKeys('yes');
