@@ -70,14 +70,20 @@ app.component("graphCreationComponent", {
       if (angular.isUndefined(item)) {
         return;
       }
+      var values;
       self.isLoading = true;
       api.call(angular.isFunction(api.filterApi) ? api.filterApi(item) : undefined)
         .$promise
         .then(function (res) {
-          var values = angular.isFunction(api.extractValues) ? api.extractValues(res, item) : res;
-          graphFactory.setUpGraphs(values);
+          values = angular.isFunction(api.extractValues) ? api.extractValues(res, item) : res;
+        })
+        .catch(function (error) {
+          if (error.status === 500) { // TODO: After Nagios is replaced with Prometheus remove this error handling!
+            error.preventDefault();
+          }
         })
         .finally(function () {
+          graphFactory.setUpGraphs(values);
           $interval(function () {
             self.isLoading = false;
           }, 1000, 1);
