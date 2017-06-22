@@ -16,7 +16,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.2.0] - unreleased
+[3.2.0] - 2017-06-22
 --------------------
 
 Added
@@ -50,16 +50,18 @@ Changed
   table column (OP-2112)
 * WebUI: Replaces id with fsid in pools service and usage (OP-2121)
 * WebUI: Various improvements in the RGW usermanagement UI, e.g. notify user
-  about unsaved changes (OP-2255), preselect 'Generate key' and 'Generate secret'.
+  about unsaved changes (OP-2255), preselect 'Generate key' and 'Generate
+  secret'. Fixed test cases (OP-2353)
 * Backend: RadosGW Proxy refactoring (OP-2326)
-* Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342) 
+* Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342)
 
 Fixed
 ~~~~~
 * WebUI: Harden RBD statistics watcher function (OP-2310)
 * Development: Fix requirement files (OP-2316)
 * WebUI: Restrict RBD form to replicated pools (OP-2314)
-
+* WebUI: Health widget will not show empty alerts (OP-2263)
+* Backend: Fixed validation of urls array for DeepSea ui_rgw call (OP-2338)
 
 [3.1.1] - 2017-06-08
 --------------------
