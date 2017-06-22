@@ -175,7 +175,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
         name: $scope.pool.name,
         pg_num: $scope.pool.pg_num,
         type: $scope.pool.type,
-        id: $scope.clusterId
+        fsid: $scope.clusterId
       };
       if (pool.type === "replicated") {
         pool.min_size = 1; // No need for this here - API update needed.

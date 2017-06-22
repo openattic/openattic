@@ -75,7 +75,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
           .then(function (res) {
             $scope.rbdFailure = false;
             cephPoolsService.get({
-              id: $scope.registry.selectedCluster.fsid
+              fsid: $scope.registry.selectedCluster.fsid
             }).$promise.then(function (pools) {
               $scope.poolFailure = false;
               res.results.forEach(function (rbd) {

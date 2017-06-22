@@ -5,6 +5,6 @@
 <div class="alert alert-danger bottom-margin-zero" ng-if="$ctrl.cluster.osdmap.osdmap.full">
   <i class="fa fa-bomb bg-danger"></i> <strong>Your cluster is full!</strong>
 </div>
-<div class="max-height" ng-class="{'alert-is-shown': $ctrl.isAnyAlertShown()}">
+<div class="max-height osd-widget-chart" ng-class="{'alert-is-shown': $ctrl.isAnyAlertShown()}">
   <nvd3 api="$ctrl.nvd3api" options="$ctrl.cluster.pieChart.options" data="$ctrl.cluster.pieChart.data"></nvd3>
 </div>

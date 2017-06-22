@@ -56,7 +56,7 @@
                 <div class="input-group">
                     <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
                     <input class="form-control"
-                           type="text"
+                           type="password"
                            placeholder="Secret key..."
                            ng-model="key.secret_key"
                            ng-readonly="editing"
@@ -66,9 +66,13 @@
                     <span class="input-group-btn">
                         <button type="button"
                                 class="btn btn-default"
+                                oa-password-button="secret_key">
+                        </button>
+                        <button type="button"
+                                class="btn btn-default"
                                 uib-tooltip="Copy to clipboard"
                                 oa-clipboard oa-clipboard-target="secret_key"
-                                oa-clipboard-text="Secret key">
+                                oa-clipboard-text="secret key">
                             <i class="icon-prepend fa fa-clipboard"></i>
                         </button>
                     </span>
