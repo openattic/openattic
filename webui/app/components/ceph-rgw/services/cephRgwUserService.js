@@ -58,7 +58,7 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
             result.user_quota.max_objects_unlimited = false;
           }
         }
-        if (angular.isObject(result.user_quota)) {
+        if (angular.isObject(result.bucket_quota)) {
           if ((result.bucket_quota.max_size_kb === -1) || (result.bucket_quota.max_size <= -1)) {
             result.bucket_quota.max_size = "";
             result.bucket_quota.max_size_unlimited = true;
