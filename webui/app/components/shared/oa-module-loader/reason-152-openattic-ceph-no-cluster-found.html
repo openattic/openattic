@@ -1,0 +1,14 @@
+<h4>Ceph - No cluster found</h4>
+
+<p>
+  This module cannot be loaded due to a problem while trying to connect to the Ceph cluster
+  with fsid <strong>{{ $ctrl.moduleAvailable.fsid }}</strong>
+</p>
+
+<hr>
+
+<p>Please verify that:</p>
+<ul>
+  <li>Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong></li>
+  <li>File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong> has the correct permissions</li>
+</ul>
