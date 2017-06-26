@@ -1,4 +1,4 @@
-<oa-module-loader module="ceph_nfs">
+<oa-module-loader module="ceph_nfs" fsid="$ctrl.registry.selectedCluster.fsid">
 <ceph-cluster-dropdown cluster="$ctrl.cluster" registry="$ctrl.registry" get-data="$ctrl.getNfsList()"></ceph-cluster-dropdown>
 
 <div class="panel panel-default" ng-show="$ctrl.error">

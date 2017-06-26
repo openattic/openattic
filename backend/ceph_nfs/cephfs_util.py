@@ -21,16 +21,16 @@ logger = logging.getLogger(__name__)
 
 
 class CephFSUtil(object):
-    _instance = None
+    _instance = {}
 
     @staticmethod
-    def instance():
-        if CephFSUtil._instance is None:
-            CephFSUtil._instance = CephFSUtil()
-        return CephFSUtil._instance
+    def instance(cluster_name='ceph'):
+        if cluster_name not in CephFSUtil._instance:
+            CephFSUtil._instance[cluster_name] = CephFSUtil()
+        return CephFSUtil._instance[cluster_name]
 
-    def __init__(self):
-        self.cfs = libcephfs.LibCephFS(conffile='')
+    def __init__(self, cluster_name='ceph'):
+        self.cfs = libcephfs.LibCephFS(conffile='/etc/ceph/{}.conf'.format(cluster_name))
         self.cfs.mount()
 
     def __del__(self):
