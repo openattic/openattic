@@ -787,7 +787,7 @@ class CephPg(NodbModel, RadosMixin):
         assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict))
+            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict, default_return=[]))
         except librados.ExternalCommandError, e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []
