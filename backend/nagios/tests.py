@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
 This file demonstrates writing tests using the unittest module. These will pass
