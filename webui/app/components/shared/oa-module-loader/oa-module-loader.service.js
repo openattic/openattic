@@ -32,7 +32,8 @@
 
 var app = angular.module("openattic.shared");
 app.factory("oaModuleLoaderService", function ($resource) {
-  return $resource(globalConfig.API.URL + ":module/status", {
-    module: "@module"
+  return $resource(globalConfig.API.URL + ":module/:fsid/module_status", {
+    module: "@module",
+    fsid: "@fsid"
   });
 });

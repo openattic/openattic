@@ -18,6 +18,6 @@ from ceph_nfs.cephfs_util import CephFSUtil
 class SystemD(BasePlugin):
     dbus_path = "/cephfs"
 
-    @method(in_signature="s")
-    def cephfs_mkdirs(self, dirpath):
-        CephFSUtil.instance().mkdirs(dirpath)
+    @method(in_signature="ss")
+    def cephfs_mkdirs(self, cluster_name, dirpath):
+        CephFSUtil.instance(cluster_name).mkdirs(dirpath)
