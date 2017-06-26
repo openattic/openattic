@@ -41,9 +41,18 @@ app.component("oaModuleLoader", {
   controller: function (oaModuleLoaderService) {
     var self = this;
 
-    self.moduleAvailable = undefined;
-
     self.$onInit = function () {
+      loadModule();
+    };
+
+    self.$onChanges = function (changesObj) {
+      if (angular.isDefined(changesObj.fsid)) {
+        loadModule();
+      }
+    };
+
+    var loadModule = function () {
+      self.moduleAvailable = undefined;
       oaModuleLoaderService.get({
         module: self.module,
         fsid: self.fsid
@@ -69,7 +78,22 @@ app.component("oaModuleLoader", {
       "122": "deepsea-nfs-no-hosts",
       "123": "deepsea-nfs-no-fsals",
       "131": "openattic-nfs-no-cephfs",
-      "132": "openattic-nfs-no-rgw"
+      "132": "openattic-nfs-no-rgw",
+      "140": "deepsea-iscsi-unknown-problem",
+      "141": "deepsea-iscsi-runner-error",
+      "142": "deepsea-iscsi-no-interfaces",
+      "151": "openattic-ceph-no-connection",
+      "152": "openattic-ceph-no-cluster-found",
+      "160": "rgw-conn-unknown-problem",
+      "161": "rgw-connection-refused",
+      "163": "rgw-unknown-host",
+      "164": "rgw-connection-timeout",
+      "165": "rgw-no-route-to-host",
+      "166": "rgw-failed-authentication",
+      "167": "rgw-internal-server-error",
+      "168": "rgw-http-problem",
+      "171": "openattic-rgw-no-deepsea-conn",
+      "172": "openattic-rgw-no-deepsea-cred"
     };
 
     self.getErrorTemplate = function (reason) {
