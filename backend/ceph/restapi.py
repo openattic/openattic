@@ -149,15 +149,17 @@ class CephPoolSerializer(NodbSerializer):
 
 class FsidContext(object):
 
-    def __init__(self, viewset, module_name):
+    def __init__(self, viewset=None, module_name=None, request=None):
         self.viewset = viewset
+        self.request = request
         self.module_name = module_name
 
     @cached_property
     def fsid(self):
+        request = self.viewset.request if self.viewset else self.request
         import re
         m = re.match(r'^.*/api/{}/(?P<fsid>[a-zA-Z0-9-]+)/.*'.format(self.module_name),
-                     self.viewset.request.path)
+                     request.path)
         return m.groupdict()["fsid"]
 
     @cached_property
