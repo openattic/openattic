@@ -24,10 +24,11 @@ Added
 
 Changed
 ~~~~~~
-Development: Updated SUSE oA repo url and the Vagrant box image.
-Development: Remove editor-specific `# kate: space-indent on...` comments from
-the code base and replace them with an editor-neutral configuration file based
-on the `EditorConfig project <http://editorconfig.org/>_ (OP-1918).
+* Development: Updated SUSE oA repo URL and the Vagrant box image
+* Development: Remove editor-specific `# kate: space-indent on...` comments
+  from the code base and replace them with an editor-neutral configuration
+  file based on the `EditorConfig project <http://editorconfig.org/>_
+  (OP-1918)
 
 Fixed
 ~~~~~
