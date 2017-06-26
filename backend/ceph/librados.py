@@ -177,6 +177,8 @@ class Client(object):
         :type cmd: str | dict[str, Any]
         :param argdict: Additional Command-Parameters
         :type argdict: dict[str, Any]
+        :param output_format: Format of the return value
+        :type output_format: str
         :param default_return: Return value in case of an error - if the answer given by Ceph cluster can't be Json
             decoded (only for output_format='json')
         :type default_return: any
