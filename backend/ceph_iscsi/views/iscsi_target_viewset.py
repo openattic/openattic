@@ -38,7 +38,7 @@ class iSCSITargetViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(iSCSITargetViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph_iscsi'))
 
     def get_queryset(self):
         return iSCSITarget.objects.all()
