@@ -36,6 +36,8 @@ Fixed
   while updating the Nagios configs (OP-2291)
 * Backend: Fix an issue in a multinode setup caused by an newer DRF
   version in Ubuntu 16.04.(OP-2138)
+* Packaging: Enable byte-compiling the Python files during RPM packaging
+  (OP-2167)
 
 [2.0.20] - 2017-04-26
 ---------------------
