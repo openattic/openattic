@@ -32,6 +32,7 @@ Changed
 
 Fixed
 ~~~~~
+* QA/Development: Fix JSON of e2e linter configuration (OP-2364)
 
 [3.2.0] - 2017-06-22
 --------------------
