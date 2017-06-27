@@ -71,6 +71,9 @@ option {
 .no-margin {
   margin: 0;
 }
+.margin-left-md {
+  margin-left:15px
+}
 .margin-right-md {
   margin-right:15px
 }
