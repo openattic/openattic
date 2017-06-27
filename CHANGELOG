@@ -29,6 +29,7 @@ Changed
   from the code base and replace them with an editor-neutral configuration
   file based on the `EditorConfig project <http://editorconfig.org/>_
   (OP-1918)
+* Backend: Added support for different modules in FsidContext class (OP-2369)
 
 Fixed
 ~~~~~
