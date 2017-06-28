@@ -38,6 +38,7 @@ app.directive("oadatatable", function () {
     templateUrl: "components/shared/oadatatable/oadatatable.directive.html",
     scope: {
       selection: "=",
+      onSelectionChange: "&",
       data: "=",
       filterConfig: "=",
       special: "="
@@ -186,6 +187,7 @@ app.directive("oadatatable", function () {
         } else {
           $scope.selection.item = null;
         }
+        $scope.onSelectionChange({"selection": $scope.selection});
       });
 
       $scope.$watch("data", function () {

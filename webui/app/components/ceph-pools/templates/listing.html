@@ -15,7 +15,8 @@
 </div>
 
 <oadatatable ng-show="!error && pools.results" data="pools"
-        class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+             class="oadatatable tc_cephPoolTable" filter-config="filterConfig"
+             selection="selection" on-selection-change="onSelectionChange(selection)">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add

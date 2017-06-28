@@ -16,7 +16,8 @@
     </div>
 </div>
 
-<oadatatable ng-show="!error && rbd.results" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="!error && rbd.results" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig"
+             selection="selection" on-selection-change="onSelectionChange(selection)">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
