@@ -91,41 +91,6 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         _doSubmitAction(userForm);
       }
     };
-
-    // Check if user_id already exists.
-    $scope.$watch("user.user_id", function (newValue, oldValue) {
-      if (!angular.isString(newValue) || (newValue === "") || (newValue === oldValue)) {
-        // Reset the validity flag.
-        if (newValue === "" || angular.isUndefined(newValue)) {
-          $scope.userForm.user_id.$setValidity("uniqueuserid", true);
-        }
-        return;
-      }
-      // Cancel a pending request.
-      if (angular.isObject($scope.uidQueryRequest)) {
-        $scope.uidQueryRequest.reject();
-      }
-      // Create a new request.
-      $scope.uidQueryRequest = $q.defer();
-      cephRgwUserService.query({
-        "uid": newValue
-      }, $scope.uidQueryRequest.resolve, $scope.uidQueryRequest.reject);
-      $q.when($scope.uidQueryRequest.promise)
-        .then(function (res) {
-          $scope.userForm.user_id.$setValidity("uniqueuserid", res.length === 0);
-        })
-        .catch(function (error) {
-          $scope.userForm.user_id.$setValidity("uniqueuserid", true);
-          // Do not display the error toasty if the user does not exist (the Admin Ops API
-          // returns a 404 in this case).
-          if (angular.isObject(error) && (error.status === 404)) {
-            error.preventDefault();
-          }
-        })
-        .finally(function () {
-          delete $scope.uidQueryRequest;
-        });
-    });
   } else {
     $scope.editing = true;
 
