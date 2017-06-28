@@ -122,7 +122,7 @@ describe('ceph rgw', function(){
     expect(bucketQuotaMaxSizeUnlimited.isSelected()).toBe(false);
     expect(bucketQuotaMaxSize.getAttribute('value')).toEqual('10485760K');
     expect(bucketQuotaMaxObjectsUnlimited.isSelected()).toBe(true);
-    element(by.css('.tc_backButton')).click();
+    helpers.leaveForm();
   });
 
   it('should check the user ID already taken error message', function(){
@@ -131,8 +131,7 @@ describe('ceph rgw', function(){
     // Wait some time until the user ID has been validated via REST API call.
     browser.sleep(helpers.configs.sleep);
     expect(element(by.css('.tc_userIdNotUnique')).isDisplayed()).toBe(true);
-    element(by.css('.tc_backButton')).click();
-    element(by.css('.tc_leaveButton')).click();
+    helpers.leaveForm(true);
   });
 
   it('should delete the user "herpderp"', function(){
@@ -202,7 +201,7 @@ describe('ceph rgw', function(){
     expect(element(by.css('.tc_subuserNotUnique')).isDisplayed()).toBe(true);
     cephRgwCommons.cancelSubuserBtn.click();
     browser.sleep(400);
-    cephRgwCommons.backBtn.click();
+    helpers.leaveForm();
   });
 
   it('should add a new S3 keys', function(){
@@ -254,7 +253,7 @@ describe('ceph rgw', function(){
     expect(userQuotaEnabled.isSelected()).toBe(false);
     expect(element(by.model('user.user_quota.max_size')).isDisplayed()).toBe(false);
     expect(element(by.model('user.user_quota.max_objects')).isDisplayed()).toBe(false);
-    cephRgwCommons.backBtn.click();
+    helpers.leaveForm();
   });
 
   it('should set user quota', function(){
@@ -327,7 +326,7 @@ describe('ceph rgw', function(){
     expect(bucketQuotaEnabled.isSelected()).toBe(false);
     expect(element(by.model('user.bucket_quota.max_size')).isDisplayed()).toBe(false);
     expect(element(by.model('user.bucket_quota.max_objects')).isDisplayed()).toBe(false);
-    cephRgwCommons.backBtn.click();
+    helpers.leaveForm();
   });
 
   it('should set bucket quota', function(){

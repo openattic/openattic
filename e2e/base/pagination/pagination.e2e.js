@@ -37,7 +37,7 @@ describe('Pagination', function(){
 
   beforeAll(function(){
     helpers.login();
-    browser.setLocation('users');
+    helpers.setLocation('users');
     for(var i = 0; i < numUsersToCreate; i++){
       userTable.removeUserIfExists('e2e_user_' + i);
       userTable.addUser();
