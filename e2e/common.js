@@ -1,11 +1,32 @@
 'use strict';
 
 (function(){
-
   var configs = require('./configs.js');
+  var UnsavedChangesDialog = require('./base/UnsavedChangesDialog.js');
 
   var helper = {
     configs: configs,
+
+    setLocation: function(location, dialogIsShown){
+      browser.setLocation(location);
+      helper.checkForUnsavedChanges(dialogIsShown);
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/' + location);
+    },
+
+    leaveForm: function(dialogIsShown){
+      element(by.css('.tc_backButton')).click();
+      helper.checkForUnsavedChanges(dialogIsShown);
+    },
+
+    checkForUnsavedChanges: function(dialogIsShown){
+      var dialog =  new UnsavedChangesDialog();
+      if(dialogIsShown !== undefined){
+        expect(dialog.leaveBtn.isPresent()).toBe(dialogIsShown);
+      }
+      dialog.leaveBtn.isDisplayed().then(function(){
+        dialog.close();
+      }).catch(function(){});
+    },
 
     get_list_element: function(itemName){
       return element(by.cssContainingText('tr', itemName));
@@ -43,15 +64,6 @@
       element.all(by.model('username')).sendKeys(configs.username);
       element.all(by.model('password')).sendKeys(configs.password);
       element.all(by.css('input[type="submit"]')).click();
-    },
-
-    check_form: function(){
-      var oaCheckFormOk = element(by.css('.oa-check-form-ok'));
-      oaCheckFormOk.isPresent().then(function(result){
-        if(result){
-          oaCheckFormOk.click();
-        }
-      });
     }
   };
   module.exports = helper;

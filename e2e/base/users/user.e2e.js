@@ -18,7 +18,18 @@ describe('Should add an user', function(){
 
   beforeAll(function(){
     helpers.login();
-    browser.setLocation('users');
+    helpers.setLocation('users');
+  });
+
+  it('should warn that unsaved changes will be lost', function(){
+    addBtn.click();
+    element.all(by.css('input')).first().sendKeys('warn_me');
+    helpers.setLocation('users', true);
+  });
+
+  it('should not warn that unsaved changes will be lost', function(){
+    addBtn.click();
+    helpers.setLocation('users', false);
   });
 
   it('should create an user', function(){
@@ -54,7 +65,7 @@ describe('Should add an user', function(){
   it('should verify that if the "already in use" error message is still working', function(){
     element(by.model('user.username')).clear().sendKeys('openattic');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
-    element(by.css('.tc_backButton')).click().then(helpers.check_form);
+    helpers.leaveForm(true);
   });
 
   //logout first
@@ -74,7 +85,7 @@ describe('Should add an user', function(){
   it('should be able to click something now', function(){
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     expect(browser.getCurrentUrl()).toContain('/#/ceph/pools');
-    browser.setLocation('users');
+    helpers.setLocation('users');
   });
 
   it('should display an error message if one tries to add an user with already taken username', function(){
@@ -94,7 +105,7 @@ describe('Should add an user', function(){
 
   it('should logout protractor_test_user', function(){
     logout.click().then(function(){
-      helpers.check_form();
+      helpers.checkForUnsavedChanges();
       expect(browser.getCurrentUrl()).toContain('/#/login');
     });
   });
@@ -103,7 +114,7 @@ describe('Should add an user', function(){
     element.all(by.model('username')).sendKeys('openattic');
     element.all(by.model('password')).sendKeys('openattic');
     element.all(by.css('input[type="submit"]')).click();
-    browser.setLocation('users');
+    helpers.setLocation('users');
     user.click();
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();

@@ -156,8 +156,7 @@ describe('ceph nfs', function(){
   });
 
   afterEach(function(){
-    form.backButton.click();
-    helpers.check_form();
+    helpers.leaveForm();
   });
 
   afterAll(function(){
