@@ -32,8 +32,8 @@
 
 var app = angular.module("openattic.cephRbd");
 app.factory("cephRbdService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:clusterId/rbds", {
-    clusterId: "@clusterId",
+  return $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {
+    fsid: "@fsid",
     pool: "@pool",
     name: "@name"
   }, {
@@ -47,12 +47,12 @@ app.factory("cephRbdService", function ($resource) {
     },
     delete: {
       method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:clusterId/rbds/:pool/:name"
+      url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
     },
     performancedata: {
       method: "GET",
       isArray: true,
-      url: globalConfig.API.URL + "ceph/:clusterId/rbds/:pool/:name/performancedata_rbd"
+      url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
     }
   });
 });

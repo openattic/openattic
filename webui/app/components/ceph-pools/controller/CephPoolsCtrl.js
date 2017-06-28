@@ -153,7 +153,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.addAction = function () {
     $state.go("ceph-pools-add", {
-      clusterId: $scope.registry.selectedCluster.fsid
+      fsid: $scope.registry.selectedCluster.fsid
     });
   };
 

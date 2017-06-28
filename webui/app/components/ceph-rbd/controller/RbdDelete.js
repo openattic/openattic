@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, clusterId, $q,
+app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, fsid, $q,
     Notification) {
   $scope.rbds = rbdSelection;
 
@@ -41,7 +41,7 @@ app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance,
       $scope.rbds.forEach(function (rbd) {
         var deferred = $q.defer();
         cephRbdService.delete({
-          clusterId: clusterId,
+          fsid: fsid,
           pool: rbd.pool.name,
           name: rbd.name
         }, deferred.resolve, deferred.reject);
