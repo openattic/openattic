@@ -24,7 +24,7 @@ describe('ceph nfs', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/nfs');
   });
 
-  it('should check the ceph NFS add export url', function () {
+  it('should check the ceph NFS add export url', function(){
     table.addExport();
     expect(browser.getCurrentUrl()).toMatch('/ceph/.*/nfs/add');
     form.backButton.click();

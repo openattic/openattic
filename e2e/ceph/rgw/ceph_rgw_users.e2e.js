@@ -31,12 +31,12 @@ describe('ceph rgw', function(){
   var bucketQuotaMaxObjectsUnlimited = element(by.model('user.bucket_quota.max_objects_unlimited'));
   var bucketQuotaMaxObjects = element(by.model('user.bucket_quota.max_objects'));
 
-  var addUser = function() {
+  var addUser = function(){
     cephRgwCommons.addUser();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/add');
   };
 
-  var editUser = function(uid) {
+  var editUser = function(uid){
     cephRgwCommons.editUser(uid);
     expect(browser.getCurrentUrl()).toMatch('/ceph/rgw/users/edit/' + uid);
   };
@@ -172,7 +172,7 @@ describe('ceph rgw', function(){
     cephRgwCommons.submitBtn.click();
   });
 
-  it('should validate the user modifications', function() {
+  it('should validate the user modifications', function(){
     var user = element(by.cssContainingText('tr', testUser2.user_id));
     browser.sleep(400);
     expect(user.element(by.binding('row.display_name')).getText()).toEqual('Tux Doe Jr.');
@@ -400,8 +400,8 @@ describe('ceph rgw', function(){
   it('should delete all S3 keys', function(){
     editUser(testUser2.user_id);
     // Delete all keys.
-    element.all(by.css('.tc_deleteS3KeyButton')).count().then(function(count) {
-      for (; count > 0; count--) {
+    element.all(by.css('.tc_deleteS3KeyButton')).count().then(function(count){
+      for(; count > 0; count--){
         // Always use the first element to delete because after pressing the
         // delete button the view is rendered again.
         element.all(by.css('.tc_deleteS3KeyButton')).get(0).click();
