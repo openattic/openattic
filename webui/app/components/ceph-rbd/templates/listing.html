@@ -1,4 +1,4 @@
-<ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getRbdList()"></ceph-cluster-dropdown>
+<oa-module-loader cluster="cluster" registry="registry" get-data="getRbdList()">
 
 <div ng-show="cluster.results.length > 0 && !rbdFailure && !poolFailure">
   <oa-loading-panel message="Ceph RBDs are loading..."
@@ -83,3 +83,4 @@
 </oadatatable>
 <div id="more" ui-view="tab">
 </div>
+</oa-module-loader>

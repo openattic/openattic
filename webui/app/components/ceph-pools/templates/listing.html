@@ -1,4 +1,4 @@
-<ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getPoolList()"></ceph-cluster-dropdown>
+<oa-module-loader cluster="cluster" registry="registry" get-data="getPoolList()">
 
 <div ng-show="cluster.results.length > 0">
     <div class="panel panel-default" ng-show="error">
@@ -87,3 +87,4 @@
 </oadatatable>
 <div id="more" ui-view="tab">
 </div>
+</oa-module-loader>

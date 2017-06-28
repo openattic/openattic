@@ -35,32 +35,43 @@ app.component("oaModuleLoader", {
   templateUrl: "components/shared/oa-module-loader/oa-module-loader.component.html",
   bindings: {
     module: "@",
-    fsid: "<"
+    cluster: "<",
+    registry: "=",
+    getData: "&"
   },
   transclude: true,
   controller: function (oaModuleLoaderService) {
     var self = this;
 
     self.$onInit = function () {
-      loadModule();
+      self.loadModule();
     };
 
-    self.$onChanges = function (changesObj) {
-      if (angular.isDefined(changesObj.fsid)) {
-        loadModule();
+    self.loadModule = function () {
+      if (angular.isDefined(self.module)) {
+        if (self.cluster === undefined || self.cluster.results.length > 0) {
+          self.moduleAvailable = undefined;
+          var fsid = (angular.isDefined(self.registry) && angular.isDefined(self.registry.selectedCluster)) ?
+          self.registry.selectedCluster.fsid : undefined;
+          oaModuleLoaderService.get({
+            module: self.module,
+            fsid: fsid
+          })
+          .$promise
+          .then(function (res) {
+            self.moduleAvailable = res;
+            if (self.moduleAvailable.available) {
+              self.getData();
+            }
+          });
+        }
+      } else {
+        self.moduleAvailable = {
+          $resolved: true,
+          available: true
+        };
+        self.getData();
       }
-    };
-
-    var loadModule = function () {
-      self.moduleAvailable = undefined;
-      oaModuleLoaderService.get({
-        module: self.module,
-        fsid: self.fsid
-      })
-      .$promise
-      .then(function (res) {
-        self.moduleAvailable = res;
-      });
     };
 
     var reasons = {
