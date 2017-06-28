@@ -10,7 +10,8 @@
 <oa-loading-panel message="Object Gateway users are loading..."
                   ng-show="!error && !users.results"></oa-loading-panel>
 
-<oadatatable ng-show="!error && users.results" class="oadatatable tc_oadatatable_users" data="users" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="!error && users.results" class="oadatatable tc_oadatatable_users" data="users" filter-config="filterConfig"
+             selection="selection" on-selection-change="onSelectionChange(selection)">
     <actions>
         <a class="btn btn-sm btn-primary tc_addUser" type="button" ng-click="addAction()" ng-hide="hasSelection">
             <i class="fa fa-fw fa-plus"></i>Add

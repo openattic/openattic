@@ -13,7 +13,8 @@
                   ng-show="!error && !iscsi.$resolved"></oa-loading-panel>
 
 <oadatatable ng-show="!error && iscsi.results" data="iscsi" class="oadatatable tc_cephIscsiTable"
-             filter-config="filterConfig" selection="selection" special="deployed">
+             filter-config="filterConfig" special="deployed"
+             selection="selection" on-selection-change="onSelectionChange(selection)" >
   <actions>
     <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()"
        ng-hide="hasSelection || multiSelection">
