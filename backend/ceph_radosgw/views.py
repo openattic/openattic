@@ -24,9 +24,9 @@ def proxy_view(request, path):
     try:
         result = RGWClient.admin_instance().proxy(request.method, path, request.GET.copy(),
                                                   request.body)
-        return HttpResponse(result, 200)
+        return HttpResponse(result, status=200)
     except RequestException as e:
-        return HttpResponse(e.content, e.status_code)
+        return HttpResponse(e.content, status=e.status_code)
     except RGWClient.NoCredentialsException:
         content = {
             'Code': 'ConfigurationIncomplete',
