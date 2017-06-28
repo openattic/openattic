@@ -44,7 +44,7 @@ app.directive("oadatatable", function () {
     },
     link: function (scope, element, attr, controller, transclude) {
       transclude(scope, function (clone, scope) {
-        element.find(".oadatatableactions").append(clone.filter("actions"));
+        element.find(".oadatatableactions").append(clone.filter("actions")).append(clone.filter("additional-actions"));
         element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
           scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
