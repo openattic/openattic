@@ -112,15 +112,18 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
       }, $scope.uidQueryRequest.resolve, $scope.uidQueryRequest.reject);
       $q.when($scope.uidQueryRequest.promise)
         .then(function (res) {
-          delete $scope.uidQueryRequest;
           $scope.userForm.user_id.$setValidity("uniqueuserid", res.length === 0);
         })
         .catch(function (error) {
+          $scope.userForm.user_id.$setValidity("uniqueuserid", true);
           // Do not display the error toasty if the user does not exist (the Admin Ops API
           // returns a 404 in this case).
           if (angular.isObject(error) && (error.status === 404)) {
             error.preventDefault();
           }
+        })
+        .finally(function () {
+          delete $scope.uidQueryRequest;
         });
     });
   } else {
@@ -260,6 +263,8 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
         }
       }, function () {
         userForm.$submitted = false;
+        // Clear all requests.
+        $scope.requests = [];
       });
     };
     // Process all requests (RGW Admin Ops API calls) in sequential order.
