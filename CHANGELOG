@@ -36,6 +36,8 @@ Fixed
   while updating the Nagios configs (OP-2291)
 * Backend: Fix an issue in a multinode setup caused by an newer DRF
   version in Ubuntu 16.04.(OP-2138)
+* Backend: Add formulas to calculate the usage of a Ceph pool correctly (for 
+  Ceph Luminous and Jewel) (OP-2128)
 * Packaging: Enable byte-compiling the Python files during RPM packaging
   (OP-2167)
 
