@@ -3,7 +3,18 @@
         <h3 class="panel-title">No Ceph cluster found</h3>
     </div>
     <div class="panel-body">
-        Please check your openATTIC/Ceph configuration.
+      <p>
+        This module cannot be loaded due to a problem while trying to connect to the Ceph cluster</strong>
+      </p>
+      <hr>
+      <p>Please verify that:</p>
+      <ul>
+        <li>Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong></li>
+        <li>
+          File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>
+          can be read by the <strong>openattic</strong> user
+        </li>
+      </ul>
     </div>
 </div>
 
@@ -32,14 +43,21 @@
   <span ng-if="$ctrl.moduleAvailable.$resolved">
     <span ng-transclude ng-if="$ctrl.moduleAvailable.available"></span>
     <span ng-if="!$ctrl.moduleAvailable.available">
-      <div uib-alert class="alert-warning">
-        <ng-include src="$ctrl.getErrorTemplate($ctrl.moduleAvailable.reason)"></ng-include>
-        <span ng-if="$ctrl.moduleAvailable.message">
-          <hr>
-          {{ $ctrl.moduleAvailable.message }}
-        </span>
-        <span class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})</span>
-      </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ $ctrl.getErrorTitle($ctrl.moduleAvailable.reason) }}</h3>
+        </div>
+        <div class="panel-body">
+          <ng-include src="$ctrl.getErrorTemplate($ctrl.moduleAvailable.reason)"></ng-include>
+          <span ng-if="$ctrl.moduleAvailable.message">
+            <hr>
+            {{ $ctrl.moduleAvailable.message }}
+          </span>
+          <span class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})</span>
+        </div>
+    </div>
     </span>
   </span>
 
