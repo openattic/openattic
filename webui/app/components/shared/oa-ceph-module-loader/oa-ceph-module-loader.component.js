@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.shared");
-app.component("oaModuleLoader", {
-  templateUrl: "components/shared/oa-module-loader/oa-module-loader.component.html",
+app.component("oaCephModuleLoader", {
+  templateUrl: "components/shared/oa-ceph-module-loader/oa-ceph-module-loader.component.html",
   bindings: {
     module: "@",
     cluster: "<",
@@ -40,7 +40,7 @@ app.component("oaModuleLoader", {
     getData: "&"
   },
   transclude: true,
-  controller: function (oaModuleLoaderService) {
+  controller: function (oaCephModuleLoaderService) {
     var self = this;
 
     self.$onInit = function () {
@@ -53,7 +53,7 @@ app.component("oaModuleLoader", {
           self.moduleAvailable = undefined;
           var fsid = (angular.isDefined(self.registry) && angular.isDefined(self.registry.selectedCluster)) ?
           self.registry.selectedCluster.fsid : undefined;
-          oaModuleLoaderService.get({
+          oaCephModuleLoaderService.get({
             module: self.module,
             fsid: fsid
           })
@@ -109,9 +109,9 @@ app.component("oaModuleLoader", {
 
     self.getErrorTemplate = function (reason) {
       if (angular.isDefined(reasons[reason])) {
-        return "components/shared/oa-module-loader/reason-" + reason + "-" + reasons[reason] + ".html";
+        return "components/shared/oa-ceph-module-loader/reason-" + reason + "-" + reasons[reason] + ".html";
       }
-      return "components/shared/oa-module-loader/reason-default.html";
+      return "components/shared/oa-ceph-module-loader/reason-default.html";
     };
 
   }
