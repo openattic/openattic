@@ -31,6 +31,7 @@ Changed
   (OP-1918)
 * Backend: Added support for different modules in FsidContext class (OP-2369)
 * WebUI: Replaces "clusterId" usage with "fsid" (OP-2354)
+* Backend: CephFS client API support for different Ceph clusters (OP-2371)
 
 Fixed
 ~~~~~
