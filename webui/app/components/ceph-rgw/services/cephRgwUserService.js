@@ -113,17 +113,16 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
     query: {
       method: "GET",
       isArray: true,
-      transformResponse: function (data) {
+      transformResponse: function (data, headersGetter, status) {
         // Make sure we have received valid data.
         if (!angular.isString(data)) {
           return [];
         }
         data = angular.fromJson(data);
-        // The Admin Ops API returns a 404 with the 'Code'='NoSuchKey' if the requested
-        // user does not exist.
-        if (angular.isObject(data) && data.hasOwnProperty("Code") && (data.Code === "NoSuchKey")) {
-          return [];
+        if (status !== 200) {
+          return data;
         }
+        // Return an array to be able to support wildcard searching someday.
         return [ data ];
       }
     },
