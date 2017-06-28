@@ -75,41 +75,138 @@ app.component("oaCephModuleLoader", {
     };
 
     var reasons = {
-      "100": "unknown",
-      "101": "deepsea-conn-unknown-problem",
-      "102": "deepsea-connection-refused",
-      "103": "deepsea-unknown-host",
-      "104": "deepsea-connection-timeout",
-      "105": "deepsea-no-route-to-host",
-      "106": "deepsea-failed-authentication",
-      "107": "deepsea-internal-server-error",
-      "108": "deepsea-http-problem",
-      "120": "deepsea-nfs-unknown-problem",
-      "121": "deepsea-nfs-runner-error",
-      "122": "deepsea-nfs-no-hosts",
-      "123": "deepsea-nfs-no-fsals",
-      "131": "openattic-nfs-no-cephfs",
-      "132": "openattic-nfs-no-rgw",
-      "140": "deepsea-iscsi-unknown-problem",
-      "141": "deepsea-iscsi-runner-error",
-      "142": "deepsea-iscsi-no-interfaces",
-      "151": "openattic-ceph-no-connection",
-      "152": "openattic-ceph-no-cluster-found",
-      "160": "rgw-conn-unknown-problem",
-      "161": "rgw-connection-refused",
-      "163": "rgw-unknown-host",
-      "164": "rgw-connection-timeout",
-      "165": "rgw-no-route-to-host",
-      "166": "rgw-failed-authentication",
-      "167": "rgw-internal-server-error",
-      "168": "rgw-http-problem",
-      "171": "openattic-rgw-no-deepsea-conn",
-      "172": "openattic-rgw-no-deepsea-cred"
+      "100": {
+        title: "Unexpected error",
+        template: "unknown"
+      },
+      "101": {
+        title: "DeepSea - Connection failed",
+        template: "deepsea-conn-unknown-problem"
+      },
+      "102": {
+        title: "DeepSea - Connection refused",
+        template: "deepsea-connection-refused"
+      },
+      "103": {
+        title: "DeepSea - Unknown host",
+        template: "deepsea-unknown-host"
+      },
+      "104": {
+        title: "DeepSea - Connection timeout",
+        template: "deepsea-connection-timeout"
+      },
+      "105": {
+        title: "DeepSea - No route to host",
+        template: "deepsea-no-route-to-host"
+      },
+      "106": {
+        title: "DeepSea - Authentication failed",
+        template: "deepsea-failed-authentication"
+      },
+      "107": {
+        title: "DeepSea - Internal server error",
+        template: "deepsea-internal-server-error"
+      },
+      "108": {
+        title: "DeepSea - Unexpected response",
+        template: "deepsea-http-problem"
+      },
+      "120": {
+        title: "DeepSea - NFS - Unexpected error",
+        template: "deepsea-nfs-unknown-problem"
+      },
+      "121": {
+        title: "DeepSea - NFS - Runner error",
+        template: "deepsea-nfs-runner-error"
+      },
+      "122": {
+        title: "DeepSea - NFS - No suitable hosts found",
+        template: "deepsea-nfs-no-hosts"
+      },
+      "123": {
+        title: "DeepSea - NFS - No suitable storage backend found",
+        template: "deepsea-nfs-no-fsals"
+      },
+      "131": {
+        title: "openATTIC - CephFS connection failure",
+        template: "openattic-nfs-no-cephfs"
+      },
+      "132": {
+        title: "openATTIC - Ceph Object Store connection failure",
+        template: "openattic-nfs-no-rgw"
+      },
+      "140": {
+        title: "DeepSea - iSCSI - Unexpected error",
+        template: "deepsea-iscsi-unknown-problem"
+      },
+      "141": {
+        title: "DeepSea - iSCSI - Runner error",
+        template: "deepsea-iscsi-runner-error"
+      },
+      "142": {
+        title: "DeepSea - iSCSI - No Interfaces",
+        template: "deepsea-iscsi-no-interfaces"
+      },
+      "151": {
+        title: "Ceph - No connection",
+        template: "openattic-ceph-no-connection"
+      },
+      "152": {
+        title: "Ceph - No cluster found",
+        template: "openattic-ceph-no-cluster-found"
+      },
+      "160": {
+        title: "Object Gateway - Connection failed",
+        template: "rgw-conn-unknown-problem"
+      },
+      "161": {
+        title: "Object Gateway - Connection refused",
+        template: "rgw-connection-refused"
+      },
+      "163": {
+        title: "Object Gateway - Unknown host",
+        template: "rgw-unknown-host"
+      },
+      "164": {
+        title: "Object Gateway - Connection timeout",
+        template: "rgw-connection-timeout"
+      },
+      "165": {
+        title: "Object Gateway - No route to host",
+        template: "rgw-no-route-to-host"
+      },
+      "166": {
+        title: "Object Gateway - Authentication failed",
+        template: "rgw-failed-authentication"
+      },
+      "167": {
+        title: "Object Gateway - Internal server error",
+        template: "rgw-internal-server-error"
+      },
+      "168": {
+        title: "Object Gateway - Unexpected response",
+        template: "rgw-http-problem"
+      },
+      "171": {
+        title: "Object Gateway - No connection",
+        template: "openattic-rgw-no-deepsea-conn"
+      },
+      "172": {
+        title: "Object Gateway - DeepSea - No connection",
+        template: "openattic-rgw-no-deepsea-cred"
+      }
+    };
+
+    self.getErrorTitle = function (reason) {
+      if (angular.isDefined(reasons[reason])) {
+        return reasons[reason].title;
+      }
+      return "Error";
     };
 
     self.getErrorTemplate = function (reason) {
       if (angular.isDefined(reasons[reason])) {
-        return "components/shared/oa-ceph-module-loader/reason-" + reason + "-" + reasons[reason] + ".html";
+        return "components/shared/oa-ceph-module-loader/reason-" + reason + "-" + reasons[reason].template + ".html";
       }
       return "components/shared/oa-ceph-module-loader/reason-default.html";
     };
