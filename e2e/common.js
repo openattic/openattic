@@ -20,7 +20,7 @@
       element.all(by.css('.tc_menudropdown')).get(dropdown).click();
       element(by.css('.tc_deleteItem > a')).click();
       var enteredNameInput = 'input.enteredName';
-      if (controllerName) {
+      if(controllerName){
         enteredNameInput = controllerName + '.' + enteredNameInput;
       }
       element(by.model(enteredNameInput)).sendKeys('yes');
