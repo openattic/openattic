@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from deepsea import DeepSea
 from rest_client import RequestException
 from ceph_radosgw.rgw_client import RGWClient
+from ceph.restapi import FsidContext
 
 
 logger = logging.getLogger(__name__)
@@ -96,7 +97,7 @@ class StatusView(APIView):
         return {'available': True}
 
     @staticmethod
-    def check_deepsea_nfs_api():
+    def check_deepsea_nfs_api(cluster_name):
         def map_status_code(status_code, resp_content):
             _table = {
                 '401': (Reason.DEEPSEA_FAILED_AUTHENTICATION, None),
@@ -123,7 +124,7 @@ class StatusView(APIView):
             if fsals == ['CEPH']:
                 try:
                     from ceph_nfs.cephfs_util import CephFSUtil
-                    CephFSUtil.instance().get_dir_list('/', 1)
+                    CephFSUtil.instance(cluster_name).get_dir_list('/', 1)
                 except Exception as e:
                     return StatusView.gen_reason_response(Reason.OPENATTIC_NFS_NO_CEPHFS,
                                                           str(e))
@@ -145,11 +146,13 @@ class StatusView(APIView):
         return {'available': True}
 
     def get(self, request):
+        cluster_name = FsidContext(request=request, module_name='ceph_nfs').cluster.name
+
         response = StatusView.check_deepsea_connection()
         if not response['available']:
             return Response(response)
 
-        response = StatusView.check_deepsea_nfs_api()
+        response = StatusView.check_deepsea_nfs_api(cluster_name)
         if not response['available']:
             return Response(response)
 
