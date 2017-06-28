@@ -1,4 +1,4 @@
-<oa-ceph-module-loader cluster="cluster" registry="registry" get-data="getRbdList()">
+<oa-ceph-module-loader cluster="cluster" registry="registry" on-cluster-change="getRbdList()">
 
 <div ng-show="cluster.results.length > 0 && !rbdFailure && !poolFailure">
   <oa-loading-panel message="Ceph RBDs are loading..."

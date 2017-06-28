@@ -28,7 +28,7 @@
             <select id="cluster-selection"
                     class="form-control"
                     ng-model="$ctrl.registry.selectedCluster"
-                    ng-change="$ctrl.loadModule()"
+                    ng-change="$ctrl.loadModule(true)"
                     ng-options="(c.name + ' (' + c.fsid + ')') for c in $ctrl.cluster.results track by c.fsid">
             </select>
         </div>

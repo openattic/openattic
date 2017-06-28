@@ -37,7 +37,7 @@ app.component("oaCephModuleLoader", {
     module: "@",
     cluster: "<",
     registry: "=",
-    getData: "&"
+    onClusterChange: "&"
   },
   transclude: true,
   controller: function (oaCephModuleLoaderService) {
@@ -47,7 +47,7 @@ app.component("oaCephModuleLoader", {
       self.loadModule();
     };
 
-    self.loadModule = function () {
+    self.loadModule = function (triggerOnClusterChange) {
       if (angular.isDefined(self.module)) {
         if (self.cluster === undefined || self.cluster.results.length > 0) {
           self.moduleAvailable = undefined;
@@ -60,8 +60,8 @@ app.component("oaCephModuleLoader", {
           .$promise
           .then(function (res) {
             self.moduleAvailable = res;
-            if (self.moduleAvailable.available) {
-              self.getData();
+            if (self.moduleAvailable.available && triggerOnClusterChange) {
+              self.onClusterChange();
             }
           });
         }
@@ -70,7 +70,9 @@ app.component("oaCephModuleLoader", {
           $resolved: true,
           available: true
         };
-        self.getData();
+        if (triggerOnClusterChange) {
+          self.onClusterChange();
+        }
       }
     };
 
