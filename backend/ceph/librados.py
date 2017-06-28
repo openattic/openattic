@@ -215,7 +215,7 @@ class Client(object):
                         return json.loads(out)
                     else:
                         logger.warning("Returned default value '{}' for command '{}' because the JSON object of the "
-                                       "Ceph cluster's command output '{}' can't decoded."
+                                       "Ceph cluster's command output '{}' couldn't be decoded."
                                        .format(default_return, cmd, out))
                         return default_return
                 return out
