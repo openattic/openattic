@@ -30,6 +30,7 @@ Changed
   file based on the `EditorConfig project <http://editorconfig.org/>_
   (OP-1918)
 * Backend: Added support for different modules in FsidContext class (OP-2369)
+* WebUI: Replaces "clusterId" usage with "fsid" (OP-2354)
 
 Fixed
 ~~~~~
