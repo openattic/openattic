@@ -44,6 +44,13 @@ class Reason(object):
     OPENATTIC_NFS_NO_CEPHFS = 131
     OPENATTIC_NFS_NO_RGW = 132
 
+    DEEPSEA_ISCSI_UNKNOWN_PROBLEM = 140
+    DEEPSEA_ISCSI_RUNNER_ERROR = 141
+    DEEPSEA_ISCSI_NO_INTERFACES = 142
+
+    OPENATTIC_CEPH_NO_CONNECTION = 151
+    OPENATTIC_CEPH_NO_CLUSTER_FOUND = 152
+
 
 def check_deepsea_connection():
     def map_errno_to_reason(errno):
