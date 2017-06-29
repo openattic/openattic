@@ -76,7 +76,7 @@ Changed
 * WebUI: Various improvements in the RGW usermanagement UI, e.g. notify user
   about unsaved changes (OP-2255), preselect 'Generate key' and 'Generate
   secret'. Fixed test cases (OP-2353)
-* Backend: RadosGW Proxy refactoring (OP-2326)
+* Backend: RadosGW Proxy refactoring (OP-2326, OP-2295)
 * Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342)
 
 Fixed
