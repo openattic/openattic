@@ -33,6 +33,15 @@
     },
 
     /**
+     * Get the cells of the specified row.
+     * @param itemName The value to identify the data table row.
+     */
+    get_list_element_cells: function(itemName) {
+      var row = helper.get_list_element(itemName);
+      return row.all(by.tagName('td'));
+    },
+
+    /**
      * Will delete the selected items, using the default test classes for this.
      * @param {number} [dropdown] - which dropdown to get
      */

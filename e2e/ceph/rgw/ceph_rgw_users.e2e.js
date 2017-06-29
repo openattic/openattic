@@ -3,7 +3,7 @@
 var helpers = require('../../common.js');
 var CephRgwCommons = require('./cephRgwCommon.js');
 
-describe('ceph rgw', function(){
+describe('ceph rgw users', function(){
   var cephRgwCommons = new CephRgwCommons();
   var testUser1 = {
     user_id: 'e2e_herpderp',
@@ -98,14 +98,14 @@ describe('ceph rgw', function(){
     cephRgwCommons.submitBtn.click();
   });
 
-  it('should display the "herpderp" in the users panel', function(){
+  it('should display the user "herpderp" in the users panel', function(){
     expect(helpers.get_list_element(testUser1.user_id).isDisplayed()).toBe(true);
   });
 
   it('should display the details of "herpderp"', function(){
     helpers.get_list_element(testUser1.user_id).click();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
-    cephRgwCommons.detailAttributes.forEach(function(attr){
+    cephRgwCommons.userDetailAttributes.forEach(function(attr){
       expect(element(by.cssContainingText('dt', attr + ':')).isDisplayed()).toBe(true);
     });
   });
@@ -155,7 +155,7 @@ describe('ceph rgw', function(){
     cephRgwCommons.submitBtn.click();
   });
 
-  it('should display the "tuxdoe" in the users panel', function(){
+  it('should display the user "tuxdoe" in the users panel', function(){
     expect(element(by.cssContainingText('tr', testUser2.user_id)).isDisplayed()).toBe(true);
   });
 
