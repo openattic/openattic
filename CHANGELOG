@@ -39,6 +39,7 @@ Changed
 Fixed
 ~~~~~
 * QA/Development: Fix JSON of e2e linter configuration (OP-2364)
+* Backend: Fix exception handling in the RGW backend (OP-2383)
 
 [3.2.0] - 2017-06-22
 --------------------
