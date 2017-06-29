@@ -144,6 +144,10 @@ class RGWClient(RestClient):
     @RestClient.requires_login
     @RestClient.api_get('/', resp_structure='[1][*] > Name')
     def get_buckets(self, request=None):
+        """
+        Get a list of names from all existing buckets of this user.
+        :return: Returns a list of bucket names.
+        """
         response = request({
             'format': 'json'
         })
@@ -152,6 +156,11 @@ class RGWClient(RestClient):
     @RestClient.requires_login
     @RestClient.api_get('/{bucket_name}')
     def bucket_exists(self, bucket_name, userid, request=None):
+        """
+        Check if the specified bucket exists for this user.
+        :param bucket_name: The name of the bucket.
+        :return: Returns True if the bucket exists, otherwise False.
+        """
         try:
             request()
             my_buckets = self.get_buckets()
@@ -169,4 +178,21 @@ class RGWClient(RestClient):
     @RestClient.api_put('/{bucket_name}')
     def create_bucket(self, bucket_name, request=None):
         logger.info("Creating bucket: %s", bucket_name)
-        request()
+        return request()
+
+    def get_all_buckets(self):
+        """
+        Get a list of names from all existing buckets.
+        :return: Returns a list of bucket names.
+        """
+        response = self.proxy('GET', 'bucket', '', True)
+        return response
+
+    def bucket_exists_all(self, bucket_name):
+        """
+        Check if the specified bucket exists.
+        :param bucket_name: The name of the bucket.
+        :return: Returns True if the bucket exists, otherwise False.
+        """
+        all_buckets = self.get_all_buckets()
+        return bucket_name in all_buckets

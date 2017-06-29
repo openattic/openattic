@@ -1,0 +1,50 @@
+<div class="panel panel-default tc_detailsTab">
+    <div class="panel-heading">
+        <h3 class="panel-title">Details of {{selection.item.bucket}}</h3>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd ng-bind="selection.item.bucket"></dd>
+            <dt>Id:</dt>
+            <dd ng-bind="selection.item.id"></dd>
+            <dt>Owner:</dt>
+            <dd ng-bind="selection.item.owner"></dd>
+            <dt>Pool:</dt>
+            <dd ng-bind="selection.item.pool"></dd>
+            <dt>Index pool:</dt>
+            <dd ng-bind="selection.item.index_pool"></dd>
+            <dt>Marker:</dt>
+            <dd ng-bind="selection.item.marker"></dd>
+            <dt>Maximum marker:</dt>
+            <dd ng-bind="selection.item.max_marker"></dd>
+            <dt>Version:</dt>
+            <dd ng-bind="selection.item.ver"></dd>
+            <dt>Master version:</dt>
+            <dd ng-bind="selection.item.master_ver"></dd>
+            <dt>Modification time:</dt>
+            <dd ng-bind="selection.item.mtime"></dd>
+        </dl>
+        <div ng-show="selection.item.bucket_quota">
+            <legend>Bucket quota</legend>
+            <dl class="dl-horizontal">
+                <div ng-show="!selection.item.bucket_quota.enabled">
+                    <dt>Maximum size:</dt>
+                    <dd>Disabled</dd>
+                    <dt>Maximum objects:</dt>
+                    <dd>Disabled</dd>
+                </div>
+                <div ng-show="selection.item.bucket_quota.enabled">
+                    <dt>Maximum size:</dt>
+                    <dd ng-show="selection.item.bucket_quota.max_size_unlimited">Unlimited</dd>
+                    <dd ng-show="!selection.item.bucket_quota.max_size_unlimited"
+                        ng-bind="selection.item.bucket_quota.max_size"></dd>
+                    <dt>Maximum objects:</dt>
+                    <dd ng-show="selection.item.bucket_quota.max_objects_unlimited">Unlimited</dd>
+                    <dd ng-show="!selection.item.bucket_quota.max_objects_unlimited"
+                        ng-bind="selection.item.bucket_quota.max_objects"></dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>

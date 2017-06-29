@@ -1,0 +1,57 @@
+<div class="panel panel-default" ng-if="error">
+    <div class="panel-heading">
+        <h3 class="panel-title">Error</h3>
+    </div>
+    <div class="panel-body">
+        The list of buckets could not be loaded.
+    </div>
+</div>
+<oa-loading-panel message="Object Gateway buckets are loading..."
+                  ng-show="!error && !buckets.results"></oa-loading-panel>
+
+<oadatatable ng-show="!error && buckets.results" class="oadatatable tc_oadatatable_buckets" data="buckets" filter-config="filterConfig" selection="selection">
+    <actions>
+        <a class="btn btn-sm btn-primary tc_addBucket" type="button" ng-click="addAction()" ng-hide="hasSelection">
+            <i class="fa fa-fw fa-plus"></i>Add
+        </a>
+        <a class="btn btn-sm btn-primary tc_editBucket" type="button" ng-click="editAction()" ng-show="hasSelection">
+            <i class="fa fa-fw fa-pencil"></i>Edit
+        </a>
+        <li>
+            <a ng-click="addAction()">
+                <i class="fa fa-fw fa-plus"></i>Add
+            </a>
+        </li>
+        <li class="tc_editBucket" ng-class="{disabled: !hasSelection}">
+            <a ng-click="editAction()">
+                <i class="fa fa-fw fa-pencil"></i>Edit
+            </a>
+        </li>
+        <li class="divider"></li>
+        <li class="tc_deleteItem" ng-class="{disabled: !hasSelection && !multiSelection}">
+            <a ng-click="deleteAction()">
+                <i class="fa fa-fw fa-trash-o"></i>Delete
+            </a>
+        </li>
+    </actions>
+    <table class="datatable table table-striped table-bordered table-hover dataTable">
+        <thead>
+            <tr>
+                <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
+                <th sortfield="bucket" sortheaderclass ng-show="columns['Name']" sortdir="ASC" sortdefault>Name</th>
+                <th sortfield="owner"  sortheaderclass ng-show="columns['Owner']">Owner</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data.results" ng-class="{info: isRowSelected(row)}" class="clickable" ng-click="toggleSelection(row, $event)">
+                <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
+                <td ng-show="columns['Name']">
+                    <a ui-sref="ceph-rgw-bucket-edit({bucket:row.bucket})" ng-bind="row.bucket"></a>
+                </td>
+                <td ng-show="columns['Owner']"  ng-bind="row.owner"></td>
+            </tr>
+        </tbody>
+    </table>
+</oadatatable>
+<div id="more" ui-view="tab">
+</div>

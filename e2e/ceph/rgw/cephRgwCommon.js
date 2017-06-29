@@ -13,12 +13,24 @@ var CephRgwCommons = function(){
   this.addCapBtn = element(by.css('.tc_addCapButton'));
   this.submitCapBtn = element(by.css('.tc_submitCapButton'));
 
-  this.detailAttributes = [
+  this.userDetailAttributes = [
     'Username',
     'Full name',
     'Email address',
     'Suspended',
     'Maximum buckets'
+  ];
+  this.bucketDetailAttributes = [
+    'Name',
+    'Id',
+    'Owner',
+    'Pool',
+    'Index pool',
+    'Marker',
+    'Maximum marker',
+    'Version',
+    'Master version',
+    'Modification time'
   ];
 
   this.addUser = function() {
@@ -30,6 +42,18 @@ var CephRgwCommons = function(){
     helpers.get_list_element(uid).click();
     element(by.css('.tc_menudropdown')).click();
     element(by.css('.tc_editUser > a')).click();
+    browser.sleep(helpers.configs.sleep);
+  };
+
+  this.addBucket = function() {
+    element(by.css('.tc_addBucket')).click();
+    browser.sleep(helpers.configs.sleep);
+  };
+
+  this.editBucket = function(name){
+    helpers.get_list_element(name).click();
+    element(by.css('.tc_menudropdown')).click();
+    element(by.css('.tc_editBucket > a')).click();
     browser.sleep(helpers.configs.sleep);
   };
 };
