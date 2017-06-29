@@ -10,17 +10,10 @@ The installation can be broken down into the following steps:
 
 #) :ref:`base operating system installation`
 
-#) :ref:`basic storage configuration`
-
 #) openATTIC installation:
-    * :ref:`installation on debian linux`
-    * :ref:`installation on ubuntu linux`
-    * :ref:`installation on red hat enterprise linux (and derivatives)`
-    * :ref:`installation on suse linux enterprise server and opensuse leap`
+    * :ref:`installation on opensuse leap`
 
 #) :ref:`post-installation configuration`
-
-#) :ref:`download preconfigured virtual machine`
 
 #) :ref:`getting started`
 
@@ -29,8 +22,6 @@ The installation can be broken down into the following steps:
 
   oA_installation
   post_installation
-  preconfigured_vms
   getting_started
-  multinode_setup
   authentication
   config_recommendations
