@@ -36,7 +36,8 @@
                                    ng-required="!editing"
                                    name="user_id"
                                    id="user_id"
-                                   autofocus>
+                                   autofocus
+                                   ceph-rgw-user-id-unique>
                         </div>
                         <span class="help-block tc_userIdRequired"
                               ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
@@ -45,7 +46,7 @@
                         </span>
                         <span class="help-block tc_userIdNotUnique"
                               ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
-                                  userForm.user_id.$error.uniqueuserid">
+                                  userForm.user_id.$error.cephRgwUserIdUnique">
                             The chosen user ID is already in use.
                         </span>
                     </div>
