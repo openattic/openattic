@@ -49,26 +49,29 @@ app.directive("cephRgwBucketNameUnique", function ($q, cephRgwBucketService) {
         var value = modelValue || viewValue;
         var deferred = $q.defer();
         if (ctrl.$isEmpty(value) || elem[0].disabled || elem[0].readOnly) {
+          // Do not validate the value via remote request if it is empty or the field
+          // is disabled/read-only.
           deferred.resolve();
         } else {
           cephRgwBucketService.query({"bucket": value})
             .$promise
             .then(function (res) {
+              // Does any bucket with the given name exist?
               if (res.length === 0) {
-                // Mark the field as valid.
+                // No, mark the field as valid.
                 deferred.resolve();
               } else {
-                // Mark the field as invalid.
+                // Yes, mark the field as invalid.
                 deferred.reject();
               }
             })
             .catch(function (error) {
-              // Do not display the error toasty if the bucket does not exist (the Admin
-              // Ops API returns a 404 in this case).
+              // Display an error toasty for all errors except whether the bucket does not
+              // exist (the Admin Ops API returns a 404 in this case).
               if (angular.isObject(error) && (error.status === 404)) {
                 error.preventDefault();
               }
-              // Mark the field as valid.
+              // Mark the field as valid if the remote validation fails.
               deferred.resolve();
             });
         }
