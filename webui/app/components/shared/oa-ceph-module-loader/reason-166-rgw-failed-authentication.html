@@ -7,10 +7,11 @@
   <li>
     <strong>RGW_API_ACCESS_KEY</strong>, <strong>RGW_API_SECRET_KEY</strong> and <strong>RGW_API_ADMIN_RESOURCE</strong>
     are defined correctly in the openATTIC configuration file
-    <strong>/etc/(default|sysconfig)/openattic</strong>
+    <strong>/etc/(default|sysconfig)/openattic</strong> (only if you are not using <strong>DeepSea</strong>)
   </li>
   <li>
     Alternatively check that <strong>DeepSea</strong> is returning the correct <strong>RGW</strong> information
+    by running the following command on the Salt master:
     <kbd># salt-run ui_rgw.credentials</kbd>
   </li>
 </ul>

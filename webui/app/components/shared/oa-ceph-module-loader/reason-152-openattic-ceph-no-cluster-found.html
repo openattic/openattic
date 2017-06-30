@@ -10,6 +10,14 @@
   <li>Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong></li>
   <li>
     File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>
-    can be read by the <strong>openattic</strong> user
+    can be read by the <strong>openattic</strong> user<br>
   </li>
+  <ul>
+    <li>
+      You can change the user group
+      by running the following commands:<br>
+      <kbd># chgrp openattic /etc/ceph/*.{conf,keyring}</kbd><br>
+      <kbd># chmod g+r /etc/ceph/*.{conf,keyring}</kbd>
+    </li>
+  </ul>
 </ul>
