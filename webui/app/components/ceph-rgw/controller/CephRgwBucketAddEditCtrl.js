@@ -51,15 +51,12 @@ app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParam
     $scope.submitAction = function (bucketForm) {
       if (bucketForm.$valid === true) {
         // Get the arguments to create the bucket.
-        // !!! Note, this is the same API call as linking a bucket to a user,
-        // except the 'bucket-id' is submitted. The bucket will be created
-        // on demand. !!!
         var bucketArgs = {
           "bucket": $scope.bucket.bucket,
           "uid": $scope.bucket.owner
         };
         _addRequest(function (args) {
-          return cephRgwBucketService.put(args, undefined).$promise;
+          return cephRgwBucketService.create(args, undefined).$promise;
         }, [bucketArgs]);
         // Process all requests (including the creation of the user and
         // additional RGW Admin Ops API calls).

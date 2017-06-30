@@ -179,20 +179,3 @@ class RGWClient(RestClient):
     def create_bucket(self, bucket_name, request=None):
         logger.info("Creating bucket: %s", bucket_name)
         return request()
-
-    def get_all_buckets(self):
-        """
-        Get a list of names from all existing buckets.
-        :return: Returns a list of bucket names.
-        """
-        response = self.proxy('GET', 'bucket', '', True)
-        return response
-
-    def bucket_exists_all(self, bucket_name):
-        """
-        Check if the specified bucket exists.
-        :param bucket_name: The name of the bucket.
-        :return: Returns True if the bucket exists, otherwise False.
-        """
-        all_buckets = self.get_all_buckets()
-        return bucket_name in all_buckets
