@@ -38,6 +38,12 @@ distro_settings = {
         sata_controller_name: 'SATA Controller',
         ip_addr: '192.168.10.104',
         gateway: '192.168.10.1'
+    },
+    'leap' => {
+        box_name: 'opensuse/openSUSE-42.2-x86_64',
+        sata_controller_name: 'SATA Controller',
+        ip_addr: '192.168.10.105',
+        gateway: '192.168.10.1'
     }
 }
 
@@ -46,7 +52,7 @@ distro = ENV['DISTRO']
 unless distro
     #raise NoDistributionSpecified.new
     # Set the default distribution to openSUSE.
-    distro = "malachite"
+    distro = "leap"
 end
 unless distro_settings.has_key? distro
     raise UnknownDistributionSpecified

@@ -24,9 +24,22 @@ Added
 
 Changed
 ~~~~~~
+* Development: Updated SUSE oA repo URL and the Vagrant box image
+* Development: Remove editor-specific `# kate: space-indent on...` comments
+  from the code base and replace them with an editor-neutral configuration
+  file based on the `EditorConfig project <http://editorconfig.org/>_
+  (OP-1918)
+* Backend: Added support for different modules in FsidContext class (OP-2369)
+* WebUI: Replaces "clusterId" usage with "fsid" (OP-2354)
+* WebUI: Manage service button moved to datatable toolbar for both NFS and 
+  iSCSI (OP-2380)
+* WebUI/Development: Added support for additional actions on datatable (OP-2380)
+* Backend: CephFS client API support for different Ceph clusters (OP-2371)
 
 Fixed
 ~~~~~
+* QA/Development: Fix JSON of e2e linter configuration (OP-2364)
+* Backend: Fix exception handling in the RGW backend (OP-2383)
 
 [3.2.0] - 2017-06-22
 --------------------
@@ -64,7 +77,7 @@ Changed
 * WebUI: Various improvements in the RGW usermanagement UI, e.g. notify user
   about unsaved changes (OP-2255), preselect 'Generate key' and 'Generate
   secret'. Fixed test cases (OP-2353)
-* Backend: RadosGW Proxy refactoring (OP-2326)
+* Backend: RadosGW Proxy refactoring (OP-2326, OP-2295)
 * Packaging: Consolidate subpackages into a single `openattic` RPM (OP-2342)
 
 Fixed

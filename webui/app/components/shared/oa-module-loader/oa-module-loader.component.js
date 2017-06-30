@@ -34,7 +34,8 @@ var app = angular.module("openattic.shared");
 app.component("oaModuleLoader", {
   templateUrl: "components/shared/oa-module-loader/oa-module-loader.component.html",
   bindings: {
-    module: "@"
+    module: "@",
+    fsid: "<"
   },
   transclude: true,
   controller: function (oaModuleLoaderService) {
@@ -44,7 +45,8 @@ app.component("oaModuleLoader", {
 
     self.$onInit = function () {
       oaModuleLoaderService.get({
-        module: self.module
+        module: self.module,
+        fsid: self.fsid
       })
       .$promise
       .then(function (res) {

@@ -27,7 +27,7 @@ class iSCSIInterfaceViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(iSCSIInterfaceViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph_iscsi'))
 
     def get_queryset(self):
         return iSCSIInterface.objects.all()

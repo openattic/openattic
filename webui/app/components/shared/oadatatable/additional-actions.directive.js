@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,29 +30,18 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.factory("cephRbdService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {
-    fsid: "@fsid",
-    pool: "@pool",
-    name: "@name"
-  }, {
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        var res = angular.fromJson(data);
-        return res && res.results || [];
-      }
-    },
-    delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
-    },
-    performancedata: {
-      method: "GET",
-      isArray: true,
-      url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
+var app = angular.module("openattic.shared");
+app.directive("additionalActions", function () {
+  return {
+    restrict: "E",
+    templateUrl: "components/shared/oadatatable/additional-actions.directive.html",
+    transclude: true,
+    link: function (scope, element, attr, controller, transclude) {
+      var span = element.find(".oa-additional-actions");
+      var actionsScope = scope.$parent.$new();
+      transclude(actionsScope, function (clone) {
+        span.append(clone);
+      });
     }
-  });
+  };
 });

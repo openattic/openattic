@@ -458,6 +458,9 @@ class MonApi(object):
 
     @undoable
     def osd_pool_set(self, pool, var, val, force=None, undo_previous_value=None):
+        # TODO: crush_ruleset was renamed to crush_rule in Luminous. Thus add:
+        #       >>> if var == 'crush_ruleset' and ceph_version >= luminous:
+        #       >>>     var = 'crush_rule'
         """
         COMMAND("osd pool set " \
         "name=pool,type=CephPoolname " \

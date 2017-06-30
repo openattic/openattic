@@ -115,7 +115,7 @@ if [ "${DISABLE_CEPH_REPO}" == false ] ; then
 
     if [ "$IS_SUSE" ] ; then
         if ! zypper repos filesystems_ceph_jewel >/dev/null; then
-            zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.1/filesystems:ceph:jewel.repo
+            zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/jewel/openSUSE_Leap_42.2/filesystems:ceph:jewel.repo
             zypper --gpg-auto-import-keys --non-interactive ref
         fi
     fi
@@ -159,7 +159,7 @@ fi
 if [ "$IS_SUSE" ]
 then
     if ! zypper repos filesystems_openATTIC >/dev/null; then
-        zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC/openSUSE_Leap_42.1/filesystems:openATTIC.repo
+        zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC/openSUSE_Leap_42.2/filesystems:openATTIC.repo
         zypper --gpg-auto-import-keys --non-interactive ref
     fi
 fi
@@ -229,7 +229,6 @@ module-apt"
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
         service target restart
     fi
-
 fi
 
 if [ "$IS_SUSE" ]
@@ -263,6 +262,13 @@ if [ -z "$IS_TRUSTY" ] ; then
 fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
+
+# Create Nagios specific symlinks (platform independent).
+ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephcluster /usr/lib/nagios/plugins/check_cephcluster
+ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephpool /usr/lib/nagios/plugins/check_cephpool
+ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephrbd /usr/lib/nagios/plugins/check_cephrbd
+ln -s /home/vagrant/openattic/backend/nagios/plugins/check_openattic_systemd /usr/lib/nagios/plugins/check_openattic_systemd
+ln -s /home/vagrant/openattic/backend/nagios/plugins/notify_openattic /usr/lib/nagios/plugins/notify_openattic
 
 sudo -i -u vagrant bash -e << EOF
 pushd openattic

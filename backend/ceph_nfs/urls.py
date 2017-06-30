@@ -29,7 +29,8 @@ export_detail = GaneshaExportViewSet.as_view({
 })
 
 urlpatterns = patterns('',
-                       url(r'^api/ceph_nfs/status', StatusView.as_view(), name='ceph_nfs_status'),
+                       url(r'^api/ceph_nfs/[a-zA-Z0-9-]+/module_status', StatusView.as_view(),
+                           name='ceph_nfs_module_status'),
                        url(r'^api/ceph_nfs/[a-zA-Z0-9-]+/',
                            include(router.urls, namespace='api/ceph_nfs/'),
                            name='ceph_nfs'),

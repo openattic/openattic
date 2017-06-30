@@ -1,4 +1,4 @@
-# kate: space-indent on; indent-width 4; replace-tabs on;
+# -*- coding: utf-8 -*-
 
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
@@ -335,7 +335,9 @@ class CephPool(NodbModel, RadosMixin):
                 'crash_replay_interval': pool_data['crash_replay_interval'],
                 'pg_num': pool_data['pg_num'],
                 'size': pool_data['size'],
-                'crush_ruleset': pool_data['crush_ruleset'],
+                'crush_ruleset': pool_data[
+                    # Cope with API breakage at https://github.com/ceph/ceph/commit/07abacb2e4bde6cb7f9e44879e743bc91bc4b085
+                    'crush_rule' if 'crush_rule' in pool_data else 'crush_ruleset'],
                 # Considered advanced options
                 'pgp_num': pool_data['pg_placement_num'],
                 'stripe_width': pool_data['stripe_width'],

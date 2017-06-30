@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *

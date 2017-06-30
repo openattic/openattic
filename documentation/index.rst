@@ -41,8 +41,6 @@ this program. If not, see <http://www.gnu.org/licenses/>.
   gui_docs/index
   developer_docs/index
 
-.. seealso:: This documentation is also available `as a PDF file. <openATTIC.pdf>`_
-
 Indices and Tables
 ##################
 
