@@ -38,7 +38,7 @@ app.component("oaTabSet", {
     tabConfig: "=",
     selection: "="
   },
-  controller: function (oaTabSetService) {
+  controller: function ($scope, oaTabSetService) {
     var self = this;
 
     self.$onInit = function () {
@@ -62,7 +62,7 @@ app.component("oaTabSet", {
 
     self.showTabSet = function () {
       return Object.keys(self.tabData.tabs).filter(function (tabName) {
-        return self.$eval(self.tabData.tabs[tabName].show);
+        return $scope.$eval(self.tabData.tabs[tabName].show);
       }).length > 1;
     };
   }
