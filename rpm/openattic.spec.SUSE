@@ -129,6 +129,10 @@ Provides: %{name}-module-ceph-deployment
 Provides: %{name}-module-icinga
 Provides: %{name}-pgsql
 
+# The pattern "patterns-ses-ceph_openattic" was removed in SES5 M8
+# (bsc#1046617)
+Obsoletes: patterns-ses-ceph_openattic
+
 # OpenATTIC and Crowbar's apache configurations conflict with each other,
 # and in any case we (SUSE) don't support installing openATTIC on a Crowbar
 # admin node.
