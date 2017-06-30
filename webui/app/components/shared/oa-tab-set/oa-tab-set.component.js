@@ -59,5 +59,11 @@ app.component("oaTabSet", {
     self.changeTab = function (state, index) {
       oaTabSetService.changeTab(state, self.tabData, self.tabConfig, self.selection, index);
     };
+
+    self.showTabSet = function () {
+      return Object.keys(self.tabData.tabs).filter(function (tabName) {
+        return self.$eval(self.tabData.tabs[tabName].show);
+      }).length > 1;
+    };
   }
 });
