@@ -49,10 +49,9 @@ app.component("oaCephModuleLoader", {
 
     self.loadModule = function (triggerOnClusterChange) {
       if (angular.isDefined(self.module)) {
-        if (self.cluster === undefined || self.cluster.results.length > 0) {
+        if (angular.isUndefined(self.cluster) || self.cluster.results.length > 0) {
           self.moduleAvailable = undefined;
-          var fsid = (angular.isDefined(self.registry) && angular.isDefined(self.registry.selectedCluster)) ?
-          self.registry.selectedCluster.fsid : undefined;
+          var fsid = self.registry && self.registry.selectedCluster ? self.registry.selectedCluster.fsid : undefined;
           oaCephModuleLoaderService.get({
             module: self.module,
             fsid: fsid
