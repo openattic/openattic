@@ -1,5 +1,5 @@
 openATTIC -- Open Source Ceph Storage Management
-======================================================
+================================================
 
 openATTIC is an Open Source Ceph and storage management solution for Linux, with a
 strong focus on storage management in a datacenter environment.
