@@ -32,8 +32,7 @@
 
 var app = angular.module("openattic.shared");
 app.factory("oaCephModuleLoaderService", function ($resource) {
-  return $resource(globalConfig.API.URL + ":module/:fsid/module_status", {
-    module: "@module",
-    fsid: "@fsid"
+  return $resource(globalConfig.API.URL + "status/:module", {
+    module: "@module"
   });
 });
