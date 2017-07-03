@@ -10,10 +10,14 @@
             <dd ng-bind="selection.item.id"></dd>
             <dt>Owner:</dt>
             <dd ng-bind="selection.item.owner"></dd>
-            <dt>Pool:</dt>
-            <dd ng-bind="selection.item.pool"></dd>
-            <dt>Index pool:</dt>
-            <dd ng-bind="selection.item.index_pool"></dd>
+            <span ng-if="selection.item.pool.length">
+                <dt>Pool:</dt>
+                <dd ng-bind="selection.item.pool"></dd>
+            </span>
+            <span ng-if="selection.item.index_pool.length">
+                <dt>Index pool:</dt>
+                <dd ng-bind="selection.item.index_pool"></dd>
+            </span>
             <dt>Marker:</dt>
             <dd ng-bind="selection.item.marker"></dd>
             <dt>Maximum marker:</dt>

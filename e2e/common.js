@@ -73,6 +73,17 @@
       element.all(by.model('username')).sendKeys(configs.username);
       element.all(by.model('password')).sendKeys(configs.password);
       element.all(by.css('input[type="submit"]')).click();
+    },
+
+    /**
+     * Check if the given element has the given class.
+     * @param {object} element The element to check.
+     * @param {string} cls The name of the class to check for.
+     */
+    hasClass: function(element, cls){
+      return element.getAttribute('class').then(function(classes){
+        return classes.split(' ').indexOf(cls) !== -1;
+      });
     }
   };
   module.exports = helper;

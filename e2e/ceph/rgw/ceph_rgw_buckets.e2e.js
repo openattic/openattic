@@ -14,6 +14,12 @@ describe('ceph rgw buckets', function(){
     owner: 'e2e_tuxdoe'
   };
 
+  var goToUserListView = function() {
+    element(by.css('.tc_menuitem_ceph_rgw')).click();
+    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
+    browser.sleep(helpers.configs.sleep);
+  };
+
   var addBucket = function() {
     cephRgwCommons.addBucket();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/add');
@@ -35,9 +41,7 @@ describe('ceph rgw buckets', function(){
   });
 
   it('should create test user', function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
-    browser.sleep(helpers.configs.sleep);
+    goToUserListView();
     cephRgwCommons.addUser();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/add');
     element(by.model('user.user_id')).sendKeys(testUser.user_id);
@@ -46,8 +50,7 @@ describe('ceph rgw buckets', function(){
   });
 
   it('should display the test user in the users panel', function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
+    goToUserListView();
     expect(helpers.get_list_element(testUser.user_id).isDisplayed()).toBe(true);
   });
 
@@ -57,8 +60,7 @@ describe('ceph rgw buckets', function(){
     // Wait some time until the bucket name has been validated via REST API call.
     browser.sleep(helpers.configs.sleep);
     expect(element(by.css('.tc_bucketInvalid')).isDisplayed()).toBe(true);
-    element(by.css('.tc_backButton')).click();
-    element(by.css('.tc_leaveButton')).click();
+    helpers.leaveForm();
   });
 
   it('should create test bucket (owner=admin)', function(){
@@ -74,10 +76,17 @@ describe('ceph rgw buckets', function(){
     expect(cells.get(2).getText()).toEqual('admin');
   });
 
-  it('should display the details of the bucket', function(){
-    helpers.get_list_element(testBucket.name).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/details');
-    cephRgwCommons.bucketDetailAttributes.forEach(function(attr){
+  cephRgwCommons.bucketDetailAttributes.forEach(function(attr) {
+    it('should display "' +  attr + '" in the details of the bucket', function(){
+      var row = helpers.get_list_element(testBucket.name);
+      // Deselect the row if it is already selected, otherwise the details
+      // are not shown.
+      if (helpers.hasClass(row, 'info')) {
+        row.all(by.tagName('input')).click();
+      }
+      // Finally select the row to display the details.
+      row.click();
+      expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/details');
       expect(element(by.cssContainingText('dt', attr + ':')).isDisplayed()).toBe(true);
     });
   });
@@ -106,6 +115,6 @@ describe('ceph rgw buckets', function(){
   });
 
   afterAll(function(){
-    console.log('ceph_rgw -> ceph_rgw_users.e2e.js');
+    console.log('ceph_rgw -> ceph_rgw_buckets.e2e.js');
   });
 });
