@@ -17,7 +17,6 @@ from rest_framework import routers
 
 from ceph_nfs.views.ganesha_export_viewset import GaneshaExportViewSet
 from ceph_nfs.views.ganesha_mgr_view import hosts, fsals, status, deploy, stop, ls_dir, buckets
-from ceph_nfs.views.status import StatusView
 
 
 router = routers.SimpleRouter(trailing_slash=False)
@@ -29,8 +28,6 @@ export_detail = GaneshaExportViewSet.as_view({
 })
 
 urlpatterns = patterns('',
-                       url(r'^api/ceph_nfs/[a-zA-Z0-9-]+/module_status', StatusView.as_view(),
-                           name='ceph_nfs_module_status'),
                        url(r'^api/ceph_nfs/[a-zA-Z0-9-]+/',
                            include(router.urls, namespace='api/ceph_nfs/'),
                            name='ceph_nfs'),
