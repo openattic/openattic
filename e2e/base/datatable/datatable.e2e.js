@@ -21,7 +21,7 @@ describe('Should test oadatatable and its options', function(){
   });
 
   beforeEach(function(){
-    browser.setLocation('ceph/pools');
+    helpers.setLocation('ceph/pools');
   });
 
   var list = [

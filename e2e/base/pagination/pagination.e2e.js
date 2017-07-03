@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../common.js');
 var UserTable = require('../users/UserTable.js');
 var UserForm = require('../users/UserForm.js');
@@ -21,7 +23,7 @@ describe('Pagination', function(){
   };
 
   var elementIsDisabled = function(e){
-    return e.getAttribute('class').then(function (classes){
+    return e.getAttribute('class').then(function(classes){
       return classes.split(' ').indexOf('disabled') !== -1;
     });
   };
@@ -35,11 +37,11 @@ describe('Pagination', function(){
 
   beforeAll(function(){
     helpers.login();
-    browser.setLocation('users');
-    for (var i=0;i<numUsersToCreate;i++) {
-      userTable.removeUserIfExists('e2e_user_'+i);
+    helpers.setLocation('users');
+    for(var i = 0; i < numUsersToCreate; i++){
+      userTable.removeUserIfExists('e2e_user_' + i);
       userTable.addUser();
-      userForm.username.sendKeys('e2e_user_'+i);
+      userForm.username.sendKeys('e2e_user_' + i);
       userForm.password.sendKeys('password');
       userForm.submit();
     }
@@ -156,8 +158,8 @@ describe('Pagination', function(){
   });
 
   afterAll(function(){
-    for (var i=0;i<numUsersToCreate;i++) {
-      userTable.removeUserIfExists('e2e_user_'+i);
+    for(var i = 0; i < numUsersToCreate; i++){
+      userTable.removeUserIfExists('e2e_user_' + i);
     }
     console.log('pagination -> pagination.e2e.js');
   });

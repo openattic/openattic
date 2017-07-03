@@ -24,10 +24,10 @@ describe('ceph nfs', function(){
     expect(browser.getCurrentUrl()).toContain('/ceph/nfs');
   });
 
-  it('should check the ceph NFS add export url', function () {
+  it('should check the ceph NFS add export url', function(){
     table.addExport();
     expect(browser.getCurrentUrl()).toMatch('/ceph/.*/nfs/add');
-    form.backButton.click();
+    helpers.leaveForm();
   });
 
   it('should add a export', function(){
@@ -68,7 +68,7 @@ describe('ceph nfs', function(){
   it('should check the ceph NFS edit export url', function(){
     table.editExport('/e2e/cfs-add');
     expect(browser.getCurrentUrl()).toMatch('/ceph/.*/nfs/edit/.*/.*');
-    form.backButton.click();
+    helpers.leaveForm();
   });
 
   it('should edit export', function(){
@@ -102,7 +102,7 @@ describe('ceph nfs', function(){
   it('should check the ceph NFS clone export url', function(){
     table.cloneExport('/e2e/cfs-edit');
     expect(browser.getCurrentUrl()).toMatch('/ceph/.*/nfs/clone/.*/.*');
-    form.backButton.click();
+    helpers.leaveForm();
   });
 
   it('should clone export', function(){
