@@ -40,6 +40,8 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Resets graph data if needed (OP-2358)
+* WebUI: Hiding graph loading error message if graph data is unavailable (OP-2002)
 * QA/Development: Fix JSON of e2e linter configuration (OP-2364)
 * Backend: Fix exception handling in the RGW backend (OP-2383)
 * Backend: Prevent the 'ValueError: No JSON object could be decoded' error if 
