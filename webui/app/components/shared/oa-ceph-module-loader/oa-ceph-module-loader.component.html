@@ -1,0 +1,64 @@
+<div class="panel panel-default" ng-show="$ctrl.cluster !== undefined && $ctrl.cluster.results.length === 0">
+    <div class="panel-heading">
+        <h3 class="panel-title">No Ceph cluster found</h3>
+    </div>
+    <div class="panel-body">
+      <p>
+        This module cannot be loaded due to a problem while trying to connect to the Ceph cluster</strong>
+      </p>
+      <hr>
+      <p>Please verify that:</p>
+      <ul>
+        <li>Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong></li>
+        <li>
+          File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>
+          can be read by the <strong>openattic</strong> user
+        </li>
+      </ul>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="$ctrl.cluster !== undefined && $ctrl.cluster.results.length > 1">
+    <div class="panel-heading">
+        <h3 class="panel-title">Select a Cluster</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="form-group no-margin">
+            <select id="cluster-selection"
+                    class="form-control"
+                    ng-model="$ctrl.registry.selectedCluster"
+                    ng-change="$ctrl.loadModule(true)"
+                    ng-options="(c.name + ' (' + c.fsid + ')') for c in $ctrl.cluster.results track by c.fsid">
+            </select>
+        </div>
+    </div>
+</div>
+
+<div ng-if="$ctrl.cluster === undefined || $ctrl.cluster.results.length > 0">
+
+  <oa-loading-panel message="Module is loading..."
+                    ng-show="!$ctrl.moduleAvailable.$resolved"></oa-loading-panel>
+
+  <span ng-if="$ctrl.moduleAvailable.$resolved">
+    <span ng-transclude ng-if="$ctrl.moduleAvailable.available"></span>
+    <span ng-if="!$ctrl.moduleAvailable.available">
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ $ctrl.getErrorTitle($ctrl.moduleAvailable.reason) }}</h3>
+        </div>
+        <div class="panel-body">
+          <ng-include src="$ctrl.getErrorTemplate($ctrl.moduleAvailable.reason)"></ng-include>
+          <span ng-if="$ctrl.moduleAvailable.message">
+            <hr>
+            {{ $ctrl.moduleAvailable.message }}
+          </span>
+          <span class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})</span>
+        </div>
+    </div>
+    </span>
+  </span>
+
+</div>

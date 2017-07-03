@@ -176,7 +176,10 @@ app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $ui
     $scope.getIscsiList();
   }, true);
 
-  $scope.$watchCollection("selection.items", function (items) {
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+    var items = selection.items;
+
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
     if (!items || items.length !== 1) {
@@ -188,7 +191,7 @@ app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $ui
     } else {
       changeTab($state.current.name);
     }
-  });
+  };
 
   $scope.addAction = function () {
     $state.go("cephIscsi-add", {

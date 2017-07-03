@@ -82,7 +82,10 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
       });
   }, true);
 
-  $scope.$watchCollection("selection.items", function (items) {
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+    var items = selection.items;
+
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
 
@@ -96,7 +99,7 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
     } else {
       $scope.changeTab($state.current.name);
     }
-  });
+  };
 
   $scope.addAction = function () {
     $state.go("ceph-rgw-bucket-add");

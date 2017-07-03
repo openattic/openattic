@@ -44,6 +44,7 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout, cephCrushmapServi
 
   $scope.getCrushmap = function () {
     if ($scope.clusters.results.length > 0 && $scope.registry.selectedCluster) {
+      $scope.error = false;
       cephCrushmapService
         .get({fsid: $scope.registry.selectedCluster.fsid})
         .$promise
