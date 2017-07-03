@@ -35,6 +35,7 @@ Changed
 * WebUI: Replaces "clusterId" usage with "fsid" (OP-2354)
 * WebUI: Manage service button moved to datatable toolbar for both NFS and 
   iSCSI (OP-2380)
+* WebUI: Hide the details tabset if there is only one visible tab (OP-2393)
 * WebUI/Development: Added support for additional actions on datatable (OP-2380)
 * Backend: CephFS client API support for different Ceph clusters (OP-2371)
 
