@@ -204,13 +204,6 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   };
 
   /**
-   * Execute action if the 'Cancel' button has been pressed.
-   */
-  $scope.cancelAction = function () {
-    $scope.goToListView();
-  };
-
-  /**
    * Helper function that executes all requests.
    * @param userForm The HTML formular.
    */

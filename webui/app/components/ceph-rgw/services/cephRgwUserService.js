@@ -163,9 +163,10 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
               (filterParams.page - 1) * filterParams.pageSize);
             // Prepare the response object.
             return {
+              $resolved: true,
               count: users.length,
-              next: null,
-              previous: null,
+              next: undefined,
+              previous: undefined,
               results: users
             };
           });
