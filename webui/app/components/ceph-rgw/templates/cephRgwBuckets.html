@@ -1,3 +1,4 @@
+<oa-ceph-module-loader module="ceph_radosgw">
 <div class="panel panel-default" ng-if="error">
     <div class="panel-heading">
         <h3 class="panel-title">Error</h3>
@@ -9,7 +10,8 @@
 <oa-loading-panel message="Object Gateway buckets are loading..."
                   ng-show="!error && !buckets.results"></oa-loading-panel>
 
-<oadatatable ng-show="!error && buckets.results" class="oadatatable tc_oadatatable_buckets" data="buckets" filter-config="filterConfig" selection="selection">
+<oadatatable ng-show="!error && buckets.results" class="oadatatable tc_oadatatable_buckets" data="buckets" filter-config="filterConfig"
+             selection="selection" on-selection-change="onSelectionChange(selection)">
     <actions>
         <a class="btn btn-sm btn-primary tc_addBucket" type="button" ng-click="addAction()" ng-hide="hasSelection">
             <i class="fa fa-fw fa-plus"></i>Add
@@ -55,3 +57,4 @@
 </oadatatable>
 <div id="more" ui-view="tab">
 </div>
+</oa-ceph-module-loader>
