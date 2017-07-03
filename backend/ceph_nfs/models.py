@@ -217,7 +217,7 @@ class GaneshaExport(NodbModel):
     def save_exports(export_models, empty_hosts):
         try:
             rgw_is_online = RGWClient.admin_instance().is_service_online()
-        except RGWClient.NoCredentialsException:
+        except (RGWClient.NoCredentialsException, RequestException):
             rgw_is_online = False
         for e in export_models:
             # fetch keys for all RGW exports
@@ -291,7 +291,7 @@ class GaneshaExport(NodbModel):
 
         try:
             rgw_is_online = RGWClient.admin_instance().is_service_online()
-        except RGWClient.NoCredentialsException:
+        except (RGWClient.NoCredentialsException, RequestException):
             rgw_is_online = False
         if self.fsal == 'RGW' and not rgw_is_online:
             raise Exception("RGW REST service is not online, please check if service is running "

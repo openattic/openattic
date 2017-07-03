@@ -102,19 +102,16 @@ class RGWClient(RestClient):
             self.auth = S3Auth(keys['access_key'], keys['secret_key'],
                                service_url=self.service_url)
         else:
-            raise Exception('Authentication failed for the "{}" user: wrong credentials'
-                            .format(self.userid))
+            raise RequestException('Authentication failed for the "{}" user: wrong credentials'
+                                   .format(self.userid), status_code=401)
 
     @RestClient.requires_login
     @RestClient.api_get('/', resp_structure='[0] > ID')
     def is_service_online(self, request=None):
-        try:
-            response = request({
-                'format': 'json'
-            })
-            return response[0]['ID'] == self.userid
-        except RequestException:
-            return False
+        response = request({
+            'format': 'json'
+        })
+        return response[0]['ID'] == self.userid
 
     @RestClient.requires_login
     @RestClient.api_get('/{sysuser}/user', resp_structure='tenant & user_id & email & keys[*] > '
