@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 Added
 ~~~~~
 * Backend: Gracefully handle not properly configured modules (OP-2362)
+* WebUI/QA: Handling of unsaved changes dialog (OP-2189)
 
 Changed
 ~~~~~~
