@@ -8,31 +8,37 @@
             <dd ng-bind="selection.item.user_id"></dd>
             <dt>Full name:</dt>
             <dd ng-bind="selection.item.display_name"></dd>
-            <dt ng-show="selection.item.email.length">Email address:</dt>
-            <dd ng-bind="selection.item.email"></dd>
+            <span ng-if="selection.item.email.length">
+                <dt>Email address:</dt>
+                <dd ng-bind="selection.item.email"></dd>
+            </span>
             <dt>Suspended:</dt>
             <dd>{{ selection.item.suspended ? "Yes" : "No" }}</dd>
             <dt>Maximum buckets:</dt>
             <dd ng-bind="selection.item.max_buckets"></dd>
-            <dt ng-show="selection.item.subusers.length">Subusers:</dt>
-            <span ng-repeat="subuser in selection.item.subusers">
-                <dd>{{ subuser.id }} ({{ subuser.permissions }})</dd>
+            <span ng-if="selection.item.subusers.length">
+                <dt>Subusers:</dt>
+                <span ng-repeat="subuser in selection.item.subusers">
+                    <dd>{{ subuser.id }} ({{ subuser.permissions }})</dd>
+                </span>
             </span>
-            <dt ng-show="selection.item.caps.length">Capabilities:</dt>
-            <span ng-repeat="cap in selection.item.caps">
-                <dd>{{ cap.type }} ({{ cap.perm }})</dd>
+            <span ng-if="selection.item.caps.length">
+                <dt>Capabilities:</dt>
+                <span ng-repeat="cap in selection.item.caps">
+                    <dd>{{ cap.type }} ({{ cap.perm }})</dd>
+                </span>
             </span>
         </dl>
-        <div ng-show="selection.item.user_quota">
+        <div ng-if="selection.item.user_quota">
             <legend>User quota</legend>
             <dl class="dl-horizontal">
-                <div ng-show="!selection.item.user_quota.enabled">
+                <div ng-if="!selection.item.user_quota.enabled">
                     <dt>Maximum size:</dt>
                     <dd>Disabled</dd>
                     <dt>Maximum objects:</dt>
                     <dd>Disabled</dd>
                 </div>
-                <div ng-show="selection.item.user_quota.enabled">
+                <div ng-if="selection.item.user_quota.enabled">
                     <dt>Maximum size:</dt>
                     <dd ng-show="selection.item.user_quota.max_size_unlimited">Unlimited</dd>
                     <dd ng-show="!selection.item.user_quota.max_size_unlimited"
@@ -44,16 +50,16 @@
                 </div>
             </dl>
         </div>
-        <div ng-show="selection.item.bucket_quota">
+        <div ng-if="selection.item.bucket_quota">
             <legend>Bucket quota</legend>
             <dl class="dl-horizontal">
-                <div ng-show="!selection.item.bucket_quota.enabled">
+                <div ng-if="!selection.item.bucket_quota.enabled">
                     <dt>Maximum size:</dt>
                     <dd>Disabled</dd>
                     <dt>Maximum objects:</dt>
                     <dd>Disabled</dd>
                 </div>
-                <div ng-show="selection.item.bucket_quota.enabled">
+                <div ng-if="selection.item.bucket_quota.enabled">
                     <dt>Maximum size:</dt>
                     <dd ng-show="selection.item.bucket_quota.max_size_unlimited">Unlimited</dd>
                     <dd ng-show="!selection.item.bucket_quota.max_size_unlimited"

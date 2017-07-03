@@ -37,10 +37,10 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
   $scope.error = false;
   $scope.filterConfig = {
     page: 0,
-    entries: null,
+    entries: undefined,
     search: "",
-    sortfield: null,
-    sortorder: null
+    sortfield: undefined,
+    sortorder: undefined
   };
   $scope.selection = {};
   $scope.tabData = {

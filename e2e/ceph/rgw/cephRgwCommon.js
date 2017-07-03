@@ -13,14 +13,6 @@ var CephRgwCommons = function(){
   this.addCapBtn = element(by.css('.tc_addCapButton'));
   this.submitCapBtn = element(by.css('.tc_submitCapButton'));
 
-  this.userDetailAttributes = [
-    'Username',
-    'Full name',
-    'Email address',
-    'Suspended',
-    'Maximum buckets'
-  ];
-
   this.addUser = function() {
     element(by.css('.tc_addUser')).click();
     browser.sleep(helpers.configs.sleep);
