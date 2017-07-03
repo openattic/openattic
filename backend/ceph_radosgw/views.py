@@ -37,6 +37,8 @@ def proxy_view(request, path):
                                                   request.body)
         return HttpResponse(result, status=200)
     except RequestException as e:
+        if not e.status_code:
+            raise Exception(str(e))
         return HttpResponse(e.content, status=e.status_code)
     except RGWClient.NoCredentialsException:
         return NoCredentialsResponse()
@@ -56,6 +58,8 @@ def bucket_create(request):
         result = RGWClient.instance(params['uid']).create_bucket(params['bucket'])
         return HttpResponse(result, status=200)
     except RequestException as e:
+        if not e.status_code:
+            raise Exception(str(e))
         return HttpResponse(e.content, status=e.status_code)
     except RGWClient.NoCredentialsException:
         return NoCredentialsResponse()
