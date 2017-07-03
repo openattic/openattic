@@ -37,10 +37,10 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
   $scope.error = false;
   $scope.filterConfig = {
     page: 0,
-    entries: null,
+    entries: undefined,
     search: "",
-    sortfield: null,
-    sortorder: null
+    sortfield: undefined,
+    sortorder: undefined
   };
   $scope.selection = {};
   $scope.tabData = {

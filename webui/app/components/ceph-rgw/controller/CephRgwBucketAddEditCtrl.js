@@ -104,13 +104,6 @@ app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParam
   };
 
   /**
-   * Execute action if the 'Cancel' button has been pressed.
-   */
-  $scope.cancelAction = function () {
-    $scope.goToListView();
-  };
-
-  /**
    * Helper function that executes all requests.
    * @param bucketForm The HTML formular.
    */
