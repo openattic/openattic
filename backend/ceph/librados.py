@@ -166,7 +166,7 @@ class Client(object):
     def change_pool_owner(self, pool_name, auid):
         return self.get_pool(pool_name).change_auid(auid)
 
-    def mon_command(self, cmd, argdict=None, output_format='json'):
+    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
@@ -177,6 +177,11 @@ class Client(object):
         :type cmd: str | dict[str, Any]
         :param argdict: Additional Command-Parameters
         :type argdict: dict[str, Any]
+        :param output_format: Format of the return value
+        :type output_format: str
+        :param default_return: Return value in case of an error - if the answer given by Ceph cluster can't be Json
+            decoded (only for output_format='json')
+        :type default_return: any
         :return: Return type is json (aka dict) if output_format == 'json' else str.
         :rtype: str | dict[str, Any]
 
@@ -194,7 +199,7 @@ class Client(object):
 
         if type(cmd) is str:
             return self.mon_command(
-                {'prefix': cmd}, argdict, output_format)
+                {'prefix': cmd}, argdict, output_format, default_return)
 
         elif type(cmd) is dict:
             (ret, out, err) = self._cluster.mon_command(
@@ -205,7 +210,15 @@ class Client(object):
                 timeout=self._default_timeout)
             logger.debug('mod command {}, {}, {}'.format(cmd, argdict, err))
             if ret == 0:
-                return json.loads(out) if output_format == "json" else out
+                if output_format == 'json':
+                    if out:
+                        return json.loads(out)
+                    else:
+                        logger.warning("Returned default value '{}' for command '{}' because the JSON object of the "
+                                       "Ceph cluster's command output '{}' couldn't be decoded."
+                                       .format(default_return, cmd, out))
+                        return default_return
+                return out
             else:
                 raise ExternalCommandError(err, cmd, argdict)
 
