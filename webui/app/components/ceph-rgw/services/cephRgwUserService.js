@@ -126,6 +126,11 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
         return [ data ];
       }
     },
+    enumerate: {
+      method: "GET",
+      url: globalConfig.API.URL + "rgw/metadata/user",
+      isArray: true
+    },
     filter: {
       url: globalConfig.API.URL + "rgw/metadata/user",
       method: "GET",

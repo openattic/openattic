@@ -32,9 +32,9 @@
 
 var app = angular.module("openattic.cephRgw");
 /**
- * Validate the user identifier.
+ * Validate the bucket name.
  */
-app.directive("cephRgwUserIdUnique", function ($q, cephRgwUserService) {
+app.directive("cephRgwBucketNameUnique", function ($q, cephRgwBucketService) {
   return {
     // Restrict to an attribute type.
     restrict: "A",
@@ -45,7 +45,7 @@ app.directive("cephRgwUserIdUnique", function ($q, cephRgwUserService) {
     // attrs = A dictionary of attributes on the element
     // ctrl  = The controller for ngModel
     link: function (scope, elem, attrs, ctrl) {
-      ctrl.$asyncValidators.cephRgwUserIdUnique = function (modelValue, viewValue) {
+      ctrl.$asyncValidators.cephRgwBucketNameUnique = function (modelValue, viewValue) {
         var value = modelValue || viewValue;
         var deferred = $q.defer();
         if (ctrl.$isEmpty(value) || elem[0].disabled || elem[0].readOnly) {
@@ -53,10 +53,10 @@ app.directive("cephRgwUserIdUnique", function ($q, cephRgwUserService) {
           // is disabled/read-only.
           deferred.resolve();
         } else {
-          cephRgwUserService.query({"uid": value})
+          cephRgwBucketService.query({"bucket": value})
             .$promise
             .then(function (res) {
-              // Does any user with the given UID exist?
+              // Does any bucket with the given name exist?
               if (res.length === 0) {
                 // No, mark the field as valid.
                 deferred.resolve();
@@ -66,7 +66,7 @@ app.directive("cephRgwUserIdUnique", function ($q, cephRgwUserService) {
               }
             })
             .catch(function (error) {
-              // Display an error toasty for all errors except whether the user does not
+              // Display an error toasty for all errors except whether the bucket does not
               // exist (the Admin Ops API returns a 404 in this case).
               if (angular.isObject(error) && (error.status === 404)) {
                 error.preventDefault();

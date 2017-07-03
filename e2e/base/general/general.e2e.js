@@ -11,8 +11,8 @@ describe('General', function(){
     'ceph_nodes',
     'ceph_iscsi',
     'ceph_nfs',
-    'ceph_crushmap',
     'ceph_rgw',
+    'ceph_crushmap',
     'system'
   ];
   var subMenusItems = [{
@@ -21,9 +21,11 @@ describe('General', function(){
     url: '/openattic/#/ceph/rgw/',
     subitems: {
       users: element(by.css('.tc_submenuitem_ceph_rgw_users')),
+      buckets: element(by.css('.tc_submenuitem_ceph_rgw_buckets'))
     },
     order: [
-      'users'
+      'users',
+      'buckets'
     ]
   },{
     name: 'system',
