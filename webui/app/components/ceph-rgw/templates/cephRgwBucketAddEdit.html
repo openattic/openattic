@@ -74,10 +74,10 @@
                             <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
                             <select class="form-control"
                                     ng-model="bucket.owner"
-                                    ng-required="!editing"
                                     ng-options="owner for owner in owners"
                                     name="owner"
-                                    id="owner">
+                                    id="owner"
+                                    required>
                                 <option value="">-- Select a user --</option>
                             </select>
                         </div>
