@@ -76,19 +76,17 @@ describe('ceph rgw buckets', function(){
     expect(cells.get(2).getText()).toEqual('admin');
   });
 
-  cephRgwCommons.bucketDetailAttributes.forEach(function(attr) {
-    it('should display "' +  attr + '" in the details of the bucket', function(){
-      var row = helpers.get_list_element(testBucket.name);
-      // Deselect the row if it is already selected, otherwise the details
-      // are not shown.
-      if (helpers.hasClass(row, 'info')) {
-        row.all(by.tagName('input')).click();
-      }
-      // Finally select the row to display the details.
-      row.click();
-      expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/details');
-      expect(element(by.cssContainingText('dt', attr + ':')).isDisplayed()).toBe(true);
-    });
+  it('should display the details of the bucket', function(){
+    helpers.get_list_element(testBucket.name).click();
+    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/details');
+    expect(element(by.cssContainingText('dt', 'Name:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Id:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Owner:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Marker:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Maximum marker:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Version:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Master version:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Modification time:')).isDisplayed()).toBe(true);
   });
 
   it('should change owner (owner=tuxdoe)', function(){

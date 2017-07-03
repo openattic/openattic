@@ -20,18 +20,6 @@ var CephRgwCommons = function(){
     'Suspended',
     'Maximum buckets'
   ];
-  this.bucketDetailAttributes = [
-    'Name',
-    'Id',
-    'Owner',
-//  'Pool',
-//  'Index pool',
-    'Marker',
-    'Maximum marker',
-    'Version',
-    'Master version',
-    'Modification time'
-  ];
 
   this.addUser = function() {
     element(by.css('.tc_addUser')).click();
