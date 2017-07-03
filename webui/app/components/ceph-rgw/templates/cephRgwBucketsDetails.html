@@ -25,26 +25,5 @@
             <dt>Modification time:</dt>
             <dd ng-bind="selection.item.mtime"></dd>
         </dl>
-        <div ng-show="selection.item.bucket_quota">
-            <legend>Bucket quota</legend>
-            <dl class="dl-horizontal">
-                <div ng-show="!selection.item.bucket_quota.enabled">
-                    <dt>Maximum size:</dt>
-                    <dd>Disabled</dd>
-                    <dt>Maximum objects:</dt>
-                    <dd>Disabled</dd>
-                </div>
-                <div ng-show="selection.item.bucket_quota.enabled">
-                    <dt>Maximum size:</dt>
-                    <dd ng-show="selection.item.bucket_quota.max_size_unlimited">Unlimited</dd>
-                    <dd ng-show="!selection.item.bucket_quota.max_size_unlimited"
-                        ng-bind="selection.item.bucket_quota.max_size"></dd>
-                    <dt>Maximum objects:</dt>
-                    <dd ng-show="selection.item.bucket_quota.max_objects_unlimited">Unlimited</dd>
-                    <dd ng-show="!selection.item.bucket_quota.max_objects_unlimited"
-                        ng-bind="selection.item.bucket_quota.max_objects"></dd>
-                </div>
-            </dl>
-        </div>
     </div>
 </div>
