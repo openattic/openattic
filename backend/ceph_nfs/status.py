@@ -66,7 +66,7 @@ def check_deepsea_nfs_api(fsid):
                 if not RGWClient.admin_instance().is_service_online():
                     raise UnavailableModule(Reason.OPENATTIC_NFS_NO_RGW,
                                             "unexpected output")
-            except RGWClient.NoCredentialsException as e:
+            except (RGWClient.NoCredentialsException, RequestException) as e:
                 raise UnavailableModule(Reason.OPENATTIC_NFS_NO_RGW, str(e))
     except RequestException as e:
         if e.status_code:
