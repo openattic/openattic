@@ -63,6 +63,12 @@ app.directive("tabView", function () {
       });
       tabViewService.setScope($scope);
       $scope.changeTab = tabViewService.changeTab;
+
+      $scope.showTabSet = function () {
+        return Object.keys($scope.tabData.tabs).filter(function (tabName) {
+          return $scope.$eval($scope.tabData.tabs[tabName].show);
+        }).length > 1;
+      };
     }
   };
 });

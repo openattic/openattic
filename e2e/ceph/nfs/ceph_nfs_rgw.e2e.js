@@ -38,7 +38,7 @@ describe('ceph nfs', function(){
   it('should display added export details', function(){
     table.clickRowByPath('e2e-rgw-add');
     expect(table.rows.get(0).getText()).toBe('e2e-rgw-add');
-    expect(table.detailsTab.isDisplayed()).toBe(true);
+    expect(table.detailsTab.isDisplayed()).toBe(false);
     expect(details.panelTitle.getText()).toMatch(/Details of .*:e2e-rgw-add/);
     expect(details.fsal.getText()).toBe('Object Gateway');
     expect(details.path.getText()).toBe('e2e-rgw-add');

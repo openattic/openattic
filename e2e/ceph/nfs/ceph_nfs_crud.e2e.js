@@ -47,7 +47,7 @@ describe('ceph nfs', function(){
   it('should display added export details', function(){
     table.clickRowByPath('/e2e/cfs-add');
     expect(table.rows.get(0).getText()).toBe('/e2e/cfs-add');
-    expect(table.detailsTab.isDisplayed()).toBe(true);
+    expect(table.detailsTab.isDisplayed()).toBe(false);
     expect(details.panelTitle.getText()).toMatch(/Details of .*:\/e2e\/cfs-add/);
     expect(details.fsal.getText()).toBe('CephFS');
     expect(details.path.getText()).toBe('/e2e/cfs-add');
@@ -81,7 +81,7 @@ describe('ceph nfs', function(){
   it('should display edited export details', function(){
     table.clickRowByPath('/e2e/cfs-edit');
     expect(table.rows.get(0).getText()).toBe('/e2e/cfs-edit');
-    expect(table.detailsTab.isDisplayed()).toBe(true);
+    expect(table.detailsTab.isDisplayed()).toBe(false);
     expect(details.panelTitle.getText()).toMatch(/Details of .*:\/e2e\/cfs-edit/);
     expect(details.fsal.getText()).toBe('CephFS');
     expect(details.path.getText()).toBe('/e2e/cfs-edit');
@@ -116,7 +116,7 @@ describe('ceph nfs', function(){
   it('should display cloned target details', function(){
     table.clickRowByPath('/e2e/cfs-clone');
     expect(table.rows.get(0).getText()).toBe('/e2e/cfs-clone');
-    expect(table.detailsTab.isDisplayed()).toBe(true);
+    expect(table.detailsTab.isDisplayed()).toBe(false);
     expect(details.panelTitle.getText()).toMatch(/Details of .*:\/e2e\/cfs-clone/);
     expect(details.fsal.getText()).toBe('CephFS');
     expect(details.path.getText()).toBe('/e2e/cfs-clone');
