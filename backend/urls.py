@@ -27,6 +27,8 @@ from rest_framework.authtoken import views
 
 from views import AuthView
 
+from module_status import StatusView
+
 def _get_openattic_apps():
     from os.path import commonprefix
     from django.conf import settings
@@ -50,6 +52,9 @@ urlpatterns = [
     # we need a second URL for the do_login view which can be configured using an Apache
     # <Location> directive to authenticate using Kerberos
     (r'^accounts/kerblogin.js$', 'views.do_login',  {}, 'kerblogin' ),
+
+    # module status service
+    (r'^api/status/(?P<module_name>[^/]+)', StatusView.as_view(), {}, 'module_status'),
 ]
 
 for app in settings.INSTALLED_MODULES:
@@ -60,6 +65,7 @@ for app in settings.INSTALLED_MODULES:
     else:
         if hasattr(module.urls, "urlpatterns"):
             urlpatterns += module.urls.urlpatterns
+
 
 if "rosetta" in settings.INSTALLED_APPS:
     urlpatterns.append( ( r'rosetta/', include( 'rosetta.urls' ) ) )
