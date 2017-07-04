@@ -13,14 +13,14 @@
 """
 import logging
 from awsauth import S3Auth
-from ceph_radosgw.conf import settings
+from oa_settings import Settings, SettingsListener
 from deepsea import DeepSea
 from rest_client import RestClient, RequestException
 
 logger = logging.getLogger(__name__)
 
 
-class RGWClient(RestClient):
+class RGWClient(RestClient, SettingsListener):
     _SYSTEM_USERID = None
     _host = None
     _port = None
@@ -33,17 +33,17 @@ class RGWClient(RestClient):
 
     @staticmethod
     def _load_settings():
-        if all((settings.RGW_API_HOST, settings.RGW_API_PORT, settings.RGW_API_SCHEME,
-                settings.RGW_API_ADMIN_RESOURCE, settings.RGW_API_ACCESS_KEY,
-                settings.RGW_API_SECRET_KEY)):
+        if all((Settings.RGW_API_HOST, Settings.RGW_API_PORT, Settings.RGW_API_SCHEME,
+                Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_ACCESS_KEY,
+                Settings.RGW_API_SECRET_KEY)):
             logger.info("Using local RGW settings to connect to RGW REST API")
             credentials = {
-                'host': settings.RGW_API_HOST,
-                'port': settings.RGW_API_PORT,
-                'scheme': settings.RGW_API_SCHEME,
-                'user_id': settings.RGW_API_ADMIN_RESOURCE,
-                'access_key': settings.RGW_API_ACCESS_KEY,
-                'secret_key': settings.RGW_API_SECRET_KEY
+                'host': Settings.RGW_API_HOST,
+                'port': Settings.RGW_API_PORT,
+                'scheme': Settings.RGW_API_SCHEME,
+                'user_id': Settings.RGW_API_ADMIN_RESOURCE,
+                'access_key': Settings.RGW_API_ACCESS_KEY,
+                'secret_key': Settings.RGW_API_SECRET_KEY
             }
         else:
             try:
@@ -83,7 +83,7 @@ class RGWClient(RestClient):
         return RGWClient.instance(RGWClient._SYSTEM_USERID)
 
     def __init__(self, userid, access_key, secret_key, host=None, port=None, ssl=False):
-        if not RGWClient._host:
+        if not host and not RGWClient._host:
             RGWClient._load_settings()
         host = host if host else RGWClient._host
         port = port if port else RGWClient._port
@@ -104,6 +104,10 @@ class RGWClient(RestClient):
         else:
             raise RequestException('Authentication failed for the "{}" user: wrong credentials'
                                    .format(self.userid), status_code=401)
+
+    def settings_changed_handler(self):
+        logger.debug("RGW Client was notified that settings changed!")
+        RGWClient._user_instances = {}
 
     @RestClient.requires_login
     @RestClient.api_get('/', resp_structure='[0] > ID')
