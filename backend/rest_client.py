@@ -19,6 +19,7 @@ import logging
 import re
 import requests
 from requests import ConnectionError
+from requests.packages.urllib3.exceptions import SSLError
 
 logger = logging.getLogger(__name__)
 
@@ -344,18 +345,24 @@ class RestClient(object):
                                        .format(self.client_name, resp.status_code),
                                        resp.status_code, resp.content)
         except ConnectionError as ex:
-            if len(ex.args) > 0:
-                match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
-                if match:
-                    errno = match.group(1)
-                    strerror = match.group(2)
-                    logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
-                                 self.client_name, method.upper(), errno, strerror)
-                else:
+            if ex.args:
+                if isinstance(ex.args[0], SSLError):
                     errno = "n/a"
-                    strerror = "n/a"
-                    logger.error("%s REST API failed %s, connection error.",
+                    strerror = "SSL error. Probably trying to access a non SSL connection."
+                    logger.error("%s REST API failed %s, SSL error.",
                                  self.client_name, method.upper())
+                else:
+                    match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
+                    if match:
+                        errno = match.group(1)
+                        strerror = match.group(2)
+                        logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
+                                     self.client_name, method.upper(), errno, strerror)
+                    else:
+                        errno = "n/a"
+                        strerror = "n/a"
+                        logger.error("%s REST API failed %s, connection error.",
+                                     self.client_name, method.upper())
             else:
                 errno = "n/a"
                 strerror = "n/a"
