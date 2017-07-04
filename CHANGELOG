@@ -21,6 +21,10 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend: Gracefully handle not properly configured modules (OP-2362)
+* WebUI: Gracefully handle not properly configured modules (OP-2363)
+* WebUI/QA: Handling of unsaved changes dialog (OP-2189)
+* WebUI: Add UI to manage Object Gateway buckets (OP-2368)
 
 Changed
 ~~~~~~
@@ -33,13 +37,18 @@ Changed
 * WebUI: Replaces "clusterId" usage with "fsid" (OP-2354)
 * WebUI: Manage service button moved to datatable toolbar for both NFS and 
   iSCSI (OP-2380)
+* WebUI: Hide the details tabset if there is only one visible tab (OP-2393)
 * WebUI/Development: Added support for additional actions on datatable (OP-2380)
 * Backend: CephFS client API support for different Ceph clusters (OP-2371)
 
 Fixed
 ~~~~~
+* WebUI: Resets graph data if needed (OP-2358)
+* WebUI: Hiding graph loading error message if graph data is unavailable (OP-2002)
 * QA/Development: Fix JSON of e2e linter configuration (OP-2364)
 * Backend: Fix exception handling in the RGW backend (OP-2383)
+* Backend: Prevent the 'ValueError: No JSON object could be decoded' error if 
+  the result value of a mon_command is an empty string (OP-2345)
 
 [3.2.0] - 2017-06-22
 --------------------

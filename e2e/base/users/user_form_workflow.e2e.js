@@ -12,10 +12,8 @@ describe('should test the user form', function(){
   });
 
   beforeEach(function(){
-    browser.setLocation('users').then(function(){
-      helpers.check_form();
-      element(by.css('.tc_addUser')).click();
-    });
+    helpers.setLocation('users');
+    element(by.css('.tc_addUser')).click();
   });
 
   it('Should have the title "Create User:"', function(){
@@ -51,7 +49,7 @@ describe('should test the user form', function(){
   });
 
   it('should not have a checkbox title "Is active", while editing the own profile', function(){
-    browser.setLocation('users');
+    helpers.setLocation('users');
     element(by.cssContainingText('tr', 'openattic')).element(by.css('a')).click();
     expect(element(by.id('userActive')).isPresent()).toBe(false);
   });
@@ -105,8 +103,7 @@ describe('should test the user form', function(){
   });
 
   it('should navigate to the user overview when hitting the back button', function(){
-    var backButton = element(by.css('.tc_backButton'));
-    backButton.click();
+    helpers.leaveForm();
     expect(element(by.css('.tc_oadatatable_users')).isDisplayed()).toBe(true);
   });
 

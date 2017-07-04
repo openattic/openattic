@@ -33,6 +33,7 @@
 var app = angular.module("openattic.graph");
 app.service("graphFactory", function (graphConfigService, graphOptionsService) {
   var graphConfig = {};
+  var self = this;
 
   /**
    * Sets up the graph objects.
@@ -74,6 +75,15 @@ app.service("graphFactory", function (graphConfigService, graphOptionsService) {
     });
   };
 
+  this.emptyGraphs = function () {
+    angular.forEach(graphConfig, function (graph) {
+      if (angular.isArray(graph.data) && graph.data.length > 0) {
+        graph.data = [];
+        graph.api.update();
+      }
+    });
+  };
+
   /*
    * Generates graph out of the API response.
    *
@@ -86,6 +96,9 @@ app.service("graphFactory", function (graphConfigService, graphOptionsService) {
    * @param {number[][]} item.values - Monitored values.
    */
   this.setUpGraphs = function (items) {
+    if (angular.isUndefined(items)) {
+      return self.emptyGraphs();
+    }
     angular.forEach(graphConfig, function (graph) {
       graph.data = items.filter(function (item) {
         return angular.isObject(item) && item.hasOwnProperty("key") && graph.bindings.indexOf(item.key) !== -1;

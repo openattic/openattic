@@ -1,4 +1,4 @@
-<ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getIscsiList()"></ceph-cluster-dropdown>
+<oa-ceph-module-loader module="ceph_iscsi" cluster="cluster" registry="registry" on-cluster-change="getIscsiList()">
 
 <div class="panel panel-default" ng-show="error">
   <div class="panel-heading">
@@ -13,7 +13,8 @@
                   ng-show="!error && !iscsi.$resolved"></oa-loading-panel>
 
 <oadatatable ng-show="!error && iscsi.results" data="iscsi" class="oadatatable tc_cephIscsiTable"
-             filter-config="filterConfig" selection="selection" special="deployed">
+             filter-config="filterConfig" special="deployed"
+             selection="selection" on-selection-change="onSelectionChange(selection)" >
   <actions>
     <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()"
        ng-hide="hasSelection || multiSelection">
@@ -116,3 +117,4 @@
 
 <div id="more" ui-view="tab">
 </div>
+</oa-ceph-module-loader>

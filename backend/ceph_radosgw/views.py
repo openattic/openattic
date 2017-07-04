@@ -11,11 +11,22 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-import json
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from ceph_radosgw.rgw_client import RGWClient
 from rest_client import RequestException
+
+
+class NoCredentialsResponse(HttpResponse):
+    def __init__(self):
+        content = json.dumps({
+            'Code': 'ConfigurationIncomplete',
+            'Message': 'Rados Gateway seems to be either unconfigured or misconfigured. '
+                       'Please check your configuration or contact your system administrator.'
+        })
+        super(NoCredentialsResponse, self).__init__(content,
+                                                    content_type='application/json',
+                                                    status=500)
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
@@ -26,13 +37,29 @@ def proxy_view(request, path):
                                                   request.body)
         return HttpResponse(result, status=200)
     except RequestException as e:
+        if not e.status_code:
+            raise Exception(str(e))
         return HttpResponse(e.content, status=e.status_code)
     except RGWClient.NoCredentialsException:
-        content = {
-            'Code': 'ConfigurationIncomplete',
-            'Message': 'Rados Gateway seems to be either unconfigured or misconfigured. '
-                       'Please check your configuration or contact your system administrator.'
-        }
-        response = HttpResponse(json.dumps(content), status=500)
-        response['Content-Type'] = 'application/json'
-        return response
+        return NoCredentialsResponse()
+
+
+@api_view(['PUT'])
+def bucket_create(request):
+
+    try:
+        params = request.GET.copy()
+
+        if 'bucket' not in params:
+            raise ValidationError('No bucket parameter provided')
+        if 'uid' not in params:
+            raise ValidationError('No uid parameter provided')
+
+        result = RGWClient.instance(params['uid']).create_bucket(params['bucket'])
+        return HttpResponse(result, status=200)
+    except RequestException as e:
+        if not e.status_code:
+            raise Exception(str(e))
+        return HttpResponse(e.content, status=e.status_code)
+    except RGWClient.NoCredentialsException:
+        return NoCredentialsResponse()

@@ -1,0 +1,25 @@
+<oa-delete-confirmation-modal on-confirm="delete()"
+                              on-cancel="cancel()"
+                              title="{{ (buckets.length > 1) ? 'Delete buckets' : 'Delete bucket' }}">
+  <!-- single bucket -->
+  <div ng-if="buckets.length === 1">
+    <p>
+      You are about to delete the bucket <strong>{{buckets[0].bucket}}</strong>.
+    </p>
+  </div>
+  <!-- end single bucket -->
+
+  <!-- multiple buckets -->
+  <div ng-if="buckets.length > 1">
+    <p>
+      You are about to delete multiple buckets.
+    </p>
+    <span class="text-danger">The following buckets will be deleted:</span>
+      <ul class="text-danger">
+        <li ng-repeat="bucket in buckets | orderBy:'+bucket'">
+          {{bucket.bucket}}
+        </li>
+      </ul>
+  </div>
+  <!-- end multiple buckets -->
+</oa-delete-confirmation-modal>

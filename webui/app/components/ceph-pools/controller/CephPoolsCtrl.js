@@ -130,7 +130,9 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     $scope.getPoolList();
   }, true);
 
-  $scope.$watchCollection("selection", function (selection) {
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+
     var item = selection.item;
     var items = selection.items;
 
@@ -149,7 +151,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
         $scope.changeTab($state.current.name);
       }
     }
-  });
+  };
 
   $scope.addAction = function () {
     $state.go("ceph-pools-add", {
