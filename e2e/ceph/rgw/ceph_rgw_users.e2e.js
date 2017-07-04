@@ -105,9 +105,11 @@ describe('ceph rgw users', function(){
   it('should display the details of "herpderp"', function(){
     helpers.get_list_element(testUser1.user_id).click();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
-    cephRgwCommons.userDetailAttributes.forEach(function(attr){
-      expect(element(by.cssContainingText('dt', attr + ':')).isDisplayed()).toBe(true);
-    });
+    expect(element(by.cssContainingText('dt', 'Username:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Full name:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Email address:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Suspended:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Maximum buckets:')).isDisplayed()).toBe(true);
   });
 
   it('should check if user/bucket quota is set for "herpderp"', function(){
