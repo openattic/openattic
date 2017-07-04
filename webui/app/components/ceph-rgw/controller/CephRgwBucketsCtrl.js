@@ -39,8 +39,8 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
     page: 0,
     entries: undefined,
     search: "",
-    sortfield: undefined,
-    sortorder: undefined
+    sortfield: "bucket",
+    sortorder: "ASC"
   };
   $scope.selection = {};
   $scope.tabData = {
@@ -63,7 +63,14 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
   tabViewService.setScope($scope);
   $scope.changeTab = tabViewService.changeTab;
 
-  $scope.$watch("filterConfig", function (newValue, oldValue) {
+  // Apply filter parameters given via non-URL route parameters.
+  Object.keys($scope.filterConfig).forEach(function (param) {
+    if (angular.isDefined($stateParams[param])) {
+      $scope.filterConfig[param] = $stateParams[param];
+    }
+  });
+
+  $scope.$watch("filterConfig", function (newVal) {
     if (angular.equals(newValue, oldValue)) {
       return;
     }
