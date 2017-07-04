@@ -333,12 +333,6 @@ LOCALE_PATHS = (
 
 MPLCONFIGDIR = "/tmp/.matplotlib"
 
-SALT_API_HOST = 'salt'
-SALT_API_PORT = 8000
-SALT_API_USERNAME = 'admin'
-SALT_API_PASSWORD = 'admin'
-SALT_API_EAUTH = 'auto'
-
 
 # In `backend/nagios/conf/distro.py` there's basically the same parser, but used for a slightly
 # different purpose. This is just to mention that this code is somewhat duplicated. This comment may
