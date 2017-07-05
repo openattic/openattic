@@ -244,7 +244,7 @@ class CephOsdViewSet(NodbViewSet):
 
     The reply consists of the output of ```osd tree```.
     """
-    filter_fields = ("name", "id")
+    filter_fields = ("name", "id", "osd_objectstore")
     serializer_class = CephOsdSerializer
 
     def __init__(self, **kwargs):
