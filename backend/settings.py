@@ -436,6 +436,11 @@ def __loadmods__():
 __loadmods__()
 
 
+# Load OA module settings
+import oa_settings
+oa_settings.load_settings()
+
+
 # This enables developers and test systems to override settings in a non-versioned file.
 try:
     from settings_local import *
