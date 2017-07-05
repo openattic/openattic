@@ -63,8 +63,8 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
   tabViewService.setScope($scope);
   $scope.changeTab = tabViewService.changeTab;
 
-  $scope.$watch("filterConfig", function (newVal) {
-    if (newVal.entries === null) {
+  $scope.$watch("filterConfig", function (newValue, oldValue) {
+    if (angular.equals(newValue, oldValue)) {
       return;
     }
     cephRgwUserService.filter({
