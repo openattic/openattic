@@ -11,7 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import json
 from django.http import HttpResponse
+from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from ceph_radosgw.rgw_client import RGWClient
 from rest_client import RequestException
