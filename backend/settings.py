@@ -431,6 +431,7 @@ def __loadmods__():
 
     modprobe('django_extensions')
     modprobe('rosetta')
+    modprobe('oa_settings')
 
 
 __loadmods__()
