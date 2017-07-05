@@ -42,6 +42,9 @@ Changed
 * WebUI/Development: Added support for additional actions on datatable (OP-2380)
 * Backend: CephFS client API support for different Ceph clusters (OP-2371)
 * Backend: Added support for SSL error exception in REST Client class (OP-2407)
+* WebUI: Replaced Nagios Ceph pools graphs with Grafana graphs, because of a
+  better performance. Also, added a dedicated Grafana dashboard that can be
+  used when a openATTIC dashboard, with the name Grafana, is created (OP-829)
 
 Fixed
 ~~~~~
