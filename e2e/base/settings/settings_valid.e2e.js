@@ -29,7 +29,7 @@ describe('settings inputs validations', function(){
   });
 
   it('should validate salt api eauth', function(){
-    form.selectEauth('-- Select the eauth --');
+    form.selectEauth('-- Select the external auth system --');
     expect(form.saltApiEauthRequired.isDisplayed()).toBe(true);
 
     form.selectEauth('auto');

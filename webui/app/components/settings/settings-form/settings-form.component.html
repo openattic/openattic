@@ -20,12 +20,12 @@
       </div>
       <div class="panel-body">
 
-        <legend>Salt API</legend>
+        <legend>DeepSea / Salt REST API</legend>
 
         <!-- Salt API Host -->
         <div class="form-group"
              ng-class="{'has-error': (settingsForm.$submitted || settingsForm['saltApiHost'].$dirty) && settingsForm['saltApiHost'].$invalid}">
-          <label class="col-sm-3 control-label" for="saltApiHost">Host</label>
+          <label class="col-sm-3 control-label" for="saltApiHost">Hostname / IP Address</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" name="saltApiHost" id="saltApiHost"
                    ng-model="$ctrl.model.deepsea.host" ng-change="$ctrl.checkDeepSeaConnection()" required>
@@ -39,7 +39,7 @@
         <!-- Salt API Port -->
         <div class="form-group"
              ng-class="{'has-error': (settingsForm.$submitted || settingsForm['saltApiPort'].$dirty) && settingsForm['saltApiPort'].$invalid}">
-          <label class="col-sm-3 control-label" for="saltApiPort">Port</label>
+          <label class="col-sm-3 control-label" for="saltApiPort">TCP port</label>
           <div class="col-sm-9">
             <input type="number" class="form-control" name="saltApiPort" id="saltApiPort"
                    ng-model="$ctrl.model.deepsea.port" ng-change="$ctrl.checkDeepSeaConnection()" required>
@@ -53,7 +53,7 @@
         <!-- Salt API Eauth -->
         <div class="form-group"
              ng-class="{'has-error': (settingsForm.$submitted || settingsForm['saltApiEauth'].$dirty) && settingsForm['saltApiEauth'].$invalid}">
-          <label class="col-sm-3 control-label" for="saltApiEauth">Eauth</label>
+          <label class="col-sm-3 control-label" for="saltApiEauth">External Auth System</label>
           <div class="col-sm-9">
             <select class="form-control"
                     ng-model="$ctrl.model.deepsea.eauth"
@@ -62,7 +62,7 @@
                     id="saltApiEauth"
                     ng-change="$ctrl.checkDeepSeaConnection()"
                     required>
-              <option value="">-- Select the eauth --</option>
+              <option value="">-- Select the external auth system --</option>
             </select>
             <span class="help-block tc_saltApiEauthRequired"
                   ng-show="(settingsForm.$submitted || settingsForm['saltApiEauth'].$dirty) && settingsForm['saltApiEauth'].$error.required">
@@ -122,7 +122,7 @@
 
         <!-- Object Gateway Host -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="rgwApiHost">Host</label>
+          <label class="col-sm-3 control-label" for="rgwApiHost">Hostname / IP Address</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" name="rgwApiHost" id="rgwApiHost"
                    ng-model="$ctrl.model.rgw.host" ng-change="$ctrl.checkRgwConnection()"
@@ -132,7 +132,7 @@
 
         <!-- Object Gateway Port -->
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="rgwApiPort">Port</label>
+          <label class="col-sm-3 control-label" for="rgwApiPort">TCP port</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" name="rgwApiPort" id="rgwApiPort"
                    ng-model="$ctrl.model.rgw.port" ng-change="$ctrl.checkRgwConnection()"
