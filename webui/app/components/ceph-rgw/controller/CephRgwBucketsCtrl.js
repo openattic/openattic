@@ -63,8 +63,8 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
   tabViewService.setScope($scope);
   $scope.changeTab = tabViewService.changeTab;
 
-  $scope.$watch("filterConfig", function (newVal) {
-    if (newVal.entries === null) {
+  $scope.$watch("filterConfig", function (newValue, oldValue) {
+    if (angular.equals(newValue, oldValue)) {
       return;
     }
     cephRgwBucketService.filter({
