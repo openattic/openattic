@@ -21,6 +21,7 @@
   Caret
   Datatables
   FlexElement
+  Grafana
   Graph
   Gridster
   Progressbar
@@ -72,16 +73,16 @@ option {
   margin: 0;
 }
 .margin-left-md {
-  margin-left:15px
+  margin-left: 15px
 }
 .margin-right-md {
-  margin-right:15px
+  margin-right: 15px
 }
 .margin-right-sm {
-  margin-right:10px
+  margin-right: 10px
 }
 .margin-bottom-md {
-  margin-bottom:15px
+  margin-bottom: 15px
 }
 .no-padding {
   padding: 0;
@@ -980,6 +981,16 @@ h6{
 .flex-item-7 { -webkit-flex: 7; -moz-flex: 7; -ms-flex: 7; flex: 7; padding: 0 10px; }
 .flex-item-8 { -webkit-flex: 8; -moz-flex: 8; -ms-flex: 8; flex: 8; padding: 0 10px; }
 .flex-item-9 { -webkit-flex: 9; -moz-flex: 9; -ms-flex: 9; flex: 9; padding: 0 10px; }
+
+/* Grafana */
+.grafana-container {
+  margin-top: 20px;
+  height: 64px;
+  background:url(../images/loading.gif) center center no-repeat;
+}
+.grafana {
+  width: 100%;
+}
 
 /* Graph */
 .osd-widget-chart nvd3 .nvd3.nv-pie path {

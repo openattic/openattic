@@ -53,21 +53,13 @@ app.config(function ($stateProvider) {
           label: "Ceph OSDs"
         }
       })
-      .state("cephOsds.detail", {
+      .state("cephOsds.statistics", {
+        url: "/statistics",
         views: {
-          "tab": {templateUrl: "components/ceph-osd/templates/tab.html"}
+          "statistics": {templateUrl: "components/ceph-osd/templates/statistics.html"}
         },
         ncyBreadcrumb: {
           skip: true
-        }
-      })
-      .state("cephOsds.detail.status", {
-        url: "/status",
-        views: {
-          "tab-content": {templateUrl: "components/ceph-osd/templates/status.html"}
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} status"
         }
       });
 });

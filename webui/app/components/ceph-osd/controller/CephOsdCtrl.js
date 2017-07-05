@@ -88,23 +88,18 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
     $scope.getOsdList();
   }, true);
 
-  $scope.$watchCollection("selection", function (selection) {
-    var item = selection.item;
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+
     var items = selection.items;
 
-    $scope.multiSelection = Boolean(items);
-    $scope.hasSelection = Boolean(item);
-
-    if (!item && !items) {
+    if (!items || items.length !== 1) {
       $state.go("cephOsds");
       return;
     }
 
-    if (item) {
-      $state.go("cephOsds.detail.status", {
-        cephOsd: item.id,
-        "#"    : "more"
-      });
-    }
-  });
+    $state.go("cephOsds.statistics", {
+      "#": "more"
+    });
+  };
 });
