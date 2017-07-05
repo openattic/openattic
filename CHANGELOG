@@ -25,6 +25,7 @@ Added
 * WebUI: Gracefully handle not properly configured modules (OP-2363)
 * WebUI/QA: Handling of unsaved changes dialog (OP-2189)
 * WebUI: Add UI to manage Object Gateway buckets (OP-2368)
+* Backend: Implemented a proxy for the access to the Grafana API (OP-2344)
 
 Changed
 ~~~~~~
