@@ -29,10 +29,9 @@
           <div class="col-sm-9">
             <input type="text" class="form-control" name="saltApiHost" id="saltApiHost"
                    ng-model="$ctrl.model.deepsea.host" ng-change="$ctrl.checkDeepSeaConnection()" required>
-            <span class="help-block"
-                  ng-show="settingsForm.$submitted || settingsForm['saltApiHost'].$dirty">
-              <span class="tc_saltApiHostRequired"
-                    ng-show="settingsForm['saltApiHost'].$error.required">Required field</span>
+            <span class="help-block tc_saltApiHostRequired"
+                  ng-show="(settingsForm.$submitted || settingsForm['saltApiHost'].$dirty) && settingsForm['saltApiHost'].$error.required">
+              Required field
             </span>
           </div>
         </div>
@@ -44,10 +43,9 @@
           <div class="col-sm-9">
             <input type="number" class="form-control" name="saltApiPort" id="saltApiPort"
                    ng-model="$ctrl.model.deepsea.port" ng-change="$ctrl.checkDeepSeaConnection()" required>
-            <span class="help-block"
-                  ng-show="settingsForm.$submitted || settingsForm['saltApiPort'].$dirty">
-              <span class="tc_saltApiPortRequired"
-                    ng-show="settingsForm['saltApiPort'].$error.required">Required field</span>
+            <span class="help-block tc_saltApiPortRequired"
+                  ng-show="(settingsForm.$submitted || settingsForm['saltApiPort'].$dirty) && settingsForm['saltApiPort'].$error.required">
+              Required field
             </span>
           </div>
         </div>
@@ -66,10 +64,9 @@
                     required>
               <option value="">-- Select the eauth --</option>
             </select>
-            <span class="help-block"
-                  ng-show="settingsForm.$submitted || settingsForm['saltApiEauth'].$dirty">
-              <span class="tc_saltApiEauthRequired"
-                    ng-show="settingsForm['saltApiEauth'].$error.required">Required field</span>
+            <span class="help-block tc_saltApiEauthRequired"
+                  ng-show="(settingsForm.$submitted || settingsForm['saltApiEauth'].$dirty) && settingsForm['saltApiEauth'].$error.required">
+              Required field
             </span>
           </div>
         </div>
@@ -82,18 +79,23 @@
           <div class="col-sm-9">
             <input type="text" class="form-control" name="saltApiUsername" id="saltApiUsername"
                    ng-model="$ctrl.model.deepsea.username" ng-change="$ctrl.checkDeepSeaConnection()" required>
-            <span class="help-block"
-                  ng-show="settingsForm.$submitted || settingsForm['saltApiUsername'].$dirty">
-              <span class="tc_saltApiUsernameRequired"
-                    ng-show="settingsForm['saltApiUsername'].$error.required">Required field</span>
+            <span class="help-block tc_saltApiUsernameRequired"
+                  ng-show="(settingsForm.$submitted || settingsForm['saltApiUsername'].$dirty) && settingsForm['saltApiUsername'].$error.required">
+              Required field
             </span>
           </div>
         </div>
 
         <div class="pull-right">
-          <span ng-if="$ctrl.deepseaConnectionStatus.loading"><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection</span>
-          <span class="text-success tc_deepseaConnectionSuccess" ng-show="$ctrl.deepseaConnectionStatus.success === true"><i class="fa fa-check" aria-hidden="true"></i> Salt API connection successfull</span>
-          <span class="text-danger tc_deepseaConnectionFail" ng-show="$ctrl.deepseaConnectionStatus.success === false"><i class="fa fa-times" aria-hidden="true"></i> Salt API connection failed</span>
+          <span ng-if="$ctrl.deepseaConnectionStatus.loading">
+            <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection
+          </span>
+          <span class="text-success tc_deepseaConnectionSuccess" ng-show="$ctrl.deepseaConnectionStatus.success === true">
+            <i class="fa fa-check" aria-hidden="true"></i> Salt API connection successfull
+          </span>
+          <span class="text-danger tc_deepseaConnectionFail" ng-show="$ctrl.deepseaConnectionStatus.success === false">
+            <i class="fa fa-times" aria-hidden="true"></i> Salt API connection failed
+          </span>
         </div>
         <br>
         <div class="pull-right">
@@ -183,9 +185,15 @@
         </div>
 
         <div class="pull-right">
-          <span ng-if="$ctrl.rgwConnectionStatus.loading"><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection</span>
-          <span class="text-success tc_rgwConnectionSuccess" ng-show="$ctrl.rgwConnectionStatus.success === true"><i class="fa fa-check" aria-hidden="true"></i> Object Gateway API connection successfull</span>
-          <span class="text-danger tc_rgwConnectionFail" ng-show="$ctrl.rgwConnectionStatus.success === false"><i class="fa fa-times" aria-hidden="true"></i> Object Gateway API connection failed</span>
+          <span ng-if="$ctrl.rgwConnectionStatus.loading">
+            <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection
+          </span>
+          <span class="text-success tc_rgwConnectionSuccess" ng-show="$ctrl.rgwConnectionStatus.success === true">
+            <i class="fa fa-check" aria-hidden="true"></i> Object Gateway API connection successfull
+          </span>
+          <span class="text-danger tc_rgwConnectionFail" ng-show="$ctrl.rgwConnectionStatus.success === false">
+            <i class="fa fa-times" aria-hidden="true"></i> Object Gateway API connection failed
+          </span>
         </div>
         <br>
         <div class="pull-right">
