@@ -63,17 +63,21 @@ app.component("settingsForm",  {
       });
     };
 
+    var isAllDeepSeaPropsDefined = function (deepsea) {
+      return angular.isDefined(deepsea.host) &&
+        angular.isDefined(deepsea.port) &&
+        angular.isDefined(deepsea.eauth) &&
+        angular.isDefined(deepsea.username) &&
+        angular.isDefined(deepsea.password);
+    };
+
     var checkDeepSeaConnectionTimeout;
     self.checkDeepSeaConnection = function () {
       self.deepseaConnectionStatus = undefined;
       if (checkDeepSeaConnectionTimeout) {
         $timeout.cancel(checkDeepSeaConnectionTimeout);
       }
-      if (angular.isDefined(self.model.deepsea.host) &&
-          angular.isDefined(self.model.deepsea.port) &&
-          angular.isDefined(self.model.deepsea.eauth) &&
-          angular.isDefined(self.model.deepsea.username) &&
-          angular.isDefined(self.model.deepsea.password)) {
+      if (isAllDeepSeaPropsDefined(self.model.deepsea)) {
         self.deepseaConnectionStatus = {
           loading: true
         };
@@ -104,18 +108,22 @@ app.component("settingsForm",  {
       }
     };
 
+    var isAllRgwPropsDefined = function (rgw) {
+      return angular.isDefined(rgw.host) &&
+          angular.isDefined(rgw.port) &&
+          angular.isDefined(rgw.access_key) &&
+          angular.isDefined(rgw.secret_key) &&
+          angular.isDefined(rgw.user_id) &&
+          angular.isDefined(rgw.use_ssl);
+    };
+
     var checkRgwConnectionTimeout;
     self.checkRgwConnection = function () {
       self.rgwConnectionStatus = undefined;
       if (checkRgwConnectionTimeout) {
         $timeout.cancel(checkRgwConnectionTimeout);
       }
-      if (angular.isDefined(self.model.rgw.host) &&
-          angular.isDefined(self.model.rgw.port) &&
-          angular.isDefined(self.model.rgw.access_key) &&
-          angular.isDefined(self.model.rgw.secret_key) &&
-          angular.isDefined(self.model.rgw.user_id) &&
-          angular.isDefined(self.model.rgw.use_ssl)) {
+      if (isAllRgwPropsDefined(self.model.rgw)) {
         self.rgwConnectionStatus = {
           loading: true
         };

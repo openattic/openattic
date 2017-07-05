@@ -3,7 +3,7 @@
 var helpers = require('../../common.js');
 var SettingsForm = require('./SettingsForm');
 
-describe('settings', function(){
+describe('settings inputs validations', function(){
 
   var form = new SettingsForm();
 
