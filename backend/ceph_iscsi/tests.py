@@ -41,7 +41,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().post.side_effect = [login_resp, rest_iscsi]
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'admin', 'admin')
             res = api.iscsi_interfaces()
 
             self.assertTrue(mock_requests_session().post.called)

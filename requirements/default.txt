@@ -21,6 +21,7 @@ pexpect==4.0.1
 pickleshare==0.7.2
 ptyprocess==0.5.1
 python-dateutil==2.5.3
+python-pyinotify==0.9.6
 python-memcached==1.57
 pytz==2016.4
 pyudev==0.16.1

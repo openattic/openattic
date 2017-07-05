@@ -280,6 +280,7 @@ class _Request(object):
 
 class RestClient(object):
     def __init__(self, host, port, client_name=None, ssl=False, auth=None):
+        super(RestClient, self).__init__()
         self.client_name = client_name if client_name else ''
         self.base_url = 'http{}://{}:{}'.format('s' if ssl else '', host, port)
         logger.debug("REST service base URL: %s", self.base_url)
@@ -313,7 +314,7 @@ class RestClient(object):
                     if isinstance(e, BadResponseFormatException):
                         raise e
                     retries -= 1
-                    if e.status_code not in  [401, 403] or retries == 0:
+                    if e.status_code not in [401, 403] or retries == 0:
                         raise e
                     self._reset_login()
         return func_wrapper

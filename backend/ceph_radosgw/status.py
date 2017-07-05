@@ -16,7 +16,7 @@ import logging
 from deepsea import DeepSea
 from module_status import Reason, check_deepsea_connection, UnavailableModule
 from rest_client import RequestException
-from ceph_radosgw.conf import settings
+from oa_settings import Settings
 from ceph_radosgw.rgw_client import RGWClient
 
 
@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 
 
 def check_rgw_credentials():
-    if not all((settings.RGW_API_HOST, settings.RGW_API_PORT, settings.RGW_API_SCHEME,
-                settings.RGW_API_ADMIN_RESOURCE, settings.RGW_API_ACCESS_KEY,
-                settings.RGW_API_SECRET_KEY)):
+    if not all((Settings.RGW_API_HOST, Settings.RGW_API_PORT, Settings.RGW_API_SCHEME,
+                Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_ACCESS_KEY,
+                Settings.RGW_API_SECRET_KEY)):
         try:
             check_deepsea_connection()
         except UnavailableModule as ex:
