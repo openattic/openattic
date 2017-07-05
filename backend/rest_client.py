@@ -19,7 +19,11 @@ import logging
 import re
 import requests
 from requests import ConnectionError
-from requests.packages.urllib3.exceptions import SSLError
+try:
+    from requests.packages.urllib3.exceptions import SSLError
+except ImportError:
+    from urllib3.exceptions import SSLError
+
 
 logger = logging.getLogger(__name__)
 
