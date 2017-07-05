@@ -40,6 +40,7 @@ Changed
 * WebUI: Hide the details tabset if there is only one visible tab (OP-2393)
 * WebUI/Development: Added support for additional actions on datatable (OP-2380)
 * Backend: CephFS client API support for different Ceph clusters (OP-2371)
+* Backend: Added support for SSL error exception in REST Client class (OP-2407)
 
 Fixed
 ~~~~~
