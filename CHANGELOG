@@ -27,6 +27,7 @@ Added
 * WebUI: Add UI to manage Object Gateway buckets (OP-2368)
 * Backend: Implemented a proxy for the access to the Grafana API (OP-2344)
 * Backend: Implementation of module settings support (OP-2225)
+* WebUI: Make the Salt REST API and RGW configurable from the UI (OP-2226)
 
 Changed
 ~~~~~~
