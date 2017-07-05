@@ -93,6 +93,7 @@ Requires: policycoreutils
 Requires: policycoreutils-python
 Requires: postgresql
 Requires: python-requests-aws
+Requires: python-pyinotify
 Requires: selinux-tools
 Requires(pre): shadow
 
