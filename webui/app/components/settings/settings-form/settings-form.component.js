@@ -47,6 +47,7 @@ app.component("settingsForm",  {
       managed_by_deepsea: true
     };
     self.rgwDeepseaSettings = angular.copy(defaultRgwDeepseaSettings);
+    self.managedByDeepSeaEnabled = true;
 
     self.deepseaConnectionStatus = undefined;
     self.rgwConnectionStatus = undefined;
@@ -56,6 +57,9 @@ app.component("settingsForm",  {
       .$promise
       .then(function (res) {
         self.model = res;
+        if (!self.model.rgw.managed_by_deepsea) {
+          self.managedByDeepSeaEnabled = false;
+        }
         self.checkDeepSeaConnection();
       })
       .catch(function (error) {
@@ -93,11 +97,17 @@ app.component("settingsForm",  {
               .then(function (res) {
                 if (res.success) {
                   self.rgwDeepSeaSettings = res.rgw;
+                  self.managedByDeepSeaEnabled = true;
                   angular.extend(self.rgwDeepSeaSettings, defaultRgwDeepseaSettings);
+                } else {
+                  self.model.rgw.managed_by_deepsea = false;
+                  self.managedByDeepSeaEnabled = false;
                 }
                 self.rgwManagedByDeepSeaChangeHandler();
               });
             } else {
+              self.model.rgw.managed_by_deepsea = false;
+              self.managedByDeepSeaEnabled = false;
               self.rgwManagedByDeepSeaChangeHandler();
             }
           })
