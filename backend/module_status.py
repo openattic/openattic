@@ -129,13 +129,16 @@ class StatusView(APIView):
     def get(self, request, module_name):
         if module_name:
             try:
-                module = import_module('{}.status'.format(module_name))
+                import_module(module_name)
             except ImportError:
                 return HttpResponse('Module "{}" not found'.format(module_name), status=404)
-        try:
-            module.status(request.GET)
-            return available_response()
-        except AttributeError:
-            return available_response()
-        except UnavailableModule as ex:
-            return unavailable_response(ex.reason, ex.message)
+
+            try:
+                module = import_module('{}.status'.format(module_name))
+                module.status(request.GET)
+                return available_response()
+            except ImportError:
+                return available_response()
+            except UnavailableModule as ex:
+                return unavailable_response(ex.reason, ex.message)
+
