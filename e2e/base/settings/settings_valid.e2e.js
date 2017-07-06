@@ -45,6 +45,8 @@ describe('settings inputs validations', function(){
   });
 
   it('should disable object gateway fields', function(){
+    browser.refresh();
+
     form.checkManagedByDeepSea(true);
     expect(form.rgwHost.isEnabled()).toBe(false);
     expect(form.rgwPort.isEnabled()).toBe(false);

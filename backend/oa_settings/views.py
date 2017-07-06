@@ -111,6 +111,9 @@ def _check_rest_client_connection(restclient):
                 message = '{} return HTTP code {}'.format(restclient.client_name, ex.status_code)
         else:
             message = 'Connection error: (errno {}) {}'.format(ex.conn_errno, ex.conn_strerror)
+    except RGWClient.NoCredentialsException:
+        return {'success': False,
+                'message': '{} Authentication Failed'.format(restclient.client_name)}
     return {'success': False, 'message': message}
 
 
