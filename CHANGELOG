@@ -48,6 +48,7 @@ Changed
 * WebUI: Replaced Nagios Ceph pools graphs with Grafana graphs, because of a
   better performance. Also, added a dedicated Grafana dashboard that can be
   used when a openATTIC dashboard, with the name Grafana, is created (OP-829)
+  Test, that have failed after the changes, has been fixed (OP-2406, OP-2413)
 
 Fixed
 ~~~~~
