@@ -44,5 +44,14 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           label: "Ceph Nodes"
         }
+      })
+      .state("cephNodes.statistics", {
+        url: "/statistics",
+        views: {
+          "statistics": {templateUrl: "components/ceph-nodes/templates/statistics.html"}
+        },
+        ncyBreadcrumb: {
+          skip: true
+        }
       });
 });

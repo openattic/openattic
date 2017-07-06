@@ -25,6 +25,9 @@ Added
 * WebUI: Gracefully handle not properly configured modules (OP-2363)
 * WebUI/QA: Handling of unsaved changes dialog (OP-2189)
 * WebUI: Add UI to manage Object Gateway buckets (OP-2368)
+* Backend: Implemented a proxy for the access to the Grafana API (OP-2344)
+* Backend: Implementation of module settings support (OP-2225)
+* WebUI: Make the Salt REST API and RGW configurable from the UI (OP-2226)
 
 Changed
 ~~~~~~
@@ -40,11 +43,16 @@ Changed
 * WebUI: Hide the details tabset if there is only one visible tab (OP-2393)
 * WebUI/Development: Added support for additional actions on datatable (OP-2380)
 * Backend: CephFS client API support for different Ceph clusters (OP-2371)
+* Backend: Added support for SSL error exception in REST Client class (OP-2407)
+* WebUI: Replaced Nagios Ceph pools graphs with Grafana graphs, because of a
+  better performance. Also, added a dedicated Grafana dashboard that can be
+  used when a openATTIC dashboard, with the name Grafana, is created (OP-829)
 
 Fixed
 ~~~~~
 * WebUI: Resets graph data if needed (OP-2358)
 * WebUI: Hiding graph loading error message if graph data is unavailable (OP-2002)
+* WebUI: Error 500 if Object Gateway API not accessible (OP-2418)
 * QA/Development: Fix JSON of e2e linter configuration (OP-2364)
 * Backend: Fix exception handling in the RGW backend (OP-2383)
 * Backend: Prevent the 'ValueError: No JSON object could be decoded' error if 

@@ -10,7 +10,6 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from django.conf import settings
 from django.test import TestCase
 from mock import mock
 from requests import ConnectionError
@@ -20,11 +19,6 @@ from rest_client import BadResponseFormatException, RequestException
 
 
 class DeepSeaTestCase(TestCase):
-    def setUp(self):
-        settings.SALT_API_USERNAME = 'hello'
-        settings.SALT_API_PASSWORD = 'world'
-        settings.SALT_API_EAUTH = 'auto'
-
     def test_deepsea_singleton(self):
         api = DeepSea.instance()
         api2 = DeepSea.instance()
@@ -46,7 +40,7 @@ class DeepSeaTestCase(TestCase):
             resp.json.return_value = {'return': 'Welcome'}
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             self.assertTrue(api.is_service_online())
 
             self.assertTrue(mock_requests_session().get.called)
@@ -68,7 +62,7 @@ class DeepSeaTestCase(TestCase):
             resp.json.return_value = {'no_return': 'Welcome'}
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(BadResponseFormatException):
                 api.is_service_online()
 
@@ -90,7 +84,7 @@ class DeepSeaTestCase(TestCase):
             resp.status_code = 404
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(RequestException):
                 api.is_service_online()
 
@@ -108,7 +102,7 @@ class DeepSeaTestCase(TestCase):
             mock_requests_session().post.return_value = resp_post
             mock_requests_session().get.side_effect = ConnectionError()
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(RequestException):
                 api.is_service_online()
 
@@ -125,7 +119,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().post.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             api._login()
 
             self.assertTrue(mock_requests_session().post.called)
@@ -141,7 +135,7 @@ class DeepSeaTestCase(TestCase):
             resp.status_code = 401
             mock_requests_session().post.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(RequestException) as context:
                 api._login()
 
@@ -156,7 +150,7 @@ class DeepSeaTestCase(TestCase):
         with mock.patch("requests.Session") as mock_requests_session:
             mock_requests_session().post.side_effect = ConnectionError()
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(RequestException) as context:
                 api._login()
 
@@ -177,7 +171,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().post.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(BadResponseFormatException):
                 api._login()
 
@@ -210,7 +204,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             res = api.key_list()
 
             self.assertTrue(mock_requests_session().post.called)
@@ -253,7 +247,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().get.side_effect = [resp_un, resp_ok]
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             res = api.key_list()
 
             self.assertTrue(mock_requests_session().post.called)
@@ -288,7 +282,7 @@ class DeepSeaTestCase(TestCase):
 
             mock_requests_session().get.side_effect = [resp_un]
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(RequestException) as context:
                 api.key_list()
 
@@ -318,7 +312,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(BadResponseFormatException) as context:
                 api.key_list()
 
@@ -352,7 +346,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             with self.assertRaises(BadResponseFormatException) as context:
                 api.key_list()
 
@@ -396,7 +390,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().post.side_effect = [login_resp, resp]
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             res = api.pillar_items()
 
             self.assertTrue(mock_requests_session().post.called)
@@ -469,7 +463,7 @@ class DeepSeaTestCase(TestCase):
             }
             mock_requests_session().get.return_value = resp
 
-            api = DeepSea()
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
             res = api.get_minions()
 
             self.assertTrue(mock_requests_session().post.called)

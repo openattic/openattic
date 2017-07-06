@@ -36,6 +36,7 @@ var allSuites = {
   general              : '../e2e/base/general/**/general.e2e.js',
   datatable            : '../e2e/base/datatable/**/*.e2e.js',
   pagination           : '../e2e/base/pagination/**/*.e2e.js',
+  settings             : '../e2e/base/settings/*.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
   auth                 : '../e2e/base/auth/*.e2e.js',
   cmdlogs              : '../e2e/base/commandLogs/**/*.e2e.js',

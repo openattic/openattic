@@ -5,8 +5,7 @@
 <p>Please verify that:</p>
 <ul>
   <li>
-    <strong>RGW_API_HOST</strong> and <strong>RGW_API_PORT</strong> are defined correctly in the openATTIC configuration file
-    <strong>/etc/(default|sysconfig)/openattic</strong>
+    <a ui-sref="settings"><strong>Object Gateway Host</strong> and <strong>Port</strong> settings</a> are defined correctly
   </li>
   <li>No firewall is enabled on the Object Gateway host that blocks access to the RGW S3 API</li>
   <li>The <strong>ceph-radosgw.target</strong> daemon is running on the Object Gateway node <kbd># systemctl status ceph-radosgw.target</kbd></li>
