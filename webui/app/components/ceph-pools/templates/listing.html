@@ -1,4 +1,4 @@
-<ceph-cluster-dropdown cluster="cluster" registry="registry" get-data="getPoolList()"></ceph-cluster-dropdown>
+<oa-ceph-module-loader cluster="cluster" registry="registry" on-cluster-change="getPoolList()">
 
 <div ng-show="cluster.results.length > 0">
     <div class="panel panel-default" ng-show="error">
@@ -15,7 +15,8 @@
 </div>
 
 <oadatatable ng-show="!error && pools.results" data="pools"
-        class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+             class="oadatatable tc_cephPoolTable" filter-config="filterConfig"
+             selection="selection" on-selection-change="onSelectionChange(selection)">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
@@ -87,3 +88,4 @@
 </oadatatable>
 <div id="more" ui-view="tab">
 </div>
+</oa-ceph-module-loader>

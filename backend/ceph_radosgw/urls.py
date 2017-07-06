@@ -13,8 +13,9 @@
 
 from django.conf.urls import patterns, url
 
-from ceph_radosgw.views import proxy_view
+from ceph_radosgw.views import proxy_view, bucket_create
 
 urlpatterns = patterns('',
-                       url('^api/rgw/(?P<path>.*)', proxy_view),
+                       url('^api/ceph_radosgw/bucket/create', bucket_create),
+                       url('^api/rgw/(?P<path>.*)', proxy_view)
                        )

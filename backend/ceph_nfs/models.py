@@ -115,7 +115,7 @@ class GaneshaExport(NodbModel):
                 })
         return [GaneshaExport(**GaneshaExport.make_model_args(e)) for e in exports]
 
-    def _validate(self, exports):
+    def _validate(self, exports, cluster_name):
         if self.fsal == 'CEPH':
             path_regex = r'^/[^><|&()?]*$'
         elif self.fsal == 'RGW':
@@ -184,7 +184,8 @@ class GaneshaExport(NodbModel):
                                            if len(parent_export.path) > 1 else "",
                                            self.pseudo[idx:])
                 if self.fsal == 'CEPH':
-                    if self.path != real_path and not CephFSUtil.instance().dir_exists(real_path):
+                    if self.path != real_path and \
+                       not CephFSUtil.instance(cluster_name).dir_exists(real_path):
                         raise ValidationError("Pseudo path ({}) invalid, path {} does not exist."
                                               .format(self.pseudo, real_path))
 
@@ -216,7 +217,7 @@ class GaneshaExport(NodbModel):
     def save_exports(export_models, empty_hosts):
         try:
             rgw_is_online = RGWClient.admin_instance().is_service_online()
-        except RGWClient.NoCredentialsException:
+        except (RGWClient.NoCredentialsException, RequestException):
             rgw_is_online = False
         for e in export_models:
             # fetch keys for all RGW exports
@@ -274,6 +275,9 @@ class GaneshaExport(NodbModel):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
 
+        context = GaneshaExport.objects.nodb_context
+        cluster_name = context.cluster.name
+
         self.path = self.path.strip()
         if self.fsal == 'CEPH' and self.path[-1] == '/' and len(self.path) > 1:
             self.path = self.path[:-1]
@@ -283,19 +287,19 @@ class GaneshaExport(NodbModel):
         if hasattr(self, 'id'):
             export_models = [e for e in export_models if e.id != self.id]
 
-        self._validate([e for e in export_models if e.host == self.host])
+        self._validate([e for e in export_models if e.host == self.host], cluster_name)
 
         try:
             rgw_is_online = RGWClient.admin_instance().is_service_online()
-        except RGWClient.NoCredentialsException:
+        except (RGWClient.NoCredentialsException, RequestException):
             rgw_is_online = False
         if self.fsal == 'RGW' and not rgw_is_online:
             raise Exception("RGW REST service is not online, please check if service is running "
                             "and openATTIC configuration settings")
 
-        if self.fsal == 'CEPH' and not CephFSUtil.instance().dir_exists(self.path):
+        if self.fsal == 'CEPH' and not CephFSUtil.instance(cluster_name).dir_exists(self.path):
             cephfs = get_dbus_object("/cephfs")
-            cephfs.cephfs_mkdirs(self.path)
+            cephfs.cephfs_mkdirs(cluster_name, self.path)
         elif self.fsal == 'RGW':
             rgw = RGWClient.instance(self.rgwUserId)
             try:

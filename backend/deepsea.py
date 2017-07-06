@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
  *   Copyright (c) 2017 SUSE LLC
@@ -13,26 +12,32 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from __future__ import absolute_import
 import logging
-from django.conf import settings
-from utilities import aggregate_dict, zip_by_keys
-from rest_client import RestClient, RequestException
 from urlparse import urlparse
+from oa_settings import Settings, SettingsListener
+from utilities import aggregate_dict, zip_by_keys
+from rest_client import RestClient
 
 logger = logging.getLogger(__name__)
 
 
-class DeepSea(RestClient):
+class DeepSea(RestClient, SettingsListener):
     _instance = None
 
     @staticmethod
     def instance():
         if DeepSea._instance is None:
-            DeepSea._instance = DeepSea()
+            DeepSea._instance = DeepSea(Settings.SALT_API_HOST, Settings.SALT_API_PORT,
+                                        Settings.SALT_API_EAUTH, Settings.SALT_API_USERNAME,
+                                        Settings.SALT_API_PASSWORD)
         return DeepSea._instance
 
-    def __init__(self):
-        super(DeepSea, self).__init__(settings.SALT_API_HOST, settings.SALT_API_PORT, 'Salt')
+    def __init__(self, host, port, eauth, username, password):
+        super(DeepSea, self).__init__(host, port, 'Salt')
+        self.eauth = eauth
+        self.username = username
+        self.password = password
         self.token = None
 
     def _is_logged_in(self):
@@ -40,6 +45,10 @@ class DeepSea(RestClient):
 
     def _reset_login(self):
         self.token = None
+
+    def settings_changed_handler(self):
+        logger.debug("DeepSea was notified that settings changed!")
+        DeepSea._instance = None
 
     @RestClient.api_get('/', resp_structure='return')
     @RestClient.requires_login
@@ -50,9 +59,9 @@ class DeepSea(RestClient):
     @RestClient.api_post('/login', resp_structure='return[0] > token')
     def _login(self, request=None):
         response = request({
-            'username': settings.SALT_API_USERNAME,
-            'password': settings.SALT_API_PASSWORD,
-            'eauth': settings.SALT_API_EAUTH
+            'username': self.username,
+            'password': self.password,
+            'eauth': self.eauth
         })
         self.token = response['return'][0]['token']
         self.headers['X-Auth-Token'] = self.token

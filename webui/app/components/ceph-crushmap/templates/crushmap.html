@@ -1,4 +1,4 @@
-<ceph-cluster-dropdown cluster="clusters" registry="registry" get-data="getCrushmap()"></ceph-cluster-dropdown>
+<oa-ceph-module-loader cluster="clusters" registry="registry" on-cluster-change="getCrushmap()">
 
 <div class="panel panel-default" ng-show="!error && cluster === null">
     <div class="panel-heading">
@@ -102,3 +102,4 @@
         </div>
     </div>
 </div>
+</oa-ceph-module-loader>

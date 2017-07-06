@@ -1,0 +1,33 @@
+<div class="panel panel-default tc_detailsTab">
+    <div class="panel-heading">
+        <h3 class="panel-title">Details of {{selection.item.bucket}}</h3>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd ng-bind="selection.item.bucket"></dd>
+            <dt>Id:</dt>
+            <dd ng-bind="selection.item.id"></dd>
+            <dt>Owner:</dt>
+            <dd ng-bind="selection.item.owner"></dd>
+            <span ng-if="selection.item.pool.length">
+                <dt>Pool:</dt>
+                <dd ng-bind="selection.item.pool"></dd>
+            </span>
+            <span ng-if="selection.item.index_pool.length">
+                <dt>Index pool:</dt>
+                <dd ng-bind="selection.item.index_pool"></dd>
+            </span>
+            <dt>Marker:</dt>
+            <dd ng-bind="selection.item.marker"></dd>
+            <dt>Maximum marker:</dt>
+            <dd ng-bind="selection.item.max_marker"></dd>
+            <dt>Version:</dt>
+            <dd ng-bind="selection.item.ver"></dd>
+            <dt>Master version:</dt>
+            <dd ng-bind="selection.item.master_ver"></dd>
+            <dt>Modification time:</dt>
+            <dd ng-bind="selection.item.mtime"></dd>
+        </dl>
+    </div>
+</div>

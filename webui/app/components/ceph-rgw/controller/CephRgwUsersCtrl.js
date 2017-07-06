@@ -37,10 +37,10 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
   $scope.error = false;
   $scope.filterConfig = {
     page: 0,
-    entries: null,
+    entries: undefined,
     search: "",
-    sortfield: null,
-    sortorder: null
+    sortfield: undefined,
+    sortorder: undefined
   };
   $scope.selection = {};
   $scope.tabData = {
@@ -63,8 +63,8 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
   tabViewService.setScope($scope);
   $scope.changeTab = tabViewService.changeTab;
 
-  $scope.$watch("filterConfig", function (newVal) {
-    if (newVal.entries === null) {
+  $scope.$watch("filterConfig", function (newValue, oldValue) {
+    if (angular.equals(newValue, oldValue)) {
       return;
     }
     cephRgwUserService.filter({
@@ -82,7 +82,10 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
       });
   }, true);
 
-  $scope.$watchCollection("selection.items", function (items) {
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+    var items = selection.items;
+
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
 
@@ -105,7 +108,7 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
     } else {
       $scope.changeTab($state.current.name);
     }
-  });
+  };
 
   $scope.addAction = function () {
     $state.go("ceph-rgw-user-add");

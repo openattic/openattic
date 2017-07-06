@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
@@ -17,18 +17,16 @@ from __future__ import division
 
 import ConfigParser
 import itertools
-import json
 import logging
 import math
 import os
+from StringIO import StringIO
 
 from contextlib import contextmanager
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext_noop as _
 from django.shortcuts import get_object_or_404
 
 from ceph import librados
@@ -37,8 +35,7 @@ import ceph.tasks
 from exception import NotSupportedError
 from ifconfig.models import Host
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
-from systemd import get_dbus_object, dbus_to_python
-from systemd.helpers import Transaction
+from systemd import get_dbus_object
 from taskqueue.models import TaskQueue
 from utilities import aggregate_dict, zip_by_keys
 
@@ -126,8 +123,7 @@ class CephCluster(NodbModel, RadosMixin):
             if conf_file.endswith('.conf'):
                 cluster_name = os.path.splitext(conf_file)[0]
                 if CephCluster.has_valid_config_file_and_keyring(cluster_name):
-                    config = ConfigParser.ConfigParser()
-                    config.read(os.path.join('/etc/ceph/', conf_file))
+                    config = CephCluster._get_confobj(os.path.join('/etc/ceph/', conf_file))
 
                     if config.get('global', 'fsid') == fsid:
                         return cluster_name
@@ -138,12 +134,18 @@ class CephCluster(NodbModel, RadosMixin):
     def get_fsid(cluster_name):
         f = '/etc/ceph/{name}.conf'.format(name=cluster_name)
         if CephCluster.has_valid_config_file_and_keyring(cluster_name):
-            config = ConfigParser.ConfigParser()
-            config.read(f)
+            config = CephCluster._get_confobj(f)
             fsid = config.get('global', 'fsid')
             return fsid
 
         raise LookupError()
+
+    @staticmethod
+    def _get_confobj(file_name):
+        cp = ConfigParser.RawConfigParser()
+        with open(file_name) as f:
+            cp.readfp(StringIO('\n'.join(line.strip() for line in f)))
+        return cp
 
     @property
     def status(self):
@@ -335,7 +337,9 @@ class CephPool(NodbModel, RadosMixin):
                 'crash_replay_interval': pool_data['crash_replay_interval'],
                 'pg_num': pool_data['pg_num'],
                 'size': pool_data['size'],
-                'crush_ruleset': pool_data['crush_ruleset'],
+                'crush_ruleset': pool_data[
+                    # Cope with API breakage at https://github.com/ceph/ceph/commit/07abacb2e4bde6cb7f9e44879e743bc91bc4b085
+                    'crush_rule' if 'crush_rule' in pool_data else 'crush_ruleset'],
                 # Considered advanced options
                 'pgp_num': pool_data['pg_placement_num'],
                 'stripe_width': pool_data['stripe_width'],
@@ -785,7 +789,7 @@ class CephPg(NodbModel, RadosMixin):
         assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict))
+            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict, default_return=[]))
         except librados.ExternalCommandError, e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []

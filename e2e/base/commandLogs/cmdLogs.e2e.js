@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 describe('CommandLogs', function(){
   beforeAll(function(){
     helpers.login();
-    browser.setLocation('commandlog');
+    helpers.setLocation('commandlog');
     browser.sleep(400);
   });
 

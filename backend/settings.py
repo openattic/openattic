@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
@@ -42,6 +41,8 @@ else:
 API_ROOT = "/openattic/api"
 API_OS_USER = 'openattic'
 
+DISABLE_CSRF_FOR_API_PATH = []
+
 from ConfigParser import ConfigParser
 
 DEBUG = True
@@ -55,7 +56,7 @@ LVM_CHOWN_GROUP = "users"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oa_auth.ExtendedBasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'oa_auth.CsrfExemptSessionAuthentication',  # Disables CSRF for paths in DISABLE_CSRF_FOR_API_PATH
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -334,12 +335,6 @@ LOCALE_PATHS = (
 
 MPLCONFIGDIR = "/tmp/.matplotlib"
 
-SALT_API_HOST = 'salt'
-SALT_API_PORT = 8000
-SALT_API_USERNAME = 'admin'
-SALT_API_PASSWORD = 'admin'
-SALT_API_EAUTH = 'auto'
-
 
 # In `backend/nagios/conf/distro.py` there's basically the same parser, but used for a slightly
 # different purpose. This is just to mention that this code is somewhat duplicated. This comment may
@@ -432,9 +427,15 @@ def __loadmods__():
 
     modprobe('django_extensions')
     modprobe('rosetta')
+    modprobe('oa_settings')
 
 
 __loadmods__()
+
+
+# Load OA module settings
+import oa_settings
+oa_settings.load_settings()
 
 
 # This enables developers and test systems to override settings in a non-versioned file.

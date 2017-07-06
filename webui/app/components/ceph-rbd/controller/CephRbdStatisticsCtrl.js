@@ -57,7 +57,7 @@ app.controller("CephRbdStatisticsCtrl", function ($scope, cephRbdService) {
       call: cephRbdService.performancedata,
       filterApi: function (rbd) {
         return {
-          clusterId: rbd.pool.cluster,
+          fsid: rbd.pool.cluster,
           pool: rbd.pool.name,
           name: rbd.name
         };

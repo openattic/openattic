@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
@@ -150,13 +149,17 @@ class CephPoolSerializer(NodbSerializer):
 
 class FsidContext(object):
 
-    def __init__(self, viewset):
+    def __init__(self, viewset=None, module_name=None, request=None):
         self.viewset = viewset
+        self.request = request
+        self.module_name = module_name
 
     @cached_property
     def fsid(self):
+        request = self.viewset.request if self.viewset else self.request
         import re
-        m = re.match(r'^.*/api/ceph/(?P<fsid>[a-zA-Z0-9-]+)/.*', self.viewset.request.path)
+        m = re.match(r'^.*/api/{}/(?P<fsid>[a-zA-Z0-9-]+)/.*'.format(self.module_name),
+                     request.path)
         return m.groupdict()["fsid"]
 
     @cached_property
@@ -179,7 +182,7 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
 
     def __init__(self, **kwargs):
         super(CephPoolViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph'))
 
     def get_queryset(self):
         return CephPool.objects.all()
@@ -224,7 +227,7 @@ class CephErasureCodeProfileViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(CephErasureCodeProfileViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph'))
 
     def get_queryset(self):
         return CephErasureCodeProfile.objects.all()
@@ -246,7 +249,7 @@ class CephOsdViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(CephOsdViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph'))
 
     def get_queryset(self):
         return CephOsd.objects.all()
@@ -291,7 +294,7 @@ class CephPgViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(CephPgViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph'))
 
     def get_queryset(self):
         return CephPg.objects.all()
@@ -313,7 +316,7 @@ class CephRbdViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(CephRbdViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph'))
 
     def get_queryset(self):
         return CephRbd.objects.all()
@@ -343,7 +346,7 @@ class CephFsViewSet(NodbViewSet):
 
     def __init__(self, **kwargs):
         super(CephFsViewSet, self).__init__(**kwargs)
-        self.set_nodb_context(FsidContext(self))
+        self.set_nodb_context(FsidContext(self, 'ceph'))
 
     def get_queryset(self):
         return CephFs.objects.all()

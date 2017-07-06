@@ -56,8 +56,6 @@ describe('should test the ceph pools panel', function(){
     expect(cephPoolProperties.statisticsTab.isDisplayed()).toBe(true);
   });
 
-  graphHelpers.testGraphs(cephPoolProperties.statisticGraphsConfig);
-
   var cephCluster = helpers.configs.cephCluster;
   var cephClusterCount = Object.keys(cephCluster).length;
   Object.keys(cephCluster).forEach(function(clusterName){

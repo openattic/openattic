@@ -65,7 +65,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
       cephRbdService
           .get({
-            clusterId: $scope.registry.selectedCluster.fsid,
+            fsid: $scope.registry.selectedCluster.fsid,
             page: $scope.filterConfig.page + 1,
             pageSize: $scope.filterConfig.entries,
             search: $scope.filterConfig.search,
@@ -141,7 +141,10 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     $scope.getRbdList();
   }, true);
 
-  $scope.$watchCollection("selection.items", function (items) {
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+    var items = selection.items;
+
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
 
@@ -155,11 +158,11 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     } else {
       $scope.changeTab($state.current.name);
     }
-  });
+  };
 
   $scope.addAction = function () {
     $state.go("rbds-add", {
-      clusterId: $scope.registry.selectedCluster.fsid
+      fsid: $scope.registry.selectedCluster.fsid
     });
   };
 
@@ -175,7 +178,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
         rbdSelection: function () {
           return $scope.selection.items;
         },
-        clusterId: function () {
+        fsid: function () {
           return $scope.registry.selectedCluster.fsid;
         }
       }

@@ -25,6 +25,7 @@ except ImportError:
     CephFSUtil = None
 from ceph_radosgw.rgw_client import RGWClient
 from rest_client import RequestException
+from ceph.restapi import FsidContext
 
 
 logger = logging.getLogger(__name__)
@@ -40,13 +41,15 @@ def fsals(request):
     if 'CEPH' in res:
         if not CephFSUtil:
             res = [f for f in res if f != 'CEPH']
-        elif not CephFSUtil.instance().status():
-            res = [f for f in res if f != 'CEPH']
+        else:
+            cluster_name = FsidContext(request=request, module_name='ceph_nfs').cluster.name
+            if not CephFSUtil.instance(cluster_name).status():
+                res = [f for f in res if f != 'CEPH']
     if 'RGW' in res:
         try:
             if not RGWClient.admin_instance().is_service_online():
                 res = [f for f in res if f != 'RGW']
-        except RGWClient.NoCredentialsException:
+        except (RGWClient.NoCredentialsException, RequestException):
             res = [f for f in res if f != 'RGW']
     return Response({'fsals': res})
 
@@ -95,7 +98,8 @@ def ls_dir(request):
     root = '{}/'.format(root) if not root.endswith('/') else root
 
     try:
-        paths = CephFSUtil.instance().get_dir_list(root, depth)
+        cluster_name = FsidContext(request=request, module_name='ceph_nfs').cluster.name
+        paths = CephFSUtil.instance(cluster_name).get_dir_list(root, depth)
         paths = [p[:-1] for p in paths if p != root]
         return Response({'paths': paths})
     except libcephfs.ObjectNotFound:

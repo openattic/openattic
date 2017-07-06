@@ -194,7 +194,7 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
 
   $scope.allImages = [];
   cephRbdService.get({
-      clusterId: $scope.fsid
+      fsid: $scope.fsid
     })
     .$promise
     .then(function (rbds) {

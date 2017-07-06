@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
  *   Copyright (c) 2017 SUSE LLC
@@ -20,6 +19,11 @@ import logging
 import re
 import requests
 from requests import ConnectionError
+try:
+    from requests.packages.urllib3.exceptions import SSLError
+except ImportError:
+    from urllib3.exceptions import SSLError
+
 
 logger = logging.getLogger(__name__)
 
@@ -276,6 +280,7 @@ class _Request(object):
 
 class RestClient(object):
     def __init__(self, host, port, client_name=None, ssl=False, auth=None):
+        super(RestClient, self).__init__()
         self.client_name = client_name if client_name else ''
         self.base_url = 'http{}://{}:{}'.format('s' if ssl else '', host, port)
         logger.debug("REST service base URL: %s", self.base_url)
@@ -309,7 +314,7 @@ class RestClient(object):
                     if isinstance(e, BadResponseFormatException):
                         raise e
                     retries -= 1
-                    if e.status_code not in  [401, 403] or retries == 0:
+                    if e.status_code not in [401, 403] or retries == 0:
                         raise e
                     self._reset_login()
         return func_wrapper
@@ -345,18 +350,24 @@ class RestClient(object):
                                        .format(self.client_name, resp.status_code),
                                        resp.status_code, resp.content)
         except ConnectionError as ex:
-            if len(ex.args) > 0:
-                match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
-                if match:
-                    errno = match.group(1)
-                    strerror = match.group(2)
-                    logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
-                                 self.client_name, method.upper(), errno, strerror)
-                else:
+            if ex.args:
+                if isinstance(ex.args[0], SSLError):
                     errno = "n/a"
-                    strerror = "n/a"
-                    logger.error("%s REST API failed %s, connection error.",
+                    strerror = "SSL error. Probably trying to access a non SSL connection."
+                    logger.error("%s REST API failed %s, SSL error.",
                                  self.client_name, method.upper())
+                else:
+                    match = re.match(r'.*: \[Errno (-?\d+)\] (.+)', ex.args[0].reason.args[0])
+                    if match:
+                        errno = match.group(1)
+                        strerror = match.group(2)
+                        logger.error("%s REST API failed %s, connection error: [errno: %s] %s",
+                                     self.client_name, method.upper(), errno, strerror)
+                    else:
+                        errno = "n/a"
+                        strerror = "n/a"
+                        logger.error("%s REST API failed %s, connection error.",
+                                     self.client_name, method.upper())
             else:
                 errno = "n/a"
                 strerror = "n/a"

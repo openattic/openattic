@@ -26,7 +26,7 @@ describe('ceph nfs', function(){
     form.selectFsal('Object Gateway');
     form.bucket.sendKeys('e2e-rgw-add');
     form.selectRgwUser(1);
-    form.tag.clear().sendKeys('e2eTag');
+    form.tag.clear().sendKeys('e2eTagRgw');
     form.addClientsButton.click();
     form.clients.clear().sendKeys('192.168.0.10');
     form.selectClientsAccessType('MDONLY_RO');
@@ -38,11 +38,11 @@ describe('ceph nfs', function(){
   it('should display added export details', function(){
     table.clickRowByPath('e2e-rgw-add');
     expect(table.rows.get(0).getText()).toBe('e2e-rgw-add');
-    expect(table.detailsTab.isDisplayed()).toBe(true);
+    expect(table.detailsTab.isDisplayed()).toBe(false);
     expect(details.panelTitle.getText()).toMatch(/Details of .*:e2e-rgw-add/);
     expect(details.fsal.getText()).toBe('Object Gateway');
     expect(details.path.getText()).toBe('e2e-rgw-add');
-    expect(details.tag.getText()).toBe('e2eTag');
+    expect(details.tag.getText()).toBe('e2eTagRgw');
     expect(details.nfsProtocol.get(0).getText()).toBe('NFSv3');
     expect(details.nfsProtocol.get(1).getText()).toBe('NFSv4');
     expect(details.pseudo.getText()).toMatch(/.*e2e-rgw-add/);

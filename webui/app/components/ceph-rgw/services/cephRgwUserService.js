@@ -58,7 +58,7 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
             result.user_quota.max_objects_unlimited = false;
           }
         }
-        if (angular.isObject(result.user_quota)) {
+        if (angular.isObject(result.bucket_quota)) {
           if ((result.bucket_quota.max_size_kb === -1) || (result.bucket_quota.max_size <= -1)) {
             result.bucket_quota.max_size = "";
             result.bucket_quota.max_size_unlimited = true;
@@ -113,19 +113,23 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
     query: {
       method: "GET",
       isArray: true,
-      transformResponse: function (data) {
+      transformResponse: function (data, headersGetter, status) {
         // Make sure we have received valid data.
         if (!angular.isString(data)) {
           return [];
         }
         data = angular.fromJson(data);
-        // The Admin Ops API returns a 404 with the 'Code'='NoSuchKey' if the requested
-        // user does not exist.
-        if (angular.isObject(data) && data.hasOwnProperty("Code") && (data.Code === "NoSuchKey")) {
-          return [];
+        if (status !== 200) {
+          return data;
         }
+        // Return an array to be able to support wildcard searching someday.
         return [ data ];
       }
+    },
+    enumerate: {
+      method: "GET",
+      url: globalConfig.API.URL + "rgw/metadata/user",
+      isArray: true
     },
     filter: {
       url: globalConfig.API.URL + "rgw/metadata/user",
@@ -159,9 +163,10 @@ app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
               (filterParams.page - 1) * filterParams.pageSize);
             // Prepare the response object.
             return {
+              $resolved: true,
               count: users.length,
-              next: null,
-              previous: null,
+              next: undefined,
+              previous: undefined,
               results: users
             };
           });

@@ -1,0 +1,15 @@
+<p>This module cannot be loaded due to a problem while trying to connect to <strong>RGW S3 API</strong></p>
+
+<hr>
+
+<p>Please verify that:</p>
+<ul>
+  <li>
+    <a ui-sref="settings"><strong>Object Gateway Host</strong> and <strong>Port</strong> settings</a> are defined correctly
+  </li>
+  <li>
+    Alternatively check that <strong>DeepSea</strong> is returning the correct <strong>RGW</strong> information
+    by running the following command on the Salt master:
+    <kbd># salt-run ui_rgw.credentials</kbd>
+  </li>
+</ul>

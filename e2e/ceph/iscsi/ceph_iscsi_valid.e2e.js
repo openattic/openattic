@@ -200,7 +200,7 @@ describe('ceph iscsi', function(){
   });
 
   afterEach(function(){
-    form.backButton.click();
+    helpers.leaveForm();
   });
 
   afterAll(function(){

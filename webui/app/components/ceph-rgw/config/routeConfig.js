@@ -50,16 +50,18 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           label: "Object Gateway users"
         }
-      }).state("ceph-rgw-users.detail", {
-      views        : {
-        "tab": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUsersTab.html"
+      })
+      .state("ceph-rgw-users.detail", {
+        views: {
+          "tab": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwUsersTab.html"
+          }
+        },
+        ncyBreadcrumb: {
+          skip: true
         }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    }).state("ceph-rgw-users.detail.details", {
+      })
+      .state("ceph-rgw-users.detail.details", {
         url: "/details",
         views: {
           "tab-content": {
@@ -69,7 +71,8 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           label: "{{selection.item.user_id}} details"
         }
-      }).state("ceph-rgw-user-add", {
+      })
+      .state("ceph-rgw-user-add", {
         url: "/ceph/rgw/users/add",
         views: {
           "main": {
@@ -93,6 +96,65 @@ app.config(function ($stateProvider) {
         ncyBreadcrumb: {
           parent: "ceph-rgw-users",
           label: "Edit {{user.user_id}}"
+        }
+      })
+      .state("ceph-rgw-buckets", {
+        url: "/ceph/rgw/buckets",
+        views: {
+          "main": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwBuckets.html",
+            controller: "CephRgwBucketsCtrl"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "Object Gateway buckets"
+        }
+      })
+      .state("ceph-rgw-buckets.detail", {
+        views: {
+          "tab": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwBucketsTab.html"
+          }
+        },
+        ncyBreadcrumb: {
+          skip: true
+        }
+      })
+      .state("ceph-rgw-buckets.detail.details", {
+        url: "/details",
+        views: {
+          "tab-content": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwBucketsDetails.html"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.bucket}} details"
+        }
+      })
+      .state("ceph-rgw-bucket-add", {
+        url: "/ceph/rgw/buckets/add",
+        views: {
+          "main": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
+            controller: "CephRgwBucketAddEditCtrl"
+          }
+        },
+        ncyBreadcrumb: {
+          parent: "ceph-rgw-buckets",
+          label: "Add"
+        }
+      })
+      .state("ceph-rgw-bucket-edit", {
+        url: "/ceph/rgw/buckets/edit/:bucket",
+        views: {
+          "main": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
+            controller: "CephRgwBucketAddEditCtrl"
+          }
+        },
+        ncyBreadcrumb: {
+          parent: "ceph-rgw-buckets",
+          label: "Edit {{bucket.bucket}}"
         }
       });
 });

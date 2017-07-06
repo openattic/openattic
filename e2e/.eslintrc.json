@@ -19,5 +19,5 @@
     "space-in-parens": [2, "never"],
     "no-trailing-spaces": [2, { "skipBlankLines": false }],
     "indent": [2, 2]
-  },
+  }
 }

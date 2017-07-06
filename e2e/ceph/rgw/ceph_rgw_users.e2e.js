@@ -3,7 +3,7 @@
 var helpers = require('../../common.js');
 var CephRgwCommons = require('./cephRgwCommon.js');
 
-describe('ceph rgw', function(){
+describe('ceph rgw users', function(){
   var cephRgwCommons = new CephRgwCommons();
   var testUser1 = {
     user_id: 'e2e_herpderp',
@@ -31,12 +31,12 @@ describe('ceph rgw', function(){
   var bucketQuotaMaxObjectsUnlimited = element(by.model('user.bucket_quota.max_objects_unlimited'));
   var bucketQuotaMaxObjects = element(by.model('user.bucket_quota.max_objects'));
 
-  var addUser = function() {
+  var addUser = function(){
     cephRgwCommons.addUser();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/add');
   };
 
-  var editUser = function(uid) {
+  var editUser = function(uid){
     cephRgwCommons.editUser(uid);
     expect(browser.getCurrentUrl()).toMatch('/ceph/rgw/users/edit/' + uid);
   };
@@ -98,16 +98,18 @@ describe('ceph rgw', function(){
     cephRgwCommons.submitBtn.click();
   });
 
-  it('should display the "herpderp" in the users panel', function(){
+  it('should display the user "herpderp" in the users panel', function(){
     expect(helpers.get_list_element(testUser1.user_id).isDisplayed()).toBe(true);
   });
 
   it('should display the details of "herpderp"', function(){
     helpers.get_list_element(testUser1.user_id).click();
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
-    cephRgwCommons.detailAttributes.forEach(function(attr){
-      expect(element(by.cssContainingText('dt', attr + ':')).isDisplayed()).toBe(true);
-    });
+    expect(element(by.cssContainingText('dt', 'Username:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Full name:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Email address:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Suspended:')).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText('dt', 'Maximum buckets:')).isDisplayed()).toBe(true);
   });
 
   it('should check if user/bucket quota is set for "herpderp"', function(){
@@ -122,7 +124,7 @@ describe('ceph rgw', function(){
     expect(bucketQuotaMaxSizeUnlimited.isSelected()).toBe(false);
     expect(bucketQuotaMaxSize.getAttribute('value')).toEqual('10485760K');
     expect(bucketQuotaMaxObjectsUnlimited.isSelected()).toBe(true);
-    element(by.css('.tc_backButton')).click();
+    helpers.leaveForm();
   });
 
   it('should check the user ID already taken error message', function(){
@@ -131,8 +133,7 @@ describe('ceph rgw', function(){
     // Wait some time until the user ID has been validated via REST API call.
     browser.sleep(helpers.configs.sleep);
     expect(element(by.css('.tc_userIdNotUnique')).isDisplayed()).toBe(true);
-    element(by.css('.tc_backButton')).click();
-    element(by.css('.tc_leaveButton')).click();
+    helpers.leaveForm(true);
   });
 
   it('should delete the user "herpderp"', function(){
@@ -156,7 +157,7 @@ describe('ceph rgw', function(){
     cephRgwCommons.submitBtn.click();
   });
 
-  it('should display the "tuxdoe" in the users panel', function(){
+  it('should display the user "tuxdoe" in the users panel', function(){
     expect(element(by.cssContainingText('tr', testUser2.user_id)).isDisplayed()).toBe(true);
   });
 
@@ -172,7 +173,7 @@ describe('ceph rgw', function(){
     cephRgwCommons.submitBtn.click();
   });
 
-  it('should validate the user modifications', function() {
+  it('should validate the user modifications', function(){
     var user = element(by.cssContainingText('tr', testUser2.user_id));
     browser.sleep(400);
     expect(user.element(by.binding('row.display_name')).getText()).toEqual('Tux Doe Jr.');
@@ -202,7 +203,7 @@ describe('ceph rgw', function(){
     expect(element(by.css('.tc_subuserNotUnique')).isDisplayed()).toBe(true);
     cephRgwCommons.cancelSubuserBtn.click();
     browser.sleep(400);
-    cephRgwCommons.backBtn.click();
+    helpers.leaveForm();
   });
 
   it('should add a new S3 keys', function(){
@@ -254,7 +255,7 @@ describe('ceph rgw', function(){
     expect(userQuotaEnabled.isSelected()).toBe(false);
     expect(element(by.model('user.user_quota.max_size')).isDisplayed()).toBe(false);
     expect(element(by.model('user.user_quota.max_objects')).isDisplayed()).toBe(false);
-    cephRgwCommons.backBtn.click();
+    helpers.leaveForm();
   });
 
   it('should set user quota', function(){
@@ -327,7 +328,7 @@ describe('ceph rgw', function(){
     expect(bucketQuotaEnabled.isSelected()).toBe(false);
     expect(element(by.model('user.bucket_quota.max_size')).isDisplayed()).toBe(false);
     expect(element(by.model('user.bucket_quota.max_objects')).isDisplayed()).toBe(false);
-    cephRgwCommons.backBtn.click();
+    helpers.leaveForm();
   });
 
   it('should set bucket quota', function(){
@@ -400,8 +401,8 @@ describe('ceph rgw', function(){
   it('should delete all S3 keys', function(){
     editUser(testUser2.user_id);
     // Delete all keys.
-    element.all(by.css('.tc_deleteS3KeyButton')).count().then(function(count) {
-      for (; count > 0; count--) {
+    element.all(by.css('.tc_deleteS3KeyButton')).count().then(function(count){
+      for(; count > 0; count--){
         // Always use the first element to delete because after pressing the
         // delete button the view is rendered again.
         element.all(by.css('.tc_deleteS3KeyButton')).get(0).click();

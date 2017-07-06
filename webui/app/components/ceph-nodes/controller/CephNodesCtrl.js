@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephNodes");
-app.controller("CephNodesCtrl", function ($scope, cephNodesService) {
+app.controller("CephNodesCtrl", function ($scope, $state, cephNodesService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -71,4 +71,19 @@ app.controller("CephNodesCtrl", function ($scope, cephNodesService) {
     }
     $scope.getNodes();
   }, true);
+
+  $scope.onSelectionChange = function (selection) {
+    $scope.selection = selection;
+
+    var items = selection.items;
+
+    if (!items || items.length !== 1) {
+      $state.go("cephNodes");
+      return;
+    }
+
+    $state.go("cephNodes.statistics", {
+      "#": "more"
+    });
+  };
 });
