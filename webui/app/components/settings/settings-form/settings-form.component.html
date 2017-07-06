@@ -112,9 +112,13 @@
           <div class="col-sm-offset-3 col-sm-9">
             <div class="checkbox checkbox-primary">
               <input type="checkbox" ng-model="$ctrl.model.rgw.managed_by_deepsea" name="active"
-                     id="rgwManagedByDeepSea" ng-change="$ctrl.rgwManagedByDeepSeaChangeHandler()">
+                     id="rgwManagedByDeepSea" ng-change="$ctrl.rgwManagedByDeepSeaChangeHandler()"
+                     ng-disabled="!$ctrl.managedByDeepSeaEnabled">
               <label for="rgwManagedByDeepSea">
                 Managed by DeepSea
+                <span ng-if="!$ctrl.managedByDeepSeaEnabled" class="text-muted">
+                  (DeepSea is not able to provide Object Gateway credentials)
+                </span>
               </label>
             </div>
           </div>
