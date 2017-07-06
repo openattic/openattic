@@ -12,6 +12,7 @@
  *  GNU General Public License for more details.
 """
 from __future__ import absolute_import
+import json
 from importlib import import_module
 from deepsea import DeepSea
 from django.http import HttpResponse
@@ -141,4 +142,9 @@ class StatusView(APIView):
                 return available_response()
             except UnavailableModule as ex:
                 return unavailable_response(ex.reason, ex.message)
+            except AttributeError:
+                return Response({
+                    'message': 'Missing function `status` in module `{}`'.format(module_name),
+                    'available': False,
+                }, status=500)
 
