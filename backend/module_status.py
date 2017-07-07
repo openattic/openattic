@@ -132,7 +132,8 @@ class StatusView(APIView):
             try:
                 import_module(module_name)
             except ImportError:
-                return HttpResponse('Module "{}" not found'.format(module_name), status=404)
+                return Response({'message': 'Module "{}" not found'.format(module_name),
+                                 'available': False}, status=404)
 
             try:
                 module = import_module('{}.status'.format(module_name))
