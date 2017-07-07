@@ -12,10 +12,8 @@
  *  GNU General Public License for more details.
 """
 from __future__ import absolute_import
-import json
 from importlib import import_module
 from deepsea import DeepSea
-from django.http import HttpResponse
 from rest_client import RequestException
 from rest_framework.views import APIView
 from rest_framework.response import Response
