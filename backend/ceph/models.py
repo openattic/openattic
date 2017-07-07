@@ -841,6 +841,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                         in RbdApi.get_feature_mapping().values()])))
     old_format = models.BooleanField(default=False, help_text='should always be false')
     used_size = models.IntegerField(editable=False)
+    stripe_unit = models.IntegerField(blank=True, null=True)
+    stripe_count = models.IntegerField(blank=True, null=True)
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
@@ -906,6 +908,16 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             if 'used_size' in disk_usage:
                 self.used_size = disk_usage['used_size']
 
+    @bulk_attribute_setter(['stripe_unit', 'stripe_count'])
+    def set_stripe_info(self, objects, field_names):
+        if 'stripingv2' in self.features:
+            api = RadosMixin.rbd_api(self.pool.cluster.fsid)
+
+            self.stripe_count, self.stripe_unit = api.image_stripe_info(self.pool.name, self.name)
+        else:
+            self.stripe_count = None
+            self.stripe_unit = None
+
     def save(self, *args, **kwargs):
         """
         This method implements three purposes.
@@ -928,7 +940,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features,
-                           old_format=self.old_format, order=order)
+                           old_format=self.old_format, order=order,
+                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count)
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
