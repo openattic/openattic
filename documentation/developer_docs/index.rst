@@ -61,5 +61,6 @@ documentation.
   core
   developer-documentation
   ui_customizing
+  taskqueue
   dev_e2e
   dev_gatling
