@@ -13,6 +13,8 @@
 """
 import logging
 
+from django.core.exceptions import ValidationError
+
 from ceph.models import CephCluster
 from ceph.librados import Client
 from deepsea import DeepSea
@@ -60,7 +62,7 @@ def check_ceph_api(fsid):
 
 def status(params):
     if 'fsid' not in params:
-        raise Exception("fsid parameter is required")
+        raise ValidationError("fsid parameter is required")
 
     check_deepsea_connection()
     check_deepsea_iscsi_api()
