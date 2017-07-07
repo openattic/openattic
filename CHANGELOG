@@ -20,6 +20,8 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend: The 'allow_ec_overwrites' flag will now be recognized by
+  creating an erasure coded pool (OP-2356)
 
 Changed
 ~~~~~~~
