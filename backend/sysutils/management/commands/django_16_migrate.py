@@ -390,6 +390,9 @@ _migrations = [
         ALTER TABLE "ceph_cephosd" ALTER COLUMN "osd_objectstore" DROP DEFAULT;
         COMMIT;
         """
+    ),
+    SqlMigration(
+        'ceph', u'0007_cephpool_flags_editable', None, None
     )
 ]
 

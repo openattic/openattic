@@ -34,6 +34,7 @@ from ceph.librados import MonApi, undo_transaction, RbdApi, Keyring, call_librad
 import ceph.tasks
 from exception import NotSupportedError
 from ifconfig.models import Host
+from librados import ExternalCommandError
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from systemd import get_dbus_object
 from taskqueue.models import TaskQueue
@@ -305,7 +306,7 @@ class CephPool(NodbModel, RadosMixin):
     hit_set_count = models.IntegerField(blank=True)
     hit_set_params = JsonField(base_type=dict, editable=False, blank=True)
     tiers = JsonField(base_type=list, editable=False, blank=True)
-    flags = JsonField(base_type=list, editable=False, blank=True)
+    flags = JsonField(base_type=list, blank=True)
 
     pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
@@ -432,7 +433,8 @@ class CephPool(NodbModel, RadosMixin):
         """
         context = CephPool.objects.nodb_context
         insert = getattr(self, 'id', None) is None
-        with undo_transaction(self.mon_api(), re_raise_exception=True) as api:
+        with undo_transaction(self.mon_api(), exception_type=(ExternalCommandError, NotSupportedError),
+                              re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
                                     self.pg_num,
@@ -484,6 +486,14 @@ class CephPool(NodbModel, RadosMixin):
                     else:
                         read_tier_target = self.read_tier
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
+                elif key == 'flags' and value:
+                    for flag in value:
+                        if flag == 'allow_ec_overwrites' or flag == 'ec_overwrites':
+                            api.osd_pool_set(self.name, 'allow_ec_overwrites', 'true')
+                        else:
+                            msg = 'Unknown flag \'{}\'.'.format(flag)
+                            logger.warning(msg)
+                            raise NotSupportedError(msg)
                 elif self.type == 'replicated' and key not in ['name'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
