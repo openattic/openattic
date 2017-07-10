@@ -18,7 +18,7 @@ diff -r 9af3dd6cdd38 backend/nagios/readstatus.py
 diff -r 236d67eb0c5c backend/settings.py
 --- a/backend/settings.py	Sat Feb 11 15:31:45 2017 +0000
 +++ b/backend/settings.py	Mon Feb 13 09:43:10 2017 +0100
-@@ -35,8 +35,8 @@
+@@ -41,8 +41,8 @@
  else:
      GUI_ROOT = "/usr/share/openattic-gui"
 
@@ -27,7 +27,7 @@ diff -r 236d67eb0c5c backend/settings.py
 +API_ROOT = ":8000/api"
 +API_OS_USER = 'vagrant'
 
- from ConfigParser import ConfigParser
+ DISABLE_CSRF_FOR_API_PATH = []
 
 @@ -218,7 +218,7 @@
          'file': {
