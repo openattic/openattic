@@ -27,6 +27,7 @@ Added
   
 Changed
 ~~~~~~~
+* WebUI: Refactors add form template (OP-2420)
 
 Fixed
 ~~~~~
