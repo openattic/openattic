@@ -28,6 +28,10 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: The status module returns "available" for modules missing
+  the status.py file. (OP-2441)
+* Backend: The status module returns JSON if a module couldn't be
+  found by now. (OP-2440)
 
 
 [3.3.0] - 2017-07-06
