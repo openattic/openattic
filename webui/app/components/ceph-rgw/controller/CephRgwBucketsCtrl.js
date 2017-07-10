@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRgw");
-app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRgwBucketService,
-    tabViewService) {
+app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $stateParams,
+    cephRgwBucketService, tabViewService) {
   $scope.buckets = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -70,7 +70,7 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
     }
   });
 
-  $scope.$watch("filterConfig", function (newVal) {
+  $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
       return;
     }

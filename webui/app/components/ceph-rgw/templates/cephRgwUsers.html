@@ -29,6 +29,11 @@
                 <i class="fa fa-fw fa-pencil"></i>Edit
             </a>
         </li>
+        <li class="tc_listBucketsItem" ng-class="{disabled: !hasSelection && !multiSelection}">
+            <a ng-click="listBucketsAction()">
+                <i class="fa fa-fw fa-eye"></i>List buckets
+            </a>
+        </li>
         <li class="divider"></li>
         <li class="tc_deleteItem" ng-class="{disabled: !hasSelection && !multiSelection}">
             <a ng-click="deleteAction()">
@@ -45,7 +50,6 @@
                 <th sortfield="email"        sortheaderclass ng-show="columns['Email address']">Email address</th>
                 <th sortfield="suspended"    sortheaderclass ng-show="columns['Suspended']">Suspended</th>
                 <th sortfield="max_buckets"  sortheaderclass ng-show="columns['Max. buckets']">Max. buckets</th>
-                <th ng-show="columns['Buckets']">Buckets</th>
             </tr>
         </thead>
         <tbody>
@@ -58,9 +62,6 @@
                 <td ng-show="columns['Email address']" ng-bind="row.email"></td>
                 <td ng-show="columns['Suspended']"><i class="fa fa-check fa-fw" ng-show="row.suspended"></i></td>
                 <td ng-show="columns['Max. buckets']"  ng-bind="row.max_buckets"></td>
-                <td ng-show="columns['Buckets']" class="tc_linkToBuckets">
-                    <a ui-sref="ceph-rgw-buckets({search:row.user_id, sortfield:'owner'})"><i class="fa fa-check fa-eye"></i></a>
-                </td>
             </tr>
         </tbody>
     </table>

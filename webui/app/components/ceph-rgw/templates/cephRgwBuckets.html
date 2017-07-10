@@ -50,7 +50,9 @@
                 <td ng-show="columns['Name']">
                     <a ui-sref="ceph-rgw-bucket-edit({bucket:row.bucket})" ng-bind="row.bucket"></a>
                 </td>
-                <td ng-show="columns['Owner']"  ng-bind="row.owner"></td>
+                <td ng-show="columns['Owner']">
+                    <a ui-sref="ceph-rgw-user-edit({user_id:row.owner})" ng-bind="row.owner"></a>
+                </td>
             </tr>
         </tbody>
     </table>

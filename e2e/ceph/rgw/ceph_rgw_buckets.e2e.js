@@ -102,8 +102,11 @@ describe('ceph rgw buckets', function(){
 
   it('should redirect from the user list to the bucket list', function(){
     goToUserListView();
-    var ownerRow = helpers.get_list_element(testBucket.owner);
-    ownerRow.element(by.css('.tc_linkToBuckets > a')).click();
+    // Mark the user row and select the 'List buckets' menu.
+    helpers.get_list_element(testBucket.owner).click();
+    element(by.css('.tc_menudropdown')).click();
+    element(by.css('.tc_listBucketsItem > a')).click();
+    browser.sleep(helpers.configs.sleep);
     // Check whether we are on the correct page?
     expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets');
     // Check the number of buckets owned by the user 'e2e_tuxdoe'.
