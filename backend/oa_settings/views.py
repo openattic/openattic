@@ -55,7 +55,8 @@ class SettingsView(APIView):
                 "port": Settings.SALT_API_PORT,
                 "eauth": Settings.SALT_API_EAUTH,
                 "username": Settings.SALT_API_USERNAME,
-                "password": Settings.SALT_API_PASSWORD
+                "password": Settings.SALT_API_PASSWORD,
+                "shared_secret": Settings.SALT_API_SHARED_SECRET
             },
             "rgw": {
                 "managed_by_deepsea": managed_deepsea,
@@ -75,6 +76,7 @@ class SettingsView(APIView):
         Settings.SALT_API_EAUTH = deepsea['eauth']
         Settings.SALT_API_USERNAME = deepsea['username']
         Settings.SALT_API_PASSWORD = deepsea['password']
+        Settings.SALT_API_SHARED_SECRET = deepsea['shared_secret']
 
         rgw = request.DATA['rgw']
         if not rgw['managed_by_deepsea']:
@@ -121,13 +123,21 @@ class CheckDeepSeaConnectionView(APIView):
     def get(self, request):
         if 'host' not in request.GET or \
            'port' not in request.GET or \
-           'eauth' not in request.GET or \
-           'username' not in request.GET or \
-           'password' not in request.GET:
-            raise ValidationError('"host", "port", "eauth", "username", and "password", params are '
-                                  'required')
+           'eauth' not in request.GET:
+            raise ValidationError('"host", "port", and "eauth" params are required')
+
+        if request.GET['eauth'] == 'auto' and \
+           ('username' not in request.GET or 'password' not in request.GET):
+            raise ValidationError('"username", and "password" params are required')
+
+        if request.GET['eauth'] == 'sharedsecret' and \
+           ('username' not in request.GET or 'shared_secret' not in request.GET):
+            raise ValidationError('"username", and "shared_secret" params are required')
+
+        password = request.GET['shared_secret'] \
+            if request.GET['eauth'] == 'sharedsecret' else request.GET['password']
         deepsea = DeepSea(request.GET['host'], request.GET['port'], request.GET['eauth'],
-                          request.GET['username'], request.GET['password'])
+                          request.GET['username'], password)
         return Response(_check_rest_client_connection(deepsea))
 
 
@@ -156,13 +166,21 @@ class GetRGWConfigurationView(APIView):
     def get(self, request):
         if 'host' not in request.GET or \
            'port' not in request.GET or \
-           'eauth' not in request.GET or \
-           'username' not in request.GET or \
-           'password' not in request.GET:
-            raise ValidationError('"host", "port", "eauth", "username", and "password", params are '
-                                  'required')
+           'eauth' not in request.GET:
+            raise ValidationError('"host", "port", and "eauth" params are required')
+
+        if request.GET['eauth'] == 'auto' and \
+           ('username' not in request.GET or 'password' not in request.GET):
+            raise ValidationError('"username", and "password" params are required')
+
+        if request.GET['eauth'] == 'sharedsecret' and \
+           ('username' not in request.GET or 'shared_secret' not in request.GET):
+            raise ValidationError('"username", and "shared_secret" params are required')
+
+        password = request.GET['shared_secret'] \
+            if request.GET['eauth'] == 'sharedsecret' else request.GET['password']
         deepsea = DeepSea(request.GET['host'], request.GET['port'], request.GET['eauth'],
-                          request.GET['username'], request.GET['password'])
+                          request.GET['username'], password)
         try:
             rgw_info = deepsea.get_rgw_api_credentials()
             if rgw_info:

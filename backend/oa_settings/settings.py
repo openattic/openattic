@@ -18,7 +18,8 @@ SALT_API_HOST = ('salt', str)
 SALT_API_PORT = (8000, int)
 SALT_API_USERNAME = ('admin', str)
 SALT_API_PASSWORD = ('admin', str)
-SALT_API_EAUTH = ('auto', str)
+SALT_API_EAUTH = ('sharedsecret', str)
+SALT_API_SHARED_SECRET = ('', str)
 
 # RGW settings
 RGW_API_HOST = ('', str)
