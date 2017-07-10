@@ -27,7 +27,7 @@ diff -r 236d67eb0c5c backend/settings.py
 +API_ROOT = ":8000/api"
 +API_OS_USER = 'vagrant'
 
- DISABLE_CSRF_FOR_API_PATH = []
+ DISABLE_CSRF_FOR_API_PATH = ['/api/grafana']
 
 @@ -218,7 +218,7 @@
          'file': {
