@@ -22,7 +22,9 @@ Added
 ~~~~~
 * Backend: The 'allow_ec_overwrites' flag will now be recognized by
   creating an erasure coded pool (OP-2356)
-
+* Backend: Automatically reload Grafana settings after openattic 
+  config file changed (OP-2426)
+  
 Changed
 ~~~~~~~
 
