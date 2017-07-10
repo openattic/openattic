@@ -20,8 +20,14 @@ describe('settings form', function(){
     form.saltApiPort.getAttribute('value').then(function(value){
       initialSettings.deepsea.port = value;
     });
+    form.saltApiEauth.getAttribute('value').then(function(value){
+      initialSettings.deepsea.eauth = value.replace('string:', '');
+    });
     form.saltApiUsername.getAttribute('value').then(function(value){
       initialSettings.deepsea.username = value;
+    });
+    form.saltApiSharedSecret.getAttribute('value').then(function(value){
+      initialSettings.deepsea.shared_secret = value;
     });
   });
 
@@ -61,7 +67,9 @@ describe('settings form', function(){
   it('should restore initial settings', function(){
     form.saltApiHost.clear().sendKeys(initialSettings.deepsea.host);
     form.saltApiPort.clear().sendKeys(initialSettings.deepsea.port);
+    form.selectEauth(initialSettings.deepsea.eauth);
     form.saltApiUsername.clear().sendKeys(initialSettings.deepsea.username);
+    form.saltApiSharedSecret.clear().sendKeys(initialSettings.deepsea.shared_secret);
     form.checkManagedByDeepSea(true);
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
