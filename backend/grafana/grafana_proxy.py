@@ -18,37 +18,29 @@ import time
 
 import requests
 from django.http import HttpResponse
+from oa_settings import Settings
 from rest_framework.reverse import reverse
-
-from grafana.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
 def has_static_credentials():
-    return all(STATIC_CREDENTIALS.values())
+    return all((Settings.GRAFANA_API_HOST,
+                Settings.GRAFANA_API_PORT,
+                Settings.GRAFANA_API_USERNAME,
+                Settings.GRAFANA_API_PASSWORD,
+                Settings.GRAFANA_API_SCHEME))
 
 
-STATIC_CREDENTIALS = {
-    'host': settings.GRAFANA_API_HOST,
-    'port': settings.GRAFANA_API_PORT,
-    'username': settings.GRAFANA_API_USERNAME,
-    'password': settings.GRAFANA_API_PASSWORD,
-    'scheme': settings.GRAFANA_API_SCHEME,
-}
-
-
-def get_grafana_api_response(request, path, credentials):
-    credentials['port'] = credentials['port'] or settings.GRAFANA_API_PORT
-    credentials['scheme'] = credentials['scheme'] or settings.GRAFANA_API_SCHEME
+def get_grafana_api_response(request, path):
     base_url_prefix = reverse('grafana', args=['/']).rstrip('/')  # e.g. /openattic/api
 
     params = request.GET.copy()
     if path.startswith('/'):
         path = path[1:]
-    scheme = 'https' if credentials['scheme'].lower() == 'https' else 'http'
-    url = '{}://{}:{}/{}'.format(scheme, credentials['host'], credentials['port'], path)
-    auth = (STATIC_CREDENTIALS['username'], STATIC_CREDENTIALS['password'])
+    scheme = 'https' if Settings.GRAFANA_API_SCHEME.lower() == 'https' else 'http'
+    url = '{}://{}:{}/{}'.format(scheme, Settings.GRAFANA_API_HOST, Settings.GRAFANA_API_PORT, path)
+    auth = (Settings.GRAFANA_API_USERNAME, Settings.GRAFANA_API_PASSWORD)
 
     headers = {header.replace(r'HTTP_', ''): value for header, value
                in request.META.items()

@@ -27,3 +27,10 @@ RGW_API_ACCESS_KEY = ('', str)
 RGW_API_SECRET_KEY = ('', str)
 RGW_API_ADMIN_RESOURCE = ('admin', str)
 RGW_API_SCHEME = ('http', str)
+
+# Grafana
+GRAFANA_API_HOST = ('localhost', str)
+GRAFANA_API_PORT = (3000, int)
+GRAFANA_API_USERNAME = ('admin', str)
+GRAFANA_API_PASSWORD = ('admin', str)
+GRAFANA_API_SCHEME = ('http', str)

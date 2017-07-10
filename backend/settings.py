@@ -41,7 +41,7 @@ else:
 API_ROOT = "/openattic/api"
 API_OS_USER = 'openattic'
 
-DISABLE_CSRF_FOR_API_PATH = []
+DISABLE_CSRF_FOR_API_PATH = ['/api/grafana']
 
 from ConfigParser import ConfigParser
 
