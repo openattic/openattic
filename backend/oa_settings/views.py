@@ -30,12 +30,13 @@ class SettingsView(APIView):
         rgw_port = Settings.RGW_API_PORT
         rgw_access_key = Settings.RGW_API_ACCESS_KEY
         rgw_secret_key = Settings.RGW_API_SECRET_KEY
-        rgw_user_id = Settings.RGW_API_ADMIN_RESOURCE
+        rgw_admin_path = Settings.RGW_API_ADMIN_RESOURCE
+        rgw_user_id = Settings.RGW_API_USER_ID
         rgw_use_ssl = Settings.RGW_API_SCHEME == 'https'
         managed_deepsea = False
         if not all((Settings.RGW_API_HOST, Settings.RGW_API_PORT, Settings.RGW_API_SCHEME,
-                    Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_ACCESS_KEY,
-                    Settings.RGW_API_SECRET_KEY)):
+                    Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_USER_ID,
+                    Settings.RGW_API_ACCESS_KEY, Settings.RGW_API_SECRET_KEY)):
             try:
                 credentials = DeepSea.instance().get_rgw_api_credentials()
                 if credentials:
@@ -44,6 +45,7 @@ class SettingsView(APIView):
                     rgw_port = credentials['port']
                     rgw_access_key = credentials['access_key']
                     rgw_secret_key = credentials['secret_key']
+                    rgw_admin_path = credentials['admin_path']
                     rgw_user_id = credentials['user_id']
                     rgw_use_ssl = credentials['scheme'] == 'https'
             except RequestException:
@@ -64,6 +66,7 @@ class SettingsView(APIView):
                 "port": rgw_port,
                 "access_key": rgw_access_key,
                 "secret_key": rgw_secret_key,
+                "admin_path": rgw_admin_path,
                 "user_id": rgw_user_id,
                 "use_ssl": rgw_use_ssl
             }
@@ -84,10 +87,12 @@ class SettingsView(APIView):
             Settings.RGW_API_PORT = rgw['port']
             Settings.RGW_API_ACCESS_KEY = rgw['access_key']
             Settings.RGW_API_SECRET_KEY = rgw['secret_key']
-            Settings.RGW_API_ADMIN_RESOURCE = rgw['user_id']
+            Settings.RGW_API_ADMIN_RESOURCE = rgw['admin_path']
+            Settings.RGW_API_USER_ID = rgw['user_id']
             Settings.RGW_API_SCHEME = 'https' if rgw['use_ssl'] else 'http'
         else:
             Settings.RGW_API_HOST = ''
+            Settings.RGW_API_USER_ID = ''
             Settings.RGW_API_ACCESS_KEY = ''
             Settings.RGW_API_SECRET_KEY = ''
 
@@ -144,22 +149,38 @@ class CheckDeepSeaConnectionView(APIView):
 class CheckRGWConnectionView(APIView):
     def get(self, request):
         if 'user_id' not in request.GET or \
+           'admin_path' not in request.GET or \
            'access_key' not in request.GET or \
            'secret_key' not in request.GET or \
            'host' not in request.GET or \
            'port' not in request.GET or \
            'use_ssl' not in request.GET:
-            raise ValidationError('"host", "port", "user_id", "access_key", "secret_key", '
-                                  'and "use_ssl" params are required')
+            raise ValidationError('"host", "port", "user_id", "admin_path", "access_key", '
+                                  '"secret_key", and "use_ssl" params are required')
 
-        if not all((request.GET['user_id'], request.GET['access_key'], request.GET['secret_key'],
-                    request.GET['host'], request.GET['port'], request.GET['use_ssl'])):
+        if not all((request.GET['user_id'], request.GET['admin_path'], request.GET['access_key'],
+                    request.GET['secret_key'], request.GET['host'], request.GET['port'],
+                    request.GET['use_ssl'])):
             return Response({'success': False, 'message': 'Configuration incomplete'})
 
         rgwclient = RGWClient(request.GET['user_id'], request.GET['access_key'],
                               request.GET['secret_key'], request.GET['host'],
-                              request.GET['port'], request.GET['use_ssl'] == 'true')
-        return Response(_check_rest_client_connection(rgwclient))
+                              request.GET['port'], request.GET['admin_path'],
+                              request.GET['use_ssl'] == 'true')
+        response = _check_rest_client_connection(rgwclient)
+        if not response['success']:
+            return Response(response)
+
+        try:
+            if rgwclient.is_system_user():
+                return Response({'success': True})
+        except RequestException:
+            pass
+
+        return Response({
+            'success': False,
+            'message': 'Non system user capabilities, or wrong admin resource path'
+        })
 
 
 class GetRGWConfigurationView(APIView):
@@ -191,6 +212,7 @@ class GetRGWConfigurationView(APIView):
                         "port": int(rgw_info['port']),
                         "access_key": rgw_info['access_key'],
                         "secret_key": rgw_info['secret_key'],
+                        "admin_path": rgw_info['admin_path'],
                         "user_id": rgw_info['user_id'],
                         "use_ssl": rgw_info['scheme'] == 'https'
                     }

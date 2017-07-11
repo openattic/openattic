@@ -124,6 +124,15 @@ class RGWClient(RestClient, SettingsListener):
         return response[0]['ID'] == self.userid
 
     @RestClient.requires_login
+    @RestClient.api_get('/{admin_path}/metadata/user', resp_structure='[+]')
+    def _is_system_user(self, admin_path, request=None):
+        response = request()
+        return self.userid in response
+
+    def is_system_user(self):
+        return self._is_system_user(self.admin_path)
+
+    @RestClient.requires_login
     @RestClient.api_get('/{admin_path}/user', resp_structure='tenant & user_id & email & keys[*] > '
                                                              ' (user & access_key & secret_key)')
     def _admin_get_user_keys(self, admin_path, userid, request=None):

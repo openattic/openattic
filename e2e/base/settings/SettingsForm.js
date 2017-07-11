@@ -19,6 +19,7 @@ var SettingsForm = function(){
   this.rgwAccessKey = element(by.model('$ctrl.model.rgw.access_key'));
   this.rgwSecretKey = element(by.model('$ctrl.model.rgw.secret_key'));
   this.rgwAdminUser = element(by.model('$ctrl.model.rgw.user_id'));
+  this.rgwAdminResourcePath = element(by.model('$ctrl.model.rgw.admin_path'));
   this.rgwUseSSL = element(by.model('$ctrl.model.rgw.use_ssl'));
   this.rgwConnectionSuccess = element(by.css('.tc_rgwConnectionSuccess'));
   this.rgwConnectionFail = element(by.css('.tc_rgwConnectionFail'));
