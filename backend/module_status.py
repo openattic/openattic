@@ -135,15 +135,19 @@ class StatusView(APIView):
 
             try:
                 module = import_module('{}.status'.format(module_name))
-                module.status(request.GET)
-                return available_response()
             except ImportError:
                 return available_response()
+
+            try:
+                if getattr(module, 'status') is None:
+                    return Response({
+                        'message': 'Missing function `status` in module `{}`'.format(module_name),
+                        'available': False,
+                    }, status=500)
+
+                module.status(request.GET)
+
+                return available_response()
+
             except UnavailableModule as ex:
                 return unavailable_response(ex.reason, ex.message)
-            except AttributeError:
-                return Response({
-                    'message': 'Missing function `status` in module `{}`'.format(module_name),
-                    'available': False,
-                }, status=500)
-
