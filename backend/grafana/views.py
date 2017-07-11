@@ -16,7 +16,7 @@ import json
 from django.http import HttpResponse
 from rest_framework.views import APIView
 
-from grafana.grafana_proxy import GrafanaProxy
+from grafana.grafana_proxy import GrafanaProxy, get_grafana_api_response
 from rest_client import RequestException
 
 
@@ -38,6 +38,6 @@ class ProxyView(APIView):
             return response
 
         try:
-            return GrafanaProxy.get_grafana_api_response(request, path)
+            return get_grafana_api_response(request, path)
         except RequestException as e:
             return HttpResponse(e.content, e.status_code)
