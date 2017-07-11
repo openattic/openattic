@@ -344,6 +344,7 @@ cp -r /usr/lib*/python2.7/*-packages/dbus env/lib/python2.7/site-packages/
 # ceph
 cp -r /usr/lib*/python2.7/*-packages/rados* env/lib/python2.7/site-packages/
 cp -r /usr/lib*/python2.7/*-packages/rbd*  env/lib/python2.7/site-packages/
+cp -r /usr/lib*/python2.7/*-packages/cephfs*  env/lib/python2.7/site-packages/
 
 # glib
 cp -r /usr/lib*/python2.7/*-packages/gobject env/lib/python2.7/site-packages/
