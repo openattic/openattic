@@ -1,0 +1,18 @@
+<p>This module cannot be loaded due to an authentication problem while connecting to the RGW S3 API</p>
+
+<hr>
+
+<p>Please verify that:</p>
+<ul>
+  <li>
+    <a ui-sref="settings"><strong>Object Gateway Admin User</strong> setting</a> is a "system" user.<br>
+    Run <kbd>radosgw-admin user info --uid=<USERID> | grep system</kbd> to check whether the user &lt;USERID&gt; has system capabilities.
+  </li>
+  
+  <li>
+    <a ui-sref="settings"><strong>Object Gateway Admin Resource Path</strong> setting</a> matches
+    the RGW configuration option rgw_admin_entry in ceph.conf file.<br>
+    Run <kbd>salt -I 'roles:rgw' cmd.run 'cat /etc/ceph/ceph.conf | grep rgw'</kbd> to check the configuration options in RGW nodes.<br>
+    The default value of rgw_admin_entry is "admin".
+  </li>
+</ul>

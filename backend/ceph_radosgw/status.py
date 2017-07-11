@@ -81,6 +81,18 @@ def check_rgw_connection():
         raise UnavailableModule(Reason.RGW_HTTP_PROBLEM, str(ex))
 
 
+def check_rgw_admin_permissions():
+    try:
+        if not RGWClient.admin_instance().is_system_user():
+            raise UnavailableModule(Reason.RGW_NOT_SYSTEM_USER, None)
+    except RequestException as ex:
+        if ex.status_code and ex.status_code in [401, 403]:
+            raise UnavailableModule(Reason.RGW_NOT_SYSTEM_USER, None)
+        else:
+            raise UnavailableModule(Reason.RGW_HTTP_PROBLEM, str(ex))
+
+
 def status(params):
     check_rgw_credentials()
     check_rgw_connection()
+    check_rgw_admin_permissions()
