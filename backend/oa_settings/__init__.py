@@ -36,6 +36,24 @@ class Settings(object):
     '''
     pass
 
+    @staticmethod
+    def have_values(prefix):
+        """
+        Checks if all settings starting with `prefix` evaluate to `True`. Returns `False` if at
+        least one setting does not evaluate to `True`. Returns `False` if not settings could be
+        found.
+
+        :type prefix: str
+        :rtype: bool
+        """
+        settings = [value for key, value in Settings.__dict__.items() if
+                    key.startswith(prefix)]
+
+        if len(settings) == 0:
+            return False
+
+        return all(settings)
+
 
 _custom_settings = ('/etc/default/openattic', '/etc/sysconfig/openattic')
 settings_file = None
