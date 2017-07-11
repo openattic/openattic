@@ -286,13 +286,13 @@ if [ "$IS_XENIAL" ]
 then
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user openattic createdb createuser password 'DB_PASSWORD';
+create user openattic createdb createrole password 'DB_PASSWORD';
 create database openattic OWNER openattic ENCODING 'UTF-8';
 EOF
 else
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user openattic createdb createuser password 'DB_PASSWORD';
+create user openattic createdb createrole password 'DB_PASSWORD';
 create database openattic OWNER openattic;
 EOF
 fi
