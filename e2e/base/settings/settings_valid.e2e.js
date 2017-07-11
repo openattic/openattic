@@ -44,6 +44,15 @@ describe('settings inputs validations', function(){
     expect(form.saltApiUsernameRequired.isDisplayed()).toBe(false);
   });
 
+  it('should validate salt api shared secret', function(){
+    form.selectEauth('sharedsecret');
+    form.saltApiSharedSecret.clear();
+    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(true);
+
+    form.saltApiSharedSecret.sendKeys('mysecretkey');
+    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(false);
+  });
+
   it('should disable object gateway fields', function(){
     browser.refresh();
     

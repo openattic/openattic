@@ -8,6 +8,8 @@ var SettingsForm = function(){
   this.saltApiEauthRequired = element(by.css('.tc_saltApiEauthRequired'));
   this.saltApiUsername = element(by.model('$ctrl.model.deepsea.username'));
   this.saltApiUsernameRequired = element(by.css('.tc_saltApiUsernameRequired'));
+  this.saltApiSharedSecret = element(by.model('$ctrl.model.deepsea.shared_secret'));
+  this.saltApiSharedSecretRequired = element(by.css('.tc_saltApiSharedSecretRequired'));
   this.saltApiConnectionSuccess = element(by.css('.tc_deepseaConnectionSuccess'));
   this.saltApiConnectionFail = element(by.css('.tc_deepseaConnectionFail'));
 
