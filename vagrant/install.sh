@@ -168,13 +168,7 @@ fi
 # http://docs.openattic.org/2.0/developer_docs/setup_howto.html#installing-the-development-tools
 OA_PACKAGES='base
 gui
-module-btrfs
 module-ceph
-module-cron
-module-http
-module-nfs
-module-samba
-module-lio
 pgsql'
 
 if [ "$IS_DEBIAN" ]
