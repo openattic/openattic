@@ -35,6 +35,11 @@ def check_grafana_connection():
             raise UnavailableModule(errno_to_grafana_code[e.conn_errno], e.conn_strerror)
         elif e.status_code in status_code_grafana_code:
             raise UnavailableModule(status_code_grafana_code[e.status_code])
+        elif e.conn_errno:
+            raise UnavailableModule(Reason.GRAFANA_REQUEST_EXCEPTION, {
+                'code': e.conn_errno,
+                'message': e.conn_strerror,
+            })
         else:
             raise UnavailableModule(Reason.GRAFANA_REQUEST_EXCEPTION, {
                 'status_code': e.status_code,
