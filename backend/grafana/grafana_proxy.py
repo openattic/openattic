@@ -29,19 +29,19 @@ logger = logging.getLogger(__name__)
 class GrafanaProxy(RestClient):
     _instance = None
 
-    @classmethod
-    def instance(cls):
+    @staticmethod
+    def instance():
         """
         :rtype: GrafanaProxy
         """
         ssl = Settings.GRAFANA_API_SCHEME.lower() == 'https'
-        if cls._instance is None:
-            cls._instance = GrafanaProxy(Settings.GRAFANA_API_HOST,
-                                         Settings.GRAFANA_API_PORT,
-                                         Settings.GRAFANA_API_USERNAME,
-                                         Settings.GRAFANA_API_PASSWORD,
-                                         ssl)
-        return cls._instance
+        if GrafanaProxy._instance is None:
+            GrafanaProxy._instance = GrafanaProxy(Settings.GRAFANA_API_HOST,
+                                                  Settings.GRAFANA_API_PORT,
+                                                  Settings.GRAFANA_API_USERNAME,
+                                                  Settings.GRAFANA_API_PASSWORD,
+                                                  ssl)
+        return GrafanaProxy._instance
 
     def __init__(self, host, port, username, password, ssl=False):
         super(GrafanaProxy, self).__init__(host, port, 'Grafana', ssl, auth=(username, password))
