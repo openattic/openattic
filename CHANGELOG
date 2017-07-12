@@ -41,6 +41,8 @@ Fixed
 * WebUI: Remove unique name errors in pool form (OP-2421)
 * Development: Add cephfs.so to Vagrant's virtual environment (OP-2463)
 * Development: Fix various issues in the Vagrant box installer script.
+* Backend: Commented settings should not be removed by openATTIC 
+  (OP-2459)
 
 [3.3.0] - 2017-07-06
 --------------------
