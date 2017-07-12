@@ -110,10 +110,8 @@ def save_settings():
         for line in f:
             sline = line.strip()
             idx = sline.find('=')
-            if idx != -1:
+            if idx != -1 and not sline.startswith('#'):
                 key = sline[:idx].strip()
-                if key.startswith('#'):
-                    key = key[1:]
                 if key in settings_list:
                     if getattr(Settings, key) == setting_init_dict[key][0]:
                         continue
