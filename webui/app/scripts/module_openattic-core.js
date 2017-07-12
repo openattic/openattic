@@ -37,8 +37,6 @@ angular.module("openattic.core", [
   "openattic.commandlog",
   "openattic.dashboard",
   "openattic.grafana",
-  "openattic.graph",
-  "openattic.graph",
   "openattic.navigation",
   "openattic.notification",
   "openattic.settings",

@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.dashboard");
-app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance, data) {
+app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance, cephClusterService, data) {
   $scope.data = angular.copy(data);
   $scope.editMode = angular.isString(data.name);
   if (!$scope.editMode) {
@@ -65,12 +65,6 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
     footer: reason
   };
 
-  $scope.extendedSettings = [
-    "ceph-cluster-performance",
-    "ceph-mon-status",
-    "ceph-osd-status"
-  ];
-
   $scope.addOrEdit = function () {
     $uibModalInstance.close($scope.input);
   };
@@ -80,36 +74,62 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
   };
 
   var selectInput = function () {
-    if ($scope.editMode) {
-      if ($scope.data.type === "dashboard") {
-        $scope.input = {
-          "name": $scope.data.name
-        };
-      }
-      if ($scope.data.type === "widget") {
-        $scope.input = {
-          "name"    : $scope.data.name,
-          "manager" : $scope.data.selectedManager,
-          "settings": $scope.data.settings
-        };
-      }
-    } else {
-      if ($scope.data.type === "widget") {
-        $scope.input = {
-          settings: $scope.data.settings
-        };
-        $scope.$watch("input.manager", function (manager) {
-          if (!manager) {
-            return;
-          }
-          $scope.input.name = manager.name;
-        });
-      } else {
-        $scope.input = {
-          name: "Dashboard"
-        };
-      }
+    if ($scope.data.type === "widget") {
+      setUpWidget($scope.data);
+    } else if ($scope.data.type === "dashboard") {
+      setUpDashboard($scope.data);
     }
+  };
+
+  var setUpWidget = function () {
+    var data = $scope.data;
+    if ($scope.editMode) {
+      $scope.input = {
+        "name"    : data.name,
+        "manager" : data.selectedManager,
+        "settings": data.settings
+      };
+    } else {
+      $scope.input = {
+        settings: data.settings
+      };
+      enableManagerNameChange();
+    }
+    retreiveClusterList();
+  };
+
+  var retreiveClusterList = function () {
+    cephClusterService
+        .get()
+        .$promise
+        .then(function (res) {
+          var results = res.results;
+          $scope.cluster = results;
+          if (results.length === 1) {
+            $scope.input.settings.cluster = results[0];
+          }
+        });
+  };
+
+  var setUpDashboard = function () {
+    if ($scope.editMode) {
+      $scope.input = {
+        "name": $scope.data.name
+      };
+    } else {
+      $scope.input = {
+        name: "Dashboard"
+      };
+    }
+  };
+
+  var enableManagerNameChange = function () {
+    $scope.$watch("input.manager", function (manager) {
+      if (!manager) {
+        return;
+      }
+      $scope.input.name = manager.name;
+    });
   };
 
   selectInput();

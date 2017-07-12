@@ -46,8 +46,21 @@
                required>
       </div>
 
-      <ceph-cluster-performance-settings ng-if="extendedSettings.indexOf(input.manager.manager) >= 0">
-      </ceph-cluster-performance-settings>
+      <div ng-if="extendedSettings.indexOf(input.manager.manager) >= 0">
+        <i class="fa fa-spinner fa-spin fa-fw" ng-if="!cluster.length"></i>
+
+        <div class="form-group" ng-if="cluster.length > 1">
+          <label for="cluster" class="control-label">Cluster</label>
+          <select id="cluster"
+                  name="cluster"
+                  class="form-control tc_cluster"
+                  ng-model="input.settings.cluster"
+                  ng-options="(c.name + ' (' + c.fsid + ')') for c in cluster track by c.fsid"
+                  required>
+            <option value="">-- Select a cluster --</option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
 

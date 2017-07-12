@@ -60,17 +60,6 @@ var cephPoolCommons = function(){
     }
   ];
 
-  this.statisticGraphsConfig = [
-    {
-      name: 'Utilization',
-      attributes: ['max_avail', 'num_bytes']
-    },
-    {
-      name: 'Number of Objects',
-      attributes: ['num_objects']
-    }
-  ];
-
   // Describes the form elements.
   this.formElements = {
     name: {
