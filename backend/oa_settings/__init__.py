@@ -37,7 +37,7 @@ class Settings(object):
     pass
 
     @staticmethod
-    def have_values(prefix):
+    def has_values(prefix):
         """
         Checks if all settings starting with `prefix` evaluate to `True`. Returns `False` if at
         least one setting does not evaluate to `True`. Returns `False` if not settings could be

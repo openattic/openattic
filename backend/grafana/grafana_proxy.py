@@ -34,8 +34,8 @@ class GrafanaProxy(RestClient):
         """
         :rtype: GrafanaProxy
         """
-        ssl = Settings.GRAFANA_API_SCHEME.lower() == 'https'
         if GrafanaProxy._instance is None:
+            ssl = Settings.GRAFANA_API_SCHEME.lower() == 'https'
             GrafanaProxy._instance = GrafanaProxy(Settings.GRAFANA_API_HOST,
                                                   Settings.GRAFANA_API_PORT,
                                                   Settings.GRAFANA_API_USERNAME,
@@ -52,7 +52,7 @@ class GrafanaProxy(RestClient):
 
     @staticmethod
     def has_credentials():
-        return Settings.have_values('GRAFANA_API_')
+        return Settings.has_values('GRAFANA_API_')
 
     @RestClient.api_get('/api/org/users', resp_structure='[*]')
     @RestClient.requires_login
