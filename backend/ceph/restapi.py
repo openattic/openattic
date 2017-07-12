@@ -24,7 +24,7 @@ from taskqueue.restapi import TaskQueueLocationMixin
 from rest.restapi import NoCacheModelViewSet
 
 from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params, \
-    drf_version
+    drf_version, get_paginated_response, get_request_query_params
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -177,7 +177,7 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
     """
 
     serializer_class = CephPoolSerializer
-    filter_fields = ("name", "type",)
+    filter_fields = ("name", "type", "flags",)
     search_fields = ("name",)
 
     def __init__(self, **kwargs):
@@ -209,6 +209,14 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
                             status=status.HTTP_200_OK)
         else:
             raise ValueError('{}. Method not allowed.'.format(request.method))
+
+    def list(self, request, *args, **kwargs):
+        query_params = get_request_query_params(request)
+        if 'flags' in query_params:
+            filtered_pools = CephPool.objects.filter(flags__icontains=query_params['flags'])
+            return get_paginated_response(self, filtered_pools)
+        else:
+            return super(CephPoolViewSet, self).list(request, args, kwargs)
 
 
 class CephErasureCodeProfileSerializer(NodbSerializer):
