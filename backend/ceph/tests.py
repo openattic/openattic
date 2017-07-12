@@ -441,13 +441,9 @@ class JsonFieldFilterTest(TestCase):
 
         @staticmethod
         def get_all_objects(context, query):
-            return [JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'a', 'attr2': 'b'}),
-                    JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'b', 'attr2': 'a'}),
-                    JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'x', 'attr2': 'y'}),
-                    JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'x', 'attr2': 'y'}),
-                    JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'a', 'attr2': 'y'}),
-                    JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'b', 'attr2': 'k'}),
-                    JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': 'a', 'attr2': 'i'})]
+            return [JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': a1, 'attr2': a2})
+                    for (a1, a2) in
+                    [('a', 'b'), ('b', 'a'), ('x', 'y'), ('x', 'y'), ('a', 'y'), ('b', 'k'), ('a', 'i')]]
 
     def test_list_icontains(self):
         self.assertEqual(
