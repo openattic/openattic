@@ -214,6 +214,7 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
         query_params = get_request_query_params(request)
         if 'flags' in query_params:
             filtered_pools = CephPool.objects.filter(flags__icontains=query_params['flags'])
+            filtered_pools = self.filter_queryset(filtered_pools)
             return get_paginated_response(self, filtered_pools)
         else:
             return super(CephPoolViewSet, self).list(request, args, kwargs)
