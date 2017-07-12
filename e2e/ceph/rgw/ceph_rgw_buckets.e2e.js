@@ -100,6 +100,19 @@ describe('ceph rgw buckets', function(){
     expect(cells.get(2).getText()).toEqual(testUser.user_id);
   });
 
+  it('should redirect from the user list to the bucket list', function(){
+    goToUserListView();
+    // Mark the user row and select the 'List buckets' menu.
+    helpers.get_list_element(testBucket.owner).click();
+    element(by.css('.tc_menudropdown')).click();
+    element(by.css('.tc_listBucketsItem > a')).click();
+    browser.sleep(helpers.configs.sleep);
+    // Check whether we are on the correct page?
+    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets');
+    // Check the number of buckets owned by the user 'e2e_tuxdoe'.
+    expect(element.all(by.tagName('tbody > tr')).count()).toEqual(1);
+  });
+
   it('should delete the test bucket', function(){
     element(by.cssContainingText('tr', testBucket.name)).click();
     helpers.delete_selection(0, '$ctrl');
