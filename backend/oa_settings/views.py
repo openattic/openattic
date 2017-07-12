@@ -16,6 +16,8 @@ import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
+
+from grafana.grafana_proxy import GrafanaProxy
 from oa_settings import Settings, save_settings
 from deepsea import DeepSea
 from rest_client import RequestException
@@ -153,6 +155,26 @@ class CheckDeepSeaConnectionView(APIView):
         deepsea = DeepSea(request.GET['host'], request.GET['port'], request.GET['eauth'],
                           request.GET['username'], password)
         return Response(_check_rest_client_connection(deepsea))
+
+
+class CheckGrafanaConnectionView(APIView):
+    def get(self, request):
+        if 'host' not in request.GET or \
+           'port' not in request.GET or \
+           'username' not in request.GET or \
+           'password' not in request.GET or \
+           'use_ssl' not in request.GET:
+            raise ValidationError('"host", "port", "username", "password", and "use_ssl", '
+                                  'params are required')
+
+        if not all((request.GET['host'], request.GET['port'], request.GET['username'],
+                    request.GET['password'], request.GET['use_ssl'])):
+            return Response({'success': False, 'message': 'Configuration incomplete'})
+
+        grafanaproxy = GrafanaProxy(request.GET['host'], request.GET['port'],
+                              request.GET['username'], request.GET['password'],
+                              request.GET['use_ssl'] == 'true')
+        return Response(_check_rest_client_connection(grafanaproxy))
 
 
 class CheckRGWConnectionView(APIView):

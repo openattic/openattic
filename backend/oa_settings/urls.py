@@ -12,13 +12,15 @@
  *  GNU General Public License for more details.
 """
 from django.conf.urls import patterns, url
-from oa_settings.views import SettingsView, CheckDeepSeaConnectionView, CheckRGWConnectionView, \
-                              GetRGWConfigurationView
+from oa_settings.views import SettingsView, CheckDeepSeaConnectionView, CheckGrafanaConnectionView, \
+                              CheckRGWConnectionView, GetRGWConfigurationView
 
 
 urlpatterns = patterns('',
                        url(r'^api/settings/check_deepsea_connection$',
                            CheckDeepSeaConnectionView.as_view(), name='settings_check_deepsea'),
+                       url(r'^api/settings/check_grafana_connection$',
+                           CheckGrafanaConnectionView.as_view(), name='settings_check_grafana'),
                        url(r'^api/settings/check_rgw_connection$',
                            CheckRGWConnectionView.as_view(), name='settings_check_rgw'),
                        url(r'^api/settings/get_rgw_configuration$',
