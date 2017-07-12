@@ -132,7 +132,7 @@ class NodbQuerySet(QuerySet):
             if attr is None:
                 return value is None
             elif isinstance(attr, list):
-                if len(keys) == 2 and isinstance(keys[0], str) and isinstance(keys[1], str):
+                if isinstance(attr[0], basestring):
                     return _filter_by_modifier(keys, attr, value)
                 return reduce(operator.or_, [filter_impl(keys[1:], value, e) for e in attr], False)
             elif isinstance(attr, models.Model) or isinstance(attr, dict):
