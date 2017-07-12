@@ -39,8 +39,8 @@ Fixed
 * Backend: The status module returns JSON if a module couldn't be
   found by now. (OP-2440)
 * WebUI: Remove unique name errors in pool form (OP-2421)
-* Developeent: Add cephfs.so to Vagrant's virtual environment (OP-2463)
-
+* Development: Add cephfs.so to Vagrant's virtual environment (OP-2463)
+* Development: Fix various issues in the Vagrant box installer script.
 
 [3.3.0] - 2017-07-06
 --------------------
