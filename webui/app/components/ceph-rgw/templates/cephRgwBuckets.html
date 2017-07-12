@@ -40,7 +40,7 @@
         <thead>
             <tr>
                 <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
-                <th sortfield="bucket" sortheaderclass ng-show="columns['Name']" sortdir="ASC" sortdefault>Name</th>
+                <th sortfield="bucket" sortheaderclass ng-show="columns['Name']" sortdir="ASC">Name</th>
                 <th sortfield="owner"  sortheaderclass ng-show="columns['Owner']">Owner</th>
             </tr>
         </thead>
@@ -50,7 +50,9 @@
                 <td ng-show="columns['Name']">
                     <a ui-sref="ceph-rgw-bucket-edit({bucket:row.bucket})" ng-bind="row.bucket"></a>
                 </td>
-                <td ng-show="columns['Owner']"  ng-bind="row.owner"></td>
+                <td ng-show="columns['Owner']">
+                    <a ui-sref="ceph-rgw-user-edit({user_id:row.owner})" ng-bind="row.owner"></a>
+                </td>
             </tr>
         </tbody>
     </table>

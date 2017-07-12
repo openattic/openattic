@@ -14,7 +14,6 @@
 from __future__ import absolute_import
 from importlib import import_module
 from deepsea import DeepSea
-from django.http import HttpResponse
 from rest_client import RequestException
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -129,13 +128,26 @@ class StatusView(APIView):
     def get(self, request, module_name):
         if module_name:
             try:
+                import_module(module_name)
+            except ImportError:
+                return Response({'message': 'Module "{}" not found'.format(module_name),
+                                 'available': False}, status=404)
+
+            try:
                 module = import_module('{}.status'.format(module_name))
             except ImportError:
-                return HttpResponse('Module "{}" not found'.format(module_name), status=404)
-        try:
-            module.status(request.GET)
-            return available_response()
-        except AttributeError:
-            return available_response()
-        except UnavailableModule as ex:
-            return unavailable_response(ex.reason, ex.message)
+                return available_response()
+
+            try:
+                if getattr(module, 'status') is None:
+                    return Response({
+                        'message': 'Missing function `status` in module `{}`'.format(module_name),
+                        'available': False,
+                    }, status=500)
+
+                module.status(request.GET)
+
+                return available_response()
+
+            except UnavailableModule as ex:
+                return unavailable_response(ex.reason, ex.message)

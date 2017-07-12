@@ -28,9 +28,13 @@ class DeepSea(RestClient, SettingsListener):
     @staticmethod
     def instance():
         if DeepSea._instance is None:
+            if Settings.SALT_API_EAUTH == 'sharedsecret':
+                password = Settings.SALT_API_SHARED_SECRET
+            else:
+                password = Settings.SALT_API_PASSWORD
             DeepSea._instance = DeepSea(Settings.SALT_API_HOST, Settings.SALT_API_PORT,
                                         Settings.SALT_API_EAUTH, Settings.SALT_API_USERNAME,
-                                        Settings.SALT_API_PASSWORD)
+                                        password)
         return DeepSea._instance
 
     def __init__(self, host, port, eauth, username, password):
@@ -60,7 +64,7 @@ class DeepSea(RestClient, SettingsListener):
     def _login(self, request=None):
         response = request({
             'username': self.username,
-            'password': self.password,
+            'sharedsecret' if self.eauth == 'sharedsecret' else 'password': self.password,
             'eauth': self.eauth
         })
         self.token = response['return'][0]['token']

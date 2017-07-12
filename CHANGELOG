@@ -22,13 +22,28 @@ Added
 ~~~~~
 * Backend: The 'allow_ec_overwrites' flag will now be recognized by
   creating an erasure coded pool (OP-2356)
+* Backend: OSD list is now filterable by 'osd_objectstore' (OP-2417)
+* Backend: Automatically reload Grafana settings after openattic 
+  config file changed (OP-2426)
+* Backend/WebUI: Added support for Salt-API "sharedsecret" eauth
+  authentication (OP-2451)
+* WebUI: Add a menu to navigate to the users buckets (OP-2382)
 
 Changed
 ~~~~~~~
+* WebUI: Refactors add form template (OP-2420)
 
 Fixed
 ~~~~~
-
+* Backend: The status module returns "available" for modules missing
+  the status.py file. (OP-2441)
+* Backend: The status module returns JSON if a module couldn't be
+  found by now. (OP-2440)
+* WebUI: Remove unique name errors in pool form (OP-2421)
+* Development: Add cephfs.so to Vagrant's virtual environment (OP-2463)
+* Development: Fix various issues in the Vagrant box installer script.
+* Backend: Commented settings should not be removed by openATTIC 
+  (OP-2459)
 
 [3.3.0] - 2017-07-06
 --------------------

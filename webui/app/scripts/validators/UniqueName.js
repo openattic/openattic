@@ -70,6 +70,9 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               };
               break;
             case "ceph-pool":
+              if (!scope.data.cluster.fsid) {
+                return;
+              }
               query.fsid = scope.data.cluster.fsid;
               obj = {
                 model: cephPoolsService,

@@ -71,8 +71,14 @@ app.component("settingsForm",  {
       return angular.isDefined(deepsea.host) &&
         angular.isDefined(deepsea.port) &&
         angular.isDefined(deepsea.eauth) &&
-        angular.isDefined(deepsea.username) &&
-        angular.isDefined(deepsea.password);
+        (
+          (deepsea.eauth === "auto" &&
+           angular.isDefined(deepsea.username) &&
+           angular.isDefined(deepsea.password)) ||
+          (deepsea.eauth === "sharedsecret" &&
+           angular.isDefined(deepsea.username) &&
+           angular.isDefined(deepsea.shared_secret))
+        );
     };
 
     var checkDeepSeaConnectionTimeout;
