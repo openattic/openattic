@@ -275,6 +275,7 @@ def call_librados(fsid, method, timeout=30):
                         res = method(client)
                         self.com_pipe.send(res)
                 except Exception as e:
+                    logger.exception("Exception when running a librados process.")
                     self.com_pipe.send(e)
 
     if settings.SEPARATE_LIBRADOS_PROCESS:
@@ -831,7 +832,7 @@ class RbdApi(object):
     @logged
     @undoable
     def create(self, pool_name, image_name, size, old_format=True, features=None,
-               order=None):
+               order=None, stripe_unit=None, stripe_count=None):
         """
         .. example::
                 >>> api = RbdApi()
@@ -844,6 +845,8 @@ class RbdApi(object):
         :param order: obj_size will be 2**order
         :type features: list[str]
         :param old_format: Some features are not supported by the old format.
+        :type stripe_unit: int
+        :type stripe_count: int
         """
         def _do(client):
             ioctx = client.get_pool(pool_name)
@@ -851,8 +854,14 @@ class RbdApi(object):
             default_features = 0 if old_format else 61  # FIXME: hardcoded int
             feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
                                default_features)
-            rbd_inst.create(ioctx, image_name, size, old_format=old_format,
-                            features=feature_bitmask, order=order)
+            try:
+                rbd_inst.create(ioctx, image_name, size, old_format=old_format,
+                                features=feature_bitmask, order=order,
+                                stripe_unit=stripe_unit, stripe_count=stripe_count)
+            except TypeError:
+                logger.exception('This seems to be Jewel?!')
+                rbd_inst.create(ioctx, image_name, size, old_format=old_format,
+                                features=feature_bitmask, order=order)
 
         yield self._call_librados(_do)
         self.remove(pool_name, image_name)
@@ -900,6 +909,19 @@ class RbdApi(object):
                                        '--pool', pool_name, '--image', name, '--format', 'json'])
         du = json.loads(out)['images']
         return du[0] if du else {}
+
+    def image_stripe_info(self, pool_name, name, snapshot=None):
+        """:returns: tuple of count and unit"""
+        def _action(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
+                try:
+                    return image.stripe_count(), image.stripe_count()
+                except AttributeError:
+                    return None, None
+
+        return self._call_librados(_action)
+
 
     @undoable
     def image_resize(self, pool_name, name, size):
