@@ -32,6 +32,8 @@ Added
 * WebUI: Add a menu to navigate to the users buckets (OP-2382)
 * Backend: Added Grafana configuration to the settings REST service 
   (OP-2450)
+* Backend: Returns the status of the Grafana integration through the
+  API (OP-2438)
 
 Changed
 ~~~~~~~
