@@ -21,25 +21,52 @@ from django.http import HttpResponse
 from oa_settings import Settings
 from rest_framework.reverse import reverse
 
+from rest_client import RestClient
+
 logger = logging.getLogger(__name__)
 
 
-def has_static_credentials():
-    return all((Settings.GRAFANA_API_HOST,
-                Settings.GRAFANA_API_PORT,
-                Settings.GRAFANA_API_USERNAME,
-                Settings.GRAFANA_API_PASSWORD,
-                Settings.GRAFANA_API_SCHEME))
+class GrafanaProxy(RestClient):
+    _instance = None
+
+    @staticmethod
+    def instance():
+        """
+        :rtype: GrafanaProxy
+        """
+        if GrafanaProxy._instance is None:
+            ssl = Settings.GRAFANA_API_SCHEME.lower() == 'https'
+            GrafanaProxy._instance = GrafanaProxy(Settings.GRAFANA_API_HOST,
+                                                  Settings.GRAFANA_API_PORT,
+                                                  Settings.GRAFANA_API_USERNAME,
+                                                  Settings.GRAFANA_API_PASSWORD,
+                                                  ssl)
+        return GrafanaProxy._instance
+
+    def __init__(self, host, port, username, password, ssl=False):
+        super(GrafanaProxy, self).__init__(host, port, 'Grafana', ssl, auth=(username, password))
+        self.token = None
+
+    def _is_logged_in(self):
+        return True
+
+    @staticmethod
+    def has_credentials():
+        return Settings.has_values('GRAFANA_API_')
+
+    @RestClient.api_get('/api/org/users', resp_structure='[*]')
+    @RestClient.requires_login
+    def is_service_online(self, request=None):
+        return request()
 
 
 def get_grafana_api_response(request, path):
+    path = path.rstrip('/')
     base_url_prefix = reverse('grafana', args=['/']).rstrip('/')  # e.g. /openattic/api
-
     params = request.GET.copy()
-    if path.startswith('/'):
-        path = path[1:]
     scheme = 'https' if Settings.GRAFANA_API_SCHEME.lower() == 'https' else 'http'
-    url = '{}://{}:{}/{}'.format(scheme, Settings.GRAFANA_API_HOST, Settings.GRAFANA_API_PORT, path)
+    url = '{}://{}:{}/{}'.format(scheme, Settings.GRAFANA_API_HOST, Settings.GRAFANA_API_PORT,
+                                 path.lstrip('/'))
     auth = (Settings.GRAFANA_API_USERNAME, Settings.GRAFANA_API_PASSWORD)
 
     headers = {header.replace(r'HTTP_', ''): value for header, value
@@ -62,7 +89,8 @@ def get_grafana_api_response(request, path):
     else:
         cookies = None
 
-    response = requests.request(request.method, url, data=request.body, params=params, auth=auth,
+    response = requests.request(request.method, url, data=request.body, params=params,
+                                auth=auth,
                                 headers=nheaders, cookies=cookies)
 
     replacements = {
@@ -135,7 +163,8 @@ def get_grafana_api_response(request, path):
             content = content[:position] + content[position:].replace(search, replacement, 1)
             replaced_context = content[position - lpad:position + len(replacement) + rpad]
 
-            logger.debug('Replaced   {}   with   {}  '.format(original_context, replaced_context))
+            logger.debug(
+                'Replaced   {}   with   {}  '.format(original_context, replaced_context))
 
             position += len(replacement)
 

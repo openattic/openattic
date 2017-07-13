@@ -62,6 +62,15 @@ class Reason(object):
     OPENATTIC_RGW_NO_DEEPSEA_CONN = 171
     OPENATTIC_RGW_NO_DEEPSEA_CRED = 172
 
+    GRAFANA_INCOMPLETE_CREDENTIALS = 180
+    GRAFANA_FAILED_AUTHENTICATION = 181
+    GRAFANA_CONNECTION_REFUSED = 182
+    GRAFANA_UNKNOWN_HOST = 183
+    GRAFANA_CONNECTION_TIMEOUT = 184
+    GRAFANA_NO_ROUTE_TO_HOST = 185
+    GRAFANA_CONNECTION_ERROR = 186
+    GRAFANA_HTTP_ERROR = 187
+
 
 def check_deepsea_connection():
     def map_errno_to_reason(errno):
@@ -101,7 +110,7 @@ def check_deepsea_connection():
 
 
 class UnavailableModule(Exception):
-    def __init__(self, reason, message):
+    def __init__(self, reason, message=None):
         super(UnavailableModule, self).__init__()
         self.reason = reason
         self.message = message

@@ -27,11 +27,22 @@ Added
   config file changed (OP-2426)
 * Backend/WebUI: Added support for Salt-API "sharedsecret" eauth
   authentication (OP-2451)
+* Backend: Added `stripe_unit` and `stripe_count` to the RBD management
+  API (OP-2236)
 * WebUI: Add a menu to navigate to the users buckets (OP-2382)
+* Backend: Added Grafana configuration to the settings REST service 
+  (OP-2450)
+* Backend: Returns the status of the Grafana integration through the
+  API (OP-2438)
 
 Changed
 ~~~~~~~
 * WebUI: Refactors add form template (OP-2420)
+
+Removed
+~~~~~~~
+* Installation: Removed Nagios and PNP4Nagios from the RPM package and
+  removed configuration from `oaconfig` (OP-2267) 
 
 Fixed
 ~~~~~
