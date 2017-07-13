@@ -39,6 +39,11 @@ Changed
 ~~~~~~~
 * WebUI: Refactors add form template (OP-2420)
 
+Removed
+~~~~~~~
+* Installation: Removed Nagios and PNP4Nagios from the RPM package and
+  removed configuration from `oaconfig` (OP-2267) 
+
 Fixed
 ~~~~~
 * Backend: The status module returns "available" for modules missing
