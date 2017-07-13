@@ -30,6 +30,8 @@ Added
 * Backend: Added `stripe_unit` and `stripe_count` to the RBD management
   API (OP-2236)
 * WebUI: Add a menu to navigate to the users buckets (OP-2382)
+* Backend: Added Grafana configuration to the settings REST service 
+  (OP-2450)
 
 Changed
 ~~~~~~~
