@@ -66,6 +66,13 @@ class SettingsView(APIView):
                 "secret_key": rgw_secret_key,
                 "user_id": rgw_user_id,
                 "use_ssl": rgw_use_ssl
+            },
+            "grafana": {
+                "host": Settings.GRAFANA_API_HOST,
+                "port": Settings.GRAFANA_API_PORT,
+                "username": Settings.GRAFANA_API_USERNAME,
+                "password": Settings.GRAFANA_API_PASSWORD,
+                "use_ssl": Settings.GRAFANA_API_SCHEME == 'https'
             }
         })
 
@@ -90,6 +97,13 @@ class SettingsView(APIView):
             Settings.RGW_API_HOST = ''
             Settings.RGW_API_ACCESS_KEY = ''
             Settings.RGW_API_SECRET_KEY = ''
+
+        grafana = request.DATA['grafana']
+        Settings.GRAFANA_API_HOST = grafana['host']
+        Settings.GRAFANA_API_PORT = grafana['port']
+        Settings.GRAFANA_API_USERNAME = grafana['username']
+        Settings.GRAFANA_API_PASSWORD = grafana['password']
+        Settings.GRAFANA_API_SCHEME = 'https' if grafana['use_ssl'] else 'http'
 
         save_settings()
         return Response({'success': True})
