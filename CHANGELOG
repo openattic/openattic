@@ -27,6 +27,8 @@ Added
   config file changed (OP-2426)
 * Backend/WebUI: Added support for Salt-API "sharedsecret" eauth
   authentication (OP-2451)
+* Backend: Added `stripe_unit` and `stripe_count` to the RBD management
+  API (OP-2236)
 * WebUI: Add a menu to navigate to the users buckets (OP-2382)
 
 Changed
