@@ -35,6 +35,7 @@ Added
 * Backend: Returns the status of the Grafana integration through the
   API (OP-2438)
 * Backend: Added REST service to check Grafana connection (OP-2449)
+* Backend: Add support to override settings via backend/settings_local.conf (OP-2473)
 
 Changed
 ~~~~~~~
