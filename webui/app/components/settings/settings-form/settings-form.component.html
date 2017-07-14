@@ -232,6 +232,76 @@
           <span ng-if="!$ctrl.rgwConnectionStatus.message">&nbsp;</span>
         </div>
 
+        <legend>Grafana</legend>
+
+        <!-- Grafana Host -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiHost">Hostname / IP Address</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiHost" id="grafanaApiHost"
+                   ng-model="$ctrl.model.grafana.host" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Port -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiPort">TCP port</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiPort" id="grafanaApiPort"
+                   ng-model="$ctrl.model.grafana.port" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Username -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiUsername">Username</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiUsername" id="grafanaApiUsername"
+                   ng-model="$ctrl.model.grafana.username" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Password -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiPassword">Password</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiPassword" id="grafanaApiPassword"
+                   ng-model="$ctrl.model.grafana.password" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Use SSL -->
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.model.grafana.use_ssl" name="active"
+                     id="grafanaUseSSL" ng-change="$ctrl.checkGrafanaConnection()">
+              <label for="grafanaUseSSL">
+                Use SSL
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="pull-right">
+          <span ng-if="$ctrl.grafanaConnectionStatus.loading">
+            <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection
+          </span>
+          <span class="text-success tc_grafanaConnectionSuccess" ng-show="$ctrl.grafanaConnectionStatus.success === true">
+            <i class="fa fa-check" aria-hidden="true"></i> Grafana connection successfull
+          </span>
+          <span class="text-danger tc_grafanaConnectionFail" ng-show="$ctrl.grafanaConnectionStatus.success === false">
+            <i class="fa fa-times" aria-hidden="true"></i> Grafana connection failed
+          </span>
+        </div>
+        <br>
+        <div class="pull-right">
+          <span class="text-muted" ng-if="$ctrl.grafanaConnectionStatus.message">
+            {{ $ctrl.grafanaConnectionStatus.message }} - <a ng-click="$ctrl.checkGrafanaConnection()">retry</a>
+          </span>
+          <span ng-if="!$ctrl.grafanaConnectionStatus.message">&nbsp;</span>
+        </div>
+
       </div>
 
       <div class="panel-footer">

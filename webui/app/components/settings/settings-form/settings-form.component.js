@@ -40,7 +40,8 @@ app.component("settingsForm",  {
 
     self.model = {
       deepsea: {},
-      rgw: {}
+      rgw: {},
+      grafana: {}
     };
 
     var defaultRgwDeepseaSettings = {
@@ -51,6 +52,7 @@ app.component("settingsForm",  {
 
     self.deepseaConnectionStatus = undefined;
     self.rgwConnectionStatus = undefined;
+    self.grafanaConnectionStatus = undefined;
 
     self.$onInit = function () {
       settingsFormService.get()
@@ -61,6 +63,7 @@ app.component("settingsForm",  {
           self.managedByDeepSeaEnabled = false;
         }
         self.checkDeepSeaConnection();
+        self.checkGrafanaConnection();
       })
       .catch(function (error) {
         self.error = error;
@@ -161,6 +164,37 @@ app.component("settingsForm",  {
         self.model.rgw = angular.copy(self.rgwDeepSeaSettings);
       }
       self.checkRgwConnection();
+    };
+
+    var isAllGrafanaPropsDefined = function (grafana) {
+      return angular.isDefined(grafana.host) &&
+          angular.isDefined(grafana.port) &&
+          angular.isDefined(grafana.username) &&
+          angular.isDefined(grafana.password) &&
+          angular.isDefined(grafana.use_ssl);
+    };
+
+    var checkGrafanaConnectionTimeout;
+    self.checkGrafanaConnection = function () {
+      self.grafanaConnectionStatus = undefined;
+      if (checkGrafanaConnectionTimeout) {
+        $timeout.cancel(checkGrafanaConnectionTimeout);
+      }
+      if (isAllGrafanaPropsDefined(self.model.grafana)) {
+        self.grafanaConnectionStatus = {
+          loading: true
+        };
+        checkGrafanaConnectionTimeout = $timeout(function () {
+          settingsFormService.checkGrafanaConnection(self.model.grafana)
+            .$promise
+            .then(function (res) {
+              self.grafanaConnectionStatus = res;
+            })
+            .catch(function () {
+              self.grafanaConnectionStatus = undefined;
+            });
+        }, 1000);
+      }
     };
 
     self.saveAction = function () {
