@@ -433,6 +433,20 @@ _migrations = [
         COMMIT;
         """
     ),
+    SqlMigration(
+        'ceph', u'0013_cephcluster_add_keyring',
+        lambda cursor: _column_not_exists('ceph_cephcluster', 'config_file_path', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephcluster" ADD COLUMN "config_file_path" varchar(1024) NULL;
+        ALTER TABLE "ceph_cephcluster" ALTER COLUMN "config_file_path" DROP DEFAULT;
+        ALTER TABLE "ceph_cephcluster" ADD COLUMN "keyring_file_path" varchar(1024) NULL;
+        ALTER TABLE "ceph_cephcluster" ALTER COLUMN "keyring_file_path" DROP DEFAULT;
+        ALTER TABLE "ceph_cephcluster" ADD COLUMN "keyring_user" varchar(1024) NULL;
+        ALTER TABLE "ceph_cephcluster" ALTER COLUMN "keyring_user" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
 ]
 
 

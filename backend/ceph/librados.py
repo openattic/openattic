@@ -12,9 +12,16 @@
  *  GNU General Public License for more details.
 """
 import subprocess
+from StringIO import StringIO
 from collections import deque
 from contextlib import contextmanager, closing
-from itertools import product
+import fnmatch
+
+from configobj import ConfigObj
+from django.utils.functional import cached_property
+from django.conf import settings as django_settings
+
+import oa_settings
 from conf import settings
 
 import rados
@@ -29,78 +36,198 @@ import rbd
 
 logger = logging.getLogger(__name__)
 
-logged_skipped_keyrings = set()
+
+def _write_oa_setting(key, value):
+    setattr(django_settings, key, value)
+    conf_obj = ConfigObj(oa_settings.settings_file)
+
+    def get_default(this_key):
+        return '' if not conf_obj.has_key(this_key) else conf_obj[this_key]
+
+    def get_type(this_key):
+        return type(value) if not conf_obj.has_key(this_key) else type(conf_obj[this_key])
+
+    def get_value(this_key):
+        return value if this_key == key else conf_obj[this_key]
+    oa_settings.save_settings_generic([key], get_default, get_type, get_value)
+
+
+class _ClusterSettingsListener(oa_settings.SettingsListener):
+
+    def settings_changed_handler(self):
+        conf_obj = ConfigObj(oa_settings.settings_file)
+        for pattern in ['CEPH_CLUSTERS', 'CEPH_KEYRING_*', 'CEPH_KEYRING_USER_*']:
+            for key in fnmatch.filter(conf_obj.keys(), pattern):
+                logger.info('{} {} {}'.format(key, getattr(django_settings, key), conf_obj[key]))
+                setattr(django_settings, key, conf_obj[key])
+
+_clusterSettingsListener = _ClusterSettingsListener()
+
+
+class ClusterConf(object):
+    def __init__(self, file_path):
+        """:type file_path: str | unicode"""
+        self.file_path = file_path
+
+    def is_valid(self):
+        if not os.path.exists(self.file_path):
+            logger.error("No Ceph cluster configuration file '{}' found".format(self.file_path))
+            return False
+
+        if not os.access(self.file_path, os.R_OK):
+            logger.error("Ceph configuration file '{}' is not accessible, permission denied"
+                         .format(self.file_path))
+            return False
+
+        return True
+
+    @cached_property
+    def config_parser(self):
+        cp = ConfigParser.RawConfigParser()
+        with open(self.file_path) as f:
+            cp.readfp(StringIO('\n'.join(line.strip() for line in f)))
+        return cp
+
+    @property
+    def name(self):
+        return os.path.basename(os.path.splitext(self.file_path)[0])
+
+    @property
+    def fsid(self):
+        return self.config_parser.get('global', 'fsid')
+
+    @property
+    def keyring_file_path(self):
+        try:
+            return getattr(django_settings, 'CEPH_KEYRING_' + self.fsid.upper())
+        except AttributeError:
+            candidates = self.keyring_candidates
+            return candidates[0].file_name if candidates else ''
+
+    @keyring_file_path.setter
+    def keyring_file_path(self, file_path):
+        if self.keyring_file_path != file_path:
+            _write_oa_setting('CEPH_KEYRING_' + self.fsid.upper(), file_path)
+
+    @cached_property
+    def keyring(self):
+        user_name = getattr(django_settings, 'CEPH_KEYRING_USER_' + self.fsid.upper(), None)
+        return Keyring(self.keyring_file_path, user_name)
+
+    @property
+    def keyring_candidates(self):
+        """
+        According to http://docs.ceph.com/docs/master/rados/configuration/auth-config-ref/#keys
+        :rtype: list[Keyring]
+        """
+        keyrings = glob.glob('/etc/ceph/{}.*.keyring'.format(self.name))
+        keyrings += glob.glob('/etc/ceph/{}.keyring'.format(self.name))
+        keyrings += glob.glob('/etc/ceph/keyring')
+        keyrings += glob.glob('/etc/ceph/keyring.bin')
+        for section in self.config_parser.sections():
+            if section.startswith('client'):
+                try:
+                    keyrings.append(self.config_parser.get(section, 'keyring'))
+                except ConfigParser.NoOptionError:
+                    pass
+
+        def keyring_or_none(file_path):
+            try:
+                return Keyring(file_path)
+            except RuntimeError:
+                return None
+
+        return filter(None, map(keyring_or_none, keyrings))
+
+    @cached_property
+    def client(self):
+        return Client(self.file_path, self.keyring)
+
+    @classmethod
+    def all_configs(cls):
+        configs = set(glob.glob('/etc/ceph/*.conf'))
+        if hasattr(django_settings, 'CEPH_CLUSTERS'):
+            configs = configs.union(django_settings.CEPH_CLUSTERS.split(';'))
+
+        known_fsids = set()
+        for conf_file in configs:
+            conf = cls(conf_file)
+            if conf.is_valid() and conf.fsid not in known_fsids:
+                known_fsids.add(conf.fsid)
+                yield conf
+
+    @classmethod
+    def from_fsid(cls, fsid):
+        for c in cls.all_configs():
+            if c.fsid == fsid:
+                return c
+        raise ValueError('Unknown cluster {}'.format(fsid))
 
 
 class Keyring(object):
     """
     Returns usable keyring
     """
-    def __init__(self, cluster_name='ceph', ceph_dir='/etc/ceph'):
+    def __init__(self, file_name, user_name=None):
         """
         Sets keyring filename and username
+        :type file_name: str | unicode
+        :type user_name: str | unicode | None
         """
-        global logged_skipped_keyrings
-        self.filename = None
-        self.username = None
+        self.file_name = file_name
+        self.user_name = user_name
+        self.available_user_names = None  # type: list
 
-        keyrings = glob.glob("{}/{}.client.*.keyring".format(ceph_dir, cluster_name))
-        self._find(keyrings)
+        self._check_access()
+        self._usernames()
+        logger.debug("Connecting as {}".format(self.user_name))
 
-        if self.filename:
-            logger.debug("Selected keyring {}".format(self.filename))
-        else:
-            logger.error("No usable keyring")
-            logged_skipped_keyrings.clear()
-            raise RuntimeError("Check keyring permissions")
-
-        self._username()
-        logger.debug("Connecting as {}".format(self.username))
-
-    def _find(self, keyrings):
+    def _check_access(self):
         """
-        Check permissions on keyrings, set last usable keyring
+        Check permissions on keyring.
         """
-        global logged_skipped_keyrings
-        for keyring in keyrings:
-            if os.access(keyring, os.R_OK):
-                self.filename = keyring
-            else:
-                message = "Skipping {}, permission denied".format(keyring)
-                if keyring in logged_skipped_keyrings:
-                    logger.debug(message)
-                else:
-                    logger.info(message)
-                    logged_skipped_keyrings.add(keyring)
+        if not os.path.isfile(self.file_name):
+            raise RuntimeError("Keyring does not exist: {}".format(self.file_name))
 
-    def _username(self):
+        if not os.access(self.file_name, os.R_OK):
+            raise RuntimeError("Check keyring permissions: {}".format(self.file_name))
+
+    def _usernames(self):
         """
         Parse keyring for username
         """
         _config = ConfigParser.ConfigParser()
         try:
-            _config.read(self.filename)
+            _config.read(self.file_name)
         except ConfigParser.ParsingError:
             # ConfigParser fails on leading whitespace for keys
             pass
 
         try:
-            self.username = _config.sections()[0]
+            self.available_user_names = _config.sections()
+            if self.user_name is None:
+                self.user_name = self.available_user_names[0]
+            if self.user_name not in self.available_user_names:
+                raise RuntimeError(
+                    'Keyring {} does not contain user {}'.format(self.file_name, self.user_name))
         except IndexError:
-            error_msg = "Corrupt keyring, check {}".format(self.filename)
+            error_msg = "Corrupt keyring, check {}".format(self.file_name)
             logger.error(error_msg)
             raise RuntimeError(error_msg)
+
+    def set_user_name(self, fsid, user_name):
+        if self.user_name != user_name:
+            _write_oa_setting('CEPH_KEYRING_USER_' + fsid.upper(), user_name)
 
 
 class Client(object):
     """Represents the connection to a single ceph cluster."""
 
-    def __init__(self, cluster_name='ceph'):
-        self.cluster_name = cluster_name
-        self._conf_file = os.path.join('/etc/ceph/', cluster_name + '.conf')
-        keyring = Keyring(cluster_name)
-        self._keyring = keyring.filename
-        self._name = keyring.username
+    def __init__(self, file_path, keyring):
+        """:type keyring: Keyring"""
+        self._conf_file = file_path
+        self._keyring = keyring.file_name
+        self._name = keyring.user_name
         self._pools = {}
         """:type _pools: dict[str, rados.Ioctx]"""
         self._cluster = None
@@ -235,8 +362,7 @@ class ClientManager(object):
         from ceph.models import CephCluster
 
         if fsid not in self.instances:
-            cluster_name = CephCluster.get_name(fsid)
-            self.instances[fsid] = Client(cluster_name)
+            self.instances[fsid] = ClusterConf.from_fsid(fsid).client
 
         return self.instances[fsid]
 
@@ -256,11 +382,6 @@ class ExternalCommandError(Exception):
 
 
 def call_librados(fsid, method, timeout=30):
-    def _get_client():
-        from ceph.models import CephCluster
-        cluster_name = CephCluster.get_name(fsid)
-        client = Client(cluster_name)
-        return client
 
     class LibradosProcess(multiprocessing.Process):
         def __init__(self, fsid, com_pipe):
@@ -271,7 +392,7 @@ def call_librados(fsid, method, timeout=30):
         def run(self):
             with closing(self.com_pipe):
                 try:
-                    with _get_client() as client:
+                    with ClusterConf.from_fsid(fsid).client as client:
                         res = method(client)
                         self.com_pipe.send(res)
                 except Exception as e:
@@ -828,9 +949,8 @@ class RbdApi(object):
         """
         :type fsid: str | unicode
         """
-        from ceph.models import CephCluster
         self.fsid = fsid
-        self.cluster_name = CephCluster.get_name(self.fsid)
+        self.cluster_name = ClusterConf.from_fsid(fsid).name
 
     @logged
     @undoable

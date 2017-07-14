@@ -40,12 +40,12 @@ class KeyringTestCase(TestCase):
                 as tmpfile:
             tmpfile.write("[client.admin]")
             tmpfile.flush()
-            keyring = Keyring('ceph', '/tmp')
-            self.assertEqual(keyring.username, 'client.admin')
+            keyring = Keyring(tmpfile.name)
+            self.assertEqual(keyring.available_user_names, ['client.admin'])
 
     def test_keyring_raises_runtime_error(self):
         try:
-            Keyring('ceph', '/tmp')
+            Keyring('/does/not/exist')
         except RuntimeError:
             return True
 
@@ -55,7 +55,7 @@ class KeyringTestCase(TestCase):
             tmpfile.write("abcdef")
             tmpfile.flush()
             try:
-                Keyring('ceph', '/tmp')
+                Keyring(tmpfile.name)
             except RuntimeError:
                 return True
 
@@ -65,11 +65,13 @@ class CephPoolTestCase(TestCase):
         if Host.objects.get_current() is None:
             Host.insert_current_host()
 
+    mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
+
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.MonApi', autospec=True)
     def test_insert(self, monApi_mock, cephpool_objects_mock):
-        cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
-        nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
+        cephpool_objects_mock.nodb_context = self.mock_context
+        nodb.models.NodbManager.nodb_context = self.mock_context
 
         cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0,
                                                                       type='replicated')
@@ -104,19 +106,17 @@ class CephPoolTestCase(TestCase):
         """
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
-        cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
-        nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
+        cephpool_objects_mock.nodb_context = self.mock_context
+        nodb.models.NodbManager.nodb_context = self.mock_context
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
-                                                  erasure_code_profile_id=None, cluster_id='0',
-                                                  cluster=ceph.models.CephCluster(fsid='0',
-                                                                                  name=''),
+                                                  erasure_code_profile_id=None,
                                                   tier_of_id=None, cache_mode=None)
         cephpool_objects_mock.get.return_value = existing_test_pool
 
         # Checking the order of different calls.
         pool = ceph.models.CephPool(name='test1', pg_num=0, type='replicated', tier_of_id=1,
-                                    tier_of=ceph.models.CephPool(id=1, name="test"),
-                                    cache_mode='writeback', cluster_id=0,
+                                    tier_of=ceph.models.CephPool(id=1, name="test", cluser_id=None),
+                                    cache_mode='writeback',
                                     erasure_code_profile_id=None)
         pool.save()
         calls = [
@@ -134,19 +134,21 @@ class CephPoolTestCase(TestCase):
         FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of,
                resulting in weird parameters to osd_tier_remove.
         """
-        cephpool_objects_mock.nodb_context = mock.Mock(fsid='hallo')
-        nodb.models.NodbManager.nodb_context = mock.Mock(fsid='hallo')
+        cephpool_objects_mock.nodb_context = self.mock_context
+        nodb.models.NodbManager.nodb_context = self.mock_context
 
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   cache_mode='writeback', tier_of_id=0,
                                                   tier_of=ceph.models.CephPool(id=0, name='test',
                                                                                pg_num=0,
-                                                                               type='replicated'))
+                                                                               type='replicated'),
+                                                  cluser_id=None)
 
         cephpool_objects_mock.get.return_value = existing_test_pool
         monApi_mock.return_value.reset_mock()
         pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
-                                    cache_mode='none', tier_of=None, tier_of_id=None)
+                                    cache_mode='none', tier_of=None, tier_of_id=None,
+                                    cluser_id=None)
         pool.save()
         calls = [
             mock.call.osd_tier_cache_mode('test', 'none', undo_previous_mode='writeback'),
