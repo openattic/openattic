@@ -93,8 +93,9 @@ def get_grafana_api_response(request, path):
                                 auth=auth,
                                 headers=nheaders, cookies=cookies)
 
+    # General replacements to make basics work and other adjustments.
+
     replacements = {
-        # General replacements to make basics work.
         'href=\'/': 'href=\'{base_url}/',
         'href="/': 'href="{base_url}/',
         'src="/': 'src="{base_url}/',
@@ -141,13 +142,6 @@ def get_grafana_api_response(request, path):
 
     content = response.content
 
-    if re.search(r'grafana\.(light|dark)\.(min\.)?(\w+\.)?css', path):
-        content += '[ng-if="::showSettingsMenu"] { display:none; } '
-        content += '[ng-show="::dashboardMeta.canShare"] { display:none; } '
-        content += '[ng-click="addRowDefault()"] { display: none; } '
-        content += '.dash-row-menu-container { display: none; } '
-        content += '.search-results-container .search-item-dash-home { display: none !important; } '
-
     lpad, rpad = 20, 20
     position = 0
     for search, replacement in replacements.items():
@@ -167,6 +161,24 @@ def get_grafana_api_response(request, path):
                 'Replaced   {}   with   {}  '.format(original_context, replaced_context))
 
             position += len(replacement)
+
+    # Replacements based on paths.
+
+    if re.search(r'grafana\.(light|dark)\.(min\.)?(\w+\.)?css', path):
+        content += '[ng-if="::showSettingsMenu"] { display:none; } '
+        content += '[ng-show="::dashboardMeta.canShare"] { display:none; } '
+        content += '[ng-click="addRowDefault()"] { display: none; } '
+        content += '.dash-row-menu-container { display: none; } '
+        content += '.search-results-container .search-item-dash-home { display: none !important; } '
+
+    if any(search in path for search in ['ceph-osd', 'ceph-pools', 'node-statistics']):
+        tag = '<style>{content}</style>'
+        tag = tag.format(content="""
+            navbar { display: none !important; }
+            .submenu-controls > div.submenu-item:nth-child(n+2) { display: none !important; }
+        """)
+
+        content = re.sub(r'</body>', tag + '</body>', content)
 
     proxy_response = HttpResponse(content, response.status_code)
 
