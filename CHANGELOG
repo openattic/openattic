@@ -34,6 +34,7 @@ Added
   (OP-2450)
 * Backend: Returns the status of the Grafana integration through the
   API (OP-2438)
+* Backend: Added REST service to check Grafana connection (OP-2449)
 
 Changed
 ~~~~~~~
