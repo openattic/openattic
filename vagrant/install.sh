@@ -240,16 +240,50 @@ then
     systemctl enable postgresql.service
 fi
 
-if [ -z "$IS_TRUSTY" ] ; then
-    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
-fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
-ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
-sudo -i -u vagrant bash -e << EOF
-pushd openattic
-! git apply vagrant/required-changes.patch
+# Create/modify the local settings files.
+pushd /home/vagrant/openattic
+if [ ! -e "backend/settings_local.conf" ]; then
+    touch backend/settings_local.conf
+    cat <<EOF > backend/settings_local.conf
+API_ROOT=":8000/api"
+API_OS_USER="vagrant"
+LOGGING_FILENAME="/dev/stdout"
+EOF
+fi
+if [ ! -e "webui/app/config.local.js" ]; then
+    cp webui/app/config.local.js.sample webui/app/config.local.js
+    sed -i -e 's#/openattic/api/#/api/#' webui/app/config.local.js
+fi
 popd
+
+# Modify the configuration for creation, deletion and cleaning of volatile and temporary files.
+mkdir -p /etc/tempfiles.d
+cat <<EOF > /etc/tempfiles.d/openattic.conf
+d /run/lock/openattic 0755 vagrant users -
+EOF
+
+# Create the DBUS configuration.
+cat <<EOF > /etc/dbus-1/system.d/openattic.conf
+<!DOCTYPE busconfig PUBLIC
+    "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+    "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+    <policy user="root">
+            <allow own="org.openattic.systemd" />
+            <allow send_destination="org.openattic.systemd" />
+            <allow receive_sender="org.openattic.systemd"   />
+    </policy>
+    <policy user="vagrant">
+            <allow send_destination="org.openattic.systemd" />
+            <allow receive_sender="org.openattic.systemd"   />
+    </policy>
+    <policy context="default">
+            <deny  send_destination="org.openattic.systemd" />
+            <deny  receive_sender="org.openattic.systemd"   />
+    </policy>
+</busconfig>
 EOF
 
 service dbus reload
@@ -328,18 +362,6 @@ cp -r /usr/lib*/python2.7/*-packages/glib env/lib/python2.7/site-packages/
 
 # psycopg2
 cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
-
-#rtslib
-if [ "$IS_XENIAL" ]
-then
-    cp -r /usr/lib*/python2.7/*-packages/rtslib_fb env/lib/python2.7/site-packages/
-else
-    cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
-fi
-
-# Create symlinks for various oA command line tools.
-sudo ln -s /home/vagrant/openattic/bin/blkdevzero /bin/blkdevzero
-sudo ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
 
 # oaconfig install
 
