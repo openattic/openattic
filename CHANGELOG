@@ -57,6 +57,8 @@ Fixed
 * Development: Fix various issues in the Vagrant box installer script.
 * Backend: Commented settings should not be removed by openATTIC 
   (OP-2459)
+* WebUI: Grafana loading spinner will be displayed as well as the icon in the
+  notification list now (OP-2431)
 
 [3.3.0] - 2017-07-06
 --------------------
