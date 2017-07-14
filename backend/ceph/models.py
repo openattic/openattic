@@ -306,7 +306,7 @@ class CephPool(NodbModel, RadosMixin):
     hit_set_count = models.IntegerField(blank=True)
     hit_set_params = JsonField(base_type=dict, editable=False, blank=True)
     tiers = JsonField(base_type=list, editable=False, blank=True)
-    flags = JsonField(base_type=list, blank=True)
+    flags = JsonField(base_type=list, blank=True, default=[])
 
     pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
@@ -486,7 +486,7 @@ class CephPool(NodbModel, RadosMixin):
                     else:
                         read_tier_target = self.read_tier
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
-                elif key == 'flags' and value:
+                elif key == 'flags':
                     for flag in value:
                         if flag == 'allow_ec_overwrites' or flag == 'ec_overwrites':
                             api.osd_pool_set(self.name, 'allow_ec_overwrites', 'true')

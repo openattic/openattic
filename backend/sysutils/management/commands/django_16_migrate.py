@@ -405,7 +405,11 @@ _migrations = [
         ALTER TABLE "ceph_cephrbd" ALTER COLUMN "stripe_unit" DROP DEFAULT;
         COMMIT;
         """
-    )
+    ),
+    SqlMigration(
+        'ceph', u'0009_cephpool_flags_default', None, None
+    ),
+
 ]
 
 
