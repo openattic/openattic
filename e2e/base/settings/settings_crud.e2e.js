@@ -42,6 +42,7 @@ describe('settings form', function(){
     form.rgwAccessKey.clear().sendKeys('e2e-access-key');
     form.rgwSecretKey.clear().sendKeys('e2e-secret-key');
     form.rgwAdminUser.clear().sendKeys('e2e-admin-user');
+    form.rgwAdminResourcePath.clear().sendKeys('e2e-admin-path');
     form.checkUseSSL(true);
 
     expect(form.submitButton.isEnabled()).toBe(true);
@@ -61,6 +62,7 @@ describe('settings form', function(){
     expect(form.rgwAccessKey.getAttribute('value')).toEqual('e2e-access-key');
     expect(form.rgwSecretKey.getAttribute('value')).toEqual('e2e-secret-key');
     expect(form.rgwAdminUser.getAttribute('value')).toEqual('e2e-admin-user');
+    expect(form.rgwAdminResourcePath.getAttribute('value')).toEqual('e2e-admin-path');
     expect(form.rgwUseSSL.isSelected()).toBe(true);
   });
 

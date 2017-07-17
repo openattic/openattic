@@ -188,10 +188,16 @@ class DeepSea(RestClient, SettingsListener):
         if not response_json['success']:
             return None
         parsed_url = urlparse(response_json['urls'][0])  # Uses the first returned host
+
+        if not parsed_url.path or parsed_url.path == '/':
+            admin_path = 'admin'
+        else:
+            admin_path = parsed_url.path[1:]
         return {
             'scheme': parsed_url.scheme,
             'host': parsed_url.hostname,
             'port': parsed_url.port,
+            'admin_path': admin_path,
             'access_key': response_json['access_key'],
             'secret_key': response_json['secret_key'],
             'user_id': response_json['user_id']

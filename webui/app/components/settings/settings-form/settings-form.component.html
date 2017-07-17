@@ -189,6 +189,16 @@
           </div>
         </div>
 
+        <!-- Object Gateway Admin Resource Path -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="rgwApiAdminResourcePath">Admin Resource Path</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="rgwApiAdminResourcePath" id="rgwApiAdminResourcePath"
+                   ng-model="$ctrl.model.rgw.admin_path" ng-change="$ctrl.checkRgwConnection()"
+                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
+          </div>
+        </div>
+
         <!-- Object Use SSL -->
         <div class="form-group">
           <div class="col-sm-offset-3 col-sm-9">

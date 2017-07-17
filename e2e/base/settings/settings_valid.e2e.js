@@ -62,6 +62,7 @@ describe('settings inputs validations', function(){
     expect(form.rgwAccessKey.isEnabled()).toBe(false);
     expect(form.rgwSecretKey.isEnabled()).toBe(false);
     expect(form.rgwAdminUser.isEnabled()).toBe(false);
+    expect(form.rgwAdminResourcePath.isEnabled()).toBe(false);
     expect(form.rgwUseSSL.isEnabled()).toBe(false);
 
     form.checkManagedByDeepSea(false);
@@ -70,6 +71,7 @@ describe('settings inputs validations', function(){
     expect(form.rgwAccessKey.isEnabled()).toBe(true);
     expect(form.rgwSecretKey.isEnabled()).toBe(true);
     expect(form.rgwAdminUser.isEnabled()).toBe(true);
+    expect(form.rgwAdminResourcePath.isEnabled()).toBe(true);
     expect(form.rgwUseSSL.isEnabled()).toBe(true);
   });
 

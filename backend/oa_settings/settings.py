@@ -27,6 +27,7 @@ RGW_API_PORT = (80, int)
 RGW_API_ACCESS_KEY = ('', str)
 RGW_API_SECRET_KEY = ('', str)
 RGW_API_ADMIN_RESOURCE = ('admin', str)
+RGW_API_USER_ID = ('', str)
 RGW_API_SCHEME = ('http', str)
 
 # Grafana

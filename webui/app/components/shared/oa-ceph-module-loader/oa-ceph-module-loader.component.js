@@ -188,6 +188,10 @@ app.component("oaCephModuleLoader", {
         title: "Object Gateway - Unexpected response",
         template: "rgw-http-problem"
       },
+      "169": {
+        title: "Object Gateway - Not a system user",
+        template: "rgw-not-system-user"
+      },
       "171": {
         title: "Object Gateway - No connection",
         template: "openattic-rgw-no-deepsea-conn"

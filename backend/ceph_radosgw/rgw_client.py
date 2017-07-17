@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 class RGWClient(RestClient, SettingsListener):
     _SYSTEM_USERID = None
+    _ADMIN_PATH = None
     _host = None
     _port = None
     _ssl = None
@@ -34,14 +35,15 @@ class RGWClient(RestClient, SettingsListener):
     @staticmethod
     def _load_settings():
         if all((Settings.RGW_API_HOST, Settings.RGW_API_PORT, Settings.RGW_API_SCHEME,
-                Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_ACCESS_KEY,
-                Settings.RGW_API_SECRET_KEY)):
+                Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_USER_ID,
+                Settings.RGW_API_ACCESS_KEY, Settings.RGW_API_SECRET_KEY)):
             logger.info("Using local RGW settings to connect to RGW REST API")
             credentials = {
                 'host': Settings.RGW_API_HOST,
                 'port': Settings.RGW_API_PORT,
                 'scheme': Settings.RGW_API_SCHEME,
-                'user_id': Settings.RGW_API_ADMIN_RESOURCE,
+                'admin_path': Settings.RGW_API_ADMIN_RESOURCE,
+                'user_id': Settings.RGW_API_USER_ID,
                 'access_key': Settings.RGW_API_ACCESS_KEY,
                 'secret_key': Settings.RGW_API_SECRET_KEY
             }
@@ -60,6 +62,7 @@ class RGWClient(RestClient, SettingsListener):
         RGWClient._port = credentials['port']
         RGWClient._ssl = credentials['scheme'] == 'https'
         logger.info("Creating new connection for user: %s", credentials['user_id'])
+        RGWClient._ADMIN_PATH = credentials['admin_path']
         RGWClient._SYSTEM_USERID = credentials['user_id']
         RGWClient._user_instances[RGWClient._SYSTEM_USERID] = RGWClient(credentials['user_id'],
                                                                         credentials['access_key'],
@@ -82,15 +85,18 @@ class RGWClient(RestClient, SettingsListener):
     def admin_instance():
         return RGWClient.instance(RGWClient._SYSTEM_USERID)
 
-    def __init__(self, userid, access_key, secret_key, host=None, port=None, ssl=False):
+    def __init__(self, userid, access_key, secret_key, host=None, port=None, admin_path=None,
+                 ssl=False):
         if not host and not RGWClient._host:
             RGWClient._load_settings()
         host = host if host else RGWClient._host
         port = port if port else RGWClient._port
+        admin_path = admin_path if admin_path else RGWClient._ADMIN_PATH
         ssl = ssl if ssl else RGWClient._ssl
 
         self.userid = userid
         self.service_url = '{}:{}'.format(host, port)
+        self.admin_path = admin_path
 
         s3auth = S3Auth(access_key, secret_key, service_url=self.service_url)
         super(RGWClient, self).__init__(host, port, 'RGW', ssl, s3auth)
@@ -118,9 +124,18 @@ class RGWClient(RestClient, SettingsListener):
         return response[0]['ID'] == self.userid
 
     @RestClient.requires_login
-    @RestClient.api_get('/{sysuser}/user', resp_structure='tenant & user_id & email & keys[*] > '
-                                                          ' (user & access_key & secret_key)')
-    def _admin_get_user_keys(self, sysuser, userid, request=None):
+    @RestClient.api_get('/{admin_path}/metadata/user', resp_structure='[+]')
+    def _is_system_user(self, admin_path, request=None):
+        response = request()
+        return self.userid in response
+
+    def is_system_user(self):
+        return self._is_system_user(self.admin_path)
+
+    @RestClient.requires_login
+    @RestClient.api_get('/{admin_path}/user', resp_structure='tenant & user_id & email & keys[*] > '
+                                                             ' (user & access_key & secret_key)')
+    def _admin_get_user_keys(self, admin_path, userid, request=None):
         colon_idx = userid.find(':')
         user = userid if colon_idx == -1 else userid[:colon_idx]
         response = request({
@@ -134,16 +149,16 @@ class RGWClient(RestClient, SettingsListener):
                 }
 
     def get_user_keys(self, userid):
-        return self._admin_get_user_keys(RGWClient._SYSTEM_USERID, userid)
+        return self._admin_get_user_keys(self.admin_path, userid)
 
     @RestClient.requires_login
-    @RestClient.api('/{sysuser}/{path}')
-    def _proxy_request(self, sysuser, path, method, params, data, request=None):
+    @RestClient.api('/{admin_path}/{path}')
+    def _proxy_request(self, admin_path, path, method, params, data, request=None):
         return request(method=method, params=params, data=data, raw_content=True)
 
     def proxy(self, method, path, params, data):
         logger.debug("proxying method=%s path=%s params=%s data=%s", method, path, params, data)
-        return self._proxy_request(RGWClient._SYSTEM_USERID, path, method, params, data)
+        return self._proxy_request(self.admin_path, path, method, params, data)
 
     @RestClient.requires_login
     @RestClient.api_get('/', resp_structure='[1][*] > Name')
