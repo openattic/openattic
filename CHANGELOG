@@ -61,6 +61,7 @@ Fixed
   (OP-2459)
 * WebUI: Grafana loading spinner will be displayed as well as the icon in the
   notification list now (OP-2431)
+* Backend: Handle JSON decode exception in REST Client class (OP-2476)
 
 [3.3.0] - 2017-07-06
 --------------------
