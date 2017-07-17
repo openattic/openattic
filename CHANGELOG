@@ -21,12 +21,16 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Packaging: make_dist.py: Added `--sign` option to sign tarballs with GPG
+  (OP-2124)
 
 Changed
 ~~~~~~~
 * Backend: Corrected num_bytes unit in check_cephpool Nagios plugin (OP-1532)
 * Backend/WebUI: The monitoring of RBDs without 'fast-diff' feature has been
   disabled due to performance reasons (OP-2141, OP-2223)
+* Packaging: back-ported a number of improvements to `make_dist.py`, to keep
+  it in sync with the master branch and to simplify the packaging process.
 
 Fixed
 ~~~~~
@@ -40,6 +44,7 @@ Fixed
   Ceph Luminous and Jewel) (OP-2128)
 * Packaging: Enable byte-compiling the Python files during RPM packaging
   (OP-2167)
+* Packaging: Fix internal commit functionality of `make_dist.py` (OP-2227)
 
 [2.0.20] - 2017-04-26
 ---------------------
