@@ -442,4 +442,4 @@ oa_settings.load_settings()
 local_settings_file = join(os.getcwd(), 'settings_local.conf')
 if os.access(local_settings_file, os.R_OK):
     for key, val in ConfigObj(local_settings_file).items():
-        globals()[key] = value
+        globals()[key] = val
