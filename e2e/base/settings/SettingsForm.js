@@ -24,6 +24,14 @@ var SettingsForm = function(){
   this.rgwConnectionSuccess = element(by.css('.tc_rgwConnectionSuccess'));
   this.rgwConnectionFail = element(by.css('.tc_rgwConnectionFail'));
 
+  this.grafanaHost = element(by.model('$ctrl.model.grafana.host'));
+  this.grafanaPort = element(by.model('$ctrl.model.grafana.port'));
+  this.grafanaUsername = element(by.model('$ctrl.model.grafana.username'));
+  this.grafanaPassword = element(by.model('$ctrl.model.grafana.password'));
+  this.grafanaUseSSL = element(by.model('$ctrl.model.grafana.use_ssl'));
+  this.grafanaConnectionSuccess = element(by.css('.tc_grafanaConnectionSuccess'));
+  this.grafanaConnectionFail = element(by.css('.tc_grafanaConnectionFail'));
+
   this.submitButton = element(by.css('.tc_submitButton'));
 
   this.selectEauth = function(text){
@@ -39,8 +47,17 @@ var SettingsForm = function(){
     });
   };
 
-  this.checkUseSSL = function(value){
+  this.checkRgwUseSSL = function(value){
     var checkbox = element(by.model('$ctrl.model.rgw.use_ssl'));
+    checkbox.isSelected().then(function(selected){
+      if(selected !== value){
+        checkbox.click();
+      }
+    });
+  };
+
+  this.checkGrafanaUseSSL = function(value){
+    var checkbox = element(by.model('$ctrl.model.grafana.use_ssl'));
     checkbox.isSelected().then(function(selected){
       if(selected !== value){
         checkbox.click();

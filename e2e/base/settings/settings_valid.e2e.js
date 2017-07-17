@@ -102,6 +102,15 @@ describe('settings inputs validations', function(){
     expect(form.rgwConnectionFail.isDisplayed()).toBe(true);
   });
 
+  it('should check grafana connection', function(){
+    expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(true);
+    expect(form.grafanaConnectionFail.isDisplayed()).toBe(false);
+
+    form.grafanaHost.clear().sendKeys('e2e-host');
+    expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(false);
+    expect(form.grafanaConnectionFail.isDisplayed()).toBe(true);
+  });
+
   afterAll(function(){
     browser.refresh();
     console.log('settings -> settings_valid.e2e.js');
