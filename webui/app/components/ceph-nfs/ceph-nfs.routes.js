@@ -89,7 +89,7 @@ app.config(function ($stateProvider) {
         }
       },
       ncyBreadcrumb: {
-        label: "Add As...",
+        label: "Copy",
         parent: "cephNfs"
       }
     })
