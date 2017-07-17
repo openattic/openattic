@@ -265,8 +265,17 @@
         <div class="form-group">
           <label class="col-sm-3 control-label" for="grafanaApiPassword">Password</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" name="grafanaApiPassword" id="grafanaApiPassword"
-                   ng-model="$ctrl.model.grafana.password" ng-change="$ctrl.checkGrafanaConnection()">
+            <div class="input-group">
+              <input type="password" class="form-control" name="grafanaApiPassword" id="grafanaApiPassword"
+                     ng-model="$ctrl.model.grafana.password" ng-change="$ctrl.checkGrafanaConnection()"
+                     autocomplete="off">
+              <span class="input-group-btn">
+                <button type="button"
+                        class="btn btn-default"
+                        oa-password-button="grafanaApiPassword">
+                </button>
+              </span>
+            </div>
           </div>
         </div>
 
