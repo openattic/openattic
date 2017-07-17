@@ -22,7 +22,7 @@ from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
 from rest.utilities import drf_version, get_request_query_params, mk_method_field_params, \
-    get_request_data, ToNativeToRepresentationMixin
+    get_request_data, ToNativeToRepresentationMixin, get_paginated_response
 from rest.restapi import NoCacheReadOnlyModelViewSet
 
 
@@ -97,18 +97,7 @@ class UserProfileViewSet(NoCacheReadOnlyModelViewSet, mixins.CreateModelMixin,
             if profile.user == request.user and profile.host == host:
                 result_profiles.append(profile)
 
-        page = self.paginate_queryset(result_profiles)
-
-        if drf_version() >= (3, 0):
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        if page is not None:
-            profile_ser = self.get_pagination_serializer(page)
-        else:
-            profile_ser = self.get_serializer(result_profiles, many=True)
-
-        return Response(profile_ser.data, status=status.HTTP_200_OK)
+        return get_paginated_response(self, result_profiles)
 
     def retrieve(self, request, *args, **kwargs):
         profile = self.get_object()

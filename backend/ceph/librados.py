@@ -916,7 +916,7 @@ class RbdApi(object):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
                 try:
-                    return image.stripe_count(), image.stripe_count()
+                    return image.stripe_count(), image.stripe_unit()
                 except AttributeError:
                     return None, None
 

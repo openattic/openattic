@@ -439,7 +439,7 @@ oa_settings.load_settings()
 
 
 # This enables developers and test systems to override settings in a non-versioned file.
-try:
-    from settings_local import *
-except ImportError:
-    pass
+local_settings_file = join(os.getcwd(), 'settings_local.conf')
+if os.access(local_settings_file, os.R_OK):
+    for key, val in ConfigObj(local_settings_file).items():
+        globals()[key] = value

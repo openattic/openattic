@@ -37,6 +37,28 @@ class Settings(object):
     pass
 
     @staticmethod
+    def keys():
+        """
+        Returns a list containing all the keys.
+        :rtype: list
+        """
+        keys = [key for key in dir(Settings) if
+                not callable(getattr(Settings, key)) and
+                not key.startswith('_')]
+        return keys
+
+    @staticmethod
+    def dict():
+        """
+        Returns a dictionary containing all the key/value pairs.
+        :rtype: dict
+        """
+        result = {}
+        for key in Settings.keys():
+            result[key] = getattr(Settings, key)
+        return result
+
+    @staticmethod
     def has_values(prefix):
         """
         Checks if all settings starting with `prefix` evaluate to `True`. Returns `False` if at
@@ -46,7 +68,7 @@ class Settings(object):
         :type prefix: str
         :rtype: bool
         """
-        settings = [value for key, value in Settings.__dict__.items() if
+        settings = [value for key, value in Settings.dict().items() if
                     key.startswith(prefix)]
 
         if len(settings) == 0:
@@ -100,23 +122,34 @@ signal.signal(signal.SIGTERM, shutdown_inotify)
 signal.signal(signal.SIGQUIT, shutdown_inotify)
 
 
+def _set_setting(key, val):
+    if key not in settings_list:
+        return
+    setting_type = setting_init_dict[key][1]
+    try:
+        tval = setting_type(val)
+        setattr(Settings, key, tval)
+    except ValueError:
+        logger.error("Invalid setting value for '%s': '%s' is not of type '%s'",
+                     key, val, setting_type.__name__)
+        print("Invalid setting value for '{}': '{}' is not of type '{}'"
+              .format(key, val, setting_type.__name__))
+
+
 def load_settings():
     for setting_key, (def_value, _) in setting_init_dict.items():
         setattr(Settings, setting_key, def_value)
 
-    # override settings from custom settings file
+    # Override settings from custom settings file
     for key, val in configobj.ConfigObj(settings_file).items():
-        if key not in settings_list:
-            continue
-        setting_type = setting_init_dict[key][1]
-        try:
-            tval = setting_type(val)
-            setattr(Settings, key, tval)
-        except ValueError:
-            logger.error("Invalid setting value for '%s': '%s' is not of type '%s'",
-                         key, val, setting_type.__name__)
-            print("Invalid setting value for '{}': '{}' is not of type '{}'"
-                  .format(key, val, setting_type.__name__))
+        _set_setting(key, val)
+
+    # Override settings from local settings file. This enables developers and test
+    # systems to override settings in a non-versioned file.
+    local_settings_file = os.path.join(os.getcwd(), 'settings_local.conf')
+    if os.access(local_settings_file, os.R_OK):
+        for key, val in configobj.ConfigObj(local_settings_file).items():
+            _set_setting(key, val)
 
     _notify_settings_listeners()
 
