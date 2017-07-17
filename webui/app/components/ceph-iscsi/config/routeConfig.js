@@ -93,7 +93,7 @@ app.config(function ($stateProvider) {
         }
       },
       ncyBreadcrumb: {
-        label: "Clone - {{targetId}}",
+        label: "Add as {{targetId}}",
         parent: "cephIscsi"
       }
     })
