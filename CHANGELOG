@@ -37,7 +37,9 @@ Added
 * Backend: Added the functionality to filter the Ceph pool list by the
   enabled flags of a pool (OP-2446)
 * Backend: Added REST service to check Grafana connection (OP-2449)
-* Backend: Add support to override settings via backend/settings_local.conf (OP-2473)
+* Backend: Add support to override settings via backend/settings_local.conf 
+  (OP-2473)
+* WebUI: Make Grafana configurable from the UI (OP-2427)
 
 Changed
 ~~~~~~~
