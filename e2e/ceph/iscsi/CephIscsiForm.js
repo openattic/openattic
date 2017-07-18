@@ -1,5 +1,7 @@
 var CephIscsiForm = function(){
 
+  this.panelTitle = element(by.css('.tc_panelTitle'));
+
   this.targetIdInput = element(by.model('model.targetId'));
   this.targetIdRequired = element(by.css('.tc_targetIdRequired'));
   this.targetIdInvalid = element(by.css('.tc_targetIdInvalid'));
