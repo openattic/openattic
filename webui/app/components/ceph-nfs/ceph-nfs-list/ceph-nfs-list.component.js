@@ -55,10 +55,6 @@ app.component("cephNfsList", {
 
     this.selection = {};
 
-    if (this.cluster.results.length > 0 && typeof this.registry.selectedCluster === "undefined") {
-      this.registry.selectedCluster = this.cluster.results[0];
-    }
-
     self.tabData = {
       active: 0,
       tabs: {
@@ -118,8 +114,13 @@ app.component("cephNfsList", {
       });
     };
 
+    self.onClusterLoad = function (cluster) {
+      self.cluster = cluster;
+    };
+
     self.getNfsList = function () {
-      if (self.cluster.results.length > 0 && self.registry.selectedCluster) {
+      if (angular.isObject(self.cluster) && self.cluster.results &&
+          self.cluster.results.length > 0 && self.registry.selectedCluster) {
         var obj = $filter("filter")(self.cluster.results, {fsid: self.registry.selectedCluster.fsid}, true);
         if (obj.length === 0) {
           self.registry.selectedCluster = self.cluster.results[0];

@@ -31,9 +31,9 @@
 "use strict";
 
 var app = angular.module("openattic.cephOsd");
-app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService, clusterData, registryService) {
+app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService, registryService) {
   $scope.registry = registryService;
-  $scope.cluster = clusterData;
+  $scope.cluster = undefined;
   $scope.osd = {};
   $scope.error = false;
 
@@ -47,13 +47,13 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
   $scope.selection = {};
 
-  if (angular.isObject($scope.cluster) && $scope.cluster.results.length > 0 &&
-      angular.isUndefined($scope.registry.selectedCluster)) {
-    $scope.registry.selectedCluster = $scope.cluster.results[0];
-  }
+  $scope.onClusterLoad = function (cluster) {
+    $scope.cluster = cluster;
+  };
 
   $scope.getOsdList = function () {
-    if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
+    if (angular.isObject($scope.cluster) && $scope.cluster.results &&
+        $scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];
