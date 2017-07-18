@@ -47,6 +47,7 @@ Changed
 * WebUI: Adapted the paths to grafana dashboards to the latest deepsea
   changes (OP-2442)
 * Backend: Cope wit the new Ceph health format (OP-2489)
+* WebUI: Rename "Clone" button to "Copy" (OP-2478)
 
 Removed
 ~~~~~~~
