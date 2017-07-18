@@ -46,6 +46,7 @@ Changed
 * WebUI: Refactors add form template (OP-2420)
 * WebUI: Adapted the paths to grafana dashboards to the latest deepsea
   changes (OP-2442)
+* Backend: Cope wit the new Ceph health format (OP-2489)
 
 Removed
 ~~~~~~~
