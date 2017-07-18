@@ -42,6 +42,7 @@ angular.module('openattic.grafana').component('grafana', {
     vm.dashboardName = '';
     vm.src = '';
     vm.urlParameterName = '';
+    vm.resizePromise = undefined;
 
     /**
      * Set some information to determine the correct iframe source
@@ -79,7 +80,7 @@ angular.module('openattic.grafana').component('grafana', {
         vm.src = vm.baseUrl + 'dashboard/db/' + vm.dashboardName + '?' + vm.urlParameterName + '=' + vm.data;
       }
 
-      $interval(vm.resize, 500);
+      vm.resizePromise = $interval(vm.resize, 500);
     };
 
     vm.$onChanges = function (values) {
@@ -87,6 +88,10 @@ angular.module('openattic.grafana').component('grafana', {
       if (angular.isDefined(values.data)) {
         vm.src = vm.src.replace(values.data.previousValue, values.data.currentValue);
       }
+    };
+
+    vm.$onDestroy = function () {
+      $interval.cancel(vm.resizePromise);
     };
 
     /**
