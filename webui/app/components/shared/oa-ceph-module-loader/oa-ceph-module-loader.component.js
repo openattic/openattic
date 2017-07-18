@@ -202,6 +202,38 @@ app.component("oaCephModuleLoader", {
       "172": {
         title: "Object Gateway - DeepSea - No connection",
         template: "openattic-rgw-no-deepsea-cred"
+      },
+      "180": {
+        title: "Grafana - Incomplete Credentials",
+        template: "grafana-incomplete-credentials"
+      },
+      "181": {
+        title: "Grafana - Authentication failed",
+        template: "grafana-failed-authentication"
+      },
+      "182": {
+        title: "Grafana - Connection refused",
+        template: "grafana-connection-refused"
+      },
+      "183": {
+        title: "Grafana - Unknown host",
+        template: "grafana-unknown-host"
+      },
+      "184": {
+        title: "Grafana - Connection timeout",
+        template: "grafana-connection-timeout"
+      },
+      "185": {
+        title: "Grafana - No route to host",
+        template: "grafana-no-route-to-host"
+      },
+      "186": {
+        title: "Grafana - Connection error",
+        template: "grafana-connection-error"
+      },
+      "187": {
+        title: "Grafana - HTTP error",
+        template: "grafana-http-error"
       }
     };
 
