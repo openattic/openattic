@@ -52,20 +52,20 @@ angular.module('openattic.grafana').component('grafana', {
        */
       switch (vm.mode) {
         case 'pool':
-          vm.dashboardName = 'ceph-pools.json';
+          vm.dashboardName = 'ceph-pools';
           vm.urlParameterName = 'var-pool';
           break;
         case 'osd':
-          vm.dashboardName = 'ceph-osd.json';
+          vm.dashboardName = 'ceph-osd';
           vm.urlParameterName = 'var-osd';
           break;
         case 'node':
-          vm.dashboardName = 'node.json';
+          vm.dashboardName = 'node-statistics';
           vm.urlParameterName = 'var-instance';
           break;
 
         default:
-          vm.dashboardName = 'ceph-cluster.json';
+          vm.dashboardName = 'ceph-cluster';
           vm.mode = 'dashboard';
           break;
       }
@@ -74,9 +74,9 @@ angular.module('openattic.grafana').component('grafana', {
        * Set src of the iframe.
        */
       if (vm.mode === 'dashboard') {
-        vm.src = vm.baseUrl + 'dashboard/file/' + vm.dashboardName;
+        vm.src = vm.baseUrl + 'dashboard/db/' + vm.dashboardName;
       } else {
-        vm.src = vm.baseUrl + 'dashboard/file/' + vm.dashboardName + '?' + vm.urlParameterName + '=' + vm.data;
+        vm.src = vm.baseUrl + 'dashboard/db/' + vm.dashboardName + '?' + vm.urlParameterName + '=' + vm.data;
       }
 
       $interval(vm.resize, 500);

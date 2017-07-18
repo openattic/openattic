@@ -37,13 +37,15 @@ Added
 * Backend: Added the functionality to filter the Ceph pool list by the
   enabled flags of a pool (OP-2446)
 * Backend: Added REST service to check Grafana connection (OP-2449)
-* Backend: Add support to override settings via backend/settings_local.conf 
+* Backend: Add support to override settings via backend/settings_local.conf
   (OP-2473)
 * WebUI: Make Grafana configurable from the UI (OP-2427)
 
 Changed
 ~~~~~~~
 * WebUI: Refactors add form template (OP-2420)
+* WebUI: Adapted the paths to grafana dashboards to the latest deepsea
+  changes (OP-2442)
 
 Removed
 ~~~~~~~
