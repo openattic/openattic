@@ -72,6 +72,7 @@ Fixed
 * Backend/WebUI: Fixed check of RGW system user permissions in RGW status module (OP-2416)
 * Backend: Fixed RGW system user permissions check in NFS module (OP-2465)
 * Backend: Initialize all Nodb fields with their defaults (OP-2279)
+* WebUI: Grafana - Add cancellation of resize interval (OP-2482)
 
 [3.3.0] - 2017-07-06
 --------------------
