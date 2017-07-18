@@ -66,43 +66,28 @@ app.component("cephMonStatus", {
     };
 
     this.getCombinedHealth = function (cluster) {
-      var clusterHealth = cluster.health;
+      // Check if timechecks is empty
+      if (angular.equals(cluster.timechecks, {})) {
+        throw "timechecks hasn't been set in the api yet";
+      }
+
+      // var clusterHealth = cluster.health;
       var health = {
         "HEALTH_OK": [],
         "HEALTH_WARN": [],
         "HEALTH_ERR": []
       };
       angular.forEach(cluster.monmap.mons, function (mon) {
-        mon = self.extendMon(mon, clusterHealth.timechecks.mons);
-        mon = self.extendMon(mon, clusterHealth.health.health_services[0].mons);
+        // Extend the mon object by the timecheck of the specific mon
+        angular.extend(mon, cluster.timechecks.time_skew_status[mon.name]);
+
         if (!mon.health) {
           mon.health = "HEALTH_ERR";
         }
         health[mon.health].push(mon);
       });
+
       return health;
-    };
-
-    this.extendMon = function (mon, objArray) {
-      var obj = objArray.find(function (obj) {
-        return mon.name === obj.name;
-      });
-      if (mon.health && obj) {
-        obj.health = self.worstHealthState(mon.health, obj.health);
-      }
-      if (obj) {
-        mon = angular.extend({}, mon, obj);
-      }
-      return mon;
-    };
-
-    this.worstHealthState = function (health1, health2) {
-      var healthStateValue = {
-        "HEALTH_OK": 1,
-        "HEALTH_WARN": 2,
-        "HEALTH_ERR": 3
-      };
-      return healthStateValue[health1] > healthStateValue[health2] ? health1 : health2;
     };
 
     this.createPieData = function (health) {
