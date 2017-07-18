@@ -37,6 +37,7 @@ app.component("oaCephModuleLoader", {
     module: "@",
     cluster: "<",
     registry: "=",
+    displayLoadingPanel: "@",
     onClusterChange: "&"
   },
   transclude: true,
@@ -44,6 +45,8 @@ app.component("oaCephModuleLoader", {
     var self = this;
 
     self.$onInit = function () {
+      self.displayLoadingPanelValue = angular.isUndefined(self.displayLoadingPanel) ||
+        self.displayLoadingPanel === "true";
       self.loadModule();
     };
 
