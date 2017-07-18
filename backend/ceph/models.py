@@ -168,7 +168,9 @@ class CephCluster(NodbModel, RadosMixin):
 
     @bulk_attribute_setter(['health'])
     def set_cluster_health(self, objects, field_names):
-        self.health = self.mon_api(self.fsid).health()['overall_status']
+        health = self.mon_api(self.fsid).health()
+        # Ceph Luminous > 12.1 renamed `overall_status` to `status`
+        self.health = health['overall_status' if 'overall_status' in health else 'status']
 
     @bulk_attribute_setter(['performance_data_options'])
     def set_performance_data_options(self, objects, field_names):

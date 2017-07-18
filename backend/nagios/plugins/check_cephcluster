@@ -57,7 +57,9 @@ class ClusterStatus(dict):
             sys.exit(3)
 
     def _map_health_status(self):
-        status = self['health']['overall_status']
+        health = self['health']
+        # Ceph Luminous > 12.1 renamed `overall_status` to `status`
+        status = health['overall_status' if 'overall_status' in health else 'status']
         # See also: ceph.models.Pool#get_status
         status_map = {
             'HEALTH_OK': ('OK', 0),
