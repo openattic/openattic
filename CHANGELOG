@@ -67,6 +67,7 @@ Fixed
 * Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE setting (OP-2415)
 * Backend/WebUI: Fixed check of RGW system user permissions in RGW status module (OP-2416)
 * Backend: Fixed RGW system user permissions check in NFS module (OP-2465)
+* Backend: Initialize all Nodb fields with their defaults (OP-2279)
 
 [3.3.0] - 2017-07-06
 --------------------
