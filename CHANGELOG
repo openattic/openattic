@@ -48,6 +48,7 @@ Changed
   changes (OP-2442)
 * Backend: Cope wit the new Ceph health format (OP-2489)
 * WebUI: Rename "Clone" button to "Copy" (OP-2478)
+* WebUI: iSCSI - Rename "Target" to "Target IQN" (OP-2481)
 
 Removed
 ~~~~~~~
