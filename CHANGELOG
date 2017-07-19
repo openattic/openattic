@@ -42,6 +42,8 @@ Added
 * WebUI: Make Grafana configurable from the UI (OP-2427)
 * WebUI: Gracefully handle not properly configured Grafana (OP-2434)
 * Backend: Add time-sync-status to the API (OP-2495)
+* WebUI: Display help text for shared secret key configuration in 
+  settings page (OP-2479)
 
 Changed
 ~~~~~~~
