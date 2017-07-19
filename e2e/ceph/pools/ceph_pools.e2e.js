@@ -1,7 +1,6 @@
 'use strict';
 
 var helpers = require('../../common.js');
-var graphHelpers = require('../../graphCommon.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
 
 describe('should test the ceph pools panel', function(){

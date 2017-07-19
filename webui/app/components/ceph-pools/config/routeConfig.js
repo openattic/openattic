@@ -92,7 +92,6 @@ app.config(function ($stateProvider) {
         url          : "/statistics",
         views        : {
           "tab-content": {
-            controller : "CephPoolsStatisticsCtrl",
             templateUrl: "components/ceph-pools/templates/statistics.html"
           }
         },

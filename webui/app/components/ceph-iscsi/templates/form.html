@@ -15,13 +15,13 @@
   <form ng-show="!targetId || (!error && model.$resolved)" name="iscsiForm" role="form" class="form-horizontal" novalidate>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">Target {{ model.targetId }}</h3>
+        <h3 class="panel-title tc_panelTitle">Target IQN: {{ model.targetId }}</h3>
       </div>
       <div class="panel-body">
 
         <div class="form-group"
              ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm.targetId.$dirty) && iscsiForm.targetId.$invalid}">
-          <label class="col-sm-3 control-label" for="targetId">Target</label>
+          <label class="col-sm-3 control-label" for="targetId">Target IQN</label>
           <div class="col-sm-9">
             <div class="input-group">
               <input type="text" class="form-control" name="targetId" id="targetId"

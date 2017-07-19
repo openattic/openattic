@@ -40,19 +40,33 @@ Added
 * Backend: Add support to override settings via backend/settings_local.conf
   (OP-2473)
 * WebUI: Make Grafana configurable from the UI (OP-2427)
+* WebUI: Gracefully handle not properly configured Grafana (OP-2434)
+* Backend: Add time-sync-status to the API (OP-2495)
+* WebUI: Display help text for shared secret key configuration in 
+  settings page (OP-2479)
 
 Changed
 ~~~~~~~
 * WebUI: Refactors add form template (OP-2420)
 * WebUI: Adapted the paths to grafana dashboards to the latest deepsea
   changes (OP-2442)
-* Backend: Cope wit the new Ceph health format (OP-2489)
 * WebUI: Rename "Clone" button to "Copy" (OP-2478)
+* WebUI: iSCSI - Rename "Target" to "Target IQN" (OP-2481)
+* Backend: Cope with the new Ceph health format (OP-2489)
+* WebUI: Add support for new Luminous Ceph health format (OP-2471)
+* WebUI: Enhance troubleshooting hints when Salt REST API is not reachable 
+  (OP-2492)
+* Backend: Hide the controls of the Grafana graphs for OSDs, Nodes and
+  Pools (OP-2423)
 
 Removed
 ~~~~~~~
 * Installation: Removed Nagios and PNP4Nagios from the RPM package and
   removed configuration from `oaconfig` (OP-2267) 
+* Backend: All Nagios relations have been removed from the Ceph
+  module (OP-2490)
+* Backend: Removed unused ceph/systemapi.py (OP-2494)
+* WebUI: Removed all Nagios relations from UI and e2e test (OP-2448)
 
 Fixed
 ~~~~~
@@ -68,11 +82,15 @@ Fixed
 * WebUI: Grafana loading spinner will be displayed as well as the icon in the
   notification list now (OP-2431)
 * Backend: Handle JSON decode exception in REST Client class (OP-2476)
-* Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE setting (OP-2415)
-* Backend/WebUI: Fixed check of RGW system user permissions in RGW status module (OP-2416)
+* Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE
+  setting (OP-2415)
+* Backend/WebUI: Fixed check of RGW system user permissions in RGW status
+  module (OP-2416)
 * Backend: Fixed RGW system user permissions check in NFS module (OP-2465)
 * Backend: Initialize all Nodb fields with their defaults (OP-2279)
 * WebUI: Grafana - Add cancellation of resize interval (OP-2482)
+* WebUI: The min-height of the grafana iframe is 600px now. So, the iframe
+  isn't too small anymore if the dashboard couldn't be loaded (OP-2486)
 
 [3.3.0] - 2017-07-06
 --------------------

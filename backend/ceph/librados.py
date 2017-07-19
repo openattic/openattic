@@ -763,6 +763,9 @@ class MonApi(object):
     def health(self):
         return self._call_mon_command('health')
 
+    def time_sync_status(self):
+        return self._call_mon_command('time-sync-status')
+
     def df(self):
         return self._call_mon_command('df', self._args_to_argdict(detail='detail'))
 
