@@ -2,10 +2,10 @@
 
 <div class="panel panel-default" ng-show="error">
   <div class="panel-heading">
-    <h3 class="panel-title">Couldn't load iSCSI targets</h3>
+    <h3 class="panel-title">Couldn't load iSCSI target IQNs</h3>
   </div>
   <div class="panel-body">
-    iSCSI targets could not be loaded. Make sure that the ceph module is installed.
+    iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed.
   </div>
 </div>
 
@@ -70,7 +70,7 @@
       <th class="oadatatablecheckbox" ng-if="selection.available">
         <input type="checkbox" ng-model="selection.checkAll"/>
       </th>
-      <th ng-show="columns['Target']" sortfield="targetId" sortdir="asc" sortheaderclass sortdefault>Target</th>
+      <th ng-show="columns['Target IQN']" sortfield="targetId" sortdir="asc" sortheaderclass sortdefault>Target IQN</th>
       <th ng-show="columns['State']">State</th>
       <th ng-show="columns['Portals']" sortfield="portals" sortheaderclass>Portals</th>
       <th ng-show="columns['Images']" sortfield="images" sortheaderclass>Images</th>
@@ -84,7 +84,7 @@
       <td ng-if="selection.available">
         <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
       </td>
-      <td ng-show="columns['Target']">
+      <td ng-show="columns['Target IQN']">
         <a ui-sref="cephIscsi-edit({
                       fsid: row.fsid,
                       targetId: row.targetId
