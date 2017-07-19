@@ -54,6 +54,8 @@ Changed
 * WebUI: iSCSI - Rename "Target" to "Target IQN" (OP-2481)
 * Backend: Cope with the new Ceph health format (OP-2489)
 * WebUI: Add support for new Luminous Ceph health format (OP-2471)
+* WebUI: Enhance troubleshooting hints when Salt REST API is not reachable 
+  (OP-2492)
 
 Removed
 ~~~~~~~
