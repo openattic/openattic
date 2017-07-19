@@ -37,7 +37,7 @@ app.config(function ($stateProvider) {
         url          : "/ceph/rbds",
         views        : {
           "main": {
-            templateUrl: "components/ceph-rbd/templates/listing.html",
+            templateUrl: "components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html",
             controller : "CephRbdCtrl"
           }
         },
@@ -57,7 +57,7 @@ app.config(function ($stateProvider) {
         url: "/rbds/add",
         views: {
           "main": {
-            templateUrl: "components/ceph-rbd/templates/add-form.html",
+            templateUrl: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html",
             controller : "RbdFormCtrl"
           }
         },
@@ -74,7 +74,7 @@ app.config(function ($stateProvider) {
         url          : "/statistics",
         views        : {
           "tab-content": {
-            templateUrl: "components/ceph-rbd/templates/statistics.html"
+            templateUrl: "components/ceph-rbd/ceph-rbd-statistics/ceph-rbd-statistics.component.html"
           }
         },
         ncyBreadcrumb: {
@@ -85,7 +85,7 @@ app.config(function ($stateProvider) {
       .state("cephRbds.detail.details", {
         url          : "/details",
         views        : {
-          "tab-content": {templateUrl: "components/ceph-rbd/templates/details.html"} },
+          "tab-content": {templateUrl: "components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html"} },
         ncyBreadcrumb: {
           label: "{{selection.item.name}} details"
         }

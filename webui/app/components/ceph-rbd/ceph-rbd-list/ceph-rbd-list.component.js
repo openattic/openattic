@@ -166,7 +166,7 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
     }
     var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/ceph-rbd/templates/delete.html",
+      templateUrl: "components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html",
       controller: "RbdDelete",
       resolve: {
         rbdSelection: function () {
