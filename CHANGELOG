@@ -57,6 +57,7 @@ Removed
   removed configuration from `oaconfig` (OP-2267) 
 * Backend: All Nagios relations have been removed from the Ceph
   module (OP-2490)
+* Removed all Nagios relations from UI and e2e test (OP-2448)
 
 Fixed
 ~~~~~
