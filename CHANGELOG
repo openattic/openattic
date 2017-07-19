@@ -40,6 +40,7 @@ Added
 * Backend: Add support to override settings via backend/settings_local.conf
   (OP-2473)
 * WebUI: Make Grafana configurable from the UI (OP-2427)
+* WebUI: Gracefully handle not properly configured Grafana (OP-2434)
 
 Changed
 ~~~~~~~
