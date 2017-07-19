@@ -1,7 +1,6 @@
 'use strict';
 
 var helpers = require('../../common.js');
-var graphHelpers = require('../../graphCommon.js');
 var rbdCommons = require('./cephRbdCommon.js');
 
 describe('should test the ceph rbd panel', function(){
@@ -67,19 +66,17 @@ describe('should test the ceph rbd panel', function(){
     });
   });
 
+  /* TODO: Uncomment for OP-2475
   rbdProperties.useWriteablePools(function(cluster, pool){
     it('should have a statistic tab when selecting a rbd', function(){
       // Select the created rbd
       helpers.get_list_element('e2e_' + pool.name + '_' + cluster.name).click();
-      console.log('Wait one minute for nagios to create the graph data.');
-      browser.sleep(60000); // Wait a minute for nagios to create the graph data.
       rbdProperties.statisticsTab.click();
       expect(browser.getCurrentUrl()).toContain('/ceph/rbds/statistics#more');
       expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
     });
   });
-
-  graphHelpers.testGraphs(rbdProperties.statisticGraphsConfig);
+  */
 
   rbdProperties.useWriteablePools(function(cluster, pool){
     it('should delete the created rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){

@@ -116,12 +116,14 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
         state: "cephRbds.detail.details",
         class: "tc_statusTab",
         name: "Status"
+        /* TODO: Uncomment for OP-2475
       },
       statistics: {
         show: "selection.item",
         state: "cephRbds.detail.statistics",
         class: "tc_statisticsTab",
         name: "Statistics"
+        */
       }
     }
   };

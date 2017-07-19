@@ -52,6 +52,12 @@ angular.module('openattic.grafana').component('grafana', {
        * Check the given mode and set the correct dashboard name and url parameter name
        */
       switch (vm.mode) {
+        /* TODO: Uncomment for OP-2475
+        case 'rbd':
+          vm.dashboardName = 'ceph-pools';
+          vm.urlParameterName = 'var-rbd';
+          break;
+        */
         case 'pool':
           vm.dashboardName = 'ceph-pools';
           vm.urlParameterName = 'var-pool';
