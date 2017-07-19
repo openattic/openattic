@@ -47,9 +47,10 @@ Changed
 * WebUI: Refactors add form template (OP-2420)
 * WebUI: Adapted the paths to grafana dashboards to the latest deepsea
   changes (OP-2442)
-* Backend: Cope wit the new Ceph health format (OP-2489)
 * WebUI: Rename "Clone" button to "Copy" (OP-2478)
 * WebUI: iSCSI - Rename "Target" to "Target IQN" (OP-2481)
+* Backend: Cope with the new Ceph health format (OP-2489)
+* WebUI: Add support for new Luminous Ceph health format (OP-2471)
 
 Removed
 ~~~~~~~
@@ -57,7 +58,7 @@ Removed
   removed configuration from `oaconfig` (OP-2267) 
 * Backend: All Nagios relations have been removed from the Ceph
   module (OP-2490)
-* Removed all Nagios relations from UI and e2e test (OP-2448)
+* WebUI: Removed all Nagios relations from UI and e2e test (OP-2448)
 
 Fixed
 ~~~~~

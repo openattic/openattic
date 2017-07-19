@@ -36,14 +36,14 @@
       <div ng-if="cluster.summary.err.length" class="alert alert-danger">
         <ul class="fa-ul ceph-health-error-listing">
           <li ng-repeat="err in cluster.summary.err">
-            <i class="fa-li fa fa-bomb"></i> {{err.summary}}
+            <i class="fa-li fa fa-bomb"></i> {{err.message}}
           </li>
         </ul>
       </div>
       <div ng-if="cluster.summary.warn.length" class="alert alert-warning">
         <ul class="fa-ul ceph-health-warning-listing">
           <li ng-repeat="warn in cluster.summary.warn">
-            <i class="fa-li fa fa-warning"></i> {{warn.summary}}
+            <i class="fa-li fa fa-warning"></i> {{warn.message}}
           </li>
         </ul>
       </div>
