@@ -41,6 +41,7 @@ Added
   (OP-2473)
 * WebUI: Make Grafana configurable from the UI (OP-2427)
 * WebUI: Gracefully handle not properly configured Grafana (OP-2434)
+* Backend: Add time-sync-status to the API (OP-2495)
 
 Changed
 ~~~~~~~
