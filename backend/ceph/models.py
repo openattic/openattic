@@ -147,7 +147,14 @@ class CephCluster(NodbModel, RadosMixin):
 
     @property
     def status(self):
-        return self.mon_api(self.fsid).status()
+        val = self.mon_api(self.fsid).status()
+        if 'timechecks' not in val:
+            try:
+                val['timechecks'] = self.mon_api(self.fsid).time_sync_status()
+            except Exception:
+                logger.exception('time_sync_status failed.')
+                val['timechecks'] = {}
+        return val
 
     @staticmethod
     def get_all_objects(context, query):
