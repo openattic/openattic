@@ -22,7 +22,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ModelState
-from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor
+from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor, ForeignObjectRel
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
@@ -541,6 +541,16 @@ class NodbModel(models.Model):
             if key in self.__class__.__dict__ and \
                     isinstance(self.__class__.__dict__[key], ReverseSingleRelatedObjectDescriptor):
                 setattr(self, key, value)
+
+        for field in self._meta.concrete_fields:
+            is_related_field = isinstance(field.rel, ForeignObjectRel)
+
+            if not self.attribute_is_unevaluated_lazy_property(field.name) \
+                and not hasattr(self, field.name):
+                if is_related_field:
+                    setattr(self, field.attname, field.get_default())
+                else:
+                    setattr(self, field.name, field.get_default())
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

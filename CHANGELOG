@@ -37,11 +37,17 @@ Added
 * Backend: Added the functionality to filter the Ceph pool list by the
   enabled flags of a pool (OP-2446)
 * Backend: Added REST service to check Grafana connection (OP-2449)
-* Backend: Add support to override settings via backend/settings_local.conf (OP-2473)
+* Backend: Add support to override settings via backend/settings_local.conf
+  (OP-2473)
+* WebUI: Make Grafana configurable from the UI (OP-2427)
 
 Changed
 ~~~~~~~
 * WebUI: Refactors add form template (OP-2420)
+* WebUI: Adapted the paths to grafana dashboards to the latest deepsea
+  changes (OP-2442)
+* Backend: Cope wit the new Ceph health format (OP-2489)
+* WebUI: Rename "Clone" button to "Copy" (OP-2478)
 
 Removed
 ~~~~~~~
@@ -65,6 +71,8 @@ Fixed
 * Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE setting (OP-2415)
 * Backend/WebUI: Fixed check of RGW system user permissions in RGW status module (OP-2416)
 * Backend: Fixed RGW system user permissions check in NFS module (OP-2465)
+* Backend: Initialize all Nodb fields with their defaults (OP-2279)
+* WebUI: Grafana - Add cancellation of resize interval (OP-2482)
 
 [3.3.0] - 2017-07-06
 --------------------

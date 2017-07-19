@@ -33,7 +33,7 @@
     </li>
     <li class="tc_cloneItem" ng-click="cloneAction()" ng-class="{disabled: !hasSelection}">
       <a>
-        <i class="fa fa-fw fa-clone"></i>Clone
+        <i class="fa fa-fw fa-clone"></i>Copy
       </a>
     </li>
     <li class="tc_deleteItem" ng-click="deleteAction()" ng-class="{disabled: !hasSelection && !multiSelection}">
@@ -44,8 +44,8 @@
   </actions>
   <additional-actions>
     <div class="btn-group" uib-dropdown is-open="status.isopen">
-      <button type="button" class="btn btn-sm btn-default tc_manageService" uib-dropdown-toggle>
-        <i class="fa fa-cog" aria-hidden="true"></i> Manage service
+      <button type="button" class="btn btn-sm btn-default btn-label tc_manageService" uib-dropdown-toggle>
+        <i class="fa fa-fw fa-cog" aria-hidden="true"></i>Manage service
       </button>
       <ul class="dropdown-menu" uib-dropdown-menu>
         <li class="tc_deployItem" ng-click="deployIscsi()"

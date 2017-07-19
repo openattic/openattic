@@ -22,13 +22,13 @@
           <span ng-repeat="message in value.messages" class="text-muted"><br>{{ message }}</span>
         </td>
         <td align="center">
-          <button class="btn btn-default btn-sm tc_startService"
+          <button class="btn btn-default btn-sm btn-label tc_startService"
                   ng-if="value.state === 'INACTIVE' || value.state === 'STARTING'"
                   ng-click="$ctrl.start(key)"
                   ng-disabled="value.state === 'STARTING'">
             <i class="fa fa-fw fa-play"></i>Start
           </button>
-          <button class="btn btn-default btn-sm tc_stopService"
+          <button class="btn btn-default btn-sm btn-label tc_stopService"
                   ng-if="value.state === 'ACTIVE' || value.state === 'STOPPING'"
                   ng-click="$ctrl.stop(key)"
                   ng-disabled="value.state === 'STOPPING'">
