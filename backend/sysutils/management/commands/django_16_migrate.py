@@ -409,7 +409,9 @@ _migrations = [
     SqlMigration(
         'ceph', u'0009_cephpool_flags_default', None, None
     ),
-
+    SqlMigration(
+        'ceph', u'0010_remove_cephcluster_performance_data_options', None, None
+    ),
 ]
 
 
