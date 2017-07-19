@@ -75,11 +75,15 @@ Fixed
 * WebUI: Grafana loading spinner will be displayed as well as the icon in the
   notification list now (OP-2431)
 * Backend: Handle JSON decode exception in REST Client class (OP-2476)
-* Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE setting (OP-2415)
-* Backend/WebUI: Fixed check of RGW system user permissions in RGW status module (OP-2416)
+* Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE
+  setting (OP-2415)
+* Backend/WebUI: Fixed check of RGW system user permissions in RGW status
+  module (OP-2416)
 * Backend: Fixed RGW system user permissions check in NFS module (OP-2465)
 * Backend: Initialize all Nodb fields with their defaults (OP-2279)
 * WebUI: Grafana - Add cancellation of resize interval (OP-2482)
+* WebUI: The min-height of the grafana iframe is 600px now. So, the iframe
+  isn't too small anymore if the dashboard couldn't be loaded (OP-2486)
 
 [3.3.0] - 2017-07-06
 --------------------

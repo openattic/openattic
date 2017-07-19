@@ -999,6 +999,7 @@ h6{
 }
 .grafana {
   width: 100%;
+  min-height: 600px;
 }
 
 /* Graph */
