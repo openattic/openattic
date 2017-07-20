@@ -15,6 +15,8 @@ import logging
 
 from cephfs import Error
 
+from django.core.exceptions import ValidationError
+
 from ceph.models import CephCluster
 from ceph_radosgw.rgw_client import RGWClient
 from deepsea import DeepSea
@@ -64,8 +66,9 @@ def check_deepsea_nfs_api(fsid):
         elif fsals == ['RGW']:
             try:
                 if not RGWClient.admin_instance().is_service_online():
-                    raise UnavailableModule(Reason.OPENATTIC_NFS_NO_RGW,
-                                            "unexpected output")
+                    raise UnavailableModule(Reason.OPENATTIC_NFS_NO_RGW, None)
+                if not RGWClient.admin_instance().is_system_user():
+                    raise UnavailableModule(Reason.OPENATTIC_NFS_NO_RGW, None)
             except (RGWClient.NoCredentialsException, RequestException) as e:
                 raise UnavailableModule(Reason.OPENATTIC_NFS_NO_RGW, str(e))
     except RequestException as e:
@@ -76,7 +79,7 @@ def check_deepsea_nfs_api(fsid):
 
 def status(params):
     if 'fsid' not in params:
-        raise Exception("fsid parameter is required")
+        raise ValidationError("fsid parameter is required")
 
     check_deepsea_connection()
     check_deepsea_nfs_api(params['fsid'])

@@ -100,6 +100,13 @@ app.config(function ($stateProvider) {
       })
       .state("ceph-rgw-buckets", {
         url: "/ceph/rgw/buckets",
+        params: {
+          page: undefined,
+          entries: undefined,
+          search: undefined,
+          sortfield: undefined,
+          sortorder: undefined
+        },
         views: {
           "main": {
             templateUrl: "components/ceph-rgw/templates/cephRgwBuckets.html",

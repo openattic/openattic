@@ -29,56 +29,70 @@ def check_rgw_credentials():
                 Settings.RGW_API_SECRET_KEY)):
         try:
             check_deepsea_connection()
+
         except UnavailableModule as ex:
             raise UnavailableModule(Reason.OPENATTIC_RGW_NO_DEEPSEA_CONN,
                                     {'deepsea_status': {'reason': ex.reason,
                                                         'messsage': ex.message}})
+
         try:
             credentials = DeepSea.instance().get_rgw_api_credentials()
             if not credentials:
                 raise UnavailableModule(Reason.OPENATTIC_RGW_NO_DEEPSEA_CRED, None)
+
         except RequestException as ex:
             raise UnavailableModule(Reason.OPENATTIC_RGW_NO_DEEPSEA_CRED, str(ex))
 
-    return {'available': True}
-
 
 def check_rgw_connection():
-    def map_errno_to_reason(errno):
-        _table = {
+    def raise_for_error_number(errno):
+        table = {
             '111': Reason.RGW_CONNECTION_REFUSED,
             '-2': Reason.RGW_UNKNOWN_HOST,
             '110': Reason.RGW_CONNECTION_TIMEOUT,
             '113': Reason.RGW_NO_ROUTE_TO_HOST,
         }
         raise UnavailableModule(
-            _table[errno] if errno in _table else Reason.RGW_CONN_UNKNOWN_PROBLEM,
-            None)
+            table[errno] if errno in table else Reason.RGW_CONN_UNKNOWN_PROBLEM, None)
 
-    def map_status_code(status_code, message=None):
-        _table = {
+    def raise_for_status_code(status_code, message=None):
+        table = {
             '401': Reason.RGW_FAILED_AUTHENTICATION,
             '403': Reason.RGW_FAILED_AUTHENTICATION,
             '500': Reason.RGW_INTERNAL_SERVER_ERROR,
         }
-        if str(status_code) not in _table:
+        if str(status_code) not in table:
             raise UnavailableModule(Reason.RGW_HTTP_PROBLEM,
                                     "RGW server returned status_code={}".format(status_code))
-        raise UnavailableModule(_table[str(status_code)], message)
+
+        raise UnavailableModule(table[str(status_code)], message)
 
     try:
         online = RGWClient.admin_instance().is_service_online()
         if not online:
             raise UnavailableModule(Reason.RGW_HTTP_PROBLEM, "Unexpected RGW response output")
+
     except RequestException as ex:
         if ex.conn_errno and ex.conn_strerror:
-            return map_errno_to_reason(ex.conn_errno)
+            raise_for_error_number(ex.conn_errno)
         elif ex.status_code:
-            return map_status_code(
-                ex.status_code, ex.content if ex.status_code == 500 else None)
+            raise_for_status_code(ex.status_code, ex.content if ex.status_code == 500 else None)
+
         raise UnavailableModule(Reason.RGW_HTTP_PROBLEM, str(ex))
+
+
+def check_rgw_admin_permissions():
+    try:
+        if not RGWClient.admin_instance().is_system_user():
+            raise UnavailableModule(Reason.RGW_NOT_SYSTEM_USER, None)
+    except RequestException as ex:
+        if ex.status_code and ex.status_code in [401, 403]:
+            raise UnavailableModule(Reason.RGW_NOT_SYSTEM_USER, None)
+        else:
+            raise UnavailableModule(Reason.RGW_HTTP_PROBLEM, str(ex))
 
 
 def status(params):
     check_rgw_credentials()
     check_rgw_connection()
+    check_rgw_admin_permissions()

@@ -43,6 +43,10 @@ app.factory("settingsFormService", function ($resource) {
       method: "GET",
       url: globalConfig.API.URL + "settings/check_rgw_connection"
     },
+    checkGrafanaConnection: {
+      method: "GET",
+      url: globalConfig.API.URL + "settings/check_grafana_connection"
+    },
     getRgwConfiguration: {
       method: "GET",
       url: globalConfig.API.URL + "settings/get_rgw_configuration"

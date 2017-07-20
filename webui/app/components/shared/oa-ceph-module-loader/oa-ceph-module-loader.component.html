@@ -38,7 +38,7 @@
 <div ng-if="$ctrl.cluster === undefined || $ctrl.cluster.results.length > 0">
 
   <oa-loading-panel message="Module is loading..."
-                    ng-show="!$ctrl.moduleAvailable.$resolved"></oa-loading-panel>
+                    ng-show="!$ctrl.moduleAvailable.$resolved && $ctrl.displayLoadingPanelValue"></oa-loading-panel>
 
   <span ng-if="$ctrl.moduleAvailable.$resolved">
     <span ng-transclude ng-if="$ctrl.moduleAvailable.available"></span>

@@ -14,11 +14,9 @@
 import json
 
 from django.http import HttpResponse
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 
-from grafana.grafana_proxy import get_grafana_api_response, STATIC_CREDENTIALS, \
-    has_static_credentials
+from grafana.grafana_proxy import GrafanaProxy, get_grafana_api_response
 from rest_client import RequestException
 
 
@@ -29,7 +27,7 @@ class ProxyView(APIView):
 
     @staticmethod
     def proxy_view(request, path):
-        if not has_static_credentials():
+        if not GrafanaProxy.has_credentials():
             content = {
                 'Code': 'ConfigurationIncomplete',
                 'Message': 'Grafana seems to be either unconfigured or misconfigured. '
@@ -40,6 +38,6 @@ class ProxyView(APIView):
             return response
 
         try:
-            return get_grafana_api_response(request, path, credentials=STATIC_CREDENTIALS)
+            return get_grafana_api_response(request, path)
         except RequestException as e:
             return HttpResponse(e.content, e.status_code)

@@ -13,10 +13,11 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls            import url, patterns, include
-from django.views.generic        import TemplateView
+from django.conf.urls import url, patterns, include
+from django.views.generic import TemplateView
 
 from django.contrib import admin
+
 admin.autodiscover()
 
 from django.conf import settings
@@ -29,29 +30,32 @@ from views import AuthView
 
 from module_status import StatusView
 
+
 def _get_openattic_apps():
     from os.path import commonprefix
     from django.conf import settings
     for name in settings.INSTALLED_APPS:
         try:
             module = __import__(name)
-            if commonprefix((settings.PROJECT_ROOT, getattr(module, '__file__'))) == settings.PROJECT_ROOT:
+            if commonprefix(
+                (settings.PROJECT_ROOT, getattr(module, '__file__'))) == settings.PROJECT_ROOT:
                 yield name
         except ImportError, err:
             pass
 
-js_info_dict = { "packages": list(_get_openattic_apps()) }
+
+js_info_dict = {"packages": list(_get_openattic_apps())}
 
 urlpatterns = [
     (r'^api/auth$', AuthView.as_view(), {}, 'authenticate'),
 
-    (r'^api/',      include(ROUTER.urls)),
+    (r'^api/', include(ROUTER.urls)),
     (r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     (r'^api/api-token-auth$', views.obtain_auth_token),
 
     # we need a second URL for the do_login view which can be configured using an Apache
     # <Location> directive to authenticate using Kerberos
-    (r'^accounts/kerblogin.js$', 'views.do_login',  {}, 'kerblogin' ),
+    (r'^accounts/kerblogin.js$', 'views.do_login', {}, 'kerblogin'),
 
     # module status service
     (r'^api/status/(?P<module_name>[^/]+)', StatusView.as_view(), {}, 'module_status'),
@@ -66,19 +70,17 @@ for app in settings.INSTALLED_MODULES:
         if hasattr(module.urls, "urlpatterns"):
             urlpatterns += module.urls.urlpatterns
 
-
 if "rosetta" in settings.INSTALLED_APPS:
-    urlpatterns.append( ( r'rosetta/', include( 'rosetta.urls' ) ) )
+    urlpatterns.append((r'rosetta/', include('rosetta.urls')))
 
 # URLs for the GUI
 urlpatterns.extend([
     # first, a catch-all URL that serves bower_components, css etc
     url(r'^(?P<path>.+)$', 'django.views.static.serve', {
-        'document_root': settings.GUI_ROOT, 'show_indexes': False} ),
+        'document_root': settings.GUI_ROOT, 'show_indexes': False}),
     # second, a URL that serves index.html for "openattic/"
-    url(r'^$',             'django.views.static.serve', {
-        'document_root': settings.GUI_ROOT, 'path': 'index.html'} )
-    ])
-
+    url(r'^$', 'django.views.static.serve', {
+        'document_root': settings.GUI_ROOT, 'path': 'index.html'})
+])
 
 urlpatterns = patterns('', *urlpatterns)

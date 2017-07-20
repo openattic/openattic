@@ -8,7 +8,8 @@ describe('settings form', function(){
   var form = new SettingsForm();
 
   var initialSettings = {
-    deepsea: {}
+    deepsea: {},
+    grafana: {}
   };
 
   beforeAll(function(){
@@ -20,8 +21,29 @@ describe('settings form', function(){
     form.saltApiPort.getAttribute('value').then(function(value){
       initialSettings.deepsea.port = value;
     });
+    form.saltApiEauth.getAttribute('value').then(function(value){
+      initialSettings.deepsea.eauth = value.replace('string:', '');
+    });
     form.saltApiUsername.getAttribute('value').then(function(value){
       initialSettings.deepsea.username = value;
+    });
+    form.saltApiSharedSecret.getAttribute('value').then(function(value){
+      initialSettings.deepsea.shared_secret = value;
+    });
+    form.grafanaHost.getAttribute('value').then(function(value){
+      initialSettings.grafana.host = value;
+    });
+    form.grafanaPort.getAttribute('value').then(function(value){
+      initialSettings.grafana.port = value;
+    });
+    form.grafanaUsername.getAttribute('value').then(function(value){
+      initialSettings.grafana.username = value;
+    });
+    form.grafanaPassword.getAttribute('value').then(function(value){
+      initialSettings.grafana.password = value;
+    });
+    form.grafanaUseSSL.getAttribute('checked').then(function(value){
+      initialSettings.grafana.use_ssl = value === 'true';
     });
   });
 
@@ -36,7 +58,14 @@ describe('settings form', function(){
     form.rgwAccessKey.clear().sendKeys('e2e-access-key');
     form.rgwSecretKey.clear().sendKeys('e2e-secret-key');
     form.rgwAdminUser.clear().sendKeys('e2e-admin-user');
-    form.checkUseSSL(true);
+    form.rgwAdminResourcePath.clear().sendKeys('e2e-admin-path');
+    form.checkRgwUseSSL(true);
+
+    form.grafanaHost.clear().sendKeys('e2e-grafana-host');
+    form.grafanaPort.clear().sendKeys('8003');
+    form.grafanaUsername.clear().sendKeys('e2e-grafana-user');
+    form.grafanaPassword.clear().sendKeys('e2e-grafana-pass');
+    form.checkGrafanaUseSSL(true);
 
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
@@ -55,14 +84,28 @@ describe('settings form', function(){
     expect(form.rgwAccessKey.getAttribute('value')).toEqual('e2e-access-key');
     expect(form.rgwSecretKey.getAttribute('value')).toEqual('e2e-secret-key');
     expect(form.rgwAdminUser.getAttribute('value')).toEqual('e2e-admin-user');
+    expect(form.rgwAdminResourcePath.getAttribute('value')).toEqual('e2e-admin-path');
     expect(form.rgwUseSSL.isSelected()).toBe(true);
+
+    expect(form.grafanaHost.getAttribute('value')).toEqual('e2e-grafana-host');
+    expect(form.grafanaPort.getAttribute('value')).toEqual('8003');
+    expect(form.grafanaUsername.getAttribute('value')).toEqual('e2e-grafana-user');
+    expect(form.grafanaPassword.getAttribute('value')).toEqual('e2e-grafana-pass');
+    expect(form.grafanaUseSSL.isSelected()).toBe(true);
   });
 
   it('should restore initial settings', function(){
     form.saltApiHost.clear().sendKeys(initialSettings.deepsea.host);
     form.saltApiPort.clear().sendKeys(initialSettings.deepsea.port);
+    form.selectEauth(initialSettings.deepsea.eauth);
     form.saltApiUsername.clear().sendKeys(initialSettings.deepsea.username);
+    form.saltApiSharedSecret.clear().sendKeys(initialSettings.deepsea.shared_secret);
     form.checkManagedByDeepSea(true);
+    form.grafanaHost.clear().sendKeys(initialSettings.grafana.host);
+    form.grafanaPort.clear().sendKeys(initialSettings.grafana.port);
+    form.grafanaUsername.clear().sendKeys(initialSettings.grafana.username);
+    form.grafanaPassword.clear().sendKeys(initialSettings.grafana.password);
+    form.checkGrafanaUseSSL(initialSettings.grafana.use_ssl);
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
   });
@@ -73,6 +116,11 @@ describe('settings form', function(){
     expect(form.saltApiPort.getAttribute('value')).toEqual(initialSettings.deepsea.port);
     expect(form.saltApiUsername.getAttribute('value')).toEqual(initialSettings.deepsea.username);
     expect(form.rgwManagedByDeepSea.isSelected()).toBe(true);
+    expect(form.grafanaHost.getAttribute('value')).toEqual(initialSettings.grafana.host);
+    expect(form.grafanaPort.getAttribute('value')).toEqual(initialSettings.grafana.port);
+    expect(form.grafanaUsername.getAttribute('value')).toEqual(initialSettings.grafana.username);
+    expect(form.grafanaPassword.getAttribute('value')).toEqual(initialSettings.grafana.password);
+    expect(form.grafanaUseSSL.isSelected()).toBe(initialSettings.grafana.use_ssl);
   });
 
   afterAll(function(){

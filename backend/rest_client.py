@@ -342,7 +342,14 @@ class RestClient(object):
                              method.upper(), resp.status_code, resp.text)
                 if raw_content:
                     return resp.content
-                return resp.json() if resp.text else None
+                try:
+                    return resp.json() if resp.text else None
+                except ValueError:
+                    logger.error("%s REST API failed %s req while decoding JSON response : %s",
+                                 self.client_name, method.upper(), resp.text)
+                    raise RequestException("{} REST API failed request while decoding JSON "
+                                           "response: {}".format(self.client_name, resp.text),
+                                           resp.status_code, resp.text)
             else:
                 logger.error("%s REST API failed %s req status: %s", self.client_name,
                              method.upper(), resp.status_code)

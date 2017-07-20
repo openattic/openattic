@@ -22,7 +22,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.db.models.base import ModelState
-from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor
+from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor, ForeignObjectRel
 from django.db.models.query import QuerySet
 from django.core import exceptions
 from django.db.models.fields import Field
@@ -105,9 +105,20 @@ class NodbQuerySet(QuerySet):
         """
         Each Q child consists of either another Q, `attr__iexact` or `model__attr__iexact` or `attr`
         """
+        def _filter_by_modifier(keys, attr, value):
+            modifier = keys[1] if len(keys) > 1 else "exact"
+            if modifier == "exact":
+                return attr == attr.__class__(value)
+            elif modifier == "istartswith":
+                return attr.startswith(value)
+            elif modifier == "icontains":
+                return value in attr
+            else:
+                raise ValueError('Unsupported Modifier {}.'.format(modifier))
 
         def filter_impl(keys, value, obj):
             assert keys
+
             if isinstance(obj, dict):
                 if keys[0] not in obj:
                     raise AttributeError(
@@ -115,23 +126,19 @@ class NodbQuerySet(QuerySet):
             elif not hasattr(obj, keys[0]):
                 raise AttributeError(
                     'Attribute {} does not exist for {}'.format(keys[0], obj.__class__))
+
             attr = obj[keys[0]] if isinstance(obj, dict) else getattr(obj, keys[0], None)
+
             if attr is None:
                 return value is None
             elif isinstance(attr, list):
+                if isinstance(attr[0], basestring):
+                    return _filter_by_modifier(keys, attr, value)
                 return reduce(operator.or_, [filter_impl(keys[1:], value, e) for e in attr], False)
             elif isinstance(attr, models.Model) or isinstance(attr, dict):
                 return filter_impl(keys[1:], value, attr)
             else:
-                modifier = keys[1] if len(keys) > 1 else "exact"
-                if modifier == "exact":
-                    return attr == attr.__class__(value)
-                elif modifier == "istartswith":
-                    return attr.startswith(value)
-                elif modifier == "icontains":
-                    return value in attr
-                else:
-                    raise ValueError('Unsupported Modifier {}.'.format(modifier))
+                return _filter_by_modifier(keys, attr, value)
 
         def filter_one_q(q, obj):
             """
@@ -534,6 +541,16 @@ class NodbModel(models.Model):
             if key in self.__class__.__dict__ and \
                     isinstance(self.__class__.__dict__[key], ReverseSingleRelatedObjectDescriptor):
                 setattr(self, key, value)
+
+        for field in self._meta.concrete_fields:
+            is_related_field = isinstance(field.rel, ForeignObjectRel)
+
+            if not self.attribute_is_unevaluated_lazy_property(field.name) \
+                and not hasattr(self, field.name):
+                if is_related_field:
+                    setattr(self, field.attname, field.get_default())
+                else:
+                    setattr(self, field.name, field.get_default())
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

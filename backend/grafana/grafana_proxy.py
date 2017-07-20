@@ -18,37 +18,56 @@ import time
 
 import requests
 from django.http import HttpResponse
+from oa_settings import Settings
 from rest_framework.reverse import reverse
 
-from grafana.conf import settings
+from rest_client import RestClient
 
 logger = logging.getLogger(__name__)
 
 
-def has_static_credentials():
-    return all(STATIC_CREDENTIALS.values())
+class GrafanaProxy(RestClient):
+    _instance = None
+
+    @staticmethod
+    def instance():
+        """
+        :rtype: GrafanaProxy
+        """
+        if GrafanaProxy._instance is None:
+            ssl = Settings.GRAFANA_API_SCHEME.lower() == 'https'
+            GrafanaProxy._instance = GrafanaProxy(Settings.GRAFANA_API_HOST,
+                                                  Settings.GRAFANA_API_PORT,
+                                                  Settings.GRAFANA_API_USERNAME,
+                                                  Settings.GRAFANA_API_PASSWORD,
+                                                  ssl)
+        return GrafanaProxy._instance
+
+    def __init__(self, host, port, username, password, ssl=False):
+        super(GrafanaProxy, self).__init__(host, port, 'Grafana', ssl, auth=(username, password))
+        self.token = None
+
+    def _is_logged_in(self):
+        return True
+
+    @staticmethod
+    def has_credentials():
+        return Settings.has_values('GRAFANA_API_')
+
+    @RestClient.api_get('/api/org/users', resp_structure='[*]')
+    @RestClient.requires_login
+    def is_service_online(self, request=None):
+        return request()
 
 
-STATIC_CREDENTIALS = {
-    'host': settings.GRAFANA_API_HOST,
-    'port': settings.GRAFANA_API_PORT,
-    'username': settings.GRAFANA_API_USERNAME,
-    'password': settings.GRAFANA_API_PASSWORD,
-    'scheme': settings.GRAFANA_API_SCHEME,
-}
-
-
-def get_grafana_api_response(request, path, credentials):
-    credentials['port'] = credentials['port'] or settings.GRAFANA_API_PORT
-    credentials['scheme'] = credentials['scheme'] or settings.GRAFANA_API_SCHEME
+def get_grafana_api_response(request, path):
+    path = path.rstrip('/')
     base_url_prefix = reverse('grafana', args=['/']).rstrip('/')  # e.g. /openattic/api
-
     params = request.GET.copy()
-    if path.startswith('/'):
-        path = path[1:]
-    scheme = 'https' if credentials['scheme'].lower() == 'https' else 'http'
-    url = '{}://{}:{}/{}'.format(scheme, credentials['host'], credentials['port'], path)
-    auth = (STATIC_CREDENTIALS['username'], STATIC_CREDENTIALS['password'])
+    scheme = 'https' if Settings.GRAFANA_API_SCHEME.lower() == 'https' else 'http'
+    url = '{}://{}:{}/{}'.format(scheme, Settings.GRAFANA_API_HOST, Settings.GRAFANA_API_PORT,
+                                 path.lstrip('/'))
+    auth = (Settings.GRAFANA_API_USERNAME, Settings.GRAFANA_API_PASSWORD)
 
     headers = {header.replace(r'HTTP_', ''): value for header, value
                in request.META.items()
@@ -70,11 +89,13 @@ def get_grafana_api_response(request, path, credentials):
     else:
         cookies = None
 
-    response = requests.request(request.method, url, data=request.body, params=params, auth=auth,
+    response = requests.request(request.method, url, data=request.body, params=params,
+                                auth=auth,
                                 headers=nheaders, cookies=cookies)
 
+    # General replacements to make basics work and other adjustments.
+
     replacements = {
-        # General replacements to make basics work.
         'href=\'/': 'href=\'{base_url}/',
         'href="/': 'href="{base_url}/',
         'src="/': 'src="{base_url}/',
@@ -121,13 +142,6 @@ def get_grafana_api_response(request, path, credentials):
 
     content = response.content
 
-    if re.search(r'grafana\.(light|dark)\.(min\.)?(\w+\.)?css', path):
-        content += '[ng-if="::showSettingsMenu"] { display:none; } '
-        content += '[ng-show="::dashboardMeta.canShare"] { display:none; } '
-        content += '[ng-click="addRowDefault()"] { display: none; } '
-        content += '.dash-row-menu-container { display: none; } '
-        content += '.search-results-container .search-item-dash-home { display: none !important; } '
-
     lpad, rpad = 20, 20
     position = 0
     for search, replacement in replacements.items():
@@ -143,9 +157,28 @@ def get_grafana_api_response(request, path, credentials):
             content = content[:position] + content[position:].replace(search, replacement, 1)
             replaced_context = content[position - lpad:position + len(replacement) + rpad]
 
-            logger.debug('Replaced   {}   with   {}  '.format(original_context, replaced_context))
+            logger.debug(
+                'Replaced   {}   with   {}  '.format(original_context, replaced_context))
 
             position += len(replacement)
+
+    # Replacements based on paths.
+
+    if re.search(r'grafana\.(light|dark)\.(min\.)?(\w+\.)?css', path):
+        content += '[ng-if="::showSettingsMenu"] { display:none; } '
+        content += '[ng-show="::dashboardMeta.canShare"] { display:none; } '
+        content += '[ng-click="addRowDefault()"] { display: none; } '
+        content += '.dash-row-menu-container { display: none; } '
+        content += '.search-results-container .search-item-dash-home { display: none !important; } '
+
+    if any(search in path for search in ['ceph-osd', 'ceph-pools', 'node-statistics']):
+        tag = '<style>{content}</style>'
+        tag = tag.format(content="""
+            navbar { display: none !important; }
+            .submenu-controls > div.submenu-item:nth-child(n+2) { display: none !important; }
+        """)
+
+        content = re.sub(r'</body>', tag + '</body>', content)
 
     proxy_response = HttpResponse(content, response.status_code)
 

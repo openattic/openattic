@@ -42,6 +42,7 @@ angular.module('openattic.grafana').component('grafana', {
     vm.dashboardName = '';
     vm.src = '';
     vm.urlParameterName = '';
+    vm.resizePromise = undefined;
 
     /**
      * Set some information to determine the correct iframe source
@@ -51,21 +52,27 @@ angular.module('openattic.grafana').component('grafana', {
        * Check the given mode and set the correct dashboard name and url parameter name
        */
       switch (vm.mode) {
+        /* TODO: Uncomment for OP-2475
+        case 'rbd':
+          vm.dashboardName = 'ceph-pools';
+          vm.urlParameterName = 'var-rbd';
+          break;
+        */
         case 'pool':
-          vm.dashboardName = 'ceph-pools.json';
+          vm.dashboardName = 'ceph-pools';
           vm.urlParameterName = 'var-pool';
           break;
         case 'osd':
-          vm.dashboardName = 'ceph-osd.json';
+          vm.dashboardName = 'ceph-osd';
           vm.urlParameterName = 'var-osd';
           break;
         case 'node':
-          vm.dashboardName = 'node.json';
+          vm.dashboardName = 'node-statistics';
           vm.urlParameterName = 'var-instance';
           break;
 
         default:
-          vm.dashboardName = 'ceph-cluster.json';
+          vm.dashboardName = 'ceph-cluster';
           vm.mode = 'dashboard';
           break;
       }
@@ -74,12 +81,12 @@ angular.module('openattic.grafana').component('grafana', {
        * Set src of the iframe.
        */
       if (vm.mode === 'dashboard') {
-        vm.src = vm.baseUrl + 'dashboard/file/' + vm.dashboardName;
+        vm.src = vm.baseUrl + 'dashboard/db/' + vm.dashboardName;
       } else {
-        vm.src = vm.baseUrl + 'dashboard/file/' + vm.dashboardName + '?' + vm.urlParameterName + '=' + vm.data;
+        vm.src = vm.baseUrl + 'dashboard/db/' + vm.dashboardName + '?' + vm.urlParameterName + '=' + vm.data;
       }
 
-      $interval(vm.resize, 500);
+      vm.resizePromise = $interval(vm.resize, 500);
     };
 
     vm.$onChanges = function (values) {
@@ -87,6 +94,10 @@ angular.module('openattic.grafana').component('grafana', {
       if (angular.isDefined(values.data)) {
         vm.src = vm.src.replace(values.data.previousValue, values.data.currentValue);
       }
+    };
+
+    vm.$onDestroy = function () {
+      $interval.cancel(vm.resizePromise);
     };
 
     /**

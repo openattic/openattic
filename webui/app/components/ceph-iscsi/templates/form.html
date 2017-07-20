@@ -15,13 +15,13 @@
   <form ng-show="!targetId || (!error && model.$resolved)" name="iscsiForm" role="form" class="form-horizontal" novalidate>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">Target {{ model.targetId }}</h3>
+        <h3 class="panel-title tc_panelTitle">Target IQN: {{ model.targetId }}</h3>
       </div>
       <div class="panel-body">
 
         <div class="form-group"
              ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm.targetId.$dirty) && iscsiForm.targetId.$invalid}">
-          <label class="col-sm-3 control-label" for="targetId">Target</label>
+          <label class="col-sm-3 control-label" for="targetId">Target IQN</label>
           <div class="col-sm-9">
             <div class="input-group">
               <input type="text" class="form-control" name="targetId" id="targetId"
@@ -75,7 +75,7 @@
               <span class="help-block"></span>
             </span>
             <span uib-dropdown on-toggle="toggled(open)" class="form-control no-border">
-              <button type="button" class="btn btn-default pull-right tc_addPortalButton" uib-dropdown-toggle
+              <button type="button" class="btn btn-default btn-label pull-right tc_addPortalButton" uib-dropdown-toggle
                       ng-disabled="availablePortals().length === 0">
                 <i class="fa fa-fw fa-plus"></i>Add portal
               </button>
@@ -127,7 +127,7 @@
               <span class="help-block"></span>
             </span>
             <span uib-dropdown on-toggle="toggled(open)" class="form-control no-border">
-              <button type="button" class="btn btn-default pull-right tc_addImageButton" uib-dropdown-toggle
+              <button type="button" class="btn btn-default btn-label pull-right tc_addImageButton" uib-dropdown-toggle
                       ng-disabled="availableImages().length === 0">
                 <i class="fa fa-fw fa-plus"></i>Add image
               </button>
@@ -226,7 +226,7 @@
                 </div>
               </span>
               <span uib-dropdown on-toggle="toggled(open)" class="form-control no-border">
-                <button type="button" class="btn btn-default pull-right tc_addInitiatorButton" ng-click="addInitiator()">
+                <button type="button" class="btn btn-default btn-label pull-right tc_addInitiatorButton" ng-click="addInitiator()">
                   <i class="fa fa-fw fa-plus"></i>Add initiator
                 </button>
               </span>

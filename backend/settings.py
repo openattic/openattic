@@ -41,7 +41,7 @@ else:
 API_ROOT = "/openattic/api"
 API_OS_USER = 'openattic'
 
-DISABLE_CSRF_FOR_API_PATH = []
+DISABLE_CSRF_FOR_API_PATH = ['/api/grafana']
 
 from ConfigParser import ConfigParser
 
@@ -439,7 +439,7 @@ oa_settings.load_settings()
 
 
 # This enables developers and test systems to override settings in a non-versioned file.
-try:
-    from settings_local import *
-except ImportError:
-    pass
+local_settings_file = join(os.getcwd(), 'settings_local.conf')
+if os.access(local_settings_file, os.R_OK):
+    for key, val in ConfigObj(local_settings_file).items():
+        globals()[key] = val

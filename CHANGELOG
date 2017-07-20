@@ -16,6 +16,93 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.4.1] - 2017-07-20
+--------------------
+
+Removed
+~~~~~~~
+* Backend: Removed all signals from the nagios module in preparation 
+  for the complete removal (OP-2500)
+
+[3.4.0] - 2017-07-20
+--------------------
+
+Added
+~~~~~
+* Backend: The 'allow_ec_overwrites' flag will now be recognized by
+  creating an erasure coded pool (OP-2356)
+* Backend: OSD list is now filterable by 'osd_objectstore' (OP-2417)
+* Backend: Automatically reload Grafana settings after openattic 
+  config file changed (OP-2426)
+* Backend/WebUI: Added support for Salt-API "sharedsecret" eauth
+  authentication (OP-2451)
+* Backend: Added `stripe_unit` and `stripe_count` to the RBD management
+  API (OP-2236)
+* WebUI: Add a menu to navigate to the users buckets (OP-2382)
+* Backend: Added Grafana configuration to the settings REST service 
+  (OP-2450)
+* Backend: Returns the status of the Grafana integration through the
+  API (OP-2438)
+* Backend: Added the functionality to filter the Ceph pool list by the
+  enabled flags of a pool (OP-2446)
+* Backend: Added REST service to check Grafana connection (OP-2449)
+* Backend: Add support to override settings via backend/settings_local.conf
+  (OP-2473)
+* WebUI: Make Grafana configurable from the UI (OP-2427)
+* WebUI: Gracefully handle not properly configured Grafana (OP-2434)
+* Backend: Add time-sync-status to the API (OP-2495)
+* WebUI: Display help text for shared secret key configuration in 
+  settings page (OP-2479)
+
+Changed
+~~~~~~~
+* WebUI: Refactors add form template (OP-2420)
+* WebUI: Adapted the paths to grafana dashboards to the latest deepsea
+  changes (OP-2442)
+* WebUI: Rename "Clone" button to "Copy" (OP-2478)
+* WebUI: iSCSI - Rename "Target" to "Target IQN" (OP-2481)
+* Backend: Cope with the new Ceph health format (OP-2489)
+* WebUI: Add support for new Luminous Ceph health format (OP-2471)
+* WebUI: Enhance troubleshooting hints when Salt REST API is not reachable 
+  (OP-2492)
+* Backend: Hide the controls of the Grafana graphs for OSDs, Nodes and
+  Pools (OP-2423)
+
+Removed
+~~~~~~~
+* Installation: Removed Nagios and PNP4Nagios from the RPM package and
+  removed configuration from `oaconfig` (OP-2267) 
+* Backend: All Nagios relations have been removed from the Ceph
+  module (OP-2490)
+* Backend: Removed unused ceph/systemapi.py (OP-2494)
+* WebUI: Removed all Nagios relations from UI and e2e test (OP-2448)
+
+Fixed
+~~~~~
+* Backend: The status module returns "available" for modules missing
+  the status.py file. (OP-2441)
+* Backend: The status module returns JSON if a module couldn't be
+  found by now. (OP-2440)
+* WebUI: Remove unique name errors in pool form (OP-2421)
+* Development: Add cephfs.so to Vagrant's virtual environment (OP-2463)
+* Development: Fix various issues in the Vagrant box installer script.
+* Backend: Commented settings should not be removed by openATTIC 
+  (OP-2459)
+* WebUI: Grafana loading spinner will be displayed as well as the icon in the
+  notification list now (OP-2431)
+* Backend: Handle JSON decode exception in REST Client class (OP-2476)
+* Backend/WebUI: Fixed the usage/configuration of the RGW_API_RESOURCE
+  setting (OP-2415)
+* Backend/WebUI: Fixed check of RGW system user permissions in RGW status
+  module (OP-2416)
+* Backend: Fixed RGW system user permissions check in NFS module (OP-2465)
+* Backend: Initialize all Nodb fields with their defaults (OP-2279)
+* WebUI: Grafana - Add cancellation of resize interval (OP-2482)
+* WebUI: The min-height of the grafana iframe is 600px now. So, the iframe
+  isn't too small anymore if the dashboard couldn't be loaded (OP-2486)
+* WebUI: Fixed settings page if RGW config is not available in DeepSea (OP-2433)
+* WebUI: Fixed spacing between button icons and text (OP-2452)
+
 [3.3.0] - 2017-07-06
 --------------------
 
@@ -31,7 +118,7 @@ Added
 
 Changed
 ~~~~~~
-* Development: Updated SUSE oA repo URL and the Vagrant box image
+* Development: Updated SUSE oA repo URL and the Vagrant box image (OP-2467)
 * Development: Remove editor-specific `# kate: space-indent on...` comments
   from the code base and replace them with an editor-neutral configuration
   file based on the `EditorConfig project <http://editorconfig.org/>_

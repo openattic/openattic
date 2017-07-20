@@ -23,8 +23,8 @@ from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 from rest.restapi import NoCacheModelViewSet
 
-from rest.utilities import get_request_query_filter_data, get_request_data, mk_method_field_params, \
-    drf_version
+from rest.utilities import get_request_data, mk_method_field_params, drf_version, get_paginated_response, \
+    get_request_query_params
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -48,8 +48,7 @@ class CephClusterViewSet(NodbViewSet):
 
     This is the root of a Ceph Cluster. More details are available at ```/api/ceph/<fsid>/pools```,
     ```/api/ceph/<fsid>/osds```, ```/api/ceph/<fsid>/status```,
-    ```/api/ceph/<fsid>/crushmap```,
-    ```/api/ceph/<fsid>/performancedata``` and ```/api/ceph/<fsid>/performancedata_pools```.
+    ```/api/ceph/<fsid>/crushmap```.
     """
 
     serializer_class = CephClusterSerializer
@@ -62,24 +61,6 @@ class CephClusterViewSet(NodbViewSet):
     def status(self, request, *args, **kwargs):
         object = self.get_object()
         return Response(object.status, status=status.HTTP_200_OK)
-
-    @detail_route(methods=['get'])
-    def performancedata(self, request, *args, **kwargs):
-        fsid = kwargs['pk']
-        filter_data = get_request_query_filter_data(request, "filter")
-        performance_data = CephCluster.get_performance_data(fsid, filter_data)
-        return Response(performance_data, status=status.HTTP_200_OK)
-
-    @detail_route(methods=["get"])
-    def performancedata_pools(self, request, *args, **kwargs):
-        fsid = kwargs['pk']
-
-        filter_data = dict()
-        for filter_key in ["filter_pools", "filter_sources"]:
-            filter_data[filter_key] = get_request_query_filter_data(request, filter_key)
-
-        performance_data = CephPool.get_performance_data(fsid, filter_data)
-        return Response(performance_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def crushmap(self, request, *args, **kwargs):
@@ -177,7 +158,7 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
     """
 
     serializer_class = CephPoolSerializer
-    filter_fields = ("name", "type",)
+    filter_fields = ("name", "type", "flags",)
     search_fields = ("name",)
 
     def __init__(self, **kwargs):
@@ -209,6 +190,15 @@ class CephPoolViewSet(TaskQueueLocationMixin, NodbViewSet):
                             status=status.HTTP_200_OK)
         else:
             raise ValueError('{}. Method not allowed.'.format(request.method))
+
+    def list(self, request, *args, **kwargs):
+        query_params = get_request_query_params(request)
+        if 'flags' in query_params:
+            filtered_pools = CephPool.objects.filter(flags__icontains=query_params['flags'])
+            filtered_pools = self.filter_queryset(filtered_pools)
+            return get_paginated_response(self, filtered_pools)
+        else:
+            return super(CephPoolViewSet, self).list(request, args, kwargs)
 
 
 class CephErasureCodeProfileSerializer(NodbSerializer):
@@ -244,7 +234,7 @@ class CephOsdViewSet(NodbViewSet):
 
     The reply consists of the output of ```osd tree```.
     """
-    filter_fields = ("name", "id")
+    filter_fields = ("name", "id", "osd_objectstore")
     serializer_class = CephOsdSerializer
 
     def __init__(self, **kwargs):
@@ -320,13 +310,6 @@ class CephRbdViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephRbd.objects.all()
-
-    @detail_route(methods=["get"])
-    def performancedata_rbd(self, request, *args, **kwargs):
-        rbd = self.get_object()
-        filter_data = get_request_query_filter_data(request, "filter")
-        performance_data = CephRbd.get_performance_data(rbd, filter_data)
-        return Response(performance_data, status=status.HTTP_200_OK)
 
 
 class CephFsSerializer(NodbSerializer):

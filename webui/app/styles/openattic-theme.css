@@ -189,6 +189,11 @@ fieldset[disabled] .btn-primary.active {
 .btn-primary .caret {
   color: #ececec;
 }
+.btn-group>.btn>i.fa,
+button.btn.btn-label>i.fa {
+  /** Add space between icon and text */
+  padding-right: 5px;
+}
 
 /* Dropdown */
 .dropdown-menu {
@@ -197,6 +202,10 @@ fieldset[disabled] .btn-primary.active {
 .dropdown-menu>li>a {
   color: #474544;
   cursor: pointer;
+}
+.dropdown-menu>li>a>i.fa {
+  /** Add space between icon and text */
+  padding-right: 5px;
 }
 .dropdown-menu>.active>a {
   color: #ececec;
@@ -990,6 +999,7 @@ h6{
 }
 .grafana {
   width: 100%;
+  min-height: 600px;
 }
 
 /* Graph */
