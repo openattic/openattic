@@ -102,7 +102,11 @@ app.component("cephHealth", {
               .status({fsid: cluster.fsid})
               .$promise
               .then(function (res) {
-                var summaries = res.health.summary;
+                // Convert object to array
+                var summaries = Object.keys(res.health.checks).map(function (key) {
+                  return res.health.checks[key];
+                });
+
                 cluster.summary = {
                   warn: self.filterSummary(summaries, "HEALTH_WARN"),
                   err: self.filterSummary(summaries, "HEALTH_ERR")

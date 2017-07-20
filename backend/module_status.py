@@ -14,7 +14,6 @@
 from __future__ import absolute_import
 from importlib import import_module
 from deepsea import DeepSea
-from django.http import HttpResponse
 from rest_client import RequestException
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -59,9 +58,19 @@ class Reason(object):
     RGW_FAILED_AUTHENTICATION = 166
     RGW_INTERNAL_SERVER_ERROR = 167
     RGW_HTTP_PROBLEM = 168
+    RGW_NOT_SYSTEM_USER = 169
 
     OPENATTIC_RGW_NO_DEEPSEA_CONN = 171
     OPENATTIC_RGW_NO_DEEPSEA_CRED = 172
+
+    GRAFANA_INCOMPLETE_CREDENTIALS = 180
+    GRAFANA_FAILED_AUTHENTICATION = 181
+    GRAFANA_CONNECTION_REFUSED = 182
+    GRAFANA_UNKNOWN_HOST = 183
+    GRAFANA_CONNECTION_TIMEOUT = 184
+    GRAFANA_NO_ROUTE_TO_HOST = 185
+    GRAFANA_CONNECTION_ERROR = 186
+    GRAFANA_HTTP_ERROR = 187
 
 
 def check_deepsea_connection():
@@ -102,7 +111,7 @@ def check_deepsea_connection():
 
 
 class UnavailableModule(Exception):
-    def __init__(self, reason, message):
+    def __init__(self, reason, message=None):
         super(UnavailableModule, self).__init__()
         self.reason = reason
         self.message = message
@@ -129,13 +138,26 @@ class StatusView(APIView):
     def get(self, request, module_name):
         if module_name:
             try:
+                import_module(module_name)
+            except ImportError:
+                return Response({'message': 'Module "{}" not found'.format(module_name),
+                                 'available': False}, status=404)
+
+            try:
                 module = import_module('{}.status'.format(module_name))
             except ImportError:
-                return HttpResponse('Module "{}" not found'.format(module_name), status=404)
-        try:
-            module.status(request.GET)
-            return available_response()
-        except AttributeError:
-            return available_response()
-        except UnavailableModule as ex:
-            return unavailable_response(ex.reason, ex.message)
+                return available_response()
+
+            try:
+                if getattr(module, 'status') is None:
+                    return Response({
+                        'message': 'Missing function `status` in module `{}`'.format(module_name),
+                        'available': False,
+                    }, status=500)
+
+                module.status(request.GET)
+
+                return available_response()
+
+            except UnavailableModule as ex:
+                return unavailable_response(ex.reason, ex.message)

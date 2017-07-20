@@ -33,9 +33,8 @@ from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi, Keyring, call_librados
 import ceph.tasks
 from exception import NotSupportedError
-from ifconfig.models import Host
+from librados import ExternalCommandError
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
-from systemd import get_dbus_object
 from taskqueue.models import TaskQueue
 from utilities import aggregate_dict, zip_by_keys
 
@@ -75,7 +74,6 @@ class CephCluster(NodbModel, RadosMixin):
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
     health = models.CharField(max_length=11)
-    performance_data_options = JsonField(base_type=list, editable=False)
 
     @staticmethod
     def has_valid_config_file_and_keyring(cluster_name="ceph", ceph_dir="/etc/ceph"):
@@ -149,7 +147,14 @@ class CephCluster(NodbModel, RadosMixin):
 
     @property
     def status(self):
-        return self.mon_api(self.fsid).status()
+        val = self.mon_api(self.fsid).status()
+        if 'timechecks' not in val:
+            try:
+                val['timechecks'] = self.mon_api(self.fsid).time_sync_status()
+            except Exception:
+                logger.exception('time_sync_status failed.')
+                val['timechecks'] = {}
+        return val
 
     @staticmethod
     def get_all_objects(context, query):
@@ -167,68 +172,9 @@ class CephCluster(NodbModel, RadosMixin):
 
     @bulk_attribute_setter(['health'])
     def set_cluster_health(self, objects, field_names):
-        self.health = self.mon_api(self.fsid).health()['overall_status']
-
-    @bulk_attribute_setter(['performance_data_options'])
-    def set_performance_data_options(self, objects, field_names):
-        self.performance_data_options = {}
-        if "nagios" in settings.INSTALLED_APPS:
-            from nagios.graphbuilder import RRD
-            curr_host = Host.objects.get_current()
-
-            try:
-                sources = dict()
-                sources["performancedata"] = RRD.get_sources_list(
-                    curr_host, "Check_CephCluster_{}".format(self.fsid))
-
-                with fsid_context(self.fsid):
-
-                    pools = CephPool.objects.all()
-                    if len(pools) > 0:
-                        sources["performancedata_pools"] = RRD.get_sources_list(
-                            curr_host, "Check_CephPool_{}_{}".format(self.fsid, pools[0].name))
-
-                    try:
-                        rbds = CephRbd.objects.all()
-                        if len(rbds) > 0:
-                            sources["performancedata_rbds"] = RRD.get_sources_list(
-                                curr_host, "Check_CephRbd_{}_{}_{}".format(self.fsid, pools[0].name,
-                                                                           rbds[0].name))
-                    except librados.ExternalCommandError:
-                        # Don't break the cluster list, if too many, OSDs are down, as this would
-                        # kill our Dashboard.
-                        logger.exception('Failed to get RBDs')
-                        # pass
-
-                self.performance_data_options = sources
-
-            except SystemError as e:
-                logger.error('Set performance_data_options failed: {}'.format(str(e)))
-
-    @staticmethod
-    def get_performance_data(fsid, filter=None):
-        """
-        Returns the performance data for a cluster by the FSID and consideration of the filter
-        parameters if given.
-
-        :param fsid: FSID of the cluster
-        :rtype: str
-        :param filter: The performance data will be filtered by these sources (based on the RRD
-            file).
-        :rtype: list[str]
-        :return: Returns a list of performance data.
-        :rtype: dict
-        """
-
-        get_object_or_404(CephCluster, fsid=fsid)
-        check_for_installed_nagios()
-
-        from nagios.graphbuilder import Graph, RRD
-        curr_host = Host.objects.get_current()
-
-        rrd = RRD.get_rrd(curr_host, "Check_CephCluster_{}".format(fsid))
-        graph = Graph.get_graph(rrd, filter)
-        return Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
+        health = self.mon_api(self.fsid).health()
+        # Ceph Luminous > 12.1 renamed `overall_status` to `status`
+        self.health = health['overall_status' if 'overall_status' in health else 'status']
 
     def __str__(self):
         return self.name
@@ -305,7 +251,7 @@ class CephPool(NodbModel, RadosMixin):
     hit_set_count = models.IntegerField(blank=True)
     hit_set_params = JsonField(base_type=dict, editable=False, blank=True)
     tiers = JsonField(base_type=list, editable=False, blank=True)
-    flags = JsonField(base_type=list, editable=False, blank=True)
+    flags = JsonField(base_type=list, blank=True, default=[])
 
     pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
@@ -432,7 +378,8 @@ class CephPool(NodbModel, RadosMixin):
         """
         context = CephPool.objects.nodb_context
         insert = getattr(self, 'id', None) is None
-        with undo_transaction(self.mon_api(), re_raise_exception=True) as api:
+        with undo_transaction(self.mon_api(), exception_type=(ExternalCommandError, NotSupportedError),
+                              re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
                                     self.pg_num,
@@ -484,6 +431,14 @@ class CephPool(NodbModel, RadosMixin):
                     else:
                         read_tier_target = self.read_tier
                         api.osd_tier_set_overlay(self.name, read_tier_target.name)
+                elif key == 'flags':
+                    for flag in value:
+                        if flag == 'allow_ec_overwrites' or flag == 'ec_overwrites':
+                            api.osd_pool_set(self.name, 'allow_ec_overwrites', 'true')
+                        else:
+                            msg = 'Unknown flag \'{}\'.'.format(flag)
+                            logger.warning(msg)
+                            raise NotSupportedError(msg)
                 elif self.type == 'replicated' and key not in ['name'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
@@ -495,12 +450,10 @@ class CephPool(NodbModel, RadosMixin):
                                    'supported'.format(key, value, self.id, self.name))
 
             super(CephPool, self).save(*args, **kwargs)
-            self._update_nagios_configs()
 
     def delete(self, using=None):
         api = self.mon_api()
         api.osd_pool_delete(self.name, self.name, "--yes-i-really-really-mean-it")
-        self._update_nagios_configs()
 
     def create_snapshot(self, name):
         api = self.mon_api()
@@ -509,51 +462,6 @@ class CephPool(NodbModel, RadosMixin):
     def delete_snapshot(self, name):
         api = self.mon_api()
         api.osd_pool_rmsnap(self.name, name)
-
-    def _update_nagios_configs(self):
-        if "nagios" in settings.INSTALLED_APPS:
-            ceph = get_dbus_object("/ceph")
-            nagios = get_dbus_object("/nagios")
-
-            ceph.remove_nagios_configs(["pool"])
-            ceph.write_pool_nagios_configs()
-            nagios.restart_service()
-
-    @staticmethod
-    def get_performance_data(fsid, filter=None):
-        """
-        Returns the performance data for a pool by the FSID and consideration of the filter
-        parameters if given.
-
-        :param fsid: FSID of the cluster
-        :rtype: str
-        :param filter: The performance data will be filtered by these sources (based on the RRD
-            file).
-        :rtype: dict["filter_pools": list[str], "filter_sources": list[str]]
-        :return: Returns a list of performance data.
-        :rtype: dict
-        """
-
-        get_object_or_404(CephCluster, fsid=fsid)
-        check_for_installed_nagios()
-
-        from nagios.graphbuilder import Graph, RRD
-        curr_host = Host.objects.get_current()
-
-        pools = []
-        with fsid_context(fsid):
-            if filter["filter_pools"]:
-                for filter_pool in filter["filter_pools"]:
-                    pools.append(CephPool.objects.get(name=filter_pool))
-            else:
-                pools = CephPool.objects.all()
-
-        perf_data_results = dict()
-        for pool in pools:
-            pool_rrd = RRD.get_rrd(curr_host, "Check_CephPool_{}_{}".format(fsid, pool.name))
-            graph = Graph.get_graph(pool_rrd, filter["filter_sources"])
-            perf_data_results[pool.name] = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
-        return perf_data_results
 
 
 class CephErasureCodeProfile(NodbModel, RadosMixin):
@@ -831,6 +739,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                         in RbdApi.get_feature_mapping().values()])))
     old_format = models.BooleanField(default=False, help_text='should always be false')
     used_size = models.IntegerField(editable=False)
+    stripe_unit = models.IntegerField(blank=True, null=True)
+    stripe_count = models.IntegerField(blank=True, null=True)
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
@@ -896,6 +806,16 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             if 'used_size' in disk_usage:
                 self.used_size = disk_usage['used_size']
 
+    @bulk_attribute_setter(['stripe_unit', 'stripe_count'])
+    def set_stripe_info(self, objects, field_names):
+        if 'stripingv2' in self.features:
+            api = RadosMixin.rbd_api(self.pool.cluster.fsid)
+
+            self.stripe_count, self.stripe_unit = api.image_stripe_info(self.pool.name, self.name)
+        else:
+            self.stripe_count = None
+            self.stripe_unit = None
+
     def save(self, *args, **kwargs):
         """
         This method implements three purposes.
@@ -918,7 +838,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features,
-                           old_format=self.old_format, order=order)
+                           old_format=self.old_format, order=order,
+                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count)
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
@@ -945,7 +866,6 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                    'supported'.format(key, value, self.name))
 
             super(CephRbd, self).save(*args, **kwargs)
-            self._update_nagios_configs()
 
     def delete(self, using=None):
         try:
@@ -958,42 +878,6 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
         api = self.rbd_api()
         api.remove(self.pool.name, self.name)
-        self._update_nagios_configs()
-
-    def _update_nagios_configs(self):
-        if "nagios" in settings.INSTALLED_APPS:
-            ceph = get_dbus_object("/ceph")
-            nagios = get_dbus_object("/nagios")
-
-            ceph.remove_nagios_configs(["rbd"])
-            ceph.write_rbd_nagios_configs()
-            nagios.restart_service()
-
-    @staticmethod
-    def get_performance_data(rbd, filter=None):
-        """
-        Returns the performance data for a RBD by consideration of the filter parameters if given.
-
-        :param rbd: RBD object
-        :type rbd: CephRbd
-        :param filter: The performance data will be filtered by these sources (based on the RRD
-            file).
-        :type filter: list[str]
-        :return: Returns a list of performance data.
-        :rtype: dict
-        """
-
-        check_for_installed_nagios()
-
-        from nagios.graphbuilder import Graph, RRD
-        curr_host = Host.objects.get_current()
-
-        rrd = RRD.get_rrd(curr_host, "Check_CephRbd_{}_{}_{}".format(
-            rbd.pool.cluster.fsid, rbd.pool.name, rbd.name))
-
-        graph = Graph.get_graph(rrd, filter)
-        perf_data = Graph.convert_rrdtool_json_to_nvd3(graph.get_json())
-        return perf_data
 
 
 class CephFs(NodbModel, RadosMixin):
@@ -1078,9 +962,3 @@ class CrushmapVersion(NodbModel):
                 crushtree["buckets"].append(cbucket)
 
         return crushtree
-
-
-def check_for_installed_nagios():
-    if "nagios" not in settings.INSTALLED_APPS:
-        raise NotSupportedError("Nagios does not appear to be installed, no performance data could "
-                                "be returned.")

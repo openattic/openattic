@@ -51,7 +51,7 @@ app.controller("CephIscsiDeleteModalCtrl", function ($scope, cephIscsiService, $
         resolve();
         $uibModalInstance.close("deleted");
         Notification.success({
-          msg: $scope.iscsiTargets.length > 1 ? "Targets have been deleted" : "Target has been deleted"
+          msg: $scope.iscsiTargets.length > 1 ? "Target IQNs have been deleted" : "Target IQN has been deleted"
         });
       }, function () {
         reject();
@@ -64,7 +64,7 @@ app.controller("CephIscsiDeleteModalCtrl", function ($scope, cephIscsiService, $
 
     Notification.warning({
       title: "Cancelled deletion",
-      msg: "Cancelled iSCSI target deletion"
+      msg: "Cancelled iSCSI target IQN deletion"
     });
   };
 });

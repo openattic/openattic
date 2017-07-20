@@ -31,16 +31,16 @@
 "use strict";
 
 var app = angular.module("openattic.cephRgw");
-app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRgwBucketService,
-    tabViewService) {
+app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $stateParams,
+    cephRgwBucketService, tabViewService) {
   $scope.buckets = {};
   $scope.error = false;
   $scope.filterConfig = {
     page: 0,
     entries: undefined,
     search: "",
-    sortfield: undefined,
-    sortorder: undefined
+    sortfield: "bucket",
+    sortorder: "ASC"
   };
   $scope.selection = {};
   $scope.tabData = {
@@ -62,6 +62,13 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, cephRg
 
   tabViewService.setScope($scope);
   $scope.changeTab = tabViewService.changeTab;
+
+  // Apply filter parameters given via non-URL route parameters.
+  Object.keys($scope.filterConfig).forEach(function (param) {
+    if (angular.isDefined($stateParams[param])) {
+      $scope.filterConfig[param] = $stateParams[param];
+    }
+  });
 
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {

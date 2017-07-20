@@ -29,6 +29,11 @@
                 <i class="fa fa-fw fa-pencil"></i>Edit
             </a>
         </li>
+        <li class="tc_listBucketsItem" ng-class="{disabled: !hasSelection && !multiSelection}">
+            <a ng-click="listBucketsAction()">
+                <i class="fa fa-fw fa-list"></i>List buckets
+            </a>
+        </li>
         <li class="divider"></li>
         <li class="tc_deleteItem" ng-class="{disabled: !hasSelection && !multiSelection}">
             <a ng-click="deleteAction()">

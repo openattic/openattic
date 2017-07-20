@@ -159,7 +159,7 @@ fi
 if [ "$IS_SUSE" ]
 then
     if ! zypper repos filesystems_openATTIC >/dev/null; then
-        zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC/openSUSE_Leap_42.2/filesystems:openATTIC.repo
+        zypper ar http://download.opensuse.org/repositories/filesystems:/openATTIC:/3.x/openSUSE_Leap_42.2/filesystems:openATTIC:3.x.repo
         zypper --gpg-auto-import-keys --non-interactive ref
     fi
 fi
@@ -168,13 +168,7 @@ fi
 # http://docs.openattic.org/2.0/developer_docs/setup_howto.html#installing-the-development-tools
 OA_PACKAGES='base
 gui
-module-btrfs
 module-ceph
-module-cron
-module-http
-module-nfs
-module-samba
-module-lio
 pgsql'
 
 if [ "$IS_DEBIAN" ]
@@ -292,13 +286,13 @@ if [ "$IS_XENIAL" ]
 then
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user openattic createdb createuser password 'DB_PASSWORD';
+create user openattic createdb createrole password 'DB_PASSWORD';
 create database openattic OWNER openattic ENCODING 'UTF-8';
 EOF
 else
 sudo -u postgres psql << EOF
 alter user postgres password 'postgres';
-create user openattic createdb createuser password 'DB_PASSWORD';
+create user openattic createdb createrole password 'DB_PASSWORD';
 create database openattic OWNER openattic;
 EOF
 fi
@@ -344,6 +338,7 @@ cp -r /usr/lib*/python2.7/*-packages/dbus env/lib/python2.7/site-packages/
 # ceph
 cp -r /usr/lib*/python2.7/*-packages/rados* env/lib/python2.7/site-packages/
 cp -r /usr/lib*/python2.7/*-packages/rbd*  env/lib/python2.7/site-packages/
+cp -r /usr/lib*/python2.7/*-packages/cephfs*  env/lib/python2.7/site-packages/
 
 # glib
 cp -r /usr/lib*/python2.7/*-packages/gobject env/lib/python2.7/site-packages/

@@ -137,4 +137,11 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
       $scope.filterConfig.refresh = new Date();
     });
   };
+
+  $scope.listBucketsAction = function () {
+    $state.go("ceph-rgw-buckets", {
+      search: $scope.selection.item.user_id,
+      sortfield: "owner"
+    });
+  };
 });

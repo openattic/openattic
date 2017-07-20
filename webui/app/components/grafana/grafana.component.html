@@ -1,5 +1,7 @@
 <!-- Embed dashboard -->
 <!-- TODO: display loading spinner as long as the images haven't loaded -->
 <div class="grafana-container">
-    <iframe ng-src="{{ $ctrl.src }}" class="grafana" frameborder="0" scrolling="auto"></iframe>
+    <oa-ceph-module-loader module="grafana" display-loading-panel="false">
+        <iframe ng-src="{{ $ctrl.src }}" class="grafana" frameborder="0" scrolling="auto"></iframe>
+    </oa-ceph-module-loader>
 </div>

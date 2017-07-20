@@ -70,10 +70,6 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
     "name"   : "Ceph MON status",
     "manager": "ceph-mon-status",
     "group"  : "Ceph"
-  }, {
-    "name"   : "Ceph cluster performance",
-    "manager": "ceph-cluster-performance",
-    "group"  : "Ceph"
   }];
 
   var composeModalConfig = function (data) {

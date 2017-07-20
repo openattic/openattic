@@ -28,9 +28,13 @@ class DeepSea(RestClient, SettingsListener):
     @staticmethod
     def instance():
         if DeepSea._instance is None:
+            if Settings.SALT_API_EAUTH == 'sharedsecret':
+                password = Settings.SALT_API_SHARED_SECRET
+            else:
+                password = Settings.SALT_API_PASSWORD
             DeepSea._instance = DeepSea(Settings.SALT_API_HOST, Settings.SALT_API_PORT,
                                         Settings.SALT_API_EAUTH, Settings.SALT_API_USERNAME,
-                                        Settings.SALT_API_PASSWORD)
+                                        password)
         return DeepSea._instance
 
     def __init__(self, host, port, eauth, username, password):
@@ -60,7 +64,7 @@ class DeepSea(RestClient, SettingsListener):
     def _login(self, request=None):
         response = request({
             'username': self.username,
-            'password': self.password,
+            'sharedsecret' if self.eauth == 'sharedsecret' else 'password': self.password,
             'eauth': self.eauth
         })
         self.token = response['return'][0]['token']
@@ -184,10 +188,16 @@ class DeepSea(RestClient, SettingsListener):
         if not response_json['success']:
             return None
         parsed_url = urlparse(response_json['urls'][0])  # Uses the first returned host
+
+        if not parsed_url.path or parsed_url.path == '/':
+            admin_path = 'admin'
+        else:
+            admin_path = parsed_url.path[1:]
         return {
             'scheme': parsed_url.scheme,
             'host': parsed_url.hostname,
             'port': parsed_url.port,
+            'admin_path': admin_path,
             'access_key': response_json['access_key'],
             'secret_key': response_json['secret_key'],
             'user_id': response_json['user_id']

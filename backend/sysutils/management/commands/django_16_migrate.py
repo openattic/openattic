@@ -98,11 +98,11 @@ def test_nagios_remove_traditional_fixtures(cursor):
 
 
 def test_ceph_0005_cephpool_percent_used(cursor):
-    return _column_exists('ceph_cephpool', 'percent_used', cursor)
+    return _column_not_exists('ceph_cephpool', 'percent_used', cursor)
 
 
 def test_ceph_0006_cephosd_osd_objectstore(cursor):
-    return _column_exists('ceph_cephosd', 'osd_objectstore', cursor)
+    return _column_not_exists('ceph_cephosd', 'osd_objectstore', cursor)
 
 
 class SqlMigration(object):
@@ -390,7 +390,28 @@ _migrations = [
         ALTER TABLE "ceph_cephosd" ALTER COLUMN "osd_objectstore" DROP DEFAULT;
         COMMIT;
         """
-    )
+    ),
+    SqlMigration(
+        'ceph', u'0007_cephpool_flags_editable', None, None
+    ),
+    SqlMigration(
+        'ceph', u'0008_rbd_stripe_info.py',
+        lambda cursor: _column_not_exists('ceph_cephrbd', 'stripe_count', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephrbd" ADD COLUMN "stripe_count" integer NULL;
+        ALTER TABLE "ceph_cephrbd" ALTER COLUMN "stripe_count" DROP DEFAULT;
+        ALTER TABLE "ceph_cephrbd" ADD COLUMN "stripe_unit" integer NULL;
+        ALTER TABLE "ceph_cephrbd" ALTER COLUMN "stripe_unit" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
+    SqlMigration(
+        'ceph', u'0009_cephpool_flags_default', None, None
+    ),
+    SqlMigration(
+        'ceph', u'0010_remove_cephcluster_performance_data_options', None, None
+    ),
 ]
 
 
@@ -458,7 +479,7 @@ def _table_exists(table_name, cursor):
     return len(res) > 0 and res[0]['table_name'] == table_name
 
 
-def _column_exists(table_name, column_name, cursor):
+def _column_not_exists(table_name, column_name, cursor):
     stmt = """SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS
               WHERE table_name = %s;"""
     res = execute_and_fetch(cursor, stmt, [table_name])

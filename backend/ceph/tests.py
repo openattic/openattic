@@ -423,3 +423,65 @@ class CephPoolSerializerTest(TestCase):
                     self.assertIn(key, s.errors)
                 else:
                     self.assertTrue(s.is_valid(), 'pool={} errors={}'.format(pool, s.errors))
+
+
+class JsonFieldFilterTest(TestCase):
+
+    class JsonFieldListFilterModel(nodb.models.NodbModel):
+        my_list = nodb.models.JsonField(base_type=list, primary_key=True)
+
+        @staticmethod
+        def get_all_objects(context, query):
+            return [JsonFieldFilterTest.JsonFieldListFilterModel(my_list=['a', 'b']),
+                    JsonFieldFilterTest.JsonFieldListFilterModel(my_list=['b', 'c']),
+                    JsonFieldFilterTest.JsonFieldListFilterModel(my_list=['z'])]
+
+    class JsonFieldObjectFilterModel(nodb.models.NodbModel):
+        my_object_list = nodb.models.JsonField(base_type=list, primary_key=True)
+
+        @staticmethod
+        def get_all_objects(context, query):
+            return [JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': a1, 'attr2': a2})
+                    for (a1, a2) in
+                    [('a', 'b'), ('b', 'a'), ('x', 'y'), ('x', 'y'), ('a', 'y'), ('b', 'k'), ('a', 'i')]]
+
+    def test_list_icontains(self):
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(my_list__icontains='a')), 1)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(my_list__icontains='x')), 0)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(my_list__icontains='b')), 2)
+
+    def test_object_icontains(self):
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a')), 3)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='b')), 2)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='x')), 2)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='o')), 0)
+
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='y')), 3)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='a')), 1)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='b')), 1)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='i')), 1)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='o')), 0)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='x')), 0)
+
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='x',
+                                                                              my_object_list__attr2='y')), 2)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a',
+                                                                              my_object_list__attr2='b')), 1)
+        self.assertEqual(
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a',
+                                                                              my_object_list__attr2='z')), 0)

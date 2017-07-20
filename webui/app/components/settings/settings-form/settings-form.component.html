@@ -57,7 +57,7 @@
           <div class="col-sm-9">
             <select class="form-control"
                     ng-model="$ctrl.model.deepsea.eauth"
-                    ng-options="eauth for eauth in ['auto']"
+                    ng-options="eauth for eauth in ['auto', 'sharedsecret']"
                     name="saltApiEauth"
                     id="saltApiEauth"
                     ng-change="$ctrl.checkDeepSeaConnection()"
@@ -74,7 +74,7 @@
         <!-- Salt API Username -->
         <div class="form-group"
              ng-class="{'has-error': (settingsForm.$submitted || settingsForm['saltApiUsername'].$dirty) && settingsForm['saltApiUsername'].$invalid}"
-             ng-if="$ctrl.model.deepsea.eauth === 'auto'">
+             ng-if="$ctrl.model.deepsea.eauth === 'auto' || $ctrl.model.deepsea.eauth === 'sharedsecret'">
           <label class="col-sm-3 control-label" for="saltApiUsername">Username</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" name="saltApiUsername" id="saltApiUsername"
@@ -86,15 +86,34 @@
           </div>
         </div>
 
+        <!-- Salt API Shared Secret -->
+        <div class="form-group"
+             ng-class="{'has-error': (settingsForm.$submitted || settingsForm['saltApiSharedSecret'].$dirty) && settingsForm['saltApiSharedSecret'].$invalid}"
+             ng-if="$ctrl.model.deepsea.eauth === 'sharedsecret'">
+          <label class="col-sm-3 control-label" for="saltApiSharedSecret"
+                 uib-tooltip-html="'Shared Secret can be obtained by running the following command
+                                    on the Salt master: <br><strong># salt-run sharedsecret.show</strong>'">
+            Shared Secret <i class="fa fa-question-circle" aria-hidden="true"></i>
+          </label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="saltApiSharedSecret" id="saltApiSharedSecret"
+                   ng-model="$ctrl.model.deepsea.shared_secret" ng-change="$ctrl.checkDeepSeaConnection()" required>
+            <span class="help-block tc_saltApiSharedSecretRequired"
+                  ng-show="(settingsForm.$submitted || settingsForm['saltApiSharedSecret'].$dirty) && settingsForm['saltApiSharedSecret'].$error.required">
+              Required field
+            </span>
+          </div>
+        </div>
+
         <div class="pull-right">
           <span ng-if="$ctrl.deepseaConnectionStatus.loading">
-            <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection
+            <i class="fa fa-fw fa-spinner fa-spin" aria-hidden="true"></i>Checking connection
           </span>
           <span class="text-success tc_deepseaConnectionSuccess" ng-show="$ctrl.deepseaConnectionStatus.success === true">
-            <i class="fa fa-check" aria-hidden="true"></i> Salt API connection successfull
+            <i class="fa fa-fw fa-check" aria-hidden="true"></i>Salt API connection established successfully
           </span>
           <span class="text-danger tc_deepseaConnectionFail" ng-show="$ctrl.deepseaConnectionStatus.success === false">
-            <i class="fa fa-times" aria-hidden="true"></i> Salt API connection failed
+            <i class="fa fa-fw fa-times" aria-hidden="true"></i>Salt API connection failed
           </span>
         </div>
         <br>
@@ -174,6 +193,16 @@
           </div>
         </div>
 
+        <!-- Object Gateway Admin Resource Path -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="rgwApiAdminResourcePath">Admin Resource Path</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="rgwApiAdminResourcePath" id="rgwApiAdminResourcePath"
+                   ng-model="$ctrl.model.rgw.admin_path" ng-change="$ctrl.checkRgwConnection()"
+                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
+          </div>
+        </div>
+
         <!-- Object Use SSL -->
         <div class="form-group">
           <div class="col-sm-offset-3 col-sm-9">
@@ -190,13 +219,13 @@
 
         <div class="pull-right">
           <span ng-if="$ctrl.rgwConnectionStatus.loading">
-            <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i> Checking connection
+            <i class="fa fa-fw fa-spinner fa-spin" aria-hidden="true"></i>Checking connection
           </span>
           <span class="text-success tc_rgwConnectionSuccess" ng-show="$ctrl.rgwConnectionStatus.success === true">
-            <i class="fa fa-check" aria-hidden="true"></i> Object Gateway API connection successfull
+            <i class="fa fa-fw fa-check" aria-hidden="true"></i>Object Gateway API connection established successfully
           </span>
           <span class="text-danger tc_rgwConnectionFail" ng-show="$ctrl.rgwConnectionStatus.success === false">
-            <i class="fa fa-times" aria-hidden="true"></i> Object Gateway API connection failed
+            <i class="fa fa-fw fa-times" aria-hidden="true"></i>Object Gateway API connection failed
           </span>
         </div>
         <br>
@@ -205,6 +234,85 @@
             {{ $ctrl.rgwConnectionStatus.message }} - <a ng-click="$ctrl.checkRgwConnection()">retry</a>
           </span>
           <span ng-if="!$ctrl.rgwConnectionStatus.message">&nbsp;</span>
+        </div>
+
+        <legend>Grafana</legend>
+
+        <!-- Grafana Host -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiHost">Hostname / IP Address</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiHost" id="grafanaApiHost"
+                   ng-model="$ctrl.model.grafana.host" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Port -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiPort">TCP port</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiPort" id="grafanaApiPort"
+                   ng-model="$ctrl.model.grafana.port" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Username -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiUsername">Username</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="grafanaApiUsername" id="grafanaApiUsername"
+                   ng-model="$ctrl.model.grafana.username" ng-change="$ctrl.checkGrafanaConnection()">
+          </div>
+        </div>
+
+        <!-- Grafana Password -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="grafanaApiPassword">Password</label>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <input type="password" class="form-control" name="grafanaApiPassword" id="grafanaApiPassword"
+                     ng-model="$ctrl.model.grafana.password" ng-change="$ctrl.checkGrafanaConnection()"
+                     autocomplete="off">
+              <span class="input-group-btn">
+                <button type="button"
+                        class="btn btn-default"
+                        oa-password-button="grafanaApiPassword">
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grafana Use SSL -->
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.model.grafana.use_ssl" name="active"
+                     id="grafanaUseSSL" ng-change="$ctrl.checkGrafanaConnection()">
+              <label for="grafanaUseSSL">
+                Use SSL
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="pull-right">
+          <span ng-if="$ctrl.grafanaConnectionStatus.loading">
+            <i class="fa fa-fw fa-spinner fa-spin" aria-hidden="true"></i>Checking connection
+          </span>
+          <span class="text-success tc_grafanaConnectionSuccess" ng-show="$ctrl.grafanaConnectionStatus.success === true">
+            <i class="fa fa-fw fa-check" aria-hidden="true"></i>Grafana connection established successfully
+          </span>
+          <span class="text-danger tc_grafanaConnectionFail" ng-show="$ctrl.grafanaConnectionStatus.success === false">
+            <i class="fa fa-fw fa-times" aria-hidden="true"></i>Grafana connection failed
+          </span>
+        </div>
+        <br>
+        <div class="pull-right">
+          <span class="text-muted" ng-if="$ctrl.grafanaConnectionStatus.message">
+            {{ $ctrl.grafanaConnectionStatus.message }} - <a ng-click="$ctrl.checkGrafanaConnection()">retry</a>
+          </span>
+          <span ng-if="!$ctrl.grafanaConnectionStatus.message">&nbsp;</span>
         </div>
 
       </div>

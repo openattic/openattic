@@ -49,6 +49,8 @@ def fsals(request):
         try:
             if not RGWClient.admin_instance().is_service_online():
                 res = [f for f in res if f != 'RGW']
+            if not RGWClient.admin_instance().is_system_user():
+                res = [f for f in res if f != 'RGW']
         except (RGWClient.NoCredentialsException, RequestException):
             res = [f for f in res if f != 'RGW']
     return Response({'fsals': res})

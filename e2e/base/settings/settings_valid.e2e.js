@@ -44,6 +44,15 @@ describe('settings inputs validations', function(){
     expect(form.saltApiUsernameRequired.isDisplayed()).toBe(false);
   });
 
+  it('should validate salt api shared secret', function(){
+    form.selectEauth('sharedsecret');
+    form.saltApiSharedSecret.clear();
+    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(true);
+
+    form.saltApiSharedSecret.sendKeys('mysecretkey');
+    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(false);
+  });
+
   it('should disable object gateway fields', function(){
     browser.refresh();
 
@@ -53,6 +62,7 @@ describe('settings inputs validations', function(){
     expect(form.rgwAccessKey.isEnabled()).toBe(false);
     expect(form.rgwSecretKey.isEnabled()).toBe(false);
     expect(form.rgwAdminUser.isEnabled()).toBe(false);
+    expect(form.rgwAdminResourcePath.isEnabled()).toBe(false);
     expect(form.rgwUseSSL.isEnabled()).toBe(false);
 
     form.checkManagedByDeepSea(false);
@@ -61,6 +71,7 @@ describe('settings inputs validations', function(){
     expect(form.rgwAccessKey.isEnabled()).toBe(true);
     expect(form.rgwSecretKey.isEnabled()).toBe(true);
     expect(form.rgwAdminUser.isEnabled()).toBe(true);
+    expect(form.rgwAdminResourcePath.isEnabled()).toBe(true);
     expect(form.rgwUseSSL.isEnabled()).toBe(true);
   });
 
@@ -89,6 +100,15 @@ describe('settings inputs validations', function(){
     form.rgwHost.clear().sendKeys('e2e-host');
     expect(form.rgwConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.rgwConnectionFail.isDisplayed()).toBe(true);
+  });
+
+  it('should check grafana connection', function(){
+    expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(true);
+    expect(form.grafanaConnectionFail.isDisplayed()).toBe(false);
+
+    form.grafanaHost.clear().sendKeys('e2e-host');
+    expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(false);
+    expect(form.grafanaConnectionFail.isDisplayed()).toBe(true);
   });
 
   afterAll(function(){

@@ -16,6 +16,7 @@
 # Don't import Views, otherwise you get a circular import in pagination.PageSizePageNumberPagination
 from django.http.request import QueryDict # Docstring
 from rest_framework.serializers import Serializer
+from rest_framework.response import Response
 
 
 def drf_version():
@@ -86,6 +87,20 @@ def mk_method_field_params(field_name):
         return []
     else:
         return ['get_{}'.format(field_name)]
+
+
+def get_paginated_response(viewset_obj, queryset):
+    page = viewset_obj.paginate_queryset(queryset)
+    if page is not None:
+        if drf_version() >= (3, 1):
+            serializer = viewset_obj.get_serializer(page, many=True)
+            return viewset_obj.get_paginated_response(serializer.data)
+        else:
+            serializer = viewset_obj.get_pagination_serializer(page)
+            return Response(serializer.data)
+    else:
+        serializer = viewset_obj.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ToNativeToRepresentationMixin(object):

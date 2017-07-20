@@ -5,8 +5,8 @@
 <p>Please verify that:</p>
 <ul>
   <li>
-    <a ui-sref="settings"><strong>Salt API Host</strong> and <strong>Port</strong> settings</a> are defined correctly
+    <a ui-sref="settings"><strong>Salt API Host</strong> and <strong>TCP Port</strong> settings</a> are defined correctly
   </li>
+  <li>The <strong>salt-api</strong> daemon is installed and running on the salt master node <kbd># systemctl status salt-api</kbd></li>
   <li>No firewall is enabled on the Salt Master host that blocks access to the Salt REST API</li>
-  <li>The <strong>salt-api</strong> daemon is running on the salt master node <kbd># systemctl status salt-api</kbd></li>
 </ul>
