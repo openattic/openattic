@@ -26,6 +26,7 @@ Added
 * WebUI: Add Ceph Object Gateway user statistics (OP-2214)
 * Development: Add support for ECMAScript6 using Babel (OP-1890)
 * Documentation: Add documentation how to use local settings (OP-2549)
+* WebUI: Add Pool compression (OP-2470)
 
 Changed
 ~~~~~~

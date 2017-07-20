@@ -19,20 +19,20 @@ describe('ceph pool creation form', function(){
   };
 
   var isFormElementAvailable = function(e){
-    if(e.presented === false){
+    if(e.presented && e.presented() === false){
       it('should not present the form element "' + e.name + '"', function(){
         if(e.byModel){
-          expect(e.byModel.isPresent()).toBe(e.presented);
+          expect(e.byModel.isPresent()).toBe(e.presented());
         }else{
-          expect(e.byClass.isPresent()).toBe(e.presented);
+          expect(e.byClass.isPresent()).toBe(e.presented());
         }
       });
-    } else {
-      it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
+    }else{
+      it('should' + (e.displayed() ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
         if(e.byModel){
-          expect(e.byModel.isDisplayed()).toBe(e.displayed);
+          expect(e.byModel.isDisplayed()).toBe(e.displayed());
         }else{
-          expect(e.byClass.isDisplayed()).toBe(e.displayed);
+          expect(e.byClass.isDisplayed()).toBe(e.displayed());
         }
       });
       for(var item in e.items){

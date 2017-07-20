@@ -288,6 +288,124 @@
               </div>
             </div>
 
+            <!-- Compression -->
+            <div ng-show="bluestore">
+              <legend>Compression</legend>
+              <div class="form-group"
+                  ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionMode.$dirty) && poolForm.compressionMode.$invalid}">
+                <label class="control-label col-sm-3" for="compressionMode">
+                  Mode
+                </label>
+                <div class="col-sm-9">
+                  <select class="form-control tc_compressionMode"
+                      id="compressionMode" name="compressionMode"
+                      ng-model="pool.compression_mode"
+                      ng-options="compressionMode.name as compressionMode.description for compressionMode in data.compressionModes"
+                      required>
+                    <option class="tc_compressionModeOption" value="">
+                      -- Select a compression mode --
+                    </option>
+                  </select>
+                  <span class="help-block tc_compressionModeRequired"
+                      ng-show="(poolForm.$submitted || poolForm.compressionMode.$dirty) && poolForm.compressionMode.$error.required">
+                    This field is required!
+                  </span>
+                </div>
+              </div>
+              <div ng-show="pool.compression_mode && pool.compression_mode !== 'none'">
+                <div class="form-group"
+                    ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionAlgorithm.$dirty) && poolForm.compressionAlgorithm.$invalid}">
+                  <label class="control-label col-sm-3" for="compressionAlgorithm">
+                    Algorithm
+                  </label>
+                  <div class="col-sm-9">
+                    <select class="form-control tc_compressionAlgorithmSelection"
+                        id="compressionAlgorithm" name="compressionAlgorithm"
+                        ng-model="pool.compression_algorithm"
+                        ng-options="compressionAlgorithm.name as compressionAlgorithm.description for compressionAlgorithm in data.compressionAlgorithms"
+                        ng-required="pool.compression_mode && pool.compression_mode !== 'none'">
+                      <option class="tc_compressionAlgorithmOption" value="">
+                        -- Select a compression algorithm --
+                      </option>
+                    </select>
+                    <span class="help-block tc_compressionAlgorithmRequired"
+                        ng-show="(poolForm.$submitted || poolForm.compressionAlgorithm.$dirty) && poolForm.compressionAlgorithm.$error.required">
+                      This field is required!
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group"
+                    ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionMinBlobSize.$dirty) && poolForm.compressionMinBlobSize.$invalid}">
+                  <label class="control-label col-sm-3" for="compressionMinBlobSize">
+                    Minimum blob size
+                  </label>
+                  <div class="col-sm-9">
+                    <input id="compressionMinBlobSize" name="compressionMinBlobSize"
+                        type="text" min="0" ng-model-options="{ updateOn: 'blur' }"
+                        class="form-control tc_compressionMinBlobSize"
+                        placeholder="e.g., 128K"
+                        ng-model="data.compression_min_blob_size"
+                        ng-change="updateCompressionMinBlobSize()"
+                        ng-required="pool.compression_mode && pool.compression_mode !== 'none'">
+                    <span class="help-block tc_compressionMinBlobSizeRequired"
+                        ng-show="(poolForm.$submitted || poolForm.compressionMinBlobSize.$dirty) && poolForm.compressionMinBlobSize.$error.required">
+                      This field is required!
+                    </span>
+                    <span class="help-block tc_compressionMinBlobSizeMin"
+                        ng-show="poolForm.compressionMinBlobSize.$error.min">
+                      Value should be greater or equal to 0
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group"
+                    ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionMaxBlobSize.$dirty) && poolForm.compressionMaxBlobSize.$invalid}">
+                  <label class="control-label col-sm-3" for="compressionMaxBlobSize">
+                    Maximum blob size
+                  </label>
+                  <div class="col-sm-9">
+                    <input id="compressionMaxBlobSize" type="text" min="0"
+                        class="form-control tc_compressionMaxBlobSize"
+                        placeholder="e.g., 512K" name="compressionMaxBlobSize"
+                        ng-model-options="{ updateOn: 'blur' }"
+                        ng-model="data.compression_max_blob_size"
+                        ng-change="updateCompressionMaxBlobSize()"
+                        ng-required="pool.compression_mode && pool.compression_mode !== 'none'">
+                    <span class="help-block tc_compressionMaxBlobSizeRequired"
+                        ng-show="(poolForm.$submitted || poolForm.compressionMaxBlobSize.$dirty) && poolForm.compressionMaxBlobSize.$error.required">
+                      This field is required!
+                    </span>
+                    <span class="help-block tc_compressionMaxBlobSizeMin"
+                        ng-show="poolForm.compressionMaxBlobSize.$error.min">
+                      Value should be greater or equal to 0
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group"
+                    ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionRequiredRatio.$dirty) && poolForm.compressionRequiredRatio.$invalid}">
+                  <label class="control-label col-sm-3"
+                      for="compressionRequiredRatio">
+                    Required ratio
+                  </label>
+                  <div class="col-sm-9">
+                    <input id="compressionRequiredRatio"
+                        name="compressionRequiredRatio"
+                        type="number" min="0" max="1" step="0.1"
+                        class="form-control tc_compressionRequiredRatio"
+                        placeholder="Compression required ratio..."
+                        ng-model="pool.compression_required_ratio">
+                    <span class="help-block tc_ccompressionRequiredRatioRequired"
+                        ng-show="(poolForm.$submitted || poolForm.compressionRequiredRatio.$dirty) && poolForm.compressionRequiredRatio.$error.required">
+                      This field is required!
+                    </span>
+                    <span class="help-block tc_compressionRequiredRatioMinMax"
+                        ng-show="poolForm.compressionRequiredRatio.$error.min || poolForm.compressionRequiredRatio.$error.max">
+                      Value should be between 0.0 and 1.0
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Compression end-->
           </div>
         </div>
         <div class="text-center"

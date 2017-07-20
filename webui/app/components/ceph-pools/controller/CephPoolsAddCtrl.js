@@ -31,8 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibModal, Notification,
-    cephOsdService, cephCrushmapService, cephClusterService, cephErasureCodeProfilesService, cephPoolsService) {
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
+    $uibModal, Notification, cephOsdService, cephCrushmapService,
+    cephClusterService, cephErasureCodeProfilesService, cephPoolsService,
+    $filter, SizeParserService) {
   const PG_MIN = 16;
   $scope.pool = {
     name: "",
@@ -42,7 +44,12 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
     size: 3,
     erasure: {
       profile: undefined
-    }
+    },
+    compression_algorithm: "snappy",
+    compression_max_blob_size: 0,
+    compression_min_blob_size: 0,
+    compression_mode: "none",
+    compression_required_ratio: 0.875
   };
 
   $scope.data = {
@@ -61,7 +68,47 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
     expert: false,
     ruleset: undefined,
     osdCount: 1,
-    flags: {}
+    flags: {},
+    compressionAlgorithms: [{
+        name: "none",
+        description: "none"
+      },
+      {
+        name: "snappy",
+        description: "snappy"
+      },
+      {
+        name: "zlib",
+        description: "zlib"
+      },
+      {
+        name: "zstd",
+        description: "zstd"
+      },
+      {
+        name: "lz4",
+        description: "lz4"
+      }
+    ],
+    compressionModes: [{
+        name: "none",
+        description: "none"
+      },
+      {
+        name: "force",
+        description: "force"
+      },
+      {
+        name: "aggressive",
+        description: "aggressive"
+      },
+      {
+        name: "passive",
+        description: "passive"
+      }
+    ],
+    compression_min_blob_size: "0 B",
+    compression_max_blob_size: "0 B"
   };
 
   $scope.clusters = undefined;
@@ -261,6 +308,18 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
         }
         return isSet && pool.flags.push(flag);
       });
+      // Compression
+      if ($scope.pool.compression_mode !== "none") {
+        pool.compression_algorithm = $scope.pool.compression_algorithm;
+        pool.compression_mode = $scope.pool.compression_mode;
+        pool.compression_min_blob_size = SizeParserService
+          .parseInt($scope.data.compression_min_blob_size, "b");
+        pool.compression_max_blob_size = SizeParserService
+          .parseInt($scope.data.compression_max_blob_size, "b");
+        pool.compression_required_ratio =
+          $scope.pool.compression_required_ratio;
+      }
+
       cephPoolsService.save(pool)
         .$promise
         .then(function () {
@@ -278,10 +337,10 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
   // Erasure Code Profile
   $scope.addErasureCodeProfile = function () {
     var modalInstance = $uibModal.open({
-      controller       : "CephErasureCodeProfilesAddCtrl",
-      templateUrl      : "components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html",
+      controller: "CephErasureCodeProfilesAddCtrl",
+      templateUrl: "components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html",
       windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
+      resolve: {
         cluster: function () {
           return $scope.data.cluster;
         },
@@ -300,10 +359,10 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
 
   $scope.deleteErasureCodeProfile = function () {
     var modalInstance = $uibModal.open({
-      controller       : "CephErasureCodeProfilesDeleteCtrl",
-      templateUrl      : "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
+      controller: "CephErasureCodeProfilesDeleteCtrl",
+      templateUrl: "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
       windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
+      resolve: {
         cluster: function () {
           return $scope.data.cluster;
         },
@@ -318,5 +377,17 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
       var idx = $scope.data.profiles.indexOf($scope.pool.erasure.profile);
       $scope.data.profiles.splice(idx, 1);
     });
+  };
+
+  $scope.updateCompressionMaxBlobSize = function () {
+    var size =
+      SizeParserService.parseInt($scope.data.compression_max_blob_size, "b");
+    $scope.data.compression_max_blob_size = $filter("bytes")(size);
+  };
+
+  $scope.updateCompressionMinBlobSize = function () {
+    var size =
+      SizeParserService.parseInt($scope.data.compression_min_blob_size, "b");
+    $scope.data.compression_min_blob_size = $filter("bytes")(size);
   };
 });
