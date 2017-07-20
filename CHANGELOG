@@ -16,7 +16,8 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.3.1] - unreleased
+[3.4.0] - 2017-07-20
+--------------------
 
 Added
 ~~~~~
@@ -91,6 +92,8 @@ Fixed
 * WebUI: Grafana - Add cancellation of resize interval (OP-2482)
 * WebUI: The min-height of the grafana iframe is 600px now. So, the iframe
   isn't too small anymore if the dashboard couldn't be loaded (OP-2486)
+* WebUI: Fixed settings page if RGW config is not available in DeepSea (OP-2433)
+* WebUI: Fixed spacing between button icons and text (OP-2452)
 
 [3.3.0] - 2017-07-06
 --------------------
@@ -107,7 +110,7 @@ Added
 
 Changed
 ~~~~~~
-* Development: Updated SUSE oA repo URL and the Vagrant box image
+* Development: Updated SUSE oA repo URL and the Vagrant box image (OP-2467)
 * Development: Remove editor-specific `# kate: space-indent on...` comments
   from the code base and replace them with an editor-neutral configuration
   file based on the `EditorConfig project <http://editorconfig.org/>_
