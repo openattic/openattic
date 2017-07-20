@@ -1029,13 +1029,33 @@ class RbdApi(object):
 
         return self._call_librados(_action)
 
+    def _call_rbd_tool(self, cmd, pool_name, name):
+        """ Calls a RBD command and returns the result as dict.
+
+        :param cmd: Command that should be called
+        :type cmd: str
+        :param pool_name: Name of the pool
+        :type pool_name: str
+        :param name: Name of the RBD image
+        :type name: str
+        :return: Result of the rbd command
+        :rtype: dict
+        """
+        out = subprocess.check_output(['rbd', cmd, '--cluster', self.cluster_name, '--pool', pool_name,
+                                       '--image', name, '--format', 'json'])
+        return json.loads(out)
+
     def image_disk_usage(self, pool_name, name):
         """The "rbd du" command is not exposed in python, as it
         is directly implemented in the rbd tool."""
-        out = subprocess.check_output(['rbd', 'disk-usage', '--cluster', self.cluster_name,
-                                       '--pool', pool_name, '--image', name, '--format', 'json'])
-        du = json.loads(out)['images']
+        du = self._call_rbd_tool('disk-usage', pool_name, name)['images']
         return du[0] if du else {}
+
+    def image_info(self, pool_name, name):
+        """The "rbd info" command is not exposed in python, as it
+        is directly implemented in the rbd tool."""
+        info = self._call_rbd_tool('info', pool_name, name)
+        return info if info else {}
 
     def image_stripe_info(self, pool_name, name, snapshot=None):
         """:returns: tuple of count and unit"""
