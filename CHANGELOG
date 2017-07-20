@@ -16,6 +16,13 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.4.1] - unreleased
+--------------------
+Removed
+~~~~~~~
+* Backend: Removed all signals from the nagios module in preparation 
+  for the complete removal (OP-2500)
+
 [3.4.0] - 2017-07-20
 --------------------
 
