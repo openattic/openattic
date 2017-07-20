@@ -26,8 +26,6 @@ from nagios.models import Service, Command, update_conf
 
 def create_nagios(**kwargs):
     # Make sure the contacts config exists
-    signals.post_save.disconnect(update_conf, sender=Service)
-
     nagios = get_dbus_object("/nagios")
 
     for servstate in Service.nagstate["servicestatus"]:
@@ -67,6 +65,3 @@ def create_nagios(**kwargs):
     nagios.restart_service()
 
     update_conf()
-    signals.post_save.connect(update_conf, sender=Service)
-
-sysutils.models.post_install.connect(create_nagios)

@@ -19,7 +19,6 @@ from datetime import datetime
 from os.path import exists
 
 from django.db import models
-from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import make_aware, get_default_timezone
 from django.contrib.auth.models import User
@@ -173,10 +172,3 @@ def update_conf(**kwargs):
     nagios = get_dbus_object("/nagios")
     nagios.writeconf()
     nagios.restart_service()
-
-
-signals.pre_save.connect(update_conf_for_user, sender=User)
-signals.post_delete.connect(update_conf, sender=User)
-
-signals.post_save.connect(update_conf, sender=Service)
-signals.post_delete.connect(update_conf, sender=Service)
