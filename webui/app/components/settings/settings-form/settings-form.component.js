@@ -35,14 +35,21 @@ app.component("settingsForm",  {
   templateUrl: "components/settings/settings-form/settings-form.component.html",
   bindings: {
   },
-  controller: function ($scope, $state, $timeout, settingsFormService, Notification) {
+  controller: function ($scope, $state, $timeout, $q, settingsFormService, cephClusterService, Notification) {
     var self = this;
+
+    var animationTimeout = 300;
 
     self.model = {
       deepsea: {},
       rgw: {},
       grafana: {}
     };
+
+    self.clusters = undefined;
+    self.clustersKeyringCandidates = {};
+    self.settingsError = "";
+    self.clustersErrors = {};
 
     var defaultRgwDeepseaSettings = {
       managed_by_deepsea: true
@@ -68,6 +75,24 @@ app.component("settingsForm",  {
       .catch(function (error) {
         self.error = error;
       });
+
+      cephClusterService.get()
+      .$promise
+      .then(function (res) {
+        self.clusters = res;
+        angular.forEach(self.clusters.results, function (cluster) {
+          self.checkCephConnection(cluster);
+          cephClusterService.keyringCandidates(cluster)
+          .$promise
+          .then(function (res) {
+            self.clustersKeyringCandidates[cluster.fsid] = res;
+          });
+        });
+      })
+      .catch(function (error) {
+        self.error = error;
+      });
+
     };
 
     var isAllDeepSeaPropsDefined = function (deepsea) {
@@ -123,7 +148,7 @@ app.component("settingsForm",  {
           .catch(function () {
             self.deepseaConnectionStatus = undefined;
           });
-        }, 1000);
+        }, animationTimeout);
       }
     };
 
@@ -155,7 +180,7 @@ app.component("settingsForm",  {
             .catch(function () {
               self.rgwConnectionStatus = undefined;
             });
-        }, 1000);
+        }, animationTimeout);
       }
     };
 
@@ -193,22 +218,104 @@ app.component("settingsForm",  {
             .catch(function () {
               self.grafanaConnectionStatus = undefined;
             });
-        }, 1000);
+        }, animationTimeout);
       }
     };
 
+    var isAllCephPropsDefined = function (ceph) {
+      return angular.isDefined(ceph.config_file_path) &&
+          angular.isDefined(ceph.keyring_file_path) &&
+          angular.isDefined(ceph.keyring_user);
+    };
+
+    var checkCephConnectionTimeout;
+    self.checkCephConnection = function (ceph) {
+      self.cephConnectionStatus = undefined;
+      if (checkCephConnectionTimeout) {
+        $timeout.cancel(checkCephConnectionTimeout);
+      }
+      if (isAllCephPropsDefined(ceph)) {
+        self.cephConnectionStatus = {
+          loading: true
+        };
+        checkCephConnectionTimeout = $timeout(function () {
+          settingsFormService.checkCephConnection(ceph)
+            .$promise
+            .then(function (res) {
+              self.cephConnectionStatus = res;
+            })
+            .catch(function () {
+              self.cephConnectionStatus = undefined;
+            });
+        }, animationTimeout);
+      }
+    };
+
+    self.getKeyringFileTypeahead = function (fsid) {
+      var clusterKeyringCandidates = self.clustersKeyringCandidates[fsid];
+      if (angular.isDefined(clusterKeyringCandidates)) {
+        return clusterKeyringCandidates.reduce(function (result, item) {
+          return result.concat(item["file-path"]);
+        }, []);
+      }
+      return [];
+    };
+
+    self.getKeyringUserTypeahead = function (fsid, keyringFile) {
+      var clusterKeyringCandidates = self.clustersKeyringCandidates[fsid];
+      if (angular.isDefined(clusterKeyringCandidates)) {
+        return clusterKeyringCandidates.reduce(function (result, item) {
+          if (item["file-path"] === keyringFile) {
+            return result.concat(item["user-names"]);
+          } else {
+            return result;
+          }
+        }, []);
+      }
+      return [];
+    };
+
     self.saveAction = function () {
-      settingsFormService.save(self.model)
+      self.settingsError = "";
+      self.clustersErrors = {};
+      var hasErros = false;
+      var promises = [];
+      var promise = settingsFormService.save(self.model)
         .$promise
-        .then(function () {
+        .catch(function (error) {
+          error.preventDefault();
+          self.settingsError = error.message;
+          hasErros = true;
+        });
+      promises.push(promise);
+
+      angular.forEach(self.clusters.results, function (cluster) {
+        var promise = cephClusterService.update(cluster)
+        .$promise
+        .catch(function (error) {
+          error.preventDefault();
+          self.clustersErrors[cluster.fsid] = error.message;
+          hasErros = true;
+        });
+        promises.push(promise);
+      });
+
+      $q.all(promises)
+      .then(function () {
+        if (!hasErros) {
           Notification.success({
             msg: "Settings has been saved successfully"
           });
-          $scope.settingsForm.$submitted = false;
-          $scope.settingsForm.$dirty = false;
-        }, function () {
-          $scope.settingsForm.$submitted = false;
-        });
+        } else {
+          Notification.warning({
+            title: "Some settings were not saved",
+            msg: "One or more settings were not saved, see inline error messages for details"
+          });
+        }
+        $scope.settingsForm.$submitted = false;
+        $scope.settingsForm.$dirty = false;
+      });
+
     };
 
   }

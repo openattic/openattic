@@ -10,15 +10,19 @@
   </div>
 
   <oa-loading-panel message="Settings are loading..."
-                    ng-show="!$ctrl.error && !$ctrl.model.$resolved"></oa-loading-panel>
+                    ng-show="!$ctrl.error && !$ctrl.model.$resolved && !$ctrl.clusters.$resolved"></oa-loading-panel>
 
-  <form ng-show="!$ctrl.error && $ctrl.model.$resolved" name="settingsForm" role="form" class="form-horizontal"
+  <form ng-show="!$ctrl.error && $ctrl.model.$resolved && $ctrl.clusters.$resolved" name="settingsForm" role="form" class="form-horizontal"
         novalidate oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">Settings</h3>
       </div>
       <div class="panel-body">
+
+        <div uib-alert class="alert-danger" ng-if="$ctrl.settingsError"
+             ng-bind-html="$ctrl.settingsError">
+        </div>
 
         <legend>DeepSea / Salt REST API</legend>
 
@@ -313,6 +317,83 @@
             {{ $ctrl.grafanaConnectionStatus.message }} - <a ng-click="$ctrl.checkGrafanaConnection()">retry</a>
           </span>
           <span ng-if="!$ctrl.grafanaConnectionStatus.message">&nbsp;</span>
+        </div>
+
+        <legend>Ceph</legend>
+
+        <!-- Ceph Cluster -->
+        <div class="form-group">
+          <label class="col-sm-3 control-label">Cluster</label>
+          <div class="col-sm-9">
+
+            <div ng-repeat="cephCluster in $ctrl.clusters.results">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">{{ cephCluster.fsid }}</h3>
+                </div>
+                <div class="panel-body">
+
+                  <div uib-alert class="alert-danger tc_cephClusterError" ng-if="$ctrl.clustersErrors[cephCluster.fsid]"
+                       ng-bind-html="$ctrl.clustersErrors[cephCluster.fsid]">
+                  </div>
+
+                  <!--  Ceph Cluster Config File -->
+                  <div class="form-group">
+                    <label class="col-sm-3 control-label" for="cephClusterConfigFilePath">Config file</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="cephClusterConfigFilePath" id="cephClusterConfigFilePath"
+                             ng-model="cephCluster.config_file_path" readonly>
+                    </div>
+                  </div>
+
+                  <!--  Ceph Cluster Keyring File -->
+                  <div class="form-group">
+                    <label class="col-sm-3 control-label" for="cephClusterKeyringFilePath">Keyring file</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="cephClusterKeyringFilePath" id="cephClusterKeyringFilePath"
+                             ng-model="cephCluster.keyring_file_path" autocomplete="off"
+                             uib-typeahead="file for file in $ctrl.getKeyringFileTypeahead(cephCluster.fsid)"
+                             typeahead-focus-first="false" ng-change="$ctrl.checkCephConnection(cephCluster)"
+                             typeahead-on-select="$ctrl.checkCephConnection(cephCluster)">
+                    </div>
+                  </div>
+
+                  <!--  Ceph Cluster Keyring User -->
+                  <div class="form-group">
+                    <label class="col-sm-3 control-label" for="cephClusterKeyringUser">Keyring user</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="cephClusterKeyringUser" id="cephClusterKeyringUser"
+                             ng-model="cephCluster.keyring_user" autocomplete="off"
+                             uib-typeahead="user for user in $ctrl.getKeyringUserTypeahead(cephCluster.fsid, cephCluster.keyring_file_path)"
+                             typeahead-focus-first="false" ng-change="$ctrl.checkCephConnection(cephCluster)"
+                             typeahead-on-select="$ctrl.checkCephConnection(cephCluster)">
+                    </div>
+                  </div>
+
+                  <div class="pull-right">
+                    <span ng-if="$ctrl.cephConnectionStatus.loading">
+                      <i class="fa fa-fw fa-spinner fa-spin" aria-hidden="true"></i>Checking connection
+                    </span>
+                    <span class="text-success tc_cephConnectionSuccess" ng-show="$ctrl.cephConnectionStatus.success === true">
+                      <i class="fa fa-fw fa-check" aria-hidden="true"></i>Ceph connection established successfully
+                    </span>
+                    <span class="text-danger tc_cephConnectionFail" ng-show="$ctrl.cephConnectionStatus.success === false">
+                      <i class="fa fa-fw fa-times" aria-hidden="true"></i>Ceph connection failed
+                    </span>
+                  </div>
+                  <br>
+                  <div class="pull-right">
+                    <span class="text-muted" ng-if="$ctrl.cephConnectionStatus.message">
+                      {{ $ctrl.cephConnectionStatus.message }} - <a ng-click="$ctrl.checkCephConnection(cephCluster)">retry</a>
+                    </span>
+                    <span ng-if="!$ctrl.cephConnectionStatus.message">&nbsp;</span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>

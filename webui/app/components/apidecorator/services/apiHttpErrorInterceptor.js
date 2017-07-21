@@ -69,6 +69,7 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
           });
         }
         notificationConfig.msg = detailMsg || simpleMsg;
+        error.message = notificationConfig.msg;
         notification = new Notification(notificationConfig, error)
           .show();
 
