@@ -1,24 +1,25 @@
 "use strict";
 
-var helpers = require("../../common.js");
-var CephNfsTable = require("./CephNfsTable");
-var CephNfsForm = require("./CephNfsForm");
+const helpers = require("../../common.js");
+const CephNfsTable = require("./CephNfsTable");
+const CephNfsForm = require("./CephNfsForm");
 
-describe("ceph nfs", function () {
+describe("ceph nfs", () => {
 
-  var table = new CephNfsTable();
-  var form = new CephNfsForm();
+  let table = new CephNfsTable();
+  let form = new CephNfsForm();
 
-  beforeAll(function () {
+  beforeAll(() => {
     helpers.login();
     element(by.css(".tc_menuitem_ceph_nfs")).click();
-  });
-
-  beforeEach(function () {
     table.addExport();
   });
 
-  it("should validate host", function () {
+  beforeEach(() => {
+    browser.refresh();
+  });
+
+  it("should validate host", () => {
     form.selectHost(1);
     expect(form.hostRequired.isDisplayed()).toBe(false);
 
@@ -26,7 +27,7 @@ describe("ceph nfs", function () {
     expect(form.hostRequired.isDisplayed()).toBe(true);
   });
 
-  it("should validate fsal", function () {
+  it("should validate fsal", () => {
     form.selectFsal("CephFS");
     expect(form.fsalRequired.isDisplayed()).toBe(false);
 
@@ -34,7 +35,7 @@ describe("ceph nfs", function () {
     expect(form.fsalRequired.isDisplayed()).toBe(true);
   });
 
-  it("should validate rgw user", function () {
+  it("should validate rgw user", () => {
     form.selectFsal("Object Gateway");
 
     form.selectRgwUserIndex(1);
@@ -44,7 +45,7 @@ describe("ceph nfs", function () {
     expect(form.rgwUserIdRequired.isDisplayed()).toBe(true);
   });
 
-  it("should validate path", function () {
+  it("should validate path", () => {
     form.selectFsal("CephFS");
 
     form.path.clear().sendKeys("/").sendKeys(protractor.Key.TAB);
@@ -60,7 +61,7 @@ describe("ceph nfs", function () {
     expect(form.newDirectoryInfo.isDisplayed()).toBe(false);
   });
 
-  it("should validate bucket", function () {
+  it("should validate bucket", () => {
     form.selectFsal("Object Gateway");
     form.selectRgwUserIndex(1);
 
@@ -73,7 +74,7 @@ describe("ceph nfs", function () {
     expect(form.newBucketInfo.isDisplayed()).toBe(false);
   });
 
-  it("should validate protocols", function () {
+  it("should validate protocols", () => {
     // unselect all
     form.protocolNfsv3.click();
     form.protocolNfsv4.click();
@@ -93,7 +94,7 @@ describe("ceph nfs", function () {
     expect(form.nfsProtocolRequired.isDisplayed()).toBe(false);
   });
 
-  it("should validate pseudo", function () {
+  it("should validate pseudo", () => {
     form.selectFsal("CephFS");
 
     form.pseudo.clear().sendKeys("/");
@@ -103,7 +104,7 @@ describe("ceph nfs", function () {
     expect(form.pseudoRequired.isDisplayed()).toBe(true);
   });
 
-  it("should validate access type", function () {
+  it("should validate access type", () => {
     form.selectAccessType("RW");
     expect(form.accessTypeRequired.isDisplayed()).toBe(false);
 
@@ -111,7 +112,7 @@ describe("ceph nfs", function () {
     expect(form.accessTypeRequired.isDisplayed()).toBe(true);
   });
 
-  it("should validate squash", function () {
+  it("should validate squash", () => {
     form.selectSquash("Root");
     expect(form.squashRequired.isDisplayed()).toBe(false);
 
@@ -119,7 +120,7 @@ describe("ceph nfs", function () {
     expect(form.squashRequired.isDisplayed()).toBe(true);
   });
 
-  it("should validate protocols", function () {
+  it("should validate protocols", () => {
     // unselect all
     form.transportUDP.click();
     form.transportTCP.click();
@@ -139,7 +140,7 @@ describe("ceph nfs", function () {
     expect(form.transportProtocolRequired.isDisplayed()).toBe(false);
   });
 
-  it("should validate clients", function () {
+  it("should validate clients", () => {
     form.addClientsButton.click();
 
     form.clients.clear().sendKeys("192.168.0.10, 192.168.1.0/8");
@@ -155,11 +156,7 @@ describe("ceph nfs", function () {
     expect(form.clientsInvalid.isDisplayed()).toBe(true);
   });
 
-  afterEach(function () {
-    helpers.leaveForm();
-  });
-
-  afterAll(function () {
+  afterAll(() => {
     console.log("ceph_nfs -> ceph_nfs_valid.e2e.js");
   });
 

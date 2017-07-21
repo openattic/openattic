@@ -30,49 +30,45 @@
  */
 "use strict";
 
+class CephNfsDetail {
+
+  constructor (cephNfsFsal, cephNfsAccessType) {
+    this.cephNfsFsal = cephNfsFsal;
+    this.cephNfsAccessType = cephNfsAccessType;
+  }
+
+  getFsalDesc (fsal) {
+    let fsalItem = this.cephNfsFsal.find((currentFsalItem) => {
+      if (fsal === currentFsalItem.value) {
+        return currentFsalItem;
+      }
+    });
+    return angular.isDefined(fsalItem) ? fsalItem.descr : fsal;
+  }
+
+  getAccessTypeHelp (accessType) {
+    let accessTypeItem = this.cephNfsAccessType.find((currentAccessTypeItem) => {
+      if (accessType === currentAccessTypeItem.value) {
+        return currentAccessTypeItem;
+      }
+    });
+    return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
+  }
+
+  getMountCommand () {
+    if (this.selection.item) {
+      let device = this.selection.item.pseudo || this.selection.item.tag || this.selection.item.path || "";
+      return `# mount.nfs ${this.selection.item.host}:${device} /mnt`;
+    }
+    return "";
+  }
+}
+
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsDetail", {
   template: require("./ceph-nfs-detail.component.html"),
   bindings: {
     selection: "<"
   },
-  controller: function (cephNfsFsal, cephNfsAccessType) {
-    var self = this;
-
-    self.getFsalDesc = function (fsal) {
-      var fsalItem = cephNfsFsal.find(function (currentFsalItem) {
-        if (fsal === currentFsalItem.value) {
-          return currentFsalItem;
-        }
-      });
-      return angular.isDefined(fsalItem) ? fsalItem.descr : fsal;
-    };
-
-    self.getAccessTypeHelp = function (accessType) {
-      var accessTypeItem = cephNfsAccessType.find(function (currentAccessTypeItem) {
-        if (accessType === currentAccessTypeItem.value) {
-          return currentAccessTypeItem;
-        }
-      });
-      return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
-    };
-
-    self.getMountCommand = function () {
-      var command = "";
-      if (angular.isDefined(self.selection.item) && self.selection.item !== null) {
-        command = "# mount.nfs " +
-          self.selection.item.host +
-          ":";
-        if (angular.isDefined(self.selection.item.pseudo) && self.selection.item.pseudo !== null) {
-          command += self.selection.item.pseudo;
-        } else if (angular.isDefined(self.selection.item.tag) && self.selection.item.tag !== null) {
-          command += self.selection.item.tag;
-        } else {
-          command += self.selection.item.path;
-        }
-        command += " /mnt";
-      }
-      return command;
-    };
-  }
+  controller: CephNfsDetail
 });

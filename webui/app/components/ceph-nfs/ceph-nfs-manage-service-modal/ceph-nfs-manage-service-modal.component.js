@@ -30,6 +30,73 @@
  */
 "use strict";
 
+class CephNfsManageServiceModal {
+
+  constructor ($timeout, cephNfsService, cephNfsStateService, $filter) {
+    this.$timeout = $timeout;
+    this.cephNfsService = cephNfsService;
+    this.cephNfsStateService = cephNfsStateService;
+    this.$filter = $filter;
+
+    this.hosts = undefined;
+    this._dirty = false;
+  }
+
+  $onInit () {
+    this.cephNfsService.hosts({
+      fsid: this.resolve.fsid
+    })
+      .$promise
+      .then((res) => {
+        this.hosts = {};
+        this.hostnames = this.$filter("orderBy")(res.hosts);
+        this._updateStates();
+      });
+  }
+
+  _updateStates () {
+    angular.forEach(this.hostnames, (hostname) => {
+      if (angular.isUndefined(this.hosts[hostname])) {
+        this.hosts[hostname] = {};
+      }
+      this.hosts[hostname].state = "LOADING";
+    });
+    this.cephNfsStateService.updateStates(this.resolve.fsid, (hostsToUpdate) => {
+      angular.forEach(this.hosts, (host, hostname) => {
+        let hostToUpdate = hostsToUpdate[hostname];
+        if (angular.isDefined(hostToUpdate)) {
+          host.state = hostToUpdate.state;
+          host.messages = [];
+          angular.forEach(hostToUpdate.exports, (exportItem) => {
+            if (exportItem.state === "INACTIVE" && angular.isDefined(exportItem.message)) {
+              host.messages.push(exportItem.message);
+            }
+          });
+        }
+      });
+    });
+  }
+
+  start (hostname) {
+    this._dirty = true;
+    this.cephNfsStateService.start(this.hosts[hostname], hostname, this.resolve.fsid);
+  }
+
+  stop (hostname) {
+    this._dirty = true;
+    this.cephNfsStateService.stop(this.hosts[hostname], hostname, this.resolve.fsid);
+  }
+
+  close () {
+    if (this._dirty) {
+      this.modalInstance.dismiss("close");
+    } else {
+      this.modalInstance.close("close");
+    }
+  }
+
+}
+
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsManageServiceModal", {
   template: require("./ceph-nfs-manage-service-modal.component.html"),
@@ -37,62 +104,5 @@ app.component("cephNfsManageServiceModal", {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function ($timeout, cephNfsService, taskQueueSubscriber, $cacheFactory, cephNfsStateService, $filter) {
-
-    var self = this;
-
-    var updateStates = function () {
-      angular.forEach(self.hostnames, function (hostname) {
-        if (angular.isUndefined(self.hosts[hostname])) {
-          self.hosts[hostname] = {};
-        }
-        self.hosts[hostname].state = "LOADING";
-      });
-      cephNfsStateService.updateStates(self.resolve.fsid, function (hostsToUpdate) {
-        angular.forEach(self.hosts, function (host, hostname) {
-          var hostToUpdate = hostsToUpdate[hostname];
-          if (angular.isDefined(hostToUpdate)) {
-            host.state = hostToUpdate.state;
-            host.messages = [];
-            angular.forEach(hostToUpdate.exports, function (exportItem) {
-              if (exportItem.state === "INACTIVE" && angular.isDefined(exportItem.message)) {
-                host.messages.push(exportItem.message);
-              }
-            });
-          }
-        });
-      });
-    };
-
-    self.hosts = undefined;
-    cephNfsService.hosts({
-      fsid: self.resolve.fsid
-    })
-      .$promise
-      .then(function (res) {
-        self.hosts = {};
-        self.hostnames = $filter("orderBy")(res.hosts);
-        updateStates();
-      });
-
-    var dirty = false;
-
-    self.start = function (hostname) {
-      dirty = true;
-      cephNfsStateService.start(self.hosts[hostname], hostname, self.resolve.fsid);
-    };
-
-    self.stop = function (hostname) {
-      dirty = true;
-      cephNfsStateService.stop(self.hosts[hostname], hostname, self.resolve.fsid);
-    };
-
-    self.close = function () {
-      if (dirty) {
-        self.modalInstance.dismiss("close");
-      } else {
-        self.modalInstance.close("close");
-      }
-    };
-  }
+  controller: CephNfsManageServiceModal
 });

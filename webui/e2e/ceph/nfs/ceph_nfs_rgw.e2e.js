@@ -1,26 +1,26 @@
 "use strict";
 
-var helpers = require("../../common.js");
-var CephNfsTable = require("./CephNfsTable");
-var CephNfsForm = require("./CephNfsForm");
-var CephNfsDetails = require("./CephNfsDetails");
-var CephNfsManageService = require("./CephNfsManageService");
+const helpers = require("../../common.js");
+const CephNfsTable = require("./CephNfsTable");
+const CephNfsForm = require("./CephNfsForm");
+const CephNfsDetails = require("./CephNfsDetails");
+const CephNfsManageService = require("./CephNfsManageService");
 
-describe("ceph nfs", function () {
+describe("ceph nfs", () => {
 
-  var table = new CephNfsTable();
-  var form = new CephNfsForm();
-  var details = new CephNfsDetails();
-  var manageService = new CephNfsManageService();
+  let table = new CephNfsTable();
+  let form = new CephNfsForm();
+  let details = new CephNfsDetails();
+  let manageService = new CephNfsManageService();
 
-  beforeAll(function () {
+  beforeAll(() => {
     helpers.login();
     element(by.css(".tc_menuitem_ceph_nfs")).click();
     table.removeExportsIfExists("e2e-rgw-");
     manageService.startAllIfStopped();
   });
 
-  it("should add a export", function () {
+  it("should add a export", () => {
     table.addExport();
     form.selectHost(1);
     form.selectFsal("Object Gateway");
@@ -35,7 +35,7 @@ describe("ceph nfs", function () {
     form.submitButton.click();
   });
 
-  it("should display added export details", function () {
+  it("should display added export details", () => {
     table.clickRowByPath("e2e-rgw-add");
     expect(table.rows.get(0).getText()).toBe("e2e-rgw-add");
     expect(table.detailsTab.isDisplayed()).toBe(false);
@@ -51,24 +51,24 @@ describe("ceph nfs", function () {
     expect(details.transportProtocol.get(0).getText()).toBe("TCP");
     expect(details.transportProtocol.get(1).getText()).toBe("UDP");
     expect(details.clientAccessType.get(0).getText())
-      .toBe("MDONLY_RO - Does not allow read, write, or any operation that " +
-        "modifies file attributes or directory content");
+      .toBe("MDONLY_RO - Does not allow read, write, or any operation that modifies file " +
+        "attributes or directory content");
     expect(details.clientSquash.get(0).getText()).toBe("None");
     expect(details.mountCommand.getText()).toMatch("# mount.nfs .*:/.*/e2e-rgw-add /mnt");
   });
 
-  it("should remove export", function () {
+  it("should remove export", () => {
     table.removeExport("e2e-rgw-add");
     table.filterInput.clear().sendKeys("e2e-rgw-add");
     expect(table.rows.get(0).isPresent()).toBe(false);
     table.filterInput.clear();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     table.filterInput.clear();
   });
 
-  afterAll(function () {
+  afterAll(() => {
     console.log("ceph_nfs -> ceph_nfs_rgw.e2e.js");
   });
 

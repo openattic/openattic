@@ -30,20 +30,23 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsForm", {
-  template: require("./ceph-nfs-form.component.html"),
-  bindings: {
-  },
-  controller: function ($scope, $state, $stateParams, cephNfsAccessType,
+class CephNfsForm {
+
+  constructor ($scope, $state, $stateParams, $q, cephNfsAccessType,
       cephNfsSquash, cephNfsFsal, cephNfsService, cephNfsFormService,
-      cephRgwUserService, $q) {
-    var self = this;
+      cephRgwUserService) {
+    this.$scope = $scope;
+    this.$state = $state;
+    this.$stateParams = $stateParams;
+    this.$q = $q;
+    this.cephNfsAccessType = cephNfsAccessType;
+    this.cephNfsSquash = cephNfsSquash;
+    this.cephNfsFsal = cephNfsFsal;
+    this.cephNfsService = cephNfsService;
+    this.cephNfsFormService = cephNfsFormService;
+    this.cephRgwUserService = cephRgwUserService;
 
-    self.cephNfsAccessType = cephNfsAccessType;
-    self.cephNfsSquash = cephNfsSquash;
-
-    self.model = {
+    this.model = {
       fsid: $stateParams.fsid,
       id: undefined,
       exportId: undefined,
@@ -62,33 +65,52 @@ app.component("cephNfsForm", {
       clientBlocks: []
     };
 
-    var oaPromises = [
-      cephNfsService.hosts({fsid: $stateParams.fsid}).$promise,
-      cephNfsService.fsals({fsid: $stateParams.fsid}).$promise
+    this.isNewDirectory = false;
+    this.isNewBucket = false;
+
+    this.allHosts = [];
+    this.allRgwUsers = [];
+    this.allFsals = [];
+  }
+
+  $onInit () {
+    let oaPromises = [
+      this.cephNfsService.hosts({fsid: this.$stateParams.fsid}).$promise,
+      this.cephNfsService.fsals({fsid: this.$stateParams.fsid}).$promise
     ];
 
-    var resolveModel = function (res) {
-      self.model = res;
-      self.model.fsid = $stateParams.fsid;
-      if (self.model.fsal === "RGW") {
-        self.model.bucket = self.model.path;
-        delete self.model.path;
+    if (this.isEditMode()) {
+      oaPromises.push(this.cephNfsService
+        .get({
+          fsid: this.$stateParams.fsid,
+          host: this.$stateParams.host,
+          exportId: this.$stateParams.exportId
+        })
+        .$promise);
+    }
+
+    let resolveModel = (res) => {
+      this.model = res;
+      this.model.fsid = this.$stateParams.fsid;
+      if (this.model.fsal === "RGW") {
+        this.model.bucket = this.model.path;
+        delete this.model.path;
       }
-      if (self.model.tag !== generateTag()) {
-        $scope.nfsForm.tag.$dirty = true;
+      if (this.model.tag !== this._generateTag()) {
+        this.$scope.nfsForm.tag.$dirty = true;
       }
-      if (self.model.pseudo !== generatePseudo()) {
-        $scope.nfsForm.pseudo.$dirty = true;
+      if (this.model.pseudo !== this._generatePseudo()) {
+        this.$scope.nfsForm.pseudo.$dirty = true;
       }
-      self.model.protocolNfsv3 = self.model.protocols.indexOf("NFSv3") !== -1;
-      self.model.protocolNfsv4 = self.model.protocols.indexOf("NFSv4") !== -1;
-      delete self.model.protocols;
-      self.model.transportTCP = self.model.transports.indexOf("TCP") !== -1;
-      self.model.transportUDP = self.model.transports.indexOf("UDP") !== -1;
-      delete self.model.transports;
-      angular.forEach(self.model.clientBlocks, function (clientBlock) {
-        var clientsStr = "";
-        angular.forEach(clientBlock.clients, function (client) {
+      this.model.protocolNfsv3 = this.model.protocols.indexOf("NFSv3") !== -1;
+      this.model.protocolNfsv4 = this.model.protocols.indexOf("NFSv4") !== -1;
+      delete this.model.protocols;
+      this.model.transportTCP = this.model.transports.indexOf("TCP") !== -1;
+      this.model.transportUDP = this.model.transports.indexOf("UDP") !== -1;
+      delete this.model.transports;
+      angular.forEach(this.model.clientBlocks, (clientBlock) => {
+        let clientsStr = "";
+        angular.forEach(clientBlock.clients, (client) => {
           clientsStr += client + ", ";
         });
         if (clientsStr.length >= 2) {
@@ -96,70 +118,46 @@ app.component("cephNfsForm", {
         }
         clientBlock.clients = clientsStr;
       });
-      if ($state.current.name === "cephNfs-clone") {
-        delete self.model.id;
-        delete self.model.exportId;
+      if (this.$state.current.name === "cephNfs-clone") {
+        delete this.model.id;
+        delete this.model.exportId;
       }
     };
 
-    self.isEditMode = function () {
-      return angular.isDefined($stateParams.host) && angular.isDefined($stateParams.exportId);
+    let resolveHosts = (res) => {
+      this.allHosts = res.hosts;
     };
 
-    if (self.isEditMode()) {
-      oaPromises.push(cephNfsService
-        .get({
-          fsid: $stateParams.fsid,
-          host: $stateParams.host,
-          exportId: $stateParams.exportId
-        })
-        .$promise);
-    }
-
-    self.getId = function () {
-      if (angular.isDefined(self.model.host) && angular.isDefined(self.model.path)) {
-        return self.model.host + ":" + self.model.path;
-      }
-      return "";
-    };
-
-    self.allHosts = [];
-    var resolveHosts = function (res) {
-      self.allHosts = res.hosts;
-    };
-
-    self.allRgwUsers = [];
-    self.allFsals = [];
-    var resolvefsals = function (res) {
-      angular.forEach(res.fsals, function (fsal) {
-        var fsalItem = cephNfsFsal.find(function (currentFsalItem) {
+    let resolvefsals = (res) => {
+      angular.forEach(res.fsals, (fsal) => {
+        let fsalItem = this.cephNfsFsal.find((currentFsalItem) => {
           if (fsal === currentFsalItem.value) {
             return currentFsalItem;
           }
         });
         if (angular.isDefined(fsalItem)) {
-          self.allFsals.push(fsalItem);
+          this.allFsals.push(fsalItem);
           if (fsalItem.value === "RGW") {
-            cephRgwUserService.filter({
+            this.cephRgwUserService.filter({
               ordering: "ASC"
             })
               .$promise
-              .then(function (result) {
-                angular.forEach(result.results, function (user) {
+              .then((result) => {
+                angular.forEach(result.results, (user) => {
                   if (user.suspended === 0) {
-                    self.allRgwUsers.push(user.user_id);
+                    this.allRgwUsers.push(user.user_id);
                   }
                 });
               });
           }
         }
       });
-      if (self.allFsals.length === 1 && angular.isUndefined(self.model.fsal)) {
-        self.model.fsal = self.allFsals[0];
+      if (this.allFsals.length === 1 && angular.isUndefined(this.model.fsal)) {
+        this.model.fsal = this.allFsals[0];
       }
     };
 
-    $q.all(oaPromises)
+    this.$q.all(oaPromises)
       .then(data => {
         resolveHosts(data[0]);
         resolvefsals(data[1]);
@@ -167,178 +165,195 @@ app.component("cephNfsForm", {
         if (data[2]) {
           resolveModel(data[2]);
         }
-        self.formDataIsReady = true;
+        this.formDataIsReady = true;
       })
       .catch(error => {
-        self.error = error;
+        this.error = error;
       });
+  }
 
-    self.isNewDirectory = false;
-    self.getPathTypeahead = function (path, setNewDirectory) {
-      var rootDir = "/";
-      if (angular.isDefined(path) && path.length > 1 && path[0] === "/") {
-        rootDir = path.substring(0, path.lastIndexOf("/") + 1);
-      }
-      return cephNfsFormService.lsDir({
-        fsid: $stateParams.fsid,
-        root_dir: rootDir,
-        userid: self.model.rgwUserId
+  isEditMode () {
+    return angular.isDefined(this.$stateParams.host) && angular.isDefined(this.$stateParams.exportId);
+  };
+
+  getId () {
+    if (angular.isDefined(this.model.host) && angular.isDefined(this.model.path)) {
+      return this.model.host + ":" + this.model.path;
+    }
+    return "";
+  };
+
+  getPathTypeahead (path, setNewDirectory) {
+    let rootDir = "/";
+    if (angular.isDefined(path) && path.length > 1 && path[0] === "/") {
+      rootDir = path.substring(0, path.lastIndexOf("/") + 1);
+    }
+    return this.cephNfsFormService.lsDir({
+      fsid: this.$stateParams.fsid,
+      root_dir: rootDir,
+      userid: this.model.rgwUserId
+    })
+      .$promise
+      .then((res) => {
+        if (setNewDirectory) {
+          this.isNewDirectory = path !== "/" && res.paths.indexOf(path) === -1;
+        } else {
+          this.isNewDirectory = false;
+        }
+        return res.paths;
+      });
+  };
+
+  getBucketTypeahead (path, setNewBucket) {
+    if (angular.isDefined(this.model.rgwUserId) && this.model.rgwUserId !== null) {
+      return this.cephNfsFormService.buckets({
+        fsid: this.$stateParams.fsid,
+        userid: this.model.rgwUserId
       })
         .$promise
-        .then(function (res) {
-          if (setNewDirectory) {
-            self.isNewDirectory = path !== "/" && res.paths.indexOf(path) === -1;
+        .then((res) => {
+          if (setNewBucket) {
+            this.isNewBucket = path !== "" && res.buckets.indexOf(path) === -1;
           } else {
-            self.isNewDirectory = false;
+            this.isNewBucket = false;
           }
-          return res.paths;
+          return res.buckets;
         });
-    };
+    }
+  };
 
-    self.isNewBucket = false;
-    self.getBucketTypeahead = function (path, setNewBucket) {
-      if (angular.isDefined(self.model.rgwUserId) && self.model.rgwUserId !== null) {
-        return cephNfsFormService.buckets({
-          fsid: $stateParams.fsid,
-          userid: self.model.rgwUserId
-        })
-          .$promise
-          .then(function (res) {
-            if (setNewBucket) {
-              self.isNewBucket = path !== "" && res.buckets.indexOf(path) === -1;
-            } else {
-              self.isNewBucket = false;
-            }
-            return res.buckets;
-          });
+  _generateTag () {
+    let newTag = this.model.tag;
+    if (!this.$scope.nfsForm.tag.$dirty) {
+      newTag = undefined;
+      if (this.model.fsal === "RGW") {
+        newTag = this.model.bucket;
       }
-    };
+    }
+    return newTag;
+  };
 
-    var generateTag = function () {
-      var newTag = self.model.tag;
-      if (!$scope.nfsForm.tag.$dirty) {
-        newTag = undefined;
-        if (self.model.fsal === "RGW") {
-          newTag = self.model.bucket;
+  _generatePseudo () {
+    let newPseudo = this.model.pseudo;
+    if (this.$scope.nfsForm.pseudo && !this.$scope.nfsForm.pseudo.$dirty) {
+      newPseudo = undefined;
+      if (this.model.fsal === "CEPH") {
+        newPseudo = "/cephfs";
+        if (angular.isDefined(this.model.path)) {
+          newPseudo += this.model.path;
         }
-      }
-      return newTag;
-    };
-
-    var generatePseudo = function () {
-      var newPseudo = self.model.pseudo;
-      if ($scope.nfsForm.pseudo && !$scope.nfsForm.pseudo.$dirty) {
-        newPseudo = undefined;
-        if (self.model.fsal === "CEPH") {
-          newPseudo = "/cephfs";
-          if (angular.isDefined(self.model.path)) {
-            newPseudo += self.model.path;
-          }
-        } else if (self.model.fsal === "RGW") {
-          if (angular.isDefined(self.model.rgwUserId) && self.model.rgwUserId !== null) {
-            newPseudo = "/" + self.model.rgwUserId;
-            if (angular.isDefined(self.model.bucket)) {
-              newPseudo += "/" + self.model.bucket;
-            }
+      } else if (this.model.fsal === "RGW") {
+        if (angular.isDefined(this.model.rgwUserId) && this.model.rgwUserId !== null) {
+          newPseudo = "/" + this.model.rgwUserId;
+          if (angular.isDefined(this.model.bucket)) {
+            newPseudo += "/" + this.model.bucket;
           }
         }
       }
-      return newPseudo;
-    };
+    }
+    return newPseudo;
+  };
 
-    self.fsalChangeHandler = function () {
-      self.model.tag = generateTag();
-      self.model.pseudo = generatePseudo();
-    };
+  fsalChangeHandler () {
+    this.model.tag = this._generateTag();
+    this.model.pseudo = this._generatePseudo();
+  };
 
-    self.rgwUserIdChangeHandler = function () {
-      self.model.pseudo = generatePseudo();
-    };
+  rgwUserIdChangeHandler () {
+    this.model.pseudo = this._generatePseudo();
+  };
 
-    self.pathChangeHandler = function () {
-      self.model.pseudo = generatePseudo();
-    };
+  pathChangeHandler () {
+    this.model.pseudo = this._generatePseudo();
+  };
 
-    self.bucketChangeHandler = function () {
-      self.model.tag = generateTag();
-      self.model.pseudo = generatePseudo();
-    };
+  bucketChangeHandler () {
+    this.model.tag = this._generateTag();
+    this.model.pseudo = this._generatePseudo();
+  };
 
-    self.getAccessTypeHelp = function (accessType) {
-      var accessTypeItem = cephNfsAccessType.find(function (currentAccessTypeItem) {
-        if (accessType === currentAccessTypeItem.value) {
-          return currentAccessTypeItem;
-        }
-      });
-      return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
-    };
-
-    self.buildRequest = function () {
-      var requestModel = angular.copy(self.model);
-      if (requestModel.fsal === "RGW") {
-        requestModel.path = requestModel.bucket;
+  getAccessTypeHelp (accessType) {
+    let accessTypeItem = this.cephNfsAccessType.find((currentAccessTypeItem) => {
+      if (accessType === currentAccessTypeItem.value) {
+        return currentAccessTypeItem;
       }
-      if (angular.isUndefined(requestModel.tag) || requestModel.tag === "") {
-        requestModel.tag = null;
-      }
-      requestModel.protocols = [];
-      if (requestModel.protocolNfsv3) {
-        delete requestModel.protocolNfsv3;
-        requestModel.protocols.push("NFSv3");
+    });
+    return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
+  };
+
+  _buildRequest () {
+    let requestModel = angular.copy(this.model);
+    if (requestModel.fsal === "RGW") {
+      requestModel.path = requestModel.bucket;
+    }
+    if (angular.isUndefined(requestModel.tag) || requestModel.tag === "") {
+      requestModel.tag = null;
+    }
+    requestModel.protocols = [];
+    if (requestModel.protocolNfsv3) {
+      delete requestModel.protocolNfsv3;
+      requestModel.protocols.push("NFSv3");
+    } else {
+      requestModel.tag = null;
+    }
+    if (requestModel.protocolNfsv4) {
+      delete requestModel.protocolNfsv4;
+      requestModel.protocols.push("NFSv4");
+    } else {
+      requestModel.pseudo = null;
+    }
+    requestModel.transports = [];
+    if (requestModel.transportTCP) {
+      delete requestModel.transportTCP;
+      requestModel.transports.push("TCP");
+    }
+    if (requestModel.transportUDP) {
+      delete requestModel.transportUDP;
+      requestModel.transports.push("UDP");
+    }
+    angular.forEach(requestModel.clientBlocks, (clientBlock) => {
+      if (angular.isDefined(clientBlock.clients)) {
+        let clients = clientBlock.clients.replace(/\s/g, "");
+        clients = "\"" + clients.replace(/,/g, "\",\"") + "\"";
+        clientBlock.clients = angular.fromJson("[" + clients + "]");
       } else {
-        requestModel.tag = null;
+        clientBlock.clients = [];
       }
-      if (requestModel.protocolNfsv4) {
-        delete requestModel.protocolNfsv4;
-        requestModel.protocols.push("NFSv4");
-      } else {
-        requestModel.pseudo = null;
-      }
-      requestModel.transports = [];
-      if (requestModel.transportTCP) {
-        delete requestModel.transportTCP;
-        requestModel.transports.push("TCP");
-      }
-      if (requestModel.transportUDP) {
-        delete requestModel.transportUDP;
-        requestModel.transports.push("UDP");
-      }
-      angular.forEach(requestModel.clientBlocks, function (clientBlock) {
-        if (angular.isDefined(clientBlock.clients)) {
-          var clients = clientBlock.clients.replace(/\s/g, "");
-          clients = "\"" + clients.replace(/,/g, "\",\"") + "\"";
-          clientBlock.clients = angular.fromJson("[" + clients + "]");
-        } else {
-          clientBlock.clients = [];
-        }
-      });
-      return requestModel;
-    };
+    });
+    return requestModel;
+  };
 
-    self.submitAction = function () {
-      var requestModel = self.buildRequest();
-      // Add
-      if (angular.isUndefined(requestModel.id)) {
-        cephNfsService.save(requestModel)
-          .$promise
-          .then(function () {
-            $state.go("cephNfs");
-          }, function () {
-            $scope.nfsForm.$submitted = false;
-          });
-      } else { // Edit
-        cephNfsService.update(requestModel)
-          .$promise
-          .then(function () {
-            $state.go("cephNfs");
-          }, function () {
-            $scope.nfsForm.$submitted = false;
-          });
-      }
-    };
+  submitAction () {
+    let requestModel = this._buildRequest();
+    // Add
+    if (angular.isUndefined(requestModel.id)) {
+      this.cephNfsService.save(requestModel)
+        .$promise
+        .then(() => {
+          this.$state.go("cephNfs");
+        }, () => {
+          this.$scope.nfsForm.$submitted = false;
+        });
+    } else { // Edit
+      this.cephNfsService.update(requestModel)
+        .$promise
+        .then(() => {
+          this.$state.go("cephNfs");
+        }, () => {
+          this.$scope.nfsForm.$submitted = false;
+        });
+    }
+  };
 
-    self.cancelAction = function () {
-      $state.go("cephNfs");
-    };
-  }
+  cancelAction () {
+    this.$state.go("cephNfs");
+  };
+}
+
+var app = angular.module("openattic.cephNfs");
+app.component("cephNfsForm", {
+  template: require("./ceph-nfs-form.component.html"),
+  bindings: {
+  },
+  controller: CephNfsForm
 });
