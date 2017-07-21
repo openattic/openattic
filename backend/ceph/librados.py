@@ -959,7 +959,7 @@ class RbdApi(object):
     @logged
     @undoable
     def create(self, pool_name, image_name, size, old_format=True, features=None,
-               order=None, stripe_unit=None, stripe_count=None):
+               order=None, stripe_unit=None, stripe_count=None, data_pool_name=None):
         """
         .. example::
                 >>> api = RbdApi()
@@ -974,6 +974,7 @@ class RbdApi(object):
         :param old_format: Some features are not supported by the old format.
         :type stripe_unit: int
         :type stripe_count: int
+        :type data_pool_name: str
         """
         def _do(client):
             ioctx = client.get_pool(pool_name)
@@ -984,7 +985,7 @@ class RbdApi(object):
             try:
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,
                                 features=feature_bitmask, order=order,
-                                stripe_unit=stripe_unit, stripe_count=stripe_count)
+                                stripe_unit=stripe_unit, stripe_count=stripe_count, data_pool=data_pool_name)
             except TypeError:
                 logger.exception('This seems to be Jewel?!')
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,

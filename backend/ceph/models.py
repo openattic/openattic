@@ -886,7 +886,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features,
                            old_format=self.old_format, order=order,
-                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count)
+                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
+                           data_pool_name=self.data_pool.name)
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
