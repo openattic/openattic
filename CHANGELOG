@@ -28,6 +28,8 @@ Fixed
 * Backend: DeepSea's pillar data may not contain `roles` for a minion (OP-2507)
 * Backend: Allow `CephRbd.features` to be empty (OP-2506)
 * WebUI: Allow the deletion of non-empty S3 buckets (OP-2503)
+* WebUI: The copy to clipboard button does not work with password
+  fields (OP-2501)
 
 [3.4.1] - 2017-07-20
 --------------------
