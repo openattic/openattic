@@ -61,7 +61,10 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
             if (key === "detail") {
               detailMsg = val + detailMsg;
             } else {
-              detailMsg += "<br>" + key + ": " + val;
+              if (detailMsg !== "") {
+                detailMsg += "<br>";
+              }
+              detailMsg += key + ": " + val;
             }
           });
         }
