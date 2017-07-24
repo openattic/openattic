@@ -412,6 +412,10 @@ _migrations = [
     SqlMigration(
         'ceph', u'0010_remove_cephcluster_performance_data_options', None, None
     ),
+    SqlMigration(
+        'ceph', u'0011_cephrbd_features_default', None, None
+    ),
+
 ]
 
 

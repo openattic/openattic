@@ -484,4 +484,23 @@ class JsonFieldFilterTest(TestCase):
                                                                               my_object_list__attr2='b')), 1)
         self.assertEqual(
             len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a',
+
                                                                               my_object_list__attr2='z')), 0)
+
+
+class CephRbdTestCase(TestCase):
+
+    @mock.patch('nodb.models.NodbManager.nodb_context', fsid='hallo')
+    @mock.patch('ceph.models.RbdApi', **{'return_value._undo_stack': None})
+    @mock.patch('ceph.models.CephPool.get_all_objects')
+    @mock.patch('ceph.models.CephRbd.get_all_objects')
+    def rbd_save_no_features(self, rbd_get_all_objects_mock, pool_get_all_objects_mock, rbd_api_mock, nodb_context_moc):
+        """
+        Regression test for https://tracker.openattic.org/browse/OP-2506
+        Creating an RBD without features causes an error
+        """
+        pool = ceph.models.CephPool(name='pool', id=1)
+        rbd = ceph.models.CephRbd(pool=pool, name='rbd')
+        pool_get_all_objects_mock.return_value = [pool]
+        rbd_get_all_objects_mock.return_value = [rbd]  # needed to fake successful `RbdApi.create()`
+        rbd.save()
