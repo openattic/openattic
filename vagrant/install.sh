@@ -201,7 +201,6 @@ module-apt"
     # System packages not available in pip + npm
 
     apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-m2crypto nodejs npm
-    apt-get install -y libjpeg-dev # TODO this is required for openattic-module-nagios
     if [ "$IS_XENIAL" ]
     then
         apt-get install -y --force-yes nullmailer python-rtslib-fb # FIXME! Needed for newaliases command
@@ -215,9 +214,6 @@ module-apt"
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
-    ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg  /etc/nagios-plugins/config/openattic-ceph.cfg
     if [ "$IS_TRUSTY" ]
     then
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
@@ -227,8 +223,6 @@ fi
 
 if [ "$IS_SUSE" ]
 then
-    OA_PACKAGES="$OA_PACKAGES
-module-icinga"
     ZYP_PACKAGES="$(echo -e "$OA_PACKAGES" | xargs -I SUB echo openattic-SUB)"
     ! DEPS="$(LANG=C zypper --non-interactive install --dry-run $ZYP_PACKAGES | grep -A 1 'NEW packages are going to be installed' | tail -n 1 | tr " " "\n" | grep -v -e openattic -e apache -e python)"
     if [ -n "$DEPS" ] ; then
@@ -236,15 +230,10 @@ module-icinga"
     fi
 
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
-    ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/icinga/conf.d/openattic_static.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg /etc/icinga/objects/openattic.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg /etc/icinga/objects/openattic-ceph.cfg
 
     # System packages not available in pip + npm
-
     zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
-    # python-dbus  python-gobject-2
-    #zypper --non-interactive install -y libjpeg-dev # interestingly this is required for openattic-module-nagios
+    # python-dbus python-gobject-2
     systemctl restart postgresql.service
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
@@ -256,13 +245,6 @@ if [ -z "$IS_TRUSTY" ] ; then
 fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
 ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
-
-# Create Nagios specific symlinks (platform independent).
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephcluster /usr/lib/nagios/plugins/check_cephcluster
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephpool /usr/lib/nagios/plugins/check_cephpool
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephrbd /usr/lib/nagios/plugins/check_cephrbd
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_openattic_systemd /usr/lib/nagios/plugins/check_openattic_systemd
-ln -s /home/vagrant/openattic/backend/nagios/plugins/notify_openattic /usr/lib/nagios/plugins/notify_openattic
 
 sudo -i -u vagrant bash -e << EOF
 pushd openattic
@@ -371,14 +353,6 @@ python manage.py install --pre-install
 
 popd
 EOF
-
-if [ "$IS_SUSE" ]
-then
-    # TODO: looks weird, but it's required.
-    echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
-    echo cfg_file=/etc/icinga/objects/openattic-ceph.cfg >> /etc/icinga/icinga.cfg
-    systemctl start icinga.service
-fi
 
 
 pushd /home/vagrant/openattic/backend/
