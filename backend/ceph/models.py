@@ -733,7 +733,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                    default=2 ** 22)
     num_objs = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
-    features = JsonField(base_type=list, null=True, blank=True,
+    features = JsonField(base_type=list, null=True, blank=True, default=[],
                          help_text='For example: [{}]'.format(
                              ', '.join(['"{}"'.format(v) for v
                                         in RbdApi.get_feature_mapping().values()])))
