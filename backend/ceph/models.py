@@ -801,7 +801,6 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
         rbds = []
         for (image_name, pool) in rbd_name_pools:
-            data_pool = None
             data_pool_id = None
             image_info = api.image_info(pool.name, image_name)
 
@@ -813,9 +812,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                         old_format=api.image_old_format(pool.name, image_name),
                                         features=api.image_features(pool.name, image_name),
                                         name=image_name,
-                                        pool=pool,
                                         pool_id=pool.id,
-                                        data_pool=data_pool,
                                         data_pool_id=data_pool_id,
                                         id=CephRbd.make_key(pool, image_name))))
 
