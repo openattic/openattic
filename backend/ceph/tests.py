@@ -506,3 +506,40 @@ class CephRbdTestCase(TestCase):
         pool_get_all_objects_mock.return_value = [pool]
         rbd_get_all_objects_mock.return_value = [rbd]  # needed to fake successful `RbdApi.create()`
         rbd.save()
+
+
+class CallLibradosTestCase(TestCase):
+    def test_simple(self):
+        def return1():
+            return 1
+
+        self.assertEqual(ceph.librados.run_in_external_process(return1), 1)
+
+    def test_huge(self):
+        def return_big():
+            return 'x' * (1024 * 1024)
+
+        self.assertEqual(ceph.librados.run_in_external_process(return_big), return_big())
+
+    def test_exception(self):
+        def raise_exception():
+            raise KeyError()
+
+        self.assertRaises(KeyError,
+                          lambda: ceph.librados.run_in_external_process(raise_exception))
+
+    def test_exit(self):
+        def just_exit():
+            import sys
+            sys.exit(0)
+
+        self.assertRaises(ceph.librados.ExternalCommandError,
+                          lambda: ceph.librados.run_in_external_process(just_exit))
+
+    def test_timeout(self):
+        def just_wait():
+            import time
+            time.sleep(3)
+
+        self.assertRaises(ceph.librados.ExternalCommandError,
+                          lambda: ceph.librados.run_in_external_process(just_wait, timeout=1))

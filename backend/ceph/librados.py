@@ -381,39 +381,43 @@ class ExternalCommandError(Exception):
         super(ExternalCommandError, self).__init__(s)
 
 
-def call_librados(fsid, method, timeout=30):
-
+def run_in_external_process(func, timeout=30):
     class LibradosProcess(multiprocessing.Process):
-        def __init__(self, fsid, com_pipe):
+        def __init__(self, com_pipe):
             multiprocessing.Process.__init__(self)
             self.com_pipe = com_pipe
-            self.fsid = fsid
 
         def run(self):
             with closing(self.com_pipe):
                 try:
-                    with ClusterConf.from_fsid(fsid).client as client:
-                        res = method(client)
-                        self.com_pipe.send(res)
+                    self.com_pipe.send(func())
                 except Exception as e:
                     logger.exception("Exception when running a librados process.")
                     self.com_pipe.send(e)
 
+    com1, com2 = multiprocessing.Pipe()
+    p = LibradosProcess(com2)
+    p.start()
+    with closing(com1):
+        if com1.poll(timeout):
+            res = com1.recv()
+            p.join()
+            if isinstance(res, Exception):
+                raise res
+            return res
+        else:
+            p.terminate()
+            raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
+                                       '({} sec).'.format(p.name, p.pid, timeout))
+
+
+def call_librados(fsid, method, timeout=30):
+    def with_client():
+        with ClusterConf.from_fsid(fsid).client as client:
+            return method(client)
+
     if settings.SEPARATE_LIBRADOS_PROCESS:
-        com1, com2 = multiprocessing.Pipe()
-        p = LibradosProcess(fsid, com2)
-        p.start()
-        with closing(com1):
-            if com1.poll(timeout):
-                res = com1.recv()
-                p.join()
-                if isinstance(res, Exception):
-                    raise res
-                return res
-            else:
-                p.terminate()
-                raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
-                                           '({} sec).'.format(p.name, p.pid, timeout))
+        return run_in_external_process(with_client, timeout)
     else:
         client = clients[fsid]
         return method(client)

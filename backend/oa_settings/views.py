@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 
+from ceph.librados import Keyring, Client, run_in_external_process, ExternalCommandError
 from grafana.grafana_proxy import GrafanaProxy
 from oa_settings import Settings, save_settings
 from deepsea import DeepSea
@@ -256,3 +257,31 @@ class GetRGWConfigurationView(APIView):
         except RequestException:
             pass
         return Response({'success': False})
+
+
+class CheckCephCofigurationView(APIView):
+
+    def get(self, request):
+        keys = 'config_file_path', 'keyring_file_path', 'keyring_user'
+        try:
+            cluster_conf, keyring_path, user_name = [request.GET[k] for k in keys]
+        except KeyError:
+            raise ValidationError('{} are required.'.format(str(keys)))
+
+        try:
+            keyring = Keyring(keyring_path, user_name)
+        except RuntimeError as e:
+            return Response({'success': False, 'message': str(e)})
+
+        def do_connect():
+            try:
+                with Client(cluster_conf, keyring):
+                    return {'success': True}
+            except Exception as e:
+                msg = 'Connection Error: {}'.format(str(e))
+                return {'success': False, 'message': msg}
+        try:
+            return Response(run_in_external_process(do_connect))
+        except ExternalCommandError:
+            logger.exception('run_in_external_process failed.')
+            return Response({'success': False, 'message': 'Failed to connect to Ceph'})
