@@ -26,6 +26,8 @@ from contextlib import contextmanager
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.shortcuts import get_object_or_404
 
@@ -253,6 +255,17 @@ class CephPool(NodbModel, RadosMixin):
     tiers = JsonField(base_type=list, editable=False, blank=True)
     flags = JsonField(base_type=list, blank=True, default=[])
 
+    _compr_mode_choices = 'force aggressive passive none'.split(' ')
+    _compr_algorithm_choices = 'none snappy zlib zstd lz4'.split(' ')
+    compression_mode = models.CharField(max_length=100, default='none',
+                                        choices=[(x, x) for x in _compr_mode_choices])
+
+    compression_algorithm = models.CharField(max_length=100, default='none',
+                                             choices=[(x, x) for x in _compr_algorithm_choices])
+    compression_required_ratio = models.FloatField(default=0.0, validators=[MinValueValidator(0), MaxValueValidator(1)])
+    compression_max_blob_size = models.IntegerField(default=0)
+    compression_min_blob_size = models.IntegerField(default=0)
+
     pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
     @staticmethod
@@ -267,6 +280,10 @@ class CephPool(NodbModel, RadosMixin):
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
+
+            def options(key, default=None):
+                opts = pool_data.get('options', {})
+                return opts.get(key, default)
 
             object_data = {
                 'id': pool_id,
@@ -304,6 +321,11 @@ class CephPool(NodbModel, RadosMixin):
                 'tiers': pool_data['tiers'],
                 'flags': pool_data['flags_names'].split(','),
                 'pool_snaps': pool_data['pool_snaps'],
+                'compression_mode': options('compression_mode', 'none'),
+                'compression_algorithm': options('compression_algorithm', 'none'),
+                'compression_required_ratio': options('compression_required_ratio'),
+                'compression_max_blob_size': options('compression_max_blob_size'),
+                'compression_min_blob_size': options('compression_min_blob_size'),
             }
 
             ceph_pool = CephPool(**CephPool.make_model_args(object_data))
@@ -439,6 +461,10 @@ class CephPool(NodbModel, RadosMixin):
                             msg = 'Unknown flag \'{}\'.'.format(flag)
                             logger.warning(msg)
                             raise NotSupportedError(msg)
+                elif key == 'compression_required_ratio':
+                    api.osd_pool_set(self.name, key, str(value),
+                                     undo_previous_value=str(getattr(original, key)))
+
                 elif self.type == 'replicated' and key not in ['name'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))

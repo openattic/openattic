@@ -415,7 +415,24 @@ _migrations = [
     SqlMigration(
         'ceph', u'0011_cephrbd_features_default', None, None
     ),
-
+    SqlMigration(
+        'ceph', u'0012_cephpool_compression',
+        lambda cursor: _column_not_exists('ceph_cephosd', 'osd_objectstore', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_algorithm" varchar(100) NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_algorithm" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_max_blob_size" integer NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_max_blob_size" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_min_blob_size" integer NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_min_blob_size" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_mode" varchar(100) NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_mode" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_required_ratio" double precision NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_required_ratio" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
 ]
 
 
