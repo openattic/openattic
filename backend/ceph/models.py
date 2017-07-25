@@ -761,7 +761,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                           help_text='pool-name/image-name')
     name = models.CharField(max_length=100)
     pool = models.ForeignKey(CephPool, related_name='pool')
-    data_pool = models.ForeignKey(CephPool, null=True, related_name='data_pool')
+    data_pool = models.ForeignKey(CephPool, null=True, blank=True, related_name='data_pool')
     size = models.IntegerField(help_text='Bytes, where size modulo obj_size === 0',
                                default=4 * 1024 ** 3)
     obj_size = models.IntegerField(null=True, blank=True, help_text='obj_size === 2^n',
@@ -882,12 +882,14 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             if insert:
                 order = None
+                data_pool_name = self.data_pool.name if self.data_pool else None
+
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features,
                            old_format=self.old_format, order=order,
                            stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
-                           data_pool_name=self.data_pool.name)
+                           data_pool_name=data_pool_name)
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()

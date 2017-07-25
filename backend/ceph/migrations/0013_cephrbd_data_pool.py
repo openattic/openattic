@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cephrbd',
             name='data_pool',
-            field=models.ForeignKey(related_name='data_pool', to='ceph.CephPool', null=True),
+            field=models.ForeignKey(related_name='data_pool', blank=True, to='ceph.CephPool', null=True),
             preserve_default=True,
         ),
         migrations.AlterField(
