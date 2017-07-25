@@ -19,6 +19,11 @@ To describe their impact on the project, changes are grouped as follows:
 [3.4.2] - unreleased
 --------------------
 
+Added
+~~~~~
+
+* Backend: Enable compression on Ceph pools on BlueStore OSD Pools (OP-2309)
+
 Fixed
 ~~~~~
 
