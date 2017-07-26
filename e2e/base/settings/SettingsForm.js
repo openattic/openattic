@@ -32,7 +32,6 @@ var SettingsForm = function(){
   this.grafanaConnectionSuccess = element(by.css('.tc_grafanaConnectionSuccess'));
   this.grafanaConnectionFail = element(by.css('.tc_grafanaConnectionFail'));
 
-  this.cephClusterError = element(by.css('.tc_cephClusterError'));
   this.cephClusterConfigFile = element(by.model('cephCluster.config_file_path'));
   this.cephClusterKeyringFile = element(by.model('cephCluster.keyring_file_path'));
   this.cephClusterKeyringUser = element(by.model('cephCluster.keyring_user'));

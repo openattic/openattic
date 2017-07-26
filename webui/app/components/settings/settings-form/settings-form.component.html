@@ -10,19 +10,15 @@
   </div>
 
   <oa-loading-panel message="Settings are loading..."
-                    ng-show="!$ctrl.error && !$ctrl.model.$resolved && !$ctrl.clusters.$resolved"></oa-loading-panel>
+                    ng-show="!$ctrl.error && !$ctrl.model.$resolved"></oa-loading-panel>
 
-  <form ng-show="!$ctrl.error && $ctrl.model.$resolved && $ctrl.clusters.$resolved" name="settingsForm" role="form" class="form-horizontal"
+  <form ng-show="!$ctrl.error && $ctrl.model.$resolved" name="settingsForm" role="form" class="form-horizontal"
         novalidate oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">Settings</h3>
       </div>
       <div class="panel-body">
-
-        <div uib-alert class="alert-danger" ng-if="$ctrl.settingsError"
-             ng-bind-html="$ctrl.settingsError">
-        </div>
 
         <legend>DeepSea / Salt REST API</legend>
 
@@ -326,23 +322,19 @@
           <label class="col-sm-3 control-label">Cluster</label>
           <div class="col-sm-9">
 
-            <div ng-repeat="cephCluster in $ctrl.clusters.results">
+            <div ng-repeat="cephCluster in $ctrl.model.ceph">
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">{{ cephCluster.fsid }}</h3>
                 </div>
                 <div class="panel-body">
 
-                  <div uib-alert class="alert-danger tc_cephClusterError" ng-if="$ctrl.clustersErrors[cephCluster.fsid]"
-                       ng-bind-html="$ctrl.clustersErrors[cephCluster.fsid]">
-                  </div>
-
                   <!--  Ceph Cluster Config File -->
                   <div class="form-group">
                     <label class="col-sm-3 control-label" for="cephClusterConfigFilePath">Config file</label>
                     <div class="col-sm-9">
                       <input type="text" class="form-control" name="cephClusterConfigFilePath" id="cephClusterConfigFilePath"
-                             ng-model="cephCluster.config_file_path" readonly>
+                             ng-model="cephCluster.config_file_path" disabled>
                     </div>
                   </div>
 

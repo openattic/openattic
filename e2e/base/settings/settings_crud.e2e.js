@@ -102,13 +102,8 @@ describe('settings form', function(){
   });
 
   it('should not save invalid ceph config', function(){
-    expect(form.cephClusterError.isPresent()).toBe(false);
-
     form.cephClusterKeyringFile.clear().sendKeys('/e2e-invalid-file');
     form.submitButton.click();
-
-    expect(form.cephClusterError.isPresent()).toBe(true);
-
     browser.refresh();
     expect(form.cephClusterKeyringFile.getAttribute('value')).toEqual(initialSettings.ceph.keyringFile);
   });
