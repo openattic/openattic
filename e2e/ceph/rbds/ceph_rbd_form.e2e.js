@@ -85,7 +85,9 @@ describe('should test the ceph rbd creation form', function(){
       expect(element(by.className(e.testClass)).isDisplayed()).toBe(e.displayed);
     });
     for(var item in e.items){
-      isItemPresent(item, e.items[item]);
+      var itemClasse = typeof e.items[item] == "string" ?
+        e.items[item] : e.items[item].class;
+      isItemPresent(item, itemClasse);
     }
   };
 
