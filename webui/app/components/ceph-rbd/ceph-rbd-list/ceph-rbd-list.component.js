@@ -31,53 +31,59 @@
 "use strict";
 
 var app = angular.module("openattic.cephRbd");
-app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService,
-    registryService, cephPoolsService, Notification, tabViewService) {
-  $scope.registry = registryService;
-  $scope.cluster = undefined;
-  $scope.rbd = {};
-  $scope.error = false;
+app.component("cephRbdList", {
+  templateUrl: "components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html",
+  controller: function ($scope, $state, $filter, $uibModal, cephRbdService,
+      registryService, cephPoolsService, Notification, oaTabSetService) {
+    var self = this;
 
-  $scope.filterConfig = {
-    page     : 0,
-    entries  : 10,
-    search   : "",
-    sortfield: null,
-    sortorder: null
-  };
+    self.registry = registryService;
+    self.cluster = undefined;
+    self.rbd = {};
+    self.error = false;
 
-  $scope.selection = {};
+    self.filterConfig = {
+      page: 0,
+      entries: 10,
+      search: "",
+      sortfield: null,
+      sortorder: null
+    };
 
-  $scope.onClusterLoad = function (cluster) {
-    $scope.cluster = cluster;
-  };
+    self.selection = {};
 
-  $scope.getRbdList = function () {
-    if (angular.isObject($scope.cluster) && $scope.cluster.results &&
-        $scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
-      var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
-      if (obj.length === 0) {
-        $scope.registry.selectedCluster = $scope.cluster.results[0];
-      }
+    self.onClusterLoad = function (cluster) {
+      self.cluster = cluster;
+    };
 
-      $scope.rbd = {};
-      $scope.error = false;
+    self.getRbdList = function () {
+      if (self.cluster.results.length > 0 && self.registry.selectedCluster) {
+        var obj = $filter("filter")(self.cluster.results, {
+          fsid: self.registry.selectedCluster.fsid
+        }, true);
+        if (obj.length === 0) {
+          self.registry.selectedCluster = self.cluster.results[0];
+        }
 
-      cephRbdService
+        self.rbd = {};
+        self.error = false;
+
+        cephRbdService
           .get({
-            fsid: $scope.registry.selectedCluster.fsid,
-            page: $scope.filterConfig.page + 1,
-            pageSize: $scope.filterConfig.entries,
-            search: $scope.filterConfig.search,
-            ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+            fsid: self.registry.selectedCluster.fsid,
+            page: self.filterConfig.page + 1,
+            pageSize: self.filterConfig.entries,
+            search: self.filterConfig.search,
+            ordering: (self.filterConfig.sortorder === "ASC" ? "" : "-") +
+              self.filterConfig.sortfield
           })
           .$promise
           .then(function (res) {
-            $scope.rbdError = false;
+            self.rbdError = false;
             cephPoolsService.get({
-              fsid: $scope.registry.selectedCluster.fsid
+              fsid: self.registry.selectedCluster.fsid
             }).$promise.then(function (pools) {
-              $scope.poolError = false;
+              self.poolError = false;
               res.results.forEach(function (rbd) {
                 pools.results.some(function (pool) {
                   if (pool.id === rbd.pool) {
@@ -89,97 +95,97 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 rbd.usedPercent = rbd.used_size / rbd.size * 100;
                 rbd.freePercent = rbd.free / rbd.size * 100;
               });
-              $scope.rbd = res;
+              self.rbd = res;
             }).catch(function (error) {
-              $scope.poolError = error;
+              self.poolError = error;
             });
           })
           .catch(function (error) {
-            $scope.rbdError = error;
+            self.rbdError = error;
           });
-    }
-  };
+      }
+    };
 
-  $scope.tabData = {
-    active: 0,
-    tabs: {
-      status: {
-        show: "selection.item",
-        state: "cephRbds.detail.details",
-        class: "tc_statusTab",
-        name: "Status"
-        /* TODO: Uncomment for OP-2475
+    self.tabData = {
+      active: 0,
+      tabs: {
+        status: {
+          show: "$ctrl.selection.item",
+          state: "cephRbds.detail.details",
+          class: "tc_statusTab",
+          name: "Status"
+          /* TODO: Uncomment for OP-2475
       },
       statistics: {
-        show: "selection.item",
+        show: "$ctrl.selection.item",
         state: "cephRbds.detail.statistics",
         class: "tc_statisticsTab",
         name: "Statistics"
         */
-      }
-    }
-  };
-  $scope.tabConfig = {
-    type: "cephRbds",
-    linkedBy: "id",
-    jumpTo: "more"
-  };
-  tabViewService.setScope($scope);
-  $scope.changeTab = tabViewService.changeTab;
-
-  $scope.$watch("filterConfig", function (newValue, oldValue) {
-    if (angular.equals(newValue, oldValue)) {
-      return;
-    }
-
-    $scope.getRbdList();
-  }, true);
-
-  $scope.onSelectionChange = function (selection) {
-    $scope.selection = selection;
-    var items = selection.items;
-
-    $scope.multiSelection = items && items.length > 1;
-    $scope.hasSelection = items && items.length === 1;
-
-    if (!items || items.length !== 1) {
-      $state.go("cephRbds");
-      return;
-    }
-
-    if ($state.current.name === "cephRbds") {
-      $scope.changeTab("cephRbds.detail.details");
-    } else {
-      $scope.changeTab($state.current.name);
-    }
-  };
-
-  $scope.addAction = function () {
-    $state.go("rbds-add", {
-      fsid: $scope.registry.selectedCluster.fsid
-    });
-  };
-
-  $scope.deleteAction = function () {
-    if (!$scope.hasSelection && !$scope.multiSelection) {
-      return;
-    }
-    var modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html",
-      controller: "RbdDelete",
-      resolve: {
-        rbdSelection: function () {
-          return $scope.selection.items;
-        },
-        fsid: function () {
-          return $scope.registry.selectedCluster.fsid;
         }
       }
-    });
+    };
+    self.tabConfig = {
+      type: "cephRbds",
+      linkedBy: "id",
+      jumpTo: "more"
+    };
 
-    modalInstance.result.then(function () {
-      $scope.filterConfig.refresh = new Date();
-    });
-  };
+    $scope.$watch("$ctrl.filterConfig", function (newValue, oldValue) {
+      if (angular.equals(newValue, oldValue)) {
+        return;
+      }
+
+      self.getRbdList();
+    }, true);
+
+    self.onSelectionChange = function (selection) {
+      self.selection = selection;
+      var items = selection.items;
+
+      self.multiSelection = items && items.length > 1;
+      self.hasSelection = items && items.length === 1;
+
+      if (!items || items.length !== 1) {
+        $state.go("cephRbds");
+        return;
+      }
+
+      if ($state.current.name === "cephRbds") {
+        oaTabSetService.changeTab("cephRbds.detail.details", self.tabData,
+          self.tabConfig, selection);
+      } else {
+        oaTabSetService.changeTab($state.current.name, self.tabData,
+          self.tabConfig, selection);
+      }
+    };
+
+    self.addAction = function () {
+      $state.go("cephRbds-add", {
+        fsid: self.registry.selectedCluster.fsid
+      });
+    };
+
+    self.deleteAction = function () {
+      if (!self.hasSelection && !self.multiSelection) {
+        return;
+      }
+      var modalInstance = $uibModal.open({
+        windowTemplateUrl: "templates/messagebox.html",
+        component: "cephRbdDeleteModal",
+        resolve: {
+          fsid: function () {
+            return self.registry.selectedCluster.fsid;
+          },
+          rbdSelection: function () {
+            return self.selection.items;
+          }
+        }
+      });
+
+      modalInstance.result.then(function () {
+        self.filterConfig.refresh = new Date();
+      });
+    };
+  }
 });

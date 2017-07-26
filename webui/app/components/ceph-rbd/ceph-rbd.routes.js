@@ -33,61 +33,64 @@
 var app = angular.module("openattic.cephRbd");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("cephRbds", {
-        url          : "/ceph/rbds",
-        views        : {
-          "main": {
-            templateUrl: "components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html",
-            controller : "CephRbdCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Ceph RBDs"
+    .state("cephRbds", {
+      url: "/ceph/rbds",
+      views: {
+        "main": {
+          component: "cephRbdList"
         }
-      })
-      .state("cephRbds.detail", {
-        views        : {
-          "tab": {templateUrl: "components/ceph-rbd/templates/tab.html"}
-        },
-        ncyBreadcrumb: {
-          skip: true
+      },
+      ncyBreadcrumb: {
+        label: "Ceph RBDs"
+      }
+    })
+    .state("cephRbds.detail", {
+      views: {
+        "tab": {
+          component: "oaTabSet"
         }
-      })
-      .state("rbds-add", {
-        url: "/rbds/add",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html",
-            controller : "RbdFormCtrl"
-          }
-        },
-        params: {
-          fsid: null
-        },
-        ncyBreadcrumb: {
-          parent: "cephRbds",
-          label: "Add"
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephRbds-add", {
+      url: "/rbds/add",
+      views: {
+        "main": {
+          component: "cephRbdForm"
         }
-      })
-      /* TODO: Uncomment for OP-2475
-      .state("cephRbds.detail.statistics", {
-        url          : "/statistics",
-        views        : {
-          "tab-content": {
-            templateUrl: "components/ceph-rbd/ceph-rbd-statistics/ceph-rbd-statistics.component.html"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} statistics"
+      },
+      params: {
+        fsid: null
+      },
+      ncyBreadcrumb: {
+        parent: "cephRbds",
+        label: "Add"
+      }
+    })
+    /* TODO: Uncomment for OP-2475
+    .state("cephRbds.detail.statistics", {
+      url          : "/statistics",
+      views        : {
+        "tab-content": {
+          component: "cephRbdStatistics"
         }
-      })
-      */
-      .state("cephRbds.detail.details", {
-        url          : "/details",
-        views        : {
-          "tab-content": {templateUrl: "components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html"} },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} details"
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} statistics"
+      }
+    })
+    */
+    .state("cephRbds.detail.details", {
+      url: "/details",
+      views: {
+        "tab-content": {
+          component: "cephRbdDetail"
         }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "{{$ctrl.selection.item.name}} details"
+      }
+    });
 });

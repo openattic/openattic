@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -31,43 +31,11 @@
 "use strict";
 
 var app = angular.module("openattic.cephRbd");
-app.component("cephRbdDeleteModal", {
-  templateUrl: "components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html",
+app.component("cephRbdDetail", {
+  templateUrl: "components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html",
   bindings: {
-    modalInstance: "<",
-    resolve: "<"
+    selection: "<"
   },
-  controller: function (cephRbdService, $q, Notification) {
-    var self = this;
-
-    self.delete = function () {
-      return $q(function (resolve, reject) {
-        var requests = [];
-        self.resolve.rbdSelection.forEach(function (rbd) {
-          var deferred = $q.defer();
-          cephRbdService.delete({
-            fsid: self.resolve.fsid,
-            pool: rbd.pool.name,
-            name: rbd.name
-          }, deferred.resolve, deferred.reject);
-          requests.push(deferred.promise);
-        });
-        $q.all(requests).then(function () {
-          resolve();
-          self.modalInstance.close("deleted");
-        }, function () {
-          reject();
-        });
-      });
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-
-      Notification.warning({
-        title: "Delete RBD",
-        msg: "Cancelled"
-      });
-    };
+  controller: function () {
   }
 });
