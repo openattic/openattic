@@ -23,6 +23,10 @@ Added
 ~~~~~
 * Backend: Enable compression on Ceph pools on BlueStore OSD Pools (OP-2309)
 
+Changed
+~~~~~~~
+* WebUI: Migration of Ceph RBDs controllers to components (OP-2400)
+
 Fixed
 ~~~~~
 * Backend: DeepSea's pillar data may not contain `roles` for a minion (OP-2507)
