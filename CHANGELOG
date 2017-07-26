@@ -21,14 +21,13 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
-
 * Backend: Enable compression on Ceph pools on BlueStore OSD Pools (OP-2309)
 
 Fixed
 ~~~~~
-
 * Backend: DeepSea's pillar data may not contain `roles` for a minion (OP-2507)
 * Backend: Allow `CephRbd.features` to be empty (OP-2506)
+* WebUI: Allow the deletion of non-empty S3 buckets (OP-2503)
 
 [3.4.1] - 2017-07-20
 --------------------
