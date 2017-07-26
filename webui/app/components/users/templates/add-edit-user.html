@@ -36,8 +36,15 @@
                                        ng-model="user.password" name="password" id="userPassword" required>
                                 <span class="input-group-btn">
                                     <button type="button"
-                                            class="btn btn-default"
+                                            class="btn btn-default tc_showPassword"
                                             oa-password-button="userPassword">
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-default tc_copyPasswordToClipboard"
+                                            uib-tooltip="Copy to clipboard"
+                                            oa-clipboard oa-clipboard-target="userPassword"
+                                            oa-clipboard-text="password">
+                                        <i class="icon-prepend fa fa-clipboard"></i>
                                     </button>
                                 </span>
                             </div>
