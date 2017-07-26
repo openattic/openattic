@@ -58,7 +58,7 @@ class _ClusterSettingsListener(oa_settings.SettingsListener):
         conf_obj = ConfigObj(oa_settings.settings_file)
         for pattern in ['CEPH_CLUSTERS', 'CEPH_KEYRING_*', 'CEPH_KEYRING_USER_*']:
             for key in fnmatch.filter(conf_obj.keys(), pattern):
-                logger.info('{} {} {}'.format(key, getattr(django_settings, key), conf_obj[key]))
+                logger.info('{} {} {}'.format(key, getattr(django_settings, key, '<unset>'), conf_obj[key]))
                 setattr(django_settings, key, conf_obj[key])
 
 _clusterSettingsListener = _ClusterSettingsListener()

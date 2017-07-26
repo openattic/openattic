@@ -18,9 +18,12 @@ from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 
 from ceph.librados import Keyring, Client, run_in_external_process, ExternalCommandError
+from ceph.models import CephCluster
+from ceph.restapi import CephClusterSerializer
 from grafana.grafana_proxy import GrafanaProxy
 from oa_settings import Settings, save_settings
 from deepsea import DeepSea
+from rest.utilities import get_request_data
 from rest_client import RequestException
 from ceph_radosgw.rgw_client import RGWClient
 
@@ -79,11 +82,14 @@ class SettingsView(APIView):
                 "username": Settings.GRAFANA_API_USERNAME,
                 "password": Settings.GRAFANA_API_PASSWORD,
                 "use_ssl": Settings.GRAFANA_API_SCHEME == 'https'
-            }
+            },
+            'ceph':
+                list(CephClusterSerializer(CephCluster.objects.all(), many=True).data)
         })
 
     def post(self, request):
-        deepsea = request.DATA['deepsea']
+        data = get_request_data(request)
+        deepsea = data['deepsea']
         Settings.SALT_API_HOST = deepsea['host']
         Settings.SALT_API_PORT = deepsea['port']
         Settings.SALT_API_EAUTH = deepsea['eauth']
@@ -91,7 +97,7 @@ class SettingsView(APIView):
         Settings.SALT_API_PASSWORD = deepsea['password']
         Settings.SALT_API_SHARED_SECRET = deepsea['shared_secret']
 
-        rgw = request.DATA['rgw']
+        rgw = data['rgw']
         if not rgw['managed_by_deepsea']:
             Settings.RGW_API_HOST = rgw['host']
             Settings.RGW_API_PORT = rgw['port']
@@ -106,7 +112,7 @@ class SettingsView(APIView):
             Settings.RGW_API_ACCESS_KEY = ''
             Settings.RGW_API_SECRET_KEY = ''
 
-        grafana = request.DATA['grafana']
+        grafana = data['grafana']
         Settings.GRAFANA_API_HOST = grafana['host']
         Settings.GRAFANA_API_PORT = grafana['port']
         Settings.GRAFANA_API_USERNAME = grafana['username']
@@ -114,6 +120,22 @@ class SettingsView(APIView):
         Settings.GRAFANA_API_SCHEME = 'https' if grafana['use_ssl'] else 'http'
 
         save_settings()
+
+        if 'ceph' in data:
+            serializers = []
+            for index, cluster_data in enumerate(data['ceph']):
+                if not 'fsid' in cluster_data:
+                    raise ValidationError('No fsid in cluster {}'.format(index+1))
+                orig_cluster = CephCluster.objects.get(fsid=cluster_data['fsid'])
+
+                serializer = CephClusterSerializer(orig_cluster, cluster_data, partial=True)
+                if not serializer.is_valid():
+                    raise ValidationError(serializer.errors)
+                serializers.append(serializer)
+
+            for serializer in serializers:  # new loop to raise all errors before saving
+                serializer.object.save()
+
         return Response({'success': True})
 
 
