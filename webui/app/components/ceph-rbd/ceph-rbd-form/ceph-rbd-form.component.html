@@ -2,7 +2,7 @@
     <form name="rbdForm" role="form" class="form-horizontal" novalidate oa-check-form>
         <div class="panel panel-default">
             <div class="panel-heading tc_formHeadline">
-                <h3 class="panel-title">Create RBD: {{rbd.name}}</h3>
+                <h3 class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>
             </div>
             <div class="panel-body">
                 <!-- The following panel body needs to be encapsulated into the template of a directive in order to
@@ -13,7 +13,7 @@
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="name">Name</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <input id="name" type="text" class="form-control tc_rbd_name" placeholder="Name..."
-            ng-model="rbd.name" name="name" validname uniquename="rbd" required autofocus>
+            ng-model="$ctrl.rbd.name" name="name" validname uniquename="rbd" required autofocus>
         <span class="help-block tc_nameRequired" ng-show="(rbdForm.$submitted || rbdForm.name.$dirty)
             && rbdForm.name.$error.required">This field is required!</span>
         <span class="help-block tc_noValidName" ng-show="rbdForm.name.$error.validname">{{errortext}}</span>
@@ -27,9 +27,10 @@
     && rbdForm.cluster.$invalid}">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="cluster">Cluster</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select id="cluster" ng-disabled="!clusters" class="form-control tc_cluster_selection" ng-model="data.cluster"
-                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid" name="cluster" required>
-            <option class="tc_rbdClusterOption" value="" ng-bind="waitingClusterMsg"></option>
+        <select id="cluster" ng-disabled="!$ctrl.clusters" class="form-control tc_cluster_selection" ng-model="$ctrl.data.cluster"
+                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in $ctrl.clusters track by cluster.fsid" name="cluster" 
+                ng-change="$ctrl.watchDataCluster()" required>
+            <option class="tc_rbdClusterOption" value="" ng-bind="$ctrl.waitingClusterMsg"></option>
         </select>
         <span class="help-block tc_clusterRequired" ng-show="(rbdForm.$submitted || rbdForm.cluster.$dirty)
             && rbdForm.cluster.$error.required">
@@ -45,17 +46,18 @@
     && rbdForm.pool.$invalid}">
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select id="pool" ng-disabled="!pools" class="form-control tc_pool_selection" ng-model="data.pool"
-                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in pools track by pool.id" name="pool" required>
+        <select id="pool" ng-disabled="!$ctrl.pools" class="form-control tc_pool_selection" ng-model="$ctrl.data.pool"
+                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in $ctrl.pools track by pool.id"
+                name="pool" ng-change="$ctrl.watchDataPool()" required>
             <option class="tc_rbdPoolOption" value="" ng-bind="waitingPoolMsg"></option>
         </select>
-        <div ng-show="data.pool" class="progress-bar-outer clearfix">
-            <uib-progressbar max="100" class="progress-striped" value="data.pool.oaUsed">
+        <div ng-show="$ctrl.data.pool" class="progress-bar-outer clearfix">
+            <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.oaUsed">
                 <span></span>
             </uib-progressbar>
-                <span class="pull-left tc_poolSize">{{data.pool.num_bytes | bytes}} of {{data.pool.oaFreeText}} used</span>
+                <span class="pull-left tc_poolSize">{{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used</span>
                 <span class="pull-right tc_poolAvailableSize">
-                    {{data.pool.oaFreeText}} free - <a ng-click="data.size = data.pool.oaMaxFree">use max</a>
+                    {{$ctrl.data.pool.oaFreeText}} free - <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree; $ctrl.watchDataSize()">use max</a>
                 </span>
         </div>
         <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
@@ -73,8 +75,8 @@
     <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="size">Size</label>
     <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
         <input id="size" class="form-control tc_rbd_size" type="text" name="size"
-            ng-disabled="data.pool == null" max-ng-value="data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
-            ng-model="data.size" placeholder="e.g., 10GB" required>
+            ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="$ctrl.data.size" placeholder="e.g., 10GB" ng-change="$ctrl.watchDataSize()" required>
         <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
             && rbdForm.size.$error.required">
             This field is required!
@@ -85,20 +87,20 @@
     <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
         <br>
         <div class="checkbox checkbox-primary">
-            <input id="expert-settings" type="checkbox" ng-disabled="data.pool == null" ng-model="data.expert" ng-name="expert">
+            <input id="expert-settings" type="checkbox" ng-disabled="$ctrl.data.pool == null" ng-model="$ctrl.data.expert" ng-name="expert">
             <label class="tc_expertSettings" for="expert-settings" >Expert settings</label>
         </div>
     </div>
 </div>
-<div ng-show="data.expert">
+<div ng-show="$ctrl.data.expert">
     <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty)
         && rbdForm.obj_size.$invalid}">
         <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="object-size">Object size</label>
         <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
             <input id="object-size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
-                ng-disabled="data.pool == null" max-ng-value="data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
-                ng-keydown="objSizeChange($event)"
-                ng-model="data.obj_size" placeholder="4 KB up to 32 MB" required>
+                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
+                ng-keydown="$ctrl.objSizeChange($event)" ng-change="$ctrl.updateObjSize($ctrl.data.obj_size, null, null)"
+                ng-model="$ctrl.data.obj_size" placeholder="4 KB up to 32 MB" required>
             <span class="help-block tc_objSizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                 && rbdForm.size.$error.required">
                 This field is required!
@@ -107,16 +109,16 @@
     </div>
     <div class="form-group tc_features">
         <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="features">Features</label>
-        <input id="features" type="hidden" ng-model="data.features" required>
+        <input id="features" type="hidden" ng-model="$ctrl.data.features" required>
         <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-            <div class="checkbox checkbox-primary" ng-repeat="(key, feature) in features" >
-                <input type="checkbox" ng-model="data.features[key].checked" id="{{key}}"
-                    ng-disabled="data.features[key].disabled"
+            <div class="checkbox checkbox-primary" ng-repeat="(key, feature) in $ctrl.features" >
+                <input type="checkbox" ng-model="$ctrl.data.features[key].checked" id="{{key}}"
+                    ng-disabled="$ctrl.data.features[key].disabled" ng-change="$ctrl.watchDataFeatures(key)"
                     class="tc_feature_{{key}}" ng-name="key">
                 <label ng-bind="feature.desc" for="{{key}}"></label>
             </div>
             <br>
-            <button type="button" class="btn btn-sm btn-default tc_featureDefaults" ng-click="defaultFeatures()">
+            <button type="button" class="btn btn-sm btn-default tc_featureDefaults" ng-click="$ctrl.defaultFeatures()">
                 Reset features
             </button>
         </div>
@@ -128,11 +130,11 @@
                     <button type="submit"
                             class="btn btn-sm btn-primary tc_submitButton"
                             ng-disabled="rbdForm.$invalid || rbdForm.$submitted"
-                            ng-click="submitAction(rbdForm)">
+                            ng-click="$ctrl.submitAction(rbdForm)">
                         Create
                         <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
+                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
                         Back
                     </button>
                 </div>

@@ -1,13 +1,13 @@
-<oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
-<oa-ceph-module-loader module="ceph_deployment" cluster="cluster" registry="registry" on-cluster-change="getRbdList()">
+<oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
+<oa-ceph-module-loader module="ceph_deployment" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getRbdList()">
 
-<div class="panel panel-default" ng-show="rbdError">
+<div class="panel panel-default" ng-show="$ctrl.rbdError">
     <div class="panel-heading">
         <h3 class="panel-title">Error</h3>
     </div>
     <div class="panel-body">Ceph RBD resources could not be loaded.</div>
 </div>
-<div class="panel panel-default" ng-show="poolError">
+<div class="panel panel-default" ng-show="$ctrl.poolError">
     <div class="panel-heading">
         <h3 class="panel-title">Error</h3>
     </div>
@@ -15,23 +15,23 @@
 </div>
 
 <oa-loading-panel message="Ceph RBDs are loading..."
-                  ng-show="!error && !rbdError && !poolError && !rbd.$resolved"></oa-loading-panel>
+                  ng-show="!$ctrl.error && !$ctrl.rbdError && !$ctrl.poolError && !$ctrl.rbd.$resolved"></oa-loading-panel>
 
-<oadatatable ng-show="!error && rbd.results" data="rbd" class="oadatatable tc_cephRbdTable" filter-config="filterConfig"
-             selection="selection" on-selection-change="onSelectionChange(selection)">
+<oadatatable ng-show="!$ctrl.error && $ctrl.rbd.results" data="$ctrl.rbd" class="oadatatable tc_cephRbdTable" filter-config="$ctrl.filterConfig"
+             selection="$ctrl.selection" on-selection-change="$ctrl.onSelectionChange(selection)">
     <actions>
-        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
+        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="$ctrl.addAction()" ng-hide="$ctrl.hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="hasSelection || multiSelection">
+        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="$ctrl.deleteAction()" ng-show="$ctrl.hasSelection || multiSelection">
             <i class="fa fa-fw fa-trash-o"></i>Delete
         </a>
         <li>
-            <a ng-click="addAction()">
+            <a ng-click="$ctrl.addAction()">
                 <i class="fa fa-fw fa-plus"></i>Add
             </a>
         </li>
-        <li class="tc_deleteItem" ng-click="deleteAction()" ng-class="{disabled: !hasSelection && !multiSelection}">
+        <li class="tc_deleteItem" ng-click="$ctrl.deleteAction()" ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
             <a>
                 <i class="fa fa-fw fa-trash-o"></i>Delete
             </a>
@@ -68,7 +68,7 @@
                             Free: {{row.free | bytes}}">
                         <div class="progress-bar" role="progressbar"
                              aria-valuenow="{{row.usedPercent}}" aria-valuemin="0"
-                             aria-valuemax="100" style="width: {{row.usedPercent}}}%">
+                             aria-valuemax="100" style="width: {{row.usedPercent}}%">
                             <span>{{row.usedPercent | number:2}}%</span>
                         </div>
                         <div class="progress-bar progress-bar-freespace" role="progressbar"
@@ -83,7 +83,10 @@
         </tbody>
     </table>
 </oadatatable>
-<div id="more" ui-view="tab">
+<div id="more" ui-view="tab"
+     tab-data="$ctrl.tabData"
+     tab-config="$ctrl.tabConfig"
+     selection="$ctrl.selection">
 </div>
 
 </oa-ceph-module-loader>

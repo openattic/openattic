@@ -7,7 +7,7 @@ var rbdCommons = function(){
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
-  this.clusterSelect = element(by.model('registry.selectedCluster'));
+  this.clusterSelect = element(by.model('$ctrl.registry.selectedCluster'));
   /* TODO: Uncomment for OP-2475
   this.statisticsTab = element(by.className('tc_statisticsTab'));
   */
@@ -52,13 +52,13 @@ var rbdCommons = function(){
     name: {
       name: 'Name',
       testClass: 'tc_rbd_name',
-      model: 'rbd.name',
+      model: '$ctrl.rbd.name',
       displayed: true
     },
     cluster: {
       name: 'Cluster',
       testClass: 'tc_cluster_selection',
-      model: 'data.cluster',
+      model: '$ctrl.data.cluster',
       displayed: true,
       items: {
         clusterSelection: 'tc_rbdClusterOption',
@@ -69,7 +69,7 @@ var rbdCommons = function(){
     pool: {
       name: 'Poolname',
       testClass: 'tc_pool_selection',
-      model: 'data.pool',
+      model: '$ctrl.data.pool',
       displayed: true,
       items: {
         poolSelection: 'tc_rbdPoolOption',
@@ -82,7 +82,7 @@ var rbdCommons = function(){
     size: {
       name: 'Size',
       testClass: 'tc_rbd_size',
-      model: 'data.size',
+      model: '$ctrl.data.size',
       displayed: true,
       items: {
         helpSize: 'tc_sizeRequired'
@@ -91,13 +91,13 @@ var rbdCommons = function(){
     expertSettings: {
       name: 'Expert Settings',
       testClass: 'tc_expertSettings',
-      model: 'data.expert',
+      model: '$ctrl.data.expert',
       displayed: true
     },
     objectSize: {
       name: 'Object size',
       testClass: 'tc_rbd_obj_size',
-      model: 'data.obj_size',
+      model: '$ctrl.data.obj_size',
       displayed: false,
       items: {
         helpSize: 'tc_objSizeRequired'
@@ -277,7 +277,7 @@ var rbdCommons = function(){
     expect(rbd.isDisplayed()).toBe(true);
     rbd.click();
 
-    expect(element(by.binding('selection.item.obj_size')).getText()).toBe(rbdObjSize);
+    expect(element(by.binding('$ctrl.selection.item.obj_size')).getText()).toBe(rbdObjSize);
     if(featureCase){
       var keys = Object.keys(self.formElements.features.items);
       featureCase.forEach(function(state, index){ // check the features

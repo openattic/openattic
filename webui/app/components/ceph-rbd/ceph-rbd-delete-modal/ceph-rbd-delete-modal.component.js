@@ -30,38 +30,44 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, fsid, $q,
-    Notification) {
-  $scope.rbds = rbdSelection;
+var app = angular.module("openattic.cephRbd");
+app.component("cephRbdDeleteModal", {
+  templateUrl: "components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html",
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  },
+  controller: function (cephRbdService, $q, Notification) {
+    var self = this;
 
-  $scope.delete = function () {
-    return $q(function (resolve, reject) {
-      var requests = [];
-      $scope.rbds.forEach(function (rbd) {
-        var deferred = $q.defer();
-        cephRbdService.delete({
-          fsid: fsid,
-          pool: rbd.pool.name,
-          name: rbd.name
-        }, deferred.resolve, deferred.reject);
-        requests.push(deferred.promise);
+    self.delete = function () {
+      return $q(function (resolve, reject) {
+        var requests = [];
+        self.resolve.rbdSelection.forEach(function (rbd) {
+          var deferred = $q.defer();
+          cephRbdService.delete({
+            fsid: self.resolve.fsid,
+            pool: rbd.pool.name,
+            name: rbd.name
+          }, deferred.resolve, deferred.reject);
+          requests.push(deferred.promise);
+        });
+        $q.all(requests).then(function () {
+          resolve();
+          self.modalInstance.close("deleted");
+        }, function () {
+          reject();
+        });
       });
-      $q.all(requests).then(function () {
-        resolve();
-        $uibModalInstance.close("deleted");
-      }, function () {
-        reject();
+    };
+
+    self.cancel = function () {
+      self.modalInstance.dismiss("cancel");
+
+      Notification.warning({
+        title: "Delete RBD",
+        msg: "Cancelled"
       });
-    });
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-
-    Notification.warning({
-      title: "Delete RBD",
-      msg: "Cancelled"
-    });
-  };
+    };
+  }
 });

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,8 +30,12 @@
  */
 "use strict";
 
-angular.module("openattic.cephRbd", [
-  "openattic.cephCluster",
-  "openattic.registry",
-  "openattic.tabView"
-]);
+var app = angular.module("openattic.cephRbd");
+app.component("cephRbdDetail", {
+  templateUrl: "components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html",
+  bindings: {
+    selection: "<"
+  },
+  controller: function () {
+  }
+});
