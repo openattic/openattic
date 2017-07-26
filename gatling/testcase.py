@@ -343,3 +343,34 @@ class GatlingTestCase(unittest.TestCase):
                                                 response=e.response,
                                                 request=e.request)
         return res
+
+    @classmethod
+    def send_ceph_request(cls, method, fsid, subresource=None, data=None):
+        """
+        Helper function to send the request to the Ceph REST API.
+
+        :param method: HTTP method of the request
+        :type method: str
+        :param fsid: Ceph cluster fsid
+        :type method: str
+        :param subresource: Resource under /ceph/<fsid> that should be called
+        :type method: str
+        :param data: Request data
+        :type data: dict[str, Any]
+        :return: Returns the response of the request
+        :rtype: requests.response
+        """
+        url = '{}{}/{}'.format(cls.base_url, 'ceph', fsid)
+
+        if subresource:
+            url = '{}/{}'.format(url, subresource)
+
+        headers = dict()
+        headers['content-type'] = 'application/json'
+        headers.update(cls.get_auth_header())
+
+        res = cls._do_request(method, url, headers, data=data)
+        try:
+            return {'response': res.json(), 'status_code': res.status_code}
+        except:
+            return {'response': res.text, 'status_code': res.status_code}
