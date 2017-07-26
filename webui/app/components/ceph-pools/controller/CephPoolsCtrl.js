@@ -31,10 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, clusterData, registryService,
+app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, registryService,
     $uibModal, tabViewService) {
   $scope.registry = registryService;
-  $scope.cluster = clusterData;
+  $scope.cluster = undefined;
   $scope.pools = {};
   $scope.error = false;
 
@@ -48,11 +48,6 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.selection = {};
 
-  if (angular.isObject($scope.cluster) && $scope.cluster.results.length > 0 &&
-      angular.isUndefined($scope.registry.selectedCluster)) {
-    $scope.registry.selectedCluster = $scope.cluster.results[0];
-  }
-
   var modifyResult = function (res) {
     res.results.forEach(function (pool) {
       pool.oaUsed = pool.percent_used;
@@ -63,8 +58,13 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     return res;
   };
 
+  $scope.onClusterLoad = function (cluster) {
+    $scope.cluster = cluster;
+  };
+
   $scope.getPoolList = function () {
-    if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
+    if (angular.isObject($scope.cluster) && $scope.cluster.results &&
+        $scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];

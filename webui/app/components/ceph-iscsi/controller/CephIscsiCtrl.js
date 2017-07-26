@@ -31,12 +31,12 @@
 "use strict";
 
 var app = angular.module("openattic.cephIscsi");
-app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $uibModal, clusterData, registryService,
+app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $uibModal, registryService,
     tabViewService, cephIscsiService, CEPH_ISCSI_IMAGE_OPTIONAL_SETTINGS, CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS,
     CEPH_ISCSI_TARGET_ADVANCED_SETTINGS, Notification) {
 
   $scope.registry = registryService;
-  $scope.cluster = clusterData;
+  $scope.cluster = undefined;
   $scope.iscsi = {};
   $scope.error = false;
 
@@ -51,10 +51,6 @@ app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $ui
   };
 
   $scope.selection = {};
-
-  if ($scope.cluster.results.length > 0 && typeof $scope.registry.selectedCluster === "undefined") {
-    $scope.registry.selectedCluster = $scope.cluster.results[0];
-  }
 
   $scope.deployed = {
     $resolved: false,
@@ -107,8 +103,13 @@ app.controller("CephIscsiCtrl", function ($scope, $state, $filter, $timeout, $ui
       });
   };
 
+  $scope.onClusterLoad = function (cluster) {
+    $scope.cluster = cluster;
+  };
+
   $scope.getIscsiList = function () {
-    if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
+    if (angular.isObject($scope.cluster) && $scope.cluster.results &&
+        $scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];

@@ -31,10 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.cephRbd");
-app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService, clusterData,
+app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, cephRbdService,
     registryService, cephPoolsService, Notification, tabViewService) {
   $scope.registry = registryService;
-  $scope.cluster = clusterData;
+  $scope.cluster = undefined;
   $scope.rbd = {};
   $scope.error = false;
 
@@ -48,13 +48,13 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
 
   $scope.selection = {};
 
-  if (angular.isObject($scope.cluster) && $scope.cluster.results.length > 0 &&
-      angular.isUndefined($scope.registry.selectedCluster)) {
-    $scope.registry.selectedCluster = $scope.cluster.results[0];
-  }
+  $scope.onClusterLoad = function (cluster) {
+    $scope.cluster = cluster;
+  };
 
   $scope.getRbdList = function () {
-    if ($scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
+    if (angular.isObject($scope.cluster) && $scope.cluster.results &&
+        $scope.cluster.results.length > 0 && $scope.registry.selectedCluster) {
       var obj = $filter("filter")($scope.cluster.results, {fsid: $scope.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
         $scope.registry.selectedCluster = $scope.cluster.results[0];
@@ -73,11 +73,11 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
           })
           .$promise
           .then(function (res) {
-            $scope.rbdFailure = false;
+            $scope.rbdError = false;
             cephPoolsService.get({
               fsid: $scope.registry.selectedCluster.fsid
             }).$promise.then(function (pools) {
-              $scope.poolFailure = false;
+              $scope.poolError = false;
               res.results.forEach(function (rbd) {
                 pools.results.some(function (pool) {
                   if (pool.id === rbd.pool) {
@@ -90,20 +90,12 @@ app.controller("CephRbdCtrl", function ($scope, $state, $filter, $uibModal, ceph
                 rbd.freePercent = rbd.free / rbd.size * 100;
               });
               $scope.rbd = res;
-            }).catch(function (poolError) {
-              if (!$scope.poolFailure) {
-                $scope.poolFailure = true;
-                $scope.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
-                $scope.poolFailureError = poolError;
-              }
+            }).catch(function (error) {
+              $scope.poolError = error;
             });
           })
-          .catch(function (rbdError) {
-            if (!$scope.rbdFailure) {
-              $scope.rbdFailure = true;
-              $scope.rbdFailureTitle = rbdError.status + ": " + rbdError.statusText.toLowerCase();
-              $scope.rbdFailureError = rbdError;
-            }
+          .catch(function (error) {
+            $scope.rbdError = error;
           });
     }
   };

@@ -53,9 +53,9 @@
           <ng-include src="$ctrl.getErrorTemplate($ctrl.moduleAvailable.reason)"></ng-include>
           <span ng-if="$ctrl.moduleAvailable.message">
             <hr>
-            {{ $ctrl.moduleAvailable.message }}
+            <span ng-bind-html="$ctrl.moduleAvailable.message"></span>
           </span>
-          <span class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})</span>
+          <span ng-if="$ctrl.moduleAvailable.reason" class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})</span>
         </div>
     </div>
     </span>

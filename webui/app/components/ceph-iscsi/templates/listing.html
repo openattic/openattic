@@ -1,3 +1,4 @@
+<oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
 <oa-ceph-module-loader module="ceph_iscsi" cluster="cluster" registry="registry" on-cluster-change="getIscsiList()">
 
 <div class="panel panel-default" ng-show="error">
@@ -117,4 +118,6 @@
 
 <div id="more" ui-view="tab">
 </div>
+
 </oa-ceph-module-loader>
+</oa-ceph-cluster-loader>
