@@ -92,7 +92,13 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="images">Images</label>
+          <label class="col-sm-3 control-label" for="images"
+                 uib-tooltip-template="'unsupportedRbdFeatures.html'"
+                 tooltip-class="oa-iscsi-image-tooltip"
+                 tooltip-trigger="'outsideClick'"
+                 tooltip-placement="bottom-right">
+            Images <i class="fa fa-question-circle" aria-hidden="true"></i>
+          </label>
           <input type="hidden" ng-model="model.images[0]" id="images" required>
           <div class="col-sm-9">
             <span ng-if="model.images.length === 0" class="form-control no-border">
@@ -416,3 +422,10 @@
     </div>
   </form>
 </div>
+
+<script type="text/ng-template" id="unsupportedRbdFeatures.html">
+    <p>RBD images with the following features are not supported by iSCSI:</p>
+    <ul>
+        <li ng-repeat="(id, elem) in unsupportedRbdFeatures">{{elem.name}}</li>
+    </ul>
+</script>

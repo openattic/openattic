@@ -1293,3 +1293,8 @@ uib-accordion .panel-title,
 .required {
   color: #d04437;
 }
+
+/* iSCSI  */
+.tooltip.oa-iscsi-image-tooltip .tooltip-inner {
+  text-align: justify;
+}
