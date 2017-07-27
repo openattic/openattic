@@ -23,6 +23,7 @@ try:
 except ImportError:
     CephFSUtil = None
 from ceph_nfs.tasks import async_deploy_exports
+from ceph.models import CephCluster
 from ceph_radosgw.rgw_client import RGWClient
 from deepsea import DeepSea
 from nodb.models import JsonField, NodbModel
@@ -115,7 +116,7 @@ class GaneshaExport(NodbModel):
                 })
         return [GaneshaExport(**GaneshaExport.make_model_args(e)) for e in exports]
 
-    def _validate(self, exports, cluster_name):
+    def _validate(self, exports, cluster):
         if self.fsal == 'CEPH':
             path_regex = r'^/[^><|&()?]*$'
         elif self.fsal == 'RGW':
@@ -185,7 +186,7 @@ class GaneshaExport(NodbModel):
                                            self.pseudo[idx:])
                 if self.fsal == 'CEPH':
                     if self.path != real_path and \
-                       not CephFSUtil.instance(cluster_name).dir_exists(real_path):
+                       not CephFSUtil.instance(cluster).dir_exists(real_path):
                         raise ValidationError("Pseudo path ({}) invalid, path {} does not exist."
                                               .format(self.pseudo, real_path))
 
@@ -276,7 +277,7 @@ class GaneshaExport(NodbModel):
              update_fields=None):
 
         context = GaneshaExport.objects.nodb_context
-        cluster_name = context.cluster.name
+        cluster = context.cluster
 
         self.path = self.path.strip()
         if self.fsal == 'CEPH' and self.path[-1] == '/' and len(self.path) > 1:
@@ -287,7 +288,7 @@ class GaneshaExport(NodbModel):
         if hasattr(self, 'id'):
             export_models = [e for e in export_models if e.id != self.id]
 
-        self._validate([e for e in export_models if e.host == self.host], cluster_name)
+        self._validate([e for e in export_models if e.host == self.host], cluster)
 
         try:
             rgw_is_online = RGWClient.admin_instance().is_service_online()
@@ -297,9 +298,9 @@ class GaneshaExport(NodbModel):
             raise Exception("RGW REST service is not online, please check if service is running "
                             "and openATTIC configuration settings")
 
-        if self.fsal == 'CEPH' and not CephFSUtil.instance(cluster_name).dir_exists(self.path):
+        if self.fsal == 'CEPH' and not CephFSUtil.instance(cluster).dir_exists(self.path):
             cephfs = get_dbus_object("/cephfs")
-            cephfs.cephfs_mkdirs(cluster_name, self.path)
+            cephfs.cephfs_mkdirs(cluster.fsid, self.path)
         elif self.fsal == 'RGW':
             rgw = RGWClient.instance(self.rgwUserId)
             try:
