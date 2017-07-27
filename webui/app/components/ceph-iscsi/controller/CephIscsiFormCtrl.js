@@ -67,7 +67,7 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
   };
 
   var generateTargetId = function () {
-    return "iqn.1996-04.de.suse:" + Date.now();
+    return "iqn.1996-10.com.suse:" + Date.now();
   };
 
   var hasLunId = function (model) {
