@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ceph', '0012_cephpool_compression'),
+        ('ceph', '0013_cephcluster_add_keyring'),
     ]
 
     operations = [
