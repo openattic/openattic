@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 Added
 ~~~~~
 * Backend: Enable compression on Ceph pools on BlueStore OSD Pools (OP-2309)
+* WebUI: iSCSI - Add help text on Images field (OP-2508)
 
 Changed
 ~~~~~~~
