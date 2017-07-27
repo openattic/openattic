@@ -339,26 +339,36 @@
                   </div>
 
                   <!--  Ceph Cluster Keyring File -->
-                  <div class="form-group">
+                  <div class="form-group"
+                    ng-class="{'has-error': (settingsForm.$submitted || settingsForm['cephClusterKeyringFilePath'].$dirty) && settingsForm['cephClusterKeyringFilePath'].$invalid}">
                     <label class="col-sm-3 control-label" for="cephClusterKeyringFilePath">Keyring file</label>
                     <div class="col-sm-9">
                       <input type="text" class="form-control" name="cephClusterKeyringFilePath" id="cephClusterKeyringFilePath"
                              ng-model="cephCluster.keyring_file_path" autocomplete="off"
                              uib-typeahead="file for file in $ctrl.getKeyringFileTypeahead(cephCluster.fsid)"
                              typeahead-focus-first="false" ng-change="$ctrl.checkCephConnection(cephCluster)"
-                             typeahead-on-select="$ctrl.checkCephConnection(cephCluster)">
+                             typeahead-on-select="$ctrl.checkCephConnection(cephCluster)" required>
+                      <span class="help-block tc_cephClusterKeyringFilePathRequired"
+                            ng-show="(settingsForm.$submitted || settingsForm['cephClusterKeyringFilePath'].$dirty) && settingsForm['cephClusterKeyringFilePath'].$error.required">
+                        Required field
+                      </span>
                     </div>
                   </div>
 
                   <!--  Ceph Cluster Keyring User -->
-                  <div class="form-group">
+                  <div class="form-group"
+                       ng-class="{'has-error': (settingsForm.$submitted || settingsForm['cephClusterKeyringUser'].$dirty) && settingsForm['cephClusterKeyringUser'].$invalid}">
                     <label class="col-sm-3 control-label" for="cephClusterKeyringUser">Keyring user</label>
                     <div class="col-sm-9">
                       <input type="text" class="form-control" name="cephClusterKeyringUser" id="cephClusterKeyringUser"
                              ng-model="cephCluster.keyring_user" autocomplete="off"
                              uib-typeahead="user for user in $ctrl.getKeyringUserTypeahead(cephCluster.fsid, cephCluster.keyring_file_path)"
                              typeahead-focus-first="false" ng-change="$ctrl.checkCephConnection(cephCluster)"
-                             typeahead-on-select="$ctrl.checkCephConnection(cephCluster)">
+                             typeahead-on-select="$ctrl.checkCephConnection(cephCluster)" required>
+                      <span class="help-block tc_cephClusterKeyringUserRequired"
+                            ng-show="(settingsForm.$submitted || settingsForm['cephClusterKeyringUser'].$dirty) && settingsForm['cephClusterKeyringUser'].$error.required">
+                        Required field
+                      </span>
                     </div>
                   </div>
 

@@ -34,7 +34,9 @@ var SettingsForm = function(){
 
   this.cephClusterConfigFile = element(by.model('cephCluster.config_file_path'));
   this.cephClusterKeyringFile = element(by.model('cephCluster.keyring_file_path'));
+  this.cephClusterKeyringFileRequired = element(by.css('.tc_cephClusterKeyringFilePathRequired'));
   this.cephClusterKeyringUser = element(by.model('cephCluster.keyring_user'));
+  this.cephClusterKeyringUserRequired = element(by.css('.tc_cephClusterKeyringUserRequired'));
   this.cephClusterConnectionSuccess = element(by.css('.tc_cephConnectionSuccess'));
   this.cephClusterConnectionFail = element(by.css('.tc_cephConnectionFail'));
 

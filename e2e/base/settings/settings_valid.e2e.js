@@ -79,6 +79,22 @@ describe('settings inputs validations', function(){
     expect(form.cephClusterConfigFile.isEnabled()).toBe(false);
   });
 
+  it('should validate ceph keyring file path', function(){
+    form.cephClusterKeyringFile.clear();
+    expect(form.cephClusterKeyringFileRequired.isDisplayed()).toBe(true);
+
+    form.cephClusterKeyringFile.sendKeys('/e2e-path');
+    expect(form.cephClusterKeyringFileRequired.isDisplayed()).toBe(false);
+  });
+
+  it('should validate ceph keyring user', function(){
+    form.cephClusterKeyringUser.clear();
+    expect(form.cephClusterKeyringUserRequired.isDisplayed()).toBe(true);
+
+    form.cephClusterKeyringUser.sendKeys('e2e-user');
+    expect(form.cephClusterKeyringUserRequired.isDisplayed()).toBe(false);
+  });
+
   it('should check salt api connection', function(){
     browser.refresh();
 
