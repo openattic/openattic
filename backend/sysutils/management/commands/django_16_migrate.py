@@ -448,7 +448,7 @@ _migrations = [
         """
     ),
     SqlMigration(
-        'ceph', u'0013_cephrbd_data_pool',
+        'ceph', u'0014_cephrbd_data_pool',
         lambda cursor: _column_not_exists('ceph_cephrbd', 'data_pool_id', cursor),
         """
         BEGIN;
