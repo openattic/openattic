@@ -13,7 +13,8 @@
 """
 from django.conf.urls import patterns, url
 from oa_settings.views import SettingsView, CheckDeepSeaConnectionView, CheckGrafanaConnectionView, \
-                              CheckRGWConnectionView, GetRGWConfigurationView
+                              CheckRGWConnectionView, GetRGWConfigurationView, \
+                              CheckCephCofigurationView
 
 
 urlpatterns = patterns('',
@@ -25,4 +26,6 @@ urlpatterns = patterns('',
                            CheckRGWConnectionView.as_view(), name='settings_check_rgw'),
                        url(r'^api/settings/get_rgw_configuration$',
                            GetRGWConfigurationView.as_view(), name='settings_get_rgw_conf'),
+                       url(r'^api/settings/check_ceph_configuration$',
+                           CheckCephCofigurationView.as_view(), name='settings_check_ceph_conf'),
                        url(r'^api/settings$', SettingsView.as_view(), name="settings"))

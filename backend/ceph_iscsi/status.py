@@ -16,7 +16,7 @@ import logging
 from django.core.exceptions import ValidationError
 
 from ceph.models import CephCluster
-from ceph.librados import Client
+from ceph.librados import Client, ClusterConf
 from deepsea import DeepSea
 from module_status import check_deepsea_connection, Reason, UnavailableModule
 from rest_client import RequestException
@@ -51,11 +51,11 @@ def check_deepsea_iscsi_api():
 
 def check_ceph_api(fsid):
     try:
-        cluster_name = CephCluster.get_name(fsid)
-        with Client(cluster_name) as client:
+        cluster = ClusterConf.from_fsid(fsid)
+        with cluster.client as client:
             if not client.connected():
                 raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CONNECTION,
-                                        {'fsid': fsid, 'cluster_name': cluster_name})
+                                        {'fsid': fsid, 'cluster_name': cluster.name})
     except LookupError:
         raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CLUSTER_FOUND, {'fsid': fsid})
 
