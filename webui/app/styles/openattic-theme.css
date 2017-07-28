@@ -1298,7 +1298,8 @@ uib-accordion .panel-title,
   color: #d04437;
 }
 
-/* iSCSI  */
-.tooltip.oa-iscsi-image-tooltip .tooltip-inner {
-  text-align: justify;
+/* oa-helper  */
+oa-helper i {
+  color: #288cea;
+  cursor: pointer;
 }
