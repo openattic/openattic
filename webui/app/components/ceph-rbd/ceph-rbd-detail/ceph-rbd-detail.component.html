@@ -18,7 +18,7 @@
             <dd ng-bind="$ctrl.selection.item.num_objs"></dd>
             <div ng-if="$ctrl.selection.item.features.length > 0">
                 <dt>Features:</dt>
-                <dd ng-repeat="feature in $ctrl.selection.item.features" ng-bind="feature"></dd>
+                <dd ng-repeat="feature in $ctrl.selection.item.features">{{$ctrl.features[feature].desc}}</dd>
             </div>
         </dl>
     </div>

@@ -108,15 +108,42 @@ var rbdCommons = function(){
       testClass: 'tc_features',
       displayed: false,
       items: {
-        'deep-flatten': 'tc_feature_deep-flatten',
-        'layering': 'tc_feature_layering',
-        'stripingv2': 'tc_feature_stripingv2',
-        'exclusive-lock': 'tc_feature_exclusive-lock',
-        'object-map': 'tc_feature_object-map',
-        'journaling': 'tc_feature_journaling',
-        'fast-diff': 'tc_feature_fast-diff',
-        'defaultFeatures': 'tc_featureDefaults',
-        'helpSize': 'tc_objSizeRequired'
+        'deep-flatten': {
+          class: 'tc_feature_deep-flatten',
+          desc: 'Deep flatten'
+        },
+        'layering': {
+          class: 'tc_feature_layering',
+          desc: 'Layering'
+        },
+        'stripingv2': {
+          class: 'tc_feature_stripingv2',
+          desc: 'Striping (currently unsupported)'
+        },
+        'exclusive-lock': {
+          class: 'tc_feature_exclusive-lock',
+          desc: 'Exclusive lock'
+        },
+        'object-map': {
+          class: 'tc_feature_object-map',
+          desc: 'Object map'
+        },
+        'journaling': {
+          class: 'tc_feature_journaling',
+          desc: 'Journaling'
+        },
+        'fast-diff': {
+          class: 'tc_feature_fast-diff',
+          desc: 'Fast diff'
+        },
+        'defaultFeatures': {
+          class: 'tc_featureDefaults',
+          desc: ''
+        },
+        'helpSize': {
+          class: 'tc_objSizeRequired',
+          desc: ''
+        }
       }
     }
   };
@@ -194,13 +221,13 @@ var rbdCommons = function(){
     var keys = Object.keys(self.formElements.features.items);
     var values = self.formElements.features.items;
     for (var i = 0; i < 7; i++){ // deselect all boxes
-      self.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
+      self.checkCheckboxToBe(element(by.className(values[keys[i]].class)), false);
     }
     features.forEach(function(state, index){ // select the features
-      self.checkCheckboxToBe(element(by.className(values[keys[index]])), state === 1);
+      self.checkCheckboxToBe(element(by.className(values[keys[index]].class)), state === 1);
     });
     features.forEach(function(state, index){ // control feature states
-      self.controlFeatureState(element(by.className(values[keys[index]])), state);
+      self.controlFeatureState(element(by.className(values[keys[index]].class)), state);
     });
   };
 
@@ -280,11 +307,12 @@ var rbdCommons = function(){
     expect(element(by.binding('$ctrl.selection.item.obj_size')).getText()).toBe(rbdObjSize);
     if(featureCase){
       var keys = Object.keys(self.formElements.features.items);
+      var values = self.formElements.features.items;
       featureCase.forEach(function(state, index){ // check the features
         if(state === 1){
-          expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
+          expect(element(by.cssContainingText('dd', values[keys[index]].desc)).isDisplayed()).toBe(true);
         } else {
-          expect(element(by.cssContainingText('dd', keys[index])).isPresent()).toBe(false);
+          expect(element(by.cssContainingText('dd', values[keys[index]].desc)).isPresent()).toBe(false);
         }
       });
     }

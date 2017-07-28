@@ -36,6 +36,9 @@ app.component("cephRbdDetail", {
   bindings: {
     selection: "<"
   },
-  controller: function () {
+  controller: function (cephRbdFeatures) {
+    var self = this;
+
+    self.features = cephRbdFeatures;
   }
 });

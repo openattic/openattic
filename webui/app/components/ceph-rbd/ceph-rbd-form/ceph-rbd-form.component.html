@@ -108,10 +108,18 @@
         </div>
     </div>
     <div class="form-group tc_features">
-        <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="features">Features</label>
+        <label class="col-sm-3 control-label" for="features"
+               uib-tooltip-template="'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-tooltip-features.html'"
+               tooltip-class="oa-iscsi-image-tooltip"
+               tooltip-trigger="'outsideClick'"
+               tooltip-placement="bottom-right">
+            Features <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </label>
         <input id="features" type="hidden" ng-model="$ctrl.data.features" required>
         <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-            <div class="checkbox checkbox-primary" ng-repeat="(key, feature) in $ctrl.features" >
+            <div class="checkbox checkbox-primary"
+                 ng-repeat="(key, feature) in $ctrl.features"
+                 ng-if="feature.isUsed" >
                 <input type="checkbox" ng-model="$ctrl.data.features[key].checked" id="{{key}}"
                     ng-disabled="$ctrl.data.features[key].disabled" ng-change="$ctrl.watchDataFeatures(key)"
                     class="tc_feature_{{key}}" ng-name="key">

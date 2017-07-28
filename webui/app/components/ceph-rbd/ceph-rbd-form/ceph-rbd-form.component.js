@@ -33,10 +33,10 @@
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdForm", {
   templateUrl: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html",
-  bindings: {
-  },
-  controller: function ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
-      SizeParserService, $filter, Notification, cephClusterService) {
+  bindings: {},
+  controller: function ($scope, $state, $stateParams, cephRbdService,
+      cephPoolsService, SizeParserService, $filter, Notification,
+      cephClusterService, cephRbdFeatures) {
     var self = this;
 
     self.submitted = false;
@@ -90,50 +90,7 @@ app.component("cephRbdForm", {
     self.pools = {};
     self.clusters = {};
 
-    self.features = {
-      "deep-flatten": {
-        desc: "Deep flatten",
-        helpText: "",
-        requires: null,
-        excludes: null
-      },
-      "layering": {
-        desc: "Layering",
-        helpText: "",
-        requires: null,
-        excludes: null
-      },
-      "stripingv2": {
-        desc: "Striping (currently unsupported)",
-        helpText: "This feature is currently unsupported.",
-        requires: "unsupported",
-        excludes: null
-      },
-      "exclusive-lock": {
-        desc: "Exclusive lock",
-        helpText: "",
-        requires: null,
-        excludes: null
-      },
-      "object-map": {
-        desc: "Object map",
-        helpText: "",
-        requires: "exclusive-lock",
-        excludes: null
-      },
-      "journaling": {
-        desc: "Journaling",
-        helpText: "",
-        requires: "exclusive-lock",
-        excludes: null
-      },
-      "fast-diff": {
-        desc: "Fast diff",
-        helpText: "",
-        requires: "object-map",
-        excludes: null
-      }
-    };
+    self.features = cephRbdFeatures;
 
     self.defaultFeatureValues = {};
     angular.copy(self.data.features, self.defaultFeatureValues);
