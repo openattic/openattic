@@ -29,6 +29,7 @@ Added
 Changed
 ~~~~~~~
 * WebUI: Migration of Ceph RBDs controllers to components (OP-2400)
+* Backend/QA: RGW proxy Gatling tests are disabled by default (OP-2525)
 
 Fixed
 ~~~~~
