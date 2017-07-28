@@ -25,11 +25,13 @@ Added
 * Backend: Added settings to allow overwriting the cluster by DeepSea (OP-2502, OP-2483, OP-2339)
 * WebUI: iSCSI - Add help text on Images field (OP-2508)
 * WebUI: Add support for local configs (OP-2469)
+* WebUI: Make Ceph keyring configurable from the UI (OP-2504)
 
 Changed
 ~~~~~~~
 * WebUI: Migration of Ceph RBDs controllers to components (OP-2400)
 * Backend/QA: RGW proxy Gatling tests are disabled by default (OP-2525)
+* WebUI: Improve suggested iSCSI target IQN format (OP-2511)
 
 Fixed
 ~~~~~
