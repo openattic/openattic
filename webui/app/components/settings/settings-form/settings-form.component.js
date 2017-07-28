@@ -35,14 +35,19 @@ app.component("settingsForm",  {
   templateUrl: "components/settings/settings-form/settings-form.component.html",
   bindings: {
   },
-  controller: function ($scope, $state, $timeout, settingsFormService, Notification) {
+  controller: function ($scope, $state, $timeout, $q, settingsFormService, cephClusterService, Notification) {
     var self = this;
+
+    const animationTimeout = 300;
 
     self.model = {
       deepsea: {},
       rgw: {},
-      grafana: {}
+      grafana: {},
+      ceph: {}
     };
+
+    self.clustersKeyringCandidates = {};
 
     var defaultRgwDeepseaSettings = {
       managed_by_deepsea: true
@@ -62,6 +67,14 @@ app.component("settingsForm",  {
         if (!self.model.rgw.managed_by_deepsea) {
           self.managedByDeepSeaEnabled = false;
         }
+        angular.forEach(self.model.ceph, function (cluster) {
+          self.checkCephConnection(cluster);
+          cephClusterService.keyringCandidates(cluster)
+          .$promise
+          .then(function (res) {
+            self.clustersKeyringCandidates[cluster.fsid] = res;
+          });
+        });
         self.checkDeepSeaConnection();
         self.checkGrafanaConnection();
       })
@@ -123,7 +136,7 @@ app.component("settingsForm",  {
           .catch(function () {
             self.deepseaConnectionStatus = undefined;
           });
-        }, 1000);
+        }, animationTimeout);
       }
     };
 
@@ -155,7 +168,7 @@ app.component("settingsForm",  {
             .catch(function () {
               self.rgwConnectionStatus = undefined;
             });
-        }, 1000);
+        }, animationTimeout);
       }
     };
 
@@ -193,8 +206,61 @@ app.component("settingsForm",  {
             .catch(function () {
               self.grafanaConnectionStatus = undefined;
             });
-        }, 1000);
+        }, animationTimeout);
       }
+    };
+
+    var isAllCephPropsDefined = function (ceph) {
+      return angular.isDefined(ceph.config_file_path) &&
+          angular.isDefined(ceph.keyring_file_path) &&
+          angular.isDefined(ceph.keyring_user);
+    };
+
+    var checkCephConnectionTimeout;
+    self.checkCephConnection = function (ceph) {
+      self.cephConnectionStatus = undefined;
+      if (checkCephConnectionTimeout) {
+        $timeout.cancel(checkCephConnectionTimeout);
+      }
+      if (isAllCephPropsDefined(ceph)) {
+        self.cephConnectionStatus = {
+          loading: true
+        };
+        checkCephConnectionTimeout = $timeout(function () {
+          settingsFormService.checkCephConnection(ceph)
+            .$promise
+            .then(function (res) {
+              self.cephConnectionStatus = res;
+            })
+            .catch(function () {
+              self.cephConnectionStatus = undefined;
+            });
+        }, animationTimeout);
+      }
+    };
+
+    self.getKeyringFileTypeahead = function (fsid) {
+      var clusterKeyringCandidates = self.clustersKeyringCandidates[fsid];
+      if (angular.isDefined(clusterKeyringCandidates)) {
+        return clusterKeyringCandidates.reduce(function (result, item) {
+          return result.concat(item["file-path"]);
+        }, []);
+      }
+      return [];
+    };
+
+    self.getKeyringUserTypeahead = function (fsid, keyringFile) {
+      var clusterKeyringCandidates = self.clustersKeyringCandidates[fsid];
+      if (angular.isDefined(clusterKeyringCandidates)) {
+        return clusterKeyringCandidates.reduce(function (result, item) {
+          if (item["file-path"] === keyringFile) {
+            return result.concat(item["user-names"]);
+          } else {
+            return result;
+          }
+        }, []);
+      }
+      return [];
     };
 
     self.saveAction = function () {
