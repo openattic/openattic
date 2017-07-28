@@ -26,6 +26,7 @@ Added
 * WebUI: iSCSI - Add help text on Images field (OP-2508)
 * WebUI: Add support for local configs (OP-2469)
 * WebUI: Make Ceph keyring configurable from the UI (OP-2504)
+* WebUI: RBD - Add information about features unsupported by iSCSI (OP-2522)
 
 Changed
 ~~~~~~~
