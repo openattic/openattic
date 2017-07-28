@@ -406,11 +406,17 @@ class CephPoolSerializerTest(TestCase):
     minimal_ersaure_pool = {'name': 'erasure_coded_pool', 'erasure_code_profile': 'default',
                             'type': 'erasure', 'pg_num': 3, 'crush_ruleset': 0}
 
+    mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
+
+    @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.CephErasureCodeProfile.get_all_objects')
-    def test_minimum_valid_pools(self, cecpo_mock):
+    def test_minimum_valid_pools(self, cecpo_mock, cephpool_objects_mock):
 
         profile = ceph.models.CephErasureCodeProfile(name='default', m=1, k=1)
         cecpo_mock.return_value = [profile]
+
+        cephpool_objects_mock.nodb_context = self.mock_context
+        nodb.models.NodbManager.nodb_context = self.mock_context
 
         for pool in [self.minimal_replicated_pool, self.minimal_ersaure_pool]:
 
