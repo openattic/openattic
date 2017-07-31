@@ -38,7 +38,7 @@ app.constant("cephRbdFeatures", {
     requires: null,
     excludes: null,
     isSupportedISCSI: false,
-    isUsed: true
+    isDisplayed: true
   },
   "layering": {
     desc: "Layering",
@@ -46,7 +46,7 @@ app.constant("cephRbdFeatures", {
     requires: null,
     excludes: null,
     isSupportedISCSI: true,
-    isUsed: true
+    isDisplayed: true
   },
   "stripingv2": {
     desc: "Striping (currently unsupported)",
@@ -54,7 +54,7 @@ app.constant("cephRbdFeatures", {
     requires: "unsupported",
     excludes: null,
     isSupportedISCSI: true,
-    isUsed: true
+    isDisplayed: true
   },
   "exclusive-lock": {
     desc: "Exclusive lock",
@@ -62,7 +62,7 @@ app.constant("cephRbdFeatures", {
     requires: null,
     excludes: null,
     isSupportedISCSI: false,
-    isUsed: true
+    isDisplayed: true
   },
   "object-map": {
     desc: "Object map",
@@ -70,7 +70,7 @@ app.constant("cephRbdFeatures", {
     requires: "exclusive-lock",
     excludes: null,
     isSupportedISCSI: false,
-    isUsed: true
+    isDisplayed: true
   },
   "journaling": {
     desc: "Journaling",
@@ -78,7 +78,7 @@ app.constant("cephRbdFeatures", {
     requires: "exclusive-lock",
     excludes: null,
     isSupportedISCSI: false,
-    isUsed: true
+    isDisplayed: true
   },
   "fast-diff": {
     desc: "Fast diff",
@@ -86,7 +86,7 @@ app.constant("cephRbdFeatures", {
     requires: "object-map",
     excludes: null,
     isSupportedISCSI: false,
-    isUsed: true
+    isDisplayed: true
   },
   "data-pool": {
     desc: "Data pool",
@@ -94,6 +94,6 @@ app.constant("cephRbdFeatures", {
     requires: null,
     excludes: null,
     isSupportedISCSI: false,
-    isUsed: false
+    isDisplayed: false
   }
 });

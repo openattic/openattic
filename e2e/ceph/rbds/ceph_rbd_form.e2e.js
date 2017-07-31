@@ -10,6 +10,7 @@ describe('should test the ceph rbd creation form', function(){
     helpers.login();
     rbdProperties.cephRBDs.click();
     rbdProperties.addButton.click();
+    rbdProperties.firstPool.click();
   });
 
   var objSizeInput = [
@@ -129,6 +130,36 @@ describe('should test the ceph rbd creation form', function(){
     it('should test the following case: [' + testCase + ']',function(){
       rbdProperties.selectFeatures(testCase);
     });
+  });
+
+  /**
+   * For this tests at least 2 pool are needed!
+   * One replicated pool and another replicated pool or erasure coded pool with ec_overwrites enabled.
+   */
+  it('should change the lable of pool to meta-pool if a data pool can be selected', function(){
+    rbdProperties.useDataPool.click();
+    expect(element(by.css('label[for=pool]')).getText()).toBe('Meta-Pool *');
+    rbdProperties.useDataPool.click();
+    expect(element(by.css('label[for=pool]')).getText()).toBe('Pool *');
+  });
+
+  it('should not be able to select the same pool as data pool', function(){
+    rbdProperties.useDataPool.click();
+    expect(element(by.css('label[for=dataPool]')).getText()).toBe('Data-Pool *');
+    expect(rbdProperties.dataPoolSelect.element(by.cssContainingText('option', rbdProperties.firstPool.getText()))
+      .isPresent()).toBe(false);
+    rbdProperties.useDataPool.click();
+  });
+
+  it('should shows tooltips for pool selections', function(){
+    expect(element(by.css('label[for=pool] > span[uib-tooltip]')).getAttribute('uib-tooltip'))
+      .toBe('Main pool where the RBD is located and all data is stored');
+    rbdProperties.useDataPool.click();
+    expect(element(by.css('label[for=pool] > span[uib-tooltip]')).getAttribute('uib-tooltip'))
+      .toBe('Main pool where the RBD is located and the meta-data is stored');
+    expect(element(by.css('label[for=dataPool] > span[uib-tooltip]')).getAttribute('uib-tooltip'))
+      .toBe('Dedicated pool that stores the object-data of the RBD');
+    rbdProperties.useDataPool.click();
   });
 
   afterAll(function(){

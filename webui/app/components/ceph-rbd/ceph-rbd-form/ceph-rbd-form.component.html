@@ -26,7 +26,7 @@
           <div class="col-sm-9">
             <select id="cluster" ng-disabled="!$ctrl.clusters" class="form-control tc_cluster_selection"
                 ng-model="$ctrl.data.cluster" ng-options="(cluster.name + ' (' + cluster.fsid + ')')
-                for cluster in clusters track by cluster.fsid" name="cluster" required>
+                for cluster in $ctrl.clusters track by cluster.fsid" name="cluster" required>
               <option class="tc_rbdClusterOption" value="" ng-bind="$ctrl.waitingClusterMsg"></option>
             </select>
             <span class="help-block tc_clusterRequired" ng-show="(rbdForm.$submitted || rbdForm.cluster.$dirty)
@@ -39,26 +39,45 @@
           </div>
         </div>
 
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary"
+                  ng-show="$ctrl.pools.replicated.length + $ctrl.pools.erasure.length > 1">
+                <input id="use-data-pool" type="checkbox" ng-model="$ctrl.data.useDataPool" ng-name="useDataPool">
+                <label for="use-data-pool">Use a dedicated data pool</label>
+              </div>
+            </div>
+        </div>
+
         <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.pool.$dirty)
             && rbdForm.pool.$invalid}">
-          <label class="col-sm-3" class="control-label" for="pool">Pool</label>
+          <label class="control-label col-sm-3"
+              for="pool">
+            <span tooltip-placement="top"
+              uib-tooltip="Main pool where the RBD is located and {{$ctrl.data.useDataPool ? 'the meta-data' :
+                'all data'}} is stored">
+              {{$ctrl.data.useDataPool ? "Meta-" : ""}}Pool
+            </span>
+          </label>
           <div class="col-sm-9">
             <select id="pool" ng-disabled="!$ctrl.pools" class="form-control tc_pool_selection"
-                ng-model="$ctrl.data.pool" ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in
-                $ctrl.pools track by pool.id" name="pool" ng-change="$ctrl.watchDataPool()" required>
-              <option class="tc_rbdPoolOption" value="" ng-bind="waitingPoolMsg"></option>
+                ng-model="$ctrl.data.pool"
+                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in $ctrl.pools.replicated
+                  track by pool.id"
+                name="pool" required>
+              <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
             </select>
-            <div ng-show="$ctrl.data.pool" class="progress-bar-outer clearfix">
+            <div ng-show="$ctrl.data.pool && !$ctrl.data.useDataPool" class="progress-bar-outer clearfix">
               <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.oaUsed">
                 <span></span>
               </uib-progressbar>
-                <span class="pull-left tc_poolSize">
-                  {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used
-                </span>
-                <span class="pull-right tc_poolAvailableSize">
-                  {{$ctrl.data.pool.oaFreeText}} free -
-                  <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree; $ctrl.watchDataSize()">use max</a>
-                </span>
+              <span class="pull-left tc_poolSize">
+                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used
+              </span>
+              <span class="pull-right tc_poolAvailableSize">
+                {{$ctrl.data.pool.oaFreeText}} free -
+                <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree">use max</a>
+              </span>
             </div>
             <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
                 && rbdForm.pool.$error.required">
@@ -70,13 +89,52 @@
           </div>
         </div>
 
+        <div class="form-group" ng-if="$ctrl.data.useDataPool" ng-class="{'has-error': (rbdForm.$submitted ||
+            rbdForm.dataPool.$dirty) && rbdForm.dataPool.$invalid}">
+          <label class="control-label col-sm-3"
+              for="dataPool">
+            <span tooltip-placement="top"
+                uib-tooltip="Dedicated pool that stores the object-data of the RBD">
+              Data-Pool
+            </span>
+          </label>
+          <div class="col-sm-9">
+            <select id="dataPool" ng-disabled="!$ctrl.data.pool" class="form-control" name="dataPool" ng-model="$ctrl.data.dataPool"
+                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) group by pool.type
+                  for pool in $ctrl.getDataPools() track by pool.id"
+                required>
+              <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
+            </select>
+            <div ng-show="$ctrl.data.dataPool" class="progress-bar-outer clearfix">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.dataPool.oaUsed">
+                <span></span>
+              </uib-progressbar>
+              <span class="pull-left tc-data-pool-size">
+                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.oaFreeText}} used
+              </span>
+              <span class="pull-right tc-data-pool-available-size">
+                {{$ctrl.data.dataPool.oaFreeText}} free -
+                <a ng-click="$ctrl.data.size = $ctrl.data.dataPool.oaMaxFree">use max</a>
+              </span>
+            </div>
+            <span class="help-block tc-data-pool-required" ng-show="(rbdForm.$submitted || rbdForm.dataPool.$dirty)
+                && rbdForm.dataPool.$error.required">
+              This field is required!
+            </span>
+            <span class="help-block tc-data-pool-loading" ng-show="rbdForm.$error.dataPoolLoading">
+              Couldn't load any pool, please contact your administrator for details.
+            </span>
+          </div>
+        </div>
+
         <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.size.$dirty)
             && rbdForm.size.$invalid}">
           <label class="control-label col-sm-3" for="size">Size</label>
           <div class="col-sm-9">
             <input id="size" class="form-control tc_rbd_size" type="text" name="size"
                 ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree"
-                ng-model-options="{ updateOn: 'blur' }" ng-model="$ctrl.data.size" placeholder="e.g., 10GB" required>
+                ng-change="$ctrl.watchDataSize()" ng-model-options="{ updateOn: 'blur' }" ng-model="$ctrl.data.size"
+                placeholder="e.g., 10GB" required>
             <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                 && rbdForm.size.$error.required">
               This field is required!
@@ -101,8 +159,8 @@
             <label class="control-label col-sm-3" for="object-size">Object size</label>
             <div class="col-sm-9">
               <input id="object-size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
-                  ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree"
-                  ng-model-options="{ updateOn: 'blur' }" ng-keydown="$ctrl.objSizeChange($event)" ng-model="data.obj_size"
+                  ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-change="$ctrl.updateObjSize()"
+                  ng-model-options="{ updateOn: 'blur' }" ng-keyup="$ctrl.objSizeChange($event)" ng-model="$ctrl.data.obj_size"
                   placeholder="4 KB up to 32 MB" required>
               <span class="help-block tc_objSizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                   && rbdForm.size.$error.required">
@@ -121,7 +179,7 @@
             <div class="col-sm-9">
               <div class="checkbox checkbox-primary"
                   ng-repeat="(key, feature) in $ctrl.features"
-                  ng-if="feature.isUsed" >
+                  ng-if="feature.isDisplayed" >
                 <input type="checkbox" ng-model="$ctrl.data.features[key].checked" id="{{key}}"
                     ng-disabled="$ctrl.data.features[key].disabled" ng-change="$ctrl.watchDataFeatures(key)"
                     class="tc_feature_{{key}}" ng-name="key">
@@ -138,7 +196,7 @@
       <div class="panel-footer">
         <div class="button-group text-right">
           <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-              ng-disabled="rbdForm.$invalid || rbdForm.$submitted" ng-click=$ctrl."submitAction(rbdForm)">
+              ng-disabled="rbdForm.$invalid || rbdForm.$submitted" ng-click="$ctrl.submitAction(rbdForm)">
             Create
             <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
           </button>
