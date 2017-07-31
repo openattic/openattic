@@ -43,6 +43,7 @@ Fixed
   fields (OP-2501)
 * WebUI: Fix various issues when no Ceph cluster can be loaded. Additionally
   add a visual feedback while loading the Ceph clusters (OP-2493)
+* Backend: Fixed ceph django unit tests (OP-2526)
 
 [3.4.1] - 2017-07-20
 --------------------
