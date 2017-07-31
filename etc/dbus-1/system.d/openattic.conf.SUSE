@@ -11,10 +11,6 @@
             <allow send_destination="org.openattic.systemd" />
             <allow receive_sender="org.openattic.systemd"   />
     </policy>
-    <policy user="icinga">
-            <allow send_destination="org.openattic.systemd" />
-            <allow receive_sender="org.openattic.systemd"   />
-    </policy>
     <policy context="default">
             <deny  send_destination="org.openattic.systemd" />
             <deny  receive_sender="org.openattic.systemd"   />
