@@ -760,7 +760,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     id = models.CharField(max_length=100, primary_key=True, editable=False,
                           help_text='pool-name/image-name')
     name = models.CharField(max_length=100)
-    pool = models.ForeignKey(CephPool)
+    pool = models.ForeignKey(CephPool, related_name='pool')
+    data_pool = models.ForeignKey(CephPool, null=True, blank=True, related_name='data_pool')
     size = models.IntegerField(help_text='Bytes, where size modulo obj_size === 0',
                                default=4 * 1024 ** 3)
     obj_size = models.IntegerField(null=True, blank=True, help_text='obj_size === 2^n',
@@ -797,17 +798,26 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool)
                                                           for image in api.list(pool.name))
                                                          for pool in pools)))
-        rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
-                                old_format=api.image_old_format(pool.name, image_name),
-                                features=api.image_features(pool.name, image_name),
-                                name=image_name,
-                                pool_id=pool.id),
-                 pool)
-                for (image_name, pool)
-                in rbd_name_pools)
 
-        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(
-            rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name'])))) for (rbd, pool) in rbds]
+        rbds = []
+        for (image_name, pool) in rbd_name_pools:
+            data_pool_id = None
+            image_info = api.image_info(pool.name, image_name)
+
+            if 'data_pool' in image_info:
+                data_pool = CephPool.objects.get(name=image_info['data_pool'])
+                data_pool_id = data_pool.id if data_pool else None
+
+            rbds.append((aggregate_dict(api.image_stat(pool.name, image_name),
+                                        old_format=api.image_old_format(pool.name, image_name),
+                                        features=api.image_features(pool.name, image_name),
+                                        name=image_name,
+                                        pool_id=pool.id,
+                                        data_pool_id=data_pool_id,
+                                        id=CephRbd.make_key(pool, image_name))))
+
+        return [CephRbd(**CephRbd.make_model_args(rbd)) for rbd in rbds]
+
 
     @bulk_attribute_setter(['used_size'])
     def set_disk_usage(self, objects, field_names):
@@ -869,11 +879,14 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             if insert:
                 order = None
+                data_pool_name = self.data_pool.name if self.data_pool else None
+
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features,
                            old_format=self.old_format, order=order,
-                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count)
+                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
+                           data_pool_name=data_pool_name)
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()

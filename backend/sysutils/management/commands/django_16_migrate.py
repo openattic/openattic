@@ -447,6 +447,16 @@ _migrations = [
         COMMIT;
         """
     ),
+    SqlMigration(
+        'ceph', u'0014_cephrbd_data_pool',
+        lambda cursor: _column_not_exists('ceph_cephrbd', 'data_pool_id', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephrbd" ADD COLUMN "data_pool_id" integer NULL;
+        ALTER TABLE "ceph_cephrbd" ALTER COLUMN "data_pool_id" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
 ]
 
 

@@ -492,7 +492,6 @@ class JsonFieldFilterTest(TestCase):
                                                                               my_object_list__attr2='b')), 1)
         self.assertEqual(
             len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a',
-
                                                                               my_object_list__attr2='z')), 0)
 
 
