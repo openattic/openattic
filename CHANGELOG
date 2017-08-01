@@ -35,6 +35,7 @@ Changed
 * WebUI: Migration of Ceph RBDs controllers to components (OP-2400)
 * Backend/QA: RGW proxy Gatling tests are disabled by default (OP-2525)
 * WebUI: Improve suggested iSCSI target IQN format (OP-2511)
+* Development: Remove Vagrant required-changes.patch file (OP-1446)
 
 Fixed
 ~~~~~
