@@ -161,7 +161,7 @@ def get_grafana_api_response(request, path):
             position += len(replacement)
 
     content = re.sub(r'grafana\.(light|dark)\.min\.(\w+?)\.css',
-                     r'grafana.light.min.css?cache_buster=\1',
+                     r'grafana.light.min.css?cache_buster=\2',
                      content)
 
     # Replacements based on paths.
