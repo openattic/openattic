@@ -229,6 +229,7 @@ def log_prefix():
 
 
 # Set logging
+LOGGING_FILENAME = '/var/log/openattic/openattic.log'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -242,7 +243,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/openattic/openattic.log',
+            'filename': LOGGING_FILENAME,
             'formatter': 'oa',
         }
     },
