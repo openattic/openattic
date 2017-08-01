@@ -37,6 +37,7 @@ Changed
 * Backend/QA: RGW proxy Gatling tests are disabled by default (OP-2525)
 * WebUI: Improve suggested iSCSI target IQN format (OP-2511)
 * Development: Remove Vagrant required-changes.patch file (OP-1446)
+* Backend: Cached Grafana CSS to optimized the iframe loading performance (OP-2509)
 
 Fixed
 ~~~~~
