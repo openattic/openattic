@@ -47,6 +47,7 @@ Fixed
 * WebUI: Fix various issues when no Ceph cluster can be loaded. Additionally
   add a visual feedback while loading the Ceph clusters (OP-2493)
 * Backend: Fixed ceph django unit tests (OP-2526)
+* Backend: Use the correct username and keyring to connect to CephFS (OP-2515)
 
 [3.4.1] - 2017-07-20
 --------------------
