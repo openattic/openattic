@@ -29,6 +29,7 @@ Added
 * WebUI: Add support for local configs (OP-2469)
 * WebUI: Make Ceph keyring configurable from the UI (OP-2504)
 * WebUI: RBD - Add information about features unsupported by iSCSI (OP-2522)
+* Installation: Add `SALT_API_*` and `RGW_API_*` to the openATTIC sysconfig file (OP-2280)
 
 Changed
 ~~~~~~~
