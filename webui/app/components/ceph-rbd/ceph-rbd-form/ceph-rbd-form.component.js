@@ -44,7 +44,6 @@ app.component("cephRbdForm", {
       name: "",
       size: 0,
       pool: -1,
-      old_format: true,
       obj_size: 4194304
     };
 
@@ -289,7 +288,6 @@ app.component("cephRbdForm", {
     self.submitAction = function (rbdForm) {
       if (rbdForm.$valid) {
         if (self.data.expert) {
-          self.rbd.old_format = false;
           var features = [];
           for (var feature in self.data.features) {
             if (self.data.features[feature].checked) {
