@@ -33,6 +33,8 @@ Added
 * Installation: Add `SALT_API_*` and `RGW_API_*` to the openATTIC sysconfig
   file (OP-2280)
 * WebUI: Add helper component (OP-2527)
+* WebUI: Create ec overwrite enabled pools in the UI (OP-2357)
+* WebUI: Calculate the best pg size for a pool (OP-2377)
 
 Changed
 ~~~~~~~
@@ -42,6 +44,7 @@ Changed
 * Development: Remove Vagrant required-changes.patch file (OP-1446)
 * Backend: Cached Grafana CSS to optimized the iframe loading performance
   (OP-2509)
+* WebUI: Enabled crush rule set for all pool types (OP-2378)
 
 Fixed
 ~~~~~
