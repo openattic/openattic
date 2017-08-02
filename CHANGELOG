@@ -24,12 +24,14 @@ Added
 * Backend: Enable compression on Ceph pools on BlueStore OSD Pools (OP-2309)
 * Backend: The data_pool parameter will now be recognized by creating an
   RBD (OP-2317)
-* Backend: Added settings to allow overwriting the cluster by DeepSea (OP-2502, OP-2483, OP-2339)
+* Backend: Added settings to allow overwriting the cluster by DeepSea (OP-2502,
+  OP-2483, OP-2339)
 * WebUI: iSCSI - Add help text on Images field (OP-2508)
 * WebUI: Add support for local configs (OP-2469)
 * WebUI: Make Ceph keyring configurable from the UI (OP-2504)
 * WebUI: RBD - Add information about features unsupported by iSCSI (OP-2522)
-* Installation: Add `SALT_API_*` and `RGW_API_*` to the openATTIC sysconfig file (OP-2280)
+* Installation: Add `SALT_API_*` and `RGW_API_*` to the openATTIC sysconfig
+  file (OP-2280)
 * WebUI: Add helper component (OP-2527)
 
 Changed
@@ -38,7 +40,8 @@ Changed
 * Backend/QA: RGW proxy Gatling tests are disabled by default (OP-2525)
 * WebUI: Improve suggested iSCSI target IQN format (OP-2511)
 * Development: Remove Vagrant required-changes.patch file (OP-1446)
-* Backend: Cached Grafana CSS to optimized the iframe loading performance (OP-2509)
+* Backend: Cached Grafana CSS to optimized the iframe loading performance
+  (OP-2509)
 
 Fixed
 ~~~~~
