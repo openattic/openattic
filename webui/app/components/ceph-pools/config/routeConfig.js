@@ -41,16 +41,6 @@ app.config(function ($stateProvider) {
             controller : "CephPoolsCtrl"
           }
         },
-        resolve      : {
-          clusterData: function ($q, cephClusterService) {
-            return cephClusterService.get().$promise
-                .then(function (res) {
-                  return res;
-                }).catch(function () {
-                  return false;
-                });
-          }
-        },
         ncyBreadcrumb: {
           label: "Ceph Pools"
         }

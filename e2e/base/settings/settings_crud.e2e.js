@@ -9,7 +9,8 @@ describe('settings form', function(){
 
   var initialSettings = {
     deepsea: {},
-    grafana: {}
+    grafana: {},
+    ceph: {}
   };
 
   beforeAll(function(){
@@ -44,6 +45,12 @@ describe('settings form', function(){
     });
     form.grafanaUseSSL.getAttribute('checked').then(function(value){
       initialSettings.grafana.use_ssl = value === 'true';
+    });
+    form.cephClusterKeyringFile.getAttribute('value').then(function(value){
+      initialSettings.ceph.keyringFile = value;
+    });
+    form.cephClusterKeyringUser.getAttribute('value').then(function(value){
+      initialSettings.ceph.keyringUser = value;
     });
   });
 
@@ -94,6 +101,13 @@ describe('settings form', function(){
     expect(form.grafanaUseSSL.isSelected()).toBe(true);
   });
 
+  it('should not save invalid ceph config', function(){
+    form.cephClusterKeyringFile.clear().sendKeys('/e2e-invalid-file');
+    form.submitButton.click();
+    browser.refresh();
+    expect(form.cephClusterKeyringFile.getAttribute('value')).toEqual(initialSettings.ceph.keyringFile);
+  });
+
   it('should restore initial settings', function(){
     form.saltApiHost.clear().sendKeys(initialSettings.deepsea.host);
     form.saltApiPort.clear().sendKeys(initialSettings.deepsea.port);
@@ -106,6 +120,8 @@ describe('settings form', function(){
     form.grafanaUsername.clear().sendKeys(initialSettings.grafana.username);
     form.grafanaPassword.clear().sendKeys(initialSettings.grafana.password);
     form.checkGrafanaUseSSL(initialSettings.grafana.use_ssl);
+    form.cephClusterKeyringFile.clear().sendKeys(initialSettings.ceph.keyringFile);
+    form.cephClusterKeyringUser.clear().sendKeys(initialSettings.ceph.keyringUser);
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
   });
@@ -121,6 +137,8 @@ describe('settings form', function(){
     expect(form.grafanaUsername.getAttribute('value')).toEqual(initialSettings.grafana.username);
     expect(form.grafanaPassword.getAttribute('value')).toEqual(initialSettings.grafana.password);
     expect(form.grafanaUseSSL.isSelected()).toBe(initialSettings.grafana.use_ssl);
+    expect(form.cephClusterKeyringFile.getAttribute('value')).toEqual(initialSettings.ceph.keyringFile);
+    expect(form.cephClusterKeyringUser.getAttribute('value')).toEqual(initialSettings.ceph.keyringUser);
   });
 
   afterAll(function(){

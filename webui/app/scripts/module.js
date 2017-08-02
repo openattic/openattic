@@ -34,6 +34,7 @@ angular.module("openattic", [
   "angular-md5",
   "angular-toasty",
   "ncy-angular-breadcrumb",
+  "ngAnimate",
   "ngResource",
   "ngSanitize",
   "ngStorage",

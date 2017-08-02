@@ -201,7 +201,6 @@ module-apt"
     # System packages not available in pip + npm
 
     apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-m2crypto nodejs npm
-    apt-get install -y libjpeg-dev # TODO this is required for openattic-module-nagios
     if [ "$IS_XENIAL" ]
     then
         apt-get install -y --force-yes nullmailer python-rtslib-fb # FIXME! Needed for newaliases command
@@ -215,9 +214,6 @@ module-apt"
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
-    ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/nagios3/conf.d/openattic_static.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg  /etc/nagios-plugins/config/openattic.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg  /etc/nagios-plugins/config/openattic-ceph.cfg
     if [ "$IS_TRUSTY" ]
     then
         # http://docs.openattic.org/2.0/install_guides/oA_installation.html#package-installation
@@ -227,8 +223,6 @@ fi
 
 if [ "$IS_SUSE" ]
 then
-    OA_PACKAGES="$OA_PACKAGES
-module-icinga"
     ZYP_PACKAGES="$(echo -e "$OA_PACKAGES" | xargs -I SUB echo openattic-SUB)"
     ! DEPS="$(LANG=C zypper --non-interactive install --dry-run $ZYP_PACKAGES | grep -A 1 'NEW packages are going to be installed' | tail -n 1 | tr " " "\n" | grep -v -e openattic -e apache -e python)"
     if [ -n "$DEPS" ] ; then
@@ -236,38 +230,60 @@ module-icinga"
     fi
 
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
-    ln -s /home/vagrant/openattic/etc/nagios3/conf.d/openattic_static.cfg /etc/icinga/conf.d/openattic_static.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic.cfg /etc/icinga/objects/openattic.cfg
-    ln -s /home/vagrant/openattic/etc/nagios-plugins/config/openattic-ceph.cfg /etc/icinga/objects/openattic-ceph.cfg
 
     # System packages not available in pip + npm
-
     zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
-    # python-dbus  python-gobject-2
-    #zypper --non-interactive install -y libjpeg-dev # interestingly this is required for openattic-module-nagios
+    # python-dbus python-gobject-2
     systemctl restart postgresql.service
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
     systemctl enable postgresql.service
 fi
 
-if [ -z "$IS_TRUSTY" ] ; then
-    ln -s /home/vagrant/openattic/etc/tmpfiles.d/openattic.conf /etc/tmpfiles.d/openattic.conf
-fi
 ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
-ln -s /home/vagrant/openattic/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
-# Create Nagios specific symlinks (platform independent).
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephcluster /usr/lib/nagios/plugins/check_cephcluster
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephpool /usr/lib/nagios/plugins/check_cephpool
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_cephrbd /usr/lib/nagios/plugins/check_cephrbd
-ln -s /home/vagrant/openattic/backend/nagios/plugins/check_openattic_systemd /usr/lib/nagios/plugins/check_openattic_systemd
-ln -s /home/vagrant/openattic/backend/nagios/plugins/notify_openattic /usr/lib/nagios/plugins/notify_openattic
-
-sudo -i -u vagrant bash -e << EOF
-pushd openattic
-! git apply vagrant/required-changes.patch
+# Create/modify the local settings files.
+pushd /home/vagrant/openattic
+if [ ! -e "backend/settings_local.conf" ]; then
+    touch backend/settings_local.conf
+    cat <<EOF > backend/settings_local.conf
+API_ROOT=":8000/api"
+API_OS_USER="vagrant"
+LOGGING_FILENAME="/dev/stdout"
+EOF
+fi
+if [ ! -e "webui/app/config.local.js" ]; then
+    cp webui/app/config.local.js.sample webui/app/config.local.js
+    sed -i -e 's#/openattic/api/#/api/#' webui/app/config.local.js
+fi
 popd
+
+# Modify the configuration for creation, deletion and cleaning of volatile and temporary files.
+mkdir -p /etc/tempfiles.d
+cat <<EOF > /etc/tempfiles.d/openattic.conf
+d /run/lock/openattic 0755 vagrant users -
+EOF
+
+# Create the DBUS configuration.
+cat <<EOF > /etc/dbus-1/system.d/openattic.conf
+<!DOCTYPE busconfig PUBLIC
+    "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+    "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+    <policy user="root">
+            <allow own="org.openattic.systemd" />
+            <allow send_destination="org.openattic.systemd" />
+            <allow receive_sender="org.openattic.systemd"   />
+    </policy>
+    <policy user="vagrant">
+            <allow send_destination="org.openattic.systemd" />
+            <allow receive_sender="org.openattic.systemd"   />
+    </policy>
+    <policy context="default">
+            <deny  send_destination="org.openattic.systemd" />
+            <deny  receive_sender="org.openattic.systemd"   />
+    </policy>
+</busconfig>
 EOF
 
 service dbus reload
@@ -347,18 +363,6 @@ cp -r /usr/lib*/python2.7/*-packages/glib env/lib/python2.7/site-packages/
 # psycopg2
 cp -r /usr/lib*/python2.7/*-packages/psycopg2 env/lib/python2.7/site-packages/
 
-#rtslib
-if [ "$IS_XENIAL" ]
-then
-    cp -r /usr/lib*/python2.7/*-packages/rtslib_fb env/lib/python2.7/site-packages/
-else
-    cp -r /usr/lib*/python2.7/*-packages/rtslib env/lib/python2.7/site-packages/
-fi
-
-# Create symlinks for various oA command line tools.
-sudo ln -s /home/vagrant/openattic/bin/blkdevzero /bin/blkdevzero
-sudo ln -s /home/vagrant/openattic/bin/oavgmanager /bin/oavgmanager
-
 # oaconfig install
 
 pushd openattic/backend/
@@ -371,14 +375,6 @@ python manage.py install --pre-install
 
 popd
 EOF
-
-if [ "$IS_SUSE" ]
-then
-    # TODO: looks weird, but it's required.
-    echo cfg_file=/etc/icinga/objects/openattic.cfg >> /etc/icinga/icinga.cfg
-    echo cfg_file=/etc/icinga/objects/openattic-ceph.cfg >> /etc/icinga/icinga.cfg
-    systemctl start icinga.service
-fi
 
 
 pushd /home/vagrant/openattic/backend/

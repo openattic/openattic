@@ -35,6 +35,9 @@ documentation is somewhat more involved, as it requires a LateX environment
 (e.g. the ``texlive`` distribution) and the ``latexpdf`` utility (usually
 included in the ``pdftex`` package).
 
+.. note::
+  ``python-sphinx`` version should be >=1.3.6.
+
 For previewing the HTML documentation, you need a local web browser, e.g.
 Mozilla Firefox or Google Chrome/Chromium. The PDF document can be previewed
 using any PDF viewer, e.g. Evince or Adobe Acrobat Reader |reg|.

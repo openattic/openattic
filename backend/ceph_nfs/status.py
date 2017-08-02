@@ -13,8 +13,6 @@
 """
 import logging
 
-from cephfs import Error
-
 from django.core.exceptions import ValidationError
 
 from ceph.models import CephCluster
@@ -28,10 +26,11 @@ logger = logging.getLogger(__name__)
 
 def check_cephfs_api(fsid):
     try:
-        cluster_name = CephCluster.get_name(fsid)
+        cluster = CephCluster.objects.get(fsid=fsid)
         try:
             from ceph_nfs.cephfs_util import CephFSUtil
-            CephFSUtil.instance(cluster_name).get_dir_list('/', 1)
+            from cephfs import Error
+            CephFSUtil.instance(cluster).get_dir_list('/', 1)
         except (Error, OSError) as e:
             raise UnavailableModule(Reason.OPENATTIC_NFS_NO_CEPHFS, str(e))
     except LookupError:

@@ -24,13 +24,39 @@ class CephFSUtil(object):
     _instance = {}
 
     @staticmethod
-    def instance(cluster_name='ceph'):
-        if cluster_name not in CephFSUtil._instance:
-            CephFSUtil._instance[cluster_name] = CephFSUtil()
-        return CephFSUtil._instance[cluster_name]
+    def instance(cluster):
+        """Initializes or returns a singleton reference to a CephFS util wrapper instance
 
-    def __init__(self, cluster_name='ceph'):
-        self.cfs = libcephfs.LibCephFS(conffile='/etc/ceph/{}.conf'.format(cluster_name))
+        :param cluster ceph.models.CephCluster: ceph cluster model instance
+        """
+        if cluster.name not in CephFSUtil._instance:
+            CephFSUtil._instance[cluster.name] = CephFSUtil(cluster=cluster)
+        return CephFSUtil._instance[cluster.name]
+
+    def __init__(self, conf_file='/etc/ceph/ceph.conf', auth_id='admin',
+                 keyring_file='/etc/ceph/ceph.client.admin.keyring', cluster=None):
+        """Creates a CephFS util wrapper instance
+
+        :param conf_file str opt: ceph conf file path
+        :param auth_id str opt: the id used to authenticate the client entity (e.g.,
+                                client.admin, openattic)
+        :param keyring_file str opt: the keyring file path
+        :param cluster ceph.models.CephCluster opt: ceph cluster model instance
+        """
+        if cluster:
+            conf_file = cluster.config_file_path
+            auth_id = cluster.keyring_user
+
+            # if the auth_id starts with the prefix "client." we need to remove it 
+            if auth_id.startswith('client.'):
+                auth_id = auth_id[auth_id.find('.')+1:]
+            keyring_file = cluster.keyring_file_path
+
+        logger.debug("Initializing CephFS connection: conf_file=%s, auth_id=%s, keyring_file=%s",
+                     conf_file, auth_id, keyring_file)
+
+        self.cfs = libcephfs.LibCephFS(conffile=conf_file, auth_id=auth_id,
+                                       conf={'keyring': keyring_file})
         self.cfs.mount()
 
     def __del__(self):

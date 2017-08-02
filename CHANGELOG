@@ -16,6 +16,49 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.4.2] - unreleased
+--------------------
+
+Added
+~~~~~
+* Backend: Enable compression on Ceph pools on BlueStore OSD Pools (OP-2309)
+* Backend: The data_pool parameter will now be recognized by creating an
+  RBD (OP-2317)
+* Backend: Added settings to allow overwriting the cluster by DeepSea (OP-2502,
+  OP-2483, OP-2339)
+* WebUI: iSCSI - Add help text on Images field (OP-2508)
+* WebUI: Add support for local configs (OP-2469)
+* WebUI: Make Ceph keyring configurable from the UI (OP-2504)
+* WebUI: RBD - Add information about features unsupported by iSCSI (OP-2522)
+* Installation: Add `SALT_API_*` and `RGW_API_*` to the openATTIC sysconfig
+  file (OP-2280)
+* WebUI: Add helper component (OP-2527)
+* WebUI: Create ec overwrite enabled pools in the UI (OP-2357)
+* WebUI: Calculate the best pg size for a pool (OP-2377)
+
+Changed
+~~~~~~~
+* WebUI: Migration of Ceph RBDs controllers to components (OP-2400)
+* Backend/QA: RGW proxy Gatling tests are disabled by default (OP-2525)
+* WebUI: Improve suggested iSCSI target IQN format (OP-2511)
+* Development: Remove Vagrant required-changes.patch file (OP-1446)
+* Backend: Cached Grafana CSS to optimized the iframe loading performance
+  (OP-2509)
+* WebUI: Enabled crush rule set for all pool types (OP-2378)
+
+Fixed
+~~~~~
+* Backend: DeepSea's pillar data may not contain `roles` for a minion (OP-2507)
+* Backend: Allow `CephRbd.features` to be empty (OP-2506)
+* WebUI: Allow the deletion of non-empty S3 buckets (OP-2503)
+* WebUI: The copy to clipboard button does not work with password
+  fields (OP-2501)
+* WebUI: Fix various issues when no Ceph cluster can be loaded. Additionally
+  add a visual feedback while loading the Ceph clusters (OP-2493)
+* Backend: Fixed ceph django unit tests (OP-2526)
+* Backend: Use the correct username and keyring to connect to CephFS (OP-2515)
+* WebUI: Remove the use of the old format in RBD form (OP-2538)
+
 [3.4.1] - 2017-07-20
 --------------------
 

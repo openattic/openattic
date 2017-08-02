@@ -7,7 +7,7 @@ var rbdCommons = function(){
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
-  this.clusterSelect = element(by.model('registry.selectedCluster'));
+  this.clusterSelect = element(by.model('$ctrl.registry.selectedCluster'));
   /* TODO: Uncomment for OP-2475
   this.statisticsTab = element(by.className('tc_statisticsTab'));
   */
@@ -52,13 +52,13 @@ var rbdCommons = function(){
     name: {
       name: 'Name',
       testClass: 'tc_rbd_name',
-      model: 'rbd.name',
+      model: '$ctrl.rbd.name',
       displayed: true
     },
     cluster: {
       name: 'Cluster',
       testClass: 'tc_cluster_selection',
-      model: 'data.cluster',
+      model: '$ctrl.data.cluster',
       displayed: true,
       items: {
         clusterSelection: 'tc_rbdClusterOption',
@@ -69,7 +69,7 @@ var rbdCommons = function(){
     pool: {
       name: 'Poolname',
       testClass: 'tc_pool_selection',
-      model: 'data.pool',
+      model: '$ctrl.data.pool',
       displayed: true,
       items: {
         poolSelection: 'tc_rbdPoolOption',
@@ -82,7 +82,7 @@ var rbdCommons = function(){
     size: {
       name: 'Size',
       testClass: 'tc_rbd_size',
-      model: 'data.size',
+      model: '$ctrl.data.size',
       displayed: true,
       items: {
         helpSize: 'tc_sizeRequired'
@@ -91,13 +91,13 @@ var rbdCommons = function(){
     expertSettings: {
       name: 'Expert Settings',
       testClass: 'tc_expertSettings',
-      model: 'data.expert',
+      model: '$ctrl.data.expert',
       displayed: true
     },
     objectSize: {
       name: 'Object size',
       testClass: 'tc_rbd_obj_size',
-      model: 'data.obj_size',
+      model: '$ctrl.data.obj_size',
       displayed: false,
       items: {
         helpSize: 'tc_objSizeRequired'
@@ -108,15 +108,42 @@ var rbdCommons = function(){
       testClass: 'tc_features',
       displayed: false,
       items: {
-        'deep-flatten': 'tc_feature_deep-flatten',
-        'layering': 'tc_feature_layering',
-        'stripingv2': 'tc_feature_stripingv2',
-        'exclusive-lock': 'tc_feature_exclusive-lock',
-        'object-map': 'tc_feature_object-map',
-        'journaling': 'tc_feature_journaling',
-        'fast-diff': 'tc_feature_fast-diff',
-        'defaultFeatures': 'tc_featureDefaults',
-        'helpSize': 'tc_objSizeRequired'
+        'deep-flatten': {
+          class: 'tc_feature_deep-flatten',
+          desc: 'Deep flatten'
+        },
+        'layering': {
+          class: 'tc_feature_layering',
+          desc: 'Layering'
+        },
+        'stripingv2': {
+          class: 'tc_feature_stripingv2',
+          desc: 'Striping (currently unsupported)'
+        },
+        'exclusive-lock': {
+          class: 'tc_feature_exclusive-lock',
+          desc: 'Exclusive lock'
+        },
+        'object-map': {
+          class: 'tc_feature_object-map',
+          desc: 'Object map'
+        },
+        'journaling': {
+          class: 'tc_feature_journaling',
+          desc: 'Journaling'
+        },
+        'fast-diff': {
+          class: 'tc_feature_fast-diff',
+          desc: 'Fast diff'
+        },
+        'defaultFeatures': {
+          class: 'tc_featureDefaults',
+          desc: ''
+        },
+        'helpSize': {
+          class: 'tc_objSizeRequired',
+          desc: ''
+        }
       }
     }
   };
@@ -194,13 +221,13 @@ var rbdCommons = function(){
     var keys = Object.keys(self.formElements.features.items);
     var values = self.formElements.features.items;
     for (var i = 0; i < 7; i++){ // deselect all boxes
-      self.checkCheckboxToBe(element(by.className(values[keys[i]])), false);
+      self.checkCheckboxToBe(element(by.className(values[keys[i]].class)), false);
     }
     features.forEach(function(state, index){ // select the features
-      self.checkCheckboxToBe(element(by.className(values[keys[index]])), state === 1);
+      self.checkCheckboxToBe(element(by.className(values[keys[index]].class)), state === 1);
     });
     features.forEach(function(state, index){ // control feature states
-      self.controlFeatureState(element(by.className(values[keys[index]])), state);
+      self.controlFeatureState(element(by.className(values[keys[index]].class)), state);
     });
   };
 
@@ -277,14 +304,15 @@ var rbdCommons = function(){
     expect(rbd.isDisplayed()).toBe(true);
     rbd.click();
 
-    expect(element(by.binding('selection.item.obj_size')).getText()).toBe(rbdObjSize);
+    expect(element(by.binding('$ctrl.selection.item.obj_size')).getText()).toBe(rbdObjSize);
     if(featureCase){
       var keys = Object.keys(self.formElements.features.items);
+      var values = self.formElements.features.items;
       featureCase.forEach(function(state, index){ // check the features
         if(state === 1){
-          expect(element(by.cssContainingText('dd', keys[index])).isDisplayed()).toBe(true);
+          expect(element(by.cssContainingText('dd', values[keys[index]].desc)).isDisplayed()).toBe(true);
         } else {
-          expect(element(by.cssContainingText('dd', keys[index])).isPresent()).toBe(false);
+          expect(element(by.cssContainingText('dd', values[keys[index]].desc)).isPresent()).toBe(false);
         }
       });
     }

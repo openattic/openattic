@@ -32,24 +32,21 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibModal, Notification,
-    cephCrushmapService, cephClusterService, cephErasureCodeProfilesService, cephOsdService, cephPoolsService) {
+    cephOsdService, cephCrushmapService, cephClusterService, cephErasureCodeProfilesService, cephPoolsService) {
+  const PG_MIN = 16;
   $scope.pool = {
     name: "",
-    pg_num: 1,
+    pg_num: PG_MIN,
     type: "",
-    replicated: {
-      size: 1, // Replica size
-      expert: {
-        crush_ruleset: 0
-      }
-    },
+    crush_ruleset: 0,
+    size: 3,
     erasure: {
-      profile: null
+      profile: undefined
     }
   };
 
   $scope.data = {
-    cluster: null,
+    cluster: undefined,
     poolTypes: [
       {
         name: "replicated",
@@ -62,11 +59,12 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
     ],
     profiles: [],
     expert: false,
-    ruleset: null,
-    osdCount: 1
+    ruleset: undefined,
+    osdCount: 1,
+    flags: {}
   };
 
-  $scope.clusters = {};
+  $scope.clusters = undefined;
 
   var goToListView = function () {
     $state.go("cephPools");
@@ -74,13 +72,44 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
 
   $scope.fsid = $stateParams.fsid;
 
-  $scope.waitingClusterMsg = "Retrieving cluster list...";
+  $scope.pgUpdate = function (pgs, jump) {
+    pgs = pgs || $scope.pool.pg_num;
+    var power =  Math.round(Math.log(pgs) / Math.log(2));
+    if (angular.isNumber(jump)) {
+      power += jump;
+    }
+    pgs = Math.pow(2, power); // Set size the nearest accurate size.
+    if (pgs < PG_MIN) {
+      pgs = PG_MIN;
+    }
+    $scope.pool.pg_num = pgs;
+  };
+
+  $scope.pgSizeChange = function () {
+    var pgs = $scope.data.osdCount * 100;
+    var type = $scope.pool.type;
+    var eprofile = $scope.pool.erasure.profile;
+    if (type === "replicated") {
+      pgs = pgs / $scope.pool.size;
+    } else if (type === "erasure" && eprofile) {
+      pgs = pgs / (eprofile.k + eprofile.m);
+    }
+    $scope.pgUpdate(pgs);
+  };
+
+  $scope.pgKeyChange = function (event) {
+    if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
+      $scope.pgUpdate(undefined, 39 - event.keyCode);
+    } else if (event.keyCode === 187 || event.keyCode === 189) { // 187 == plus sign && 189 == minus sign
+      $scope.pgUpdate(undefined, 188 - event.keyCode);
+    }
+  };
+
   cephClusterService.get()
     .$promise
     .then(function (clusters) {
       $scope.clusters = clusters.results;
-      $scope.waitingClusterMsg = "-- Select a cluster --";
-      $scope.clusters.forEach(function (cluster) {
+      angular.forEach($scope.clusters, function (cluster) {
         if (cluster.fsid === $scope.fsid) {
           $scope.data.cluster = cluster;
         }
@@ -89,85 +118,127 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
         if (clusters.count > 0) {
           $scope.data.cluster = $scope.clusters[0];
         } else {
-          $scope.waitingClusterMsg = "No cluster available.";
           Notification.warning({
-            title: $scope.waitingClusterMsg,
-            msg: "You can't create any RBDs with your configuration."
+            title: "No cluster available",
+            msg: "You can't create any pools with your configuration."
           });
         }
       }
-    }).catch(function () {
-      $scope.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
     });
 
   $scope.$watch("data.cluster", function (cluster) {
     if (cluster) {
+      $scope.data.cluster.loaded = false;
       $scope.fsid = cluster.fsid;
-      cephOsdService.get({fsid: cluster.fsid})
+      cephClusterService.status({fsid: cluster.fsid})
         .$promise
-        .then(function (res) {
-          $scope.data.osdCount = res.count;
+        .then(function (cluster) {
+          $scope.data.osdCount = cluster.osdmap.osdmap.num_osds;
+          // Calculation found here: http://docs.ceph.com/docs/master/rados/operations/placement-groups/#data-durability
+          $scope.pgSizeChange();
         });
       cephErasureCodeProfilesService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
           $scope.data.profiles = res.results;
-
-          if ($scope.data.profiles.length === 1) {
-            $scope.pool.erasure.profile = $scope.data.profiles[0];
-          }
+          $scope.ecProfileChange();
         });
+      cephOsdService.get({
+          fsid: cluster.fsid,
+          osd_objectstore: "bluestore"
+        })
+          .$promise
+          .then(function (res) {
+            $scope.bluestore = res.count > 0;
+          });
       cephCrushmapService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
-          $scope.data.cluster.rules = res.crushmap.rules;
-          $scope.data.ruleset = $scope.data.cluster.rules[0];
-        }).catch(function () {
-          $scope.waitingClusterMsg = "Error: Crushmap couldn't be loaded!";
+          $scope.data.cluster.rules = {
+            replicated: [],
+            erasure: []
+          };
+          /* Confusing types because of:
+           * https://bitbucket.org/openattic/openattic/src/2a054091ffb56d69b7ccee9ee7070b5116261d6b/backend/ceph/
+           * models.py?at=master&fileviewer=file-view-default#models.py-327
+           */
+          var type = {
+            1: "replicated",
+            3: "erasure"
+          };
+          angular.forEach(res.crushmap.rules, function (ruleset) {
+            $scope.data.cluster.rules[type[ruleset.type]].push(ruleset);
+          });
+          $scope.data.cluster.loaded = true;
         });
     }
   });
 
-  $scope.setReplicaSizeError = function (min, max, isValid) {
-    isValid = Boolean(isValid);
-    $scope.poolForm.crushSet.$setValidity("sizeError", isValid);
-    if (!isValid) {
-      $scope.poolForm.crushSet.$setDirty();
-      $scope.data.expert = true;
-    }
-    if (min) {
-      $scope.replicaSizeError = "Your replica size is too small. To use this rule a replica size of at least " + min +
-        " is needed.";
-    } else if (max) {
-      $scope.replicaSizeError = "Your replica size is too big. To use this rule a replica size of at most " + max +
-        " is needed.";
+  $scope.ecProfileChange = function () {
+    if ($scope.data.profiles.length === 1) {
+      $scope.pool.erasure.profile = $scope.data.profiles[0];
     }
   };
 
-  $scope.rulesetValidation = function () {
+  $scope.getMaxSize = function () {
+    var osdCount = $scope.data.osdCount;
     var ruleset = $scope.data.ruleset;
-    var size = $scope.pool.replicated.size;
+    if (ruleset && ruleset.max_size < osdCount) {
+      return ruleset.max_size;
+    }
+    return osdCount;
+  };
+
+  $scope.describeStep = function (step) {
+    return [
+      step.op.replace("_", " "),
+      step.item_name || "",
+      step.type ? step.num + " type " + step.type : ""
+    ].join(" ");
+  };
+
+  $scope.rulesetChange = function () {
+    if (!$scope.pool.type || !$scope.data.cluster.loaded) {
+      return;
+    }
+    var rules = $scope.data.cluster.rules[$scope.pool.type];
+    var ruleset = $scope.data.ruleset;
+    if (rules.length !== 1) {
+      ruleset = undefined;
+    } else if (rules.length === 1) {
+      ruleset = rules[0];
+    }
+    $scope.data.ruleset = ruleset;
+    $scope.useRulesetSize();
+    $scope.pgSizeChange();
+  };
+
+  $scope.useRulesetSize = function () {
+    var ruleset = $scope.data.ruleset;
+    if (!ruleset || $scope.pool.type !== "replicated") {
+      return;
+    }
+    var size = $scope.pool.size;
     if (size < ruleset.min_size) {
-      $scope.setReplicaSizeError(ruleset.min_size);
+      $scope.pool.size = ruleset.min_size;
     } else if (size > ruleset.max_size) {
-      $scope.setReplicaSizeError(null, ruleset.max_size);
-    } else {
-      $scope.setReplicaSizeError(null, null, true);
+      $scope.pool.size = ruleset.max_size;
     }
   };
 
   $scope.$watch("data.ruleset", function (ruleset) {
-    if (ruleset && $scope.data.cluster) {
-      $scope.pool.replicated.expert.crush_ruleset = ruleset.rule_id;
-      $scope.rulesetValidation();
+    if (ruleset) {
+      $scope.pool.crush_ruleset = ruleset.rule_id;
+      $scope.useRulesetSize();
+    } else {
+      $scope.pool.crush_ruleset = undefined;
     }
   });
 
-  $scope.$watch("pool.replicated.size", function () {
-    if ($scope.data.cluster) {
-      $scope.rulesetValidation();
-    }
-  });
+  $scope.onSizeChange = function () {
+    $scope.useRulesetSize();
+    $scope.pgSizeChange();
+  };
 
   $scope.submitAction = function (poolForm) {
     if (poolForm.$valid) {
@@ -175,16 +246,21 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $uibM
         name: $scope.pool.name,
         pg_num: $scope.pool.pg_num,
         type: $scope.pool.type,
-        fsid: $scope.fsid
+        fsid: $scope.fsid,
+        crush_ruleset: $scope.data.ruleset && $scope.data.ruleset.rule_id
       };
       if (pool.type === "replicated") {
         pool.min_size = 1; // No need for this here - API update needed.
-        pool.size = $scope.pool[pool.type].size;
-        pool.crush_ruleset = $scope.pool[pool.type].expert.crush_ruleset;
+        pool.size = $scope.pool.size;
       } else if (pool.type === "erasure") {
-        pool.min_size = 2; // No need for this here - API update needed.
-        pool.erasure_code_profile = $scope.pool[pool.type].profile.name;
+        pool.erasure_code_profile = $scope.pool.erasure.profile.name;
       }
+      angular.forEach($scope.data.flags, function (isSet, flag) {
+        if (angular.isUndefined(pool.flags) && isSet) {
+          pool.flags = [];
+        }
+        return isSet && pool.flags.push(flag);
+      });
       cephPoolsService.save(pool)
         .$promise
         .then(function () {

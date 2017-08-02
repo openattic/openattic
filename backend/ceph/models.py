@@ -15,25 +15,23 @@
 
 from __future__ import division
 
-import ConfigParser
 import itertools
 import logging
 import math
-import os
-from StringIO import StringIO
 
 from contextlib import contextmanager
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.shortcuts import get_object_or_404
 
 from ceph import librados
-from ceph.librados import MonApi, undo_transaction, RbdApi, Keyring, call_librados
+from ceph.librados import MonApi, undo_transaction, RbdApi, call_librados, ClusterConf, Keyring
 import ceph.tasks
 from exception import NotSupportedError
-from librados import ExternalCommandError
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from taskqueue.models import TaskQueue
 from utilities import aggregate_dict, zip_by_keys
@@ -71,79 +69,20 @@ class RadosMixin:
 class CephCluster(NodbModel, RadosMixin):
     """Represents a Ceph cluster."""
 
-    fsid = models.CharField(max_length=36, primary_key=True)
-    name = models.CharField(max_length=100)
-    health = models.CharField(max_length=11)
+    fsid = models.CharField(max_length=36, primary_key=True, editable=False)
+    name = models.CharField(max_length=100, editable=False)
+    health = models.CharField(max_length=11, editable=False)
+    config_file_path = models.CharField(max_length=1024, editable=False, null=True)
+    keyring_file_path = models.CharField(max_length=1024, null=True)
+    keyring_user = models.CharField(max_length=1024, null=True)
 
-    @staticmethod
-    def has_valid_config_file_and_keyring(cluster_name="ceph", ceph_dir="/etc/ceph"):
-        valid = True
+    @classmethod
+    def get_name(cls, fsid):
+        return cls.objects.get(fsid=fsid).name
 
-        # Check for existance of Ceph directory
-        if not os.path.isdir(ceph_dir):
-            valid = False
-            logger.error("No Ceph config directory found at '{}'".format(ceph_dir))
-        else:
-            # Check if valid config file exists
-            file_path = os.path.join(ceph_dir, cluster_name + ".conf")
-
-            if not os.path.exists(file_path):
-                valid = False
-                logger.error("No Ceph cluster configuration file '{}' found".format(file_path))
-            else:
-                # If yes check if config file is accessible
-                if not os.access(file_path, os.R_OK):
-                    valid = False
-                    logger.error("Ceph configuration file '{}' is not accessible, permission denied"
-                                 .format(file_path))
-            # Check for existing and accessible keyring
-            try:
-                Keyring(cluster_name, ceph_dir)
-            except RuntimeError:
-                valid = False
-
-        return valid
-
-    @staticmethod
-    def get_names():
-        clusters = []
-
-        for file in os.listdir('/etc/ceph'):
-            if file.endswith('.conf'):
-                cluster_name = os.path.splitext(file)[0]
-                if CephCluster.has_valid_config_file_and_keyring(cluster_name):
-                    clusters.append(cluster_name)
-        return clusters
-
-    @staticmethod
-    def get_name(fsid):
-        for conf_file in os.listdir('/etc/ceph'):
-            if conf_file.endswith('.conf'):
-                cluster_name = os.path.splitext(conf_file)[0]
-                if CephCluster.has_valid_config_file_and_keyring(cluster_name):
-                    config = CephCluster._get_confobj(os.path.join('/etc/ceph/', conf_file))
-
-                    if config.get('global', 'fsid') == fsid:
-                        return cluster_name
-
-        raise LookupError()
-
-    @staticmethod
-    def get_fsid(cluster_name):
-        f = '/etc/ceph/{name}.conf'.format(name=cluster_name)
-        if CephCluster.has_valid_config_file_and_keyring(cluster_name):
-            config = CephCluster._get_confobj(f)
-            fsid = config.get('global', 'fsid')
-            return fsid
-
-        raise LookupError()
-
-    @staticmethod
-    def _get_confobj(file_name):
-        cp = ConfigParser.RawConfigParser()
-        with open(file_name) as f:
-            cp.readfp(StringIO('\n'.join(line.strip() for line in f)))
-        return cp
+    @classmethod
+    def get_file_path(cls, fsid):
+        return cls.objects.get(fsid=fsid).config_file_path
 
     @property
     def status(self):
@@ -159,12 +98,64 @@ class CephCluster(NodbModel, RadosMixin):
     @staticmethod
     def get_all_objects(context, query):
         result = []
-        for cluster_name in CephCluster.get_names():
-            fsid = CephCluster.get_fsid(cluster_name)
-            cluster = CephCluster(fsid=fsid, name=cluster_name)
+        for conf in ClusterConf.all_configs():
+            cluster = CephCluster(fsid=conf.fsid,
+                                  name=conf.name,
+                                  config_file_path=conf.file_path,
+                                  keyring_file_path=conf.keyring.file_name,
+                                  keyring_user=conf.keyring.user_name)
             result.append(cluster)
 
         return result
+
+    def clean(self):
+        try:
+            keyring = Keyring(file_name=self.keyring_file_path)
+        except RuntimeError as e:
+            raise ValidationError({'keyring_file_path': [str(e)]})
+
+        if self.keyring_user not in keyring.available_user_names:
+            raise ValidationError({'keyring_user': ["Unknown keyring user."]})
+
+    def save(self, *args, **kwargs):
+        """
+        This method implements three purposes.
+
+        1. Implements the functionality originally done by django (e.g. setting id on self)
+        2. Modify the Ceph state-machine in a sane way.
+        3. Providing a RESTful API.
+        """
+        insert = self._state.adding  # there seems to be no id field.
+
+        if insert:
+            raise ValidationError('Cannot create Ceph cluster.')
+
+        diff, original = self.get_modified_fields()
+
+        if insert:
+            self.features = original.features
+
+        for key, value in diff.items():
+            if key == 'keyring_file_path':
+                ClusterConf(self.config_file_path).keyring_file_path = value
+            elif key == 'keyring_user':
+                ClusterConf(self.config_file_path).keyring.set_user_name(self.fsid, value)
+            else:
+                logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
+                               'supported'.format(key, value, self.config_file_path))
+
+        super(CephCluster, self).save(*args, **kwargs)
+
+
+    @property
+    def keyring_candidates(self):
+        return [{
+                    "file-path": keyring.file_name,
+                    "user-names": keyring.available_user_names
+                }
+                for keyring
+                in ClusterConf(self.config_file_path).keyring_candidates
+        ]
 
     def get_crushmap(self):
         with fsid_context(self.fsid):
@@ -172,12 +163,19 @@ class CephCluster(NodbModel, RadosMixin):
 
     @bulk_attribute_setter(['health'])
     def set_cluster_health(self, objects, field_names):
-        health = self.mon_api(self.fsid).health()
-        # Ceph Luminous > 12.1 renamed `overall_status` to `status`
-        self.health = health['overall_status' if 'overall_status' in health else 'status']
+        try:
+            health = self.mon_api(self.fsid).health()
+            # Ceph Luminous > 12.1 renamed `overall_status` to `status`
+            self.health = health['overall_status' if 'overall_status' in health else 'status']
+        except (TypeError, librados.ExternalCommandError):
+            logger.exception('failed to get ceph health')
+            self.health = 'HEALTH_ERR'
 
     def __str__(self):
-        return self.name
+        return self.config_file_path
+
+    def __unicode__(self):
+        return self.config_file_path
 
 
 @contextmanager
@@ -253,6 +251,17 @@ class CephPool(NodbModel, RadosMixin):
     tiers = JsonField(base_type=list, editable=False, blank=True)
     flags = JsonField(base_type=list, blank=True, default=[])
 
+    _compr_mode_choices = 'force aggressive passive none'.split(' ')
+    _compr_algorithm_choices = 'none snappy zlib zstd lz4'.split(' ')
+    compression_mode = models.CharField(max_length=100, default='none',
+                                        choices=[(x, x) for x in _compr_mode_choices])
+
+    compression_algorithm = models.CharField(max_length=100, default='none',
+                                             choices=[(x, x) for x in _compr_algorithm_choices])
+    compression_required_ratio = models.FloatField(default=0.0, validators=[MinValueValidator(0), MaxValueValidator(1)])
+    compression_max_blob_size = models.IntegerField(default=0)
+    compression_min_blob_size = models.IntegerField(default=0)
+
     pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
     @staticmethod
@@ -267,6 +276,10 @@ class CephPool(NodbModel, RadosMixin):
         for pool_data in osd_dump_data['pools']:
 
             pool_id = pool_data['pool']
+
+            def options(key, default=None):
+                opts = pool_data.get('options', {})
+                return opts.get(key, default)
 
             object_data = {
                 'id': pool_id,
@@ -304,6 +317,11 @@ class CephPool(NodbModel, RadosMixin):
                 'tiers': pool_data['tiers'],
                 'flags': pool_data['flags_names'].split(','),
                 'pool_snaps': pool_data['pool_snaps'],
+                'compression_mode': options('compression_mode', 'none'),
+                'compression_algorithm': options('compression_algorithm', 'none'),
+                'compression_required_ratio': options('compression_required_ratio'),
+                'compression_max_blob_size': options('compression_max_blob_size'),
+                'compression_min_blob_size': options('compression_min_blob_size'),
             }
 
             ceph_pool = CephPool(**CephPool.make_model_args(object_data))
@@ -311,6 +329,11 @@ class CephPool(NodbModel, RadosMixin):
             result.append(ceph_pool)
 
         return result
+
+    def __init__(self, **kwargs):
+        super(CephPool, self).__init__(**kwargs)
+        if self.cluster is None:
+            self.cluster = CephPool.objects.nodb_context.cluster
 
     @bulk_attribute_setter(['max_avail', 'kb_used', 'percent_used'])
     def ceph_df(self, pools, field_names):
@@ -376,9 +399,13 @@ class CephPool(NodbModel, RadosMixin):
         2. Modify the Ceph state-machine in a sane way.
         3. Providing a RESTful API.
         """
-        context = CephPool.objects.nodb_context
+
+        if self.cluster is None:
+            self.cluster = CephPool.objects.nodb_context.cluster
+
         insert = getattr(self, 'id', None) is None
-        with undo_transaction(self.mon_api(), exception_type=(ExternalCommandError, NotSupportedError),
+        with undo_transaction(self.mon_api(),
+                              exception_type=(librados.ExternalCommandError, NotSupportedError),
                               re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
@@ -397,8 +424,11 @@ class CephPool(NodbModel, RadosMixin):
                 for attr, value in diff.items():
                     if not hasattr(self, attr):
                         setattr(self, attr, value)
-                self._task_queue = ceph.tasks.track_pg_creation.delay(context.fsid, self.id, 0,
+                self._task_queue = ceph.tasks.track_pg_creation.delay(self.cluster.fsid, self.id, 0,
                                                                       self.pg_num)
+
+            if not insert and 'cluster' in diff:
+                raise ValueError({'cluster': ["Cluster cannot be changed."]})
 
             def schwartzian_transform(obj):
                 key, val = obj
@@ -439,6 +469,10 @@ class CephPool(NodbModel, RadosMixin):
                             msg = 'Unknown flag \'{}\'.'.format(flag)
                             logger.warning(msg)
                             raise NotSupportedError(msg)
+                elif key == 'compression_required_ratio':
+                    api.osd_pool_set(self.name, key, str(value),
+                                     undo_previous_value=str(getattr(original, key)))
+
                 elif self.type == 'replicated' and key not in ['name'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
@@ -726,14 +760,15 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     id = models.CharField(max_length=100, primary_key=True, editable=False,
                           help_text='pool-name/image-name')
     name = models.CharField(max_length=100)
-    pool = models.ForeignKey(CephPool)
+    pool = models.ForeignKey(CephPool, related_name='pool')
+    data_pool = models.ForeignKey(CephPool, null=True, blank=True, related_name='data_pool')
     size = models.IntegerField(help_text='Bytes, where size modulo obj_size === 0',
                                default=4 * 1024 ** 3)
     obj_size = models.IntegerField(null=True, blank=True, help_text='obj_size === 2^n',
                                    default=2 ** 22)
     num_objs = models.IntegerField(editable=False)
     block_name_prefix = models.CharField(max_length=100, editable=False)
-    features = JsonField(base_type=list, null=True, blank=True,
+    features = JsonField(base_type=list, null=True, blank=True, default=[],
                          help_text='For example: [{}]'.format(
                              ', '.join(['"{}"'.format(v) for v
                                         in RbdApi.get_feature_mapping().values()])))
@@ -763,17 +798,26 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         rbd_name_pools = (itertools.chain.from_iterable((((image, pool)
                                                           for image in api.list(pool.name))
                                                          for pool in pools)))
-        rbds = ((aggregate_dict(api.image_stat(pool.name, image_name),
-                                old_format=api.image_old_format(pool.name, image_name),
-                                features=api.image_features(pool.name, image_name),
-                                name=image_name,
-                                pool_id=pool.id),
-                 pool)
-                for (image_name, pool)
-                in rbd_name_pools)
 
-        return [CephRbd(**CephRbd.make_model_args(aggregate_dict(
-            rbd, pool=pool, id=CephRbd.make_key(pool, rbd['name'])))) for (rbd, pool) in rbds]
+        rbds = []
+        for (image_name, pool) in rbd_name_pools:
+            data_pool_id = None
+            image_info = api.image_info(pool.name, image_name)
+
+            if 'data_pool' in image_info:
+                data_pool = CephPool.objects.get(name=image_info['data_pool'])
+                data_pool_id = data_pool.id if data_pool else None
+
+            rbds.append((aggregate_dict(api.image_stat(pool.name, image_name),
+                                        old_format=api.image_old_format(pool.name, image_name),
+                                        features=api.image_features(pool.name, image_name),
+                                        name=image_name,
+                                        pool_id=pool.id,
+                                        data_pool_id=data_pool_id,
+                                        id=CephRbd.make_key(pool, image_name))))
+
+        return [CephRbd(**CephRbd.make_model_args(rbd)) for rbd in rbds]
+
 
     @bulk_attribute_setter(['used_size'])
     def set_disk_usage(self, objects, field_names):
@@ -835,11 +879,14 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             if insert:
                 order = None
+                data_pool_name = self.data_pool.name if self.data_pool else None
+
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
                 api.create(self.pool.name, self.name, self.size, features=self.features,
                            old_format=self.old_format, order=order,
-                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count)
+                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
+                           data_pool_name=data_pool_name)
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()

@@ -75,6 +75,26 @@ describe('settings inputs validations', function(){
     expect(form.rgwUseSSL.isEnabled()).toBe(true);
   });
 
+  it('should disable ceph config file', function(){
+    expect(form.cephClusterConfigFile.isEnabled()).toBe(false);
+  });
+
+  it('should validate ceph keyring file path', function(){
+    form.cephClusterKeyringFile.clear();
+    expect(form.cephClusterKeyringFileRequired.isDisplayed()).toBe(true);
+
+    form.cephClusterKeyringFile.sendKeys('/e2e-path');
+    expect(form.cephClusterKeyringFileRequired.isDisplayed()).toBe(false);
+  });
+
+  it('should validate ceph keyring user', function(){
+    form.cephClusterKeyringUser.clear();
+    expect(form.cephClusterKeyringUserRequired.isDisplayed()).toBe(true);
+
+    form.cephClusterKeyringUser.sendKeys('e2e-user');
+    expect(form.cephClusterKeyringUserRequired.isDisplayed()).toBe(false);
+  });
+
   it('should check salt api connection', function(){
     browser.refresh();
 
@@ -109,6 +129,17 @@ describe('settings inputs validations', function(){
     form.grafanaHost.clear().sendKeys('e2e-host');
     expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.grafanaConnectionFail.isDisplayed()).toBe(true);
+  });
+
+  it('should check ceph connection', function(){
+    browser.refresh();
+
+    expect(form.cephClusterConnectionSuccess.isDisplayed()).toBe(true);
+    expect(form.cephClusterConnectionFail.isDisplayed()).toBe(false);
+
+    form.cephClusterKeyringUser.clear().sendKeys('e2e-keyring-user');
+    expect(form.cephClusterConnectionSuccess.isDisplayed()).toBe(false);
+    expect(form.cephClusterConnectionFail.isDisplayed()).toBe(true);
   });
 
   afterAll(function(){

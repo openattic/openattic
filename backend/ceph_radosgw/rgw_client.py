@@ -55,7 +55,7 @@ class RGWClient(RestClient, SettingsListener):
                     raise RGWClient.NoCredentialsException()
                 logger.info("Using DeepSea RGW settings to connect to RGW REST API")
             except RequestException as e:
-                logger.error(e)
+                logger.exception(e)
                 raise RGWClient.NoCredentialsException()
 
         RGWClient._host = credentials['host']

@@ -129,6 +129,47 @@ NAGIOS_STATE_DIR="/var/lib/icinga"
 # Location of the Nagios plugin directory
 NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"
 
+# Host of the Salt-API which shall be used by openATTIC. Can be an IP address or a hostname.
+#SALT_API_HOST="salt"
+
+# Port of the Salt-API.
+#SALT_API_PORT=8000
+
+# Salt-API External Authentication System:
+#  -"auto": An "Always Approved" eauth interface to test against, not intended for production use;
+#  -"sharedsecret": Provide authentication using configured shared secret.
+#SALT_API_EAUTH="sharedsecret"
+
+# The username for Salt-API authentication.
+#SALT_API_USERNAME="admin"
+
+# The password for Salt-API authentication.
+#SALT_API_PASSWORD="admin"
+
+# The shared secret for Salt-API authentication.
+#SALT_API_SHARED_SECRET=""
+
+# Host of the Ceph Object Gateway instance. Can be an IP address or a hostname.
+#RGW_API_HOST=""
+
+# Port of the Ceph Object Gateway instance.
+#RGW_API_PORT=80
+
+# Access key for Ceph Object Gateway.
+#RGW_API_ACCESS_KEY=""
+
+# Secret key for Ceph Object Gateway.
+#RGW_API_SECRET_KEY=""
+
+# The entry point for an admin request URL.
+#RGW_API_ADMIN_RESOURCE="admin"
+
+# The user ID.
+#RGW_API_USER_ID=""
+
+# The HTTP Scheme to be used. Either 'http' or 'https'.
+#RGW_API_SCHEME="http"
+
 # Host of the Grafana instance which shall be used by openATTIC.
 #GRAFANA_API_HOST="localhost"
 

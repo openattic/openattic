@@ -33,7 +33,9 @@
 var app = angular.module("openattic");
 /**
  * @param {string} oaClipboardTarget The identifer of the DOM element whose
- *   text is copied into the clipboard.
+ *   text is copied into the clipboard. Take care that the identifier is
+ *   selectable (e.g. input or textarea), otherwise it is not possible to copy
+ *   the element value into the clipboard.
  * @param {string} oaClipboardText An alternative text. Default is 'text'.
  */
 app.directive("oaClipboard", function (Notification) {
@@ -51,12 +53,15 @@ app.directive("oaClipboard", function (Notification) {
         try {
           // Get the DOM element by id.
           var node = $("#" + attrs.oaClipboardTarget);
+          // Create the input to hold our text.
+          element = document.createElement("input");
+          element.value = node.val();
+          document.body.appendChild(element);
           // Copy text to clipboard.
-          var selection = document.getSelection();
-          selection.removeAllRanges();
-          node.select();
+          element.select();
           document.execCommand("copy");
-          selection.removeAllRanges();
+          // Finally remove the element.
+          document.body.removeChild(element);
           // Set success message.
           toastyOptions = {
             type: "success",

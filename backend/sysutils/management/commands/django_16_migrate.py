@@ -412,6 +412,51 @@ _migrations = [
     SqlMigration(
         'ceph', u'0010_remove_cephcluster_performance_data_options', None, None
     ),
+    SqlMigration(
+        'ceph', u'0011_cephrbd_features_default', None, None
+    ),
+    SqlMigration(
+        'ceph', u'0012_cephpool_compression',
+        lambda cursor: _column_not_exists('ceph_cephosd', 'osd_objectstore', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_algorithm" varchar(100) NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_algorithm" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_max_blob_size" integer NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_max_blob_size" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_min_blob_size" integer NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_min_blob_size" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_mode" varchar(100) NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_mode" DROP DEFAULT;
+        ALTER TABLE "ceph_cephpool" ADD COLUMN "compression_required_ratio" double precision NULL;
+        ALTER TABLE "ceph_cephpool" ALTER COLUMN "compression_required_ratio" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
+    SqlMigration(
+        'ceph', u'0013_cephcluster_add_keyring',
+        lambda cursor: _column_not_exists('ceph_cephcluster', 'config_file_path', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephcluster" ADD COLUMN "config_file_path" varchar(1024) NULL;
+        ALTER TABLE "ceph_cephcluster" ALTER COLUMN "config_file_path" DROP DEFAULT;
+        ALTER TABLE "ceph_cephcluster" ADD COLUMN "keyring_file_path" varchar(1024) NULL;
+        ALTER TABLE "ceph_cephcluster" ALTER COLUMN "keyring_file_path" DROP DEFAULT;
+        ALTER TABLE "ceph_cephcluster" ADD COLUMN "keyring_user" varchar(1024) NULL;
+        ALTER TABLE "ceph_cephcluster" ALTER COLUMN "keyring_user" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
+    SqlMigration(
+        'ceph', u'0014_cephrbd_data_pool',
+        lambda cursor: _column_not_exists('ceph_cephrbd', 'data_pool_id', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "ceph_cephrbd" ADD COLUMN "data_pool_id" integer NULL;
+        ALTER TABLE "ceph_cephrbd" ALTER COLUMN "data_pool_id" DROP DEFAULT;
+        COMMIT;
+        """
+    ),
 ]
 
 
