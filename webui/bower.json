@@ -9,6 +9,7 @@
   ],
   "dependencies": {
     "angular": "1.5.3",
+    "angular-animate": "1.5.3",
     "angular-bootstrap": "2.5.0",
     "angular-bootstrap-toggle": "0.1.2",
     "angular-breadcrumb": "0.4.1",

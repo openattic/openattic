@@ -16,12 +16,10 @@ var cephPoolCommons = function(){
   // Describes the attributes seen in the detail tab.
   this.detailAttributes = [
     'ID',
-    'Size',
-    'Used',
     'Placement Groups',
     'Type',
-    'Last change',
-    'Placement groups for placement'
+    'Flags',
+    'Last change'
   ];
 
   // Description of headers in the table.
@@ -74,11 +72,12 @@ var cephPoolCommons = function(){
         validName: element(by.className('tc_noValidName'))
       }
     },
+    /* Only for multi cluster systems
     cluster: {
       name: 'Cluster',
       byClass: element.all(by.className('tc_cluster_selection')),
       byModel: element(by.model('data.cluster')),
-      displayed: true,
+      displayed: false,
       type: 'select',
       items: {
         clusterSelection: element(by.className('tc_clusterOption')),
@@ -86,6 +85,7 @@ var cephPoolCommons = function(){
         helpLoad: element(by.className('tc_clusterLoading'))
       }
     },
+    */
     types: {
       name: 'Pool type',
       byClass: element.all(by.className('tc_poolTypes_selection')),
@@ -102,42 +102,35 @@ var cephPoolCommons = function(){
       byClass: element(by.className('tc_pool_pgNum')),
       byModel: element(by.model('pool.pg_num')),
       displayed: false,
-      displayedIf: 'replicated',
+      displayedIf: 'replicated', // and 'erasure'
       type: 'number',
       items: {
         helpPgnum: element(by.className('tc_pgNumRequired'))
       }
     },
-    replicaSize: {
-      name: 'Replica size',
+    replicatedSize: {
+      name: 'Replicated size',
       byClass: element(by.className('tc_pool_size')),
-      byModel: element(by.model('pool.replicated.size')),
+      byModel: element(by.model('pool.size')),
       type: 'number',
       displayed: false,
+      presented: false,
       displayedIf: 'replicated',
       items: {
+        helpSize: element(by.className('tc-applied-rule-set')),
+        helpSize: element(by.className('tc-size-out-of-range')),
         helpSize: element(by.className('tc_sizeRequired'))
       }
     },
-    expertSetting: {
-      name: 'Expert settings',
-      byClass: element(by.className('tc_expertSettings')),
-      byModel: element(by.model('data.expert')),
-      type: 'checkbox',
-      displayed: false,
-      displayedIf: 'replicated'
-    },
     crushRules: {
       name: 'Crush ruleset',
-      byClass: element.all(by.className('tc_crushSet_selection')),
-      byModel: element(by.model('data.ruleset')),
+      byClass: element(by.className('tc_crushSet_selection')),
       displayed: false,
-      displayedIf: 'replicatedExpert',
+      displayedIf: 'replicated', // and 'erasure'
       type: 'select',
       items: {
         crushSelection: element(by.className('tc_crushSetOption')),
-        helpRuleReq: element(by.className('tc_crushSetRequired')),
-        helpCrush: element(by.className('tc_crushSetFailure'))
+        helpRuleReq: element(by.className('tc_crushSetRequired'))
       }
     },
     erasureProfiles: {
@@ -150,7 +143,16 @@ var cephPoolCommons = function(){
       items: {
         erasureSelection: element(by.className('tc_erasureProfilesOption')),
         erasureRequired: element(by.className('tc_erasureRequired'))
-      }
+      },
+    },
+    ecOverwriteFlag: {
+      name: 'EC Overwrites',
+      byClass: element.all(by.id('ec-overwrites')),
+      byModel: element(by.model('data.flags.ec_overwrites')),
+      type: 'checkbox',
+      displayed: false,
+      presented: false,
+      displayedIf: 'erasure',
     },
     backButton: {
       name: 'Back',
@@ -178,10 +180,6 @@ var cephPoolCommons = function(){
     if(e.displayedIf === 'replicated'){
       self.formElements.types.byModel.sendKeys('Replicated');
       self.formElements.name.byModel.click();
-    }else if(e.displayedIf === 'replicatedExpert'){
-      self.formElements.types.byModel.sendKeys('Replicated');
-      self.formElements.name.byModel.click();
-      self.checkCheckboxToBe(self.formElements.expertSetting.byModel, true);
     }else if(e.displayedIf === 'erasure'){
       self.formElements.types.byModel.sendKeys('Erasure');
       self.formElements.name.byModel.click();

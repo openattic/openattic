@@ -50,8 +50,14 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   var modifyResult = function (res) {
     res.results.forEach(function (pool) {
+      if (pool.percent_used) {
+        pool.percent_used = 0;
+      }
       pool.oaUsed = pool.percent_used;
       pool.oaUnused = 100 - pool.oaUsed;
+      if (pool.max_avail) {
+        pool.max_avail = 0;
+      }
       pool.oaFree = pool.max_avail - pool.num_bytes;
     });
 
