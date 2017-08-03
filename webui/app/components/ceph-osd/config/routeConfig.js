@@ -41,14 +41,6 @@ app.config(function ($stateProvider) {
             controller: "CephOsdCtrl"
           }
         },
-        resolve: {
-          clusterData: function ($q, cephClusterService) {
-            return cephClusterService.get().$promise
-                .then(function (res) {
-                  return res;
-                });
-          }
-        },
         ncyBreadcrumb: {
           label: "Ceph OSDs"
         }

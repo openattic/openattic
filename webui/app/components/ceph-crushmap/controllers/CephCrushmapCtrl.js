@@ -31,19 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic.cephCrushmap");
-app.controller("CephCrushmapCtrl", function ($scope, $timeout, cephCrushmapService, clusterData, Notification,
+app.controller("CephCrushmapCtrl", function ($scope, $timeout, cephCrushmapService, Notification,
     registryService) {
-  $scope.cluster = null;
-  $scope.clusters = clusterData;
+  $scope.cluster = undefined;
+  $scope.clusters = undefined;
   $scope.registry = registryService;
   $scope.repsize = 3;
 
-  if ($scope.clusters.results.length > 0 && angular.isUndefined($scope.registry.selectedCluster)) {
-    $scope.registry.selectedCluster = $scope.clusters.results[0];
-  }
+  $scope.onClusterLoad = function (cluster) {
+    $scope.clusters = cluster;
+    $scope.getCrushmap();
+  };
 
   $scope.getCrushmap = function () {
-    if ($scope.clusters.results.length > 0 && $scope.registry.selectedCluster) {
+    if (angular.isObject($scope.clusters) && $scope.clusters.results &&
+        $scope.clusters.results.length > 0 && $scope.registry.selectedCluster) {
       $scope.error = false;
       cephCrushmapService
         .get({fsid: $scope.registry.selectedCluster.fsid})
@@ -56,7 +58,6 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout, cephCrushmapServi
         });
     }
   };
-  $scope.getCrushmap();
 
   $scope.setActiveRuleset = function (activeRuleset) {
     $scope.activeRuleset = activeRuleset;

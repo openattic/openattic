@@ -40,16 +40,6 @@ app.config(function ($stateProvider) {
           component: "cephNfsList"
         }
       },
-      resolve: {
-        cluster: function ($q, cephClusterService) {
-          return cephClusterService.get().$promise
-            .then(function (res) {
-              return res;
-            }).catch(function () {
-              console.log("No Ceph cluster available");
-            });
-        }
-      },
       ncyBreadcrumb: {
         label: "Ceph NFS"
       }

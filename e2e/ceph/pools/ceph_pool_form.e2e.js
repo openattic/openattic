@@ -1,3 +1,5 @@
+'use strict';
+
 var helpers = require('../../common.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
 
@@ -17,15 +19,25 @@ describe('ceph pool creation form', function(){
   };
 
   var isFormElementAvailable = function(e){
-    it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
-      if(e.byModel){
-        expect(e.byModel.isDisplayed()).toBe(e.displayed);
-      }else{
-        expect(e.byClass.isDisplayed()).toBe(e.displayed);
+    if(e.presented === false){
+      it('should not present the form element "' + e.name + '"', function(){
+        if(e.byModel){
+          expect(e.byModel.isPresent()).toBe(e.presented);
+        }else{
+          expect(e.byClass.isPresent()).toBe(e.presented);
+        }
+      });
+    } else {
+      it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
+        if(e.byModel){
+          expect(e.byModel.isDisplayed()).toBe(e.displayed);
+        }else{
+          expect(e.byClass.isDisplayed()).toBe(e.displayed);
+        }
+      });
+      for(var item in e.items){
+        isItemPresent(item, e.items);
       }
-    });
-    for(item in e.items){
-      isItemPresent(item, e.items);
     }
   };
 

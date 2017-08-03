@@ -41,7 +41,8 @@ app.controller("CephRgwBucketDeleteModalCtrl", function ($scope, $q, $uibModalIn
       $scope.buckets.forEach(function (bucket) {
         var deferred = $q.defer();
         cephRgwBucketService.delete({
-          "bucket": bucket.bucket
+          "bucket": bucket.bucket,
+          "purge-objects": true
         }, undefined, deferred.resolve, deferred.reject);
         requests.push(deferred.promise);
       });

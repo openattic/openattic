@@ -1,13 +1,5 @@
+<oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
 <oa-ceph-module-loader cluster="clusters" registry="registry" on-cluster-change="getCrushmap()">
-
-<div class="panel panel-default" ng-show="!error && cluster === null">
-    <div class="panel-heading">
-        <h3 class="panel-title">Loading...</h3>
-    </div>
-    <div class="panel-body">
-        Ceph cluster is loading...
-    </div>
-</div>
 
 <div class="panel panel-default" ng-show="error && error.statusText === 'NOT FOUND'">
     <div class="panel-heading">
@@ -18,7 +10,10 @@
     </div>
 </div>
 
-<div class="row" ng-show="!error && cluster !== null">
+<oa-loading-panel message="Ceph CRUSH map is loading..."
+                  ng-show="!error && !cluster.$resolved"></oa-loading-panel>
+
+<div class="row" ng-show="!error && cluster.crushmap">
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -102,4 +97,6 @@
         </div>
     </div>
 </div>
+
 </oa-ceph-module-loader>
+</oa-ceph-cluster-loader>

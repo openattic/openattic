@@ -50,6 +50,10 @@ app.factory("settingsFormService", function ($resource) {
     getRgwConfiguration: {
       method: "GET",
       url: globalConfig.API.URL + "settings/get_rgw_configuration"
+    },
+    checkCephConnection: {
+      method: "GET",
+      url: globalConfig.API.URL + "settings/check_ceph_configuration"
     }
   });
 });

@@ -62,7 +62,7 @@ module.exports = function (grunt) {
       watch: {
         dev: {
           files: buildConfig.watchFiles,
-          tasks: ["htmlbuild", "jshint", "jscs"]
+          tasks: ["htmlbuild:dev", "jshint", "jscs"]
         }
       },
 
@@ -77,7 +77,7 @@ module.exports = function (grunt) {
        Inserts all project scripts and styles into 'htmlbuild:' prefixed html comment blocks from 'index.tpl.html'.
        */
       htmlbuild: {
-        dev_index: {
+        dist: {
           src: "<%= buildConfig.src %>index.tpl.html",
           dest: "<%= buildConfig.src %>index.html",
           options: {
@@ -85,6 +85,31 @@ module.exports = function (grunt) {
             prefix: "",
             parseTag: "htmlbuild",
             scripts: {
+              config: {
+                files: "<%= buildConfig.src %>config.js"
+              },
+              src: {
+                files: buildConfig.applicationFiles
+              }
+            },
+            styles: {
+              bundle: [
+                "<%= buildConfig.src %>styles/**/*.css"
+              ]
+            }
+          }
+        },
+        dev: {
+          src: "<%= buildConfig.src %>index.tpl.html",
+          dest: "<%= buildConfig.src %>index.html",
+          options: {
+            relative: true,
+            prefix: "",
+            parseTag: "htmlbuild",
+            scripts: {
+              config: {
+                files: "<%= buildConfig.src %>config.*js"
+              },
               src: {
                 files: buildConfig.applicationFiles
               }
@@ -204,8 +229,8 @@ module.exports = function (grunt) {
   );
 
   grunt.registerTask("dev", [
-    "htmlbuild",
-    "watch"
+    "htmlbuild:dev",
+    "watch:dev"
   ]);
 
   grunt.registerTask("default", [
@@ -219,7 +244,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask("build", [
     "clean",
-    "htmlbuild",
+    "htmlbuild:dist",
     "useminPrepare",
     "copy",
     "concat",

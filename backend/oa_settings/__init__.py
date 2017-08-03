@@ -86,6 +86,15 @@ for fn in _custom_settings:
 assert settings_file
 
 
+def get_containing_folder_follow_links(file_path):
+    if os.path.islink(file_path):
+        file_path = os.readlink(file_path)
+    ret = os.path.dirname(file_path)
+
+    return ret
+
+
+
 settings_list = [i for i in dir(settings) if not inspect.ismethod(i) and not i.startswith('_')]
 
 # populate Settings class
@@ -101,15 +110,15 @@ mask = pyinotify.IN_MODIFY
 
 
 class SettingsFileHandler(pyinotify.ProcessEvent):
+
     def process_IN_MODIFY(self, event):
-        if event.pathname == settings_file:
-            logger.debug("Settings file %s was modified, trigger settings reload.", settings_file)
-            load_settings()
+        logger.debug("Settings file %s was modified, trigger settings reload.", event.pathname)
+        load_settings()
 
 notifier = pyinotify.ThreadedNotifier(wm, SettingsFileHandler())
 notifier.setDaemon(True)
 notifier.start()
-wdd = wm.add_watch(settings_file[:settings_file.rfind('/')], mask)
+wdd = wm.add_watch(get_containing_folder_follow_links(settings_file), mask)
 
 
 @atexit.register
@@ -153,8 +162,20 @@ def load_settings():
 
     _notify_settings_listeners()
 
-
 def save_settings():
+    def get_default(key):
+        return setting_init_dict[key][0]
+
+    def get_type(key):
+        return setting_init_dict[key][1]
+
+    def get_value(key):
+        return getattr(Settings, key)
+
+    save_settings_generic(settings_list, get_default, get_type, get_value)
+
+
+def save_settings_generic(this_settings_list, get_default, get_type, get_value):
     conf_content = ""
     write_log = set()
     with open(settings_file, "r") as f:
@@ -163,23 +184,23 @@ def save_settings():
             idx = sline.find('=')
             if idx != -1 and not sline.startswith('#'):
                 key = sline[:idx].strip()
-                if key in settings_list:
-                    if getattr(Settings, key) == setting_init_dict[key][0]:
+                if key in this_settings_list:
+                    if get_value(key) == get_default(key):
                         continue
-                    if setting_init_dict[key][1] == int:
-                        val_str = "{}".format(getattr(Settings, key))
+                    if get_type(key) == int:
+                        val_str = "{}".format(get_value(key))
                     else:
-                        val_str = '"{}"'.format(getattr(Settings, key))
+                        val_str = '"{}"'.format(get_value(key))
                     conf_content += '{}={}\n'.format(key, val_str)
                     write_log.add(key)
                     continue
 
             conf_content += line
 
-    for key in settings_list:
-        val = getattr(Settings, key)
-        if key not in write_log and val != setting_init_dict[key][0]:
-            if setting_init_dict[key][1] == int:
+    for key in this_settings_list:
+        val = get_value(key)
+        if key not in write_log and val != get_default(key):
+            if get_type(key) == int:
                 val_str = "{}".format(val)
             else:
                 val_str = '"{}"'.format(val)
@@ -224,3 +245,6 @@ class SettingsListener(object):
     def __init__(self):
         super(SettingsListener, self).__init__()
         register_listener(self)
+
+    def settings_changed_handler(self):
+        raise NotImplementedError('settings_changed_handler')

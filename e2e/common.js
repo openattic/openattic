@@ -70,7 +70,9 @@
 
     login: function(){
       browser.get(configs.url);
+      element.all(by.model('username')).clear();
       element.all(by.model('username')).sendKeys(configs.username);
+      element.all(by.model('password')).clear();
       element.all(by.model('password')).sendKeys(configs.password);
       element.all(by.css('input[type="submit"]')).click();
     },

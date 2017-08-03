@@ -39,6 +39,7 @@ webui/app/bower_components
 webui/app/index.html
 webui/coverage
 webui/npm-debug.log
+webui/app/config.local.js
 
 # From gatling-rest
 gatling/conf/

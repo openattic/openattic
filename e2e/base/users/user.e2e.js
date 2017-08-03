@@ -32,6 +32,32 @@ describe('Should add an user', function(){
     helpers.setLocation('users', false);
   });
 
+  it('should show the password in plain text', function(){
+    addBtn.click();
+    browser.sleep(400);
+    var password = element(by.model('user.password'));
+    expect(password.getAttribute('type')).toEqual('password');
+    password.sendKeys(testUser.userpasswd);
+    element(by.css('.tc_showPassword')).click();
+    expect(password.getAttribute('type')).toEqual('text');
+    helpers.leaveForm();
+  });
+
+  it('should copy the password to the clipboard', function(){
+    addBtn.click();
+    browser.sleep(400);
+    var password = element(by.model('user.password'));
+    expect(password.getAttribute('type')).toEqual('password');
+    password.sendKeys(testUser.userpasswd);
+    // Copy text to clipboard.
+    element(by.css('.tc_copyPasswordToClipboard')).click();
+    // Paste text into another field to compare the value.
+    var firstName = element(by.model('user.first_name'));
+    firstName.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, 'v'));
+    expect(firstName.getAttribute('value')).toEqual(testUser.userpasswd);
+    helpers.leaveForm();
+  });
+
   it('should create an user', function(){
     addBtn.click();
     browser.sleep(400);
