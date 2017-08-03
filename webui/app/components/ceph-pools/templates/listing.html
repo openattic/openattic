@@ -1,18 +1,15 @@
-<oa-ceph-module-loader cluster="cluster" registry="registry" on-cluster-change="getPoolList()">
+<oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
+<oa-ceph-module-loader module="ceph_deployment" cluster="cluster" registry="registry" on-cluster-change="getPoolList()">
 
-<div ng-show="cluster.results.length > 0">
-    <div class="panel panel-default" ng-show="error">
-        <div class="panel-heading">
-            <h3 class="panel-title">Couldn't connect to Ceph cluster</h3>
-        </div>
-        <div class="panel-body">
-            Ceph pool resource could not be loaded. Make sure that the ceph module is installed.
-        </div>
+<div class="panel panel-default" ng-show="error">
+    <div class="panel-heading">
+        <h3 class="panel-title">Error</h3>
     </div>
-
-    <oa-loading-panel message="Ceph pools are loading..."
-                      ng-show="!error && !pools.$resolved"></oa-loading-panel>
+    <div class="panel-body">Ceph pool resources could not be loaded.</div>
 </div>
+
+<oa-loading-panel message="Ceph pools are loading..."
+                  ng-show="!error && !pools.$resolved"></oa-loading-panel>
 
 <oadatatable ng-show="!error && pools.results" data="pools"
              class="oadatatable tc_cephPoolTable" filter-config="filterConfig"
@@ -72,7 +69,7 @@
                         </div>
                         <div class="progress-bar progress-bar-freespace" role="progressbar"
                                 aria-valuenow="{{row.oaUnused}}" aria-valuemin="0"
-                                aria-valuemax="100" style="width: {{row.unused}}%">
+                                aria-valuemax="100" style="width: {{row.oaUnused}}%">
                         </div>
                     </div>
                 </td>
@@ -88,4 +85,6 @@
 </oadatatable>
 <div id="more" ui-view="tab">
 </div>
+
 </oa-ceph-module-loader>
+</oa-ceph-cluster-loader>

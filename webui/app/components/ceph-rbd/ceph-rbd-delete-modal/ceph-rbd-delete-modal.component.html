@@ -1,9 +1,9 @@
-<oa-delete-confirmation-modal title="{{ (rbds.length > 1) ? 'Delete RBDs' : 'Delete RBD' }}"
-                           on-confirm="delete()" on-cancel="cancel()">
+<oa-delete-confirmation-modal title="{{ ($ctrl.resolve.rbdSelection.length > 1) ? 'Delete RBDs' : 'Delete RBD' }}"
+                           on-confirm="$ctrl.delete()" on-cancel="$ctrl.cancel()">
   <!-- single rbd -->
-  <div ng-if="rbds.length === 1">
+  <div ng-if="$ctrl.resolve.rbdSelection.length === 1">
     <p>
-      You are about to delete the RBD <strong>{{rbds[0].name}}</strong>.
+      You are about to delete the RBD <strong>{{$ctrl.resolve.rbdSelection[0].name}}</strong>.
     </p>
     <p>
       Be aware that you will <strong>lose all data</strong>
@@ -13,7 +13,7 @@
   <!-- end single rbd -->
 
   <!-- multiple rbds -->
-  <div ng-if="rbds.length > 1">
+  <div ng-if="$ctrl.resolve.rbdSelection.length > 1">
     <p>
       You are about to delete multiple RBDs.
     </p>
@@ -23,7 +23,7 @@
     </p>
     <span class="text-danger">The following RBDs will be deleted:</span>
       <ul class="text-danger">
-        <li ng-repeat="rad in rbds">
+        <li ng-repeat="rad in $ctrl.resolve.rbdSelection">
           {{rad.name}} ({{rad.size | bytes}})
         </li>
       </ul>

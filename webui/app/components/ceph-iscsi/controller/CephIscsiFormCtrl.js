@@ -67,7 +67,7 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
   };
 
   var generateTargetId = function () {
-    return "iqn.1996-04.de.suse:" + Date.now();
+    return "iqn.1996-10.com.suse:" + Date.now();
   };
 
   var hasLunId = function (model) {
@@ -177,18 +177,39 @@ app.controller("CephIscsiFormCtrl", function ($scope, $state, $timeout, $statePa
     $scope.model.portals.splice(index, 1);
   };
 
-  var unsupportedRbdFeatures = [
-    "deep-flatten",
-    "exclusive-lock",
-    "object-map",
-    "journaling",
-    "fast-diff",
-    "data-pool"
+  $scope.unsupportedRbdFeatures = [
+    {
+      name: "Deep flatten",
+      value: "deep-flatten"
+    },
+    {
+      name: "Exclusive lock",
+      value: "exclusive-lock"
+    },
+    {
+      name: "Object map",
+      value: "object-map"
+    },
+    {
+      name: "Journaling",
+      value: "journaling"
+    },
+    {
+      name: "Fast diff",
+      value: "fast-diff"
+    },
+    {
+      name: "Data pool",
+      value: "data-pool"
+    }
   ];
 
   var containsUnsupportedFeature = function (features) {
     return features.some(function (feature) {
-      return unsupportedRbdFeatures.indexOf(feature) !== -1;
+      return $scope.unsupportedRbdFeatures
+        .findIndex(function (element) {
+          return element.value === feature;
+        }) !== -1;
     });
   };
 

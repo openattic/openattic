@@ -722,6 +722,10 @@ h3{
   font-size: 1.583em;
   font-weight: 400;
 }
+h3.sub-title {
+  color: #666666;
+  margin-left: 15px;
+}
 h4{
   font-size: 1.5em;
   line-height: normal
@@ -1292,4 +1296,10 @@ uib-accordion .panel-title,
 
 .required {
   color: #d04437;
+}
+
+/* oa-helper  */
+oa-helper i {
+  color: #288cea;
+  cursor: pointer;
 }

@@ -2,6 +2,9 @@
   "extends": [
     "angular"
   ],
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
   "rules": {
     // Check for possible errors
     "angular/avoid-scope-typos": 1,

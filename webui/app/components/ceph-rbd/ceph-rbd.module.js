@@ -30,38 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.controller("RbdDelete", function ($scope, cephRbdService, $uibModalInstance, rbdSelection, fsid, $q,
-    Notification) {
-  $scope.rbds = rbdSelection;
-
-  $scope.delete = function () {
-    return $q(function (resolve, reject) {
-      var requests = [];
-      $scope.rbds.forEach(function (rbd) {
-        var deferred = $q.defer();
-        cephRbdService.delete({
-          fsid: fsid,
-          pool: rbd.pool.name,
-          name: rbd.name
-        }, deferred.resolve, deferred.reject);
-        requests.push(deferred.promise);
-      });
-      $q.all(requests).then(function () {
-        resolve();
-        $uibModalInstance.close("deleted");
-      }, function () {
-        reject();
-      });
-    });
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-
-    Notification.warning({
-      title: "Delete RBD",
-      msg: "Cancelled"
-    });
-  };
-});
+angular.module("openattic.cephRbd", [
+  "openattic.cephCluster",
+  "openattic.registry"
+]);

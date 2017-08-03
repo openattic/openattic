@@ -65,6 +65,14 @@ app.component("oaCephModuleLoader", {
             if (self.moduleAvailable.available && triggerOnClusterChange) {
               self.onClusterChange();
             }
+          }).catch(function (error) {
+            self.moduleAvailable = {
+              $resolved: true,
+              available: false,
+              reason: 100,
+              message: error.data && error.data.detail ?
+                error.data.detail : undefined
+            };
           });
         }
       } else {

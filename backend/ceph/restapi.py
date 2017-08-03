@@ -67,6 +67,11 @@ class CephClusterViewSet(NodbViewSet):
         data = CrushmapVersionSerializer(self.get_object().get_crushmap(), many=False, read_only=True).data
         return Response(data, status=status.HTTP_200_OK)
 
+    @detail_route(methods=['get'])
+    def keyring_candidates(self, request, *args, **kwargs):
+        return Response(self.get_object().keyring_candidates, status=status.HTTP_200_OK)
+
+
 
 class CephPoolSerializer(NodbSerializer):
 

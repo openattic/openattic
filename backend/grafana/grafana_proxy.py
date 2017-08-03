@@ -124,8 +124,6 @@ def get_grafana_api_response(request, path):
         # Enforce light theme.
         '"light":"dark"': '"light":"light"',
         'this.style=a.style||"dark"': 'this.style="light"',
-        'grafana.dark.min.fc104690.css':
-            'grafana.light.min.css?cache-buster={}'.format(int(time.time())),
         'System.import(a.dark + "!css")': 'System.import(a.light + "!css")',
 
         # hide some items on navbar.
@@ -161,6 +159,10 @@ def get_grafana_api_response(request, path):
                 'Replaced   {}   with   {}  '.format(original_context, replaced_context))
 
             position += len(replacement)
+
+    content = re.sub(r'grafana\.(light|dark)\.min\.(\w+?)\.css',
+                     r'grafana.light.min.css?cache_buster=\2',
+                     content)
 
     # Replacements based on paths.
 

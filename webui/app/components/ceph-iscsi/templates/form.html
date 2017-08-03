@@ -92,7 +92,11 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-3 control-label" for="images">Images</label>
+          <label class="col-sm-3 control-label" for="images">
+            Images <oa-helper helper-data="unsupportedRbdFeatures"
+                              helper-template="'components/ceph-iscsi/templates/ceph-iscsi-form-helper-features.html'">
+                   </oa-helper>
+          </label>
           <input type="hidden" ng-model="model.images[0]" id="images" required>
           <div class="col-sm-9">
             <span ng-if="model.images.length === 0" class="form-control no-border">

@@ -7,6 +7,15 @@ Setting up a development system using `Vagrant <https://www.vagrantup.com/>`_ is
 way to start developing on |oa|. However, we also provide instructions for setting up a classical
 development environment in :ref:`developer_setup_howto`.
 
+WebUI preparation
+-----------------
+
+To be able to run the WebUI with this setup you will have to change the default
+value of the API URL from "/openattic/api/" to "/api/".
+
+More information on how to do this can be found at
+:ref:`webui_global_configuration`.
+
 Vagrant Installation
 --------------------
 

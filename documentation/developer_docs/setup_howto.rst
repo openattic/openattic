@@ -148,3 +148,24 @@ Examples for additional scripts can be found here:
 
 * `Snapshot Python script with authtoken <http://blog.openattic.org/posts/snapshot-python-script-with-authtoken/>`_
 * `Cronjob Snapshot Script for openATTIC <http://blog.openattic.org/posts/cron-snapshot-script-for-openattic/>`_
+
+.. _webui_global_configuration:
+
+WebUI Global Configuration
+--------------------------
+
+Our frontend application reads most of its default values from a global
+configuration file found in ``/webui/app/config.js``.
+
+If you ever need to permanently change one of those values you can just open the
+file, change it and save the modification. This way everyone will have access
+to that same value.
+
+But in situations where the changes you intent to apply only makes sense to your
+development environment, e.g. when using our vagrant setup
+(:ref:`developer_vagrant_howto`), you will have to take an extra step.
+You will have to create a local configuration file that will overwrite all the
+values of the preexisting file.
+To do that, simply create a new file, ``/webui/app/config.local.js``, with the
+content of ``/webui/app/config.local.js.sample``.
+After that just edit that file and you, and only you, will see them applied.

@@ -1,0 +1,18 @@
+<div ng-if="$ctrl.loading">
+    <oa-loading-panel message="Ceph clusters are loading..."></oa-loading-panel>
+</div>
+<span ng-if="$ctrl.error">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Error</h3>
+        </div>
+        <div class="panel-body">
+            Couldn't load Ceph cluster.
+            <span ng-if="$ctrl.error.data && $ctrl.error.data.detail">
+                <hr>
+                <span ng-bind-html="$ctrl.error.data.detail"></span>
+            </span>
+        </div>
+    </div>
+</span>
+<span ng-transclude ng-if="$ctrl.loaded"></span>

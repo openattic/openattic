@@ -41,16 +41,6 @@ app.config(function ($stateProvider) {
           controller : "CephCrushmapCtrl"
         }
       },
-      resolve: {
-        clusterData: function ($q, cephClusterService) {
-          return cephClusterService.get().$promise
-            .then(function (res) {
-              return res;
-            }).catch(function () {
-              return false;
-            });
-        }
-      },
       ncyBreadcrumb: {
         label: "CRUSH Map Editor"
       }

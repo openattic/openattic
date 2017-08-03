@@ -4,6 +4,7 @@ openATTIC webui licenses
 bower packages
 --------------
 angular                           1.5.3               MIT                         https://github.com/angular/bower-angular/tree/v1.5.3
+angular-animate                   1.5.3               MIT                         https://github.com/angular/bower-angular-animate/tree/v1.5.3
 angular-bootstrap                 2.5.0               MIT                         https://github.com/angular-ui/bootstrap-bower/tree/2.5.0
 angular-bootstrap-toggle          0.1.2               MIT                         https://github.com/ziscloud/angular-bootstrap-toggle/tree/v0.1.2
 angular-breadcrumb                0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
@@ -19,7 +20,7 @@ angular-ui-tree                   2.15.0              MIT                       
 bootstrap                         3.3.6               MIT                         https://github.com/twbs/bootstrap/tree/v3.3.6
 bootstrap-notifications           1.0.1               MIT                         https://github.com/skywalkapps/bootstrap-notifications/tree/v1.0.1
 d3                                3.5.17              BSD-3-Clause                https://github.com/mbostock-bower/d3-bower/tree/v3.5.17
-fontawesome                       4.5.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.5.0
+fontawesome                       4.7.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.7.0
 jquery                            2.2.3               MIT                         https://github.com/jquery/jquery-dist/tree/2.2.3
 jquery-ui                         1.11.4              MIT                         https://github.com/components/jqueryui/tree/1.11.4
 ngstorage                         0.3.10              MIT                         https://github.com/gsklee/ngStorage/tree/0.3.10
