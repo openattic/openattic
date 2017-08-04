@@ -37,8 +37,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/iscsi",
       views: {
         "main": {
-          templateUrl: "components/ceph-iscsi/templates/listing.html",
-          controller: "CephIscsiCtrl"
+          component: "cephIscsiList"
         }
       },
       ncyBreadcrumb: {
@@ -49,8 +48,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/:fsid/iscsi/add",
       views: {
         "main": {
-          templateUrl: "components/ceph-iscsi/templates/form.html",
-          controller : "CephIscsiFormCtrl"
+          component: "cephIscsiForm"
         }
       },
       params: {
@@ -65,12 +63,11 @@ app.config(function ($stateProvider) {
       url: "/ceph/:fsid/iscsi/edit/:targetId",
       views: {
         "main": {
-          templateUrl: "components/ceph-iscsi/templates/form.html",
-          controller : "CephIscsiFormCtrl"
+          component: "cephIscsiForm"
         }
       },
       ncyBreadcrumb: {
-        label: "Edit - {{targetId}}",
+        label: "Edit",
         parent: "cephIscsi"
       }
     })
@@ -78,18 +75,19 @@ app.config(function ($stateProvider) {
       url: "/ceph/:fsid/iscsi/clone/:targetId",
       views: {
         "main": {
-          templateUrl: "components/ceph-iscsi/templates/form.html",
-          controller : "CephIscsiFormCtrl"
+          component: "cephIscsiForm"
         }
       },
       ncyBreadcrumb: {
-        label: "Copy {{targetId}}",
+        label: "Copy",
         parent: "cephIscsi"
       }
     })
     .state("cephIscsi.detail", {
-      views        : {
-        "tab": {templateUrl: "components/ceph-iscsi/templates/tab.html"}
+      views: {
+        "tab": {
+          component: "oaTabSet"
+        }
       },
       ncyBreadcrumb: {
         skip: true
@@ -98,9 +96,12 @@ app.config(function ($stateProvider) {
     .state("cephIscsi.detail.details", {
       url: "/details",
       views: {
-        "tab-content": {templateUrl: "components/ceph-iscsi/templates/details.html"} },
+        "tab-content": {
+          component: "cephIscsiDetail"
+        }
+      },
       ncyBreadcrumb: {
-        label: "{{selection.item.targetId}} details"
+        label: "{{$ctrl.selection.item.targetId}} details"
       }
     });
 });

@@ -31,26 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic.cephIscsi");
-app.controller("CephIscsiTargetSettingsModalCtrl", function ($scope, $uibModalInstance, model,
-    CEPH_ISCSI_TARGET_ADVANCED_SETTINGS) {
-
-  $scope.model = model;
-  $scope.CEPH_ISCSI_TARGET_ADVANCED_SETTINGS = CEPH_ISCSI_TARGET_ADVANCED_SETTINGS;
-
-  $scope.targetSettings = angular.copy(model.targetSettings);
-
-  $scope.confirm = function () {
-    angular.forEach($scope.targetSettings, function (value, key) {
-      if (value === "" || value === null) {
-        delete $scope.targetSettings[key];
-      }
-    });
-    $scope.model.targetSettings = $scope.targetSettings;
-    $uibModalInstance.close("confirmed");
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
-
-});
+app.value("cephIscsiImageOptionalSettings", [
+    {
+      property: "uuid",
+      help: ""
+    },
+    {
+      property: "retries",
+      help: ""
+    },
+    {
+      property: "sleep",
+      help: ""
+    },
+    {
+      property: "retry_errors",
+      help: ""
+    }
+  ]);
