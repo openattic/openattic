@@ -265,7 +265,7 @@ systemctl try-restart apache2
 
 %defattr(-,openattic,openattic,-)
 %dir %{_localstatedir}/lib/%{name}
-%attr(0775,-,-) %dir %{_localstatedir}/log/%{name}
+%attr(0755,-,root) %dir %{_localstatedir}/log/%{name}
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
 %ghost %dir %{_localstatedir}/lock/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/database.ini
