@@ -8,9 +8,7 @@ var rbdCommons = function(){
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
   this.clusterSelect = element(by.model('$ctrl.registry.selectedCluster'));
-  /* TODO: Uncomment for OP-2475
   this.statisticsTab = element(by.className('tc_statisticsTab'));
-  */
 
   this.detailAttributes = [
     'Name',
