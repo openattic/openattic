@@ -20,6 +20,7 @@ describe('task queue directive test', function(){
    */
   beforeAll(function(){
     helpers.login();
+    element(by.css('.tc_menuitem_ceph_osds')).click();
     qProperties.deleteAllTasks();
   });
 

@@ -96,6 +96,7 @@
       tab: 'tc_tab_',
       deleteBtn: 'tc_task_delete_',
       loadingParagraph: 'tc_loading_',
+      refreshBtn: 'tc_refreshBtn_',
       noElements: 'tc_no_elements_',
       listing: 'tc_listing_',
       selectAll: 'tc_select_all_'
@@ -116,6 +117,7 @@
       var className = tabElements[elementName] + tabName;
       tab.elements[elementName] = element(by.className(className));
     });
+
     /**
      * Uses the attribute name of each column and tab name to create an column element.
      */
@@ -162,9 +164,7 @@
    * @param {String} tabName
    */
   self.changeTab = function(tabName){
-    if(tabName === 'pending'){ // Updates pending tab view.
-      self.changeTab('failed');
-    }
+    browser.sleep(helpers.configs.sleep / 2);
     element(by.className(self.dialog.tabElements.tab + tabName)).click();
     self.expectDefaultModalElements(true);
   };
@@ -241,12 +241,18 @@
    * @param {int} [depth] - Given by the recursive call.
    */
   self.waitForPendingTasks = function(depth){
-    browser.sleep(helpers.configs.sleep);
     if(!depth){
       self.open(); // Opens the dialog at first call.
       self.changeTab('pending');
       depth = 1;
     }
+    browser.sleep(helpers.configs.sleep / 2);
+    // Because it won't be displayed if not task is there anymore.
+    self.dialog.tabs.pending.elements.refreshBtn.isDisplayed().then(function(isDisplayed){
+      if(isDisplayed){
+        self.dialog.tabs.pending.elements.refreshBtn.click();
+      }
+    });
     self.dialog.tabs.pending.elements.tab.getText().then(function(s){
       if(parseInt(s.match(/[0-9]+/)[0], 10) === 0){
         self.close(); // Closes the dialog when there are zero pending tasks.
@@ -274,7 +280,6 @@
         xhr.send(JSON.stringify({times: times}));
       }, times, helpers.configs);
     }
-    browser.sleep(helpers.configs.sleep);
   };
 
   /**
@@ -333,7 +338,7 @@
     expect(confirmBtn.isDisplayed()).toBe(true);
     expect(confirmBtn.getText()).toBe('Delete');
     confirmBtn.click();
-    browser.sleep(helpers.configs.sleep);
+    browser.sleep(helpers.configs.sleep / 2);
   };
   module.exports = self;
 }());

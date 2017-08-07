@@ -37,10 +37,9 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="widget-toolbar tc_refreshBtn">
+                    <div class="widget-toolbar tc_refreshBtn_{{tabKey}}">
                         <a ng-click="loadAllTabs(true)">
-                            <i class="fa fa-lg fa-refresh" ng-hide="update"></i>
-                            <i class="fa fa-spinner fa-spin fa-fw" ng-show="update"></i>
+                            <i class="fa fa-lg fa-refresh" ng-class="{'fa-refresh fa-lg': !update, 'fa-spinner fa-spin fa-fw': update}"></i>
                         </a>
                     </div>
                 </div>
