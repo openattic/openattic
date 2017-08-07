@@ -30,6 +30,8 @@ Development: Upgrade Vagrant box to openSUSE Leap 42.3
 
 Fixed
 ~~~~~
+WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
+
 
 [3.4.2] - 2017-08-03
 --------------------
