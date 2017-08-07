@@ -25,6 +25,7 @@ WebUI: Enabled grafana statistics for RBDs (OP-2475)
 
 Changed
 ~~~~~~
+Development: Upgrade Vagrant box to openSUSE Leap 42.3
 
 Fixed
 ~~~~~
