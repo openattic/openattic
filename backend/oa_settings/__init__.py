@@ -157,6 +157,7 @@ def load_settings():
     # systems to override settings in a non-versioned file.
     local_settings_file = os.path.join(os.getcwd(), 'settings_local.conf')
     if os.access(local_settings_file, os.R_OK):
+        logger.debug("Reading local settings %s", local_settings_file)
         for key, val in configobj.ConfigObj(local_settings_file).items():
             _set_setting(key, val)
 
