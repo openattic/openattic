@@ -21,16 +21,17 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
-WebUI: Enabled grafana statistics for RBDs (OP-2475)
-WebUI: Enable providing a dedicated data pool when creating RBDs (OP-2315)
+* WebUI: Enabled grafana statistics for RBDs (OP-2475)
+* WebUI: Enable providing a dedicated data pool when creating RBDs (OP-2315)
+* Development: Add support for ECMAScript6 using Babel (OP-1890)
 
 Changed
 ~~~~~~
-Development: Upgrade Vagrant box to openSUSE Leap 42.3
+* Development: Upgrade Vagrant box to openSUSE Leap 42.3
 
 Fixed
 ~~~~~
-WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
+* WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
 
 
 [3.4.2] - 2017-08-03
