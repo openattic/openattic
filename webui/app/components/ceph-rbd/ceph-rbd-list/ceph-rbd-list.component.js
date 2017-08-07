@@ -91,6 +91,14 @@ app.component("cephRbdList", {
                     return true;
                   }
                 });
+                if (rbd.data_pool) {
+                  pools.results.some(function (pool) {
+                    if (pool.id === rbd.data_pool) {
+                      rbd.data_pool = pool;
+                      return true;
+                    }
+                  });
+                }
                 rbd.free = rbd.size - rbd.used_size;
                 rbd.usedPercent = rbd.used_size / rbd.size * 100;
                 rbd.freePercent = rbd.free / rbd.size * 100;

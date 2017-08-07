@@ -8,8 +8,12 @@
             <dd ng-bind="$ctrl.selection.item.name"></dd>
             <dt>Block name prefix:</dt>
             <dd ng-bind="$ctrl.selection.item.block_name_prefix"></dd>
-            <dt>Pool:</dt>
+            <dt>{{$ctrl.selection.item.data_pool ? 'Meta-' : ''}}Pool:</dt>
             <dd ng-bind="$ctrl.selection.item.pool.name"></dd>
+            <div ng-if="$ctrl.selection.item.data_pool">
+              <dt>Data-Pool:</dt>
+              <dd ng-bind="$ctrl.selection.item.data_pool.name"></dd>
+            </div>
             <dt>Size:</dt>
             <dd ng-bind="$ctrl.selection.item.size | bytes"></dd>
             <dt>Object size:</dt>

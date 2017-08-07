@@ -83,6 +83,29 @@ describe('ceph rbd creation and deletion', function(){
       fullRbdCreation(rbdConfig);
       fullRbdDeletion(rbdConfig);
     });
+
+    /**
+     * For this tests at least 2 pool are needed!
+     * One replicated pool and another replicated pool or erasure coded pool with ec_overwrites enabled.
+     */
+    var rbdDataPoolName = namePrefix + '_with_data_pool';
+    it('should create RBD with a meta and data pool with the first pools in both lists, named ' + rbdDataPoolName, function(){
+      rbdProperties.selectCluster(cluster.name);
+      rbdProperties.addButton.click();
+      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
+      var firstPoolOption = rbdProperties.poolSelect.all(by.tagName('option')).get(1);
+      firstPoolOption.click();
+      rbdProperties.useDataPool.click();
+      var firstDataPoolOption = rbdProperties.dataPoolSelect.all(by.tagName('option')).get(1);
+      firstDataPoolOption.click();
+      rbdProperties.createRbd(rbdDataPoolName);
+      expect(element(by.cssContainingText('dt', 'Meta-Pool')).isDisplayed()).toBe(true);
+      expect(element(by.cssContainingText('dt', 'Data-Pool')).isDisplayed()).toBe(true);
+    });
+    fullRbdDeletion({
+      rbdName: rbdDataPoolName,
+      clusterName: cluster.name
+    });
   });
 
   afterAll(function(){
