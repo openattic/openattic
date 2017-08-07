@@ -4,29 +4,11 @@ Developer Documentation
 #######################
 
 |oA| consists of a set of components built on different frameworks, which work
-together to provide a comprehensive storage management platform.
+together to provide a comprehensive Ceph storage management platform.
 
 This document describes the architecture and components of |oA| and provides
-instructions on how to set up a development environment and work on the |oA|
-code base.
-
-When an application (e.g. the |oA| Web UI, a command line tool or an external
-application), wants to perform an action, the following happens:
-
-* The REST API receives a request in form of a function call, decides which
-  host is responsible for answering the request, and forwards it to the core
-  on that host.
-* The :ref:`developer_docs_models` consists of two layers:
-
-  * Django Models, the brains. They keep an eye on the whole system and decide
-    what needs to be done.
-  * File system layer: Decides which programs need to be called in order to
-    implement the actions requested by the models, and calls those programs
-    via the |oA| ``systemd`` background process (not to be confused with the
-    `systemd System and Service Manager
-    <http://www.freedesktop.org/wiki/Software/systemd/>`_).
-
-* The |oA| `systemd` executes commands on the system and delivers the results.
+instructions on how to set up a development environment and work on the various
+components included in the |oA| code base.
 
 If you would like to contribute to the |oA| project, you need to prepare a
 development environment first.
@@ -58,7 +40,7 @@ documentation.
   setup_howto
   contribute
   contributing_guidelines
-  core
+  architecture
   developer-documentation
   ui_customizing
   taskqueue
