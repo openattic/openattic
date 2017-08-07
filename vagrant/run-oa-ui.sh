@@ -7,4 +7,6 @@ for iface in $(ls /sys/class/net/ | grep ^eth); do
 done
 echo
 echo "# Starting webserver..."
-python /home/vagrant/openattic/backend/manage.py runserver 0.0.0.0:8000
+# Change to the directory, otherwise 'settings_local.conf' won't be loaded.
+cd /home/vagrant/openattic/backend
+python manage.py runserver 0.0.0.0:8000

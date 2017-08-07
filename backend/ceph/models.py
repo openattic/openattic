@@ -869,8 +869,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         3. Providing a RESTful API.
         """
         insert = self._state.adding  # there seems to be no id field.
-        if not hasattr(self, 'features') or self.features == u'':
-            self.features = None
+        if not hasattr(self, 'features') or not isinstance(self.features, list):
+            self.features = []
 
         api = self.rbd_api()
 

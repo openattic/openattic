@@ -91,6 +91,14 @@ app.component("cephRbdList", {
                     return true;
                   }
                 });
+                if (rbd.data_pool) {
+                  pools.results.some(function (pool) {
+                    if (pool.id === rbd.data_pool) {
+                      rbd.data_pool = pool;
+                      return true;
+                    }
+                  });
+                }
                 rbd.free = rbd.size - rbd.used_size;
                 rbd.usedPercent = rbd.used_size / rbd.size * 100;
                 rbd.freePercent = rbd.free / rbd.size * 100;
@@ -114,14 +122,12 @@ app.component("cephRbdList", {
           state: "cephRbds.detail.details",
           class: "tc_statusTab",
           name: "Status"
-          /* TODO: Uncomment for OP-2475
-      },
-      statistics: {
-        show: "$ctrl.selection.item",
-        state: "cephRbds.detail.statistics",
-        class: "tc_statisticsTab",
-        name: "Statistics"
-        */
+        },
+        statistics: {
+          show: "$ctrl.selection.item",
+          state: "cephRbds.detail.statistics",
+          class: "tc_statisticsTab",
+          name: "Statistics"
         }
       }
     };

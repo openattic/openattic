@@ -38,6 +38,7 @@ module.exports = function (grunt) {
   var buildConfig = {
     src: "app/",
     dist: "dist/",
+    tmp: ".tmp/",
     name: "openattic-web",
     applicationFiles: [
       "<%= buildConfig.src %>scripts/*.js",
@@ -145,6 +146,23 @@ module.exports = function (grunt) {
         ]
       },
 
+      // transpile ECMAScript6 for older browsers support
+      babel: {
+        options: {
+          sourceMap: false,
+          compact: true,
+          presets: ['es2015']
+        },
+        dist: {
+          files: [{
+            expand: true,
+            cwd: "<%= buildConfig.tmp %>concat",
+            src: ["oa-app.js"],
+            dest: "<%= buildConfig.tmp %>concat"
+          }]
+        }
+      },
+
       // Prepare angular js files for minification (prevent dependency injection from breaking)
       ngAnnotate: {
         dist: {
@@ -250,6 +268,7 @@ module.exports = function (grunt) {
     "concat",
     "cssmin",
     "ngAnnotate",
+    "babel",
     "uglify",
     "rev",
     "usemin"
