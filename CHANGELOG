@@ -21,6 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+WebUI: Enabled grafana statistics for RBDs (OP-2475)
 
 Changed
 ~~~~~~
