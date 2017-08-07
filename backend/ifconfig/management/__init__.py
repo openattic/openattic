@@ -130,7 +130,7 @@ def create_interfaces(**kwargs):
                     # Strip '/xyz' suffix from IPv6 netmasks, e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128
                     # This format has been introduced with netifaces 0.10.5
                     # Reference: https://bitbucket.org/al45tair/netifaces/issues/50/netmask-format-of-ipv6-address-is-not
-                    addr["netmask"] = re.sub("/\d+", "", addr["netmask"])
+                    addr["netmask"] = re.sub("/\d+$", "", addr["netmask"])
 
                 ipnet = netaddr.IPNetwork(addr["addr"] + "/" + addr["netmask"])
                 try:
