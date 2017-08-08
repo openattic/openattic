@@ -236,8 +236,6 @@ button.btn.btn-label>i.fa {
 /* Modal */
 .modal-dialog {
   margin: 30px auto !important;
-  height: 90%;
-  overflow: auto;
 }
 .modal .modal-content .openattic-modal-header,
 .modal .modal-content .openattic-modal-content,
@@ -251,6 +249,8 @@ button.btn.btn-label>i.fa {
 }
 .modal .modal-content .openattic-modal-content {
   padding: 20px 20px 10px 20px;
+  overflow-x: auto;
+  max-height: 70vh;
 }
 .modal .modal-content .openattic-modal-content p {
   margin-bottom: 10px;

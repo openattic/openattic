@@ -33,6 +33,7 @@ Changed
 * WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
 * WebUI: Migration of Ceph iSCSI controllers to components (OP-2372)
 * WebUI: Removed expert settings from RBD form (OP-2518)
+* WebUI: Improve usabality of modal dialogs (OP-2560)
 
 Fixed
 ~~~~~
