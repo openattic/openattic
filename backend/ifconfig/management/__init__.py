@@ -18,6 +18,7 @@ import netaddr
 import netifaces
 import socket
 import struct
+import re
 
 import sysutils.models
 from ifconfig.models import Host, NetDevice, IPAddress
@@ -124,6 +125,13 @@ def create_interfaces(**kwargs):
                 if addrfam == socket.AF_INET6 and addr["addr"][:4] == "fe80":
                     # Don't record link-local addresses
                     continue
+
+                if addrfam == socket.AF_INET6:
+                    # Strip '/xyz' suffix from IPv6 netmasks, e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128
+                    # This format has been introduced with netifaces 0.10.5
+                    # Reference: https://bitbucket.org/al45tair/netifaces/issues/50/netmask-format-of-ipv6-address-is-not
+                    addr["netmask"] = re.sub("/\d+$", "", addr["netmask"])
+
                 ipnet = netaddr.IPNetwork(addr["addr"] + "/" + addr["netmask"])
                 try:
                     ip = IPAddress.objects.get(device__host=host,
