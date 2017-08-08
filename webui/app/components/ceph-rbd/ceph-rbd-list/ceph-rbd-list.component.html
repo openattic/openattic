@@ -1,21 +1,15 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
 <oa-ceph-module-loader module="ceph_deployment" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getRbdList()">
 
-<div class="panel panel-default" ng-show="$ctrl.rbdError">
+<div class="panel panel-default" ng-show="$ctrl.error">
     <div class="panel-heading">
         <h3 class="panel-title">Error</h3>
     </div>
     <div class="panel-body">Ceph RBD resources could not be loaded.</div>
 </div>
-<div class="panel panel-default" ng-show="$ctrl.poolError">
-    <div class="panel-heading">
-        <h3 class="panel-title">Error</h3>
-    </div>
-    <div class="panel-body">Ceph pool resources could not be loaded.</div>
-</div>
 
 <oa-loading-panel message="Ceph RBDs are loading..."
-                  ng-show="!$ctrl.error && !$ctrl.rbdError && !$ctrl.poolError && !$ctrl.rbd.$resolved"></oa-loading-panel>
+                  ng-show="!$ctrl.error && !$ctrl.rbd.$resolved"></oa-loading-panel>
 
 <oadatatable ng-show="!$ctrl.error && $ctrl.rbd.results" data="$ctrl.rbd" class="oadatatable tc_cephRbdTable" filter-config="$ctrl.filterConfig"
              selection="$ctrl.selection" on-selection-change="$ctrl.onSelectionChange(selection)">

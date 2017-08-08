@@ -28,11 +28,12 @@ Added
 Changed
 ~~~~~~
 * Development: Upgrade Vagrant box to openSUSE Leap 42.3
+* WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
 
 Fixed
 ~~~~~
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
-
+* Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
 
 [3.4.2] - 2017-08-03
 --------------------
