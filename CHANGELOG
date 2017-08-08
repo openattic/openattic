@@ -32,7 +32,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
-
+* Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
 
 [3.4.2] - 2017-08-03
 --------------------
