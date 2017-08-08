@@ -1303,3 +1303,13 @@ oa-helper i {
   color: #288cea;
   cursor: pointer;
 }
+
+.page-footer {
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  margin-left: 150px;
+  margin-right: 150px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
