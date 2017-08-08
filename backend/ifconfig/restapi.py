@@ -16,6 +16,8 @@
 import django_filters
 
 from rest_framework import serializers
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
 
 from ifconfig import models
 from rest import relations
@@ -138,6 +140,11 @@ class HostViewSet(NoCacheModelViewSet):
 class HostProxyViewSet(RequestHandlers, HostViewSet):
     api_prefix = 'hosts'
     model = models.Host
+
+    @list_route()
+    def current(self, request):
+        serializer = HostSerializer(models.Host.objects.get_current(), context={"request": request})
+        return Response(serializer.data)
 
 
 class HostGroupViewSet(NoCacheModelViewSet):
