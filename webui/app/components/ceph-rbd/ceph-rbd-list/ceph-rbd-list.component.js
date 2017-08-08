@@ -33,7 +33,7 @@
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdList", {
   templateUrl: "components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html",
-  controller: function ($scope, $state, $filter, $uibModal, cephRbdService,
+  controller: function ($scope, $state, $filter, $uibModal, $q, cephRbdService,
       registryService, cephPoolsService, Notification, oaTabSetService) {
     var self = this;
 
@@ -68,48 +68,50 @@ app.component("cephRbdList", {
         self.rbd = {};
         self.error = false;
 
-        cephRbdService
-          .get({
+        // Load the list of RBDs and Pools in parallel to increase the
+        // loading speed.
+        var requests = [];
+        requests.push(
+          cephRbdService.get({
             fsid: self.registry.selectedCluster.fsid,
             page: self.filterConfig.page + 1,
             pageSize: self.filterConfig.entries,
             search: self.filterConfig.search,
             ordering: (self.filterConfig.sortorder === "ASC" ? "" : "-") +
               self.filterConfig.sortfield
-          })
-          .$promise
+          }).$promise
+        );
+        requests.push(
+          cephPoolsService.get({
+            fsid: self.registry.selectedCluster.fsid
+          }).$promise
+        );
+        $q.all(requests)
           .then(function (res) {
-            self.rbdError = false;
-            cephPoolsService.get({
-              fsid: self.registry.selectedCluster.fsid
-            }).$promise.then(function (pools) {
-              self.poolError = false;
-              res.results.forEach(function (rbd) {
+            var rbds = res[0], pools = res[1];
+            rbds.results.forEach(function (rbd) {
+              pools.results.some(function (pool) {
+                if (pool.id === rbd.pool) {
+                  rbd.pool = pool;
+                  return true;
+                }
+              });
+              if (rbd.data_pool) {
                 pools.results.some(function (pool) {
-                  if (pool.id === rbd.pool) {
-                    rbd.pool = pool;
+                  if (pool.id === rbd.data_pool) {
+                    rbd.data_pool = pool;
                     return true;
                   }
                 });
-                if (rbd.data_pool) {
-                  pools.results.some(function (pool) {
-                    if (pool.id === rbd.data_pool) {
-                      rbd.data_pool = pool;
-                      return true;
-                    }
-                  });
-                }
-                rbd.free = rbd.size - rbd.used_size;
-                rbd.usedPercent = rbd.used_size / rbd.size * 100;
-                rbd.freePercent = rbd.free / rbd.size * 100;
-              });
-              self.rbd = res;
-            }).catch(function (error) {
-              self.poolError = error;
+              }
+              rbd.free = rbd.size - rbd.used_size;
+              rbd.usedPercent = rbd.used_size / rbd.size * 100;
+              rbd.freePercent = rbd.free / rbd.size * 100;
             });
+            self.rbd = rbds;
           })
           .catch(function (error) {
-            self.rbdError = error;
+            self.error = error;
           });
       }
     };
