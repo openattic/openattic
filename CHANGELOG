@@ -28,6 +28,7 @@ Added
 Changed
 ~~~~~~
 * Development: Upgrade Vagrant box to openSUSE Leap 42.3
+* WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
 
 Fixed
 ~~~~~
