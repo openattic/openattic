@@ -1042,8 +1042,10 @@ class RbdApi(object):
         :return: Result of the rbd command
         :rtype: dict
         """
+        cluster_conf = ClusterConf.from_fsid(self.fsid)
         out = subprocess.check_output(['rbd', cmd, '--cluster', self.cluster_name, '--pool', pool_name,
-                                       '--image', name, '--format', 'json'])
+                                       '--image', name, '--format', 'json', '--name', cluster_conf.keyring.user_name,
+                                       '-k', cluster_conf.keyring.file_name])
         return json.loads(out)
 
     def image_disk_usage(self, pool_name, name):
