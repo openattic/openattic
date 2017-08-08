@@ -14,10 +14,15 @@
 <oadatatable ng-show="!$ctrl.error && $ctrl.rbd.results" data="$ctrl.rbd" class="oadatatable tc_cephRbdTable" filter-config="$ctrl.filterConfig"
              selection="$ctrl.selection" on-selection-change="$ctrl.onSelectionChange(selection)">
     <actions>
-        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="$ctrl.addAction()" ng-hide="$ctrl.hasSelection || multiSelection">
+        <a class="btn btn-sm btn-primary tc_add_btn" type="button"
+           ng-click="$ctrl.addAction()"
+           ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="$ctrl.deleteAction()" ng-show="$ctrl.hasSelection || multiSelection">
+        <a class="btn btn-sm btn-primary tc_delete_btn"
+           type="button"
+           ng-click="$ctrl.deleteAction()"
+           ng-show="$ctrl.hasSelection || $ctrl.multiSelection">
             <i class="fa fa-fw fa-trash-o"></i>Delete
         </a>
         <li>
