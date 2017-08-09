@@ -31,40 +31,30 @@
 "use strict";
 
 var app = angular.module("openattic.cephIscsi");
-app.controller("CephIscsiDeleteModalCtrl", function ($scope, cephIscsiService, $uibModalInstance,
-    iscsiTargetSelection, fsid, $q, Notification) {
-  $scope.iscsiTargets = iscsiTargetSelection;
-  $scope.deleteFormSubmitted = false;
-
-  $scope.delete = function () {
-    return $q(function (resolve, reject) {
-      var targetIds = [];
-      $scope.iscsiTargets.forEach(function (isciTarget) {
-        targetIds.push(isciTarget.targetId);
-      });
-      cephIscsiService.bulk_delete({
-        fsid: fsid,
-        targetIds: targetIds
-      })
-      .$promise
-      .then(function () {
-        resolve();
-        $uibModalInstance.close("deleted");
-        Notification.success({
-          msg: $scope.iscsiTargets.length > 1 ? "Target IQNs have been deleted" : "Target IQN has been deleted"
-        });
-      }, function () {
-        reject();
-      });
-    });
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-
-    Notification.warning({
-      title: "Cancelled deletion",
-      msg: "Cancelled iSCSI target IQN deletion"
-    });
-  };
-});
+app.value("cephIscsiTargetAdvangedSettings", [
+    {
+      property: "tpg_default_cmdsn_depth",
+      help: "Default CmdSN (Command Sequence Number) depth. Limits the amount of requests that an iSCSI initiator " +
+      "can have outstanding at any moment"
+    },
+    {
+      property: "tpg_default_erl",
+      help: "Default error recovery level"
+    },
+    {
+      property: "tpg_login_timeout",
+      help: "Login timeout value in seconds"
+    },
+    {
+      property: "tpg_netif_timeout",
+      help: "NIC failure timeout in seconds"
+    },
+    {
+      property: "tpg_prod_mode_write_protect",
+      help: "If set to 1, prevent writes to LUNs"
+    },
+    {
+      property: "tpg_t10_pi",
+      help: ""
+    }
+  ]);

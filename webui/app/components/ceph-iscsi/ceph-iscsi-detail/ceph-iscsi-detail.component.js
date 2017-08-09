@@ -31,30 +31,11 @@
 "use strict";
 
 var app = angular.module("openattic.cephIscsi");
-app.value("CEPH_ISCSI_TARGET_ADVANCED_SETTINGS", [
-    {
-      property: "tpg_default_cmdsn_depth",
-      help: "Default CmdSN (Command Sequence Number) depth. Limits the amount of requests that an iSCSI initiator " +
-      "can have outstanding at any moment"
-    },
-    {
-      property: "tpg_default_erl",
-      help: "Default error recovery level"
-    },
-    {
-      property: "tpg_login_timeout",
-      help: "Login timeout value in seconds"
-    },
-    {
-      property: "tpg_netif_timeout",
-      help: "NIC failure timeout in seconds"
-    },
-    {
-      property: "tpg_prod_mode_write_protect",
-      help: "If set to 1, prevent writes to LUNs"
-    },
-    {
-      property: "tpg_t10_pi",
-      help: ""
-    }
-  ]);
+app.component("cephIscsiDetail", {
+  templateUrl: "components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html",
+  bindings: {
+    selection: "<"
+  },
+  controller: function () {
+  }
+});

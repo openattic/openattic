@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephIscsi");
-app.value("CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS", [
+app.value("cephIscsiImageAdvangedSettings", [
     {
       property: "backstore_block_size",
       help: "Block size of the underlying device"
