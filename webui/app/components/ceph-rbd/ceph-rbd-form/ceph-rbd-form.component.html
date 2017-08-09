@@ -142,41 +142,36 @@
           </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-                <br>
-                <div class="checkbox checkbox-primary">
-                    <input id="expert-settings" type="checkbox" ng-disabled="$ctrl.data.pool == null"
-                      ng-model="$ctrl.data.expert" ng-name="expert">
-                    <label class="tc_expertSettings" for="expert-settings">Expert settings</label>
-                </div>
-            </div>
-        </div>
-
-        <div ng-show="$ctrl.data.expert">
-          <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty)
-              && rbdForm.obj_size.$invalid}">
-            <label class="control-label col-sm-3" for="object-size">Object size</label>
-            <div class="col-sm-9">
-              <input id="object-size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
-                  ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-change="$ctrl.updateObjSize()"
-                  ng-model-options="{ updateOn: 'blur' }" ng-keyup="$ctrl.objSizeChange($event)" ng-model="$ctrl.data.obj_size"
-                  placeholder="4 KB up to 32 MB" required>
-              <span class="help-block tc_objSizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
-                  && rbdForm.size.$error.required">
-                This field is required!
-              </span>
-            </div>
+        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty)
+            && rbdForm.obj_size.$invalid}">
+          <label class="control-label col-sm-3" for="object-size">Object size</label>
+          <div class="col-sm-9">
+            <input id="object-size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
+                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-change="$ctrl.updateObjSize()"
+                ng-model-options="{ updateOn: 'blur' }" ng-keyup="$ctrl.objSizeChange($event)" ng-model="$ctrl.data.obj_size"
+                placeholder="4 KB up to 32 MB" required>
+            <span class="help-block tc_objSizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
+                && rbdForm.size.$error.required">
+              This field is required!
+            </span>
           </div>
-          <div class="form-group tc_features">
-            <label class="col-sm-3 control-label" for="features">
-              Features
-              <oa-helper helper-data="$ctrl.features"
-                helper-template="'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'">
-              </oa-helper>
-            </label>
-            <input id="features" type="hidden" ng-model="$ctrl.data.features" required>
-            <div class="col-sm-9">
+        </div>
+        <div class="form-group tc_features" ng-class="{'has-error': rbdForm.$error.noFeatureSelected}">
+          <label class="col-sm-3 control-label" for="features">
+            Features
+            <oa-helper helper-data="$ctrl.features"
+              helper-template="'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'">
+            </oa-helper>
+          </label>
+          <input id="features" type="hidden" ng-model="$ctrl.data.features" required>
+          <div class="col-sm-9">
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.data.defaultFeatures" ng-change="$ctrl.watchDataFeatures()"
+                id="default-features" name="default-features">
+              <label for="default-features">Use default features</label>
+            </div>
+            <div uib-collapse="$ctrl.data.defaultFeatures">
+              <br>
               <div class="checkbox checkbox-primary"
                   ng-repeat="(key, feature) in $ctrl.features"
                   ng-if="feature.isDisplayed" >
@@ -185,10 +180,7 @@
                     class="tc_feature_{{key}}" ng-name="key">
                 <label ng-bind="feature.desc" for="{{key}}"></label>
               </div>
-              <br>
-              <button type="button" class="btn btn-sm btn-default tc_featureDefaults" ng-click="$ctrl.defaultFeatures()">
-                Reset features
-              </button>
+              <span class="help-block tc_noFeature" ng-show="rbdForm.$error.noFeatureSelected">At least one feature has to be selected</span>
             </div>
           </div>
         </div>

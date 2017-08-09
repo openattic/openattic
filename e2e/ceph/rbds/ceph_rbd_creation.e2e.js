@@ -26,7 +26,7 @@ describe('ceph rbd creation and deletion', function(){
   var fullRbdCreation = function(rbdConfig){
     var desc = [
       'should create "' + rbdConfig.rbdName + '" rbd',
-      rbdConfig.features ? 'with the following expert option case: "[' + rbdConfig.features + ']" options' : '',
+      rbdConfig.features ? 'with the following feature case: "[' + rbdConfig.features + ']" options' : '',
       rbdConfig.objSize ? 'with a object size of "' + rbdConfig.objSize + '"' : '',
       'on pool "' + rbdConfig.poolName + '"',
       'on cluster "' + rbdConfig.clusterName + '"'
@@ -92,7 +92,6 @@ describe('ceph rbd creation and deletion', function(){
     it('should create RBD with a meta and data pool with the first pools in both lists, named ' + rbdDataPoolName, function(){
       rbdProperties.selectCluster(cluster.name);
       rbdProperties.addButton.click();
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
       var firstPoolOption = rbdProperties.poolSelect.all(by.tagName('option')).get(1);
       firstPoolOption.click();
       rbdProperties.useDataPool.click();

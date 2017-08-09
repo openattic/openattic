@@ -52,11 +52,11 @@ app.component("cephRbdForm", {
       pool: null,
       features: {
         "deep-flatten": {
-          checked: true,
+          checked: false,
           disabled: false
         },
         "layering": {
-          checked: true,
+          checked: false,
           disabled: false
         },
         "stripingv2": {
@@ -64,22 +64,23 @@ app.component("cephRbdForm", {
           disabled: true
         },
         "exclusive-lock": {
-          checked: true,
-          disabled: false
-        },
-        "object-map": {
-          checked: true,
-          disabled: false
-        },
-        "journaling": {
           checked: false,
           disabled: false
         },
+        "object-map": {
+          checked: false,
+          disabled: true
+        },
+        "journaling": {
+          checked: false,
+          disabled: true
+        },
         "fast-diff": {
-          checked: true,
-          disabled: false
+          checked: false,
+          disabled: true
         }
       },
+      defaultFeatures: true,
       obj_num: 1,
       obj_size: "4 MiB",
       size: "",
@@ -113,7 +114,7 @@ app.component("cephRbdForm", {
       });
     };
 
-    self.watchDataFeatures = function (key) {
+    var featureFormUpdate = function (key) {
       var checked = self.data.features[key].checked;
       if (checked) {
         var required = self.features[key].requires;
@@ -123,8 +124,22 @@ app.component("cephRbdForm", {
           return;
         }
       }
-
       deepBoxCheck(key, checked);
+    };
+
+    self.watchDataFeatures = function (key) {
+      var defaults = self.data.defaultFeatures;
+      if (!defaults) {
+        if (key) {
+          featureFormUpdate(key);
+        }
+        var noneSelected = Object.keys(self.data.features).every(function (feature) {
+          return !self.data.features[feature].checked;
+        });
+        $scope.rbdForm.$setValidity("noFeatureSelected", !noneSelected);
+      } else {
+        $scope.rbdForm.$setValidity("noFeatureSelected", defaults);
+      }
     };
 
     self.defaultFeatures = function () {
@@ -302,7 +317,7 @@ app.component("cephRbdForm", {
 
     self.submitAction = function (rbdForm) {
       if (rbdForm.$valid) {
-        if (self.data.expert) {
+        if (!self.data.defaultFeatures) {
           var features = [];
           for (var feature in self.data.features) {
             if (self.data.features[feature].checked) {
