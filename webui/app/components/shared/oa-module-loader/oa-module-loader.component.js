@@ -31,17 +31,14 @@
 "use strict";
 
 var app = angular.module("openattic.shared");
-app.component("oaCephModuleLoader", {
-  templateUrl: "components/shared/oa-ceph-module-loader/oa-ceph-module-loader.component.html",
+app.component("oaModuleLoader", {
+  templateUrl: "components/shared/oa-module-loader/oa-module-loader.component.html",
   bindings: {
     module: "@",
-    cluster: "<",
-    registry: "=",
-    displayLoadingPanel: "@",
-    onClusterChange: "&"
+    displayLoadingPanel: "@"
   },
   transclude: true,
-  controller: function (oaCephModuleLoaderService) {
+  controller: function (oaModuleLoaderService, registryService) {
     var self = this;
 
     self.$onInit = function () {
@@ -50,39 +47,31 @@ app.component("oaCephModuleLoader", {
       self.loadModule();
     };
 
-    self.loadModule = function (triggerOnClusterChange) {
+    self.loadModule = function () {
       if (angular.isDefined(self.module)) {
-        if (angular.isUndefined(self.cluster) || self.cluster.results.length > 0) {
-          self.moduleAvailable = undefined;
-          var fsid = self.registry && self.registry.selectedCluster ? self.registry.selectedCluster.fsid : undefined;
-          oaCephModuleLoaderService.get({
-            module: self.module,
-            fsid: fsid
-          })
-          .$promise
-          .then(function (res) {
-            self.moduleAvailable = res;
-            if (self.moduleAvailable.available && triggerOnClusterChange) {
-              self.onClusterChange();
-            }
-          }).catch(function (error) {
-            self.moduleAvailable = {
-              $resolved: true,
-              available: false,
-              reason: 100,
-              message: error.data && error.data.detail ?
-                error.data.detail : undefined
-            };
-          });
-        }
+        self.moduleAvailable = undefined;
+        var fsid = registryService && registryService.selectedCluster ?
+          registryService.selectedCluster.fsid : undefined;
+        oaModuleLoaderService.get({
+          module: self.module,
+          fsid: fsid
+        })
+        .$promise
+        .then(function (res) {
+          self.moduleAvailable = res;
+        }).catch(function (error) {
+          self.moduleAvailable = {
+            $resolved: true,
+            available: false,
+            reason: 100,
+            message: error.data && error.data.detail ? error.data.detail : undefined
+          };
+        });
       } else {
         self.moduleAvailable = {
           $resolved: true,
           available: true
         };
-        if (triggerOnClusterChange) {
-          self.onClusterChange();
-        }
       }
     };
 
@@ -254,9 +243,9 @@ app.component("oaCephModuleLoader", {
 
     self.getErrorTemplate = function (reason) {
       if (angular.isDefined(reasons[reason])) {
-        return "components/shared/oa-ceph-module-loader/reason-" + reason + "-" + reasons[reason].template + ".html";
+        return "components/shared/oa-module-loader/reason-" + reason + "-" + reasons[reason].template + ".html";
       }
-      return "components/shared/oa-ceph-module-loader/reason-default.html";
+      return "components/shared/oa-module-loader/reason-default.html";
     };
 
   }

@@ -1,5 +1,5 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
-<oa-ceph-module-loader module="ceph_iscsi" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getIscsiList()">
+<oa-module-loader module="ceph_iscsi">
 
 <div class="panel panel-default" ng-show="$ctrl.error">
   <div class="panel-heading">
@@ -122,5 +122,5 @@
      selection="$ctrl.selection">
 </div>
 
-</oa-ceph-module-loader>
+</oa-module-loader>
 </oa-ceph-cluster-loader>
