@@ -3,7 +3,7 @@
     <span>Advanced Settings</span>
   </div>
   <div class="openattic-modal-content">
-    <div uib-alert class="alert-warning">Changing these parameters from their default values is usually not necessary</div>
+    <div uib-alert class="alert-warning">Changing these parameters from their default values is usually not necessary.</div>
     <span ng-repeat="setting in $ctrl.cephIscsiTargetAdvangedSettings">
       <div class="form-group"
            ng-class="{'has-error': (settingsForm.$submitted || settingsForm[setting.property].$dirty) && settingsForm[setting.property].$invalid}">
