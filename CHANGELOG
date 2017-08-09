@@ -28,6 +28,8 @@ Added
 Changed
 ~~~~~~
 * Development: Upgrade Vagrant box to openSUSE Leap 42.3
+* Development: Ensure that the webserver and oA systemd are killed when the
+  Vagrant helper scripts are interrupted via CTRL-C
 * WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
 
 Fixed
