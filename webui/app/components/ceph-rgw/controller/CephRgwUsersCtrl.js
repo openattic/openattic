@@ -51,6 +51,12 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
         state: "ceph-rgw-users.detail.details",
         class: "tc_statusTab",
         name: "Details"
+      },
+      statistics: {
+        show: "selection.item",
+        state: "ceph-rgw-users.detail.statistics",
+        class: "tc_statisticsTab",
+        name: "Statistics"
       }
     }
   };
