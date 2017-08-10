@@ -66,6 +66,8 @@ based on the latest commit in the ``default`` branch.
 
       OADIR="/srv/openattic/backend"
 
+    .. _build_the_web_ui:
+
 #.  Now build the Web UI::
 
       # cd /srv/openattic/webui
@@ -149,13 +151,13 @@ Examples for additional scripts can be found here:
 * `Snapshot Python script with authtoken <http://blog.openattic.org/posts/snapshot-python-script-with-authtoken/>`_
 * `Cronjob Snapshot Script for openATTIC <http://blog.openattic.org/posts/cron-snapshot-script-for-openattic/>`_
 
-.. _webui_global_configuration:
+.. _webui_local_configuration:
 
-WebUI Global Configuration
---------------------------
+WebUI local configuration
+-------------------------
 
 Our frontend application reads most of its default values from a global
-configuration file found in ``/webui/app/config.js``.
+configuration file found in ``webui/app/config.js``.
 
 If you ever need to permanently change one of those values you can just open the
 file, change it and save the modification. This way everyone will have access
@@ -166,6 +168,37 @@ development environment, e.g. when using our vagrant setup
 (:ref:`developer_vagrant_howto`), you will have to take an extra step.
 You will have to create a local configuration file that will overwrite all the
 values of the preexisting file.
-To do that, simply create a new file, ``/webui/app/config.local.js``, with the
-content of ``/webui/app/config.local.js.sample``.
-After that just edit that file and you, and only you, will see them applied.
+To do that, simply create a new file, ``webui/app/config.local.js``, with the
+content of ``webui/app/config.local.js.sample``. Finally you have to
+:ref:`rebuild the frontend <build_the_web_ui>`. After that you, and only you, will
+see your custom configuration applied.
+
+.. _backend_local_configuration:
+
+Backend local configuration
+---------------------------
+
+Same as to the frontend application, the backend part reads most of its default
+values from a global configuration file found in ``backend/settings.py``.
+
+If you want to customize those settings equal to the frontend application, then
+simply create the file ``backend/settings_local.conf`` and put the key/value pairs
+you want to override into this file.::
+
+  SALT_API_HOST='deepsea-1.xyz.net'
+  SALT_API_EAUTH='sharedsecret'
+  SALT_API_SHARED_SECRET='173a59b3-5abf-4a78-808a-253fe9ae3d94'
+
+  RGW_API_HOST="deepsea-1.xyz.net"
+  RGW_API_ADMIN_RESOURCE="admin"
+  RGW_API_USER_ID="admin"
+  RGW_API_ACCESS_KEY="PK258BAY1G1KEM7UH2Y3"
+  RGW_API_SECRET_KEY="rsOV874KLsaUBKLQzJ1oYdzyo7OXV4OAWoGDOdvE"
+
+  GRAFANA_API_HOST="deepsea-1.xyz.net"
+  GRAFANA_API_PORT="3000"
+  GRAFANA_API_USERNAME="admin"
+  GRAFANA_API_PASSWORD="admin"
+
+The local configuration will be applied when you restart the webserver and |oA| systemd
+daemon.

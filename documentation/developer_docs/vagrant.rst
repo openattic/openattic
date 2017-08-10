@@ -14,7 +14,7 @@ To be able to run the WebUI with this setup you will have to change the default
 value of the API URL from "/openattic/api/" to "/api/".
 
 More information on how to do this can be found at
-:ref:`webui_global_configuration`.
+:ref:`webui_local_configuration`.
 
 Vagrant Installation
 --------------------
