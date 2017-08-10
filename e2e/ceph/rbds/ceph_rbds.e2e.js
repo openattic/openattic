@@ -15,7 +15,7 @@ describe('should test the ceph rbd panel', function(){
     it('should create a rbd with default settings on ' + pool.name + ' in cluster ' + cluster.name, function(){
       rbdProperties.selectClusterAndPool(cluster.name, pool.name);
       var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
-      rbdProperties.createRbd(rbdName, null, rbdProperties.defaultFeatureCase);
+      rbdProperties.createRbd(rbdName);
     });
   });
 

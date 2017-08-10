@@ -23,17 +23,24 @@ Added
 ~~~~~
 * WebUI: Enabled grafana statistics for RBDs (OP-2475)
 * WebUI: Enable providing a dedicated data pool when creating RBDs (OP-2315)
+* WebUI: Add Ceph Object Gateway user statistics (OP-2214)
 * Development: Add support for ECMAScript6 using Babel (OP-1890)
 
 Changed
 ~~~~~~
 * Development: Upgrade Vagrant box to openSUSE Leap 42.3
+* Development: Ensure that the webserver and oA systemd are killed when the
+  Vagrant helper scripts are interrupted via CTRL-C
 * WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
+* WebUI: Migration of Ceph iSCSI controllers to components (OP-2372)
+* WebUI: Removed expert settings from RBD form (OP-2518)
+* WebUI: Improve usabality of modal dialogs (OP-2560)
 
 Fixed
 ~~~~~
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
 * Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
+* WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
 
 [3.4.2] - 2017-08-03
 --------------------

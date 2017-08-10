@@ -1,7 +1,7 @@
-<oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
-<oa-ceph-module-loader module="ceph_iscsi" cluster="cluster" registry="registry" on-cluster-change="getIscsiList()">
+<oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
+<oa-ceph-module-loader module="ceph_iscsi" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getIscsiList()">
 
-<div class="panel panel-default" ng-show="error">
+<div class="panel panel-default" ng-show="$ctrl.error">
   <div class="panel-heading">
     <h3 class="panel-title">Couldn't load iSCSI target IQNs</h3>
   </div>
@@ -11,33 +11,33 @@
 </div>
 
 <oa-loading-panel message="iSCSI targets are loading..."
-                  ng-show="!error && !iscsi.$resolved"></oa-loading-panel>
+                  ng-show="!$ctrl.error && !$ctrl.iscsi.$resolved"></oa-loading-panel>
 
-<oadatatable ng-show="!error && iscsi.results" data="iscsi" class="oadatatable tc_cephIscsiTable"
-             filter-config="filterConfig" special="deployed"
-             selection="selection" on-selection-change="onSelectionChange(selection)" >
+<oadatatable ng-show="!$ctrl.error && $ctrl.iscsi.results" data="$ctrl.iscsi" class="oadatatable tc_cephIscsiTable"
+             filter-config="$ctrl.filterConfig" special="$ctrl.deployed"
+             selection="$ctrl.selection" on-selection-change="$ctrl.onSelectionChange(selection)" >
   <actions>
-    <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()"
-       ng-hide="hasSelection || multiSelection">
+    <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="$ctrl.addAction()"
+       ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
       <i class="fa fa-fw fa-plus"></i>Add
     </a>
-    <a class="btn btn-sm btn-primary tc_edit_btn" type="button" ng-click="editAction()" ng-show="hasSelection">
+    <a class="btn btn-sm btn-primary tc_edit_btn" type="button" ng-click="$ctrl.editAction()" ng-show="$ctrl.hasSelection">
       <i class="fa fa-fw fa-pencil"></i>Edit
     </a>
-    <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="multiSelection">
+    <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="$ctrl.deleteAction()" ng-show="$ctrl.multiSelection">
       <i class="fa fa-fw fa-trash-o"></i>Delete
     </a>
     <li>
-      <a ng-click="addAction()">
+      <a ng-click="$ctrl.addAction()">
         <i class="fa fa-fw fa-plus"></i>Add
       </a>
     </li>
-    <li class="tc_cloneItem" ng-click="cloneAction()" ng-class="{disabled: !hasSelection}">
+    <li class="tc_cloneItem" ng-click="$ctrl.cloneAction()" ng-class="{disabled: !$ctrl.hasSelection}">
       <a>
         <i class="fa fa-fw fa-clone"></i>Copy
       </a>
     </li>
-    <li class="tc_deleteItem" ng-click="deleteAction()" ng-class="{disabled: !hasSelection && !multiSelection}">
+    <li class="tc_deleteItem" ng-click="$ctrl.deleteAction()" ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
       <a>
         <i class="fa fa-fw fa-trash-o"></i>Delete
       </a>
@@ -49,17 +49,17 @@
         <i class="fa fa-fw fa-cog" aria-hidden="true"></i>Manage service
       </button>
       <ul class="dropdown-menu" uib-dropdown-menu>
-        <li class="tc_deployItem" ng-click="deployIscsi()"
-            ng-class="{disabled: (deployed.status === true || deployed.$resolved === false)}">
+        <li class="tc_deployItem" ng-click="$ctrl.deployIscsi()"
+            ng-class="{disabled: ($ctrl.deployed.status === true || $ctrl.deployed.$resolved === false)}">
           <a>
             <i class="fa fa-fw fa-play"></i>Start all
           </a>
         </li>
-        <li class="tc_undeployItem" ng-click="undeployIscsi()"
-            ng-class="{disabled: (deployed.status === false || deployed.$resolved === false)}">
+        <li class="tc_undeployItem" ng-click="$ctrl.undeployIscsi()"
+            ng-class="{disabled: ($ctrl.deployed.status === false || $ctrl.deployed.$resolved === false)}">
           <a>
             <i class="fa fa-fw fa-stop "
-               ng-class="{'icon-danger': !(deployed.status === false || deployed.$resolved === false)}"></i>Stop all
+               ng-class="{'icon-danger': !($ctrl.deployed.status === false || $ctrl.deployed.$resolved === false)}"></i>Stop all
           </a>
         </li>
       </ul>
@@ -116,7 +116,10 @@
   </table>
 </oadatatable>
 
-<div id="more" ui-view="tab">
+<div id="more" ui-view="tab"
+     tab-data="$ctrl.tabData"
+     tab-config="$ctrl.tabConfig"
+     selection="$ctrl.selection">
 </div>
 
 </oa-ceph-module-loader>

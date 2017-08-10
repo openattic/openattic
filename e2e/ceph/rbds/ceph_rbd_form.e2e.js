@@ -82,11 +82,13 @@ describe('should test the ceph rbd creation form', function(){
   };
 
   var isFormElementAvailable = function(e){
-    it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
-      expect(element(by.className(e.testClass)).isDisplayed()).toBe(e.displayed);
-    });
+    if(e.testClass){
+      it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
+        expect(element(by.className(e.testClass)).isDisplayed()).toBe(e.displayed);
+      });
+    }
     for(var item in e.items){
-      var itemClasse = typeof e.items[item] == "string" ?
+      var itemClasse = typeof e.items[item] == 'string' ?
         e.items[item] : e.items[item].class;
       isItemPresent(item, itemClasse);
     }
@@ -94,11 +96,8 @@ describe('should test the ceph rbd creation form', function(){
 
   var changeSize = function(inputField, io, fieldName){
     it('should change the input ' + io.input + ' to ' + io.output + ' in "' + fieldName + '"', function(){
-      //rdb should be preselected
-      rbdProperties.checkCheckboxToBe(rbdProperties.expertSettings, true);
-      inputField.click();
-      inputField.clear();
-      inputField.sendKeys(io.input);
+      //rbd should be preselected
+      inputField.clear().sendKeys(io.input);
       rbdProperties.name.click();
       expect(inputField.getAttribute('value')).toEqual(io.output);
     });

@@ -31,37 +31,33 @@
 "use strict";
 
 var app = angular.module("openattic.cephIscsi");
-app.controller("CephIscsiImageSettingsModalCtrl", function ($scope, $uibModalInstance, image,
-    CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS) {
+app.component("cephIscsiFormTargetSettingsModal", {
+  templateUrl: "components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component.html",
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  },
+  controller: function (cephIscsiTargetAdvangedSettings) {
+    var self = this;
 
-  $scope.image = image;
-  $scope.CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS = CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS;
+    self.model = self.resolve.model;
+    self.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
 
-  $scope.settings = angular.copy(image.settings);
+    self.targetSettings = angular.copy(self.model.targetSettings);
 
-  $scope.advancedSettingsEnabled = CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS.some(function (value) {
-    return $scope.settings.hasOwnProperty(value.property);
-  });
-
-  $scope.confirm = function () {
-    angular.forEach($scope.settings, function (value, key) {
-      if (value === "" || value === null) {
-        delete $scope.settings[key];
-      } else if (key === "retry_errors" && angular.isString($scope.settings[key])) {
-        $scope.settings[key] = angular.fromJson("[" + value + "]");
-      }
-    });
-    if (!$scope.advancedSettingsEnabled) {
-      angular.forEach(CEPH_ISCSI_IMAGE_ADVANCED_SETTINGS, function (value) {
-        delete $scope.settings[value.property];
+    self.confirm = function () {
+      angular.forEach(self.targetSettings, function (value, key) {
+        if (value === "" || value === null) {
+          delete self.targetSettings[key];
+        }
       });
-    }
-    $scope.image.settings = $scope.settings;
-    $uibModalInstance.close("confirmed");
-  };
+      self.model.targetSettings = self.targetSettings;
+      self.modalInstance.close("confirmed");
+    };
 
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
+    self.cancel = function () {
+      self.modalInstance.dismiss("cancel");
+    };
 
+  }
 });

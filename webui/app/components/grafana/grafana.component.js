@@ -68,7 +68,10 @@ angular.module('openattic.grafana').component('grafana', {
           vm.dashboardName = 'node-statistics';
           vm.urlParameterName = 'var-instance';
           break;
-
+        case 'rgwusers':
+          vm.dashboardName = 'ceph-object-gateway-users';
+          vm.urlParameterName = 'var-owner';
+          break;
         default:
           vm.dashboardName = 'ceph-cluster';
           vm.mode = 'dashboard';
