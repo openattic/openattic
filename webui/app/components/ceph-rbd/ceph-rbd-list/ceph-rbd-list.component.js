@@ -88,7 +88,8 @@ app.component("cephRbdList", {
         );
         $q.all(requests)
           .then(function (res) {
-            var rbds = res[0], pools = res[1];
+            var rbds = res[0];
+            var pools = res[1];
             rbds.results.forEach(function (rbd) {
               pools.results.some(function (pool) {
                 if (pool.id === rbd.pool) {
