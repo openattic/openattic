@@ -33,7 +33,12 @@ describe('Should test oadatatable and its options', function(){
     'Erasure code profile',
     'Last Change',
     'Type',
-    'Crush ruleset'
+    'Crush ruleset',
+    'Compression mode',
+    'Compression algorithm',
+    'Compression min. blob size',
+    'Compression max. blob size',
+    'Compression required ratio'
   ];
 
   it('should display the datatable header', function(){

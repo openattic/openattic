@@ -25,6 +25,10 @@ Added
 * WebUI: Enable providing a dedicated data pool when creating RBDs (OP-2315)
 * WebUI: Add Ceph Object Gateway user statistics (OP-2214)
 * Development: Add support for ECMAScript6 using Babel (OP-1890)
+* Documentation: Add documentation how to use local settings (OP-2549)
+* WebUI: Add Pool compression (OP-2470)
+* Backend: Add "/api/host/current" service to get the current openATTIC host (OP-2496)
+* WebUI: Display openATTIC version on the settings page (OP-2496)
 
 Changed
 ~~~~~~
@@ -40,7 +44,11 @@ Fixed
 ~~~~~
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
 * Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
+* Backend: Added user name and keyring file information to RBD command
+  call (OP-2553)
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
+* Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
+  RPM package to fix a logrotate failure (OP-2517)
 
 [3.4.2] - 2017-08-03
 --------------------

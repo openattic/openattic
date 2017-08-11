@@ -8,12 +8,12 @@
             <dt>ID:</dt>
             <dd ng-bind="selection.item.id"></dd>
             <div ng-show="selection.item.max_avail">
-              <dt>Pool size:</dt>
-              <dd ng-bind="selection.item.max_avail | bytes"></dd>
+                <dt>Pool size:</dt>
+                <dd ng-bind="selection.item.max_avail | bytes"></dd>
             </div>
             <div ng-show="selection.item.num_bytes">
-              <dt>Used:</dt>
-              <dd ng-bind="selection.item.num_bytes | bytes"></dd>
+                <dt>Used:</dt>
+                <dd ng-bind="selection.item.num_bytes | bytes"></dd>
             </div>
             <dt>Placement Groups:</dt>
             <dd ng-bind="selection.item.pg_num"></dd>
@@ -33,7 +33,8 @@
             </div>
             <div ng-show="selection.item.flags.length > 0">
                 <dt>Flags:</dt>
-                <dd ng-bind="flag" class="tc-flag-{{flag}}" ng-repeat="flag in selection.item.flags"></dd>
+                <dd ng-bind="flag" class="tc-flag-{{flag}}"
+                        ng-repeat="flag in selection.item.flags"></dd>
             </div>
             <div ng-show="selection.item.cluster.id">
                 <dt>Cluster ID:</dt>
@@ -54,5 +55,21 @@
                 <dd ng-bind="selection.item.quota_max_objects"></dd>
             </div>
         </dl>
+
+        <div ng-show="selection.item.compression_mode !== 'none'">
+            <h2>Compression information:</h2>
+            <dl class="dl-horizontal">
+                <dt>Mode:</dt>
+                <dd ng-bind="selection.item.compression_mode"></dd>
+                <dt>Algorithm:</dt>
+                <dd ng-bind="selection.item.compression_algorithm"></dd>
+                <dt>Minimum blob size:</dt>
+                <dd>{{selection.item.compression_min_blob_size | bytes}}</dd>
+                <dt>Maximum blob size:</dt>
+                <dd>{{selection.item.compression_max_blob_size | bytes}}</dd>
+                <dt>Required ratio:</dt>
+                <dd ng-bind="selection.item.compression_required_ratio"></dd>
+            </dl>
+        </div>
     </div>
 </div>
