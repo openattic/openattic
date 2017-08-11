@@ -47,6 +47,8 @@ Fixed
 * Backend: Added user name and keyring file information to RBD command
   call (OP-2553)
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
+* Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
+  RPM package to fix a logrotate failure (OP-2517)
 
 [3.4.2] - 2017-08-03
 --------------------
