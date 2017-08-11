@@ -27,6 +27,8 @@ Added
 * Development: Add support for ECMAScript6 using Babel (OP-1890)
 * Documentation: Add documentation how to use local settings (OP-2549)
 * WebUI: Add Pool compression (OP-2470)
+* Backend: Add "/api/host/current" service to get the current openATTIC host (OP-2496)
+* WebUI: Display openATTIC version on the settings page (OP-2496)
 
 Changed
 ~~~~~~
