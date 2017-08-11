@@ -77,6 +77,16 @@ describe('ceph pool creation form', function(){
     }
   });
 
+  it('should have a disabled crush rule set selection for replicated pools', function(){
+    cephPoolProperties.formElements.types.byModel.sendKeys('Replicated').click();
+    expect(cephPoolProperties.formElements.crushRules.byClass.getAttribute('disabled')).toBe('true');
+  });
+
+  it('should have a disabled crush rule set selection for ec pools', function(){
+    cephPoolProperties.formElements.types.byModel.sendKeys('Erasure');
+    expect(cephPoolProperties.formElements.crushRules.byClass.getAttribute('disabled')).toBe('true');
+  });
+
   afterAll(function(){
     console.log('ceph_pool_form -> ceph_pool_form.e2e.js');
   });

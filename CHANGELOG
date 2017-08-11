@@ -54,6 +54,7 @@ Fixed
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
 * Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
   RPM package to fix a logrotate failure (OP-2517)
+* WebUI: Fixed rule set selection problem in pool form (OP-2564)
 
 [3.4.2] - 2017-08-03
 --------------------
