@@ -44,6 +44,8 @@ Fixed
 ~~~~~
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
 * Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
+* Backend: Added user name and keyring file information to RBD command
+  call (OP-2553)
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
 
 [3.4.2] - 2017-08-03
