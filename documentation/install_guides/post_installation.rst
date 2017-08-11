@@ -3,65 +3,21 @@
 Post-installation Configuration
 ===============================
 
-|oA| Base Configuration
------------------------
-
-After all the required packages have been installed and a storage pool has
-been created, you need to perform the actual |oA| configuration, by running
-``oaconfig``::
-
-  # oaconfig install
-
-``oaconfig install`` will start and enable a number of services, initialize
-the |oA| database and scan the system for pools and volumes to include.
-
-Changing the Default User Password
-----------------------------------
-
-By default, ``oaconfig`` creates a local adminstrative user account
-``openattic``, with the same password.
-
-As a security precaution, we strongly recommend to change this password
-immediately::
-
-  # oaconfig changepassword openattic
-  Changing password for user 'openattic'
-  Password: <enter password>
-  Password (again): <re-enter password>
-  Password changed successfully for user 'openattic'
-
-Now, your |oA| storage system can be managed via the user interface.
-
-See :ref:`getting started` for instructions on how to access the web user
-interface.
-
-If you don't want to manage your users locally, consult the chapter
-:ref:`admin_auth_methods` for alternative methods for authentication and
-authorization.
-
-Installing additional |oA| Modules
-----------------------------------
-
-After installing |oA|, you can install additional modules
-(``openattic-module-<module-name>``), by using your operating system's native
-package manager, i.e.::
-
-  # apt-get install openattic-module-drbd # Debian/Ubuntu
-  # yum install openattic-module-btrfs # RHEL/CentOS
-
-.. note::
-  Don't forget to run ``oaconfig install`` after installing new modules.
-
 .. _enabling_ceph_support:
 
-Enabling Ceph Support in |oA|
-=============================
+Enabling Basic Ceph Support in |oA|
+===================================
+
+|oA| depends on Ceph's `librados Python bindings
+<http://docs.ceph.com/docs/master/rados/api/python/>`_ for performing many Ceph
+management and monitoring tasks, e.g. the management of Ceph Pools or RADOS
+block devices.
 
 .. note::
-  Ceph support in |oA| is currently developed against Ceph 10.2 aka "Jewel".
-  Older Ceph versions may not work as expected. If your Linux distribution
-  ships an older version of Ceph (as most currently do), please either use the
-  `upstream Ceph package repositories
+  Ceph support in |oA| is currently developed against Ceph 12.1.0 aka
+  "Luminous". Older Ceph versions may not work as expected. If your Linux
+  distribution ships an older version of Ceph (as most currently do), please
+  either use the `upstream Ceph package repositories
   <http://docs.ceph.com/docs/master/install/get-packages/>`_ or find an
   alternative package repository for your distribution that provides a version
   of Ceph that meets the requirements. Note that this applies to both the
@@ -96,22 +52,14 @@ On the |oA| node, you should then have the following files::
 Alternatively, you can copy these files manually.
 
 .. note::
-  |oA| supports managing multiple Ceph clusters, provided they have different
-  names and FSIDs. You can add another cluster by copying the cluster's admin
-  keyring and configuration into ``/etc/ceph`` using a different cluster name,
-  e.g. ``development`` instead of the default name ``ceph``::
+  |oA| partially supports managing multiple Ceph clusters, provided they have
+  different names and FSIDs. You can add another cluster by copying the
+  cluster's admin keyring and configuration into ``/etc/ceph`` using a different
+  cluster name, e.g. ``development`` instead of the default name ``ceph``::
 
     /etc/ceph/development.client.admin.keyring
     /etc/ceph/development.conf
 
-The next step is to install the |oA| Ceph module ``openattic-module-ceph`` on your
-system::
-
-  # apt-get install openattic-module-ceph
-  - or -
-  # yum install openattic-module-ceph
-
-The packages should automatically install any additionally required packages.
 The last step is to recreate your |oA| configuration::
 
   # oaconfig install
@@ -121,8 +69,14 @@ The last step is to recreate your |oA| configuration::
 DeepSea integration in |oA|
 ===========================
 
-Some |oA| features, like Ceph iSCSI and RGW management, make use of the DeepSea
-REST API.
+`DeepSea <https://github.com/SUSE/DeepSea>`_ is a Ceph installation and
+management framework developed by SUSE which is based on the `Salt Open
+<https://saltstack.com/salt-open-source/>`_ automation and orchestration
+software. It highly automates the deployment, configuration and management of an
+entire Ceph cluster and all of its components.
+
+Some |oA| features like iSCSI target and Ceph object gateway (RGW) management
+depend on communicating with DeepSea via the Salt REST API.
 
 To enable the REST API of DeepSea you would have to issue the following command
 on the Salt master node::
@@ -137,24 +91,25 @@ as well as SUSE Linux.
 
 Available settings are::
 
-  SALT_API_HOST='salt'
-  SALT_API_PORT=8000
-  SALT_API_USERNAME='admin'
-  SALT_API_PASSWORD='admin'
+  SALT_API_HOST="salt"
+  SALT_API_PORT="8000"
+  SALT_API_USERNAME="admin"
+  SALT_API_PASSWORD="admin"
 
 .. caution::
 
   Do not use spaces before or after the equal signs
 
-Rados Gateway management features
----------------------------------
+Object Gateway management features
+----------------------------------
 
-If you want to enable the Rados Gateway management features, and you are using DeepSea,
-you just have to guarantee that the SALT-API is correctly configured (see :ref:`deepsea_integration`).
-In case you are not using DeepSea, you have to configure the Rados Gateway manually
-by editing either ``/etc/default/openattic`` for Debian-based
-distributions or ``/etc/sysconfig/openattic`` for RedHat-based distributions
-as well as SUSE Linux.
+If you want to enable the Object Gateway management features, and you are using
+DeepSea, you just have to guarantee that the Salt REST API is correctly
+configured (see :ref:`deepsea_integration`). In case you are not using DeepSea,
+you have to configure the Rados Gateway manually by editing either
+``/etc/default/openattic`` for Debian-based distributions or
+``/etc/sysconfig/openattic`` for RedHat-based distributions as well as SUSE
+Linux.
 
 This is an example for the manually configured Rados Gateway credentials::
 
@@ -175,3 +130,37 @@ so::
 
   radosgw-admin user info --uid=admin
 
+|oA| Base Configuration
+-----------------------
+
+After all the required packages have been installed, you need to perform the
+actual |oA| configuration, by running ``oaconfig``::
+
+  # oaconfig install
+
+``oaconfig install`` will start and enable a number of services, initialize
+the |oA| database and scan the system for.
+
+Changing the Default User Password
+----------------------------------
+
+By default, ``oaconfig`` creates a local adminstrative user account
+``openattic``, with the same password.
+
+As a security precaution, we strongly recommend to change this password
+immediately::
+
+  # oaconfig changepassword openattic
+  Changing password for user 'openattic'
+  Password: <enter password>
+  Password (again): <re-enter password>
+  Password changed successfully for user 'openattic'
+
+Now, your |oA| storage system can be managed via the user interface.
+
+See :ref:`getting started` for instructions on how to access the web user
+interface.
+
+If you don't want to manage your users locally, consult the chapter
+:ref:`admin_auth_methods` for alternative methods for authentication and
+authorization.
