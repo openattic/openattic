@@ -149,6 +149,7 @@ import unittest
 import ConfigParser
 import platform
 import logging
+import fileinput
 from shutil import rmtree, copytree
 from os.path import isfile, isdir
 from os import makedirs
@@ -533,33 +534,26 @@ class DistBuilder(object):
         else:
             _copytree(source, destination_dir, symlinks=True)
 
-    def _get_build_basename(self, channel, version, suffix=''):
-        """Return the base name for the given revision.
-
-        Depending on the channel, this may either like `openattic-2.0.4` or
-        `openattic-2.0.5~201512021037`.
-
-        :param channel: release | snapshot
-        :type channel: str
-        :return: The base name
-        """
-        assert channel in ('release', 'snapshot')
-
-        build_basename = 'openattic{}-{}'.format(suffix, version)
-        build_basename += '~' + self._datestring if channel == 'snapshot' else ''
-
-        return build_basename
-
-    def _create_source_tarball(self, build_basename):
+    def _create_source_tarball(self, channel, version, suffix=''):
         """Make some necessary modifications and create the tarball.
 
         Remove the previous version of the current build directory, generate the frontend cache
         files if necessary, update the version.txt and create the compressed tar archive.
 
-        :param build_basename:
-        :type build_basename: str
-        :return: The absolute file path of the created tarball
+        :param channel: release | snapshot
+        :type channel: str
+        :return: The base name
         """
+
+        # Append time stamp to version when building a snapshot
+        assert channel in ('release', 'snapshot') 
+        version += '~' + self._datestring if channel == 'snapshot' else ''
+
+        # Create the base name for the given version.
+        # Depending on the channel, this may either like `openattic-2.0.4` or
+        # `openattic-2.0.5~201512021037`.
+        build_basename = 'openattic{}-{}'.format(suffix, version)
+        
         tmp_abs_build_dir = os.path.join(self._tmp_dir, build_basename)
         abs_tarball_dest_file = os.path.join(self._destination_dir, build_basename + '.tar.bz2')
 
@@ -632,6 +626,10 @@ class DistBuilder(object):
             for key, value in data.items():
                 f.write('{} = {}{}'.format(key, value, os.linesep))
 
+        for line in fileinput.input(os.path.join(tmp_abs_build_dir, 'rpm', 'openattic.spec'), inplace=True):
+            line = re.sub(r"^Version:.*", "Version: " + version, line)
+            sys.stdout.write(line)
+
         # Compress the directory into the tarball file.
         options = 'cjf'
         options += 'v' if log.level <= logging.DEBUG else ''
@@ -698,8 +696,7 @@ class DistBuilder(object):
             repo_updated = True
 
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
-        build_basename = self._get_build_basename(channel, version, self._args['--suffix'])
-
+        
         debchange_installed = bool(find_executable('debchange'))
         enable_debchange = False
         if self._args['--adapt-debian-changelog']:
@@ -741,7 +738,7 @@ class DistBuilder(object):
                 log.warning('Ignoring the --push-changes switch because temporary files of the '
                             'given source have been committed.')
 
-        abs_tarball_file_path = self._create_source_tarball(build_basename)
+        abs_tarball_file_path = self._create_source_tarball(channel, version, self._args['--suffix'])
 
         if self._args['--sign']:
             process_run(['gpg', '--detach-sign', abs_tarball_file_path])
