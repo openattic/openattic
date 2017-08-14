@@ -39,12 +39,9 @@ On the |oA| node, you should then have the following files::
   /etc/ceph/ceph.conf
 
 .. note::
-  Please ensure that these files are actually readable by the |oA| user
-  (``openattic``) and the Nagios/Icinga user account (usually ``nagios`` or
-  ``icinga``) that runs the related Nagios checks. In a default installation,
-  these users are added to the group ``openattic``, so it should be sufficient
-  to make sure these files are either world-readable or owned and readable by
-  this group::
+  Please ensure that these files are actually readable by the |oA| system user
+  (``openattic`` by default). This could be done by making them readable by the
+  ``openattic`` user group::
 
     # chgrp openattic /etc/ceph/ceph.conf /etc/ceph/ceph.client.admin.keyring
     # chmod g+r /etc/ceph/ceph.conf /etc/ceph/ceph.client.admin.keyring
@@ -59,6 +56,24 @@ Alternatively, you can copy these files manually.
 
     /etc/ceph/development.client.admin.keyring
     /etc/ceph/development.conf
+
+It is also possible to configure a Ceph cluster's configuration and keyring file
+in the settings file ``/etc/sysconfig/openattic``.
+
+``CEPH_CLUSTERS`` is a string setting containing paths to ``ceph.conf`` files.
+Multiple clusters can be added by seperating them with a ``;`` sign like so::
+
+  CEPH_CLUSTERS="/etc/ceph/ceph.conf;/home/user/ceph/build/ceph.conf"
+
+For each Ceph cluster, one can set the path to the keyring file by adding
+``CEPH_KEYRING_`` appended by the uppercase cluster fsid as follows::
+
+    CEPH_KEYRING_123ABCDE-4567-ABCD-1234-567890ABCDEF="/home/user/ceph/build/keyring"
+
+It is also possible to define a specific user name for each cluster, by adding
+``CEPH_KEYRING_USER_`` appended by the uppercase cluster fsid, like so::
+
+  CEPH_KEYRING_USER_123ABCDE-4567-ABCD-1234-567890ABCDEF="client.openattic"
 
 The last step is to recreate your |oA| configuration::
 
@@ -100,10 +115,10 @@ Available settings are::
 
   Do not use spaces before or after the equal signs
 
-Object Gateway management features
-----------------------------------
+Ceph Object Gateway management features
+---------------------------------------
 
-If you want to enable the Object Gateway management features, and you are using
+If you want to enable the Ceph Object Gateway management features, and you are using
 DeepSea, you just have to guarantee that the Salt REST API is correctly
 configured (see :ref:`deepsea_integration`). In case you are not using DeepSea,
 you have to configure the Rados Gateway manually by editing either
