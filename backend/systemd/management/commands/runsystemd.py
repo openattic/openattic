@@ -267,4 +267,7 @@ class Command( BaseCommand ):
         except ImportError:
             pass
 
-        loop.run()
+        try:
+            loop.run()
+        except KeyboardInterrupt:
+            loop.quit()
