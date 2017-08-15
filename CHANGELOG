@@ -29,6 +29,8 @@ Added
 * WebUI: Add Pool compression (OP-2470)
 * Backend: Add "/api/host/current" service to get the current openATTIC host (OP-2496)
 * WebUI: Display openATTIC version on the settings page (OP-2496)
+* Packaging: `make_dist.py` now replaces the Version: tag in the RPM spec
+  file automatically (OP-2256)
 
 Changed
 ~~~~~~
@@ -40,6 +42,7 @@ Changed
 * WebUI: Removed expert settings from RBD form (OP-2518)
 * WebUI: Improve usabality of modal dialogs (OP-2560)
 * Documentation: Updated Ceph keyring installation chapter (OP-2505)
+* Packaging: Renamed openattic RPM spec files (OP-1950)
 
 Fixed
 ~~~~~
