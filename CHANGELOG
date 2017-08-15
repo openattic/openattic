@@ -39,6 +39,7 @@ Changed
 * WebUI: Migration of Ceph iSCSI controllers to components (OP-2372)
 * WebUI: Removed expert settings from RBD form (OP-2518)
 * WebUI: Improve usabality of modal dialogs (OP-2560)
+* Documentation: Updated Ceph keyring installation chapter (OP-2505)
 
 Fixed
 ~~~~~
