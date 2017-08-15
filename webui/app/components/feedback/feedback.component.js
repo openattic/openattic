@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -28,23 +28,31 @@
  * for the JavaScript code in this page.
  *
  */
-"use strict";
+'use strict';
 
-angular.module("openattic.core", [
-  "openattic.apidecorator",
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.commandlog",
-  "openattic.dashboard",
-  "openattic.feedback",
-  "openattic.grafana",
-  "openattic.navigation",
-  "openattic.notification",
-  "openattic.settings",
-  "openattic.shared",
-  "openattic.sizeparser",
-  "openattic.tabView",
-  "openattic.userinfo",
-  "openattic.taskQueue",
-  "openattic.users"
-]);
+class FeedbackController {
+  constructor() {
+    this.opened = false;
+  };
+
+  toggle() {
+    if (this.opened) {
+      this.close();
+    } else {
+      this.open();
+    }
+  };
+
+  open() {
+    this.opened = true;
+  };
+
+  close() {
+    this.opened = false;
+  };
+}
+
+angular.module('openattic.feedback').component('feedback', {
+  templateUrl: 'components/feedback/feedback.component.html',
+  controller: FeedbackController
+});
