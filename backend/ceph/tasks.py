@@ -14,6 +14,7 @@
 """
 import logging
 import time
+from subprocess import CalledProcessError
 
 from taskqueue.models import task
 from ceph import librados
@@ -71,7 +72,12 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_curren
 def get_rbd_performance_data(fsid, pool_name, image_name):
     start_time = time.time()
     api = librados.RbdApi(fsid)
-    disk_usage = api.image_disk_usage(pool_name, image_name)
-    exec_time = time.time() - start_time
+    try:
+        disk_usage = api.image_disk_usage(pool_name, image_name)
+        exec_time = time.time() - start_time
 
-    return disk_usage, round(exec_time * 1000, 2)
+        return disk_usage, round(exec_time * 1000, 2)
+    except CalledProcessError:
+        logger.exception('image_disk_usage failed')
+        return {'used_size': 0, 'provisioned_size': 0}, 0
+
