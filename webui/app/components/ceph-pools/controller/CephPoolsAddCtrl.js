@@ -250,7 +250,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
     }
     var rules = $scope.data.cluster.rules[$scope.pool.type];
     var ruleset = $scope.data.ruleset;
-    if (rules.length !== 1) {
+    if (rules.length === 0) {
       ruleset = undefined;
     } else if (rules.length === 1) {
       ruleset = rules[0];
