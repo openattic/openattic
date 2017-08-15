@@ -86,7 +86,7 @@ app.component("settingsForm",  {
       .$promise
       .then(function (res) {
         self.openatticVersion = res.oa_version.package.VERSION;
-      })
+      });
     };
 
     var isAllDeepSeaPropsDefined = function (deepsea) {
