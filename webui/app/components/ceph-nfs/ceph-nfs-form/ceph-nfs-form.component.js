@@ -275,6 +275,8 @@ app.component("cephNfsForm", {
       if (requestModel.protocolNfsv3) {
         delete requestModel.protocolNfsv3;
         requestModel.protocols.push("NFSv3");
+      } else {
+        requestModel.tag = null;
       }
       if (requestModel.protocolNfsv4) {
         delete requestModel.protocolNfsv4;

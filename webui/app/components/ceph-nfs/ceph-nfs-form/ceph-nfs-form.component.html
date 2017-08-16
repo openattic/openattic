@@ -127,17 +127,6 @@
           </div>
         </div>
 
-        <!-- Tag -->
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="tag">
-            NFS Tag
-            <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html'"></oa-helper>
-          </label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" name="tag" id="tag" ng-model="$ctrl.model.tag">
-          </div>
-        </div>
-
         <!-- NFS Protocol -->
         <div class="form-group"
              ng-class="{'has-error':
@@ -162,6 +151,18 @@
                     ng-show="nfsForm.protocolNfsv3.$error.required || nfsForm.protocolNfsv4.$error.required">
                 Required field</span>
             </span>
+          </div>
+        </div>
+
+        <!-- Tag -->
+        <div class="form-group"
+             ng-if="$ctrl.model.protocolNfsv3">
+          <label class="col-sm-3 control-label" for="tag">
+            NFS Tag
+            <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html'"></oa-helper>
+          </label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="tag" id="tag" ng-model="$ctrl.model.tag">
           </div>
         </div>
 
