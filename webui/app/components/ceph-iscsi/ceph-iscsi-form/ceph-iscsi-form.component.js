@@ -37,7 +37,7 @@ app.component("cephIscsiForm", {
   },
   controller: function ($scope, $state, $timeout, $stateParams, $uibModal,
       cephIscsiTargetAdvangedSettings, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
-      cephRbdService, cephPoolsService, cephIscsiService, Notification) {
+      cephRbdService, cephPoolsService, cephIscsiService) {
     let self = this;
 
     self.fsid = $stateParams.fsid;
@@ -344,9 +344,6 @@ app.component("cephIscsiForm", {
         cephIscsiService.update(requestModel)
           .$promise
           .then(function () {
-            Notification.success({
-              msg: "Target has been edited"
-            });
             $state.go("cephIscsi");
           }, function () {
             $scope.iscsiForm.$submitted = false;
@@ -356,9 +353,6 @@ app.component("cephIscsiForm", {
         cephIscsiService.save(requestModel)
           .$promise
           .then(function () {
-            Notification.success({
-              msg: "Target has been added"
-            });
             $state.go("cephIscsi");
           }, function () {
             $scope.iscsiForm.$submitted = false;

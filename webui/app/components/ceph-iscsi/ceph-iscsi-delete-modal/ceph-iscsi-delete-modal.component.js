@@ -37,7 +37,7 @@ app.component("cephIscsiDeleteModal", {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function ($q, cephIscsiService, Notification) {
+  controller: function ($q, cephIscsiService) {
     var self = this;
 
     self.delete = function () {
@@ -54,10 +54,6 @@ app.component("cephIscsiDeleteModal", {
         .then(function () {
           resolve();
           self.modalInstance.close("deleted");
-          Notification.success({
-            msg: self.resolve.iscsiTargetSelection.length > 1 ?
-              "Target IQNs have been deleted" : "Target IQN has been deleted"
-          });
         }, function () {
           reject();
         });
@@ -66,10 +62,6 @@ app.component("cephIscsiDeleteModal", {
 
     self.cancel = function () {
       self.modalInstance.dismiss("cancel");
-      Notification.warning({
-        title: "Cancelled deletion",
-        msg: "Cancelled iSCSI target IQN deletion"
-      });
     };
   }
 });
