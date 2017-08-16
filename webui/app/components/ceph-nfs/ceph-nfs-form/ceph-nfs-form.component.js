@@ -217,7 +217,7 @@ app.component("cephNfsForm", {
 
     var generatePseudo = function () {
       var newPseudo = self.model.pseudo;
-      if (!$scope.nfsForm.pseudo.$dirty) {
+      if ($scope.nfsForm.pseudo && !$scope.nfsForm.pseudo.$dirty) {
         newPseudo = undefined;
         if (self.model.fsal === "CEPH") {
           newPseudo = "/cephfs";
