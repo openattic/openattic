@@ -294,7 +294,10 @@ var rbdCommons = function(){
     rbdObjSize = rbdObjSize || '4.00 MiB';
     self.fillForm(rbdName, rbdObjSize, rbdObjSize, featureCase);
     element(by.className('tc_submitButton')).click();
+
     taskQueueHelpers.waitForPendingTasks();
+    self.cephRBDs.click();
+    helpers.checkForUnsavedChanges(false);
 
     var rbd = helpers.search_for_element(rbdName);
     expect(rbd.isDisplayed()).toBe(true);

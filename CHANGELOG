@@ -50,6 +50,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Unstuck RBD and pool creation tests (OP-2574)
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
 * Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
 * Backend: Added user name and keyring file information to RBD command
