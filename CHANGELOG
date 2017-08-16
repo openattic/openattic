@@ -43,6 +43,7 @@ Changed
 * WebUI: Improved usability of modal dialogs (OP-2560)
 * Documentation: Updated Ceph keyring installation chapter (OP-2505)
 * Packaging: Renamed openattic RPM spec files (OP-1950)
+* WebUI: The password of a user can be changed now (OP-4)
 
 Fixed
 ~~~~~
