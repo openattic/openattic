@@ -15,6 +15,7 @@
 import logging
 import time
 
+from ceph.librados import ExternalCommandError
 from taskqueue.models import task
 from ceph import librados
 
@@ -71,7 +72,11 @@ def track_pg_creation(fsid, pool_id, pg_count_before, pg_count_after, pgs_curren
 def get_rbd_performance_data(fsid, pool_name, image_name):
     start_time = time.time()
     api = librados.RbdApi(fsid)
-    disk_usage = api.image_disk_usage(pool_name, image_name)
+    try:
+        disk_usage = api.image_disk_usage(pool_name, image_name)
+    except ExternalCommandError:
+        logger.exception('image_disk_usage failed')
+        return {}, 0
     exec_time = time.time() - start_time
 
     return disk_usage, round(exec_time * 1000, 2)
