@@ -58,6 +58,7 @@ Fixed
 * Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
   RPM package to fix a logrotate failure (OP-2517)
 * WebUI: Fixed rule set selection problem in pool form (OP-2564)
+* WebUI: Javascript error on edit NFSv3 export (OP-2576)
 
 Removed
 ~~~~~~~
