@@ -56,6 +56,11 @@ Fixed
   RPM package to fix a logrotate failure (OP-2517)
 * WebUI: Fixed rule set selection problem in pool form (OP-2564)
 
+Removed
+~~~~~~~
+* Backend: The Nagios backend module has been removed due to Prometheus/Grafana
+  integration (OP-2436)
+
 [3.4.2] - 2017-08-03
 --------------------
 

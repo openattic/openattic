@@ -74,12 +74,14 @@ def test_taskqueue_0002_taskqueue_description_textfield(cursor):
 
 
 def test_0002_auto_20170126_1628(cursor):
-    stmt1 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
-               'check_twraid_unit');"""
+    if _table_exists('nagios_command', cursor):
+        stmt1 = """SELECT * FROM nagios_command WHERE name in ('check_openattic_rpcd', 'check_drbd',
+                   'check_twraid_unit');"""
 
-    res1 = execute_and_fetch(cursor, stmt1)
+        res1 = execute_and_fetch(cursor, stmt1)
 
-    return bool(len(res1))
+        return bool(len(res1))
+    return False
 
 
 def test_sysutils_0002_delete_initscript(cursor):
@@ -91,10 +93,12 @@ def test_ceph_deployment_remove_CephMinion(cursor):
 
 
 def test_nagios_remove_traditional_fixtures(cursor):
-    if len(execute_and_fetch(cursor, """SELECT * FROM nagios_graph;""")):
-        return True
-    return len(execute_and_fetch(cursor, """SELECT * FROM nagios_command
-                                            WHERE id in (8, 9, 10, 13, 14, 17, 18);"""))
+    if _table_exists('nagios_graph', cursor):
+        if len(execute_and_fetch(cursor, """SELECT * FROM nagios_graph;""")):
+            return True
+        return len(execute_and_fetch(cursor, """SELECT * FROM nagios_command
+                                                WHERE id in (8, 9, 10, 13, 14, 17, 18);"""))
+    return False
 
 
 def test_ceph_0005_cephpool_percent_used(cursor):
@@ -457,6 +461,21 @@ _migrations = [
         COMMIT;
         """
     ),
+    SqlMigration(
+        'nagios', u'0004_remove',
+        lambda cursor: _table_exists('nagios_service', cursor),
+        """
+        BEGIN;
+        ALTER TABLE "nagios_graph" DROP COLUMN "command_id" CASCADE;
+        DROP TABLE "nagios_graph" CASCADE;;
+        ALTER TABLE "nagios_service" DROP COLUMN "command_id" CASCADE;
+        DROP TABLE "nagios_command" CASCADE;
+        ALTER TABLE "nagios_service" DROP COLUMN "host_id" CASCADE;
+        ALTER TABLE "nagios_service" DROP COLUMN "target_type_id" CASCADE;
+        DROP TABLE "nagios_service" CASCADE;
+        COMMIT;
+        """
+    )
 ]
 
 
