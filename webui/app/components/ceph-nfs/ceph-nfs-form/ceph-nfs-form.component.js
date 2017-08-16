@@ -35,7 +35,7 @@ app.component("cephNfsForm", {
   templateUrl: "components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html",
   bindings: {
   },
-  controller: function ($scope, $state, $stateParams, Notification, cephNfsAccessType, cephNfsSquash, cephNfsFsal,
+  controller: function ($scope, $state, $stateParams, cephNfsAccessType, cephNfsSquash, cephNfsFsal,
       cephNfsService, cephNfsFormService, cephRgwUserService) {
     var self = this;
 
@@ -310,9 +310,6 @@ app.component("cephNfsForm", {
         cephNfsService.save(requestModel)
         .$promise
         .then(function () {
-          Notification.success({
-            msg: "NFS export has been added"
-          });
           $state.go("cephNfs");
         }, function () {
           $scope.nfsForm.$submitted = false;
@@ -321,9 +318,6 @@ app.component("cephNfsForm", {
         cephNfsService.update(requestModel)
           .$promise
           .then(function () {
-            Notification.success({
-              msg: "NFS export has been edited"
-            });
             $state.go("cephNfs");
           }, function () {
             $scope.nfsForm.$submitted = false;

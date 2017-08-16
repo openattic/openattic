@@ -37,7 +37,7 @@ app.component("cephNfsDeleteModal", {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function ($q, cephNfsService, Notification) {
+  controller: function ($q, cephNfsService) {
     var self = this;
 
     self.delete = function () {
@@ -54,10 +54,6 @@ app.component("cephNfsDeleteModal", {
         .then(function () {
           resolve();
           self.modalInstance.close("deleted");
-          Notification.success({
-            msg: self.resolve.selectionItems.length > 1 ?
-              "NFS exports have been deleted" : "NFS export has been deleted"
-          });
         }, function () {
           reject();
         });
@@ -66,10 +62,6 @@ app.component("cephNfsDeleteModal", {
 
     self.cancel = function () {
       self.modalInstance.dismiss("cancel");
-      Notification.warning({
-        title: "Cancelled deletion",
-        msg: "Cancelled NFS export deletion"
-      });
     };
   }
 });
