@@ -58,14 +58,7 @@ describe('ceph rbd creation and deletion', function(){
 
   beforeAll(function(){
     helpers.login();
-  });
-
-  /**
-   * To prevent getting stuck anywhere.
-   */
-  beforeEach(function(){
     rbdProperties.cephRBDs.click();
-    browser.sleep(helpers.configs.sleep);
   });
 
   rbdProperties.useWriteablePools(function(cluster, pool){

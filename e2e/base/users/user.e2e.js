@@ -5,7 +5,7 @@ describe('Should add an user', function(){
 
   var testUser = {
     username: 'protractor_test_user',
-    userpasswd: 'test',
+    userpasswd: 'test123',
     firstname: 'Herp',
     lastname: 'Derp',
     email: 'herp.derp@openattic.org'
@@ -64,6 +64,8 @@ describe('Should add an user', function(){
     element(by.model('user.username')).sendKeys(testUser.username);
     browser.sleep(400);
     element(by.model('user.password')).sendKeys(testUser.userpasswd);
+    browser.sleep(400);
+    element(by.model('user.confirmPassword')).sendKeys(testUser.userpasswd);
     browser.sleep(400);
     element(by.model('user.first_name')).sendKeys(testUser.firstname);
     browser.sleep(400);

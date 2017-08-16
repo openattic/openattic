@@ -1,15 +1,85 @@
+#
+# spec file for package openattic
+#
+# Copyright (c) 2016-2017 SUSE LINUX GmbH, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+
 Name: openattic
-# VERSION and RELEASE are passed via rpmbuild macro defines
-Version: %{VERSION}
-Release: %{RELEASE}
-Summary: openATTIC Comprehensive Storage Management System
+Version: 3.4.3
+Release: 0
+Summary: Open Source Ceph Storage Management System
 Group: System Environment/Libraries
-License: GPLv2
+License: GPL-2.0
 URL: http://www.openattic.org
 BuildArch: noarch
 Source:	%{name}-%{version}.tar.bz2
-Requires:	%{name}-module-nagios
-Requires:	%{name}-pgsql
+BuildRequires: -post-build-checks
+%if 0%{?suse_version} >= 1210
+BuildRequires: systemd-rpm-macros
+%endif
+%if 0%{?suse_version} >= 1020
+BuildRequires:  fdupes
+%endif
+BuildRequires: apache2
+BuildRequires: lvm2
+BuildRequires: postgresql
+BuildRequires: postgresql-server
+BuildRequires: python
+BuildRequires: rsync
+
+Recommends: logrotate
+
+%{?systemd_requires}
+Requires:	apache2-mod_wsgi
+Requires:	bridge-utils
+Requires:	bzip2
+Requires:	dbus-1
+Requires:	dbus-1-python
+Requires:	logrotate
+Requires:	memcached
+Requires:	ntp
+Requires:	policycoreutils
+Requires:	postgresql-server
+Requires:	python-configobj
+Requires:	python-django = 1.6.11
+Requires:	python-django-filter
+Requires:	python-djangorestframework = 2.4.4
+Requires:	python-djangorestframework-bulk
+Requires:	python-gobject2
+Requires:	python-imaging
+Requires:	python-M2Crypto
+Requires:	python-m2ext
+Requires:	python-memcached
+Requires:	python-netaddr
+Requires:	python-netifaces
+Requires:	python-numpy
+Requires:	python-pam
+Requires:	python-psycopg2
+Requires:	python-pyudev
+Requires:	python-requests
+Requires:	python-simplejson
+Requires:	udisks2
+Requires:	vlan
+Requires:	wget
+Requires: ceph-common >= 10.0.0
+Requires: ceph-common >= 10.0.0
+Requires: policycoreutils
+Requires: policycoreutils-python
+Requires: postgresql
+Requires: python-requests-aws
+Requires: python-pyinotify
+Requires: selinux-tools
+Requires(pre): shadow
 
 # These subpackages have been removed in 2.0.19 (OP#1968)
 Obsoletes: %{name}-module-ipmi <= 2.0.18
@@ -29,451 +99,199 @@ Obsoletes: %{name}-module-samba <= 3.0.0
 Obsoletes: %{name}-module-volumes <= 3.0.0
 Obsoletes: %{name}-module-zfs <= 3.0.0
 
+# These subpackages have merged into the main "openattic" package in 3.1.2
+# (OP#2342)
+Obsoletes: %{name}-base <= 3.1.2
+Obsoletes: %{name}-gui <= 3.1.2
+Obsoletes: %{name}-module-ceph <= 3.1.2
+Obsoletes: %{name}-module-ceph-deployment <= 3.1.2
+Obsoletes: %{name}-module-icinga <= 3.1.2
+Obsoletes: %{name}-pgsql <= 3.1.2
+Provides: %{name}-base
+Provides: %{name}-gui
+Provides: %{name}-module-ceph
+Provides: %{name}-module-ceph-deployment
+Provides: %{name}-module-icinga
+Provides: %{name}-pgsql
+
+# OpenATTIC and Crowbar's apache configurations conflict with each other,
+# and in any case we (SUSE) don't support installing openATTIC on a Crowbar
+# admin node.
+Conflicts:  crowbar
+
 %description
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
+openATTIC is an open source Ceph storage management solution for Linux, with a
+strong focus on storage management in a datacenter environment.
 
-It comes with an extensible API focused on modularity, so you can tailor
-your installation exactly to your needs and embed openATTIC in your existing
-data center infrastructure.
+The various resources of a Ceph cluster can be managed and monitored from a
+central web-based management interface. It is no longer necessary to be
+intimately familiar with the inner workings of the individual Ceph components.
 
-This metapackage installs the most common set of openATTIC modules along
-with the basic requirements.
+Any task can be carried out by either using openATTIC’s intuitive web interface
+or via the REST API.
 
 Upstream URL: http://www.openattic.org
 
-%package base
-Requires:	bridge-utils
-Requires:	bzip2
-Requires:	dbus
-Requires:	django-filter
-Requires:	djangorestframework
-Requires:	djangorestframework-bulk
-Requires:	m2crypto
-Requires:	memcached
-Requires:	mod_wsgi
-Requires:	ntp
-Requires:	numpy
-Requires:	policycoreutils-python
-Requires:	pygobject2
-Requires:	python-dbus
-Requires:	python-configobj
-Requires:	python-django
-Requires:	python-imaging
-Requires:	python-m2ext
-Requires:	python-memcached
-Requires:	python-netaddr
-Requires:	python-netifaces
-Requires:	python-pam
-Requires:	python-psycopg2
-Requires:	python-pyudev
-Requires:	python-requests
-Requires:	udisks2
-Requires:	vconfig
-Requires:	wget
-Requires:	xfsprogs
-Requires(pre): shadow-utils
-Summary:  Basic requirements for openATTIC
-
-%description base
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package installs the basic framework for openATTIC, which consists
-of the RPC and System daemons. You will not be able to manage any storage
-using *just* this package, but the other packages require this one to be
-available.
-
-%package gui
-Requires: %{name}
-Requires: policycoreutils-python
-Summary: openATTIC User Interface
-
-%description gui
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes the Web UI based on AngularJS/Bootstrap.
-
-%package module-ceph
-Requires: ceph-common >= 10.0.0
-Requires: %{name}-base
-Requires: %{name}-module-nagios
-Requires: python-rados
-Requires: python-requests-aws
-Summary: Ceph module for openATTIC
-
-%description module-ceph
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package includes support for Ceph, a distributed storage system
-designed to provide excellent performance, reliability, and scalability.
-
-%package module-ceph-deployment
-Requires: ceph-common >= 10.0.0
-Requires: %{name}-module-ceph
-Summary: Ceph deployment and management module for openATTIC
-
-%description module-ceph-deployment
-openATTIC is a storage management system based upon Open Source tools with a
-comprehensive user interface that allows you to create, share and backup storage
-space on demand.
-
-This package includes deployment and remote management support for Ceph, a
-distributed storage system designed to provide excellent performance,
-reliability, and scalability. It is based on the "DeepSea" collection of Salt
-files (https://github.com/SUSE/DeepSea).
-
-%package  module-nagios
-Requires: bc
-Requires:	nagios
-Requires:	nagios-common
-Requires: %{name}-base
-Requires:	pnp4nagios
-Requires: nagios-plugins-http
-Requires: nagios-plugins-swap
-Requires: nagios-plugins-ssh
-Requires: nagios-plugins-ping
-Requires: nagios-plugins-disk
-Requires: nagios-plugins-users
-Requires: nagios-plugins-procs
-Requires: nagios-plugins-load
-Requires: nagios-plugins-tcp
-
-Summary: Nagios module for openATTIC
-
-%description module-nagios
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-Nagios is a widely used system monitoring solution. This package installs a
-module which automatically configures service checks for your configured
-volumes and shares, measures performance data, and provides you with an
-intuitive user interface to view the graphs.
-
-This package also contains the Nagios check plugin 'check_openattic_systemd'.
-
-%package pgsql
-Requires: postgresql
-Requires:	postgresql-server
-Requires:	%{name}-base
-Summary: PGSQL database for openATTIC
-
-%description pgsql
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package configures the PostgreSQL database for openATTIC.
-
-%package release
-Summary: openATTIC yum Repository Information
-
-%description release
-openATTIC is a storage management system based upon Open Source tools with
-a comprehensive user interface that allows you to create, share and backup
-storage space on demand.
-
-This package contains the yum repository file to install openATTIC.
-
 %prep
 %setup -q
+
+%build
 
 %install
 
 # Build up target directory structure
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/openattic-gui
-mkdir -p %{buildroot}%{_libdir}/nagios/plugins/
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
-mkdir -p %{buildroot}%{_localstatedir}/www/html/
+mkdir -p %{buildroot}/srv/www/htdocs/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
+mkdir -p %{buildroot}%{_sysconfdir}/apache2/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
-mkdir -p %{buildroot}%{_sysconfdir}/default/
-mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
-mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
-mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
-mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
-mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
-mkdir -p %{buildroot}/lib/systemd/system/
-mkdir -p %{buildroot}/lib/tmpfiles.d/
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
+mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}%{_prefix}/lib/tmpfiles.d/
+%if 0%{?suse_version}
+mkdir -p %{buildroot}/var/adm/fillup-templates
+%else
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+%endif
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
 install -m 644 version.txt %{buildroot}%{_datadir}/%{name}
-rm -f  %{buildroot}%{_datadir}/%{name}/.style.yapf
-rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
+rm -rf %{buildroot}%{_datadir}/%{name}/.style.yapf
+rm -rf %{buildroot}%{_datadir}/%{name}/.pep8
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 
-%py_byte_compile %{__python2} %{buildroot}%{_datadir}/%{name}
+%py_compile %{buildroot}%{_datadir}/%{name}
 
 # Install Web UI
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
 
 # Install HTML redirect
-install -m 644 webui/redirect.html %{buildroot}%{_localstatedir}/www/html/index.html
+install -m 644 webui/redirect.html %{buildroot}/srv/www/htdocs/index.html
 
-# Install /etc/default/openattic
-# TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
-install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
+%if 0%{?suse_version}
+install -m 644 rpm/sysconfig/%{name}.SUSE %{buildroot}/var/adm/fillup-templates/sysconfig.%{name}
+%else
+install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}%{_sysconfdir}/sysconfig/%{name}
+%endif
 
 # Install db file
 install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
 
 # configure dbus
-install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+install -m 644 etc/dbus-1/system.d/%{name}.conf.SUSE %{buildroot}%{_sysconfdir}/dbus-1/system.d/%{name}.conf
 
 install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
 touch %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
-
-# configure yum repo
-install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
 
 # install man pages
 install -m 644 man/*.1 %{buildroot}%{_mandir}/man1/
 gzip %{buildroot}%{_mandir}/man1/*.1
 
-#configure nagios
-install -m 644 etc/nagios-plugins/config/%{name}.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
-install -m 644 etc/nagios3/conf.d/%{name}_*.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
-
-for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
-    ln -s "%{_datadir}/%{name}/nagios/plugins/$NAGPLUGIN" "%{buildroot}%{_libdir}/nagios/plugins/$NAGPLUGIN"
-done
-
-install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
-install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
-
-#configure ceph
-install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
+install -m 444 etc/systemd/%{name}-systemd.service.SUSE %{buildroot}%{_unitdir}/%{name}-systemd.service
+ln -s %{_sbindir}/service %{buildroot}%{_sbindir}/rcopenattic-systemd
+install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_prefix}/lib/tmpfiles.d/
 
 # openATTIC httpd config
-install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
+install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/apache2/conf.d/
 
-%pre base
+%if 0%{?suse_version} >= 1020
+%fdupes %{buildroot}
+%endif
+
+%pre
 # create openattic user/group  if it does not exist
 if getent group openattic > /dev/null ; then
   echo "openattic group already exists"
 else
-  groupadd -r openattic
-  groupmems -g openattic -a apache
-  groupmems -g openattic -a nagios
+  groupadd -r openattic 2>/dev/null || :
+  usermod -a --groups openattic wwwrun 2>/dev/null || :
 fi
 
 if getent passwd openattic > /dev/null ; then
   echo "openattic user already exists"
 else
-  useradd -r -g openattic -d /var/lib/openattic -s /bin/bash -c "openATTIC System User" openattic
-  groupmems -g apache -a openattic
-  groupmems -g nagios -a openattic
+  useradd -r -g openattic -d /var/lib/openattic -s /bin/bash -c "openATTIC System User" openattic 2>/dev/null || :
+  usermod -a --groups www openattic 2>/dev/null || :
 fi
+%service_add_pre %{name}-systemd.service
 exit 0
 
-%post base
-systemctl daemon-reload
-systemctl restart dbus
-systemctl enable httpd
-systemctl start httpd
-
-%postun base
-systemctl daemon-reload
-systemctl restart dbus
-systemctl restart httpd
-
-%post module-ceph
-# Add nagios user to the ceph group (OP-1320)
-if getent passwd nagios > /dev/null && getent group ceph > /dev/null ; then
-  if ! groups nagios | grep -q ceph ; then
-    groupmems -g ceph -a nagios 
-  fi
-fi
-
-%post gui
-semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
-restorecon -vvR
-systemctl restart httpd
-
-%postun gui
-semanage fcontext -d -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
-restorecon -vvR
-systemctl restart httpd
-
-%post pgsql
-
-# Configure Postgres DB
-systemctl start postgresql
-if postgresql-setup initdb; then
-	echo "postgresql database initialized";
-else
-	echo "postgres database already initialized";
-fi
+%post
+%service_add_post %{name}-systemd.service
+%fillup_and_insserv
+systemd-tmpfiles --create %{_prefix}/lib/tmpfiles.d/%{name}.conf
+# These steps should probably be moved to oaconfig instead
 systemctl enable postgresql
 systemctl start postgresql
 
-%postun pgsql
+%posttrans
+# The setup of apache2 may not be finished at the post stage due to
+# scriptlets included in apache2's own posttrans. So we need to move
+# the attempt to start it here:
+oaconfig install || oaconfig install --allow-broken-hostname
+systemctl enable apache2
+systemctl start apache2
+
+%preun
+systemd-tmpfiles --remove %{_prefix}/lib/tmpfiles.d/%{name}.conf
+%service_del_preun %{name}-systemd.service
+
+%postun
 if [ $1 -eq 0 ] ; then
-    echo "Note: removing this package does not delete the"
-    echo "corresponding PostgreSQL database by default."
-    echo "If you want to drop the openATTIC database and"
-    echo "database user, run the following commands as root:"
-    echo ""
-    echo "su - postgres -c psql"
-    echo "postgres=# drop database openattic;"
-    echo "postgres=# drop user openattic;"
-    echo "postgres=# \q"
-    echo ""
+  echo "Note: removing this package does not delete the"
+  echo "corresponding PostgreSQL database by default."
+  echo "If you want to drop the openATTIC database and"
+  echo "database user, run the following commands as root:"
+  echo ""
+  echo "su - postgres -c psql"
+  echo "postgres=# drop database openattic;"
+  echo "postgres=# drop user openattic;"
+  echo "postgres=# \q"
+  echo ""
 fi
+%service_del_postun %{name}-systemd.service
+systemctl try-restart apache2
 
 %files
-%defattr(-,root,root,-)
-%doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
 
-%files base
 %defattr(-,openattic,openattic,-)
 %dir %{_localstatedir}/lib/%{name}
-%dir %{_localstatedir}/log/%{name}
+%attr(0755,-,root) %dir %{_localstatedir}/log/%{name}
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
-%dir %{_localstatedir}/lock/%{name}
-%defattr(-,root,root,-)
-%{_sbindir}/oaconfig
-%config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
-/lib/systemd/system/%{name}-systemd.service
-/lib/tmpfiles.d/%{name}.conf
-%config %{_sysconfdir}/httpd/conf.d/%{name}.conf
-%config %{_sysconfdir}/logrotate.d/%{name}
-%dir %{_datadir}/%{name}
-%dir %{_datadir}/%{name}/installed_apps.d
-%dir %{_sysconfdir}/%{name}
-%config %{_sysconfdir}/default/%{name}
-%doc %{_mandir}/man1/oaconfig.1.gz
-%{_datadir}/%{name}/cmdlog/
-%{_datadir}/%{name}/ifconfig/
-%{_datadir}/%{name}/__init__.py*
-%{_datadir}/%{name}/installed_apps.d/60_taskqueue
-%{_datadir}/%{name}/manage.py*
-%{_datadir}/%{name}/nodb/
-%{_datadir}/%{name}/oa_auth.py*
-%{_datadir}/%{name}/openattic.wsgi
-%{_datadir}/%{name}/pamauth.py*
-%{_datadir}/%{name}/processors.py*
-%{_datadir}/%{name}/rest/
-%{_datadir}/%{name}/rest_client.py*
-%{_datadir}/%{name}/settings.py*
-%{_datadir}/%{name}/deepsea.py*
-%{_datadir}/%{name}/systemd/
-%{_datadir}/%{name}/sysutils/
-%{_datadir}/%{name}/taskqueue/
-%{_datadir}/%{name}/templates/
-%{_datadir}/%{name}/urls.py*
-%{_datadir}/%{name}/userprefs/
-%{_datadir}/%{name}/version.txt
-%{_datadir}/%{name}/views.py*
-%{_datadir}/%{name}/volumes/
-%{_datadir}/%{name}/exception.py*
-%{_datadir}/%{name}/utilities.py*
-
-%files module-ceph
-%defattr(-,root,root,-)
-%config %{_sysconfdir}/nagios/conf.d/%{name}-ceph.cfg
-%{_datadir}/%{name}/installed_apps.d/60_ceph
-%{_datadir}/%{name}/installed_apps.d/60_ceph_radosgw
-%{_datadir}/%{name}/ceph/
-%{_datadir}/%{name}/ceph_radosgw/
-%{_libdir}/nagios/plugins/check_cephcluster
-%{_libdir}/nagios/plugins/check_cephpool
-%{_libdir}/nagios/plugins/check_cephrbd
-
-%files module-ceph-deployment
-%defattr(-,root,root,-)
-%{_datadir}/%{name}/installed_apps.d/60_ceph_deployment
-%{_datadir}/%{name}/ceph_deployment/
-%{_datadir}/%{name}/installed_apps.d/60_ceph_iscsi
-%{_datadir}/%{name}/ceph_iscsi/
-%{_datadir}/%{name}/installed_apps.d/60_ceph_nfs
-%{_datadir}/%{name}/ceph_nfs/
-
-%files gui
-%defattr(-,root,root,-)
-%{_datadir}/%{name}-gui
-%{_localstatedir}/www/html/index.html
-
-%files module-nagios
-%defattr(-,root,root,-)
-%config %{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
-%config %{_sysconfdir}/nagios/conf.d/%{name}_static.cfg
-%config %{_sysconfdir}/nagios/conf.d/%{name}_contacts.cfg
-%{_libdir}/nagios/plugins/check_openattic_systemd
-%{_libdir}/nagios/plugins/notify_openattic
-%{_datadir}/%{name}/installed_apps.d/50_nagios
-%{_datadir}/%{name}/nagios
-%attr(0644, -, -) %{_datadir}/%{name}/nagios/restapi.py*
-
-%post module-nagios
-systemctl daemon-reload
-chkconfig nagios on
-chkconfig npcd on
-systemctl start nagios.service
-systemctl start npcd.service
-
-%files 	pgsql
-%defattr(-,openattic,openattic,-)
+%ghost %dir %{_localstatedir}/lock/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/database.ini
 
-%files release
 %defattr(-,root,root,-)
-%config(noreplace) %{_sysconfdir}/yum.repos.d/%{name}.repo
+%doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
+%doc %{_mandir}/man1/oaconfig.1.gz
+
+%dir %{_sysconfdir}/%{name}/
+
+%config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
+%config %{_sysconfdir}/apache2/conf.d/%{name}.conf
+%config %{_sysconfdir}/logrotate.d/%{name}
+
+%if 0%{?suse_version}
+/var/adm/fillup-templates/sysconfig.%{name}
+%else
+%config %{_sysconfdir}/sysconfig/openattic
+%endif
+
+/srv/www/htdocs/index.html
+%{_datadir}/%{name}
+%{_datadir}/%{name}-gui
+%{_prefix}/lib/tmpfiles.d/%{name}.conf
+%{_sbindir}/oaconfig
+%{_sbindir}/rcopenattic-systemd
+%{_unitdir}/%{name}-systemd.service
 
 %changelog
-* Thu Jan 07 2016 Lenz Grimmer <lenz@openattic.org> 2.0.6
-- Make more use of the name macro, added cron to the requirements
-  of the openattic-module-twraid subpackage (OP-845)
-* Mon Dec 07 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
-- Moved dependency on python-rtslib from the openattic-base package
-  to the openattic-module-lio RPM
-* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
-- Start and enable Samba in the samba subpackage (OP-788)
-- Removed obsolete dependency on the Oxygen icon set (OP-787)
-- Added openattic-module-lio to the openattic metapackage dependencies
-* Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
-- Make sure to enable httpd upon restart
-- Make sure to start rpcbind before nfs-server in the module-nfs post
-  scriptlet (OP-786)
-* Tue Sep 29 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
-- Fixed dependencies and moved %pre section that creates the openattic
-  user/group to the base subpackage (OP-536)
-- Moved log files into /var/log/openattic, removed superflouous chown
-  in the %pre install
-- Replaced some legacy "system" calls with "systemctl"
-
-* Mon Sep 07 2015 Lenz Grimmer <lenz@openattic.org> 2.0.2
-- Updated package descriptions (fixed formatting)
-- Added openattic-module-ceph subpackage (OP-624)
-- Use a versioned tar ball as the build source
-- Don't install bower and grunt as part of the RPM build process
-- Reworked install section, use more RPM macros
-- Removed compiled Python objects from the file list
-- Added /var/lib/nagios3 to the nagios subpackage
-- Added policycoreutils-python dependency to the gui package (OP-571)
-
-* Thu May 21 2015 Michael Ziegler <michael@open-attic.org> - %{BUILDVERSION}-%{PKGVERSION}
-- Remove prep stuff
-- Replace fixed version numbers by BUILDVERSION and PKGVERSION macros which are populated with info from HG
-- rm the docs from RPM_BUILD_ROOT and properly install them through %doc
-
-* Tue Feb 24 2015 Markus Koch  <mkoch@redhat.com> - 1.2 build
-- split into package modules
-
-* Fri May 23 2003 Markus Koch  <mkoch@redhat.com> - 1.2 build version 1
-- First build.

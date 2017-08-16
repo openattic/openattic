@@ -26,6 +26,8 @@ describe('ceph pool creation', function(){
     var create = cephPoolProperties.formElements.createButton.byClass;
     create.click();
     taskQueueHelpers.waitForPendingTasks();
+    cephPoolProperties.cephPools.click();
+    helpers.checkForUnsavedChanges(false);
 
     var cephPool = helpers.search_for_element(poolName);
     expect(cephPool.isDisplayed()).toBe(true);

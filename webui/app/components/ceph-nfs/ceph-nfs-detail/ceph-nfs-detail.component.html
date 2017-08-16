@@ -14,12 +14,12 @@
       </span>
       <dt ng-bind="$ctrl.selection.item.fsal === 'RGW' ? 'Bucket:' : 'Ceph Path:'"></dt>
       <dd ng-bind="$ctrl.selection.item.path"></dd>
+      <dt>NFS Protocol:</dt>
+      <dd ng-repeat="protocol in $ctrl.selection.item.protocols" ng-bind="protocol"></dd>
       <span ng-if="$ctrl.selection.item.tag">
         <dt>NFS Tag:</dt>
         <dd ng-bind="$ctrl.selection.item.tag"></dd>
       </span>
-      <dt>NFS Protocol:</dt>
-      <dd ng-repeat="protocol in $ctrl.selection.item.protocols" ng-bind="protocol"></dd>
       <span ng-if="$ctrl.selection.item.pseudo">
         <dt>Pseudo:</dt>
         <dd ng-bind="$ctrl.selection.item.pseudo"></dd>

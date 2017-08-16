@@ -29,6 +29,9 @@ Added
 * WebUI: Add Pool compression (OP-2470)
 * Backend: Add "/api/host/current" service to get the current openATTIC host (OP-2496)
 * WebUI: Display openATTIC version on the settings page (OP-2496)
+* Packaging: `make_dist.py` now replaces the Version: tag in the RPM spec
+  file automatically (OP-2256)
+* WebUI: Add helper text for NFS "pseudo" and "tag" (OP-2554)
 
 Changed
 ~~~~~~
@@ -38,17 +41,32 @@ Changed
 * WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
 * WebUI: Migration of Ceph iSCSI controllers to components (OP-2372)
 * WebUI: Removed expert settings from RBD form (OP-2518)
-* WebUI: Improve usabality of modal dialogs (OP-2560)
+* WebUI: Improved usability of modal dialogs (OP-2560)
+* Documentation: Updated Ceph keyring installation chapter (OP-2505)
+* Packaging: Renamed openattic RPM spec files (OP-1950)
+* WebUI: The password of a user can be changed now (OP-4)
+* WebUI: Remove unnecessary toasty messages (OP-2563)
+* WebUI: NFS Tag displayed only for NFSv3 protocol (OP-2555)
 
 Fixed
 ~~~~~
+* WebUI/QA: Unstuck RBD and pool creation tests (OP-2574)
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
 * Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
 * Backend: Added user name and keyring file information to RBD command
   call (OP-2553)
+* Backend: Fixed hanging of `systemctl stop openattic-systemd` (OP-2444)
+* Backend: Fixed error in `get_rbd_performance_data` task by catching an exception (OP-2057)
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
 * Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
   RPM package to fix a logrotate failure (OP-2517)
+* WebUI: Fixed rule set selection problem in pool form (OP-2564)
+* WebUI: Javascript error on edit NFSv3 export (OP-2576)
+
+Removed
+~~~~~~~
+* Backend: The Nagios backend module has been removed due to Prometheus/Grafana
+  integration (OP-2436)
 
 [3.4.2] - 2017-08-03
 --------------------

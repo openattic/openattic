@@ -3,6 +3,7 @@ var helpers = require('../../common.js');
 describe('should test the user form', function(){
   var name = element(by.model('user.username'));
   var passwd = element(by.model('user.password'));
+  var confirmPasswd = element(by.model('user.confirmPassword'));
 
   var username = 'herpderp';
   var submitButton = element(by.css('.tc_submitButton'));
@@ -26,6 +27,10 @@ describe('should test the user form', function(){
 
   it('should have a "Password" input field', function(){
     expect(passwd.isDisplayed()).toBe(true);
+  });
+
+  it('should have a "Confirm password" input field', function(){
+    expect(confirmPasswd.isDisplayed()).toBe(true);
   });
 
   it('should have a "Firstname" input field', function(){
@@ -70,12 +75,47 @@ describe('should test the user form', function(){
     expect(element(by.css('.tc_usernameRequired')).isDisplayed()).toBe(true);
   });
 
+  // The password is only required in the user add and not the user edit form
   it('should check if the submit button is disabled and an error is displayed when the "Password" is empty', function(){
-    element(by.model('user.username')).sendKeys(username);
-    element(by.model('user.password')).sendKeys('test');
+    name.sendKeys(username);
+    passwd.sendKeys('test123');
     passwd.clear();
+    // Click another field that the error appears, because of state $touched
+    name.click();
     expect(submitButton.isEnabled()).toBe(false);
     expect(element(by.css('.tc_passwdRequired')).isDisplayed()).toBe(true);
+  });
+
+  it('should check if the submit button is disabled and an error is displayed when the "Confirm password" is empty', function(){
+    name.sendKeys(username);
+    confirmPasswd.sendKeys('test123');
+    confirmPasswd.clear();
+    // Click another field that the error appears, because of state $touched
+    name.click();
+    expect(submitButton.isEnabled()).toBe(false);
+    expect(element(by.css('.tc_confirmPasswdRequired')).isDisplayed()).toBe(true);
+  });
+
+  it('should check if an error is displayed when the length of the "Password" is shorter than 6 chars', function() {
+    passwd.sendKeys('test');
+    // Click another field that the error appears, because of state $touched
+    name.click();
+    expect(element(by.css('.tc_passwdMinlength')).isDisplayed()).toBe(true);
+  });
+
+  it('should check if an error is displayed when the length of the "Confirm password" is shorter than 6 chars', function() {
+    confirmPasswd.sendKeys('test');
+    // Click another field that the error appears, because of state $touched
+    name.click();
+    expect(element(by.css('.tc_confirmPasswdMinlength')).isDisplayed()).toBe(true);
+  });
+
+  it('should check if an error is displayed when "Password" and "Confirm password" are not equal', function() {
+    passwd.sendKeys('test123');
+    confirmPasswd.sendKeys('test321');
+    // Click another field that the error appears, because of state $touched
+    name.click();
+    expect(element(by.css('.tc_passwdEqual')).isDisplayed()).toBe(true);
   });
 
   it('should show an error message when data for field "username" does not match', function(){
@@ -108,8 +148,9 @@ describe('should test the user form', function(){
   });
 
   it('should dismiss form validation and stay on same view', function(){
-    element(by.model('user.username')).sendKeys(username);
-    element(by.model('user.password')).sendKeys('test');
+    name.sendKeys(username);
+    passwd.sendKeys('test123');
+    confirmPasswd.sendKeys('test123');
     element(by.css('.tc_menuitem_ceph_pools')).click().then(function(){
       element(by.css('.oa-check-form-cancel')).click();
       expect(element(by.css('.oa-check-form-cancel')).isPresent()).toBe(false);
@@ -118,8 +159,9 @@ describe('should test the user form', function(){
   });
 
   it('should confirm form validation and change view', function(){
-    element(by.model('user.username')).sendKeys(username);
-    element(by.model('user.password')).sendKeys('test');
+    name.sendKeys(username);
+    passwd.sendKeys('test123');
+    confirmPasswd.sendKeys('test123');
     element(by.css('.tc_menuitem_ceph_pools')).click().then(function(){
       element(by.css('.oa-check-form-ok')).click();
       expect(browser.getCurrentUrl()).toContain('/#/ceph/pools');

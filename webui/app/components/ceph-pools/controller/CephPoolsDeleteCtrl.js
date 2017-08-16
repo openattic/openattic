@@ -31,8 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection,
-    $q, Notification) {
+app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection, $q) {
   $scope.cephPools = cephPoolSelection;
 
   $scope.delete = function () {
@@ -57,10 +56,5 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
-
-    Notification.warning({
-      title: "Cancelled deletion",
-      msg: "Cancelled Ceph pool deletion"
-    });
   };
 });

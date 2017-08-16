@@ -28,40 +28,24 @@
  * for the JavaScript code in this page.
  *
  */
-"use strict";
+'use strict';
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiDeleteModal", {
-  templateUrl: "components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html",
-  bindings: {
-    modalInstance: "<",
-    resolve: "<"
-  },
-  controller: function ($q, cephIscsiService) {
-    var self = this;
+var app = angular.module('openattic.shared');
+app.directive('equalValidator', function () {
+  return {
+    require: 'ngModel',
+    restrict: 'A',
+    scope: {
+      equalValidator: '='
+    },
+    link: function (scope, element, attrs, ngModel) {
+      ngModel.$validators.equalValidator = function (modelValue) {
+        return modelValue === scope.equalValidator;
+      };
 
-    self.delete = function () {
-      return $q(function (resolve, reject) {
-        var targetIds = [];
-        self.resolve.iscsiTargetSelection.forEach(function (isciTarget) {
-          targetIds.push(isciTarget.targetId);
-        });
-        cephIscsiService.bulk_delete({
-          fsid: self.resolve.fsid,
-          targetIds: targetIds
-        })
-        .$promise
-        .then(function () {
-          resolve();
-          self.modalInstance.close("deleted");
-        }, function () {
-          reject();
-        });
+      scope.$watch('equalValidator', function () {
+        ngModel.$validate();
       });
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-    };
-  }
+    }
+  };
 });

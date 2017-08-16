@@ -43,6 +43,7 @@ describe('Pagination', function(){
       userTable.addUser();
       userForm.username.sendKeys('e2e_user_' + i);
       userForm.password.sendKeys('password');
+      userForm.confirmPassword.sendKeys('password');
       userForm.submit();
     }
     browser.sleep(400);
