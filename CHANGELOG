@@ -51,6 +51,7 @@ Fixed
 * Backend: Added user name and keyring file information to RBD command
   call (OP-2553)
 * Backend: Fixed hanging of `systemctl stop openattic-systemd` (OP-2444)
+* Backend: Fixed error in `get_rbd_performance_data` task by catching an exception (OP-2057)
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
 * Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
   RPM package to fix a logrotate failure (OP-2517)
