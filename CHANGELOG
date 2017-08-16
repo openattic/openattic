@@ -44,6 +44,7 @@ Changed
 * Documentation: Updated Ceph keyring installation chapter (OP-2505)
 * Packaging: Renamed openattic RPM spec files (OP-1950)
 * WebUI: The password of a user can be changed now (OP-4)
+* WebUI: Remove unnecessary toasty messages (OP-2563)
 
 Fixed
 ~~~~~
