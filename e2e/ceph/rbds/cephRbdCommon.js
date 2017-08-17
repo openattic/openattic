@@ -8,9 +8,7 @@ var rbdCommons = function(){
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
   this.clusterSelect = element(by.model('$ctrl.registry.selectedCluster'));
-  /* TODO: Uncomment for OP-2475
   this.statisticsTab = element(by.className('tc_statisticsTab'));
-  */
 
   this.detailAttributes = [
     'Name',
@@ -37,6 +35,10 @@ var rbdCommons = function(){
     {
       name: 'Used',
       displayed: true
+    },
+    {
+      name: 'Data-pool',
+      displayed: false
     },
     {
       name: 'Object size',
@@ -88,25 +90,24 @@ var rbdCommons = function(){
         helpSize: 'tc_sizeRequired'
       }
     },
-    expertSettings: {
-      name: 'Expert Settings',
-      testClass: 'tc_expertSettings',
-      model: '$ctrl.data.expert',
-      displayed: true
-    },
     objectSize: {
       name: 'Object size',
       testClass: 'tc_rbd_obj_size',
       model: '$ctrl.data.obj_size',
-      displayed: false,
+      displayed: true,
       items: {
         helpSize: 'tc_objSizeRequired'
       }
     },
+    defaultFeatures: {
+      name: 'Default Features',
+      model: '$ctrl.data.defaultFeatures',
+      displayed: true
+    },
     features: {
       name: 'Features',
       testClass: 'tc_features',
-      displayed: false,
+      displayed: true,
       items: {
         'deep-flatten': {
           class: 'tc_feature_deep-flatten',
@@ -136,23 +137,23 @@ var rbdCommons = function(){
           class: 'tc_feature_fast-diff',
           desc: 'Fast diff'
         },
-        'defaultFeatures': {
-          class: 'tc_featureDefaults',
-          desc: ''
-        },
-        'helpSize': {
-          class: 'tc_objSizeRequired',
+        'noFeature': {
+          class: 'tc_noFeature',
           desc: ''
         }
       }
     }
   };
 
-  this.expertSettings = element(by.model(this.formElements.expertSettings.model));
+  this.defaultFeatures = element(by.model(this.formElements.defaultFeatures.model));
   this.objSize = element(by.model(this.formElements.objectSize.model));
   this.size = element(by.model(this.formElements.size.model));
   this.name = element(by.model(this.formElements.name.model));
   this.poolSelect = element(by.model(this.formElements.pool.model));
+  this.firstPool = this.poolSelect.all(by.tagName('option')).get(1);
+  this.useDataPool = element(by.model('$ctrl.data.useDataPool'));
+  this.dataPoolSelect = element(by.model('$ctrl.data.dataPool'));
+  this.firstDataPool = this.dataPoolSelect.all(by.tagName('option')).get(1);
   this.creationClusterSelect = element(by.model(this.formElements.cluster.model));
 
   this.featureCases = [ // 0 = unchecked; 1 = checked; -1= disabled; 2=true or false should not matter
@@ -217,7 +218,7 @@ var rbdCommons = function(){
   };
 
   this.selectFeatures = function(features){
-    self.checkCheckboxToBe(self.expertSettings, true);
+    self.checkCheckboxToBe(self.defaultFeatures, false);
     var keys = Object.keys(self.formElements.features.items);
     var values = self.formElements.features.items;
     for (var i = 0; i < 7; i++){ // deselect all boxes
@@ -258,7 +259,6 @@ var rbdCommons = function(){
   this.selectClusterAndPool = function(clusterName, poolName){
     self.selectCluster(clusterName);
     self.addButton.click();
-    self.checkCheckboxToBe(self.expertSettings, true);
     self.poolSelect.sendKeys(poolName);
     expect(self.poolSelect.getText()).toContain(poolName);
   };
@@ -282,13 +282,9 @@ var rbdCommons = function(){
 
   this.fillForm = function(rbdName, size, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.checkCheckboxToBe(self.expertSettings, true);
-    self.name.clear();
-    self.name.sendKeys(rbdName);
-    self.size.clear();
-    self.size.sendKeys(size);
-    self.objSize.clear();
-    self.objSize.sendKeys(rbdObjSize);
+    self.name.clear().sendKeys(rbdName);
+    self.size.clear().sendKeys(size);
+    self.objSize.clear().sendKeys(rbdObjSize);
     if(featureCase){
       self.selectFeatures(featureCase);
     }
@@ -298,7 +294,10 @@ var rbdCommons = function(){
     rbdObjSize = rbdObjSize || '4.00 MiB';
     self.fillForm(rbdName, rbdObjSize, rbdObjSize, featureCase);
     element(by.className('tc_submitButton')).click();
+
     taskQueueHelpers.waitForPendingTasks();
+    self.cephRBDs.click();
+    helpers.checkForUnsavedChanges(false);
 
     var rbd = helpers.search_for_element(rbdName);
     expect(rbd.isDisplayed()).toBe(true);

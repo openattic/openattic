@@ -26,6 +26,8 @@ describe('ceph pool creation', function(){
     var create = cephPoolProperties.formElements.createButton.byClass;
     create.click();
     taskQueueHelpers.waitForPendingTasks();
+    cephPoolProperties.cephPools.click();
+    helpers.checkForUnsavedChanges(false);
 
     var cephPool = helpers.search_for_element(poolName);
     expect(cephPool.isDisplayed()).toBe(true);
@@ -34,13 +36,19 @@ describe('ceph pool creation', function(){
     expect(element(by.binding('selection.item.pg_num')).getText()).toBe(pgs + '');
   };
 
-  var fillForm = function(poolName, poolType, pgs){
+  var fillForm = function(poolName, poolType, pgs, isCompression){
     var name = cephPoolProperties.formElements.name.byModel;
     var pgnum = cephPoolProperties.formElements.pgnum.byModel;
     var type = cephPoolProperties.formElements.types.byModel;
+    var compressionMode =
+      cephPoolProperties.formElements.compressionMode.byModel;
     name.clear().sendKeys(poolName);
     type.sendKeys(poolType);
     pgnum.clear().sendKeys(pgs);
+
+    if(isCompression === true){
+      compressionMode.sendKeys('force');
+    }
   };
 
   Object.keys(cephPoolProperties.clusters).forEach(function(clusterName){
@@ -73,6 +81,21 @@ describe('ceph pool creation', function(){
     it('should delete ' + ecName + ' pool on ' + cluster.name + ' cluster', function(){
       deletePool(ecName);
     });
+
+    if(cephPoolProperties.isBluestore){
+      var poolName = cluster.name + '_erasure_with_16_pgs_compressed';
+      var poolType = 'erasure';
+      var pgs = 16;
+      it('should create a compresed pool', function(){
+        cephPoolProperties.addButton.click();
+        cephPoolProperties.selectCluster(cluster);
+        fillForm(poolName, poolType, pgs, true);
+        createPool(poolName, poolType, pgs);
+      });
+      it('should delete ' + poolName + ' pool on ' + cluster.name + ' cluster', function(){
+        deletePool(poolName);
+      });
+    }
   });
 
   afterAll(function(){

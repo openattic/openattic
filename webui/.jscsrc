@@ -1,5 +1,4 @@
 {
-  "disallowArrowFunctions": true,
   "disallowEmptyBlocks": true,
   "disallowIdenticalDestructuringNames": true,
   "disallowImplicitTypeConversion": [

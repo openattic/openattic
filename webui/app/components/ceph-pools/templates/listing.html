@@ -47,6 +47,11 @@
                 <th ng-show="columns['Last change']">Last Change</th>
                 <th ng-show="columns['Type']">Type</th>
                 <th ng-show="columns['Crush ruleset']">Crush ruleset</th>
+                <th ng-show="columns['Compression mode']">Compression mode</th>
+                <th ng-show="columns['Compression algorithm']" disabled>Compression algorithm</th>
+                <th ng-show="columns['Compression min. blob size']" disabled>Compression min. blob size</th>
+                <th ng-show="columns['Compression max. blob size']" disabled>Compression max. blob size</th>
+                <th ng-show="columns['Compression required ratio']" disabled>Compression required ratio</th>
             </tr>
         </thead>
         <tbody>
@@ -64,12 +69,12 @@
                             title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.oaFree | bytes}}">
                         <div class="progress-bar" role="progressbar"
                                 aria-valuenow="{{row.oaUsed | number: 2}}" aria-valuemin="0"
-                                aria-valuemax="100" style="width: {{row.oaUsed | number: 2}}%">
+                                aria-valuemax="100" ng-style="{'width': {{row.oaUsed | number: 2}}+'%'}">
                             <span>{{row.oaUsed | number: 2}}%</span>
                         </div>
                         <div class="progress-bar progress-bar-freespace" role="progressbar"
                                 aria-valuenow="{{row.oaUnused}}" aria-valuemin="0"
-                                aria-valuemax="100" style="width: {{row.oaUnused}}%">
+                                aria-valuemax="100" ng-style="{'width': {{row.oaUnused | number: 2}}+'%'}">
                         </div>
                     </div>
                 </td>
@@ -79,6 +84,11 @@
                 <td ng-show="columns['Last change']" ng-bind="row.last_change"></td>
                 <td ng-show="columns['Type']" ng-bind="row.type"></td>
                 <td ng-show="columns['Crush ruleset']" ng-bind="row.crush_ruleset"></td>
+                <td ng-show="columns['Compression mode']" ng-bind="row.compression_mode"></td>
+                <td ng-show="columns['Compression algorithm']" ng-bind="row.compression_algorithm"></td>
+                <td ng-show="columns['Compression min. blob size']">{{row.compression_min_blob_size | bytes}}</td>
+                <td ng-show="columns['Compression max. blob size']">{{row.compression_max_blob_size | bytes}}</td>
+                <td ng-show="columns['Compression required ratio']" ng-bind="row.compression_required_ratio"></td>
             </tr>
         </tbody>
     </table>

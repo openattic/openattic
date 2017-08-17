@@ -15,6 +15,7 @@ import inspect
 import logging
 import os
 import signal
+import sys
 import atexit
 import configobj
 
@@ -118,17 +119,30 @@ class SettingsFileHandler(pyinotify.ProcessEvent):
 notifier = pyinotify.ThreadedNotifier(wm, SettingsFileHandler())
 notifier.setDaemon(True)
 notifier.start()
-wdd = wm.add_watch(get_containing_folder_follow_links(settings_file), mask)
+wm.add_watch(get_containing_folder_follow_links(settings_file), mask)
 
 
 @atexit.register
-def shutdown_inotify(*args):
-    wm.rm_watch(wdd.values())
+def shutdown_inotify():
     notifier.stop()
 
-signal.signal(signal.SIGINT, shutdown_inotify)
-signal.signal(signal.SIGTERM, shutdown_inotify)
-signal.signal(signal.SIGQUIT, shutdown_inotify)
+
+def shutdown_inotify_signal(*args):
+    """
+    By calling `sys.exit(0)` the `@atexit` decorator of the `shutdown_inotify()` function is being
+    used and the file descriptors are properly freed. If `sys.exit(0)` isn't called, the shutdown is
+    performed in a way which doesn't call the `shutdown_inotify()` function.
+    """
+    sys.exit(0)
+
+if sys.argv[0] != 'mod_wsgi':
+    # mod_wsgi disables signals by default to not interfere with Apaches' signals, preventing issues
+    # with actions such as restart or shutdown. Using signals with mod_wsgi is not recommended. By
+    # excluding `mod_wsgi` these signals are only used for non WSGI processes like the openATTIC
+    # systemd.
+    signal.signal(signal.SIGINT, shutdown_inotify_signal)
+    signal.signal(signal.SIGTERM, shutdown_inotify_signal)
+    signal.signal(signal.SIGQUIT, shutdown_inotify_signal)
 
 
 def _set_setting(key, val):
@@ -157,6 +171,7 @@ def load_settings():
     # systems to override settings in a non-versioned file.
     local_settings_file = os.path.join(os.getcwd(), 'settings_local.conf')
     if os.access(local_settings_file, os.R_OK):
+        logger.debug("Reading local settings %s", local_settings_file)
         for key, val in configobj.ConfigObj(local_settings_file).items():
             _set_setting(key, val)
 

@@ -15,7 +15,7 @@ describe('should test the ceph rbd panel', function(){
     it('should create a rbd with default settings on ' + pool.name + ' in cluster ' + cluster.name, function(){
       rbdProperties.selectClusterAndPool(cluster.name, pool.name);
       var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
-      rbdProperties.createRbd(rbdName, null, rbdProperties.defaultFeatureCase);
+      rbdProperties.createRbd(rbdName);
     });
   });
 
@@ -66,7 +66,6 @@ describe('should test the ceph rbd panel', function(){
     });
   });
 
-  /* TODO: Uncomment for OP-2475
   rbdProperties.useWriteablePools(function(cluster, pool){
     it('should have a statistic tab when selecting a rbd', function(){
       // Select the created rbd
@@ -76,7 +75,6 @@ describe('should test the ceph rbd panel', function(){
       expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
     });
   });
-  */
 
   rbdProperties.useWriteablePools(function(cluster, pool){
     it('should delete the created rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){

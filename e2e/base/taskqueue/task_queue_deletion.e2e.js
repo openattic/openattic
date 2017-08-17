@@ -5,7 +5,7 @@ var qProperties = require('./task_queue_common.js'); // Defines task queue eleme
 
 describe('task queue deletion pedning', function(){
   /**
-   * Will create 5 tasks - keep them selected to prevent the UI to update the
+   * Will create 2 tasks - keep them selected to prevent the UI to update the
    * selection. After they have already been finished, we then try to delete
    * them as they were pending tasks. Because they are finished we will be
    * presented with the moved deletion view. The UI tells us that they
@@ -13,9 +13,15 @@ describe('task queue deletion pedning', function(){
    */
   beforeAll(function(){
     helpers.login();
+    element(by.css('.tc_menuitem_ceph_osds')).click();
+    qProperties.deleteAllTasks();
+    qProperties.createTask(5, 2); // short living ( < 30 sec)
+    browser.sleep(helpers.configs.sleep);
     qProperties.open(); // This will open the task queue dialogue.
-    qProperties.createTask(5, 5); // short living ( < 30 sec)
     qProperties.changeTab('pending');
+  });
+
+  it('should try to remove 2 finished tasks', function(){
     var task = element.all(by.cssContainingText('tr', 'wait')).first();
     task.click();
     browser.sleep(30000);
@@ -23,15 +29,15 @@ describe('task queue deletion pedning', function(){
     var tabName = 'pending';
     qProperties.dialog.tabs[tabName].elements.selectAll.click();
     qProperties.dialog.tabs[tabName].elements.deleteBtn.click();
-    qProperties.handleDeleteForm(tabName, 5);
+    qProperties.handleDeleteForm(tabName, 2);
   });
 
   /**
-   * We expect 5 tasks to have a changed status, thats why they weren't
+   * We expect 2 tasks to have a changed status, that's why they weren't
    * deleted and a displayed to us now.
    */
-  it('should have five moved tasks', function(){
-    expect($$('uib-accordion.tc-moved-tasks ul > li').count()).toBe(5);
+  it('should have 2 moved tasks', function(){
+    expect($$('uib-accordion.tc-moved-tasks ul > li').count()).toBe(2);
   });
 
   /**

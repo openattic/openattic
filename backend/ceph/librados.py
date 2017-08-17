@@ -1042,8 +1042,16 @@ class RbdApi(object):
         :return: Result of the rbd command
         :rtype: dict
         """
-        out = subprocess.check_output(['rbd', cmd, '--cluster', self.cluster_name, '--pool', pool_name,
-                                       '--image', name, '--format', 'json'])
+        cluster_conf = ClusterConf.from_fsid(self.fsid)
+        proc = subprocess.Popen(['rbd', cmd, '--conf', cluster_conf.file_path, '--pool', pool_name,
+                                 '--image', name, '--format', 'json',
+                                 '--name', cluster_conf.keyring.user_name,
+                                 '-k', cluster_conf.keyring.file_name],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        out, err = proc.communicate()
+        if proc.returncode:
+            raise ExternalCommandError('rbd failed: {}'.format(err))
         return json.loads(out)
 
     def image_disk_usage(self, pool_name, name):

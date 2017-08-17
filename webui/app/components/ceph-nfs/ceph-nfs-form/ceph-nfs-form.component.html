@@ -127,14 +127,6 @@
           </div>
         </div>
 
-        <!-- Tag -->
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="tag">NFS Tag</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" name="tag" id="tag" ng-model="$ctrl.model.tag">
-          </div>
-        </div>
-
         <!-- NFS Protocol -->
         <div class="form-group"
              ng-class="{'has-error':
@@ -162,11 +154,26 @@
           </div>
         </div>
 
+        <!-- Tag -->
+        <div class="form-group"
+             ng-if="$ctrl.model.protocolNfsv3">
+          <label class="col-sm-3 control-label" for="tag">
+            NFS Tag
+            <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html'"></oa-helper>
+          </label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" name="tag" id="tag" ng-model="$ctrl.model.tag">
+          </div>
+        </div>
+
         <!-- Pseudo -->
         <div class="form-group"
              ng-class="{'has-error': (nfsForm.$submitted || nfsForm.pseudo.$dirty) && nfsForm.pseudo.$invalid}"
              ng-if="$ctrl.model.protocolNfsv4">
-          <label class="col-sm-3 control-label" for="pseudo">Pseudo</label>
+          <label class="col-sm-3 control-label" for="pseudo">
+            Pseudo
+            <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html'"></oa-helper>
+          </label>
           <div class="col-sm-9">
             <input type="text" class="form-control" name="pseudo" id="pseudo"
                    ng-model="$ctrl.model.pseudo" required>

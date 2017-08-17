@@ -12,14 +12,50 @@ var cephPoolCommons = function(){
   this.statusTab = element(by.css('.tc_statusTab'));
   this.statisticsTab = element(by.className('tc_statisticsTab'));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
+  this.isBluestore = element(by.model('bluestore'));
 
   // Describes the attributes seen in the detail tab.
   this.detailAttributes = [
-    'ID',
-    'Placement Groups',
-    'Type',
-    'Flags',
-    'Last change'
+    {
+      name: 'ID',
+      displayed: true
+    },
+    {
+      name: 'Placement Groups',
+      displayed: true
+    },
+    {
+      name: 'Type',
+      displayed: true
+    },
+    {
+      name: 'Flags',
+      displayed: true
+    },
+    {
+      name: 'Last change',
+      displayed: true
+    },
+    {
+      name: 'Mode',
+      displayed: false
+    },
+    {
+      name: 'Algorithm',
+      displayed: false
+    },
+    {
+      name: 'Minimum blob size',
+      displayed: false
+    },
+    {
+      name: 'Maximum blob size',
+      displayed: false
+    },
+    {
+      name: 'Required ratio',
+      displayed: false
+    }
   ];
 
   // Description of headers in the table.
@@ -55,6 +91,26 @@ var cephPoolCommons = function(){
     {
       name: 'Crush ruleset',
       displayed: true
+    },
+    {
+      name: 'Compression mode',
+      displayed: true
+    },
+    {
+      name: 'Compression algorithm',
+      displayed: false
+    },
+    {
+      name: 'Compression min. blob size',
+      displayed: false
+    },
+    {
+      name: 'Compression max. blob size',
+      displayed: false
+    },
+    {
+      name: 'Compression required ratio',
+      displayed: false
     }
   ];
 
@@ -65,7 +121,7 @@ var cephPoolCommons = function(){
       byClass: element(by.className('tc_pool_name')),
       byModel: element(by.model('pool.name')),
       type: 'text',
-      displayed: true,
+      displayed: function(){ return true; },
       items: {
         required: element(by.className('tc_nameRequired')),
         uniqueName: element(by.className('tc_noUniqueName')),
@@ -90,7 +146,7 @@ var cephPoolCommons = function(){
       name: 'Pool type',
       byClass: element.all(by.className('tc_poolTypes_selection')),
       byModel: element(by.model('pool.type')),
-      displayed: true,
+      displayed: function(){ return true; },
       type: 'select',
       items: {
         typeSelection: element(by.className('tc_poolTypesOption')),
@@ -101,7 +157,7 @@ var cephPoolCommons = function(){
       name: 'Placement groups',
       byClass: element(by.className('tc_pool_pgNum')),
       byModel: element(by.model('pool.pg_num')),
-      displayed: false,
+      displayed: function(){ return false; },
       displayedIf: 'replicated', // and 'erasure'
       type: 'number',
       items: {
@@ -113,8 +169,8 @@ var cephPoolCommons = function(){
       byClass: element(by.className('tc_pool_size')),
       byModel: element(by.model('pool.size')),
       type: 'number',
-      displayed: false,
-      presented: false,
+      displayed: function(){ return false; },
+      presented: function(){ return false; },
       displayedIf: 'replicated',
       items: {
         helpSize: element(by.className('tc-applied-rule-set')),
@@ -125,7 +181,7 @@ var cephPoolCommons = function(){
     crushRules: {
       name: 'Crush ruleset',
       byClass: element(by.className('tc_crushSet_selection')),
-      displayed: false,
+      displayed: function(){ return false; },
       displayedIf: 'replicated', // and 'erasure'
       type: 'select',
       items: {
@@ -138,7 +194,7 @@ var cephPoolCommons = function(){
       byClass: element.all(by.className('tc_erasureProfiles_selection')),
       byModel: element(by.model('pool.erasure.profile')),
       type: 'select',
-      displayed: false,
+      displayed: function(){ return false; },
       displayedIf: 'erasure',
       items: {
         erasureSelection: element(by.className('tc_erasureProfilesOption')),
@@ -150,21 +206,81 @@ var cephPoolCommons = function(){
       byClass: element.all(by.id('ec-overwrites')),
       byModel: element(by.model('data.flags.ec_overwrites')),
       type: 'checkbox',
-      displayed: false,
-      presented: false,
+      displayed: function(){ return false; },
+      presented: function(){ return false; },
       displayedIf: 'erasure',
+    },
+    compressionMode: {
+      name: 'Compression mode',
+      byClass: element.all(by.className('tc_compressionMode')),
+      byModel: element(by.model('pool.compression_mode')),
+      type: 'select',
+      displayed: function(){
+        return false;//self.isBluestore && self.formElements.types.byModel ? true : false;
+      },
+      displayedIf: 'bluestore',
+      items: {
+        compressionModeRequired: element(by.className('tc_compressionModeRequired'))
+      }
+    },
+    compressionAlgorith: {
+      name: 'Compression algorithm',
+      byClass: element.all(by.className('tc_compressionAlgorithmSelection')),
+      byModel: element(by.model('pool.compression_algorithm')),
+      type: 'select',
+      displayed: function(){ return false; },
+      displayedIf: 'isCompression',
+      items: {
+        compressionAlgorithmRequired: element(by.className('tc_compressionAlgorithmRequired'))
+      }
+    },
+    compressionMinBlobSize: {
+      name: 'Compression min blob size',
+      byClass: element.all(by.className('tc_compressionMaxBlobSize')),
+      byModel: element(by.model('data.compression_min_blob_size')),
+      type: 'text',
+      displayed: function(){ return false; },
+      displayedIf: 'isCompression',
+      items: {
+        compressionMinBlobSizeRequired: element(by.className('tc_compressionMinBlobSizeRequired')),
+        compressionMinBlobSizeMin: element(by.className('tc_compressionMinBlobSizeMin'))
+      }
+    },
+    compressionMaxBlobSize: {
+      name: 'Compression max blob size',
+      byClass: element.all(by.className('tc_compressionMaxBlobSize')),
+      byModel: element(by.model('data.compression_max_blob_size')),
+      type: 'text',
+      displayed: function(){ return false; },
+      displayedIf: 'isCompression',
+      items: {
+        compressionMaxBlobSizeRequired: element(by.className('tc_compressionMaxBlobSizeRequired')),
+        compressionMaxBlobSizeMin: element(by.className('tc_compressionMaxBlobSizeMin'))
+      }
+    },
+    compressionRequiredRatio: {
+      name: 'Compression required ratio',
+      byClass: element.all(by.className('tc_compressionRequiredRatio')),
+      byModel: element(by.model('pool.compression_required_ratio')),
+      type: 'number',
+      displayed: function(){ return false; },
+      displayedIf: 'isCompression',
+      items: {
+        ccompressionRequiredRatioRequired: element(by.className('tc_ccompressionRequiredRatioRequired')),
+        compressionRequiredRatioMinMax: element(by.className('tc_compressionRequiredRatioMinMax'))
+      }
     },
     backButton: {
       name: 'Back',
       byClass: element(by.className('tc_backButton')),
       type: 'button',
-      displayed: true
+      displayed: function(){ return true; },
     },
     createButton: {
       name: 'Create',
       byClass: element(by.className('tc_submitButton')),
       type: 'button',
-      displayed: true
+      displayed: function(){ return true; },
     }
   };
 
@@ -182,6 +298,9 @@ var cephPoolCommons = function(){
       self.formElements.name.byModel.click();
     }else if(e.displayedIf === 'erasure'){
       self.formElements.types.byModel.sendKeys('Erasure');
+      self.formElements.name.byModel.click();
+    }else if(e.displayedIf === 'isCompression'){
+      self.formElements.compressionMode.byModel.sendKeys('force');
       self.formElements.name.byModel.click();
     }
     e.byClass.click();

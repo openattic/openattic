@@ -37,8 +37,7 @@ app.component("cephNfsManageServiceModal", {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function ($timeout, cephNfsService, taskQueueSubscriber, Notification, $cacheFactory,
-      cephNfsStateService, $filter) {
+  controller: function ($timeout, cephNfsService, taskQueueSubscriber, $cacheFactory, cephNfsStateService, $filter) {
 
     var self = this;
 
