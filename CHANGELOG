@@ -16,7 +16,19 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.4.3] - unreleased
+[3.4.4] - unreleased
+--------------------
+
+Added
+~~~~~
+
+Changed
+~~~~~~~
+
+Fixed
+~~~~~
+
+[3.4.3] - 2017-08-17
 --------------------
 
 Added
@@ -27,17 +39,18 @@ Added
 * Development: Add support for ECMAScript6 using Babel (OP-1890)
 * Documentation: Add documentation how to use local settings (OP-2549)
 * WebUI: Add Pool compression (OP-2470)
-* Backend: Add "/api/host/current" service to get the current openATTIC host (OP-2496)
+* Backend: Add "/api/host/current" service to get the current openATTIC host
+  (OP-2496)
 * WebUI: Display openATTIC version on the settings page (OP-2496)
 * Packaging: `make_dist.py` now replaces the Version: tag in the RPM spec
   file automatically (OP-2256)
 * WebUI: Add helper text for NFS "pseudo" and "tag" (OP-2554)
 
 Changed
-~~~~~~
-* Development: Upgrade Vagrant box to openSUSE Leap 42.3
+~~~~~~~
+* Development: Upgrade Vagrant box to openSUSE Leap 42.3 (OP-2579)
 * Development: Ensure that the webserver and oA systemd are killed when the
-  Vagrant helper scripts are interrupted via CTRL-C
+  Vagrant helper scripts are interrupted via CTRL-C (OP-2578)
 * WebUI: Execute requests in parallel to speedup RBD list loading (OP-2552)
 * WebUI: Migration of Ceph iSCSI controllers to components (OP-2372)
 * WebUI: Removed expert settings from RBD form (OP-2518)
@@ -47,16 +60,20 @@ Changed
 * WebUI: The password of a user can be changed now (OP-4)
 * WebUI: Remove unnecessary toasty messages (OP-2563)
 * WebUI: NFS Tag displayed only for NFSv3 protocol (OP-2555)
+* Documentation: Documentation cleanups and updates (OP-2580)
 
 Fixed
 ~~~~~
 * WebUI/QA: Unstuck RBD and pool creation tests (OP-2574)
 * WebUI/QA: Fixed element not clickable in task-queue suite (OP-2262)
+* Backend: Failed to create RBD with expert settings enabled but without any
+  selected features (OP-2541)
 * Backend: Handle IPv6 netmask with suffix gracefully (OP-2547)
 * Backend: Added user name and keyring file information to RBD command
   call (OP-2553)
 * Backend: Fixed hanging of `systemctl stop openattic-systemd` (OP-2444)
-* Backend: Fixed error in `get_rbd_performance_data` task by catching an exception (OP-2057)
+* Backend: Fixed error in `get_rbd_performance_data` task by catching an
+  exception (OP-2057)
 * WebUI: Fixed default action when selecting multiple RBDs (OP-2546)
 * Installation: fix ownership/permissions of `/var/log/openattic` in the SUSE
   RPM package to fix a logrotate failure (OP-2517)
