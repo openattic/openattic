@@ -106,7 +106,6 @@ class Command(BaseCommand):
             cmd.handle_noargs(noinput=False, verbosity=verbosity, database=DEFAULT_DB_ALIAS)
             call_command('django_16_migrate')
 
-        call_command('loaddata', *glob('*/fixtures/initial_data.json'))
         try:
             call_command('createcachetable', 'status_cache')
         except CommandError:

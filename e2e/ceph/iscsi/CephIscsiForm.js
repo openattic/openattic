@@ -2,39 +2,39 @@ var CephIscsiForm = function(){
 
   this.panelTitle = element(by.css('.tc_panelTitle'));
 
-  this.targetIdInput = element(by.model('model.targetId'));
+  this.targetIdInput = element(by.model('$ctrl.model.targetId'));
   this.targetIdRequired = element(by.css('.tc_targetIdRequired'));
   this.targetIdInvalid = element(by.css('.tc_targetIdInvalid'));
 
-  this.authenticationCheckbox = element(by.model('model.authentication.hasAuthentication'));
-  this.userInput = element(by.model('model.authentication.user'));
+  this.authenticationCheckbox = element(by.model('$ctrl.model.authentication.hasAuthentication'));
+  this.userInput = element(by.model('$ctrl.model.authentication.user'));
   this.userRequired = element(by.css('.tc_userRequired'));
-  this.passwordInput = element(by.model('model.authentication.password'));
+  this.passwordInput = element(by.model('$ctrl.model.authentication.password'));
   this.passwordRequired = element(by.css('.tc_passwordRequired'));
 
-  this.initiatorsInput = element.all(by.model('model.authentication.initiators[$index]'));
+  this.initiatorsInput = element.all(by.model('$ctrl.model.authentication.initiators[$index]'));
   this.initiatorsRequired = element.all(by.css('.tc_InitiatorRequired'));
   this.initiatorsInvalid = element.all(by.css('.tc_InitiatorInvalid'));
 
-  this.lunIdInput = element(by.model('settings.lun'));
+  this.lunIdInput = element(by.model('$ctrl.settings.lun'));
   this.lunIdRequired = element(by.css('.tc_imageLunRequired'));
 
-  this.mutualAuthenticationCheckbox = element(by.model('model.authentication.hasMutualAuthentication'));
-  this.mutualUserInput = element(by.model('model.authentication.mutualUser'));
+  this.mutualAuthenticationCheckbox = element(by.model('$ctrl.model.authentication.hasMutualAuthentication'));
+  this.mutualUserInput = element(by.model('$ctrl.model.authentication.mutualUser'));
   this.mutualUserRequired = element(by.css('.tc_mutualUserRequired'));
-  this.mutualPasswordInput = element(by.model('model.authentication.mutualPassword'));
+  this.mutualPasswordInput = element(by.model('$ctrl.model.authentication.mutualPassword'));
   this.mutualPasswordRequired = element(by.css('.tc_mutualPasswordRequired'));
 
-  this.discoveryAuthenticationCheckbox = element(by.model('model.authentication.hasDiscoveryAuthentication'));
-  this.discoveryUserInput = element(by.model('model.authentication.discoveryUser'));
+  this.discoveryAuthenticationCheckbox = element(by.model('$ctrl.model.authentication.hasDiscoveryAuthentication'));
+  this.discoveryUserInput = element(by.model('$ctrl.model.authentication.discoveryUser'));
   this.discoveryUserRequired = element(by.css('.tc_discoveryUserRequired'));
-  this.discoveryPasswordInput = element(by.model('model.authentication.discoveryPassword'));
+  this.discoveryPasswordInput = element(by.model('$ctrl.model.authentication.discoveryPassword'));
   this.discoveryPasswordRequired = element(by.css('.tc_discoveryPasswordRequired'));
 
-  this.discoveryMutualAuthenticationCheckbox = element(by.model('model.authentication.hasDiscoveryMutualAuthentication'));
-  this.discoveryMutualUserInput = element(by.model('model.authentication.discoveryMutualUser'));
+  this.discoveryMutualAuthenticationCheckbox = element(by.model('$ctrl.model.authentication.hasDiscoveryMutualAuthentication'));
+  this.discoveryMutualUserInput = element(by.model('$ctrl.model.authentication.discoveryMutualUser'));
   this.discoveryMutualUserRequired = element(by.css('.tc_discoveryMutualUserRequired'));
-  this.discoveryMutualPasswordInput = element(by.model('model.authentication.discoveryMutualPassword'));
+  this.discoveryMutualPasswordInput = element(by.model('$ctrl.model.authentication.discoveryMutualPassword'));
   this.discoveryMutualPasswordRequired = element(by.css('.tc_discoveryMutualPasswordRequired'));
 
   this.submitButton = element(by.css('.tc_submitButton'));

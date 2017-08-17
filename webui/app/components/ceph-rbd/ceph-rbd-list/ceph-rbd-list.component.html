@@ -1,29 +1,28 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
 <oa-ceph-module-loader module="ceph_deployment" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getRbdList()">
 
-<div class="panel panel-default" ng-show="$ctrl.rbdError">
+<div class="panel panel-default" ng-show="$ctrl.error">
     <div class="panel-heading">
         <h3 class="panel-title">Error</h3>
     </div>
     <div class="panel-body">Ceph RBD resources could not be loaded.</div>
 </div>
-<div class="panel panel-default" ng-show="$ctrl.poolError">
-    <div class="panel-heading">
-        <h3 class="panel-title">Error</h3>
-    </div>
-    <div class="panel-body">Ceph pool resources could not be loaded.</div>
-</div>
 
 <oa-loading-panel message="Ceph RBDs are loading..."
-                  ng-show="!$ctrl.error && !$ctrl.rbdError && !$ctrl.poolError && !$ctrl.rbd.$resolved"></oa-loading-panel>
+                  ng-show="!$ctrl.error && !$ctrl.rbd.$resolved"></oa-loading-panel>
 
 <oadatatable ng-show="!$ctrl.error && $ctrl.rbd.results" data="$ctrl.rbd" class="oadatatable tc_cephRbdTable" filter-config="$ctrl.filterConfig"
              selection="$ctrl.selection" on-selection-change="$ctrl.onSelectionChange(selection)">
     <actions>
-        <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="$ctrl.addAction()" ng-hide="$ctrl.hasSelection || multiSelection">
+        <a class="btn btn-sm btn-primary tc_add_btn" type="button"
+           ng-click="$ctrl.addAction()"
+           ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="$ctrl.deleteAction()" ng-show="$ctrl.hasSelection || multiSelection">
+        <a class="btn btn-sm btn-primary tc_delete_btn"
+           type="button"
+           ng-click="$ctrl.deleteAction()"
+           ng-show="$ctrl.hasSelection || $ctrl.multiSelection">
             <i class="fa fa-fw fa-trash-o"></i>Delete
         </a>
         <li>
@@ -47,6 +46,8 @@
                 <th sortfield="id" sortdir="asc" sortheaderclass ng-show="columns['Poolname']">Poolname</th>
                 <th sortfield="size" sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
                 <th sortfield="used_size" sortdir="asc" sortheaderclass ng-show="columns['Used']">Used</th>
+                <!-- The data pool column is only sorted by it's pool id -->
+                <th sortfield="data_pool" sortdir="asc" sortheaderclass disabled ng-show="columns['Data-pool']">Data-pool</th>
                 <th sortfield="obj_size" sortdir="asc" sortheaderclass disabled ng-show="columns['Object size']">Object size</th>
                 <th sortfield="num_objs" sortdir="asc" sortheaderclass disabled ng-show="columns['Number of objects']">Number of objects</th>
             </tr>
@@ -77,6 +78,7 @@
                         </div>
                     </div>
                 </td>
+                <td ng-show="columns['Data-pool']" ng-bind="row.data_pool.name"></td>
                 <td ng-show="columns['Object size']" ng-bind="row.obj_size | bytes"></td>
                 <td ng-show="columns['Number of objects']" ng-bind="row.num_objs"></td>
             </tr>

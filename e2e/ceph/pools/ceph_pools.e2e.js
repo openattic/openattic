@@ -40,10 +40,10 @@ describe('should test the ceph pools panel', function(){
     expect(cephPoolProperties.statusTab.isDisplayed()).toBe(true);
   });
 
-  cephPoolProperties.detailAttributes.forEach(function(attribute){
-    it('should check the content attribute "' + attribute + '" in the details tab when selecting a pool', function(){
+  cephPoolProperties.detailAttributes.forEach(function(attr){
+    it('should check the content attribute "' + attr.name + '" in the details tab when selecting a pool', function(){
       element.all(by.binding('row.name')).get(0).click();
-      expect(element.all(by.cssContainingText('dt', attribute + ':')).first().isDisplayed()).toBe(true);
+      expect(element.all(by.cssContainingText('dt', attr.name + ':')).first().isDisplayed()).toBe(attr.displayed);
     });
   });
 

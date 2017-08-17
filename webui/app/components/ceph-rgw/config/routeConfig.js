@@ -72,6 +72,17 @@ app.config(function ($stateProvider) {
           label: "{{selection.item.user_id}} details"
         }
       })
+      .state("ceph-rgw-users.detail.statistics", {
+        url: "/statistics",
+        views: {
+          "tab-content": {
+            templateUrl: "components/ceph-rgw/templates/cephRgwUsersStatistics.html"
+          }
+        },
+        ncyBreadcrumb: {
+          label: "{{selection.item.user_id}} statistics"
+        }
+      })
       .state("ceph-rgw-user-add", {
         url: "/ceph/rgw/users/add",
         views: {

@@ -10,12 +10,15 @@ describe('task queue dialog test', function(){
    */
   beforeAll(function(){
     helpers.login();
+    element(by.css('.tc_menuitem_ceph_osds')).click();
+    qProperties.deleteAllTasks();
     qProperties.open(); // This will open the task queue dialogue.
-    qProperties.createTask(1, 60); // short living (~1 sec)
-    browser.sleep(helpers.configs.sleep * 5);
+    qProperties.createTask(1); // short living (~1 sec)
     qProperties.createTask(500); // long living (~10 min)
+    browser.sleep(helpers.configs.sleep * 4);
     qProperties.deleteTasks('pending');
     qProperties.createTask(500); // long living (~10 min)
+    browser.sleep(helpers.configs.sleep * 4);
   });
 
   /**
@@ -36,8 +39,7 @@ describe('task queue dialog test', function(){
     // 1. Show at least one task in the current tab.
     it('should show at least one task in tab "' + tabName + '"', function(){
       qProperties.changeTab(tabName);
-      var listing = elements.listing;
-      expect(listing.isDisplayed()).toBe(true); // If at least one task is there the listing is shown.
+      expect(elements.listing.isDisplayed()).toBe(true); // If at least one task is there the listing is shown.
     });
 
     // 2. Checkout each column of the tab.
@@ -46,7 +48,6 @@ describe('task queue dialog test', function(){
       var columnName = column.name;
       var columnElement = column.element;
       it('should display this column in tab -> Column: "' + columnName + '", Tab: "' + tabName + '"', function(){
-        qProperties.changeTab(tabName);
         expect(columnElement.isDisplayed()).toBe(true);
         expect(columnElement.getText()).toBe(columnName);
       });
@@ -55,26 +56,21 @@ describe('task queue dialog test', function(){
     // 3. Checkout all default elements.
     Object.keys(elements).forEach(function(elementName){
       it('should check if this element exists in the tab -> Element: "' + elementName + '", Tab: "' + tabName + '"', function(){
-        qProperties.changeTab(tabName);
         expect(elements[elementName].isPresent()).toBe(true);
       });
     });
 
     // 4. Remove any tasks.
     it('should empty the tasks if any, in tab "' +  tabName + '"', function(){
-      qProperties.changeTab(tabName);
-      elements.listing.isDisplayed().then(function(displayed){
-        if(displayed){ // If at least one task is there the listing is shown.
-          qProperties.deleteTasks(tabName);
-        }
-      });
+      expect(elements.listing.isDisplayed()).toBe(true);
+      qProperties.deleteTasks(tabName);
     });
 
     // 5. Check the "no tasks available" message.
     it('should have an empty task queue in tab "' + tabName + '"', function(){
-      var noElements = elements.noElements;
-      qProperties.changeTab(tabName);
+      browser.sleep(helpers.configs.sleep);
       expect(elements.listing.isDisplayed()).toBe(false);
+      var noElements = element(by.className('tc_no_elements_' + tabName));
       expect(noElements.isDisplayed()).toBe(true);
       expect(noElements.getText()).toBe('There are no ' + tabName + ' Tasks.');
     });

@@ -1,0 +1,126 @@
+<oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
+<oa-ceph-module-loader module="ceph_iscsi" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getIscsiList()">
+
+<div class="panel panel-default" ng-show="$ctrl.error">
+  <div class="panel-heading">
+    <h3 class="panel-title">Couldn't load iSCSI target IQNs</h3>
+  </div>
+  <div class="panel-body">
+    iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed.
+  </div>
+</div>
+
+<oa-loading-panel message="iSCSI targets are loading..."
+                  ng-show="!$ctrl.error && !$ctrl.iscsi.$resolved"></oa-loading-panel>
+
+<oadatatable ng-show="!$ctrl.error && $ctrl.iscsi.results" data="$ctrl.iscsi" class="oadatatable tc_cephIscsiTable"
+             filter-config="$ctrl.filterConfig" special="$ctrl.deployed"
+             selection="$ctrl.selection" on-selection-change="$ctrl.onSelectionChange(selection)" >
+  <actions>
+    <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="$ctrl.addAction()"
+       ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
+      <i class="fa fa-fw fa-plus"></i>Add
+    </a>
+    <a class="btn btn-sm btn-primary tc_edit_btn" type="button" ng-click="$ctrl.editAction()" ng-show="$ctrl.hasSelection">
+      <i class="fa fa-fw fa-pencil"></i>Edit
+    </a>
+    <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="$ctrl.deleteAction()" ng-show="$ctrl.multiSelection">
+      <i class="fa fa-fw fa-trash-o"></i>Delete
+    </a>
+    <li>
+      <a ng-click="$ctrl.addAction()">
+        <i class="fa fa-fw fa-plus"></i>Add
+      </a>
+    </li>
+    <li class="tc_cloneItem" ng-click="$ctrl.cloneAction()" ng-class="{disabled: !$ctrl.hasSelection}">
+      <a>
+        <i class="fa fa-fw fa-clone"></i>Copy
+      </a>
+    </li>
+    <li class="tc_deleteItem" ng-click="$ctrl.deleteAction()" ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
+      <a>
+        <i class="fa fa-fw fa-trash-o"></i>Delete
+      </a>
+    </li>
+  </actions>
+  <additional-actions>
+    <div class="btn-group" uib-dropdown is-open="status.isopen">
+      <button type="button" class="btn btn-sm btn-default btn-label tc_manageService" uib-dropdown-toggle>
+        <i class="fa fa-fw fa-cog" aria-hidden="true"></i>Manage service
+      </button>
+      <ul class="dropdown-menu" uib-dropdown-menu>
+        <li class="tc_deployItem" ng-click="$ctrl.deployIscsi()"
+            ng-class="{disabled: ($ctrl.deployed.status === true || $ctrl.deployed.$resolved === false)}">
+          <a>
+            <i class="fa fa-fw fa-play"></i>Start all
+          </a>
+        </li>
+        <li class="tc_undeployItem" ng-click="$ctrl.undeployIscsi()"
+            ng-class="{disabled: ($ctrl.deployed.status === false || $ctrl.deployed.$resolved === false)}">
+          <a>
+            <i class="fa fa-fw fa-stop "
+               ng-class="{'icon-danger': !($ctrl.deployed.status === false || $ctrl.deployed.$resolved === false)}"></i>Stop all
+          </a>
+        </li>
+      </ul>
+    </div>
+  </additional-actions>
+  <table class="table table-striped table-bordered table-hover dataTable datatable">
+    <thead>
+    <tr>
+      <th class="oadatatablecheckbox" ng-if="selection.available">
+        <input type="checkbox" ng-model="selection.checkAll"/>
+      </th>
+      <th ng-show="columns['Target IQN']" sortfield="targetId" sortdir="asc" sortheaderclass sortdefault>Target IQN</th>
+      <th ng-show="columns['State']">State</th>
+      <th ng-show="columns['Portals']" sortfield="portals" sortheaderclass>Portals</th>
+      <th ng-show="columns['Images']" sortfield="images" sortheaderclass>Images</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in data.results"
+        ng-class="{ info: isRowSelected(row) }"
+        class="clickable"
+        ng-click="toggleSelection(row, $event)">
+      <td ng-if="selection.available">
+        <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
+      </td>
+      <td ng-show="columns['Target IQN']">
+        <a ui-sref="cephIscsi-edit({
+                      fsid: row.fsid,
+                      targetId: row.targetId
+                    })" ng-bind="row.targetId"></a>
+      </td>
+      <td ng-show="columns['State']">
+        <span ng-if="special.status === true">
+          <span ng-if="special.$resolved === false">
+            <i class="fa fa-spinner fa-spin fa-fw"></i> Stopping...
+          </span>
+          <span ng-if="special.$resolved === true">Running</span>
+        </span>
+        <span ng-if="special.status === false">
+          <span ng-if="special.$resolved === false">
+            <i class="fa fa-spinner fa-spin fa-fw"></i> Starting...
+          </span>
+          <span ng-if="special.$resolved === true">
+            <i class="fa fa-angle-double-down fa-lg icon-danger"></i> Stopped
+          </span>
+        </span>
+      </td>
+      <td ng-show="columns['Portals']"
+          ng-bind="row.portals[0].hostname + ':' + row.portals[0].interface + (row.portals.length > 1 ? ', ...' : '')"></td>
+      <td ng-show="columns['Images']"
+          ng-bind="row.images[0].pool + ':' + row.images[0].name + (row.images.length > 1 ? ', ...' : '')"></td>
+    </tr>
+    </tbody>
+  </table>
+</oadatatable>
+
+<div id="more" ui-view="tab"
+     tab-data="$ctrl.tabData"
+     tab-config="$ctrl.tabConfig"
+     selection="$ctrl.selection">
+</div>
+
+</oa-ceph-module-loader>
+</oa-ceph-cluster-loader>

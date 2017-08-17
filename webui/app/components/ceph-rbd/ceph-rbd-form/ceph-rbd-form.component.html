@@ -1,150 +1,202 @@
 <div class="col-sm-12 col-lg-6">
-    <form name="rbdForm" role="form" class="form-horizontal" novalidate oa-check-form>
-        <div class="panel panel-default">
-            <div class="panel-heading tc_formHeadline">
-                <h3 class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>
+  <form name="rbdForm" role="form" class="form-horizontal" novalidate oa-check-form>
+    <div class="panel panel-default">
+      <div class="panel-heading tc_formHeadline">
+        <h3 class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.name.$dirty)
+            && rbdForm.name.$invalid}">
+          <label class="control-label col-sm-3" for="name">Name</label>
+          <div class="col-sm-9">
+            <input id="name" type="text" class="form-control tc_rbd_name" placeholder="Name..."
+                ng-model="$ctrl.rbd.name" name="name" validname uniquename="rbd" required autofocus>
+            <span class="help-block tc_nameRequired" ng-show="(rbdForm.$submitted || rbdForm.name.$dirty)
+                && rbdForm.name.$error.required">This field is required!</span>
+            <span class="help-block tc_noValidName" ng-show="rbdForm.name.$error.validname">{{errortext}}</span>
+            <span class="help-block tc_noUniqueName" ng-show="rbdForm.name.$error.uniquename">
+              The chosen RBD name is already in use.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.cluster.$dirty)
+            && rbdForm.cluster.$invalid}">
+          <label class="control-label col-sm-3" for="cluster">Cluster</label>
+          <div class="col-sm-9">
+            <select id="cluster" ng-disabled="!$ctrl.clusters" class="form-control tc_cluster_selection"
+                ng-model="$ctrl.data.cluster" ng-options="(cluster.name + ' (' + cluster.fsid + ')')
+                for cluster in $ctrl.clusters track by cluster.fsid" name="cluster" required>
+              <option class="tc_rbdClusterOption" value="" ng-bind="$ctrl.waitingClusterMsg"></option>
+            </select>
+            <span class="help-block tc_clusterRequired" ng-show="(rbdForm.$submitted || rbdForm.cluster.$dirty)
+                && rbdForm.cluster.$error.required">
+              This field is required!
+            </span>
+            <span class="help-block tc_clusterLoading" ng-show="rbdForm.$error.clusterLoading">
+              Couldn't load any cluster, please contact your administrator for details.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary"
+                  ng-show="$ctrl.pools.replicated.length + $ctrl.pools.erasure.length > 1">
+                <input id="use-data-pool" type="checkbox" ng-model="$ctrl.data.useDataPool" ng-name="useDataPool">
+                <label for="use-data-pool">Use a dedicated data pool</label>
+              </div>
             </div>
-            <div class="panel-body">
-                <!-- The following panel body needs to be encapsulated into the template of a directive in order to
-                     create a RBD wizard or use the form somewhere else. Therefor it's not intended as expected at the
-                     moment and it already includes class adjustments in case it's a template. -->
-<div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.name.$dirty)
-    && rbdForm.name.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="name">Name</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <input id="name" type="text" class="form-control tc_rbd_name" placeholder="Name..."
-            ng-model="$ctrl.rbd.name" name="name" validname uniquename="rbd" required autofocus>
-        <span class="help-block tc_nameRequired" ng-show="(rbdForm.$submitted || rbdForm.name.$dirty)
-            && rbdForm.name.$error.required">This field is required!</span>
-        <span class="help-block tc_noValidName" ng-show="rbdForm.name.$error.validname">{{errortext}}</span>
-        <span class="help-block tc_noUniqueName" ng-show="rbdForm.name.$error.uniquename">
-            The chosen RBD name is already in use.
-        </span>
-    </div>
-</div>
+        </div>
 
-<div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.cluster.$dirty)
-    && rbdForm.cluster.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="cluster">Cluster</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select id="cluster" ng-disabled="!$ctrl.clusters" class="form-control tc_cluster_selection" ng-model="$ctrl.data.cluster"
-                ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in $ctrl.clusters track by cluster.fsid" name="cluster" 
-                ng-change="$ctrl.watchDataCluster()" required>
-            <option class="tc_rbdClusterOption" value="" ng-bind="$ctrl.waitingClusterMsg"></option>
-        </select>
-        <span class="help-block tc_clusterRequired" ng-show="(rbdForm.$submitted || rbdForm.cluster.$dirty)
-            && rbdForm.cluster.$error.required">
-            This field is required!
-        </span>
-        <span class="help-block tc_clusterLoading" ng-show="rbdForm.$error.clusterLoading">
-            Couldn't load any cluster, please contact your administrator for details.
-        </span>
-    </div>
-</div>
-
-<div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.pool.$dirty)
-    && rbdForm.pool.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="pool">Pool</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <select id="pool" ng-disabled="!$ctrl.pools" class="form-control tc_pool_selection" ng-model="$ctrl.data.pool"
-                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in $ctrl.pools track by pool.id"
-                name="pool" ng-change="$ctrl.watchDataPool()" required>
-            <option class="tc_rbdPoolOption" value="" ng-bind="waitingPoolMsg"></option>
-        </select>
-        <div ng-show="$ctrl.data.pool" class="progress-bar-outer clearfix">
-            <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.oaUsed">
+        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.pool.$dirty)
+            && rbdForm.pool.$invalid}">
+          <label class="control-label col-sm-3"
+              for="pool">
+            <span tooltip-placement="top"
+              uib-tooltip="Main pool where the RBD is located and {{$ctrl.data.useDataPool ? 'the meta-data' :
+                'all data'}} is stored">
+              {{$ctrl.data.useDataPool ? "Meta-" : ""}}Pool
+            </span>
+          </label>
+          <div class="col-sm-9">
+            <select id="pool" ng-disabled="!$ctrl.pools" class="form-control tc_pool_selection"
+                ng-model="$ctrl.data.pool"
+                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in $ctrl.pools.replicated
+                  track by pool.id"
+                name="pool" required>
+              <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
+            </select>
+            <div ng-show="$ctrl.data.pool && !$ctrl.data.useDataPool" class="progress-bar-outer clearfix">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.oaUsed">
                 <span></span>
-            </uib-progressbar>
-                <span class="pull-left tc_poolSize">{{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used</span>
-                <span class="pull-right tc_poolAvailableSize">
-                    {{$ctrl.data.pool.oaFreeText}} free - <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree; $ctrl.watchDataSize()">use max</a>
-                </span>
+              </uib-progressbar>
+              <span class="pull-left tc_poolSize">
+                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used
+              </span>
+              <span class="pull-right tc_poolAvailableSize">
+                {{$ctrl.data.pool.oaFreeText}} free -
+                <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree">use max</a>
+              </span>
+            </div>
+            <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
+                && rbdForm.pool.$error.required">
+              This field is required!
+            </span>
+            <span class="help-block tc_poolLoading" ng-show="rbdForm.$error.poolLoading">
+              Couldn't load any pool, please contact your administrator for details.
+            </span>
+          </div>
         </div>
-        <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
-            && rbdForm.pool.$error.required">
-            This field is required!
-        </span>
-        <span class="help-block tc_poolLoading" ng-show="rbdForm.$error.poolLoading">
-            Couldn't load any pool, please contact your administrator for details.
-        </span>
-    </div>
-</div>
 
-<div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.size.$dirty)
-    && rbdForm.size.$invalid}">
-    <label ng-class="wizard ? 'col-md-2' : 'col-sm-3'" class="control-label" for="size">Size</label>
-    <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-        <input id="size" class="form-control tc_rbd_size" type="text" name="size"
-            ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
-            ng-model="$ctrl.data.size" placeholder="e.g., 10GB" ng-change="$ctrl.watchDataSize()" required>
-        <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
-            && rbdForm.size.$error.required">
-            This field is required!
-        </span>
-    </div>
-</div>
-<div class="form-group">
-    <div ng-class="wizard ? 'col-sm-offset-2 col-sm-10' : 'col-sm-offset-3 col-sm-9'">
-        <br>
-        <div class="checkbox checkbox-primary">
-            <input id="expert-settings" type="checkbox" ng-disabled="$ctrl.data.pool == null" ng-model="$ctrl.data.expert" ng-name="expert">
-            <label class="tc_expertSettings" for="expert-settings" >Expert settings</label>
+        <div class="form-group" ng-if="$ctrl.data.useDataPool" ng-class="{'has-error': (rbdForm.$submitted ||
+            rbdForm.dataPool.$dirty) && rbdForm.dataPool.$invalid}">
+          <label class="control-label col-sm-3"
+              for="dataPool">
+            <span tooltip-placement="top"
+                uib-tooltip="Dedicated pool that stores the object-data of the RBD">
+              Data-Pool
+            </span>
+          </label>
+          <div class="col-sm-9">
+            <select id="dataPool" ng-disabled="!$ctrl.data.pool" class="form-control" name="dataPool" ng-model="$ctrl.data.dataPool"
+                ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) group by pool.type
+                  for pool in $ctrl.getDataPools() track by pool.id"
+                required>
+              <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
+            </select>
+            <div ng-show="$ctrl.data.dataPool" class="progress-bar-outer clearfix">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.dataPool.oaUsed">
+                <span></span>
+              </uib-progressbar>
+              <span class="pull-left tc-data-pool-size">
+                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.oaFreeText}} used
+              </span>
+              <span class="pull-right tc-data-pool-available-size">
+                {{$ctrl.data.dataPool.oaFreeText}} free -
+                <a ng-click="$ctrl.data.size = $ctrl.data.dataPool.oaMaxFree">use max</a>
+              </span>
+            </div>
+            <span class="help-block tc-data-pool-required" ng-show="(rbdForm.$submitted || rbdForm.dataPool.$dirty)
+                && rbdForm.dataPool.$error.required">
+              This field is required!
+            </span>
+            <span class="help-block tc-data-pool-loading" ng-show="rbdForm.$error.dataPoolLoading">
+              Couldn't load any pool, please contact your administrator for details.
+            </span>
+          </div>
         </div>
-    </div>
-</div>
-<div ng-show="$ctrl.data.expert">
-    <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty)
-        && rbdForm.obj_size.$invalid}">
-        <label ng-class="wizard ? 'col-md-3' : 'col-sm-3'" class="control-label" for="object-size">Object size</label>
-        <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
+
+        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.size.$dirty)
+            && rbdForm.size.$invalid}">
+          <label class="control-label col-sm-3" for="size">Size</label>
+          <div class="col-sm-9">
+            <input id="size" class="form-control tc_rbd_size" type="text" name="size"
+                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree"
+                ng-change="$ctrl.watchDataSize()" ng-model-options="{ updateOn: 'blur' }" ng-model="$ctrl.data.size"
+                placeholder="e.g., 10GB" required>
+            <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
+                && rbdForm.size.$error.required">
+              This field is required!
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty)
+            && rbdForm.obj_size.$invalid}">
+          <label class="control-label col-sm-3" for="object-size">Object size</label>
+          <div class="col-sm-9">
             <input id="object-size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
-                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-model-options="{ updateOn: 'blur' }"
-                ng-keydown="$ctrl.objSizeChange($event)" ng-change="$ctrl.updateObjSize($ctrl.data.obj_size, null, null)"
-                ng-model="$ctrl.data.obj_size" placeholder="4 KB up to 32 MB" required>
+                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-change="$ctrl.updateObjSize()"
+                ng-model-options="{ updateOn: 'blur' }" ng-keyup="$ctrl.objSizeChange($event)" ng-model="$ctrl.data.obj_size"
+                placeholder="4 KB up to 32 MB" required>
             <span class="help-block tc_objSizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                 && rbdForm.size.$error.required">
-                This field is required!
+              This field is required!
             </span>
+          </div>
         </div>
-    </div>
-    <div class="form-group tc_features">
-        <label class="col-sm-3 control-label" for="features">
-            Features <oa-helper helper-data="$ctrl.features"
-                                helper-template="'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'">
-                     </oa-helper>
-        </label>
-        <input id="features" type="hidden" ng-model="$ctrl.data.features" required>
-        <div ng-class="wizard ? 'col-md-10' : 'col-sm-9'">
-            <div class="checkbox checkbox-primary"
-                 ng-repeat="(key, feature) in $ctrl.features"
-                 ng-if="feature.isUsed" >
+        <div class="form-group tc_features" ng-class="{'has-error': rbdForm.$error.noFeatureSelected}">
+          <label class="col-sm-3 control-label" for="features">
+            Features
+            <oa-helper helper-data="$ctrl.features"
+              helper-template="'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'">
+            </oa-helper>
+          </label>
+          <input id="features" type="hidden" ng-model="$ctrl.data.features" required>
+          <div class="col-sm-9">
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox" ng-model="$ctrl.data.defaultFeatures" ng-change="$ctrl.watchDataFeatures()"
+                id="default-features" name="default-features">
+              <label for="default-features">Use default features</label>
+            </div>
+            <div uib-collapse="$ctrl.data.defaultFeatures">
+              <br>
+              <div class="checkbox checkbox-primary"
+                  ng-repeat="(key, feature) in $ctrl.features"
+                  ng-if="feature.isDisplayed" >
                 <input type="checkbox" ng-model="$ctrl.data.features[key].checked" id="{{key}}"
                     ng-disabled="$ctrl.data.features[key].disabled" ng-change="$ctrl.watchDataFeatures(key)"
                     class="tc_feature_{{key}}" ng-name="key">
                 <label ng-bind="feature.desc" for="{{key}}"></label>
+              </div>
+              <span class="help-block tc_noFeature" ng-show="rbdForm.$error.noFeatureSelected">At least one feature has to be selected</span>
             </div>
-            <br>
-            <button type="button" class="btn btn-sm btn-default tc_featureDefaults" ng-click="$ctrl.defaultFeatures()">
-                Reset features
-            </button>
+          </div>
         </div>
+      </div>
+      <div class="panel-footer">
+        <div class="button-group text-right">
+          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
+              ng-disabled="rbdForm.$invalid || rbdForm.$submitted" ng-click="$ctrl.submitAction(rbdForm)">
+            Create
+            <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
+            Back
+          </button>
+        </div>
+      </div>
     </div>
-</div>
-            </div>
-            <div class="panel-footer">
-                <div class="button-group text-right">
-                    <button type="submit"
-                            class="btn btn-sm btn-primary tc_submitButton"
-                            ng-disabled="rbdForm.$invalid || rbdForm.$submitted"
-                            ng-click="$ctrl.submitAction(rbdForm)">
-                        Create
-                        <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
-                        Back
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
+  </form>
 </div>

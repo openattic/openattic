@@ -69,7 +69,6 @@ app.config(function ($stateProvider) {
         label: "Add"
       }
     })
-    /* TODO: Uncomment for OP-2475
     .state("cephRbds.detail.statistics", {
       url          : "/statistics",
       views        : {
@@ -81,7 +80,6 @@ app.config(function ($stateProvider) {
         label: "{{selection.item.name}} statistics"
       }
     })
-    */
     .state("cephRbds.detail.details", {
       url: "/details",
       views: {

@@ -47,6 +47,7 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
       "username": "",
       "email": "",
       "password": "",
+      "confirmPassword": "",
       "first_name": "",
       "last_name": "",
       "is_active": false,

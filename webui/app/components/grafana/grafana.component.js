@@ -52,12 +52,10 @@ angular.module('openattic.grafana').component('grafana', {
        * Check the given mode and set the correct dashboard name and url parameter name
        */
       switch (vm.mode) {
-        /* TODO: Uncomment for OP-2475
         case 'rbd':
-          vm.dashboardName = 'ceph-pools';
+          vm.dashboardName = 'ceph-rbd';
           vm.urlParameterName = 'var-rbd';
           break;
-        */
         case 'pool':
           vm.dashboardName = 'ceph-pools';
           vm.urlParameterName = 'var-pool';
@@ -70,7 +68,10 @@ angular.module('openattic.grafana').component('grafana', {
           vm.dashboardName = 'node-statistics';
           vm.urlParameterName = 'var-instance';
           break;
-
+        case 'rgwusers':
+          vm.dashboardName = 'ceph-object-gateway-users';
+          vm.urlParameterName = 'var-owner';
+          break;
         default:
           vm.dashboardName = 'ceph-cluster';
           vm.mode = 'dashboard';

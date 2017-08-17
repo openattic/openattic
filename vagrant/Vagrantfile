@@ -40,7 +40,7 @@ distro_settings = {
         gateway: '192.168.10.1'
     },
     'leap' => {
-        box_name: 'opensuse/openSUSE-42.2-x86_64',
+        box_name: 'opensuse/openSUSE-42.3-x86_64',
         sata_controller_name: 'SATA Controller',
         ip_addr: '192.168.10.105',
         gateway: '192.168.10.1'

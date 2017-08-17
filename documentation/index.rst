@@ -1,25 +1,14 @@
 |oA| |version| Documentation
 ############################
 
-The times when storage was considered a server-based resource and every system
-needed to have its own hard drives are long gone. In modern data centers central
-storage systems have become ubiquitous for obvious reasons. Centrally managed
-storage increases flexibility and reduces the cost for unused storage reserves.
-With the introduction of a cluster or virtualization solution shared storage
-becomes a necessity.
+|oA| is an Open Source Ceph and storage management solution for Linux, with a
+strong focus on storage management in a datacenter environment.
 
-This mission-critical part of IT used to be dominated by proprietary offerings.
-Even though mature open source projects may now meet practically every
-requirement of a modern storage system, managing and using these tools is often
-quite complex and is mostly done decentrally.
-
-|oA| is a full-fledged central storage management system. Hardware resources
-can be managed, logical storage areas can be shared and distributed and data
-can be stored more efficiently and less expensively than ever before – and you
-can control everything from a central management interface. It is no longer
-necessary to be intimately familiar with the inner workings of the individual
-storage tools. Any task can be carried out by either using |oA|'s intuitive
-web interface or via the REST API.
+The various resources of a Ceph cluster can be managed and monitored from a
+central web-based management interface. It is no longer necessary to be
+intimately familiar with the inner workings of the individual Ceph components.
+Any task can be carried out by either using |oA|'s intuitive web interface or
+via the REST API.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License version 2 as published by the Free

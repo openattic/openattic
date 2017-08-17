@@ -337,9 +337,6 @@ LOCALE_PATHS = (
 MPLCONFIGDIR = "/tmp/.matplotlib"
 
 
-# In `backend/nagios/conf/distro.py` there's basically the same parser, but used for a slightly
-# different purpose. This is just to mention that this code is somewhat duplicated. This comment may
-# be removed if the nagios module is removed.
 def get_config(filename):
     result = {}
     with open(filename, "r") as f:
@@ -442,5 +439,6 @@ oa_settings.load_settings()
 # This enables developers and test systems to override settings in a non-versioned file.
 local_settings_file = join(os.getcwd(), 'settings_local.conf')
 if os.access(local_settings_file, os.R_OK):
+    print('Reading local settings {}'.format(local_settings_file))
     for key, val in ConfigObj(local_settings_file).items():
         globals()[key] = val

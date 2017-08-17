@@ -35,7 +35,8 @@ app.component("settingsForm",  {
   templateUrl: "components/settings/settings-form/settings-form.component.html",
   bindings: {
   },
-  controller: function ($scope, $state, $timeout, $q, settingsFormService, cephClusterService, Notification) {
+  controller: function ($scope, $state, $timeout, $q, settingsFormService, cephClusterService, hostsService,
+      Notification) {
     var self = this;
 
     const animationTimeout = 300;
@@ -80,6 +81,11 @@ app.component("settingsForm",  {
       })
       .catch(function (error) {
         self.error = error;
+      });
+      hostsService.current()
+      .$promise
+      .then(function (res) {
+        self.openatticVersion = res.oa_version.package.VERSION;
       });
     };
 

@@ -26,14 +26,20 @@
                                 </span>
                         </div>
                     </div>
-                    <div class="form-group" ng-if="!editing" ng-class="{'has-error': (submitted || userForm.password.$dirty)
-                        && userForm.password.$invalid}">
+
+                    <div class="form-group" ng-class="{'has-error': userForm.password.$touched && userForm.password.$invalid}">
                         <label class="col-sm-3 control-label" for="userPassword">Password</label>
                         <div class="col-sm-9">
                             <div class="input-group">
                                 <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
-                                <input class="form-control" type="password" placeholder="Password..."
-                                       ng-model="user.password" name="password" id="userPassword" required>
+                                <input class="form-control"
+                                       type="password"
+                                       placeholder="Password..."
+                                       ng-model="user.password"
+                                       name="password"
+                                       id="userPassword"
+                                       ng-required="!editing"
+                                       ng-minlength="6">
                                 <span class="input-group-btn">
                                     <button type="button"
                                             class="btn btn-default tc_showPassword"
@@ -48,12 +54,55 @@
                                     </button>
                                 </span>
                             </div>
-                                <span class="help-block tc_passwdRequired" ng-show="(submitted ||userForm.password.$dirty)
-                                && userForm.password.$error.required">
-                                    A password is required.
-                                </span>
+                            <span class="help-block tc_passwdMinlength"
+                                  ng-show="userForm.password.$touched && userForm.password.$error.minlength">
+                                The password must be of minimum length 6 characters.
+                            </span>
+                            <span class="help-block tc_passwdRequired"
+                                  ng-show="userForm.password.$touched && userForm.password.$error.required">
+                                A password is required.
+                            </span>
                         </div>
                     </div>
+
+                    <div class="form-group"
+                         ng-class="{'has-error': userForm.confirmPassword.$touched && userForm.confirmPassword.$invalid}">
+                        <label class="col-sm-3 control-label" for="userConfirmPassword">Confirm password</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
+                                <input class="form-control"
+                                       type="password"
+                                       placeholder="Password..."
+                                       id="userConfirmPassword"
+                                       name="confirmPassword"
+                                       ng-model="user.confirmPassword"
+                                       equal-validator="user.password"
+                                       ng-required="!editing"
+                                       ng-minlength="6">
+                                <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            oa-password-button="userConfirmPassword">
+                                    </button>
+                                </span>
+                            </div>
+                            <span class="help-block tc_confirmPasswdRequired"
+                                  ng-show="userForm.confirmPassword.$touched && userForm.confirmPassword.$error.required">
+                                The password confirmation is required.
+                            </span>
+                            <span class="help-block tc_confirmPasswdMinlength"
+                                  ng-show="userForm.confirmPassword.$touched && userForm.confirmPassword.$error.minlength">
+                                The password must be of minimum length 6 characters.
+                            </span>
+                            <span class="help-block tc_passwdEqual"
+                                  ng-show="userForm.confirmPassword.$touched && userForm.confirmPassword.$error.equalValidator &&
+                                           !userForm.confirmPassword.$error.minlength">
+                                The passwords are not equal.
+                            </span>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="userFirstname">Firstname</label>
                         <div class="col-sm-9">
