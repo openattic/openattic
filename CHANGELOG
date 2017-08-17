@@ -16,6 +16,18 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.4.4] - unreleased
+--------------------
+
+Added
+~~~~~
+
+Changed
+~~~~~~~
+
+Fixed
+~~~~~
+
 [3.4.3] - 2017-08-17
 --------------------
 
@@ -35,7 +47,7 @@ Added
 * WebUI: Add helper text for NFS "pseudo" and "tag" (OP-2554)
 
 Changed
-~~~~~~
+~~~~~~~
 * Development: Upgrade Vagrant box to openSUSE Leap 42.3 (OP-2579)
 * Development: Ensure that the webserver and oA systemd are killed when the
   Vagrant helper scripts are interrupted via CTRL-C (OP-2578)

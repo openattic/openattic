@@ -15,7 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
 Name: openattic
-Version: 3.4.3
+Version: 3.4.4
 Release: 0
 Summary: Open Source Ceph Storage Management System
 Group: System Environment/Libraries
