@@ -475,7 +475,28 @@ _migrations = [
         DROP TABLE "nagios_service" CASCADE;
         COMMIT;
         """
-    )
+    ),
+    SqlMigration(
+        'ifcoinfig', '0005_remove_hostgroup_ipaddress_netdevice',
+        lambda cursor: _table_exists('ifcoinfig_netdevice', cursor),
+        """
+        BEGIN;
+        DROP TABLE "ifconfig_hostgroup_hosts" CASCADE;
+        ALTER TABLE "ifconfig_ipaddress" DROP CONSTRAINT IF EXISTS "ifconfig_ipaddress_device_id_fkey";
+        ALTER TABLE "ifconfig_ipaddress" DROP COLUMN "device_id" CASCADE;
+        ALTER TABLE "ifconfig_netdevice" DROP CONSTRAINT IF EXISTS "ifconfig_netdevice_host_id_devname_key";
+        DROP TABLE "ifconfig_netdevice_brports" CASCADE;
+        ALTER TABLE "ifconfig_netdevice" DROP CONSTRAINT IF EXISTS "ifconfig_netdevice_host_id_fkey";
+        ALTER TABLE "ifconfig_netdevice" DROP COLUMN "host_id" CASCADE;
+        DROP TABLE "ifconfig_netdevice_slaves" CASCADE;
+        ALTER TABLE "ifconfig_netdevice" DROP CONSTRAINT IF EXISTS "ifconfig_netdevice_vlanrawdev_id_fkey";
+        ALTER TABLE "ifconfig_netdevice" DROP COLUMN "vlanrawdev_id" CASCADE;
+        DROP TABLE "ifconfig_hostgroup" CASCADE;
+        DROP TABLE "ifconfig_ipaddress" CASCADE;
+        DROP TABLE "ifconfig_netdevice" CASCADE;
+        COMMIT;
+        """
+        )
 ]
 
 

@@ -60,8 +60,6 @@ Requires:	python-imaging
 Requires:	python-M2Crypto
 Requires:	python-m2ext
 Requires:	python-memcached
-Requires:	python-netaddr
-Requires:	python-netifaces
 Requires:	python-numpy
 Requires:	python-pam
 Requires:	python-psycopg2
