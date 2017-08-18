@@ -21,6 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI: No clusters configured message on settings page (OP-2535)
 
 Changed
 ~~~~~~~
@@ -28,6 +29,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI: OSD, RBD and Pool tabs are broken without DeepSea (OP-2571)
+* WebUI: Error after remove iSCSI "Discovery authentication" (OP-2550)
 
 [3.4.3] - 2017-08-17
 --------------------
