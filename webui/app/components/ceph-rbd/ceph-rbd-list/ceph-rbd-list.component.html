@@ -1,5 +1,5 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
-<oa-ceph-module-loader module="ceph_deployment" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getRbdList()">
+<oa-ceph-module-loader cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getRbdList()">
 
 <div class="panel panel-default" ng-show="$ctrl.error">
     <div class="panel-heading">
