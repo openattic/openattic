@@ -27,6 +27,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: OSD, RBD and Pool tabs are broken without DeepSea (OP-2571)
 
 [3.4.3] - 2017-08-17
 --------------------
