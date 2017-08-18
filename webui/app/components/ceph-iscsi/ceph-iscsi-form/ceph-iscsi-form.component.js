@@ -324,6 +324,7 @@ app.component("cephIscsiForm", {
         delete auth.enabledDiscoveryAuthentication;
         delete auth.discoveryUser;
         delete auth.discoveryPassword;
+        auth.hasDiscoveryMutualAuthentication = false;
         delete auth.enabledDiscoveryMutualAuthentication;
         delete auth.discoveryMutualUser;
         delete auth.discoveryMutualPassword;
