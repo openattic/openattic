@@ -21,6 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI: No clusters configured message on settings page (OP-2535)
 
 Changed
 ~~~~~~~
