@@ -35,9 +35,10 @@ app.component("cephIscsiForm", {
   templateUrl: "components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html",
   bindings: {
   },
-  controller: function ($scope, $state, $timeout, $stateParams, $uibModal,
-      cephIscsiTargetAdvangedSettings, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
-      cephRbdService, cephPoolsService, cephIscsiService) {
+  controller: function ($q, $scope, $state, $timeout, $stateParams, $uibModal,
+      cephIscsiTargetAdvangedSettings, cephIscsiImageOptionalSettings,
+      cephIscsiImageAdvangedSettings, cephRbdService, cephPoolsService,
+      cephIscsiService) {
     let self = this;
 
     self.fsid = $stateParams.fsid;
@@ -71,6 +72,12 @@ app.component("cephIscsiForm", {
       originalTargetId: null
     };
 
+    var oaPromises = [
+      cephRbdService.get({fsid: self.fsid}).$promise,
+      cephPoolsService.get({fsid: self.fsid}).$promise,
+      cephIscsiService.interfaces({fsid: self.fsid}).$promise
+    ];
+
     var generateTargetId = function () {
       return "iqn.1996-10.com.suse:" + Date.now();
     };
@@ -97,37 +104,34 @@ app.component("cephIscsiForm", {
 
       // Edit existing iSCSI target
     } else {
-      cephIscsiService
+      oaPromises.push(cephIscsiService
         .get({
           fsid: self.fsid,
           targetId: $stateParams.targetId
-        })
-        .$promise
-        .then(function (res) {
-          self.model = res;
-          self.model.fsid = self.fsid;
-          var auth = self.model.authentication;
-          if (!auth.hasMutualAuthentication) {
-            auth.enabledMutualAuthentication = true;
-          }
-          if (!auth.hasDiscoveryAuthentication) {
-            auth.enabledDiscoveryAuthentication = true;
-          }
-          if (!auth.hasDiscoveryMutualAuthentication) {
-            auth.enabledDiscoveryMutualAuthentication = true;
-          }
-          initLunId(self.model);
-          if ($state.current.name === "cephIscsi-clone") {
-            self.model.targetId = generateTargetId();
-            self.model.originalTargetId = null;
-          } else {
-            self.model.originalTargetId = angular.copy(self.model.targetId);
-          }
-        })
-        .catch(function (error) {
-          self.error = error;
-        });
+        }).$promise);
     }
+
+    var resolveModel = function (res) {
+      self.model = res;
+      self.model.fsid = self.fsid;
+      var auth = self.model.authentication;
+      if (!auth.hasMutualAuthentication) {
+        auth.enabledMutualAuthentication = true;
+      }
+      if (!auth.hasDiscoveryAuthentication) {
+        auth.enabledDiscoveryAuthentication = true;
+      }
+      if (!auth.hasDiscoveryMutualAuthentication) {
+        auth.enabledDiscoveryMutualAuthentication = true;
+      }
+      initLunId(self.model);
+      if ($state.current.name === "cephIscsi-clone") {
+        self.model.targetId = generateTargetId();
+        self.model.originalTargetId = null;
+      } else {
+        self.model.originalTargetId = angular.copy(self.model.targetId);
+      }
+    };
 
     self.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
 
@@ -144,11 +148,7 @@ app.component("cephIscsiForm", {
     };
 
     self.allPortals = [];
-    cephIscsiService.interfaces({
-      fsid: self.fsid
-    })
-    .$promise
-    .then(function (portalsFromServer) {
+    var resolvePortals = function (portalsFromServer) {
       angular.forEach(portalsFromServer, function (portalItem) {
         angular.forEach(portalItem.interfaces, function (interfaceItem) {
           self.allPortals.push({
@@ -157,7 +157,7 @@ app.component("cephIscsiForm", {
           });
         });
       });
-    });
+    };
 
     var containsPortalInModel = function (portal) {
       return self.model.portals.some(function (currentPortal) {
@@ -218,28 +218,33 @@ app.component("cephIscsiForm", {
     };
 
     self.allImages = [];
-    cephRbdService.get({
-      fsid: self.fsid
-    })
-      .$promise
-      .then(function (rbds) {
-        cephPoolsService.get({
-          fsid: self.fsid
-        }).$promise.then(function (pools) {
-          angular.forEach(rbds.results, function (rbd) {
-            pools.results.some(function (pool) {
-              if (pool.id === rbd.pool) {
-                self.allImages.push({
-                  name: rbd.name,
-                  pool: pool.name,
-                  hasUnsupportedFeature: containsUnsupportedFeature(rbd.features),
-                  settings: {}
-                });
-                return true;
-              }
+    var resolveRbdsPools = function (rbds, pools) {
+      angular.forEach(rbds.results, function (rbd) {
+        pools.results.some(function (pool) {
+          if (pool.id === rbd.pool) {
+            self.allImages.push({
+              name: rbd.name,
+              pool: pool.name,
+              hasUnsupportedFeature: containsUnsupportedFeature(rbd.features),
+              settings: {}
             });
-          });
+            return true;
+          }
         });
+      });
+    };
+
+    $q.all(oaPromises)
+      .then(data => {
+        resolveRbdsPools(data[0], data[1]);
+        resolvePortals(data[2]);
+        if (data[3]) {
+          resolveModel(data[3]);
+        }
+        self.formDataIsReady = true;
+      })
+      .catch(function (error) {
+        self.error = error;
       });
 
     self.allIscsiImageSettings = cephIscsiImageOptionalSettings.concat(cephIscsiImageAdvangedSettings);

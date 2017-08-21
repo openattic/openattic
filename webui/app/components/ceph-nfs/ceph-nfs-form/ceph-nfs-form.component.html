@@ -10,9 +10,9 @@
   </div>
 
   <oa-loading-panel message="NFS export is loading..."
-                    ng-show="$ctrl.isEditMode() && !error && !$ctrl.model.$resolved"></oa-loading-panel>
+                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error"></oa-loading-panel>
 
-  <form ng-show="!$ctrl.isEditMode() || (!$ctrl.error && $ctrl.model.$resolved)" name="nfsForm"
+  <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="nfsForm"
         role="form" class="form-horizontal" novalidate oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">

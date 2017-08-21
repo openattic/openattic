@@ -1,7 +1,11 @@
 <div class="col-sm-12 col-lg-6">
+  <oa-loading-panel message="Form is loading..."
+      ng-show="!clusters"></oa-loading-panel>
+
   <form name="poolForm"
       role="form"
       class="form-horizontal"
+      ng-show="clusters"
       novalidate
       oa-check-form>
     <div class="panel panel-default">

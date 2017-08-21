@@ -9,10 +9,10 @@
     </div>
   </div>
 
-  <oa-loading-panel message="iSCSI target '{{ $ctrl.targetId }}' is loading..."
-                    ng-show="$ctrl.targetId && !$ctrl.error && !$ctrl.model.$resolved"></oa-loading-panel>
+  <oa-loading-panel message="iSCSI target is loading..."
+                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error"></oa-loading-panel>
 
-  <form ng-show="!$ctrl.targetId || (!$ctrl.error && $ctrl.model.$resolved)" name="iscsiForm" role="form" class="form-horizontal" novalidate>
+  <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="iscsiForm" role="form" class="form-horizontal" novalidate>
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title tc_panelTitle">Target IQN: {{ $ctrl.model.targetId }}</h3>
