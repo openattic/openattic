@@ -70,7 +70,7 @@
      * Get the cells of the specified row.
      * @param itemName The value to identify the data table row.
      */
-    get_list_element_cells: function(itemName) {
+    get_list_element_cells: function(itemName){
       var row = helper.get_list_element(itemName);
       return row.all(by.tagName('td'));
     },
@@ -122,6 +122,8 @@
       element.all(by.model('password')).clear().sendKeys(password);
       element.all(by.css('input[type="submit"]')).click();
     },
+
+    changeInput: (e, val) => e.clear().sendKeys(val).sendKeys(protractor.Key.TAB),
 
     /**
      * Check if the given element has the given class.

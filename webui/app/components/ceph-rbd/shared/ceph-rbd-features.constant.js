@@ -49,9 +49,9 @@ app.constant("cephRbdFeatures", {
     isDisplayed: true
   },
   "stripingv2": {
-    desc: "Striping (currently unsupported)",
-    helpText: "This feature is currently unsupported.",
-    requires: "unsupported",
+    desc: "Striping",
+    helpText: "",
+    requires: null,
     excludes: null,
     isSupportedISCSI: true,
     isDisplayed: true

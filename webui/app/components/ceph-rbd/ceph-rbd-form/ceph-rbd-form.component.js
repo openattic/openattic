@@ -50,6 +50,11 @@ app.component("cephRbdForm", {
     self.data = {
       cluster: null,
       pool: null,
+      striping: {
+        count: 5,
+        unit: 4194304,
+        unitDisplayed: "4 MiB"
+      },
       features: {
         "deep-flatten": {
           checked: false,
@@ -61,7 +66,7 @@ app.component("cephRbdForm", {
         },
         "stripingv2": {
           checked: false,
-          disabled: true
+          disabled: false
         },
         "exclusive-lock": {
           checked: false,
@@ -146,8 +151,7 @@ app.component("cephRbdForm", {
       angular.copy(self.defaultFeatureValues, self.data.features);
     };
 
-    self.updateObjSize = function (jump) {
-      var size = self.data.obj_size;
+    self.getSizeInBytes = (size, jump) => {
       if (size.match(/[+-]+/)) {
         size = size.replace(/[+-]+/, "");
       }
@@ -166,15 +170,68 @@ app.component("cephRbdForm", {
       } else {
         size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
       }
-      self.rbd.obj_size = size;
+      return size;
+    };
+
+    self.updateObjSize = function (newSize, jump) {
+      self.setMutex("obj_size", newSize);
+      self.rbd.obj_size = newSize || self.getSizeInBytes(self.data.obj_size, jump);
+      let size = self.rbd.obj_size;
+      if (!$scope.rbdForm.stripingUnit) {
+        self.updateStripingUnit(size);
+      }
+      if (self.data.striping.unit > size) {
+        self.updateStripingUnit(size);
+      }
       self.data.obj_size = $filter("bytes")(size);
     };
 
-    self.objSizeChange = function (event) {
+    self.updateStripingUnit = (newSize, jump) => {
+      self.setMutex("stripingUnit", newSize);
+      self.data.striping.unit = newSize || self.getSizeInBytes(self.data.striping.unitDisplayed, jump);
+      let unit = self.data.striping.unit;
+      if (unit > self.rbd.obj_size) {
+        self.updateObjSize(unit);
+      }
+      self.data.striping.unitDisplayed = $filter("bytes")(unit);
+      self.data.striping.unit = unit;
+    };
+
+    self.setMutex = (inputName, setLock) => {
+      if (!$scope.rbdForm[inputName]) {
+        return;
+      }
+      if (setLock) {
+        self.changedField = inputName;
+        $scope.rbdForm[inputName].$touched = false;
+        $scope.rbdForm[inputName].$untouched = true;
+      } else {
+        if (self.changedField === inputName) {
+          self.changedField = undefined;
+        }
+      }
+    };
+
+    self.stripingDescription = () => {
+      const striping = self.data.striping;
+      const stripeSize = striping.count * striping.unit;
+      const objectSetSize = striping.count * self.rbd.obj_size;
+      const stripeSum = objectSetSize / stripeSize;
+      return [
+        stripeSum === 1 ? "Each" : stripeSum + " stripes",
+        "(" + $filter("bytes")(stripeSize) + ")",
+        "spans accross",
+        striping.count,
+        "Objects",
+        "(" + $filter("bytes")(objectSetSize) + ")"
+      ].join(" ");
+    };
+
+    self.sizeChange = function (event, callback) {
       if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
-        self.updateObjSize(39 - event.keyCode);
+        callback(undefined, 39 - event.keyCode);
       } else if (event.keyCode === 187 || event.keyCode === 189) {
-        self.updateObjSize(188 - event.keyCode);
+        callback(undefined, 188 - event.keyCode);
       }
     };
 
@@ -318,13 +375,17 @@ app.component("cephRbdForm", {
     self.submitAction = function (rbdForm) {
       if (rbdForm.$valid) {
         if (!self.data.defaultFeatures) {
-          var features = [];
-          for (var feature in self.data.features) {
-            if (self.data.features[feature].checked) {
-              features.push(feature);
+          let features = [];
+          angular.forEach(self.data.features, (feature, featureName) => {
+            if (feature.checked) {
+              features.push(featureName);
             }
-          }
+          });
           self.rbd.features = features;
+          if (features.indexOf("stripingv2") !== -1) {
+            self.rbd.stripe_count = self.data.striping.count;
+            self.rbd.stripe_unit = self.data.striping.unit;
+          }
         }
         self.rbd.pool = self.data.pool.id;
         if (self.data.useDataPool) {
