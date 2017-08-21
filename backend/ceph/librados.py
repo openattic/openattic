@@ -64,6 +64,18 @@ class _ClusterSettingsListener(oa_settings.SettingsListener):
 _clusterSettingsListener = _ClusterSettingsListener()
 
 
+def sort_by_prioritized_users(elem):
+    # Priorities:
+    # 1. string that contains openattic
+    # 2. string that contains admin
+    # 3. everything else
+    if 'openattic' in elem:
+        return 0, elem
+    if 'admin' in elem:
+        return 1, elem
+    return 2, elem
+
+
 class ClusterConf(object):
     def __init__(self, file_path):
         """:type file_path: str | unicode"""
@@ -137,7 +149,8 @@ class ClusterConf(object):
             except RuntimeError:
                 return None
 
-        return filter(None, map(keyring_or_none, keyrings))
+        keyrings = filter(None, map(keyring_or_none, keyrings))
+        return sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
     @cached_property
     def client(self):
@@ -204,7 +217,7 @@ class Keyring(object):
             pass
 
         try:
-            self.available_user_names = _config.sections()
+            self.available_user_names = sorted(_config.sections(), key=sort_by_prioritized_users)
             if self.user_name is None:
                 self.user_name = self.available_user_names[0]
             if self.user_name not in self.available_user_names:
