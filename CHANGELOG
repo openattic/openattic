@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 Added
 ~~~~~
 * WebUI: No clusters configured message on settings page (OP-2535)
+* Backend: Provide Ceph pool application metadata in the API (OP-2593)
 
 Changed
 ~~~~~~~

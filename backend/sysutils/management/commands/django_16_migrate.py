@@ -156,6 +156,14 @@ class SqlMigration(object):
             insert_into_django_migrations(self.app, unicode(self.name), cursor)
 
 
+def MigrationWithoutSQL(app, name):
+    """
+    This migration has to be inserted into the database, but has no SQL attached to it, thus it
+    does not really alter the database.
+    """
+    return SqlMigration(app, name, None, None)
+
+
 class FixLocalhostMigration(SqlMigration):
     app = 'ifconfig'
     name = '0004_fix_current_host_localhost'
@@ -211,8 +219,8 @@ _migrations = [
         );
         """
     ),
-    SqlMigration(
-        'ifconfig', u'0001_initial', None, None
+    MigrationWithoutSQL(
+        'ifconfig', u'0001_initial'
     ),
     SqlMigration(
         'ifconfig', u'0002_auto_20160329_1248',
@@ -233,17 +241,17 @@ _migrations = [
         COMMIT;
         """
     ),
-    SqlMigration(
-        'ceph', u'0001_initial', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0001_initial'
     ),
-    SqlMigration(
-        'ceph', u'0002_auto_20161007_1921', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0002_auto_20161007_1921'
     ),
-    SqlMigration(
-        'ceph', u'0003_allow_blanks_in_cephpool', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0003_allow_blanks_in_cephpool'
     ),
-    SqlMigration(
-        'taskqueue', u'0001_initial', None, None
+    MigrationWithoutSQL(
+        'taskqueue', u'0001_initial'
     ),
     SqlMigration(
         'taskqueue', u'0002_taskqueue_description_textfield',
@@ -299,8 +307,8 @@ _migrations = [
         DROP TABLE "ceph_cluster" CASCADE;
         """
     ),
-    SqlMigration(
-        'sysutils', u'0001_initial', None, None
+    MigrationWithoutSQL(
+        'sysutils', u'0001_initial'
     ),
     SqlMigration(
         'sysutils', u'0002_delete_initscript',
@@ -332,8 +340,8 @@ _migrations = [
         COMMIT;
         """
     ),
-    SqlMigration(
-        'ceph', u'0001_squashed_0004_rm_models_based_on_storageobj', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0001_squashed_0004_rm_models_based_on_storageobj'
     ),
     SqlMigration(
         'volumes', u'0002_remove',
@@ -369,8 +377,8 @@ _migrations = [
         COMMIT;
         """
     ),
-    SqlMigration(
-        'ceph_iscsi', u'0001_initial', None, None
+    MigrationWithoutSQL(
+        'ceph_iscsi', u'0001_initial'
     ),
     FixLocalhostMigration(),
     SqlMigration(
@@ -382,8 +390,8 @@ _migrations = [
         COMMIT;
         """
     ),
-    SqlMigration(
-        'ceph_nfs', u'0001_initial', None, None
+    MigrationWithoutSQL(
+        'ceph_nfs', u'0001_initial'
     ),
     SqlMigration(
         'ceph', u'0006_cephosd_osd_objectstore',
@@ -395,8 +403,8 @@ _migrations = [
         COMMIT;
         """
     ),
-    SqlMigration(
-        'ceph', u'0007_cephpool_flags_editable', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0007_cephpool_flags_editable'
     ),
     SqlMigration(
         'ceph', u'0008_rbd_stripe_info.py',
@@ -410,14 +418,14 @@ _migrations = [
         COMMIT;
         """
     ),
-    SqlMigration(
-        'ceph', u'0009_cephpool_flags_default', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0009_cephpool_flags_default'
     ),
-    SqlMigration(
-        'ceph', u'0010_remove_cephcluster_performance_data_options', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0010_remove_cephcluster_performance_data_options'
     ),
-    SqlMigration(
-        'ceph', u'0011_cephrbd_features_default', None, None
+    MigrationWithoutSQL(
+        'ceph', u'0011_cephrbd_features_default'
     ),
     SqlMigration(
         'ceph', u'0012_cephpool_compression',
@@ -496,7 +504,10 @@ _migrations = [
         DROP TABLE "ifconfig_netdevice" CASCADE;
         COMMIT;
         """
-        )
+    ),
+    MigrationWithoutSQL(
+        'ceph', u'0015_cephpool_application_metadata'
+    ),
 ]
 
 
