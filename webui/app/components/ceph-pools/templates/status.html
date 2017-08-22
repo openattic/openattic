@@ -3,7 +3,6 @@
         <h3 class="panel-title">Status of {{selection.item.name}}</h3>
     </div>
     <div class="panel-body">
-        <h2>Detailed information</h2>
         <dl class="dl-horizontal">
             <dt>ID:</dt>
             <dd ng-bind="selection.item.id"></dd>
@@ -15,6 +14,11 @@
                 <dt>Used:</dt>
                 <dd ng-bind="selection.item.num_bytes | bytes"></dd>
             </div>
+            <dt>Applications:</dt>
+            <dd ng-bind="selection.item.showApps"
+                ng-hide="selection.item.application_metadata.length === 0">
+            </dd>
+            <dd ng-show="selection.item.application_metadata.length === 0">None</dd>
             <dt>Placement Groups:</dt>
             <dd ng-bind="selection.item.pg_num"></dd>
             <div ng-show="selection.item.type === 'replicated'">
