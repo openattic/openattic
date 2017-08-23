@@ -26,6 +26,8 @@ Added
 Changed
 ~~~~~~~
 
+* Backend: Removed some outdated and unused Django models (OP-2586)
+
 Fixed
 ~~~~~
 * WebUI: OSD, RBD and Pool tabs are broken without DeepSea (OP-2571)
