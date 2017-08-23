@@ -196,7 +196,7 @@ class ProcessResult(object):
         return self.returncode == 0
 
 
-def process_run(args, cwd=None, env=None):
+def process_run(args, cwd=None, env=None, exit_on_error=True):
     log_command(args, cwd)
 
     pipe = subprocess.Popen(args,
@@ -224,7 +224,7 @@ def process_run(args, cwd=None, env=None):
                            os.linesep.join(tmp_result['stderr']),
                            returncode=pipe.wait())
 
-    if not result.success():
+    if not result.success() and exit_on_error:
         # Print stdout on failure too. Some tools like Grunt print errors to stdout!
         if result.stdout and log.level >= logging.DEBUG:
             # Only print stdout if already printed, otherwise we
@@ -330,7 +330,9 @@ def _commit_changes(commit_msg, repo_dir):
     :rtype: ProcessResult
     """
     process_run(['git', 'add', '--all'], cwd=repo_dir)
-    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg], cwd=repo_dir)
+    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg],
+                       cwd=repo_dir,
+                       exit_on_error=False)
 
 
 def _push_changes(repo_dir):
