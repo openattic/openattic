@@ -62,10 +62,6 @@ class KeyringTestCase(TestCase):
 
 
 class CephPoolTestCase(TestCase):
-    def setUp(self):
-        if Host.objects.get_current() is None:
-            Host.insert_current_host()
-
     mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
 
     @mock.patch('ceph.models.CephPool.objects')
