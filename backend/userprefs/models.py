@@ -18,14 +18,12 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 
-from ifconfig.models import Host, HostDependentManager
+from ifconfig.models import Host
 
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User)
     host = models.ForeignKey(Host)
-
-    objects = HostDependentManager()
 
     class Meta:
         unique_together = ("user", "host")
