@@ -27,6 +27,8 @@ Changed
 ~~~~~~~
 
 * Backend: Removed some outdated and unused Django models (OP-2586)
+* Backend: Prefer the openattic (firstly) and the admin (secondly) keyring
+  user over any other (OP-2523)
 
 Fixed
 ~~~~~
