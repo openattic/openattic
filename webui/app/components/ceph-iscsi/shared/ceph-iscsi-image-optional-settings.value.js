@@ -32,20 +32,20 @@
 
 var app = angular.module("openattic.cephIscsi");
 app.value("cephIscsiImageOptionalSettings", [
-    {
-      property: "uuid",
-      help: ""
-    },
-    {
-      property: "retries",
-      help: ""
-    },
-    {
-      property: "sleep",
-      help: ""
-    },
-    {
-      property: "retry_errors",
-      help: ""
-    }
-  ]);
+  {
+    property: "uuid",
+    help: ""
+  },
+  {
+    property: "retries",
+    help: ""
+  },
+  {
+    property: "sleep",
+    help: ""
+  },
+  {
+    property: "retry_errors",
+    help: ""
+  }
+]);

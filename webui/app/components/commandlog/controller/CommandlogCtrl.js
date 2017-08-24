@@ -54,10 +54,10 @@ app.controller("CommandlogCtrl", function ($scope, $state, commandlogService, $u
       search: $scope.filterConfig.search,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })
-        .$promise
-        .then(function (res) {
-          $scope.data = res;
-        });
+      .$promise
+      .then(function (res) {
+        $scope.data = res;
+      });
   }, true);
 
   $scope.$watchCollection("selection.items", function (items) {

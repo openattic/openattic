@@ -33,16 +33,16 @@
 var app = angular.module("openattic.dashboard");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("dashboard", {
-        url          : "/dashboard",
-        views        : {
-          "main": {
-            templateUrl: "components/dashboard/templates/dashboard.html",
-            controller : "DashboardCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Dashboard"
+    .state("dashboard", {
+      url          : "/dashboard",
+      views        : {
+        "main": {
+          templateUrl: "components/dashboard/templates/dashboard.html",
+          controller : "DashboardCtrl"
         }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "Dashboard"
+      }
+    });
 });

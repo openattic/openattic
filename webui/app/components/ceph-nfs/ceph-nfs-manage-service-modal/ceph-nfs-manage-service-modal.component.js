@@ -68,12 +68,12 @@ app.component("cephNfsManageServiceModal", {
     cephNfsService.hosts({
       fsid: self.resolve.fsid
     })
-    .$promise
-    .then(function (res) {
-      self.hosts = {};
-      self.hostnames = $filter("orderBy")(res.hosts);
-      updateStates();
-    });
+      .$promise
+      .then(function (res) {
+        self.hosts = {};
+        self.hostnames = $filter("orderBy")(res.hosts);
+        updateStates();
+      });
 
     var dirty = false;
 

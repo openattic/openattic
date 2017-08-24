@@ -31,8 +31,8 @@
 "use strict";
 
 angular.module("openattic.apidecorator", [
-    "openattic.notification"
-  ])
+  "openattic.notification"
+])
   .config(function ($httpProvider) {
     $httpProvider.interceptors.push("ApiHttpErrorInterceptor");
     $httpProvider.interceptors.push("ApiHttpTimeoutInterceptor");

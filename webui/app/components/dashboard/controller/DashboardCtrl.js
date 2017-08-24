@@ -110,9 +110,9 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   $scope.editDashboard = function () {
     var modalInstance = $uibModal.open(composeModalConfig({
-        "type": "dashboard",
-        "name": $scope.dashboard.name
-      }));
+      "type": "dashboard",
+      "name": $scope.dashboard.name
+    }));
 
     modalInstance.result.then(function (data) {
       $scope.dashboard.name = data.name;
@@ -183,9 +183,9 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   $scope.addWidget = function () {
     var modalInstance = $uibModal.open(composeModalConfig({
-        "manager" : $scope.manager,
-        "settings": {}
-      }));
+      "manager" : $scope.manager,
+      "settings": {}
+    }));
 
     modalInstance.result.then(function (data) {
       var idx = $scope.dashboard.widgets.length;
@@ -207,12 +207,12 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   $scope.editWidget = function (idx, name) {
     var modalInstance = $uibModal.open(composeModalConfig({
-        "type"           : "widget",
-        "name"           : name,
-        "manager"        : $scope.manager,
-        "selectedManager": $scope.dashboard.widgets[idx].manager,
-        "settings"       : $scope.dashboard.widgets[idx].settings
-      }));
+      "type"           : "widget",
+      "name"           : name,
+      "manager"        : $scope.manager,
+      "selectedManager": $scope.dashboard.widgets[idx].manager,
+      "settings"       : $scope.dashboard.widgets[idx].settings
+    }));
 
     modalInstance.result.then(function (data) {
       $scope.dashboard.widgets[idx].name = data.name;
@@ -326,47 +326,47 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   var init = function () {
     dashboardService
-        .get({"search": dashboardKey})
-        .$promise
-        .then(function (res) {
-          // load dashboard
-          if (res.results[0].preferences.hasOwnProperty(dashboardKey)) {
-            $scope.data = res.results[0].preferences[dashboardKey];
-            $scope.dashboard = $scope.data.boards[$scope.data.settings.activeBoard];
-            return;
+      .get({"search": dashboardKey})
+      .$promise
+      .then(function (res) {
+        // load dashboard
+        if (res.results[0].preferences.hasOwnProperty(dashboardKey)) {
+          $scope.data = res.results[0].preferences[dashboardKey];
+          $scope.dashboard = $scope.data.boards[$scope.data.settings.activeBoard];
+          return;
+        }
+
+        // if no dashboard is saved, create default
+        try {
+          verifyDashboardConfig();
+          $scope.data = globalConfig.GUI.defaultDashboard;
+
+          setIds();
+          var obj = {};
+          obj[dashboardKey] = $scope.data;
+          if ($scope.data.settings.activeBoard > ($scope.data.boards.length - 1) ||
+              $scope.data.settings.activeBoard < 0) {
+            $scope.data.settings.activeBoard = 0;
           }
-
-          // if no dashboard is saved, create default
-          try {
-            verifyDashboardConfig();
-            $scope.data = globalConfig.GUI.defaultDashboard;
-
-            setIds();
-            var obj = {};
-            obj[dashboardKey] = $scope.data;
-            if ($scope.data.settings.activeBoard > ($scope.data.boards.length - 1) ||
-                $scope.data.settings.activeBoard < 0) {
-              $scope.data.settings.activeBoard = 0;
+          $scope.dashboard = $scope.data.boards[$scope.data.settings.activeBoard];
+        } catch (error) {
+          $scope.data = {
+            "boards"  : [{
+              "id"     : 0,
+              "name"   : "Default",
+              "widgets": []
+            }],
+            "settings": {
+              "activeBoard": 0,
+              "locked"     : false
             }
-            $scope.dashboard = $scope.data.boards[$scope.data.settings.activeBoard];
-          } catch (error) {
-            $scope.data = {
-              "boards"  : [{
-                "id"     : 0,
-                "name"   : "Default",
-                "widgets": []
-              }],
-              "settings": {
-                "activeBoard": 0,
-                "locked"     : false
-              }
-            };
-          } finally {
-            $scope.saveDashboard();
-          }
-        }).catch(function (error) {
-          error.ignoreStatusCode(401);
-        });
+          };
+        } finally {
+          $scope.saveDashboard();
+        }
+      }).catch(function (error) {
+        error.ignoreStatusCode(401);
+      });
   };
 
   // watcher

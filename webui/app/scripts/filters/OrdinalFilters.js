@@ -42,10 +42,10 @@ app.filter("ordinal", function () {
     if (isNaN(num)) {
       return value;
     }
-    return value + (Math.floor(num / 10) === 1 ? "th"
-      : (num % 10 === 1 ? "st"
-        : (num % 10 === 2 ? "nd"
-          : (num % 10 === 3 ? "rd"
-            : "th"))));
+    return value + (Math.floor(num / 10) === 1 ? "th" :
+      (num % 10 === 1 ? "st" :
+        (num % 10 === 2 ? "nd" :
+          (num % 10 === 3 ? "rd" :
+            "th"))));
   };
 });

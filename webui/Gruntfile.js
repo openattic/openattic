@@ -63,7 +63,7 @@ module.exports = function (grunt) {
       watch: {
         dev: {
           files: buildConfig.watchFiles,
-          tasks: ["htmlbuild:dev", "jshint", "jscs"]
+          tasks: ["htmlbuild:dev", "eslint"]
         }
       },
 
@@ -124,21 +124,11 @@ module.exports = function (grunt) {
         }
       },
 
-      // check source files for violations of jshint rules defined in .jshintrc
-      jshint: {
+      // check source files for violations of eslint rules
+      eslint: {
         options: {
-          jshintrc: ".jshintrc"
-        },
-        all: [
-          "<%= buildConfig.src %>scripts/{,**/}*.js",
-          "<%= buildConfig.src %>components/{,**/}*.js"
-        ]
-      },
-
-      // check source files for violations of jscs rules defined in .jscsrc
-      jscs: {
-        options: {
-          config: ".jscsrc"
+          useEslintrc: false,
+          configFile: "grunt.eslintrc.json"
         },
         all: [
           "<%= buildConfig.src %>scripts/{,**/}*.js",
@@ -151,7 +141,7 @@ module.exports = function (grunt) {
         options: {
           sourceMap: false,
           compact: true,
-          presets: ['es2015']
+          presets: ["es2015"]
         },
         dist: {
           files: [{
@@ -239,7 +229,7 @@ module.exports = function (grunt) {
 
       uglify: {
         options: {
-          report: 'min',
+          report: "min",
           mangle: false
         }
       }
@@ -256,8 +246,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask("inspect", [
-    "jshint",
-    "jscs"
+    "eslint"
   ]);
 
   grunt.registerTask("build", [

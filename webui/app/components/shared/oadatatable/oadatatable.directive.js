@@ -44,13 +44,13 @@ app.directive("oadatatable", function () {
       special: "="
     },
     link: function (scope, element, attr, controller, transclude) {
-      transclude(scope, function (clone, scope) {
+      transclude(scope, function (clone, _scope) {
         element.find(".oadatatableactions").append(clone.filter("actions")).append(clone.filter("additional-actions"));
         element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
-          scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
+          _scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
           if (item.attributes.sortfield) {
-            scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
+            _scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
           }
         });
       });

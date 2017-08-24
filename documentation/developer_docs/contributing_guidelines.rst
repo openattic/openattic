@@ -29,14 +29,13 @@ tracking them:
 * Existing code can be refactored to adhere to PEP 8, if you feel like it.
   However, such style changes must be committed separately from other code
   modifications, to ease the reviewing of such pull requests.
-* For JavaScript code, we use `grunt-jscs <grunt-tasks.com/grunt-jscs/>`_  and
-  `grunt-contrib-jshint <https://github.com/gruntjs/grunt-contrib-jshint/>`_ to
-  perform automated syntax and style checks of the JavaScript code. The
-  configuration files for these WebUI tests can be found in file
-  ``webui/.jshintrc`` and ``webui/.jscsrc``, please consult them for more
-  details on the coding style and conventions. By running ``grunt inspect
-  --force`` on the command line, you can check the quality of your JavaScript
-  code.
+* For JavaScript code, we use
+  `grunt-eslint <https://github.com/sindresorhus/grunt-eslint/>`_ to perform
+  automated syntax and style checks of the JavaScript code. The configuration
+  files for these WebUI tests can be found in file ``webui/.eslintrc.json`` and
+  ``webui/grunt.eslintrc.json``, please consult them for more details on the
+  coding style and conventions. By running ``grunt inspect --force`` on the
+  command line, you can check the quality of your JavaScript code.
 * Every bug fix or notable change made to a release branch must be accompanied
   by a `JIRA issue <https://tracker.openattic.org/>`_. The issue ID must be
   mentioned in the summary of the commit message and pull request in the
@@ -55,7 +54,7 @@ tracking them:
   Science (or Art?) of Commit Messages
   <http://www.joinfu.com/2012/01/the-science-of-commit-messages/>`_ and `How to
   Write a Git Commit Message <http://chris.beams.io/posts/git-commit/>`_
-* When resolving a JIRA issue as fixed, include the resulting git 
+* When resolving a JIRA issue as fixed, include the resulting git
   revision ID or add a link to the ChangeSet or related pull request on
   BitBucket for reference. This makes it easier to review the code changes
   that resulted from a bug report or feature request.

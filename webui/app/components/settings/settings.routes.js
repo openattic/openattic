@@ -33,15 +33,15 @@
 var app = angular.module("openattic.settings");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("settings", {
-        url: "/settings",
-        views: {
-          "main": {
-            component: "settingsForm"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Settings"
+    .state("settings", {
+      url: "/settings",
+      views: {
+        "main": {
+          component: "settingsForm"
         }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "Settings"
+      }
+    });
 });

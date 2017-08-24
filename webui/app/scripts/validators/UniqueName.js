@@ -105,8 +105,8 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
           };
           query[ctrl.field] = modelValue;
           obj.model.query(query)
-              .$promise
-              .then(resCheck);
+            .$promise
+            .then(resCheck);
         }, 300);
       });
     }

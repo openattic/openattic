@@ -37,13 +37,13 @@ app.directive("userinfo", function () {
     templateUrl: "components/userinfo/templates/userinfo.html",
     controller: function ($rootScope, usersService) {
       usersService.current()
-      .$promise
-      .then(function (res) {
-        $rootScope.user = res;
-      })
-      .catch(function (error) {
-        error.ignoreStatusCode(401);
-      });
+        .$promise
+        .then(function (res) {
+          $rootScope.user = res;
+        })
+        .catch(function (error) {
+          error.ignoreStatusCode(401);
+        });
     }
   };
 });
