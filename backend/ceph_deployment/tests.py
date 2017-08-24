@@ -531,3 +531,60 @@ class DeepSeaTestCase(TestCase):
                  'public_network': '10.0.0.0/19', 'cluster_network': '10.0.0.0/19',
                  'stage_prep_master': 'default'}
             ])
+
+
+    def test_deepsea_get_minions_no_public_network(self):
+        """Regression test for OP-2595: DeepSea's pillar data doesn't contain "public_network" """
+        with mock.patch("requests.Session") as mock_requests_session:
+            resp_pillar = mock.MagicMock()
+            resp_pillar.ok = True
+            resp_pillar.status_code = 200
+            resp_pillar.json.return_value = {
+                'return': [{
+                    'minion1': {
+                        u'time_init': u'ntp',
+                        u'roles': [u'storage'],
+                        u'time_server': u'ses-node01',
+                        u'master_minion': u'ses-node01',
+                        u'benchmark': {u'log-file-directory': u'/var/log/ceph_bench_logs',
+                                       u'job-file-directory': u'/run/ceph_bench_jobs',
+                                       u'default-collection': u'simple.yml',
+                                       u'work-directory': u'/run/ceph_bench'},
+                        u'cluster': u'unassigned', u'deepsea_minions': u'*'
+                    },
+                }]
+            }
+            mock_requests_session().post.side_effect = [self._login_resp, resp_pillar]
+
+            resp = mock.MagicMock()
+            resp.ok = True
+            resp.status_code = 200
+            resp.json.return_value = {
+                'return': {
+                    'minions': ['minion1'],
+                    'minions_pre': [],
+                    'minions_denied': [],
+                    'minions_rejected': []
+                }
+            }
+            mock_requests_session().get.return_value = resp
+
+            api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
+            res = api.get_minions()
+
+            self.assertEqual(res, [
+                    {
+                        'hostname': 'minion1',
+                        'key_status': 'accepted',
+                        u'time_init': u'ntp',
+                        u'roles': [u'storage'],
+                        u'time_server': u'ses-node01',
+                        u'master_minion': u'ses-node01',
+                        u'benchmark': {u'log-file-directory': u'/var/log/ceph_bench_logs',
+                                       u'job-file-directory': u'/run/ceph_bench_jobs',
+                                       u'default-collection': u'simple.yml',
+                                       u'work-directory': u'/run/ceph_bench'},
+                        u'cluster': u'unassigned', u'deepsea_minions': u'*'
+                    }
+                ]
+            )

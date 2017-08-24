@@ -85,9 +85,9 @@ class DeepSea(RestClient, SettingsListener):
         return response['return']
 
     @RestClient.api_post('/', resp_structure='return[0] >> (?roles[*] & ?public_address &'
-                                             '              public_network & cluster_network &'
-                                             '              fsid & mon_host[*] &'
-                                             '              mon_initial_members[*])')
+                                             '              ?public_network & ?cluster_network &'
+                                             '              ?fsid & ?mon_host[*] &'
+                                             '              ?mon_initial_members[*])')
     @RestClient.requires_login
     def pillar_items(self, request=None):
         """
