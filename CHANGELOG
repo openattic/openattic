@@ -36,6 +36,7 @@ Fixed
 * WebUI: Error after remove iSCSI "Discovery authentication" (OP-2550)
 * Packaging: Fixed regression in make_dist.py which caused `cache push`
   to fail on empty cache (OP-2587)
+* WebUI: Fix wrong angular module declaration (OP-2588)
 
 [3.4.3] - 2017-08-17
 --------------------

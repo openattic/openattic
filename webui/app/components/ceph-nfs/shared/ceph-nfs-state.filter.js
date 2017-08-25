@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.cephNfs");
 
 app.filter("cephNfsState", function () {
 
