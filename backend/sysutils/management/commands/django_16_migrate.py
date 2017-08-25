@@ -508,6 +508,9 @@ _migrations = [
     MigrationWithoutSQL(
         'ceph', u'0015_cephpool_application_metadata'
     ),
+    MigrationWithoutSQL(
+        'ceph', u'0016_cephcluster_osd_flags'
+    ),
 ]
 
 
