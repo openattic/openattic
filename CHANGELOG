@@ -48,6 +48,11 @@ Fixed
   ${SYSD_PIDFILE}" in service file (OP-2570)
 * WebUI/QA: Refactored pool form element verification (OP-2609)
 
+Removed
+~~~~~~~
+* Packaging: Removed all unnecessary (local storage related) packages
+  from the spec file (OP-2211)
+
 [3.4.3] - 2017-08-17
 --------------------
 

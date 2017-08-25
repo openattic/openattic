@@ -106,10 +106,6 @@ class Command(BaseCommand):
             cmd.handle_noargs(noinput=False, verbosity=verbosity, database=DEFAULT_DB_ALIAS)
             call_command('django_16_migrate')
 
-        try:
-            call_command('createcachetable', 'status_cache')
-        except CommandError:
-            pass
         call_command('add-host')
 
     def post_install(self, **options):
