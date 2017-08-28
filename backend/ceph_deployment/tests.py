@@ -337,20 +337,15 @@ class DeepSeaTestCase(TestCase):
                 'return': [{
                     'minion1': {
                         'roles': ['storage', 'mon', 'igw'],
-                        'public_address': '10.1.0.1',
                         'public_network': '10.1.0.0/24',
                         'cluster_network': '10.1.0.0/24',
                         'fsid': 'aaabbb',
-                        'mon_host': ['10.1.0.1'],
-                        'mon_initial_members': ['minion1']
                     },
                     'minion2': {
                         'roles': ['storage', 'rgw'],
                         'public_network': '10.1.0.0/24',
                         'cluster_network': '10.1.0.0/24',
                         'fsid': 'aaabbb',
-                        'mon_host': ['10.1.0.1'],
-                        'mon_initial_members': ['minion1']
                     }
                 }]
             }
@@ -364,20 +359,15 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(res, {
                 'minion1': {
                     'roles': ['storage', 'mon', 'igw'],
-                    'public_address': '10.1.0.1',
                     'public_network': '10.1.0.0/24',
                     'cluster_network': '10.1.0.0/24',
                     'fsid': 'aaabbb',
-                    'mon_host': ['10.1.0.1'],
-                    'mon_initial_members': ['minion1']
                 },
                 'minion2': {
                     'roles': ['storage', 'rgw'],
                     'public_network': '10.1.0.0/24',
                     'cluster_network': '10.1.0.0/24',
                     'fsid': 'aaabbb',
-                    'mon_host': ['10.1.0.1'],
-                    'mon_initial_members': ['minion1']
                 }
             })
 
@@ -390,20 +380,15 @@ class DeepSeaTestCase(TestCase):
                 'return': [{
                     'minion1': {
                         'roles': ['storage', 'mon', 'igw'],
-                        'public_address': '10.1.0.1',
                         'public_network': '10.1.0.0/24',
                         'cluster_network': '10.1.0.0/24',
                         'fsid': 'aaabbb',
-                        'mon_host': ['10.1.0.1'],
-                        'mon_initial_members': ['minion1']
                     },
                     'minion2': {
                         'roles': ['storage', 'rgw'],
                         'public_network': '10.1.0.0/24',
                         'cluster_network': '10.1.0.0/24',
                         'fsid': 'aaabbb',
-                        'mon_host': ['10.1.0.1'],
-                        'mon_initial_members': ['minion1']
                     }
                 }]
             }
@@ -431,14 +416,11 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(res, [
                 {
                     'roles': ['storage', 'mon', 'igw'],
-                    'public_address': '10.1.0.1',
                     'hostname': 'minion1',
                     'key_status': 'accepted',
                     'public_network': '10.1.0.0/24',
                     'cluster_network': '10.1.0.0/24',
                     'fsid': 'aaabbb',
-                    'mon_host': ['10.1.0.1'],
-                    'mon_initial_members': ['minion1']
                 },
                 {
                     'roles': ['storage', 'rgw'],
@@ -447,8 +429,6 @@ class DeepSeaTestCase(TestCase):
                     'key_status': 'rejected',
                     'cluster_network': '10.1.0.0/24',
                     'fsid': 'aaabbb',
-                    'mon_host': ['10.1.0.1'],
-                    'mon_initial_members': ['minion1']
                 }
             ])
 
@@ -484,9 +464,7 @@ class DeepSeaTestCase(TestCase):
                         "time_server": "master_minion.openattic.org",
                         "igw_config": "default-ui",
                         "cluster": "ceph",
-                        "mon_host": ["10.0.0.5", "10.0.0.2", "10.0.0.4", "10.0.0.3"],
                         "public_network": "10.0.0.0/19",
-                        "mon_initial_members": ["minion1"],
                         "cluster_network": "10.0.0.0/19",
                         "stage_prep_master": "default",
                         "fsid": "c0f85b6a-70d7-4c49-81fa-64ed80069e24"
@@ -518,7 +496,7 @@ class DeepSeaTestCase(TestCase):
                                'work-directory': '/run/cephfs_bench'},
                  'master_minion': 'master_minion.openattic.org',
                  'time_server': 'master_minion.openattic.org', 'igw_config': 'default-ui',
-                 'cluster': 'ceph', 'mon_initial_members': ['minion1'],
+                 'cluster': 'ceph',
                  'fsid': 'c0f85b6a-70d7-4c49-81fa-64ed80069e24', 'time_init': 'ntp',
                  'rgw_configurations': {'rgw': {
                      'users': {'uid': 'admin', 'email': 'admin@admin.nil', 'name': 'Admin',
@@ -527,7 +505,6 @@ class DeepSeaTestCase(TestCase):
                                      'rgw', 'ganesha', 'client-cephfs', 'client-radosgw',
                                      'client-iscsi', 'client-nfs', 'master'], 'hostname': 'minion1',
                  'key_status': 'accepted',
-                 'mon_host': ['10.0.0.5', '10.0.0.2', '10.0.0.4', '10.0.0.3'],
                  'public_network': '10.0.0.0/19', 'cluster_network': '10.0.0.0/19',
                  'stage_prep_master': 'default'}
             ])

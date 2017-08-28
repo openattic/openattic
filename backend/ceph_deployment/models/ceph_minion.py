@@ -34,15 +34,12 @@ class CephMinion(NodbModel):
     ]
 
     hostname = models.CharField(max_length=250, primary_key=True, editable=False)
-    public_address = models.CharField(max_length=100, null=True, blank=True, editable=False)
     cluster = models.ForeignKey(CephCluster, blank=True, null=True)
     public_network = models.CharField(max_length=100, blank=True, null=True, editable=False)
     cluster_network = models.CharField(max_length=100, blank=True, null=True, editable=False)
     key_status = models.CharField(max_length=100, choices=[(c, c) for c in KEY_STATES])
     roles = JsonField(base_type=list, null=True, blank=True)
     storage = JsonField(base_type=dict, null=True, blank=True)
-    mon_initial_members = JsonField(base_type=list, editable=False, null=True, blank=True)
-    mon_host = JsonField(base_type=list, editable=False, null=True, blank=True)
 
     @staticmethod
     def get_all_objects(context, query):
@@ -53,5 +50,5 @@ class CephMinion(NodbModel):
         for minion in minions:
             minion['cluster_id'] = minion['fsid'] if 'fsid' in minion else None
 
-        return [CephMinion(**CephMinion.make_model_args(host, ['public_address', 'storage', 'public_network', 'cluster_network', 'roles', 'mon_initial_members', 'mon_host']))
+        return [CephMinion(**CephMinion.make_model_args(host, ['storage', 'public_network', 'cluster_network', 'roles']))
                 for host in minions]
