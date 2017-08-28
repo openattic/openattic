@@ -685,6 +685,30 @@ class MonApi(object):
                                       output_format='string')
 
     @undoable
+    def osd_pool_application_enable(self, pool, app):
+        """COMMAND("osd pool application enable " \
+        "name=pool,type=CephPoolname " \
+        "name=app,type=CephString,goodchars=[A-Za-z0-9-_.] " \
+        "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>",
+        "osd", "rw", "cli,rest")"""
+        yield self._call_mon_command('osd pool application enable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
+                                     output_format='string')
+        self.osd_pool_application_disable(pool, app)
+
+    @undoable
+    def osd_pool_application_disable(self, pool, app):
+        """COMMAND("osd pool application disable " \
+        "name=pool,type=CephPoolname " \
+        "name=app,type=CephString " \
+        "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "disables use of an application <app> on pool <poolname>",
+        "osd", "rw", "cli,rest")"""
+        yield self._call_mon_command('osd pool application disable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
+                                     output_format='string')
+        self.osd_pool_application_enable(pool, app)
+
+    @undoable
     def osd_tier_add(self, pool, tierpool):
         """
         COMMAND("osd tier add " \
