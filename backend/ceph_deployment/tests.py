@@ -10,10 +10,13 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import json
+
 from django.test import TestCase
 from mock import mock
 from requests import ConnectionError
 
+from ceph_deployment.models.ceph_minion import all_metadata, merge_pillar_metadata
 from deepsea import DeepSea
 from rest_client import BadResponseFormatException, RequestException
 
@@ -509,7 +512,6 @@ class DeepSeaTestCase(TestCase):
                  'stage_prep_master': 'default'}
             ])
 
-
     def test_deepsea_get_minions_no_public_network(self):
         """Regression test for OP-2595: DeepSea's pillar data doesn't contain "public_network" """
         with mock.patch("requests.Session") as mock_requests_session:
@@ -565,3 +567,34 @@ class DeepSeaTestCase(TestCase):
                     }
                 ]
             )
+
+
+class MetadataTestCase(TestCase):
+
+    @mock.patch('ceph_deployment.models.ceph_minion.MonApi')
+    @mock.patch('ceph_deployment.models.ceph_minion.CephCluster')
+    def test_metadata(self, CephCluster_mock, MonApi_mock):
+        with open('ceph_deployment/tests/metadata.json') as f:
+            osd, mon, mds, mgr, expected_result, _, _ = json.load(f)
+
+        MonApi_mock.return_value.osd_metadata.return_value = osd
+        MonApi_mock.return_value.mon_metadata.return_value = mon
+        MonApi_mock.return_value.mds_metadata.return_value = mds
+        MonApi_mock.return_value.mgr_metadata.return_value = mgr
+        CephCluster_mock.objects.all.return_value = [mock.MagicMock(fsid='fsid')]
+
+        res = all_metadata()
+        self.assertEqual(res, expected_result)
+
+    @mock.patch('ceph_deployment.models.ceph_minion.DeepSea')
+    @mock.patch('ceph_deployment.models.ceph_minion.all_metadata')
+    def test_merge_pillar_metadata(self, all_metadata_mock, DeepSea_mock):
+        with open('ceph_deployment/tests/metadata.json') as f:
+            _, _, _, _, all_metadata, pillar_data, expected_result = json.load(f)
+
+        all_metadata_mock.return_value = all_metadata
+        DeepSea_mock.instance.return_value.get_minions.return_value = pillar_data
+
+        res = merge_pillar_metadata()
+        self.assertEqual(res, expected_result)
+

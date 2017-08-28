@@ -511,6 +511,33 @@ class MonApi(object):
     def _args_to_argdict(**kwargs):
         return {k: v for (k, v) in kwargs.iteritems() if v is not None}
 
+    def mds_metadata(self, who=None):
+        """
+        COMMAND("mds metadata name=who,type=CephString,req=false",
+        "fetch metadata for mds <who>",
+        "mds", "r", "cli,rest")
+        """
+        return self._call_mon_command('mds metadata',
+                                      self._args_to_argdict(who=who))
+
+    def mgr_metadata(self, who=None):
+        """
+        COMMAND("mgr metadata name=id,type=CephString,req=false",
+        "dump metadata for all daemons or a specific daemon",
+        "mgr", "r", "cli,rest")
+        """
+        return self._call_mon_command('mgr metadata',
+                                      self._args_to_argdict(who=who))
+
+    def mon_metadata(self, id=None):
+        """
+        COMMAND("mon metadata name=id,type=CephString,req=false",
+        "fetch metadata for mon <id>",
+        "mon", "r", "cli,rest")
+        """
+        return self._call_mon_command('mon metadata',
+                                      self._args_to_argdict(id=id))
+
     def osd_crush_dump(self):
         return self._call_mon_command('osd crush dump')
 
@@ -875,7 +902,7 @@ class MonApi(object):
         """
         return self._call_mon_command('osd tree')
 
-    def osd_metadata(self, name=None):
+    def osd_metadata(self, id=None):
         """
         COMMAND("osd metadata " \
         "name=id,type=CephInt,range=0,req=false", \
@@ -885,7 +912,7 @@ class MonApi(object):
         :type name: int
         :rtype: list[dict] | dict
         """
-        return self._call_mon_command('osd metadata', self._args_to_argdict(name=name))
+        return self._call_mon_command('osd metadata', self._args_to_argdict(id=id))
 
     def fs_ls(self):
         return self._call_mon_command('fs ls')

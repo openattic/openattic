@@ -25,6 +25,7 @@ Added
 * Backend: Provide Ceph pool application metadata in the API (OP-2593)
 * Backend: Fixed internal server error, if DeepSea's pillar data doesn't
   contain "public_network" (OP-2595)
+* Node list is now accessible without DeepSea (OP-2602)
 
 Changed
 ~~~~~~~
