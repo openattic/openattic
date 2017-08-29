@@ -40,6 +40,8 @@ Fixed
 * Packaging: Fixed regression in make_dist.py which caused `cache push`
   to fail on empty cache (OP-2587)
 * WebUI: Fix wrong angular module declaration (OP-2588)
+* Backend: Fixed systemd error "Not an absolute path, ignoring:
+  ${SYSD_PIDFILE}" in service file (OP-2570)
 
 [3.4.3] - 2017-08-17
 --------------------
