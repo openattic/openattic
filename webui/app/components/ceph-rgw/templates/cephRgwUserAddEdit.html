@@ -291,6 +291,12 @@
                                        readonly>
                                 <span class="input-group-btn">
                                     <button type="button"
+                                            class="btn btn-default tc_editCapButton"
+                                            uib-tooltip="Edit"
+                                            ng-click="addEditCapability($index)">
+                                        <i class="fa fa-cogs"></i>
+                                    </button>
+                                    <button type="button"
                                             class="btn btn-default tc_deleteCapButton"
                                             uib-tooltip="Delete"
                                             ng-click="removeCapability($index)">

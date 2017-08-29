@@ -18,13 +18,13 @@
             <dd ng-bind="selection.item.max_buckets"></dd>
             <span ng-if="selection.item.subusers.length">
                 <dt>Subusers:</dt>
-                <span ng-repeat="subuser in selection.item.subusers">
+                <span ng-repeat="subuser in selection.item.subusers | orderBy:'id'">
                     <dd>{{ subuser.id }} ({{ subuser.permissions }})</dd>
                 </span>
             </span>
             <span ng-if="selection.item.caps.length">
                 <dt>Capabilities:</dt>
-                <span ng-repeat="cap in selection.item.caps">
+                <span ng-repeat="cap in selection.item.caps | orderBy:'type'">
                     <dd>{{ cap.type }} ({{ cap.perm }})</dd>
                 </span>
             </span>

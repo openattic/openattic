@@ -30,7 +30,7 @@ Added
 Changed
 ~~~~~~~
 * WebUI: Improve forms initial rendering (OP-2559)
-
+* WebUI: Allow the modification of existing RGW user capabilities (OP-2319)
 * Backend: Removed some outdated and unused Django models (OP-2586)
 * Backend: Prefer the openattic (firstly) and the admin (secondly) keyring
   user over any other (OP-2523)
