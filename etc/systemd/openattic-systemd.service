@@ -6,7 +6,6 @@ After=network.target remote-fs.target nss-lookup.target
 Type=simple
 EnvironmentFile=/etc/default/openattic
 ExecStart=/usr/bin/python -- ${OADIR}/manage.py runsystemd -l ${SYSD_LOGFILE}
-PIDFile=${SYSD_PIDFILE}
 
 [Install]
 WantedBy=multi-user.target
