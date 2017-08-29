@@ -1,0 +1,48 @@
+<oa-loading-panel message="Ceph Cluster settings are loading..."
+                  ng-show="!$ctrl.error && !$ctrl.model.$resolved"></oa-loading-panel>
+
+<form ng-show="!$ctrl.error && $ctrl.model.$resolved"
+      name="clusterForm"
+      role="form"
+      class="form-horizontal"
+      novalidate>
+    <div class="openattic-modal-header">
+        <span>Cluster:<small> {{ $ctrl.model.name }} ({{ $ctrl.model.fsid }})</small></span>
+    </div>
+
+    <div class="openattic-modal-content">
+        <fieldset>
+            <legend><small>Cluster-wide OSD Flags</small></legend>
+            <div class="checkbox checkbox-primary"
+                 ng-repeat="(key, flag) in $ctrl.data.osd_flags">
+                <input type="checkbox"
+                       ng-model="flag.value"
+                       name="active"
+                       id="{{key}}">
+                <label for="{{key}}"
+                       ng-class="['tc_' + key]">
+                    <strong>{{ flag.name }}</strong>
+                    <br>
+                    <span class="text-muted">{{flag.description}}</span>
+                </label>
+                <hr class="oa-hr-small">
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="openattic-modal-footer">
+        <div class="button-group text-right">
+            <button type="submit"
+                    class="btn btn-sm btn-primary tc_submitButton"
+                    ng-disabled="clusterForm.$invalid || clusterForm.$submitted"
+                    ng-click="$ctrl.submitAction()">
+            Submit
+            <i class="fa fa-spinner fa-spin fa-fw" ng-if="clusterForm.$submitted"></i>
+          </button>
+
+            <button id="cancelButton"
+                    class="btn btn-link btn-sm"
+                    ng-click="$ctrl.cancel()">Cancel</button>
+        </div>
+    </div>
+</form>
