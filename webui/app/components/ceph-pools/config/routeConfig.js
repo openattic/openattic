@@ -69,6 +69,19 @@ app.config(function ($stateProvider) {
         label: "Add"
       }
     })
+    .state("ceph-pools-edit", {
+      url: "/ceph/pools/edit/:poolFsid/:poolId",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-pools/templates/add-pool.html",
+          controller : "CephPoolsAddCtrl"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Edit {{pool.name}}",
+        parent: "cephPools"
+      }
+    })
     .state("cephPools.detail.cacheTier", {
       url          : "/cachetier",
       views        : {

@@ -111,7 +111,7 @@ describe('ceph pool creation form', function(){
       expect(firstCase.isDisplayed()).toBe(true);
       firstCase.sendKeys('tux');
       fe.name.byModel.click();
-      fe.firstAppDeletionBtn.byClass.click();
+      cephPoolProperties.deleteFirstApp();
       expect(firstCase.isPresent()).toBe(false);
     });
   });

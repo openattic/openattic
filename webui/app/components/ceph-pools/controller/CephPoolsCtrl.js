@@ -162,8 +162,15 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
   };
 
   $scope.addAction = function () {
-    $state.go("ceph-pools-add", {
+    $state.go("ceph-pool-add", {
       fsid: $scope.registry.selectedCluster.fsid
+    });
+  };
+
+  $scope.editAction = function () {
+    $state.go("ceph-pool-edit", {
+      poolFsid: $scope.selection.item.cluster,
+      poolId: $scope.selection.item.id
     });
   };
 

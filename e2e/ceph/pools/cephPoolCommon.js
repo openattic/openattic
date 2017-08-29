@@ -2,14 +2,17 @@
 
 var cephPoolCommons = function(){
   var helpers = require('../../common.js');
+  var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
+
   this.cephPools = element(by.css('.tc_menuitem_ceph_pools'));
 
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
   this.clusterSelect = element(by.model('registry.selectedCluster'));
 
-  this.addButton = element(by.css('oadatatable .tc_add_btn'));
-  this.statusTab = element(by.css('.tc_statusTab'));
+  this.addButton = element(by.className('tc_add_btn'));
+  this.editButton = element(by.className('tc_edit_btn'));
+  this.statusTab = element(by.className('tc_statusTab'));
   this.statisticsTab = element(by.className('tc_statisticsTab'));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
   this.isBluestore = element(by.model('bluestore'));
@@ -164,7 +167,7 @@ var cephPoolCommons = function(){
     pgnum: {
       name: 'Placement groups',
       byClass: element(by.className('tc_pool_pgNum')),
-      byModel: element(by.model('pool.pg_num')),
+      byModel: element(by.model('data.pg_num')),
       displayed: false,
       displayedIf: ['replicated'], // and 'erasure'
       type: 'number',
@@ -301,14 +304,6 @@ var cephPoolCommons = function(){
         maxApps: element(by.className('tc-max-apps'))
       }
     },
-    firstAppDeletionBtn: {
-      byClass: element(by.className('tc-delete-app')),
-      presented: false,
-      type: 'button',
-      items: {
-        maxApps: element(by.className('tc-max-apps'))
-      }
-    },
     backButton: {
       name: 'Back',
       byClass: element(by.className('tc_backButton')),
@@ -323,17 +318,23 @@ var cephPoolCommons = function(){
     }
   };
 
-  this.selectApplication = (number) => {
-    const selection = self.formElements.selectApplication.byClass;
+  this.deleteFirstApp = () => {
+    element.all(by.className('tc-delete-app')).first().click();
+  };
+
+  this.addApplication = (select) => {
+    const fe = self.formElements;
+    const selection = self.getFormElement(fe.selectApplication);
     selection.click();
-    selection.all(by.tagName('option')).get(number).click();
+    let option = {};
+    if(typeof select === 'string'){
+      option = selection.element(by.cssContainingText('option', select));
+    }else{
+      option = selection.all(by.tagName('option')).get(select);
+    }
+    option.click();
+    self.getFormElement(fe.addApplication).click();
   };
-
-  this.addApplication = (number) => {
-    self.selectApplication(number);
-    self.formElements.addApplication.byClass.click();
-  };
-
 
   this.formLabels = {
     header: {
@@ -373,6 +374,45 @@ var cephPoolCommons = function(){
   };
 
   this.getFormElement = (e) =>  e.byModel || e.byClass;
+
+  this.deletePool = (name) => {
+    self.cephPools.click();
+    var pool = helpers.search_for_element(name);
+    pool.click();
+    helpers.delete_selection(undefined, '$ctrl');
+    expect(pool.isPresent()).toBe(false);
+  };
+
+  this.fillForm = (name, type, pgs, isCompression = false, appToUse = 'cephfs') => {
+    const fe = self.formElements;
+    self.getFormElement(fe.name).clear().sendKeys(name);
+    self.getFormElement(fe.types).sendKeys(type);
+    self.getFormElement(fe.pgnum).clear().sendKeys(pgs);
+    self.addApplication(appToUse);
+    if(isCompression === true){
+      self.getFormElement(fe.compressionMode).sendKeys('force');
+    }
+  };
+
+  this.submitForm = (name, type, pgs) => {
+    self.getFormElement(self.formElements.createButton).click();
+    taskQueueHelpers.waitForPendingTasks();
+    self.cephPools.click();
+    helpers.checkForUnsavedChanges(false);
+
+    const cephPool = helpers.search_for_element(name);
+    expect(cephPool.isDisplayed()).toBe(true);
+    cephPool.click();
+    if(type && pgs){
+      expect(element(by.binding('selection.item.type')).getText()).toBe(type);
+      expect(element(by.binding('selection.item.pg_num')).getText()).toBe(pgs + '');
+    }
+  };
+
+  this.createPool = (name, type, pgs, isCompression = false, appToUse = 'cephfs') => {
+    self.fillForm(name, type, pgs, isCompression, appToUse);
+    self.submitForm(name, type, pgs);
+  };
 
   /*
    Selects cluster if a selection is available in the listing.

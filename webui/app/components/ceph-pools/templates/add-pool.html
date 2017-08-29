@@ -16,11 +16,12 @@
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 class="panel-title">
-          Create Ceph pool: {{pool.name}}
+          {{editing ? 'Edit' : 'Create'}} Ceph pool: {{pool.name}}
         </h3>
       </div>
       <div class="panel-body">
         <div class="form-group"
+            ng-if="!editing"
             ng-class="{'has-error': (poolForm.$submitted || poolForm.name.$dirty) && poolForm.name.$invalid}">
           <label class="control-label col-sm-3"
               for="poolName">
@@ -52,10 +53,10 @@
           </div>
         </div>
 
-        <div ng-if="clusters.length">
+        <div ng-if="clusters.length || editing">
           <div class="form-group"
               ng-class="{'has-error': (poolForm.$submitted || poolForm.cluster.$dirty) && poolForm.cluster.$invalid}"
-              ng-if="clusters.length !== 1">
+              ng-if="clusters.length !== 1 && !editing">
             <label class="control-label col-sm-3"
                 for="cluster">
               Cluster
@@ -86,7 +87,8 @@
 
           <div class="form-group"
               ng-class="{'has-error': (poolForm.$submitted || poolForm.poolTypes.$dirty) &&
-                  poolForm.poolTypes.$invalid}">
+                  poolForm.poolTypes.$invalid}"
+              ng-if="!editing">
             <label class="control-label col-sm-3"
                 for="poolTypes">
               Pool type
@@ -111,11 +113,11 @@
             </div>
           </div>
 
-          <div ng-show="pool.type && data.cluster.loaded">
+          <div ng-show="editing || pool.type && data.cluster.loaded">
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty) &&
                     poolForm.crushSet.$invalid}"
-                ng-if="data.cluster.rules[pool.type].length > 0">
+                ng-if="data.cluster.rules[pool.type].length > 0 && !editing">
               <label class="control-label col-sm-3"
                   for="crushSet">
                 Crush ruleset
@@ -162,14 +164,14 @@
                         </ol>
                       </div>
                     </li>
-                  <ul>
+                  </ul>
                 </span>
               </div>
             </div>
 
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$invalid}"
-                ng-if="pool.type === 'replicated'">
+                ng-if="pool.type === 'replicated' && !editing">
               <label class="control-label col-sm-3"
                   for="size">
                 Replicated size
@@ -207,7 +209,7 @@
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.erasureProfiles.$dirty) &&
                     poolForm.erasureProfiles.$invalid}"
-                ng-if="pool.type === 'erasure'">
+                ng-if="pool.type === 'erasure' && !editing">
               <label class="control-label col-sm-3"
                   for="erasureProfiles">
                 Erasure code profile
@@ -259,14 +261,19 @@
               <div class="col-sm-9">
                 <input class="form-control tc_pool_pgNum"
                     id="pgNum"
-                    min="1"
+                    placeholder="{{pool.pg_num}}"
+                    min="{{pool.pg_num}}"
                     name="pgNum"
                     type="number"
                     ng-keyup="pgKeyChange($event)"
-                    ng-model="pool.pg_num"
+                    ng-model="data.pg_num"
                     ng-model-options="{ updateOn: 'blur' }"
                     ng-change="pgUpdate()"
                     required>
+                <span class="help-block tc_pgNumRequired"
+                    ng-show="editing">
+                  The pg size of a pool can only be increased in edit mode.
+                </span>
                 <span class="help-block tc_pgNumRequired"
                     ng-show="(poolForm.$submitted || poolForm.pgNum.$dirty) && poolForm.pgNum.$error.required">
                   This field is required!
@@ -278,7 +285,7 @@
             </div>
 
             <div class="form-group"
-                ng-if="bluestore && pool.type === 'erasure'">
+                ng-if="bluestore && pool.type === 'erasure' && !editing">
               <label class="control-label col-sm-3">
                 Flags
               </label>
@@ -299,7 +306,7 @@
             </div>
 
             <!-- Compression -->
-            <div ng-show="bluestore">
+            <div ng-if="bluestore && !editing">
               <legend>Compression</legend>
               <div class="form-group"
                   ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionMode.$dirty) && poolForm.compressionMode.$invalid}">
@@ -500,7 +507,7 @@
           </div>
         </div>
         <div class="text-center"
-            ng-if="!clusters.length || cluster.length === 1 && !data.cluster.loaded">
+            ng-if="!editing && (!clusters.length || cluster.length === 1 && !data.cluster.loaded)">
           <i class="fa fa-spinner fa-spin fa-fw"></i>
         </div>
       </div>
@@ -509,9 +516,9 @@
         <div class="button-group text-right">
           <button class="btn btn-sm btn-primary tc_submitButton"
               type="submit"
-              ng-click="submitAction(poolForm)"
+              ng-click="submitAction()"
               ng-disabled="poolForm.$invalid || poolForm.$submitted">
-            Create
+            {{!editing ? "Create" : "Update"}}
             <i class="fa fa-spinner fa-spin fa-fw"
               ng-if="poolForm.$submitted"></i>
           </button>

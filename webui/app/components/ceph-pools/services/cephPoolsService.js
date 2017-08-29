@@ -32,13 +32,15 @@
 
 var app = angular.module("openattic.cephPools");
 app.factory("cephPoolsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/pools", {
+  return $resource(globalConfig.API.URL + "ceph/:fsid/pools/:id", {
     fsid: "@fsid",
-    poolId: "@poolId"
+    id: "@id"
   }, {
+    update: {
+      method: "PUT"
+    },
     delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:fsid/pools/:poolId"
+      method: "DELETE"
     },
     performancedata: {
       method: "GET",

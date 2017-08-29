@@ -66,7 +66,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               obj = {
                 model: cephRbdService,
                 current: null, // Has no renaming feature.
-                attribute: "name"
+                attribute: "id"
               };
               break;
             case "ceph-pool":
@@ -76,8 +76,8 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               query.fsid = scope.data.cluster.fsid;
               obj = {
                 model: cephPoolsService,
-                current: null, // Has no renaming feature.
-                attribute: "name"
+                current: scope.pool.id,
+                attribute: "id"
               };
               break;
             case "erasure-code-profiles":
@@ -85,7 +85,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               obj = {
                 model: cephErasureCodeProfilesService,
                 current: null, // Has no renaming feature.
-                attribute: "name"
+                attribute: "id"
               };
               break;
 
@@ -96,17 +96,16 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               });
               return;
           }
-          var resCheck = function (res) {
-            if (res.length !== 0 && obj.current) {
-              ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
-            } else {
-              ctrl.$setValidity("uniquename", res.length === 0);
-            }
-          };
           query[ctrl.field] = modelValue;
           obj.model.query(query)
-            .$promise
-            .then(resCheck);
+              .$promise
+              .then((res) => {
+                if (res.length !== 0 && obj.current) {
+                  ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
+                } else {
+                  ctrl.$setValidity("uniquename", res.length === 0);
+                }
+              });
         }, 300);
       });
     }
