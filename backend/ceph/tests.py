@@ -564,11 +564,14 @@ class CallLibradosTestCase(TestCase):
 
     def test_exit(self):
         def just_exit():
-            import sys
-            sys.exit(0)
+            # NOTE: sys.exit(0) used to work here. No idea why it did work, because ...
+            import os
+            os._exit(0)
 
+        # ... multiprocessing seems to have a bug where we end up in a timeout, if the child
+        # died prematurely.
         self.assertRaises(ceph.librados.ExternalCommandError,
-                          lambda: ceph.librados.run_in_external_process(just_exit))
+                          lambda: ceph.librados.run_in_external_process(just_exit, timeout=1))
 
     def test_timeout(self):
         def just_wait():
