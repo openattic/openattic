@@ -42,6 +42,8 @@ Fixed
 * Packaging: Fixed regression in make_dist.py which caused `cache push`
   to fail on empty cache (OP-2587)
 * WebUI: Fix wrong angular module declaration (OP-2588)
+* WebUI: Ceph health widget does not display the error and warning
+  messages (OP-2610)
 * Backend: Fixed systemd error "Not an absolute path, ignoring:
   ${SYSD_PIDFILE}" in service file (OP-2570)
 * WebUI/QA: Refactored pool form element verification (OP-2609)
