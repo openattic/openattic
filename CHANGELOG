@@ -43,6 +43,7 @@ Fixed
 * WebUI: Fix wrong angular module declaration (OP-2588)
 * Backend: Fixed systemd error "Not an absolute path, ignoring:
   ${SYSD_PIDFILE}" in service file (OP-2570)
+* WebUI/QA: Refactored pool form element verification (OP-2609)
 
 [3.4.3] - 2017-08-17
 --------------------
