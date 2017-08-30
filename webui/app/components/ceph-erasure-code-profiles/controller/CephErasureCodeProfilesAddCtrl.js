@@ -41,7 +41,7 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
     name                  : "",
     ruleset_failure_domain: ""
   };
-  $scope.rulesetFailureDomains = [];
+  $scope.rulesetFailureDomains = undefined;
 
   $scope.addErasureCodeProfile = function () {
     cephErasureCodeProfilesService

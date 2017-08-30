@@ -2,7 +2,10 @@
   <span>Add erasure code profile</span>
 </div>
 
-<form name="addForm" role="form" novalidate>
+<oa-loading-panel message="Form is loading..."
+    ng-show="!rulesetFailureDomains"></oa-loading-panel>
+
+<form name="addForm" role="form" ng-if="rulesetFailureDomains" novalidate>
   <div class="openattic-modal-content">
     <p>
       You are about to add a new erasure code profile.

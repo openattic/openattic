@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
+var app = angular.module("openattic.cephNfs");
 app.factory("cephNfsFormService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph_nfs/:fsid", {
     fsid: "@fsid"

@@ -91,7 +91,7 @@ app.component("cephRbdForm", {
       replicated: [],
       erasure: []
     };
-    self.clusters = {};
+    self.clusters = undefined;
 
     self.features = cephRbdFeatures;
 

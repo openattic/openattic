@@ -38,12 +38,10 @@ app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParam
   $scope.requests = [];
   $scope.owners = [];
 
-  // Get the list of possible owners.
-  cephRgwUserService.enumerate()
-    .$promise
-    .then(function (res) {
-      $scope.owners = res;
-    });
+  var oaPromises = [
+    // Get the list of possible owners.
+    cephRgwUserService.enumerate().$promise
+  ];
 
   if (!$stateParams.bucket) {
     $scope.editing = false;
@@ -67,16 +65,11 @@ app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParam
     $scope.editing = true;
 
     // Load the bucket data.
-    cephRgwBucketService.get({
-      "bucket": $stateParams.bucket
-    })
-      .$promise
-      .then(function (res) {
-        $scope.bucket = res;
+    oaPromises.push(
+      cephRgwBucketService.get({
+        "bucket": $stateParams.bucket
       })
-      .catch(function (error) {
-        $scope.error = error;
-      });
+      .$promise);
 
     $scope.submitAction = function (bucketForm) {
       // Check if the general bucket settings have been modified.
@@ -95,6 +88,18 @@ app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParam
       _doSubmitAction(bucketForm);
     };
   }
+
+  $q.all(oaPromises)
+    .then(data => {
+      $scope.owners = data[0];
+      if (data[1]) {
+        $scope.bucket = data[1];
+      }
+      $scope.formDataIsReady = true;
+    })
+    .catch(error => {
+      $scope.error = error;
+    });
 
   /**
    * Go to the users list view.
