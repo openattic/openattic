@@ -10,7 +10,9 @@
     setLocation: function(location, dialogIsShown){
       browser.setLocation(location);
       helper.checkForUnsavedChanges(dialogIsShown);
-      expect(browser.getCurrentUrl()).toContain('/openattic/#/' + location);
+      it('should go to ' + location + ' page', function () {
+        expect(browser.getCurrentUrl()).toContain('/openattic/#/' + location);
+      });
     },
 
     leaveForm: function(dialogIsShown){
