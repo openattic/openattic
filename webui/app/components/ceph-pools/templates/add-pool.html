@@ -411,6 +411,87 @@
               </div>
             </div>
             <!-- Compression end-->
+
+            <!-- Applications -->
+            <legend>Applications</legend>
+            <div class="form-group">
+              <label class="col-sm-3 control-label"
+                  for="appSelection">
+                Add applications
+              </label>
+              <div class="col-sm-9">
+                <div class="input-group">
+                  <select class="form-control tc-app-selection"
+                      ID="AppSelection"
+                      name="appSelection"
+                      ng-model="app.selection"
+                      ng-change="apps.getAvail()"
+                      ng-options="appName for appName in apps.getAvail()">
+                    <option class="tc_appOption" value="">
+                      - Select an application to use -
+                    </option>
+                  </select>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default tc-add-app"
+                        type="button"
+                        uib-tooltip="Add application"
+                        ng-disabled="!app.selection || apps.used.length > 3"
+                        ng-click="app.add(app.selection)">
+                      <i class="fa fa-plus"
+                          aria-hidden="true"></i>
+                    </button>
+                  </span>
+                </div>
+                <span class="help-block tc-max-apps" ng-show="apps.used.length > 3">
+                  You can use up to four application per pool.
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label"
+                  for="apps">
+                Applications
+              </label>
+              <input type="hidden"
+                  ng-model="apps.used[0]"
+                  id="apps"
+                  required>
+              <div class="col-sm-9">
+                <span ng-repeat="appName in apps.used track by $index">
+                  <div class="input-group"
+                      ng-class="{'has-error': $first && poolForm.customApp && !poolForm.customApp.$valid}">
+                    <input type="text"
+                        class="form-control tc-used-app"
+                        name="{{appName ? appName : 'customApp'}}"
+                        maxlength="128"
+                        ng-model="appName"
+                        ng-model-options="{ updateOn: 'blur' }"
+                        ng-change=app.add(appName)
+                        ng-value="appName"
+                        pattern="[A-Za-z0-9_]+"
+                        ng-readonly="appName !== undefined && appName !== ''">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default tc-delete-app"
+                          type="button"
+                          uib-tooltip="Remove application"
+                          ng-click="app.removeByIndex($index)">
+                        <i class="fa fa-trash-o"></i>
+                      </button>
+                    </span>
+                  </div>
+                  <span class="help-block" ng-show="$first && poolForm.customApp && !poolForm.customApp.$valid">
+                    The following characters are valid: _ a-z A-Z 0-9
+                  </span>
+                  <br>
+                </span>
+                <span ng-hide="apps.used.length !== 0"
+                    class="form-control no-border text-muted">
+                  No application added
+                </span>
+              </div>
+            </div>
+            <!-- Applications end-->
+
           </div>
         </div>
         <div class="text-center"

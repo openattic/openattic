@@ -28,6 +28,7 @@ describe('Should test oadatatable and its options', function(){
     'Name',
     'ID',
     'Used',
+    'Applications',
     'Placement groups',
     'Replica size',
     'Erasure code profile',

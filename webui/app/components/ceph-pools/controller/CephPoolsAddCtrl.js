@@ -296,6 +296,11 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
         fsid: $scope.fsid,
         crush_ruleset: $scope.data.ruleset && $scope.data.ruleset.rule_id
       };
+      const apps = {};
+      $scope.apps.used.forEach((app) => {
+        apps[app] = {};
+      });
+      pool.application_metadata = apps;
       if (pool.type === "replicated") {
         pool.min_size = 1; // No need for this here - API update needed.
         pool.size = $scope.pool.size;
@@ -390,4 +395,46 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
       SizeParserService.parseInt($scope.data.compression_min_blob_size, "b");
     $scope.data.compression_min_blob_size = $filter("bytes")(size);
   };
+
+  $scope.app = {
+    selected: undefined,
+    add: (app) => {
+      if (!angular.isString(app) || app === "") {
+        return;
+      }
+      // A custom app without a name will be undefined
+      $scope.app.remove(undefined);
+      if ($scope.apps.used.indexOf(app) === -1) {
+        if (app === "Custom application") {
+          app = undefined;
+        } else if ($scope.apps.all.indexOf(app) === -1) {
+          $scope.apps.all.push(app);
+        }
+        //$scope.apps.used.push(app);
+        $scope.apps.used = [app].concat($scope.apps.used);
+      }
+    },
+    remove: (app) => {
+      const emptyAppIndex = $scope.apps.used.indexOf(app);
+      if (emptyAppIndex !== -1) {
+        $scope.app.removeByIndex(emptyAppIndex);
+      }
+    },
+    removeByIndex: (index) => {
+      $scope.apps.used.splice(index, 1);
+    }
+  };
+
+  $scope.apps = {
+    all: ["cephfs", "rbd", "rgw"],
+    used: [],
+    getAvail: () => {
+      const appList = $scope.apps.all.filter((app) => {
+        return $scope.apps.used.indexOf(app) === -1;
+      }).sort();
+      appList.push("Custom application");
+      return appList;
+    }
+  };
+
 });
