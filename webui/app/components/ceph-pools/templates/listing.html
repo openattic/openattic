@@ -41,6 +41,7 @@
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
                 <th ng-show="columns['ID']" sortfield="id" sortheaderclass>ID</th>
                 <th ng-show="columns['Used']" sortfield="kb_used" sortheaderclass>Used</th>
+                <th ng-show="columns['Applications']">Applications</th>
                 <th ng-show="columns['Placement groups']">Placement groups</th>
                 <th ng-show="columns['Replica size']">Replica size</th>
                 <th ng-show="columns['Erasure code profile']">Erasure code profile</th>
@@ -78,6 +79,7 @@
                         </div>
                     </div>
                 </td>
+                <td ng-show="columns['Applications']" ng-bind="row.showApps"></td>
                 <td ng-show="columns['Placement groups']" ng-bind="row.pg_num"></td>
                 <td ng-show="columns['Replica size']" ng-bind="row.size"></td>
                 <td ng-show="columns['Erasure code profile']" ng-bind="row.erasure_code_profile"></td>

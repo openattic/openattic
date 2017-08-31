@@ -34,10 +34,9 @@
                 <div class="input-group">
                     <select class="form-control"
                             ng-model="cap.perm"
-                            ng-readonly="editing"
-                            ng-required="!editing"
                             name="perm"
-                            id="perm">
+                            id="perm"
+                            required>
                         <option value="">-- Select a permission --</option>
                         <option value="read">read</option>
                         <option value="write">write</option>
