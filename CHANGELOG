@@ -32,6 +32,7 @@ Changed
 * Documentation: Changed the project descriptions in `README.rst` and
   `openattic.spec` to reflect the wording used on openattic.org (OP-2643)
 * WebUI/QA: Improve protractor report configuration (OP-2647)
+* Documentation: Update e2e documentation (OP-2329)
 
 Fixed
 ~~~~~
