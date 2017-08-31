@@ -139,10 +139,13 @@ def metadata_by_cluster(hosts, cluster):
         mon['fsid'] = cluster.fsid
         hosts.setdefault(mon['hostname'], []).append(mon)
     for mgr in api.mgr_metadata():
-        mgr["type"] = "mgr"
-        mgr["daemon"] = "mgr.{}".format(mgr['id'])
-        mgr['fsid'] = cluster.fsid
-        hosts.setdefault(mgr['hostname'], []).append(mgr)
+        if 'hostname' in mgr:
+            mgr["type"] = "mgr"
+            mgr["daemon"] = "mgr.{}".format(mgr['id'])
+            mgr['fsid'] = cluster.fsid
+            hosts.setdefault(mgr['hostname'], []).append(mgr)
+        else:
+            logger.warning('no "hostname" in {}'.format(mgr.keys()))
     for mds in api.mds_metadata():
         mds["type"] = "mds"
         mds["daemon"] = "mds.{}".format(mds['name'])
