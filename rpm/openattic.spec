@@ -15,7 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
 Name: openattic
-Version: 3.4.3
+Version: 3.4.4
 Release: 0
 Summary: Open Source Ceph Storage Management System
 Group: System Environment/Libraries
@@ -31,7 +31,6 @@ BuildRequires: systemd-rpm-macros
 BuildRequires:  fdupes
 %endif
 BuildRequires: apache2
-BuildRequires: lvm2
 BuildRequires: postgresql
 BuildRequires: postgresql-server
 BuildRequires: python
@@ -40,45 +39,23 @@ BuildRequires: rsync
 Recommends: logrotate
 
 %{?systemd_requires}
-Requires:	apache2-mod_wsgi
-Requires:	bridge-utils
-Requires:	bzip2
-Requires:	dbus-1
-Requires:	dbus-1-python
-Requires:	logrotate
-Requires:	memcached
-Requires:	ntp
-Requires:	policycoreutils
-Requires:	postgresql-server
-Requires:	python-configobj
-Requires:	python-django = 1.6.11
-Requires:	python-django-filter
-Requires:	python-djangorestframework = 2.4.4
-Requires:	python-djangorestframework-bulk
-Requires:	python-gobject2
-Requires:	python-imaging
-Requires:	python-M2Crypto
-Requires:	python-m2ext
-Requires:	python-memcached
-Requires:	python-netaddr
-Requires:	python-netifaces
-Requires:	python-numpy
-Requires:	python-pam
-Requires:	python-psycopg2
-Requires:	python-pyudev
-Requires:	python-requests
-Requires:	python-simplejson
-Requires:	udisks2
-Requires:	vlan
-Requires:	wget
+Requires: apache2-mod_wsgi
+Requires: dbus-1-python
+Requires: logrotate
+Requires: postgresql-server
+Requires: python-configobj
+Requires: python-django = 1.6.11
+Requires: python-django-filter
+Requires: python-djangorestframework = 2.4.4
+Requires: python-djangorestframework-bulk
+Requires: python-gobject2
+Requires: python-pam
+Requires: python-psycopg2
+Requires: python-requests
 Requires: ceph-common >= 10.0.0
-Requires: ceph-common >= 10.0.0
-Requires: policycoreutils
-Requires: policycoreutils-python
 Requires: postgresql
 Requires: python-requests-aws
 Requires: python-pyinotify
-Requires: selinux-tools
 Requires(pre): shadow
 
 # These subpackages have been removed in 2.0.19 (OP#1968)

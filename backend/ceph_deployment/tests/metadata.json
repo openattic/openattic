@@ -1,0 +1,297 @@
+[
+  [
+    {
+      "id": 0,
+      "arch": "x86_64",
+      "back_addr": "127.0.1.1:6802/17587",
+      "back_iface": "backiface",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "default_device_class": "hdd",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "front_addr": "127.0.0.1:6801/17587",
+      "front_iface": "frontiface",
+      "hb_back_addr": "127.0.0.1:6803/17587",
+      "hb_front_addr": "127.0.0.1:6804/17587",
+      "hostname": "localhost",
+      "journal_rotational": "1",
+      "kernel_description": "SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux",
+      "osd_data": "/src/ceph/build/dev/osd0",
+      "osd_objectstore": "bluestore",
+      "rotational": "1"
+    },
+    {
+      "id": 1,
+      "arch": "x86_64",
+      "back_addr": "127.0.1.1:6806/17597",
+      "back_iface": "backiface",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "default_device_class": "hdd",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "front_addr": "127.0.0.1:6805/17597",
+      "front_iface": "frontiface",
+      "hb_back_addr": "127.0.0.1:6807/17597",
+      "hb_front_addr": "127.0.0.1:6808/17597",
+      "hostname": "localhost",
+      "journal_rotational": "1",
+      "kernel_description": "SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux",
+      "osd_data": "/src/ceph/build/dev/osd1",
+      "osd_objectstore": "bluestore",
+      "rotational": "1"
+    },
+    {
+      "id": 2,
+      "arch": "x86_64",
+      "back_addr": "[::2]:6810/17610",
+      "back_iface": "backiface",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "default_device_class": "hdd",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "front_addr": "[::1]:6809/17610",
+      "front_iface": "iface",
+      "hb_back_addr": "[::1]:6811/17610",
+      "hb_front_addr": "[::1]:6812/17610",
+      "hostname": "host2",
+      "journal_rotational": "1",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux",
+      "osd_data": "/src/ceph/build/dev/osd2",
+      "osd_objectstore": "bluestore",
+      "rotational": "1"
+    }
+  ],
+  [
+    {
+      "name": "a",
+      "addr": "127.0.0.1:40000/0",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "localhost",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    },
+    {
+      "name": "b",
+      "addr": "127.0.0.1:40001/0",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "localhost",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    },
+    {
+      "name": "c",
+      "addr": "127.0.0.1:40002/0",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "localhost",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    }
+  ],
+  [
+    {
+      "name": "a",
+      "addr": "127.0.0.1:6813/2351978011",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "localhost",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    },
+    {
+      "name": "c",
+      "addr": "127.0.0.1:6815/1097599357",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "localhost",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    },
+    {
+      "name": "b",
+      "addr": "127.0.0.1:6814/3761860721",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "localhost",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    }
+  ],
+  [
+    {
+      "id": "x",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "host2",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
+    }
+  ],
+  {
+    "localhost": {
+      "distro_description": "distro 1.0",
+      "daemon_types": [
+        "mds",
+        "osd",
+        "mon"
+      ],
+      "daemons": [
+        "mds.a",
+        "mds.b",
+        "mds.c",
+        "mon.a",
+        "mon.b",
+        "mon.c",
+        "osd.0",
+        "osd.1"
+      ],
+      "hostname": "localhost",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "fsid": "fsid",
+      "cpu": "my CPU",
+      "addresses": ["127.0.0.1", "127.0.1.1"]
+    },
+    "host2": {
+      "distro_description": "distro 1.0",
+      "daemon_types": [
+        "mgr",
+        "osd"
+      ],
+      "daemons": [
+        "mgr.x",
+        "osd.2"
+      ],
+      "hostname": "host2",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "fsid": "fsid",
+      "cpu": "my CPU",
+      "addresses": ["::1", "::2"]
+    }
+  },
+  [
+    {
+      "hostname": "localhost.deepsea-pillar.local"
+    },
+    {
+      "hostname": "deepsea-only.deepsea-pillar.local"
+    }
+  ],
+  [
+    {
+      "distro_description": "distro 1.0",
+      "hostname": "localhost",
+      "daemon_types": [
+        "mds",
+        "osd",
+        "mon"
+      ],
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "daemons": [
+        "mds.a",
+        "mds.b",
+        "mds.c",
+        "mon.a",
+        "mon.b",
+        "mon.c",
+        "osd.0",
+        "osd.1"
+      ],
+      "arch": "x86_64",
+      "cpu": "my CPU",
+      "fsid": "fsid",
+      "addresses": ["127.0.0.1", "127.0.1.1"]
+
+    },
+    {
+      "hostname": "deepsea-only.deepsea-pillar.local"
+    },
+    {
+      "distro_description": "distro 1.0",
+      "hostname": "host2",
+      "daemon_types": [
+        "mgr",
+        "osd"
+      ],
+      "cpu": "my CPU",
+      "daemons": [
+        "mgr.x",
+        "osd.2"
+      ],
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "fsid": "fsid",
+      "addresses": ["::1", "::2"]
+    }
+  ]
+]

@@ -21,8 +21,8 @@
   </div>
 
   <div class="flex-item clickable" ng-if="$ctrl.messages.warn || $ctrl.messages.err"
-    ng-click="$ctrl.summaryCollapsed = !$ctrl.summaryCollapsed"
-    ng-class="{'bg-danger': $ctrl.messages.err, 'bg-warning': $ctrl.messages.warn}">
+       ng-click="$ctrl.summaryCollapsed = !$ctrl.summaryCollapsed"
+       ng-class="{'bg-danger': $ctrl.messages.err, 'bg-warning': $ctrl.messages.warn}">
     <i class="fa fa-2x" ng-class="{'fa-bomb': $ctrl.messages.err, 'fa-warning': $ctrl.messages.warn}"></i>
     <strong ng-bind="$ctrl.messages.err || $ctrl.messages.warn"></strong>
     <div class="pull-right">
@@ -30,20 +30,19 @@
       <i class="fa fa-caret-up" ng-if="!$ctrl.summaryCollapsed"></i>
     </div>
     <div class="indent ceph-summary" ng-if="!$ctrl.summaryCollapsed"
-      ng-repeat="cluster in $ctrl.data.warn.concat($ctrl.data.err)">
-      <p> On cluster "<span ng-bind="cluster.name"></span>" with fsid "<span ng-bind="cluster.fsid"></span>"
-      </p>
+         ng-repeat="cluster in $ctrl.data.warn.concat($ctrl.data.err)">
+      <p>On cluster "<span ng-bind="cluster.name"></span>" with fsid "<span ng-bind="cluster.fsid"></span>"</p>
       <div ng-if="cluster.summary.err.length" class="alert alert-danger">
         <ul class="fa-ul ceph-health-error-listing">
           <li ng-repeat="err in cluster.summary.err">
-            <i class="fa-li fa fa-bomb"></i> {{err.message}}
+            <i class="fa-li fa fa-bomb"></i>{{err.summary.message}}
           </li>
         </ul>
       </div>
       <div ng-if="cluster.summary.warn.length" class="alert alert-warning">
         <ul class="fa-ul ceph-health-warning-listing">
           <li ng-repeat="warn in cluster.summary.warn">
-            <i class="fa-li fa fa-warning"></i> {{warn.message}}
+            <i class="fa-li fa fa-warning"></i>{{warn.summary.message}}
           </li>
         </ul>
       </div>

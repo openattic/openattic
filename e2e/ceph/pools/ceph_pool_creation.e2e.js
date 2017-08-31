@@ -40,8 +40,7 @@ describe('ceph pool creation', function(){
     var name = cephPoolProperties.formElements.name.byModel;
     var pgnum = cephPoolProperties.formElements.pgnum.byModel;
     var type = cephPoolProperties.formElements.types.byModel;
-    var compressionMode =
-      cephPoolProperties.formElements.compressionMode.byModel;
+    var compressionMode = cephPoolProperties.formElements.compressionMode.byModel;
     name.clear().sendKeys(poolName);
     type.sendKeys(poolType);
     pgnum.clear().sendKeys(pgs);
@@ -74,7 +73,7 @@ describe('ceph pool creation', function(){
       cephPoolProperties.addButton.click();
       //cephPoolProperties.selectCluster(cluster); // Only needed if multiple clusters are configured
       fillForm(ecName, 'erasure', 32);
-      cephPoolProperties.checkCheckboxToBe(cephPoolProperties.formElements.ecOverwriteFlag.byModel);
+      cephPoolProperties.checkCheckboxToBe(element(by.model('data.flags.ec_overwrites')));
       createPool(ecName, 'erasure', 32);
       expect(element(by.className('tc-flag-ec_overwrites')).isDisplayed()).toBe(true);
     });

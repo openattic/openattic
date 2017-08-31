@@ -1,5 +1,5 @@
 <oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
-<oa-ceph-module-loader module="ceph_deployment" cluster="cluster" registry="registry" on-cluster-change="getOsdList()">
+<oa-module-loader>
 
 <div class="panel panel-default" ng-show="error">
     <div class="panel-heading">
@@ -49,5 +49,5 @@
 <div id="more" ui-view="statistics">
 </div>
 
-</oa-ceph-module-loader>
+</oa-module-loader>
 </oa-ceph-cluster-loader>

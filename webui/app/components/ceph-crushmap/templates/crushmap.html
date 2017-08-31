@@ -1,5 +1,5 @@
 <oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
-<oa-ceph-module-loader cluster="clusters" registry="registry" on-cluster-change="getCrushmap()">
+<oa-module-loader>
 
 <div class="panel panel-default" ng-show="error && error.statusText === 'NOT FOUND'">
     <div class="panel-heading">
@@ -98,5 +98,5 @@
     </div>
 </div>
 
-</oa-ceph-module-loader>
+</oa-module-loader>
 </oa-ceph-cluster-loader>

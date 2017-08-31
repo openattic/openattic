@@ -1,7 +1,11 @@
 <div class="col-sm-12 col-lg-6">
+  <oa-loading-panel message="Form is loading..."
+      ng-show="!clusters"></oa-loading-panel>
+
   <form name="poolForm"
       role="form"
       class="form-horizontal"
+      ng-show="clusters"
       novalidate
       oa-check-form>
     <div class="panel panel-default">
@@ -106,7 +110,7 @@
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty) &&
                     poolForm.crushSet.$invalid}"
-                ng-show="data.cluster.rules[pool.type].length > 0">
+                ng-if="data.cluster.rules[pool.type].length > 0">
               <label class="control-label col-sm-3"
                   for="crushSet">
                 Crush ruleset
@@ -198,7 +202,7 @@
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.erasureProfiles.$dirty) &&
                     poolForm.erasureProfiles.$invalid}"
-                ng-show="pool.type === 'erasure'">
+                ng-if="pool.type === 'erasure'">
               <label class="control-label col-sm-3"
                   for="erasureProfiles">
                 Erasure code profile
@@ -280,7 +284,8 @@
                         type="checkbox"
                         ng-model="data.flags.ec_overwrites"
                         ng-name="ec-overwrites">
-                    <label for="ec-overwrites">
+                    <label for="ec-overwrites"
+                        class="tc-ec-overwrites">
                       EC Overwrite
                     </label>
                   </div>

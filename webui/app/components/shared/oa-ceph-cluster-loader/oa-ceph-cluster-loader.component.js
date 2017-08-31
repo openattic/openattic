@@ -37,10 +37,13 @@ app.component("oaCephClusterLoader", {
     onClusterLoad: "&"
   },
   transclude: true,
-  controller: function (cephClusterService, registryService) {
+  controller: function ($state, cephClusterService, registryService) {
     var self = this;
+
     self.loading = false;
     self.loaded = false;
+    self.registry = registryService;
+    self.cluster = undefined;
 
     self.$onInit = function () {
       self.loadCluster();
@@ -50,15 +53,17 @@ app.component("oaCephClusterLoader", {
       self.loading = true;
       cephClusterService.get().$promise
         .then(function (res) {
-          var cluster = res;
-          // Update the registry.
-          if (angular.isObject(cluster) && cluster.results && cluster.results.length > 0 &&
-              angular.isUndefined(registryService.selectedCluster)) {
-            registryService.selectedCluster = cluster.results[0];
+          self.cluster = res;
+          // Update the registry. Select the first cluster in the list
+          // if there isn't already a cluster selected.
+          if (angular.isObject(self.cluster) && self.cluster.results &&
+              self.cluster.results.length > 0 &&
+              angular.isUndefined(self.registry.selectedCluster)) {
+            self.registry.selectedCluster = self.cluster.results[0];
           }
           // Execute the callback function.
           if (angular.isFunction(self.onClusterLoad)) {
-            self.onClusterLoad({cluster: cluster});
+            self.onClusterLoad({cluster: self.cluster});
           }
           // Finally execute the transclusion.
           self.loaded = res.$resolved;
@@ -67,6 +72,11 @@ app.component("oaCephClusterLoader", {
         }).finally(function () {
           self.loading = false;
         });
+    };
+
+    self.onClusterChange = function () {
+      // Reload the current state to apply the newly selected cluster.
+      $state.reload();
     };
   }
 });

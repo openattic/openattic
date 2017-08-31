@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.shared");
-app.factory("oaCephModuleLoaderService", function ($resource) {
+app.factory("oaModuleLoaderService", function ($resource) {
   return $resource(globalConfig.API.URL + "status/:module", {
     module: "@module"
   });

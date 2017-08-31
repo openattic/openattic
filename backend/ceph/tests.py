@@ -26,7 +26,7 @@ import ceph.librados
 import ceph.tasks
 import nodb.models
 
-from ceph.librados import Keyring, undoable, undo_transaction
+from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
 from ifconfig.models import Host
 
@@ -60,12 +60,40 @@ class KeyringTestCase(TestCase):
             except RuntimeError:
                 return True
 
+    def test_keyring_users_sorting(self):
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring', suffix='.keyring') as tmpfile:
+            tmpfile.write('[mon.]\n[client.admin]\n[client.rgw]\n[client.openattic]\n')
+            tmpfile.flush()
+            keyring = Keyring(tmpfile.name)
+            self.assertEqual(keyring.available_user_names[0], 'client.openattic')
+            self.assertEqual(keyring.available_user_names[1], 'client.admin')
+
+    def test_keyring_sorting(self):
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring1', suffix='.keyring') as tmpfile1:
+            with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring2', suffix='.keyring') as tmpfile2:
+                with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring3', suffix='.keyring') as tmpfile3:
+                    tmpfile1.write('[client.rgw]\n')
+                    tmpfile1.flush()
+                    keyring1 = Keyring(tmpfile1.name)
+
+                    tmpfile2.write('[client.openattic]\n')
+                    tmpfile2.flush()
+                    keyring2 = Keyring(tmpfile2.name)
+
+                    tmpfile3.write('[mon.]\n[client.admin]\n')
+                    tmpfile3.flush()
+                    keyring3 = Keyring(tmpfile3.name)
+
+                    keyrings = [keyring1, keyring2, keyring3]
+
+                    sorted_keyrings = sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
+
+                    self.assertIs(sorted_keyrings[0], keyring2)
+                    self.assertIs(sorted_keyrings[1], keyring3)
+                    self.assertIs(sorted_keyrings[2], keyring1)
+
 
 class CephPoolTestCase(TestCase):
-    def setUp(self):
-        if Host.objects.get_current() is None:
-            Host.insert_current_host()
-
     mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
 
     @mock.patch('ceph.models.CephPool.objects')
@@ -536,11 +564,14 @@ class CallLibradosTestCase(TestCase):
 
     def test_exit(self):
         def just_exit():
-            import sys
-            sys.exit(0)
+            # NOTE: sys.exit(0) used to work here. No idea why it did work, because ...
+            import os
+            os._exit(0)
 
+        # ... multiprocessing seems to have a bug where we end up in a timeout, if the child
+        # died prematurely.
         self.assertRaises(ceph.librados.ExternalCommandError,
-                          lambda: ceph.librados.run_in_external_process(just_exit))
+                          lambda: ceph.librados.run_in_external_process(just_exit, timeout=1))
 
     def test_timeout(self):
         def just_wait():

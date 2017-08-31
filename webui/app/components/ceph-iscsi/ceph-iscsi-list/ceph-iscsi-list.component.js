@@ -33,9 +33,6 @@
 var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiList", {
   templateUrl: "components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html",
-  bindings: {
-    cluster: "<"
-  },
   controller: function ($scope, $state, $filter, $timeout, $uibModal, registryService,
       tabViewService, cephIscsiService, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
       cephIscsiTargetAdvangedSettings, Notification) {
@@ -118,7 +115,9 @@ app.component("cephIscsiList", {
     self.getIscsiList = function () {
       if (angular.isObject(self.cluster) && self.cluster.results &&
           self.cluster.results.length > 0 && self.registry.selectedCluster) {
-        var obj = $filter("filter")(self.cluster.results, {fsid: self.registry.selectedCluster.fsid}, true);
+        var obj = $filter("filter")(self.cluster.results, {
+          fsid: self.registry.selectedCluster.fsid
+        }, true);
         if (obj.length === 0) {
           self.registry.selectedCluster = self.cluster.results[0];
         }
