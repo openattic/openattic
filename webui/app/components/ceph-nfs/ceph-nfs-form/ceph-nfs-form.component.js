@@ -35,8 +35,9 @@ app.component("cephNfsForm", {
   templateUrl: "components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html",
   bindings: {
   },
-  controller: function ($scope, $state, $stateParams, cephNfsAccessType, cephNfsSquash, cephNfsFsal,
-      cephNfsService, cephNfsFormService, cephRgwUserService) {
+  controller: function ($scope, $state, $stateParams, cephNfsAccessType,
+      cephNfsSquash, cephNfsFsal, cephNfsService, cephNfsFormService,
+      cephRgwUserService, $q) {
     var self = this;
 
     self.cephNfsAccessType = cephNfsAccessType;
@@ -61,55 +62,58 @@ app.component("cephNfsForm", {
       clientBlocks: []
     };
 
+    var oaPromises = [
+      cephNfsService.hosts({fsid: $stateParams.fsid}).$promise,
+      cephNfsService.fsals({fsid: $stateParams.fsid}).$promise
+    ];
+
+    var resolveModel = function (res) {
+      self.model = res;
+      self.model.fsid = $stateParams.fsid;
+      if (self.model.fsal === "RGW") {
+        self.model.bucket = self.model.path;
+        delete self.model.path;
+      }
+      if (self.model.tag !== generateTag()) {
+        $scope.nfsForm.tag.$dirty = true;
+      }
+      if (self.model.pseudo !== generatePseudo()) {
+        $scope.nfsForm.pseudo.$dirty = true;
+      }
+      self.model.protocolNfsv3 = self.model.protocols.indexOf("NFSv3") !== -1;
+      self.model.protocolNfsv4 = self.model.protocols.indexOf("NFSv4") !== -1;
+      delete self.model.protocols;
+      self.model.transportTCP = self.model.transports.indexOf("TCP") !== -1;
+      self.model.transportUDP = self.model.transports.indexOf("UDP") !== -1;
+      delete self.model.transports;
+      angular.forEach(self.model.clientBlocks, function (clientBlock) {
+        var clientsStr = "";
+        angular.forEach(clientBlock.clients, function (client) {
+          clientsStr += client + ", ";
+        });
+        if (clientsStr.length >= 2) {
+          clientsStr = clientsStr.substring(0, clientsStr.length - 2);
+        }
+        clientBlock.clients = clientsStr;
+      });
+      if ($state.current.name === "cephNfs-clone") {
+        delete self.model.id;
+        delete self.model.exportId;
+      }
+    };
+
     self.isEditMode = function () {
       return angular.isDefined($stateParams.host) && angular.isDefined($stateParams.exportId);
     };
 
     if (self.isEditMode()) {
-      cephNfsService
-      .get({
-        fsid: $stateParams.fsid,
-        host: $stateParams.host,
-        exportId: $stateParams.exportId
-      })
-      .$promise
-      .then(function (res) {
-        self.model = res;
-        self.model.fsid = $stateParams.fsid;
-        if (self.model.fsal === "RGW") {
-          self.model.bucket = self.model.path;
-          delete self.model.path;
-        }
-        if (self.model.tag !== generateTag()) {
-          $scope.nfsForm.tag.$dirty = true;
-        }
-        if (self.model.pseudo !== generatePseudo()) {
-          $scope.nfsForm.pseudo.$dirty = true;
-        }
-        self.model.protocolNfsv3 = self.model.protocols.indexOf("NFSv3") !== -1;
-        self.model.protocolNfsv4 = self.model.protocols.indexOf("NFSv4") !== -1;
-        delete self.model.protocols;
-        self.model.transportTCP = self.model.transports.indexOf("TCP") !== -1;
-        self.model.transportUDP = self.model.transports.indexOf("UDP") !== -1;
-        delete self.model.transports;
-        angular.forEach(self.model.clientBlocks, function (clientBlock) {
-          var clientsStr = "";
-          angular.forEach(clientBlock.clients, function (client) {
-            clientsStr += client + ", ";
-          });
-          if (clientsStr.length >= 2) {
-            clientsStr = clientsStr.substring(0, clientsStr.length - 2);
-          }
-          clientBlock.clients = clientsStr;
-        });
-        if ($state.current.name === "cephNfs-clone") {
-          delete self.model.id;
-          delete self.model.exportId;
-        }
-      })
-      .catch(function (error) {
-        self.error = error;
-      });
+      oaPromises.push(cephNfsService
+        .get({
+          fsid: $stateParams.fsid,
+          host: $stateParams.host,
+          exportId: $stateParams.exportId
+        })
+        .$promise);
     }
 
     self.getId = function () {
@@ -120,21 +124,13 @@ app.component("cephNfsForm", {
     };
 
     self.allHosts = [];
-    cephNfsService.hosts({
-      fsid: $stateParams.fsid
-    })
-    .$promise
-    .then(function (res) {
+    var resolveHosts = function (res) {
       self.allHosts = res.hosts;
-    });
+    };
 
     self.allRgwUsers = [];
     self.allFsals = [];
-    cephNfsService.fsals({
-      fsid: $stateParams.fsid
-    })
-    .$promise
-    .then(function (res) {
+    var resolvefsals = function (res) {
       angular.forEach(res.fsals, function (fsal) {
         var fsalItem = cephNfsFsal.find(function (currentFsalItem) {
           if (fsal === currentFsalItem.value) {
@@ -161,7 +157,21 @@ app.component("cephNfsForm", {
       if (self.allFsals.length === 1 && angular.isUndefined(self.model.fsal)) {
         self.model.fsal = self.allFsals[0];
       }
-    });
+    };
+
+    $q.all(oaPromises)
+      .then(data => {
+        resolveHosts(data[0]);
+        resolvefsals(data[1]);
+
+        if (data[2]) {
+          resolveModel(data[2]);
+        }
+        self.formDataIsReady = true;
+      })
+      .catch(error => {
+        self.error = error;
+      });
 
     self.isNewDirectory = false;
     self.getPathTypeahead = function (path, setNewDirectory) {

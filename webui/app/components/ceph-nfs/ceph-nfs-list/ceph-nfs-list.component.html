@@ -1,5 +1,5 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
-<oa-ceph-module-loader module="ceph_nfs" cluster="$ctrl.cluster" registry="$ctrl.registry" on-cluster-change="$ctrl.getNfsList()">
+<oa-module-loader module="ceph_nfs">
 
 <div class="panel panel-default" ng-show="$ctrl.error">
   <div class="panel-heading">
@@ -95,5 +95,5 @@
      selection="$ctrl.selection">
 </div>
 
-</oa-ceph-module-loader>
+</oa-module-loader>
 </oa-ceph-cluster-loader>

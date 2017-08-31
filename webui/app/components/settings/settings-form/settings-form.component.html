@@ -315,6 +315,12 @@
 
         <legend>Ceph Clusters</legend>
 
+        <div ng-if="$ctrl.model.ceph.length === 0">
+          <div class="col-md-offset-3 col-sm-9">
+            <span class="text-muted">No Ceph clusters configured</span>
+          </div>
+        </div>
+
         <div ng-repeat="cephCluster in $ctrl.model.ceph">
           <h3 class="sub-title">{{ cephCluster.name }} ({{ cephCluster.fsid }})</h3>
 

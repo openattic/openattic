@@ -264,6 +264,8 @@ class CephPool(NodbModel, RadosMixin):
 
     pool_snaps = JsonField(base_type=list, editable=False, blank=True)
 
+    application_metadata = JsonField(base_type=dict, default={}, blank=True)
+
     @staticmethod
     def get_all_objects(context, query):
         """:type context: ceph.restapi.FsidContext"""
@@ -322,6 +324,7 @@ class CephPool(NodbModel, RadosMixin):
                 'compression_required_ratio': options('compression_required_ratio'),
                 'compression_max_blob_size': options('compression_max_blob_size'),
                 'compression_min_blob_size': options('compression_min_blob_size'),
+                'application_metadata': pool_data.get('application_metadata'),
             }
 
             ceph_pool = CephPool(**CephPool.make_model_args(object_data))
@@ -414,7 +417,7 @@ class CephPool(NodbModel, RadosMixin):
                                     # second pg_num is in fact pgp_num, but we don't want to allow
                                     # different values here.
                                     self.type,
-                                    self.erasure_code_profile.name if self.erasure_code_profile
+                                    self.erasure_code_profile.name if (self.erasure_code_profile and self.type == 'erasure')
                                     else None)
 
             diff, original = (self.get_modified_fields(name=self.name) if insert else
@@ -472,8 +475,13 @@ class CephPool(NodbModel, RadosMixin):
                 elif key == 'compression_required_ratio':
                     api.osd_pool_set(self.name, key, str(value),
                                      undo_previous_value=str(getattr(original, key)))
+                elif key == 'application_metadata':
+                    for app in set(original.application_metadata) - set(value):
+                        api.osd_pool_application_disable(self.name, app)
+                    for app in set(value) - set(original.application_metadata):
+                        api.osd_pool_application_enable(self.name, app)
 
-                elif self.type == 'replicated' and key not in ['name'] and value is not None:
+                elif self.type == 'replicated' and key not in ['name', 'erasure_code_profile_id'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
                 elif self.type == 'erasure' and key not in ['name', 'size', 'min_size'] and value is not None:

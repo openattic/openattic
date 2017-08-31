@@ -161,7 +161,6 @@ following commands instead.
     python manage.py pre_install
     python manage.py migrate
     python manage.py loaddata */fixtures/initial_data.json
-    python manage.py createcachetable status_cache
     python manage.py add-host
     python manage.py makedefaultadmin
     python manage.py post_install

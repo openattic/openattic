@@ -1,5 +1,9 @@
 <div class="col-sm-12 col-lg-6">
-  <form name="rbdForm" role="form" class="form-horizontal" novalidate oa-check-form>
+  <oa-loading-panel message="Form is loading..."
+      ng-show="!$ctrl.clusters"></oa-loading-panel>
+
+  <form name="rbdForm" role="form" class="form-horizontal" novalidate oa-check-form
+    ng-show="$ctrl.clusters">
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>

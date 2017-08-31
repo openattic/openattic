@@ -33,15 +33,12 @@
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsList", {
   templateUrl: "components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html",
-  bindings: {
-    cluster: "<"
-  },
   controller: function ($scope, $filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
       cephNfsService, taskQueueService, taskQueueSubscriber, cephNfsStateService, cephNfsFsal) {
     var self = this;
 
     this.registry = registryService;
-
+    this.cluster = undefined;
     this.nfs = {};
     this.error = false;
 
@@ -121,12 +118,16 @@ app.component("cephNfsList", {
     self.getNfsList = function () {
       if (angular.isObject(self.cluster) && self.cluster.results &&
           self.cluster.results.length > 0 && self.registry.selectedCluster) {
-        var obj = $filter("filter")(self.cluster.results, {fsid: self.registry.selectedCluster.fsid}, true);
+        var obj = $filter("filter")(self.cluster.results, {
+          fsid: self.registry.selectedCluster.fsid
+        }, true);
         if (obj.length === 0) {
           self.registry.selectedCluster = self.cluster.results[0];
         }
+
         self.nfs = {};
         self.error = false;
+
         cephNfsService
           .get({
             fsid: self.registry.selectedCluster.fsid,

@@ -64,6 +64,18 @@ class _ClusterSettingsListener(oa_settings.SettingsListener):
 _clusterSettingsListener = _ClusterSettingsListener()
 
 
+def sort_by_prioritized_users(elem):
+    # Priorities:
+    # 1. string that contains openattic
+    # 2. string that contains admin
+    # 3. everything else
+    if 'openattic' in elem:
+        return 0, elem
+    if 'admin' in elem:
+        return 1, elem
+    return 2, elem
+
+
 class ClusterConf(object):
     def __init__(self, file_path):
         """:type file_path: str | unicode"""
@@ -137,7 +149,8 @@ class ClusterConf(object):
             except RuntimeError:
                 return None
 
-        return filter(None, map(keyring_or_none, keyrings))
+        keyrings = filter(None, map(keyring_or_none, keyrings))
+        return sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
     @cached_property
     def client(self):
@@ -204,7 +217,7 @@ class Keyring(object):
             pass
 
         try:
-            self.available_user_names = _config.sections()
+            self.available_user_names = sorted(_config.sections(), key=sort_by_prioritized_users)
             if self.user_name is None:
                 self.user_name = self.available_user_names[0]
             if self.user_name not in self.available_user_names:
@@ -498,6 +511,33 @@ class MonApi(object):
     def _args_to_argdict(**kwargs):
         return {k: v for (k, v) in kwargs.iteritems() if v is not None}
 
+    def mds_metadata(self, who=None):
+        """
+        COMMAND("mds metadata name=who,type=CephString,req=false",
+        "fetch metadata for mds <who>",
+        "mds", "r", "cli,rest")
+        """
+        return self._call_mon_command('mds metadata',
+                                      self._args_to_argdict(who=who))
+
+    def mgr_metadata(self, who=None):
+        """
+        COMMAND("mgr metadata name=id,type=CephString,req=false",
+        "dump metadata for all daemons or a specific daemon",
+        "mgr", "r", "cli,rest")
+        """
+        return self._call_mon_command('mgr metadata',
+                                      self._args_to_argdict(who=who))
+
+    def mon_metadata(self, id=None):
+        """
+        COMMAND("mon metadata name=id,type=CephString,req=false",
+        "fetch metadata for mon <id>",
+        "mon", "r", "cli,rest")
+        """
+        return self._call_mon_command('mon metadata',
+                                      self._args_to_argdict(id=id))
+
     def osd_crush_dump(self):
         return self._call_mon_command('osd crush dump')
 
@@ -672,6 +712,30 @@ class MonApi(object):
                                       output_format='string')
 
     @undoable
+    def osd_pool_application_enable(self, pool, app):
+        """COMMAND("osd pool application enable " \
+        "name=pool,type=CephPoolname " \
+        "name=app,type=CephString,goodchars=[A-Za-z0-9-_.] " \
+        "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>",
+        "osd", "rw", "cli,rest")"""
+        yield self._call_mon_command('osd pool application enable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
+                                     output_format='string')
+        self.osd_pool_application_disable(pool, app)
+
+    @undoable
+    def osd_pool_application_disable(self, pool, app):
+        """COMMAND("osd pool application disable " \
+        "name=pool,type=CephPoolname " \
+        "name=app,type=CephString " \
+        "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
+        "disables use of an application <app> on pool <poolname>",
+        "osd", "rw", "cli,rest")"""
+        yield self._call_mon_command('osd pool application disable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
+                                     output_format='string')
+        self.osd_pool_application_enable(pool, app)
+
+    @undoable
     def osd_tier_add(self, pool, tierpool):
         """
         COMMAND("osd tier add " \
@@ -838,7 +902,7 @@ class MonApi(object):
         """
         return self._call_mon_command('osd tree')
 
-    def osd_metadata(self, name=None):
+    def osd_metadata(self, id=None):
         """
         COMMAND("osd metadata " \
         "name=id,type=CephInt,range=0,req=false", \
@@ -848,7 +912,7 @@ class MonApi(object):
         :type name: int
         :rtype: list[dict] | dict
         """
-        return self._call_mon_command('osd metadata', self._args_to_argdict(name=name))
+        return self._call_mon_command('osd metadata', self._args_to_argdict(id=id))
 
     def fs_ls(self):
         return self._call_mon_command('fs ls')

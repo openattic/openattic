@@ -4,7 +4,7 @@ var helpers = require('../../common.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
 
 describe('ceph pool creation form', function(){
-  var cephPoolProperties = new cephPoolCommon();
+  const cephPoolProperties = new cephPoolCommon();
 
   beforeAll(function(){
     helpers.login();
@@ -12,37 +12,47 @@ describe('ceph pool creation form', function(){
     cephPoolProperties.addButton.click();
   });
 
-  var isItemPresent = function(item, items){
+  const isItemPresent = function(item, items){
     it('should hold the item "' + item + '"', function(){
       expect(items[item].isPresent()).toBe(true);
     });
   };
 
-  var isFormElementAvailable = function(e){
-    if(e.presented && e.presented() === false){
+  const verifySubitems = e => {
+    for(let item in e.items){
+      isItemPresent(item, e.items);
+    }
+  };
+
+  const isFormElementAvailableOnInit = function(e){
+    if(e.presented === false){
       it('should not present the form element "' + e.name + '"', function(){
-        if(e.byModel){
-          expect(e.byModel.isPresent()).toBe(e.presented());
-        }else{
-          expect(e.byClass.isPresent()).toBe(e.presented());
-        }
+        expect(cephPoolProperties.getFormElement(e).isPresent()).toBe(false);
       });
     }else{
-      it('should' + (e.displayed() ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
-        if(e.byModel){
-          expect(e.byModel.isDisplayed()).toBe(e.displayed());
-        }else{
-          expect(e.byClass.isDisplayed()).toBe(e.displayed());
-        }
+      it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
+        expect(cephPoolProperties.getFormElement(e).isDisplayed()).toBe(e.displayed);
       });
-      for(var item in e.items){
-        isItemPresent(item, e.items);
-      }
+      verifySubitems(e);
+    }
+  };
+
+  const showByDefaultHiddenElement = function(e){
+    if(e.displayedIf){
+      it('should display the form element "' + e.name + '" if "' + e.displayedIf + '"', function(){
+        cephPoolProperties.selectNeededSelection(e);
+        expect(cephPoolProperties.getFormElement(e).isDisplayed()).toBe(true);
+      });
+      verifySubitems(e);
     }
   };
 
   for(var formElement in cephPoolProperties.formElements){
-    isFormElementAvailable(cephPoolProperties.formElements[formElement]);
+    isFormElementAvailableOnInit(cephPoolProperties.formElements[formElement]);
+  }
+
+  for(var formElement in cephPoolProperties.formElements){
+    showByDefaultHiddenElement(cephPoolProperties.formElements[formElement]);
   }
 
   Object.keys(cephPoolProperties.formLabels).forEach(function(name){

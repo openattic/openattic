@@ -1,4 +1,4 @@
-<oa-ceph-module-loader module="ceph_deployment">
+<oa-module-loader>
 <div ng-if="error">
   <div class="panel panel-default" ng-if="error.statusText === 'NOT FOUND'">
     <div class="panel-heading">
@@ -25,7 +25,7 @@
           <input type="checkbox" ng-model="selection.checkAll"/>
         </th>
         <th ng-show="columns['Hostname']" sortfield="hostname" sortdir="asc" sortheaderclass sortdefault>Hostname</th>
-        <th ng-show="columns['Public address']" sortfield="public_address" sortdir="asc" sortheaderclass>Public address</th>
+        <th ng-show="columns['Addresses']" sortfield="addresses" sortdir="asc" sortheaderclass>Addresses</th>
         <th ng-show="columns['Cluster']" sortfield="cluster" sortdir="asc" sortheaderclass>Cluster</th>
         <th ng-show="columns['Roles']">Roles</th>
         <th ng-show="columns['Key status']" sortfield="key_status" sortdir="asc" sortheaderclass>Key status</th>
@@ -40,7 +40,7 @@
           <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
         </td>
         <td ng-show="columns['Hostname']" ng-bind="row.hostname"></td>
-        <td ng-show="columns['Public address']" ng-bind="row.public_address"></td>
+        <td ng-show="columns['Addresses']" ng-bind="row.addresses"></td>
         <td ng-show="columns['Cluster']" ng-bind="row.cluster"></td>
         <td ng-show="columns['Roles']" ng-bind="row.roles"></td>
         <td ng-show="columns['Key status']" ng-bind="row.key_status"></td>
@@ -52,5 +52,4 @@
 <div id="more" ui-view="statistics">
 </div>
 
-</oa-ceph-module-loader>
-
+</oa-module-loader>

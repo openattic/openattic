@@ -121,7 +121,7 @@ var cephPoolCommons = function(){
       byClass: element(by.className('tc_pool_name')),
       byModel: element(by.model('pool.name')),
       type: 'text',
-      displayed: function(){ return true; },
+      displayed: true,
       items: {
         required: element(by.className('tc_nameRequired')),
         uniqueName: element(by.className('tc_noUniqueName')),
@@ -131,7 +131,7 @@ var cephPoolCommons = function(){
     /* Only for multi cluster systems
     cluster: {
       name: 'Cluster',
-      byClass: element.all(by.className('tc_cluster_selection')),
+      byClass: element(by.className('tc_cluster_selection')),
       byModel: element(by.model('data.cluster')),
       displayed: false,
       type: 'select',
@@ -144,9 +144,9 @@ var cephPoolCommons = function(){
     */
     types: {
       name: 'Pool type',
-      byClass: element.all(by.className('tc_poolTypes_selection')),
+      byClass: element(by.className('tc_poolTypes_selection')),
       byModel: element(by.model('pool.type')),
-      displayed: function(){ return true; },
+      displayed: true,
       type: 'select',
       items: {
         typeSelection: element(by.className('tc_poolTypesOption')),
@@ -157,7 +157,7 @@ var cephPoolCommons = function(){
       name: 'Placement groups',
       byClass: element(by.className('tc_pool_pgNum')),
       byModel: element(by.model('pool.pg_num')),
-      displayed: function(){ return false; },
+      displayed: false,
       displayedIf: 'replicated', // and 'erasure'
       type: 'number',
       items: {
@@ -169,8 +169,7 @@ var cephPoolCommons = function(){
       byClass: element(by.className('tc_pool_size')),
       byModel: element(by.model('pool.size')),
       type: 'number',
-      displayed: function(){ return false; },
-      presented: function(){ return false; },
+      presented: false,
       displayedIf: 'replicated',
       items: {
         helpSize: element(by.className('tc-applied-rule-set')),
@@ -181,7 +180,7 @@ var cephPoolCommons = function(){
     crushRules: {
       name: 'Crush ruleset',
       byClass: element(by.className('tc_crushSet_selection')),
-      displayed: function(){ return false; },
+      presented: false,
       displayedIf: 'replicated', // and 'erasure'
       type: 'select',
       items: {
@@ -191,33 +190,29 @@ var cephPoolCommons = function(){
     },
     erasureProfiles: {
       name: 'Erasure code profile',
-      byClass: element.all(by.className('tc_erasureProfiles_selection')),
+      byClass: element(by.className('tc_erasureProfiles_selection')),
       byModel: element(by.model('pool.erasure.profile')),
       type: 'select',
-      displayed: function(){ return false; },
+      presented: false,
       displayedIf: 'erasure',
       items: {
         erasureSelection: element(by.className('tc_erasureProfilesOption')),
         erasureRequired: element(by.className('tc_erasureRequired'))
-      },
+      }
     },
     ecOverwriteFlag: {
       name: 'EC Overwrites',
-      byClass: element.all(by.id('ec-overwrites')),
-      byModel: element(by.model('data.flags.ec_overwrites')),
+      byClass: element(by.className('tc-ec-overwrites')),
       type: 'checkbox',
-      displayed: function(){ return false; },
-      presented: function(){ return false; },
-      displayedIf: 'erasure',
+      presented: false,
+      displayedIf: 'erasure'
     },
     compressionMode: {
       name: 'Compression mode',
-      byClass: element.all(by.className('tc_compressionMode')),
+      byClass: element(by.className('tc_compressionMode')),
       byModel: element(by.model('pool.compression_mode')),
       type: 'select',
-      displayed: function(){
-        return false;//self.isBluestore && self.formElements.types.byModel ? true : false;
-      },
+      displayed: false, //self.isBluestore && self.formElements.types.byModel ? true : false;
       displayedIf: 'bluestore',
       items: {
         compressionModeRequired: element(by.className('tc_compressionModeRequired'))
@@ -225,10 +220,10 @@ var cephPoolCommons = function(){
     },
     compressionAlgorith: {
       name: 'Compression algorithm',
-      byClass: element.all(by.className('tc_compressionAlgorithmSelection')),
+      byClass: element(by.className('tc_compressionAlgorithmSelection')),
       byModel: element(by.model('pool.compression_algorithm')),
       type: 'select',
-      displayed: function(){ return false; },
+      displayed: false,
       displayedIf: 'isCompression',
       items: {
         compressionAlgorithmRequired: element(by.className('tc_compressionAlgorithmRequired'))
@@ -236,10 +231,10 @@ var cephPoolCommons = function(){
     },
     compressionMinBlobSize: {
       name: 'Compression min blob size',
-      byClass: element.all(by.className('tc_compressionMaxBlobSize')),
+      byClass: element(by.className('tc_compressionMaxBlobSize')),
       byModel: element(by.model('data.compression_min_blob_size')),
       type: 'text',
-      displayed: function(){ return false; },
+      displayed: false,
       displayedIf: 'isCompression',
       items: {
         compressionMinBlobSizeRequired: element(by.className('tc_compressionMinBlobSizeRequired')),
@@ -248,10 +243,10 @@ var cephPoolCommons = function(){
     },
     compressionMaxBlobSize: {
       name: 'Compression max blob size',
-      byClass: element.all(by.className('tc_compressionMaxBlobSize')),
+      byClass: element(by.className('tc_compressionMaxBlobSize')),
       byModel: element(by.model('data.compression_max_blob_size')),
       type: 'text',
-      displayed: function(){ return false; },
+      displayed: false,
       displayedIf: 'isCompression',
       items: {
         compressionMaxBlobSizeRequired: element(by.className('tc_compressionMaxBlobSizeRequired')),
@@ -260,10 +255,10 @@ var cephPoolCommons = function(){
     },
     compressionRequiredRatio: {
       name: 'Compression required ratio',
-      byClass: element.all(by.className('tc_compressionRequiredRatio')),
+      byClass: element(by.className('tc_compressionRequiredRatio')),
       byModel: element(by.model('pool.compression_required_ratio')),
       type: 'number',
-      displayed: function(){ return false; },
+      displayed: false,
       displayedIf: 'isCompression',
       items: {
         ccompressionRequiredRatioRequired: element(by.className('tc_ccompressionRequiredRatioRequired')),
@@ -274,13 +269,13 @@ var cephPoolCommons = function(){
       name: 'Back',
       byClass: element(by.className('tc_backButton')),
       type: 'button',
-      displayed: function(){ return true; },
+      displayed: true
     },
     createButton: {
       name: 'Create',
       byClass: element(by.className('tc_submitButton')),
       type: 'button',
-      displayed: function(){ return true; },
+      displayed: true
     }
   };
 
@@ -293,20 +288,22 @@ var cephPoolCommons = function(){
   };
 
   this.isListInSelectBox = function(e){
-    if(e.displayedIf === 'replicated'){
-      self.formElements.types.byModel.sendKeys('Replicated');
-      self.formElements.name.byModel.click();
-    }else if(e.displayedIf === 'erasure'){
-      self.formElements.types.byModel.sendKeys('Erasure');
-      self.formElements.name.byModel.click();
-    }else if(e.displayedIf === 'isCompression'){
-      self.formElements.compressionMode.byModel.sendKeys('force');
-      self.formElements.name.byModel.click();
-    }
+    self.selectNeededSelection(e);
     e.byClass.click();
     var listEntries = e.byClass.all(by.css('option'));
-
     expect(listEntries.count()).toBeGreaterThan(1);
+  };
+
+  this.selectNeededSelection = (e) => {
+    if(e.displayedIf === 'replicated'){
+      self.formElements.types.byModel.sendKeys('Replicated');
+    }else if(e.displayedIf === 'erasure'){
+      self.formElements.types.byModel.sendKeys('Erasure');
+    }else if(e.displayedIf === 'isCompression'){
+      self.formElements.types.byModel.sendKeys('Replicated');
+      self.formElements.compressionMode.byModel.sendKeys('force');
+    }
+    self.formElements.name.byModel.click();
   };
 
   this.checkCheckboxToBe = function(e, bool){
@@ -316,6 +313,8 @@ var cephPoolCommons = function(){
       }
     });
   };
+
+  this.getFormElement = (e) =>  e.byModel || e.byClass;
 
   /*
    Selects cluster if a selection is available in the listing.
