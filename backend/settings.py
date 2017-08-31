@@ -12,6 +12,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import logging
 import sys
 
 from configobj import ConfigObj
@@ -237,7 +238,13 @@ LOGGING = {
         '': {
             'handlers': ['file'],
             'level': 'INFO',
-            'propagate': True
+            'propagate': False
+        },
+        # By default, the Requests library writes log messages to the console, along the lines of
+        # "Starting new HTTP connection (1): example.com"
+        'requests.packages.urllib3': {
+            'handlers': ['file'],
+            'level': logging.WARNING
         }
     }
 }
