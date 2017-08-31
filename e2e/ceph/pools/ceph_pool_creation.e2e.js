@@ -44,7 +44,7 @@ describe('ceph pool creation', function(){
     name.clear().sendKeys(poolName);
     type.sendKeys(poolType);
     pgnum.clear().sendKeys(pgs);
-
+    cephPoolProperties.addApplication(1);
     if(isCompression === true){
       compressionMode.sendKeys('force');
     }

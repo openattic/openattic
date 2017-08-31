@@ -752,10 +752,18 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   $scope.addEditCapability = function (index) {
     var modalInstance = _showModalDialog("capability", index);
     modalInstance.result.then(function (result) {
-      _addRequest(_getPromiseByType, ["caps", result.action, result.data]);
       switch (result.action) {
         case "add":
+          _addRequest(_getPromiseByType, ["caps", result.action, result.data]);
           $scope.user.caps.push(angular.copy(result.data));
+          break;
+        case "modify":
+          // Note, the RadosGW Admin OPS API does not support the modification of
+          // user capabilities. Because of that it is necessary to delete it and
+          // then to re-add the capability with its new value/permission.
+          _addRequest(_getPromiseByType, ["caps", "delete", $scope.user.caps[index]]);
+          _addRequest(_getPromiseByType, ["caps", "add", result.data]);
+          $scope.user.caps[index] = angular.copy(result.data);
           break;
       }
       _markFormAsDirty();
