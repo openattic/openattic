@@ -110,6 +110,7 @@ describe('ceph rgw users', function(){
     expect(element(by.cssContainingText('dt', 'Email address:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'Suspended:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'Maximum buckets:')).isDisplayed()).toBe(true);
+    expect(cephRgwCommons.capabilitiesDT.isPresent()).toBe(false);
   });
 
   it('should check if user/bucket quota is set for "herpderp"', function(){
@@ -248,6 +249,30 @@ describe('ceph rgw users', function(){
     cephRgwCommons.submitCapBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
+  });
+
+  it('should display the added capabilities in details', function(){
+    helpers.get_list_element(testUser2.user_id).click();
+    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
+    expect(cephRgwCommons.capabilitiesDT.isPresent()).toBe(true);
+    expect(cephRgwCommons.capabilitiesDD.get(0).getText()).toBe('metadata (write)');
+    expect(cephRgwCommons.capabilitiesDD.get(1).getText()).toBe('users (*)');
+  });
+
+  it('should modify a capability', function(){
+    editUser(testUser2.user_id);
+    element.all(by.css('.tc_editCapButton')).get(1).click();
+    browser.sleep(400);
+    element(by.model('cap.perm')).element(by.cssContainingText('option', 'read')).click();
+    cephRgwCommons.submitCapBtn.click();
+    cephRgwCommons.submitBtn.click();
+  });
+
+  it('should display the modified capability in details', function(){
+    helpers.get_list_element(testUser2.user_id).click();
+    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
+    expect(cephRgwCommons.capabilitiesDT.isPresent()).toBe(true);
+    expect(cephRgwCommons.capabilitiesDD.get(1).getText()).toBe('users (read)');
   });
 
   it('should not display user quota max. size/objects', function(){

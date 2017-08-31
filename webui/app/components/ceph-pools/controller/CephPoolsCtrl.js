@@ -59,6 +59,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
         pool.max_avail = 0;
       }
       pool.oaFree = pool.max_avail - pool.num_bytes;
+      pool.application_metadata = Object.keys(pool.application_metadata).sort();
+      pool.showApps = pool.application_metadata.join(", ");
     });
 
     return res;
