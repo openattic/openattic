@@ -16,15 +16,15 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.4.4] - unreleased
+[3.4.4] - 2017-08-31
 --------------------
 
 Added
 ~~~~~
 * WebUI: No clusters configured message on settings page (OP-2535)
 * Backend: Provide Ceph pool application metadata in the API (OP-2593)
-* Backend: Fixed internal server error, if DeepSea's pillar data doesn't
-  contain "public_network" (OP-2595)
+* Backend: Fixed internal server error, if DeepSea's pillar data doesn't contain
+  "public_network" (OP-2595)
 * Node list is now accessible without DeepSea (OP-2602)
 * WebUI: Create pools with application tags (OP-2591)
 
@@ -35,27 +35,28 @@ Changed
 * WebUI: Improve forms initial rendering (OP-2559)
 * WebUI: Allow the modification of existing RGW user capabilities (OP-2319)
 * Backend: Removed some outdated and unused Django models (OP-2586)
-* Backend: Prefer the openattic (firstly) and the admin (secondly) keyring
-  user over any other (OP-2523)
-* Remove on mon_hosts, mon_initial_members and public_address from DeepSea pillar (OP-2606)
+* Backend: Prefer the openattic (firstly) and the admin (secondly) keyring user
+  over any other (OP-2523)
+* Remove on mon_hosts, mon_initial_members and public_address from DeepSea
+  pillar (OP-2606)
 
 Fixed
 ~~~~~
 * WebUI: OSD, RBD and Pool tabs are broken without DeepSea (OP-2571)
 * WebUI: Error after remove iSCSI "Discovery authentication" (OP-2550)
-* Packaging: Fixed regression in make_dist.py which caused `cache push`
-  to fail on empty cache (OP-2587)
+* Packaging: Fixed regression in make_dist.py which caused `cache push` to fail
+  on empty cache (OP-2587)
 * WebUI: Fix wrong angular module declaration (OP-2588)
-* WebUI: Ceph health widget does not display the error and warning
-  messages (OP-2610)
-* Backend: Fixed systemd error "Not an absolute path, ignoring:
-  ${SYSD_PIDFILE}" in service file (OP-2570)
+* WebUI: Ceph health widget does not display the error and warning messages
+  (OP-2610)
+* Backend: Fixed systemd error "Not an absolute path, ignoring: ${SYSD_PIDFILE}"
+  in service file (OP-2570)
 * WebUI/QA: Refactored pool form element verification (OP-2609)
 
 Removed
 ~~~~~~~
-* Packaging: Removed all unnecessary (local storage related) packages
-  from the spec file (OP-2211)
+* Packaging: Removed all unnecessary (local storage related) packages from the
+  spec file (OP-2211)
 
 [3.4.3] - 2017-08-17
 --------------------
