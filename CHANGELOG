@@ -39,6 +39,7 @@ Changed
 * Documentation: Update e2e documentation (OP-2329)
 * WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
 * WebUI: Hide RBD usage percentage bar if no usage information is available (OP-2639)
+* Installation: Drop database when calling `oaconfig install` without data loss (OP-2577)
 
 Fixed
 ~~~~~

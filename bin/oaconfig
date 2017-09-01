@@ -190,7 +190,7 @@ case $1 in
         # Also, pre-install may need to run DROP DATABASE
         $0 stop
 
-        su "$OAUSER" -c 'python manage.py install --pre-install'
+        python manage.py install --pre-install
 
         $0 start
 		
