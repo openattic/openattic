@@ -20,6 +20,7 @@ import mock
 import tempfile
 import json
 
+import exception
 from ceph.restapi import CephPoolSerializer
 from django.test import TestCase
 
@@ -543,46 +544,6 @@ class CephRbdTestCase(TestCase):
         rbd.save()
 
 
-class CallLibradosTestCase(TestCase):
-    def test_simple(self):
-        def return1():
-            return 1
-
-        self.assertEqual(ceph.librados.run_in_external_process(return1), 1)
-
-    def test_huge(self):
-        def return_big():
-            return 'x' * (1024 * 1024)
-
-        self.assertEqual(ceph.librados.run_in_external_process(return_big), return_big())
-
-    def test_exception(self):
-        def raise_exception():
-            raise KeyError()
-
-        self.assertRaises(KeyError,
-                          lambda: ceph.librados.run_in_external_process(raise_exception))
-
-    def test_exit(self):
-        def just_exit():
-            # NOTE: sys.exit(0) used to work here. No idea why it did work, because ...
-            import os
-            os._exit(0)
-
-        # ... multiprocessing seems to have a bug where we end up in a timeout, if the child
-        # died prematurely.
-        self.assertRaises(ceph.librados.ExternalCommandError,
-                          lambda: ceph.librados.run_in_external_process(just_exit, timeout=1))
-
-    def test_timeout(self):
-        def just_wait():
-            import time
-            time.sleep(3)
-
-        self.assertRaises(ceph.librados.ExternalCommandError,
-                          lambda: ceph.librados.run_in_external_process(just_wait, timeout=1))
-
-
 class PerformanceTaskTest(TestCase):
 
     @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
@@ -597,7 +558,7 @@ class PerformanceTaskTest(TestCase):
     @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
     def test_exception(self, RbdApi_mock):
         RbdApi_mock.return_value.image_disk_usage.side_effect \
-            = ceph.librados.ExternalCommandError('foo')
+            = exception.ExternalCommandError('foo')
         res = ceph.tasks.get_rbd_performance_data.call_now("3d693c97-d0e7-41d2-87e4-979fa4ebd10a",
                                                            "mypool", "myrbd")
         data, time = res
