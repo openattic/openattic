@@ -48,3 +48,4 @@ grunt-usemin                      3.1.1               BSD-2-Clause              
 load-grunt-tasks                  3.4.1               MIT                         https://github.com/sindresorhus/load-grunt-tasks/tree/v3.4.1
 matchdep                          1.0.1               MIT                         https://github.com/tkellen/js-matchdep/tree/v1.0.1
 protractor                        5.1.2               MIT                         https://github.com/angular/protractor/tree/5.1.2
+protractor-jasmine2-screenshot-reporter     0.4.0     MIT                         https://github.com/mlison/protractor-jasmine2-screenshot-reporter
