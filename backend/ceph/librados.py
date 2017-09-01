@@ -16,7 +16,7 @@ from StringIO import StringIO
 from collections import deque
 from contextlib import contextmanager
 import fnmatch
-from errno import EPERM, errorcode
+from errno import EPERM
 from configobj import ConfigObj
 import os
 import json
