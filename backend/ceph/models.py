@@ -75,6 +75,11 @@ class CephCluster(NodbModel, RadosMixin):
     config_file_path = models.CharField(max_length=1024, editable=False, null=True)
     keyring_file_path = models.CharField(max_length=1024, null=True)
     keyring_user = models.CharField(max_length=1024, null=True)
+    osd_flags = JsonField(base_type=list, default=[],
+                          help_text='supported flags: full|pause|noup|nodown|noout|noin|nobackfill|'
+                                    'norebalance|norecover|noscrub|nodeep-scrub|notieragent|'
+                                    'sortbitwise|recovery_deletes|require_jewel_osds|'
+                                    'require_kraken_osds')
 
     @classmethod
     def get_name(cls, fsid):
@@ -132,14 +137,17 @@ class CephCluster(NodbModel, RadosMixin):
 
         diff, original = self.get_modified_fields()
 
-        if insert:
-            self.features = original.features
-
         for key, value in diff.items():
             if key == 'keyring_file_path':
                 ClusterConf(self.config_file_path).keyring_file_path = value
             elif key == 'keyring_user':
                 ClusterConf(self.config_file_path).keyring.set_user_name(self.fsid, value)
+            elif key == 'osd_flags':
+                api = self.mon_api(self.fsid)
+                for flag in set(original.osd_flags) - set(value):
+                    api.osd_unset(flag)
+                for flag in set(value) - set(original.osd_flags):
+                    api.osd_set(flag)
             else:
                 logger.warning('Tried to set "{}" to "{}" on rbd "{}", which is not '
                                'supported'.format(key, value, self.config_file_path))
@@ -170,6 +178,11 @@ class CephCluster(NodbModel, RadosMixin):
         except (TypeError, librados.ExternalCommandError):
             logger.exception('failed to get ceph health')
             self.health = 'HEALTH_ERR'
+
+    @bulk_attribute_setter(['osd_flags'], catch_exceptions=librados.ExternalCommandError)
+    def set_osd_flags(self, objects, field_names):
+        flags = self.mon_api(self.fsid).osd_dump()['flags']
+        self.osd_flags = flags.split(',')
 
     def __str__(self):
         return self.config_file_path

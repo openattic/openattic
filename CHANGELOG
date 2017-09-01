@@ -23,6 +23,8 @@ Added
 ~~~~~
 * Documentation: Added Troubleshooting chapter (OP-1070)
 
+* Backend: Added `osd_flags` to `CephCluster` (OP-2598)
+
 Changed
 ~~~~~~~
 
