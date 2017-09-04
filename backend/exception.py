@@ -45,6 +45,8 @@ def custom_handler(exc, context=None):
     # e.g. where the user is not responsible for, must use the HTTP 500 error.
 
     if isinstance(exc, ValidationError):
+        if logger.level <= logging.DEBUG:
+            logger.exception('Validation Error')
         # By default the ValidationError exception should be called with a Python dictionary
         # containing the error messages for each erroneous field.
         if hasattr(exc, 'error_dict'):
@@ -52,6 +54,14 @@ def custom_handler(exc, context=None):
             # will not be processed correct by the Django framework and will finally not submitted
             # to the API caller as response content.
             return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+
+        if hasattr(exc, 'error_list'):
+            errors = exc.messages
+            if len(errors) == 1:
+                return Response({'detail': errors[0]}, status=status.HTTP_400_BAD_REQUEST)
+            if len(errors) > 1:
+                return Response({'detail': errors}, status=status.HTTP_400_BAD_REQUEST)
+
         # Handle exceptions that are raised with an single error message string.
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 

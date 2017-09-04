@@ -21,6 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend: Addded routes to trigger scrub per OSD, single host and many hosts (OP-2603)
 
 Changed
 ~~~~~~~

@@ -19,6 +19,7 @@ from django.db import models
 from ceph.models import CephCluster
 from deepsea import DeepSea
 from ceph.librados import MonApi
+from exception import NotSupportedError
 from nodb.models import JsonField, NodbModel
 from utilities import aggregate_dict
 import rest_client
@@ -67,6 +68,15 @@ class CephMinion(NodbModel):
 
         return [CephMinion(**CephMinion.make_model_args(host))
                 for host in minions]
+
+    def scrub(self, deep_scrub):
+        api = MonApi(self.cluster.fsid)
+        osds = [daemon for daemon in self.daemons if daemon.startswith('osd.')]
+        if not osds:
+            raise NotSupportedError('Node {} does not have any OSDs'.format(self.hostname))
+
+        api_scrub = api.osd_deep_scrub if deep_scrub else api.osd_scrub
+        return {osd: api_scrub(osd) for osd in osds}
 
 
 def merge_pillar_metadata():

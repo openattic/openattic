@@ -14,16 +14,16 @@
 """
 from django.utils.functional import cached_property
 from rest_framework import serializers, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 
-from ceph.models import *
-
+from ceph.models import CephCluster, CrushmapVersion, CephPool, CephErasureCodeProfile, CephOsd, \
+    CephPg, CephRbd, CephFs
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
-from rest.restapi import NoCacheModelViewSet
 
-from rest.utilities import get_request_data, mk_method_field_params, drf_version, get_paginated_response, \
+from rest.utilities import get_request_data, drf_version, get_paginated_response, \
     get_request_query_params
 
 
@@ -70,7 +70,6 @@ class CephClusterViewSet(NodbViewSet):
     @detail_route(methods=['get'])
     def keyring_candidates(self, request, *args, **kwargs):
         return Response(self.get_object().keyring_candidates, status=status.HTTP_200_OK)
-
 
 
 class CephPoolSerializer(NodbSerializer):
@@ -235,10 +234,7 @@ class CephOsdSerializer(NodbSerializer):
 
 
 class CephOsdViewSet(NodbViewSet):
-    """Represents a Ceph osd.
-
-    The reply consists of the output of ```osd tree```.
-    """
+    """Represents a Ceph osd."""
     filter_fields = ("name", "id", "osd_objectstore")
     serializer_class = CephOsdSerializer
 
@@ -264,6 +260,15 @@ class CephOsdViewSet(NodbViewSet):
         ]
 
         return Response(json_data, status=status.HTTP_200_OK)
+
+    @detail_route(['post', 'get'])
+    def scrub(self, request, *args, **kwargs):
+        deep_scrub = get_request_data(request).get('deep-scrub', False)
+        res = {
+            'command': "deep-scrub" if deep_scrub else "scrub",
+            'result': self.get_object().scrub(deep_scrub=deep_scrub)
+        }
+        return Response(res, status=status.HTTP_200_OK)
 
 
 class CephPgSerializer(NodbSerializer):
