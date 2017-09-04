@@ -28,6 +28,8 @@ Added
 Changed
 ~~~~~~~
 
+* Packaging: Depend on Ceph Luminous (OP-2622)
+
 Fixed
 ~~~~~
 

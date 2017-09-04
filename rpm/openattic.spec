@@ -52,7 +52,7 @@ Requires: python-gobject2
 Requires: python-pam
 Requires: python-psycopg2
 Requires: python-requests
-Requires: ceph-common >= 10.0.0
+Requires: ceph-common >= 12.2.0
 Requires: postgresql
 Requires: python-requests-aws
 Requires: python-pyinotify
