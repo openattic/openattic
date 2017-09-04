@@ -852,6 +852,29 @@ class MonApi(object):
                                      output_format='string')
         self.osd_out(name)
 
+
+    @undoable
+    def osd_set(self, key):
+        """
+        COMMAND("osd set " \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent|sortbitwise|recovery_deletes|require_jewel_osds|require_kraken_osds", \
+        "set <key>", "osd", "rw", "cli,rest")
+        """
+        yield self._call_mon_command('osd set', self._args_to_argdict(key=key),
+                                     output_format='string')
+        self.osd_unset(key)
+
+    @undoable
+    def osd_unset(self, key):
+        """
+        COMMAND("osd unset " \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent", \
+        "unset <key>", "osd", "rw", "cli,rest")
+        """
+        yield self._call_mon_command('osd unset', self._args_to_argdict(key=key),
+                                     output_format='string')
+        self.osd_set(key)
+
     @undoable
     def osd_crush_reweight(self, name, weight, undo_previous_weight=None):
         """
@@ -867,6 +890,11 @@ class MonApi(object):
         self.osd_crush_reweight(name, undo_previous_weight)
 
     def osd_dump(self):
+        """
+        COMMAND("osd dump " \
+        "name=epoch,type=CephInt,range=0,req=false",
+        "print summary of OSD map", "osd", "r", "cli,rest")
+        """
         return self._call_mon_command('osd dump')
 
     def osd_list(self):

@@ -25,3 +25,4 @@ The installation can be broken down into the following steps:
   getting_started
   authentication
   config_recommendations
+  troubleshooting
