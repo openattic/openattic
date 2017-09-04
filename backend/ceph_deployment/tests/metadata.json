@@ -264,7 +264,7 @@
   [
     {
       "distro_description": "distro 1.0",
-      "hostname": "localhost",
+      "hostname": "localhost.deepsea-pillar.local",
       "daemon_types": [
         "mds",
         "osd",
