@@ -33,6 +33,8 @@ Changed
 Fixed
 ~~~~~
 
+* Stop `requests.packages.urllib3` from spamming the log file (OP-2616)
+
 Removed
 ~~~~~~~
 
