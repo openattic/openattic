@@ -201,10 +201,6 @@ app.component("cephIscsiForm", {
       {
         name: "Fast diff",
         value: "fast-diff"
-      },
-      {
-        name: "Data pool",
-        value: "data-pool"
       }
     ];
 
