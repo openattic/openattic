@@ -47,3 +47,4 @@ grunt-rev                         0.1.0               MIT                       
 grunt-usemin                      3.1.1               BSD-2-Clause                https://github.com/yeoman/grunt-usemin/tree/3.1.1
 load-grunt-tasks                  3.4.1               MIT                         https://github.com/sindresorhus/load-grunt-tasks/tree/v3.4.1
 matchdep                          1.0.1               MIT                         https://github.com/tkellen/js-matchdep/tree/v1.0.1
+protractor                        5.1.2               MIT                         https://github.com/angular/protractor/tree/5.1.2

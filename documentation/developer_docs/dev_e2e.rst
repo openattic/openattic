@@ -37,18 +37,13 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor@4.0.10``
-
 .. note::
-  Protractor version 4.x.x requires Node.js |reg| version 4.x (you can check
-  your installed version with ``node -v``).
+  Protractor and most of its dependencies will be installed locally when you
+  execute ``npm install`` on ``webui/``.
 
-* ``apt-get install openjdk-7-jre-headless``
+* *(optional)* ``npm install -g protractor@5.1.2``
 
-* ``webdriver-manager`` version should be 10.3.x
-
-* ``npm install -g jasmine-beforeAll`` (in case this package is not available,
-  try ``npm install -g jasmine-before-all``)
+* ``apt-get install openjdk-8-jre-headless oracle-java8-installer``
 
 * Choose/Install your preferred browser (Protractor supports the two
   latest major versions of Chrome, Firefox, Safari, and IE)
@@ -170,17 +165,16 @@ you can of course skip those tests by removing the suite from
 Start webdriver manager Environment
 -----------------------------------
 
-Use a separate tab/window to run the following command::
+Go to ``webui/`` and type the following command:
 
-  $ webdriver-manager start
+``$ webdriver-manager start`` *or:* ``$ npm run webdriver``
 
 Make Protractor Execute the Tests
 ---------------------------------
 
-Go to ``/srv/openattic/webui/`` and type ``protractor protractor.conf.js`` in
-order to run the tests::
+Use a separate tab/window, go to ``webui/`` and type::
 
-  $ protractor protractor.conf.js (--suite <suiteName>)
+  $ npm run protractor (-- --suite <suiteName>)
 
 .. important::
   Without a given suite protractor will execute all tests (and this will
@@ -190,13 +184,13 @@ Starting Only a Specific Test Suite
 -----------------------------------
 
 If you only want to test a specific action, you can run i.e.
-``protractor protractor.conf.js --suite snapshot_add``.
+``$ npm run protractor -- --suite general``.
 
 Available test cases can be looked up in ``protractor.conf.js``, i.e.::
 
   suites: {
     //suite name       : '/path/to/e2e-test/file.e2e.js'
-    snapshot_add       : '../e2e/snapshots/add/**/*.e2e.js',
+    general            : '../e2e/base/general/**/general.e2e.js',
   }
 
 .. note::
@@ -209,10 +203,10 @@ How to Cancel the Tests
 -----------------------
 
 When running the tests and you want to cancel them, rather press :kbd:`CTRL+C`
-on the commandline (in same window in which you've started
-``protractor.conf.js``) than closing the browser. Just closing the browser
-window causes every single test to fail because protractor now tries to
-execute the tests and can not find the browser window anymore.
+on the commandline (in same window in which you've started ``protractor``) than
+closing the browser. Just closing the browser window causes every single test to
+fail because protractor now tries to execute the tests and can not find the
+browser window anymore.
 
 E2E-Test Directory and File Structure
 -------------------------------------

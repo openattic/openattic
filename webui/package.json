@@ -22,7 +22,8 @@
     "grunt-rev": "0.1.0",
     "grunt-usemin": "3.1.1",
     "load-grunt-tasks": "3.4.1",
-    "matchdep": "1.0.1"
+    "matchdep": "1.0.1",
+    "protractor": "5.1.2"
   },
   "engines": {
     "node": ">=4.3.0"
@@ -33,6 +34,8 @@
     "build:npm": "npm install -g bower grunt-cli && npm install",
     "build:bower": "bower install --allow-root",
     "build:grunt": "grunt build",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "npm run clean && npm run build",
+    "webdriver": "webdriver-manager update && webdriver-manager start",
+    "protractor": "protractor protractor.conf.js"
   }
 }

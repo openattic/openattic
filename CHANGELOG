@@ -22,17 +22,15 @@ To describe their impact on the project, changes are grouped as follows:
 Added
 ~~~~~
 * Documentation: Added Troubleshooting chapter (OP-1070)
-
 * Backend: Added `osd_flags` to `CephCluster` (OP-2598)
 
 Changed
 ~~~~~~~
-
 * Packaging: Depend on Ceph Luminous (OP-2622)
+* WebUI: Upgrade Protractor (OP-2618)
 
 Fixed
 ~~~~~
-
 * Stop `requests.packages.urllib3` from spamming the log file (OP-2616)
 
 Removed
