@@ -103,6 +103,11 @@
     }
   };
 
+  self.movedElements = {
+    close: element(by.className('tc-tab-del-close')),
+    movedTasks: element.all(by.css('uib-accordion.tc-moved-tasks ul > li'))
+  };
+
   /**
    * Adds elements to each tab.elements and adds an element to each column of the tab.
    * For internal use only.
