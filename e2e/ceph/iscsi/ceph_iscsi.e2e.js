@@ -41,6 +41,7 @@ describe('ceph iscsi', function(){
     form.passwordInput.sendKeys('TargetPassword');
     form.addInitiator();
     form.initiatorsInput.get(0).sendKeys('iqn.2016-06.org.openattic:storage:disk.sn-a8675310');
+    browser.sleep(helpers.configs.sleep);
     form.mutualAuthenticationCheckbox.click();
     form.mutualUserInput.sendKeys('TargetMutualUser');
     form.mutualPasswordInput.sendKeys('TargetMutualPassword');
