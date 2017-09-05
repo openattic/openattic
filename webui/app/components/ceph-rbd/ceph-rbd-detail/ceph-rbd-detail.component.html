@@ -24,6 +24,12 @@
                 <dt>Features:</dt>
                 <dd ng-repeat="feature in $ctrl.selection.item.features">{{$ctrl.features[feature].desc}}</dd>
             </div>
+            <div ng-if="$ctrl.selection.item.used_size !== null">
+              <dt>Used:</dt>
+              <dd>{{$ctrl.selection.item.usedPercent | number:2}}%
+              <span class="text-muted">(Used: {{$ctrl.selection.item.used_size | bytes}} &mdash; Free: {{$ctrl.selection.item.free | bytes}})</span>
+              </dd>
+            </div>
         </dl>
     </div>
 </div>
