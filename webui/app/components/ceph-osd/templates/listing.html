@@ -18,9 +18,11 @@
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
             <tr>
+                <!-- Removes checkbox column
                 <th class="oadatatablecheckbox" ng-if="selection.available">
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
+                -->
                 <th ng-show="columns['Name']" sortfield="name" sortdir="asc" sortheaderclass sortdefault>Name</th>
                 <th ng-show="columns['Hostname']" sortfield="hostname" sortheaderclass>Hostname</th>
                 <th ng-show="columns['Status']" sortfield="status" sortheaderclass>Status</th>
@@ -33,9 +35,11 @@
                 ng-class="{ info: isRowSelected(row) }"
                 class="clickable"
                 ng-click="toggleSelection(row, $event)">
+                <!-- Removes checkbox column
                 <td ng-if="selection.available">
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
+                -->
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
                 <td ng-show="columns['Hostname']" ng-bind="row.hostname"></td>
                 <td ng-show="columns['Status']" ng-bind="row.status"></td>
