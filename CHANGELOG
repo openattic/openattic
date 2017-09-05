@@ -37,6 +37,7 @@ Fixed
   test user (OP-2627)
 
 * Fixed Grafana Node Statistics are not immediately visible in oA (OP-2634)
+* Backend: Fixed `KeyError: 'hostname'` in nodes tab (OP-2638)
 
 Removed
 ~~~~~~~

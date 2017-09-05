@@ -129,29 +129,24 @@ def reduce_services(services):
 
 def metadata_by_cluster(hosts, cluster):
     """:type cluster: CephCluster"""
+
+    def add_hosts(metadata, daemon_type, daemon_name):
+        for daemon in metadata:
+            if 'hostname' in daemon:
+                daemon["type"] = daemon_type
+                daemon["daemon"] = daemon_name.format(daemon)
+                daemon['fsid'] = cluster.fsid
+                hosts.setdefault(daemon['hostname'], []).append(daemon)
+            else:
+                logger.warning(
+                    '{} metadata: no "hostname" in {}'.format(daemon_type, daemon.keys()))
+
     api = MonApi(cluster.fsid)
-    for osd in api.osd_metadata():
-        osd["type"] = "osd"
-        osd["daemon"] = "osd.{}".format(osd['id'])
-        osd['fsid'] = cluster.fsid
-        hosts.setdefault(osd['hostname'], []).append(osd)
-    for mon in api.mon_metadata():
-        mon["type"] = "mon"
-        mon["daemon"] = "mon.{}".format(mon['name'])
-        mon['fsid'] = cluster.fsid
-        hosts.setdefault(mon['hostname'], []).append(mon)
-    for mgr in api.mgr_metadata():
-        if 'hostname' in mgr:
-            mgr["type"] = "mgr"
-            mgr["daemon"] = "mgr.{}".format(mgr['id'])
-            mgr['fsid'] = cluster.fsid
-            hosts.setdefault(mgr['hostname'], []).append(mgr)
-        else:
-            logger.warning('no "hostname" in {}'.format(mgr.keys()))
-    for mds in api.mds_metadata():
-        mds["type"] = "mds"
-        mds["daemon"] = "mds.{}".format(mds['name'])
-        mds['fsid'] = cluster.fsid
-        hosts.setdefault(mds['hostname'], []).append(mds)
+
+    add_hosts(api.osd_metadata(), 'osd', 'osd.{[id]}')
+    add_hosts(api.mon_metadata(), 'mon', 'mon.{[name]}')
+    add_hosts(api.mgr_metadata(), 'mgr', 'mgr.{[id]}')
+    add_hosts(api.mds_metadata(), 'mds', 'mds.{[name]}')
+
     return hosts
 
