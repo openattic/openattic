@@ -50,10 +50,10 @@ app.constant("cephRbdFeatures", {
   },
   "stripingv2": {
     desc: "Striping",
-    helpText: "",
+    helperTemplate: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html",
     requires: null,
     excludes: null,
-    isSupportedISCSI: true,
+    isSupportedISCSI: false,
     isDisplayed: true
   },
   "exclusive-lock": {

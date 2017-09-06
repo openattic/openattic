@@ -133,6 +133,9 @@ app.component("cephRbdForm", {
     };
 
     self.watchDataFeatures = function (key) {
+      if (key === "stripingv2") {
+        self.sizeValidator();
+      }
       var defaults = self.data.defaultFeatures;
       if (!defaults) {
         if (key) {
@@ -217,13 +220,30 @@ app.component("cephRbdForm", {
       const stripeSize = striping.count * striping.unit;
       const objectSetSize = striping.count * self.rbd.obj_size;
       const stripeSum = objectSetSize / stripeSize;
+      let size;
+      let maxSets;
+      let maxStripes;
+      if (angular.isString(self.data.size)) {
+        size = SizeParserService.parseInt(self.data.size, "b");
+        maxSets = parseInt(size / objectSetSize, 10);
+        maxStripes = maxSets * stripeSum;
+        self.sizeValidator(size);
+      }
       return [
-        stripeSum === 1 ? "Each" : stripeSum + " stripes",
-        "(" + $filter("bytes")(stripeSize) + ")",
-        "spans accross",
+        stripeSum === 1 ? "Each stripe" : stripeSum + " stripes, each " + $filter("bytes")(stripeSize) + ", ",
+        stripeSum === 1 ? "spans" : "span",
+        "across",
         striping.count,
         "Objects",
-        "(" + $filter("bytes")(objectSetSize) + ")"
+        "(" + $filter("bytes")(objectSetSize) + ")",
+        !size || !maxSets ? "" : [
+          "<br>",
+          "The RBD can hold up to",
+          maxSets,
+          "Objects and",
+          stripeSum > 1 ? maxStripes : "",
+          "Stripes"
+        ].join(" ")
       ].join(" ");
     };
 
@@ -240,14 +260,24 @@ app.component("cephRbdForm", {
       if (size === "") {
         return;
       }
-
       size = SizeParserService.parseInt(size, "b");
-      var objNum = parseInt(size / self.data.obj_size, 10);
-      if (objNum < 1) {
+      self.sizeValidator(size);
+      if (parseInt(size / self.data.obj_size, 10) < 1) {
         self.data.size = $filter("bytes")(self.data.obj_size);
       } else {
         self.data.size = $filter("bytes")(size);
       }
+    };
+
+    self.sizeValidator = (size = SizeParserService.parseInt(self.data.size, "b")) => {
+      let valid = true;
+      if (self.data.features.stripingv2.checked &&
+          $scope.rbdForm.stripingCount &&
+          $scope.rbdForm.stripingCount.$valid &&
+          $scope.rbdForm.obj_size.$valid) {
+        valid = self.data.striping.count * self.rbd.obj_size < size;
+      }
+      $scope.rbdForm.size.$setValidity("valid", valid);
     };
 
     var goToListView = function () {

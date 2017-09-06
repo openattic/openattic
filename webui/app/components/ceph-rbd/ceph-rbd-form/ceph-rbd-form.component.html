@@ -143,6 +143,12 @@
                 && rbdForm.size.$error.required">
               This field is required!
             </span>
+            <span class="help-block tc_sizeIncrease"
+                ng-show="$ctrl.data.features.stripingv2.checked &&
+                    (rbdForm.$submitted || rbdForm.size.$dirty) &&
+                    rbdForm.size.$invalid">
+              You have to increase the size in order to use striping.
+            </span>
           </div>
         </div>
 
@@ -188,6 +194,9 @@
                     ng-disabled="$ctrl.data.features[key].disabled" ng-change="$ctrl.watchDataFeatures(key)"
                     class="tc_feature_{{key}}" ng-name="key">
                 <label ng-bind="feature.desc" for="{{key}}"></label>
+                <oa-helper ng-if="feature.helperTemplate"
+                    helper-template="feature.helperTemplate">
+                </oa-helper>
               </div>
               <span class="help-block tc_noFeature" ng-show="rbdForm.$error.noFeatureSelected">At least one feature has to be selected</span>
             </div>
@@ -227,7 +236,7 @@
           </div>
           <div class="form-group"
               ng-class="{'has-error': (rbdForm.$submitted || rbdForm.stripingCount.$dirty) && rbdForm.stripingCount.$invalid,
-              'has-warning': $ctrl.data.striping.count < 3 || $ctrl.data.striping.count > 15}">
+              'has-warning': $ctrl.data.striping.count > 15}">
             <label class="control-label col-sm-4"
                 for="stripingCount">
               Striping count
@@ -248,8 +257,8 @@
                 This field is required!
               </span>
               <span class="help-block tc-stripingCount-min"
-                  ng-show="$ctrl.data.striping.count < 3">
-                A stipe count of 1 can't be set. A good value is 5.
+                  ng-show="rbdForm.stripingCount.$invalid">
+                  The striping count has to be a value higher than 1.
               </span>
               <span class="help-block tc-stripingCount-toBig"
                   ng-show="$ctrl.data.striping.count > 15">
@@ -257,8 +266,11 @@
               </span>
             </div>
           </div>
-          <div class="form-group">
-            <span class="help-block tc-striping-help col-sm-offset-4 col-sm-8" ng-bind="$ctrl.stripingDescription()"></span>
+          <div class="form-group"
+              ng-show="rbdForm.obj_size.$valid && rbdForm.stripingUnit.$valid && rbdForm.stripingCount.$valid">
+            <span class="help-block tc-striping-help col-sm-offset-4 col-sm-8"
+                ng-bind-html="$ctrl.stripingDescription()">
+            </span>
           </div>
         </div>
       </div>
