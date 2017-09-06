@@ -7,6 +7,7 @@
     sleep   : 2000, // Default browser test sleep time.
     outDir: '<existing_path>', // Path in which the test report will be stored. If preserveDirectory is false, this folder will be cleaned on each test.
     preserveDirectory: <boolean>, // Indicates if each report should be created in a separate directory with unique name.
+    captureOnlyFailedSpecs: <boolean>, // When this option is enabled, reporter will create screenshots only for specs that have failed their expectations.
     allScriptsTimeout: <ms>, // Timeout value for each test in miliseconds.
 
     cephCluster: { // Contains all ceph cluster definitions
