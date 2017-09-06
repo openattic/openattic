@@ -83,7 +83,8 @@ var rbdCommons = function(){
       testClass: 'tc_rbd_size',
       model: '$ctrl.data.size',
       items: {
-        helpSize: 'tc_sizeRequired'
+        helpSize: 'tc_sizeRequired',
+        helpSizeStripe: 'tc_sizeIncrease'
       }
     },
     objectSize: {
@@ -182,20 +183,28 @@ var rbdCommons = function(){
     [2, 2, 2, 1, 1, 2, 2],
   ];
 
-  this.convertFeatureObjectToFeatureArray = function(feature){
-    return [
-      feature.deepFlatten,
-      feature.layering,
-      feature.striping,
-      feature.exclusiveLock,
-      feature.objectMap,
-      feature.journaling,
-      feature.fastDiff
-    ];
-  };
+  this.convertFeatureObjectToArray = (feature) => [
+    feature.deepFlatten,
+    feature.layering,
+    feature.striping,
+    feature.exclusiveLock,
+    feature.objectMap,
+    feature.journaling,
+    feature.fastDiff
+  ];
+
+  this.convertFeatureArrayToObject = (feature) => ({
+    deepFlatten: feature[0],
+    layering: feature[1],
+    striping: feature[2],
+    exclusiveLock: feature[3],
+    objectMap: feature[4],
+    journaling: feature[5],
+    fastDiff: feature[6]
+  });
 
   // Works on every operating system that was tested
-  this.defaultFeatureCase = this.convertFeatureObjectToFeatureArray({
+  this.defaultFeatureCase = this.convertFeatureObjectToArray({
     deepFlatten: 1,
     layering: 1,
     striping: 0,
@@ -297,18 +306,18 @@ var rbdCommons = function(){
   };
 
   this.fillForm = function(rbdName, size, rbdObjSize, featureCase){
-    rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.name.clear().sendKeys(rbdName);
-    self.size.clear().sendKeys(size);
-    self.objSize.clear().sendKeys(rbdObjSize);
+    helpers.changeInput(self.name, rbdName);
+    helpers.changeInput(self.size, size);
+    helpers.changeInput(self.objSize, rbdObjSize || '4.00 MiB');
     if(featureCase){
       self.selectFeatures(featureCase);
     }
   };
 
-  this.createRbd = function(rbdName, rbdObjSize, featureCase){
+  this.createRbd = function(rbdName, size, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.fillForm(rbdName, rbdObjSize, rbdObjSize, featureCase);
+    size = size || rbdObjSize;
+    self.fillForm(rbdName, size, rbdObjSize, featureCase);
     element(by.className('tc_submitButton')).click();
 
     taskQueueHelpers.waitForPendingTasks();

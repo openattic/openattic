@@ -107,27 +107,50 @@ describe('should test the ceph rbd creation form', function(){
 
   it('should show a warning on object size if stripe unit is increased', () => {
     const unit = rbdProperties.stripingUnit;
-    helpers.changeInput(rbdProperties.objSize, '4 M');
+    const objSize = rbdProperties.objSize;
+    helpers.changeInput(objSize, '4 M');
     helpers.changeInput(unit, '4 M');
     helpers.changeInput(unit, '8 M');
     expect(element(by.className(fe.objectSize.items.changed)).isDisplayed()).toBe(true);
+    helpers.changeInput(objSize, '8 M');
+    expect(element(by.className(fe.objectSize.items.changed)).isDisplayed()).toBe(false);
   });
 
   it('should show a warning on stripe unit if object size is decreased', () => {
-    helpers.changeInput(rbdProperties.stripingUnit, '4 M');
-    helpers.changeInput(rbdProperties.objSize, '4 M');
-    helpers.changeInput(rbdProperties.objSize, '2 M');
+    const unit = rbdProperties.stripingUnit;
+    const objSize = rbdProperties.objSize;
+    helpers.changeInput(unit, '4 M');
+    helpers.changeInput(objSize, '4 M');
+    helpers.changeInput(objSize, '2 M');
     expect(element(by.className(fe.stripingUnit.items.changed)).isDisplayed()).toBe(true);
+    helpers.changeInput(unit, '2 M');
+    expect(element(by.className(fe.stripingUnit.items.changed)).isDisplayed()).toBe(false);
   });
 
   it('should show a warning if stripe count is set to 2', () => {
-    helpers.changeInput(rbdProperties.stripingCount, '2');
+    const count = rbdProperties.stripingCount;
+    helpers.changeInput(count, '1');
     expect(element(by.className(fe.stripingCount.items.min)).isDisplayed()).toBe(true);
+    helpers.changeInput(count, '5');
+    expect(element(by.className(fe.stripingCount.items.min)).isDisplayed()).toBe(false);
   });
 
   it('should show a warning if stripe count is higher than 15', () => {
-    helpers.changeInput(rbdProperties.stripingCount, '16');
+    const count = rbdProperties.stripingCount;
+    helpers.changeInput(count, '16');
     expect(element(by.className(fe.stripingCount.items.toBig)).isDisplayed()).toBe(true);
+    helpers.changeInput(count, '5');
+    expect(element(by.className(fe.stripingCount.items.toBig)).isDisplayed()).toBe(false);
+  });
+
+  it('should show an error on size if object set size icreases the setted size', () => {
+    const size = rbdProperties.size;
+    helpers.changeInput(rbdProperties.stripingUnit, '4 M');
+    helpers.changeInput(rbdProperties.stripingCount, '5');
+    helpers.changeInput(size, '10 M');
+    expect(element(by.className(fe.size.items.helpSizeStripe)).isDisplayed()).toBe(true);
+    helpers.changeInput(size, '100 M');
+    expect(element(by.className(fe.size.items.helpSizeStripe)).isDisplayed()).toBe(false);
   });
 
   for(let e in fe){

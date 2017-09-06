@@ -92,9 +92,7 @@
     },
 
     search_for: function(query){
-      var search = element.all(by.model('filterConfig.search')).first();
-      search.clear();
-      search.sendKeys(query);
+      helper.changeInput(element(by.model('filterConfig.search')), query);
     },
 
     search_for_element: function(query){
@@ -123,6 +121,11 @@
       element.all(by.css('input[type="submit"]')).click();
     },
 
+    /**
+     * Changes the value of an input field.
+     * @param {object} e is the input field element.
+     * @param {string} val is the value the field will be changed to.
+     */
     changeInput: (e, val) => e.clear().sendKeys(val).sendKeys(protractor.Key.TAB),
 
     /**
