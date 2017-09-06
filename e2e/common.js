@@ -12,7 +12,7 @@
      * @param {string} inPageUrl The in-page URL, e.g. 'login'.
      * @return {string} Returns the requested absolute URL.
      */
-    getUrl: function(inPageUrl){
+    getUrl: (inPageUrl) => {
       return configs.urls.base + helper.getAbsLocationUrl(inPageUrl);
     },
 
@@ -21,7 +21,7 @@
      * @param {string} inPageUrl The in-page URL, e.g. 'ceph/pools'.
      * @return {string} Returns the requested absolute location URL.
      */
-    getAbsLocationUrl: function(inPageUrl){
+    getAbsLocationUrl: (inPageUrl) => {
       return configs.urls.ui + inPageUrl;
     },
 
@@ -31,7 +31,7 @@
      * @param {boolean} dialogIsShown Set to TRUE to check whether the dialog
      *                                for unsaved changes is displayed.
      */
-    setLocation: function(inPageUrl, dialogIsShown){
+    setLocation: (inPageUrl, dialogIsShown) => {
       browser.setLocation(inPageUrl);
       helper.checkForUnsavedChanges(dialogIsShown);
       helper.checkLocation(inPageUrl);
@@ -42,8 +42,8 @@
      * @param {string} inPageUrl The in-page URL, e.g. 'ceph/rgw/users'.
      *                           This can be a regular expression.
      */
-    checkLocation: function(inPageUrl){
-      var expected = helper.getAbsLocationUrl(inPageUrl);
+    checkLocation: (inPageUrl) => {
+      const expected = helper.getAbsLocationUrl(inPageUrl);
       expect(browser.getCurrentUrl()).toMatch(expected);
     },
 
