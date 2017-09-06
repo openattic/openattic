@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 def get_related_model(field):
     """
     Provides a Django 1.8 and pre-1.8 compatible version of
-    >>> ..._meta.get_field_by_name(...)[0].related.parent_model
+    >>> ..._meta.get_field_by_name(...)[0].related.parent_model  # doctest: +SKIP
 
     :type field: django.db.models.Field
     :rtype: django.db.models.Model
@@ -43,6 +43,10 @@ def aggregate_dict(*args, **kwargs):
     """
     >>> assert aggregate_dict({1:2}, {3:4}, a=5) == {1:2, 3:4, 'a':5}
 
+        You can also overwrite keys:
+    >>> assert aggregate_dict({1:2}, {1:4}) == {1:4}
+
+
     :rtype: dict[str, Any]
     """
     ret = {}
@@ -56,11 +60,13 @@ def zip_by_keys(*args):
     """
     Zips lists of dicts by keys into one list of dicts.
 
-    >>> l1 = [{'k1': 0, 'v1': 'hello'}, {'k1': 1, 'v1': 'Hallo'}]
-    >>> l2 = [{'k2': 0, 'v2': 'world'}, {'k2': 1, 'v2': 'Welt'}]
+    >>> l1 = [{'k1': 0, 'v1': 'hello'},
+    ...       {'k1': 1, 'v1': 'Hallo'}]
+    >>> l2 = [{'k2': 0, 'v2': 'world'},
+    ...       {'k2': 1, 'v2': 'Welt'}]
     >>> r = zip_by_keys(('k1', l1), ('k2', l2))
     >>> assert r == [{'k1': 0, 'v1': 'hello', 'k2': 0, 'v2': 'world'},
-    >>>              {'k1': 1, 'v1': 'Hallo', 'k2': 1, 'v2': 'Welt'}]
+    ...              {'k1': 1, 'v1': 'Hallo', 'k2': 1, 'v2': 'Welt'}]
 
     :type args: tuple(tuple[str, Any]]
     :rtype: list[dict[str, Any]]
@@ -83,7 +89,7 @@ def zip_by_key(key, *args):
     >>> l2 = [{'k': 0, 'v2': 'world'}, {'k': 1, 'v2': 'Welt'}]
     >>> r = zip_by_key('k', l1, l2)
     >>> assert r == [{'k': 0, 'v1': 'hello', 'v2': 'world'},
-    >>>              {'k': 1, 'v1': 'Hallo', 'v2': 'Welt'}]
+    ...              {'k': 1, 'v1': 'Hallo', 'v2': 'Welt'}]
 
     :type key: str
     :type args: tuple[dict[str, Any]]

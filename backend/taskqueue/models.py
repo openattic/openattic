@@ -284,13 +284,13 @@ class TaskFactory(object):
     A TaskFactory holds a reference to a function. It can generate Tasks or TaskQueues.
 
     >>> @task
-    >>> def inc(x)
-    >>>     return x + 1
+    ... def inc(x):
+    ...     return x + 1
     >>>
     >>> assert isinstance(inc, TaskFactory)
     >>> assert isinstance(inc(42), Task)
     >>> assert isinstance(inc.delay(42), TaskQueue)
-    >>> assert isinstance(inc.call_now(42), 43)
+    >>> assert inc.call_now(42) == 43
     """
     def __init__(self, func, percent=None, description=None, metadata=None):
         """

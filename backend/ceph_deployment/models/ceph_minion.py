@@ -83,7 +83,9 @@ def merge_pillar_metadata():
     for minion in minions:
         minion_hostname = get_hostname(minion['hostname'])
         if minion_hostname in metadata:
-            ret.append(aggregate_dict(minion, metadata[minion_hostname]))
+            # both `metadata[minion_hostname]` and `minion` contain a "hostname" key. Use the one
+            # from minion, as it contains the fqdn instead of just the name.
+            ret.append(aggregate_dict(metadata[minion_hostname], minion))
             del metadata[minion_hostname]
         else:
             ret.append(minion)
