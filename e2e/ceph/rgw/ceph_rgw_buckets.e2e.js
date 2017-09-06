@@ -35,9 +35,7 @@ describe('ceph rgw buckets', function(){
   });
 
   beforeEach(function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_buckets')).click();
-    browser.sleep(helpers.configs.sleep);
+    helpers.setLocation('ceph/rgw/buckets');
   });
 
   it('should create test user', function(){
@@ -119,8 +117,7 @@ describe('ceph rgw buckets', function(){
   });
 
   it('should delete the test user', function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
+    helpers.setLocation('ceph/rgw/users');
     element(by.cssContainingText('tr', testUser.user_id)).click();
     helpers.delete_selection(0, '$ctrl');
   });

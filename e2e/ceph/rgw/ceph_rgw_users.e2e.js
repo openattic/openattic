@@ -46,9 +46,7 @@ describe('ceph rgw users', function(){
   });
 
   beforeEach(function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
-    browser.sleep(helpers.configs.sleep);
+    helpers.setLocation('ceph/rgw/users');
   });
 
   it('should create user "herpderp"', function(){
