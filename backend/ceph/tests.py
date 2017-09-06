@@ -14,6 +14,8 @@
 """
 
 import os
+from errno import EPERM
+
 import mock
 import tempfile
 import json
@@ -28,7 +30,6 @@ import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
-from ifconfig.models import Host
 
 
 def open_testdata(name):
@@ -601,3 +602,46 @@ class PerformanceTaskTest(TestCase):
                                                            "mypool", "myrbd")
         data, time = res
         self.assertEqual(data, {})
+
+
+class OsdPoolDeleteTest(TestCase):
+    @mock.patch('ceph.librados.call_librados')
+    def test_delete_allowed(self, call_librados_mock):
+        client_mock = mock.MagicMock(spec=ceph.librados.Client)
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        api = ceph.librados.MonApi('fsid')
+        api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
+        self.assertTrue(client_mock.mon_command.called)
+        self.assertEqual(client_mock.mon_command.mock_calls, [mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string')])
+
+
+    @mock.patch('ceph.librados.call_librados')
+    def test_delete_forbidden(self, call_librados_mock):
+        client_mock = mock.MagicMock(spec=ceph.librados.Client)
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+
+        client_mock.mon_command.side_effect = [
+            ceph.librados.ExternalCommandError('mon_allow_pool_delete', cmd="cmd", code=EPERM),
+            {'mons': [{'name': n} for n in ['a', 'b', 'c']]},  # mon dump
+            '', '', '',  # replies from  injected_args
+            '',  # pool delete
+            '', '', '',  # replies from  injected_args
+        ]
+
+        api = ceph.librados.MonApi('fsid')
+        api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
+        self.assertTrue(client_mock.mon_command.called)
+        print client_mock.mon_command.mock_calls
+        calls = [
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
+            mock.call('mon dump'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='a'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='b'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='c'),
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='a'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='b'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='c')
+        ]
+
+        self.assertEqual(client_mock.mon_command.mock_calls, calls)
