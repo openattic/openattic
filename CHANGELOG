@@ -37,9 +37,9 @@ Fixed
 * Backend: Stop `requests.packages.urllib3` from spamming the log file (OP-2616)
 * WebUI/QA: Fix random e2e failure - ceph rgw buckets should delete the
   test user (OP-2627)
-
 * Fixed Grafana Node Statistics are not immediately visible in oA (OP-2634)
 * Backend: Fixed `KeyError: 'hostname'` in nodes tab (OP-2638)
+* WebUI/QA: Fix random NFS e2e timeout failure (OP-2641)
 
 Removed
 ~~~~~~~

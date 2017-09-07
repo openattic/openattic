@@ -13,9 +13,11 @@ describe('ceph nfs', function(){
     manageService.startAllIfStopped();
   });
 
+
   it('should stop the NFS service', function(){
     manageService.manageServiceButton.click();
     manageService.stopServiceButton.get(0).click();
+    manageService.waitForState(/.*Stopping*/,0);
     expect(manageService.state.get(0).getText()).toMatch(/.*Stopped.*/);
     manageService.closeButton.click();
   });
@@ -23,6 +25,7 @@ describe('ceph nfs', function(){
   it('should start the NFS service', function(){
     manageService.manageServiceButton.click();
     manageService.startServiceButton.get(0).click();
+    manageService.waitForState(/.*Starting*/,0);
     expect(manageService.state.get(0).getText()).toMatch(/.*Running.*/);
     manageService.closeButton.click();
   });
