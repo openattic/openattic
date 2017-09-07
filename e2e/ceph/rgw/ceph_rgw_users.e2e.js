@@ -33,12 +33,12 @@ describe('ceph rgw users', function(){
 
   var addUser = function(){
     cephRgwCommons.addUser();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/add');
+    helpers.checkLocation('ceph/rgw/users/add');
   };
 
   var editUser = function(uid){
     cephRgwCommons.editUser(uid);
-    expect(browser.getCurrentUrl()).toMatch('/ceph/rgw/users/edit/' + uid);
+    helpers.checkLocation('ceph/rgw/users/edit/' + uid);
   };
 
   beforeAll(function(){
@@ -102,7 +102,7 @@ describe('ceph rgw users', function(){
 
   it('should display the details of "herpderp"', function(){
     helpers.get_list_element(testUser1.user_id).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
+    helpers.checkLocation('ceph/rgw/users/details');
     expect(element(by.cssContainingText('dt', 'Username:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'Full name:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'Email address:')).isDisplayed()).toBe(true);
@@ -251,7 +251,7 @@ describe('ceph rgw users', function(){
 
   it('should display the added capabilities in details', function(){
     helpers.get_list_element(testUser2.user_id).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
+    helpers.checkLocation('ceph/rgw/users/details');
     expect(cephRgwCommons.capabilitiesDT.isPresent()).toBe(true);
     expect(cephRgwCommons.capabilitiesDD.get(0).getText()).toBe('metadata (write)');
     expect(cephRgwCommons.capabilitiesDD.get(1).getText()).toBe('users (*)');
@@ -268,7 +268,7 @@ describe('ceph rgw users', function(){
 
   it('should display the modified capability in details', function(){
     helpers.get_list_element(testUser2.user_id).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/details');
+    helpers.checkLocation('ceph/rgw/users/details');
     expect(cephRgwCommons.capabilitiesDT.isPresent()).toBe(true);
     expect(cephRgwCommons.capabilitiesDD.get(1).getText()).toBe('users (read)');
   });

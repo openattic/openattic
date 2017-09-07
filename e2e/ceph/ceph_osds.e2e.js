@@ -17,7 +17,7 @@ describe('should test the ceph osd panel', function(){
   ];
 
   it('should check the ceph OSDs url', function(){
-    expect(browser.getCurrentUrl()).toContain('/ceph/osds');
+    helpers.checkLocation('ceph/osds');
   });
 
   it('should display the ceph OSD table after selecting a cluster', function(){
@@ -42,10 +42,10 @@ describe('should test the ceph osd panel', function(){
 
   it('should still have the cluster selected and display OSDs when switching between panels', function(){
     element(by.css('ul .tc_menuitem_pools > a')).click();
-    expect(browser.getCurrentUrl()).toContain('/#/pools');
+    helpers.checkLocation('pools');
     cephMenu.click();
     cephOSDs.click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/osds');
+    helpers.checkLocation('ceph/osds');
     expect(element(by.id('cluster-selection')).getText()).toContain('ceph (');
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });

@@ -1,7 +1,12 @@
 'use strict';
 (function(){
   module.exports = {
-    url     : '<url_of_your_machine>/openattic/#/login', // Set where to go to log in.
+    urls: {
+      base: '<proto://addr:port>',
+      ui  : '/openattic/#/', // Use '/#/' for Vagrant boxes.
+      api : '/openattic/api/' // Use '/api/' for Vagrant boxes.
+    },
+
     username: '<log_in_name>', // Name of the user protractor uses.
     password: '<user_password>', // Password for the $log_in_name user.
     sleep   : 2000, // Default browser test sleep time.

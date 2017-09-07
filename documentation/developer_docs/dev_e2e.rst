@@ -79,12 +79,19 @@ system as well as login data - see below::
 
   (function() {
     module.exports = {
-      url     : 'http://IP-to-your-oA-test-sys/openattic/#/login',
+      urls: {
+        base: '<proto://addr:port>',
+        ui: '/openattic/#/',
+        api: '/openattic/api/'
+      },
       //leave this if you want to use openATTIC's default user for login
       username: 'openattic',
       password: 'openattic',
     };
   }());
+
+If you are using a Vagrant box, then you have to set urls.ui to ``/#/`` and
+urls.api to ``/api/``.
 
 In order to run our graphical user interface tests, please make sure that your
 |oA| system at least has:
