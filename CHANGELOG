@@ -29,6 +29,8 @@ Changed
 ~~~~~~~
 * Packaging: Depend on Ceph Luminous (OP-2622)
 * WebUI: Upgrade Protractor (OP-2618)
+* Documentation: Changed the project descriptions in `README.rst` and
+  `openattic.spec` to reflect the wording used on openattic.org (OP-2643)
 
 Fixed
 ~~~~~
