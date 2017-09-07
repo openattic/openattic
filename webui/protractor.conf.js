@@ -83,7 +83,8 @@ var reporter = new HtmlScreenshotReporter({
   dest: config.outDir || '/tmp/openattic',
   filename: 'report.html',
   reportOnlyFailedSpecs: false,
-  preserveDirectory: config.preserveDirectory || true
+  preserveDirectory: config.preserveDirectory === undefined ? true : config.preserveDirectory,
+  captureOnlyFailedSpecs: config.captureOnlyFailedSpecs === undefined ? false : config.captureOnlyFailedSpecs
 });
 
 exports.config = {
