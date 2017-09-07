@@ -31,5 +31,5 @@
 "use strict";
 
 angular.module("openattic.userinfo", [
-    "openattic.users"
+  "openattic.users"
 ]);

@@ -33,25 +33,25 @@
 var app = angular.module("openattic.cephNodes");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("cephNodes", {
-        url: "/ceph/nodes",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-nodes/templates/nodes.html",
-            controller: "CephNodesCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Ceph Nodes"
+    .state("cephNodes", {
+      url: "/ceph/nodes",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-nodes/templates/nodes.html",
+          controller: "CephNodesCtrl"
         }
-      })
-      .state("cephNodes.statistics", {
-        url: "/statistics",
-        views: {
-          "statistics": {templateUrl: "components/ceph-nodes/templates/statistics.html"}
-        },
-        ncyBreadcrumb: {
-          skip: true
-        }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "Ceph Nodes"
+      }
+    })
+    .state("cephNodes.statistics", {
+      url: "/statistics",
+      views: {
+        "statistics": {templateUrl: "components/ceph-nodes/templates/statistics.html"}
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    });
 });

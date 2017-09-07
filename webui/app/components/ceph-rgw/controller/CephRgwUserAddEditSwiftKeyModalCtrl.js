@@ -49,12 +49,12 @@ app.controller("CephRgwUserAddEditSwiftKeyModalCtrl", function ($scope, $uibModa
     };
 
     // Check if user already exists.
-    $scope.$watch("key.user", function (user) {
-      if (!angular.isString(user) || (user === "")) {
+    $scope.$watch("key.user", function (localUser) {
+      if (!angular.isString(localUser) || (localUser === "")) {
         return;
       }
       angular.forEach($scope.user.swift_keys, function (key) {
-        $scope.form.user.$setValidity("uniqueuser", key.user !== user);
+        $scope.form.user.$setValidity("uniqueuser", key.user !== localUser);
       });
     });
   } else {

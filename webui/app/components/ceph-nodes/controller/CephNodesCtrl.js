@@ -50,18 +50,18 @@ app.controller("CephNodesCtrl", function ($scope, $state, cephNodesService) {
     $scope.error = false;
 
     cephNodesService.filter({
-          page: $scope.filterConfig.page + 1,
-          pageSize: $scope.filterConfig.entries,
-          search: $scope.filterConfig.search,
-          ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
-        })
-        .$promise
-        .then(function (res) {
-          $scope.data = res;
-        })
-        .catch(function (error) {
-          $scope.error = error;
-        });
+      page: $scope.filterConfig.page + 1,
+      pageSize: $scope.filterConfig.entries,
+      search: $scope.filterConfig.search,
+      ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+    })
+      .$promise
+      .then(function (res) {
+        $scope.data = res;
+      })
+      .catch(function (error) {
+        $scope.error = error;
+      });
   };
 
   // Watcher

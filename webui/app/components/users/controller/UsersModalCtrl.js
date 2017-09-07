@@ -36,10 +36,10 @@ app.controller("UsersModalCtrl", function ($scope, usersService, $uibModalInstan
 
   $scope.generateAuthToken = function () {
     usersService.generateAuthToken({id: $scope.user.id})
-        .$promise
-        .then(function (res) {
-          $uibModalInstance.close(res.auth_token.token);
-        });
+      .$promise
+      .then(function (res) {
+        $uibModalInstance.close(res.auth_token.token);
+      });
   };
 
   $scope.cancel = function () {

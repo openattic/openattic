@@ -33,9 +33,9 @@
 var app = angular.module("openattic.settings");
 app.factory("hostsService", function ($resource) {
   return $resource(globalConfig.API.URL + "hosts/:id", {
-      id: "@id"
-    },
-    {
+    id: "@id"
+  },
+  {
     current: {
       method: "GET",
       url: globalConfig.API.URL + "hosts/current"

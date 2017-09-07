@@ -69,7 +69,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
     ruleset: undefined,
     osdCount: 1,
     flags: {},
-    compressionAlgorithms: [{
+    compressionAlgorithms: [
+      {
         name: "none",
         description: "none"
       },
@@ -90,7 +91,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
         description: "lz4"
       }
     ],
-    compressionModes: [{
+    compressionModes: [
+      {
         name: "none",
         description: "none"
       },
@@ -179,8 +181,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
       $scope.fsid = cluster.fsid;
       cephClusterService.status({fsid: cluster.fsid})
         .$promise
-        .then(function (cluster) {
-          $scope.data.osdCount = cluster.osdmap.osdmap.num_osds;
+        .then(function (localCluster) {
+          $scope.data.osdCount = localCluster.osdmap.osdmap.num_osds;
           // Calculation found here: http://docs.ceph.com/docs/master/rados/operations/placement-groups/#data-durability
           $scope.pgSizeChange();
         });
@@ -191,13 +193,13 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
           $scope.ecProfileChange();
         });
       cephOsdService.get({
-          fsid: cluster.fsid,
-          osd_objectstore: "bluestore"
-        })
-          .$promise
-          .then(function (res) {
-            $scope.bluestore = res.count > 0;
-          });
+        fsid: cluster.fsid,
+        osd_objectstore: "bluestore"
+      })
+        .$promise
+        .then(function (res) {
+          $scope.bluestore = res.count > 0;
+        });
       cephCrushmapService.get({fsid: cluster.fsid})
         .$promise
         .then(function (res) {
@@ -297,8 +299,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
         crush_ruleset: $scope.data.ruleset && $scope.data.ruleset.rule_id
       };
       const apps = {};
-      $scope.apps.used.forEach((app) => {
-        apps[app] = {};
+      $scope.apps.used.forEach((_app) => {
+        apps[_app] = {};
       });
       pool.application_metadata = apps;
       if (pool.type === "replicated") {
@@ -398,24 +400,24 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
 
   $scope.app = {
     selected: undefined,
-    add: (app) => {
-      if (!angular.isString(app) || app === "") {
+    add: (_app) => {
+      if (!angular.isString(_app) || _app === "") {
         return;
       }
       // A custom app without a name will be undefined
       $scope.app.remove(undefined);
-      if ($scope.apps.used.indexOf(app) === -1) {
-        if (app === "Custom application") {
-          app = undefined;
-        } else if ($scope.apps.all.indexOf(app) === -1) {
-          $scope.apps.all.push(app);
+      if ($scope.apps.used.indexOf(_app) === -1) {
+        if (_app === "Custom application") {
+          _app = undefined;
+        } else if ($scope.apps.all.indexOf(_app) === -1) {
+          $scope.apps.all.push(_app);
         }
         //$scope.apps.used.push(app);
-        $scope.apps.used = [app].concat($scope.apps.used);
+        $scope.apps.used = [_app].concat($scope.apps.used);
       }
     },
-    remove: (app) => {
-      const emptyAppIndex = $scope.apps.used.indexOf(app);
+    remove: (_app) => {
+      const emptyAppIndex = $scope.apps.used.indexOf(_app);
       if (emptyAppIndex !== -1) {
         $scope.app.removeByIndex(emptyAppIndex);
       }
@@ -429,8 +431,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
     all: ["cephfs", "rbd", "rgw"],
     used: [],
     getAvail: () => {
-      const appList = $scope.apps.all.filter((app) => {
-        return $scope.apps.used.indexOf(app) === -1;
+      const appList = $scope.apps.all.filter((_app) => {
+        return $scope.apps.used.indexOf(_app) === -1;
       }).sort();
       appList.push("Custom application");
       return appList;

@@ -35,6 +35,7 @@ Changed
 * WebUI/QA: Improve the e2e framework to execute tests in a Vagrant box
   environment (OP-2640)
 * Documentation: Update e2e documentation (OP-2329)
+* WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
 
 Fixed
 ~~~~~

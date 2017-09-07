@@ -44,13 +44,13 @@ app.service("taskQueueSubscriber", function ($interval, taskQueueService) {
   self.subscribe = function (taskId, callback) {
     let stop = $interval(function () {
       taskQueueService.get({id: taskId})
-      .$promise
-      .then(function (res) {
-        if (isFinalStatus(res)) {
-          $interval.cancel(stop);
-          callback(res);
-        }
-      });
+        .$promise
+        .then(function (res) {
+          if (isFinalStatus(res)) {
+            $interval.cancel(stop);
+            callback(res);
+          }
+        });
     }, 1000);
   };
 });

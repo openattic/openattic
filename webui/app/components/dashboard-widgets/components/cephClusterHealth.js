@@ -54,18 +54,18 @@ app.component("cephHealth", {
     self.getData = function () {
       self.isLoading = true;
       cephClusterService
-          .get()
-          .$promise
-          .then(function (res) {
-            self.processData(res);
-            self.processSummaries();
-            self.processMessages();
-          })
-          .finally(function () {
-            $interval(function () {
-              self.isLoading = false;
-            }, 1000, 1);
-          });
+        .get()
+        .$promise
+        .then(function (res) {
+          self.processData(res);
+          self.processSummaries();
+          self.processMessages();
+        })
+        .finally(function () {
+          $interval(function () {
+            self.isLoading = false;
+          }, 1000, 1);
+        });
     };
 
     self.processData = function (data) {
@@ -99,20 +99,20 @@ app.component("cephHealth", {
       if (data.warn.length > 0 || data.err.length > 0) {
         angular.forEach(data.warn.concat(data.err), function (cluster) {
           cephClusterService
-              .status({fsid: cluster.fsid})
-              .$promise
-              .then(function (res) {
-                // Convert object to array
-                var summaries = Object.keys(res.health.checks).map(function (key) {
-                  return res.health.checks[key];
-                });
-
-                cluster.summary = {
-                  warn: self.filterSummary(summaries, "HEALTH_WARN"),
-                  err: self.filterSummary(summaries, "HEALTH_ERR")
-                };
-                self.processMessages();
+            .status({fsid: cluster.fsid})
+            .$promise
+            .then(function (res) {
+              // Convert object to array
+              var summaries = Object.keys(res.health.checks).map(function (key) {
+                return res.health.checks[key];
               });
+
+              cluster.summary = {
+                warn: self.filterSummary(summaries, "HEALTH_WARN"),
+                err: self.filterSummary(summaries, "HEALTH_ERR")
+              };
+              self.processMessages();
+            });
         });
       }
     };
@@ -145,9 +145,9 @@ app.component("cephHealth", {
         unknown: "in an unknown error state"
       };
       var msg = [
-          count > 1 ? count + " clusters are" : "Cluster \"" + data[0].name + "\" is",
-          messages[attribute]
-        ].join(" ");
+        count > 1 ? count + " clusters are" : "Cluster \"" + data[0].name + "\" is",
+        messages[attribute]
+      ].join(" ");
       if (attribute === "err") {
         msg += [
           counting.err === 1 ? "an error" : counting.err + " errors",
