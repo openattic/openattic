@@ -330,7 +330,7 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
       .$promise
       .then(function (res) {
         // load dashboard
-        if (res.results[0].preferences.hasOwnProperty(dashboardKey)) {
+        if (res.results.length > 0 && res.results[0].preferences.hasOwnProperty(dashboardKey)) {
           $scope.data = res.results[0].preferences[dashboardKey];
           $scope.dashboard = $scope.data.boards[$scope.data.settings.activeBoard];
           return;
