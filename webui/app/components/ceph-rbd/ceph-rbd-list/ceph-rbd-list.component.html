@@ -77,6 +77,9 @@
                              aria-valuemax="100" style="width: {{row.freePercent}}%">
                         </div>
                     </div>
+                    <div class="text-muted text-center" ng-show="row.used_size === null">
+                      Not available
+                    </div>
                 </td>
                 <td ng-show="columns['Data-pool']" ng-bind="row.data_pool.name"></td>
                 <td ng-show="columns['Object size']" ng-bind="row.obj_size | bytes"></td>
