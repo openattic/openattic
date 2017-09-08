@@ -7,10 +7,44 @@
   var helper = {
     configs: configs,
 
-    setLocation: function(location, dialogIsShown){
-      browser.setLocation(location);
+    /**
+     * Get the absolute URL, e.g. 'http://192.168.10.105:8000/openattic/#/login'.
+     * @param {string} inPageUrl The in-page URL, e.g. 'login'.
+     * @return {string} Returns the requested absolute URL.
+     */
+    getUrl: (inPageUrl) => {
+      return configs.urls.base + helper.getAbsLocationUrl(inPageUrl);
+    },
+
+    /**
+     * Get the absolute location URL, e.g. '/openattic/#/ceph/pools'.
+     * @param {string} inPageUrl The in-page URL, e.g. 'ceph/pools'.
+     * @return {string} Returns the requested absolute location URL.
+     */
+    getAbsLocationUrl: (inPageUrl) => {
+      return configs.urls.ui + inPageUrl;
+    },
+
+    /**
+     * Browse to the specified page using in-page navigation.
+     * @param {string} inPageUrl The in-page URL, e.g. 'ceph/pools'.
+     * @param {boolean} dialogIsShown Set to TRUE to check whether the dialog
+     *                                for unsaved changes is displayed.
+     */
+    setLocation: (inPageUrl, dialogIsShown) => {
+      browser.setLocation(inPageUrl);
       helper.checkForUnsavedChanges(dialogIsShown);
-      expect(browser.getCurrentUrl()).toContain('/openattic/#/' + location);
+      helper.checkLocation(inPageUrl);
+    },
+
+    /**
+     * Ensure that the specified in-page URL equals with the current page.
+     * @param {string} inPageUrl The in-page URL, e.g. 'ceph/rgw/users'.
+     *                           This can be a regular expression.
+     */
+    checkLocation: (inPageUrl) => {
+      const expected = helper.getAbsLocationUrl(inPageUrl);
+      expect(browser.getCurrentUrl()).toMatch(expected);
     },
 
     leaveForm: function(dialogIsShown){
@@ -68,12 +102,24 @@
       return helper.get_list_element(query);
     },
 
-    login: function(){
-      browser.get(configs.url);
-      element.all(by.model('username')).clear();
-      element.all(by.model('username')).sendKeys(configs.username);
-      element.all(by.model('password')).clear();
-      element.all(by.model('password')).sendKeys(configs.password);
+    /**
+     * Log into the WebUI.
+     * @param {string} username The username to use. Defaults to the
+     *                          configs.username if not set.
+     * @param {string} password The password to use. Defaults to the
+     *                          configs.password if not set.
+     * @param {boolean} browse Set to FALSE to do not browse to the
+     *                         login page. Defaults to TRUE.
+     */
+    login: function(username, password, browse){
+      username = username || configs.username;
+      password = password || configs.password;
+      browse = (browse !== undefined) ? browse : true;
+      if (browse) {
+        browser.get(helper.getUrl('login'));
+      }
+      element.all(by.model('username')).clear().sendKeys(username);
+      element.all(by.model('password')).clear().sendKeys(password);
       element.all(by.css('input[type="submit"]')).click();
     },
 

@@ -82,20 +82,20 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
       $scope.error = false;
 
       cephPoolsService
-          .get({
-            fsid    : $scope.registry.selectedCluster.fsid,
-            page    : $scope.filterConfig.page + 1,
-            pageSize: $scope.filterConfig.entries,
-            search  : $scope.filterConfig.search,
-            ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
-          })
-          .$promise
-          .then(function (res) {
-            $scope.pools = modifyResult(res);
-          })
-          .catch(function (error) {
-            $scope.error = error;
-          });
+        .get({
+          fsid    : $scope.registry.selectedCluster.fsid,
+          page    : $scope.filterConfig.page + 1,
+          pageSize: $scope.filterConfig.entries,
+          search  : $scope.filterConfig.search,
+          ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+        })
+        .$promise
+        .then(function (res) {
+          $scope.pools = modifyResult(res);
+        })
+        .catch(function (error) {
+          $scope.error = error;
+        });
     }
   };
 

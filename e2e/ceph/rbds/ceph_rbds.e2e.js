@@ -20,7 +20,7 @@ describe('should test the ceph rbd panel', function(){
   });
 
   it('should check the ceph RBDs url', function(){
-    expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
+    helpers.checkLocation('ceph/rbds');
   });
 
   it('should display the ceph RBD table after selecting a cluster', function(){
@@ -44,17 +44,17 @@ describe('should test the ceph rbd panel', function(){
 
   it('should still have the cluster selected and display RBDs when switching between panels', function(){
     element(by.css('ul .tc_menuitem_pools > a')).click();
-    expect(browser.getCurrentUrl()).toContain('/#/pools');
+    helpers.checkLocation('pools');
     rbdProperties.cephMenu.click();
     rbdProperties.cephRBDs.click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rbds');
+    helpers.checkLocation('ceph/rbds');
     expect(element(by.id('cluster-selection')).getText()).toContain('ceph (');
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });
 
   it('should have a details tab when selecting a rbd', function(){
     element.all(by.binding('row.name')).get(0).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rbds/details#more');
+    helpers.checkLocation('ceph/rbds/details#more');
     expect(element(by.css('.tc_detailsTab')).isDisplayed()).toBe(true);
   });
   */
@@ -71,7 +71,7 @@ describe('should test the ceph rbd panel', function(){
       // Select the created rbd
       helpers.get_list_element('e2e_' + pool.name + '_' + cluster.name).click();
       rbdProperties.statisticsTab.click();
-      expect(browser.getCurrentUrl()).toContain('/ceph/rbds/statistics#more');
+      helpers.checkLocation('ceph/rbds/statistics#more');
       expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
     });
   });

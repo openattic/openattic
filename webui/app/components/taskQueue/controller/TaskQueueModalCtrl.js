@@ -210,8 +210,8 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
     tab = tab || $scope.getActiveTab();
     var search = $scope.search.toLowerCase();
     tab.workingData = search === "" ? tab.data : tab.data.filter(function (e) {
-        return e.description.toLowerCase().match(search);
-      });
+      return e.description.toLowerCase().match(search);
+    });
     tab.workingData = $filter("orderBy")(tab.workingData, [
       (tab.tableSort.reverse ? "-" : "+") + tab.tableSort.attribute,
       "-last_modified"

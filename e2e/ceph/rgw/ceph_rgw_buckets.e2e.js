@@ -22,12 +22,12 @@ describe('ceph rgw buckets', function(){
 
   var addBucket = function() {
     cephRgwCommons.addBucket();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/add');
+    helpers.checkLocation('ceph/rgw/buckets/add');
   };
 
   var editBucket = function(name) {
     cephRgwCommons.editBucket(name);
-    expect(browser.getCurrentUrl()).toMatch('/ceph/rgw/buckets/edit/' + name);
+    helpers.checkLocation('ceph/rgw/buckets/edit/' + name);
   };
 
   beforeAll(function(){
@@ -35,15 +35,13 @@ describe('ceph rgw buckets', function(){
   });
 
   beforeEach(function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_buckets')).click();
-    browser.sleep(helpers.configs.sleep);
+    helpers.setLocation('ceph/rgw/buckets');
   });
 
   it('should create test user', function(){
     goToUserListView();
     cephRgwCommons.addUser();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/users/add');
+    helpers.checkLocation('ceph/rgw/users/add');
     element(by.model('user.user_id')).sendKeys(testUser.user_id);
     element(by.model('user.display_name')).sendKeys(testUser.display_name);
     cephRgwCommons.submitBtn.click();
@@ -78,7 +76,7 @@ describe('ceph rgw buckets', function(){
 
   it('should display the details of the bucket', function(){
     helpers.get_list_element(testBucket.name).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets/details');
+    helpers.checkLocation('ceph/rgw/buckets/details');
     expect(element(by.cssContainingText('dt', 'Name:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'Id:')).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText('dt', 'Owner:')).isDisplayed()).toBe(true);
@@ -108,7 +106,7 @@ describe('ceph rgw buckets', function(){
     element(by.css('.tc_listBucketsItem > a')).click();
     browser.sleep(helpers.configs.sleep);
     // Check whether we are on the correct page?
-    expect(browser.getCurrentUrl()).toContain('/ceph/rgw/buckets');
+    helpers.checkLocation('ceph/rgw/buckets');
     // Check the number of buckets owned by the user 'e2e_tuxdoe'.
     expect(element.all(by.tagName('tbody > tr')).count()).toEqual(1);
   });
@@ -119,8 +117,7 @@ describe('ceph rgw buckets', function(){
   });
 
   it('should delete the test user', function(){
-    element(by.css('.tc_menuitem_ceph_rgw')).click();
-    element(by.css('.tc_submenuitem_ceph_rgw_users')).click();
+    helpers.setLocation('ceph/rgw/users');
     element(by.cssContainingText('tr', testUser.user_id)).click();
     helpers.delete_selection(0, '$ctrl');
   });

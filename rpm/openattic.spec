@@ -17,7 +17,7 @@
 Name: openattic
 Version: 3.4.5
 Release: 0
-Summary: Open Source Ceph Storage Management System
+Summary: Open Source Management and Monitoring System for Ceph
 Group: System Environment/Libraries
 License: GPL-2.0
 URL: http://www.openattic.org
@@ -52,7 +52,7 @@ Requires: python-gobject2
 Requires: python-pam
 Requires: python-psycopg2
 Requires: python-requests
-Requires: ceph-common >= 10.0.0
+Requires: ceph-common >= 12.2.0
 Requires: postgresql
 Requires: python-requests-aws
 Requires: python-pyinotify
@@ -97,15 +97,18 @@ Provides: %{name}-pgsql
 Conflicts:  crowbar
 
 %description
-openATTIC is an open source Ceph storage management solution for Linux, with a
-strong focus on storage management in a datacenter environment.
+openATTIC is an Open Source Management and Monitoring System for the Ceph
+distributed storage system <http://ceph.com>.
 
-The various resources of a Ceph cluster can be managed and monitored from a
-central web-based management interface. It is no longer necessary to be
-intimately familiar with the inner workings of the individual Ceph components.
+Various resources of a Ceph cluster can be managed and monitored via a web-based
+management interface. It is no longer necessary to be intimately familiar with
+the inner workings of the individual Ceph components.
 
-Any task can be carried out by either using openATTIC’s intuitive web interface
-or via the REST API.
+Any task can be carried out by either using openATTIC’s clean and intuitive web
+interface or via the openATTIC REST API.
+
+openATTIC itself is stateless - it remains in a consistent state even if you
+make changes to the Ceph cluster's resources using external command-line tools.
 
 Upstream URL: http://www.openattic.org
 

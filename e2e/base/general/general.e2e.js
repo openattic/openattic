@@ -18,7 +18,7 @@ describe('General', function(){
   var subMenusItems = [{
     name: 'ceph_rgw',
     item: element(by.css('.tc_menuitem_ceph_rgw > a')),
-    url: '/openattic/#/ceph/rgw/',
+    url: 'ceph/rgw/',
     subitems: {
       users: element(by.css('.tc_submenuitem_ceph_rgw_users')),
       buckets: element(by.css('.tc_submenuitem_ceph_rgw_buckets'))
@@ -30,7 +30,7 @@ describe('General', function(){
   },{
     name: 'system',
     item: element(by.css('.tc_menuitem_system > a')),
-    url: '/openattic/#/',
+    url: '',
     subitems: {
       users: element(by.css('.tc_submenuitem_system_users')),
       commandlog: element(by.css('.tc_submenuitem_system_cmdlog'))
@@ -59,7 +59,7 @@ describe('General', function(){
           url = name.replace("_", "/");
           item.click();
           browser.sleep(400);
-          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + url);
+          helpers.checkLocation(url);
         }
       });
     });
@@ -90,7 +90,7 @@ describe('General', function(){
             browser.refresh();
             dropdown.item.click();
             dropdown.subitems[item].click();
-            expect(browser.getCurrentUrl()).toContain(dropdown.url + item);
+            helpers.checkLocation(dropdown.url + item);
           }
         });
       });
@@ -147,9 +147,9 @@ describe('General', function(){
   it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
     //click somewhere else to change the url
     element(by.css('.tc_menuitem_ceph_osds > a')).click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/ceph/osds');
+    helpers.checkLocation('ceph/osds');
     oaLogo.click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
+    helpers.checkLocation('dashboard');
   });
 
   afterAll(function(){

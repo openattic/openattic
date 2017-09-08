@@ -208,6 +208,9 @@
       "mem_swap_kb": "3906556",
       "mem_total_kb": "7850136",
       "os": "Linux"
+    },
+    {
+      "id": "no hostname. See OP-2638"
     }
   ],
   {
@@ -264,7 +267,7 @@
   [
     {
       "distro_description": "distro 1.0",
-      "hostname": "localhost",
+      "hostname": "localhost.deepsea-pillar.local",
       "daemon_types": [
         "mds",
         "osd",

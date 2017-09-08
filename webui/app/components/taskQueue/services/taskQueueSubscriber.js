@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.service("taskQueueSubscriber", function ($timeout, taskQueueService) {
+app.service("taskQueueSubscriber", function ($interval, taskQueueService) {
 
   var self = this;
 
@@ -42,14 +42,13 @@ app.service("taskQueueSubscriber", function ($timeout, taskQueueService) {
   };
 
   self.subscribe = function (taskId, callback) {
-    $timeout(function () {
+    let stop = $interval(function () {
       taskQueueService.get({id: taskId})
         .$promise
         .then(function (res) {
           if (isFinalStatus(res)) {
+            $interval.cancel(stop);
             callback(res);
-          } else {
-            self.subscribe(taskId, callback);
           }
         });
     }, 1000);

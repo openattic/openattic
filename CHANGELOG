@@ -22,14 +22,29 @@ To describe their impact on the project, changes are grouped as follows:
 Added
 ~~~~~
 * Documentation: Added Troubleshooting chapter (OP-1070)
-
 * Backend: Added `osd_flags` to `CephCluster` (OP-2598)
+* QA/Development: Export HTML e2e report (OP-2261)
 
 Changed
 ~~~~~~~
+* Packaging: Depend on Ceph Luminous (OP-2622)
+* WebUI: Upgrade Protractor (OP-2618)
+* Documentation: Changed the project descriptions in `README.rst` and
+  `openattic.spec` to reflect the wording used on openattic.org (OP-2643)
+* WebUI/QA: Improve protractor report configuration (OP-2647)
+* WebUI/QA: Improve the e2e framework to execute tests in a Vagrant box
+  environment (OP-2640)
+* Documentation: Update e2e documentation (OP-2329)
+* WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
 
 Fixed
 ~~~~~
+* Backend: Stop `requests.packages.urllib3` from spamming the log file (OP-2616)
+* WebUI/QA: Fix random e2e failure - ceph rgw buckets should delete the
+  test user (OP-2627)
+* Fixed Grafana Node Statistics are not immediately visible in oA (OP-2634)
+* Backend: Fixed `KeyError: 'hostname'` in nodes tab (OP-2638)
+* WebUI/QA: Fix random NFS e2e timeout failure (OP-2641)
 
 Removed
 ~~~~~~~

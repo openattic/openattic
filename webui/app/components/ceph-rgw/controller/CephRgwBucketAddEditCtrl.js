@@ -69,7 +69,7 @@ app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParam
       cephRgwBucketService.get({
         "bucket": $stateParams.bucket
       })
-      .$promise);
+        .$promise);
 
     $scope.submitAction = function (bucketForm) {
       // Check if the general bucket settings have been modified.

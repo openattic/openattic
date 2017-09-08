@@ -1,4 +1,4 @@
-var configs = require('../../configs.js');
+var helpers = require('../../common.js');
 
 describe('should test the login', function(){
 
@@ -11,28 +11,24 @@ describe('should test the login', function(){
   var submitBtn = element(by.css('input[type="submit"]'));
 
   it('should login and get to the dashboard site', function(){
-    browser.get(configs.url);
-    element.all(by.model('username')).sendKeys(configs.username);
-    element.all(by.model('password')).sendKeys(configs.password);
-    submitBtn.click();
+    helpers.login();
     //if login was successful the url should contain /dashboard
-    expect(browser.getCurrentUrl()).toContain('#/dashboard');
+    helpers.checkLocation('dashboard');
   });
 
   it('should go to dashboard when already logged in', function(){
-    browser.get(configs.url);
-    expect(browser.getCurrentUrl()).toContain('#/dashboard');
+    browser.get(helpers.getUrl('login'));
+    helpers.checkLocation('dashboard');
   });
 
   it('should click any menu entry', function(){
     element(by.css('ul .tc_menuitem_ceph_osds > a')).click();
-    expect(browser.getCurrentUrl()).toContain('#/ceph/osds');
+    helpers.checkLocation('ceph/osds');
   });
 
   it('should logout again', function(){
     element(by.css('.tc_logout a')).click();
-    expect(browser.getCurrentUrl()).toContain('/#/login');
-
+    helpers.checkLocation('login');
   });
 
   //login workflow
@@ -86,7 +82,6 @@ describe('should test the login', function(){
     expect(correctInput.getText()).toBe('The given credentials are not correct.');
     expect(nameRequired.isPresent()).toBe(false);
     expect(passwdRequired.isPresent()).toBe(false);
-
   });
 
   afterAll(function(){

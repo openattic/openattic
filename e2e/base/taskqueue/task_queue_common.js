@@ -273,9 +273,10 @@
     for(var x = 0; x < quantity; x++){
       browser.executeScript(function(times, configs){
         var xhr = new XMLHttpRequest();
-        var url = configs.url.split('/');
-        url = url[0] + '//' + configs.username + ':' + configs.password + '@' + url[2];
-        xhr.open('post', url + '/openattic/api/taskqueue/test_task', true);
+        var parts = configs.urls.base.split('/');
+        var url = parts[0] + '//' + configs.username + ':' + configs.password + '@' +
+          parts[2] + configs.urls.api + 'taskqueue/test_task';
+        xhr.open('post', url, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({times: times}));
       }, times, helpers.configs);

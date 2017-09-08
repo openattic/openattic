@@ -38,25 +38,25 @@ app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalI
 
   $scope.deleteErasureCodeProfile = function () {
     cephErasureCodeProfilesService
-        .delete({
-          fsid: $scope.cluster.fsid,
-          id  : $scope.profile.name
-        })
-        .$promise
-        .then(function () {
-          // Trigger notification message on success
-          Notification.success({
-            title: "Erasure code profile deleted",
-            msg  : "Erasure code profile '" + $scope.profile.name + "' successfully deleted."
-          });
-
-          // Close dialog
-          $uibModalInstance.close("deleted");
-        })
-        .catch(function () {
-          $scope.deleteForm.$submitted = false;
-          $scope.cancel();
+      .delete({
+        fsid: $scope.cluster.fsid,
+        id  : $scope.profile.name
+      })
+      .$promise
+      .then(function () {
+        // Trigger notification message on success
+        Notification.success({
+          title: "Erasure code profile deleted",
+          msg  : "Erasure code profile '" + $scope.profile.name + "' successfully deleted."
         });
+
+        // Close dialog
+        $uibModalInstance.close("deleted");
+      })
+      .catch(function () {
+        $scope.deleteForm.$submitted = false;
+        $scope.cancel();
+      });
   };
 
   $scope.cancel = function () {

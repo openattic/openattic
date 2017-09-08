@@ -50,13 +50,13 @@ app.component("cephNfsDeleteModal", {
           fsid: self.resolve.fsid,
           exportIds: exportIds
         })
-        .$promise
-        .then(function () {
-          resolve();
-          self.modalInstance.close("deleted");
-        }, function () {
-          reject();
-        });
+          .$promise
+          .then(function () {
+            resolve();
+            self.modalInstance.close("deleted");
+          }, function () {
+            reject();
+          });
       });
     };
 

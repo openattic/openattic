@@ -12,7 +12,7 @@ describe('should test the ceph pools panel', function(){
   });
 
   it('should check the ceph pool url', function(){
-    expect(browser.getCurrentUrl()).toContain('/ceph/pools');
+    helpers.checkLocation('ceph/pools');
   });
 
   it('should display the ceph pools table', function(){
@@ -36,7 +36,7 @@ describe('should test the ceph pools panel', function(){
   it('should have a status tab when selecting a pool', function(){
     //choose first element in ceph pools list
     element.all(by.binding('row.name')).get(0).click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/pools/status#more');
+    helpers.checkLocation('ceph/pools/status#more');
     expect(cephPoolProperties.statusTab.isDisplayed()).toBe(true);
   });
 
@@ -51,7 +51,7 @@ describe('should test the ceph pools panel', function(){
     //choose first element in ceph pools list
     element.all(by.binding('row.name')).get(0).click();
     cephPoolProperties.statisticsTab.click();
-    expect(browser.getCurrentUrl()).toContain('/ceph/pools/statistics#more');
+    helpers.checkLocation('ceph/pools/statistics#more');
     expect(cephPoolProperties.statisticsTab.isDisplayed()).toBe(true);
   });
 

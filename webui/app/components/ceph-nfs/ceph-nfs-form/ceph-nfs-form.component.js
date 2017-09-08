@@ -143,14 +143,14 @@ app.component("cephNfsForm", {
             cephRgwUserService.filter({
               ordering: "ASC"
             })
-            .$promise
-            .then(function (res) {
-              angular.forEach(res.results, function (user) {
-                if (user.suspended === 0) {
-                  self.allRgwUsers.push(user.user_id);
-                }
+              .$promise
+              .then(function (result) {
+                angular.forEach(result.results, function (user) {
+                  if (user.suspended === 0) {
+                    self.allRgwUsers.push(user.user_id);
+                  }
+                });
               });
-            });
           }
         }
       });
@@ -184,15 +184,15 @@ app.component("cephNfsForm", {
         root_dir: rootDir,
         userid: self.model.rgwUserId
       })
-      .$promise
-      .then(function (res) {
-        if (setNewDirectory) {
-          self.isNewDirectory = path !== "/" && res.paths.indexOf(path) === -1;
-        } else {
-          self.isNewDirectory = false;
-        }
-        return res.paths;
-      });
+        .$promise
+        .then(function (res) {
+          if (setNewDirectory) {
+            self.isNewDirectory = path !== "/" && res.paths.indexOf(path) === -1;
+          } else {
+            self.isNewDirectory = false;
+          }
+          return res.paths;
+        });
     };
 
     self.isNewBucket = false;
@@ -202,15 +202,15 @@ app.component("cephNfsForm", {
           fsid: $stateParams.fsid,
           userid: self.model.rgwUserId
         })
-        .$promise
-        .then(function (res) {
-          if (setNewBucket) {
-            self.isNewBucket = path !== "" && res.buckets.indexOf(path) === -1;
-          } else {
-            self.isNewBucket = false;
-          }
-          return res.buckets;
-        });
+          .$promise
+          .then(function (res) {
+            if (setNewBucket) {
+              self.isNewBucket = path !== "" && res.buckets.indexOf(path) === -1;
+            } else {
+              self.isNewBucket = false;
+            }
+            return res.buckets;
+          });
       }
     };
 
@@ -320,12 +320,12 @@ app.component("cephNfsForm", {
       // Add
       if (angular.isUndefined(requestModel.id)) {
         cephNfsService.save(requestModel)
-        .$promise
-        .then(function () {
-          $state.go("cephNfs");
-        }, function () {
-          $scope.nfsForm.$submitted = false;
-        });
+          .$promise
+          .then(function () {
+            $state.go("cephNfs");
+          }, function () {
+            $scope.nfsForm.$submitted = false;
+          });
       } else { // Edit
         cephNfsService.update(requestModel)
           .$promise

@@ -103,7 +103,7 @@ app.component("cephMonStatus", {
 
     this.createPieChart = function (health) {
       var worstState = health.HEALTH_ERR.length > 0 ? "HEALTH_ERR" :
-          (health.HEALTH_WARN.length > 0 ? "HEALTH_WARN" : "HEALTH_OK");
+        (health.HEALTH_WARN.length > 0 ? "HEALTH_WARN" : "HEALTH_OK");
       return {
         chart: {
           type: "pieChart",
@@ -140,7 +140,7 @@ app.component("cephMonStatus", {
     };
 
     this.nvd3Colorize = function (data) {
-      switch (data.health){
+      switch (data.health) {
         case "HEALTH_OK":
           return "#5cb85c"; // Bootstrap success
         case "HEALTH_WARN":
@@ -153,22 +153,22 @@ app.component("cephMonStatus", {
     this.nvd3Tooltip = function (d) {
       var data = d.data;
       return [
-          "<div class=\"panel-default\">",
-          "<div class=\"panel-heading small-padding\"><table><thead><tr>",
-          "<td class=\"legend-color-guide\"><div style=\"background-color: " + d.series[0].color + ";\"></div></td>",
-          "<td class=\"key\">" + data.name + "</td>",
-          "</tr></thead></table></div>",
-          "<div class=\"panel-body small-padding\">" + self.createMonContent(data) + "</div>",
-          "</div>"
-        ].join("");
+        "<div class=\"panel-default\">",
+        "<div class=\"panel-heading small-padding\"><table><thead><tr>",
+        "<td class=\"legend-color-guide\"><div style=\"background-color: " + d.series[0].color + ";\"></div></td>",
+        "<td class=\"key\">" + data.name + "</td>",
+        "</tr></thead></table></div>",
+        "<div class=\"panel-body small-padding\">" + self.createMonContent(data) + "</div>",
+        "</div>"
+      ].join("");
     };
 
     this.createMonContent = function (mon) {
       return [
-          "Addr: " + mon.addr,
-          "Health: " + mon.health,
-          mon.details ? "Details: " + mon.details : ""
-        ].join("<br>");
+        "Addr: " + mon.addr,
+        "Health: " + mon.health,
+        mon.details ? "Details: " + mon.details : ""
+      ].join("<br>");
     };
 
     // Watcher

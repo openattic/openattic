@@ -246,9 +246,9 @@ app.component("cephRbdForm", {
     var getReplicatedPools = function () {
       self.waitingPoolMsg = "Retrieving pool list...";
       cephPoolsService.get({
-          fsid: self.fsid,
-          type: "replicated"
-        })
+        fsid: self.fsid,
+        type: "replicated"
+      })
         .$promise
         .then(function (res) {
           self.poolFailure = false;
@@ -281,9 +281,9 @@ app.component("cephRbdForm", {
 
     var getEcOverwritesPools = function () {
       cephPoolsService.get({
-          fsid: self.fsid,
-          flags: "ec_overwrites"
-        })
+        fsid: self.fsid,
+        flags: "ec_overwrites"
+      })
         .$promise
         .then(function (res) {
           angular.forEach(res.results, addPoolAttributes);
