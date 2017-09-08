@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephOsd");
-app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService, registryService) {
+app.controller("CephOsdCtrl", function ($scope, $state, $filter, $uibModal,
+    cephOsdService, registryService) {
   $scope.registry = registryService;
   $scope.cluster = undefined;
   $scope.osd = {};
@@ -100,6 +101,18 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
     $state.go("cephOsds.statistics", {
       "#": "more"
+    });
+  };
+
+  $scope.configureClusterAction = function () {
+    $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      component: "cephClusterSettingsModal",
+      resolve: {
+        fsid: function () {
+          return $scope.registry.selectedCluster.fsid;
+        }
+      }
     });
   };
 });

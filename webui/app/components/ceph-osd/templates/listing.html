@@ -14,6 +14,11 @@
 <oadatatable ng-show="!error && osd.results" data="osd"
              class="oadatatable tc_cephOsdTable" filter-config="filterConfig"
              selection="selection" on-selection-change="onSelectionChange(selection)">
+    <additional-actions>
+        <button class="btn btn-sm btn-default btn-label tc_configureCluster" type="button" ng-click="configureClusterAction()">
+            <i class="fa fa-fw fa-cog" aria-hidden="true"></i>Configure Cluster-wide OSD Flags
+        </button>
+    </additional-actions>
     {{data.results}}
     <table class="table table-striped table-bordered table-hover dataTable datatable">
         <thead>
