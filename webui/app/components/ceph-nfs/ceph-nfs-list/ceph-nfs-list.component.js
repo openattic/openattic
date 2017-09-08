@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsList", {
-  templateUrl: "components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html",
+  template: require("./ceph-nfs-list.component.html"),
   controller: function ($scope, $filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
       cephNfsService, taskQueueService, taskQueueSubscriber, cephNfsStateService, cephNfsFsal) {
     var self = this;
@@ -175,7 +175,7 @@ app.component("cephNfsList", {
         return;
       }
       var modalInstance = $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephNfsDeleteModal",
         resolve: {
           fsid: function () {
@@ -201,7 +201,7 @@ app.component("cephNfsList", {
 
     self.stateAction = function () {
       var modalInstance = $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephNfsManageServiceModal",
         resolve: {
           fsid: function () {

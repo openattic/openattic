@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdDeleteModal", {
-  templateUrl: "components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html",
+  template: require("./ceph-rbd-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"

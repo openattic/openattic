@@ -35,7 +35,7 @@ app.config(["$provide", function ($provide) {
   $provide.decorator("uibAccordionGroupDirective", function ($delegate) {
     var directive = $delegate[0];
 
-    directive.templateUrl = "templates/accordion/accordion-group.view.html";
+    directive.template = require("../../templates/accordion/accordion-group.view.html");
 
     return $delegate;
   });

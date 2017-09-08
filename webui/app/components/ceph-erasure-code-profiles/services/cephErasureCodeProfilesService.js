@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephErasureCodeProfiles");
 app.factory("cephErasureCodeProfilesService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid/erasure-code-profiles/:id", {

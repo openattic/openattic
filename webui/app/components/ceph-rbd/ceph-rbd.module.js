@@ -30,7 +30,17 @@
  */
 "use strict";
 
+import "../ceph-cluster/module";
+import "../registry/module";
+
 angular.module("openattic.cephRbd", [
   "openattic.cephCluster",
   "openattic.registry"
 ]);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}
+require("./ceph-rbd.routes");

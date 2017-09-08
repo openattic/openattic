@@ -13,6 +13,8 @@ take a look at :ref:`developer_vagrant_howto`, which automates the process
 of setting up a development environment in a virtual machine to keep it
 separated from your local system.
 
+.. _installing_the_develpment_tools:
+
 Installing the Development Tools
 --------------------------------
 
@@ -33,10 +35,13 @@ based on the latest commit in the ``default`` branch.
 
       # apt-get install git
 
-#.  Install Node.JS and the Node Package Manager ``npm``::
+#.  Install Node.js and the Node Package Manager ``npm``::
 
       # apt-get install nodejs npm
       # ln -s /usr/bin/nodejs /usr/bin/node
+
+    .. note::
+        We currently support Node.js v6.11.x
 
 #.  Go to the ``/srv`` directory, and create a local clone of your |oA| fork
     there, using the current ``master`` branch as the basis::
@@ -74,16 +79,18 @@ based on the latest commit in the ``default`` branch.
       # npm run build
 
     If you intend to make changes to the web interface, it may be useful to
-    run ``grunt dev`` as a background task, which watches the project
+    run ``npm run dev`` as a background task, which watches the project
     directory for any changed files and triggers an automatic rebuild of the
     web interface code (including the ``eslint`` output), if required.
-    Grunt will not include the ``eslint`` output for angular, because the
-    provided configuration is there to help **you** develop the UI.
 
-    In some rare cases there might be a problem with "just" updating the frontend
-    dependencies and rebuilding the frontend files. In this case, it helps to delete
-    all dependecies. The ``npm run rebuild`` command does that and then executes
-    the ``npm run build`` process.
+    .. note::
+        Webpack will not include the ``eslint`` output for angular, because the
+        provided configuration is there to help **you** develop the UI.
+
+    .. note::
+        If you modify any npm package or webpack configuration you will have to
+        stop the background task and run it again. After doing so, the
+        modification will be reflected.
 
 #.  Run ``oaconfig install`` and start |oA| by running ``oaconfig start``.
 
@@ -98,6 +105,31 @@ automatically adapt to the new directory and use the code located therein.
 See chapters :ref:`developer_contribute` and
 :ref:`developer_contributing_guidelines` for further details on how to prepare
 your code contributions for upstream inclusion.
+
+How to run the frontend in a local server
+-----------------------------------------
+
+If you wish to run a frontend server on your local machine, while keeping the
+backend on a different machine, you can do it by simply creating an extra
+configuration file and replacing the build command shown in
+:ref:`installing_the_develpment_tools` with ``npm start``.
+
+We already provide you with a sample configuration file, that can be found at
+''webui/webpack.config.json.sample'', so you just need to copy the contents of
+that file to a new one named ''webpack.config.json'' and update the value of the
+target property so it reflects the hostname of your backend.
+
+After creating the config file you can run the command and an instance of
+webpack dev server will start running on the background.
+
+One big difference of this server is that it will keep all the compiled code in
+memory, allowing for a faster development process.
+It also comes with a live reload functionallity that will reload your browser
+automatically each time it detects a change in your code.
+And last, but not least, it will provide you with a proxy to your remote backend
+so you will not have CORS problems.
+
+You can access openATTIC at http://localhost:8080/openattic/.
 
 How to use eslint in your developer environment
 -----------------------------------------------

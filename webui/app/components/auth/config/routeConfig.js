@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
       url: "/login",
       views: {
         "main": {
-          templateUrl: "components/auth/templates/login.html",
-          controller : "AuthCtrl"
+          template: require("../templates/login.html"),
+          controller: "AuthCtrl"
         }
       }
     });

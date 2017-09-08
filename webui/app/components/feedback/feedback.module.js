@@ -28,6 +28,10 @@
  * for the JavaScript code in this page.
  *
  */
-'use strict';
+"use strict";
 
-angular.module("openattic.feedback", []);
+import FeedbackComponent from "./feedback.component"
+
+let app = angular.module("openattic.feedback", []);
+
+app.component("feedback", FeedbackComponent);

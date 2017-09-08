@@ -31,3 +31,9 @@
 "use strict";
 
 angular.module("openattic.navigation", []);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

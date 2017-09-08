@@ -75,7 +75,7 @@ if "rosetta" in settings.INSTALLED_APPS:
 
 # URLs for the GUI
 urlpatterns.extend([
-    # first, a catch-all URL that serves bower_components, css etc
+    # first, a catch-all URL that serves static files (css, etc)
     url(r'^(?P<path>.+)$', 'django.views.static.serve', {
         'document_root': settings.GUI_ROOT, 'show_indexes': False}),
     # second, a URL that serves index.html for "openattic/"

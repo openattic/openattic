@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.shared");
 app.component("oaLoadingPanel", {
-  templateUrl: "components/shared/oa-loading-panel/oa-loading-panel.component.html",
+  template: require("./oa-loading-panel.component.html"),
   bindings: {
     message: "@"
   },

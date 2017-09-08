@@ -43,7 +43,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/rgw/users",
       views: {
         "main": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUsers.html",
+          template: require("../templates/cephRgwUsers.html"),
           controller: "CephRgwUsersCtrl"
         }
       },
@@ -54,7 +54,7 @@ app.config(function ($stateProvider) {
     .state("ceph-rgw-users.detail", {
       views: {
         "tab": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUsersTab.html"
+          template: require("../templates/cephRgwUsersTab.html")
         }
       },
       ncyBreadcrumb: {
@@ -65,7 +65,7 @@ app.config(function ($stateProvider) {
       url: "/details",
       views: {
         "tab-content": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUsersDetails.html"
+          template: require("../templates/cephRgwUsersDetails.html")
         }
       },
       ncyBreadcrumb: {
@@ -76,7 +76,7 @@ app.config(function ($stateProvider) {
       url: "/statistics",
       views: {
         "tab-content": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUsersStatistics.html"
+          template: require("../templates/cephRgwUsersStatistics.html")
         }
       },
       ncyBreadcrumb: {
@@ -87,7 +87,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/rgw/users/add",
       views: {
         "main": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEdit.html",
+          template: require("../templates/cephRgwUserAddEdit.html"),
           controller: "CephRgwUserAddEditCtrl"
         }
       },
@@ -100,7 +100,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/rgw/users/edit/:user_id",
       views: {
         "main": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEdit.html",
+          template: require("../templates/cephRgwUserAddEdit.html"),
           controller: "CephRgwUserAddEditCtrl"
         }
       },
@@ -120,7 +120,7 @@ app.config(function ($stateProvider) {
       },
       views: {
         "main": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwBuckets.html",
+          template: require("../templates/cephRgwBuckets.html"),
           controller: "CephRgwBucketsCtrl"
         }
       },
@@ -131,7 +131,7 @@ app.config(function ($stateProvider) {
     .state("ceph-rgw-buckets.detail", {
       views: {
         "tab": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwBucketsTab.html"
+          template: require("../templates/cephRgwBucketsTab.html")
         }
       },
       ncyBreadcrumb: {
@@ -142,7 +142,7 @@ app.config(function ($stateProvider) {
       url: "/details",
       views: {
         "tab-content": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwBucketsDetails.html"
+          template: require("../templates/cephRgwBucketsDetails.html")
         }
       },
       ncyBreadcrumb: {
@@ -153,7 +153,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/rgw/buckets/add",
       views: {
         "main": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
+          template: require("../templates/cephRgwBucketAddEdit.html"),
           controller: "CephRgwBucketAddEditCtrl"
         }
       },
@@ -166,7 +166,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/rgw/buckets/edit/:bucket",
       views: {
         "main": {
-          templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
+          template: require("../templates/cephRgwBucketAddEdit.html"),
           controller: "CephRgwBucketAddEditCtrl"
         }
       },

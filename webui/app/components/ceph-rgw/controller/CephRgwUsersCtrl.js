@@ -129,8 +129,8 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
       return;
     }
     var modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/ceph-rgw/templates/cephRgwUserDeleteModal.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
+      template: require("../templates/cephRgwUserDeleteModal.html"),
       controller: "CephRgwUserDeleteModalCtrl",
       resolve: {
         userSelection: function () {

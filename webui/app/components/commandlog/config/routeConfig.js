@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
       url: "/commandlog",
       views: {
         "main": {
-          templateUrl: "components/commandlog/templates/commandlog.html",
-          controller : "CommandlogCtrl"
+          template: require("../templates/commandlog.html"),
+          controller: "CommandlogCtrl"
         }
       },
       ncyBreadcrumb: {

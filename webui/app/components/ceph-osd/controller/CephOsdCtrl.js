@@ -106,7 +106,7 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, $uibModal,
 
   $scope.configureClusterAction = function () {
     $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
       component: "cephClusterSettingsModal",
       resolve: {
         fsid: function () {

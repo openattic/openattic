@@ -4,7 +4,10 @@
     "jquery": true,
     "node": true
   },
-  "parserOptions": { "ecmaVersion": 6 },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
   "globals": {
     "_": false,
     "angular": false,
@@ -28,10 +31,6 @@
     "no-irregular-whitespace": 2,
     "no-new": 0,
     "no-shadow": 2,
-    "strict": [
-      2,
-      "global"
-    ],
     "no-undef": 2,
     "no-unused-vars": 2,
     "no-var": 0,

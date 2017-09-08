@@ -31,3 +31,10 @@
 "use strict";
 
 angular.module("openattic.settings", []);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}
+require("./settings.routes");

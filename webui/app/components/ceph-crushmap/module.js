@@ -30,6 +30,14 @@
  */
 "use strict";
 
+import "../ceph-cluster/module";
+
 angular.module("openattic.cephCrushmap", [
   "openattic.cephCluster"
 ]);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

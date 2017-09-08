@@ -133,13 +133,12 @@ class cephClusterSettingsModal {
   }
 }
 
-var app = angular.module("openattic.cephCluster");
-app.component("cephClusterSettingsModal", {
-  templateUrl: "components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.html",
+export default {
+  template: require("./ceph-cluster-settings-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
   controller: cephClusterSettingsModal
-});
+}
 

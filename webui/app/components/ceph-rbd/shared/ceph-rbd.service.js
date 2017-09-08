@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephRbd");
 app.factory("cephRbdService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {

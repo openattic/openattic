@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiList", {
-  templateUrl: "components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html",
+  template: require("./ceph-iscsi-list.component.html"),
   controller: function ($scope, $state, $filter, $timeout, $uibModal, registryService,
       tabViewService, cephIscsiService, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
       cephIscsiTargetAdvangedSettings, Notification) {
@@ -212,7 +212,7 @@ app.component("cephIscsiList", {
         return;
       }
       var modalInstance = $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephIscsiDeleteModal",
         resolve: {
           fsid: function () {

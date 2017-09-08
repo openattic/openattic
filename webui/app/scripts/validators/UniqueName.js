@@ -98,14 +98,14 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
           }
           query[ctrl.field] = modelValue;
           obj.model.query(query)
-              .$promise
-              .then((res) => {
-                if (res.length !== 0 && obj.current) {
-                  ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
-                } else {
-                  ctrl.$setValidity("uniquename", res.length === 0);
-                }
-              });
+            .$promise
+            .then((res) => {
+              if (res.length !== 0 && obj.current) {
+                ctrl.$setValidity("uniquename", res[0][obj.attribute] === obj.current);
+              } else {
+                ctrl.$setValidity("uniquename", res.length === 0);
+              }
+            });
         }, 300);
       });
     }

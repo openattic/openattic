@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.taskQueue");
 app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filter, $uibModal, $interval,
     taskQueueFetcher) {
@@ -525,8 +527,8 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
       return;
     }
     modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/taskQueue/templates/task-deletion.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
+      template: require("../templates/task-deletion.html"),
       controller: "TaskDeleteCtrl",
       resolve: {
         taskSelection: function () {

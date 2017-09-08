@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.dashboardWidgets");
 app.component("cephOsdStatus", {
-  templateUrl: "components/dashboard-widgets/templates/ceph-osd-status.html",
+  template: require("../templates/ceph-osd-status.html"),
   bindings: {
     settings: "="
   },

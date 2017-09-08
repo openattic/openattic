@@ -30,7 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephErasureCodeProfiles");
+import app from "../module";
+
 app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInstance, cephErasureCodeProfilesService,
     cluster, osd, Notification) {
   $scope.cluster = cluster;

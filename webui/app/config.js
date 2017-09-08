@@ -13,29 +13,31 @@ var globalConfig = {
     },
     "defaultTaskReloadTime": 5000,
     "defaultDashboard": {
-      "boards"  : [{
-        "name"   : "Ceph",
+      "boards": [{
+        "name": "Ceph",
         "widgets": [{
-          "name"    : "Ceph Health",
-          "manager" : {
-            "name"   : "Ceph Health",
+          "name": "Ceph Health",
+          "manager": {
+            "name": "Ceph Health",
             "manager": "ceph-health",
-            "group"  : "Ceph"
+            "group": "Ceph"
           },
           "settings": {}
         }]
       }, {
-        "name"   : "Grafana",
+        "name": "Grafana",
         "widgets": []
       }],
       "settings": {
         "activeBoard": 1,
-        "locked"     : false
+        "locked": false
       }
     },
-    "quickLogin"      : {
+    "quickLogin": {
       "username": "",
       "password": ""
     }
   }
 };
+
+export default globalConfig;

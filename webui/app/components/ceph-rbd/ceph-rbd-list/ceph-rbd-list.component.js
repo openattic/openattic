@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdList", {
-  templateUrl: "components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html",
+  template: require("./ceph-rbd-list.component.html"),
   controller: function ($scope, $state, $filter, $uibModal, $q, cephRbdService,
       registryService, cephPoolsService, Notification, oaTabSetService) {
     var self = this;
@@ -180,7 +180,7 @@ app.component("cephRbdList", {
         return;
       }
       var modalInstance = $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephRbdDeleteModal",
         resolve: {
           fsid: function () {

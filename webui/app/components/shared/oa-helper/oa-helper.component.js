@@ -45,7 +45,7 @@ var app = angular.module("openattic.shared");
  * @param {string} helperData Data that will be used on the template.
  */
 app.component("oaHelper", {
-  templateUrl: "components/shared/oa-helper/oa-helper.component.html",
+  template: require("./oa-helper.component.html"),
   transclude: false,
   bindings: {
     helperText: "<",

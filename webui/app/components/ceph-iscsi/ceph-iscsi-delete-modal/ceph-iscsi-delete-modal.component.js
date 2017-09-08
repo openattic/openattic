@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiDeleteModal", {
-  templateUrl: "components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html",
+  template: require("./ceph-iscsi-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"

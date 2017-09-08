@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import "../notification/module";
+
 angular.module("openattic.apidecorator", [
   "openattic.notification"
 ])
@@ -37,3 +39,9 @@ angular.module("openattic.apidecorator", [
     $httpProvider.interceptors.push("ApiHttpErrorInterceptor");
     $httpProvider.interceptors.push("ApiHttpTimeoutInterceptor");
   });
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

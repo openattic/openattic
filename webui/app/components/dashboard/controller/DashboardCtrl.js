@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.dashboard");
 app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashboardService) {
   // Basic configuration
@@ -75,8 +77,8 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
   var composeModalConfig = function (data) {
     return {
       controller: "DashboardComposeModalCtrl",
-      templateUrl: "components/dashboard/templates/dashboard-compose-modal.html",
-      windowTemplateUrl: "templates/messagebox.html",
+      template: require("../templates/dashboard-compose-modal.html"),
+      windowTemplate: require("../../../templates/messagebox.html"),
       resolve: {
         data: angular.isUndefined(data) ? {} : data
       }
@@ -127,10 +129,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   $scope.clearDashboard = function () {
     var modalInstance = $uibModal.open({
-      controller       : "DashboardDeleteCtrl",
-      templateUrl      : "components/dashboard/templates/delete-widgets.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
+      controller: "DashboardDeleteCtrl",
+      template: require("../../../components/dashboard/templates/delete-widgets.html"),
+      windowTemplate: require("../../../templates/messagebox.html"),
+      resolve: {
         data: {
           "name": $scope.dashboard.name
         }
@@ -150,10 +152,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   $scope.deleteDashboard = function () {
     var modalInstance = $uibModal.open({
-      controller       : "DashboardDeleteCtrl",
-      templateUrl      : "components/dashboard/templates/delete-dashboard.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
+      controller: "DashboardDeleteCtrl",
+      template: require("../../../components/dashboard/templates/delete-dashboard.html"),
+      windowTemplate: require("../../../templates/messagebox.html"),
+      resolve: {
         data: {
           "name": $scope.dashboard.name
         }
@@ -229,10 +231,10 @@ app.controller("DashboardCtrl", function ($scope, $uibModal, Notification, dashb
 
   $scope.deleteWidget = function (idx, name) {
     var modalInstance = $uibModal.open({
-      controller       : "DashboardDeleteCtrl",
-      templateUrl      : "components/dashboard/templates/delete-widget.html",
-      windowTemplateUrl: "templates/messagebox.html",
-      resolve          : {
+      controller: "DashboardDeleteCtrl",
+      template: require("../templates/delete-widget.html"),
+      windowTemplate: require("../../../templates/messagebox.html"),
+      resolve: {
         data: {
           "name": name
         }

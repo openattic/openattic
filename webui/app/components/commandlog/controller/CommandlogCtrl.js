@@ -68,8 +68,8 @@ app.controller("CommandlogCtrl", function ($scope, $state, commandlogService, $u
 
   $scope.deleteAction = function () {
     var modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/commandlog/templates/delete-by-selection.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
+      template: require("../templates/delete-by-selection.html"),
       controller: "CommandlogDeleteBySelectionCtrl",
       resolve: {
         selection: function () {
@@ -85,8 +85,8 @@ app.controller("CommandlogCtrl", function ($scope, $state, commandlogService, $u
 
   $scope.deleteByDateAction = function () {
     var modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/commandlog/templates/delete-by-date.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
+      template: require("../templates/delete-by-date.html"),
       controller: "CommandlogDeleteByDateCtrl"
     });
 
