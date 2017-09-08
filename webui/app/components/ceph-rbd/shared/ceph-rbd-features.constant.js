@@ -93,7 +93,7 @@ app.constant("cephRbdFeatures", {
     helpText: "",
     requires: null,
     excludes: null,
-    isSupportedISCSI: false,
+    isSupportedISCSI: true,
     isDisplayed: false
   }
 });

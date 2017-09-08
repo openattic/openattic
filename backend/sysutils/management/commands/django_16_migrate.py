@@ -485,7 +485,7 @@ _migrations = [
         """
     ),
     SqlMigration(
-        'ifcoinfig', '0005_remove_hostgroup_ipaddress_netdevice',
+        'ifconfig', '0005_remove_hostgroup_ipaddress_netdevice',
         lambda cursor: _table_exists('ifcoinfig_netdevice', cursor),
         """
         BEGIN;

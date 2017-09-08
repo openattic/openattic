@@ -24,6 +24,8 @@ Added
 * Documentation: Added Troubleshooting chapter (OP-1070)
 * Backend: Added `osd_flags` to `CephCluster` (OP-2598)
 * QA/Development: Export HTML e2e report (OP-2261)
+* WebUI: Add Ceph cluster settings modal (OP-2599)
+* WebUI: iSCSI Target dialog should support RBDs with data-pool enabled (OP-2633)
 
 Changed
 ~~~~~~~
@@ -36,6 +38,7 @@ Changed
   environment (OP-2640)
 * Documentation: Update e2e documentation (OP-2329)
 * WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
+* WebUI: Hide RBD usage percentage bar if no usage information is available (OP-2639)
 
 Fixed
 ~~~~~
@@ -45,6 +48,8 @@ Fixed
 * Fixed Grafana Node Statistics are not immediately visible in oA (OP-2634)
 * Backend: Fixed `KeyError: 'hostname'` in nodes tab (OP-2638)
 * WebUI/QA: Fix random NFS e2e timeout failure (OP-2641)
+* WebUI: Fix dashboard error if no user profile exists (OP-2649)
+* Installation: Fixed database migration `ifconfig.0005` (OP-2646)
 
 Removed
 ~~~~~~~
