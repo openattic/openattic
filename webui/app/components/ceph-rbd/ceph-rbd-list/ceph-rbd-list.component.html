@@ -64,9 +64,9 @@
                 <td ng-show="columns['Poolname']" ng-bind="row.pool.name"></td>
                 <td ng-show="columns['Size']" ng-bind="row.size | bytes"></td>
                 <td ng-show="columns['Used']">
-                    <div class="progress oaprogress" ng-show="row.used_size !== undefined"
-                         data-toggle="tooltip" data-placement="right" title="Used: {{row.usage_size | bytes}} &mdash;
-                            Free: {{row.free | bytes}}">
+                    <div class="progress oaprogress" ng-show="row.used_size !== null"
+                         data-toggle="tooltip" data-placement="right"
+                         title="Used: {{row.used_size | bytes}} &mdash; Free: {{row.free | bytes}}">
                         <div class="progress-bar" role="progressbar"
                              aria-valuenow="{{row.usedPercent}}" aria-valuemin="0"
                              aria-valuemax="100" style="width: {{row.usedPercent}}%">
@@ -76,6 +76,9 @@
                              aria-valuenow="{{row.freePercent}}" aria-valuemin="0"
                              aria-valuemax="100" style="width: {{row.freePercent}}%">
                         </div>
+                    </div>
+                    <div class="text-muted text-center" ng-show="row.used_size === null">
+                      Not available
                     </div>
                 </td>
                 <td ng-show="columns['Data-pool']" ng-bind="row.data_pool.name"></td>
