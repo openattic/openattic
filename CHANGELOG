@@ -47,6 +47,7 @@ Fixed
 * Backend: Fixed `KeyError: 'hostname'` in nodes tab (OP-2638)
 * WebUI/QA: Fix random NFS e2e timeout failure (OP-2641)
 * WebUI: Fix dashboard error if no user profile exists (OP-2649)
+* Installation: Fixed database migration `ifconfig.0005` (OP-2646)
 
 Removed
 ~~~~~~~
