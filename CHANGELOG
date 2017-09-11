@@ -51,6 +51,7 @@ Fixed
 * WebUI/QA: Fix random NFS e2e timeout failure (OP-2641)
 * WebUI: Fix dashboard error if no user profile exists (OP-2649)
 * Installation: Fixed database migration `ifconfig.0005` (OP-2646)
+* WebUI: MON widget will verify if timechecks are there (OP-2655)
 
 Removed
 ~~~~~~~
