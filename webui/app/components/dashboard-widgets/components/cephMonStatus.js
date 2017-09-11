@@ -79,7 +79,9 @@ app.component("cephMonStatus", {
       };
       angular.forEach(cluster.monmap.mons, function (mon) {
         // Extend the mon object by the timecheck of the specific mon
-        angular.extend(mon, cluster.timechecks.time_skew_status[mon.name]);
+        if (cluster.timechecks && cluster.timechecks.time_skew_status) {
+          angular.extend(mon, cluster.timechecks.time_skew_status[mon.name]);
+        }
 
         if (!mon.health) {
           mon.health = "HEALTH_ERR";
