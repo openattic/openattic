@@ -47,9 +47,11 @@ Fixed
   test user (OP-2627)
 * Fixed Grafana Node Statistics are not immediately visible in oA (OP-2634)
 * Backend: Fixed `KeyError: 'hostname'` in nodes tab (OP-2638)
+* Backend: Fixed deleting Pools with Luminous (OP-2216)
 * WebUI/QA: Fix random NFS e2e timeout failure (OP-2641)
 * WebUI: Fix dashboard error if no user profile exists (OP-2649)
 * Installation: Fixed database migration `ifconfig.0005` (OP-2646)
+* WebUI: MON widget will verify if timechecks are there (OP-2655)
 
 Removed
 ~~~~~~~
