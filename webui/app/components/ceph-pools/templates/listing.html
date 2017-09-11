@@ -69,7 +69,7 @@
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Name']">
-                  <a ui-sref="ceph-pool-edit({poolFsid:row.cluster,poolId:row.id})" ng-bind="row.name"></a>
+                  <a ui-sref="ceph-pools-edit({fsid:row.cluster,poolId:row.id})" ng-bind="row.name"></a>
                 </td>
                 <td ng-show="columns['ID']" ng-bind="row.id"></td>
                 <td ng-show="columns['Used']">

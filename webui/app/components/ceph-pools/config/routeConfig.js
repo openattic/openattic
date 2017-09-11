@@ -70,7 +70,7 @@ app.config(function ($stateProvider) {
       }
     })
     .state("ceph-pools-edit", {
-      url: "/ceph/pools/edit/:poolFsid/:poolId",
+      url: "/ceph/pools/edit/:fsid/:poolId",
       views: {
         "main": {
           templateUrl: "components/ceph-pools/templates/add-pool.html",

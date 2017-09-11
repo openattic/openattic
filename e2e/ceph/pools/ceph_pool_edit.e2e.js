@@ -5,7 +5,7 @@ const cephPoolCommon = require('./cephPoolCommon.js');
 
 describe('ceph pool edit form', function(){
   const cephPoolProperties = new cephPoolCommon();
-  const name = 'e2e-pool-edit';
+  const name = 'e2e-pools-edit';
 
   const isHidden = (e) => !e.isPresent() || !e.isDisplayed();
 
@@ -34,7 +34,7 @@ describe('ceph pool edit form', function(){
   });
 
   it('should contain edit in url', () => {
-    expect(browser.getCurrentUrl()).toContain('/#/ceph/pool/edit/');
+    expect(browser.getCurrentUrl()).toContain('/#/ceph/pools/edit/');
   });
 
   it('should not be possible to decrease pgnum', () => {

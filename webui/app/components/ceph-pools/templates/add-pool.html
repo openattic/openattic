@@ -21,7 +21,6 @@
       </div>
       <div class="panel-body">
         <div class="form-group"
-            ng-if="!editing"
             ng-class="{'has-error': (poolForm.$submitted || poolForm.name.$dirty) && poolForm.name.$invalid}">
           <label class="control-label col-sm-3"
               for="poolName">
@@ -33,10 +32,11 @@
                 type="text"
                 class="form-control tc_pool_name"
                 placeholder="Name..."
+                ng-disabled="editing"
                 ng-model="pool.name"
                 uniquename="ceph-pool"
                 validname
-                required
+                ng-required="!editing"
                 autofocus>
             <span class="help-block tc_nameRequired"
                 ng-show="(poolForm.$submitted || poolForm.name.$dirty) && poolForm.name.$error.required">
@@ -68,7 +68,7 @@
                   ng-disabled="!clusters"
                   ng-model="data.cluster"
                   ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid"
-                  required>
+                  ng-required="!editing">
                 <option class="tc_clusterOption"
                     value="">
                   -- Select a cluster --
@@ -87,8 +87,7 @@
 
           <div class="form-group"
               ng-class="{'has-error': (poolForm.$submitted || poolForm.poolTypes.$dirty) &&
-                  poolForm.poolTypes.$invalid}"
-              ng-if="!editing">
+                  poolForm.poolTypes.$invalid}">
             <label class="control-label col-sm-3"
                 for="poolTypes">
               Pool type
@@ -100,7 +99,8 @@
                   ng-change="rulesetChange()"
                   ng-model="pool.type"
                   ng-options="poolType.name as poolType.description for poolType in data.poolTypes"
-                  required>
+                  ng-disabled="editing"
+                  ng-required="!editing">
                 <option class="tc_poolTypesOption"
                     value="">
                   -- Select a pool type --
@@ -117,7 +117,7 @@
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty) &&
                     poolForm.crushSet.$invalid}"
-                ng-if="data.cluster.rules[pool.type].length > 0 && !editing">
+                ng-if="data.cluster.rules[pool.type].length > 0">
               <label class="control-label col-sm-3"
                   for="crushSet">
                 Crush ruleset
@@ -127,10 +127,10 @@
                     id="crushSet"
                     name="crushSet"
                     ng-change="rulesetChange()"
-                    ng-disabled="data.cluster.rules[pool.type].length === 1"
+                    ng-disabled="editing || data.cluster.rules[pool.type].length === 1"
                     ng-model="data.ruleset"
                     ng-options="rule.rule_name for rule in data.cluster.rules[pool.type]"
-                    ng-required="data.cluster.rules[pool.type].length > 0">
+                    ng-required="!editing && data.cluster.rules[pool.type].length > 0">
                   <option class="tc_crushSetOption"
                       value="">
                     -- Select a crush ruleset --
@@ -171,7 +171,7 @@
 
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$invalid}"
-                ng-if="pool.type === 'replicated' && !editing">
+                ng-if="pool.type === 'replicated'">
               <label class="control-label col-sm-3"
                   for="size">
                 Replicated size
@@ -179,27 +179,28 @@
               <div class="col-sm-9">
                 <input class="form-control tc_pool_size"
                     id="size"
-                    max="{{getMaxSize()}}"
-                    min="{{data.ruleset.min_size || 1}}"
+                    max="{{editing ? pool.size : getMaxSize()}}"
+                    min="{{editing ? pool.size : data.ruleset.min_size || 1}}"
                     name="size"
                     type="number"
                     ng-change="onSizeChange()"
+                    ng-disabled="editing"
                     ng-model="pool.size"
                     ng-model-options="{ updateOn: 'blur' }"
-                    required>
+                    ng-required="!editing">
                 <span class="help-block tc_sizeRequired"
                     ng-show="(poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$error.required">
                   This field is required!
                 </span>
                 <span class="help-block tc-applied-rule-set"
-                    ng-hide="poolForm.size.$invalid">
+                    ng-hide="editing || poolForm.size.$invalid">
                   <ul class="list-inline">
                     <li>Minimum: {{data.ruleset.min_size || 1}}</li>
                     <li>Maximum: {{getMaxSize()}}</li>
                   </ul>
                 </span>
                 <span class="help-block tc-size-out-of-range"
-                    ng-show="poolForm.size.$invalid">
+                    ng-show="!editing && poolForm.size.$invalid">
                   The size specified is out of range.
                   A value from {{data.ruleset.min_size || 1}} to {{getMaxSize()}} is valid.
                 </span>
@@ -209,7 +210,7 @@
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.erasureProfiles.$dirty) &&
                     poolForm.erasureProfiles.$invalid}"
-                ng-if="pool.type === 'erasure' && !editing">
+                ng-if="pool.type === 'erasure'">
               <label class="control-label col-sm-3"
                   for="erasureProfiles">
                 Erasure code profile
@@ -221,9 +222,9 @@
                       name="erasureProfiles"
                       ng-change="ecProfileChange(); pgSizeChange()"
                       ng-model="pool.erasure.profile"
-                      ng-disabled="data.profiles.length === 1"
+                      ng-disabled="editing || data.profiles.length === 1"
                       ng-options="profile as profile.name for profile in data.profiles"
-                      ng-required="pool.type === 'erasure'">
+                      ng-required="!editing && pool.type === 'erasure'">
                     <option class="tc_erasureProfilesOption"
                         value="">
                       -- Select an erasure code profile --
@@ -232,6 +233,7 @@
                   <span class="input-group-btn">
                     <button class="btn btn-default"
                         type="button"
+                        ng-disabled="editing"
                         ng-click="addErasureCodeProfile()">
                       <i class="fa fa-plus"
                           aria-hidden="true"></i>
@@ -239,7 +241,7 @@
                     <button class="btn btn-default"
                         type="button"
                         ng-click="deleteErasureCodeProfile()"
-                        ng-disabled="data.profiles.length < 1">
+                        ng-disabled="editing || data.profiles.length < 1">
                       <i class="fa fa-trash-o"
                           aria-hidden="true"></i>
                     </button>
@@ -285,7 +287,7 @@
             </div>
 
             <div class="form-group"
-                ng-if="bluestore && pool.type === 'erasure' && !editing">
+                ng-if="bluestore && pool.type === 'erasure'">
               <label class="control-label col-sm-3">
                 Flags
               </label>
@@ -294,6 +296,7 @@
                   <div class="checkbox checkbox-primary">
                     <input id="ec-overwrites"
                         type="checkbox"
+                        ng-disabled="editing"
                         ng-model="data.flags.ec_overwrites"
                         ng-name="ec-overwrites">
                     <label for="ec-overwrites"
@@ -306,7 +309,7 @@
             </div>
 
             <!-- Compression -->
-            <div ng-if="bluestore && !editing">
+            <div ng-if="bluestore">
               <legend>Compression</legend>
               <div class="form-group"
                   ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionMode.$dirty) && poolForm.compressionMode.$invalid}">
@@ -316,9 +319,10 @@
                 <div class="col-sm-9">
                   <select class="form-control tc_compressionMode"
                       id="compressionMode" name="compressionMode"
+                      ng-disabled="editing"
                       ng-model="pool.compression_mode"
                       ng-options="compressionMode.name as compressionMode.description for compressionMode in data.compressionModes"
-                      required>
+                      ng-required="!editing">
                     <option class="tc_compressionModeOption" value="">
                       -- Select a compression mode --
                     </option>
@@ -338,9 +342,10 @@
                   <div class="col-sm-9">
                     <select class="form-control tc_compressionAlgorithmSelection"
                         id="compressionAlgorithm" name="compressionAlgorithm"
+                        ng-disabled="editing"
                         ng-model="pool.compression_algorithm"
                         ng-options="compressionAlgorithm.name as compressionAlgorithm.description for compressionAlgorithm in data.compressionAlgorithms"
-                        ng-required="pool.compression_mode && pool.compression_mode !== 'none'">
+                        ng-required="!editing && pool.compression_mode && pool.compression_mode !== 'none'">
                       <option class="tc_compressionAlgorithmOption" value="">
                         -- Select a compression algorithm --
                       </option>
@@ -361,9 +366,10 @@
                         type="text" min="0" ng-model-options="{ updateOn: 'blur' }"
                         class="form-control tc_compressionMinBlobSize"
                         placeholder="e.g., 128K"
+                        ng-disabled="editing"
                         ng-model="data.compression_min_blob_size"
                         ng-change="updateCompressionMinBlobSize()"
-                        ng-required="pool.compression_mode && pool.compression_mode !== 'none'">
+                        ng-required="!editing && pool.compression_mode && pool.compression_mode !== 'none'">
                     <span class="help-block tc_compressionMinBlobSizeRequired"
                         ng-show="(poolForm.$submitted || poolForm.compressionMinBlobSize.$dirty) && poolForm.compressionMinBlobSize.$error.required">
                       This field is required!
@@ -383,10 +389,11 @@
                     <input id="compressionMaxBlobSize" type="text" min="0"
                         class="form-control tc_compressionMaxBlobSize"
                         placeholder="e.g., 512K" name="compressionMaxBlobSize"
+                        ng-disabled="editing"
                         ng-model-options="{ updateOn: 'blur' }"
                         ng-model="data.compression_max_blob_size"
                         ng-change="updateCompressionMaxBlobSize()"
-                        ng-required="pool.compression_mode && pool.compression_mode !== 'none'">
+                        ng-required="!editing && pool.compression_mode && pool.compression_mode !== 'none'">
                     <span class="help-block tc_compressionMaxBlobSizeRequired"
                         ng-show="(poolForm.$submitted || poolForm.compressionMaxBlobSize.$dirty) && poolForm.compressionMaxBlobSize.$error.required">
                       This field is required!
@@ -409,6 +416,8 @@
                         type="number" min="0" max="1" step="0.1"
                         class="form-control tc_compressionRequiredRatio"
                         placeholder="Compression required ratio..."
+                        ng-disabled="editing"
+                        ng-required="!editing"
                         ng-model="pool.compression_required_ratio">
                     <span class="help-block tc_ccompressionRequiredRatioRequired"
                         ng-show="(poolForm.$submitted || poolForm.compressionRequiredRatio.$dirty) && poolForm.compressionRequiredRatio.$error.required">
@@ -507,7 +516,7 @@
           </div>
         </div>
         <div class="text-center"
-            ng-if="!editing && (!clusters.length || cluster.length === 1 && !data.cluster.loaded)">
+            ng-if="(!clusters.length || cluster.length === 1 && !data.cluster.loaded)">
           <i class="fa fa-spinner fa-spin fa-fw"></i>
         </div>
       </div>
