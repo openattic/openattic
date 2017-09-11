@@ -135,14 +135,6 @@ describe('should test the ceph rbd creation form', function(){
     expect(element(by.className(fe.stripingCount.items.min)).isDisplayed()).toBe(false);
   });
 
-  it('should show a warning if stripe count is higher than 15', () => {
-    const count = rbdProperties.stripingCount;
-    helpers.changeInput(count, '16');
-    expect(element(by.className(fe.stripingCount.items.toBig)).isDisplayed()).toBe(true);
-    helpers.changeInput(count, '5');
-    expect(element(by.className(fe.stripingCount.items.toBig)).isDisplayed()).toBe(false);
-  });
-
   it('should show an error on size if object set size icreases the setted size', () => {
     const size = rbdProperties.size;
     helpers.changeInput(rbdProperties.stripingUnit, '4 M');

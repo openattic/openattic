@@ -235,8 +235,8 @@
             </div>
           </div>
           <div class="form-group"
-              ng-class="{'has-error': (rbdForm.$submitted || rbdForm.stripingCount.$dirty) && rbdForm.stripingCount.$invalid,
-              'has-warning': $ctrl.data.striping.count > 15}">
+              ng-class="{'has-error': (rbdForm.$submitted || rbdForm.stripingCount.$dirty) &&
+                  rbdForm.stripingCount.$invalid}">
             <label class="control-label col-sm-4"
                 for="stripingCount">
               Striping count
@@ -250,7 +250,6 @@
                   ng-disabled="$ctrl.data.pool == null"
                   ng-model-options="{ updateOn: 'blur' }"
                   ng-model="$ctrl.data.striping.count"
-                  placeholder="5"
                   required>
               <span class="help-block tc-stripingCount-required"
                   ng-show="(rbdForm.$submitted || rbdForm.stripingCount.$dirty) && rbdForm.stripingCount.$error.required">
@@ -259,10 +258,6 @@
               <span class="help-block tc-stripingCount-min"
                   ng-show="rbdForm.stripingCount.$invalid">
                   The striping count has to be a value higher than 1.
-              </span>
-              <span class="help-block tc-stripingCount-toBig"
-                  ng-show="$ctrl.data.striping.count > 15">
-                If you know what you are doing use such a high count value. Please keep in mind that for most cases a count of 5 is a good choice.
               </span>
             </div>
           </div>

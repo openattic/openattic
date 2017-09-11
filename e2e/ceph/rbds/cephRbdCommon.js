@@ -143,8 +143,7 @@ var rbdCommons = function(){
       model: '$ctrl.data.striping.count',
       items: {
         required: 'tc-stripingCount-required',
-        min: 'tc-stripingCount-min',
-        toBig: 'tc-stripingCount-toBig'
+        min: 'tc-stripingCount-min'
       }
     },
     stripingUnit: {

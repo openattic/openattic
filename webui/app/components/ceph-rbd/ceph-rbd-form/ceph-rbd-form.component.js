@@ -222,11 +222,11 @@ app.component("cephRbdForm", {
       const stripeSum = objectSetSize / stripeSize;
       let size;
       let maxSets;
-      let maxStripes;
+      let partialStripes;
       if (angular.isString(self.data.size)) {
         size = SizeParserService.parseInt(self.data.size, "b");
         maxSets = parseInt(size / objectSetSize, 10);
-        maxStripes = maxSets * stripeSum;
+        partialStripes = parseInt((size - maxSets * objectSetSize) / striping.unit, 10);
         self.sizeValidator(size);
       }
       return [
@@ -240,9 +240,14 @@ app.component("cephRbdForm", {
           "<br>",
           "The RBD can hold up to",
           maxSets,
-          "Objects and",
-          stripeSum > 1 ? maxStripes : "",
-          "Stripes"
+          "object sets",
+          "(" + stripeSum * maxSets,
+          "Stripes)",
+          !partialStripes ? "" : [
+            "and",
+            partialStripes,
+            "partial Stripes"
+          ].join(" ")
         ].join(" ")
       ].join(" ");
     };
