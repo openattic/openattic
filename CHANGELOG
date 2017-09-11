@@ -40,6 +40,7 @@ Changed
 * WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
 * WebUI: Hide RBD usage percentage bar if no usage information is available (OP-2639)
 * WebUI: Fix 'Configure Cluster-wide OSD Flags' header button position (OP-2657)
+* WebUI: Display an error message when the loading of the form data fails (OP-2656)
 * Installation: Drop database when calling `oaconfig install` without data loss (OP-2577)
 
 Fixed

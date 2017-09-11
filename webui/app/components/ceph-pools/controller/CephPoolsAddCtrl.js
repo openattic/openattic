@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
     $uibModal, Notification, cephOsdService, cephCrushmapService,
     cephClusterService, cephErasureCodeProfilesService, cephPoolsService,
     $filter, SizeParserService) {
@@ -179,30 +179,34 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
     if (cluster) {
       $scope.data.cluster.loaded = false;
       $scope.fsid = cluster.fsid;
-      cephClusterService.status({fsid: cluster.fsid})
-        .$promise
-        .then(function (localCluster) {
-          $scope.data.osdCount = localCluster.osdmap.osdmap.num_osds;
-          // Calculation found here: http://docs.ceph.com/docs/master/rados/operations/placement-groups/#data-durability
-          $scope.pgSizeChange();
-        });
-      cephErasureCodeProfilesService.get({fsid: cluster.fsid})
-        .$promise
-        .then(function (res) {
-          $scope.data.profiles = res.results;
-          $scope.ecProfileChange();
-        });
-      cephOsdService.get({
-        fsid: cluster.fsid,
-        osd_objectstore: "bluestore"
-      })
-        .$promise
-        .then(function (res) {
-          $scope.bluestore = res.count > 0;
-        });
-      cephCrushmapService.get({fsid: cluster.fsid})
-        .$promise
-        .then(function (res) {
+
+      let promises = [];
+      promises.push(
+        cephClusterService.status({
+          fsid: cluster.fsid
+        }).$promise
+      );
+      promises.push(
+        cephErasureCodeProfilesService.get({
+          fsid: cluster.fsid
+        }).$promise
+      );
+      promises.push(
+        cephOsdService.get({
+          fsid: cluster.fsid,
+          osd_objectstore: "bluestore"
+        }).$promise
+      );
+      promises.push(
+        cephCrushmapService.get({
+          fsid: cluster.fsid
+        }).$promise
+      );
+      $q.all(promises)
+        .then((res) => {
+          $scope.data.osdCount = res[0].osdmap.osdmap.num_osds;
+          $scope.data.profiles = res[1].results;
+          $scope.bluestore = res[2].count > 0;
           $scope.data.cluster.rules = {
             replicated: [],
             erasure: []
@@ -211,14 +215,19 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
            * https://bitbucket.org/openattic/openattic/src/2a054091ffb56d69b7ccee9ee7070b5116261d6b/backend/ceph/
            * models.py?at=master&fileviewer=file-view-default#models.py-327
            */
-          var type = {
+          const type = {
             1: "replicated",
             3: "erasure"
           };
-          angular.forEach(res.crushmap.rules, function (ruleset) {
+          angular.forEach(res[3].crushmap.rules, (ruleset) => {
             $scope.data.cluster.rules[type[ruleset.type]].push(ruleset);
           });
           $scope.data.cluster.loaded = true;
+          $scope.pgSizeChange();
+          $scope.ecProfileChange();
+        })
+        .catch((error) => {
+          $scope.error = error;
         });
     }
   });
