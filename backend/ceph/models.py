@@ -31,7 +31,7 @@ from django.shortcuts import get_object_or_404
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi, call_librados, ClusterConf, Keyring
 import ceph.tasks
-from exception import NotSupportedError
+from exception import NotSupportedError, ExternalCommandError
 from nodb.models import NodbModel, JsonField, NodbManager, bulk_attribute_setter
 from taskqueue.models import TaskQueue
 from utilities import aggregate_dict, zip_by_keys
@@ -175,7 +175,7 @@ class CephCluster(NodbModel, RadosMixin):
             health = self.mon_api(self.fsid).health()
             # Ceph Luminous > 12.1 renamed `overall_status` to `status`
             self.health = health['overall_status' if 'overall_status' in health else 'status']
-        except (TypeError, librados.ExternalCommandError):
+        except (TypeError, ExternalCommandError):
             logger.exception('failed to get ceph health')
             self.health = 'HEALTH_ERR'
 
@@ -421,7 +421,7 @@ class CephPool(NodbModel, RadosMixin):
 
         insert = getattr(self, 'id', None) is None
         with undo_transaction(self.mon_api(),
-                              exception_type=(librados.ExternalCommandError, NotSupportedError),
+                              exception_type=(ExternalCommandError, NotSupportedError),
                               re_raise_exception=True) as api:
             if insert:
                 api.osd_pool_create(self.name,
@@ -542,7 +542,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
 
     @bulk_attribute_setter(['k', 'm', 'plugin', 'technique', 'jerasure_per_chunk_alignment',
                            'ruleset_failure_domain', 'ruleset_root', 'w'],
-                           catch_exceptions=librados.ExternalCommandError)
+                           catch_exceptions=ExternalCommandError)
     def set_data(self, objects, field_names):
         context = self.get_context()
         api = self.mon_api(context.fsid)
@@ -565,7 +565,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
             profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
         try:
             api.osd_erasure_code_profile_set(self.name, profile)
-        except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
+        except ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
             # ExternalCommandError here, but ExternalCommandError should default to an
             # internal server error.
             logger.exception('Failed to create ECP')
@@ -576,7 +576,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
         api = self.mon_api(context.fsid)
         try:
             api.osd_erasure_code_profile_rm(self.name)
-        except librados.ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
+        except ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching
             # ExternalCommandError here, but ExternalCommandError should default to an
             # internal server error.
             logger.exception('Failed to delete ECP')
@@ -753,7 +753,7 @@ class CephPg(NodbModel, RadosMixin):
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
             pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict, default_return=[]))
-        except librados.ExternalCommandError, e:
+        except ExternalCommandError, e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []
 

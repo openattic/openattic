@@ -14,26 +14,26 @@
 import subprocess
 from StringIO import StringIO
 from collections import deque
-from contextlib import contextmanager, closing
+from contextlib import contextmanager
 import fnmatch
-from errno import EPERM, errorcode
-
+from errno import EPERM
 from configobj import ConfigObj
-from django.utils.functional import cached_property
-from django.conf import settings as django_settings
-
-import oa_settings
-from conf import settings
-
-import rados
 import os
 import json
 import glob
 import logging
-import multiprocessing
 import ConfigParser
 
+from django.utils.functional import cached_property
+from django.conf import settings as django_settings
+
+import rados
 import rbd
+
+import oa_settings
+from ceph.conf import settings
+from exception import ExternalCommandError
+from utilities import run_in_external_process
 
 logger = logging.getLogger(__name__)
 
@@ -382,52 +382,6 @@ class ClientManager(object):
         return self.instances[fsid]
 
 clients = ClientManager()
-
-
-class ExternalCommandError(Exception):
-    def __init__(self, err, cmd=None, argdict=None, code=None):
-        self.code = abs(code) if code is not None else None
-        code_string = errorcode.get(self.code, str(self.code))
-        argdict = argdict if isinstance(argdict, dict) else {}
-        if cmd is None and self.code is None:
-            s = err
-        elif cmd is None:
-            s = 'error={} code={}'.format(err, code_string)
-        else:
-            cmd = cmd['prefix'] if isinstance(cmd, dict) and 'prefix' in cmd else cmd
-            s = 'Executing "{} {}" failed: "{}" code={}'.format(cmd, ' '.join(
-                ['{}={}'.format(k, v) for k, v in argdict.items()]), err, code_string)
-        super(ExternalCommandError, self).__init__(s)
-
-
-def run_in_external_process(func, timeout=30):
-    class LibradosProcess(multiprocessing.Process):
-        def __init__(self, com_pipe):
-            multiprocessing.Process.__init__(self)
-            self.com_pipe = com_pipe
-
-        def run(self):
-            with closing(self.com_pipe):
-                try:
-                    self.com_pipe.send(func())
-                except Exception as e:
-                    logger.exception("Exception when running a librados process.")
-                    self.com_pipe.send(e)
-
-    com1, com2 = multiprocessing.Pipe()
-    p = LibradosProcess(com2)
-    p.start()
-    with closing(com1):
-        if com1.poll(timeout):
-            res = com1.recv()
-            p.join()
-            if isinstance(res, Exception):
-                raise res
-            return res
-        else:
-            p.terminate()
-            raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
-                                       '({} sec).'.format(p.name, p.pid, timeout))
 
 
 def call_librados(fsid, method, timeout=30):
