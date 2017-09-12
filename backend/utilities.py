@@ -15,12 +15,16 @@
 import logging
 import inspect
 from collections import defaultdict
+from contextlib import closing
 from distutils.spawn import find_executable
 from importlib import import_module
 from os import path
 
 import django
+import multiprocessing
 from django.conf import settings
+
+from exception import ExternalCommandError
 
 logger = logging.getLogger(__name__)
 
@@ -132,3 +136,39 @@ def in_unittest():
             if "unittest" in program_line:
                 return True
     return False
+
+
+def run_in_external_process(func, timeout=30):
+    """
+    Runs `func` in an external process. Exceptions and return values are forwarded
+
+    :type func: () -> T
+    :rtype: T
+    """
+    class LibradosProcess(multiprocessing.Process):
+        def __init__(self, com_pipe):
+            multiprocessing.Process.__init__(self)
+            self.com_pipe = com_pipe
+
+        def run(self):
+            with closing(self.com_pipe):
+                try:
+                    self.com_pipe.send(func())
+                except Exception as e:
+                    logger.exception("Exception when running a librados process.")
+                    self.com_pipe.send(e)
+
+    com1, com2 = multiprocessing.Pipe()
+    p = LibradosProcess(com2)
+    p.start()
+    with closing(com1):
+        if com1.poll(timeout):
+            res = com1.recv()
+            p.join()
+            if isinstance(res, Exception):
+                raise res
+            return res
+        else:
+            p.terminate()
+            raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
+                                       '({} sec).'.format(p.name, p.pid, timeout))
