@@ -1,0 +1,33 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+
+#: app/components/feedback/feedback.component.html:29
+msgid "<strong>Remember</strong>, for bugs and issues, you need to open a Jira ticket."
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:10
+msgid "<strong>Your feedback</strong><br>makes openATTIC better"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:12
+msgid ""
+"And this is why we wanted to let you know that you can get in contact with us on many social media platforms. Your comments,\n"
+"            your ideas, and everything you think will help make your work at openATTIC better."
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:36
+msgid "Get involved"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:17
+msgid ""
+"In order to stay up-to-date you can visit our blog for the latest release notes and other information about openATTIC and\n"
+"            interesting topics in general."
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:33
+msgid "Report a bug"
+msgstr ""

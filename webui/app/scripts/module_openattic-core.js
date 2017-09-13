@@ -52,6 +52,7 @@ angular.module("openattic.core", [
   "openattic.dashboard",
   "openattic.feedback",
   "openattic.grafana",
+  "openattic.i18n",
   "openattic.navigation",
   "openattic.notification",
   "openattic.settings",

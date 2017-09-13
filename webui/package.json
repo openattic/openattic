@@ -10,6 +10,7 @@
     "angular-animate": "1.5.11",
     "angular-bootstrap-toggle": "0.1.2",
     "angular-breadcrumb": "0.4.1",
+    "angular-gettext": "2.3.10",
     "angular-md5": "0.1.10",
     "angular-resource": "1.5.11",
     "angular-sanitize": "1.5.11",
@@ -27,6 +28,7 @@
     "ngstorage": "0.3.10"
   },
   "devDependencies": {
+    "angular-gettext-plugin": "1.0.1",
     "angular-mocks": "1.5.11",
     "autoprefixer": "7.1.4",
     "babel-core": "6.26.0",
