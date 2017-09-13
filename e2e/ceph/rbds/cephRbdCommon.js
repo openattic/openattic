@@ -55,13 +55,11 @@ var rbdCommons = function(){
       name: 'Name',
       testClass: 'tc_rbd_name',
       model: '$ctrl.rbd.name',
-      displayed: true
     },
     cluster: {
       name: 'Cluster',
       testClass: 'tc_cluster_selection',
       model: '$ctrl.data.cluster',
-      displayed: true,
       items: {
         clusterSelection: 'tc_rbdClusterOption',
         helpCluster: 'tc_clusterRequired',
@@ -72,7 +70,6 @@ var rbdCommons = function(){
       name: 'Poolname',
       testClass: 'tc_pool_selection',
       model: '$ctrl.data.pool',
-      displayed: true,
       items: {
         poolSelection: 'tc_rbdPoolOption',
         poolSize: 'tc_poolSize',
@@ -85,29 +82,27 @@ var rbdCommons = function(){
       name: 'Size',
       testClass: 'tc_rbd_size',
       model: '$ctrl.data.size',
-      displayed: true,
       items: {
-        helpSize: 'tc_sizeRequired'
+        helpSize: 'tc_sizeRequired',
+        helpSizeStripe: 'tc_sizeIncrease'
       }
     },
     objectSize: {
       name: 'Object size',
       testClass: 'tc_rbd_obj_size',
       model: '$ctrl.data.obj_size',
-      displayed: true,
       items: {
-        helpSize: 'tc_objSizeRequired'
+        helpSize: 'tc_objSizeRequired',
+        changed: 'tc-objSize-changed'
       }
     },
     defaultFeatures: {
       name: 'Default Features',
       model: '$ctrl.data.defaultFeatures',
-      displayed: true
     },
     features: {
       name: 'Features',
       testClass: 'tc_features',
-      displayed: true,
       items: {
         'deep-flatten': {
           class: 'tc_feature_deep-flatten',
@@ -119,7 +114,7 @@ var rbdCommons = function(){
         },
         'stripingv2': {
           class: 'tc_feature_stripingv2',
-          desc: 'Striping (currently unsupported)'
+          desc: 'Striping'
         },
         'exclusive-lock': {
           class: 'tc_feature_exclusive-lock',
@@ -142,11 +137,32 @@ var rbdCommons = function(){
           desc: ''
         }
       }
+    },
+    stripingCount: {
+      name: 'Striping count',
+      model: '$ctrl.data.striping.count',
+      items: {
+        required: 'tc-stripingCount-required',
+        min: 'tc-stripingCount-min'
+      }
+    },
+    stripingUnit: {
+      name: 'Striping unit',
+      model: '$ctrl.data.striping.unitDisplayed',
+      items: {
+        required: 'tc-stripingUnit-required',
+        changed: 'tc-stripingUnit-changed'
+      }
+    },
+    stripingHelp: {
+      testClass: 'tc-striping-help'
     }
   };
 
   this.defaultFeatures = element(by.model(this.formElements.defaultFeatures.model));
   this.objSize = element(by.model(this.formElements.objectSize.model));
+  this.stripingUnit = element(by.model(this.formElements.stripingUnit.model));
+  this.stripingCount = element(by.model(this.formElements.stripingCount.model));
   this.size = element(by.model(this.formElements.size.model));
   this.name = element(by.model(this.formElements.name.model));
   this.poolSelect = element(by.model(this.formElements.pool.model));
@@ -160,29 +176,37 @@ var rbdCommons = function(){
     // TODO: Uncomment it when OP-2217 is fixed, to create a featureless RBD.
     //[2, 2, -1, 0, -1, -1, -1],
     // TODO: Remove the following two lines when OP-2217 is fixed.
-    [1, 2, -1, 0, -1, -1, -1],
-    [2, 1, -1, 0, -1, -1, -1],
-    [2, 2, -1, 1, 0, 2, -1],
-    [2, 2, -1, 1, 1, 2, 2],
+    [1, 2, 2, 0, -1, -1, -1],
+    [2, 1, 2, 0, -1, -1, -1],
+    [2, 2, 2, 1, 0, 2, -1],
+    [2, 2, 2, 1, 1, 2, 2],
   ];
 
-  this.convertFeatureObjectToFeatureArray = function(feature){
-    return [
-      feature.deepFlatten,
-      feature.layering,
-      feature.striping,
-      feature.exclusiveLock,
-      feature.objectMap,
-      feature.journaling,
-      feature.fastDiff
-    ];
-  };
+  this.convertFeatureObjectToArray = (feature) => [
+    feature.deepFlatten,
+    feature.layering,
+    feature.striping,
+    feature.exclusiveLock,
+    feature.objectMap,
+    feature.journaling,
+    feature.fastDiff
+  ];
+
+  this.convertFeatureArrayToObject = (feature) => ({
+    deepFlatten: feature[0],
+    layering: feature[1],
+    striping: feature[2],
+    exclusiveLock: feature[3],
+    objectMap: feature[4],
+    journaling: feature[5],
+    fastDiff: feature[6]
+  });
 
   // Works on every operating system that was tested
-  this.defaultFeatureCase = this.convertFeatureObjectToFeatureArray({
+  this.defaultFeatureCase = this.convertFeatureObjectToArray({
     deepFlatten: 1,
     layering: 1,
-    striping: -1,
+    striping: 0,
     exclusiveLock: 1,
     objectMap: 1,
     journaling: 0,
@@ -281,18 +305,18 @@ var rbdCommons = function(){
   };
 
   this.fillForm = function(rbdName, size, rbdObjSize, featureCase){
-    rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.name.clear().sendKeys(rbdName);
-    self.size.clear().sendKeys(size);
-    self.objSize.clear().sendKeys(rbdObjSize);
+    helpers.changeInput(self.name, rbdName);
+    helpers.changeInput(self.size, size);
+    helpers.changeInput(self.objSize, rbdObjSize || '4.00 MiB');
     if(featureCase){
       self.selectFeatures(featureCase);
     }
   };
 
-  this.createRbd = function(rbdName, rbdObjSize, featureCase){
+  this.createRbd = function(rbdName, size, rbdObjSize, featureCase){
     rbdObjSize = rbdObjSize || '4.00 MiB';
-    self.fillForm(rbdName, rbdObjSize, rbdObjSize, featureCase);
+    size = size || rbdObjSize;
+    self.fillForm(rbdName, size, rbdObjSize, featureCase);
     element(by.className('tc_submitButton')).click();
 
     taskQueueHelpers.waitForPendingTasks();
