@@ -77,6 +77,9 @@ class RGWClient(RestClient, SettingsListener):
         if userid not in RGWClient._user_instances:
             logger.info("Creating new connection for user: %s", userid)
             keys = RGWClient.admin_instance().get_user_keys(userid)
+            if not keys:
+                raise Exception("User '{}' does not have any keys configured.".format(userid))
+
             RGWClient._user_instances[userid] = RGWClient(userid, keys['access_key'],
                                                           keys['secret_key'])
         return RGWClient._user_instances[userid]
