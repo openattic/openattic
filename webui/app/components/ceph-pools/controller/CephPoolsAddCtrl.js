@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
-    $uibModal, Notification, cephOsdService, cephCrushmapService,
+    $timeout, $uibModal, Notification, cephOsdService, cephCrushmapService,
     cephClusterService, cephErasureCodeProfilesService, cephPoolsService,
     $filter, SizeParserService) {
   const PG_MIN = 16;
@@ -349,22 +349,24 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
   };
 
   $scope.submitAction = function () {
-    if ($scope.poolForm.$valid) {
-      let pool = {
-        name: $scope.pool.name,
-        pg_num: $scope.data.pg_num
-      };
-      const apps = {};
-      $scope.apps.used.forEach((_app) => {
-        apps[_app] = {};
-      });
-      pool.application_metadata = apps;
-      if ($scope.editing) {
-        $scope.submitEdit(pool);
-      } else {
-        $scope.submitAdd(pool);
+    $timeout(() => {
+      if ($scope.poolForm.$valid) {
+        let pool = {
+          name: $scope.pool.name,
+          pg_num: $scope.data.pg_num
+        };
+        const apps = {};
+        $scope.apps.used.forEach((_app) => {
+          apps[_app] = {};
+        });
+        pool.application_metadata = apps;
+        if ($scope.editing) {
+          $scope.submitEdit(pool);
+        } else {
+          $scope.submitAdd(pool);
+        }
       }
-    }
+    });
   };
 
   $scope.submitEdit = (pool) => {
