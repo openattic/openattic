@@ -183,8 +183,6 @@ var cephPoolCommons = function(){
       presented: false,
       displayedIf: ['replicated'],
       items: {
-        helpSize: element(by.className('tc-applied-rule-set')),
-        helpSize: element(by.className('tc-size-out-of-range')),
         helpSize: element(by.className('tc_sizeRequired'))
       }
     },
@@ -383,7 +381,9 @@ var cephPoolCommons = function(){
     expect(pool.isPresent()).toBe(false);
   };
 
-  this.fillForm = (name, type, pgs, isCompression = false, appToUse = 'cephfs') => {
+  this.fillForm = (name, type, pgs, isCompression, appToUse) => {
+    isCompression = isCompression || false;
+    appToUse = appToUse || 'cephfs';
     const fe = self.formElements;
     self.getFormElement(fe.name).clear().sendKeys(name);
     self.getFormElement(fe.types).sendKeys(type);
@@ -409,7 +409,9 @@ var cephPoolCommons = function(){
     }
   };
 
-  this.createPool = (name, type, pgs, isCompression = false, appToUse = 'cephfs') => {
+  this.createPool = (name, type, pgs, isCompression, appToUse) => {
+    isCompression = isCompression || false;
+    appToUse = appToUse || 'cephfs';
     self.fillForm(name, type, pgs, isCompression, appToUse);
     self.submitForm(name, type, pgs);
   };
