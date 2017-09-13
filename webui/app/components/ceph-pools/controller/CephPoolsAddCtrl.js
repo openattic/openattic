@@ -241,6 +241,7 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
           angular.forEach(res[3].crushmap.rules, (ruleset) => {
             $scope.data.cluster.rules[type[ruleset.type]].push(ruleset);
           });
+          $scope.rulesetChange();
           $scope.data.cluster.loaded = true;
           $scope.pgSizeChange();
           $scope.ecProfileChange();
