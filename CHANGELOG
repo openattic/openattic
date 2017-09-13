@@ -61,6 +61,7 @@ Fixed
 * Installation: Fixed database migration `ifconfig.0005` (OP-2646)
 * WebUI: MON widget will verify if timechecks are there (OP-2655)
 * WebUI/QA: Harden task queue directive test cases (OP-2619)
+* Backend: Internal Server Error when creating a new NFS export with "Object Gateway" as type. (OP-2652)
 
 Removed
 ~~~~~~~
