@@ -155,6 +155,9 @@ app.component("cephRbdForm", {
     };
 
     self.getSizeInBytes = (size, jump) => {
+      if (!size) {
+        return 0;
+      }
       if (size.match(/[+-]+/)) {
         size = size.replace(/[+-]+/, "");
       }
