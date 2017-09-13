@@ -181,7 +181,7 @@
    * Closes the task queue dialog.
    */
   self.close = function(){
-    self.dialog.modalElements.closeBtn.click();
+    element(by.className('modal-close-btn')).click();
     self.expectDefaultModalElements(false);
   };
 

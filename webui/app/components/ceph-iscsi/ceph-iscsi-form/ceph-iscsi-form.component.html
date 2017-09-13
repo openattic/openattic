@@ -1,16 +1,13 @@
 <div class="col-sm-12 col-lg-6">
 
-  <div class="panel panel-default" ng-show="$ctrl.targetId && $ctrl.error">
-    <div class="panel-heading">
-      <h3 class="panel-title">Couldn't load iSCSI target</h3>
-    </div>
-    <div class="panel-body">
-      iSCSI target "{{ $ctrl.targetId }}" could not be loaded.
-    </div>
-  </div>
-
   <oa-loading-panel message="iSCSI target is loading..."
-                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error"></oa-loading-panel>
+                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
+  </oa-loading-panel>
+  <oa-error-panel title="Couldn't load iSCSI target"
+                  message="iSCSI target "{{ $ctrl.targetId }}" could not be loaded."
+                  on-back="$ctrl.cancelAction()"
+                  ng-if="$ctrl.targetId && $ctrl.error">
+  </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="iscsiForm" role="form" class="form-horizontal" novalidate>
     <div class="panel panel-default">

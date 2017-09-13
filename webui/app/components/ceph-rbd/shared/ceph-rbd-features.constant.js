@@ -49,11 +49,11 @@ app.constant("cephRbdFeatures", {
     isDisplayed: true
   },
   "stripingv2": {
-    desc: "Striping (currently unsupported)",
-    helpText: "This feature is currently unsupported.",
-    requires: "unsupported",
+    desc: "Striping",
+    helperTemplate: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html",
+    requires: null,
     excludes: null,
-    isSupportedISCSI: true,
+    isSupportedISCSI: false,
     isDisplayed: true
   },
   "exclusive-lock": {

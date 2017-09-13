@@ -36,6 +36,7 @@ var allSuites = {
   // base suites - They should always be able to run.
   general              : '../e2e/base/general/**/general.e2e.js',
   datatable            : '../e2e/base/datatable/**/*.e2e.js',
+  feedback             : '../e2e/base/feedback/**/feedback.e2e.js',
   pagination           : '../e2e/base/pagination/**/*.e2e.js',
   settings             : '../e2e/base/settings/*.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
@@ -49,6 +50,7 @@ var allSuites = {
   ceph_pools           : '../e2e/ceph/pools/ceph_pools.e2e.js',
   ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',
   ceph_pool_creation   : '../e2e/ceph/pools/ceph_pool_creation.e2e.js',
+  ceph_pool_edit       : '../e2e/ceph/pools/ceph_pool_edit.e2e.js',
   ceph_osds            : '../e2e/ceph/ceph_osds.e2e.js',
   ceph_rbds            : '../e2e/ceph/rbds/ceph_rbds.e2e.js',
   ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',

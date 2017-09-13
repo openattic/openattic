@@ -143,20 +143,31 @@
                 && rbdForm.size.$error.required">
               This field is required!
             </span>
+            <span class="help-block tc_sizeIncrease"
+                ng-show="$ctrl.data.features.stripingv2.checked &&
+                    (rbdForm.$submitted || rbdForm.size.$dirty) &&
+                    rbdForm.size.$invalid">
+              You have to increase the size in order to use striping.
+            </span>
           </div>
         </div>
 
-        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty)
-            && rbdForm.obj_size.$invalid}">
-          <label class="control-label col-sm-3" for="object-size">Object size</label>
+        <div class="form-group"
+            ng-class="{'has-error': (rbdForm.$submitted || rbdForm.obj_size.$dirty) && rbdForm.obj_size.$invalid,
+              'has-warning': rbdForm.obj_size.$untouched && $ctrl.changedField === 'obj_size'}">
+          <label class="control-label col-sm-3" for="obj_size">Object size</label>
           <div class="col-sm-9">
-            <input id="object-size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
-                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree" ng-change="$ctrl.updateObjSize()"
-                ng-model-options="{ updateOn: 'blur' }" ng-keyup="$ctrl.objSizeChange($event)" ng-model="$ctrl.data.obj_size"
-                placeholder="4 KB up to 32 MB" required>
+            <input id="obj_size" class="form-control tc_rbd_obj_size" type="text" name="obj_size"
+                ng-disabled="$ctrl.data.pool == null" ng-change="$ctrl.updateObjSize()"
+                ng-model-options="{ updateOn: 'blur' }" ng-keyup="$ctrl.sizeChange($event, $ctrl.updateObjSize)" ng-model="$ctrl.data.obj_size"
+                placeholder="4 KiB up to 32 MiB" required>
             <span class="help-block tc_objSizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                 && rbdForm.size.$error.required">
               This field is required!
+            </span>
+            <span class="help-block tc-objSize-changed"
+                ng-show="rbdForm.obj_size.$untouched && $ctrl.changedField === 'obj_size'">
+              This field was increased with your stripe unit change.
             </span>
           </div>
         </div>
@@ -171,7 +182,7 @@
           <div class="col-sm-9">
             <div class="checkbox checkbox-primary">
               <input type="checkbox" ng-model="$ctrl.data.defaultFeatures" ng-change="$ctrl.watchDataFeatures()"
-                id="default-features" name="default-features">
+                id="default-features" name="default-features" ng-disabled="$ctrl.data.pool == null">
               <label for="default-features">Use default features</label>
             </div>
             <div uib-collapse="$ctrl.data.defaultFeatures">
@@ -183,9 +194,78 @@
                     ng-disabled="$ctrl.data.features[key].disabled" ng-change="$ctrl.watchDataFeatures(key)"
                     class="tc_feature_{{key}}" ng-name="key">
                 <label ng-bind="feature.desc" for="{{key}}"></label>
+                <oa-helper ng-if="feature.helperTemplate"
+                    helper-template="feature.helperTemplate">
+                </oa-helper>
               </div>
               <span class="help-block tc_noFeature" ng-show="rbdForm.$error.noFeatureSelected">At least one feature has to be selected</span>
             </div>
+          </div>
+        </div>
+        <div ng-if="$ctrl.data.features.stripingv2.checked">
+          <h2 class="page-header">Striping</h2>
+          <div class="form-group"
+              ng-class="{'has-error': (rbdForm.$submitted || rbdForm.stripingUnit.$dirty) && rbdForm.stripingUnit.$invalid,
+                'has-warning': rbdForm.stripingUnit.$untouched && $ctrl.changedField === 'stripingUnit'}">
+            <label class="control-label col-sm-4"
+                for="stripingUnit">
+              Striping unit
+            </label>
+            <div class="col-sm-8">
+              <input id="stripingUnit"
+                  class="form-control tc-stripingUnit"
+                  type="text"
+                  name="stripingUnit"
+                  ng-init="$ctrl.updateStripingUnit($ctrl.rbd.obj_size)"
+                  ng-disabled="$ctrl.data.pool == null"
+                  ng-change="$ctrl.updateStripingUnit()"
+                  ng-model-options="{ updateOn: 'blur' }"
+                  ng-keyup="$ctrl.sizeChange($event, $ctrl.updateStripingUnit)"
+                  ng-model="$ctrl.data.striping.unitDisplayed"
+                  placeholder="4 KiB up to 32 MiB"
+                  required>
+              <span class="help-block tc-stripingUnit-required"
+                  ng-show="(rbdForm.$submitted || rbdForm.stripingUnit.$dirty) && rbdForm.stripingUnit.$error.required">
+                This field is required!
+              </span>
+              <span class="help-block tc-stripingUnit-changed"
+                  ng-show="rbdForm.stripingUnit.$untouched && $ctrl.changedField === 'stripingUnit'">
+                This field was decreased with your object size change.
+              </span>
+            </div>
+          </div>
+          <div class="form-group"
+              ng-class="{'has-error': (rbdForm.$submitted || rbdForm.stripingCount.$dirty) &&
+                  rbdForm.stripingCount.$invalid}">
+            <label class="control-label col-sm-4"
+                for="stripingCount">
+              Striping count
+            </label>
+            <div class="col-sm-8">
+              <input id="stripingCount"
+                  class="form-control tc-stripingCount"
+                  type="number"
+                  name="stripingCount"
+                  min=2
+                  ng-disabled="$ctrl.data.pool == null"
+                  ng-model-options="{ updateOn: 'blur' }"
+                  ng-model="$ctrl.data.striping.count"
+                  required>
+              <span class="help-block tc-stripingCount-required"
+                  ng-show="(rbdForm.$submitted || rbdForm.stripingCount.$dirty) && rbdForm.stripingCount.$error.required">
+                This field is required!
+              </span>
+              <span class="help-block tc-stripingCount-min"
+                  ng-show="rbdForm.stripingCount.$invalid">
+                  The striping count has to be a value higher than 1.
+              </span>
+            </div>
+          </div>
+          <div class="form-group"
+              ng-show="rbdForm.obj_size.$valid && rbdForm.stripingUnit.$valid && rbdForm.stripingCount.$valid">
+            <span class="help-block tc-striping-help col-sm-offset-4 col-sm-8"
+                ng-bind-html="$ctrl.stripingDescription()">
+            </span>
           </div>
         </div>
       </div>

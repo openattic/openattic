@@ -26,6 +26,9 @@ Added
 * QA/Development: Export HTML e2e report (OP-2261)
 * WebUI: Add Ceph cluster settings modal (OP-2599)
 * WebUI: iSCSI Target dialog should support RBDs with data-pool enabled (OP-2633)
+* WebUI: Add Feedback panel to the ui (OP-100)
+* WebUI: Ceph pool `Placement Groups` and `Applications` edition (OP-2608)
+* WebUI: Enable the RBD striping-v2 feature (OP-2454)
 
 Changed
 ~~~~~~~
@@ -40,6 +43,7 @@ Changed
 * WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
 * WebUI: Hide RBD usage percentage bar if no usage information is available (OP-2639)
 * WebUI: Fix 'Configure Cluster-wide OSD Flags' header button position (OP-2657)
+* WebUI: Display an error message when the loading of the form data fails (OP-2656)
 * Installation: Drop database when calling `oaconfig install` without data loss (OP-2577)
 
 Fixed
@@ -56,6 +60,8 @@ Fixed
   datatable is reloaded (OP-2537)
 * Installation: Fixed database migration `ifconfig.0005` (OP-2646)
 * WebUI: MON widget will verify if timechecks are there (OP-2655)
+* WebUI/QA: Harden task queue directive test cases (OP-2619)
+* Backend: Internal Server Error when creating a new NFS export with "Object Gateway" as type. (OP-2652)
 
 Removed
 ~~~~~~~

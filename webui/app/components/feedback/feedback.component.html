@@ -1,0 +1,40 @@
+<div class="feedback-button feedback-button-transform feedback-transition tc_feedbackButton"
+     ng-click="$ctrl.toggle()"
+     ng-class="{'feedback-button-active': $ctrl.opened }">
+    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Feedback
+</div>
+<div class="feedback-panel feedback-transition tc_feedbackPanel" ng-class="{'feedback-panel-active': $ctrl.opened }">
+    <button type="button" class="close tc_feedbackClose" aria-label="Close" ng-click="$ctrl.close()"><span aria-hidden="true">&times;</span></button>
+
+    <div class="tc_feedbackInformation">
+        <h3><strong>Your feedback</strong><br>makes openATTIC better</h3>
+
+        <p>
+            And this is why we wanted to let you know that you can get in contact with us on many social media platforms. Your comments,
+            your ideas, and everything you think will help make your work at openATTIC better.
+        </p>
+
+        <p>
+            In order to stay up-to-date you can visit our blog for the latest release notes and other information about openATTIC and
+            interesting topics in general.
+        </p>
+
+        <p>
+            <a href="https://blog.openattic.org/" target="_blank">
+                <i class="fa fa-home" aria-hidden="true"></i>
+                <span>openATTIC blog</span>
+            </a>
+        </p>
+
+        <p><strong>Remember</strong>, for bugs and issues, you need to open a Jira ticket.</p>
+    </div>
+
+    <div>
+        <a href="https://tracker.openattic.org" target="_blank" class="btn btn-default tc_feedbackReportBug">
+            Report a bug
+        </a>
+        <a href="https://www.openattic.org/get-involved.html" target="_blank" class="btn btn-openattic tc_feedbackGetInvolved">
+            Get involved
+        </a>
+    </div>
+</div>

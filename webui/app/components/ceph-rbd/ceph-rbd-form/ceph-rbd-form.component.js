@@ -50,6 +50,11 @@ app.component("cephRbdForm", {
     self.data = {
       cluster: null,
       pool: null,
+      striping: {
+        count: 5,
+        unit: 4194304,
+        unitDisplayed: "4 MiB"
+      },
       features: {
         "deep-flatten": {
           checked: false,
@@ -61,7 +66,7 @@ app.component("cephRbdForm", {
         },
         "stripingv2": {
           checked: false,
-          disabled: true
+          disabled: false
         },
         "exclusive-lock": {
           checked: false,
@@ -128,6 +133,9 @@ app.component("cephRbdForm", {
     };
 
     self.watchDataFeatures = function (key) {
+      if (key === "stripingv2") {
+        self.sizeValidator();
+      }
       var defaults = self.data.defaultFeatures;
       if (!defaults) {
         if (key) {
@@ -146,8 +154,10 @@ app.component("cephRbdForm", {
       angular.copy(self.defaultFeatureValues, self.data.features);
     };
 
-    self.updateObjSize = function (jump) {
-      var size = self.data.obj_size;
+    self.getSizeInBytes = (size, jump) => {
+      if (!size) {
+        return 0;
+      }
       if (size.match(/[+-]+/)) {
         size = size.replace(/[+-]+/, "");
       }
@@ -166,15 +176,84 @@ app.component("cephRbdForm", {
       } else {
         size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
       }
-      self.rbd.obj_size = size;
+      return size;
+    };
+
+    self.updateObjSize = function (newSize, jump) {
+      self.setMutex("obj_size", newSize);
+      self.rbd.obj_size = newSize || self.getSizeInBytes(self.data.obj_size, jump);
+      let size = self.rbd.obj_size;
+      if (!$scope.rbdForm.stripingUnit) {
+        self.updateStripingUnit(size);
+      }
+      if (self.data.striping.unit > size) {
+        self.updateStripingUnit(size);
+      }
       self.data.obj_size = $filter("bytes")(size);
     };
 
-    self.objSizeChange = function (event) {
+    self.updateStripingUnit = (newSize, jump) => {
+      self.setMutex("stripingUnit", newSize);
+      self.data.striping.unit = newSize || self.getSizeInBytes(self.data.striping.unitDisplayed, jump);
+      let unit = self.data.striping.unit;
+      if (unit > self.rbd.obj_size) {
+        self.updateObjSize(unit);
+      }
+      self.data.striping.unitDisplayed = $filter("bytes")(unit);
+      self.data.striping.unit = unit;
+    };
+
+    self.setMutex = (inputName, setLock) => {
+      if (!$scope.rbdForm[inputName]) {
+        return;
+      }
+      if (setLock) {
+        self.changedField = inputName;
+        $scope.rbdForm[inputName].$touched = false;
+        $scope.rbdForm[inputName].$untouched = true;
+      } else {
+        if (self.changedField === inputName) {
+          self.changedField = undefined;
+        }
+      }
+    };
+
+    self.stripingDescription = () => {
+      let message = "";
+      if (angular.isDefined(self.data.size)) {
+        let size = SizeParserService.parseInt(self.data.size, "b");
+        self.sizeValidator(size);
+        const striping = self.data.striping;
+        if (self.data.size !== "-" &&
+            angular.isDefined(self.data.obj_size) && self.data.obj_size !== "0 B" &&
+            angular.isDefined(striping.unitDisplayed) && striping.unitDisplayed !== "0 B" &&
+            angular.isDefined(striping.count)) {
+          const stripeSize = striping.count * striping.unit;
+          const objectSetSize = striping.count * self.rbd.obj_size;
+          let maxSets = Math.ceil(size / objectSetSize);
+          let maxStripes = Math.ceil(size / stripeSize);
+          let isLastStripePartial = size % stripeSize !== 0;
+          let stripeSizeStr = $filter("bytes")(stripeSize);
+          let numCompleteStripes = isLastStripePartial ? (maxStripes - 1) : maxStripes;
+
+          message += `Each stripe has ${stripeSizeStr} spanned across ${striping.count} objects.`;
+          message += "<br>";
+          message += `The RBD can hold up to ${maxSets} `;
+          message += maxSets === 1 ? "object set" : "object sets";
+          message += ` (${numCompleteStripes} `;
+          message += numCompleteStripes === 1 ? "stripe" : "stripes";
+          message += isLastStripePartial ? " + 1 partial stripe" : "";
+          message += ").";
+        }
+      }
+      return message;
+    };
+
+    self.sizeChange = function (event, callback) {
       if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
-        self.updateObjSize(39 - event.keyCode);
+        callback(undefined, 39 - event.keyCode);
       } else if (event.keyCode === 187 || event.keyCode === 189) {
-        self.updateObjSize(188 - event.keyCode);
+        callback(undefined, 188 - event.keyCode);
       }
     };
 
@@ -183,14 +262,24 @@ app.component("cephRbdForm", {
       if (size === "") {
         return;
       }
-
       size = SizeParserService.parseInt(size, "b");
-      var objNum = parseInt(size / self.data.obj_size, 10);
-      if (objNum < 1) {
+      self.sizeValidator(size);
+      if (parseInt(size / self.data.obj_size, 10) < 1) {
         self.data.size = $filter("bytes")(self.data.obj_size);
       } else {
         self.data.size = $filter("bytes")(size);
       }
+    };
+
+    self.sizeValidator = (size = SizeParserService.parseInt(self.data.size, "b")) => {
+      let valid = true;
+      if (self.data.features.stripingv2.checked &&
+          $scope.rbdForm.stripingCount &&
+          $scope.rbdForm.stripingCount.$valid &&
+          $scope.rbdForm.obj_size.$valid) {
+        valid = self.data.striping.count * self.rbd.obj_size < size;
+      }
+      $scope.rbdForm.size.$setValidity("valid", valid);
     };
 
     var goToListView = function () {
@@ -318,13 +407,17 @@ app.component("cephRbdForm", {
     self.submitAction = function (rbdForm) {
       if (rbdForm.$valid) {
         if (!self.data.defaultFeatures) {
-          var features = [];
-          for (var feature in self.data.features) {
-            if (self.data.features[feature].checked) {
-              features.push(feature);
+          let features = [];
+          angular.forEach(self.data.features, (feature, featureName) => {
+            if (feature.checked) {
+              features.push(featureName);
             }
-          }
+          });
           self.rbd.features = features;
+          if (features.indexOf("stripingv2") !== -1) {
+            self.rbd.stripe_count = self.data.striping.count;
+            self.rbd.stripe_unit = self.data.striping.unit;
+          }
         }
         self.rbd.pool = self.data.pool.id;
         if (self.data.useDataPool) {
