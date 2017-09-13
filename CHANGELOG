@@ -68,6 +68,7 @@ Removed
 
 Added
 ~~~~~
+* WebUI: Edit dialog for ceph pools (OP-2608)
 * WebUI: No clusters configured message on settings page (OP-2535)
 * Backend: Provide Ceph pool application metadata in the API (OP-2593)
 * Backend: Fixed internal server error, if DeepSea's pillar data doesn't contain

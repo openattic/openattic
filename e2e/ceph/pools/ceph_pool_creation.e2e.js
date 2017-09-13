@@ -2,102 +2,54 @@
 
 var helpers = require('../../common.js');
 var cephPoolCommon = require('./cephPoolCommon.js');
-var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
 
 describe('ceph pool creation', function(){
   var cephPoolProperties = new cephPoolCommon();
+
+  const createName = (type, pgs) => ['e2e', type, 'with', pgs, 'pgs'].join('_');
 
   beforeAll(function(){
     helpers.login();
     cephPoolProperties.cephPools.click();
   });
 
-  var pgnumTests = [16, 64];
-
-  var deletePool = function(cephPoolName){
-    cephPoolProperties.cephPools.click();
-    var cephPool = helpers.search_for_element(cephPoolName);
-    cephPool.click();
-    helpers.delete_selection(undefined, '$ctrl');
-    expect(cephPool.isPresent()).toBe(false);
-  };
-
-  var createPool = function(poolName, poolType, pgs){
-    var create = cephPoolProperties.formElements.createButton.byClass;
-    create.click();
-    taskQueueHelpers.waitForPendingTasks();
-    cephPoolProperties.cephPools.click();
-    helpers.checkForUnsavedChanges(false);
-
-    var cephPool = helpers.search_for_element(poolName);
-    expect(cephPool.isDisplayed()).toBe(true);
-    cephPool.click();
-    expect(element(by.binding('selection.item.type')).getText()).toBe(poolType);
-    expect(element(by.binding('selection.item.pg_num')).getText()).toBe(pgs + '');
-  };
-
-  var fillForm = function(poolName, poolType, pgs, isCompression){
-    var name = cephPoolProperties.formElements.name.byModel;
-    var pgnum = cephPoolProperties.formElements.pgnum.byModel;
-    var type = cephPoolProperties.formElements.types.byModel;
-    var compressionMode = cephPoolProperties.formElements.compressionMode.byModel;
-    name.clear().sendKeys(poolName);
-    type.sendKeys(poolType);
-    pgnum.clear().sendKeys(pgs);
-    cephPoolProperties.addApplication(1);
-    if(isCompression === true){
-      compressionMode.sendKeys('force');
-    }
-  };
-
-  Object.keys(cephPoolProperties.clusters).forEach(function(clusterName){
-    var cluster = cephPoolProperties.clusters[clusterName];
-    pgnumTests.forEach(function(pgs){
-      ['replicated', 'erasure'].forEach(function(poolType){
-        var poolName = cluster.name + '_' + poolType + '_with_' + pgs + '_pgs';
-        it('should create a ' + poolType + ' ceph pool on ' + cluster.name + ' cluster with ' + pgs +
-            ' placement groups', function(){
-          //cephPoolProperties.selectCluster(cluster); // Only needed if multiple clusters are configured
-          cephPoolProperties.addButton.click();
-          fillForm(poolName, poolType, pgs);
-          createPool(poolName, poolType, pgs);
-        });
-        it('should delete ' + poolName + ' pool on ' + cluster.name + ' cluster', function(){
-          deletePool(poolName);
-        });
-      });
-    });
-
-    var ecName = cluster.name + '_erasure_with_32_pgs';
-    it('should create a replicated pool with overwrite enabled', function(){
-      cephPoolProperties.addButton.click();
-      //cephPoolProperties.selectCluster(cluster); // Only needed if multiple clusters are configured
-      fillForm(ecName, 'erasure', 32);
-      cephPoolProperties.checkCheckboxToBe(element(by.model('data.flags.ec_overwrites')));
-      createPool(ecName, 'erasure', 32);
-      expect(element(by.className('tc-flag-ec_overwrites')).isDisplayed()).toBe(true);
-    });
-    it('should delete ' + ecName + ' pool on ' + cluster.name + ' cluster', function(){
-      deletePool(ecName);
-    });
-
-    if(cephPoolProperties.isBluestore){
-      var poolName = cluster.name + '_erasure_with_16_pgs_compressed';
-      var poolType = 'erasure';
-      var pgs = 16;
-      it('should create a compresed pool', function(){
+  [64, 128].forEach(function(pgs){
+    ['replicated', 'erasure'].forEach(function(type){
+      const name = createName(type, pgs);
+      it('should create a ceph pool named ' + name, function(){
         cephPoolProperties.addButton.click();
-        cephPoolProperties.selectCluster(cluster);
-        fillForm(poolName, poolType, pgs, true);
-        createPool(poolName, poolType, pgs);
+        cephPoolProperties.createPool(name, type, pgs);
       });
-      it('should delete ' + poolName + ' pool on ' + cluster.name + ' cluster', function(){
-        deletePool(poolName);
+      it('should delete pool named ' + name, function(){
+        cephPoolProperties.deletePool(name);
       });
-    }
+    });
   });
 
+  if(cephPoolProperties.isBluestore){ // TODO: Fix this as it will always resolve to true
+    const ecName = createName('erasure', 32);
+    it('should create pool with overwrite enabled named ' + ecName, function(){
+      cephPoolProperties.addButton.click();
+      cephPoolProperties.fillForm(ecName, 'erasure', 32);
+      cephPoolProperties.checkCheckboxToBe(element(by.model('data.flags.ec_overwrites')));
+      cephPoolProperties.submitForm(ecName, 'erasure', 32);
+      expect(element(by.className('tc-flag-ec_overwrites')).isDisplayed()).toBe(true);
+    });
+    it('should delete pool named ' + ecName, function(){
+      cephPoolProperties.deletePool(ecName);
+    });
+
+    const compressedName = createName('erasure', 16) + '_compressed';
+    it('should create a compressed pool', function(){
+      cephPoolProperties.addButton.click();
+      cephPoolProperties.createPool(compressedName, 'erasure', 16, true);
+    });
+    it('should delete pool named ' + compressedName, function(){
+      cephPoolProperties.deletePool(compressedName);
+    });
+  }
+
   afterAll(function(){
-    console.log('ceph_pool_creation -> ceph_pools_creation.e2e.js');
+    console.log('ceph_pool_creation -> ceph_pool_creation.e2e.js');
   });
 });

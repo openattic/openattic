@@ -167,6 +167,13 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     });
   };
 
+  $scope.editAction = function () {
+    $state.go("ceph-pools-edit", {
+      fsid: $scope.selection.item.cluster,
+      poolId: $scope.selection.item.id
+    });
+  };
+
   $scope.deleteAction = function () {
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;

@@ -41,7 +41,7 @@ app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibMo
         var deferred = $q.defer();
         cephPoolsService.delete({
           fsid: cephPool.cluster,
-          poolId: cephPool.id
+          id: cephPool.id
         }, deferred.resolve, deferred.reject);
         requests.push(deferred.promise);
       });
