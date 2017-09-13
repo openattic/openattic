@@ -219,40 +219,34 @@ app.component("cephRbdForm", {
     };
 
     self.stripingDescription = () => {
-      const striping = self.data.striping;
-      const stripeSize = striping.count * striping.unit;
-      const objectSetSize = striping.count * self.rbd.obj_size;
-      const stripeSum = objectSetSize / stripeSize;
-      let size;
-      let maxSets;
-      let partialStripes;
-      if (angular.isString(self.data.size)) {
-        size = SizeParserService.parseInt(self.data.size, "b");
-        maxSets = parseInt(size / objectSetSize, 10);
-        partialStripes = parseInt((size - maxSets * objectSetSize) / striping.unit, 10);
+      let message = "";
+      if (angular.isDefined(self.data.size)) {
+        let size = SizeParserService.parseInt(self.data.size, "b");
         self.sizeValidator(size);
+        const striping = self.data.striping;
+        if (self.data.size !== "-" &&
+            angular.isDefined(self.data.obj_size) && self.data.obj_size !== "0 B" &&
+            angular.isDefined(striping.unitDisplayed) && striping.unitDisplayed !== "0 B" &&
+            angular.isDefined(striping.count)) {
+          const stripeSize = striping.count * striping.unit;
+          const objectSetSize = striping.count * self.rbd.obj_size;
+          let maxSets = Math.ceil(size / objectSetSize);
+          let maxStripes = Math.ceil(size / stripeSize);
+          let isLastStripePartial = size % stripeSize !== 0;
+          let stripeSizeStr = $filter("bytes")(stripeSize);
+          let numCompleteStripes = isLastStripePartial ? (maxStripes - 1) : maxStripes;
+
+          message += `Each stripe has ${stripeSizeStr} spanned across ${striping.count} objects.`;
+          message += "<br>";
+          message += `The RBD can hold up to ${maxSets} `;
+          message += maxSets === 1 ? "object set" : "object sets";
+          message += ` (${numCompleteStripes} `;
+          message += numCompleteStripes === 1 ? "stripe" : "stripes";
+          message += isLastStripePartial ? " + 1 partial stripe" : "";
+          message += ").";
+        }
       }
-      return [
-        stripeSum === 1 ? "Each stripe" : stripeSum + " stripes, each " + $filter("bytes")(stripeSize) + ", ",
-        stripeSum === 1 ? "spans" : "span",
-        "across",
-        striping.count,
-        "Objects",
-        "(" + $filter("bytes")(objectSetSize) + ")",
-        !size || !maxSets ? "" : [
-          "<br>",
-          "The RBD can hold up to",
-          maxSets,
-          "object sets",
-          "(" + stripeSum * maxSets,
-          "Stripes)",
-          !partialStripes ? "" : [
-            "and",
-            partialStripes,
-            "partial Stripes"
-          ].join(" ")
-        ].join(" ")
-      ].join(" ");
+      return message;
     };
 
     self.sizeChange = function (event, callback) {
