@@ -28,6 +28,7 @@ Added
 * WebUI: iSCSI Target dialog should support RBDs with data-pool enabled (OP-2633)
 * WebUI: Add Feedback panel to the ui (OP-100)
 * WebUI: Ceph pool `Placement Groups` and `Applications` edition (OP-2608)
+* WebUI: Enable the RBD striping-v2 feature (OP-2454)
 
 Changed
 ~~~~~~~
