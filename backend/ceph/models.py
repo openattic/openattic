@@ -493,7 +493,8 @@ class CephPool(NodbModel, RadosMixin):
                         api.osd_pool_application_disable(self.name, app)
                     for app in set(value) - set(original.application_metadata):
                         api.osd_pool_application_enable(self.name, app)
-
+                elif key == 'crush_ruleset':
+                    logger.info('Setting crush_ruleset` is not yet supported.')
                 elif self.type == 'replicated' and key not in ['name', 'erasure_code_profile_id'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
