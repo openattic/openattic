@@ -1,17 +1,13 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
 <oa-module-loader module="ceph_iscsi">
 
-<div class="panel panel-default" ng-show="$ctrl.error">
-  <div class="panel-heading">
-    <h3 class="panel-title">Couldn't load iSCSI target IQNs</h3>
-  </div>
-  <div class="panel-body">
-    iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed.
-  </div>
-</div>
-
 <oa-loading-panel message="iSCSI targets are loading..."
-                  ng-show="!$ctrl.error && !$ctrl.iscsi.$resolved"></oa-loading-panel>
+                  ng-show="!$ctrl.error && !$ctrl.iscsi.$resolved">
+</oa-loading-panel>
+<oa-error-panel title="Couldn't load iSCSI target IQNs"
+                message="iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed."
+                ng-if="$ctrl.error">
+</oa-error-panel>
 
 <oadatatable ng-show="!$ctrl.error && $ctrl.iscsi.results" data="$ctrl.iscsi" class="oadatatable tc_cephIscsiTable"
              filter-config="$ctrl.filterConfig" special="$ctrl.deployed"

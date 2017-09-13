@@ -1,14 +1,11 @@
 <oa-module-loader module="ceph_radosgw">
-<div class="panel panel-default" ng-if="error">
-    <div class="panel-heading">
-        <h3 class="panel-title">Error</h3>
-    </div>
-    <div class="panel-body">
-        The list of users could not be loaded.
-    </div>
-</div>
+
 <oa-loading-panel message="Object Gateway users are loading..."
-                  ng-show="!error && !users.results"></oa-loading-panel>
+                  ng-show="!error && !users.results">
+</oa-loading-panel>
+<oa-error-panel message="The list of users could not be loaded."
+                ng-if="error">
+</oa-error-panel>
 
 <oadatatable ng-show="!error && users.results" class="oadatatable tc_oadatatable_users" data="users" filter-config="filterConfig"
              selection="selection" on-selection-change="onSelectionChange(selection)">

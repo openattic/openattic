@@ -1,16 +1,12 @@
 <oa-module-loader>
-<div ng-if="error">
-  <div class="panel panel-default" ng-if="error.statusText === 'NOT FOUND'">
-    <div class="panel-heading">
-      <h3 class="panel-title">Error {{error.status}}</h3>
-    </div>
-    <div class="panel-body">
-      The resource could not be found.
-    </div>
-  </div>
-</div>
 
-<oa-loading-panel message="Nodes are loading..." ng-show="!error && !data.$resolved"></oa-loading-panel>
+<oa-loading-panel message="Nodes are loading..."
+                  ng-show="!error && !data.$resolved">
+</oa-loading-panel>
+<oa-error-panel title="Error {{error.status}}"
+                message="The resource could not be found."
+                ng-if="error.statusText === 'NOT FOUND'">
+</oa-error-panel>
 
 <oadatatable ng-show="!error && data.results"
              class="oadatatable tc_cephNodesTable"
