@@ -99,10 +99,6 @@ fi
 # openattic-base
 mkdir -p -m 0755 /var/lock/openattic
 chown vagrant: /var/lock/openattic
-# openattic-module-http:
-mkdir -p /var/lib/openattic/http/volumes
-# openattic-module-nfs:
-mkdir -p /var/lib/openattic/nfs_dummy
 
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
@@ -185,7 +181,7 @@ def agg(state, line):
 
 deps = reduce(agg, open('/home/vagrant/openattic/debian/control'), (False, []))
 deps2 = {d.strip() for d in sum([dep.split(',') for dep in deps[1]], []) if 'python' not in d and 'openattic' not in d and '$' not in d and 'apache' not in d and '|' not in d}
-deps3 = [d.split(' ')[0] for d in deps2 if d not in ['tw-cli', 'mail-transport-agent', 'udisks', 'deepsea']]
+deps3 = [d.split(' ')[0] for d in deps2 if d not in ['deepsea']]
 print ' '.join(deps3)
 EOF
 )"
@@ -201,16 +197,6 @@ module-apt"
     # System packages not available in pip + npm
 
     apt-get install -y python-dbus python-virtualenv python-pip python-gobject-2 python-psycopg2 python-m2crypto nodejs npm
-    if [ "$IS_XENIAL" ]
-    then
-        apt-get install -y --force-yes nullmailer python-rtslib-fb # FIXME! Needed for newaliases command
-    elif [ "$IS_TRUSTY" ]
-    then
-        apt-get install -y --force-yes python-rtslib
-    else
-        # e.g. Debian Jessie
-        apt-get install -y --force-yes python-rtslib-fb
-    fi
 
     ln -s /usr/bin/nodejs /usr/bin/node
     ln -s /home/vagrant/openattic/debian/default/openattic /etc/default/openattic
@@ -232,7 +218,7 @@ then
     ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
 
     # System packages not available in pip + npm
-    zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 python-rtslib-fb nodejs npm mercurial python-devel zlib-devel libjpeg-devel
+    zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 nodejs npm python-devel zlib-devel libjpeg-devel
     # python-dbus python-gobject-2
     systemctl restart postgresql.service
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
@@ -371,13 +357,13 @@ pushd openattic/backend/
 # switching between branches).
 find * -name '*.pyc' | xargs rm
 
-python manage.py install --pre-install
 
 popd
 EOF
 
 
 pushd /home/vagrant/openattic/backend/
+../../env/bin/python manage.py install --pre-install
 ../../env/bin/python manage.py runsystemd &
 
 
