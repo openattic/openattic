@@ -47,12 +47,12 @@ app.controller("CommandlogDeleteBySelectionCtrl", function ($scope, commandlogSe
 
   $scope.delete = function () {
     commandlogService.delete({"ids": ids})
-        .$promise
-        .then(function () {
-          $uibModalInstance.close("cloned");
-        }, function () {
-          $scope.deleteForm.$submitted = false;
-        });
+      .$promise
+      .then(function () {
+        $uibModalInstance.close("cloned");
+      }, function () {
+        $scope.deleteForm.$submitted = false;
+      });
   };
 
   $scope.cancel = function () {

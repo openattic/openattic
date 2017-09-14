@@ -62,31 +62,31 @@ app.component("settingsForm",  {
 
     self.$onInit = function () {
       settingsFormService.get()
-      .$promise
-      .then(function (res) {
-        self.model = res;
-        if (!self.model.rgw.managed_by_deepsea) {
-          self.managedByDeepSeaEnabled = false;
-        }
-        angular.forEach(self.model.ceph, function (cluster) {
-          self.checkCephConnection(cluster);
-          cephClusterService.keyringCandidates(cluster)
-          .$promise
-          .then(function (res) {
-            self.clustersKeyringCandidates[cluster.fsid] = res;
+        .$promise
+        .then(function (res) {
+          self.model = res;
+          if (!self.model.rgw.managed_by_deepsea) {
+            self.managedByDeepSeaEnabled = false;
+          }
+          angular.forEach(self.model.ceph, function (cluster) {
+            self.checkCephConnection(cluster);
+            cephClusterService.keyringCandidates(cluster)
+              .$promise
+              .then(function (result) {
+                self.clustersKeyringCandidates[cluster.fsid] = result;
+              });
           });
+          self.checkDeepSeaConnection();
+          self.checkGrafanaConnection();
+        })
+        .catch(function (error) {
+          self.error = error;
         });
-        self.checkDeepSeaConnection();
-        self.checkGrafanaConnection();
-      })
-      .catch(function (error) {
-        self.error = error;
-      });
       hostsService.current()
-      .$promise
-      .then(function (res) {
-        self.openatticVersion = res.oa_version.package.VERSION;
-      });
+        .$promise
+        .then(function (res) {
+          self.openatticVersion = res.oa_version.package.VERSION;
+        });
     };
 
     var isAllDeepSeaPropsDefined = function (deepsea) {
@@ -116,32 +116,32 @@ app.component("settingsForm",  {
         checkDeepSeaConnectionTimeout = $timeout(function () {
           self.rgwDeepSeaSettings = angular.copy(defaultRgwDeepseaSettings);
           settingsFormService.checkDeepSeaConnection(self.model.deepsea)
-          .$promise
-          .then(function (res) {
-            self.deepseaConnectionStatus = res;
-            if (self.deepseaConnectionStatus.success) {
-              settingsFormService.getRgwConfiguration(self.model.deepsea)
-              .$promise
-              .then(function (res) {
-                if (res.success) {
-                  self.rgwDeepSeaSettings = res.rgw;
-                  self.managedByDeepSeaEnabled = true;
-                  angular.extend(self.rgwDeepSeaSettings, defaultRgwDeepseaSettings);
-                } else {
-                  self.model.rgw.managed_by_deepsea = false;
-                  self.managedByDeepSeaEnabled = false;
-                }
+            .$promise
+            .then(function (res) {
+              self.deepseaConnectionStatus = res;
+              if (self.deepseaConnectionStatus.success) {
+                settingsFormService.getRgwConfiguration(self.model.deepsea)
+                  .$promise
+                  .then(function (result) {
+                    if (result.success) {
+                      self.rgwDeepSeaSettings = result.rgw;
+                      self.managedByDeepSeaEnabled = true;
+                      angular.extend(self.rgwDeepSeaSettings, defaultRgwDeepseaSettings);
+                    } else {
+                      self.model.rgw.managed_by_deepsea = false;
+                      self.managedByDeepSeaEnabled = false;
+                    }
+                    self.rgwManagedByDeepSeaChangeHandler();
+                  });
+              } else {
+                self.model.rgw.managed_by_deepsea = false;
+                self.managedByDeepSeaEnabled = false;
                 self.rgwManagedByDeepSeaChangeHandler();
-              });
-            } else {
-              self.model.rgw.managed_by_deepsea = false;
-              self.managedByDeepSeaEnabled = false;
-              self.rgwManagedByDeepSeaChangeHandler();
-            }
-          })
-          .catch(function () {
-            self.deepseaConnectionStatus = undefined;
-          });
+              }
+            })
+            .catch(function () {
+              self.deepseaConnectionStatus = undefined;
+            });
         }, animationTimeout);
       }
     };

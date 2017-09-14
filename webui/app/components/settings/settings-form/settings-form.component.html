@@ -1,16 +1,11 @@
 <div class="col-sm-12 col-lg-6">
 
-  <div class="panel panel-default" ng-show="$ctrl.error">
-    <div class="panel-heading">
-      <h3 class="panel-title">Couldn't load settings</h3>
-    </div>
-    <div class="panel-body">
-      Setting could not be loaded.
-    </div>
-  </div>
-
   <oa-loading-panel message="Settings are loading..."
-                    ng-show="!$ctrl.error && !$ctrl.model.$resolved"></oa-loading-panel>
+                    ng-show="!$ctrl.error && !$ctrl.model.$resolved">
+  </oa-loading-panel>
+  <oa-error-panel message="Setting could not be loaded."
+                  ng-if="$ctrl.error">
+  </oa-error-panel>
 
   <form ng-show="!$ctrl.error && $ctrl.model.$resolved" name="settingsForm" role="form" class="form-horizontal"
         novalidate oa-check-form>

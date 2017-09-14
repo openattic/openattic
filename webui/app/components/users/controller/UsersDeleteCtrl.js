@@ -36,12 +36,12 @@ app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInsta
 
   $scope.delete = function () {
     usersService.delete({id: $scope.user.id})
-        .$promise
-        .then(function () {
-          $uibModalInstance.close("deleted");
-        }, function () {
-          $scope.deleteForm.$submitted = false;
-        });
+      .$promise
+      .then(function () {
+        $uibModalInstance.close("deleted");
+      }, function () {
+        $scope.deleteForm.$submitted = false;
+      });
   };
 
   $scope.cancel = function () {

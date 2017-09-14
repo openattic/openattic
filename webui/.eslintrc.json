@@ -1,6 +1,7 @@
 {
   "extends": [
-    "angular"
+    "angular",
+    "./grunt.eslintrc.json"
   ],
   "parserOptions": {
     "ecmaVersion": 6

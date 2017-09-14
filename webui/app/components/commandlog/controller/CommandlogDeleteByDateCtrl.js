@@ -53,12 +53,12 @@ app.controller("CommandlogDeleteByDateCtrl", function ($scope, commandlogService
 
   $scope.delete = function () {
     commandlogService.delete({"datetime": $scope.datePicker.dateTime})
-        .$promise
-        .then(function () {
-          $uibModalInstance.close("deleted");
-        }, function () {
-          $scope.pickDateForm.$submitted = false;
-        });
+      .$promise
+      .then(function () {
+        $uibModalInstance.close("deleted");
+      }, function () {
+        $scope.pickDateForm.$submitted = false;
+      });
   };
 
   $scope.cancel = function () {

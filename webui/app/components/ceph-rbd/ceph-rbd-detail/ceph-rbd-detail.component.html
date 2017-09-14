@@ -21,9 +21,23 @@
             <dt>Number of objects:</dt>
             <dd ng-bind="$ctrl.selection.item.num_objs"></dd>
             <div ng-if="$ctrl.selection.item.features.length > 0">
-                <dt>Features:</dt>
-                <dd ng-repeat="feature in $ctrl.selection.item.features">{{$ctrl.features[feature].desc}}</dd>
+              <dt>Features:</dt>
+              <dd ng-repeat="feature in $ctrl.selection.item.features">{{$ctrl.features[feature].desc}}</dd>
+              <div ng-if="$ctrl.selection.item.features.indexOf('stripingv2') !== -1">
+                <dt>Striping unit:</dt>
+                <dd ng-bind="$ctrl.selection.item.stripe_unit | bytes"></dd>
+                <dt>Striping count:</dt>
+                <dd ng-bind="$ctrl.selection.item.stripe_count"></dd>
+              </div>
             </div>
+            <dt>Used:</dt>
+            <dd ng-if="$ctrl.selection.item.used_size !== null">
+              {{$ctrl.selection.item.usedPercent | number:2}}%
+              <span class="text-muted">(Used: {{$ctrl.selection.item.used_size | bytes}} &mdash; Free: {{$ctrl.selection.item.free | bytes}})</span>
+            </dd>
+            <dd ng-if="$ctrl.selection.item.used_size === null">
+              <span class="text-muted">Not available</span>
+            </dd>
         </dl>
     </div>
 </div>

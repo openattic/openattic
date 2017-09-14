@@ -14,7 +14,7 @@ import logging
 
 import StringIO
 import os
-from glob import glob
+from subprocess import check_call
 from optparse import make_option
 
 import sys
@@ -30,7 +30,6 @@ except ImportError:
     pass
 
 logger = logging.getLogger(__name__)
-
 
 
 class Command(BaseCommand):
@@ -52,19 +51,15 @@ class Command(BaseCommand):
 
     )
 
-    def drop_database(self):
-        """
-        Taken from https://github.com/django-extensions/django-extensions/blob/master/django_extensions/management/commands/reset_db.py
-        """
-        os.system("""bash -c "echo 'drop database openattic;' | sudo -u postgres psql" """)
-        cmd = """bash -c "echo 'create database openattic OWNER openattic;' | sudo -u postgres psql" """
-        os.system(cmd)
-
     def pre_systemd(self, drop=False, verbosity=0, **options):
         if drop:
-            self.drop_database()
+            drop_database()
 
-        call_command('pre_install')
+        try:
+            call_command('pre_install')
+        except ImportError:
+            print 'you may need to remove all .pyc files.'
+            raise
 
         if VERSION[:2] >= (1, 8):
             call_command('migrate', '--fake-initial', '--noinput')
@@ -93,18 +88,31 @@ class Command(BaseCommand):
                         logger.exception("Giving up. Will now DROP DATABASE.")
                         if drop:
                             raise
-                        self.drop_database()
+                        drop_database()
                         call_command('migrate')
 
 
             finally:
                 sys.stdin = old_stdin
+
         else:
-            cmd = syncdb.Command()
-            cmd.stdout = self.stdout
-            cmd.stderr = self.stderr
-            cmd.handle_noargs(noinput=False, verbosity=verbosity, database=DEFAULT_DB_ALIAS)
-            call_command('django_16_migrate')
+            from sysutils.database_utils import SimpleDatabaseUpgrade
+
+            def call_command_syncdb():
+                cmd = syncdb.Command()
+                cmd.stdout = self.stdout
+                cmd.stderr = self.stderr
+                cmd.handle_noargs(noinput=False, verbosity=verbosity, database=DEFAULT_DB_ALIAS)
+
+            db_contents = SimpleDatabaseUpgrade()
+            if not drop:
+                db_contents.load()
+                drop_database()
+
+            call_command_syncdb()
+
+            db_contents.insert()
+
 
         call_command('add-host')
 
@@ -119,3 +127,14 @@ class Command(BaseCommand):
             self.pre_systemd(**options)
         if post_install:
             self.post_install(**options)
+
+
+def drop_database():
+    """
+    Taken from https://github.com/django-extensions/django-extensions/blob/master/django_extensions/management/commands/reset_db.py
+    """
+    check_call(
+        ['su', '-', 'postgres', '-c', "echo 'drop database openattic;' | psql"])
+    cmd = ['su', '-', 'postgres', '-c',
+           "echo 'create database openattic OWNER openattic;' | psql"]
+    check_call(cmd)

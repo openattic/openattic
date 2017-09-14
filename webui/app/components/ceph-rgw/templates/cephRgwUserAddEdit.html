@@ -1,15 +1,10 @@
-<div ng-if="editing">
-    <div class="panel panel-default" ng-show="error">
-        <div class="panel-heading">
-            <h3 class="panel-title">Error</h3>
-        </div>
-        <div class="panel-body">
-            The user data could not be loaded.
-        </div>
-    </div>
-    <oa-loading-panel message="Loading user data..."
-                      ng-show="!error && !user.$resolved"></oa-loading-panel>
-</div>
+<oa-loading-panel message="Loading user data..."
+                  ng-show="editing && !error && !user.$resolved">
+</oa-loading-panel>
+<oa-error-panel message="The user data could not be loaded."
+                on-back="goToListView()"
+                ng-if="editing && error">
+</oa-error-panel>
 
 <div class="col-sm-12 col-lg-6"
      ng-show="!editing || (editing && !error && user.$resolved)">

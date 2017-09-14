@@ -33,16 +33,16 @@
 var app = angular.module("openattic.commandlog");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("commandlog", {
-        url: "/commandlog",
-        views: {
-          "main": {
-            templateUrl: "components/commandlog/templates/commandlog.html",
-            controller : "CommandlogCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Command log"
+    .state("commandlog", {
+      url: "/commandlog",
+      views: {
+        "main": {
+          templateUrl: "components/commandlog/templates/commandlog.html",
+          controller : "CommandlogCtrl"
         }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "Command log"
+      }
+    });
 });

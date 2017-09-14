@@ -5,13 +5,7 @@ var rbdCommons = require('./cephRbdCommon.js');
 
 describe('should test the ceph rbd creation form', function(){
   var rbdProperties = new rbdCommons();
-
-  beforeAll(function(){
-    helpers.login();
-    rbdProperties.cephRBDs.click();
-    rbdProperties.addButton.click();
-    rbdProperties.firstPool.click();
-  });
+  const fe = rbdProperties.formElements;
 
   var objSizeInput = [
     {input: '0', output: '4.00 KiB'},
@@ -75,36 +69,84 @@ describe('should test the ceph rbd creation form', function(){
     {input: '1073741824', output: '1.00 PiB'}
   ];
 
-  var isItemPresent = function(item, className){
-    it('should hold the item "' + item + '"', function(){
+  var isItemPresent = function(name, item, className){
+    it('should hold the item "' + item + '" in "' + name + '"', function(){
       expect(element(by.className(className)).isPresent()).toBe(true);
     });
   };
 
   var isFormElementAvailable = function(e){
     if(e.testClass){
-      it('should' + (e.displayed ? ' ' : ' not ') + 'display the form element "' + e.name + '"', function(){
-        expect(element(by.className(e.testClass)).isDisplayed()).toBe(e.displayed);
+      it('should display the form element "' + e.name + '"', function(){
+        expect(element(by.className(e.testClass)).isDisplayed()).toBe(true);
       });
     }
     for(var item in e.items){
       var itemClasse = typeof e.items[item] == 'string' ?
         e.items[item] : e.items[item].class;
-      isItemPresent(item, itemClasse);
+      isItemPresent(e.name, item, itemClasse);
     }
   };
 
-  var changeSize = function(inputField, io, fieldName){
+  var changeSizeTest = function(inputField, io, fieldName){
     it('should change the input ' + io.input + ' to ' + io.output + ' in "' + fieldName + '"', function(){
       //rbd should be preselected
-      inputField.clear().sendKeys(io.input);
-      rbdProperties.name.click();
+      rbdProperties.checkCheckboxToBe(rbdProperties.defaultFeatures, false);
+      helpers.changeInput(inputField, io.input);
       expect(inputField.getAttribute('value')).toEqual(io.output);
     });
   };
 
-  for(var formElement in rbdProperties.formElements){
-    isFormElementAvailable(rbdProperties.formElements[formElement]);
+  beforeAll(function(){
+    helpers.login();
+    rbdProperties.cephRBDs.click();
+    rbdProperties.addButton.click();
+    rbdProperties.firstPool.click();
+    rbdProperties.selectFeatures([1, 1, 1, 1, 1, 1, 1]); // Selects all features
+  });
+
+  it('should show a warning on object size if stripe unit is increased', () => {
+    const unit = rbdProperties.stripingUnit;
+    const objSize = rbdProperties.objSize;
+    helpers.changeInput(objSize, '4 M');
+    helpers.changeInput(unit, '4 M');
+    helpers.changeInput(unit, '8 M');
+    expect(element(by.className(fe.objectSize.items.changed)).isDisplayed()).toBe(true);
+    helpers.changeInput(objSize, '8 M');
+    expect(element(by.className(fe.objectSize.items.changed)).isDisplayed()).toBe(false);
+  });
+
+  it('should show a warning on stripe unit if object size is decreased', () => {
+    const unit = rbdProperties.stripingUnit;
+    const objSize = rbdProperties.objSize;
+    helpers.changeInput(unit, '4 M');
+    helpers.changeInput(objSize, '4 M');
+    helpers.changeInput(objSize, '2 M');
+    expect(element(by.className(fe.stripingUnit.items.changed)).isDisplayed()).toBe(true);
+    helpers.changeInput(unit, '2 M');
+    expect(element(by.className(fe.stripingUnit.items.changed)).isDisplayed()).toBe(false);
+  });
+
+  it('should show a warning if stripe count is set to 2', () => {
+    const count = rbdProperties.stripingCount;
+    helpers.changeInput(count, '1');
+    expect(element(by.className(fe.stripingCount.items.min)).isDisplayed()).toBe(true);
+    helpers.changeInput(count, '5');
+    expect(element(by.className(fe.stripingCount.items.min)).isDisplayed()).toBe(false);
+  });
+
+  it('should show an error on size if object set size increase the setted size', () => {
+    const size = rbdProperties.size;
+    helpers.changeInput(rbdProperties.stripingUnit, '4 M');
+    helpers.changeInput(rbdProperties.stripingCount, '5');
+    helpers.changeInput(size, '10 M');
+    expect(element(by.className(fe.size.items.helpSizeStripe)).isDisplayed()).toBe(true);
+    helpers.changeInput(size, '100 M');
+    expect(element(by.className(fe.size.items.helpSizeStripe)).isDisplayed()).toBe(false);
+  });
+
+  for(let e in fe){
+    isFormElementAvailable(fe[e]);
   }
 
   ['cluster', 'pool'].forEach(function(name){
@@ -116,16 +158,16 @@ describe('should test the ceph rbd creation form', function(){
   // After OP-1339 create a more detailed test for cluster and pool names.
 
   objSizeInput.forEach(function(io){
-    changeSize(rbdProperties.objSize, io, 'Object size');
+    changeSizeTest(rbdProperties.objSize, io, 'Object size');
   });
 
   sizeInput.forEach(function(io){
-    changeSize(rbdProperties.size, io, 'Size');
+    changeSizeTest(rbdProperties.size, io, 'Size');
   });
 
   rbdProperties.expandedFeatureCases.forEach(function(testCase){
-    var keys = Object.keys(rbdProperties.formElements.features.items);
-    var values = rbdProperties.formElements.features.items;
+    var keys = Object.keys(fe.features.items);
+    var values = fe.features.items;
     it('should test the following case: [' + testCase + ']',function(){
       rbdProperties.selectFeatures(testCase);
     });

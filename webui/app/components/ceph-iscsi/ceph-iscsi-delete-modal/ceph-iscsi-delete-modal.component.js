@@ -50,13 +50,13 @@ app.component("cephIscsiDeleteModal", {
           fsid: self.resolve.fsid,
           targetIds: targetIds
         })
-        .$promise
-        .then(function () {
-          resolve();
-          self.modalInstance.close("deleted");
-        }, function () {
-          reject();
-        });
+          .$promise
+          .then(function () {
+            resolve();
+            self.modalInstance.close("deleted");
+          }, function () {
+            reject();
+          });
       });
     };
 

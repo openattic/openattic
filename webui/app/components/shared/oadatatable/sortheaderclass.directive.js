@@ -35,7 +35,7 @@ app.directive("sortheaderclass", function ($compile) {
   return {
     terminal: true,
     priority: 1000,
-    link: function link(scope, element) {
+    link: function link (scope, element) {
       var fieldName = scope.sortfields[$(element).text()];
       element.attr("ng-click", "sortByField('" + fieldName + "')");
       element.attr("ng-class",

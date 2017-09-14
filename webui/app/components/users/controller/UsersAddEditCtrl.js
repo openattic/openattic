@@ -59,43 +59,43 @@ app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, users
       $scope.submitted = true;
       if (userForm.$valid === true) {
         usersService.save($scope.user)
-            .$promise
-            .then(function () {
-              goToListView();
-            }, function () {
-              $scope.userForm.$submitted = false;
-            });
+          .$promise
+          .then(function () {
+            goToListView();
+          }, function () {
+            $scope.userForm.$submitted = false;
+          });
       }
     };
   } else {
     $scope.editing = true;
 
     promises.push(
-        usersService.current().$promise
+      usersService.current().$promise
     );
     promises.push(
-        usersService.get({id: $stateParams.user}).$promise
+      usersService.get({id: $stateParams.user}).$promise
     );
 
     // Use $q.all to wait until all promises have been resolved
     $q.all(promises)
-        .then(function (res) {
-          if (res[0].id === Number($stateParams.user)) {
-            $scope.isCurrentUser = true;
-          }
-          $scope.user = res[1];
-        });
+      .then(function (res) {
+        if (res[0].id === Number($stateParams.user)) {
+          $scope.isCurrentUser = true;
+        }
+        $scope.user = res[1];
+      });
 
     $scope.submitAction = function (userForm) {
       $scope.submitted = true;
       if (userForm.$valid === true) {
         usersService.update({id: $scope.user.id}, $scope.user)
-            .$promise
-            .then(function () {
-              goToListView();
-            }, function () {
-              $scope.userForm.$submitted = false;
-            });
+          .$promise
+          .then(function () {
+            goToListView();
+          }, function () {
+            $scope.userForm.$submitted = false;
+          });
       }
     };
 

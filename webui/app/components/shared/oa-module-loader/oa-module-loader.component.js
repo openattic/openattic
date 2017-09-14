@@ -56,17 +56,17 @@ app.component("oaModuleLoader", {
           module: self.module,
           fsid: fsid
         })
-        .$promise
-        .then(function (res) {
-          self.moduleAvailable = res;
-        }).catch(function (error) {
-          self.moduleAvailable = {
-            $resolved: true,
-            available: false,
-            reason: 100,
-            message: error.data && error.data.detail ? error.data.detail : undefined
-          };
-        });
+          .$promise
+          .then(function (res) {
+            self.moduleAvailable = res;
+          }).catch(function (error) {
+            self.moduleAvailable = {
+              $resolved: true,
+              available: false,
+              reason: 100,
+              message: error.data && error.data.detail ? error.data.detail : undefined
+            };
+          });
       } else {
         self.moduleAvailable = {
           $resolved: true,

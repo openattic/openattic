@@ -29,9 +29,9 @@ describe('Pagination', function(){
   };
 
   var switchPage = function(callback){
-    var currentPage = element(by.css('tbody')).getOuterHtml();
+    var currentPage = element(by.css('tbody')).getAttribute('outerHTML');
     callback();
-    var newPage = element(by.css('tbody')).getOuterHtml();
+    var newPage = element(by.css('tbody')).getAttribute('outerHTML');
     expect(currentPage !== newPage).toBe(true);
   };
 

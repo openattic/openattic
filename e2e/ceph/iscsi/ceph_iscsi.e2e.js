@@ -21,12 +21,12 @@ describe('ceph iscsi', function(){
   });
 
   it('should check the ceph iSCSI list target url', function(){
-    expect(browser.getCurrentUrl()).toContain('/ceph/iscsi');
+    helpers.checkLocation('ceph/iscsi');
   });
 
   it('should check the ceph iSCSI add target url', function(){
     table.addTarget();
-    expect(browser.getCurrentUrl()).toMatch('/ceph/.*/iscsi/add');
+    helpers.checkLocation('ceph/.*/iscsi/add');
     form.backButton.click();
   });
 
@@ -41,6 +41,7 @@ describe('ceph iscsi', function(){
     form.passwordInput.sendKeys('TargetPassword');
     form.addInitiator();
     form.initiatorsInput.get(0).sendKeys('iqn.2016-06.org.openattic:storage:disk.sn-a8675310');
+    browser.sleep(helpers.configs.sleep);
     form.mutualAuthenticationCheckbox.click();
     form.mutualUserInput.sendKeys('TargetMutualUser');
     form.mutualPasswordInput.sendKeys('TargetMutualPassword');
@@ -69,7 +70,7 @@ describe('ceph iscsi', function(){
 
   it('should check the ceph iSCSI edit target url', function(){
     table.editTarget('iqn.2016-06.org.openattic.test:storage:disk.tc-add');
-    expect(browser.getCurrentUrl()).toMatch('/ceph/.*/iscsi/edit/iqn.2016-06.org.openattic.test:storage:disk.tc-add');
+    helpers.checkLocation('ceph/.*/iscsi/edit/iqn.2016-06.org.openattic.test:storage:disk.tc-add');
     form.backButton.click();
   });
 
@@ -96,7 +97,7 @@ describe('ceph iscsi', function(){
 
   it('should check the ceph iSCSI clone target url', function(){
     table.cloneTarget('iqn.2016-06.org.openattic.test:storage:disk.tc-edit');
-    expect(browser.getCurrentUrl()).toMatch('/ceph/.*/iscsi/clone/iqn.2016-06.org.openattic.test:storage:disk.tc-edit');
+    helpers.checkLocation('ceph/.*/iscsi/clone/iqn.2016-06.org.openattic.test:storage:disk.tc-edit');
     form.backButton.click();
   });
 

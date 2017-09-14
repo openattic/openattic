@@ -6,9 +6,8 @@ Getting started
 Accessing the Web UI
 --------------------
 
-|oA| can be managed using a web-based user interface, if the package
-``openattic-gui`` has been installed and the Apache http Server has been
-restarted afterwards.
+After |oA|  has been installed, it can be managed using the web-based user
+interface.
 
 Open a web browser and navigate to http://openattic.yourdomain.com/openattic
 

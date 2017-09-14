@@ -33,146 +33,146 @@
 var app = angular.module("openattic.cephRgw");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("ceph-rgw", {
-        url: "/ceph/rgw",
-        ncyBreadcrumb: {
-          label: "Object Gateway"
+    .state("ceph-rgw", {
+      url: "/ceph/rgw",
+      ncyBreadcrumb: {
+        label: "Object Gateway"
+      }
+    })
+    .state("ceph-rgw-users", {
+      url: "/ceph/rgw/users",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUsers.html",
+          controller: "CephRgwUsersCtrl"
         }
-      })
-      .state("ceph-rgw-users", {
-        url: "/ceph/rgw/users",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwUsers.html",
-            controller: "CephRgwUsersCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Object Gateway users"
+      },
+      ncyBreadcrumb: {
+        label: "Object Gateway users"
+      }
+    })
+    .state("ceph-rgw-users.detail", {
+      views: {
+        "tab": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUsersTab.html"
         }
-      })
-      .state("ceph-rgw-users.detail", {
-        views: {
-          "tab": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwUsersTab.html"
-          }
-        },
-        ncyBreadcrumb: {
-          skip: true
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("ceph-rgw-users.detail.details", {
+      url: "/details",
+      views: {
+        "tab-content": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUsersDetails.html"
         }
-      })
-      .state("ceph-rgw-users.detail.details", {
-        url: "/details",
-        views: {
-          "tab-content": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwUsersDetails.html"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.user_id}} details"
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.user_id}} details"
+      }
+    })
+    .state("ceph-rgw-users.detail.statistics", {
+      url: "/statistics",
+      views: {
+        "tab-content": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUsersStatistics.html"
         }
-      })
-      .state("ceph-rgw-users.detail.statistics", {
-        url: "/statistics",
-        views: {
-          "tab-content": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwUsersStatistics.html"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.user_id}} statistics"
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.user_id}} statistics"
+      }
+    })
+    .state("ceph-rgw-user-add", {
+      url: "/ceph/rgw/users/add",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEdit.html",
+          controller: "CephRgwUserAddEditCtrl"
         }
-      })
-      .state("ceph-rgw-user-add", {
-        url: "/ceph/rgw/users/add",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEdit.html",
-            controller: "CephRgwUserAddEditCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          parent: "ceph-rgw-users",
-          label: "Add"
+      },
+      ncyBreadcrumb: {
+        parent: "ceph-rgw-users",
+        label: "Add"
+      }
+    })
+    .state("ceph-rgw-user-edit", {
+      url: "/ceph/rgw/users/edit/:user_id",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEdit.html",
+          controller: "CephRgwUserAddEditCtrl"
         }
-      })
-      .state("ceph-rgw-user-edit", {
-        url: "/ceph/rgw/users/edit/:user_id",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEdit.html",
-            controller: "CephRgwUserAddEditCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          parent: "ceph-rgw-users",
-          label: "Edit {{user.user_id}}"
+      },
+      ncyBreadcrumb: {
+        parent: "ceph-rgw-users",
+        label: "Edit {{user.user_id}}"
+      }
+    })
+    .state("ceph-rgw-buckets", {
+      url: "/ceph/rgw/buckets",
+      params: {
+        page: undefined,
+        entries: undefined,
+        search: undefined,
+        sortfield: undefined,
+        sortorder: undefined
+      },
+      views: {
+        "main": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwBuckets.html",
+          controller: "CephRgwBucketsCtrl"
         }
-      })
-      .state("ceph-rgw-buckets", {
-        url: "/ceph/rgw/buckets",
-        params: {
-          page: undefined,
-          entries: undefined,
-          search: undefined,
-          sortfield: undefined,
-          sortorder: undefined
-        },
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwBuckets.html",
-            controller: "CephRgwBucketsCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Object Gateway buckets"
+      },
+      ncyBreadcrumb: {
+        label: "Object Gateway buckets"
+      }
+    })
+    .state("ceph-rgw-buckets.detail", {
+      views: {
+        "tab": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwBucketsTab.html"
         }
-      })
-      .state("ceph-rgw-buckets.detail", {
-        views: {
-          "tab": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwBucketsTab.html"
-          }
-        },
-        ncyBreadcrumb: {
-          skip: true
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("ceph-rgw-buckets.detail.details", {
+      url: "/details",
+      views: {
+        "tab-content": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwBucketsDetails.html"
         }
-      })
-      .state("ceph-rgw-buckets.detail.details", {
-        url: "/details",
-        views: {
-          "tab-content": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwBucketsDetails.html"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.bucket}} details"
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.bucket}} details"
+      }
+    })
+    .state("ceph-rgw-bucket-add", {
+      url: "/ceph/rgw/buckets/add",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
+          controller: "CephRgwBucketAddEditCtrl"
         }
-      })
-      .state("ceph-rgw-bucket-add", {
-        url: "/ceph/rgw/buckets/add",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
-            controller: "CephRgwBucketAddEditCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          parent: "ceph-rgw-buckets",
-          label: "Add"
+      },
+      ncyBreadcrumb: {
+        parent: "ceph-rgw-buckets",
+        label: "Add"
+      }
+    })
+    .state("ceph-rgw-bucket-edit", {
+      url: "/ceph/rgw/buckets/edit/:bucket",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
+          controller: "CephRgwBucketAddEditCtrl"
         }
-      })
-      .state("ceph-rgw-bucket-edit", {
-        url: "/ceph/rgw/buckets/edit/:bucket",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-rgw/templates/cephRgwBucketAddEdit.html",
-            controller: "CephRgwBucketAddEditCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          parent: "ceph-rgw-buckets",
-          label: "Edit {{bucket.bucket}}"
-        }
-      });
+      },
+      ncyBreadcrumb: {
+        parent: "ceph-rgw-buckets",
+        label: "Edit {{bucket.bucket}}"
+      }
+    });
 });

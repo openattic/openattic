@@ -14,10 +14,13 @@
 """
 
 import os
+from errno import EPERM
+
 import mock
 import tempfile
 import json
 
+import exception
 from ceph.restapi import CephPoolSerializer
 from django.test import TestCase
 
@@ -28,7 +31,6 @@ import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
-from ifconfig.models import Host
 
 
 def open_testdata(name):
@@ -542,46 +544,6 @@ class CephRbdTestCase(TestCase):
         rbd.save()
 
 
-class CallLibradosTestCase(TestCase):
-    def test_simple(self):
-        def return1():
-            return 1
-
-        self.assertEqual(ceph.librados.run_in_external_process(return1), 1)
-
-    def test_huge(self):
-        def return_big():
-            return 'x' * (1024 * 1024)
-
-        self.assertEqual(ceph.librados.run_in_external_process(return_big), return_big())
-
-    def test_exception(self):
-        def raise_exception():
-            raise KeyError()
-
-        self.assertRaises(KeyError,
-                          lambda: ceph.librados.run_in_external_process(raise_exception))
-
-    def test_exit(self):
-        def just_exit():
-            # NOTE: sys.exit(0) used to work here. No idea why it did work, because ...
-            import os
-            os._exit(0)
-
-        # ... multiprocessing seems to have a bug where we end up in a timeout, if the child
-        # died prematurely.
-        self.assertRaises(ceph.librados.ExternalCommandError,
-                          lambda: ceph.librados.run_in_external_process(just_exit, timeout=1))
-
-    def test_timeout(self):
-        def just_wait():
-            import time
-            time.sleep(3)
-
-        self.assertRaises(ceph.librados.ExternalCommandError,
-                          lambda: ceph.librados.run_in_external_process(just_wait, timeout=1))
-
-
 class PerformanceTaskTest(TestCase):
 
     @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
@@ -596,8 +558,51 @@ class PerformanceTaskTest(TestCase):
     @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
     def test_exception(self, RbdApi_mock):
         RbdApi_mock.return_value.image_disk_usage.side_effect \
-            = ceph.librados.ExternalCommandError('foo')
+            = exception.ExternalCommandError('foo')
         res = ceph.tasks.get_rbd_performance_data.call_now("3d693c97-d0e7-41d2-87e4-979fa4ebd10a",
                                                            "mypool", "myrbd")
         data, time = res
         self.assertEqual(data, {})
+
+
+class OsdPoolDeleteTest(TestCase):
+    @mock.patch('ceph.librados.call_librados')
+    def test_delete_allowed(self, call_librados_mock):
+        client_mock = mock.MagicMock(spec=ceph.librados.Client)
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        api = ceph.librados.MonApi('fsid')
+        api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
+        self.assertTrue(client_mock.mon_command.called)
+        self.assertEqual(client_mock.mon_command.mock_calls, [mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string')])
+
+
+    @mock.patch('ceph.librados.call_librados')
+    def test_delete_forbidden(self, call_librados_mock):
+        client_mock = mock.MagicMock(spec=ceph.librados.Client)
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+
+        client_mock.mon_command.side_effect = [
+            ceph.librados.ExternalCommandError('mon_allow_pool_delete', cmd="cmd", code=EPERM),
+            {'mons': [{'name': n} for n in ['a', 'b', 'c']]},  # mon dump
+            '', '', '',  # replies from  injected_args
+            '',  # pool delete
+            '', '', '',  # replies from  injected_args
+        ]
+
+        api = ceph.librados.MonApi('fsid')
+        api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
+        self.assertTrue(client_mock.mon_command.called)
+        print client_mock.mon_command.mock_calls
+        calls = [
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
+            mock.call('mon dump'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='a'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='b'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='c'),
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='a'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='b'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='c')
+        ]
+
+        self.assertEqual(client_mock.mon_command.mock_calls, calls)

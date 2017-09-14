@@ -39,9 +39,9 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
   }
 
   var reason = [
-      $scope.editMode ? "Edit"  : "Add",
-      $scope.data.type
-    ].join(" ");
+    $scope.editMode ? "Edit"  : "Add",
+    $scope.data.type
+  ].join(" ");
   $scope.texts = {
     header: [
       reason,
@@ -82,16 +82,16 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
   };
 
   var setUpWidget = function () {
-    var data = $scope.data;
+    var localData = $scope.data;
     if ($scope.editMode) {
       $scope.input = {
-        "name"    : data.name,
-        "manager" : data.selectedManager,
-        "settings": data.settings
+        "name"    : localData.name,
+        "manager" : localData.selectedManager,
+        "settings": localData.settings
       };
     } else {
       $scope.input = {
-        settings: data.settings
+        settings: localData.settings
       };
       enableManagerNameChange();
     }
@@ -100,15 +100,15 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
 
   var retreiveClusterList = function () {
     cephClusterService
-        .get()
-        .$promise
-        .then(function (res) {
-          var results = res.results;
-          $scope.cluster = results;
-          if (results.length === 1) {
-            $scope.input.settings.cluster = results[0];
-          }
-        });
+      .get()
+      .$promise
+      .then(function (res) {
+        var results = res.results;
+        $scope.cluster = results;
+        if (results.length === 1) {
+          $scope.input.settings.cluster = results[0];
+        }
+      });
   };
 
   var setUpDashboard = function () {
