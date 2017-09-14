@@ -16,7 +16,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.4.5] - unreleased
+[3.5.0] - 2017-09-14
 --------------------
 
 Added
@@ -25,8 +25,9 @@ Added
 * Backend: Added `osd_flags` to `CephCluster` (OP-2598)
 * QA/Development: Export HTML e2e report (OP-2261)
 * WebUI: Add Ceph cluster settings modal (OP-2599)
-* WebUI: iSCSI Target dialog should support RBDs with data-pool enabled (OP-2633)
-* WebUI: Add Feedback panel to the ui (OP-100)
+* WebUI: iSCSI Target dialog should support RBDs with data-pool
+  enabled (OP-2633)
+* WebUI: Add Feedback panel to the UI (OP-100)
 * WebUI: Ceph pool `Placement Groups` and `Applications` edition (OP-2608)
 * WebUI: Enable the RBD striping-v2 feature (OP-2454)
 
@@ -41,14 +42,19 @@ Changed
   environment (OP-2640)
 * Documentation: Update e2e documentation (OP-2329)
 * WebUI: Replace JSCS and JSHint with ESLint (OP-2597)
-* WebUI: Hide RBD usage percentage bar if no usage information is available (OP-2639)
-* WebUI: Fix 'Configure Cluster-wide OSD Flags' header button position (OP-2657)
-* WebUI: Display an error message when the loading of the form data fails (OP-2656)
-* Installation: Drop database when calling `oaconfig install` without data loss (OP-2577)
+* WebUI: Hide RBD usage percentage bar if no usage information is
+  available (OP-2639)
+* WebUI: Fix 'Configure Cluster-wide OSD Flags' header button
+  position (OP-2657)
+* WebUI: Display an error message when the loading of the form data
+  fails (OP-2656)
+* Installation: Drop database when calling `oaconfig install` without data
+  loss (OP-2577)
 
 Fixed
 ~~~~~
-* Backend: Stop `requests.packages.urllib3` from spamming the log file (OP-2616)
+* Backend: Stop `requests.packages.urllib3` from spamming the log
+  file (OP-2616)
 * WebUI/QA: Fix random e2e failure - ceph rgw buckets should delete the
   test user (OP-2627)
 * Fixed Grafana Node Statistics are not immediately visible in oA (OP-2634)
@@ -61,7 +67,9 @@ Fixed
 * Installation: Fixed database migration `ifconfig.0005` (OP-2646)
 * WebUI: MON widget will verify if timechecks are there (OP-2655)
 * WebUI/QA: Harden task queue directive test cases (OP-2619)
-* Backend: Internal Server Error when creating a new NFS export with "Object Gateway" as type. (OP-2652)
+* WebUI/QA: Fix random e2e test failure (OP-2621)
+* Backend: Internal Server Error when creating a new NFS export with
+  "Object Gateway" as type. (OP-2652)
 
 Removed
 ~~~~~~~
