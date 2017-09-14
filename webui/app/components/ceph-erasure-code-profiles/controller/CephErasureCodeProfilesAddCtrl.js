@@ -45,48 +45,48 @@ app.controller("CephErasureCodeProfilesAddCtrl", function ($scope, $uibModalInst
 
   $scope.addErasureCodeProfile = function () {
     cephErasureCodeProfilesService
-        .save({
-          fsid                  : $scope.cluster.fsid,
-          k                     : $scope.erasureCodeProfile.k,
-          m                     : $scope.erasureCodeProfile.m,
-          name                  : $scope.erasureCodeProfile.name,
-          ruleset_failure_domain: $scope.erasureCodeProfile.ruleset_failure_domain
-        })
-        .$promise
-        .then(function (res) {
-          Notification.success({
-            title: "Erasure code profile created",
-            msg  : "Erasure code profile '" + $scope.erasureCodeProfile.name + "' successfully created."
-          });
-
-          $uibModalInstance.close(res);
+      .save({
+        fsid                  : $scope.cluster.fsid,
+        k                     : $scope.erasureCodeProfile.k,
+        m                     : $scope.erasureCodeProfile.m,
+        name                  : $scope.erasureCodeProfile.name,
+        ruleset_failure_domain: $scope.erasureCodeProfile.ruleset_failure_domain
+      })
+      .$promise
+      .then(function (res) {
+        Notification.success({
+          title: "Erasure code profile created",
+          msg  : "Erasure code profile '" + $scope.erasureCodeProfile.name + "' successfully created."
         });
+
+        $uibModalInstance.close(res);
+      });
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
   };
 
-  function init() {
+  function init () {
     cephErasureCodeProfilesService
-        .getfailureDomains({
-          fsid: $scope.cluster.fsid,
-          ordering: "-id",
-          pageSize: 1
-        })
-        .$promise
-        .then(function (res) {
-          $scope.rulesetFailureDomains = res.crushmap.types;
+      .getfailureDomains({
+        fsid: $scope.cluster.fsid,
+        ordering: "-id",
+        pageSize: 1
+      })
+      .$promise
+      .then(function (res) {
+        $scope.rulesetFailureDomains = res.crushmap.types;
 
-          angular.forEach($scope.rulesetFailureDomains, function (e) {
-            if (e.name === "host") {
-              $scope.erasureCodeProfile.ruleset_failure_domain = e.name;
-            }
-          });
-        })
-        .catch(function () {
-          $scope.addForm.$submitted = false;
+        angular.forEach($scope.rulesetFailureDomains, function (e) {
+          if (e.name === "host") {
+            $scope.erasureCodeProfile.ruleset_failure_domain = e.name;
+          }
         });
+      })
+      .catch(function () {
+        $scope.addForm.$submitted = false;
+      });
   }
 
   init();

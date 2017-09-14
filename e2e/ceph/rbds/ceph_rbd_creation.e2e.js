@@ -23,17 +23,18 @@ describe('ceph rbd creation and deletion', function(){
    * @param {string} rbdConfig.objSize
    * @param {number[]} rbdConfig.features
    */
-  var fullRbdCreation = function(rbdConfig){
+  var fullRbdCreation = (rbdConfig) =>  {
     var desc = [
       'should create "' + rbdConfig.rbdName + '" rbd',
       rbdConfig.features ? 'with the following feature case: "[' + rbdConfig.features + ']" options' : '',
       rbdConfig.objSize ? 'with a object size of "' + rbdConfig.objSize + '"' : '',
+      rbdConfig.size ? 'with a size of "' + rbdConfig.size + '"' : '',
       'on pool "' + rbdConfig.poolName + '"',
       'on cluster "' + rbdConfig.clusterName + '"'
     ].join(' ');
-    it(desc, function(){
+    it(desc, () => {
       rbdProperties.selectClusterAndPool(rbdConfig.clusterName, rbdConfig.poolName);
-      rbdProperties.createRbd(rbdConfig.rbdName, rbdConfig.objSize, rbdConfig.features);
+      rbdProperties.createRbd(rbdConfig.rbdName, rbdConfig.size, rbdConfig.objSize, rbdConfig.features);
     });
   };
 
@@ -61,18 +62,23 @@ describe('ceph rbd creation and deletion', function(){
     rbdProperties.cephRBDs.click();
   });
 
-  rbdProperties.useWriteablePools(function(cluster, pool){
+  rbdProperties.useWriteablePools((cluster, pool) => {
     // Use the case with the least, default and the most options.
-    var testCases = rbdProperties.expandedFeatureCases;
-    [testCases[0], rbdProperties.defaultFeatureCase, testCases[testCases.length - 1]].forEach(function(features, index){
-      var objSizeArr = objSizeTests[index];
-      var rbdConfig = {
+    const testCases = rbdProperties.expandedFeatureCases;
+    [testCases[0], rbdProperties.defaultFeatureCase, testCases[testCases.length - 1]].forEach((features, index) => {
+      const objSizeArr = objSizeTests[index];
+      const rbdConfig = {
         clusterName: cluster.name,
         poolName: pool.name,
         rbdName: [namePrefix, index, features.join('')].join('_'),
         objSize: objSizeArr[0] + '.00 ' + objSizeArr[1],
         features: features
       };
+      if(rbdProperties.convertFeatureArrayToObject(features).striping === 1){
+        rbdConfig.size = objSizeArr[0] * 5 + 1 + '.00 ' + objSizeArr[1];
+      }else{
+        rbdConfig.size = rbdConfig.objSize;
+      }
       fullRbdCreation(rbdConfig);
       fullRbdDeletion(rbdConfig);
     });
@@ -81,14 +87,14 @@ describe('ceph rbd creation and deletion', function(){
      * For this tests at least 2 pool are needed!
      * One replicated pool and another replicated pool or erasure coded pool with ec_overwrites enabled.
      */
-    var rbdDataPoolName = namePrefix + '_with_data_pool';
-    it('should create RBD with a meta and data pool with the first pools in both lists, named ' + rbdDataPoolName, function(){
+    const rbdDataPoolName = namePrefix + '_with_data_pool';
+    it('should create RBD with a meta and data pool with the first pools in both lists, named ' + rbdDataPoolName, () => {
       rbdProperties.selectCluster(cluster.name);
       rbdProperties.addButton.click();
-      var firstPoolOption = rbdProperties.poolSelect.all(by.tagName('option')).get(1);
+      const firstPoolOption = rbdProperties.poolSelect.all(by.tagName('option')).get(1);
       firstPoolOption.click();
       rbdProperties.useDataPool.click();
-      var firstDataPoolOption = rbdProperties.dataPoolSelect.all(by.tagName('option')).get(1);
+      const firstDataPoolOption = rbdProperties.dataPoolSelect.all(by.tagName('option')).get(1);
       firstDataPoolOption.click();
       rbdProperties.createRbd(rbdDataPoolName);
       expect(element(by.cssContainingText('dt', 'Meta-Pool')).isDisplayed()).toBe(true);

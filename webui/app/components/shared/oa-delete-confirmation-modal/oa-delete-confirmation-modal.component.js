@@ -52,7 +52,7 @@ app.component("oaDeleteConfirmationModal", {
         }, function () {
           $scope.deleteForm.$submitted = false;
         }
-      );
+        );
     };
   }
 });

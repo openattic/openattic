@@ -38,6 +38,8 @@ webui/app/index.html
 webui/coverage
 webui/npm-debug.log
 webui/app/config.local.js
+webui/package-lock.json
+webui/yarn.lock
 
 # From gatling-rest
 gatling/conf/

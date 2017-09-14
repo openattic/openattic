@@ -33,42 +33,42 @@
 var app = angular.module("openattic.users");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("users", {
-        url: "/users",
-        views: {
-          "main": {
-            templateUrl: "components/users/templates/users.html",
-            controller : "UsersCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Users"
+    .state("users", {
+      url: "/users",
+      views: {
+        "main": {
+          templateUrl: "components/users/templates/users.html",
+          controller : "UsersCtrl"
         }
-      })
-      .state("users-add", {
-        url: "/users/add",
-        views: {
-          "main": {
-            templateUrl: "components/users/templates/add-edit-user.html",
-            controller : "UsersAddEditCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Add",
-          parent: "users"
+      },
+      ncyBreadcrumb: {
+        label: "Users"
+      }
+    })
+    .state("users-add", {
+      url: "/users/add",
+      views: {
+        "main": {
+          templateUrl: "components/users/templates/add-edit-user.html",
+          controller : "UsersAddEditCtrl"
         }
-      })
-      .state("users-edit", {
-        url: "/users/edit/:user",
-        views: {
-          "main": {
-            templateUrl: "components/users/templates/add-edit-user.html",
-            controller : "UsersAddEditCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Edit {{user.username}}",
-          parent: "users"
+      },
+      ncyBreadcrumb: {
+        label: "Add",
+        parent: "users"
+      }
+    })
+    .state("users-edit", {
+      url: "/users/edit/:user",
+      views: {
+        "main": {
+          templateUrl: "components/users/templates/add-edit-user.html",
+          controller : "UsersAddEditCtrl"
         }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "Edit {{user.username}}",
+        parent: "users"
+      }
+    });
 });

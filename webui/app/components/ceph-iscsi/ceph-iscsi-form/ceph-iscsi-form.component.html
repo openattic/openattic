@@ -1,16 +1,13 @@
 <div class="col-sm-12 col-lg-6">
 
-  <div class="panel panel-default" ng-show="$ctrl.targetId && $ctrl.error">
-    <div class="panel-heading">
-      <h3 class="panel-title">Couldn't load iSCSI target</h3>
-    </div>
-    <div class="panel-body">
-      iSCSI target "{{ $ctrl.targetId }}" could not be loaded.
-    </div>
-  </div>
-
   <oa-loading-panel message="iSCSI target is loading..."
-                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error"></oa-loading-panel>
+                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
+  </oa-loading-panel>
+  <oa-error-panel title="Couldn't load iSCSI target"
+                  message="iSCSI target "{{ $ctrl.targetId }}" could not be loaded."
+                  on-back="$ctrl.cancelAction()"
+                  ng-if="$ctrl.targetId && $ctrl.error">
+  </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="iscsiForm" role="form" class="form-horizontal" novalidate>
     <div class="panel panel-default">
@@ -242,7 +239,7 @@
               <div class="checkbox checkbox-primary">
                 <input type="checkbox" ng-model="$ctrl.model.authentication.hasMutualAuthentication" name="active" id="hasMutualAuthentication">
                 <label for="hasMutualAuthentication"
-                       ng-class="$ctrl.model.authentication.hasMutualAuthentication && !$ctrl.model.authentication.enabledMutualAuthentication ? 'strikethrough text-muted' : ''">
+                       ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasMutualAuthentication && !$ctrl.model.authentication.enabledMutualAuthentication}">
                   Mutual authentication
                 </label>
               </div>
@@ -295,7 +292,7 @@
               <div class="checkbox checkbox-primary">
                 <input type="checkbox" ng-model="$ctrl.model.authentication.hasDiscoveryAuthentication" name="active" id="hasDiscoveryAuthentication">
                 <label for="hasDiscoveryAuthentication"
-                       ng-class="$ctrl.model.authentication.hasDiscoveryAuthentication && !$ctrl.model.authentication.enabledDiscoveryAuthentication ? 'strikethrough text-muted' : ''">
+                       ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasDiscoveryAuthentication && !$ctrl.model.authentication.enabledDiscoveryAuthentication}">
                   Discovery authentication
                 </label>
               </div>
@@ -352,7 +349,7 @@
                   <input type="checkbox" ng-model="$ctrl.model.authentication.hasDiscoveryMutualAuthentication"
                          name="active" id="hasDiscoveryMutualAuthentication">
                   <label for="hasDiscoveryMutualAuthentication"
-                         ng-class="$ctrl.model.authentication.hasDiscoveryMutualAuthentication && !$ctrl.model.authentication.enabledDiscoveryMutualAuthentication ? 'strikethrough text-muted' : ''">
+                         ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasDiscoveryMutualAuthentication && !$ctrl.model.authentication.enabledDiscoveryMutualAuthentication}">
                       Discovery mutual authentication
                   </label>
                 </div>

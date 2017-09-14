@@ -11,10 +11,12 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import doctest
 
 from django.db import DataError
 from django.test import TestCase
 
+import taskqueue
 from taskqueue.models import Task, task, chain
 
 
@@ -106,3 +108,8 @@ class TaskTestCase(TestCase):
     def test_description(self):
         tq = add.delay(1,2)
         self.assertEqual(tq.description, 'Adding 1 and 2')
+
+
+def load_tests(loader, tests, ignore):
+    tests.addTests(doctest.DocTestSuite(taskqueue.models))
+    return tests

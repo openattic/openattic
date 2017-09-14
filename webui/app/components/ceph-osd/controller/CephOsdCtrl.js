@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephOsd");
-app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService, registryService) {
+app.controller("CephOsdCtrl", function ($scope, $state, $filter, $uibModal,
+    cephOsdService, registryService) {
   $scope.registry = registryService;
   $scope.cluster = undefined;
   $scope.osd = {};
@@ -63,20 +64,20 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
       $scope.error = false;
 
       cephOsdService
-          .get({
-            fsid    : $scope.registry.selectedCluster.fsid,
-            page    : $scope.filterConfig.page + 1,
-            pageSize: $scope.filterConfig.entries,
-            search  : $scope.filterConfig.search,
-            ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
-          })
-          .$promise
-          .then(function (res) {
-            $scope.osd = res;
-          })
-          .catch(function (error) {
-            $scope.error = error;
-          });
+        .get({
+          fsid    : $scope.registry.selectedCluster.fsid,
+          page    : $scope.filterConfig.page + 1,
+          pageSize: $scope.filterConfig.entries,
+          search  : $scope.filterConfig.search,
+          ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+        })
+        .$promise
+        .then(function (res) {
+          $scope.osd = res;
+        })
+        .catch(function (error) {
+          $scope.error = error;
+        });
     }
   };
 
@@ -100,6 +101,18 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, cephOsdService,
 
     $state.go("cephOsds.statistics", {
       "#": "more"
+    });
+  };
+
+  $scope.configureClusterAction = function () {
+    $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      component: "cephClusterSettingsModal",
+      resolve: {
+        fsid: function () {
+          return $scope.registry.selectedCluster.fsid;
+        }
+      }
     });
   };
 });

@@ -17,9 +17,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 
-from ceph.librados import Keyring, Client, run_in_external_process, ExternalCommandError
+from ceph.librados import Keyring, Client, run_in_external_process
 from ceph.models import CephCluster
 from ceph.restapi import CephClusterSerializer
+from exception import ExternalCommandError
 from grafana.grafana_proxy import GrafanaProxy
 from oa_settings import Settings, save_settings
 from deepsea import DeepSea

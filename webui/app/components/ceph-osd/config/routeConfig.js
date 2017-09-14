@@ -33,25 +33,25 @@
 var app = angular.module("openattic.cephOsd");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("cephOsds", {
-        url: "/ceph/osds",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-osd/templates/listing.html",
-            controller: "CephOsdCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Ceph OSDs"
+    .state("cephOsds", {
+      url: "/ceph/osds",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-osd/templates/listing.html",
+          controller: "CephOsdCtrl"
         }
-      })
-      .state("cephOsds.statistics", {
-        url: "/statistics",
-        views: {
-          "statistics": {templateUrl: "components/ceph-osd/templates/statistics.html"}
-        },
-        ncyBreadcrumb: {
-          skip: true
-        }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "Ceph OSDs"
+      }
+    })
+    .state("cephOsds.statistics", {
+      url: "/statistics",
+      views: {
+        "statistics": {templateUrl: "components/ceph-osd/templates/statistics.html"}
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    });
 });

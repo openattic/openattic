@@ -73,7 +73,7 @@ describe('ceph pool creation form', function(){
   });
 
   it('should show the right url', function(){
-    expect(browser.getCurrentUrl()).toContain('/ceph/pools/add');
+    helpers.checkLocation('ceph/pools/add');
   });
 
   it('should check if the submit button is disabled when the required fields are empty', function(){
@@ -111,7 +111,7 @@ describe('ceph pool creation form', function(){
       expect(firstCase.isDisplayed()).toBe(true);
       firstCase.sendKeys('tux');
       fe.name.byModel.click();
-      fe.firstAppDeletionBtn.byClass.click();
+      cephPoolProperties.deleteFirstApp();
       expect(firstCase.isPresent()).toBe(false);
     });
   });

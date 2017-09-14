@@ -201,19 +201,15 @@ app.component("cephIscsiForm", {
       {
         name: "Fast diff",
         value: "fast-diff"
-      },
-      {
-        name: "Data pool",
-        value: "data-pool"
       }
     ];
 
     var containsUnsupportedFeature = function (features) {
       return features.some(function (feature) {
         return self.unsupportedRbdFeatures
-            .findIndex(function (element) {
-              return element.value === feature;
-            }) !== -1;
+          .findIndex(function (element) {
+            return element.value === feature;
+          }) !== -1;
       });
     };
 
@@ -264,8 +260,8 @@ app.component("cephIscsiForm", {
     };
 
     var nextLunId = function () {
-      return self.model.images.reduce(function (nextLunId, currImage) {
-        return currImage.settings.lun >= nextLunId ? currImage.settings.lun + 1 : nextLunId;
+      return self.model.images.reduce(function (nextId, currImage) {
+        return currImage.settings.lun >= nextId ? currImage.settings.lun + 1 : nextId;
       }, 0);
     };
 

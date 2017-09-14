@@ -154,7 +154,7 @@ describe('should test the user form', function(){
     element(by.css('.tc_menuitem_ceph_pools')).click().then(function(){
       element(by.css('.oa-check-form-cancel')).click();
       expect(element(by.css('.oa-check-form-cancel')).isPresent()).toBe(false);
-      expect(browser.getCurrentUrl()).toContain('/#/users/add');
+      helpers.checkLocation('users/add');
     });
   });
 
@@ -164,7 +164,7 @@ describe('should test the user form', function(){
     confirmPasswd.sendKeys('test123');
     element(by.css('.tc_menuitem_ceph_pools')).click().then(function(){
       element(by.css('.oa-check-form-ok')).click();
-      expect(browser.getCurrentUrl()).toContain('/#/ceph/pools');
+      helpers.checkLocation('ceph/pools');
     });
   });
 

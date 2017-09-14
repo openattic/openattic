@@ -1,12 +1,20 @@
 'use strict';
 (function(){
   module.exports = {
-    url     : '<url_of_your_machine>/openattic/#/login', // Set where to go to log in.
+    urls: {
+      base: '<proto://addr:port>',
+      ui  : '/openattic/#/', // Use '/#/' for Vagrant boxes.
+      api : '/openattic/api/' // Use '/api/' for Vagrant boxes.
+    },
+
     username: '<log_in_name>', // Name of the user protractor uses.
     password: '<user_password>', // Password for the $log_in_name user.
     sleep   : 2000, // Default browser test sleep time.
-    outDir: '<existing_path>', // Path in which the errors can be stored in as screenshot and error log pair.
-    
+    outDir: '<existing_path>', // Path in which the test report will be stored. If preserveDirectory is false, this folder will be cleaned on each test.
+    preserveDirectory: <boolean>, // Indicates if each report should be created in a separate directory with unique name.
+    captureOnlyFailedSpecs: <boolean>, // When this option is enabled, reporter will create screenshots only for specs that have failed their expectations.
+    allScriptsTimeout: <ms>, // Timeout value for each test in miliseconds.
+
     cephCluster: { // Contains all ceph cluster definitions
       cluster1: { // Defines a cluster
         name: '<cluster_name>', // The name of the ceph cluster.

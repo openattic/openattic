@@ -15,7 +15,7 @@
 import logging
 import time
 
-from ceph.librados import ExternalCommandError
+from exception import ExternalCommandError
 from taskqueue.models import task
 from ceph import librados
 

@@ -1,17 +1,12 @@
 <oa-ceph-cluster-loader on-cluster-load="onClusterLoad(cluster)">
 <oa-module-loader>
 
-<div class="panel panel-default" ng-show="error && error.statusText === 'NOT FOUND'">
-    <div class="panel-heading">
-        <h3 class="panel-title">Error</h3>
-    </div>
-    <div class="panel-body">
-        Ceph cluster with fsid <strong>'{{registry.selectedCluster.fsid}}'</strong> couldn't be found.
-    </div>
-</div>
-
 <oa-loading-panel message="Ceph CRUSH map is loading..."
-                  ng-show="!error && !cluster.$resolved"></oa-loading-panel>
+                  ng-show="!error && !cluster.$resolved">
+</oa-loading-panel>
+<oa-error-panel message="Ceph cluster with fsid <strong>'{{registry.selectedCluster.fsid}}'</strong> couldn't be found."
+                ng-if="error && error.statusText === 'NOT FOUND'">
+</oa-error-panel>
 
 <div class="row" ng-show="!error && cluster.crushmap">
     <div class="col-lg-6">

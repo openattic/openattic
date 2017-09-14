@@ -43,19 +43,19 @@ app.service("cephNfsStateService", function (cephNfsService, taskQueueSubscriber
     var startingHosts = {};
     var stoppingHosts = {};
     angular.forEach(notStartedTasksResult.results, function (notStartedTask) {
-      var hostname = notStartedTask.host;
+      var localHostname = notStartedTask.host;
       if (notStartedTask.description === stopTaskDescr) {
-        stoppingHosts[hostname] = true;
+        stoppingHosts[localHostname] = true;
       } else if (notStartedTask.description === deployTaskDescr) {
-        startingHosts[hostname] = true;
+        startingHosts[localHostname] = true;
       }
     });
     angular.forEach(runningTasksResult.results, function (runningTask) {
-      var hostname = runningTask.host;
+      var localHostname = runningTask.host;
       if (runningTask.description === stopTaskDescr) {
-        stoppingHosts[hostname] = true;
+        stoppingHosts[localHostname] = true;
       } else if (runningTask.description === deployTaskDescr) {
-        startingHosts[hostname] = true;
+        startingHosts[localHostname] = true;
       }
     });
     if (startingHosts[hostname] === true) {
@@ -213,10 +213,10 @@ app.service("cephNfsStateService", function (cephNfsService, taskQueueSubscriber
               fsid: fsid
             })
             .$promise
-            .then(function (res) {
-              host.active = res[hostname].active;
-              host.message = res[hostname].message;
-              if (!res[hostname].active) {
+            .then(function (result) {
+              host.active = result[hostname].active;
+              host.message = result[hostname].message;
+              if (!result[hostname].active) {
                 host.state = "INACTIVE";
                 Notification.success({
                   title: hostname + " stopped successfully"

@@ -33,69 +33,82 @@
 var app = angular.module("openattic.cephPools");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("cephPools", {
-        url          : "/ceph/pools",
-        views        : {
-          "main": {
-            templateUrl: "components/ceph-pools/templates/listing.html",
-            controller : "CephPoolsCtrl"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "Ceph Pools"
+    .state("cephPools", {
+      url          : "/ceph/pools",
+      views        : {
+        "main": {
+          templateUrl: "components/ceph-pools/templates/listing.html",
+          controller : "CephPoolsCtrl"
         }
-      })
-      .state("cephPools.detail", {
-        views        : {
-          "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
-        },
-        ncyBreadcrumb: {
-          skip: true
+      },
+      ncyBreadcrumb: {
+        label: "Ceph Pools"
+      }
+    })
+    .state("cephPools.detail", {
+      views        : {
+        "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("ceph-pools-add", {
+      url: "/ceph/pools/add",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-pools/templates/add-pool.html",
+          controller : "CephPoolsAddCtrl"
         }
-      })
-      .state("ceph-pools-add", {
-        url: "/ceph/pools/add",
-        views: {
-          "main": {
-            templateUrl: "components/ceph-pools/templates/add-pool.html",
-            controller : "CephPoolsAddCtrl"
-          }
-        },
-        params: {
-          fsid: null
-        },
-        ncyBreadcrumb: {
-          parent: "cephPools",
-          label: "Add"
+      },
+      params: {
+        fsid: null
+      },
+      ncyBreadcrumb: {
+        parent: "cephPools",
+        label: "Add"
+      }
+    })
+    .state("ceph-pools-edit", {
+      url: "/ceph/pools/edit/:fsid/:poolId",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-pools/templates/add-pool.html",
+          controller : "CephPoolsAddCtrl"
         }
-      })
-      .state("cephPools.detail.cacheTier", {
-        url          : "/cachetier",
-        views        : {
-          "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} cache tier"
+      },
+      ncyBreadcrumb: {
+        label: "Edit {{pool.name}}",
+        parent: "cephPools"
+      }
+    })
+    .state("cephPools.detail.cacheTier", {
+      url          : "/cachetier",
+      views        : {
+        "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} cache tier"
+      }
+    })
+    .state("cephPools.detail.statistics", {
+      url          : "/statistics",
+      views        : {
+        "tab-content": {
+          templateUrl: "components/ceph-pools/templates/statistics.html"
         }
-      })
-      .state("cephPools.detail.statistics", {
-        url          : "/statistics",
-        views        : {
-          "tab-content": {
-            templateUrl: "components/ceph-pools/templates/statistics.html"
-          }
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} statistics"
-        }
-      })
-      .state("cephPools.detail.status", {
-        url          : "/status",
-        views        : {
-          "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
-        },
-        ncyBreadcrumb: {
-          label: "{{selection.item.name}} status"
-        }
-      });
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} statistics"
+      }
+    })
+    .state("cephPools.detail.status", {
+      url          : "/status",
+      views        : {
+        "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} status"
+      }
+    });
 });

@@ -31,11 +31,15 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
-    $uibModal, Notification, cephOsdService, cephCrushmapService,
+app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
+    $timeout, $uibModal, Notification, cephOsdService, cephCrushmapService,
     cephClusterService, cephErasureCodeProfilesService, cephPoolsService,
     $filter, SizeParserService) {
   const PG_MIN = 16;
+  const goToListView = function () {
+    $state.go("cephPools");
+  };
+
   $scope.pool = {
     name: "",
     pg_num: PG_MIN,
@@ -64,12 +68,14 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
         description: "Erasure code pool"
       }
     ],
+    pg_num: PG_MIN,
     profiles: [],
     expert: false,
     ruleset: undefined,
     osdCount: 1,
     flags: {},
-    compressionAlgorithms: [{
+    compressionAlgorithms: [
+      {
         name: "none",
         description: "none"
       },
@@ -90,7 +96,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
         description: "lz4"
       }
     ],
-    compressionModes: [{
+    compressionModes: [
+      {
         name: "none",
         description: "none"
       },
@@ -113,26 +120,158 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
 
   $scope.clusters = undefined;
 
-  var goToListView = function () {
-    $state.go("cephPools");
+  $scope.$init = () => {
+    if ($stateParams.poolId) {
+      $scope.prepareEditForm();
+    } else {
+      $scope.prepareAddForm();
+    }
   };
 
-  $scope.fsid = $stateParams.fsid;
+  $scope.prepareEditForm = () => {
+    $scope.editing = true;
+    cephClusterService.get({
+      fsid: $stateParams.fsid
+    })
+      .$promise
+      .then(function (cluster) {
+        $scope.clusters = [cluster];
+        $scope.data.cluster = cluster;
+      });
+    cephPoolsService.get({
+      id: $stateParams.poolId,
+      fsid: $stateParams.fsid
+    }).$promise.then(function (res) {
+      angular.extend($scope.pool, res);
+      $scope.data.pg_num = $scope.pool.pg_num;
+      $scope.data.ruleset = $scope.pool.crush_ruleset;
+      $scope.data.compression_min_blob_size = $scope.pool.compression_min_blob_size + "b";
+      $scope.updateCompressionMinBlobSize();
+      $scope.data.compression_max_blob_size = $scope.pool.compression_max_blob_size + "b";
+      $scope.updateCompressionMaxBlobSize();
+      $scope.data.flags.ec_overwrites = $scope.pool.flags.indexOf("ec_overwrites") !== -1;
+      $scope.data.cluster = {
+        fsid: $stateParams.fsid
+      };
+      $scope.clusters = [ $scope.data.cluster ];
+      $scope.apps.used = Object.keys($scope.pool.application_metadata);
+      $scope.apps.all = $scope.apps.all.concat($scope.apps.used).filter((app, index, apps) => {
+        return apps.indexOf(app) === index;
+      });
+    });
+  };
+
+  $scope.prepareAddForm = () => {
+    $scope.fsid = $stateParams.fsid;
+    cephClusterService.get()
+      .$promise
+      .then(function (clusters) {
+        $scope.clusters = clusters.results;
+        angular.forEach($scope.clusters, function (cluster) {
+          if (cluster.fsid === $scope.fsid) {
+            $scope.data.cluster = cluster;
+          }
+        });
+        if (!$scope.data.cluster) {
+          if (clusters.count > 0) {
+            $scope.data.cluster = $scope.clusters[0];
+          } else {
+            Notification.warning({
+              title: "No cluster available",
+              msg: "You can't create any pools with your configuration."
+            });
+          }
+        }
+      });
+
+    $scope.$watch("data.ruleset", function (ruleset) {
+      if (ruleset) {
+        $scope.pool.crush_ruleset = ruleset.rule_id;
+        $scope.useRulesetSize();
+      } else {
+        $scope.pool.crush_ruleset = undefined;
+      }
+    });
+  };
+
+  $scope.$watch("data.cluster", function (cluster) {
+    if (cluster) {
+      $scope.data.cluster.loaded = false;
+      $scope.fsid = cluster.fsid;
+
+      let promises = [];
+      promises.push(
+        cephClusterService.status({
+          fsid: cluster.fsid
+        }).$promise
+      );
+      promises.push(
+        cephErasureCodeProfilesService.get({
+          fsid: cluster.fsid
+        }).$promise
+      );
+      promises.push(
+        cephOsdService.get({
+          fsid: cluster.fsid,
+          osd_objectstore: "bluestore"
+        }).$promise
+      );
+      promises.push(
+        cephCrushmapService.get({
+          fsid: cluster.fsid
+        }).$promise
+      );
+      $q.all(promises)
+        .then((res) => {
+          $scope.data.osdCount = res[0].osdmap.osdmap.num_osds;
+          $scope.data.profiles = res[1].results;
+          $scope.bluestore = res[2].count > 0;
+          $scope.data.cluster.rules = {
+            replicated: [],
+            erasure: []
+          };
+          /* Confusing types because of:
+           * https://bitbucket.org/openattic/openattic/src/2a054091ffb56d69b7ccee9ee7070b5116261d6b/backend/ceph/
+           * models.py?at=master&fileviewer=file-view-default#models.py-327
+           */
+          const type = {
+            1: "replicated",
+            3: "erasure"
+          };
+          angular.forEach(res[3].crushmap.rules, (ruleset) => {
+            $scope.data.cluster.rules[type[ruleset.type]].push(ruleset);
+          });
+          $scope.rulesetChange();
+          $scope.data.cluster.loaded = true;
+          $scope.pgSizeChange();
+          $scope.ecProfileChange();
+        })
+        .catch((error) => {
+          $scope.error = error;
+        });
+    }
+  });
+
+  $scope.$init(); // TODO: Convert this controller to a component
 
   $scope.pgUpdate = function (pgs, jump) {
-    pgs = pgs || $scope.pool.pg_num;
+    pgs = pgs || $scope.data.pg_num;
     var power =  Math.round(Math.log(pgs) / Math.log(2));
     if (angular.isNumber(jump)) {
       power += jump;
     }
     pgs = Math.pow(2, power); // Set size the nearest accurate size.
-    if (pgs < PG_MIN) {
-      pgs = PG_MIN;
+    if (pgs < $scope.pool.pg_num) {
+      pgs = $scope.pool.pg_num;
+    } else {
+      $scope.data.pg_num = pgs;
     }
-    $scope.pool.pg_num = pgs;
   };
 
   $scope.pgSizeChange = function () {
+    if ($scope.editing) {
+      return;
+    }
     var pgs = $scope.data.osdCount * 100;
     var type = $scope.pool.type;
     var eprofile = $scope.pool.erasure.profile;
@@ -151,75 +290,6 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
       $scope.pgUpdate(undefined, 188 - event.keyCode);
     }
   };
-
-  cephClusterService.get()
-    .$promise
-    .then(function (clusters) {
-      $scope.clusters = clusters.results;
-      angular.forEach($scope.clusters, function (cluster) {
-        if (cluster.fsid === $scope.fsid) {
-          $scope.data.cluster = cluster;
-        }
-      });
-      if (!$scope.data.cluster) {
-        if (clusters.count > 0) {
-          $scope.data.cluster = $scope.clusters[0];
-        } else {
-          Notification.warning({
-            title: "No cluster available",
-            msg: "You can't create any pools with your configuration."
-          });
-        }
-      }
-    });
-
-  $scope.$watch("data.cluster", function (cluster) {
-    if (cluster) {
-      $scope.data.cluster.loaded = false;
-      $scope.fsid = cluster.fsid;
-      cephClusterService.status({fsid: cluster.fsid})
-        .$promise
-        .then(function (cluster) {
-          $scope.data.osdCount = cluster.osdmap.osdmap.num_osds;
-          // Calculation found here: http://docs.ceph.com/docs/master/rados/operations/placement-groups/#data-durability
-          $scope.pgSizeChange();
-        });
-      cephErasureCodeProfilesService.get({fsid: cluster.fsid})
-        .$promise
-        .then(function (res) {
-          $scope.data.profiles = res.results;
-          $scope.ecProfileChange();
-        });
-      cephOsdService.get({
-          fsid: cluster.fsid,
-          osd_objectstore: "bluestore"
-        })
-          .$promise
-          .then(function (res) {
-            $scope.bluestore = res.count > 0;
-          });
-      cephCrushmapService.get({fsid: cluster.fsid})
-        .$promise
-        .then(function (res) {
-          $scope.data.cluster.rules = {
-            replicated: [],
-            erasure: []
-          };
-          /* Confusing types because of:
-           * https://bitbucket.org/openattic/openattic/src/2a054091ffb56d69b7ccee9ee7070b5116261d6b/backend/ceph/
-           * models.py?at=master&fileviewer=file-view-default#models.py-327
-           */
-          var type = {
-            1: "replicated",
-            3: "erasure"
-          };
-          angular.forEach(res.crushmap.rules, function (ruleset) {
-            $scope.data.cluster.rules[type[ruleset.type]].push(ruleset);
-          });
-          $scope.data.cluster.loaded = true;
-        });
-    }
-  });
 
   $scope.ecProfileChange = function () {
     if ($scope.data.profiles.length === 1) {
@@ -273,66 +343,82 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
     }
   };
 
-  $scope.$watch("data.ruleset", function (ruleset) {
-    if (ruleset) {
-      $scope.pool.crush_ruleset = ruleset.rule_id;
-      $scope.useRulesetSize();
-    } else {
-      $scope.pool.crush_ruleset = undefined;
-    }
-  });
-
   $scope.onSizeChange = function () {
     $scope.useRulesetSize();
     $scope.pgSizeChange();
   };
 
-  $scope.submitAction = function (poolForm) {
-    if (poolForm.$valid) {
-      var pool = {
-        name: $scope.pool.name,
-        pg_num: $scope.pool.pg_num,
-        type: $scope.pool.type,
-        fsid: $scope.fsid,
-        crush_ruleset: $scope.data.ruleset && $scope.data.ruleset.rule_id
-      };
-      const apps = {};
-      $scope.apps.used.forEach((app) => {
-        apps[app] = {};
-      });
-      pool.application_metadata = apps;
-      if (pool.type === "replicated") {
-        pool.min_size = 1; // No need for this here - API update needed.
-        pool.size = $scope.pool.size;
-      } else if (pool.type === "erasure") {
-        pool.erasure_code_profile = $scope.pool.erasure.profile.name;
-      }
-      angular.forEach($scope.data.flags, function (isSet, flag) {
-        if (angular.isUndefined(pool.flags) && isSet) {
-          pool.flags = [];
-        }
-        return isSet && pool.flags.push(flag);
-      });
-      // Compression
-      if ($scope.pool.compression_mode !== "none") {
-        pool.compression_algorithm = $scope.pool.compression_algorithm;
-        pool.compression_mode = $scope.pool.compression_mode;
-        pool.compression_min_blob_size = SizeParserService
-          .parseInt($scope.data.compression_min_blob_size, "b");
-        pool.compression_max_blob_size = SizeParserService
-          .parseInt($scope.data.compression_max_blob_size, "b");
-        pool.compression_required_ratio =
-          $scope.pool.compression_required_ratio;
-      }
-
-      cephPoolsService.save(pool)
-        .$promise
-        .then(function () {
-          goToListView();
-        }, function () {
-          $scope.poolForm.$submitted = false;
+  $scope.submitAction = function () {
+    $timeout(() => {
+      if ($scope.poolForm.$valid) {
+        let pool = {
+          name: $scope.pool.name,
+          pg_num: $scope.data.pg_num
+        };
+        const apps = {};
+        $scope.apps.used.forEach((_app) => {
+          apps[_app] = {};
         });
+        pool.application_metadata = apps;
+        if ($scope.editing) {
+          $scope.submitEdit(pool);
+        } else {
+          $scope.submitAdd(pool);
+        }
+      }
+    });
+  };
+
+  $scope.submitEdit = (pool) => {
+    pool.id = $stateParams.poolId;
+    cephPoolsService.update({
+        fsid: $stateParams.fsid,
+        id: pool.id
+      }, pool)
+      .$promise
+      .then(function () {
+        goToListView();
+      }, function () {
+        $scope.poolForm.$submitted = false;
+      });
+  };
+
+  $scope.submitAdd = (pool) => {
+    angular.extend(pool, {
+      type: $scope.pool.type,
+      fsid: $scope.fsid,
+      crush_ruleset: $scope.data.ruleset && $scope.data.ruleset.rule_id
+    });
+    if (pool.type === "replicated") {
+      pool.min_size = 1; // No need for this here - API update needed.
+      pool.size = $scope.pool.size;
+    } else if (pool.type === "erasure") {
+      pool.erasure_code_profile = $scope.pool.erasure.profile.name;
     }
+    angular.forEach($scope.data.flags, function (isSet, flag) {
+      if (angular.isUndefined(pool.flags) && isSet) {
+        pool.flags = [];
+      }
+      return isSet && pool.flags.push(flag);
+    });
+    // Compression
+    if ($scope.pool.compression_mode !== "none") {
+      pool.compression_algorithm = $scope.pool.compression_algorithm;
+      pool.compression_mode = $scope.pool.compression_mode;
+      pool.compression_min_blob_size = SizeParserService
+        .parseInt($scope.data.compression_min_blob_size, "b");
+      pool.compression_max_blob_size = SizeParserService
+        .parseInt($scope.data.compression_max_blob_size, "b");
+      pool.compression_required_ratio =
+        $scope.pool.compression_required_ratio;
+    }
+    cephPoolsService.save(pool)
+      .$promise
+      .then(function () {
+        goToListView();
+      }, function () {
+        $scope.poolForm.$submitted = false;
+      });
   };
 
   $scope.cancelAction = function () {
@@ -398,24 +484,24 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
 
   $scope.app = {
     selected: undefined,
-    add: (app) => {
-      if (!angular.isString(app) || app === "") {
+    add: (_app) => {
+      if (!angular.isString(_app) || _app === "") {
         return;
       }
       // A custom app without a name will be undefined
       $scope.app.remove(undefined);
-      if ($scope.apps.used.indexOf(app) === -1) {
-        if (app === "Custom application") {
-          app = undefined;
-        } else if ($scope.apps.all.indexOf(app) === -1) {
-          $scope.apps.all.push(app);
+      if ($scope.apps.used.indexOf(_app) === -1) {
+        if (_app === "Custom application") {
+          _app = undefined;
+        } else if ($scope.apps.all.indexOf(_app) === -1) {
+          $scope.apps.all.push(_app);
         }
         //$scope.apps.used.push(app);
-        $scope.apps.used = [app].concat($scope.apps.used);
+        $scope.apps.used = [_app].concat($scope.apps.used);
       }
     },
-    remove: (app) => {
-      const emptyAppIndex = $scope.apps.used.indexOf(app);
+    remove: (_app) => {
+      const emptyAppIndex = $scope.apps.used.indexOf(_app);
       if (emptyAppIndex !== -1) {
         $scope.app.removeByIndex(emptyAppIndex);
       }
@@ -429,8 +515,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams,
     all: ["cephfs", "rbd", "rgw"],
     used: [],
     getAvail: () => {
-      const appList = $scope.apps.all.filter((app) => {
-        return $scope.apps.used.indexOf(app) === -1;
+      const appList = $scope.apps.all.filter((_app) => {
+        return $scope.apps.used.indexOf(_app) === -1;
       }).sort();
       appList.push("Custom application");
       return appList;

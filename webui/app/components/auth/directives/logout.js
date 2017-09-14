@@ -41,11 +41,11 @@ app.directive("logout", function () {
     controller: function ($scope, $rootScope, $state, authService) {
       $scope.handleLogout = function () {
         authService.logout()
-        .$promise
-        .then(function () {
-          $rootScope.user = null;
-          $state.go("login");
-        });
+          .$promise
+          .then(function () {
+            $rootScope.user = null;
+            $state.go("login");
+          });
       };
     }
   };

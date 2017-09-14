@@ -44,13 +44,13 @@ app.directive("oadatatable", function () {
       special: "="
     },
     link: function (scope, element, attr, controller, transclude) {
-      transclude(scope, function (clone, scope) {
+      transclude(scope, function (clone, _scope) {
         element.find(".oadatatableactions").append(clone.filter("actions")).append(clone.filter("additional-actions"));
         element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
-          scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
+          _scope.columns[$(item).text()] = angular.isUndefined($(item).attr("disabled"));
           if (item.attributes.sortfield) {
-            scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
+            _scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
           }
         });
       });
@@ -228,6 +228,12 @@ app.directive("oadatatable", function () {
         $scope.store.sortorder = $scope.filterConfig.sortorder;
       };
 
+      $scope.$watchCollection("filterConfig", function () {
+        // Reset the selection, e.g. otherwise the statistic/detail tab page of the
+        // previous selected row is still shown during the datatable is reloaded.
+        $scope.selection.items = [];
+      });
+
       $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
         $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
         $scope.store.entries = newVal;
@@ -242,6 +248,10 @@ app.directive("oadatatable", function () {
       };
 
       $scope.reloadTable = function () {
+        // Reset the selection, e.g. otherwise the statistic/detail tab page of the
+        // previous selected row is still shown during the datatable is reloaded.
+        $scope.selection.items = [];
+        // Force the reloading of the datatable content.
         $scope.filterConfig.reload = new Date();
       };
     }

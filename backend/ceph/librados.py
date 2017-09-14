@@ -14,25 +14,26 @@
 import subprocess
 from StringIO import StringIO
 from collections import deque
-from contextlib import contextmanager, closing
+from contextlib import contextmanager
 import fnmatch
-
+from errno import EPERM
 from configobj import ConfigObj
-from django.utils.functional import cached_property
-from django.conf import settings as django_settings
-
-import oa_settings
-from conf import settings
-
-import rados
 import os
 import json
 import glob
 import logging
-import multiprocessing
 import ConfigParser
 
+from django.utils.functional import cached_property
+from django.conf import settings as django_settings
+
+import rados
 import rbd
+
+import oa_settings
+from ceph.conf import settings
+from exception import ExternalCommandError
+from utilities import run_in_external_process
 
 logger = logging.getLogger(__name__)
 
@@ -306,7 +307,7 @@ class Client(object):
     def change_pool_owner(self, pool_name, auid):
         return self.get_pool(pool_name).change_auid(auid)
 
-    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None):
+    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None, target=None):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
@@ -339,7 +340,7 @@ class Client(object):
 
         if type(cmd) is str:
             return self.mon_command(
-                {'prefix': cmd}, argdict, output_format, default_return)
+                {'prefix': cmd}, argdict, output_format, default_return, target)
 
         elif type(cmd) is dict:
             (ret, out, err) = self._cluster.mon_command(
@@ -347,7 +348,8 @@ class Client(object):
                                 format=output_format,
                                 **argdict if argdict is not None else {})),
                 '',
-                timeout=self._default_timeout)
+                timeout=self._default_timeout,
+                target=target)
             logger.debug('mod command {}, {}, {}'.format(cmd, argdict, err))
             if ret == 0:
                 if output_format == 'json':
@@ -360,7 +362,7 @@ class Client(object):
                         return default_return
                 return out
             else:
-                raise ExternalCommandError(err, cmd, argdict)
+                raise ExternalCommandError(err, cmd, argdict, code=ret)
 
 
 class ClientManager(object):
@@ -380,48 +382,6 @@ class ClientManager(object):
         return self.instances[fsid]
 
 clients = ClientManager()
-
-
-class ExternalCommandError(Exception):
-    def __init__(self, err, cmd=None, argdict=None):
-        argdict = argdict if isinstance(argdict, dict) else {}
-        if cmd is None:
-            s = err
-        else:
-            cmd = cmd['prefix'] if isinstance(cmd, dict) and 'prefix' in cmd else cmd
-            s = 'Executing "{} {}" failed: {}'.format(cmd, ' '.join(
-                ['{}={}'.format(k, v) for k, v in argdict.items()]), err)
-        super(ExternalCommandError, self).__init__(s)
-
-
-def run_in_external_process(func, timeout=30):
-    class LibradosProcess(multiprocessing.Process):
-        def __init__(self, com_pipe):
-            multiprocessing.Process.__init__(self)
-            self.com_pipe = com_pipe
-
-        def run(self):
-            with closing(self.com_pipe):
-                try:
-                    self.com_pipe.send(func())
-                except Exception as e:
-                    logger.exception("Exception when running a librados process.")
-                    self.com_pipe.send(e)
-
-    com1, com2 = multiprocessing.Pipe()
-    p = LibradosProcess(com2)
-    p.start()
-    with closing(com1):
-        if com1.poll(timeout):
-            res = com1.recv()
-            p.join()
-            if isinstance(res, Exception):
-                raise res
-            return res
-        else:
-            p.terminate()
-            raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
-                                       '({} sec).'.format(p.name, p.pid, timeout))
 
 
 def call_librados(fsid, method, timeout=30):
@@ -676,6 +636,8 @@ class MonApi(object):
         "delete pool", \
         "osd", "rw", "cli,rest")
 
+        Also handles `mon-allow-pool-delete=false`
+
         :param pool: Pool name
         :type pool: str | unicode
         :param pool2: Second pool name
@@ -684,9 +646,44 @@ class MonApi(object):
         :type sure: str
         :return: empty string
         """
-        return self._call_mon_command('osd pool delete',
-                                      self._args_to_argdict(pool=pool, pool2=pool2, sure=sure),
-                                      output_format='string')
+
+        def impl(client):
+            pool_delete_args = self._args_to_argdict(pool=pool, pool2=pool2, sure=sure)
+
+            try:
+                return client.mon_command('osd pool delete', pool_delete_args, output_format='string')
+            except ExternalCommandError as e:
+                if e.code != EPERM:
+                    raise
+
+                if 'mon_allow_pool_delete' not in str(e):
+                    logger.info('Expected to find "mon_allow_pool_delete" in ""'.format(str(e)))
+                    raise
+
+                logger.info('Executing fallback for mon_allow_pool_delete=false\n{}'.format(str(e)))
+
+                mon_names = [mon['name'] for mon in
+                             client.mon_command('mon dump')['mons']]  # ['a', 'b', 'c']
+                try:
+                    for mon_name in mon_names:
+                        client.mon_command('injectargs',
+                                           self._args_to_argdict(
+                                                    injected_args=['--mon-allow-pool-delete=true']),
+                                           output_format='string',
+                                           target=mon_name)
+                    res = client.mon_command('osd pool delete',
+                                             pool_delete_args,
+                                             output_format='string')
+                finally:
+                    for mon_name in mon_names:
+                        client.mon_command('injectargs',
+                                           self._args_to_argdict(
+                                                   injected_args=['--mon-allow-pool-delete=false']),
+                                           output_format='string',
+                                           target=mon_name)
+                return res
+
+        return call_librados(self.fsid, impl)
 
     @undoable
     def osd_pool_mksnap(self, pool, snap):
@@ -852,6 +849,29 @@ class MonApi(object):
                                      output_format='string')
         self.osd_out(name)
 
+
+    @undoable
+    def osd_set(self, key):
+        """
+        COMMAND("osd set " \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent|sortbitwise|recovery_deletes|require_jewel_osds|require_kraken_osds", \
+        "set <key>", "osd", "rw", "cli,rest")
+        """
+        yield self._call_mon_command('osd set', self._args_to_argdict(key=key),
+                                     output_format='string')
+        self.osd_unset(key)
+
+    @undoable
+    def osd_unset(self, key):
+        """
+        COMMAND("osd unset " \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent", \
+        "unset <key>", "osd", "rw", "cli,rest")
+        """
+        yield self._call_mon_command('osd unset', self._args_to_argdict(key=key),
+                                     output_format='string')
+        self.osd_set(key)
+
     @undoable
     def osd_crush_reweight(self, name, weight, undo_previous_weight=None):
         """
@@ -867,6 +887,11 @@ class MonApi(object):
         self.osd_crush_reweight(name, undo_previous_weight)
 
     def osd_dump(self):
+        """
+        COMMAND("osd dump " \
+        "name=epoch,type=CephInt,range=0,req=false",
+        "print summary of OSD map", "osd", "r", "cli,rest")
+        """
         return self._call_mon_command('osd dump')
 
     def osd_list(self):
@@ -1115,7 +1140,7 @@ class RbdApi(object):
                                 stderr=subprocess.PIPE)
         out, err = proc.communicate()
         if proc.returncode:
-            raise ExternalCommandError('rbd failed: {}'.format(err))
+            raise ExternalCommandError('rbd failed: {}'.format(err), code=proc.returncode)
         return json.loads(out)
 
     def image_disk_usage(self, pool_name, name):

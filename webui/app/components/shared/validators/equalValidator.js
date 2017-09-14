@@ -28,22 +28,22 @@
  * for the JavaScript code in this page.
  *
  */
-'use strict';
+"use strict";
 
-var app = angular.module('openattic.shared');
-app.directive('equalValidator', function () {
+var app = angular.module("openattic.shared");
+app.directive("equalValidator", function () {
   return {
-    require: 'ngModel',
-    restrict: 'A',
+    require: "ngModel",
+    restrict: "A",
     scope: {
-      equalValidator: '='
+      equalValidator: "="
     },
     link: function (scope, element, attrs, ngModel) {
       ngModel.$validators.equalValidator = function (modelValue) {
         return modelValue === scope.equalValidator;
       };
 
-      scope.$watch('equalValidator', function () {
+      scope.$watch("equalValidator", function () {
         ngModel.$validate();
       });
     }

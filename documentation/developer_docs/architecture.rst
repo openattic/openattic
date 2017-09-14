@@ -45,8 +45,10 @@ Please check out
 `Django at a glance <https://docs.djangoproject.com/en/1.7/intro/overview/>`_
 for more information.
 
-Filesystem API
---------------
+|oA| systemd background process
+-------------------------------
 
-The filesystem API abstracts handling different file systems, translates actions
-initiated by the model into commands to be executed and calls Systemd accordingly.
+Some tasks require root privileges for being performed. In |oA|, this is done
+via a separate background process ``openattic-systemd``, written in Python. The
+Django web application uses ``DBUS`` as a bidirectional communication channel
+to this background service.

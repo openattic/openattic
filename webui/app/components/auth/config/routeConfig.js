@@ -33,13 +33,13 @@
 var app = angular.module("openattic.auth");
 app.config(function ($stateProvider) {
   $stateProvider
-      .state("login", {
-        url: "/login",
-        views: {
-          "main": {
-            templateUrl: "components/auth/templates/login.html",
-            controller : "AuthCtrl"
-          }
+    .state("login", {
+      url: "/login",
+      views: {
+        "main": {
+          templateUrl: "components/auth/templates/login.html",
+          controller : "AuthCtrl"
         }
-      });
+      }
+    });
 });

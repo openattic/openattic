@@ -1,16 +1,12 @@
 <div class="col-sm-12 col-lg-6">
-
-  <div class="panel panel-default" ng-show="$ctrl.isEditMode() && $ctrl.error">
-    <div class="panel-heading">
-      <h3 class="panel-title">Couldn't load NFS export</h3>
-    </div>
-    <div class="panel-body">
-      NFS export could not be loaded.
-    </div>
-  </div>
-
   <oa-loading-panel message="NFS export is loading..."
-                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error"></oa-loading-panel>
+                    ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
+  </oa-loading-panel>
+  <oa-error-panel title="Couldn't load NFS export"
+                  message="NFS export could not be loaded."
+                  on-back="$ctrl.cancelAction()"
+                  ng-if="$ctrl.isEditMode() && $ctrl.error">
+  </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="nfsForm"
         role="form" class="form-horizontal" novalidate oa-check-form>
