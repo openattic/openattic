@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,16 +30,9 @@
  */
 "use strict";
 
-import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component"
-import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component"
-import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component"
-
-angular
-  .module("openattic.cephNodes", [])
-  .component("cephNodesScrubModal", cephNodesScrubModal)
-  .component("cephNodesDetail", cephNodesDetail)
-  .component("cephNodesStatistics", cephNodesStatistics);
-
-require("./config/routeConfig");
-require("./controller/CephNodesCtrl");
-require("./services/cephNodesService");
+export default {
+  template: require("./ceph-nodes-statistics.component.html"),
+  bindings: {
+    selection: "<"
+  }
+}

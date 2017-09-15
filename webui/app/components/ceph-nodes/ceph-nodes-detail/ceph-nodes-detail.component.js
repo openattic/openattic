@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,16 +30,28 @@
  */
 "use strict";
 
-import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component"
-import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component"
-import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component"
+class CephNodesDetail {
 
-angular
-  .module("openattic.cephNodes", [])
-  .component("cephNodesScrubModal", cephNodesScrubModal)
-  .component("cephNodesDetail", cephNodesDetail)
-  .component("cephNodesStatistics", cephNodesStatistics);
+  constructor (cephNodesService) {
+    this.cephNodesService = cephNodesService;
+  }
 
-require("./config/routeConfig");
-require("./controller/CephNodesCtrl");
-require("./services/cephNodesService");
+  $doCheck () {
+    if (this.selection.item && this.selection.item.daemons &&
+      angular.isObject(this.selection.item.daemons)) {
+      this.osds = this.selection.item.daemons.filter((daemon) => {
+        return daemon.startsWith("osd.");
+      });
+    } else {
+      this.osds = [];
+    }
+  }
+}
+
+export default {
+  template: require("./ceph-nodes-detail.component.html"),
+  bindings: {
+    selection: "<"
+  },
+  controller: CephNodesDetail
+};
