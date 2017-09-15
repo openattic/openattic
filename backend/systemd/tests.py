@@ -22,6 +22,9 @@ from time import time
 from django.test import TestCase
 
 from systemd.lockutils import acquire_lock, release_lock, AlreadyLocked, Lockfile
+import systemd.helpers  # test imports
+import systemd.plugins  # test imports
+import systemd.procutils  # test imports
 
 class LockutilsTestCase(TestCase):
 

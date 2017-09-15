@@ -22,7 +22,7 @@ from rest_client import _ResponseValidator
 from sysutils.database_utils import make_default_admin, SimpleDatabaseUpgrade
 
 
-class KeyringTestCase(TestCase):
+class SimpleDatabaseUpgradeTestCase(TestCase):
 
     _expected_content = [
         ('ifconfig_host', [

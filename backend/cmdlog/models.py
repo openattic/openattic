@@ -20,6 +20,11 @@ from ifconfig.models import Host
 
 
 class LogEntry(models.Model):
+    """
+    An entry in the log. Mostly deprecated now.
+
+    >>> assert unicode(LogEntry(exitcode=1, command='cmd', starttime='s')) == "cmd at s (failed)"
+    """
     host = models.ForeignKey(Host)
     command = models.CharField(max_length=250, verbose_name=_("Command"))
     user = models.CharField(max_length=50)

@@ -38,6 +38,7 @@ Fixed
 
 Removed
 ~~~~~~~
+* Removed old `virtualenv` requirements.txt entries (OP-2675)
 
 [3.5.0] - 2017-09-14
 --------------------
