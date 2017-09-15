@@ -14,11 +14,6 @@ OADIR="/usr/share/openattic"
 OAUSER="openattic"
 OAGROUP="openattic"
 
-SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
-SYSD_LOGLEVEL="INFO"
-SYSD_OPTIONS="$OADIR/manage.py runsystemd"
-
 WEBSERVER_SERVICE="httpd"
 
 # Host of the Salt-API which shall be used by openATTIC. Can be an IP address or a hostname.
