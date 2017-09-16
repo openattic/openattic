@@ -28,6 +28,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 
 Removed
 ~~~~~~~

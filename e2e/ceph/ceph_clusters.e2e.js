@@ -1,12 +1,21 @@
+'use strict';
+
 var helpers = require('../common.js');
 
-describe('should test the ceph cluster settings modal', function(){
-  var cephOSDs = element(by.css('.tc_menuitem_ceph_osds'));
-  var configureClusterBtn = element(by.css('.tc_configureCluster'));
+var cephOSDs = element(by.css('.tc_menuitem_ceph_osds'));
+var configureClusterBtn = element(by.css('.tc_configureCluster'));
 
+const resetFlags = () => {
+  configureClusterBtn.click();
+  element.all(by.css('ceph-cluster-settings-modal .ng-not-empty')).click();
+  element(by.css('.tc_submitButton')).click();
+};
+
+describe('should test the ceph cluster settings modal', function(){
   beforeAll(function(){
     helpers.login();
     cephOSDs.click();
+    resetFlags();
   });
 
   it('should show "Configure Cluster" button', function(){
