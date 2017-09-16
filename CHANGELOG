@@ -19,9 +19,18 @@ To describe their impact on the project, changes are grouped as follows:
 [3.5.1] - unreleased
 --------------------
 
+Added
+~~~~~
+
 Changed
 ~~~~~~~
 * WebUI: Improve taskQueueSubscriber (OP-2674)
+
+Fixed
+~~~~~
+
+Removed
+~~~~~~~
 
 [3.5.0] - 2017-09-14
 --------------------
