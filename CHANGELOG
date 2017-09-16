@@ -29,6 +29,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
+* WebUI/QA: Harden task queue deletion test cases (OP-2626)
 
 Removed
 ~~~~~~~
