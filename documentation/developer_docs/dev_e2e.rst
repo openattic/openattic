@@ -164,7 +164,6 @@ In directory ``e2e/`` the following directories can be found::
 
   +-- base
   |   '-- auth
-  |   '-- commandLogs
   |   '-- datatable
   |   '-- general
   |   '-- pagination

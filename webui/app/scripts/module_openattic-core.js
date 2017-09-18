@@ -33,7 +33,6 @@
 import "../components/apidecorator/module";
 import "../components/apirecorder/module";
 import "../components/auth/module";
-import "../components/commandlog/module";
 import "../components/dashboard/module";
 import "../components/grafana/grafana.module";
 import "../components/navigation/module";
@@ -51,7 +50,6 @@ angular.module("openattic.core", [
   "openattic.apidecorator",
   "openattic.apirecorder",
   "openattic.auth",
-  "openattic.commandlog",
   "openattic.dashboard",
   "openattic.feedback",
   "openattic.grafana",
