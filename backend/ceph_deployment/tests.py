@@ -16,8 +16,9 @@ from django.test import TestCase
 from mock import mock
 from requests import ConnectionError
 
-from ceph_deployment.models.ceph_minion import all_metadata, merge_pillar_metadata
+from ceph_deployment.models.ceph_minion import all_metadata, merge_pillar_metadata, CephMinion
 from deepsea import DeepSea
+from ifconfig.models import get_host_name
 from rest_client import BadResponseFormatException, RequestException
 
 
@@ -598,3 +599,20 @@ class MetadataTestCase(TestCase):
         res = merge_pillar_metadata()
         self.assertEqual(res, expected_result)
 
+    @mock.patch('ceph_deployment.models.ceph_minion.getaddrinfo')
+    def test_addresses(self, getaddrinfo_mock):
+        getaddrinfo_mock.return_value = [
+            (10, 1, 6, '', ('2a00:1450:4001:81b::2003', 0, 0, 0)),
+            (10, 2, 17, '', ('2a00:1450:4001:81b::2003', 0, 0, 0)),
+            (10, 3, 0, '', ('2a00:1450:4001:81b::2003', 0, 0, 0)),
+            (2, 1, 6, '', ('172.217.22.35', 0)),
+            (2, 2, 17, '', ('172.217.22.35', 0)),
+            (2, 3, 0, '', ('172.217.22.35', 0)),
+            (2, 3, 0, '', ('127.0.0.1', 0)),
+            (2, 3, 0, '', ('127.0.1.1', 0)),
+            (2, 3, 0, '', ('::1', 0)),
+        ]
+        m = CephMinion(hostname=get_host_name())
+        self.assertTrue(m.attribute_is_unevaluated_lazy_property('addresses'))
+        print m.addresses
+        self.assertEqual(m.addresses, {'172.217.22.35', '2a00:1450:4001:81b::2003'})
