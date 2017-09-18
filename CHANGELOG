@@ -23,6 +23,7 @@ Added
 ~~~~~
 * Packaging: make_dist.py: Added `--sign` option to sign tarballs with GPG
   (OP-2124)
+* Backend: Corrected `openattic-systemd.service` file. (OP-2570)
 
 Changed
 ~~~~~~~
