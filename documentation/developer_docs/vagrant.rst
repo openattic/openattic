@@ -158,12 +158,8 @@ following commands instead.
     cd openattic/backend
     which systemctl && sudo systemctl reload dbus || sudo service dbus reload
     sudo /home/vagrant/env/bin/python /home/vagrant/openattic/backend/manage.py runsystemd &
-    python manage.py pre_install
-    python manage.py migrate
-    python manage.py loaddata */fixtures/initial_data.json
-    python manage.py add-host
-    python manage.py makedefaultadmin
-    python manage.py post_install
+    python manage.py install --pre-install
+    python manage.py install --post-install
 
 Troubleshooting
 ---------------

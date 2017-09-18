@@ -11,11 +11,11 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-import doctest
 
-from ifconfig import models
+from django.conf.urls import patterns, url
+from ifconfig.views import current_host
 
-
-def load_tests(loader, tests, ignore):
-    tests.addTests(doctest.DocTestSuite(models))
-    return tests
+urlpatterns = patterns('',
+                       url(r'^api/hosts/current', current_host,
+                           name="current_host"),
+)

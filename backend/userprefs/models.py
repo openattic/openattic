@@ -18,15 +18,12 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 
-from ifconfig.models import Host
-
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User)
-    host = models.ForeignKey(Host)
 
     class Meta:
-        unique_together = ("user", "host")
+        unique_together = ("user",)
 
     def __getitem__(self, item):
         try:

@@ -217,7 +217,7 @@ systemctl start postgresql
 # The setup of apache2 may not be finished at the post stage due to
 # scriptlets included in apache2's own posttrans. So we need to move
 # the attempt to start it here:
-oaconfig install || oaconfig install --allow-broken-hostname
+oaconfig install
 systemctl enable apache2
 systemctl start apache2
 
