@@ -16,11 +16,13 @@ import mock
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from django.db.models import Q
+from django.db.models import Q, CharField
 from django.test import TestCase
+from django_filters import FilterSet, DateTimeFilter, Filter, CharFilter
 
 from nodb.models import NodbQuerySet, NodbModel, JsonField, bulk_attribute_setter
 from nodb.restapi import NodbSerializer
+from rest.utilities import CommaSeparatedValueFilter
 
 
 class QuerySetTestCase(TestCase):
@@ -31,21 +33,19 @@ class QuerySetTestCase(TestCase):
 
         class CephClusterMock(NodbModel):
 
+            name = CharField(max_length=100)
+            fsid = CharField(max_length=100)
+
             @staticmethod
             def get_all_objects(context, query):
-                cluster1 = mock.MagicMock()
-                cluster1.fsid = 'e79f3338-f9e4-4656-8af3-7af7357fcd09'
-                cluster1.name = 'ceph'
+                return [
+                    CephClusterMock(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd09', name='ceph'),
+                    CephClusterMock(fsid='e90a0c5a-5caa-405a-bc09-a7cfd1874243', name='vinara'),
+                    CephClusterMock(fsid='kd89g3lf-sed4-j986-asd3-akf84nchazeb', name='balkan'),
+                ]
 
-                cluster2 = mock.MagicMock()
-                cluster2.fsid = 'e90a0c5a-5caa-405a-bc09-a7cfd1874243'
-                cluster2.name = 'vinara'
-
-                cluster3 = mock.MagicMock()
-                cluster3.fsid = 'kd89g3lf-sed4-j986-asd3-akf84nchazeb'
-                cluster3.name = 'balkan'
-
-                return [cluster1, cluster2, cluster3]
+            def __str__(self):
+                return self.name
 
         cls.qs = NodbQuerySet(CephClusterMock)
 
@@ -63,12 +63,29 @@ class QuerySetTestCase(TestCase):
 
         cls.order_qs = NodbQuerySet(OrderTestModel)
 
+        class EmptyModel(NodbModel):
+
+            @staticmethod
+            def get_all_objects(context, query):
+                return []
+
+        cls.empty_qs = NodbQuerySet(EmptyModel)
+
+
     def test_kwargs_filter_by_name(self):
         filter_result = self.qs.filter(name='balkan')
 
         self.assertEqual(len(filter_result), 1)
         self.assertEqual(filter_result[0].name, 'balkan')
         self.assertEqual(filter_result[0].fsid, 'kd89g3lf-sed4-j986-asd3-akf84nchazeb')
+
+    def test_filter_or(self):
+        filter_result = self.qs.filter(Q(name='ceph') | Q(name='balkan'))
+        self.assertEqual(len(filter_result), 2)
+
+        filter_result = self.qs.filter(Q() | Q(name='ceph') | Q(name='balkan'))
+        self.assertEqual(len(filter_result), 2)
+
 
     def test_kwargs_filter_by_id(self):
         filter_result = self.qs.filter(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd09')
@@ -150,6 +167,25 @@ class QuerySetTestCase(TestCase):
         eq_order([self.ordering_b, self.ordering_a, self.ordering_c], "x", "-y")
         eq_order([self.ordering_c, self.ordering_a, self.ordering_b], "-x", "y")
         eq_order([self.ordering_c, self.ordering_b, self.ordering_a], "-x", "-y")
+
+    def test_nonzero(self):
+        self.assertTrue(bool(self.qs))
+        self.assertFalse(bool(self.empty_qs))
+
+    def test_filter_in(self):
+
+        class NameInFilterSet(FilterSet):
+            name_in = CommaSeparatedValueFilter(name='name', lookup_type='in')
+
+            class Meta:
+                model = self.qs.model
+                fields = 'name',
+
+        self.assertEqual(NameInFilterSet({'name': 'ceph'}, self.qs).qs[0].name, 'ceph')
+
+        qs = NameInFilterSet({'name_in': 'ceph,balkan'}, self.qs).qs
+        self.assertEqual(len(qs), 2)
+
 
 
 class DictFieldSerializerTest(TestCase):

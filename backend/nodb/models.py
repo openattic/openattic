@@ -113,6 +113,8 @@ class NodbQuerySet(QuerySet):
                 return attr.startswith(value)
             elif modifier == "icontains":
                 return value in attr
+            elif modifier == "in":
+                return attr in value
             else:
                 raise ValueError('Unsupported Modifier {}.'.format(modifier))
 
@@ -156,7 +158,8 @@ class NodbQuerySet(QuerySet):
             elif q.connector == "AND":
                 return negate(reduce(lambda l, r: l and filter_one_q(r, obj), q.children, True))
             else:
-                return negate(reduce(lambda l, r: l or filter_one_q(r, obj), q.children, False))
+                children = {c for c in q.children if not isinstance(c, Q) or c.children}
+                return negate(reduce(lambda l, r: l or filter_one_q(r, obj), children, False))
 
         filtered = [obj for obj in self._data()
                     if filter_one_q(self._query.q, obj)]
@@ -236,6 +239,9 @@ class NodbQuerySet(QuerySet):
 
     def __repr__(self):
         return super(NodbQuerySet, self).__repr__()
+
+    def __nonzero__(self):
+        return bool(len(self))
 
     def iterator(self):
         logger.warning(

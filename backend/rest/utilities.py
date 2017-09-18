@@ -15,6 +15,7 @@
 
 # Don't import Views, otherwise you get a circular import in pagination.PageSizePageNumberPagination
 from django.http.request import QueryDict # Docstring
+from django_filters import Filter
 from rest_framework.serializers import Serializer
 from rest_framework.response import Response
 
@@ -148,3 +149,16 @@ class DeleteCreateMixin(object):
         def restore_object(self, attrs, instance=None):  # DRF 2
             attrs = self.update_validated_data(attrs)
             return super(DeleteCreateMixin, self).restore_object(attrs, instance)
+
+
+class CommaSeparatedValueFilter(Filter):
+    """Accept comma separated string as value and convert it to list.
+    It's useful for __in lookups.
+    """
+
+    def filter(self, qs, value):
+        if value:
+            value.split(',')
+        if value in ([], (), {}, None, ''):
+            return qs
+        return qs.filter(**{'%s__%s' % (self.name, self.lookup_type): value})

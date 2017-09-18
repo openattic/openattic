@@ -594,10 +594,13 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
 
 class CephOsd(NodbModel, RadosMixin):
     id = models.IntegerField(primary_key=True, editable=False)
+
+    cluster = models.ForeignKey(CephCluster, editable=False, null=True, blank=True)
+
     crush_weight = models.FloatField()
     exists = models.IntegerField(editable=False)
     name = models.CharField(max_length=100, editable=False)
-    primary_affinity = models.FloatField()
+    primary_affinity = models.FloatField(default=0.0)
     reweight = models.FloatField()
     status = models.CharField(max_length=100, editable=False)
     type = models.CharField(max_length=100, editable=False)
@@ -618,14 +621,14 @@ class CephOsd(NodbModel, RadosMixin):
         osd_dump_data = api.osd_dump()['osds']  # key=osd
         pg_dump_data = api.pg_dump()['osd_stats']  # key=osd
         osd_metadata = api.osd_metadata()  # key=id
-        fields_to_force = ['primary_affinity']
         zipped_data = zip_by_keys(('id', osd_tree),
                                   ('osd', osd_dump_data),
                                   ('osd', pg_dump_data),
                                   ('id', osd_metadata))
         return [CephOsd(
-            **CephOsd.make_model_args(dict(in_state=data['in'] if 'in' in data else 0, **data),
-                                      fields_force_none=fields_to_force))
+            **CephOsd.make_model_args(aggregate_dict(data,
+                                                     in_state=data['in'] if 'in' in data else 0,
+                                                     cluster_id=context.fsid)))
                 for data
                 in zipped_data]
 
@@ -637,8 +640,7 @@ class CephOsd(NodbModel, RadosMixin):
         2. Modify the Ceph state-machine in a sane way.
         3. Providing a RESTful API.
         """
-        context = CephPool.objects.nodb_context
-        api = self.mon_api(context.fsid)
+        api = self.mon_api(self.cluster.fsid)
 
         if self.id is None:
             raise ValidationError('Creating OSDs is not supported.')
@@ -658,6 +660,13 @@ class CephOsd(NodbModel, RadosMixin):
                                    'supported'.format(key, value, self.name))
 
             super(CephOsd, self).save(*args, **kwargs)
+
+    def scrub(self, deep_scrub):
+        api = self.mon_api(self.cluster.fsid)
+        if deep_scrub:
+            return api.osd_deep_scrub(self.name)
+        else:
+            return api.osd_scrub(self.name)
 
     @property
     def utilization(self):
