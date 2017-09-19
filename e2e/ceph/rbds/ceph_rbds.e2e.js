@@ -11,10 +11,10 @@ describe('should test the ceph rbd panel', function(){
     rbdProperties.cephRBDs.click();
   });
 
-  rbdProperties.useWriteablePools(function(cluster, pool){
-    it('should create a rbd with default settings on ' + pool.name + ' in cluster ' + cluster.name, function(){
-      rbdProperties.selectClusterAndPool(cluster.name, pool.name);
-      var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
+  rbdProperties.useWriteablePools((poolName) => {
+    it('should create a rbd with default settings on ' + poolName, function(){
+      rbdProperties.selectPool(poolName);
+      var rbdName = 'e2e_' + poolName;
       rbdProperties.createRbd(rbdName);
     });
   });
@@ -23,7 +23,7 @@ describe('should test the ceph rbd panel', function(){
     helpers.checkLocation('ceph/rbds');
   });
 
-  it('should display the ceph RBD table after selecting a cluster', function(){
+  it('should display the ceph RBD table', () => {
     expect(element(by.css('.tc_cephRbdTable')).isDisplayed()).toBe(true);
   });
 
@@ -37,28 +37,6 @@ describe('should test the ceph rbd panel', function(){
     expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
   });
 
-  /* TODO: Update the tests to use the configuration
-  it('should select a cluster', function(){
-    rbdProperties.selectCluster.click();
-  });
-
-  it('should still have the cluster selected and display RBDs when switching between panels', function(){
-    element(by.css('ul .tc_menuitem_pools > a')).click();
-    helpers.checkLocation('pools');
-    rbdProperties.cephMenu.click();
-    rbdProperties.cephRBDs.click();
-    helpers.checkLocation('ceph/rbds');
-    expect(element(by.id('cluster-selection')).getText()).toContain('ceph (');
-    expect(element.all(by.binding('row.name')).count()).toBeGreaterThan(0);
-  });
-
-  it('should have a details tab when selecting a rbd', function(){
-    element.all(by.binding('row.name')).get(0).click();
-    helpers.checkLocation('ceph/rbds/details#more');
-    expect(element(by.css('.tc_detailsTab')).isDisplayed()).toBe(true);
-  });
-  */
-
   rbdProperties.detailAttributes.forEach(function(attribute){
     it('should check the content attribute "' + attribute + '" in the details tab when selecting a rbd', function(){
       element.all(by.binding('row.name')).get(0).click();
@@ -66,20 +44,20 @@ describe('should test the ceph rbd panel', function(){
     });
   });
 
-  rbdProperties.useWriteablePools(function(cluster, pool){
+  rbdProperties.useWriteablePools((poolName) => {
     it('should have a statistic tab when selecting a rbd', function(){
       // Select the created rbd
-      helpers.get_list_element('e2e_' + pool.name + '_' + cluster.name).click();
+      helpers.search_for_element('e2e_' + poolName).click();
       rbdProperties.statisticsTab.click();
       helpers.checkLocation('ceph/rbds/statistics#more');
       expect(rbdProperties.statisticsTab.isDisplayed()).toBe(true);
     });
   });
 
-  rbdProperties.useWriteablePools(function(cluster, pool){
-    it('should delete the created rbd on ' + pool.name + ' in cluster ' + cluster.name, function(){
-      rbdProperties.selectCluster(cluster.name);
-      var rbdName = 'e2e_' + pool.name + '_' + cluster.name;
+  rbdProperties.useWriteablePools((poolName) => {
+    it('should delete the created rbd on ' + poolName, function(){
+      var rbdName = 'e2e_' + poolName;
+      helpers.search_for_element(rbdName).click();
       rbdProperties.deleteRbd(rbdName);
     });
   });

@@ -30,6 +30,8 @@ Changed
 * WebUI: Improve taskQueueSubscriber (OP-2674)
 * WebUI: Replace grunt for webpack (OP-2566)
 * WebUI: Replace bower for npm (OP-2567)
+* WebUI: Hiding the cluster selection in RBD form if only one cluster exists
+  (OP-2684)
 
 Fixed
 ~~~~~
