@@ -26,6 +26,8 @@ Added
 Changed
 ~~~~~~~
 * WebUI: Improve taskQueueSubscriber (OP-2674)
+* WebUI: Replace grunt for webpack (OP-2566)
+* WebUI: Replace bower for npm (OP-2567)
 
 Fixed
 ~~~~~
