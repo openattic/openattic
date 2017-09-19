@@ -236,6 +236,7 @@ class CephOsdSerializer(NodbSerializer):
 class CephOsdViewSet(NodbViewSet):
     """Represents a Ceph osd."""
     filter_fields = ("name", "id", "osd_objectstore")
+    search_fields = ("name", "hostname", "status", "osd_objectstore")
     serializer_class = CephOsdSerializer
 
     def __init__(self, **kwargs):
