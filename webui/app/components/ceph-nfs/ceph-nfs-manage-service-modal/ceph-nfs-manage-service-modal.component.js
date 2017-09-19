@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsManageServiceModal", {
-  templateUrl: "components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html",
+  template: require("./ceph-nfs-manage-service-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"

@@ -30,6 +30,23 @@
  */
 "use strict";
 
+import "../components/apidecorator/module";
+import "../components/apirecorder/module";
+import "../components/auth/module";
+import "../components/commandlog/module";
+import "../components/dashboard/module";
+import "../components/grafana/grafana.module";
+import "../components/navigation/module";
+import "../components/notification/module";
+import "../components/settings/settings.module";
+import "../components/shared/shared.module";
+import "../scripts/services/sizeParserService";
+import "../components/tabView/module";
+import "../components/userinfo/module";
+import "../components/taskQueue/module";
+import "../components/users/module";
+import "../components/feedback/feedback.module";
+
 angular.module("openattic.core", [
   "openattic.apidecorator",
   "openattic.apirecorder",

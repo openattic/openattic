@@ -44,7 +44,7 @@ class oaErrorPanel {
 
 var app = angular.module("openattic.shared");
 app.component("oaErrorPanel", {
-  templateUrl: "components/shared/oa-error-panel/oa-error-panel.component.html",
+  template: require("./oa-error-panel.component.html"),
   bindings: {
     title: "@?",
     message: "@",

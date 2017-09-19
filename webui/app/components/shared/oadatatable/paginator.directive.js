@@ -34,7 +34,7 @@ var app = angular.module("openattic.shared");
 app.directive("paginator", function () {
   return {
     restrict: "E",
-    templateUrl: "components/shared/oadatatable/paginator.directive.html",
+    template: require("./paginator.directive.html"),
     scope: {
       page: "=",
       pages: "="

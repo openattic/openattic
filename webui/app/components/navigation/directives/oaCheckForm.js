@@ -57,7 +57,7 @@ app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
         animation: true,
         ariaLabelledBy: "modal-title-bottom",
         ariaDescribedBy: "modal-body-bottom",
-        templateUrl: "components/navigation/templates/oa-check-form.html",
+        template: require("../templates/oa-check-form.html"),
         controller: function ($scope) {
           $scope.ok = function () {
             scope.cancelTrans();

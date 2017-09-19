@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
       url          : "/dashboard",
       views        : {
         "main": {
-          templateUrl: "components/dashboard/templates/dashboard.html",
-          controller : "DashboardCtrl"
+          template: require("../templates/dashboard.html"),
+          controller: "DashboardCtrl"
         }
       },
       ncyBreadcrumb: {

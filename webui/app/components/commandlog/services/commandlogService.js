@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.commandlog");
 app.factory("commandlogService", function ($resource) {
   return $resource(globalConfig.API.URL + "cmdlogs/:id", {

@@ -33,7 +33,7 @@
 var app = angular.module("openattic.notification");
 app.directive("oaNotifications", function () {
   return {
-    templateUrl: "components/notification/templates/oa-notifications.html",
+    template: require("../templates/oa-notifications.html"),
     controller: function ($scope, Notification) {
       $scope.notifications = [];
 

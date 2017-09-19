@@ -30,11 +30,13 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.taskQueue");
 app.directive("oaTaskQueue", function () {
   return {
     restrict: "A",
-    templateUrl: "components/taskQueue/templates/oa-task-queue-directive.html",
+    template: require("../templates/oa-task-queue-directive.html"),
     controller: function ($scope, Notification, $uibModal, $interval, taskQueueFetcher) {
       $scope.taskOverview = {
         firstUpdate: true,
@@ -167,8 +169,8 @@ app.directive("oaTaskQueue", function () {
        */
       $scope.runnersDialog = function () {
         var taskDialog = $uibModal.open({
-          windowTemplateUrl: "templates/messagebox.html",
-          templateUrl: "components/taskQueue/templates/task-queue-dialog.html",
+          windowTemplate: require("../../../templates/messagebox.html"),
+          template: require("../templates/task-queue-dialog.html"),
           controller: "TaskQueueModalCtrl",
           size: "lg",
           animation: false

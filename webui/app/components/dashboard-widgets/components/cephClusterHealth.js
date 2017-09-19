@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.dashboardWidgets");
 app.component("cephHealth", {
-  templateUrl: "components/dashboard-widgets/templates/ceph-cluster-health.html",
+  template: require("../templates/ceph-cluster-health.html"),
   controller: function ($scope, $interval, cephClusterService) {
     var self = this;
     var promise;
@@ -99,7 +99,7 @@ app.component("cephHealth", {
       if (data.warn.length > 0 || data.err.length > 0) {
         angular.forEach(data.warn.concat(data.err), function (cluster) {
           cephClusterService
-            .status({fsid: cluster.fsid})
+            .status({ fsid: cluster.fsid })
             .$promise
             .then(function (res) {
               // Convert object to array

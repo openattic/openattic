@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdDetail", {
-  templateUrl: "components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html",
+  template: require("./ceph-rbd-detail.component.html"),
   bindings: {
     selection: "<"
   },

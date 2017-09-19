@@ -280,10 +280,6 @@ if [ -z "$IS_TRUSTY" ] ; then
     systemd-tmpfiles --create
 fi
 
-npm install -g bower
-npm install -g grunt-cli
-
-
 if [ "$IS_XENIAL" ]
 then
 sudo -u postgres psql << EOF
@@ -381,8 +377,6 @@ popd
 pushd openattic/webui
 
 npm install
-bower install
-grunt build
 
 popd
 

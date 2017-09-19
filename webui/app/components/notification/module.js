@@ -30,6 +30,14 @@
  */
 "use strict";
 
+import "angular-toasty/dist/angular-toasty";
+
 angular.module("openattic.notification", [
   "angular-toasty"
 ]);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

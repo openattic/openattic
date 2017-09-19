@@ -39,7 +39,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       url: "/apikeys",
       views: {
         "main": {
-          templateUrl: "templates/apikeys.html"
+          template: require("../../templates/apikeys.html")
         }
       },
       ncyBreadcrumb: {

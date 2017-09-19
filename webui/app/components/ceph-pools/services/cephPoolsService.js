@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephPools");
 app.factory("cephPoolsService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid/pools/:id", {

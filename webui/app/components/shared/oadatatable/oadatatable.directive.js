@@ -35,7 +35,7 @@ app.directive("oadatatable", function () {
   return {
     restrict: "E",
     transclude: true,
-    templateUrl: "components/shared/oadatatable/oadatatable.directive.html",
+    template: require("./oadatatable.directive.html"),
     scope: {
       selection: "=",
       onSelectionChange: "&",

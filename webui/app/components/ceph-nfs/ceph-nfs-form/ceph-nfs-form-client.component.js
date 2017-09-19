@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsFormClient", {
-  templateUrl: "components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html",
+  template: require("./ceph-nfs-form-client.component.html"),
   bindings: {
     clientBlocks: "<",
     form: "<",

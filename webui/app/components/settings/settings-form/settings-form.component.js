@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.settings");
 app.component("settingsForm",  {
-  templateUrl: "components/settings/settings-form/settings-form.component.html",
+  template: require("./settings-form.component.html"),
   bindings: {
   },
   controller: function ($scope, $state, $timeout, $q, settingsFormService, cephClusterService, hostsService,
