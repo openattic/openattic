@@ -592,7 +592,6 @@ class OsdPoolDeleteTest(TestCase):
         api = ceph.librados.MonApi('fsid')
         api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
         self.assertTrue(client_mock.mon_command.called)
-        print client_mock.mon_command.mock_calls
         calls = [
             mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
             mock.call('mon dump'),

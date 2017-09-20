@@ -15,12 +15,14 @@ import doctest
 
 from django.utils.unittest import TestCase
 
+import module_status
 import utilities
 import exception
 
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(utilities))
+    tests.addTests(doctest.DocTestSuite(module_status))
     return tests
 
 
