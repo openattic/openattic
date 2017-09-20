@@ -186,6 +186,7 @@
    * Closes the task queue dialog.
    */
   self.close = function(){
+    browser.sleep(helpers.configs.sleep / 2);
     element(by.className('modal-close-btn')).click();
     self.expectDefaultModalElements(false);
   };
@@ -252,10 +253,13 @@
       depth = 1;
     }
     browser.sleep(helpers.configs.sleep / 2);
-    // Because it won't be displayed if not task is there anymore.
-    self.dialog.tabs.pending.elements.refreshBtn.isDisplayed().then(function(isDisplayed){
+    // Because it won't be displayed if no task is there anymore.
+    const refreshBtn = self.dialog.tabs.pending.elements.refreshBtn;
+    refreshBtn.isDisplayed().then((isDisplayed) => {
       if(isDisplayed){
-        self.dialog.tabs.pending.elements.refreshBtn.click();
+        // This will click even if protractor says that another element would receive the click.
+        // This can only happen if some error - mostly cluster related - has poped up.
+        browser.actions().mouseMove(refreshBtn).click().perform();
       }
     });
     self.dialog.tabs.pending.elements.tab.getText().then(function(s){

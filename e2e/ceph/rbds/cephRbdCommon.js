@@ -321,6 +321,7 @@ var rbdCommons = function(){
 
     taskQueueHelpers.waitForPendingTasks();
     self.cephRBDs.click();
+    browser.sleep(helpers.configs.sleep / 2);
     helpers.checkForUnsavedChanges(false);
 
     var rbd = helpers.search_for_element(rbdName);
