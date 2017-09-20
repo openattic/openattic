@@ -30,10 +30,12 @@
  */
 "use strict";
 
-angular.module("openattic.cephNodes", []);
+import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component"
 
-requireAll(require.context("./", true, /\.js$/));
+angular
+  .module("openattic.cephNodes", [])
+  .component("cephNodesScrubModal", cephNodesScrubModal);
 
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+require("./config/routeConfig");
+require("./controller/CephNodesCtrl");
+require("./services/cephNodesService");
