@@ -77,15 +77,13 @@ then
 
     apt-get update -y
     apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-
     apt-get install -y git build-essential python-dev lsb-release
 fi
 
 if [ "$IS_SUSE" ]
 then
     zypper refresh
-    # TODO: Disabled cause of Error: Subprocess failed. Error: RPM failed: error: unpacking of archive failed on file /usr/lib64/ruby/gems/2.1.0/cache/json_pure-2.0.1.gem: cpio: chown failed - Operation not permitted
-    # zypper --non-interactive up
+    zypper --non-interactive up
 fi
 
 # Create the system user and group 'openattic'.
@@ -110,7 +108,7 @@ if [ "${DISABLE_CEPH_REPO}" == false ] ; then
     fi
 
     if [ "$IS_SUSE" ] ; then
-        if ! zypper repos filesystems_ceph_jewel >/dev/null; then
+        if ! zypper repos filesystems_ceph_luminous >/dev/null; then
             zypper ar http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
             zypper --gpg-auto-import-keys --non-interactive ref
         fi
