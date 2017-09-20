@@ -46,6 +46,7 @@ file-loader                                 0.11.2              MIT             
 html-webpack-plugin                         2.30.1              MIT                         https://github.com/jantimon/html-webpack-plugin/tree/v2.30.1
 postcss-loader                              2.0.6               MIT                         https://github.com/postcss/postcss-loader/tree/v2.0.6
 protractor                                  5.1.2               MIT                         https://github.com/angular/protractor/tree/5.1.2
+protractor-fail-fast                        3.0.2               MIT                         https://github.com/Updater/protractor-fail-fast/tree/v3.0.2
 protractor-jasmine2-screenshot-reporter     0.4.1               MIT                         https://github.com/mlison/protractor-jasmine2-screenshot-reporter
 raw-loader                                  0.5.1               MIT                         https://github.com/webpack-contrib/raw-loader
 rimraf                                      2.6.2               ISC                         https://github.com/isaacs/rimraf/tree/v2.6.2

@@ -31,6 +31,7 @@
 'use strict';
 var config = require('./e2e/configs.js');
 var HtmlScreenshotReporter = require("protractor-jasmine2-screenshot-reporter");
+var failFast = require("protractor-fail-fast");;
 
 var allSuites = {
   // base suites - They should always be able to run.
@@ -91,6 +92,10 @@ var reporter = new HtmlScreenshotReporter({
 });
 
 exports.config = {
+  plugins: [
+    failFast.init()
+  ],
+
   seleniumAddress: 'http://localhost:4444/wd/hub',
   jasmineNodeOpts: {
     defaultTimeoutInterval: 360000
@@ -117,6 +122,7 @@ exports.config = {
   afterLaunch: function(exitCode) {
     return new Promise(function(resolve){
       reporter.afterLaunch(resolve.bind(this, exitCode));
+      failFast.clean(); // Removes the fail file once all test runners have completed.
     });
   }
 };
