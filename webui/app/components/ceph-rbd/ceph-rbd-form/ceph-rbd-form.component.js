@@ -406,7 +406,7 @@ app.component("cephRbdForm", {
 
     self.previewStriping = function () {
       $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephRbdStripingModal",
         resolve: {
           size: () => {

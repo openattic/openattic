@@ -50,7 +50,7 @@ class CephRbdStripingModal {
 
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdStripingModal", {
-  templateUrl: "components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html",
+  template: require("./ceph-rbd-striping-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
