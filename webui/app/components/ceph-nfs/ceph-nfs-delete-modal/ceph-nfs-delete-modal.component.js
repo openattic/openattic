@@ -37,7 +37,7 @@ class CephNfsDeleteModal {
     this.cephNfsService = cephNfsService;
   }
 
-  delete () {
+  deleteNfs () {
     return this.$q((resolve, reject) => {
       let exportIds = [];
       this.resolve.selectionItems.forEach((selectionItem) => {
@@ -62,12 +62,11 @@ class CephNfsDeleteModal {
   };
 }
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsDeleteModal", {
+export default {
   template: require("./ceph-nfs-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
   controller: CephNfsDeleteModal
-});
+};

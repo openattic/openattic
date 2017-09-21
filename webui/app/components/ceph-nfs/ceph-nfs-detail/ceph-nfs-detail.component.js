@@ -64,11 +64,10 @@ class CephNfsDetail {
   }
 }
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsDetail", {
+export default {
   template: require("./ceph-nfs-detail.component.html"),
   bindings: {
     selection: "<"
   },
   controller: CephNfsDetail
-});
+};

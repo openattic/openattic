@@ -85,8 +85,7 @@ class CephNfsFormClient {
   };
 }
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsFormClient", {
+export default {
   template: require("./ceph-nfs-form-client.component.html"),
   bindings: {
     clientBlocks: "<",
@@ -95,4 +94,4 @@ app.component("cephNfsFormClient", {
     squash: "<"
   },
   controller: CephNfsFormClient
-});
+};

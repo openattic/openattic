@@ -225,8 +225,7 @@ class CephNfsList {
   }
 }
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsList", {
+export default {
   template: require("./ceph-nfs-list.component.html"),
   controller: CephNfsList
-});
+};

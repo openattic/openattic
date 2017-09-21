@@ -30,11 +30,26 @@
  */
 "use strict";
 
-angular.module("openattic.cephNfs", []);
+import cephNfsDeleteModal from "./ceph-nfs-delete-modal/ceph-nfs-delete-modal.component"
+import cephNfsDetail from "./ceph-nfs-detail/ceph-nfs-detail.component"
+import cephNfsForm from "./ceph-nfs-form/ceph-nfs-form.component"
+import cephNfsFormClient from "./ceph-nfs-form/ceph-nfs-form-client.component"
+import cephNfsList from "./ceph-nfs-list/ceph-nfs-list.component"
+import cephNfsManageServiceModal from "./ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component"
 
-requireAll(require.context("./", true, /\.js$/));
+angular
+  .module("openattic.cephNfs", [])
+  .component("cephNfsDeleteModal", cephNfsDeleteModal)
+  .component("cephNfsDetail", cephNfsDetail)
+  .component("cephNfsForm", cephNfsForm)
+  .component("cephNfsFormClient", cephNfsFormClient)
+  .component("cephNfsList", cephNfsList)
+  .component("cephNfsManageServiceModal", cephNfsManageServiceModal);
+
+require("./ceph-nfs.routes");
+require("./ceph-nfs-form/ceph-nfs-form.service.js");
+requireAll(require.context("./shared", true, /\.js$/));
 
 function requireAll (require) {
   require.keys().forEach(require);
 }
-require("./ceph-nfs.routes");

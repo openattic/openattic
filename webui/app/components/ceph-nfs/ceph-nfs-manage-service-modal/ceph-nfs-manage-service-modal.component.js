@@ -97,12 +97,11 @@ class CephNfsManageServiceModal {
 
 }
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsManageServiceModal", {
+export default {
   template: require("./ceph-nfs-manage-service-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
   controller: CephNfsManageServiceModal
-});
+};

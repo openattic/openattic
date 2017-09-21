@@ -350,10 +350,9 @@ class CephNfsForm {
   };
 }
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsForm", {
+export default {
   template: require("./ceph-nfs-form.component.html"),
   bindings: {
   },
   controller: CephNfsForm
-});
+};
