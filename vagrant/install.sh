@@ -242,6 +242,13 @@ if [ ! -e "webui/app/config.local.js" ]; then
     cp webui/app/config.local.js.sample webui/app/config.local.js
     sed -i -e 's#/openattic/api/#/api/#' webui/app/config.local.js
 fi
+if [ ! -e "webui/webpack.config.json" ]; then
+    cat <<EOF > webui/webpack.config.json
+{
+  "contextRoot": "/"
+}
+EOF
+fi
 popd
 
 # Modify the configuration for creation, deletion and cleaning of volatile and temporary files.

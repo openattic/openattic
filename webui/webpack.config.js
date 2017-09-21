@@ -9,6 +9,17 @@ var CopyWebpackPlugin = require("copy-webpack-plugin");
 var fs = require("fs");
 
 /**
+ * Config
+ * Default values for the config
+ * These will be changed if you define them in webpack.config.js.
+ */
+let apiConfig = {};
+if (fs.existsSync(__dirname + "/webpack.config.json")) {
+  apiConfig = JSON.parse(fs.readFileSync(__dirname + "/webpack.config.json", "utf8"));
+}
+let contextRoot = apiConfig.contextRoot || "/openattic/";
+
+/**
  * Env
  * Get npm lifecycle event to identify the environment
  */
@@ -41,7 +52,7 @@ module.exports = (function makeWebpackConfig () {
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
-    publicPath: "/openattic/",
+    publicPath: contextRoot,
 
     // Filename for entry points
     // Only adds hash in build mode
@@ -237,27 +248,20 @@ module.exports = (function makeWebpackConfig () {
     };
   }
 
-  let apiConfig = {};
-  if (fs.existsSync(__dirname + "/webpack.config.json")) {
-    apiConfig = JSON.parse(fs.readFileSync(__dirname + '/webpack.config.json', 'utf8'));
-  }
-
     /**
    * Dev server configuration
-   * You need to create webpack.config.json to use Dev server,
    * use the format described on webpack.config.json.sample
    * Reference: https://webpack.js.org/configuration/dev-server/
    */
   config.devServer = {
     contentBase: "./app",
     stats: "minimal",
-    proxy: {
-      '/openattic/api': {
-        target: apiConfig.target,
-        secure: false
-      }
-    }
+    proxy: {}
   };
+  config.devServer.proxy[contextRoot + "api"] = {
+    target: apiConfig.target || "http://192.168.100.200",
+    secure: false
+  }
 
   return config;
 }());
