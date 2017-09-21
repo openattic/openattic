@@ -40,6 +40,7 @@ Fixed
 * WebUI/QA: Fix random NFS e2e add export failure (OP-2672)
 * WebUI: Add context root to the webpack configuration (OP-2697)
 * WebUI: Fix missing html files (OP-2698)
+* WebUI/QA: Increased test task times in the directive suite (OP-2671)
 
 Removed
 ~~~~~~~
