@@ -217,6 +217,10 @@ module.exports = (function makeWebpackConfig () {
     {
       from: __dirname + "/app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html",
       to: __dirname + "/dist/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html"
+    },
+    {
+      from: __dirname + "/app/components/shared/oa-module-loader/reason*.html",
+      to: __dirname + "/dist/components/shared/oa-module-loader/[name].[ext]"
     }
   ])
   );
