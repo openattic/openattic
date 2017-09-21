@@ -32,14 +32,15 @@
 
 import "../ceph-cluster/module";
 import "../registry/module";
+import cephOdsScrubModal from "./ceph-osd-scrub-modal/ceph-osd-scrub-modal.component";
 
-angular.module("openattic.cephOsd", [
-  "openattic.cephCluster",
-  "openattic.registry"
-]);
+angular
+  .module("openattic.cephOsd", [
+    "openattic.cephCluster",
+    "openattic.registry"
+  ])
+  .component("cephOdsScrubModal", cephOdsScrubModal);
 
-requireAll(require.context("./", true, /\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+require("./config/routeConfig");
+require("./controller/CephOsdCtrl");
+require("./services/cephOsdService");
