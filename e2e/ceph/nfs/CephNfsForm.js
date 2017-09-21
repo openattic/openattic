@@ -39,8 +39,12 @@ var CephNfsForm = function(){
     element(by.model('$ctrl.model.fsal')).all(by.cssContainingText('option', text)).click();
   };
 
-  this.selectRgwUser = function(index){
+  this.selectRgwUserIndex = function(index){
     element(by.model('$ctrl.model.rgwUserId')).all(by.tagName('option')).get(index).click();
+  };
+
+  this.selectRgwUser = function(user){
+    element(by.model('$ctrl.model.rgwUserId')).all(by.cssContainingText('option', user)).click();
   };
 
   this.selectAccessType = function(text){
