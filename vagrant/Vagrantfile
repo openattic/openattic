@@ -17,31 +17,26 @@ end
 distro_settings = {
     'jessie' => {
         box_name: 'debian/jessie64',
-        sata_controller_name: 'SATA Controller',
         ip_addr: '192.168.10.101',
         gateway: '192.168.10.1'
     },
     'trusty' => {
         box_name: 'ubuntu/trusty64',
-        sata_controller_name: 'SATAController',
         ip_addr: '192.168.10.102',
         gateway: '192.168.10.1'
     },
     'xenial' => {
         box_name: 'yk0/ubuntu-xenial',
-        sata_controller_name: 'SATA',
         ip_addr: '192.168.10.103',
         gateway: '192.168.10.1'
     },
     'malachite' => {
         box_name: 'opensuse/openSUSE-42.1-x86_64',
-        sata_controller_name: 'SATA Controller',
         ip_addr: '192.168.10.104',
         gateway: '192.168.10.1'
     },
     'leap' => {
         box_name: 'opensuse/openSUSE-42.3-x86_64',
-        sata_controller_name: 'SATA Controller',
         ip_addr: '192.168.10.105',
         gateway: '192.168.10.1'
     }
@@ -166,20 +161,6 @@ Vagrant.configure(2) do |config|
     #     v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk1]
     #     v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', disk2]
     #  end
-
-    config.vm.provider :virtualbox do |vb|
-        # note 1 would mean 2 disks
-        disk_num = 1
-        disk_size = 50 * 1024
-        for i in 0..disk_num do
-            file_to_disk = "./disks/oa_#{distro}-disk#{i}.vmdk"
-            unless File.exist?(file_to_disk)
-                vb.customize ['createhd', '--filename', file_to_disk, '--size', disk_size]
-                vb.customize ['storageattach', :id, '--storagectl', distro_settings[distro][:sata_controller_name], '--port', i + 1,
-                    '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
-            end
-        end
-    end
 
     config.vm.provision :shell, :path => 'install.sh'
 
