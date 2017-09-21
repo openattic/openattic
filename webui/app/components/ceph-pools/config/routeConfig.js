@@ -45,14 +45,6 @@ app.config(function ($stateProvider) {
         label: "Ceph Pools"
       }
     })
-    .state("cephPools.detail", {
-      views        : {
-        "tab": {template: require("../templates/tab.html")}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
     .state("ceph-pools-add", {
       url: "/ceph/pools/add",
       views: {
@@ -80,6 +72,16 @@ app.config(function ($stateProvider) {
       ncyBreadcrumb: {
         label: "Edit {{pool.name}}",
         parent: "cephPools"
+      }
+    })
+    .state("cephPools.detail", {
+      views: {
+        "tab": {
+          component: "oaTabSet"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
       }
     })
     .state("cephPools.detail.cacheTier", {

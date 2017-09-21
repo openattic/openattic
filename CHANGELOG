@@ -56,6 +56,7 @@ Removed
 * Backend: Cleanup systemd module (OP-2677)
 * Remove `cmdlog` Module (OP-2683)
 * Backend: Removed Hosts model
+* Remove the deprecated oaTabView module (OP-2706)
 
 [3.5.0] - 2017-09-14
 --------------------

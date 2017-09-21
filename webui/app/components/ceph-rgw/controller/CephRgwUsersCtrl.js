@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRgw");
-app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwUserService,
-    tabViewService) {
+app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal,
+    cephRgwUserService, oaTabSetService) {
   $scope.users = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -47,13 +47,13 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
     active: 0,
     tabs: {
       status: {
-        show: "selection.item",
+        show: "$ctrl.selection.item",
         state: "ceph-rgw-users.detail.details",
         class: "tc_statusTab",
         name: "Details"
       },
       statistics: {
-        show: "selection.item",
+        show: "$ctrl.selection.item",
         state: "ceph-rgw-users.detail.statistics",
         class: "tc_statisticsTab",
         name: "Statistics"
@@ -65,9 +65,6 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
     linkedBy: "user_id",
     jumpTo: "more"
   };
-
-  tabViewService.setScope($scope);
-  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
@@ -110,9 +107,11 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal, cephRgwU
       });
 
     if ($state.current.name === "ceph-rgw-users") {
-      $scope.changeTab("ceph-rgw-users.detail.details");
+      oaTabSetService.changeTab("ceph-rgw-users.detail.details", $scope.tabData,
+        $scope.tabConfig, selection);
     } else {
-      $scope.changeTab($state.current.name);
+      oaTabSetService.changeTab($state.current.name, $scope.tabData,
+        $scope.tabConfig, selection);
     }
   };
 

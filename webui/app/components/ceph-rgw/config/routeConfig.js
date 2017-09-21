@@ -54,7 +54,7 @@ app.config(function ($stateProvider) {
     .state("ceph-rgw-users.detail", {
       views: {
         "tab": {
-          template: require("../templates/cephRgwUsersTab.html")
+          component: "oaTabSet"
         }
       },
       ncyBreadcrumb: {
@@ -131,7 +131,7 @@ app.config(function ($stateProvider) {
     .state("ceph-rgw-buckets.detail", {
       views: {
         "tab": {
-          template: require("../templates/cephRgwBucketsTab.html")
+          component: "oaTabSet"
         }
       },
       ncyBreadcrumb: {
