@@ -35,6 +35,7 @@ Fixed
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 * WebUI/QA: Harden task queue deletion test cases (OP-2626)
 * Backend: Fixed OSD table filtering (OP-2692)
+* WebUI/QA: Fix random NFS e2e add export failure (OP-2672)
 
 Removed
 ~~~~~~~
