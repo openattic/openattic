@@ -14,6 +14,7 @@ import os
 import pickle
 from contextlib import contextmanager, closing
 import logging
+from copy import deepcopy
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -31,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 class SimpleDatabaseUpgrade(object):
     _file_name = '/tmp/openattic-upgrade-backup-data'
-    _tables = ['ifconfig_host', 'auth_user', 'authtoken_token', 'userprefs_userprofile',
+    _tables = ['auth_user', 'authtoken_token', 'userprefs_userprofile',
                   'userprefs_userpreference']
 
     def __init__(self, file_name=None):
@@ -56,11 +57,6 @@ class SimpleDatabaseUpgrade(object):
                     pickle.dump(self.db_content, f)
             else:
                 self.db_content = [(table, []) for table in self._tables]
-
-        assert self.db_content[0][0] == 'ifconfig_host'
-        if 'is_oa_host' not in self.db_content[0][1]:
-            for host in self.db_content[0][1]:
-                host['is_oa_host'] = True
 
     def insert(self):
         try:
@@ -88,7 +84,7 @@ class SimpleDatabaseUpgrade(object):
     def insert_all_users_and_prefs(self):
         stmt_pattern = """INSERT INTO {} ({}) VALUES ({});"""
         with database_cursor() as cursor:
-            for table, rows in self.db_content:
+            for table, rows in self.migrate_from_host(self.db_content):
                 for row in rows:
                     keys, values = zip(*row.items())
                     stmt = stmt_pattern.format(table,
@@ -96,6 +92,26 @@ class SimpleDatabaseUpgrade(object):
                                                ', '.join(['%s'] * len(values)))
                     print 'inserting', stmt
                     cursor.execute(stmt, values)
+
+    @staticmethod
+    def migrate_from_host(old_data):
+        data = deepcopy(old_data)
+
+        def userprefs_userprofile(elem):
+            if 'host_id' in elem:
+                del elem['host_id']
+            return elem
+
+        keys = [key for key, _ in data]
+
+        index = keys.index('userprefs_userprofile')
+        assert index >= 0
+
+        data[index] = ('userprefs_userprofile', [userprefs_userprofile(elem) for elem in data[index][1]])
+        if 'ifconfig_host' in keys:
+            del data[keys.index('ifconfig_host')]
+        return data
+
 
 def make_default_admin():
     if User.objects.filter(is_superuser=True).count() == 0:

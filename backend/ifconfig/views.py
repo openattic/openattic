@@ -13,16 +13,15 @@
  *  GNU General Public License for more details.
 """
 
-from django.core.management.base import BaseCommand
+from django.conf import settings
 
-from ifconfig.models import Host
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['GET'])
+def current_host(request):
+    res = {'oa_version': {'package': {'VERSION': settings.VERSION_CONF['package']['VERSION']}}}
+    return Response(res)
 
 
-class Command(BaseCommand):
-    help = "Make sure a Host entry for this host exists."
 
-    def handle(self, **options):
-        host = Host.objects.get_current()
-        if not host.is_oa_host:
-            host.is_oa_host = True
-            host.save()

@@ -383,7 +383,8 @@ def __loadmods__():
             pass
         else:
             INSTALLED_MODULES.append(modname)
-            INSTALLED_APPS.append(modname)
+            if modname not in INSTALLED_APPS:
+                INSTALLED_APPS.append(modname)
 
     import re
     rgx = re.compile("^(?P<idx>\d\d)_(?P<name>\w+)$")
@@ -420,6 +421,7 @@ def __loadmods__():
     modprobe('rosetta')
     modprobe('oa_settings')
     modprobe('oa_logging')
+    modprobe('ifconfig')
 
 
 __loadmods__()
