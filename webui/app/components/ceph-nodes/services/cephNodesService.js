@@ -34,27 +34,20 @@ import globalConfig from "globalConfig";
 
 var app = angular.module("openattic.cephNodes");
 app.factory("cephNodesService", function ($resource) {
-  return $resource(globalConfig.API.URL + "cephminions/:id", {
-    id: "@id",
-    hostname_in: "@hostname_in"
+  return $resource(globalConfig.API.URL + "cephminions/", {
+    hostname: "@hostname",
+    hostnames: "@hostnames"
   }, {
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
-    },
     filter: {
       method: "GET"
     },
     scrub: {
       method: "POST",
-      url: globalConfig.API.URL + "cephminions/:id/scrub"
+      url: globalConfig.API.URL + "cephminions/:hostname/scrub"
     },
     scrub_many: {
       method: "POST",
-      url: globalConfig.API.URL + "cephminions/scrub_many?hostname_in=:hostname_in"
+      url: globalConfig.API.URL + "cephminions/scrub_many?hostname_in=:hostnames"
     }
   });
 });

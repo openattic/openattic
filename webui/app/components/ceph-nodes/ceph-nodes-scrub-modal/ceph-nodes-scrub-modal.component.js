@@ -49,7 +49,7 @@ class CephNodesScrubModal {
       if (nodes.length === 1) {
         this.cephNodesService
           .scrub({
-            "id": nodes[0],
+            "hostname": nodes[0],
             "deep-scrub": this.resolve.deep
           })
           .$promise
@@ -63,7 +63,7 @@ class CephNodesScrubModal {
       } else {
         this.cephNodesService
           .scrub_many({
-            "hostname_in": nodes,
+            "hostnames": nodes,
             "deep-scrub": this.resolve.deep
           })
           .$promise
