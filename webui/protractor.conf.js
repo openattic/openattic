@@ -41,7 +41,6 @@ var allSuites = {
   settings             : '../e2e/base/settings/*.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
   auth                 : '../e2e/base/auth/*.e2e.js',
-  cmdlogs              : '../e2e/base/commandLogs/**/*.e2e.js',
   task_queue_directive : '../e2e/base/taskqueue/task_queue_directive.e2e.js',
   task_queue_dialog    : '../e2e/base/taskqueue/task_queue_dialog.e2e.js',
   task_queue_deletion  : '../e2e/base/taskqueue/task_queue_deletion.e2e.js',
