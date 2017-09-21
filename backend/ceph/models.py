@@ -181,8 +181,16 @@ class CephCluster(NodbModel, RadosMixin):
 
     @bulk_attribute_setter(['osd_flags'], catch_exceptions=librados.ExternalCommandError)
     def set_osd_flags(self, objects, field_names):
-        flags = self.mon_api(self.fsid).osd_dump()['flags']
-        self.osd_flags = flags.split(',')
+        flags = self.mon_api(self.fsid).osd_dump()['flags'].split(',')
+        if 'pauserd' in flags and 'pausewr' in flags:
+            # 'pause' is special:
+            # To set this flag, call `ceph osd set pause`
+            # To unset this flag, call `ceph osd unset pause`
+            # But, `ceph osd dump | jq '.flags'` will contain 'pauserd,pausewr' if pause is set.
+            # Let's pretend to the API that 'pause' is in fact a proper flag.
+            flags = list((set(flags) - {'pauserd', 'pausewr'}).union({'pause'}))
+
+        self.osd_flags = flags
 
     def __str__(self):
         return self.config_file_path
