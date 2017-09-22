@@ -47,7 +47,7 @@ app.directive("tabView", function () {
       selection: "=",
       super: "="
     },
-    templateUrl: "components/tabView/templates/tabset.html",
+    template: require("../templates/tabset.html"),
     controller: function ($scope, tabViewService) {
       Object.keys($scope.tabData.tabs).forEach(function (tabName) {
         var tab = $scope.tabData.tabs[tabName];

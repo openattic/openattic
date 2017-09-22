@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsDeleteModal", {
-  templateUrl: "components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html",
+  template: require("./ceph-nfs-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"

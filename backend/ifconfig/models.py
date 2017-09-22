@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_host_name():
+    """
+    >>> assert get_host_name() != 'localhost'
+    """
     fqdn = socket.getfqdn()
     if fqdn != 'localhost':
         return fqdn
@@ -32,41 +35,3 @@ def get_host_name():
 
     raise ValueError('Unable to determine fully qualified domain name (FQDN) or host name. Please '
                      'check your host name configuration before proceeding with the installation.')
-
-
-class HostManager(models.Manager):
-    def __init__(self, *args, **kwargs):
-        logger.info('Current Version: {}'.format(settings.VERSION_CONF['package']['VERSION']))
-        super(HostManager, self).__init__(*args, **kwargs)
-
-    def get_current(self):
-        try:
-            return self.get(name=get_host_name())
-        except Host.DoesNotExist:
-            host = Host(name=get_host_name(), is_oa_host=True)
-            host.save()
-            return host
-
-
-class Host(models.Model):
-    name = models.CharField(max_length=63, unique=True)
-    is_oa_host = models.NullBooleanField()
-
-    objects = HostManager()
-
-    def __unicode__(self):
-        return self.name
-
-    @property
-    def hostname(self):
-        return self.name.split('.')[0]
-
-    @property
-    def installed_apps(self):
-        if self.is_oa_host:
-            return settings.INSTALLED_APPS
-
-    @property
-    def oa_version(self):
-        if self.is_oa_host:
-            return settings.VERSION_CONF

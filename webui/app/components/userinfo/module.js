@@ -30,6 +30,14 @@
  */
 "use strict";
 
+import "../users/module";
+
 angular.module("openattic.userinfo", [
   "openattic.users"
 ]);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

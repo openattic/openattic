@@ -37,10 +37,10 @@ describe('ceph nfs', function(){
   it('should validate rgw user', function(){
     form.selectFsal('Object Gateway');
 
-    form.selectRgwUser(1);
+    form.selectRgwUserIndex(1);
     expect(form.rgwUserIdRequired.isDisplayed()).toBe(false);
 
-    form.selectRgwUser(0);
+    form.selectRgwUserIndex(0);
     expect(form.rgwUserIdRequired.isDisplayed()).toBe(true);
   });
 
@@ -62,7 +62,7 @@ describe('ceph nfs', function(){
 
   it('should validate bucket', function(){
     form.selectFsal('Object Gateway');
-    form.selectRgwUser(1);
+    form.selectRgwUserIndex(1);
 
     form.bucket.clear().sendKeys('valid-bucket-'+Date.now()).sendKeys(protractor.Key.TAB);
     expect(form.bucketRequired.isDisplayed()).toBe(false);

@@ -37,7 +37,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/osds",
       views: {
         "main": {
-          templateUrl: "components/ceph-osd/templates/listing.html",
+          template: require("../templates/listing.html"),
           controller: "CephOsdCtrl"
         }
       },
@@ -48,7 +48,7 @@ app.config(function ($stateProvider) {
     .state("cephOsds.statistics", {
       url: "/statistics",
       views: {
-        "statistics": {templateUrl: "components/ceph-osd/templates/statistics.html"}
+        "statistics": {template: require("../templates/statistics.html")}
       },
       ncyBreadcrumb: {
         skip: true

@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephNfs");
 app.factory("cephNfsService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph_nfs/:fsid/exports/:host/:exportId", {

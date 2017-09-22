@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.apidecorator");
 
 app.factory("ApiHttpTimeoutInterceptor", function () {

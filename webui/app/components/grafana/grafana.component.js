@@ -30,15 +30,17 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 angular.module("openattic.grafana").component("grafana", {
-  templateUrl: "components/grafana/grafana.component.html",
+  template: require("./grafana.component.html"),
   bindings: {
     data: "<",
     mode: "<"
   },
   controller: function GrafanaController ($interval) {
     var vm = this;
-    vm.baseUrl = "api/grafana/";
+    vm.baseUrl = globalConfig.API.URL + "grafana/";
     vm.dashboardName = "";
     vm.src = "";
     vm.urlParameterName = "";

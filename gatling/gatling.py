@@ -172,32 +172,9 @@ def main():
     if not posargs and "--" not in sys.argv:
         posargs = ["discover", "-v"]
 
-    starttime = datetime.datetime.now()
     prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner, exit=False)
-    endtime = datetime.datetime.now()
 
-    cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)
-
-    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter),
-                                  auth=(username, password))
-
-    try:
-        failedcmds = failedcmds.json()
-    except ValueError:
-        print 'failed to get parse json:\n{}'.format(failedcmds.content)
-        raise
-
-    if failedcmds['count'] > 0:
-        print "openATTIC's command log recorded %d failed commands during the test period:" % \
-              failedcmds['count']
-        template = ("%(command)s (%(starttime)s - %(endtime)s):\n"
-                    "%(text)s\n")
-        for failedcmd in failedcmds['results']:
-            print template % failedcmd
-    else:
-        print "openATTIC's command log did not record any failed commands during the test period."
-
-    if prog.result.wasSuccessful() and failedcmds['count'] == 0:
+    if prog.result.wasSuccessful():
         return 0
     else:
         return 1

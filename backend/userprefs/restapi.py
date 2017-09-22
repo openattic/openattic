@@ -18,7 +18,6 @@ import json
 from rest_framework import serializers, status, mixins
 from rest_framework.response import Response
 
-from ifconfig.models import Host
 from userprefs.models import UserProfile, UserPreference
 
 from rest.utilities import drf_version, get_request_query_params, mk_method_field_params, \
@@ -43,7 +42,7 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ("url", "id", "host", "user", "preferences")
+        fields = ("url", "id", "user", "preferences")
 
     def get_preferences(self, profile):
         filter_values = get_request_query_params(self.context["request"]).get("search")
@@ -62,8 +61,7 @@ class UserProfileViewSet(NoCacheReadOnlyModelViewSet, mixins.CreateModelMixin,
     serializer_class = UserProfileSerializer
 
     def create(self, request, *args, **kwargs):
-        host = Host.objects.get_current()
-        profile, _ = UserProfile.objects.get_or_create(user=request.user, host=host)
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
         for key, value in get_request_data(request).items():
             profile[key] = value
@@ -89,12 +87,11 @@ class UserProfileViewSet(NoCacheReadOnlyModelViewSet, mixins.CreateModelMixin,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, *args, **kwargs):
-        host = Host.objects.get_current()
         queryset = self.get_queryset()
         result_profiles = []
 
         for profile in queryset:
-            if profile.user == request.user and profile.host == host:
+            if profile.user == request.user:
                 result_profiles.append(profile)
 
         return get_paginated_response(self, result_profiles)

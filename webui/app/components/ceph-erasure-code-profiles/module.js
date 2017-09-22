@@ -30,4 +30,12 @@
  */
 "use strict";
 
-angular.module("openattic.cephErasureCodeProfiles", []);
+var app = angular.module("openattic.cephErasureCodeProfiles", []);
+
+export default app;
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

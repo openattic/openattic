@@ -28,14 +28,14 @@
  * for the JavaScript code in this page.
  *
  */
-'use strict';
+"use strict";
 
 class FeedbackController {
-  constructor() {
+  constructor () {
     this.opened = false;
   };
 
-  toggle() {
+  toggle () {
     if (this.opened) {
       this.close();
     } else {
@@ -43,16 +43,16 @@ class FeedbackController {
     }
   };
 
-  open() {
+  open () {
     this.opened = true;
   };
 
-  close() {
+  close () {
     this.opened = false;
   };
 }
 
-angular.module('openattic.feedback').component('feedback', {
-  templateUrl: 'components/feedback/feedback.component.html',
+export default {
+  template: require("./feedback.component.html"),
   controller: FeedbackController
-});
+};

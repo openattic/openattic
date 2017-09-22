@@ -29,7 +29,7 @@ describe('task queue directive test', function(){
   });
 
   it('Should display the 1 Background-Task', function(){
-    qProperties.createTask(3);
+    qProperties.createTask(5);
     qProperties.open();
     qProperties.close();
     validateTaskTabText('1 Background-Task', 'pending');
@@ -37,8 +37,8 @@ describe('task queue directive test', function(){
   });
 
   it('Should display the 2 Background-Tasks', function(){
-    qProperties.createTask(3);
-    qProperties.createTask(3);
+    qProperties.createTask(5);
+    qProperties.createTask(5);
     qProperties.open();
     qProperties.close();
     validateTaskTabText('2 Background-Tasks', 'pending');
@@ -46,7 +46,7 @@ describe('task queue directive test', function(){
   });
 
   it('Should display the 1 Failed-Task', function(){
-    qProperties.createTask(5);
+    qProperties.createTask(10);
     qProperties.open();
     qProperties.deleteTasks('pending', 'wait');
     qProperties.close();
@@ -57,8 +57,8 @@ describe('task queue directive test', function(){
   });
 
   it('Should display the 2 Failed-Tasks', function(){
-    qProperties.createTask(5);
-    qProperties.createTask(5);
+    qProperties.createTask(10);
+    qProperties.createTask(10);
     qProperties.open();
     qProperties.deleteTasks('pending', 'wait');
     qProperties.deleteTasks('pending', 'wait');
@@ -82,7 +82,9 @@ describe('task queue directive test', function(){
    * Deletes all created tasks.
    */
   afterAll(function(){
-    qProperties.deleteAllTasks();
+    qProperties.open();
+    qProperties.deleteTasks('finished');
+    qProperties.close();
     console.log('task_queue_directive -> task_queue_directive.e2e.js');
   });
 });

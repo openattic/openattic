@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiDetail", {
-  templateUrl: "components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html",
+  template: require("./ceph-iscsi-detail.component.html"),
   bindings: {
     selection: "<"
   },

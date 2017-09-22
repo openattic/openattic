@@ -42,15 +42,23 @@ app.service("taskQueueSubscriber", function ($interval, taskQueueService) {
   };
 
   self.subscribe = function (taskId, callback) {
+    let isWaiting = false;
     let stop = $interval(function () {
-      taskQueueService.get({id: taskId})
-        .$promise
-        .then(function (res) {
-          if (isFinalStatus(res)) {
-            $interval.cancel(stop);
-            callback(res);
-          }
-        });
+      if (!isWaiting) {
+        isWaiting = true;
+
+        taskQueueService.get({id: taskId})
+          .$promise
+          .then((res) => {
+            if (isFinalStatus(res)) {
+              $interval.cancel(stop);
+              callback(res);
+            }
+          })
+          .finally(() => {
+            isWaiting = false;
+          });
+      }
     }, 1000);
   };
 });

@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephIscsi");
 app.factory("cephIscsiService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets/:targetId", {

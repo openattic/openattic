@@ -113,9 +113,6 @@ class Command(BaseCommand):
 
             db_contents.insert()
 
-
-        call_command('add-host')
-
     def post_install(self, **options):
         call_command('makedefaultadmin')
         call_command('post_install')

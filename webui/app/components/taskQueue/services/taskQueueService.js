@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.taskQueue");
 app.factory("taskQueueService", function ($resource) {
   return $resource(globalConfig.API.URL + "taskqueue/:id", {

@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephNfs");
 app.component("cephNfsDetail", {
-  templateUrl: "components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html",
+  template: require("./ceph-nfs-detail.component.html"),
   bindings: {
     selection: "<"
   },

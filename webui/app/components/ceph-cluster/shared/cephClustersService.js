@@ -30,7 +30,10 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephCluster");
+
 app.factory("cephClusterService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid", {
     fsid: "@fsid"

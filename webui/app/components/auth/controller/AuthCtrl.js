@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.auth");
 app.controller("AuthCtrl", function ($scope, $rootScope, $state, authService) {
   $scope.fieldRequired = "This field is required.";

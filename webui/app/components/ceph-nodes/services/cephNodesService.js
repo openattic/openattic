@@ -30,10 +30,13 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephNodes");
 app.factory("cephNodesService", function ($resource) {
   return $resource(globalConfig.API.URL + "cephminions/:id", {
-    id: "@id"
+    id: "@id",
+    hostname_in: "@hostname_in"
   }, {
     query: {
       method: "GET",
@@ -44,6 +47,14 @@ app.factory("cephNodesService", function ($resource) {
     },
     filter: {
       method: "GET"
+    },
+    scrub: {
+      method: "POST",
+      url: globalConfig.API.URL + "cephminions/:id/scrub"
+    },
+    scrub_many: {
+      method: "POST",
+      url: globalConfig.API.URL + "cephminions/scrub_many?hostname_in=:hostname_in"
     }
   });
 });

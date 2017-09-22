@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephRgw");
 app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
   return $resource(globalConfig.API.URL + "rgw/user", {

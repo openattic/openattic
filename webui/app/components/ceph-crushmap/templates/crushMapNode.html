@@ -1,8 +1,8 @@
 <span ng-class="{
-    'bg-primary': data.isRootNode,
-    'bg-info':    data.isBelowRootNode && !data.isSelectorNode,
-    'bg-success': data.isSelectorNode
-}">
+        'bg-primary': data.isRootNode,
+        'bg-info':    data.isBelowRootNode && !data.isSelectorNode,
+        'bg-success': data.isSelectorNode
+    }">
     <div style="display: inline" ng-hide="data.$editing">{{ data.name }}</div>
     <div style="display: inline" ng-show="data.$editing">
         <input type="text" ng-model="data.name" style="color: black" focus-me="data.$editing" ng-enter="data.$editing=false" />

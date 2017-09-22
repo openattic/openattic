@@ -31,3 +31,5 @@
 "use strict";
 
 angular.module("openattic.grafana", []);
+
+require("./grafana.component");

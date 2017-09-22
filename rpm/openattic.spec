@@ -15,7 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
 Name: openattic
-Version: 3.5.0
+Version: 3.5.1
 Release: 0
 Summary: Open Source Management and Monitoring System for Ceph
 Group: System Environment/Libraries
@@ -221,7 +221,7 @@ systemctl start postgresql
 # The setup of apache2 may not be finished at the post stage due to
 # scriptlets included in apache2's own posttrans. So we need to move
 # the attempt to start it here:
-oaconfig install || oaconfig install --allow-broken-hostname
+oaconfig install
 systemctl enable apache2
 systemctl start apache2
 

@@ -121,8 +121,8 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $state
       return;
     }
     var modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: "components/ceph-rgw/templates/cephRgwBucketDeleteModal.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
+      template: require("../templates/cephRgwBucketDeleteModal.html"),
       controller: "CephRgwBucketDeleteModalCtrl",
       resolve: {
         bucketSelection: function () {

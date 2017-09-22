@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.shared");
 app.component("oaCephClusterLoader", {
-  templateUrl: "components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html",
+  template: require("./oa-ceph-cluster-loader.component.html"),
   bindings: {
     onClusterLoad: "&"
   },

@@ -177,6 +177,22 @@
       "mem_swap_kb": "3906556",
       "mem_total_kb": "7850136",
       "os": "Linux"
+    },
+    {
+      "name": "d",
+      "addr": "127.0.0.3:6813/2351978011",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "cpu": "my CPU",
+      "distro": "distro",
+      "distro_description": "distro 1.0",
+      "distro_version": "1.0",
+      "hostname": "mds-only-host",
+      "kernel_description": "#110-distro SMP Tue Jul 18 12:55:35 UTC 2017",
+      "kernel_version": "4.4.0-87-generic",
+      "mem_swap_kb": "3906556",
+      "mem_total_kb": "7850136",
+      "os": "Linux"
     }
   ],
   [
@@ -254,6 +270,21 @@
       "fsid": "fsid",
       "cpu": "my CPU",
       "addresses": ["::1", "::2"]
+    },
+     "mds-only-host": {
+      "distro_description": "distro 1.0",
+      "daemon_types": [
+        "mds"
+      ],
+      "daemons": [
+        "mds.d"
+      ],
+      "hostname": "mds-only-host",
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "fsid": "fsid",
+      "cpu": "my CPU",
+      "addresses": ["127.0.0.3"]
     }
   },
   [
@@ -292,6 +323,21 @@
     },
     {
       "hostname": "deepsea-only.deepsea-pillar.local"
+    },
+    {
+      "distro_description": "distro 1.0",
+      "hostname": "mds-only-host",
+      "daemon_types": [
+        "mds"
+      ],
+      "cpu": "my CPU",
+      "daemons": [
+        "mds.d"
+      ],
+      "arch": "x86_64",
+      "ceph_version": "ceph version 12.1.2-906-g6b9a641 (6b9a64165e37062f8420fe523aee3e7f2d053460) mimic (dev)",
+      "fsid": "fsid",
+      "addresses": ["127.0.0.3"]
     },
     {
       "distro_description": "distro 1.0",

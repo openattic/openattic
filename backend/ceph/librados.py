@@ -939,6 +939,24 @@ class MonApi(object):
         """
         return self._call_mon_command('osd metadata', self._args_to_argdict(id=id))
 
+    def osd_scrub(self, who):
+        """
+        COMMAND("osd scrub " \
+        "name=who,type=CephString", \
+        "initiate scrub on osd <who>, or use <all|any|*> to scrub all", \
+        "osd", "rw", "cli,rest")
+        """
+        return self._call_mon_command('osd scrub', self._args_to_argdict(who=who), output_format='string')
+
+    def osd_deep_scrub(self, who):
+        """
+        COMMAND("osd deep-scrub " \
+        "name=who,type=CephString", \
+        "initiate deep-scrub on osd <who>, or use <all|any|*> to scrub all", \
+        "osd", "rw", "cli,rest")
+        """
+        return self._call_mon_command('osd deep-scrub', self._args_to_argdict(who=who), output_format='string')
+
     def fs_ls(self):
         return self._call_mon_command('fs ls')
 

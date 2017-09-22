@@ -30,9 +30,17 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.cephOsd");
 app.factory("cephOsdService", function ($resource) {
   return $resource(globalConfig.API.URL + "ceph/:fsid/osds", {
-    fsid: "@fsid"
+    fsid: "@fsid",
+    osdid: "@osdid"
+  }, {
+    scrub: {
+      method: "POST",
+      url: globalConfig.API.URL + "ceph/:fsid/osds/:osdid/scrub"
+    }
   });
 });
