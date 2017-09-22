@@ -62,6 +62,7 @@ Removed
 * WebUI: Refactored node service (OP-2122)
 * WebUI: Remove the deprecated oaTabView module (OP-2706)
 * Development: Removed old `virtualenv` requirements.txt entries (OP-2675)
+* Development: Remove Support for Django 1.7 (OP-2708)
 * Backend: Removed unnecessary %used calculation workaround for
   Luminous (OP-2370)
 * Backend: Removed Hosts model (OP-2589)
