@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,17 +30,45 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+class CephOdsScrubModal {
 
-var app = angular.module("openattic.cephOsd");
-app.factory("cephOsdService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/osds", {
-    fsid: "@fsid",
-    osdid: "@osdid"
-  }, {
-    scrub: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph/:fsid/osds/:osdid/scrub"
-    }
-  });
-});
+  constructor ($q, cephOsdService) {
+    this.cephOsdService = cephOsdService;
+    this.submitted = false;
+    this.$q = $q;
+  }
+
+  scrub () {
+    this.submitted = true;
+
+    return this.$q((resolve, reject) => {
+      this.cephOsdService
+        .scrub({
+          "fsid": this.resolve.osd.cluster,
+          "osdid": this.resolve.osd.id,
+          "deep-scrub": this.resolve.deep
+        })
+        .$promise
+        .then(() => {
+          resolve();
+          this.modalInstance.close("scrubbed");
+        }, () => {
+          this.submitted = false;
+          reject();
+        });
+    });
+  }
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  }
+}
+
+export default {
+  template: require("./ceph-osd-scrub-modal.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  },
+  controller: CephOdsScrubModal
+};

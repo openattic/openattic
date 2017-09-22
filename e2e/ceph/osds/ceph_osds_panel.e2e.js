@@ -1,7 +1,10 @@
-var helpers = require('../common.js');
+var helpers = require('../../common.js');
 
 describe('should test the ceph osd panel', function(){
   var cephOSDs = element(by.css('.tc_menuitem_ceph_osds'));
+  var scrubBtn = element(by.css('.tc_scrub_btn'));
+  var menuDropdownBtn = element(by.css('.tc_menudropdown'));
+  var deepScrubBtn = element(by.css('.tc_deep_scrub_btn'));
 
   beforeAll(function(){
     helpers.login();
@@ -52,7 +55,7 @@ describe('should test the ceph osd panel', function(){
   */
 
   afterAll(function(){
-    console.log('ceph_osds -> ceph_osds.e2e.js');
+    console.log('ceph_osds -> ceph_osds_panel.e2e.js');
   });
 
 });
