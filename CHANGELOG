@@ -33,6 +33,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fix task queue waiting errors (OP-2629)
 * Backend: Fixed `osd pool set`: unrecognized variable `crush_ruleset` (OP-2651)
 * Backend: Nodes Tab may not list IPs for hosts without OSDs (OP-2679)
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
