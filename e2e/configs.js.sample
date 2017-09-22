@@ -32,29 +32,6 @@
             writable    : '<isWritable>' // If $isWritable is false nothing will be created on the pool.
           }
         }
-      },
-      cluster2: { // Defines a cluster
-        name: '<cluster_name>', // The name of the ceph cluster.
-        pools: { // Contains all pool definitions for this cluster
-          cephPool1: { // Defines a pool
-            name        : '<ceph_pool_name>',
-            size        : '<size>',
-            unit        : 'GB',
-            writable    : '<isWritable>' // If $isWritable is false nothing will be created on the pool.
-          },
-          cephPool2: { // Defines a pool
-            name        : '<ceph_pool_name>',
-            size        : '<size>',
-            unit        : 'GB',
-            writable    : '<isWritable>' // If $isWritable is false nothing will be created on the pool.
-          },
-          cephPool3: { // Defines a pool
-            name        : '<ceph_pool_name>',
-            size        : '<size>',
-            unit        : 'GB',
-            writable    : '<isWritable>' // If $isWritable is false nothing will be created on the pool.
-          }
-        }
       }
     }
   };

@@ -24,8 +24,9 @@
           </div>
         </div>
 
-        <div class="form-group" ng-class="{'has-error': (rbdForm.$submitted || rbdForm.cluster.$dirty)
-            && rbdForm.cluster.$invalid}">
+        <div class="form-group"
+            ng-if="$ctrl.clusters.length !== 1"
+            ng-class="{'has-error': (rbdForm.$submitted || rbdForm.cluster.$dirty) && rbdForm.cluster.$invalid}">
           <label class="control-label col-sm-3" for="cluster">Cluster</label>
           <div class="col-sm-9">
             <select id="cluster" ng-disabled="!$ctrl.clusters" class="form-control tc_cluster_selection"
