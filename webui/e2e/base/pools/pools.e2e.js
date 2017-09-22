@@ -1,16 +1,18 @@
-var helpers = require('../../common.js');
+"use strict";
 
-describe('Pools panel', function(){
+var helpers = require("../../common.js");
 
-  beforeAll(function(){
+describe("Pools panel", function () {
+
+  beforeAll(function () {
     helpers.login();
-    element(by.css('ul .tc_menuitem_pools > a')).click();
-    element(by.css('.tc_entries_dropdown')).click();
-    element(by.css('.tc_entries_100')).click();
+    element(by.css("ul .tc_menuitem_pools > a")).click();
+    element(by.css(".tc_entries_dropdown")).click();
+    element(by.css(".tc_entries_100")).click();
   });
 
-  it('should show the oadatatable', function(){
-    expect(element(by.css('.tc_oadatatable_pools')).isDisplayed()).toBe(true);
+  it("should show the oadatatable", function () {
+    expect(element(by.css(".tc_oadatatable_pools")).isDisplayed()).toBe(true);
     browser.sleep(400);
   });
 
@@ -40,24 +42,25 @@ describe('Pools panel', function(){
   });
   */
 
-  it('should display the configured pools', function(){
-    for(var key in helpers.configs.pools){
+  it("should display the configured pools", function () {
+    for (var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
-      element.all(by.cssContainingText('option', pool.name))
-        .then(function findMatch(pname){
-          if(pool.name === pname){
-            var exact_pool = pname;
+      element.all(by.cssContainingText("option", pool.name))
+        .then(function findMatch (pname) {
+          let exactPool = undefined;
+          if (pool.name === pname) {
+            exactPool = pname;
             return true;
           }
 
-          if(exact_pool){
-            expect(element(by.cssContainingText('td', exact_pool)).isDisplayed()).toBe(true);
+          if (exactPool) {
+            expect(element(by.cssContainingText("td", exactPool)).isDisplayed()).toBe(true);
           }
         });
     }
   });
 
-  afterAll(function(){
-    console.log('pools -> pools.e2e.js');
+  afterAll(function () {
+    console.log("pools -> pools.e2e.js");
   });
 });

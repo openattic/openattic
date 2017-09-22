@@ -1,16 +1,17 @@
-'use strict';
+"use strict";
 
-var helpers = require('../../common.js');
-var qProperties = require('./task_queue_common.js'); // Defines task queue elements and common task queue related functions.
+var helpers = require("../../common.js");
 
-describe('task queue directive test', function(){
-  var sleeptime = 10000;
+// Defines task queue elements and common task queue related functions.
+var qProperties = require("./task_queue_common.js");
+
+describe("task queue directive test", function () {
   /**
    * Validates the text of the task queue "button" in the header
    * and validates the lable of a specific panel.
    * Task-Queue has to be closed for this.
    */
-  var validateTaskTabText = function(taskText, tabName){
+  var validateTaskTabText = function (taskText, tabName) {
     qProperties.validateTaskText(taskText);
     qProperties.validateDisplayedTab(tabName);
   };
@@ -18,73 +19,73 @@ describe('task queue directive test', function(){
   /**
    * Will clear all tasks if any.
    */
-  beforeAll(function(){
+  beforeAll(function () {
     helpers.login();
-    element(by.css('.tc_menuitem_ceph_osds')).click();
+    element(by.css(".tc_menuitem_ceph_osds")).click();
     qProperties.deleteAllTasks();
   });
 
-  it('Should display the Background-Tasks if empty', function(){
-    qProperties.validateTaskText('Background-Tasks');
+  it("Should display the Background-Tasks if empty", function () {
+    qProperties.validateTaskText("Background-Tasks");
   });
 
-  it('Should display the 1 Background-Task', function(){
+  it("Should display the 1 Background-Task", function () {
     qProperties.createTask(5);
     qProperties.open();
     qProperties.close();
-    validateTaskTabText('1 Background-Task', 'pending');
+    validateTaskTabText("1 Background-Task", "pending");
     qProperties.waitForPendingTasks();
   });
 
-  it('Should display the 2 Background-Tasks', function(){
+  it("Should display the 2 Background-Tasks", function () {
     qProperties.createTask(5);
     qProperties.createTask(5);
     qProperties.open();
     qProperties.close();
-    validateTaskTabText('2 Background-Tasks', 'pending');
+    validateTaskTabText("2 Background-Tasks", "pending");
     qProperties.waitForPendingTasks();
   });
 
-  it('Should display the 1 Failed-Task', function(){
+  it("Should display the 1 Failed-Task", function () {
     qProperties.createTask(10);
     qProperties.open();
-    qProperties.deleteTasks('pending', 'wait');
+    qProperties.deleteTasks("pending", "wait");
     qProperties.close();
-    validateTaskTabText('1 Failed-Task', 'failed');
+    validateTaskTabText("1 Failed-Task", "failed");
     qProperties.open();
-    qProperties.deleteTasks('failed');
+    qProperties.deleteTasks("failed");
     qProperties.close();
   });
 
-  it('Should display the 2 Failed-Tasks', function(){
+  it("Should display the 2 Failed-Tasks", function () {
     qProperties.createTask(10);
     qProperties.createTask(10);
     qProperties.open();
-    qProperties.deleteTasks('pending', 'wait');
-    qProperties.deleteTasks('pending', 'wait');
+    qProperties.deleteTasks("pending", "wait");
+    qProperties.deleteTasks("pending", "wait");
     qProperties.close();
-    validateTaskTabText('2 Failed-Tasks', 'failed');
+    validateTaskTabText("2 Failed-Tasks", "failed");
     qProperties.open();
-    qProperties.deleteTasks('failed');
+    qProperties.deleteTasks("failed");
     qProperties.close();
   });
 
   /**
    * This is a test for test cases that use the waitForPendingTasks function.
    */
-  it('Tests the waiting for task function', function(){
+  it("Tests the waiting for task function", function () {
     qProperties.createTask(3);
     qProperties.waitForPendingTasks();
-    qProperties.validateTabName('pending', 'Pending (0)');
+    qProperties.validateTabName("pending", "Pending (0)");
   });
 
   /**
    * Deletes all created tasks.
    */
-  afterAll(function(){
+  afterAll(function () {
     qProperties.open();
-    qProperties.deleteTasks('finished');
+    qProperties.deleteTasks("finished");
     qProperties.close();
-    console.log('task_queue_directive -> task_queue_directive.e2e.js');
+    console.log("task_queue_directive -> task_queue_directive.e2e.js");
   });
 });

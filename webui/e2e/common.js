@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-(function(){
-  var configs = require('./configs.js');
-  var UnsavedChangesDialog = require('./base/UnsavedChangesDialog.js');
+(function () {
+  var configs = require("./configs.js");
+  var UnsavedChangesDialog = require("./base/UnsavedChangesDialog.js");
 
   var helper = {
     configs: configs,
@@ -53,55 +53,55 @@
       expect(browser.getCurrentUrl()).toMatch(expected);
     },
 
-    leaveForm: function(dialogIsShown){
-      element(by.css('.tc_backButton')).click();
+    leaveForm: function (dialogIsShown) {
+      element(by.css(".tc_backButton")).click();
       helper.checkForUnsavedChanges(dialogIsShown);
     },
 
-    checkForUnsavedChanges: function(dialogIsShown){
+    checkForUnsavedChanges: function (dialogIsShown) {
       var dialog =  new UnsavedChangesDialog();
-      if(dialogIsShown !== undefined){
+      if (dialogIsShown !== undefined) {
         expect(dialog.leaveBtn.isPresent()).toBe(dialogIsShown);
       }
-      dialog.leaveBtn.isDisplayed().then(function(){
+      dialog.leaveBtn.isDisplayed().then(function () {
         dialog.close();
-      }).catch(function(){});
+      }).catch(function () {});
     },
 
-    get_list_element: function(itemName){
-      return element(by.cssContainingText('tr', itemName));
+    get_list_element: function (itemName) {
+      return element(by.cssContainingText("tr", itemName));
     },
 
     /**
      * Get the cells of the specified row.
      * @param itemName The value to identify the data table row.
      */
-    get_list_element_cells: function(itemName){
+    get_list_element_cells: function (itemName) {
       var row = helper.get_list_element(itemName);
-      return row.all(by.tagName('td'));
+      return row.all(by.tagName("td"));
     },
 
     /**
      * Will delete the selected items, using the default test classes for this.
      * @param {number} [dropdown] - which dropdown to get
      */
-    delete_selection: function(dropdown, controllerName){
+    delete_selection: function (dropdown, controllerName) {
       dropdown = dropdown || 0;
-      element.all(by.css('.tc_menudropdown')).get(dropdown).click();
-      element(by.css('.tc_deleteItem > a')).click();
-      var enteredNameInput = 'input.enteredName';
-      if(controllerName){
-        enteredNameInput = controllerName + '.' + enteredNameInput;
+      element.all(by.css(".tc_menudropdown")).get(dropdown).click();
+      element(by.css(".tc_deleteItem > a")).click();
+      var enteredNameInput = "input.enteredName";
+      if (controllerName) {
+        enteredNameInput = controllerName + "." + enteredNameInput;
       }
-      element(by.model(enteredNameInput)).sendKeys('yes');
-      element(by.id('bot2-Msg1')).click();
+      element(by.model(enteredNameInput)).sendKeys("yes");
+      element(by.id("bot2-Msg1")).click();
     },
 
-    search_for: function(query){
-      helper.changeInput(element(by.model('filterConfig.search')), query);
+    search_for: function (query) {
+      helper.changeInput(element(by.model("filterConfig.search")), query);
     },
 
-    search_for_element: function(query){
+    search_for_element: function (query) {
       helper.search_for(query);
       return helper.get_list_element(query);
     },
@@ -115,15 +115,15 @@
      * @param {boolean} browse Set to FALSE to do not browse to the
      *                         login page. Defaults to TRUE.
      */
-    login: function(username, password, browse){
+    login: function (username, password, browse) {
       username = username || configs.username;
       password = password || configs.password;
       browse = (browse !== undefined) ? browse : true;
       if (browse) {
-        browser.get(helper.getUrl('login'));
+        browser.get(helper.getUrl("login"));
       }
-      element.all(by.model('username')).clear().sendKeys(username);
-      element.all(by.model('password')).clear().sendKeys(password);
+      element.all(by.model("username")).clear().sendKeys(username);
+      element.all(by.model("password")).clear().sendKeys(password);
       element.all(by.css('input[type="submit"]')).click();
     },
 
@@ -139,9 +139,9 @@
      * @param {object} element The element to check.
      * @param {string} cls The name of the class to check for.
      */
-    hasClass: function(element, cls){
-      return element.getAttribute('class').then(function(classes){
-        return classes.split(' ').indexOf(cls) !== -1;
+    hasClass: function (element, cls) {
+      return element.getAttribute("class").then(function (classes) {
+        return classes.split(" ").indexOf(cls) !== -1;
       });
     }
   };

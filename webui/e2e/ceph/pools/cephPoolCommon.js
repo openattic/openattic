@@ -1,66 +1,66 @@
-'use strict';
+"use strict";
 
-var cephPoolCommons = function(){
-  var helpers = require('../../common.js');
-  var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
+var CephPoolCommons = function () {
+  var helpers = require("../../common.js");
+  var taskQueueHelpers = require("../../base/taskqueue/task_queue_common.js");
 
-  this.cephPools = element(by.css('.tc_menuitem_ceph_pools'));
+  this.cephPools = element(by.css(".tc_menuitem_ceph_pools"));
 
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
-  this.clusterSelect = element(by.model('registry.selectedCluster'));
+  this.clusterSelect = element(by.model("registry.selectedCluster"));
 
-  this.addButton = element(by.className('tc_add_btn'));
-  this.editButton = element(by.className('tc_edit_btn'));
-  this.statusTab = element(by.className('tc_statusTab'));
-  this.statisticsTab = element(by.className('tc_statisticsTab'));
+  this.addButton = element(by.className("tc_add_btn"));
+  this.editButton = element(by.className("tc_edit_btn"));
+  this.statusTab = element(by.className("tc_statusTab"));
+  this.statisticsTab = element(by.className("tc_statisticsTab"));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
-  this.isBluestore = element(by.model('bluestore'));
+  this.isBluestore = element(by.model("bluestore"));
 
   // Describes the attributes seen in the detail tab.
   this.detailAttributes = [
     {
-      name: 'ID',
+      name: "ID",
       displayed: true
     },
     {
-      name: 'Applications',
+      name: "Applications",
       displayed: true
     },
     {
-      name: 'Placement Groups',
+      name: "Placement Groups",
       displayed: true
     },
     {
-      name: 'Type',
+      name: "Type",
       displayed: true
     },
     {
-      name: 'Flags',
+      name: "Flags",
       displayed: true
     },
     {
-      name: 'Last change',
+      name: "Last change",
       displayed: true
     },
     {
-      name: 'Mode',
+      name: "Mode",
       displayed: false
     },
     {
-      name: 'Algorithm',
+      name: "Algorithm",
       displayed: false
     },
     {
-      name: 'Minimum blob size',
+      name: "Minimum blob size",
       displayed: false
     },
     {
-      name: 'Maximum blob size',
+      name: "Maximum blob size",
       displayed: false
     },
     {
-      name: 'Required ratio',
+      name: "Required ratio",
       displayed: false
     }
   ];
@@ -68,59 +68,59 @@ var cephPoolCommons = function(){
   // Description of headers in the table.
   this.tableHeaders = [
     {
-      name: 'Name',
+      name: "Name",
       displayed: true
     },
     {
-      name: 'ID',
+      name: "ID",
       displayed: true
     },
     {
-      name: 'Used',
+      name: "Used",
       displayed: true
     },
     {
-      name: 'Applications',
+      name: "Applications",
       displayed: true
     },
     {
-      name: 'Placement groups',
+      name: "Placement groups",
       displayed: true
     },
     {
-      name: 'Replica size',
+      name: "Replica size",
       displayed: true
     },
     {
-      name: 'Erasure code profile',
+      name: "Erasure code profile",
       displayed: true
     },
     {
-      name: 'Type',
+      name: "Type",
       displayed: true
     },
     {
-      name: 'Crush ruleset',
+      name: "Crush ruleset",
       displayed: true
     },
     {
-      name: 'Compression mode',
+      name: "Compression mode",
       displayed: true
     },
     {
-      name: 'Compression algorithm',
+      name: "Compression algorithm",
       displayed: false
     },
     {
-      name: 'Compression min. blob size',
+      name: "Compression min. blob size",
       displayed: false
     },
     {
-      name: 'Compression max. blob size',
+      name: "Compression max. blob size",
       displayed: false
     },
     {
-      name: 'Compression required ratio',
+      name: "Compression required ratio",
       displayed: false
     }
   ];
@@ -128,15 +128,15 @@ var cephPoolCommons = function(){
   // Describes the form elements.
   this.formElements = {
     name: {
-      name: 'Name',
-      byClass: element(by.className('tc_pool_name')),
-      byModel: element(by.model('pool.name')),
-      type: 'text',
+      name: "Name",
+      byClass: element(by.className("tc_pool_name")),
+      byModel: element(by.model("pool.name")),
+      type: "text",
       displayed: true,
       items: {
-        required: element(by.className('tc_nameRequired')),
-        uniqueName: element(by.className('tc_noUniqueName')),
-        validName: element(by.className('tc_noValidName'))
+        required: element(by.className("tc_nameRequired")),
+        uniqueName: element(by.className("tc_noUniqueName")),
+        validName: element(by.className("tc_noValidName"))
       }
     },
     /* Only for multi cluster systems
@@ -154,170 +154,170 @@ var cephPoolCommons = function(){
     },
     */
     types: {
-      name: 'Pool type',
-      byClass: element(by.className('tc_poolTypes_selection')),
-      byModel: element(by.model('pool.type')),
+      name: "Pool type",
+      byClass: element(by.className("tc_poolTypes_selection")),
+      byModel: element(by.model("pool.type")),
       displayed: true,
-      type: 'select',
+      type: "select",
       items: {
-        typeSelection: element(by.className('tc_poolTypesOption')),
-        required: element(by.className('tc_typeRequired'))
+        typeSelection: element(by.className("tc_poolTypesOption")),
+        required: element(by.className("tc_typeRequired"))
       }
     },
     pgnum: {
-      name: 'Placement groups',
-      byClass: element(by.className('tc_pool_pgNum')),
-      byModel: element(by.model('data.pg_num')),
+      name: "Placement groups",
+      byClass: element(by.className("tc_pool_pgNum")),
+      byModel: element(by.model("data.pg_num")),
       displayed: false,
-      displayedIf: ['replicated'], // and 'erasure'
-      type: 'number',
+      displayedIf: ["replicated"], // and 'erasure'
+      type: "number",
       items: {
-        helpPgnum: element(by.className('tc_pgNumRequired'))
+        helpPgnum: element(by.className("tc_pgNumRequired"))
       }
     },
     replicatedSize: {
-      name: 'Replicated size',
-      byClass: element(by.className('tc_pool_size')),
-      byModel: element(by.model('pool.size')),
-      type: 'number',
+      name: "Replicated size",
+      byClass: element(by.className("tc_pool_size")),
+      byModel: element(by.model("pool.size")),
+      type: "number",
       presented: false,
-      displayedIf: ['replicated'],
+      displayedIf: ["replicated"],
       items: {
-        helpSize: element(by.className('tc_sizeRequired'))
+        helpSize: element(by.className("tc_sizeRequired"))
       }
     },
     crushRules: {
-      name: 'Crush ruleset',
-      byClass: element(by.className('tc_crushSet_selection')),
+      name: "Crush ruleset",
+      byClass: element(by.className("tc_crushSet_selection")),
       presented: false,
-      displayedIf: ['replicated', 'erasure'],
-      type: 'select',
+      displayedIf: ["replicated", "erasure"],
+      type: "select",
       items: {
-        crushSelection: element(by.className('tc_crushSetOption')),
-        helpRuleReq: element(by.className('tc_crushSetRequired'))
+        crushSelection: element(by.className("tc_crushSetOption")),
+        helpRuleReq: element(by.className("tc_crushSetRequired"))
       }
     },
     erasureProfiles: {
-      name: 'Erasure code profile',
-      byClass: element(by.className('tc_erasureProfiles_selection')),
-      byModel: element(by.model('pool.erasure.profile')),
-      type: 'select',
+      name: "Erasure code profile",
+      byClass: element(by.className("tc_erasureProfiles_selection")),
+      byModel: element(by.model("pool.erasure.profile")),
+      type: "select",
       presented: false,
-      displayedIf: ['erasure'],
+      displayedIf: ["erasure"],
       items: {
-        erasureSelection: element(by.className('tc_erasureProfilesOption')),
-        erasureRequired: element(by.className('tc_erasureRequired'))
+        erasureSelection: element(by.className("tc_erasureProfilesOption")),
+        erasureRequired: element(by.className("tc_erasureRequired"))
       }
     },
     ecOverwriteFlag: {
-      name: 'EC Overwrites',
-      byClass: element(by.className('tc-ec-overwrites')),
-      type: 'checkbox',
+      name: "EC Overwrites",
+      byClass: element(by.className("tc-ec-overwrites")),
+      type: "checkbox",
       presented: false,
-      displayedIf: ['erasure'],
+      displayedIf: ["erasure"]
     },
     compressionMode: {
-      name: 'Compression mode',
-      byClass: element(by.className('tc_compressionMode')),
-      byModel: element(by.model('pool.compression_mode')),
-      type: 'select',
+      name: "Compression mode",
+      byClass: element(by.className("tc_compressionMode")),
+      byModel: element(by.model("pool.compression_mode")),
+      type: "select",
       displayed: false, //self.isBluestore && self.formElements.types.byModel ? true : false;
-      displayedIf: ['bluestore'],
+      displayedIf: ["bluestore"],
       items: {
-        compressionModeRequired: element(by.className('tc_compressionModeRequired'))
+        compressionModeRequired: element(by.className("tc_compressionModeRequired"))
       }
     },
     compressionAlgorith: {
-      name: 'Compression algorithm',
-      byClass: element(by.className('tc_compressionAlgorithmSelection')),
-      byModel: element(by.model('pool.compression_algorithm')),
-      type: 'select',
+      name: "Compression algorithm",
+      byClass: element(by.className("tc_compressionAlgorithmSelection")),
+      byModel: element(by.model("pool.compression_algorithm")),
+      type: "select",
       displayed: false,
-      displayedIf: ['isCompression'],
+      displayedIf: ["isCompression"],
       items: {
-        compressionAlgorithmRequired: element(by.className('tc_compressionAlgorithmRequired'))
+        compressionAlgorithmRequired: element(by.className("tc_compressionAlgorithmRequired"))
       }
     },
     compressionMinBlobSize: {
-      name: 'Compression min blob size',
-      byClass: element(by.className('tc_compressionMaxBlobSize')),
-      byModel: element(by.model('data.compression_min_blob_size')),
-      type: 'text',
+      name: "Compression min blob size",
+      byClass: element(by.className("tc_compressionMaxBlobSize")),
+      byModel: element(by.model("data.compression_min_blob_size")),
+      type: "text",
       displayed: false,
-      displayedIf: ['isCompression'],
+      displayedIf: ["isCompression"],
       items: {
-        compressionMinBlobSizeRequired: element(by.className('tc_compressionMinBlobSizeRequired')),
-        compressionMinBlobSizeMin: element(by.className('tc_compressionMinBlobSizeMin'))
+        compressionMinBlobSizeRequired: element(by.className("tc_compressionMinBlobSizeRequired")),
+        compressionMinBlobSizeMin: element(by.className("tc_compressionMinBlobSizeMin"))
       }
     },
     compressionMaxBlobSize: {
-      name: 'Compression max blob size',
-      byClass: element(by.className('tc_compressionMaxBlobSize')),
-      byModel: element(by.model('data.compression_max_blob_size')),
-      type: 'text',
+      name: "Compression max blob size",
+      byClass: element(by.className("tc_compressionMaxBlobSize")),
+      byModel: element(by.model("data.compression_max_blob_size")),
+      type: "text",
       displayed: false,
-      displayedIf: ['isCompression'],
+      displayedIf: ["isCompression"],
       items: {
-        compressionMaxBlobSizeRequired: element(by.className('tc_compressionMaxBlobSizeRequired')),
-        compressionMaxBlobSizeMin: element(by.className('tc_compressionMaxBlobSizeMin'))
+        compressionMaxBlobSizeRequired: element(by.className("tc_compressionMaxBlobSizeRequired")),
+        compressionMaxBlobSizeMin: element(by.className("tc_compressionMaxBlobSizeMin"))
       }
     },
     compressionRequiredRatio: {
-      name: 'Compression required ratio',
-      byClass: element(by.className('tc_compressionRequiredRatio')),
-      byModel: element(by.model('pool.compression_required_ratio')),
-      type: 'number',
+      name: "Compression required ratio",
+      byClass: element(by.className("tc_compressionRequiredRatio")),
+      byModel: element(by.model("pool.compression_required_ratio")),
+      type: "number",
       displayed: false,
-      displayedIf: ['isCompression'],
+      displayedIf: ["isCompression"],
       items: {
-        ccompressionRequiredRatioRequired: element(by.className('tc_ccompressionRequiredRatioRequired')),
-        compressionRequiredRatioMinMax: element(by.className('tc_compressionRequiredRatioMinMax'))
+        ccompressionRequiredRatioRequired: element(by.className("tc_ccompressionRequiredRatioRequired")),
+        compressionRequiredRatioMinMax: element(by.className("tc_compressionRequiredRatioMinMax"))
       }
     },
     selectApplication: {
-      name: 'Add application',
-      byClass: element(by.className('tc-app-selection')),
+      name: "Add application",
+      byClass: element(by.className("tc-app-selection")),
       displayed: false,
-      displayedIf: ['replicated', 'erasure'],
-      type: 'select',
+      displayedIf: ["replicated", "erasure"],
+      type: "select",
       items: {
-        maxApps: element(by.className('tc-max-apps'))
+        maxApps: element(by.className("tc-max-apps"))
       }
     },
     addApplication: {
-      name: 'Add application',
-      byClass: element(by.className('tc-add-app')),
+      name: "Add application",
+      byClass: element(by.className("tc-add-app")),
       displayed: false,
-      displayedIf: ['replicated', 'erasure'],
-      type: 'button',
+      displayedIf: ["replicated", "erasure"],
+      type: "button",
       items: {
-        maxApps: element(by.className('tc-max-apps'))
+        maxApps: element(by.className("tc-max-apps"))
       }
     },
     firstUsedApp: {
-      byClass: element(by.className('tc-used-app')),
+      byClass: element(by.className("tc-used-app")),
       presented: false,
-      type: 'text',
+      type: "text",
       items: {
-        maxApps: element(by.className('tc-max-apps'))
+        maxApps: element(by.className("tc-max-apps"))
       }
     },
     backButton: {
-      name: 'Back',
-      byClass: element(by.className('tc_backButton')),
-      type: 'button',
+      name: "Back",
+      byClass: element(by.className("tc_backButton")),
+      type: "button",
       displayed: true
     },
     createButton: {
-      name: 'Create',
-      byClass: element(by.className('tc_submitButton')),
-      type: 'button',
+      name: "Create",
+      byClass: element(by.className("tc_submitButton")),
+      type: "button",
       displayed: true
     }
   };
 
   this.deleteFirstApp = () => {
-    element.all(by.className('tc-delete-app')).first().click();
+    element.all(by.className("tc-delete-app")).first().click();
   };
 
   this.addApplication = (select) => {
@@ -325,10 +325,10 @@ var cephPoolCommons = function(){
     const selection = self.getFormElement(fe.selectApplication);
     selection.click();
     let option = {};
-    if(typeof select === 'string'){
-      option = selection.element(by.cssContainingText('option', select));
-    }else{
-      option = selection.all(by.tagName('option')).get(select);
+    if (typeof select === "string") {
+      option = selection.element(by.cssContainingText("option", select));
+    } else {
+      option = selection.all(by.tagName("option")).get(select);
     }
     option.click();
     self.getFormElement(fe.addApplication).click();
@@ -336,36 +336,36 @@ var cephPoolCommons = function(){
 
   this.formLabels = {
     header: {
-      text: 'Create Ceph pool:',
-      where: 'header',
-      byClass: element(by.className('tc_formHeadline'))
+      text: "Create Ceph pool:",
+      where: "header",
+      byClass: element(by.className("tc_formHeadline"))
     }
   };
 
-  this.isListInSelectBox = function(e){
-    if(e.displayedIf){
+  this.isListInSelectBox = function (e) {
+    if (e.displayedIf) {
       self.selectNeededSelection(e.displayedIf[0]);
     }
     e.byClass.click();
-    var listEntries = e.byClass.all(by.css('option'));
+    var listEntries = e.byClass.all(by.css("option"));
     expect(listEntries.count()).toBeGreaterThan(1);
   };
 
   this.selectNeededSelection = (displayedIf) => {
-    if(displayedIf === 'replicated'){
-      self.formElements.types.byModel.sendKeys('Replicated');
-    }else if(displayedIf === 'erasure'){
-      self.formElements.types.byModel.sendKeys('Erasure');
-    }else if(displayedIf === 'isCompression'){
-      self.formElements.types.byModel.sendKeys('Replicated');
-      self.formElements.compressionMode.byModel.sendKeys('force');
+    if (displayedIf === "replicated") {
+      self.formElements.types.byModel.sendKeys("Replicated");
+    } else if (displayedIf === "erasure") {
+      self.formElements.types.byModel.sendKeys("Erasure");
+    } else if (displayedIf === "isCompression") {
+      self.formElements.types.byModel.sendKeys("Replicated");
+      self.formElements.compressionMode.byModel.sendKeys("force");
     }
     self.formElements.name.byModel.click();
   };
 
-  this.checkCheckboxToBe = function(e, bool){
-    e.getAttribute('checked').then(function(value){
-      if(Boolean(value) !== bool){
+  this.checkCheckboxToBe = function (e, bool) {
+    e.getAttribute("checked").then(function (value) {
+      if (Boolean(value) !== bool) {
         e.click();
       }
     });
@@ -377,20 +377,20 @@ var cephPoolCommons = function(){
     self.cephPools.click();
     var pool = helpers.search_for_element(name);
     pool.click();
-    helpers.delete_selection(undefined, '$ctrl');
+    helpers.delete_selection(undefined, "$ctrl");
     expect(pool.isPresent()).toBe(false);
   };
 
   this.fillForm = (name, type, pgs, isCompression, appToUse) => {
     isCompression = isCompression || false;
-    appToUse = appToUse || 'cephfs';
+    appToUse = appToUse || "cephfs";
     const fe = self.formElements;
     self.getFormElement(fe.name).clear().sendKeys(name);
     self.getFormElement(fe.types).sendKeys(type);
     self.getFormElement(fe.pgnum).clear().sendKeys(pgs);
     self.addApplication(appToUse);
-    if(isCompression === true){
-      self.getFormElement(fe.compressionMode).sendKeys('force');
+    if (isCompression === true) {
+      self.getFormElement(fe.compressionMode).sendKeys("force");
     }
   };
 
@@ -403,15 +403,15 @@ var cephPoolCommons = function(){
     const cephPool = helpers.search_for_element(name);
     expect(cephPool.isDisplayed()).toBe(true);
     cephPool.click();
-    if(type && pgs){
-      expect(element(by.binding('selection.item.type')).getText()).toBe(type);
-      expect(element(by.binding('selection.item.pg_num')).getText()).toBe(pgs + '');
+    if (type && pgs) {
+      expect(element(by.binding("selection.item.type")).getText()).toBe(type);
+      expect(element(by.binding("selection.item.pg_num")).getText()).toBe(String(pgs));
     }
   };
 
   this.createPool = (name, type, pgs, isCompression, appToUse) => {
     isCompression = isCompression || false;
-    appToUse = appToUse || 'cephfs';
+    appToUse = appToUse || "cephfs";
     self.fillForm(name, type, pgs, isCompression, appToUse);
     self.submitForm(name, type, pgs);
   };
@@ -419,8 +419,8 @@ var cephPoolCommons = function(){
   /*
    Selects cluster if a selection is available in the listing.
    */
-  this.selectCluster = function(cluster){
-    if(self.clusterCount > 1){
+  this.selectCluster = function (cluster) {
+    if (self.clusterCount > 1) {
       self.clusterSelect.sendKeys(cluster.name);
       expect(self.clusterSelect.getText()).toContain(cluster.name);
     }
@@ -429,4 +429,4 @@ var cephPoolCommons = function(){
   var self = this;
 };
 
-module.exports = cephPoolCommons;
+module.exports = CephPoolCommons;

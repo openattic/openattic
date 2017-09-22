@@ -1,23 +1,24 @@
 {
   "plugins": [
-    "protractor"
+    "protractor",
+    "jasmine"
   ],
   "env": {
-    "browser": true,
     "protractor": true,
-    "jquery": true,
-    "node": true,
-    "es6": true
+    "es6": true,
+    "jasmine": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script"
   },
   "rules": {
-    "quotes": [2, "single"],
-    "semi": [2, "always"],
-    "strict": [2, "global"],
-    "space-infix-ops": [2, {"int32Hint": true}],
-    "space-before-blocks": [2, "never"],
-    "space-before-function-paren": [2, "never"],
-    "space-in-parens": [2, "never"],
-    "no-trailing-spaces": [2, { "skipBlankLines": false }],
-    "indent": [2, 2]
+    "angular/definedundefined": 0,
+    "angular/foreach": 0,
+    "angular/json-functions": 0,
+    "angular/log": 0,
+    "angular/no-private-call": 0,
+    "angular/typecheck-string": 0,
+    "guard-for-in": 0
   }
 }

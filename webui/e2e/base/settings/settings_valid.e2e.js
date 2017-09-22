@@ -1,61 +1,61 @@
-'use strict';
+"use strict";
 
-var helpers = require('../../common.js');
-var SettingsForm = require('./SettingsForm');
+var helpers = require("../../common.js");
+var SettingsForm = require("./SettingsForm");
 
-describe('settings inputs validations', function(){
+describe("settings inputs validations", function () {
 
   var form = new SettingsForm();
 
-  beforeAll(function(){
+  beforeAll(function () {
     helpers.login();
-    helpers.setLocation('settings');
+    helpers.setLocation("settings");
   });
 
-  it('should validate salt api host', function(){
+  it("should validate salt api host", function () {
     form.saltApiHost.clear();
     expect(form.saltApiHostRequired.isDisplayed()).toBe(true);
 
-    form.saltApiHost.sendKeys('e2e-host');
+    form.saltApiHost.sendKeys("e2e-host");
     expect(form.saltApiHostRequired.isDisplayed()).toBe(false);
   });
 
-  it('should validate salt api port', function(){
+  it("should validate salt api port", function () {
     form.saltApiPort.clear();
     expect(form.saltApiPortRequired.isDisplayed()).toBe(true);
 
-    form.saltApiPort.sendKeys('8001');
+    form.saltApiPort.sendKeys("8001");
     expect(form.saltApiPortRequired.isDisplayed()).toBe(false);
   });
 
-  it('should validate salt api eauth', function(){
-    form.selectEauth('-- Select the external auth system --');
+  it("should validate salt api eauth", function () {
+    form.selectEauth("-- Select the external auth system --");
     expect(form.saltApiEauthRequired.isDisplayed()).toBe(true);
 
-    form.selectEauth('auto');
+    form.selectEauth("auto");
     expect(form.saltApiEauthRequired.isDisplayed()).toBe(false);
   });
 
-  it('should validate salt api username', function(){
+  it("should validate salt api username", function () {
     form.saltApiUsername.clear();
     expect(form.saltApiUsernameRequired.isDisplayed()).toBe(true);
 
-    form.saltApiUsername.sendKeys('e2e-user');
+    form.saltApiUsername.sendKeys("e2e-user");
     expect(form.saltApiUsernameRequired.isDisplayed()).toBe(false);
   });
 
-  it('should validate salt api shared secret', function(){
-    form.selectEauth('sharedsecret');
+  it("should validate salt api shared secret", function () {
+    form.selectEauth("sharedsecret");
     form.saltApiSharedSecret.clear();
     expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(true);
 
-    form.saltApiSharedSecret.sendKeys('mysecretkey');
+    form.saltApiSharedSecret.sendKeys("mysecretkey");
     expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(false);
   });
 
-  it('should disable object gateway fields', function(){
+  it("should disable object gateway fields", function () {
     browser.refresh();
-    
+
     form.checkManagedByDeepSea(true);
     expect(form.rgwHost.isEnabled()).toBe(false);
     expect(form.rgwPort.isEnabled()).toBe(false);
@@ -75,38 +75,38 @@ describe('settings inputs validations', function(){
     expect(form.rgwUseSSL.isEnabled()).toBe(true);
   });
 
-  it('should disable ceph config file', function(){
+  it("should disable ceph config file", function () {
     expect(form.cephClusterConfigFile.isEnabled()).toBe(false);
   });
 
-  it('should validate ceph keyring file path', function(){
+  it("should validate ceph keyring file path", function () {
     form.cephClusterKeyringFile.clear();
     expect(form.cephClusterKeyringFileRequired.isDisplayed()).toBe(true);
 
-    form.cephClusterKeyringFile.sendKeys('/e2e-path');
+    form.cephClusterKeyringFile.sendKeys("/e2e-path");
     expect(form.cephClusterKeyringFileRequired.isDisplayed()).toBe(false);
   });
 
-  it('should validate ceph keyring user', function(){
+  it("should validate ceph keyring user", function () {
     form.cephClusterKeyringUser.clear();
     expect(form.cephClusterKeyringUserRequired.isDisplayed()).toBe(true);
 
-    form.cephClusterKeyringUser.sendKeys('e2e-user');
+    form.cephClusterKeyringUser.sendKeys("e2e-user");
     expect(form.cephClusterKeyringUserRequired.isDisplayed()).toBe(false);
   });
 
-  it('should check salt api connection', function(){
+  it("should check salt api connection", function () {
     browser.refresh();
 
     expect(form.saltApiConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.saltApiConnectionFail.isDisplayed()).toBe(false);
 
-    form.saltApiHost.clear().sendKeys('e2e-host');
+    form.saltApiHost.clear().sendKeys("e2e-host");
     expect(form.saltApiConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.saltApiConnectionFail.isDisplayed()).toBe(true);
   });
 
-  it('should check object gateway connection', function(){
+  it("should check object gateway connection", function () {
     browser.refresh();
 
     form.checkManagedByDeepSea(true);
@@ -117,34 +117,34 @@ describe('settings inputs validations', function(){
     expect(form.rgwConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.rgwConnectionFail.isDisplayed()).toBe(false);
 
-    form.rgwHost.clear().sendKeys('e2e-host');
+    form.rgwHost.clear().sendKeys("e2e-host");
     expect(form.rgwConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.rgwConnectionFail.isDisplayed()).toBe(true);
   });
 
-  it('should check grafana connection', function(){
+  it("should check grafana connection", function () {
     expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.grafanaConnectionFail.isDisplayed()).toBe(false);
 
-    form.grafanaHost.clear().sendKeys('e2e-host');
+    form.grafanaHost.clear().sendKeys("e2e-host");
     expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.grafanaConnectionFail.isDisplayed()).toBe(true);
   });
 
-  it('should check ceph connection', function(){
+  it("should check ceph connection", function () {
     browser.refresh();
 
     expect(form.cephClusterConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.cephClusterConnectionFail.isDisplayed()).toBe(false);
 
-    form.cephClusterKeyringUser.clear().sendKeys('e2e-keyring-user');
+    form.cephClusterKeyringUser.clear().sendKeys("e2e-keyring-user");
     expect(form.cephClusterConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.cephClusterConnectionFail.isDisplayed()).toBe(true);
   });
 
-  afterAll(function(){
+  afterAll(function () {
     browser.refresh();
-    console.log('settings -> settings_valid.e2e.js');
+    console.log("settings -> settings_valid.e2e.js");
   });
 
 });
