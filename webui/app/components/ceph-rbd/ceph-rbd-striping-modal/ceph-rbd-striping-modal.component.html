@@ -42,7 +42,16 @@
       object-set-index="1">
   </ceph-rbd-striping-object-set>
 
-  <h2 ng-if="$ctrl.numObjectSets > 3" class="text-muted">&#8942;</h2>
+  <h2 ng-if="$ctrl.numObjectSets > 4" class="text-muted">&#8942;</h2>
+
+  <ceph-rbd-striping-object-set
+      ng-if="$ctrl.numObjectSets >= 4"
+      size-str="$ctrl.resolve.size"
+      object-size-str="$ctrl.resolve.objectSize"
+      stripe-unit-str="$ctrl.resolve.stripeUnit"
+      stripe-count="$ctrl.resolve.stripeCount"
+      object-set-index="$ctrl.numObjectSets - 2">
+  </ceph-rbd-striping-object-set>
 
   <ceph-rbd-striping-object-set
       ng-if="$ctrl.numObjectSets >= 3"
