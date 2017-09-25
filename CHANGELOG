@@ -50,6 +50,7 @@ Fixed
 
 Removed
 ~~~~~~~
+* WebUI: Refactored node service (OP-2122)
 * Removed old `virtualenv` requirements.txt entries (OP-2675)
 * Backend: Cleanup systemd module (OP-2677)
 * Remove `cmdlog` Module (OP-2683)
