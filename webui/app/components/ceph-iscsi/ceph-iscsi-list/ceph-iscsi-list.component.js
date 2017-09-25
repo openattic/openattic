@@ -34,7 +34,7 @@ var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiList", {
   template: require("./ceph-iscsi-list.component.html"),
   controller: function ($scope, $state, $filter, $timeout, $uibModal, registryService,
-      tabViewService, cephIscsiService, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
+      oaTabSetService, cephIscsiService, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
       cephIscsiTargetAdvangedSettings, Notification) {
 
     let self = this;
@@ -161,7 +161,7 @@ app.component("cephIscsiList", {
       active: 0,
       tabs: {
         status: {
-          show: "selection.item",
+          show: "$ctrl.selection.item",
           state: "cephIscsi.detail.details",
           class: "tc_statusTab",
           name: "Status"
@@ -173,9 +173,6 @@ app.component("cephIscsiList", {
       linkedBy: "id",
       jumpTo: "more"
     };
-    tabViewService.setScope(self);
-
-    var changeTab = tabViewService.changeTab;
 
     $scope.$watch("$ctrl.filterConfig", function (newValue, oldValue) {
       if (angular.equals(newValue, oldValue)) {
@@ -195,9 +192,9 @@ app.component("cephIscsiList", {
         return;
       }
       if ($state.current.name === "cephIscsi") {
-        changeTab("cephIscsi.detail.details");
+        oaTabSetService.changeTab("cephIscsi.detail.details", self.tabData, self.tabConfig, selection);
       } else {
-        changeTab($state.current.name);
+        oaTabSetService.changeTab($state.current.name, self.tabData, self.tabConfig, selection);
       }
     };
 

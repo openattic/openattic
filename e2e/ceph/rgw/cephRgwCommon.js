@@ -13,7 +13,7 @@ var CephRgwCommons = function(){
   this.addCapBtn = element(by.css('.tc_addCapButton'));
   this.submitCapBtn = element(by.css('.tc_submitCapButton'));
   this.capabilitiesDT = element(by.cssContainingText('dt', 'Capabilities:'));
-  this.capabilitiesDD = element.all(by.repeater('cap in selection.item.caps | orderBy:\'type\''));
+  this.capabilitiesDD = element.all(by.repeater('cap in $ctrl.selection.item.caps | orderBy:\'type\''));
 
   this.addUser = function() {
     element(by.css('.tc_addUser')).click();
