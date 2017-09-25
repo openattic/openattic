@@ -113,11 +113,11 @@ app.config(function ($sceDelegateProvider) {
   ]);
 });
 
-requireAll(require.context("./config/", true, /\.js$/));
-requireAll(require.context("./directive/", true, /\.js$/));
-requireAll(require.context("./filters/", true, /\.js$/));
-requireAll(require.context("./services/", true, /\.js$/));
-requireAll(require.context("./validators/", true, /\.js$/));
+requireAll(require.context("./config/", true, /^(?!.*\.spec\.js$).*\.js$/));
+requireAll(require.context("./directive/", true, /^(?!.*\.spec\.js$).*\.js$/));
+requireAll(require.context("./filters/", true, /^(?!.*\.spec\.js$).*\.js$/));
+requireAll(require.context("./services/", true, /^(?!.*\.spec\.js$).*\.js$/));
+requireAll(require.context("./validators/", true, /^(?!.*\.spec\.js$).*\.js$/));
 
 function requireAll (require) {
   require.keys().forEach(require);
