@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephNodes");
 app.controller("CephNodesCtrl", function ($scope, $state, $uibModal,
-    cephNodesService) {
+    cephNodesService, oaTabSetService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -44,6 +44,29 @@ app.controller("CephNodesCtrl", function ($scope, $state, $uibModal,
   };
 
   $scope.selection = {};
+
+  $scope.tabData = {
+    active: 0,
+    tabs: {
+      details: {
+        show: "$ctrl.selection.item",
+        state: "cephNodes.detail.details",
+        class: "tc_detailsTab",
+        name: "Details"
+      },
+      statistics: {
+        show: "$ctrl.selection.item",
+        state: "cephNodes.detail.statistics",
+        class: "tc_statisticsTab",
+        name: "Statistics"
+      }
+    }
+  };
+  $scope.tabConfig = {
+    type: "cephNodes",
+    linkedBy: "id",
+    jumpTo: "more"
+  };
 
   $scope.error = false;
 
@@ -87,9 +110,8 @@ app.controller("CephNodesCtrl", function ($scope, $state, $uibModal,
       return;
     }
 
-    $state.go("cephNodes.statistics", {
-      "#": "more"
-    });
+    oaTabSetService.changeTab("cephNodes.detail.details", $scope.tabData,
+      $scope.tabConfig, selection);
   };
 
   $scope.scrubAction = function (deep) {
