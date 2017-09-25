@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRbd");
 app.component("cephRbdForm", {
-  templateUrl: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html",
+  template: require("./ceph-rbd-form.component.html"),
   bindings: {},
   controller: function ($scope, $state, $stateParams, cephRbdService,
       cephPoolsService, SizeParserService, $filter, Notification,

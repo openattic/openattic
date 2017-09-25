@@ -5,9 +5,6 @@ var rbdCommons = function(){
   var taskQueueHelpers = require('../../base/taskqueue/task_queue_common.js');
   this.cephRBDs = element(by.css('.tc_menuitem_ceph_rbds'));
   this.addButton = element(by.css('oadatatable .tc_add_btn'));
-  this.clusters = helpers.configs.cephCluster;
-  this.clusterCount = Object.keys(this.clusters).length;
-  this.clusterSelect = element(by.model('$ctrl.registry.selectedCluster'));
   this.statisticsTab = element(by.className('tc_statisticsTab'));
 
   this.detailAttributes = [
@@ -55,16 +52,6 @@ var rbdCommons = function(){
       name: 'Name',
       testClass: 'tc_rbd_name',
       model: '$ctrl.rbd.name',
-    },
-    cluster: {
-      name: 'Cluster',
-      testClass: 'tc_cluster_selection',
-      model: '$ctrl.data.cluster',
-      items: {
-        clusterSelection: 'tc_rbdClusterOption',
-        helpCluster: 'tc_clusterRequired',
-        helpLoad: 'tc_clusterLoading'
-      }
     },
     pool: {
       name: 'Poolname',
@@ -166,11 +153,11 @@ var rbdCommons = function(){
   this.size = element(by.model(this.formElements.size.model));
   this.name = element(by.model(this.formElements.name.model));
   this.poolSelect = element(by.model(this.formElements.pool.model));
+  this.poolEntries = this.poolSelect.all(by.css('.' + this.formElements.pool.testClass + ' option'));
   this.firstPool = this.poolSelect.all(by.tagName('option')).get(1);
   this.useDataPool = element(by.model('$ctrl.data.useDataPool'));
   this.dataPoolSelect = element(by.model('$ctrl.data.dataPool'));
   this.firstDataPool = this.dataPoolSelect.all(by.tagName('option')).get(1);
-  this.creationClusterSelect = element(by.model(this.formElements.cluster.model));
 
   this.featureCases = [ // 0 = unchecked; 1 = checked; -1= disabled; 2=true or false should not matter
     // TODO: Uncomment it when OP-2217 is fixed, to create a featureless RBD.
@@ -213,14 +200,6 @@ var rbdCommons = function(){
     fastDiff: 1
   });
 
-  this.isListInSelectBox = function(itemName){
-    var item = element(by.model(self.formElements[itemName].model));
-    item.click();
-    var listEntries = item.all(by.css('.' + self.formElements[itemName].testClass + ' option'));
-
-    expect(listEntries.count()).toBeGreaterThan(1);
-  };
-
   this.checkCheckboxToBe = function(e, bool){
     e.getAttribute('checked').then(function(value){
       if(Boolean(value) !== bool){
@@ -261,27 +240,15 @@ var rbdCommons = function(){
     expect(e.getAttribute('disabled')).toBe(state === -1 ? 'true' : null);
   };
 
-  this.useWriteablePools = function(callback){
-    Object.keys(self.clusters).forEach(function(clusterName){
-      var cluster = self.clusters[clusterName];
-      Object.keys(cluster.pools).forEach(function(poolName){
-        var pool = cluster.pools[poolName];
-        if(pool.writable !== false){
-          callback(cluster, pool);
-        }
-      });
+  this.useWriteablePools = (callback) => {
+    helpers.getConfiguredPools().forEach((pool) => {
+      if(pool.writable !== false){
+        callback(pool.name);
+      }
     });
   };
 
-  this.selectCluster = function(clusterName){
-    if(self.clusterCount > 1){
-      self.clusterSelect.sendKeys(clusterName);
-      expect(self.clusterSelect.getText()).toContain(clusterName);
-    }
-  };
-
-  this.selectClusterAndPool = function(clusterName, poolName){
-    self.selectCluster(clusterName);
+  this.selectPool = function(poolName){
     self.addButton.click();
     self.poolSelect.sendKeys(poolName);
     expect(self.poolSelect.getText()).toContain(poolName);
@@ -321,6 +288,7 @@ var rbdCommons = function(){
 
     taskQueueHelpers.waitForPendingTasks();
     self.cephRBDs.click();
+    browser.sleep(helpers.configs.sleep / 2);
     helpers.checkForUnsavedChanges(false);
 
     var rbd = helpers.search_for_element(rbdName);

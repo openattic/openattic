@@ -242,25 +242,25 @@ app.controller("CephRgwUserAddEditCtrl", function ($scope, $state, $stateParams,
   var _showModalDialog = function (type, index) {
     var typeMap = {
       subuser: {
-        templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html",
+        template: require("../templates/cephRgwUserAddEditSubuserModal.html"),
         controller: "CephRgwUserAddEditSubuserModalCtrl"
       },
       s3key: {
-        templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html",
+        template: require("../templates/cephRgwUserAddEditS3KeyModal.html"),
         controller: "CephRgwUserAddEditS3KeyModalCtrl"
       },
       swiftkey: {
-        templateUrl: "components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html",
+        template: require("../templates/cephRgwUserAddEditSwiftKeyModal.html"),
         controller: "CephRgwUserAddEditSwiftKeyModalCtrl"
       },
       capability: {
-        templateUrl: "components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html",
+        template: require("../templates/CephRgwUserAddEditCapabilityModal.html"),
         controller: "CephRgwUserAddEditCapabilityModalCtrl"
       }
     };
     return $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
-      templateUrl: typeMap[type].templateUrl,
+      windowTemplate: require("../../../templates/messagebox.html"),
+      template: typeMap[type].template,
       controller: typeMap[type].controller,
       resolve: {
         user: function () {

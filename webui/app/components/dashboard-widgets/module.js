@@ -30,7 +30,16 @@
  */
 "use strict";
 
+import "angular-nvd3";
+import "../ceph-cluster/module";
+
 angular.module("openattic.dashboardWidgets", [
   "nvd3",
   "openattic.cephCluster"
 ]);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

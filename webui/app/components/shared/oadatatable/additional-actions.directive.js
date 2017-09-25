@@ -34,7 +34,7 @@ var app = angular.module("openattic.shared");
 app.directive("additionalActions", function () {
   return {
     restrict: "E",
-    templateUrl: "components/shared/oadatatable/additional-actions.directive.html",
+    template: require("./additional-actions.directive.html"),
     transclude: true,
     link: function (scope, element, attr, controller, transclude) {
       var span = element.find(".oa-additional-actions");

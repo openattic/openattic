@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiFormTargetSettingsModal", {
-  templateUrl: "components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component.html",
+  template: require("./ceph-iscsi-form-target-settings-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"

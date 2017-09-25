@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.users");
 app.factory("usersService", function ($resource) {
   return $resource(globalConfig.API.URL + "users/:id", {

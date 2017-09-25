@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
       url          : "/ceph/pools",
       views        : {
         "main": {
-          templateUrl: "components/ceph-pools/templates/listing.html",
-          controller : "CephPoolsCtrl"
+          template: require("../templates/listing.html"),
+          controller: "CephPoolsCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -47,7 +47,7 @@ app.config(function ($stateProvider) {
     })
     .state("cephPools.detail", {
       views        : {
-        "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
+        "tab": {template: require("../templates/tab.html")}
       },
       ncyBreadcrumb: {
         skip: true
@@ -57,8 +57,8 @@ app.config(function ($stateProvider) {
       url: "/ceph/pools/add",
       views: {
         "main": {
-          templateUrl: "components/ceph-pools/templates/add-pool.html",
-          controller : "CephPoolsAddCtrl"
+          template: require("../templates/add-pool.html"),
+          controller: "CephPoolsAddCtrl"
         }
       },
       params: {
@@ -73,7 +73,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/pools/edit/:fsid/:poolId",
       views: {
         "main": {
-          templateUrl: "components/ceph-pools/templates/add-pool.html",
+          template: require("../templates/add-pool.html"),
           controller : "CephPoolsAddCtrl"
         }
       },
@@ -85,7 +85,7 @@ app.config(function ($stateProvider) {
     .state("cephPools.detail.cacheTier", {
       url          : "/cachetier",
       views        : {
-        "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
+        "tab-content": {template: require("../templates/cacheTier.html")}
       },
       ncyBreadcrumb: {
         label: "{{selection.item.name}} cache tier"
@@ -95,7 +95,7 @@ app.config(function ($stateProvider) {
       url          : "/statistics",
       views        : {
         "tab-content": {
-          templateUrl: "components/ceph-pools/templates/statistics.html"
+          template: require("../templates/statistics.html")
         }
       },
       ncyBreadcrumb: {
@@ -105,7 +105,7 @@ app.config(function ($stateProvider) {
     .state("cephPools.detail.status", {
       url          : "/status",
       views        : {
-        "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
+        "tab-content": {template: require("../templates/status.html")}
       },
       ncyBreadcrumb: {
         label: "{{selection.item.name}} status"

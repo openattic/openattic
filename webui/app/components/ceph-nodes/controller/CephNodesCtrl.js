@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephNodes");
-app.controller("CephNodesCtrl", function ($scope, $state, cephNodesService) {
+app.controller("CephNodesCtrl", function ($scope, $state, $uibModal,
+    cephNodesService) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -75,7 +76,11 @@ app.controller("CephNodesCtrl", function ($scope, $state, cephNodesService) {
   $scope.onSelectionChange = function (selection) {
     $scope.selection = selection;
 
+    var item = selection.item;
     var items = selection.items;
+
+    $scope.multiSelection = Boolean(items) && items.length > 1;
+    $scope.hasSelection = Boolean(item);
 
     if (!items || items.length !== 1) {
       $state.go("cephNodes");
@@ -84,6 +89,28 @@ app.controller("CephNodesCtrl", function ($scope, $state, cephNodesService) {
 
     $state.go("cephNodes.statistics", {
       "#": "more"
+    });
+  };
+
+  $scope.scrubAction = function (deep) {
+    if (!($scope.hasSelection || $scope.multiSelection)) {
+      return;
+    }
+    var modalInstance = $uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "CephNodesScrubModal",
+      resolve: {
+        cephNodes: function () {
+          return $scope.selection.items;
+        },
+        deep: function () {
+          return deep;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
     });
   };
 });

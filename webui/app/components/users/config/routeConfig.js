@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
       url: "/users",
       views: {
         "main": {
-          templateUrl: "components/users/templates/users.html",
-          controller : "UsersCtrl"
+          template: require("../templates/users.html"),
+          controller: "UsersCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -49,8 +49,8 @@ app.config(function ($stateProvider) {
       url: "/users/add",
       views: {
         "main": {
-          templateUrl: "components/users/templates/add-edit-user.html",
-          controller : "UsersAddEditCtrl"
+          template: require("../templates/add-edit-user.html"),
+          controller: "UsersAddEditCtrl"
         }
       },
       ncyBreadcrumb: {
@@ -62,13 +62,14 @@ app.config(function ($stateProvider) {
       url: "/users/edit/:user",
       views: {
         "main": {
-          templateUrl: "components/users/templates/add-edit-user.html",
-          controller : "UsersAddEditCtrl"
+          template: require("../templates/add-edit-user.html"),
+          controller: "UsersAddEditCtrl"
         }
       },
       ncyBreadcrumb: {
         label: "Edit {{user.username}}",
         parent: "users"
       }
-    });
+    }
+    );
 });

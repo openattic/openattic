@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.auth");
 app.factory("authService", function ($resource) {
   return $resource(globalConfig.API.URL + "auth", {}, {

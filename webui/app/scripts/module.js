@@ -30,6 +30,26 @@
  */
 "use strict";
 
+import "bootstrap/dist/js/bootstrap";
+import angular from "angular";
+import "angular-md5";
+import "angular-toasty/dist/angular-toasty";
+import "angular-breadcrumb";
+import "angular-animate";
+import "angular-resource";
+import "angular-sanitize";
+import "ngstorage";
+import "ng-tags-input";
+import "angular-ui-bootstrap";
+import "@uirouter/angularjs";
+import "angular-ui-sortable";
+import "angular-bootstrap-toggle/dist/angular-bootstrap-toggle";
+import "angular-ui-tree";
+import globalConfig from "globalConfig";
+
+require("./module_openattic-ceph");
+require("./module_openattic-core");
+
 angular.module("openattic", [
   "angular-md5",
   "angular-toasty",
@@ -83,3 +103,22 @@ app.run(function ($rootScope, usersService, $state, $transitions) {
     $rootScope.pageTitle = "openATTIC";
   }
 });
+
+app.config(function ($sceDelegateProvider) {
+  $sceDelegateProvider.resourceUrlWhitelist([
+    // Allow same origin resource loads.
+    "self",
+    // Allow loading grafana
+    globalConfig.API.URL + "**"
+  ]);
+});
+
+requireAll(require.context("./config/", true, /\.js$/));
+requireAll(require.context("./directive/", true, /\.js$/));
+requireAll(require.context("./filters/", true, /\.js$/));
+requireAll(require.context("./services/", true, /\.js$/));
+requireAll(require.context("./validators/", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

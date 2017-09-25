@@ -7,6 +7,12 @@
   var helper = {
     configs: configs,
 
+    getConfiguredPools: () => {
+      const clusters = helper.configs.cephCluster;
+      const pools = clusters[Object.keys(clusters)[0]].pools;
+      return Object.keys(pools).map(key => pools[key]);
+    },
+
     /**
      * Get the absolute URL, e.g. 'http://192.168.10.105:8000/openattic/#/login'.
      * @param {string} inPageUrl The in-page URL, e.g. 'login'.

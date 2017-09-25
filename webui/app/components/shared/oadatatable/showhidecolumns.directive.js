@@ -34,6 +34,6 @@ var app = angular.module("openattic.shared");
 app.directive("showhidecolumns", function () {
   return {
     restrict: "E",
-    templateUrl: "components/shared/oadatatable/showhidecolumns.directive.html"
+    template: require("./showhidecolumns.directive.html")
   };
 });

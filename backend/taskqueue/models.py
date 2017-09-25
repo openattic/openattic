@@ -289,7 +289,7 @@ class TaskFactory(object):
     >>>
     >>> assert isinstance(inc, TaskFactory)
     >>> assert isinstance(inc(42), Task)
-    >>> assert isinstance(inc.delay(42), TaskQueue)
+    >>> assert isinstance(inc.delay(42), TaskQueue)  # doctest: +SKIP
     >>> assert inc.call_now(42) == 43
     """
     def __init__(self, func, percent=None, description=None, metadata=None):

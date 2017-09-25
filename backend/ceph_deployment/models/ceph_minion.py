@@ -12,6 +12,7 @@
  *  GNU General Public License for more details.
 """
 import logging
+from socket import getaddrinfo
 from urlparse import urlparse
 
 from django.db import models
@@ -19,7 +20,8 @@ from django.db import models
 from ceph.models import CephCluster
 from deepsea import DeepSea
 from ceph.librados import MonApi
-from nodb.models import JsonField, NodbModel
+from exception import NotSupportedError
+from nodb.models import JsonField, NodbModel, bulk_attribute_setter
 from utilities import aggregate_dict
 import rest_client
 
@@ -68,6 +70,26 @@ class CephMinion(NodbModel):
         return [CephMinion(**CephMinion.make_model_args(host))
                 for host in minions]
 
+    def scrub(self, deep_scrub):
+        api = MonApi(self.cluster.fsid)
+        osds = [daemon for daemon in self.daemons if daemon.startswith('osd.')]
+        if not osds:
+            raise NotSupportedError('Node {} does not have any OSDs'.format(self.hostname))
+
+        api_scrub = api.osd_deep_scrub if deep_scrub else api.osd_scrub
+        return {osd: api_scrub(osd) for osd in osds}
+
+    @bulk_attribute_setter(['addresses'])
+    def set_addresses(self, objs, field_names):
+        """
+        Fallback: use `getaddrinfo` to resolve IPs.
+        """
+        self.addresses = []
+        try:
+            self.addresses = set((info[4][0] for info in getaddrinfo(self.hostname, None))) - {
+            '127.0.0.1', '127.0.1.1', '::1'}
+        except:
+            logger.exception('failed to get IP for {.hostname}'.format(self))
 
 def merge_pillar_metadata():
     def get_hostname(fqdn):
@@ -91,6 +113,10 @@ def merge_pillar_metadata():
             ret.append(minion)
     for metadata in metadata.values():
         ret.append(metadata)
+    for host in ret:
+        if 'addresses' in host and not host['addresses']:
+            del host['addresses']
+
     return ret
 
 
@@ -112,7 +138,7 @@ def reduce_services(services):
     # According to
     # ostream& operator<<(ostream& out, const sockaddr_storage &ss)
     # these are urlish
-    addresses = as_list('back_addr') + as_list('front_addr') + as_list('faddr')
+    addresses = as_list('back_addr') + as_list('front_addr') + as_list('addr')
 
     return {
         'hostname': services[0]['hostname'],

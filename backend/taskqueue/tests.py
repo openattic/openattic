@@ -69,7 +69,7 @@ class TaskTestCase(TestCase):
 
     def test_wrapper(self):
         t = add(3, 4)
-        self.assertEqual(t.func_reference, 'taskqueue.tests.add')
+        self.assertEqual(t.func_reference, 'taskqueue.tests.add', 'Run tests with "-t . -v 2"')
         self.assertEqual(t.args, [3, 4])
         self.assertEqual(t.kwargs, {})
 

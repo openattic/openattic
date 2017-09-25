@@ -41,7 +41,6 @@ var allSuites = {
   settings             : '../e2e/base/settings/*.e2e.js',
   users                : '../e2e/base/users/**/*.e2e.js',
   auth                 : '../e2e/base/auth/*.e2e.js',
-  cmdlogs              : '../e2e/base/commandLogs/**/*.e2e.js',
   task_queue_directive : '../e2e/base/taskqueue/task_queue_directive.e2e.js',
   task_queue_dialog    : '../e2e/base/taskqueue/task_queue_dialog.e2e.js',
   task_queue_deletion  : '../e2e/base/taskqueue/task_queue_deletion.e2e.js',
@@ -51,12 +50,13 @@ var allSuites = {
   ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',
   ceph_pool_creation   : '../e2e/ceph/pools/ceph_pool_creation.e2e.js',
   ceph_pool_edit       : '../e2e/ceph/pools/ceph_pool_edit.e2e.js',
-  ceph_osds            : '../e2e/ceph/ceph_osds.e2e.js',
+  ceph_osds            : '../e2e/ceph/osds/*.e2e.js',
   ceph_rbds            : '../e2e/ceph/rbds/ceph_rbds.e2e.js',
   ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
   ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js',
   ceph_iscsi           : '../e2e/ceph/iscsi/*.e2e.js',
   ceph_nfs             : '../e2e/ceph/nfs/*.e2e.js',
+  ceph_nodes           : '../e2e/ceph/nodes/*.e2e.js',
   ceph_rgw             : '../e2e/ceph/rgw/*.e2e.js'
 };
 

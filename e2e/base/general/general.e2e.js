@@ -33,11 +33,11 @@ describe('General', function(){
     url: '',
     subitems: {
       users: element(by.css('.tc_submenuitem_system_users')),
-      commandlog: element(by.css('.tc_submenuitem_system_cmdlog'))
+      settings: element(by.css('.tc_submenuitem_system_settings'))
     },
     order: [
       'users',
-      'commandlog'
+      'settings'
     ]
   }];
 

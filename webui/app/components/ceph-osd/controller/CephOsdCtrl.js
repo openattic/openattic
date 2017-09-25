@@ -92,7 +92,9 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, $uibModal,
   $scope.onSelectionChange = function (selection) {
     $scope.selection = selection;
 
+    var item = selection.item;
     var items = selection.items;
+    $scope.hasSelection = Boolean(item);
 
     if (!items || items.length !== 1) {
       $state.go("cephOsds");
@@ -106,13 +108,35 @@ app.controller("CephOsdCtrl", function ($scope, $state, $filter, $uibModal,
 
   $scope.configureClusterAction = function () {
     $uibModal.open({
-      windowTemplateUrl: "templates/messagebox.html",
+      windowTemplate: require("../../../templates/messagebox.html"),
       component: "cephClusterSettingsModal",
       resolve: {
         fsid: function () {
           return $scope.registry.selectedCluster.fsid;
         }
       }
+    });
+  };
+
+  $scope.scrubAction = function (deep) {
+    if (!$scope.hasSelection) {
+      return;
+    }
+    var modalInstance = $uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephOdsScrubModal",
+      resolve: {
+        osd: function () {
+          return $scope.selection.item;
+        },
+        deep: function () {
+          return deep;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
     });
   };
 });

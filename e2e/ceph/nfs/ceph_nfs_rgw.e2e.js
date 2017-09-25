@@ -25,7 +25,7 @@ describe('ceph nfs', function(){
     form.selectHost(1);
     form.selectFsal('Object Gateway');
     form.bucket.sendKeys('e2e-rgw-add');
-    form.selectRgwUser(1);
+    form.selectRgwUser('admin');
     form.tag.clear().sendKeys('e2eTagRgw');
     form.addClientsButton.click();
     form.clients.clear().sendKeys('192.168.0.10');

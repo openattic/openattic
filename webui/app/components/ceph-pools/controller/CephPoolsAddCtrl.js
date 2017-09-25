@@ -30,11 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
-    $timeout, $uibModal, Notification, cephOsdService, cephCrushmapService,
-    cephClusterService, cephErasureCodeProfilesService, cephPoolsService,
-    $filter, SizeParserService) {
+angular.module("openattic.cephPools").controller("CephPoolsAddCtrl", function (
+    $scope, $state, $stateParams, $q, $timeout, $uibModal, Notification,
+    cephOsdService, cephCrushmapService, cephClusterService,
+    cephErasureCodeProfilesService, cephPoolsService, $filter,
+    SizeParserService) {
   const PG_MIN = 16;
   const goToListView = function () {
     $state.go("cephPools");
@@ -372,9 +372,9 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
   $scope.submitEdit = (pool) => {
     pool.id = $stateParams.poolId;
     cephPoolsService.update({
-        fsid: $stateParams.fsid,
-        id: pool.id
-      }, pool)
+      fsid: $stateParams.fsid,
+      id: pool.id
+    }, pool)
       .$promise
       .then(function () {
         goToListView();
@@ -429,8 +429,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
   $scope.addErasureCodeProfile = function () {
     var modalInstance = $uibModal.open({
       controller: "CephErasureCodeProfilesAddCtrl",
-      templateUrl: "components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html",
-      windowTemplateUrl: "templates/messagebox.html",
+      template: require("../../ceph-erasure-code-profiles/templates/add-erasure-code-profile.html"),
+      windowTemplate: require("../../../templates/messagebox.html"),
       resolve: {
         cluster: function () {
           return $scope.data.cluster;
@@ -451,8 +451,8 @@ app.controller("CephPoolsAddCtrl", function ($scope, $state, $stateParams, $q,
   $scope.deleteErasureCodeProfile = function () {
     var modalInstance = $uibModal.open({
       controller: "CephErasureCodeProfilesDeleteCtrl",
-      templateUrl: "components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html",
-      windowTemplateUrl: "templates/messagebox.html",
+      template: require("../../ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html"),
+      windowTemplate: require("../../../templates/messagebox.html"),
       resolve: {
         cluster: function () {
           return $scope.data.cluster;

@@ -30,12 +30,11 @@ tracking them:
   However, such style changes must be committed separately from other code
   modifications, to ease the reviewing of such pull requests.
 * For JavaScript code, we use
-  `grunt-eslint <https://github.com/sindresorhus/grunt-eslint/>`_ to perform
+  `eslint-loader <https://github.com/MoOx/eslint-loader/>`_ to perform
   automated syntax and style checks of the JavaScript code. The configuration
   files for these WebUI tests can be found in file ``webui/.eslintrc.json`` and
-  ``webui/grunt.eslintrc.json``, please consult them for more details on the
-  coding style and conventions. By running ``grunt inspect --force`` on the
-  command line, you can check the quality of your JavaScript code.
+  ``webui/webpack.eslintrc.json``, please consult them for more details on the
+  coding style and conventions.
 * Every bug fix or notable change made to a release branch must be accompanied
   by a `JIRA issue <https://tracker.openattic.org/>`_. The issue ID must be
   mentioned in the summary of the commit message and pull request in the

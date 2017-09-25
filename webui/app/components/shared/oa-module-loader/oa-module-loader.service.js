@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.shared");
 app.factory("oaModuleLoaderService", function ($resource) {
   return $resource(globalConfig.API.URL + "status/:module", {

@@ -118,6 +118,15 @@ class UnavailableModule(Exception):
 
 
 def unavailable_response(reason, message):
+    """
+    Returns a simple response:
+
+    >>> unavailable_response(42, 'message').data
+    {'available': False, 'reason': 42, 'message': 'message'}
+
+    >>> unavailable_response(42, {'k': 'v'}).data
+    {'available': False, 'reason': 42, 'k': 'v'}
+    """
     resp = {
         'available': False,
         'reason': reason,

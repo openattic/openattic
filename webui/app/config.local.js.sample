@@ -1,4 +1,4 @@
-globalConfig = {
+var globalConfig = {
   "API": {
     "URL": "/openattic/api/"
   },
@@ -33,9 +33,11 @@ globalConfig = {
         "locked"     : false
       }
     },
-    "quickLogin"      : {
+    "quickLogin": {
       "username": "openattic",
       "password": "openattic"
     }
   }
 };
+
+export default globalConfig;

@@ -1,0 +1,4 @@
+{
+  "target": "http://<host:port>",
+  "contextRoot": "/openattic/"
+}

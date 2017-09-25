@@ -33,10 +33,6 @@
 angular.module("openattic.auth", []);
 
 var app = angular.module("openattic.auth");
-app.config(function ($httpProvider) {
-  $httpProvider.defaults.xsrfCookieName = "csrftoken";
-  $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
-});
 
 app.factory("AuthHttpInterceptor", function ($q, $injector, $rootScope) {
   return {
@@ -61,3 +57,8 @@ app.factory("AuthHttpInterceptor", function ($q, $injector, $rootScope) {
 app.config(function ($httpProvider) {
   $httpProvider.interceptors.push("AuthHttpInterceptor");
 });
+
+requireAll(require.context("./", true, /\.js$/));
+function requireAll (require) {
+  require.keys().forEach(require);
+}

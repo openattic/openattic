@@ -30,7 +30,16 @@
  */
 "use strict";
 
+import "angular-gridster";
+import "../dashboard-widgets/module";
+
 angular.module("openattic.dashboard", [
   "gridster",
   "openattic.dashboardWidgets"
 ]);
+
+requireAll(require.context("./", true, /\.js$/));
+
+function requireAll (require) {
+  require.keys().forEach(require);
+}

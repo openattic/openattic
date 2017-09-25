@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import globalConfig from "globalConfig";
+
 var app = angular.module("openattic.settings");
 app.factory("hostsService", function ($resource) {
   return $resource(globalConfig.API.URL + "hosts/:id", {

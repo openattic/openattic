@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephIscsi");
 app.component("cephIscsiForm", {
-  templateUrl: "components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html",
+  template: require("./ceph-iscsi-form.component.html"),
   bindings: {
   },
   controller: function ($q, $scope, $state, $timeout, $stateParams, $uibModal,
@@ -137,7 +137,7 @@ app.component("cephIscsiForm", {
 
     self.openTargetSettingsModal = function () {
       $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephIscsiFormTargetSettingsModal",
         resolve: {
           model: function () {
@@ -277,7 +277,7 @@ app.component("cephIscsiForm", {
 
     self.openImageSettingsModal = function (selectedImage) {
       $uibModal.open({
-        windowTemplateUrl: "templates/messagebox.html",
+        windowTemplate: require("../../../templates/messagebox.html"),
         component: "cephIscsiFormImageSettingsModal",
         resolve: {
           image: function () {

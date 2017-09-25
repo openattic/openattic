@@ -225,7 +225,7 @@ def process_run(args, cwd=None, env=None, exit_on_error=True):
                            returncode=pipe.wait())
 
     if not result.success() and exit_on_error:
-        # Print stdout on failure too. Some tools like Grunt print errors to stdout!
+        # Print stdout on failure too. Some tools like Webpack print errors to stdout!
         if result.stdout and log.level >= logging.DEBUG:
             # Only print stdout if already printed, otherwise we
             # want to ignore the output for being able to silence the script. Sadly some tools
@@ -401,7 +401,6 @@ class DistBuilder(object):
         self._tmp_oa_clone_dir = os.path.join(self._tmp_dir, 'openattic')
         self._version_txt_path = os.path.join(self._tmp_oa_clone_dir, 'version.txt')
         self._package_json_path = os.path.join(self._tmp_oa_clone_dir, 'webui', 'package.json')
-        self._bower_json_path = os.path.join(self._tmp_oa_clone_dir, 'webui', 'bower.json')
 
         if self._args['-q']:
             log.setLevel(logging.WARNING)
@@ -507,10 +506,6 @@ class DistBuilder(object):
         os.environ['PATH'] = os.environ['PATH'] + ':' + os.path.join(self._home_dir, '.node/bin')
         process_run(['bash', '-c', 'hash -r'])
 
-        # Check for the existence of grunt.
-        if not _command_exists('grunt'):
-            process_run(['npm', 'install', '-g', 'grunt-cli'])
-
     def _retrieve_source(self, source, destination_dir, skip_if_exists=False):
         """Clone or copy the sources to the specified directory.
 
@@ -559,7 +554,6 @@ class DistBuilder(object):
         tmp_abs_build_dir = os.path.join(self._tmp_dir, build_basename)
         abs_tarball_dest_file = os.path.join(self._destination_dir, build_basename + '.tar.bz2')
 
-        bower_components_dir = os.path.join(tmp_abs_build_dir, 'webui', 'app', 'bower_components')
         node_modules_dir = os.path.join(tmp_abs_build_dir, 'webui', 'node_modules')
         webui_dir = os.path.join(tmp_abs_build_dir, 'webui')
 
@@ -583,11 +577,6 @@ class DistBuilder(object):
             'checksum_file': self._package_json_path,
             'command': ['npm', 'install'],
             'source_dir': node_modules_dir,
-        }, {
-            'name': 'bower',
-            'checksum_file': self._bower_json_path,
-            'command': ['bower', 'install', '--allow-root'],
-            'source_dir': bower_components_dir
         }]
 
         cache_used = True
@@ -612,10 +601,9 @@ class DistBuilder(object):
                 _copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
 
         if cache_used:  # Build the frontend files.
-            process_run(['grunt', 'build'], cwd=webui_dir)
+            process_run(['npm', 'build'], cwd=webui_dir)
 
             # Remove no longer required dirs.
-            _rmtree(bower_components_dir)
             _rmtree(node_modules_dir)
 
         # Update version.txt.

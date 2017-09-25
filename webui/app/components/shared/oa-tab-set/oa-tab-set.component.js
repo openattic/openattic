@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.shared");
 app.component("oaTabSet", {
-  templateUrl: "components/shared/oa-tab-set/oa-tab-set.component.html",
+  template: require("./oa-tab-set.component.html"),
   bindings: {
     tabData: "=",
     tabConfig: "=",

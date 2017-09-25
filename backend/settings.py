@@ -34,8 +34,8 @@ if not PROJECT_ROOT or not exists(PROJECT_ROOT):
 BASE_DIR = PROJECT_ROOT
 
 # Try to find the GUI
-if exists(join(PROJECT_ROOT, "..", "webui", "app")):
-    GUI_ROOT = join(PROJECT_ROOT, "..", "webui", "app")
+if exists(join(PROJECT_ROOT, "..", "webui", "dist")):
+    GUI_ROOT = join(PROJECT_ROOT, "..", "webui", "dist")
 else:
     GUI_ROOT = "/usr/share/openattic-gui"
 
@@ -383,7 +383,8 @@ def __loadmods__():
             pass
         else:
             INSTALLED_MODULES.append(modname)
-            INSTALLED_APPS.append(modname)
+            if modname not in INSTALLED_APPS:
+                INSTALLED_APPS.append(modname)
 
     import re
     rgx = re.compile("^(?P<idx>\d\d)_(?P<name>\w+)$")
@@ -419,6 +420,8 @@ def __loadmods__():
     modprobe('django_extensions')
     modprobe('rosetta')
     modprobe('oa_settings')
+    modprobe('oa_logging')
+    modprobe('ifconfig')
 
 
 __loadmods__()

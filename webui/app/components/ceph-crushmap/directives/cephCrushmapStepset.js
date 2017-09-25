@@ -34,7 +34,7 @@ var app = angular.module("openattic.cephCrushmap");
 app.directive("cephCrushmapStepset", function () {
   return {
     restrict: "E",
-    templateUrl: "components/ceph-crushmap/templates/crushStepset.html",
+    template: require("../templates/crushStepset.html"),
     scope: {
       "stepset": "=",
       "rule": "=",

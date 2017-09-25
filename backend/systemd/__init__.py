@@ -13,4 +13,4 @@
  *  GNU General Public License for more details.
 """
 
-from systemd.helpers   import get_dbus_object, dbus_to_python
+from systemd.helpers   import get_dbus_object

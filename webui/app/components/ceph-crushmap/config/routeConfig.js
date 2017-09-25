@@ -37,8 +37,8 @@ app.config(function ($stateProvider) {
       url: "/ceph/crushmap",
       views: {
         "main": {
-          templateUrl: "components/ceph-crushmap/templates/crushmap.html",
-          controller : "CephCrushmapCtrl"
+          template: require("../templates/crushmap.html"),
+          controller: "CephCrushmapCtrl"
         }
       },
       ncyBreadcrumb: {

@@ -668,14 +668,20 @@ table.datatable thead .sorting_desc:after {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffafafa', endColorstr='#ffededed', GradientType=0);
 }
-.table-bordered,
+.table-bordered {
+  border: none;
+  border-top: 1px solid #d1d1d1;
+  border-right: 1px solid #d1d1d1;
+}
 .table-bordered>tbody>tr>td,
 .table-bordered>tbody>tr>th,
 .table-bordered>tfoot>tr>td,
 .table-bordered>tfoot>tr>th,
 .table-bordered>thead>tr>td,
 .table-bordered>thead>tr>th {
-  border: 1px solid #d1d1d1;
+  border: none;
+  border-left: 1px solid #d1d1d1;
+  border-bottom: 1px solid #d1d1d1;
 }
 .table-striped>tbody>tr:nth-of-type(odd) {
   background-color: #ffffff;

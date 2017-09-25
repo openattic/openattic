@@ -34,7 +34,7 @@ var app = angular.module("openattic.shared");
 app.directive("actions", function () {
   return {
     restrict: "E",
-    templateUrl: "components/shared/oadatatable/actions.directive.html",
+    template: require("./actions.directive.html"),
     transclude: true,
     link: function (scope, element, attr, controller, transclude) {
       var dropdown = element.find(".oa-dropdown-actions");

@@ -31,10 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("$exceptionHandler", function ($log, $injector) {
+app.factory("$exceptionHandler", function ($log, $injector, $window) {
   return function (exception, cause) {
     try {
       $log.error(exception, cause);
+
+      $injector.get("exceptionHandlerService")
+        .save({
+          url: $window.location.href,
+          errorMessage: exception && exception.message,
+          errorStack: exception && exception.stack,
+          errorCause: cause
+        })
+        .$promise
+        .then(() => {});
+
       $injector.get("Notification").error({
         title: "Unexpected error from client",
         msg: "An unexpected error occurred, see browser console for details."
