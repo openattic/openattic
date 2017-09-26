@@ -62,6 +62,7 @@ Fixed
 * WebUI: Showing the right pool size in the pool table (OP-2710)
 * Development: Stop dev server refreshes on vim changes (OP-2715)
 * WebUI: Not all graphs are displayed on the RBD statistics page (OP-2716)
+* WebUI: Fixes pool size table tooltip (OP-2539)
 
 Removed
 ~~~~~~~
