@@ -30,8 +30,62 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsFormClient", {
+class CephNfsFormClient {
+
+  constructor ($timeout, cephNfsAccessType, cephNfsSquash) {
+    this.$timeout = $timeout;
+    this.cephNfsAccessType = cephNfsAccessType;
+    this.cephNfsSquash = cephNfsSquash;
+  }
+
+  addClient (clientBlock) {
+    clientBlock.clients.push("");
+    this.$timeout(() => {
+      let clientsInputs = jQuery("#clients input");
+      clientsInputs[clientsInputs.length - 1].focus();
+    });
+  };
+
+  getNoAccessTypeDescr (clientBlock) {
+    if (!clientBlock.accessType && this.accessType) {
+      return this.accessType + " (inherited from global config)";
+    }
+    return "-- Select the access type --";
+  };
+
+  getAccessTypeHelp (accessType) {
+    let accessTypeItem = this.cephNfsAccessType.find((currentAccessTypeItem) => {
+      if (accessType === currentAccessTypeItem.value) {
+        return currentAccessTypeItem;
+      }
+    });
+    return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
+  };
+
+  getNoSquashDescr (clientBlock) {
+    if (!clientBlock.squash && this.squash) {
+      return this.squash + " (inherited from global config)";
+    }
+    return "-- Select what kind of user id squashing is performed --";
+  };
+
+  removeClientBlock (index) {
+    this.clientBlocks.splice(index, 1);
+  };
+
+  addClientBlock () {
+    this.clientBlocks.push({
+      clients: "",
+      accessType: "",
+      squash: ""
+    });
+    this.$timeout(() => {
+      jQuery("#clients" + (this.clientBlocks.length - 1)).focus();
+    });
+  };
+}
+
+export default {
   template: require("./ceph-nfs-form-client.component.html"),
   bindings: {
     clientBlocks: "<",
@@ -39,56 +93,5 @@ app.component("cephNfsFormClient", {
     accessType: "<",
     squash: "<"
   },
-  controller: function ($timeout, cephNfsAccessType, cephNfsSquash) {
-    var self = this;
-
-    self.cephNfsAccessType = cephNfsAccessType;
-    self.cephNfsSquash = cephNfsSquash;
-
-    self.addClient = function (clientBlock) {
-      clientBlock.clients.push("");
-      $timeout(function () {
-        var clientsInputs = jQuery("#clients input");
-        clientsInputs[clientsInputs.length - 1].focus();
-      });
-    };
-
-    self.getNoAccessTypeDescr = function (clientBlock) {
-      if (!clientBlock.accessType && self.accessType) {
-        return self.accessType + " (inherited from global config)";
-      }
-      return "-- Select the access type --";
-    };
-
-    self.getAccessTypeHelp = function (accessType) {
-      var accessTypeItem = cephNfsAccessType.find(function (currentAccessTypeItem) {
-        if (accessType === currentAccessTypeItem.value) {
-          return currentAccessTypeItem;
-        }
-      });
-      return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
-    };
-
-    self.getNoSquashDescr = function (clientBlock) {
-      if (!clientBlock.squash && self.squash) {
-        return self.squash + " (inherited from global config)";
-      }
-      return "-- Select what kind of user id squashing is performed --";
-    };
-
-    self.removeClientBlock = function (index) {
-      self.clientBlocks.splice(index, 1);
-    };
-
-    self.addClientBlock = function () {
-      self.clientBlocks.push({
-        clients: "",
-        accessType: "",
-        squash: ""
-      });
-      $timeout(function () {
-        jQuery("#clients" + (self.clientBlocks.length - 1)).focus();
-      });
-    };
-  }
-});
+  controller: CephNfsFormClient
+};

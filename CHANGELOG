@@ -21,9 +21,12 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
-* Backend: Addded routes to trigger scrub per OSD, single host and many hosts (OP-2603)
+* Backend: Addded routes to trigger scrub per OSD, single host and many hosts
+  (OP-2603)
 * WebUI/Backend: Log frontend exceptions into openattic.log (OP-2695)
 * WebUI: Add scrub option to Ceph Nodes and OSDs (OP-2613)
+* WebUI: Added RBD striping graphical preview (OP-2654)
+* WebUI: Display OSDs list for each Ceph Node (OP-2273)
 
 Changed
 ~~~~~~~
@@ -33,11 +36,14 @@ Changed
 * WebUI: Hiding the cluster selection in RBD form if only one cluster exists
   (OP-2684)
 * WebUI: Update AngularJS to 1.5.11 (OP-2709)
+* WebUI/QA: Move e2e folder into webui (OP-2645)
+* WebUI: Convert NFS module to ES6 (OP-2532)
 
 Fixed
 ~~~~~
 * WebUI/QA: Fix task queue waiting errors (OP-2629)
-* Backend: Fixed `osd pool set`: unrecognized variable `crush_ruleset` (OP-2651)
+* Backend: Fixed `osd pool set`: unrecognized variable `crush_ruleset`
+  (OP-2651)
 * Backend: Nodes Tab may not list IPs for hosts without OSDs (OP-2679)
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 * WebUI/QA: Harden task queue deletion test cases (OP-2626)
@@ -47,14 +53,20 @@ Fixed
 * WebUI: Add context root to the webpack configuration (OP-2697)
 * WebUI: Fix missing html files (OP-2698)
 * WebUI/QA: Increased test task times in the directive suite (OP-2671)
+* WebUI: Showing the right pool size in the pool table (OP-2710)
+* Development: Stop dev server refreshes on vim changes (OP-2715)
 
 Removed
 ~~~~~~~
 * WebUI: Refactored node service (OP-2122)
-* Removed old `virtualenv` requirements.txt entries (OP-2675)
+* WebUI: Remove the deprecated oaTabView module (OP-2706)
+* Development: Removed old `virtualenv` requirements.txt entries (OP-2675)
+* Backend: Removed unnecessary %used calculation workaround for
+  Luminous (OP-2370)
+* Backend: Removed Hosts model (OP-2589)
 * Backend: Cleanup systemd module (OP-2677)
-* Remove `cmdlog` Module (OP-2683)
-* Backend: Removed Hosts model
+* Backend: Remove `cmdlog` Module (OP-2683)
+
 
 [3.5.0] - 2017-09-14
 --------------------

@@ -45,10 +45,33 @@ app.config(function ($stateProvider) {
         label: "Ceph Nodes"
       }
     })
-    .state("cephNodes.statistics", {
+    .state("cephNodes.detail", {
+      views: {
+        "tab": {
+          component: "oaTabSet"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephNodes.detail.statistics", {
       url: "/statistics",
       views: {
-        "statistics": {template: require("../templates/statistics.html")}
+        "tab-content": {
+          component: "cephNodesStatistics"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephNodes.detail.details", {
+      url: "/details",
+      views: {
+        "tab-content": {
+          component: "cephNodesDetail"
+        }
       },
       ncyBreadcrumb: {
         skip: true

@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRgw");
-app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $stateParams,
-    cephRgwBucketService, tabViewService) {
+app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
+    $stateParams, cephRgwBucketService, oaTabSetService) {
   $scope.buckets = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -47,7 +47,7 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $state
     active: 0,
     tabs: {
       status: {
-        show: "selection.item",
+        show: "$ctrl.selection.item",
         state: "ceph-rgw-buckets.detail.details",
         class: "tc_statusTab",
         name: "Details"
@@ -59,9 +59,6 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $state
     linkedBy: "bucket",
     jumpTo: "more"
   };
-
-  tabViewService.setScope($scope);
-  $scope.changeTab = tabViewService.changeTab;
 
   // Apply filter parameters given via non-URL route parameters.
   Object.keys($scope.filterConfig).forEach(function (param) {
@@ -102,9 +99,11 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal, $state
     }
 
     if ($state.current.name === "ceph-rgw-buckets") {
-      $scope.changeTab("ceph-rgw-buckets.detail.details");
+      oaTabSetService.changeTab("ceph-rgw-buckets.detail.details",
+        $scope.tabData, $scope.tabConfig, selection);
     } else {
-      $scope.changeTab($state.current.name);
+      oaTabSetService.changeTab($state.current.name, $scope.tabData,
+        $scope.tabConfig, selection);
     }
   };
 
