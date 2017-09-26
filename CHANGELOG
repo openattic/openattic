@@ -35,6 +35,7 @@ Changed
 * WebUI: Hiding the cluster selection in RBD form if only one cluster exists
   (OP-2684)
 * WebUI: Update AngularJS to 1.5.11 (OP-2709)
+* WebUI/QA: Move e2e folder into webui (OP-2645)
 
 Fixed
 ~~~~~

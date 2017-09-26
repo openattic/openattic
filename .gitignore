@@ -6,7 +6,6 @@
 # *.png
 *.iml
 *~
-e2e/configs.js
 .pc/
 backend/settings_local.conf
 
@@ -40,6 +39,7 @@ webui/app/config.local.js
 webui/package-lock.json
 webui/yarn.lock
 webui/webpack.config.json
+webui/e2e/configs.js
 
 # From gatling-rest
 gatling/conf/
