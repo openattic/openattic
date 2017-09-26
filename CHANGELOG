@@ -50,6 +50,7 @@ Fixed
 * WebUI: Fix missing html files (OP-2698)
 * WebUI/QA: Increased test task times in the directive suite (OP-2671)
 * WebUI: Showing the right pool size in the pool table (OP-2710)
+* Development: Stop dev server refreshes on vim changes (OP-2715)
 
 Removed
 ~~~~~~~
