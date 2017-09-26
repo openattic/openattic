@@ -54,6 +54,8 @@ Fixed
 Removed
 ~~~~~~~
 * WebUI: Refactored node service (OP-2122)
+* Backend: Removed unnecessary %used calculation workaround for
+  Luminous (OP-2370)
 * Removed old `virtualenv` requirements.txt entries (OP-2675)
 * Backend: Cleanup systemd module (OP-2677)
 * Remove `cmdlog` Module (OP-2683)

@@ -212,16 +212,6 @@ def fsid_context(fsid):
         NodbManager.set_nodb_context(previous_context)
 
 
-def get_ceph_version(version_file='/usr/bin/ceph', version_variable='CEPH_GIT_NICE_VER'):
-    try:
-        version_line = [line for line in open(version_file) if line.startswith(version_variable)]
-        version = version_line[0].split('=', 1)[1].strip().replace('"', '').split('.')
-    except Exception:
-        version = [12, 0, 0]
-
-    return version
-
-
 class CephPool(NodbModel, RadosMixin):
 
     id = models.IntegerField(primary_key=True, editable=False)
@@ -384,6 +374,11 @@ class CephPool(NodbModel, RadosMixin):
         if df_data_pool['bytes_used'] == 0:
             return 0
 
+        # Since http://tracker.ceph.com/issues/20123 has been resolved it's no longer needed to calculate the value in
+        # Luminous - so just return it
+        if 'percent_used' in df_data_pool:
+            return df_data_pool['percent_used']
+
         # Calculate the current object copies rate
         if pool.type == 'replicated':
             curr_object_copies_rate = df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * pool.size)
@@ -391,18 +386,9 @@ class CephPool(NodbModel, RadosMixin):
             curr_object_copies_rate = df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * (
                 (pool.erasure_code_profile.m + pool.erasure_code_profile.k) / pool.erasure_code_profile.k))
 
-        # Get the current Ceph version because there are different formulas for the calculation of the %used in the
-        # Jewel and Luminous releases
-        version = get_ceph_version()
-
-        # Calculate the %used value
-        if int(version[0]) >= 12:
-            # Luminous release
-            return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / (df_data_pool['bytes_used'] +
-                                                                                 df_data_pool['max_avail'])
-        else:
-            # Jewel release
-            return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / df_data_global['total_bytes']
+        # 'percent_used' has not been found in ceph df pool output. We assume we're based on the Jewel release - so
+        # calculate the value and return it.
+        return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / df_data_global['total_bytes']
 
     def __unicode__(self):
         return self.name
