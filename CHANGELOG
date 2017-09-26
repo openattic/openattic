@@ -37,6 +37,7 @@ Changed
   (OP-2684)
 * WebUI: Update AngularJS to 1.5.11 (OP-2709)
 * WebUI/QA: Move e2e folder into webui (OP-2645)
+* WebUI: Convert NFS module to ES6 (OP-2532)
 
 Fixed
 ~~~~~
