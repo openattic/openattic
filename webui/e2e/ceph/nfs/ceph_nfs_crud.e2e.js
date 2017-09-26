@@ -1,36 +1,36 @@
 "use strict";
 
-var helpers = require("../../common.js");
-var CephNfsTable = require("./CephNfsTable");
-var CephNfsForm = require("./CephNfsForm");
-var CephNfsDetails = require("./CephNfsDetails");
-var CephNfsManageService = require("./CephNfsManageService");
+const helpers = require("../../common.js");
+const CephNfsTable = require("./CephNfsTable");
+const CephNfsForm = require("./CephNfsForm");
+const CephNfsDetails = require("./CephNfsDetails");
+const CephNfsManageService = require("./CephNfsManageService");
 
-describe("ceph nfs", function () {
+describe("ceph nfs", () => {
 
-  var table = new CephNfsTable();
-  var form = new CephNfsForm();
-  var details = new CephNfsDetails();
-  var manageService = new CephNfsManageService();
+  let table = new CephNfsTable();
+  let form = new CephNfsForm();
+  let details = new CephNfsDetails();
+  let manageService = new CephNfsManageService();
 
-  beforeAll(function () {
+  beforeAll(() => {
     helpers.login();
     element(by.css(".tc_menuitem_ceph_nfs")).click();
     table.removeExportsIfExists("/e2e/cfs-");
     manageService.startAllIfStopped();
   });
 
-  it("should check the ceph NFS list export url", function () {
+  it("should check the ceph NFS list export url", () => {
     helpers.checkLocation("ceph/nfs");
   });
 
-  it("should check the ceph NFS add export url", function () {
+  it("should check the ceph NFS add export url", () => {
     table.addExport();
     helpers.checkLocation("ceph/.*/nfs/add");
     helpers.leaveForm();
   });
 
-  it("should add a export", function () {
+  it("should add a export", () => {
     table.addExport();
     form.selectHost(1);
     form.selectFsal("CephFS");
@@ -44,7 +44,7 @@ describe("ceph nfs", function () {
     form.submitButton.click();
   });
 
-  it("should display added export details", function () {
+  it("should display added export details", () => {
     table.clickRowByPath("/e2e/cfs-add");
     expect(table.rows.get(0).getText()).toBe("/e2e/cfs-add");
     expect(table.detailsTab.isDisplayed()).toBe(false);
@@ -60,26 +60,26 @@ describe("ceph nfs", function () {
     expect(details.transportProtocol.get(0).getText()).toBe("TCP");
     expect(details.transportProtocol.get(1).getText()).toBe("UDP");
     expect(details.clientAccessType.get(0).getText())
-      .toBe("MDONLY_RO - Does not allow read, write, or any operation that " +
-        "modifies file attributes or directory content");
+      .toBe("MDONLY_RO - Does not allow read, write, or any operation that modifies " +
+        "file attributes or directory content");
     expect(details.clientSquash.get(0).getText()).toBe("None");
     expect(details.mountCommand.getText()).toMatch("# mount.nfs .*:/cephfs/e2e/cfs-add /mnt");
   });
 
-  it("should check the ceph NFS edit export url", function () {
+  it("should check the ceph NFS edit export url", () => {
     table.editExport("/e2e/cfs-add");
     helpers.checkLocation("ceph/.*/nfs/edit/.*/.*");
     helpers.leaveForm();
   });
 
-  it("should edit export", function () {
+  it("should edit export", () => {
     table.editExport("/e2e/cfs-add");
     form.path.clear().sendKeys("/e2e/cfs-edit");
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
   });
 
-  it("should display edited export details", function () {
+  it("should display edited export details", () => {
     table.clickRowByPath("/e2e/cfs-edit");
     expect(table.rows.get(0).getText()).toBe("/e2e/cfs-edit");
     expect(table.detailsTab.isDisplayed()).toBe(false);
@@ -95,19 +95,19 @@ describe("ceph nfs", function () {
     expect(details.transportProtocol.get(0).getText()).toBe("TCP");
     expect(details.transportProtocol.get(1).getText()).toBe("UDP");
     expect(details.clientAccessType.get(0).getText())
-      .toBe("MDONLY_RO - Does not allow read, write, or any operation that " +
-        "modifies file attributes or directory content");
+      .toBe("MDONLY_RO - Does not allow read, write, or any operation that modifies " +
+        "file attributes or directory content");
     expect(details.clientSquash.get(0).getText()).toBe("None");
     expect(details.mountCommand.getText()).toMatch("# mount.nfs .*:/cephfs/e2e/cfs-edit /mnt");
   });
 
-  it("should check the ceph NFS clone export url", function () {
+  it("should check the ceph NFS clone export url", () => {
     table.cloneExport("/e2e/cfs-edit");
     helpers.checkLocation("ceph/.*/nfs/clone/.*/.*");
     helpers.leaveForm();
   });
 
-  it("should clone export", function () {
+  it("should clone export", () => {
     table.cloneExport("/e2e/cfs-edit");
     form.path.clear().sendKeys("/e2e/cfs-clone");
     form.tag.clear().sendKeys("e2eTagClone");
@@ -115,7 +115,7 @@ describe("ceph nfs", function () {
     form.submitButton.click();
   });
 
-  it("should display cloned target details", function () {
+  it("should display cloned target details", () => {
     table.clickRowByPath("/e2e/cfs-clone");
     expect(table.rows.get(0).getText()).toBe("/e2e/cfs-clone");
     expect(table.detailsTab.isDisplayed()).toBe(false);
@@ -131,13 +131,13 @@ describe("ceph nfs", function () {
     expect(details.transportProtocol.get(0).getText()).toBe("TCP");
     expect(details.transportProtocol.get(1).getText()).toBe("UDP");
     expect(details.clientAccessType.get(0).getText())
-      .toBe("MDONLY_RO - Does not allow read, write, or any operation that " +
-        "modifies file attributes or directory content");
+      .toBe("MDONLY_RO - Does not allow read, write, or any operation that modifies file " +
+        "attributes or directory content");
     expect(details.clientSquash.get(0).getText()).toBe("None");
     expect(details.mountCommand.getText()).toMatch("# mount.nfs .*:/cephfs/e2e/cfs-clone /mnt");
   });
 
-  it("should remove export", function () {
+  it("should remove export", () => {
     table.removeExport("/e2e/cfs-edit");
     table.filterInput.clear().sendKeys("/e2e/cfs-edit");
     expect(table.rows.get(0).isPresent()).toBe(false);
@@ -148,11 +148,11 @@ describe("ceph nfs", function () {
     table.filterInput.clear();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     table.filterInput.clear();
   });
 
-  afterAll(function () {
+  afterAll(() => {
     console.log("ceph_nfs -> ceph_nfs_crud.e2e.js");
   });
 

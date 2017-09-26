@@ -30,38 +30,43 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsDeleteModal", {
+class CephNfsDeleteModal {
+
+  constructor ($q, cephNfsService) {
+    this.$q = $q;
+    this.cephNfsService = cephNfsService;
+  }
+
+  deleteNfs () {
+    return this.$q((resolve, reject) => {
+      let exportIds = [];
+      this.resolve.selectionItems.forEach((selectionItem) => {
+        exportIds.push(selectionItem.id);
+      });
+      this.cephNfsService.bulk_delete({
+        fsid: this.resolve.fsid,
+        exportIds: exportIds
+      })
+        .$promise
+        .then(() => {
+          resolve();
+          this.modalInstance.close("deleted");
+        }, () => {
+          reject();
+        });
+    });
+  };
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  };
+}
+
+export default {
   template: require("./ceph-nfs-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function ($q, cephNfsService) {
-    var self = this;
-
-    self.delete = function () {
-      return $q(function (resolve, reject) {
-        var exportIds = [];
-        self.resolve.selectionItems.forEach(function (selectionItem) {
-          exportIds.push(selectionItem.id);
-        });
-        cephNfsService.bulk_delete({
-          fsid: self.resolve.fsid,
-          exportIds: exportIds
-        })
-          .$promise
-          .then(function () {
-            resolve();
-            self.modalInstance.close("deleted");
-          }, function () {
-            reject();
-          });
-      });
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-    };
-  }
-});
+  controller: CephNfsDeleteModal
+};
