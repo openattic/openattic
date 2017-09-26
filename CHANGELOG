@@ -21,7 +21,8 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
-* Backend: Addded routes to trigger scrub per OSD, single host and many hosts (OP-2603)
+* Backend: Addded routes to trigger scrub per OSD, single host and many hosts
+  (OP-2603)
 * WebUI/Backend: Log frontend exceptions into openattic.log (OP-2695)
 * WebUI: Add scrub option to Ceph Nodes and OSDs (OP-2613)
 * WebUI: Added RBD striping graphical preview (OP-2654)
@@ -39,7 +40,8 @@ Changed
 Fixed
 ~~~~~
 * WebUI/QA: Fix task queue waiting errors (OP-2629)
-* Backend: Fixed `osd pool set`: unrecognized variable `crush_ruleset` (OP-2651)
+* Backend: Fixed `osd pool set`: unrecognized variable `crush_ruleset`
+  (OP-2651)
 * Backend: Nodes Tab may not list IPs for hosts without OSDs (OP-2679)
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 * WebUI/QA: Harden task queue deletion test cases (OP-2626)
@@ -54,13 +56,14 @@ Fixed
 Removed
 ~~~~~~~
 * WebUI: Refactored node service (OP-2122)
+* WebUI: Remove the deprecated oaTabView module (OP-2706)
+* Development: Removed old `virtualenv` requirements.txt entries (OP-2675)
 * Backend: Removed unnecessary %used calculation workaround for
   Luminous (OP-2370)
-* Removed old `virtualenv` requirements.txt entries (OP-2675)
+* Backend: Removed Hosts model (OP-2589)
 * Backend: Cleanup systemd module (OP-2677)
-* Remove `cmdlog` Module (OP-2683)
-* Backend: Removed Hosts model
-* Remove the deprecated oaTabView module (OP-2706)
+* Backend: Remove `cmdlog` Module (OP-2683)
+
 
 [3.5.0] - 2017-09-14
 --------------------
