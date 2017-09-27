@@ -57,6 +57,7 @@ Fixed
 * WebUI: Fix ugly borders in the task queue table (OP-2491)
 * Backend: Fixed OSD table filtering (OP-2692)
 * WebUI/QA: Fix random NFS e2e add export failure (OP-2672)
+* WebUI/QA: Fixed duplicated CSS test class in RBD form (OP-2721)
 * WebUI: Add context root to the webpack configuration (OP-2697)
 * WebUI: Fix missing html files (OP-2698)
 * WebUI/QA: Increased test task times in the directive suite (OP-2671)

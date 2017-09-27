@@ -143,6 +143,9 @@ var rbdCommons = function () {
     },
     stripingHelp: {
       testClass: "tc-striping-help"
+    },
+    stripingPreview: {
+      testClass: "tc-striping-preview"
     }
   };
 
