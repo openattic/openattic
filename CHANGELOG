@@ -46,6 +46,8 @@ Fixed
   (OP-2651)
 * Backend: Nodes Tab may not list IPs for hosts without OSDs (OP-2679)
 * Backend: Fix unable to disable pause flag (OP-2702)
+* Backend: Fixed the Grafana proxy implementation for the updated
+  Grafana version 4.5.1 (OP-2705)
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 * WebUI/QA: Harden task queue deletion test cases (OP-2626)
 * WebUI: Fix ugly borders in the task queue table (OP-2491)
