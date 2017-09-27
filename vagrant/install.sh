@@ -327,9 +327,6 @@ virtualenv env
 if [ "$IS_XENIAL" ]
 then
 pip install -r openattic/requirements/ubuntu-16.04.txt
-elif [ "$IS_TRUSTY" ]
-then
-pip install -r openattic/requirements/ubuntu-14.04.txt
 else
 pip install -r openattic/requirements/default.txt
 fi

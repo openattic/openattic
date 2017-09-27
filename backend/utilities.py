@@ -14,6 +14,7 @@
 """
 import logging
 import inspect
+import os
 from collections import defaultdict
 from contextlib import closing
 from distutils.spawn import find_executable
@@ -22,9 +23,8 @@ from os import path
 
 import django
 import multiprocessing
-from django.conf import settings
 
-from exception import ExternalCommandError
+from configobj import ConfigObj
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +104,8 @@ def zip_by_key(key, *args):
 
 def get_django_app_modules(module_name):
     """Returns a list of app modules named `module_name`"""
+    from django.conf import settings
+
     plugins = []
     for app in settings.INSTALLED_APPS:
         try:
@@ -169,6 +171,27 @@ def run_in_external_process(func, timeout=30):
                 raise res
             return res
         else:
+            from exception import ExternalCommandError
+
             p.terminate()
             raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
                                        '({} sec).'.format(p.name, p.pid, timeout))
+
+
+def set_globals_from_file(my_globals, file_name):
+    """
+    >>> for settings_file in ('/etc/default/openattic', '/etc/sysconfig/openattic'): # doctest: +ELLIPSIS
+    ...     set_globals_from_file(globals(), settings_file)
+    Reading settingss from /etc/.../openattic
+    >>> OAUSER
+    'openattic'
+
+
+    :param my_globals:
+    :param file_name:
+    :return:
+    """
+    if os.access(file_name, os.R_OK):
+        print('Reading settingss from {}'.format(file_name))
+        for key, val in ConfigObj(file_name).items():
+            my_globals[key] = val

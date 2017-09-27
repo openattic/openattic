@@ -12,6 +12,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+from __future__ import absolute_import  # prevent import of old ./deepsea.py
 import imp
 from deepsea import DeepSea
 from utilities import in_unittest

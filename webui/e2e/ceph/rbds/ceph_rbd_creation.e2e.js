@@ -56,6 +56,7 @@ describe("ceph rbd creation and deletion", function () {
   beforeAll(function () {
     helpers.login();
     rbdProperties.cephRBDs.click();
+    helpers.deleteAllIfExists(namePrefix);
   });
 
   rbdProperties.useWriteablePools((poolName) => {

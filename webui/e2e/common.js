@@ -143,6 +143,23 @@
       return element.getAttribute("class").then(function (classes) {
         return classes.split(" ").indexOf(cls) !== -1;
       });
+    },
+
+    deleteAllIfExists: function (name) {
+      element(by.css(".tc_entries_dropdown")).click();
+      element(by.css(".tc_entries_100")).click();
+
+      helper.search_for(name);
+
+      browser.findElements(by.css(".tc_datableNoMatch.ng-hide")).then(function (elems) {
+        if (elems.length > 0) {
+          element(by.model("selection.checkAll")).click();
+          helper.delete_selection(undefined, "$ctrl");
+        }
+      });
+
+      element(by.css(".tc_entries_dropdown")).click();
+      element(by.css(".tc_entries_10")).click();
     }
   };
   module.exports = helper;

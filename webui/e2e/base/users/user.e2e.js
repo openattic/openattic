@@ -1,7 +1,9 @@
 "use strict";
 var helpers = require("../../common.js");
+var UserTable = require("./UserTable.js");
 
 describe("Should add an user", function () {
+  const userTable = new UserTable();
 
   var testUser = {
     username: "protractor_test_user",
@@ -19,6 +21,7 @@ describe("Should add an user", function () {
   beforeAll(function () {
     helpers.login();
     helpers.setLocation("users");
+    userTable.removeUserIfExists(testUser.username);
   });
 
   it("should warn that unsaved changes will be lost", function () {

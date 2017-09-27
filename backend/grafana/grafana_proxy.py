@@ -60,8 +60,20 @@ class GrafanaProxy(RestClient):
         return request()
 
 
+def fix_path(path):
+    """
+    :type path: str
+    :rtype: str
+    """
+    replaced_path = re.sub('(\w+/)?api/grafana', '', path)
+    replaced_path = re.sub(r'^/+(.*)', r'/\1', replaced_path)
+    replaced_path = replaced_path.rstrip('/')
+    return replaced_path
+
+
 def get_grafana_api_response(request, path):
-    path = path.rstrip('/')
+    path = fix_path(path)
+
     base_url_prefix = reverse('grafana', args=['/']).rstrip('/')  # e.g. /openattic/api
     params = request.GET.copy()
     scheme = 'https' if Settings.GRAFANA_API_SCHEME.lower() == 'https' else 'http'
@@ -106,20 +118,24 @@ def get_grafana_api_response(request, path):
         'url(\'/': 'url(\'{base_url}/',
         '"url":"/': '"url":"{base_url}/',
         'get("/': 'get("{base_url}/',
+        'get(\'/': 'get(\'{base_url}/',
         'put("/': 'put("{base_url}/',
+        'put(\'/': 'put(\'{base_url}/',
         'post("/': 'post("{base_url}/',
+        'post(\'/': 'post(\'{base_url}/',
         'delete("/': 'delete("{base_url}/',
+        'delete(\'/': 'delete(\'{base_url}/',
         'd.default.appSubUrl+a.$location.path()': '"{base_url}/profile"',
 
         'appSubUrl+"/': 'appSubUrl+"{base_url}/',  # Home on `Dashboard search`
 
         # Deactivate main menu, but keep icon.
-        '<a class="navbar-brand-btn pointer" ng-click="ctrl.contextSrv.toggleSideMenu()"><span '
-        'class="navbar-brand-btn-background"><img src="public/img/grafana_icon.svg"></span><i '
-        'class="icon-gf icon-gf-grafana_wordmark"></i> <i class="fa fa-caret-down"></i> <i class="'
-        'fa fa-chevron-left"></i> </a>': '<span class="navbar-brand-btn"><span class="navbar-brand-'
-                                         'btn-background"><img src="public/img/grafana_icon.svg">'
-                                         '</span></span>',
+        '<a class="navbar-brand-btn pointer" ng-click="ctrl.toggleSideMenu()"><span class="navbar-b'
+        'rand-btn-background"><img src="public/img/grafana_icon.svg"></span><i class="icon-gf i'
+        'con-gf-grafana_wordmark"></i> <i class="fa fa-caret-down"></i> <i class="fa fa-chevron'
+        '-left"></i></a>': '<span class="navbar-brand-btn"><span class="navbar-brand-'
+                           'btn-background"><img src="public/img/grafana_icon.svg">'
+                           '</span></span>',
 
         # Enforce light theme.
         '"light":"dark"': '"light":"light"',

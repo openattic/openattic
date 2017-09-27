@@ -3,7 +3,7 @@
 var helpers = require("../../common.js");
 var page = require("./ceph_osds_common");
 
-describe("hould test ceph osd scrubing", function () {
+describe("should test ceph osd scrubing", function () {
 
   beforeAll(function () {
     helpers.login();
