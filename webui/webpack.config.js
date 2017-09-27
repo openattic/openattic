@@ -180,8 +180,7 @@ module.exports = (function makeWebpackConfig () {
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
-      "window.jQuery": "jquery",
-      "nv": "nvd3"
+      "window.jQuery": "jquery"
     }),
 
     // Copy assets from the public folder
