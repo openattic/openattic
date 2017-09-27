@@ -28,6 +28,8 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.shortcuts import get_object_or_404
 
+from rados import ObjectNotFound
+
 from ceph import librados
 from ceph.librados import MonApi, undo_transaction, RbdApi, call_librados, ClusterConf, Keyring
 import ceph.tasks
@@ -176,11 +178,11 @@ class CephCluster(NodbModel, RadosMixin):
             health = self.mon_api(self.fsid).health()
             # Ceph Luminous > 12.1 renamed `overall_status` to `status`
             self.health = health['overall_status' if 'overall_status' in health else 'status']
-        except (TypeError, ExternalCommandError):
+        except (TypeError, ExternalCommandError, ObjectNotFound):
             logger.exception('failed to get ceph health')
             self.health = 'HEALTH_ERR'
 
-    @bulk_attribute_setter(['osd_flags'], catch_exceptions=librados.ExternalCommandError)
+    @bulk_attribute_setter(['osd_flags'], catch_exceptions=(TypeError, ObjectNotFound, librados.ExternalCommandError))
     def set_osd_flags(self, objects, field_names):
         flags = self.mon_api(self.fsid).osd_dump()['flags'].split(',')
         if 'pauserd' in flags and 'pausewr' in flags:
@@ -997,6 +999,7 @@ class CrushmapVersion(NodbModel):
         assert context is not None
         fsid = context.cluster.fsid
         crushmap = RadosMixin.mon_api(fsid).osd_crush_dump()
+
         return [CrushmapVersion(id=1, crushmap=crushmap)]
 
     def get_tree(self):
