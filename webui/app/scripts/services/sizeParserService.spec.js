@@ -58,4 +58,27 @@ describe('sizeParserService', function() {
     expect(sizeParserService.parseInt("1.5E", "t")).toBe(1.5*1024**2);
     expect(sizeParserService.parseInt("1.5E", "p")).toBe(1.5*1024);
   });
+
+  // parseInt will fail with large number bigger than 1e21 because of the exponential notation,
+  // which will be removed through the native parseInt call in parseInt.
+  it('should convert from ZiB', function() {
+    expect(sizeParserService.parseFloat("1.5Z", "b")).toBe(1.5*1024**7);
+    expect(sizeParserService.parseInt("1.5Z", "k")).toBe(1.5*1024**6);
+    expect(sizeParserService.parseInt("1.5Z", "m")).toBe(1.5*1024**5);
+    expect(sizeParserService.parseInt("1.5Z", "g")).toBe(1.5*1024**4);
+    expect(sizeParserService.parseInt("1.5Z", "t")).toBe(1.5*1024**3);
+    expect(sizeParserService.parseInt("1.5Z", "p")).toBe(1.5*1024**2);
+    expect(sizeParserService.parseInt("1.5Z", "e")).toBe(1.5*1024);
+  });
+
+  it('should convert from YiB', function() {
+    expect(sizeParserService.parseFloat("1.5Y", "b")).toBe(1.5*1024**8);
+    expect(sizeParserService.parseFloat("1.5Y", "k")).toBe(1.5*1024**7);
+    expect(sizeParserService.parseInt("1.5Y", "m")).toBe(1.5*1024**6);
+    expect(sizeParserService.parseInt("1.5Y", "g")).toBe(1.5*1024**5);
+    expect(sizeParserService.parseInt("1.5Y", "t")).toBe(1.5*1024**4);
+    expect(sizeParserService.parseInt("1.5Y", "p")).toBe(1.5*1024**3);
+    expect(sizeParserService.parseInt("1.5Y", "e")).toBe(1.5*1024**2);
+    expect(sizeParserService.parseInt("1.5Y", "z")).toBe(1.5*1024);
+  });
 });

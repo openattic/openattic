@@ -90,7 +90,7 @@ app.filter("bytes", function () {
       inUnit = 0;
     }
     // Convert the value to bytes if necessary.
-    if (0 < inUnit) {
+    if (inUnit > 0) {
       value = (value * Math.pow(1024, inUnit)).toFixed(0);
     }
     // Set the output precision and unit.
@@ -105,6 +105,9 @@ app.filter("bytes", function () {
     } else {
       // Calculate the best matching unit.
       outUnit = Math.floor(Math.log(value) / Math.log(1024));
+      if (outUnit >= units.length) {
+        outUnit = units.length - 1;
+      }
     }
     result = (value / Math.pow(1024, outUnit)).toFixed(outPrecision);
     if (appendUnit) {
