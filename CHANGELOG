@@ -64,6 +64,7 @@ Fixed
 * Development: Stop dev server refreshes on vim changes (OP-2715)
 * WebUI: Not all graphs are displayed on the RBD statistics page (OP-2716)
 * WebUI: Fixes pool size table tooltip (OP-2539)
+* WebUI: Improve error handling of MON-widget (OP-2658)
 
 Removed
 ~~~~~~~

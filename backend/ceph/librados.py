@@ -992,8 +992,9 @@ class MonApi(object):
     def status(self):
         return self._call_mon_command('status')
 
-    def health(self):
-        return self._call_mon_command('health')
+    def health(self, detail=None):
+        """:param detail: 'detail' or None"""
+        return self._call_mon_command('health', self._args_to_argdict(detail=detail))
 
     def time_sync_status(self):
         return self._call_mon_command('time-sync-status')
