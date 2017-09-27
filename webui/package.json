@@ -47,6 +47,7 @@
     "html-webpack-plugin": "2.30.1",
     "postcss-loader": "2.0.6",
     "protractor": "5.1.2",
+    "protractor-fail-fast": "3.0.2",
     "protractor-jasmine2-screenshot-reporter": "0.4.1",
     "raw-loader": "0.5.1",
     "rimraf": "2.6.2",
