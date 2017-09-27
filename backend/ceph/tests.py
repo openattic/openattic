@@ -626,3 +626,14 @@ class OsdPoolDeleteTest(TestCase):
         ]
 
         self.assertEqual(client_mock.mon_command.mock_calls, calls)
+
+
+class CephClusterTestCase(TestCase):
+    @mock.patch('ceph.models.MonApi')
+    def test_pause_flag(self, MonApi_mock):
+        MonApi_mock.return_value.osd_dump.return_value = {
+            'flags': 'pauserd,pausewr,sortbitwise,recovery_deletes'
+        }
+        self.assertEqual(set(ceph.models.CephCluster(fsid='fsid').osd_flags), {
+            'pause', 'sortbitwise', 'recovery_deletes'
+        })
