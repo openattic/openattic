@@ -27,6 +27,7 @@ Added
 * WebUI: Add scrub option to Ceph Nodes and OSDs (OP-2613)
 * WebUI: Added RBD striping graphical preview (OP-2654)
 * WebUI: Display OSDs list for each Ceph Node (OP-2273)
+* WebUI/QA: Add missing validation test for the RBD form (OP-2693)
 * WebUI/QA: Add missing cleanup to e2e suites (OP-2635)
 * WebUI/QA: Add plugin to stop protractor after first failed test (OP-2694)
 
