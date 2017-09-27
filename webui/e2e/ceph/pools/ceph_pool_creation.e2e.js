@@ -11,6 +11,7 @@ describe("ceph pool creation", function () {
   beforeAll(function () {
     helpers.login();
     cephPoolProperties.cephPools.click();
+    helpers.deleteAllIfExists("e2e_");
   });
 
   [64, 128].forEach(function (pgs) {

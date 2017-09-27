@@ -32,6 +32,8 @@ describe("ceph rgw buckets", function () {
 
   beforeAll(function () {
     helpers.login();
+    helpers.setLocation("ceph/rgw/buckets");
+    helpers.deleteAllIfExists("e2e_");
   });
 
   beforeEach(function () {

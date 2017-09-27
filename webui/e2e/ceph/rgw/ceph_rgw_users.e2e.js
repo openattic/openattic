@@ -43,6 +43,8 @@ describe("ceph rgw users", function () {
 
   beforeAll(function () {
     helpers.login();
+    helpers.setLocation("ceph/rgw/users");
+    helpers.deleteAllIfExists("e2e_");
   });
 
   beforeEach(function () {
