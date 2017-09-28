@@ -100,6 +100,10 @@ app.factory("cephRgwBucketService", function ($resource, $injector, $q, $filter)
           });
         }
       }
+    },
+    isReferenced: {
+      url: globalConfig.API.URL + "ceph_radosgw/bucket/isreferenced",
+      method: "GET"
     }
   });
 });

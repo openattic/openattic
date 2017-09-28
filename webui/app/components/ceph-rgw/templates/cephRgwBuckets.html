@@ -27,7 +27,7 @@
             </a>
         </li>
         <li class="divider"></li>
-        <li class="tc_deleteItem" ng-class="{disabled: !hasSelection && !multiSelection}">
+        <li class="tc_deleteItem" ng-class="{disabled: (!hasSelection && !multiSelection) || selectionIsReferenced}">
             <a ng-click="deleteAction()">
                 <i class="fa fa-fw fa-trash-o"></i>Delete
             </a>

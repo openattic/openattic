@@ -16,6 +16,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from ceph_radosgw.rgw_client import RGWClient
+from ceph_nfs.models import GaneshaExport
 from rest_client import RequestException
 
 
@@ -59,6 +60,33 @@ def bucket_create(request):
 
         result = RGWClient.instance(params['uid']).create_bucket(params['bucket'])
         return HttpResponse(result, status=200)
+    except RequestException as e:
+        if not e.status_code:
+            raise Exception(str(e))
+        return HttpResponse(e.content, status=e.status_code)
+    except RGWClient.NoCredentialsException:
+        return NoCredentialsResponse()
+
+@api_view(['GET'])
+def bucket_is_referenced(request):
+
+    try:
+        params = request.GET.copy()
+
+        if 'bucket' not in params:
+            raise ValidationError('No bucket parameter provided')
+
+        buckets = params.getlist('bucket')
+
+        # Prepare result object.
+        result = dict.fromkeys(buckets, False)
+
+        # Get the buckets that are referenced by NFS Ganesha.
+        exports = GaneshaExport.objects.filter(path__in=buckets)
+        for export in exports:
+            result[export.path] = True
+
+        return HttpResponse(json.dumps(result), status=200)
     except RequestException as e:
         if not e.status_code:
             raise Exception(str(e))
