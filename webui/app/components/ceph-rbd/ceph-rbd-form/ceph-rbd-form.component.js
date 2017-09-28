@@ -258,6 +258,11 @@ app.component("cephRbdForm", {
       }
     };
 
+    self.useMaxSize = pool => {
+      self.data.size = $filter("bytes")(pool.max_avail - pool.num_bytes);
+      self.watchDataSize();
+    }
+
     self.watchDataSize = () => {
       if (self.data.size === "") {
         return;
@@ -385,10 +390,7 @@ app.component("cephRbdForm", {
     };
 
     var addPoolAttributes = function (pool) {
-      pool.oaUsed = $filter("number")(pool.num_bytes / pool.max_avail * 100, 2);
-      pool.oaUnused = 100 - pool.oaUsed;
       pool.oaFree = pool.max_avail - pool.num_bytes;
-      pool.oaMaxFree = parseInt((pool.max_avail - pool.num_bytes) / Math.pow(2, 20), 10);
       pool.oaFreeText = $filter("bytes")(pool.oaFree);
     };
 
