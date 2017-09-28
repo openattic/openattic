@@ -12,7 +12,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+import doctest
 import os
 from errno import EPERM
 
@@ -31,6 +31,11 @@ import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
+
+
+def load_tests(loader, tests, ignore):
+    tests.addTests(doctest.DocTestSuite(ceph.librados))
+    return tests
 
 
 def open_testdata(name):
