@@ -136,15 +136,27 @@
             && rbdForm.size.$invalid}">
           <label class="control-label col-sm-3" for="size">Size</label>
           <div class="col-sm-9">
-            <input id="size" class="form-control tc_rbd_size" type="text" name="size"
-                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree"
-                ng-change="$ctrl.watchDataSize()" ng-model-options="{ updateOn: 'blur' }" ng-model="$ctrl.data.size"
-                placeholder="e.g., 10GB" required>
+            <input id="size"
+                class="form-control tc_rbd_size"
+                type="text"
+                name="size"
+                ng-disabled="$ctrl.data.pool == null"
+                ng-change="$ctrl.watchDataSize()"
+                ng-model-options="{ updateOn: 'blur' }"
+                ng-model="$ctrl.data.size"
+                placeholder="e.g., 10GB"
+                required>
             <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                 && rbdForm.size.$error.required">
               This field is required!
             </span>
             <span class="help-block tc_sizeIncrease"
+                ng-show="!$ctrl.data.features.stripingv2.checked &&
+                    (rbdForm.$submitted || rbdForm.size.$dirty) &&
+                    rbdForm.size.$invalid">
+              You have to increase the size in order to have at least 1 object in your RBD.
+            </span>
+            <span class="help-block tc_sizeIncreaseStriping"
                 ng-show="$ctrl.data.features.stripingv2.checked &&
                     (rbdForm.$submitted || rbdForm.size.$dirty) &&
                     rbdForm.size.$invalid">

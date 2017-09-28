@@ -109,6 +109,18 @@ describe("should test the ceph rbd creation form", function () {
     rbdProperties.selectFeatures([1, 1, 1, 1, 1, 1, 1]); // Selects all features
   });
 
+  it("should show an required error if the size is smaller than the object size", () => {
+    rbdProperties.selectFeatures([1, 1, 0, 1, 1, 1, 1]); // delects striping
+    const size = rbdProperties.size;
+    const helpSizeMinimum = element(by.className(fe.size.items.helpSizeMinimum));
+    expect(helpSizeMinimum.isPresent()).toBe(true);
+    helpers.changeInput(size, "1 k");
+    expect(helpSizeMinimum.isDisplayed()).toBe(true);
+    helpers.changeInput(size, "200 M");
+    expect(helpSizeMinimum.isDisplayed()).toBe(false);
+    rbdProperties.selectFeatures([1, 1, 1, 1, 1, 1, 1]); // enables striping again
+  });
+
   it("should show a warning on object size if stripe unit is increased", () => {
     const unit = rbdProperties.stripingUnit;
     const objSize = rbdProperties.objSize;
