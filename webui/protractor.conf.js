@@ -34,16 +34,16 @@ var HtmlScreenshotReporter = require("protractor-jasmine2-screenshot-reporter");
 
 var allSuites = {
   // base suites - They should always be able to run.
-  general              : '../e2e/base/general/**/general.e2e.js',
-  datatable            : '../e2e/base/datatable/**/*.e2e.js',
-  //feedback             : '../e2e/base/feedback/**/feedback.e2e.js',
-  pagination           : '../e2e/base/pagination/**/*.e2e.js',
-  settings             : '../e2e/base/settings/*.e2e.js',
-  users                : '../e2e/base/users/**/*.e2e.js',
-  auth                 : '../e2e/base/auth/*.e2e.js',
-  task_queue_directive : '../e2e/base/taskqueue/task_queue_directive.e2e.js',
-  task_queue_dialog    : '../e2e/base/taskqueue/task_queue_dialog.e2e.js',
-  task_queue_deletion  : '../e2e/base/taskqueue/task_queue_deletion.e2e.js',
+  general              : './e2e/base/general/**/general.e2e.js',
+  datatable            : './e2e/base/datatable/**/*.e2e.js',
+  //feedback             : './e2e/base/feedback/**/feedback.e2e.js',
+  pagination           : './e2e/base/pagination/**/*.e2e.js',
+  settings             : './e2e/base/settings/*.e2e.js',
+  users                : './e2e/base/users/**/*.e2e.js',
+  auth                 : './e2e/base/auth/*.e2e.js',
+  task_queue_directive : './e2e/base/taskqueue/task_queue_directive.e2e.js',
+  task_queue_dialog    : './e2e/base/taskqueue/task_queue_dialog.e2e.js',
+  task_queue_deletion  : './e2e/base/taskqueue/task_queue_deletion.e2e.js',
   // ceph suites - They only run if a ceph pool is configured.
   ceph_clusters        : './e2e/ceph/ceph_clusters.e2e.js',
   ceph_pools           : './e2e/ceph/pools/ceph_pools.e2e.js',
