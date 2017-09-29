@@ -29,7 +29,7 @@
  *
  */
 'use strict';
-var config = require('../e2e/configs.js');
+var config = require('./e2e/configs.js');
 var HtmlScreenshotReporter = require("protractor-jasmine2-screenshot-reporter");
 
 var allSuites = {
@@ -45,29 +45,29 @@ var allSuites = {
   task_queue_dialog    : '../e2e/base/taskqueue/task_queue_dialog.e2e.js',
   task_queue_deletion  : '../e2e/base/taskqueue/task_queue_deletion.e2e.js',
   // ceph suites - They only run if a ceph pool is configured.
-  ceph_clusters        : '../e2e/ceph/ceph_clusters.e2e.js',
-  ceph_pools           : '../e2e/ceph/pools/ceph_pools.e2e.js',
-  ceph_pool_form       : '../e2e/ceph/pools/ceph_pool_form.e2e.js',
-  ceph_pool_creation   : '../e2e/ceph/pools/ceph_pool_creation.e2e.js',
-  ceph_pool_edit       : '../e2e/ceph/pools/ceph_pool_edit.e2e.js',
-  ceph_osds            : '../e2e/ceph/osds/*.e2e.js',
-  ceph_rbds            : '../e2e/ceph/rbds/ceph_rbds.e2e.js',
-  ceph_rbd_creation    : '../e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
-  ceph_rbd_form        : '../e2e/ceph/rbds/ceph_rbd_form.e2e.js',
-  ceph_iscsi           : '../e2e/ceph/iscsi/*.e2e.js',
-  ceph_nfs             : '../e2e/ceph/nfs/*.e2e.js',
-  ceph_nodes           : '../e2e/ceph/nodes/*.e2e.js',
-  ceph_rgw             : '../e2e/ceph/rgw/*.e2e.js'
+  ceph_clusters        : './e2e/ceph/ceph_clusters.e2e.js',
+  ceph_pools           : './e2e/ceph/pools/ceph_pools.e2e.js',
+  ceph_pool_form       : './e2e/ceph/pools/ceph_pool_form.e2e.js',
+  ceph_pool_creation   : './e2e/ceph/pools/ceph_pool_creation.e2e.js',
+  ceph_pool_edit       : './e2e/ceph/pools/ceph_pool_edit.e2e.js',
+  ceph_osds            : './e2e/ceph/ceph_osds.e2e.js',
+  ceph_rbds            : './e2e/ceph/rbds/ceph_rbds.e2e.js',
+  ceph_rbd_creation    : './e2e/ceph/rbds/ceph_rbd_creation.e2e.js',
+  ceph_rbd_form        : './e2e/ceph/rbds/ceph_rbd_form.e2e.js',
+  ceph_iscsi           : './e2e/ceph/iscsi/*.e2e.js',
+  ceph_nfs             : './e2e/ceph/nfs/*.e2e.js',
+  ceph_nodes           : './e2e/ceph/nodes/*.e2e.js',
+  ceph_rgw             : './e2e/ceph/rgw/*.e2e.js'
 };
 
 var categories = {
   base: {
     isAvailable: true,
-    startsWith: '../e2e/base'
+    startsWith: './e2e/base'
   },
   ceph: {
     isAvailable: config.cephCluster && Object.keys(config.cephCluster).length > 0,
-    startsWith: '../e2e/ceph'
+    startsWith: './e2e/ceph'
   }
 };
 

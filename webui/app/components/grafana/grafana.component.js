@@ -56,7 +56,7 @@ angular.module("openattic.grafana").component("grafana", {
       switch (vm.mode) {
         case "rbd":
           vm.dashboardName = "ceph-rbd";
-          vm.urlParameterName = "var-rbd";
+          vm.urlParameterName = "var-image";
           break;
         case "pool":
           vm.dashboardName = "ceph-pools";

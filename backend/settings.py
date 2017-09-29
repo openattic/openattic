@@ -17,6 +17,8 @@ import sys
 
 from configobj import ConfigObj
 
+from utilities import set_globals_from_file
+
 PROJECT_ROOT = None
 PROJECT_URL = '/openattic'
 # the following is needed in gunicorn, because it doesn't set SCRIPT_URL and PATH_INFO
@@ -217,6 +219,12 @@ def log_prefix():
 
 # Set logging
 LOGGING_FILENAME = '/var/log/openattic/openattic.log'
+LOG_LEVEL='INFO'
+
+# In order to overwrite LOGGING_FILENAME, we have to read the settings here again.
+# FIXME: find a better solution
+set_globals_from_file(globals(), join(os.getcwd(), 'settings_local.conf'))
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -228,7 +236,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'INFO',
+            'level': LOG_LEVEL,
             'class': 'logging.FileHandler',
             'filename': LOGGING_FILENAME,
             'formatter': 'oa',
@@ -237,7 +245,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': ['file'],
-            'level': 'INFO',
+            'level': LOG_LEVEL,
             'propagate': False
         },
         # By default, the Requests library writes log messages to the console, along the lines of
@@ -329,27 +337,9 @@ LOCALE_PATHS = (
 
 MPLCONFIGDIR = "/tmp/.matplotlib"
 
-
-def get_config(filename):
-    result = {}
-    with open(filename, "r") as f:
-        print('Reading file {}'.format(filename))
-        for line in f:
-            line = line.rstrip()
-            if line and not line.startswith('#'):
-                key, value = line.split('=', 1)
-                value = value.strip('"\'')
-                result[key] = value
-    return result
-
-
 # Add or replace additional configuration variables
-custom_settings = ('/etc/default/openattic', '/etc/sysconfig/openattic')
-for settings_file in custom_settings:
-    if not os.access(settings_file, os.R_OK):
-        continue
-    for key, value in get_config(settings_file).items():
-        globals()[key] = value
+for settings_file in ('/etc/default/openattic', '/etc/sysconfig/openattic'):
+    set_globals_from_file(globals(), settings_file)
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -431,10 +421,5 @@ __loadmods__()
 import oa_settings
 oa_settings.load_settings()
 
-
 # This enables developers and test systems to override settings in a non-versioned file.
-local_settings_file = join(os.getcwd(), 'settings_local.conf')
-if os.access(local_settings_file, os.R_OK):
-    print('Reading local settings {}'.format(local_settings_file))
-    for key, val in ConfigObj(local_settings_file).items():
-        globals()[key] = val
+set_globals_from_file(globals(), join(os.getcwd(), 'settings_local.conf'))

@@ -1,0 +1,71 @@
+<div class="openattic-modal-header">
+  <span>Striping Preview</span>
+</div>
+
+<div class="openattic-modal-content">
+
+  <table class="table table-no-background">
+    <thead>
+      <tr>
+        <th>RBD Size</th>
+        <th>Object Size</th>
+        <th>Stripe Unit</th>
+        <th>Stripe Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ $ctrl.resolve.size }}</td>
+        <td>{{ $ctrl.resolve.objectSize }}</td>
+        <td>{{ $ctrl.resolve.stripeUnit }}</td>
+        <td>{{ $ctrl.resolve.stripeCount }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br>
+
+  <ceph-rbd-striping-object-set
+      size-str="$ctrl.resolve.size"
+      object-size-str="$ctrl.resolve.objectSize"
+      stripe-unit-str="$ctrl.resolve.stripeUnit"
+      stripe-count="$ctrl.resolve.stripeCount"
+      object-set-index="0">
+  </ceph-rbd-striping-object-set>
+
+  <ceph-rbd-striping-object-set
+      ng-if="$ctrl.numObjectSets >= 2"
+      size-str="$ctrl.resolve.size"
+      object-size-str="$ctrl.resolve.objectSize"
+      stripe-unit-str="$ctrl.resolve.stripeUnit"
+      stripe-count="$ctrl.resolve.stripeCount"
+      object-set-index="1">
+  </ceph-rbd-striping-object-set>
+
+  <h2 ng-if="$ctrl.numObjectSets > 4" class="text-muted">&#8942;</h2>
+
+  <ceph-rbd-striping-object-set
+      ng-if="$ctrl.numObjectSets >= 4"
+      size-str="$ctrl.resolve.size"
+      object-size-str="$ctrl.resolve.objectSize"
+      stripe-unit-str="$ctrl.resolve.stripeUnit"
+      stripe-count="$ctrl.resolve.stripeCount"
+      object-set-index="$ctrl.numObjectSets - 2">
+  </ceph-rbd-striping-object-set>
+
+  <ceph-rbd-striping-object-set
+      ng-if="$ctrl.numObjectSets >= 3"
+      size-str="$ctrl.resolve.size"
+      object-size-str="$ctrl.resolve.objectSize"
+      stripe-unit-str="$ctrl.resolve.stripeUnit"
+      stripe-count="$ctrl.resolve.stripeCount"
+      object-set-index="$ctrl.numObjectSets - 1">
+  </ceph-rbd-striping-object-set>
+
+</div>
+
+<div class="openattic-modal-footer">
+  <div class="button-group text-right">
+    <button id="close" class="btn btn-default btn-sm" ng-click="$ctrl.close()">Close</button>
+  </div>
+</div>

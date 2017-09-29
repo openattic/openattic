@@ -34,14 +34,12 @@ import "../ceph-cluster/module";
 import "../ceph-erasure-code-profiles/module";
 import "../ceph-osd/module";
 import "../registry/module";
-import "../tabView/module";
 
 angular.module("openattic.cephPools", [
   "openattic.cephCluster",
   "openattic.cephErasureCodeProfiles",
   "openattic.cephOsd",
-  "openattic.registry",
-  "openattic.tabView"
+  "openattic.registry"
 ]);
 
 requireAll(require.context("./", true, /\.js$/));

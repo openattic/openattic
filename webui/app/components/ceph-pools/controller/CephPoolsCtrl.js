@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsService, registryService,
-    $uibModal, tabViewService) {
+    $uibModal, oaTabSetService) {
   $scope.registry = registryService;
   $scope.cluster = undefined;
   $scope.pools = {};
@@ -50,7 +50,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   var modifyResult = function (res) {
     res.results.forEach(function (pool) {
-      if (pool.percent_used) {
+      if (!angular.isNumber(pool.percent_used)) {
         pool.percent_used = 0;
       }
       pool.oaUsed = pool.percent_used;
@@ -103,19 +103,19 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     active: 0,
     tabs: {
       status: {
-        show: "selection.item",
+        show: "$ctrl.selection.item",
         state: "cephPools.detail.status",
         class: "tc_statusTab",
         name: "Status"
       },
       cacheTier: {
-        show: "selection.item.tiers.length > 0",
+        show: "$ctrl.selection.item.tiers.length > 0",
         state: "cephPools.detail.cacheTier",
         class: "tc_cacheTieringTab",
         name: "Cache Tier"
       },
       statistics: {
-        show: "selection.item",
+        show: "$ctrl.selection.item",
         state: "cephPools.detail.statistics",
         class: "tc_statisticsTab",
         name: "Statistics"
@@ -127,8 +127,6 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
     linkedBy: "id",
     jumpTo: "more"
   };
-  tabViewService.setScope($scope);
-  $scope.changeTab = tabViewService.changeTab;
 
   $scope.$watch("filterConfig", function (newValue, oldValue) {
     if (angular.equals(newValue, oldValue)) {
@@ -154,9 +152,11 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
     if (item) {
       if ($state.current.name === "cephPools") {
-        $scope.changeTab("cephPools.detail.status");
+        oaTabSetService.changeTab("cephPools.detail.status", $scope.tabData,
+          $scope.tabConfig, selection);
       } else {
-        $scope.changeTab($state.current.name);
+        oaTabSetService.changeTab($state.current.name, $scope.tabData,
+          $scope.tabConfig, selection);
       }
     }
   };

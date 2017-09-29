@@ -14,10 +14,18 @@
 from django.test import TestCase
 from mock import mock
 
-from grafana.grafana_proxy import get_grafana_api_response
+from grafana.grafana_proxy import get_grafana_api_response, fix_path
 
 
 class GrafanaResponseTestCase(TestCase):
+
+    def test_fix_path(self):
+        self.assertEqual(fix_path('/foo/bar'), '/foo/bar')
+        self.assertEqual(fix_path('/foo/bar/'), '/foo/bar')
+        self.assertEqual(fix_path('/123foo456/api/grafana'), '')
+        self.assertEqual(fix_path('/openattic/api/grafana'), '')
+        self.assertEqual(fix_path('/api/grafana/some/other/stuff'), '/some/other/stuff')
+        self.assertEqual(fix_path('/api/grafana/api/grafana/some/other/stuff'), '/some/other/stuff')
 
     @mock.patch('grafana.grafana_proxy.Settings')
     @mock.patch('grafana.grafana_proxy.requests.request')

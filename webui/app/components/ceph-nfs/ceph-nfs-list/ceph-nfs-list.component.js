@@ -30,14 +30,21 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.component("cephNfsList", {
-  template: require("./ceph-nfs-list.component.html"),
-  controller: function ($scope, $filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
-      cephNfsService, taskQueueService, taskQueueSubscriber, cephNfsStateService, cephNfsFsal) {
-    var self = this;
+class CephNfsList {
 
+  constructor ($scope, $filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
+      cephNfsService, cephNfsStateService, cephNfsFsal) {
+    this.$scope = $scope;
+    this.$filter = $filter;
+    this.$state = $state;
+    this.$uibModal = $uibModal;
+    this.$timeout = $timeout;
     this.registry = registryService;
+    this.oaTabSetService = oaTabSetService;
+    this.cephNfsService = cephNfsService;
+    this.cephNfsStateService = cephNfsStateService;
+    this.cephNfsFsal = cephNfsFsal;
+
     this.cluster = undefined;
     this.nfs = {};
     this.error = false;
@@ -52,7 +59,7 @@ app.component("cephNfsList", {
 
     this.selection = {};
 
-    self.tabData = {
+    this.tabData = {
       active: 0,
       tabs: {
         status: {
@@ -64,154 +71,161 @@ app.component("cephNfsList", {
       }
     };
 
-    self.tabConfig = {
+    this.tabConfig = {
       type: "cephNfs",
       linkedBy: "id",
       jumpTo: "more"
     };
+  }
 
-    $scope.$watch("$ctrl.filterConfig", function (newValue, oldValue) {
+  $onInit () {
+    this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
       if (angular.equals(newValue, oldValue)) {
         return;
       }
-      self.getNfsList();
+      this.getNfsList();
     }, true);
 
-    $scope.$watchCollection("$ctrl.selection", function (selection) {
-      var items = selection.items;
-      self.multiSelection = items && items.length > 1;
-      self.hasSelection = items && items.length === 1;
+    this.$scope.$watchCollection("$ctrl.selection", (selection) => {
+      let items = selection.items;
+      this.multiSelection = items && items.length > 1;
+      this.hasSelection = items && items.length === 1;
       if (!items || items.length !== 1) {
-        $state.go("cephNfs");
+        this.$state.go("cephNfs");
         return;
       }
-      if ($state.current.name === "cephNfs") {
-        oaTabSetService.changeTab("cephNfs.detail.details", self.tabData, self.tabConfig, selection);
+      if (this.$state.current.name === "cephNfs") {
+        this.oaTabSetService.changeTab("cephNfs.detail.details", this.tabData, this.tabConfig, selection);
       } else {
-        oaTabSetService.changeTab($state.current.name, self.tabData, self.tabConfig, selection);
+        this.oaTabSetService.changeTab(this.$state.current.name, this.tabData, this.tabConfig, selection);
       }
     });
-
-    var updateStates = function () {
-      angular.forEach(self.nfs.results, function (nfsExport) {
-        nfsExport.state = "LOADING";
-      });
-      cephNfsStateService.updateStates(self.registry.selectedCluster.fsid, function (hostsToUpdate) {
-        angular.forEach(self.nfs.results, function (nfsExport) {
-          var currentHost = hostsToUpdate[nfsExport.host];
-          if (angular.isDefined(currentHost)) {
-            if (angular.isDefined(currentHost.exports) &&
-                angular.isDefined(currentHost.exports[nfsExport.exportId])) {
-              nfsExport.state = currentHost.exports[nfsExport.exportId].state;
-            } else {
-              nfsExport.state = currentHost.state;
-            }
-          }
-        });
-      });
-    };
-
-    self.onClusterLoad = function (cluster) {
-      self.cluster = cluster;
-    };
-
-    self.getNfsList = function () {
-      if (angular.isObject(self.cluster) && self.cluster.results &&
-          self.cluster.results.length > 0 && self.registry.selectedCluster) {
-        var obj = $filter("filter")(self.cluster.results, {
-          fsid: self.registry.selectedCluster.fsid
-        }, true);
-        if (obj.length === 0) {
-          self.registry.selectedCluster = self.cluster.results[0];
-        }
-
-        self.nfs = {};
-        self.error = false;
-
-        cephNfsService
-          .get({
-            fsid: self.registry.selectedCluster.fsid,
-            page: self.filterConfig.page + 1,
-            pageSize: self.filterConfig.entries,
-            search: self.filterConfig.search,
-            ordering: (self.filterConfig.sortorder === "ASC" ? "" : "-") + self.filterConfig.sortfield
-          })
-          .$promise
-          .then(function (res) {
-            self.nfs = res;
-            updateStates();
-          })
-          .catch(function (error) {
-            self.error = error;
-          });
-      }
-    };
-
-    self.getFsalDesc = function (fsal) {
-      var fsalItem = cephNfsFsal.find(function (currentFsalItem) {
-        if (fsal === currentFsalItem.value) {
-          return currentFsalItem;
-        }
-      });
-      return angular.isDefined(fsalItem) ? fsalItem.descr : fsal;
-    };
-
-    self.addAction = function () {
-      $state.go("cephNfs-add", {
-        fsid: self.registry.selectedCluster.fsid
-      });
-    };
-
-    self.editAction = function () {
-      $state.go("cephNfs-edit", {
-        fsid: self.registry.selectedCluster.fsid,
-        host: self.selection.items[0].host,
-        exportId: self.selection.items[0].exportId
-      });
-    };
-
-    self.deleteAction = function () {
-      if (!self.hasSelection && !self.multiSelection) {
-        return;
-      }
-      var modalInstance = $uibModal.open({
-        windowTemplate: require("../../../templates/messagebox.html"),
-        component: "cephNfsDeleteModal",
-        resolve: {
-          fsid: function () {
-            return self.registry.selectedCluster.fsid;
-          },
-          selectionItems: function () {
-            return self.selection.items;
-          }
-        }
-      });
-      modalInstance.result.then(function () {
-        self.filterConfig.refresh = new Date();
-      });
-    };
-
-    self.cloneAction = function () {
-      $state.go("cephNfs-clone", {
-        fsid: self.registry.selectedCluster.fsid,
-        host: self.selection.items[0].host,
-        exportId: self.selection.items[0].exportId
-      });
-    };
-
-    self.stateAction = function () {
-      var modalInstance = $uibModal.open({
-        windowTemplate: require("../../../templates/messagebox.html"),
-        component: "cephNfsManageServiceModal",
-        resolve: {
-          fsid: function () {
-            return self.registry.selectedCluster.fsid;
-          }
-        }
-      });
-      modalInstance.result.catch(function () {
-        updateStates();
-      });
-    };
   }
-});
+
+  onClusterLoad (cluster) {
+    this.cluster = cluster;
+  }
+
+  _updateStates () {
+    angular.forEach(this.nfs.results, (nfsExport) => {
+      nfsExport.state = "LOADING";
+    });
+    this.cephNfsStateService.updateStates(this.registry.selectedCluster.fsid, (hostsToUpdate) => {
+      angular.forEach(this.nfs.results, (nfsExport) => {
+        let currentHost = hostsToUpdate[nfsExport.host];
+        if (angular.isDefined(currentHost)) {
+          if (angular.isDefined(currentHost.exports) &&
+              angular.isDefined(currentHost.exports[nfsExport.exportId])) {
+            nfsExport.state = currentHost.exports[nfsExport.exportId].state;
+          } else {
+            nfsExport.state = currentHost.state;
+          }
+        }
+      });
+    });
+  }
+
+  getNfsList () {
+    if (angular.isObject(this.cluster) && this.cluster.results &&
+        this.cluster.results.length > 0 && this.registry.selectedCluster) {
+      let obj = this.$filter("filter")(this.cluster.results, {
+        fsid: this.registry.selectedCluster.fsid
+      }, true);
+      if (obj.length === 0) {
+        this.registry.selectedCluster = this.cluster.results[0];
+      }
+
+      this.nfs = {};
+      this.error = false;
+
+      this.cephNfsService
+        .get({
+          fsid: this.registry.selectedCluster.fsid,
+          page: this.filterConfig.page + 1,
+          pageSize: this.filterConfig.entries,
+          search: this.filterConfig.search,
+          ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") + this.filterConfig.sortfield
+        })
+        .$promise
+        .then((res) => {
+          this.nfs = res;
+          this._updateStates();
+        })
+        .catch((error) => {
+          this.error = error;
+        });
+    }
+  }
+
+  getFsalDesc (fsal) {
+    let fsalItem = this.cephNfsFsal.find((currentFsalItem) => {
+      if (fsal === currentFsalItem.value) {
+        return currentFsalItem;
+      }
+    });
+    return angular.isDefined(fsalItem) ? fsalItem.descr : fsal;
+  }
+
+  addAction () {
+    this.$state.go("cephNfs-add", {
+      fsid: this.registry.selectedCluster.fsid
+    });
+  }
+
+  editAction () {
+    this.$state.go("cephNfs-edit", {
+      fsid: this.registry.selectedCluster.fsid,
+      host: this.selection.items[0].host,
+      exportId: this.selection.items[0].exportId
+    });
+  }
+
+  deleteAction () {
+    if (!this.hasSelection && !this.multiSelection) {
+      return;
+    }
+    let modalInstance = this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephNfsDeleteModal",
+      resolve: {
+        fsid: () => {
+          return this.registry.selectedCluster.fsid;
+        },
+        selectionItems: () => {
+          return this.selection.items;
+        }
+      }
+    });
+    modalInstance.result.then(() => {
+      this.filterConfig.refresh = new Date();
+    });
+  }
+
+  cloneAction () {
+    this.$state.go("cephNfs-clone", {
+      fsid: this.registry.selectedCluster.fsid,
+      host: this.selection.items[0].host,
+      exportId: this.selection.items[0].exportId
+    });
+  }
+
+  stateAction () {
+    let modalInstance = this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephNfsManageServiceModal",
+      resolve: {
+        fsid: () => {
+          return this.registry.selectedCluster.fsid;
+        }
+      }
+    });
+    modalInstance.result.catch(() => {
+      this._updateStates();
+    });
+  }
+}
+
+export default {
+  template: require("./ceph-nfs-list.component.html"),
+  controller: CephNfsList
+};

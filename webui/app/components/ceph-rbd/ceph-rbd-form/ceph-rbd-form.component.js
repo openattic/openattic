@@ -36,7 +36,7 @@ app.component("cephRbdForm", {
   bindings: {},
   controller: function ($scope, $state, $stateParams, cephRbdService,
       cephPoolsService, SizeParserService, $filter, Notification,
-      cephClusterService, cephRbdFeatures) {
+      cephClusterService, cephRbdFeatures, $uibModal) {
     var self = this;
 
     self.submitted = false;
@@ -402,6 +402,27 @@ app.component("cephRbdForm", {
         self.fsid = self.data.cluster.fsid;
         self.getCephPools();
       }
+    };
+
+    self.previewStriping = function () {
+      $uibModal.open({
+        windowTemplate: require("../../../templates/messagebox.html"),
+        component: "cephRbdStripingModal",
+        resolve: {
+          size: () => {
+            return self.data.size;
+          },
+          objectSize: () => {
+            return self.data.obj_size;
+          },
+          stripeUnit: () => {
+            return self.data.striping.unitDisplayed;
+          },
+          stripeCount: () => {
+            return self.data.striping.count;
+          }
+        }
+      });
     };
 
     self.submitAction = function (rbdForm) {

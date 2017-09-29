@@ -222,7 +222,7 @@ module.exports = (function makeWebpackConfig () {
       from: __dirname + "/app/components/shared/oa-module-loader/reason*.html",
       to: __dirname + "/dist/components/shared/oa-module-loader/[name].[ext]"
     }
-  ])
+    ])
   );
 
   // Add build specific plugins
@@ -259,6 +259,9 @@ module.exports = (function makeWebpackConfig () {
    */
   config.devServer = {
     contentBase: "./app",
+    watchOptions: {
+      ignored: /\.sw.$/
+    },
     stats: "minimal",
     proxy: {}
   };

@@ -187,6 +187,27 @@ class CephPoolTestCase(TestCase):
         ]
         monApi_mock.return_value.assert_has_calls(calls)
 
+    def test_calc_pool_percent_used_luminous(self):
+        df_data_pool = dict(bytes_used=157286400, percent_used=25)
+
+        percent_used = ceph.models.CephPool._calc_percent_used(None, None, df_data_pool)
+        self.assertEqual(df_data_pool['percent_used'], percent_used)
+
+    def test_calc_pool_percent_used_replicated_jewel(self):
+        pool = mock.Mock(size=3, type='replicated')
+        df_data_global = dict(total_bytes=629145600)
+        df_data_pool = dict(bytes_used=157286400, raw_bytes_used=471859200)
+
+        percent_used = ceph.models.CephPool._calc_percent_used(pool, df_data_global, df_data_pool)
+        self.assertEqual(percent_used, 25)
+
+    def test_calc_pool_percent_used_erasurecode_jewel(self):
+        pool = mock.Mock(size=3, type='erasure', erasure_code_profile=mock.Mock(m=1, k=2))
+        df_data_global = dict(total_bytes=629145600)
+        df_data_pool = dict(bytes_used=157286400, raw_bytes_used=471859200)
+
+        percent_used = ceph.models.CephPool._calc_percent_used(pool, df_data_global, df_data_pool)
+        self.assertEqual(percent_used, 50)
 
 class UndoFrameworkTest(TestCase):
     class Foo(object):
@@ -605,3 +626,14 @@ class OsdPoolDeleteTest(TestCase):
         ]
 
         self.assertEqual(client_mock.mon_command.mock_calls, calls)
+
+
+class CephClusterTestCase(TestCase):
+    @mock.patch('ceph.models.MonApi')
+    def test_pause_flag(self, MonApi_mock):
+        MonApi_mock.return_value.osd_dump.return_value = {
+            'flags': 'pauserd,pausewr,sortbitwise,recovery_deletes'
+        }
+        self.assertEqual(set(ceph.models.CephCluster(fsid='fsid').osd_flags), {
+            'pause', 'sortbitwise', 'recovery_deletes'
+        })

@@ -102,6 +102,10 @@ option {
   text-decoration: line-through;
 }
 
+.italic {
+  font-style: italic;
+}
+
 /* Branding */
 .navbar-openattic .navbar-brand,
 .navbar-openattic .navbar-brand:hover{
@@ -668,11 +672,17 @@ table.datatable thead .sorting_desc:after {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffafafa', endColorstr='#ffededed', GradientType=0);
 }
+
+.table.header-text-center>thead>tr>th {
+  text-align: center;
+}
+
 .table-bordered {
   border: none;
   border-top: 1px solid #d1d1d1;
   border-right: 1px solid #d1d1d1;
 }
+
 .table-bordered>tbody>tr>td,
 .table-bordered>tbody>tr>th,
 .table-bordered>tfoot>tr>td,
@@ -706,6 +716,19 @@ table.datatable thead .sorting_desc:after {
   vertical-align: middle;
   border-top: 0px;
   border-bottom: 1px solid #ddd;
+}
+
+.table-transparent>thead {
+  background: none;
+}
+.table-transparent>thead>tr>th {
+  border-bottom: 0px;
+}
+.table-transparent>tbody>tr>td {
+  height: 50px;
+  vertical-align: middle;
+  border-top: 0px;
+  border-bottom: 0px;
 }
 
 /* Typo */
@@ -1387,4 +1410,30 @@ oa-helper i {
 hr.oa-hr-small {
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.table>thead>tr>th.rbd-striping-object{
+  min-width: 60px;
+}
+.table>thead>tr>th.rbd-striping-stripe {
+  min-width: 100px;
+}
+.rbd-striping-column-separator {
+  width: 1px;
+}
+
+.table>tbody>tr>td.rbd-striping-cell-top {
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+.table>tbody>tr>td.rbd-striping-cell-center {
+  border-top: 1px dashed #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+.table>tbody>tr>td.rbd-striping-cell-bottom {
+  border-bottom: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 }
