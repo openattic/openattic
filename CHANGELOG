@@ -68,6 +68,7 @@ Fixed
 * WebUI: Not all graphs are displayed on the RBD statistics page (OP-2716)
 * WebUI: Fixes pool size table tooltip (OP-2539)
 * WebUI: Improve error handling of MON-widget (OP-2658)
+* WebUI: Removed error message when accessing iSCSI without Salt-API (OP-2728)
 
 Removed
 ~~~~~~~
