@@ -30,6 +30,7 @@ Added
 * WebUI/QA: Add missing validation test for the RBD form (OP-2693)
 * WebUI/QA: Add missing cleanup to e2e suites (OP-2635)
 * WebUI/QA: Add plugin to stop protractor after first failed test (OP-2694)
+* WebUI: Introduced frontend unit test (OP-952)
 
 Changed
 ~~~~~~~
