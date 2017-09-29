@@ -48,21 +48,13 @@ app.controller("CephPoolsCtrl", function ($scope, $state, $filter, cephPoolsServ
 
   $scope.selection = {};
 
-  var modifyResult = function (res) {
-    res.results.forEach(function (pool) {
-      if (!angular.isNumber(pool.percent_used)) {
-        pool.percent_used = 0;
-      }
-      pool.oaUsed = pool.percent_used;
-      pool.oaUnused = 100 - pool.oaUsed;
-      if (pool.max_avail) {
-        pool.max_avail = 0;
-      }
+  var modifyResult = res => {
+    res.results.forEach(pool => {
+      pool.oaUnused = 100 - pool.percent_used;
       pool.oaFree = pool.max_avail - pool.num_bytes;
       pool.application_metadata = Object.keys(pool.application_metadata).sort();
       pool.showApps = pool.application_metadata.join(", ");
     });
-
     return res;
   };
 

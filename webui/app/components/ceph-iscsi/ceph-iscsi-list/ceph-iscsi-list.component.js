@@ -109,7 +109,6 @@ app.component("cephIscsiList", {
 
     self.onClusterLoad = function (cluster) {
       self.cluster = cluster;
-      self.getIscsiList();
     };
 
     self.getIscsiList = function () {

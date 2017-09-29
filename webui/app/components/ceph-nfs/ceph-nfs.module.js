@@ -48,7 +48,7 @@ angular
 
 require("./ceph-nfs.routes");
 require("./ceph-nfs-form/ceph-nfs-form.service.js");
-requireAll(require.context("./shared", true, /\.js$/));
+requireAll(require.context("./shared", true, /^(?!.*\.spec\.js$).*\.js$/));
 
 function requireAll (require) {
   require.keys().forEach(require);

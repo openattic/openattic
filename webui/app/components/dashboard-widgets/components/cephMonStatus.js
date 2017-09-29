@@ -65,13 +65,11 @@ app.component("cephMonStatus", {
         });
     };
 
-    this.getCombinedHealth = function (cluster) {
+    this.getCombinedHealth = (cluster) => {
       // Check if timechecks is empty
       if (angular.equals(cluster.timechecks, {})) {
         throw "timechecks hasn't been set in the api yet";
       }
-
-      // var clusterHealth = cluster.health;
       var health = {
         "HEALTH_OK": [],
         "HEALTH_WARN": [],
@@ -82,13 +80,14 @@ app.component("cephMonStatus", {
         if (cluster.timechecks && cluster.timechecks.time_skew_status) {
           angular.extend(mon, cluster.timechecks.time_skew_status[mon.name]);
         }
-
+        mon.details = (mon.details ? [mon.details] : []).concat(cluster.health.detail.filter(detail => {
+          return detail.indexOf(mon.name) !== -1 || detail.indexOf(mon.addr) !== -1;
+        }));
         if (!mon.health) {
-          mon.health = "HEALTH_ERR";
+          mon.health = cluster.health.status;
         }
         health[mon.health].push(mon);
       });
-
       return health;
     };
 
@@ -165,12 +164,18 @@ app.component("cephMonStatus", {
       ].join("");
     };
 
-    this.createMonContent = function (mon) {
+    this.createMonContent = (mon) => {
       return [
         "Addr: " + mon.addr,
         "Health: " + mon.health,
-        mon.details ? "Details: " + mon.details : ""
+        mon.details.length > 0 ? "Details: " + self.processDetails(mon.details) : ""
       ].join("<br>");
+    };
+
+    this.processDetails = details => {
+      return "<ul>" +
+        details.map(detail => "<li>" + detail + "</li>").join("") +
+        "</ul>";
     };
 
     // Watcher

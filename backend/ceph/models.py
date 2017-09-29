@@ -98,6 +98,7 @@ class CephCluster(NodbModel, RadosMixin):
             except Exception:
                 logger.exception('time_sync_status failed.')
                 val['timechecks'] = {}
+        val['health'] = self.mon_api(self.fsid).health('detail')
         return val
 
     @staticmethod
