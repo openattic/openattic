@@ -126,7 +126,7 @@ class CephCluster(NodbModel, RadosMixin):
         if self.keyring_user not in keyring.available_user_names:
             raise ValidationError({'keyring_user': ["Unknown keyring user."]})
 
-    def save(self, *args, **kwargs):
+    def save(self, update_fields=None, *args, **kwargs):
         """
         This method implements three purposes.
 
@@ -139,7 +139,7 @@ class CephCluster(NodbModel, RadosMixin):
         if insert:
             raise ValidationError('Cannot create Ceph cluster.')
 
-        diff, original = self.get_modified_fields()
+        diff, original = self.get_modified_fields(update_fields=update_fields)
 
         for key, value in diff.items():
             if key == 'keyring_file_path':
