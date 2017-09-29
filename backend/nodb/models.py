@@ -438,13 +438,14 @@ class NodbModel(models.Model):
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
 
-    def get_modified_fields(self, **kwargs):
+    def get_modified_fields(self, update_fields=None, **kwargs):
         """
         Returns a dict of fields, which have changed. There are two known problems:
 
         1. There is a race between get_modified_fields and the call to this.save()
         2. A type change, e.g. str and unicode is not handled.
 
+        :param update_fields: restrict the search for updated fields to update_fields.
         :param kwargs: used to retrieve the original. default: `pk`
         :rtype: tuple[dict[str, Any], T <= NodbModel]
         :return: A tuple consisting of the diff and the original model instance
@@ -452,11 +453,18 @@ class NodbModel(models.Model):
         if not kwargs:
             kwargs['pk'] = self.pk
 
+        field_names = [f.attname for f in self.__class__._meta.fields]
+        if update_fields is None:
+            update_fields = field_names
+        else:
+            assert not (set(update_fields) - set(field_names))
+
+        fields = [f for f in self.__class__._meta.fields if f.attname in update_fields]
         original = self.__class__.objects.get(**kwargs)
         return {
             field.attname: getattr(self, field.attname, None)
             for field
-            in self.__class__._meta.fields
+            in fields
             if field.editable and getattr(self, field.attname, None) != getattr(original,
                                                                                 field.attname, None)
         }, original
