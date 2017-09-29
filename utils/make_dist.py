@@ -601,7 +601,8 @@ class DistBuilder(object):
                 _copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
 
         if cache_used:  # Build the frontend files.
-            process_run(['npm', 'build'], cwd=webui_dir)
+            process_run(['npm', 'run', 'clean'], cwd=webui_dir)  # Remove previously fetched files.
+            process_run(['npm', 'run', 'build'], cwd=webui_dir)
 
             # Remove no longer required dirs.
             _rmtree(node_modules_dir)
