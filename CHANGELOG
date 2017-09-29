@@ -70,6 +70,8 @@ Fixed
 * WebUI: Improve error handling of MON-widget (OP-2658)
 * WebUI: Removed error message when accessing iSCSI without Salt-API (OP-2728)
 * Packaging: Fixed make_dist.py error with particular switches used (OP-2628)
+* Packaging: Updated `make_dist.py` to reflect the changes since the
+  introduction of webpack and the moved E2E folder (OP-2717)
 
 Removed
 ~~~~~~~
