@@ -69,6 +69,7 @@ Fixed
 * WebUI: Fixes pool size table tooltip (OP-2539)
 * WebUI: Improve error handling of MON-widget (OP-2658)
 * WebUI: Removed error message when accessing iSCSI without Salt-API (OP-2728)
+* Packaging: Fixed make_dist.py error with particular switches used (OP-2628)
 
 Removed
 ~~~~~~~
