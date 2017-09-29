@@ -323,7 +323,7 @@ def _get_current_revision_hash(repo_dir):
     return result.stdout.strip()
 
 
-def _commit_changes(commit_msg, repo_dir):
+def _commit_changes(commit_msg, repo_dir, exit_on_error=True):
     """
     :type commit_msg: str
     :type repo_dir: str
@@ -332,7 +332,7 @@ def _commit_changes(commit_msg, repo_dir):
     process_run(['git', 'add', '--all'], cwd=repo_dir)
     return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg],
                        cwd=repo_dir,
-                       exit_on_error=False)
+                       exit_on_error=exit_on_error)
 
 
 def _push_changes(repo_dir):
@@ -743,7 +743,7 @@ class DistBuilder(object):
             print(__doc__)
             sys.exit(0)
         elif self._args['cache'] and self._args['push']:
-            _commit_changes('Update cache', self._fe_cache_dir)
+            _commit_changes('Update cache', self._fe_cache_dir, exit_on_error=False)
             _push_changes(self._fe_cache_dir)
         elif self._args['create']:
             abs_tarball_file_path = self.build()
