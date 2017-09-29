@@ -31,6 +31,8 @@ Added
 * WebUI/QA: Add missing cleanup to e2e suites (OP-2635)
 * WebUI/QA: Add plugin to stop protractor after first failed test (OP-2694)
 * WebUI: Introduced frontend unit test (OP-952)
+* Documentation: Add Python Unit Tests chapter to the Developer Documentation
+  (OP-2739)
 
 Changed
 ~~~~~~~
