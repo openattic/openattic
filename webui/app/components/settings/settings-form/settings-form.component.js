@@ -90,16 +90,16 @@ app.component("settingsForm",  {
     };
 
     var isAllDeepSeaPropsDefined = function (deepsea) {
-      return angular.isDefined(deepsea.host) &&
-        angular.isDefined(deepsea.port) &&
-        angular.isDefined(deepsea.eauth) &&
+      let isHostDefined = deepsea.host !== undefined && deepsea.host !== "";
+      let isPortDefined = deepsea.port !== undefined && deepsea.port !== null;
+      let isEauthDefined = deepsea.eauth !== undefined && deepsea.eauth !== null;
+      let isUsernameDefined = deepsea.username !== undefined && deepsea.username !== "";
+      let isPasswordDefined = deepsea.password !== undefined && deepsea.password !== "";
+      let isSharedSecretDefined = deepsea.shared_secret !== undefined && deepsea.shared_secret !== "";
+      return isHostDefined && isPortDefined && isEauthDefined &&
         (
-          (deepsea.eauth === "auto" &&
-           angular.isDefined(deepsea.username) &&
-           angular.isDefined(deepsea.password)) ||
-          (deepsea.eauth === "sharedsecret" &&
-           angular.isDefined(deepsea.username) &&
-           angular.isDefined(deepsea.shared_secret))
+          (deepsea.eauth === "auto" && isUsernameDefined && isPasswordDefined) ||
+          (deepsea.eauth === "sharedsecret" && isUsernameDefined && isSharedSecretDefined)
         );
     };
 
@@ -147,12 +147,14 @@ app.component("settingsForm",  {
     };
 
     var isAllRgwPropsDefined = function (rgw) {
-      return angular.isDefined(rgw.host) &&
-          angular.isDefined(rgw.port) &&
-          angular.isDefined(rgw.access_key) &&
-          angular.isDefined(rgw.secret_key) &&
-          angular.isDefined(rgw.user_id) &&
-          angular.isDefined(rgw.use_ssl);
+      let isHostDefined = rgw.host !== undefined && rgw.host !== "";
+      let isPortDefined = rgw.port !== undefined && rgw.port !== null;
+      let isAccessKeyDefined = rgw.access_key !== undefined && rgw.access_key !== "";
+      let isSecretKeyDefined = rgw.secret_key !== undefined && rgw.secret_key !== "";
+      let isUserIdDefined = rgw.user_id !== undefined && rgw.user_id !== "";
+      let isUseSSLDefined = rgw.use_ssl !== undefined;
+      return isHostDefined && isPortDefined && isAccessKeyDefined &&
+        isSecretKeyDefined && isUserIdDefined && isUseSSLDefined;
     };
 
     var checkRgwConnectionTimeout;
@@ -186,11 +188,12 @@ app.component("settingsForm",  {
     };
 
     var isAllGrafanaPropsDefined = function (grafana) {
-      return angular.isDefined(grafana.host) &&
-          angular.isDefined(grafana.port) &&
-          angular.isDefined(grafana.username) &&
-          angular.isDefined(grafana.password) &&
-          angular.isDefined(grafana.use_ssl);
+      let isHostDefined = grafana.host !== undefined && grafana.host !== "";
+      let isPortDefined = grafana.port !== undefined && grafana.port !== null;
+      let isUsernameDefined = grafana.username !== undefined && grafana.username !== "";
+      let isPasswordDefined = grafana.password !== undefined && grafana.password !== "";
+      let isUseSSLDefined = grafana.password !== grafana.use_ssl;
+      return isHostDefined && isPortDefined && isUsernameDefined && isPasswordDefined && isUseSSLDefined;
     };
 
     var checkGrafanaConnectionTimeout;
@@ -217,9 +220,10 @@ app.component("settingsForm",  {
     };
 
     var isAllCephPropsDefined = function (ceph) {
-      return angular.isDefined(ceph.config_file_path) &&
-          angular.isDefined(ceph.keyring_file_path) &&
-          angular.isDefined(ceph.keyring_user);
+      let isConfigFilePathDefined = ceph.config_file_path !== undefined && ceph.config_file_path !== "";
+      let isKeyringFilePathDefined = ceph.keyring_file_path !== undefined && ceph.keyring_file_path !== "";
+      let isKeyringUserDefined = ceph.keyring_user !== undefined && ceph.keyring_user !== "";
+      return isConfigFilePathDefined && isKeyringFilePathDefined && isKeyringUserDefined;
     };
 
     var checkCephConnectionTimeout;
