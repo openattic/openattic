@@ -35,7 +35,7 @@ import "../components/ceph-erasure-code-profiles/module";
 import "../components/ceph-nodes/module";
 import "../components/ceph-iscsi/ceph-iscsi.module";
 import "../components/ceph-nfs/ceph-nfs.module";
-import "../components/ceph-osd/module";
+import "../components/ceph-osd/ceph-osd.module";
 import "../components/ceph-pools/ceph-pools.module";
 import "../components/ceph-rbd/ceph-rbd.module";
 import "../components/ceph-rgw/module";

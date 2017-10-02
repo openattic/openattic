@@ -30,7 +30,7 @@
  */
 "use strict";
 
-class CephOdsScrubModal {
+class CephOsdScrubModal {
 
   constructor ($q, cephOsdService) {
     this.cephOsdService = cephOsdService;
@@ -66,5 +66,5 @@ export default {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: CephOdsScrubModal
+  controller: CephOsdScrubModal
 };
