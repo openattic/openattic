@@ -41,7 +41,6 @@ app.component("oaCephClusterLoader", {
     var self = this;
 
     self.loading = false;
-    self.loaded = false;
     self.registry = registryService;
     self.cluster = undefined;
 
@@ -65,10 +64,6 @@ app.component("oaCephClusterLoader", {
           if (angular.isFunction(self.onClusterLoad)) {
             self.onClusterLoad({cluster: self.cluster});
           }
-          // Finally execute the transclusion.
-          self.loaded = res.$resolved;
-        }).catch(function (error) {
-          self.error = error;
         }).finally(function () {
           self.loading = false;
         });

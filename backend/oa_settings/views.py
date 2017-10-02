@@ -19,7 +19,7 @@ from django.core.exceptions import ValidationError
 
 from ceph.librados import Keyring, Client, run_in_external_process
 from ceph.models import CephCluster
-from ceph.restapi import CephClusterSerializer
+from ceph.restapi import CephClusterSettingsSerializer
 from exception import ExternalCommandError
 from grafana.grafana_proxy import GrafanaProxy
 from oa_settings import Settings, save_settings
@@ -85,7 +85,7 @@ class SettingsView(APIView):
                 "use_ssl": Settings.GRAFANA_API_SCHEME == 'https'
             },
             'ceph':
-                list(CephClusterSerializer(CephCluster.objects.all(), many=True).data)
+                list(CephClusterSettingsSerializer(CephCluster.objects.all(), many=True).data)
         })
 
     def post(self, request):
@@ -129,7 +129,7 @@ class SettingsView(APIView):
                     raise ValidationError('No fsid in cluster {}'.format(index+1))
                 orig_cluster = CephCluster.objects.get(fsid=cluster_data['fsid'])
 
-                serializer = CephClusterSerializer(orig_cluster, cluster_data, partial=True)
+                serializer = CephClusterSettingsSerializer(orig_cluster, cluster_data, partial=True)
                 if not serializer.is_valid():
                     raise ValidationError(serializer.errors)
                 serializers.append(serializer)
@@ -289,8 +289,8 @@ class CheckCephCofigurationView(APIView):
         try:
             cluster_conf, keyring_path, user_name = [request.GET[k] for k in keys]
         except KeyError:
-            raise ValidationError('{} are required.'.format(str(keys)))
-
+            return Response({'success': False, 'message': 'Fields "Keyring file" and "Keyring user" are required'
+                            .format(str(keys))})
         try:
             keyring = Keyring(keyring_path, user_name)
         except RuntimeError as e:

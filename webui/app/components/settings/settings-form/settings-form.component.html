@@ -89,8 +89,16 @@
             Shared Secret <oa-helper helper-template="'components/settings/settings-form/settings-form-helper-features.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" name="saltApiSharedSecret" id="saltApiSharedSecret"
-                   ng-model="$ctrl.model.deepsea.shared_secret" ng-change="$ctrl.checkDeepSeaConnection()" required>
+            <div class="input-group">
+              <input type="password" class="form-control" name="saltApiSharedSecret" id="saltApiSharedSecret"
+                     ng-model="$ctrl.model.deepsea.shared_secret" ng-change="$ctrl.checkDeepSeaConnection()" required>
+              <span class="input-group-btn">
+                <button type="button"
+                        class="btn btn-default"
+                        oa-password-button="saltApiSharedSecret">
+                </button>
+              </span>
+            </div>
             <span class="help-block tc_saltApiSharedSecretRequired"
                   ng-show="(settingsForm.$submitted || settingsForm['saltApiSharedSecret'].$dirty) && settingsForm['saltApiSharedSecret'].$error.required">
               Required field
@@ -170,9 +178,17 @@
         <div class="form-group">
           <label class="col-sm-3 control-label" for="rgwApiSecretKey">Secret Key</label>
           <div class="col-sm-9">
-            <input type="text" class="form-control" name="rgwApiSecretKey" id="rgwApiSecretKey"
-                   ng-model="$ctrl.model.rgw.secret_key" ng-change="$ctrl.checkRgwConnection()"
-                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
+            <div class="input-group">
+              <input type="password" class="form-control" name="rgwApiSecretKey" id="rgwApiSecretKey"
+                     ng-model="$ctrl.model.rgw.secret_key" ng-change="$ctrl.checkRgwConnection()"
+                     ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
+              <span class="input-group-btn">
+                <button type="button"
+                        class="btn btn-default"
+                        oa-password-button="rgwApiSecretKey">
+                </button>
+              </span>
+            </div>
           </div>
         </div>
 

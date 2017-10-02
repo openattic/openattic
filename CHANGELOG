@@ -31,6 +31,8 @@ Added
 * WebUI/QA: Add missing cleanup to e2e suites (OP-2635)
 * WebUI/QA: Add plugin to stop protractor after first failed test (OP-2694)
 * WebUI: Introduced frontend unit test (OP-952)
+* Documentation: Add Python Unit Tests chapter to the Developer Documentation
+  (OP-2739)
 
 Changed
 ~~~~~~~
@@ -42,6 +44,7 @@ Changed
 * WebUI: Update AngularJS to 1.5.11 (OP-2709)
 * WebUI/QA: Move e2e folder into webui (OP-2645)
 * WebUI: Convert NFS module to ES6 (OP-2532)
+* WebUI: Replace interval with event listener for grafana resize (OP-2724)
 
 Fixed
 ~~~~~
@@ -49,6 +52,8 @@ Fixed
 * Backend: Fixed `osd pool set`: unrecognized variable `crush_ruleset`
   (OP-2651)
 * Backend: Nodes Tab may not list IPs for hosts without OSDs (OP-2679)
+* Backend: The settings page will be accessible even if no valid keyring file
+  was found automatically (OP-2687)
 * Backend: Fix unable to disable pause flag (OP-2702)
 * Backend: Fixed the Grafana proxy implementation for the updated
   Grafana version 4.5.1 (OP-2705)
@@ -69,7 +74,10 @@ Fixed
 * WebUI: Fixes pool size table tooltip (OP-2539)
 * WebUI: Improve error handling of MON-widget (OP-2658)
 * WebUI: Removed error message when accessing iSCSI without Salt-API (OP-2728)
+* WebUI: Add button to show/hide passwords on the settings page (OP-2734)
 * Packaging: Fixed make_dist.py error with particular switches used (OP-2628)
+* Packaging: Updated `make_dist.py` to reflect the changes since the
+  introduction of webpack and the moved E2E folder (OP-2717)
 
 Removed
 ~~~~~~~

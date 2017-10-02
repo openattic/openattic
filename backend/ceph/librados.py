@@ -192,7 +192,6 @@ class Keyring(object):
         self.user_name = user_name
         self.available_user_names = None  # type: list
 
-        self._check_access()
         self._usernames()
         logger.debug("Connecting as {}".format(self.user_name))
 
@@ -200,11 +199,23 @@ class Keyring(object):
         """
         Check permissions on keyring.
         """
+        if not self.file_name:
+            raise RuntimeError("No valid keyring file found")
+
         if not os.path.isfile(self.file_name):
             raise RuntimeError("Keyring does not exist: {}".format(self.file_name))
 
         if not os.access(self.file_name, os.R_OK):
             raise RuntimeError("Check keyring permissions: {}".format(self.file_name))
+
+        if not self.user_name:
+            error_msg = "Corrupt keyring, check {}".format(self.file_name)
+            logger.error(error_msg)
+            raise RuntimeError(error_msg)
+
+        if self.user_name not in self.available_user_names:
+            raise RuntimeError(
+                'Keyring {} does not contain user {}'.format(self.file_name, self.user_name))
 
     def _usernames(self):
         """
@@ -221,13 +232,8 @@ class Keyring(object):
             self.available_user_names = sorted(_config.sections(), key=sort_by_prioritized_users)
             if self.user_name is None:
                 self.user_name = self.available_user_names[0]
-            if self.user_name not in self.available_user_names:
-                raise RuntimeError(
-                    'Keyring {} does not contain user {}'.format(self.file_name, self.user_name))
         except IndexError:
-            error_msg = "Corrupt keyring, check {}".format(self.file_name)
-            logger.error(error_msg)
-            raise RuntimeError(error_msg)
+            return
 
     def set_user_name(self, fsid, user_name):
         if self.user_name != user_name:
@@ -374,8 +380,6 @@ class ClientManager(object):
         :type fsid: str | unicode
         :rtype: librados.Client
         """
-        from ceph.models import CephCluster
-
         if fsid not in self.instances:
             self.instances[fsid] = ClusterConf.from_fsid(fsid).client
 
