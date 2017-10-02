@@ -30,20 +30,46 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
-import "../ceph-erasure-code-profiles/module";
-import "../ceph-osd/module";
-import "../registry/module";
+class CephPoolsDeleteModal {
+  constructor (cephPoolsService, $q) {
+    this.cephPoolsService = cephPoolsService;
+    this.$q = $q;
+  }
 
-angular.module("openattic.cephPools", [
-  "openattic.cephCluster",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephOsd",
-  "openattic.registry"
-]);
+  $onInit () {
+    this.cephPools = this.resolve.cephPoolSelection;
+  }
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+  deletePool () {
+    return this.$q((resolve, reject) => {
+      let requests = [];
+      this.cephPools.forEach((cephPool) => {
+        let deferred = this.$q.defer();
+        this.cephPoolsService.delete({
+          fsid: cephPool.cluster,
+          id: cephPool.id
+        }, deferred.resolve, deferred.reject);
+        requests.push(deferred.promise);
+      });
+      this.$q.all(requests).then(() => {
+        resolve();
+        this.modalInstance.close("deleted");
+      }, () => {
+        reject();
+      });
+    });
+  }
 
-function requireAll (require) {
-  require.keys().forEach(require);
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  };
 }
+
+export default{
+  template: require("./ceph-pools-delete-modal.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  },
+  controller: CephPoolsDeleteModal
+};

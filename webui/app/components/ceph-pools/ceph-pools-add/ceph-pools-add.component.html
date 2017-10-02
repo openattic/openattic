@@ -1,22 +1,22 @@
 <div class="col-sm-12 col-lg-6">
   <oa-loading-panel message="Form is loading..."
-                    ng-show="!clusters && !error">
+                    ng-show="!$ctrl.clusters && !$ctrl.error">
   </oa-loading-panel>
   <oa-error-panel message="Failed to load the form data."
-                  on-back="cancelAction()"
-                  ng-if="error">
+                  on-back="$ctrl.cancelAction()"
+                  ng-if="$ctrl.error">
   </oa-error-panel>
 
   <form name="poolForm"
       role="form"
       class="form-horizontal"
-      ng-show="clusters && !error"
+      ng-show="$ctrl.clusters && !$ctrl.error"
       novalidate
       oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 class="panel-title">
-          {{editing ? 'Edit' : 'Create'}} Ceph pool: {{pool.name}}
+          {{$ctrl.editing ? 'Edit' : 'Create'}} Ceph pool: {{$ctrl.pool.name}}
         </h3>
       </div>
       <div class="panel-body">
@@ -32,11 +32,11 @@
                 type="text"
                 class="form-control tc_pool_name"
                 placeholder="Name..."
-                ng-disabled="editing"
-                ng-model="pool.name"
+                ng-disabled="$ctrl.editing"
+                ng-model="$ctrl.pool.name"
                 uniquename="ceph-pool"
                 validname
-                ng-required="!editing"
+                ng-required="!$ctrl.editing"
                 autofocus>
             <span class="help-block tc_nameRequired"
                 ng-show="(poolForm.$submitted || poolForm.name.$dirty) && poolForm.name.$error.required">
@@ -44,7 +44,7 @@
             </span>
             <span class="help-block tc_noValidName"
                 ng-show="poolForm.name.$error.validname">
-              {{errortext}}
+              {{$ctrl.errortext}}
             </span>
             <span class="help-block tc_noUniqueName"
                 ng-show="poolForm.name.$error.uniquename">
@@ -53,10 +53,10 @@
           </div>
         </div>
 
-        <div ng-if="clusters.length || editing">
+        <div ng-if="$ctrl.clusters.length || $ctrl.editing">
           <div class="form-group"
               ng-class="{'has-error': (poolForm.$submitted || poolForm.cluster.$dirty) && poolForm.cluster.$invalid}"
-              ng-if="clusters.length !== 1 && !editing">
+              ng-if="$ctrl.clusters.length !== 1 && !$ctrl.editing">
             <label class="control-label col-sm-3"
                 for="cluster">
               Cluster
@@ -65,10 +65,10 @@
               <select class="form-control tc_cluster_selection"
                   id="cluster"
                   name="cluster"
-                  ng-disabled="!clusters"
-                  ng-model="data.cluster"
-                  ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in clusters track by cluster.fsid"
-                  ng-required="!editing">
+                  ng-disabled="!$ctrl.clusters"
+                  ng-model="$ctrl.data.cluster"
+                  ng-options="(cluster.name + ' (' + cluster.fsid + ')') for cluster in $ctrl.clusters track by cluster.fsid"
+                  ng-required="!$ctrl.editing">
                 <option class="tc_clusterOption"
                     value="">
                   -- Select a cluster --
@@ -96,11 +96,11 @@
               <select class="form-control tc_poolTypes_selection"
                   id="poolTypes"
                   name="poolTypes"
-                  ng-change="rulesetChange()"
-                  ng-model="pool.type"
-                  ng-options="poolType.name as poolType.description for poolType in data.poolTypes"
-                  ng-disabled="editing"
-                  ng-required="!editing">
+                  ng-change="$ctrl.rulesetChange()"
+                  ng-model="$ctrl.pool.type"
+                  ng-options="poolType.name as poolType.description for poolType in $ctrl.data.poolTypes"
+                  ng-disabled="$ctrl.editing"
+                  ng-required="!$ctrl.editing">
                 <option class="tc_poolTypesOption"
                     value="">
                   -- Select a pool type --
@@ -113,11 +113,11 @@
             </div>
           </div>
 
-          <div ng-show="editing || pool.type && data.cluster.loaded">
+          <div ng-show="$ctrl.editing || $ctrl.pool.type && $ctrl.data.cluster.loaded">
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.crushSet.$dirty) &&
                     poolForm.crushSet.$invalid}"
-                ng-if="data.cluster.rules[pool.type].length > 0">
+                ng-if="$ctrl.data.cluster.rules[$ctrl.pool.type].length > 0">
               <label class="control-label col-sm-3"
                   for="crushSet">
                 Crush ruleset
@@ -126,11 +126,11 @@
                 <select class="form-control tc_crushSet_selection"
                     id="crushSet"
                     name="crushSet"
-                    ng-change="rulesetChange()"
-                    ng-disabled="editing || data.cluster.rules[pool.type].length === 1"
-                    ng-model="data.ruleset"
-                    ng-options="rule.rule_name for rule in data.cluster.rules[pool.type]"
-                    ng-required="!editing && data.cluster.rules[pool.type].length > 0">
+                    ng-change="$ctrl.rulesetChange()"
+                    ng-disabled="$ctrl.editing || $ctrl.data.cluster.rules[$ctrl.pool.type].length === 1"
+                    ng-model="$ctrl.data.ruleset"
+                    ng-options="rule.rule_name for rule in $ctrl.data.cluster.rules[$ctrl.pool.type]"
+                    ng-required="!$ctrl.editing && $ctrl.data.cluster.rules[$ctrl.pool.type].length > 0">
                   <option class="tc_crushSetOption"
                       value="">
                     -- Select a crush ruleset --
@@ -141,26 +141,26 @@
                   This field is required!
                 </span>
                 <span class="help-block"
-                    ng-show="data.ruleset">
+                    ng-show="$ctrl.data.ruleset">
                   <ul class="list-inline">
-                    <li ng-show="crushSize.show">
-                      <a ng-click="crushSize.open = !crushSize.open">Size</a>
-                      <div uib-collapse="!crushSize.open"
-                          expanding="crushSteps.show = !crushSteps.show"
-                          collapsed="crushSteps.show = !crushSteps.show">
+                    <li ng-show="$ctrl.crushSize.show">
+                      <a ng-click="$ctrl.crushSize.open = !$ctrl.crushSize.open">Size</a>
+                      <div uib-collapse="!$ctrl.crushSize.open"
+                          expanding="$ctrl.crushSteps.show = !$ctrl.crushSteps.show"
+                          collapsed="$ctrl.crushSteps.show = !$ctrl.crushSteps.show">
                         <ul class="list-unstyled">
                           <li>Minimum size: {{data.ruleset.min_size}}</li>
                           <li>Maximum size: {{data.ruleset.max_size}}</li>
                         </ul>
                       </div>
                     </li>
-                    <li ng-show="crushSteps.show">
-                      <a ng-click="crushSteps.open = !crushSteps.open">Steps</a>
-                      <div uib-collapse="!crushSteps.open"
-                          expanding="crushSize.show = !crushSize.show"
-                          collapsed="crushSize.show = !crushSize.show">
+                    <li ng-show="$ctrl.crushSteps.show">
+                      <a ng-click="$ctrl.crushSteps.open = !$ctrl.crushSteps.open">Steps</a>
+                      <div uib-collapse="!$ctrl.crushSteps.open"
+                          expanding="$ctrl.crushSize.show = !$ctrl.crushSize.show"
+                          collapsed="$ctrl.crushSize.show = !$ctrl.crushSize.show">
                         <ol>
-                          <li ng-bind="describeStep(step)" ng-repeat="step in data.ruleset.steps"></li>
+                          <li ng-bind="$ctrl.describeStep(step)" ng-repeat="step in $ctrl.data.ruleset.steps"></li>
                         </ol>
                       </div>
                     </li>
@@ -171,7 +171,7 @@
 
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$invalid}"
-                ng-if="pool.type === 'replicated'">
+                ng-if="$ctrl.pool.type === 'replicated'">
               <label class="control-label col-sm-3"
                   for="size">
                 Replicated size
@@ -179,30 +179,30 @@
               <div class="col-sm-9">
                 <input class="form-control tc_pool_size"
                     id="size"
-                    max="{{editing ? pool.size : getMaxSize()}}"
-                    min="{{editing ? pool.size : data.ruleset.min_size || 1}}"
+                    max="{{$ctrl.editing ? $ctrl.pool.size : $ctrl.getMaxSize()}}"
+                    min="{{$ctrl.editing ? $ctrl.pool.size : $ctrl.data.ruleset.min_size || 1}}"
                     name="size"
                     type="number"
-                    ng-change="onSizeChange()"
-                    ng-disabled="editing"
-                    ng-model="pool.size"
+                    ng-change="$ctrl.onSizeChange()"
+                    ng-disabled="$ctrl.editing"
+                    ng-model="$ctrl.pool.size"
                     ng-model-options="{ updateOn: 'blur' }"
-                    ng-required="!editing">
+                    ng-required="!$ctrl.editing">
                 <span class="help-block tc_sizeRequired"
                     ng-show="(poolForm.$submitted || poolForm.size.$dirty) && poolForm.size.$error.required">
                   This field is required!
                 </span>
                 <span class="help-block tc-applied-rule-set"
-                    ng-hide="editing || poolForm.size.$invalid">
+                    ng-hide="$ctrl.editing || poolForm.size.$invalid">
                   <ul class="list-inline">
-                    <li>Minimum: {{data.ruleset.min_size || 1}}</li>
-                    <li>Maximum: {{getMaxSize()}}</li>
+                    <li>Minimum: {{$ctrl.data.ruleset.min_size || 1}}</li>
+                    <li>Maximum: {{$ctrl.getMaxSize()}}</li>
                   </ul>
                 </span>
                 <span class="help-block tc-size-out-of-range"
-                    ng-show="!editing && poolForm.size.$invalid">
+                    ng-show="!$ctrl.editing && poolForm.size.$invalid">
                   The size specified is out of range.
-                  A value from {{data.ruleset.min_size || 1}} to {{getMaxSize()}} is valid.
+                  A value from {{$ctrl.data.ruleset.min_size || 1}} to {{$ctrl.getMaxSize()}} is valid.
                 </span>
               </div>
             </div>
@@ -210,7 +210,7 @@
             <div class="form-group"
                 ng-class="{'has-error': (poolForm.$submitted || poolForm.erasureProfiles.$dirty) &&
                     poolForm.erasureProfiles.$invalid}"
-                ng-if="pool.type === 'erasure'">
+                ng-if="$ctrl.pool.type === 'erasure'">
               <label class="control-label col-sm-3"
                   for="erasureProfiles">
                 Erasure code profile
@@ -220,11 +220,11 @@
                   <select class="form-control tc_erasureProfiles_selection"
                       id="erasureProfiles"
                       name="erasureProfiles"
-                      ng-change="ecProfileChange(); pgSizeChange()"
-                      ng-model="pool.erasure.profile"
-                      ng-disabled="editing || data.profiles.length === 1"
-                      ng-options="profile as profile.name for profile in data.profiles"
-                      ng-required="!editing && pool.type === 'erasure'">
+                      ng-change="$ctrl.ecProfileChange(); $ctrl.pgSizeChange()"
+                      ng-model="$ctrl.pool.erasure.profile"
+                      ng-disabled="$ctrl.editing || $ctrl.data.profiles.length === 1"
+                      ng-options="profile as profile.name for profile in $ctrl.data.profiles"
+                      ng-required="!$ctrl.editing && $ctrl.pool.type === 'erasure'">
                     <option class="tc_erasureProfilesOption"
                         value="">
                       -- Select an erasure code profile --
@@ -233,15 +233,15 @@
                   <span class="input-group-btn">
                     <button class="btn btn-default"
                         type="button"
-                        ng-disabled="editing"
-                        ng-click="addErasureCodeProfile()">
+                        ng-disabled="$ctrl.editing"
+                        ng-click="$ctrl.addErasureCodeProfile()">
                       <i class="fa fa-plus"
                           aria-hidden="true"></i>
                     </button>
                     <button class="btn btn-default"
                         type="button"
-                        ng-click="deleteErasureCodeProfile()"
-                        ng-disabled="editing || data.profiles.length < 1">
+                        ng-click="$ctrl.deleteErasureCodeProfile()"
+                        ng-disabled="$ctrl.editing || $ctrl.data.profiles.length < 1">
                       <i class="fa fa-trash-o"
                           aria-hidden="true"></i>
                     </button>
@@ -263,17 +263,17 @@
               <div class="col-sm-9">
                 <input class="form-control tc_pool_pgNum"
                     id="pgNum"
-                    placeholder="{{pool.pg_num}}"
-                    min="{{pool.pg_num}}"
+                    placeholder="{{$ctrl.pool.pg_num}}"
+                    min="{{$ctrl.pool.pg_num}}"
                     name="pgNum"
                     type="number"
-                    ng-keyup="pgKeyChange($event)"
-                    ng-model="data.pg_num"
+                    ng-keyup="$ctrl.pgKeyChange($event)"
+                    ng-model="$ctrl.data.pg_num"
                     ng-model-options="{ updateOn: 'blur' }"
-                    ng-change="pgUpdate()"
+                    ng-change="$ctrl.pgUpdate()"
                     required>
                 <span class="help-block tc_pgNumDecreaseInvalid"
-                    ng-show="editing">
+                    ng-show="$ctrl.editing">
                   The pg size of a pool can only be increased in edit mode.
                 </span>
                 <span class="help-block tc_pgNumRequired"
@@ -287,7 +287,7 @@
             </div>
 
             <div class="form-group"
-                ng-if="bluestore && pool.type === 'erasure'">
+                ng-if="$ctrl.bluestore && $ctrl.pool.type === 'erasure'">
               <label class="control-label col-sm-3">
                 Flags
               </label>
@@ -296,8 +296,8 @@
                   <div class="checkbox checkbox-primary">
                     <input id="ec-overwrites"
                         type="checkbox"
-                        ng-disabled="editing"
-                        ng-model="data.flags.ec_overwrites"
+                        ng-disabled="$ctrl.editing"
+                        ng-model="$ctrl.data.flags.ec_overwrites"
                         ng-name="ec-overwrites">
                     <label for="ec-overwrites"
                         class="tc-ec-overwrites">
@@ -309,7 +309,7 @@
             </div>
 
             <!-- Compression -->
-            <div ng-if="bluestore">
+            <div ng-if="$ctrl.bluestore">
               <legend>Compression</legend>
               <div class="form-group"
                   ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionMode.$dirty) && poolForm.compressionMode.$invalid}">
@@ -319,10 +319,10 @@
                 <div class="col-sm-9">
                   <select class="form-control tc_compressionMode"
                       id="compressionMode" name="compressionMode"
-                      ng-disabled="editing"
-                      ng-model="pool.compression_mode"
-                      ng-options="compressionMode.name as compressionMode.description for compressionMode in data.compressionModes"
-                      ng-required="!editing">
+                      ng-disabled="$ctrl.editing"
+                      ng-model="$ctrl.pool.compression_mode"
+                      ng-options="compressionMode.name as compressionMode.description for compressionMode in $ctrl.data.compressionModes"
+                      ng-required="!$ctrl.editing">
                     <option class="tc_compressionModeOption" value="">
                       -- Select a compression mode --
                     </option>
@@ -333,7 +333,7 @@
                   </span>
                 </div>
               </div>
-              <div ng-show="pool.compression_mode && pool.compression_mode !== 'none'">
+              <div ng-show="$ctrl.pool.compression_mode && $ctrl.pool.compression_mode !== 'none'">
                 <div class="form-group"
                     ng-class="{'has-error': (poolForm.$submitted || poolForm.compressionAlgorithm.$dirty) && poolForm.compressionAlgorithm.$invalid}">
                   <label class="control-label col-sm-3" for="compressionAlgorithm">
@@ -342,10 +342,10 @@
                   <div class="col-sm-9">
                     <select class="form-control tc_compressionAlgorithmSelection"
                         id="compressionAlgorithm" name="compressionAlgorithm"
-                        ng-disabled="editing"
-                        ng-model="pool.compression_algorithm"
-                        ng-options="compressionAlgorithm.name as compressionAlgorithm.description for compressionAlgorithm in data.compressionAlgorithms"
-                        ng-required="!editing && pool.compression_mode && pool.compression_mode !== 'none'">
+                        ng-disabled="$ctrl.editing"
+                        ng-model="$ctrl.pool.compression_algorithm"
+                        ng-options="compressionAlgorithm.name as compressionAlgorithm.description for compressionAlgorithm in $ctrl.data.compressionAlgorithms"
+                        ng-required="!$ctrl.editing && $ctrl.pool.compression_mode && $ctrl.pool.compression_mode !== 'none'">
                       <option class="tc_compressionAlgorithmOption" value="">
                         -- Select a compression algorithm --
                       </option>
@@ -366,10 +366,10 @@
                         type="text" min="0" ng-model-options="{ updateOn: 'blur' }"
                         class="form-control tc_compressionMinBlobSize"
                         placeholder="e.g., 128K"
-                        ng-disabled="editing"
-                        ng-model="data.compression_min_blob_size"
-                        ng-change="updateCompressionMinBlobSize()"
-                        ng-required="!editing && pool.compression_mode && pool.compression_mode !== 'none'">
+                        ng-disabled="$ctrl.editing"
+                        ng-model="$ctrl.data.compression_min_blob_size"
+                        ng-change="$ctrl.updateCompressionMinBlobSize()"
+                        ng-required="!$ctrl.editing && $ctrl.pool.compression_mode && $ctrl.pool.compression_mode !== 'none'">
                     <span class="help-block tc_compressionMinBlobSizeRequired"
                         ng-show="(poolForm.$submitted || poolForm.compressionMinBlobSize.$dirty) && poolForm.compressionMinBlobSize.$error.required">
                       This field is required!
@@ -389,11 +389,11 @@
                     <input id="compressionMaxBlobSize" type="text" min="0"
                         class="form-control tc_compressionMaxBlobSize"
                         placeholder="e.g., 512K" name="compressionMaxBlobSize"
-                        ng-disabled="editing"
+                        ng-disabled="$ctrl.editing"
                         ng-model-options="{ updateOn: 'blur' }"
-                        ng-model="data.compression_max_blob_size"
-                        ng-change="updateCompressionMaxBlobSize()"
-                        ng-required="!editing && pool.compression_mode && pool.compression_mode !== 'none'">
+                        ng-model="$ctrl.data.compression_max_blob_size"
+                        ng-change="$ctrl.updateCompressionMaxBlobSize()"
+                        ng-required="!$ctrl.editing && $ctrl.pool.compression_mode && $ctrl.pool.compression_mode !== 'none'">
                     <span class="help-block tc_compressionMaxBlobSizeRequired"
                         ng-show="(poolForm.$submitted || poolForm.compressionMaxBlobSize.$dirty) && poolForm.compressionMaxBlobSize.$error.required">
                       This field is required!
@@ -416,9 +416,9 @@
                         type="number" min="0" max="1" step="0.1"
                         class="form-control tc_compressionRequiredRatio"
                         placeholder="Compression required ratio..."
-                        ng-disabled="editing"
-                        ng-required="!editing"
-                        ng-model="pool.compression_required_ratio">
+                        ng-disabled="$ctrl.editing"
+                        ng-required="!$ctrl.editing"
+                        ng-model="$ctrl.pool.compression_required_ratio">
                     <span class="help-block tc_ccompressionRequiredRatioRequired"
                         ng-show="(poolForm.$submitted || poolForm.compressionRequiredRatio.$dirty) && poolForm.compressionRequiredRatio.$error.required">
                       This field is required!
@@ -445,9 +445,9 @@
                   <select class="form-control tc-app-selection"
                       ID="AppSelection"
                       name="appSelection"
-                      ng-model="app.selection"
-                      ng-change="apps.getAvail()"
-                      ng-options="appName for appName in apps.getAvail()">
+                      ng-model="$ctrl.app.selection"
+                      ng-change="$ctrl.apps.getAvail()"
+                      ng-options="appName for appName in $ctrl.apps.getAvail()">
                     <option class="tc_appOption" value="">
                       - Select an application to use -
                     </option>
@@ -456,26 +456,26 @@
                     <button class="btn btn-default tc-add-app"
                         type="button"
                         uib-tooltip="Add application"
-                        ng-disabled="!app.selection || apps.used.length > 3"
-                        ng-click="app.add(app.selection)">
+                        ng-disabled="!$ctrl.app.selection || $ctrl.apps.used.length > 3"
+                        ng-click="$ctrl.app.add($ctrl.app.selection)">
                       <i class="fa fa-plus"
                           aria-hidden="true"></i>
                     </button>
                   </span>
                 </div>
-                <span class="help-block tc-max-apps" ng-show="apps.used.length > 3">
+                <span class="help-block tc-max-apps" ng-show="$ctrl.apps.used.length > 3">
                   You can use up to four application per pool.
                 </span>
               </div>
             </div>
             <div class="form-group"
-                ng-class="{'has-error': (poolForm.$submitted || poolForm.apps.$dirty) && poolForm.apps.$invalid}">
+                 ng-class="{'has-error': (poolForm.$submitted || poolForm.apps.$dirty) && poolForm.apps.$invalid}">
               <label class="col-sm-3 control-label"
                   for="apps">
                 Applications
               </label>
               <div class="col-sm-9">
-                <span ng-repeat="appName in apps.used track by $index">
+                <span ng-repeat="appName in $ctrl.apps.used track by $index">
                   <div class="input-group"
                       ng-class="{'has-error': $first && poolForm.customApp && !poolForm.customApp.$valid}">
                     <input type="text"
@@ -484,7 +484,7 @@
                         maxlength="128"
                         ng-model="appName"
                         ng-model-options="{ updateOn: 'blur' }"
-                        ng-change=app.add(appName)
+                        ng-change=$ctrl.app.add(appName)
                         ng-value="appName"
                         pattern="[A-Za-z0-9_]+"
                         ng-readonly="appName !== undefined && appName !== ''">
@@ -492,7 +492,7 @@
                       <button class="btn btn-default tc-delete-app"
                           type="button"
                           uib-tooltip="Remove application"
-                          ng-click="app.removeByIndex($index)">
+                          ng-click="$ctrl.app.removeByIndex($index)">
                         <i class="fa fa-trash-o"></i>
                       </button>
                     </span>
@@ -502,15 +502,15 @@
                   </span>
                   <br>
                 </span>
-                <span ng-hide="apps.used.length !== 0"
+                <span ng-hide="$ctrl.apps.used.length !== 0"
                     class="form-control no-border text-muted">
                   No application added <input type="text"
-                                           class="no-border"
-                                           ng-model="apps.used[0]"
-                                           name="apps"
-                                           id="apps"
-                                           ng-if="apps.used.length === 0"
-                                           required readonly>
+                    class="no-border"
+                    ng-model="$ctrl.apps.used[0]"
+                    name="apps"
+                    id="apps"
+                    ng-if="$ctrl.apps.used.length === 0"
+                    required readonly>
                 </span>
                 <span class="help-block" ng-show="poolForm.$submitted || poolForm.apps.$dirty">
                   <span class="tc_appsRequired" ng-show="poolForm.apps.$error.required">Required field</span>
@@ -522,19 +522,19 @@
           </div>
         </div>
         <div class="text-center"
-            ng-if="(!clusters.length || cluster.length === 1 && !data.cluster.loaded)">
+            ng-if="(!$ctrl.clusters.length || $ctrl.cluster.length === 1 && !$ctrl.data.cluster.loaded)">
           <i class="fa fa-spinner fa-spin fa-fw"></i>
         </div>
       </div>
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button form="poolForm" on-submit="submitAction()">
-            {{ !editing ? 'Create' : 'Update' }}
+          <oa-submit-button form="poolForm" on-submit="$ctrl.submitAction()">
+            {{ !$ctrl.editing ? 'Create' : 'Update' }}
           </oa-submit-button>
           <button class="btn btn-sm btn-default tc_backButton"
               type="button"
-              ng-click="cancelAction()">
+              ng-click="$ctrl.cancelAction()">
             Back
           </button>
         </div>

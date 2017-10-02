@@ -36,6 +36,7 @@ Changed
 * WebUI: Don't allow performing a delete action on buckets shared via
   NFS (OP-2768)
 * WebUI: Improve eslint rules (OP-2749)
+* WebUI: Migration of Ceph Pools controllers to components (OP-2399)
 
 Fixed
 ~~~~~

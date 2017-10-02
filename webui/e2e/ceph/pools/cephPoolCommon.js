@@ -8,14 +8,14 @@ var CephPoolCommons = function () {
 
   this.clusters = helpers.configs.cephCluster;
   this.clusterCount = Object.keys(this.clusters).length;
-  this.clusterSelect = element(by.model("registry.selectedCluster"));
+  this.clusterSelect = element(by.model("$ctrl.registry.selectedCluster"));
 
   this.addButton = element(by.className("tc_add_btn"));
   this.editButton = element(by.className("tc_edit_btn"));
-  this.statusTab = element(by.className("tc_statusTab"));
+  this.detailsTab = element(by.className("tc_detailsTab"));
   this.statisticsTab = element(by.className("tc_statisticsTab"));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
-  this.isBluestore = element(by.model("bluestore"));
+  this.isBluestore = element(by.model("$ctrl.bluestore"));
 
   // Describes the attributes seen in the detail tab.
   this.detailAttributes = [
@@ -130,7 +130,7 @@ var CephPoolCommons = function () {
     name: {
       name: "Name",
       byClass: element(by.className("tc_pool_name")),
-      byModel: element(by.model("pool.name")),
+      byModel: element(by.model("$ctrl.pool.name")),
       type: "text",
       displayed: true,
       items: {
@@ -143,7 +143,7 @@ var CephPoolCommons = function () {
     cluster: {
       name: 'Cluster',
       byClass: element(by.className('tc_cluster_selection')),
-      byModel: element(by.model('data.cluster')),
+      byModel: element(by.model('$ctrl.data.cluster')),
       displayed: false,
       type: 'select',
       items: {
@@ -156,7 +156,7 @@ var CephPoolCommons = function () {
     types: {
       name: "Pool type",
       byClass: element(by.className("tc_poolTypes_selection")),
-      byModel: element(by.model("pool.type")),
+      byModel: element(by.model("$ctrl.pool.type")),
       displayed: true,
       type: "select",
       items: {
@@ -167,7 +167,7 @@ var CephPoolCommons = function () {
     pgnum: {
       name: "Placement groups",
       byClass: element(by.className("tc_pool_pgNum")),
-      byModel: element(by.model("data.pg_num")),
+      byModel: element(by.model("$ctrl.data.pg_num")),
       displayed: false,
       displayedIf: ["replicated"], // and 'erasure'
       type: "number",
@@ -178,7 +178,7 @@ var CephPoolCommons = function () {
     replicatedSize: {
       name: "Replicated size",
       byClass: element(by.className("tc_pool_size")),
-      byModel: element(by.model("pool.size")),
+      byModel: element(by.model("$ctrl.pool.size")),
       type: "number",
       presented: false,
       displayedIf: ["replicated"],
@@ -200,7 +200,7 @@ var CephPoolCommons = function () {
     erasureProfiles: {
       name: "Erasure code profile",
       byClass: element(by.className("tc_erasureProfiles_selection")),
-      byModel: element(by.model("pool.erasure.profile")),
+      byModel: element(by.model("$ctrl.pool.erasure.profile")),
       type: "select",
       presented: false,
       displayedIf: ["erasure"],
@@ -219,7 +219,7 @@ var CephPoolCommons = function () {
     compressionMode: {
       name: "Compression mode",
       byClass: element(by.className("tc_compressionMode")),
-      byModel: element(by.model("pool.compression_mode")),
+      byModel: element(by.model("$ctrl.pool.compression_mode")),
       type: "select",
       displayed: false, //self.isBluestore && self.formElements.types.byModel ? true : false;
       displayedIf: ["bluestore"],
@@ -230,7 +230,7 @@ var CephPoolCommons = function () {
     compressionAlgorith: {
       name: "Compression algorithm",
       byClass: element(by.className("tc_compressionAlgorithmSelection")),
-      byModel: element(by.model("pool.compression_algorithm")),
+      byModel: element(by.model("$ctrl.pool.compression_algorithm")),
       type: "select",
       displayed: false,
       displayedIf: ["isCompression"],
@@ -241,7 +241,7 @@ var CephPoolCommons = function () {
     compressionMinBlobSize: {
       name: "Compression min blob size",
       byClass: element(by.className("tc_compressionMaxBlobSize")),
-      byModel: element(by.model("data.compression_min_blob_size")),
+      byModel: element(by.model("$ctrl.data.compression_min_blob_size")),
       type: "text",
       displayed: false,
       displayedIf: ["isCompression"],
@@ -253,7 +253,7 @@ var CephPoolCommons = function () {
     compressionMaxBlobSize: {
       name: "Compression max blob size",
       byClass: element(by.className("tc_compressionMaxBlobSize")),
-      byModel: element(by.model("data.compression_max_blob_size")),
+      byModel: element(by.model("$ctrl.data.compression_max_blob_size")),
       type: "text",
       displayed: false,
       displayedIf: ["isCompression"],
@@ -265,7 +265,7 @@ var CephPoolCommons = function () {
     compressionRequiredRatio: {
       name: "Compression required ratio",
       byClass: element(by.className("tc_compressionRequiredRatio")),
-      byModel: element(by.model("pool.compression_required_ratio")),
+      byModel: element(by.model("$ctrl.pool.compression_required_ratio")),
       type: "number",
       displayed: false,
       displayedIf: ["isCompression"],
