@@ -44,6 +44,7 @@ Changed
 * WebUI: Migration of Ceph OSDs controllers to components (OP-2401)
 * Documentation: Mentioned the AngularJS style guide as the coding style
   for frontend development (OP-824)
+* WebUI: Migration of Ceph Nodes controllers to components (OP-2398)
 
 Fixed
 ~~~~~

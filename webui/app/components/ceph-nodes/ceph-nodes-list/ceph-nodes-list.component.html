@@ -1,27 +1,28 @@
 <oa-module-loader module="ceph_deployment">
 
 <oa-loading-panel message="Nodes are loading..."
-                  ng-show="!error && !data.$resolved">
+                  ng-show="!$ctrl.error && !$ctrl.data.$resolved">
 </oa-loading-panel>
-<oa-error-panel title="Error {{error.status}}"
+<oa-error-panel title="Error {{$ctrl.error.status}}"
                 message="The resource could not be found."
-                ng-if="error.statusText === 'NOT FOUND'">
+                ng-if="$ctrl.error.statusText === 'NOT FOUND'">
 </oa-error-panel>
 
-<oadatatable ng-show="!error && data.results"
+<oadatatable ng-show="!$ctrl.error && $ctrl.data.results"
              class="oadatatable tc_cephNodesTable"
-             data="data"
-             filter-config="filterConfig"
-             selection="selection"
-             on-selection-change="onSelectionChange(selection)">
+             data="$ctrl.data"
+             filter-config="$ctrl.filterConfig"
+             selection="$ctrl.selection"
+             on-selection-change="$ctrl.onSelectionChange(selection)"
+             special="$ctrl">
   <additional-actions>
       <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-primary dropdown-toggle tc_scrub_toggle" data-toggle="dropdown" ng-class="{disabled: !(hasSelection || multiSelection)}" >
+          <button type="button" class="btn btn-sm btn-primary dropdown-toggle tc_scrub_toggle" data-toggle="dropdown" ng-class="{disabled: !($ctrl.hasSelection || $ctrl.multiSelection)}" >
                   Perform Task <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
-              <li ng-click="scrubAction(false)" class="tc_scrub_li"><a><i class="fa fa-fw fa-stethoscope"></i>Srub</a></li>
-              <li ng-click="scrubAction(true)" class="tc_deep_scrub_li"><a><i class="fa fa-fw fa-stethoscope"></i>Deep Scrub</a></li>
+              <li ng-click="$ctrl.scrubAction(false)" class="tc_scrub_li"><a><i class="fa fa-fw fa-stethoscope"></i>Srub</a></li>
+              <li ng-click="$ctrl.scrubAction(true)" class="tc_deep_scrub_li"><a><i class="fa fa-fw fa-stethoscope"></i>Deep Scrub</a></li>
           </ul>
       </div>
   </additional-actions>
@@ -58,9 +59,9 @@
 
 <div id="more"
      ui-view="tab"
-     tab-data="tabData"
-     tab-config="tabConfig"
-     selection="selection">
+     tab-data="$ctrl.tabData"
+     tab-config="$ctrl.tabConfig"
+     selection="$ctrl.selection">
 </div>
 
 </oa-module-loader>

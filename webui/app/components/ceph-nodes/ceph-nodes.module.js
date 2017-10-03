@@ -30,51 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNodes");
-app.config(function ($stateProvider) {
-  $stateProvider
-    .state("cephNodes", {
-      url: "/ceph/nodes",
-      views: {
-        "main": {
-          template: require("../templates/nodes.html"),
-          controller: "CephNodesCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Ceph Nodes"
-      }
-    })
-    .state("cephNodes.detail", {
-      views: {
-        "tab": {
-          component: "oaTabSet"
-        }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("cephNodes.detail.statistics", {
-      url: "/statistics",
-      views: {
-        "tab-content": {
-          component: "cephNodesStatistics"
-        }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("cephNodes.detail.details", {
-      url: "/details",
-      views: {
-        "tab-content": {
-          component: "cephNodesDetail"
-        }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    });
-});
+import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component";
+import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component";
+import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component";
+import cephNodesList from "./ceph-nodes-list/ceph-nodes-list.component";
+
+angular
+  .module("openattic.cephNodes", [])
+  .component("cephNodesScrubModal", cephNodesScrubModal)
+  .component("cephNodesDetail", cephNodesDetail)
+  .component("cephNodesStatistics", cephNodesStatistics)
+  .component("cephNodesList", cephNodesList);
+
+require("./ceph-nodes.route");
+require("./shared/ceph-nodes.service");
