@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephCrushmap");
-app.controller("CephCrushmapCtrl", function ($scope, $timeout, cephCrushmapService, Notification,
-    registryService) {
+app.controller("CephCrushmapCtrl", function ($scope, $timeout,
+    cephCrushmapService, registryService) {
   $scope.cluster = undefined;
   $scope.clusters = undefined;
   $scope.registry = registryService;

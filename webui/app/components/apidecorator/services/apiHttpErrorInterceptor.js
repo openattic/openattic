@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.apidecorator");
 
-app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
+app.factory("ApiErrorDecoratorService", function ($log, Notification) {
   return {
     decorate: function (error) {
       var simpleMsg;
@@ -46,7 +46,7 @@ app.factory("ApiErrorDecoratorService", function ($q, $log, Notification) {
         };
         simpleMsg = error && error.config && error.config.method && error.config.url &&
           "[" + error.config.method + ": " + error.config.url + "] => " + error.status;
-        if (error.status === -1) {  // Rejected because of a timeout.
+        if (error.status === -1) { // Rejected because of a timeout.
           simpleMsg = [
             "The openATTIC REST API didn't respond in time.",
             "Please see the openattic log file for possible errors."

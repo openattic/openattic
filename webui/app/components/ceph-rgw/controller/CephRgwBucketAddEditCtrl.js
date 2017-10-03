@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.cephRgw");
-app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParams, $uibModal,
-    $q, $filter, $window, $timeout, cephRgwUserService, cephRgwBucketService) {
+app.controller("CephRgwBucketAddEditCtrl", function ($scope, $state, $stateParams,
+    $q, cephRgwUserService, cephRgwBucketService) {
   $scope.bucket = {};
   $scope.error = false;
   $scope.requests = [];

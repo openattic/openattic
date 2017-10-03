@@ -256,7 +256,7 @@ angular.module("openattic.cephPools").controller("CephPoolsAddCtrl", function (
 
   $scope.pgUpdate = function (pgs, jump) {
     pgs = pgs || $scope.data.pg_num;
-    var power =  Math.round(Math.log(pgs) / Math.log(2));
+    var power = Math.round(Math.log(pgs) / Math.log(2));
     if (angular.isNumber(jump)) {
       power += jump;
     }

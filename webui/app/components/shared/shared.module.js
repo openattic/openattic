@@ -30,7 +30,7 @@
  */
 "use strict";
 
-import oaSubmitButton from "./oa-submit-button/oa-submit-button.component"
+import oaSubmitButton from "./oa-submit-button/oa-submit-button.component";
 
 angular
   .module("openattic.shared", [])

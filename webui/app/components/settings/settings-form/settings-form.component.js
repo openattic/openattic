@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.settings");
-app.component("settingsForm",  {
+app.component("settingsForm", {
   template: require("./settings-form.component.html"),
   bindings: {
   },
