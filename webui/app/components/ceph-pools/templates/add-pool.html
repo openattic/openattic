@@ -272,7 +272,7 @@
                     ng-model-options="{ updateOn: 'blur' }"
                     ng-change="pgUpdate()"
                     required>
-                <span class="help-block tc_pgNumRequired"
+                <span class="help-block tc_pgNumDecreaseInvalid"
                     ng-show="editing">
                   The pg size of a pool can only be increased in edit mode.
                 </span>
@@ -468,15 +468,12 @@
                 </span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group"
+                ng-class="{'has-error': (poolForm.$submitted || poolForm.apps.$dirty) && poolForm.apps.$invalid}">
               <label class="col-sm-3 control-label"
                   for="apps">
                 Applications
               </label>
-              <input type="hidden"
-                  ng-model="apps.used[0]"
-                  id="apps"
-                  required>
               <div class="col-sm-9">
                 <span ng-repeat="appName in apps.used track by $index">
                   <div class="input-group"
@@ -507,7 +504,16 @@
                 </span>
                 <span ng-hide="apps.used.length !== 0"
                     class="form-control no-border text-muted">
-                  No application added
+                  No application added <input type="text"
+                                           class="no-border"
+                                           ng-model="apps.used[0]"
+                                           name="apps"
+                                           id="apps"
+                                           ng-if="apps.used.length === 0"
+                                           required readonly>
+                </span>
+                <span class="help-block" ng-show="poolForm.$submitted || poolForm.apps.$dirty">
+                  <span class="tc_appsRequired" ng-show="poolForm.apps.$error.required">Required field</span>
                 </span>
               </div>
             </div>
@@ -523,14 +529,9 @@
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <button class="btn btn-sm btn-primary tc_submitButton"
-              type="submit"
-              ng-click="submitAction()"
-              ng-disabled="poolForm.$invalid || poolForm.$submitted">
-            {{!editing ? "Create" : "Update"}}
-            <i class="fa fa-spinner fa-spin fa-fw"
-              ng-if="poolForm.$submitted"></i>
-          </button>
+          <oa-submit-button form="poolForm" on-submit="submitAction()">
+            {{ !editing ? 'Create' : 'Update' }}
+          </oa-submit-button>
           <button class="btn btn-sm btn-default tc_backButton"
               type="button"
               ng-click="cancelAction()">

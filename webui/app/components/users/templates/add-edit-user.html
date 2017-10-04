@@ -7,8 +7,8 @@
             </div>
             <div class="panel-body">
                 <fieldset>
-                    <div class="form-group" ng-class="{'has-error': (submitted || userForm.username.$dirty) &&
-                        userForm.username.$invalid}">
+                    <div class="form-group"
+                         ng-class="{'has-error': (userForm.$submitted || userForm.username.$dirty) && userForm.username.$invalid}">
                         <label class="col-sm-3 control-label" for="userUsername">Username</label>
                         <div class="col-sm-9">
                             <div class="input-group">
@@ -16,18 +16,21 @@
                                 <input class="form-control" type="text" placeholder="Username..."
                                        ng-model="user.username" name="username" id="userUsername" required validname uniquename="user">
                             </div>
-                                <span class="help-block tc_usernameRequired" ng-show="(submitted ||userForm.username.$dirty)
-                                && userForm.username.$error.required">
+                                <span class="help-block tc_usernameRequired" ng-show="(userForm.$submitted || userForm.username.$dirty) &&
+                                        userForm.username.$error.required">
                                     The username is required.
                                 </span>
-                            <span class="help-block tc_userNameNotValid" ng-show="userForm.username.$error.validname">{{errortext}}</span>
-                                <span class="help-block tc_noUniqueName" ng-show="userForm.username.$error.uniquename">
+                                <span class="help-block tc_userNameNotValid" ng-show="(userForm.$submitted || userForm.username.$dirty) &&
+                                        userForm.username.$error.validname">{{errortext}}</span>
+                                <span class="help-block tc_noUniqueName" ng-show="(userForm.$submitted || userForm.username.$dirty) &&
+                                        userForm.username.$error.uniquename">
                                     The chosen user name is already in use.
                                 </span>
                         </div>
                     </div>
 
-                    <div class="form-group" ng-class="{'has-error': userForm.password.$touched && userForm.password.$invalid}">
+                    <div class="form-group"
+                         ng-class="{'has-error': (userForm.$submitted || userForm.password.$dirty) && userForm.password.$invalid}">
                         <label class="col-sm-3 control-label" for="userPassword">Password</label>
                         <div class="col-sm-9">
                             <div class="input-group">
@@ -55,18 +58,18 @@
                                 </span>
                             </div>
                             <span class="help-block tc_passwdMinlength"
-                                  ng-show="userForm.password.$touched && userForm.password.$error.minlength">
+                                  ng-show="(userForm.$submitted || userForm.password.$dirty) && userForm.password.$error.minlength">
                                 The password must be of minimum length 6 characters.
                             </span>
                             <span class="help-block tc_passwdRequired"
-                                  ng-show="userForm.password.$touched && userForm.password.$error.required">
+                                  ng-show="(userForm.$submitted || userForm.password.$dirty) && userForm.password.$error.required">
                                 A password is required.
                             </span>
                         </div>
                     </div>
 
                     <div class="form-group"
-                         ng-class="{'has-error': userForm.confirmPassword.$touched && userForm.confirmPassword.$invalid}">
+                         ng-class="{'has-error': (userForm.$submitted || userForm.confirmPassword.$dirty) && userForm.confirmPassword.$invalid}">
                         <label class="col-sm-3 control-label" for="userConfirmPassword">Confirm password</label>
                         <div class="col-sm-9">
                             <div class="input-group">
@@ -88,16 +91,18 @@
                                 </span>
                             </div>
                             <span class="help-block tc_confirmPasswdRequired"
-                                  ng-show="userForm.confirmPassword.$touched && userForm.confirmPassword.$error.required">
+                                  ng-show="(userForm.$submitted || userForm.confirmPassword.$dirty) &&
+                                    userForm.confirmPassword.$error.required">
                                 The password confirmation is required.
                             </span>
                             <span class="help-block tc_confirmPasswdMinlength"
-                                  ng-show="userForm.confirmPassword.$touched && userForm.confirmPassword.$error.minlength">
+                                  ng-show="(userForm.$submitted || userForm.confirmPassword.$dirty) &&
+                                    userForm.confirmPassword.$error.minlength">
                                 The password must be of minimum length 6 characters.
                             </span>
                             <span class="help-block tc_passwdEqual"
-                                  ng-show="userForm.confirmPassword.$touched && userForm.confirmPassword.$error.equalValidator &&
-                                           !userForm.confirmPassword.$error.minlength">
+                                  ng-show="(userForm.$submitted || userForm.confirmPassword.$dirty) &&
+                                    userForm.confirmPassword.$error.equalValidator && !userForm.confirmPassword.$error.minlength">
                                 The passwords are not equal.
                             </span>
                         </div>
@@ -123,8 +128,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group" ng-class="{'has-error': (submitted || userForm.email.$dirty) &&
-                        userForm.email.$invalid}">
+                    <div class="form-group"
+                         ng-class="{'has-error': (userForm.$submitted || userForm.email.$dirty) && userForm.email.$invalid}">
                         <label class="col-sm-3 control-label" for="userEmail">Email Address</label>
                         <div class="col-sm-9">
                             <div class="input-group">
@@ -132,9 +137,10 @@
                                 <input class="form-control" type="email" placeholder="Email Address..."
                                        ng-model="user.email" name="email" id="userEmail">
                             </div>
-                                <span class="tc_emailNotValid" ng-show="(submitted ||userForm.email.$dirty) && userForm.email.$error.email">
-                                    It's not a valid email address.
-                                </span>
+                            <span class="help-block tc_emailNotValid"
+                                  ng-show="(userForm.$submitted ||userForm.email.$dirty) && userForm.email.$error.email">
+                                It's not a valid email address.
+                            </span>
                         </div>
                     </div>
                     <div class="form-group" ng-if="isCurrentUser">
@@ -193,13 +199,9 @@
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">
-                    <button type="submit"
-                            class="btn btn-sm btn-primary tc_submitButton"
-                            ng-click="submitAction(userForm)"
-                            ng-disabled="userForm.$invalid || userForm.$submitted">
-                        Submit
-                        <i class="fa fa-spinner fa-spin fa-fw" ng-if="userForm.$submitted"></i>
-                    </button>
+                    <oa-submit-button form="userForm" on-submit="submitAction(userForm)">
+                      Submit
+                    </oa-submit-button>
                     <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
                         Back
                     </button>

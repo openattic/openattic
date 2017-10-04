@@ -21,7 +21,7 @@
         </div>
         <!-- Subuser -->
         <div class="form-group"
-             ng-class="{'has-error': form.subuser.$dirty && form.subuser.$invalid}">
+             ng-class="{'has-error': (form.$submitted || form.subuser.$dirty) && form.subuser.$invalid}">
             <label class="col-sm-3 control-label" for="subuser">Subuser</label>
             <div class="col-sm-9">
                 <div class="input-group">
@@ -36,17 +36,17 @@
                            id="subuser">
                 </div>
                 <span class="help-block tc_subuserRequired"
-                      ng-show="form.subuser.$dirty && form.subuser.$error.required">
+                      ng-show="(form.$submitted || form.subuser.$dirty) && form.subuser.$error.required">
                     This field is required!
                 </span>
-                <span class="help-block tc_subuserNotUnique" ng-show="form.subuser.$error.uniquesubuser">
+                <span class="help-block tc_subuserNotUnique" ng-show="(form.$submitted || form.subuser.$dirty) && form.subuser.$error.uniquesubuser">
                     The chosen subuser ID is already in use.
                 </span>
             </div>
         </div>
         <!-- Permission -->
         <div class="form-group"
-             ng-class="{'has-error': form.permissions.$dirty && form.permissions.$invalid}">
+             ng-class="{'has-error': (form.$submitted || form.permissions.$dirty) && form.permissions.$invalid}">
             <label class="col-sm-3 control-label" for="permissions">Permission</label>
             <div class="col-sm-9">
                 <div class="input-group">
@@ -63,7 +63,7 @@
                     </select>
                 </div>
                 <span class="help-block tc_permissionsRequired"
-                      ng-show="form.permissions.$dirty && form.permissions.$error.required">
+                      ng-show="(form.$submitted || form.permissions.$dirty) && form.permissions.$error.required">
                     This field is required!
                 </span>
             </div>
@@ -87,7 +87,7 @@
             </div>
             <!-- Secret key -->
             <div class="form-group"
-                 ng-class="{'has-error': form.secret_key.$dirty && form.secret_key.$invalid}"
+                 ng-class="{'has-error': (form.$submitted || form.secret_key.$dirty) && form.secret_key.$invalid}"
                  ng-show="!editing && !subuser.generate_secret">
                 <label class="col-sm-3 control-label" for="secret_key">Secret key</label>
                 <div class="col-sm-9">
@@ -114,7 +114,7 @@
                         </span>
                     </div>
                     <span class="help-block tc_secret_keyRequired"
-                          ng-show="form.secret_key.$dirty && form.secret_key.$error.required">
+                          ng-show="(form.$submitted || form.secret_key.$dirty) && form.secret_key.$error.required">
                         This field is required!
                     </span>
                 </div>
@@ -123,12 +123,9 @@
     </div>
     <div class="openattic-modal-footer">
         <div class="button-group text-right">
-            <button type="submit"
-                    class="btn btn-sm btn-primary tc_submitSubuserButton"
-                    ng-click="submitAction(form)"
-                    ng-disabled="form.$invalid">
-                Submit
-            </button>
+            <oa-submit-button form="form" on-submit="submitAction(form)">
+              Submit
+            </oa-submit-button>
             <button type="button"
                     class="btn btn-sm btn-default tc_cancelSubuserButton"
                     ng-click="cancelAction()">

@@ -30,41 +30,42 @@
  */
 "use strict";
 
-class CephOdsScrubModal {
+class OASubmitButton {
 
-  constructor ($q, cephOsdService) {
-    this.cephOsdService = cephOsdService;
-    this.$q = $q;
+  constructor ($timeout) {
+    this.$timeout = $timeout;
+    this.loading = false;
   }
 
-  scrub () {
-    return this.$q((resolve, reject) => {
-      this.cephOsdService
-        .scrub({
-          "fsid": this.resolve.osd.cluster,
-          "osdid": this.resolve.osd.id,
-          "deep-scrub": this.resolve.deep
-        })
-        .$promise
-        .then(() => {
-          resolve();
-          this.modalInstance.close("scrubbed");
-        }, () => {
-          reject();
+  submitAction () {
+    this.$timeout(() => {
+      this.loading = this.form.$valid;
+      if (this.form.$valid) {
+        this.onSubmit();
+      } else {
+        let jQuerySelector = [];
+        angular.forEach(this.form, (value, key) => {
+          if (!key.startsWith("$") && Object.keys(value.$error).length > 0) {
+            jQuerySelector.push(`[name='${key}']`);
+          }
         });
+        let invalidElements = jQuery(jQuerySelector.join(","), jQuery(`[name='${this.form.$name}']`));
+        if (invalidElements.length > 0) {
+          invalidElements[0].focus();
+        }
+      }
     });
   }
 
-  cancel () {
-    this.modalInstance.dismiss("cancel");
-  }
 }
 
-export default {
-  template: require("./ceph-osd-scrub-modal.component.html"),
+var app = angular.module("openattic.shared");
+app.component("oaSubmitButton", {
+  template: require("./oa-submit-button.component.html"),
+  transclude: true,
   bindings: {
-    modalInstance: "<",
-    resolve: "<"
+    form: "<",
+    onSubmit: "&"
   },
-  controller: CephOdsScrubModal
-};
+  controller: OASubmitButton
+});

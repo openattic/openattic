@@ -281,7 +281,8 @@ var CephPoolCommons = function () {
       displayedIf: ["replicated", "erasure"],
       type: "select",
       items: {
-        maxApps: element(by.className("tc-max-apps"))
+        maxApps: element(by.className("tc-max-apps")),
+        appsRequired: element(by.className("tc_appsRequired"))
       }
     },
     addApplication: {
