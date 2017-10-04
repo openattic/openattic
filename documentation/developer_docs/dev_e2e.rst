@@ -1,9 +1,13 @@
+.. _dev_e2e:
+
 |oA| Web UI Tests - E2E Test Suite
 ==================================
 
-This section describes how our test environment is set up, as well as how you
-can run our existing tests on your |oA| system and how to write your own
-tests.
+This section describes how our **E2E test** environment is set up, as well as
+how you can run our existing **E2E tests** on your |oA| system and how to write
+your own tests.
+If you are looking for Web UI **Unit tests** documentation please refer to
+:ref:`dev_fe_unit_tests`.
 
 By continuously writing E2E-tests, we want to make sure that our graphical
 user interface is stable and acts the way it is supposed to be - that offered

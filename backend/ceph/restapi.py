@@ -42,6 +42,14 @@ class CephClusterSerializer(NodbSerializer):
     class Meta:
         model = CephCluster
 
+
+class CephClusterSettingsSerializer(CephClusterSerializer):
+
+    class Meta:
+        model = CephCluster
+        fields = ('fsid', 'name', 'config_file_path', 'keyring_file_path', 'keyring_user')
+
+
 class CephClusterViewSet(NodbViewSet):
     """
     Ceph Cluster

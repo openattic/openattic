@@ -14,12 +14,6 @@ describe("ceph rgw buckets", function () {
     owner: "e2e_tuxdoe"
   };
 
-  var goToUserListView = function () {
-    element(by.css(".tc_menuitem_ceph_rgw")).click();
-    element(by.css(".tc_submenuitem_ceph_rgw_users")).click();
-    browser.sleep(helpers.configs.sleep);
-  };
-
   var addBucket = function () {
     cephRgwCommons.addBucket();
     helpers.checkLocation("ceph/rgw/buckets/add");
@@ -41,7 +35,7 @@ describe("ceph rgw buckets", function () {
   });
 
   it("should create test user", function () {
-    goToUserListView();
+    helpers.setLocation("ceph/rgw/users");
     cephRgwCommons.addUser();
     helpers.checkLocation("ceph/rgw/users/add");
     element(by.model("user.user_id")).sendKeys(testUser.user_id);
@@ -50,7 +44,7 @@ describe("ceph rgw buckets", function () {
   });
 
   it("should display the test user in the users panel", function () {
-    goToUserListView();
+    helpers.setLocation("ceph/rgw/users");
     expect(helpers.get_list_element(testUser.user_id).isDisplayed()).toBe(true);
   });
 
@@ -101,7 +95,7 @@ describe("ceph rgw buckets", function () {
   });
 
   it("should redirect from the user list to the bucket list", function () {
-    goToUserListView();
+    helpers.setLocation("ceph/rgw/users");
     // Mark the user row and select the 'List buckets' menu.
     helpers.get_list_element(testBucket.owner).click();
     element(by.css(".tc_menudropdown")).click();

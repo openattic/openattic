@@ -10,6 +10,8 @@ describe("should test the ceph rbd creation form", function () {
   var stripingPreview = new CephRBDStripingPreview();
 
   var objSizeInput = [
+    {input: "", output: "4.00 KiB"},
+    {input: "blub", output: "4.00 KiB"},
     {input: "0", output: "4.00 KiB"},
     {input: "5", output: "4.00 KiB"},
     {input: "6",  output: "8.00 KiB"},
@@ -129,6 +131,14 @@ describe("should test the ceph rbd creation form", function () {
     expect(element(by.className(fe.stripingUnit.items.changed)).isDisplayed()).toBe(false);
   });
 
+  it("should show an required error if stripe count is empty", () => {
+    const count = rbdProperties.stripingCount;
+    helpers.changeInput(count, "");
+    expect(element(by.className(fe.stripingCount.items.required)).isDisplayed()).toBe(true);
+    helpers.changeInput(count, "5");
+    expect(element(by.className(fe.stripingCount.items.required)).isDisplayed()).toBe(false);
+  });
+
   it("should show a warning if stripe count is set to 2", () => {
     const count = rbdProperties.stripingCount;
     helpers.changeInput(count, "1");
@@ -156,7 +166,8 @@ describe("should test the ceph rbd creation form", function () {
   });
 
   objSizeInput.forEach(function (io) {
-    changeSizeTest(rbdProperties.objSize, io, "Object size");
+    changeSizeTest(rbdProperties.objSize, io, "object size");
+    changeSizeTest(rbdProperties.stripingUnit, io, "striping unit");
   });
 
   sizeInput.forEach(function (io) {
