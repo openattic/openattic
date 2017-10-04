@@ -61,6 +61,7 @@ Fixed
   *.pyc files (OP-2700, OP-2699)
 * Backend: Fixed warning in `oaconfig`, if a keyring or keyring user has been
   set in `/etc/sysconfig/openattic` (OP-2732)
+* Backend: Hidden dashboard select box of Grafana on various pages (OP-2746)
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 * WebUI/QA: Harden task queue deletion test cases (OP-2626)
 * WebUI: Fix ugly borders in the task queue table (OP-2491)
