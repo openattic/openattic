@@ -14,11 +14,14 @@
 """
 import doctest
 import os
+from contextlib import contextmanager
 from errno import EPERM
 
 import mock
 import tempfile
 import json
+
+from django.core.exceptions import ValidationError
 
 import exception
 from ceph.restapi import CephPoolSerializer
@@ -41,33 +44,45 @@ def load_tests(loader, tests, ignore):
 def open_testdata(name):
     return open(os.path.join(os.path.dirname(__file__), name))
 
+@contextmanager
+def temporary_keyring(user_name='client.admin'):
+    with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
+        as tmpfile:
+        tmpfile.write('[{}]'.format(user_name))
+        tmpfile.flush()
+        yield tmpfile.name
+
 
 class KeyringTestCase(TestCase):
-    def test_keyring_succeeds(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
-                as tmpfile:
-            tmpfile.write("[client.admin]")
-            tmpfile.flush()
-            keyring = Keyring(tmpfile.name)
+    def test_succeeds(self):
+        with temporary_keyring() as file_name:
+            keyring = Keyring(file_name)
             self.assertEqual(keyring.available_user_names, ['client.admin'])
 
-    def test_keyring_raises_runtime_error(self):
-        try:
-            Keyring('/does/not/exist')
-        except RuntimeError:
-            return True
+    def test_unknown_user(self):
+        with temporary_keyring() as file_name:
+            keyring = Keyring(file_name, user_name='unknownuser')
+            with self.assertRaises(RuntimeError) as context:
+                keyring._check_access()
+            self.assertIn('unknownuser', str(context.exception))
 
-    def test_username_raises_runtime_error(self):
+    def test_does_not_exist(self):
+        keyring = Keyring('/does/not/exist')
+        with self.assertRaises(RuntimeError) as context:
+            keyring._check_access()
+        self.assertIn('does not exist', str(context.exception))
+
+    def test_invalid_keyring(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
                 as tmpfile:
             tmpfile.write("abcdef")
             tmpfile.flush()
-            try:
-                Keyring(tmpfile.name)
-            except RuntimeError:
-                return True
+            keyring = Keyring(tmpfile.name)
+            with self.assertRaises(RuntimeError) as context:
+                keyring._check_access()
+            self.assertIn('Corrupt keyring', str(context.exception))
 
-    def test_keyring_users_sorting(self):
+    def test_users_sorting(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring', suffix='.keyring') as tmpfile:
             tmpfile.write('[mon.]\n[client.admin]\n[client.rgw]\n[client.openattic]\n')
             tmpfile.flush()
@@ -75,7 +90,7 @@ class KeyringTestCase(TestCase):
             self.assertEqual(keyring.available_user_names[0], 'client.openattic')
             self.assertEqual(keyring.available_user_names[1], 'client.admin')
 
-    def test_keyring_sorting(self):
+    def test_sorting(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring1', suffix='.keyring') as tmpfile1:
             with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring2', suffix='.keyring') as tmpfile2:
                 with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring3', suffix='.keyring') as tmpfile3:
@@ -664,3 +679,28 @@ class CephClusterTestCase(TestCase):
         self.assertEqual(set(ceph.models.CephCluster(fsid='fsid').osd_flags), {
             'pause', 'sortbitwise', 'recovery_deletes'
         })
+
+    def test_clean_keyring_file_path(self):
+        cluster = ceph.models.CephCluster(config_file_path='/does/not/exist',
+                                          keyring_file_path='/does/not/exist')
+        with self.assertRaises(ValidationError) as context:
+            cluster.clean()
+        self.assertIn('keyring_file_path', context.exception.error_dict)
+
+    def test_clean_keyring_user(self):
+        with temporary_keyring() as file_name:
+            cluster = ceph.models.CephCluster(config_file_path='/does/not/exist',
+                                              keyring_file_path=file_name,
+                                              keyring_user='unknownuser')
+            with self.assertRaises(ValidationError) as context:
+                cluster.clean()
+            self.assertIn('keyring_user', context.exception.error_dict)
+
+    def test_clean(self):
+        with temporary_keyring() as file_name:
+            cluster = ceph.models.CephCluster(config_file_path='/does/not/exist',
+                                              keyring_file_path=file_name,
+                                              keyring_user='client.admin')
+            cluster.clean()
+
+
