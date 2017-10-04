@@ -189,10 +189,18 @@ def get_grafana_api_response(request, path):
         content += '.dash-row-menu-container { display: none; } '
         content += '.search-results-container .search-item-dash-home { display: none !important; } '
 
+    # Hides the dashboard select box of Grafana on various pages.
+    if any(search in path for search in ('ceph-osd', 'ceph-pools', 'ceph-rbd', 'node-statistics',
+                                         'ceph-object-gateway-users')):
+        tag = '<style>{content}</style>'
+        tag = tag.format(content="""
+            .navbar-section-wrapper { display: none }
+        """)
+        content = re.sub(r'</body>', tag + '</body>', content)
+
     if any(search in path for search in ['ceph-osd', 'ceph-pools', 'node-statistics']):
         tag = '<style>{content}</style>'
         tag = tag.format(content="""
-            navbar { display: none !important; }
             .submenu-controls > div.submenu-item:nth-child(n+2) { display: none !important; }
         """)
 
