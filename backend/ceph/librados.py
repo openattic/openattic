@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 def _write_oa_setting(key, value):
+    assert '-' not in key
     setattr(django_settings, key, value)
     conf_obj = ConfigObj(oa_settings.settings_file)
 
@@ -52,24 +53,62 @@ def _write_oa_setting(key, value):
         return value if this_key == key else conf_obj[this_key]
     oa_settings.save_settings_generic([key], get_default, get_type, get_value)
 
+    # Added in 3.5.1: Remove old and broken keys containing '-'.
+    for pattern in ['CEPH_KEYRING_*', 'CEPH_KEYRING_USER_*']:
+        old_keys = [k for k in fnmatch.filter(conf_obj.keys(), pattern) if '-' in k]
+        if old_keys:
+            logger.warning('Removing old keys {}'.format(old_keys))
+            oa_settings.save_settings_generic(old_keys, lambda _: '', lambda _: str, lambda _: '')
+
+
+def _read_oa_settings(conf_obj, settings_obj):
+    """
+    >>> obj = type('_', (object, ), {})()  # create dummy object
+    >>> _read_oa_settings({
+    ...     'CEPH_CLUSTERS': '/etc/ceph/ceph.conf',
+    ...     'CEPH_KEYRING_F_S_I_D': '/etc/ceph/keyring',
+    ...     'CEPH_KEYRING_USER_F-S-I-D': 'replace minus with underscore',
+    ... }, obj)
+    >>> obj.CEPH_CLUSTERS
+    '/etc/ceph/ceph.conf'
+    >>> obj.CEPH_KEYRING_F_S_I_D
+    '/etc/ceph/keyring'
+    >>> obj.CEPH_KEYRING_USER_F_S_I_D
+    'replace minus with underscore'
+    >>> getattr(obj, 'CEPH_KEYRING_USER_F-S-I-D', '<unset>')
+    '<unset>'
+    """
+    for pattern in ['CEPH_CLUSTERS', 'CEPH_KEYRING_*', 'CEPH_KEYRING_USER_*']:
+        for key in fnmatch.filter(conf_obj.keys(), pattern):  # type: str
+            logger.info(
+                '{} {} {}'.format(key, getattr(settings_obj, key, '<unset>'), conf_obj[key]))
+            old_key = key
+            if '-' in key:
+                logger.warning('found old key {}'.format(old_key))
+            key = key.replace('-', '_')
+            setattr(settings_obj, key, conf_obj[old_key])
+
 
 class _ClusterSettingsListener(oa_settings.SettingsListener):
 
     def settings_changed_handler(self):
-        conf_obj = ConfigObj(oa_settings.settings_file)
-        for pattern in ['CEPH_CLUSTERS', 'CEPH_KEYRING_*', 'CEPH_KEYRING_USER_*']:
-            for key in fnmatch.filter(conf_obj.keys(), pattern):
-                logger.info('{} {} {}'.format(key, getattr(django_settings, key, '<unset>'), conf_obj[key]))
-                setattr(django_settings, key, conf_obj[key])
+        _read_oa_settings(ConfigObj(oa_settings.settings_file), django_settings)
+
 
 _clusterSettingsListener = _ClusterSettingsListener()
 
 
 def sort_by_prioritized_users(elem):
-    # Priorities:
-    # 1. string that contains openattic
-    # 2. string that contains admin
-    # 3. everything else
+    """
+    Priorities:
+    1. string that contains openattic
+    2. string that contains admin
+    3. everything else
+
+    >>> sorted(['foo', 'client.admin', 'baz', 'client.openattic', 'baz'],
+    ...        key=sort_by_prioritized_users)
+    ['client.openattic', 'client.admin', 'baz', 'baz', 'foo']
+    """
     if 'openattic' in elem:
         return 0, elem
     if 'admin' in elem:
@@ -112,7 +151,7 @@ class ClusterConf(object):
     @property
     def keyring_file_path(self):
         try:
-            return getattr(django_settings, 'CEPH_KEYRING_' + self.fsid.upper())
+            return getattr(django_settings, 'CEPH_KEYRING_' + self.fsid.upper().replace('-', '_'))
         except AttributeError:
             candidates = self.keyring_candidates
             return candidates[0].file_name if candidates else ''
@@ -120,11 +159,12 @@ class ClusterConf(object):
     @keyring_file_path.setter
     def keyring_file_path(self, file_path):
         if self.keyring_file_path != file_path:
-            _write_oa_setting('CEPH_KEYRING_' + self.fsid.upper(), file_path)
+            _write_oa_setting('CEPH_KEYRING_' + self.fsid.upper().replace('-', '_'), file_path)
 
     @cached_property
     def keyring(self):
-        user_name = getattr(django_settings, 'CEPH_KEYRING_USER_' + self.fsid.upper(), None)
+        user_name = getattr(django_settings,
+                            'CEPH_KEYRING_USER_' + self.fsid.upper().replace('-', '_'), None)
         return Keyring(self.keyring_file_path, user_name)
 
     @property
@@ -237,7 +277,7 @@ class Keyring(object):
 
     def set_user_name(self, fsid, user_name):
         if self.user_name != user_name:
-            _write_oa_setting('CEPH_KEYRING_USER_' + fsid.upper(), user_name)
+            _write_oa_setting('CEPH_KEYRING_USER_' + fsid.upper().replace('-', '_'), user_name)
 
 
 class Client(object):
