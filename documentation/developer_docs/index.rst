@@ -44,5 +44,7 @@ documentation.
   developer-documentation
   ui_customizing
   taskqueue
+  dev_fe_unit_tests
   dev_e2e
   dev_gatling
+  python_unittests

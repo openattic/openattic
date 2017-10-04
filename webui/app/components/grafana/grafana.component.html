@@ -2,6 +2,6 @@
 <!-- TODO: display loading spinner as long as the images haven't loaded -->
 <div class="grafana-container">
     <oa-module-loader module="grafana" display-loading-panel="false">
-        <iframe ng-src="{{ $ctrl.src }}" class="grafana" frameborder="0" scrolling="auto"></iframe>
+        <iframe ng-src="{{ $ctrl.src }}" ng-load="{{ $ctrl.resize() }}" class="grafana" frameborder="0" scrolling="auto"></iframe>
     </oa-module-loader>
 </div>

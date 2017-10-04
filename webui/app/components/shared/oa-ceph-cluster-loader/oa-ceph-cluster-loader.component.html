@@ -1,33 +1,9 @@
 <div ng-if="$ctrl.loading">
     <oa-loading-panel message="Ceph clusters are loading..."></oa-loading-panel>
 </div>
-<!-- The error message -->
-<span ng-if="$ctrl.error">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Error</h3>
-        </div>
-        <div class="panel-body">
-            Couldn't load Ceph cluster.
-            <hr>
-            <p>Please verify that:</p>
-            <ul>
-              <li>Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong></li>
-              <li>
-                File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>
-                can be read by the <strong>openattic</strong> user
-              </li>
-            </ul>
-            <span ng-if="$ctrl.error.data && $ctrl.error.data.detail">
-                <hr>
-                <span ng-bind-html="$ctrl.error.data.detail"></span>
-            </span>
-        </div>
-    </div>
-</span>
 <!-- The cluster selection box -->
 <div class="panel panel-default"
-     ng-if="$ctrl.loaded && $ctrl.cluster.results.length > 1">
+     ng-if="!$ctrl.loading && $ctrl.cluster.results.length > 1">
     <div class="panel-heading">
         <h3 class="panel-title">Select a Cluster</h3>
     </div>
@@ -42,4 +18,4 @@
         </div>
     </div>
 </div>
-<span ng-transclude ng-if="$ctrl.loaded"></span>
+<span ng-transclude ng-if="!$ctrl.loading"></span>

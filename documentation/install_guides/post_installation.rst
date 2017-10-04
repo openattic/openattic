@@ -68,12 +68,12 @@ Multiple clusters can be added by seperating them with a ``;`` sign like so::
 For each Ceph cluster, one can set the path to the keyring file by adding
 ``CEPH_KEYRING_`` appended by the uppercase cluster fsid as follows::
 
-    CEPH_KEYRING_123ABCDE-4567-ABCD-1234-567890ABCDEF="/home/user/ceph/build/keyring"
+    CEPH_KEYRING_123ABCDE_4567_ABCD_1234_567890ABCDEF="/home/user/ceph/build/keyring"
 
 It is also possible to define a specific user name for each cluster, by adding
 ``CEPH_KEYRING_USER_`` appended by the uppercase cluster fsid, like so::
 
-  CEPH_KEYRING_USER_123ABCDE-4567-ABCD-1234-567890ABCDEF="client.openattic"
+  CEPH_KEYRING_USER_123ABCDE_4567_ABCD_1234_567890ABCDEF="client.openattic"
 
 The last step is to recreate your |oA| configuration::
 

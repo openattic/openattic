@@ -38,7 +38,7 @@ angular.module("openattic.dashboard", [
   "openattic.dashboardWidgets"
 ]);
 
-requireAll(require.context("./", true, /\.js$/));
+requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
 
 function requireAll (require) {
   require.keys().forEach(require);
