@@ -27,6 +27,7 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: Fixed Erasure Code Profile creation (OP-2758)
 
 Removed
 ~~~~~~~
