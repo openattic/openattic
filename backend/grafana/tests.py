@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import re
 from django.test import TestCase
 from mock import mock
 
@@ -18,6 +19,29 @@ from grafana.grafana_proxy import get_grafana_api_response, fix_path
 
 
 class GrafanaResponseTestCase(TestCase):
+
+    @mock.patch('grafana.grafana_proxy.Settings')
+    @mock.patch('grafana.grafana_proxy.requests.request')
+    def test_hiding_of_dashboard_selection(self, request_method, settings):
+        request = mock.Mock()
+        request.META = {}
+        request.GET.copy.return_value = 42
+
+        response = mock.Mock()
+        response.content = '</body>'
+        response.headers = {}
+        response.status_code = 200
+        request_method.return_value = response
+
+        for path in ('ceph-osd', 'ceph-pools', 'ceph-rbd', 'node-statistics',
+                     'ceph-object-gateway-users'):
+            r = get_grafana_api_response(request, path)
+            r.content = re.sub(r'\s', '', r.content)
+            self.assertContains(r, '<style>.navbar-section-wrapper{display:none}</style>')
+
+        r = get_grafana_api_response(request, 'bar')
+        r.content = re.sub(r'\s', '', r.content)
+        self.assertNotContains(r, '<style>.navbar-section-wrapper{display:none}</style>')
 
     def test_fix_path(self):
         self.assertEqual(fix_path('/foo/bar'), '/foo/bar')
