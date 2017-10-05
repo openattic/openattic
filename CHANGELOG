@@ -62,6 +62,8 @@ Fixed
 * Backend: Fixed warning in `oaconfig`, if a keyring or keyring user has been
   set in `/etc/sysconfig/openattic` (OP-2732)
 * Backend: Hidden dashboard select box of Grafana on various pages (OP-2746)
+* Backend: 'keyring_or_none' will now check if an available keyring file is
+  readable for the openATTIC user (OP-2757)
 * WebUI/QA: Fix Cluster-wide OSD Flags e2e failures (OP-2668)
 * WebUI/QA: Harden task queue deletion test cases (OP-2626)
 * WebUI: Fix ugly borders in the task queue table (OP-2491)
