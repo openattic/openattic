@@ -186,7 +186,9 @@ class ClusterConf(object):
 
         def keyring_or_none(file_path):
             try:
-                return Keyring(file_path)
+                keyring = Keyring(file_path)
+                keyring._check_access()
+                return keyring
             except RuntimeError:
                 return None
 
