@@ -99,6 +99,28 @@ class KeyringTestCase(TestCase):
                     self.assertIs(sorted_keyrings[1], keyring3)
                     self.assertIs(sorted_keyrings[2], keyring1)
 
+    def test_empty_keyring(self):
+        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph', suffix=".conf") as tmpfile_ceph_conf:
+            with tempfile.NamedTemporaryFile(dir='/tmp', prefix='client.empty.',
+                                             suffix=".keyring") as tmpfile_keyring_empty:
+                with tempfile.NamedTemporaryFile(dir='/tmp', prefix='client.foo.',
+                                                 suffix=".keyring") as tmpfile_keyring_foo:
+                    tmpfile_keyring_foo.write('[client.foo]')
+                    tmpfile_keyring_foo.flush()
+                    tmpfile_ceph_conf.write("""
+                    [global]
+                    fsid = f-s-i-d
+                    [client.empty]
+                    keyring = {}
+                    [client.foo]
+                    keyring = {}
+                    """.format(tmpfile_keyring_empty.name, tmpfile_keyring_foo.name))
+                    tmpfile_ceph_conf.flush()
+                    self.assertEqual(
+                        [k.file_name for k in
+                         ceph.librados.ClusterConf(file_path=tmpfile_ceph_conf.name).keyring_candidates],
+                        [tmpfile_keyring_foo.name])
+
 
 class CephPoolTestCase(TestCase):
     mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
