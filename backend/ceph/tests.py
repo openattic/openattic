@@ -704,3 +704,53 @@ class CephClusterTestCase(TestCase):
             cluster.clean()
 
 
+class CephOsdTestCase(TestCase):
+
+    def test_save(self):
+        with self.assertRaises(ValidationError):
+            ceph.models.CephOsd(cluster=ceph.models.CephCluster()).save()
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save_osd_in(self, _call_mon_command_mock, get_modified_fields_mock):
+        get_modified_fields_mock.return_value = ({'in_state': 1}, None)
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name').save()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd in', {'name': 'name'}, output_format='string')
+        ])
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save_osd_out(self, _call_mon_command_mock, get_modified_fields_mock):
+        get_modified_fields_mock.return_value = ({'in_state': 0}, None)
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name').save()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd out', {'name': 'name'}, output_format='string')
+        ])
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save_reweight(self, _call_mon_command_mock, get_modified_fields_mock):
+        get_modified_fields_mock.return_value = ({'reweight': 42}, mock.Mock(reweight=0))
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name').save()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd crush reweight', {'name': 'name', 'weight': 42}, output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_scrub(self, _call_mon_command_mock):
+        osd = ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name')
+        osd.scrub(False)
+        osd.scrub(True)
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd scrub', {'who': 'name'}, output_format='string'),
+            mock.call('osd deep-scrub', {'who': 'name'}, output_format='string')
+        ])
