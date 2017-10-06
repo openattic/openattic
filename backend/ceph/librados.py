@@ -1078,6 +1078,9 @@ class RbdApi(object):
     Exported features are defined here:
        https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
     """
+
+    RBD_DELETION_TIMEOUT = 3600
+
     @staticmethod
     def get_feature_mapping():
         ret = {
@@ -1172,7 +1175,7 @@ class RbdApi(object):
             rbd_inst = rbd.RBD()
             rbd_inst.remove(ioctx, image_name)
 
-        self._call_librados(_remove)
+        self._call_librados(_remove, timeout=self.RBD_DELETION_TIMEOUT)
 
     def list(self, pool_name):
         """

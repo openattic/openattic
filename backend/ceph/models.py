@@ -963,8 +963,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         except RequestException:
             logger.debug('Salt-API is not available to check for iSCSI targets')
 
-        api = self.rbd_api()
-        api.remove(self.pool.name, self.name)
+        self._task_queue = ceph.tasks.delete_rbd.delay(
+            self.pool.cluster.fsid, self.pool.name, self.name)
 
 
 class CephFs(NodbModel, RadosMixin):
