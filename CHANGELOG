@@ -25,6 +25,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
 
 Fixed
 ~~~~~
