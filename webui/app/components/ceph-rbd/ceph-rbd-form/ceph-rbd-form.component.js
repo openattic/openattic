@@ -264,15 +264,20 @@ app.component("cephRbdForm", {
       }
       size = SizeParserService.parseInt(size, "b");
       self.sizeValidator(size);
-      if (parseInt(size / self.data.obj_size, 10) < 1) {
-        self.data.size = $filter("bytes")(self.data.obj_size);
+
+      if (angular.isNumber(size)) {
+        if (parseInt(size / self.data.obj_size, 10) < 1) {
+          self.data.size = $filter("bytes")(self.data.obj_size);
+        } else {
+          self.data.size = $filter("bytes")(size);
+        }
       } else {
-        self.data.size = $filter("bytes")(size);
+        self.data.size = "";
       }
     };
 
     self.sizeValidator = (size = SizeParserService.parseInt(self.data.size, "b")) => {
-      let valid = true;
+      let valid = angular.isNumber(size);
       if (self.data.features.stripingv2.checked &&
           $scope.rbdForm.stripingCount &&
           $scope.rbdForm.stripingCount.$valid &&
