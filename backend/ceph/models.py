@@ -119,6 +119,7 @@ class CephCluster(NodbModel, RadosMixin):
     def clean(self):
         try:
             keyring = Keyring(file_name=self.keyring_file_path)
+            keyring._check_access()
         except RuntimeError as e:
             raise ValidationError({'keyring_file_path': [str(e)]})
 
