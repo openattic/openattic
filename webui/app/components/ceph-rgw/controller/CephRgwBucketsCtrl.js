@@ -78,29 +78,10 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })
       .$promise
-      .then((res) => {
-        if (res.results.length > 0) {
-          // Check if the buckets are referenced, e.g. by NFS Ganesha.
-          let buckets = [];
-          angular.forEach(res.results, (item) => {
-            buckets.push(item.bucket);
-          });
-          cephRgwBucketService.isReferenced({"bucket": buckets})
-            .$promise
-            .then((references) => {
-              angular.forEach(res.results, (item) => {
-                item.referenced = references[item.bucket];
-              });
-              $scope.buckets = res;
-            })
-            .catch((error) => {
-              $scope.error = error;
-            });
-        } else {
-          $scope.buckets = res;
-        }
+      .then(function (res) {
+        $scope.buckets = res;
       })
-      .catch((error) => {
+      .catch(function (error) {
         $scope.error = error;
       });
   }, true);
@@ -111,14 +92,6 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
 
     $scope.multiSelection = items && items.length > 1;
     $scope.hasSelection = items && items.length === 1;
-    $scope.selectionIsReferenced = false;
-
-    // Check if the selected buckets are referenced.
-    if (items && items.length > 0) {
-      $scope.selectionIsReferenced = items.some((item) => {
-        return item.referenced;
-      });
-    }
 
     if (!items || items.length !== 1) {
       $state.go("ceph-rgw-buckets");

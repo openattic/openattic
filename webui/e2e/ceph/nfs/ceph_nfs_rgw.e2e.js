@@ -60,11 +60,12 @@ describe("ceph nfs", () => {
 
   it("should check the bucket can't be deleted because it's referenced", () => {
     helpers.setLocation("ceph/rgw/buckets");
-    helpers.search_for("e2e-rgw-add");
-    var bucket = helpers.get_list_element("e2e-rgw-add").click();
+    var bucket = helpers.search_for_element("e2e-rgw-add");
+    bucket.click();
+    helpers.delete_selection(undefined, "$ctrl");
+    // Close the delete dialog.
+    element(by.id("bot1-Msg1")).click();
     expect(bucket.isDisplayed()).toBe(true);
-    element(by.css(".tc_menudropdown")).click();
-    expect(helpers.hasClass(element(by.css(".tc_deleteItem")), "disabled")).toBe(true);
     helpers.setLocation("ceph/nfs");
   });
 
