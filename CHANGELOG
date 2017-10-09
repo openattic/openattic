@@ -18,7 +18,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 
 [3.6.0] - unreleased
--------------------- 
+--------------------
 
 Added
 ~~~~~
@@ -31,6 +31,8 @@ Fixed
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
+* Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+
 
 Removed
 ~~~~~~~
