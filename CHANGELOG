@@ -27,6 +27,8 @@ Changed
 ~~~~~~~
 * WebUI: RBD features: Add more information to features that
   require another feature to be enabled (OP-2765)
+* WebUI: Do not delete buckets that are referenced/used, e.g.
+  by NFS (OP-2536)
 
 Fixed
 ~~~~~
