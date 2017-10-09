@@ -38,6 +38,7 @@ from ceph.tasks import track_pg_creation
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(ceph.librados))
+    tests.addTests(doctest.DocTestSuite(ceph.models))
     return tests
 
 
@@ -754,3 +755,49 @@ class CephOsdTestCase(TestCase):
             mock.call('osd scrub', {'who': 'name'}, output_format='string'),
             mock.call('osd deep-scrub', {'who': 'name'}, output_format='string')
         ])
+
+
+class CephErasureCodeProfileTestCase(TestCase):
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save(self, _call_mon_command_mock):
+        ecp = ceph.models.CephErasureCodeProfile(k=3, m=3, name='test',
+                                                 ruleset_failure_domain='rack')
+        ecp._context = mock.Mock(fsid='fsid')
+        ecp.save(force_insert=True)
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd erasure-code-profile set',
+                      {'profile': ['k=3', 'm=3', 'crush-failure-domain=rack'], 'name': 'test'},
+                      output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_delete(self, _call_mon_command_mock):
+        ecp = ceph.models.CephErasureCodeProfile(name='test')
+        ecp._context = mock.Mock(fsid='fsid')
+        ecp.delete()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd erasure-code-profile rm',
+                      {'name': 'test'},
+                      output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_get_all_objects(self, _call_mon_command_mock):
+        def side_effect(prefix, *a, **kw):
+            return {
+                'osd erasure-code-profile ls': ['test'],
+                'osd erasure-code-profile get': {'k': 3, 'm': 3, 'plugin': 'jrasure',
+                                                 'technique': 'technique',
+                                                 'jerasure-per-chunk-alignment': 'align',
+                                                 'crush-failure-domain': 'rack',
+                                                 'crush-root': 'root', 'w': 1}
+            }[prefix]
+        _call_mon_command_mock.side_effect = side_effect
+        nodb.models.NodbManager.set_nodb_context(mock.Mock(fsid='fsid'))
+        ecp = ceph.models.CephErasureCodeProfile.objects.get()
+        self.assertEqual(ecp.name, 'test')
+        self.assertEqual(ecp.k, 3)
+        self.assertEqual(ecp.m, 3)
+        self.assertEqual(ecp.ruleset_failure_domain, 'rack')
+        self.assertEqual(ecp.ruleset_root, 'root')
