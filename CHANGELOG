@@ -38,6 +38,7 @@ Fixed
 * Backend: Fixed `module_status/ceph_deployment`: behave exactly as
   `module_status/ceph` (OP-2720)
 * WebUI/QA: Fix random ceph pool creation e2e test (OP-2762)
+* WebUI: Fix error when creating RBD without size (OP-2756)
 
 Removed
 ~~~~~~~
