@@ -39,6 +39,7 @@ Fixed
   `module_status/ceph` (OP-2720)
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
+* Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * WebUI/QA: Fix random ceph pool creation e2e test (OP-2762)
 * WebUI: Fix error when creating RBD without size (OP-2756)
 
