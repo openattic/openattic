@@ -1,6 +1,8 @@
 <div class="openattic-modal-header">
-  <span ng-hide="$ctrl.editing">Add Swift key: {{$ctrl.key.user}}</span>
-  <span ng-show="$ctrl.editing">View Swift key: {{$ctrl.key.user}}</span>
+  <span translate
+        ng-hide="$ctrl.editing">Add Swift key: {{$ctrl.key.user}}</span>
+  <span translate
+        ng-show="$ctrl.editing">View Swift key: {{$ctrl.key.user}}</span>
 </div>
 <form name="form"
       role="form"
@@ -10,7 +12,8 @@
     <!-- User -->
     <div class="form-group"
          ng-class="{'has-error': (form.$submitted || form.user.$dirty) && form.user.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="user">User</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -24,14 +27,17 @@
                   ng-options="user for user in $ctrl.enumKeySubuserCandidates()"
                   name="user"
                   id="user">
-            <option value="">-- Select a subuser --</option>
+            <option translate
+                    value="">-- Select a subuser --</option>
           </select>
         </div>
-        <span class="help-block tc_userRequired"
+        <span translate
+              class="help-block tc_userRequired"
               ng-show="(form.$submitted || form.user.$dirty) && form.user.$error.required">
           This field is required!
         </span>
-        <span class="help-block tc_userNotUnique"
+        <span translate
+              class="help-block tc_userNotUnique"
               ng-show="(form.$submitted || form.user.$dirty) && form.user.$error.uniqueuser">
           The chosen user is already in use.
         </span>
@@ -48,7 +54,8 @@
                  ng-false-value="0"
                  name="generate_key"
                  id="generate_key">
-          <label for="generate_key">
+          <label translate
+                 for="generate_key">
             Generate secret
           </label>
         </div>
@@ -58,7 +65,8 @@
     <div class="form-group"
          ng-class="{'has-error': (form.$submitted || form.secret_key.$dirty) && form.secret_key.$invalid}"
          ng-hide="$ctrl.key.generate_key">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="secret_key">Secret key</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -88,7 +96,8 @@
             </button>
           </span>
         </div>
-        <span class="help-block tc_secretKeyRequired"
+        <span translate
+              class="help-block tc_secretKeyRequired"
               ng-show="(form.$submitted || form.secret_key.$dirty) && form.secret_key.$error.required">
           This field is required!
         </span>
@@ -97,12 +106,14 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button form="form"
+      <oa-submit-button translate
+                        form="form"
                         on-submit="$ctrl.submitAction(form)"
                         ng-show="!$ctrl.editing">
         Submit
       </oa-submit-button>
-      <button type="button"
+      <button translate
+              type="button"
               class="btn btn-sm btn-default tc_cancelSwiftKeyButton"
               ng-click="$ctrl.cancelAction()">
         Cancel

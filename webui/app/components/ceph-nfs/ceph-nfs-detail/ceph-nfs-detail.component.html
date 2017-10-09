@@ -4,34 +4,34 @@
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
-      <dt>Host:</dt>
+      <dt translate>Host:</dt>
       <dd ng-bind="$ctrl.selection.item.host"></dd>
-      <dt>Storage Backend:</dt>
+      <dt translate>Storage Backend:</dt>
       <dd ng-bind="$ctrl.getFsalDesc($ctrl.selection.item.fsal)"></dd>
       <span ng-if="$ctrl.selection.item.fsal === 'RGW'">
-        <dt>Object Gateway User:</dt>
+        <dt translate>Object Gateway User:</dt>
         <dd ng-bind="$ctrl.selection.item.rgwUserId"></dd>
       </span>
       <dt ng-bind="$ctrl.selection.item.fsal === 'RGW' ? 'Bucket:' : 'Ceph Path:'"></dt>
       <dd ng-bind="$ctrl.selection.item.path"></dd>
-      <dt>NFS Protocol:</dt>
+      <dt translate>NFS Protocol:</dt>
       <dd ng-repeat="protocol in $ctrl.selection.item.protocols"
           ng-bind="protocol"></dd>
       <span ng-if="$ctrl.selection.item.tag">
-        <dt>NFS Tag:</dt>
+        <dt translate>NFS Tag:</dt>
         <dd ng-bind="$ctrl.selection.item.tag"></dd>
       </span>
       <span ng-if="$ctrl.selection.item.pseudo">
-        <dt>Pseudo:</dt>
+        <dt translate>Pseudo:</dt>
         <dd ng-bind="$ctrl.selection.item.pseudo"></dd>
       </span>
-      <dt>Access Type:</dt>
+      <dt translate>Access Type:</dt>
       <dd>
         {{ $ctrl.selection.item.accessType }} - {{ $ctrl.getAccessTypeHelp($ctrl.selection.item.accessType) }}
       </dd>
-      <dt>Squash:</dt>
+      <dt translate>Squash:</dt>
       <dd ng-bind="$ctrl.selection.item.squash"></dd>
-      <dt>Transports:</dt>
+      <dt translate>Transports:</dt>
       <dd ng-repeat="transport in $ctrl.selection.item.transports"
           ng-bind="transport"></dd>
     </dl>
@@ -39,10 +39,10 @@
     <span ng-repeat="clientBlock in $ctrl.selection.item.clientBlocks">
       <hr>
       <dl class="dl-horizontal">
-        <dt>Clients:</dt>
+        <dt translate>Clients:</dt>
         <dd ng-repeat="client in clientBlock.clients"
             ng-bind="client"></dd>
-        <dt>Access Type:</dt>
+        <dt translate>Access Type:</dt>
         <dd ng-if="clientBlock.accessType">
           {{ clientBlock.accessType }} - {{ $ctrl.getAccessTypeHelp(clientBlock.accessType) }}
         </dd>
@@ -50,7 +50,7 @@
           {{ $ctrl.selection.item.accessType }}
           <span class="text-muted">(inherited from global config)</span>
         </dd>
-        <dt>Squash:</dt>
+        <dt translate>Squash:</dt>
         <dd ng-if="clientBlock.squash"
             ng-bind="clientBlock.squash"></dd>
         <dd ng-if="!clientBlock.squash && $ctrl.selection.item.squash">
@@ -60,11 +60,14 @@
       </dl>
     </span>
 
-    <legend>
+    <legend translate>
       <i class="fa fa-book"
-         aria-hidden="true"></i> How to use</legend>
-    <p>To mount this NFS export, run the following command:</p>
-    <p>
+         aria-hidden="true"></i> How to use
+    </legend>
+    <p translate>
+      To mount this NFS export, run the following command:
+    </p>
+    <p translate>
       <kbd ng-bind="$ctrl.getMountCommand()"></kbd>
     </p>
 

@@ -10,13 +10,15 @@
         ng-show="$ctrl.clusters">
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
-        <h3 class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>
+        <h3 translate
+            class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>
       </div>
       <div class="panel-body">
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.name.$dirty)
             && $ctrl.rbdForm.name.$invalid}">
-          <label class="control-label col-sm-3"
+          <label translate
+                 class="control-label col-sm-3"
                  for="name">Name</label>
           <div class="col-sm-9">
             <input id="name"
@@ -29,12 +31,15 @@
                    uniquename="rbd"
                    required
                    autofocus>
-            <span class="help-block tc_nameRequired"
+            <span translate
+                  class="help-block tc_nameRequired"
                   ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.name.$dirty)
                 && $ctrl.rbdForm.name.$error.required">This field is required!</span>
-            <span class="help-block tc_noValidName"
+            <span translate
+                  class="help-block tc_noValidName"
                   ng-show="$ctrl.rbdForm.name.$error.validname">{{errortext}}</span>
-            <span class="help-block tc_noUniqueName"
+            <span translate
+                  class="help-block tc_noUniqueName"
                   ng-show="$ctrl.rbdForm.name.$error.uniquename">
               The chosen RBD name is already in use.
             </span>
@@ -44,7 +49,8 @@
         <div class="form-group"
              ng-if="$ctrl.clusters.length !== 1"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.cluster.$dirty) && $ctrl.rbdForm.cluster.$invalid}">
-          <label class="control-label col-sm-3"
+          <label translate
+                 class="control-label col-sm-3"
                  for="cluster">Cluster</label>
           <div class="col-sm-9">
             <select id="cluster"
@@ -59,12 +65,14 @@
                       value=""
                       ng-bind="$ctrl.waitingClusterMsg"></option>
             </select>
-            <span class="help-block tc_clusterRequired"
+            <span translate
+                  class="help-block tc_clusterRequired"
                   ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.cluster.$dirty)
                 && $ctrl.rbdForm.cluster.$error.required">
               This field is required!
             </span>
-            <span class="help-block tc_clusterLoading"
+            <span translate
+                  class="help-block tc_clusterLoading"
                   ng-show="$ctrl.rbdForm.$error.clusterLoading">
               Couldn't load any cluster, please contact your administrator for details.
             </span>
@@ -79,7 +87,8 @@
                      type="checkbox"
                      ng-model="$ctrl.data.useDataPool"
                      ng-name="useDataPool">
-              <label for="use-data-pool">Use a dedicated data pool</label>
+              <label translate
+                     for="use-data-pool">Use a dedicated data pool</label>
             </div>
           </div>
         </div>
@@ -89,9 +98,9 @@
             && $ctrl.rbdForm.pool.$invalid}">
           <label class="control-label col-sm-3"
                  for="pool">
-            <span tooltip-placement="top"
-                  uib-tooltip="Main pool where the RBD is located and {{$ctrl.data.useDataPool ? 'the meta-data' :
-                'all data'}} is stored">
+            <span translate
+                  tooltip-placement="top"
+                  uib-tooltip="Main pool where the RBD is located and {{$ctrl.data.useDataPool ? 'the meta-data' : 'all data'}} is stored">
               {{$ctrl.data.useDataPool ? "Meta-" : ""}}Pool
             </span>
           </label>
@@ -115,20 +124,23 @@
                                value="$ctrl.data.pool.percent_used">
                 <span></span>
               </uib-progressbar>
-              <span class="pull-left tc_poolSize">
+              <span translate
+                    class="pull-left tc_poolSize">
                 {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.max_avail | bytes}} used
               </span>
-              <span class="pull-right tc_poolAvailableSize">
-                {{$ctrl.data.pool.oaFreeText}} free -
-                <a ng-click="$ctrl.useMaxSize($ctrl.data.pool)">use max</a>
+              <span translate
+                    class="pull-right tc_poolAvailableSize">
+                {{$ctrl.data.pool.oaFreeText}} free - <a ng-click="$ctrl.useMaxSize($ctrl.data.pool)">use max</a>
               </span>
             </div>
-            <span class="help-block tc_poolRequired"
+            <span translate
+                  class="help-block tc_poolRequired"
                   ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.pool.$dirty)
                 && $ctrl.rbdForm.pool.$error.required">
               This field is required!
             </span>
-            <span class="help-block tc_poolLoading"
+            <span translate
+                  class="help-block tc_poolLoading"
                   ng-show="$ctrl.rbdForm.$error.poolLoading">
               Couldn't load any pool, please contact your administrator for details.
             </span>
@@ -139,7 +151,8 @@
              ng-if="$ctrl.data.useDataPool"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted ||
             $ctrl.rbdForm.dataPool.$dirty) && $ctrl.rbdForm.dataPool.$invalid}">
-          <label class="control-label col-sm-3"
+          <label translate
+                 class="control-label col-sm-3"
                  for="dataPool">
             <span tooltip-placement="top"
                   uib-tooltip="Dedicated pool that stores the object-data of the RBD">
@@ -166,20 +179,23 @@
                                value="$ctrl.data.dataPool.percent_used">
                 <span></span>
               </uib-progressbar>
-              <span class="pull-left tc-data-pool-size">
+              <span translate
+                    class="pull-left tc-data-pool-size">
                 {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.max_avail | bytes}} used
               </span>
-              <span class="pull-right tc-data-pool-available-size">
-                {{$ctrl.data.dataPool.oaFreeText}} free -
-                <a ng-click="$ctrl.useMaxSize($ctrl.data.dataPool)">use max</a>
+              <span translate
+                    class="pull-right tc-data-pool-available-size">
+                {{$ctrl.data.dataPool.oaFreeText}} free - <a ng-click="$ctrl.useMaxSize($ctrl.data.dataPool)">use max</a>
               </span>
             </div>
-            <span class="help-block tc-data-pool-required"
+            <span translate
+                  class="help-block tc-data-pool-required"
                   ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.dataPool.$dirty)
                 && $ctrl.rbdForm.dataPool.$error.required">
               This field is required!
             </span>
-            <span class="help-block tc-data-pool-loading"
+            <span translate
+                  class="help-block tc-data-pool-loading"
                   ng-show="$ctrl.rbdForm.$error.dataPoolLoading">
               Couldn't load any pool, please contact your administrator for details.
             </span>
@@ -189,7 +205,8 @@
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.size.$dirty)
             && $ctrl.rbdForm.size.$invalid}">
-          <label class="control-label col-sm-3"
+          <label translate
+                 class="control-label col-sm-3"
                  for="size">Size</label>
           <div class="col-sm-9">
             <input id="size"
@@ -202,18 +219,21 @@
                    ng-model="$ctrl.data.size"
                    placeholder="e.g., 10GB"
                    required>
-            <span class="help-block tc_sizeRequired"
+            <span translate
+                  class="help-block tc_sizeRequired"
                   ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.size.$dirty)
                 && $ctrl.rbdForm.size.$error.required">
               This field is required!
             </span>
-            <span class="help-block tc_sizeIncrease"
+            <span translate
+                  class="help-block tc_sizeIncrease"
                   ng-show="!$ctrl.data.features.stripingv2.checked &&
                     ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.size.$dirty) &&
                     $ctrl.rbdForm.size.$invalid">
               You have to increase the size in order to have at least 1 object in your RBD.
             </span>
-            <span class="help-block tc_sizeIncreaseStriping"
+            <span translate
+                  class="help-block tc_sizeIncreaseStriping"
                   ng-show="$ctrl.data.features.stripingv2.checked &&
                     ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.size.$dirty) &&
                     $ctrl.rbdForm.size.$invalid">
@@ -225,7 +245,8 @@
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.obj_size.$dirty) && $ctrl.rbdForm.obj_size.$invalid,
               'has-warning': $ctrl.rbdForm.obj_size.$untouched && $ctrl.changedField === 'obj_size'}">
-          <label class="control-label col-sm-3"
+          <label translate
+                 class="control-label col-sm-3"
                  for="obj_size">Object size</label>
           <div class="col-sm-9">
             <input id="obj_size"
@@ -239,12 +260,14 @@
                    ng-model="$ctrl.data.obj_size"
                    placeholder="4 KiB up to 32 MiB"
                    required>
-            <span class="help-block tc_objSizeRequired"
+            <span translate
+                  class="help-block tc_objSizeRequired"
                   ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.size.$dirty)
                 && $ctrl.rbdForm.size.$error.required">
               This field is required!
             </span>
-            <span class="help-block tc-objSize-changed"
+            <span translate
+                  class="help-block tc-objSize-changed"
                   ng-show="$ctrl.rbdForm.obj_size.$untouched && $ctrl.changedField === 'obj_size'">
               This field was increased with your stripe unit change.
             </span>
@@ -252,7 +275,8 @@
         </div>
         <div class="form-group tc_features"
              ng-class="{'has-error': $ctrl.rbdForm.$error.noFeatureSelected}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="features">
             Features
             <oa-helper helper-data="$ctrl.features"
@@ -271,7 +295,8 @@
                      id="default-features"
                      name="default-features"
                      ng-disabled="$ctrl.data.pool == null">
-              <label for="default-features">Use default features</label>
+              <label translate
+                     for="default-features">Use default features</label>
             </div>
             <div uib-collapse="$ctrl.data.defaultFeatures">
               <br>
@@ -291,17 +316,20 @@
                            helper-template="feature.helperTemplate">
                 </oa-helper>
               </div>
-              <span class="help-block tc_noFeature"
+              <span translate
+                    class="help-block tc_noFeature"
                     ng-show="$ctrl.rbdForm.$error.noFeatureSelected">At least one feature has to be selected</span>
             </div>
           </div>
         </div>
         <div ng-if="$ctrl.data.features.stripingv2.checked">
-          <h2 class="page-header">Striping</h2>
+          <h2 translate
+              class="page-header">Striping</h2>
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.stripingUnit.$dirty) && $ctrl.rbdForm.stripingUnit.$invalid,
                 'has-warning': $ctrl.rbdForm.stripingUnit.$untouched && $ctrl.changedField === 'stripingUnit'}">
-            <label class="control-label col-sm-4"
+            <label translate
+                   class="control-label col-sm-4"
                    for="stripingUnit">
               Striping unit
             </label>
@@ -318,11 +346,13 @@
                      ng-model="$ctrl.data.striping.unitDisplayed"
                      placeholder="4 KiB up to 32 MiB"
                      required>
-              <span class="help-block tc-stripingUnit-required"
+              <span translate
+                    class="help-block tc-stripingUnit-required"
                     ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.stripingUnit.$dirty) && $ctrl.rbdForm.stripingUnit.$error.required">
                 This field is required!
               </span>
-              <span class="help-block tc-stripingUnit-changed"
+              <span translate
+                    class="help-block tc-stripingUnit-changed"
                     ng-show="$ctrl.rbdForm.stripingUnit.$untouched && $ctrl.changedField === 'stripingUnit'">
                 This field was decreased with your object size change.
               </span>
@@ -331,7 +361,8 @@
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.stripingCount.$dirty) &&
                   $ctrl.rbdForm.stripingCount.$invalid}">
-            <label class="control-label col-sm-4"
+            <label translate
+                   class="control-label col-sm-4"
                    for="stripingCount">
               Striping count
             </label>
@@ -345,11 +376,13 @@
                      ng-model-options="{ updateOn: 'blur' }"
                      ng-model="$ctrl.data.striping.count"
                      required>
-              <span class="help-block tc-stripingCount-required"
+              <span translate
+                    class="help-block tc-stripingCount-required"
                     ng-show="($ctrl.rbdForm.$submitted || $ctrl.rbdForm.stripingCount.$dirty) && $ctrl.rbdForm.stripingCount.$error.required">
                 This field is required!
               </span>
-              <span class="help-block tc-stripingCount-min"
+              <span translate
+                    class="help-block tc-stripingCount-min"
                     ng-show="$ctrl.rbdForm.stripingCount.$invalid">
                 The striping count has to be a value higher than 1.
               </span>
@@ -365,7 +398,8 @@
             </span>
             <span class="help-block tc-striping-preview col-sm-offset-4 col-sm-8"
                   ng-if="$ctrl.stripingDescription()">
-              <a ng-click="$ctrl.previewStriping()"
+              <a translate
+                 ng-click="$ctrl.previewStriping()"
                  class="tc_stripingPreview">Striping Preview</a>
             </span>
           </div>
@@ -373,11 +407,13 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button form="$ctrl.rbdForm"
+          <oa-submit-button translate
+                            form="$ctrl.rbdForm"
                             on-submit="$ctrl.submitAction($ctrl.rbdForm)">
             Create
           </oa-submit-button>
-          <button type="button"
+          <button translate
+                  type="button"
                   class="btn btn-sm btn-default tc_backButton"
                   ng-click="$ctrl.cancelAction()">
             Back

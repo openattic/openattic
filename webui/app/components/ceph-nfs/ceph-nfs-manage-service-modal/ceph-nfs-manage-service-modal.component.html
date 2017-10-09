@@ -1,5 +1,5 @@
 <div class="openattic-modal-header">
-  <span>Manage NFS service</span>
+  <span translate>Manage NFS service</span>
 </div>
 <form name="deleteForm"
       role="form"
@@ -9,15 +9,17 @@
     <table class="table table-hover table-no-background">
       <thead>
         <tr>
-          <th>Host</th>
-          <th>State</th>
+          <th translate>Host</th>
+          <th translate>State</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <tr ng-show="!$ctrl.hosts">
-          <td colspan="3">
-            <i class="fa fa-spinner fa-spin fa-fw"></i> Loading...</td>
+          <td translate
+              colspan="3">
+            <i class="fa fa-spinner fa-spin fa-fw"></i> Loading..
+          </td>
         </tr>
         <tr ng-repeat="(key, value) in $ctrl.hosts">
           <td>{{ key }}</td>
@@ -31,17 +33,19 @@
               <br>{{ message }}</span>
           </td>
           <td align="center">
-            <button class="btn btn-default btn-sm btn-label tc_startService"
+            <button translate
+                    class="btn btn-default btn-sm btn-label tc_startService"
                     ng-if="value.state === 'INACTIVE' || value.state === 'STARTING'"
                     ng-click="$ctrl.start(key)"
                     ng-disabled="value.state === 'STARTING'">
-              <i class="fa fa-fw fa-play"></i>Start
+              <i class="fa fa-fw fa-play"></i> Start
             </button>
-            <button class="btn btn-default btn-sm btn-label tc_stopService"
+            <button translate
+                    class="btn btn-default btn-sm btn-label tc_stopService"
                     ng-if="value.state === 'ACTIVE' || value.state === 'STOPPING'"
                     ng-click="$ctrl.stop(key)"
                     ng-disabled="value.state === 'STOPPING'">
-              <i class="fa fa-fw fa-stop icon-danger"></i>Stop
+              <i class="fa fa-fw fa-stop icon-danger"></i> Stop
             </button>
           </td>
         </tr>
@@ -52,7 +56,8 @@
 
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <button id="close"
+      <button translate
+              id="close"
               class="btn btn-default btn-sm"
               ng-click="$ctrl.close()">Close</button>
     </div>

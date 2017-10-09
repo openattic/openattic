@@ -3,205 +3,241 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.0.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:36
-msgid "(Used: {{$ctrl.selection.item.used_size | bytes}} &mdash; Free: {{$ctrl.selection.item.free | bytes}})"
+msgid ""
+"(Used: {{$ctrl.selection.item.used_size | bytes}} &mdash; Free: {{$ctrl."
+"selection.item.free | bytes}})"
 msgstr ""
+"(已用: {{$ctrl.selection.item.used_size | 字节}} &mdash; 可用: {{$ctrl."
+"selection.item.free | 字节}})"
 
 #: app/components/ceph-pools/templates/add-pool.html:438
 msgid "- Select an application to use -"
-msgstr ""
+msgstr "- 选择一个要使用的应用 -"
 
 #: app/components/ceph-pools/templates/add-pool.html:71
 #: app/components/dashboard/templates/dashboard-compose-modal.html:58
 msgid "-- Select a cluster --"
-msgstr ""
+msgstr "-- 选择一个集群 --"
 
 #: app/components/ceph-pools/templates/add-pool.html:338
 msgid "-- Select a compression algorithm --"
-msgstr ""
+msgstr "-- 选择一种压缩算法 --"
 
 #: app/components/ceph-pools/templates/add-pool.html:315
 msgid "-- Select a compression mode --"
-msgstr ""
+msgstr "-- 选择一种压缩模式 --"
 
 #: app/components/ceph-pools/templates/add-pool.html:129
 msgid "-- Select a crush ruleset --"
-msgstr ""
+msgstr "-- 选择一个CRUSH规则组 --"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:40
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:58
 msgid "-- Select a permission --"
-msgstr ""
+msgstr "-- 选择权限 --"
 
 #: app/components/ceph-pools/templates/add-pool.html:101
 msgid "-- Select a pool type --"
-msgstr ""
+msgstr "-- 选择一种存储池类型 --"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:21
 msgid "-- Select a subuser --"
-msgstr ""
+msgstr "-- 选择子用户 --"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:20
 #: app/components/dashboard/templates/dashboard-compose-modal.html:32
 msgid "-- Select a type --"
-msgstr ""
+msgstr "-- 选择一种类型 --"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:80
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:21
 msgid "-- Select a user --"
-msgstr ""
+msgstr "-- 选择用户 --"
 
 #: app/components/ceph-pools/templates/add-pool.html:220
 msgid "-- Select an erasure code profile --"
-msgstr ""
+msgstr "-- 选择一种纠删码配置 --"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:193
 msgid "-- Select the access type --"
-msgstr ""
+msgstr "-- 选择访问类型 --"
 
 #: app/components/settings/settings-form/settings-form.component.html:60
 msgid "-- Select the external auth system --"
-msgstr ""
+msgstr "-- 选择外部认证系统 --"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:31
 msgid "-- Select the host --"
-msgstr ""
+msgstr "-- 选择宿主机 --"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:72
 msgid "-- Select the object gateway user --"
-msgstr ""
+msgstr "-- 选择对象网关用户 --"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:51
 msgid "-- Select the storage backend --"
-msgstr ""
+msgstr "-- 选择存储后端 --"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:213
 msgid "-- Select what kind of user id squashing is performed --"
-msgstr ""
+msgstr "-- 选择通过匿名方式访问的用户 --"
 
 #: app/components/navigation/templates/navigation.html:30
 msgid "<a data-ui-sref=\"ceph-rgw-buckets\">Buckets</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"ceph-rgw-buckets\">桶(Buckets)</a>"
 
 #: app/components/navigation/templates/navigation.html:29
 msgid "<a data-ui-sref=\"ceph-rgw-users\">Users</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"ceph-rgw-users\">用户</a>"
 
 #: app/components/navigation/templates/navigation.html:24
 msgid "<a data-ui-sref=\"cephIscsi\">iSCSI</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"cephIscsi\">iSCSI</a>"
 
 #: app/components/navigation/templates/navigation.html:25
 msgid "<a data-ui-sref=\"cephNfs\">NFS</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"cephNfs\">NFS</a>"
 
 #: app/components/navigation/templates/navigation.html:23
 msgid "<a data-ui-sref=\"cephNodes\">Nodes</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"cephNodes\">节点</a>"
 
 #: app/components/navigation/templates/navigation.html:20
 msgid "<a data-ui-sref=\"cephOsds\">OSDs</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"cephOsds\">OSDs</a>"
 
 #: app/components/navigation/templates/navigation.html:22
 msgid "<a data-ui-sref=\"cephPools\">Pools</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"cephPools\">存储池</a>"
 
 #: app/components/navigation/templates/navigation.html:21
 msgid "<a data-ui-sref=\"cephRbds\">RBDs</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"cephRbds\">RBDs</a>"
 
 #: app/components/navigation/templates/navigation.html:38
 msgid "<a data-ui-sref=\"commandlog\">Command Log</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"commandlog\">命令日志</a>"
 
 #: app/components/navigation/templates/navigation.html:33
 msgid "<a data-ui-sref=\"crushmap\">CRUSH Map</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"crushmap\">CRUSH地图</a>"
 
 #: app/components/navigation/templates/navigation.html:19
 msgid "<a data-ui-sref=\"dashboard\" title=\"Dashboard\">Dashboard</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"dashboard\" title=\"Dashboard\">仪表盘</a>"
 
 #: app/components/navigation/templates/navigation.html:39
 msgid "<a data-ui-sref=\"settings\">Settings</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"settings\">设置</a>"
 
 #: app/components/navigation/templates/navigation.html:37
 msgid "<a data-ui-sref=\"users\">Users</a>"
-msgstr ""
+msgstr "<a data-ui-sref=\"users\">用户</a>"
 
 #: app/index.tpl.html:39
 msgid ""
 "<h2>JavaScript required!</h2>\n"
-"                <p>A browser with JavaScript enabled is required in order to use this service.</p>\n"
-"                <p>When using Internet Explorer, please check your security settings and add this address to your trusted sites.</p>"
+"                <p>A browser with JavaScript enabled is required in order to "
+"use this service.</p>\n"
+"                <p>When using Internet Explorer, please check your security "
+"settings and add this address to your trusted sites.</p>"
 msgstr ""
+"<h2>需要支持JavaScript!</h2>\n"
+"                <p>浏览器需要启用JavaScript才能使用此服务.</p>\n"
+"                <p>使用Internet Explorer时，请检查您的安全设置，并将此地址添"
+"加到您的信任的站点.</p>"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:102
 msgid "<i class=\"fa fa-angle-double-down fa-lg icon-danger\"></i> Stopped"
-msgstr ""
+msgstr "<i class=\"fa fa-angle-double-down fa-lg icon-danger\"></i> 已停止"
 
 #: app/components/notification/templates/oa-notifications.html:1
 msgid "<i class=\"fa fa-bell\"></i> Notifications"
-msgstr ""
+msgstr "<i class=\"fa fa-bell\"></i> 通知"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:57
 msgid "<i class=\"fa fa-book\" aria-hidden=\"true\"></i> How to use"
-msgstr ""
+msgstr "<i class=\"fa fa-book\" aria-hidden=\"true\"></i>使用说明"
 
 #: app/components/users/templates/generate-auth-token.html:8
 msgid ""
-"<i class=\"fa fa-exclamation-triangle\"></i> Please note that this will invalidate\n"
-"        the existing token and make sure to update any applications still using the old token."
+"<i class=\"fa fa-exclamation-triangle\"></i> Please note that this will "
+"invalidate\n"
+"        the existing token and make sure to update any applications still "
+"using the old token."
 msgstr ""
+"<i class=\"fa fa-exclamation-triangle\"></i> 请注意，此操作会使之前的授权码失"
+"效，且执行操作后所有使用旧授权码的应用均需要更新。."
 
 #: app/components/commandlog/templates/commandlog.html:3
 msgid "<i class=\"fa fa-fw fa-calendar\"></i>Delete By Date"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-calendar\"></i>按日期删除"
 
 #: app/components/settings/settings-form/settings-form.component.html:369
-msgid "<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Ceph connection established successfully"
-msgstr ""
+msgid ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Ceph connection "
+"established successfully"
+msgstr "<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Ceph连接成功建立"
 
 #: app/components/settings/settings-form/settings-form.component.html:296
-msgid "<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Grafana connection established successfully"
+msgid ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Grafana connection "
+"established successfully"
 msgstr ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Grafana连接成功建立"
 
 #: app/components/settings/settings-form/settings-form.component.html:217
-msgid "<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Object Gateway API connection established successfully"
+msgid ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Object Gateway API "
+"connection established successfully"
 msgstr ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>对象网关API连接成功建立"
 
 #: app/components/settings/settings-form/settings-form.component.html:105
-msgid "<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Salt API connection established successfully"
+msgid ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Salt API connection "
+"established successfully"
 msgstr ""
+"<i class=\"fa fa-fw fa-check\" aria-hidden=\"true\"></i>Salt API连接成功建立"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:32
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:33
 msgid "<i class=\"fa fa-fw fa-clone\"></i>Copy"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-clone\"></i>复制"
 
 #: app/components/ceph-osd/templates/listing.html:15
-msgid "<i class=\"fa fa-fw fa-cog\" aria-hidden=\"true\"></i>Configure Cluster-wide OSD Flags"
+msgid ""
+"<i class=\"fa fa-fw fa-cog\" aria-hidden=\"true\"></i>Configure Cluster-wide "
+"OSD Flags"
 msgstr ""
+"<i class=\"fa fa-fw fa-cog\" aria-hidden=\"true\"></i>配置群集范围的OSD标志"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:45
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:45
 msgid "<i class=\"fa fa-fw fa-cog\" aria-hidden=\"true\"></i>Manage service"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-cog\" aria-hidden=\"true\"></i>管理服务"
 
 #: app/components/dashboard/templates/dashboard.html:26
 msgid "<i class=\"fa fa-fw fa-edit\"></i>Dashboard settings"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-edit\"></i>设置仪表盘"
 
 #: app/components/ceph-rgw/templates/cephRgwUsers.html:30
 msgid "<i class=\"fa fa-fw fa-list\"></i>List buckets"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-list\"></i>桶(Bucket)列表"
 
 #: app/components/dashboard/templates/dashboard.html:42
 msgid "<i class=\"fa fa-fw fa-lock\"></i>Lock dashboard"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-lock\"></i>锁定仪表盘"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:20
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:21
@@ -214,15 +250,15 @@ msgstr ""
 #: app/components/users/templates/users.html:15
 #: app/components/users/templates/users.html:6
 msgid "<i class=\"fa fa-fw fa-pencil\"></i>Edit"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-pencil\"></i>编辑"
 
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:25
 msgid "<i class=\"fa fa-fw fa-play\"></i>Start"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-play\"></i>启动"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:51
 msgid "<i class=\"fa fa-fw fa-play\"></i>Start all"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-play\"></i>启动所有"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:16
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:27
@@ -239,78 +275,94 @@ msgstr ""
 #: app/components/users/templates/users.html:10
 #: app/components/users/templates/users.html:3
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加"
 
 #: app/components/dashboard/templates/dashboard.html:18
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add Dashboard"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>增加仪表盘"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:213
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add S3 key"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加S3钥"
 
 #: app/components/dashboard/templates/dashboard.html:12
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add Widget"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>增加组件"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:305
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add capability"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加使能"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:78
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add clients"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加客户端"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:131
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add image"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加镜像"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:230
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add initiator"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加授权发起人"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:75
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add portal"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加入口"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:168
 msgid "<i class=\"fa fa-fw fa-plus\"></i>Add subuser"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-plus\"></i>添加子用户"
 
 #: app/components/settings/settings-form/settings-form.component.html:102
 #: app/components/settings/settings-form/settings-form.component.html:214
 #: app/components/settings/settings-form/settings-form.component.html:293
 #: app/components/settings/settings-form/settings-form.component.html:366
-msgid "<i class=\"fa fa-fw fa-spinner fa-spin\" aria-hidden=\"true\"></i>Checking connection"
+msgid ""
+"<i class=\"fa fa-fw fa-spinner fa-spin\" aria-hidden=\"true\"></i>Checking "
+"connection"
 msgstr ""
+"<i class=\"fa fa-fw fa-spinner fa-spin\" aria-hidden=\"true\"></i>检查连接中"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:57
-msgid "<i class=\"fa fa-fw fa-stop \" ng-class=\"{'icon-danger': !($ctrl.deployed.status === false || $ctrl.deployed.$resolved === false)}\"></i>Stop all"
+msgid ""
+"<i class=\"fa fa-fw fa-stop \" ng-class=\"{'icon-danger': !($ctrl.deployed."
+"status === false || $ctrl.deployed.$resolved === false)}\"></i>Stop all"
 msgstr ""
+"<i class=\"fa fa-fw fa-stop \" ng-class=\"{'icon-danger': !($ctrl.deployed."
+"status === false || $ctrl.deployed.$resolved === false)}\"></i>停止所有"
 
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:31
 msgid "<i class=\"fa fa-fw fa-stop icon-danger\"></i>Stop"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-stop icon-danger\"></i>停止"
 
 #: app/components/settings/settings-form/settings-form.component.html:372
-msgid "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Ceph connection failed"
-msgstr ""
+msgid ""
+"<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Ceph connection "
+"failed"
+msgstr "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Ceph连接失败"
 
 #: app/components/settings/settings-form/settings-form.component.html:299
-msgid "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Grafana connection failed"
-msgstr ""
+msgid ""
+"<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Grafana connection "
+"failed"
+msgstr "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Grafana连接失败"
 
 #: app/components/settings/settings-form/settings-form.component.html:220
-msgid "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Object Gateway API connection failed"
+msgid ""
+"<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Object Gateway API "
+"connection failed"
 msgstr ""
+"<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>对象网关API连接失败"
 
 #: app/components/settings/settings-form/settings-form.component.html:108
-msgid "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Salt API connection failed"
-msgstr ""
+msgid ""
+"<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Salt API connection "
+"failed"
+msgstr "<i class=\"fa fa-fw fa-times\" aria-hidden=\"true\"></i>Salt API连接失败"
 
 #: app/components/dashboard/templates/dashboard.html:31
 msgid "<i class=\"fa fa-fw fa-times\"></i>Clear dashboard"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-times\"></i>清除仪表盘"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:23
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:37
@@ -324,201 +376,225 @@ msgstr ""
 #: app/components/ceph-rgw/templates/cephRgwUsers.html:36
 #: app/components/users/templates/users.html:21
 msgid "<i class=\"fa fa-fw fa-trash-o\"></i>Delete"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-trash-o\"></i>删除"
 
 #: app/components/commandlog/templates/commandlog.html:7
 msgid "<i class=\"fa fa-fw fa-trash-o\"></i>Delete By Selection"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-trash-o\"></i>删除所选项"
 
 #: app/components/dashboard/templates/dashboard.html:36
 msgid "<i class=\"fa fa-fw fa-trash-o\"></i>Delete dashboard"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-trash-o\"></i>删除仪表盘"
 
 #: app/components/dashboard/templates/dashboard.html:45
 msgid "<i class=\"fa fa-fw fa-unlock\"></i>Unlock dashboard"
-msgstr ""
+msgstr "<i class=\"fa fa-fw fa-unlock\"></i>解锁仪表盘"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:18
 msgid "<i class=\"fa fa-refresh\"></i> Refresh"
-msgstr ""
+msgstr "<i class=\"fa fa-refresh\"></i> 刷新"
 
 #: app/components/shared/oa-loading-panel/oa-loading-panel.component.html:3
-msgid "<i class=\"fa fa-spinner fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading..."
-msgstr ""
+msgid ""
+"<i class=\"fa fa-spinner fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading..."
+msgstr "<i class=\"fa fa-spinner fa-spin fa-fw\" aria-hidden=\"true\"></i>加载中…"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:99
 msgid "<i class=\"fa fa-spinner fa-spin fa-fw\"></i> Starting..."
-msgstr ""
+msgstr "<i class=\"fa fa-spinner fa-spin fa-fw\"></i> 启动中…"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:93
 msgid "<i class=\"fa fa-spinner fa-spin fa-fw\"></i> Stopping..."
-msgstr ""
+msgstr "<i class=\"fa fa-spinner fa-spin fa-fw\"></i>停止中…"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:113
 msgid "<i class=\"fa fa-trash-o\"></i>"
-msgstr ""
+msgstr "<i class=\"fa fa-trash-o\"></i>"
 
 #: app/components/feedback/feedback.component.html:29
-msgid "<strong>Remember</strong>, for bugs and issues, you need to open a Jira ticket."
-msgstr ""
+msgid ""
+"<strong>Remember</strong>, for bugs and issues, you need to open a Jira "
+"ticket."
+msgstr "<strong>记住</strong>对于错误和问题，您需要利用Jira开票"
 
 #: app/components/feedback/feedback.component.html:10
 msgid "<strong>Your feedback</strong><br>makes openATTIC better"
-msgstr ""
+msgstr "<strong>您的反馈</strong><br>使openATTIC更好"
 
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:16
-msgid "<td colspan=\"3\"><i class=\"fa fa-spinner fa-spin fa-fw\"></i> Loading...</td>"
+msgid ""
+"<td colspan=\"3\"><i class=\"fa fa-spinner fa-spin fa-fw\"></i> Loading...</"
+"td>"
 msgstr ""
+"<td colspan=\"3\"><i class=\"fa fa-spinner fa-spin fa-fw\"></i>加载中…</td>"
 
 #: app/components/users/templates/add-edit-user.html:61
 msgid "A password is required."
-msgstr ""
+msgstr "请输入密码。"
 
 #: app/components/users/templates/add-edit-user.html:141
 msgid "API authentication token"
-msgstr ""
+msgstr "API授权码"
 
 #: app/components/settings/settings-form/settings-form.component.html:161
 msgid "Access Key"
-msgstr ""
+msgstr "访问密钥"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:44
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:185
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:59
 msgid "Access Type"
-msgstr ""
+msgstr "访问类型"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:27
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:42
 msgid "Access Type:"
-msgstr ""
+msgstr "访问类型:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:335
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:49
 msgid "Access key"
-msgstr ""
+msgstr "访问密钥"
 
 #: app/components/users/templates/users.html:34
 msgid "Active"
-msgstr ""
+msgstr "是否有效"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:2
 msgid "Add S3 key: {{key.user}}"
-msgstr ""
+msgstr "添加S3钥: {{key.user}}"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:2
 msgid "Add Swift key: {{key.user}}"
-msgstr ""
+msgstr "添加Swift钥: {{key.user}}"
 
 #: app/components/ceph-pools/templates/add-pool.html:427
 msgid "Add applications"
-msgstr ""
+msgstr "添加应用"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:18
 msgid "Add bucket: {{bucket.bucket}}"
-msgstr ""
+msgstr "添加桶(bucket): {{bucket.bucket}}"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:2
 msgid "Add capability: {{cap.type}}"
-msgstr ""
+msgstr "添加使能: {{cap.type}"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:2
 msgid "Add erasure code profile"
-msgstr ""
+msgstr "添加新的纠删码配置"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:112
 msgid ""
 "Add erasure code profile\n"
-"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"addForm.$submitted\"></i>"
+"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"addForm.$submitted"
+"\"></i>"
 msgstr ""
+"添加新的纠删码配置\n"
+"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"addForm.$submitted\"></"
+"i>"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:2
 msgid "Add subuser: {{subuser.subuser}}"
-msgstr ""
+msgstr "添加子用户: {{subuser.subuser}}"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:14
 msgid "Add user: {{user.user_id}}"
-msgstr ""
+msgstr "添加用户: {{user.user_id}}"
 
 #: app/components/ceph-nodes/templates/nodes.html:26
 msgid "Addresses"
-msgstr ""
+msgstr "网络地址"
 
 #: app/components/settings/settings-form/settings-form.component.html:191
 msgid "Admin Resource Path"
-msgstr ""
+msgstr "管理员资源路径"
 
 #: app/components/settings/settings-form/settings-form.component.html:181
 msgid "Admin User"
-msgstr ""
+msgstr "管理员账户"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component.html:3
 msgid "Advanced Settings"
-msgstr ""
+msgstr "高级设置"
 
 #: app/components/ceph-pools/templates/cacheTier.html:21
 msgid "Advanced information:"
-msgstr ""
+msgstr "高级信息:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component.html:62
 msgid "Advanced settings"
-msgstr ""
+msgstr "高级设置"
 
 #: app/components/ceph-pools/templates/add-pool.html:328
 msgid "Algorithm"
-msgstr ""
+msgstr "算法"
 
 #: app/components/ceph-pools/templates/status.html:68
 msgid "Algorithm:"
-msgstr ""
+msgstr "算法:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:2
-msgid "Alternative access for <strong>NFS v3</strong> mounts (it must not have a leading /)."
-msgstr ""
+msgid ""
+"Alternative access for <strong>NFS v3</strong> mounts (it must not have a "
+"leading /)."
+msgstr "<strong>NFS v3</strong> 的可替换挂载方式(/不能放在首位)。"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:220
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:34
 msgid ""
-"An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'<br>\n"
-"                For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309<br>\n"
-"                <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/ISCSI#Addressing\">More information</a>"
+"An IQN has the following notation 'iqn.$year-$month.$reversedAddress:"
+"$definedName'<br>\n"
+"                For example: iqn.2016-06.org.openattic:storage:disk.sn-"
+"a8675309<br>\n"
+"                <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/"
+"ISCSI#Addressing\">More information</a>"
 msgstr ""
+"IQN应由下列格式构成 'iqn.$year-$month.$reversedAddress:$definedName'<br>\n"
+"                例如: iqn.2016-06.org.openattic:storage:disk.sn-"
+"a8675309<br>\n"
+"                <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/"
+"ISCSI#Addressing\">相关资料</a>"
 
 #: app/components/feedback/feedback.component.html:12
 msgid ""
-"And this is why we wanted to let you know that you can get in contact with us on many social media platforms. Your comments,\n"
-"            your ideas, and everything you think will help make your work at openATTIC better."
+"And this is why we wanted to let you know that you can get in contact with "
+"us on many social media platforms. Your comments,\n"
+"            your ideas, and everything you think will help make your work at "
+"openATTIC better."
 msgstr ""
+"我希望在这里告知你可以在许多不同的社交媒体平台上与我们联系并发表你的评论,\n"
+"            你的想法和你贡献的一切都将有助于openATTIC变得更好。"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:6
 msgid "Any client can access"
-msgstr ""
+msgstr "所有客户端均可访问"
 
 #: app/components/ceph-pools/templates/add-pool.html:425
 #: app/components/ceph-pools/templates/add-pool.html:459
 #: app/components/ceph-pools/templates/listing.html:49
 msgid "Applications"
-msgstr ""
+msgstr "应用"
 
 #: app/components/ceph-pools/templates/status.html:17
 msgid "Applications:"
-msgstr ""
+msgstr "应用:"
 
 #: app/components/navigation/templates/oa-check-form.html:6
 msgid "Are you sure you want to leave this page?"
-msgstr ""
+msgstr "你是否决定离开当前页面?"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:201
 msgid "At least one feature has to be selected"
-msgstr ""
+msgstr "至少选择一项特性"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:155
 msgid "Authentication"
-msgstr ""
+msgstr "授权"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:41
 msgid "Authentication:"
-msgstr ""
+msgstr "授权:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:412
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:264
@@ -528,68 +604,83 @@ msgstr ""
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:645
 #: app/components/users/templates/add-edit-user.html:203
 msgid "Back"
-msgstr ""
+msgstr "返回"
 
 #: app/components/taskQueue/templates/task-queue-dialog.html:2
 msgid "Background-Tasks"
-msgstr ""
+msgstr "后台任务"
 
 #: app/components/ceph-pools/templates/cacheTier.html:6
 msgid "Basic information:"
-msgstr ""
+msgstr "基本信息:"
 
 #: app/components/ceph-pools/templates/delete-pool.html:8
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
-"      in that Ceph pool and that this operation <strong>cannot be undone</strong>."
+"      in that Ceph pool and that this operation <strong>cannot be undone</"
+"strong>."
 msgstr ""
+"请注意，您将<strong>丢失</strong>\n"
+"      此Ceph存储池内<strong>所有数据</strong>，且此操作<strong>不可撤销</"
+"strong>。"
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:8
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
 "      in that RBD and that this operation <strong>cannot be undone</strong>."
 msgstr ""
+"请注意，您将<strong>丢失</strong>\n"
+"      此RBD<strong>所有数据</strong>，且此操作<strong>不可撤销</strong>。"
 
 #: app/components/ceph-pools/templates/delete-pool.html:20
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
-"      in the Ceph pools and that this operation <strong>cannot be undone</strong>."
+"      in the Ceph pools and that this operation <strong>cannot be undone</"
+"strong>."
 msgstr ""
+"请注意，您将<strong>丢失</strong>\n"
+"      此Ceph存储池内<strong>所有数据</strong>，且此操作<strong>不可撤销</"
+"strong>。"
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:20
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
 "      in the RBDs and that this operation <strong>cannot be undone</strong>."
 msgstr ""
+"请注意，您将<strong>丢失</strong>\n"
+"      此RBD<strong>所有数据</strong>，且此操作<strong>不可撤销</strong>。"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:9
 msgid "Block name prefix:"
-msgstr ""
+msgstr "块名称前缀:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:107
 msgid "Bucket"
-msgstr ""
+msgstr "桶(Bucket)"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:521
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:54
 msgid "Bucket quota"
-msgstr ""
+msgstr "桶(Bucket)配额"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html:5
-msgid "By using different Pseudo options, the same Path may be exported multiple times."
-msgstr ""
+msgid ""
+"By using different Pseudo options, the same Path may be exported multiple "
+"times."
+msgstr "通过选择不同的 Pseudo 选项, 同一路径可被多次导出。"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:4
-msgid "By using different Tag options, the same Path may be exported multiple times."
-msgstr ""
+msgid ""
+"By using different Tag options, the same Path may be exported multiple times."
+msgstr "通过选择不同的标签，同一路径可被多次导出。"
 
 #: app/components/ceph-pools/templates/cacheTier.html:3
 msgid "Cache tier of {{selection.item.name}}"
-msgstr ""
+msgstr "{{selection.item.name}}的快速缓存层"
 
 #: app/components/ceph-pools/templates/add-pool.html:273
 msgid "Calculation help"
-msgstr ""
+msgstr "计算帮助"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:118
 #: app/components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html:25
@@ -610,362 +701,397 @@ msgstr ""
 #: app/components/users/templates/delete-user.html:23
 #: app/components/users/templates/generate-auth-token.html:22
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:270
 msgid "Capabilities"
-msgstr ""
+msgstr "使能"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:26
 msgid "Capabilities:"
-msgstr ""
+msgstr "使能:"
 
 #: app/components/settings/settings-form/settings-form.component.html:311
 msgid "Ceph Clusters"
-msgstr ""
+msgstr "Ceph集群"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:84
 msgid "Ceph Path"
-msgstr ""
+msgstr "Ceph路径"
 
 #: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:17
 msgid "Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong>"
-msgstr ""
+msgstr "Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong>"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component.html:68
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component.html:6
-msgid "Changing these parameters from their default values is usually not necessary."
-msgstr ""
+msgid ""
+"Changing these parameters from their default values is usually not necessary."
+msgstr "一般情况下是不需要更改默认参数的。"
 
 #: app/components/dashboard/templates/delete-widgets.html:18
 #: app/components/dashboard/templates/delete-widgets.html:2
 msgid "Clear dashboard"
-msgstr ""
+msgstr "清除仪表盘"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:2
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:22
 msgid "Clients"
-msgstr ""
+msgstr "客户端"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:3
-msgid "Clients may not mount subdirectories (i.e. if Tag = foo, the client may not mount foo/baz)."
+msgid ""
+"Clients may not mount subdirectories (i.e. if Tag = foo, the client may not "
+"mount foo/baz)."
 msgstr ""
+"客户端可能无法挂载子目录(例如:若Tag = foo, 则客户端可能无法挂载 foo/baz)."
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:40
 msgid "Clients:"
-msgstr ""
+msgstr "客户端:"
 
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:46
 #: app/components/taskQueue/templates/task-deletion.html:90
 #: app/components/taskQueue/templates/task-queue-dialog.html:113
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: app/components/ceph-nodes/templates/nodes.html:27
 #: app/components/ceph-pools/templates/add-pool.html:59
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:29
 #: app/components/dashboard/templates/dashboard-compose-modal.html:51
 msgid "Cluster"
-msgstr ""
+msgstr "集群"
 
 #: app/components/ceph-pools/templates/status.html:44
 msgid "Cluster ID:"
-msgstr ""
+msgstr "集群ID:"
 
 #: app/components/dashboard-widgets/templates/ceph-osd-status.html:3
 msgid "Cluster is near full!"
-msgstr ""
+msgstr "集群接近饱和!"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:71
 msgid "Coding chunks (m)"
-msgstr ""
+msgstr "编码块(m)"
 
 #: app/components/commandlog/templates/commandlog.html:18
 msgid "Command"
-msgstr ""
+msgstr "命令"
 
 #: app/components/ceph-pools/templates/add-pool.html:302
 msgid "Compression"
-msgstr ""
+msgstr "压缩"
 
 #: app/components/ceph-pools/templates/listing.html:57
 msgid "Compression algorithm"
-msgstr ""
+msgstr "压缩算法"
 
 #: app/components/ceph-pools/templates/status.html:64
 msgid "Compression information:"
-msgstr ""
+msgstr "压缩信息:"
 
 #: app/components/ceph-pools/templates/listing.html:59
 msgid "Compression max. blob size"
-msgstr ""
+msgstr "压缩最大blob尺寸"
 
 #: app/components/ceph-pools/templates/listing.html:58
 msgid "Compression min. blob size"
-msgstr ""
+msgstr "压缩最小blob尺寸"
 
 #: app/components/ceph-pools/templates/listing.html:56
 msgid "Compression mode"
-msgstr ""
+msgstr "压缩模式"
 
 #: app/components/ceph-pools/templates/listing.html:60
 msgid "Compression required ratio"
-msgstr ""
+msgstr "所需压缩比"
 
 #: app/components/settings/settings-form/settings-form.component.html:324
 msgid "Config file"
-msgstr ""
+msgstr "配置文件"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component.html:85
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component.html:20
 msgid ""
 "Confirm\n"
-"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm.$submitted\"></i>"
+"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 msgstr ""
+"确定\n"
+"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 
 #: app/components/users/templates/add-edit-user.html:70
 msgid "Confirm password"
-msgstr ""
+msgstr "确认密码"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:45
 msgid "Content"
-msgstr ""
+msgstr "内容"
 
 #: app/components/taskQueue/templates/task-deletion.html:67
 msgid "Couldn't delete the following {{pendingDeletionFailure.length}} Tasks"
-msgstr ""
+msgstr "无法删除下列{{pendingDeletionFailure.length}}个任务"
 
 #: app/components/taskQueue/templates/task-deletion.html:60
-msgid "Couldn't delete {{pendingDeletionFailure.length}} task{{pendingDeletionFailure.length === 1 ? '' : 's'}}."
-msgstr ""
+msgid ""
+"Couldn't delete {{pendingDeletionFailure.length}} "
+"task{{pendingDeletionFailure.length === 1 ? '' : 's'}}."
+msgstr "无法删除{{pendingDeletionFailure.length}}个任务。"
 
 #: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:11
 msgid "Couldn't load Ceph cluster."
-msgstr ""
+msgstr "无法加载Ceph集群"
 
 #: app/components/ceph-pools/templates/add-pool.html:79
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:40
-msgid "Couldn't load any cluster, please contact your administrator for details."
-msgstr ""
+msgid ""
+"Couldn't load any cluster, please contact your administrator for details."
+msgstr "找不到任何集群，请联系管理员。"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:128
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:90
 msgid "Couldn't load any pool, please contact your administrator for details."
-msgstr ""
+msgstr "找不到任何存储池，请联系管理员。"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:272
 msgid ""
 "Create\n"
-"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"rbdForm.$submitted\"></i>"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"rbdForm."
+"$submitted\"></i>"
 msgstr ""
+"创建\n"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"rbdForm."
+"$submitted\"></i>"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:9
 msgid "Create RBD: {{$ctrl.rbd.name}}"
-msgstr ""
+msgstr "创建RBD: {{$ctrl.rbd.name}}"
 
 #: app/components/users/templates/add-edit-user.html:5
 msgid "Create User: {{user.username}}"
-msgstr ""
+msgstr "创建用户: {{user.username}}"
 
 #: app/components/ceph-osd/templates/listing.html:32
 msgid "Crush Weight"
-msgstr ""
+msgstr "CRUSH权重"
 
 #: app/components/ceph-pools/templates/add-pool.html:117
 #: app/components/ceph-pools/templates/listing.html:55
 msgid "Crush ruleset"
-msgstr ""
+msgstr "CRUSH规则组"
 
 #: app/components/ceph-pools/templates/status.html:35
 msgid "Crush ruleset:"
-msgstr ""
+msgstr "CRUSH规则组"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:46
 msgid "Data chunks (k)"
-msgstr ""
+msgstr "数据块 (k)"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:100
 msgid "Data-Pool"
-msgstr ""
+msgstr "数据池"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:14
 msgid "Data-Pool:"
-msgstr ""
+msgstr "数据池:"
 
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:47
 msgid "Data-pool"
-msgstr ""
+msgstr "数据池"
 
 #: app/components/settings/settings-form/settings-form.component.html:18
 msgid "DeepSea / Salt REST API"
-msgstr ""
+msgstr "DeepSea / Salt REST API"
 
 #: app/components/taskQueue/templates/task-deletion.html:83
 #: app/components/taskQueue/templates/task-queue-dialog.html:17
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: app/components/commandlog/templates/delete-by-selection.html:19
 msgid ""
 "Delete\n"
-"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm.$submitted\"></i>"
+"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 msgstr ""
+"删除\n"
+"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 
 #: app/components/commandlog/templates/delete-by-date.html:37
 msgid ""
 "Delete\n"
-"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"pickDateForm.$submitted\"></i>"
+"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if="
+"\"pickDateForm.$submitted\"></i>"
 msgstr ""
+"删除\n"
+"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"pickDateForm."
+"$submitted\"></i>"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:27
 msgid ""
 "Delete\n"
-"          <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm.$submitted\"></i>"
+"          <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 msgstr ""
+"删除\n"
+"          <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 
 #: app/components/dashboard/templates/delete-dashboard.html:18
 msgid "Delete dashboard"
-msgstr ""
+msgstr "删除仪表盘"
 
 #: app/components/dashboard/templates/delete-dashboard.html:2
 msgid "Delete dashboard '{{data.name}}'"
-msgstr ""
+msgstr "删除仪表盘 '{{data.name}}'"
 
 #: app/components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html:2
 msgid "Delete erasure code profile"
-msgstr ""
+msgstr "删除纠删码配置"
 
 #: app/components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html:18
 msgid ""
 "Delete erasure code profile\n"
-"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm.$submitted\"></i>"
+"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 msgstr ""
+"删除纠删码配置\n"
+"        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 
 #: app/components/commandlog/templates/delete-by-date.html:2
 msgid "Delete log entry by date"
-msgstr ""
+msgstr "按日期删除日志"
 
 #: app/components/commandlog/templates/delete-by-selection.html:2
 msgid "Delete log entry by selection"
-msgstr ""
+msgstr "选择要删除的日志"
 
 #: app/components/taskQueue/templates/task-deletion.html:8
 msgid "Delete task"
-msgstr ""
+msgstr "删除任务"
 
 #: app/components/taskQueue/templates/task-deletion.html:9
 msgid "Delete tasks"
-msgstr ""
+msgstr "删除任务"
 
 #: app/components/users/templates/delete-user.html:2
 msgid "Delete user"
-msgstr ""
+msgstr "删除用户"
 
 #: app/components/users/templates/delete-user.html:16
 msgid ""
 "Delete user\n"
-"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm.$submitted\"></i>"
+"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 msgstr ""
+"删除用户\n"
+"                <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"deleteForm."
+"$submitted\"></i>"
 
 #: app/components/dashboard/templates/delete-widget.html:18
 msgid "Delete widget"
-msgstr ""
+msgstr "删除组件"
 
 #: app/components/dashboard/templates/delete-widget.html:2
 msgid "Delete widget '{{data.name}}'"
-msgstr ""
+msgstr "删除组件'{{data.name}}'"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:3
 msgid "Details of {{ $ctrl.selection.item.targetId }}"
-msgstr ""
+msgstr "{{ $ctrl.selection.item.targetId }}的详细信息"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:3
 msgid "Details of {{$ctrl.selection.item.name}}"
-msgstr ""
+msgstr "{{$ctrl.selection.item.name}}的详细信息"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:3
 msgid "Details of {{selection.item.bucket}}"
-msgstr ""
+msgstr "{{selection.item.bucket}}的详细信息"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:3
 msgid "Details of {{selection.item.user_id}}"
-msgstr ""
+msgstr "{{selection.item.user_id}}的详细信息"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:37
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:39
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:58
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:60
 msgid "Disabled"
-msgstr ""
+msgstr "未启用"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:61
 msgid "Discovery auth:"
-msgstr ""
+msgstr "发现认证:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:294
 msgid "Discovery authentication"
-msgstr ""
+msgstr "发现认证"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:69
 msgid "Discovery mutual auth:"
-msgstr ""
+msgstr "发现互认证:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:351
 msgid "Discovery mutual authentication"
-msgstr ""
+msgstr "发现互认证"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:380
 msgid "Discovery mutual password"
-msgstr ""
+msgstr "发现互认证密码"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:366
 msgid "Discovery mutual user"
-msgstr ""
+msgstr "发现互认证用户"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:322
 msgid "Discovery password"
-msgstr ""
+msgstr "发现认证密码"
 
 #: app/components/users/templates/users.html:33
 msgid "E-Mail-Address"
-msgstr ""
+msgstr "电子邮件地址"
 
 #: app/components/ceph-pools/templates/add-pool.html:291
 msgid "EC Overwrite"
-msgstr ""
+msgstr "EC覆盖"
 
 #: app/components/users/templates/add-edit-user.html:6
 msgid "Edit User: {{user.username}}"
-msgstr ""
+msgstr "编辑用户: {{user.username}"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:19
 msgid "Edit bucket: {{bucket.bucket}}"
-msgstr ""
+msgstr "编辑桶(bucket): {{bucket.bucket}}"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:3
 msgid "Edit capability: {{cap.type}}"
-msgstr ""
+msgstr "编辑使能: {{cap.type}}"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:3
 msgid "Edit subuser: {{subuser.subuser}}"
-msgstr ""
+msgstr "编辑子用户: {{subuser.subuser}}"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:15
 msgid "Edit user: {{user.user_id}}"
-msgstr ""
+msgstr "编辑用户: {{user.user_id}}"
 
 #: app/components/users/templates/add-edit-user.html:128
 msgid "Email Address"
-msgstr ""
+msgstr "电子邮件"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:76
 #: app/components/ceph-rgw/templates/cephRgwUsers.html:47
 msgid "Email address"
-msgstr ""
+msgstr "电子邮件"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:12
 msgid "Email address:"
-msgstr ""
+msgstr "电子邮件:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:100
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:197
@@ -975,415 +1101,453 @@ msgstr ""
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:230
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:278
 msgid "Empty"
-msgstr ""
+msgstr "空"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:414
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:530
 msgid "Enabled"
-msgstr ""
+msgstr "启用"
 
 #: app/components/commandlog/templates/commandlog.html:22
 msgid "Endtime"
-msgstr ""
+msgstr "结束时间"
 
 #: app/components/ceph-pools/templates/add-pool.html:207
 #: app/components/ceph-pools/templates/listing.html:52
 msgid "Erasure code profile"
-msgstr ""
+msgstr "纠删码配置"
 
 #: app/components/ceph-pools/templates/status.html:29
 msgid "Erasure code profile:"
-msgstr ""
+msgstr "纠删码配置:"
 
 #: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:8
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 #: app/components/commandlog/templates/commandlog.html:20
 msgid "Exitcode"
-msgstr ""
+msgstr "返回值"
 
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:55
 msgid "Export"
-msgstr ""
+msgstr "导出"
 
 #: app/components/settings/settings-form/settings-form.component.html:51
 msgid "External Auth System"
-msgstr ""
+msgstr "外部认证系统"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:175
 msgid ""
 "Features\n"
-"            <oa-helper helper-data=\"$ctrl.features\" helper-template=\"'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'\">\n"
+"            <oa-helper helper-data=\"$ctrl.features\" helper-template="
+"\"'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'\">\n"
 "            </oa-helper>"
 msgstr ""
+"特性\n"
+"            <oa-helper helper-data=\"$ctrl.features\" helper-"
+"template=\"'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features."
+"html'\">\n"
+"            </oa-helper>"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:24
 msgid "Features:"
-msgstr ""
+msgstr "特性:"
 
 #: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:18
 msgid ""
-"File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>\n"
+"File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</"
+"strong>\n"
 "                can be read by the <strong>openattic</strong> user"
 msgstr ""
+"此文件: <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</"
+"strong>\n"
+"                can be read by the <strong>openattic</strong> user"
 
 #: app/components/users/templates/add-edit-user.html:107
 #: app/components/users/templates/users.html:31
 msgid "Firstname"
-msgstr ""
+msgstr "名字"
 
 #: app/components/ceph-pools/templates/add-pool.html:280
 msgid "Flags"
-msgstr ""
+msgstr "标识"
 
 #: app/components/ceph-pools/templates/status.html:39
 msgid "Flags:"
-msgstr ""
+msgstr "标识:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:53
 #: app/components/ceph-rgw/templates/cephRgwUsers.html:46
 msgid "Full name"
-msgstr ""
+msgstr "全名"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:9
 msgid "Full name:"
-msgstr ""
+msgstr "全名:"
 
 #: app/components/users/templates/generate-auth-token.html:19
 msgid "Generate"
-msgstr ""
+msgstr "生成"
 
 #: app/components/users/templates/generate-auth-token.html:2
 msgid "Generate API authentication token"
-msgstr ""
+msgstr "生成API授权码"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:325
 msgid "Generate key"
-msgstr ""
+msgstr "生成钥"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:39
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:82
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:44
 msgid "Generate secret"
-msgstr ""
+msgstr "生成密钥"
 
 #: app/components/feedback/feedback.component.html:36
 msgid "Get involved"
-msgstr ""
+msgstr "参与"
 
 #: app/components/settings/settings-form/settings-form.component.html:232
 msgid "Grafana"
-msgstr ""
+msgstr "Grafana"
 
 #: app/components/users/templates/add-edit-user.html:186
 #: app/components/users/templates/users.html:36
 msgid "Has all privileges"
-msgstr ""
+msgstr "是否拥有所有权限"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:23
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:56
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:10
 #: app/components/commandlog/templates/commandlog.html:21
 msgid "Host"
-msgstr ""
+msgstr "宿主机"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:7
 msgid "Host:"
-msgstr ""
+msgstr "宿主机:"
 
 #: app/components/ceph-nodes/templates/nodes.html:25
 #: app/components/ceph-osd/templates/listing.html:29
 msgid "Hostname"
-msgstr ""
+msgstr "宿主机名"
 
 #: app/components/settings/settings-form/settings-form.component.html:141
 #: app/components/settings/settings-form/settings-form.component.html:23
 #: app/components/settings/settings-form/settings-form.component.html:236
 msgid "Hostname / IP Address"
-msgstr ""
+msgstr "宿主机名/IP地址"
 
 #: app/components/ceph-pools/templates/listing.html:47
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: app/components/ceph-pools/templates/status.html:7
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:59
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:9
 msgid "Id:"
-msgstr ""
+msgstr "ID:"
 
 #: app/components/taskQueue/templates/task-deletion.html:23
-msgid "If you delete running tasks, it will abort the execution and won't roll back what has been done so far!"
+msgid ""
+"If you delete running tasks, it will abort the execution and won't roll back "
+"what has been done so far!"
 msgstr ""
+"如果您删除正在运行的任务，该任务将会立即终止，且无法回滚至任务运行之前的状"
+"态。"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:74
 msgid "Images"
-msgstr ""
+msgstr "镜像"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:92
 msgid ""
-"Images <oa-helper helper-data=\"$ctrl.unsupportedRbdFeatures\" helper-template=\"'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html'\">\n"
+"Images <oa-helper helper-data=\"$ctrl.unsupportedRbdFeatures\" helper-"
+"template=\"'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-"
+"features.html'\">\n"
 "                   </oa-helper>"
 msgstr ""
+"镜像<oa-helper helper-data=\"$ctrl.unsupportedRbdFeatures\" helper-"
+"template=\"'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-"
+"features.html'\">\n"
+"                   </oa-helper>"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:27
 msgid "Images:"
-msgstr ""
+msgstr "镜像:"
 
 #: app/components/feedback/feedback.component.html:17
 msgid ""
-"In order to stay up-to-date you can visit our blog for the latest release notes and other information about openATTIC and\n"
+"In order to stay up-to-date you can visit our blog for the latest release "
+"notes and other information about openATTIC and\n"
 "            interesting topics in general."
 msgstr ""
+"您可以访问我们的博客以获取有关openATTIC最新的发行说明、产品有关内容\n"
+"             和其他有趣的信息。"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:18
 msgid "Index pool:"
-msgstr ""
+msgstr "索引池:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:194
 msgid "Initiators"
-msgstr ""
+msgstr "授权发起人"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:47
 msgid "Initiators:"
-msgstr ""
+msgstr "授权发起人:"
 
 #: app/components/users/templates/add-edit-user.html:165
 msgid "Is active"
-msgstr ""
+msgstr "是否有效"
 
 #: app/components/users/templates/add-edit-user.html:175
 #: app/components/users/templates/users.html:35
 msgid "Is administrator"
-msgstr ""
+msgstr "是否为管理员"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:87
 #: app/components/users/templates/add-edit-user.html:135
 msgid "It's not a valid email address."
-msgstr ""
+msgstr "不是一个有效的电子邮件地址"
 
 #: app/components/ceph-nodes/templates/nodes.html:29
 msgid "Key status"
-msgstr ""
+msgstr "密钥状态"
 
 #: app/components/settings/settings-form/settings-form.component.html:334
 msgid "Keyring file"
-msgstr ""
+msgstr "密钥环文件"
 
 #: app/components/settings/settings-form/settings-form.component.html:351
 msgid "Keyring user"
-msgstr ""
+msgstr "密钥环用户"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:177
 msgid "Keys"
-msgstr ""
+msgstr "钥匙"
 
 #: app/components/ceph-pools/templates/listing.html:53
 msgid "Last Change"
-msgstr ""
+msgstr "最新更新"
 
 #: app/components/users/templates/users.html:37
 msgid "Last Login"
-msgstr ""
+msgstr "最近一次登录时间"
 
 #: app/components/ceph-pools/templates/status.html:47
 msgid "Last change:"
-msgstr ""
+msgstr "最新更新"
 
 #: app/components/users/templates/add-edit-user.html:117
 #: app/components/users/templates/users.html:32
 msgid "Lastname"
-msgstr ""
+msgstr "姓氏"
 
 #: app/components/navigation/templates/oa-check-form.html:10
 msgid "Leave this page"
-msgstr ""
+msgstr "离开当前页面"
 
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:2
 msgid "Manage NFS service"
-msgstr ""
+msgstr "管理NFS服务"
 
 #: app/components/settings/settings-form/settings-form.component.html:129
 msgid ""
 "Managed by DeepSea\n"
-"                <span ng-if=\"!$ctrl.managedByDeepSeaEnabled\" class=\"text-muted\">\n"
-"                  (DeepSea is not able to provide Object Gateway credentials)\n"
+"                <span ng-if=\"!$ctrl.managedByDeepSeaEnabled\" class=\"text-"
+"muted\">\n"
+"                  (DeepSea is not able to provide Object Gateway "
+"credentials)\n"
 "                </span>"
 msgstr ""
+"使用DeepSea管理\n"
+"                <span ng-if=\"!$ctrl.managedByDeepSeaEnabled\" class=\"text-"
+"muted\">\n"
+"                  (DeepSea未能提供对象网关的授权管理)\n"
+"                </span>"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:21
 msgid "Marker:"
-msgstr ""
+msgstr "标识:"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:27
 msgid "Master version:"
-msgstr ""
+msgstr "版本"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:98
 #: app/components/ceph-rgw/templates/cephRgwUsers.html:49
 msgid "Max. buckets"
-msgstr ""
+msgstr "最大桶(buckets)数目"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:66
 msgid "Maximum"
-msgstr ""
+msgstr "最大值"
 
 #: app/components/ceph-pools/templates/add-pool.html:374
 msgid "Maximum blob size"
-msgstr ""
+msgstr "最大blob大小"
 
 #: app/components/ceph-pools/templates/status.html:72
 msgid "Maximum blob size:"
-msgstr ""
+msgstr "最大blob大小:"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:17
 msgid "Maximum buckets:"
-msgstr ""
+msgstr "最大桶(buckets)数目:"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:23
 msgid "Maximum marker:"
-msgstr ""
+msgstr "最大标识:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:491
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:607
 msgid "Maximum objects"
-msgstr ""
+msgstr "最大对象数目"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:38
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:46
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:59
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:67
 msgid "Maximum objects:"
-msgstr ""
+msgstr "最大对象数目:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:443
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:559
 msgid "Maximum size"
-msgstr ""
+msgstr "最大blob值:"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:36
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:42
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:57
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:63
 msgid "Maximum size:"
-msgstr ""
+msgstr "最大容量:"
 
 #: app/components/ceph-pools/templates/add-pool.html:147
 msgid "Maximum size: {{data.ruleset.max_size}}"
-msgstr ""
+msgstr "最大容量: {{data.ruleset.max_size}}"
 
 #: app/components/ceph-pools/templates/add-pool.html:192
 msgid "Maximum: {{getMaxSize()}}"
-msgstr ""
+msgstr "最大容量: {{getMaxSize()}}"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:62
 msgid "Minimum"
-msgstr ""
+msgstr "最小值"
 
 #: app/components/ceph-pools/templates/add-pool.html:350
 msgid "Minimum blob size"
-msgstr ""
+msgstr "最小BLOB大小"
 
 #: app/components/ceph-pools/templates/status.html:70
 msgid "Minimum blob size:"
-msgstr ""
+msgstr "最小BLOB大小:"
 
 #: app/components/ceph-pools/templates/add-pool.html:146
 msgid "Minimum size: {{data.ruleset.min_size}}"
-msgstr ""
+msgstr "最小容量: {{data.ruleset.min_size}}"
 
 #: app/components/ceph-pools/templates/add-pool.html:191
 msgid "Minimum: {{data.ruleset.min_size || 1}}"
-msgstr ""
+msgstr "最小容量: {{data.ruleset.min_size || 1}}"
 
 #: app/components/ceph-pools/templates/add-pool.html:305
 msgid "Mode"
-msgstr ""
+msgstr "模式"
 
 #: app/components/ceph-pools/templates/status.html:66
 msgid "Mode:"
-msgstr ""
+msgstr "模式:"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:29
 msgid "Modification time:"
-msgstr ""
+msgstr "修改时间:"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:85
 msgid "Must be equal to or greater than 1."
-msgstr ""
+msgstr "必须大于等于1。"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:59
 msgid "Must be equal to or greater than 2."
-msgstr ""
+msgstr "必须大于等于2."
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:89
 msgid "Must be equal to or smaller than the number of osds."
-msgstr ""
+msgstr "必须小于等于OSD的数量。"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component.html:50
 msgid ""
 "Must contain one or more comma-separated numbers<br>\n"
 "            For example: 95, 96"
 msgstr ""
+"只能输入数字，多个数字时请用逗号分隔。<br>\n"
+"            例如: 95, 96"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:34
 msgid ""
 "Must contain one or more comma-separated values<br>\n"
 "                  For example: 192.168.0.10, 192.168.1.0/8"
 msgstr ""
+"必须包含一个或多个用逗号放开的值<br>\n"
+"            例如: 192.168.0.10, 192.168.1.0/8"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:53
 msgid "Mutual auth:"
-msgstr ""
+msgstr "互认证:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:241
 msgid "Mutual authentication"
-msgstr ""
+msgstr "互认证"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:268
 msgid "Mutual password"
-msgstr ""
+msgstr "互认证密码"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:256
 msgid "Mutual user"
-msgstr ""
+msgstr "互认证用户"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:131
 msgid "NFS Protocol"
-msgstr ""
+msgstr "NFS协议"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:17
 msgid "NFS Protocol:"
-msgstr ""
+msgstr "NFS协议:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:156
 msgid ""
 "NFS Tag\n"
-"            <oa-helper helper-template=\"'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html'\"></oa-helper>"
+"            <oa-helper helper-template=\"'components/ceph-nfs/ceph-nfs-form/"
+"ceph-nfs-form-helper-tag.html'\"></oa-helper>"
 msgstr ""
+"NFS 标签\n"
+"            <oa-helper helper-template=\"'components/ceph-nfs/ceph-nfs-form/"
+"ceph-nfs-form-helper-tag.html'\"></oa-helper>"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:20
 msgid "NFS Tag:"
-msgstr ""
+msgstr "NFS 标签:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:15
 msgid "NFS export {{ $ctrl.getId() }}"
-msgstr ""
+msgstr "NFS导出项 {{ $ctrl.getId() }}"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:137
 msgid "NFSv3"
-msgstr ""
+msgstr "NFSv3"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:142
 msgid "NFSv4"
-msgstr ""
+msgstr "NFSv4"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:20
 #: app/components/ceph-osd/templates/listing.html:28
@@ -1396,230 +1560,242 @@ msgstr ""
 #: app/components/dashboard/templates/dashboard-compose-modal.html:12
 #: app/components/dashboard/templates/dashboard-compose-modal.html:37
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:7
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:7
 msgid "Name:"
-msgstr ""
+msgstr "名称:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:121
 msgid "New bucket will be created"
-msgstr ""
+msgstr "新的桶(bucket)将被创建"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:98
 msgid "New directory will be created"
-msgstr ""
+msgstr "新的目录将被创建"
 
 #: app/components/settings/settings-form/settings-form.component.html:315
 msgid "No Ceph clusters configured"
-msgstr ""
+msgstr "未配置Ceph集群"
 
 #: app/components/notification/templates/oa-notifications.html:32
 msgid "No Notifications"
-msgstr ""
+msgstr "没有通知"
 
 #: app/components/ceph-pools/templates/add-pool.html:494
 msgid "No application added"
-msgstr ""
+msgstr "未添加应用"
 
 #: app/components/shared/oadatatable/oadatatable.directive.html:62
 msgid "No matching records found"
-msgstr ""
+msgstr "未发现相应记录"
 
 #: app/components/ceph-pools/templates/status.html:21
 msgid "None"
-msgstr ""
+msgstr "无"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:63
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:93
 msgid "Not a valid number!"
-msgstr ""
+msgstr "这不是有效的数字!"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:39
 msgid "Not available"
-msgstr ""
+msgstr "不可用"
 
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:49
 msgid "Number of objects"
-msgstr ""
+msgstr "对象数量"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:21
 msgid "Number of objects:"
-msgstr ""
+msgstr "对象数量:"
 
 #: app/components/settings/settings-form/settings-form.component.html:120
 msgid "Object Gateway"
-msgstr ""
+msgstr "对象网关"
 
 #: app/components/navigation/templates/navigation.html:27
 msgid "Object Gateway <span class=\"caret\"></span>"
-msgstr ""
+msgstr "对象网关<span class=\"caret\"></span>"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:63
 msgid "Object Gateway User"
-msgstr ""
+msgstr "对象网关用户"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:12
 msgid "Object Gateway User:"
-msgstr ""
+msgstr "对象网关用户:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:158
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:48
 msgid "Object size"
-msgstr ""
+msgstr "对象大小"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:19
 msgid "Object size:"
-msgstr ""
+msgstr "对象大小:"
 
 #: app/components/dashboard-widgets/templates/ceph-cluster-health.html:34
-msgid "On cluster \"<span ng-bind=\"cluster.name\"></span>\" with fsid \"<span ng-bind=\"cluster.fsid\"></span>\""
+msgid ""
+"On cluster \"<span ng-bind=\"cluster.name\"></span>\" with fsid \"<span ng-"
+"bind=\"cluster.fsid\"></span>\""
 msgstr ""
+"在集群\"<span ng-bind=\"cluster.name\"></span>\"，其FSID\"<span ng-bind=\"cluster."
+"fsid\"></span>\""
 
 #: app/components/ceph-crushmap/templates/crushmap.html:70
-msgid "One replica means <em>no copies</em>. If you lose a storage node, your data is lost."
-msgstr ""
+msgid ""
+"One replica means <em>no copies</em>. If you lose a storage node, your data "
+"is lost."
+msgstr "单副本表示<em>没有副本</em>。若存储节点损坏，数据将丢失。"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:70
 #: app/components/ceph-rgw/templates/cephRgwBuckets.html:41
 msgid "Owner"
-msgstr ""
+msgstr "所有者"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:11
 msgid "Owner:"
-msgstr ""
+msgstr "所有者:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:175
 #: app/components/settings/settings-form/settings-form.component.html:263
 #: app/components/users/templates/add-edit-user.html:31
 msgid "Password"
-msgstr ""
+msgstr "密码"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:32
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:50
 msgid "Permission"
-msgstr ""
+msgstr "权限"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:15
 msgid "Physical setup"
-msgstr ""
+msgstr "物理架构"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:84
 msgid "Placement"
-msgstr ""
+msgstr "归置"
 
 #: app/components/ceph-pools/templates/status.html:22
 msgid "Placement Groups:"
-msgstr ""
+msgstr "归置组(PG)"
 
 #: app/components/ceph-pools/templates/add-pool.html:250
 #: app/components/ceph-pools/templates/listing.html:50
 msgid "Placement groups"
-msgstr ""
+msgstr "归置组(PG):"
 
 #: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:15
 msgid "Please verify that:"
-msgstr ""
+msgstr "请确认以下信息:"
 
 #: app/components/ceph-pools/templates/status.html:10
 msgid "Pool size:"
-msgstr ""
+msgstr "存储池大小:"
 
 #: app/components/ceph-pools/templates/add-pool.html:89
 msgid "Pool type"
-msgstr ""
+msgstr "存储池类型"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:14
 msgid "Pool:"
-msgstr ""
+msgstr "存储池:"
 
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:43
 msgid "Poolname"
-msgstr ""
+msgstr "存储池名称"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:54
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:73
 msgid "Portals"
-msgstr ""
+msgstr "入口"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:21
 msgid "Portals:"
-msgstr ""
+msgstr "入口:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:6
 msgid "Prevents single node bottleneck for large or busy RBDs"
-msgstr ""
+msgstr "防止单节点瓶颈大型或繁忙的RBDs"
 
 #: app/components/taskQueue/templates/task-deletion.html:59
 msgid "Processing deletion requests: {{finishedTasks}} of {{tasks.length}}"
-msgstr ""
+msgstr "正在进行删除：{{finishedTasks}} of {{tasks.length}}"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:169
 msgid ""
 "Pseudo\n"
-"            <oa-helper helper-template=\"'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html'\"></oa-helper>"
+"            <oa-helper helper-template=\"'components/ceph-nfs/ceph-nfs-form/"
+"ceph-nfs-form-helper-pseudo.html'\"></oa-helper>"
 msgstr ""
+"伪文件系统\n"
+"            <oa-helper helper-template=\"'components/ceph-nfs/ceph-nfs-form/"
+"ceph-nfs-form-helper-pseudo.html'\"></oa-helper>"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:24
 msgid "Pseudo:"
-msgstr ""
+msgstr "伪文件系统:"
 
 #: app/components/ceph-pools/templates/status.html:54
 msgid "Quota max bytes:"
-msgstr ""
+msgstr "配额-最大字节数:"
 
 #: app/components/ceph-pools/templates/status.html:58
 msgid "Quota max objects:"
-msgstr ""
+msgstr "配额-最大对象数:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:2
-msgid "RBD images are striped over many objects, which are then stored by the Ceph distributed object store (RADOS)."
-msgstr ""
+msgid ""
+"RBD images are striped over many objects, which are then stored by the Ceph "
+"distributed object store (RADOS)."
+msgstr "RBD镜像划分为许多对象，然后由Ceph分布式对象存储（RADOS）存储."
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html:2
 msgid "RBD images with the following features are not supported by iSCSI:"
-msgstr ""
+msgstr "iSCSI不支持具有以下特征的RBD镜像:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html:2
 msgid "RBD images with the following features will not be supported by iSCSI:"
-msgstr ""
+msgstr "iSCSI不支持具有以下特征的RBD镜像:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:5
 msgid "Read and write requests distributed across many nodes"
-msgstr ""
+msgstr "读和写请求分布在许多节点上"
 
 #: app/components/notification/templates/oa-notifications.html:10
 msgid "Recent Notifications"
-msgstr ""
+msgstr "最近的通知"
 
 #: app/components/notification/templates/oa-notifications.html:8
 msgid "Remove all"
-msgstr ""
+msgstr "删除所有"
 
 #: app/components/ceph-pools/templates/listing.html:51
 msgid "Replica size"
-msgstr ""
+msgstr "副本容量"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:58
 msgid "Replicas"
-msgstr ""
+msgstr "副本"
 
 #: app/components/ceph-pools/templates/add-pool.html:169
 msgid "Replicated size"
-msgstr ""
+msgstr "副本容量"
 
 #: app/components/ceph-pools/templates/status.html:25
 msgid "Replicated size:"
-msgstr ""
+msgstr "副本容量:"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:38
 msgid "Replication rules"
-msgstr ""
+msgstr "复制规则"
 
 #: app/components/feedback/feedback.component.html:33
 msgid "Report a bug"
-msgstr ""
+msgstr "报告错误"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component.html:13
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:169
@@ -1650,76 +1826,85 @@ msgstr ""
 #: app/components/settings/settings-form/settings-form.component.html:77
 #: app/components/settings/settings-form/settings-form.component.html:94
 msgid "Required field"
-msgstr ""
+msgstr "必填项"
 
 #: app/components/ceph-pools/templates/add-pool.html:398
 msgid "Required ratio"
-msgstr ""
+msgstr "所需压缩比"
 
 #: app/components/ceph-pools/templates/status.html:74
 msgid "Required ratio:"
-msgstr ""
+msgstr "所需压缩比:"
 
 #: app/components/ceph-nodes/templates/nodes.html:28
 msgid "Roles"
-msgstr ""
+msgstr "角色"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:100
 msgid "Ruleset-failure-domain"
-msgstr ""
+msgstr "规则组失败域"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:96
 msgid "Running"
-msgstr ""
+msgstr "运行中"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:315
 msgid "S3 key"
-msgstr ""
+msgstr "S3钥"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:181
 msgid "S3 keys"
-msgstr ""
+msgstr "S3钥"
 
 #: app/components/settings/settings-form/settings-form.component.html:390
 msgid ""
 "Save\n"
-"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"settingsForm.$submitted\"></i>"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"settingsForm."
+"$submitted\"></i>"
 msgstr ""
+"保存\n"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"settingsForm."
+"$submitted\"></i>"
 
 #: app/components/settings/settings-form/settings-form.component.html:171
 msgid "Secret Key"
-msgstr ""
+msgstr "密钥"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:371
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:85
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:92
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:54
 msgid "Secret key"
-msgstr ""
+msgstr "密钥"
 
 #: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:34
 msgid "Select a Cluster"
-msgstr ""
+msgstr "选择一个集群"
 
 #: app/components/commandlog/templates/delete-by-date.html:7
-msgid "Select a date. All entries that are older than this date will be deleted."
-msgstr ""
+msgid ""
+"Select a date. All entries that are older than this date will be deleted."
+msgstr "选择一个日期，所有在此日期之前的日志都将被删除。"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:51
 msgid "Select a ruleset..."
-msgstr ""
+msgstr "选择一个规则集..."
 
 #: app/components/settings/settings-form/settings-form.component.html:14
 msgid "Settings"
-msgstr ""
+msgstr "设置"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component.html:3
 msgid "Settings <small>{{ $ctrl.image.pool }}: {{ $ctrl.image.name }}</small>"
-msgstr ""
+msgstr "设置 <small>{{ $ctrl.image.pool }}: {{ $ctrl.image.name }}</small>"
 
 #: app/components/settings/settings-form/settings-form.component.html:88
-msgid "Shared Secret <oa-helper helper-template=\"'components/settings/settings-form/settings-form-helper-features.html'\"></oa-helper>"
+msgid ""
+"Shared Secret <oa-helper helper-template=\"'components/settings/settings-"
+"form/settings-form-helper-features.html'\"></oa-helper>"
 msgstr ""
+"共享密钥 <oa-helper helper-template=\"'components/settings/settings-form/"
+"settings-form-helper-features.html'\"></oa-helper>"
 
 #: app/components/settings/settings-form/settings-form-helper-features.html:1
 msgid ""
@@ -1728,304 +1913,343 @@ msgid ""
 "    <br>\n"
 "    <strong># salt-run sharedsecret.show</strong>"
 msgstr ""
+"在 Salt master 上执行以下命令可获得共享密钥:\n"
+"    <br>\n"
+"    <strong># salt-run sharedsecret.show</strong>"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:217
 msgid "Should not be empty"
-msgstr ""
+msgstr "不能为空"
 
 #: app/components/shared/oadatatable/oadatatable.directive.html:69
 msgid ""
 "Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong>\n"
 "            of <strong>{{totalEntries}}</strong> items"
 msgstr ""
+"显示 <strong>{{firstEntry}}</strong>项到第<strong>{{lastEntry}}</strong>\n"
+"            <strong>{{totalEntries}}</strong> 项"
 
 #: app/components/taskQueue/templates/task-queue-dialog.html:81
 msgid ""
-"Showing <strong>{{tab.page.lastItem === 0 ? tab.page.firstItem : tab.page.firstItem + 1}}</strong> to <strong>{{tab.page.lastItem}}</strong>\n"
+"Showing <strong>{{tab.page.lastItem === 0 ? tab.page.firstItem : tab.page."
+"firstItem + 1}}</strong> to <strong>{{tab.page.lastItem}}</strong>\n"
 "                    of <strong>{{tab.page.itemLength}}</strong> items"
 msgstr ""
+"Showing <strong>{{tab.page.lastItem === 0 ? tab.page.firstItem : tab.page."
+"firstItem + 1}}</strong> to <strong>{{tab.page.lastItem}}</strong>\n"
+"                    of <strong>{{tab.page.itemLength}}</strong> items"
 
 #: app/components/ceph-pools/templates/add-pool.html:141
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:136
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:44
 msgid "Size"
-msgstr ""
+msgstr "容量"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:17
 msgid "Size:"
-msgstr ""
+msgstr "容量:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-client.component.html:61
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:205
 msgid "Squash"
-msgstr ""
+msgstr "匿名用户"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:31
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:49
 msgid "Squash:"
-msgstr ""
+msgstr "匿名用户:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:72
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:57
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:11
 msgid "State"
-msgstr ""
+msgstr "状态"
 
 #: app/components/ceph-osd/templates/listing.html:30
 msgid "Status"
-msgstr ""
+msgstr "状态"
 
 #: app/components/ceph-pools/templates/status.html:3
 msgid "Status of {{selection.item.name}}"
-msgstr ""
+msgstr "{{selection.item.name}}状态"
 
 #: app/components/ceph-pools/templates/add-pool.html:152
 msgid "Steps"
-msgstr ""
+msgstr "步长"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:42
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:58
 #: app/components/ceph-osd/templates/listing.html:31
 msgid "Storage Backend"
-msgstr ""
+msgstr "存储后端"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:9
 msgid "Storage Backend:"
-msgstr ""
+msgstr "存储后端:"
 
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:51
 msgid "Stripe count"
-msgstr ""
+msgstr "条带数"
 
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:50
 msgid "Stripe unit"
-msgstr ""
+msgstr "条带单位"
 
 #: app/components/ceph-pools/templates/status.html:50
 msgid "Stripe width:"
-msgstr ""
+msgstr "条带宽:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:206
 msgid "Striping"
-msgstr ""
+msgstr "条带化"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:239
 msgid "Striping count"
-msgstr ""
+msgstr "条带数"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:29
 msgid "Striping count:"
-msgstr ""
+msgstr "条带数:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:3
 msgid "Striping features:"
-msgstr ""
+msgstr "条带特性:"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:210
 msgid "Striping unit"
-msgstr ""
+msgstr "条带单位"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:27
 msgid "Striping unit:"
-msgstr ""
+msgstr "条带单位:"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:55
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:120
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:126
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:89
 msgid "Submit"
-msgstr ""
+msgstr "提交"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:92
 msgid ""
 "Submit\n"
-"                        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"bucketForm.$submitted\"></i>"
+"                        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if="
+"\"bucketForm.$submitted\"></i>"
 msgstr ""
+"提交\n"
+"                        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-"
+"if=\"bucketForm.$submitted\"></i>"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:638
 #: app/components/users/templates/add-edit-user.html:196
 msgid ""
 "Submit\n"
-"                        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"userForm.$submitted\"></i>"
+"                        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if="
+"\"userForm.$submitted\"></i>"
 msgstr ""
+"提交\n"
+"                        <i class=\"fa fa-spinner fa-spin fa-fw\" ng-"
+"if=\"userForm.$submitted\"></i>"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:406
 msgid ""
 "Submit\n"
-"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"iscsiForm.$submitted\"></i>"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"iscsiForm."
+"$submitted\"></i>"
 msgstr ""
+"提交\n"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"iscsiForm."
+"$submitted\"></i>"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:258
 msgid ""
 "Submit\n"
-"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"nfsForm.$submitted\"></i>"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"nfsForm."
+"$submitted\"></i>"
 msgstr ""
+"提交\n"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"nfsForm."
+"$submitted\"></i>"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:25
 msgid "Subuser"
-msgstr ""
+msgstr "子用户"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:126
 msgid "Subusers"
-msgstr ""
+msgstr "子用户"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:20
 msgid "Subusers:"
-msgstr ""
+msgstr "子用户:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:119
 #: app/components/ceph-rgw/templates/cephRgwUsers.html:48
 msgid "Suspended"
-msgstr ""
+msgstr "暂停"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:15
 msgid "Suspended:"
-msgstr ""
+msgstr "暂停:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:72
 msgid "Swift key"
-msgstr ""
+msgstr "Swift钥"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:225
 msgid "Swift keys"
-msgstr ""
+msgstr "Swift钥"
 
 #: app/components/navigation/templates/navigation.html:35
 msgid "System <span class=\"caret\"></span>"
-msgstr ""
+msgstr "系统配置<span class=\"caret\"></span>"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:237
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: app/components/settings/settings-form/settings-form.component.html:151
 #: app/components/settings/settings-form/settings-form.component.html:245
 #: app/components/settings/settings-form/settings-form.component.html:37
 msgid "TCP port"
-msgstr ""
+msgstr "TCP端口"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:21
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:71
 msgid "Target IQN"
-msgstr ""
+msgstr "目标限定名"
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:7
 msgid "Target IQN:"
-msgstr ""
+msgstr "目标限定名:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:15
 msgid "Target IQN: {{ $ctrl.model.targetId }}"
-msgstr ""
+msgstr "目标限定名: {{ $ctrl.model.targetId }}"
 
 #: app/components/taskQueue/templates/task-deletion.html:29
-msgid "Tasks to delete ({{::tasks.length}}) <i class=\"pull-right glyphicon\" ng-class=\"{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}\"></i>"
+msgid ""
+"Tasks to delete ({{::tasks.length}}) <i class=\"pull-right glyphicon\" ng-"
+"class=\"{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !"
+"status.open}\"></i>"
 msgstr ""
+"({{::tasks.length}})个任务将被删除 <i class=\"pull-right glyphicon\" ng-"
+"class=\"{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !"
+"status.open}\"></i>"
 
 #: app/components/commandlog/templates/commandlog.html:19
 msgid "Text"
-msgstr ""
+msgstr "文本"
 
 #: app/components/ceph-pools/templates/add-pool.html:48
 msgid "The chosen Ceph pool name is already in use."
-msgstr ""
+msgstr "此Ceph存储池名称已被使用."
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:21
 msgid "The chosen RBD name is already in use."
-msgstr ""
+msgstr "此RBD名称已被使用。"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:38
 msgid "The chosen erasure code profile name is already in use."
-msgstr ""
+msgstr "您选择的纠删码名称已被使用。"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:44
 msgid "The chosen name is already in use."
-msgstr ""
+msgstr "所选名称已经被使用。"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:42
 msgid "The chosen subuser ID is already in use."
-msgstr ""
+msgstr "所选子用户ID已经被使用。"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:42
 msgid "The chosen user ID is already in use."
-msgstr ""
+msgstr "所选用户ID已经被使用。"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:28
 msgid "The chosen user is already in use."
-msgstr ""
+msgstr "所选用户名已被使用。"
 
 #: app/components/users/templates/add-edit-user.html:24
 msgid "The chosen user name is already in use."
-msgstr ""
+msgstr "所选用户名已被使用。"
 
 #: app/components/ceph-pools/templates/delete-pool.html:24
 msgid "The following Ceph pools will be deleted:"
-msgstr ""
+msgstr "下列Ceph存储池即将被删除:"
 
 #: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:12
 msgid "The following NFS exports will be deleted:"
-msgstr ""
+msgstr "以下的NFS导出项将被删除:"
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:24
 msgid "The following RBDs will be deleted:"
-msgstr ""
+msgstr "下列RBD即将被删除:"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketDeleteModal.html:17
 msgid "The following buckets will be deleted:"
-msgstr ""
+msgstr "以下的桶(bucket)都将被删除:"
 
 #: app/components/ceph-pools/templates/add-pool.html:489
 msgid "The following characters are valid: _ a-z A-Z 0-9"
-msgstr ""
+msgstr "您可使用下列字符： _ a-z A-Z 0-9"
 
 #: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:13
 msgid "The following iSCSI target IQNs will be deleted:"
-msgstr ""
+msgstr "以下的iSCSI目标限定名将被删除:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserDeleteModal.html:17
 msgid "The following users will be deleted:"
-msgstr ""
+msgstr "以下的用户都将被删除:"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:19
 #: app/components/taskQueue/templates/task-deletion.html:51
 msgid "The input value does not match 'yes'."
-msgstr ""
+msgstr "输入的值必须是 'yes'。"
 
 #: app/components/users/templates/add-edit-user.html:90
 msgid "The password confirmation is required."
-msgstr ""
+msgstr "请确认输入的密码。"
 
 #: app/components/users/templates/add-edit-user.html:57
 #: app/components/users/templates/add-edit-user.html:94
 msgid "The password must be of minimum length 6 characters."
-msgstr ""
+msgstr "密码长度不得小于6位。"
 
 #: app/components/users/templates/add-edit-user.html:98
 msgid "The passwords are not equal."
-msgstr ""
+msgstr "两次输入的密码不相同。"
 
 #: app/components/ceph-pools/templates/add-pool.html:265
 msgid "The pg size of a pool can only be increased in edit mode."
-msgstr ""
+msgstr "pg池的大小只能在编辑模式下增加。"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html:2
 msgid ""
-"The position that this <strong>NFS v4</strong> export occupies in the <strong>Pseudo FS</strong>\n"
+"The position that this <strong>NFS v4</strong> export occupies in the "
+"<strong>Pseudo FS</strong>\n"
 "    (it must be unique)."
 msgstr ""
+"<p> <strong>NFS v4</strong> 的导出文件在 <strong>伪文件系统</strong> 中所占用"
+"位置\n"
+"    (必须唯一)。"
 
 #: app/components/ceph-pools/templates/add-pool.html:195
 msgid ""
 "The size specified is out of range.\n"
-"                  A value from {{data.ruleset.min_size || 1}} to {{getMaxSize()}} is valid."
+"                  A value from {{data.ruleset.min_size || 1}} to "
+"{{getMaxSize()}} is valid."
 msgstr ""
+"副本容量超出范围。\n"
+"                  请输入介于 {{data.ruleset.min_size || 1}}到"
+"{{getMaxSize()}} 之间的值。"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:256
 msgid "The striping count has to be a value higher than 1."
-msgstr ""
+msgstr "条带数必须是高于1。"
 
 #: app/components/users/templates/add-edit-user.html:19
 msgid "The username is required."
-msgstr ""
+msgstr "请输入用户名。"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketAddEdit.html:49
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:461
@@ -2033,11 +2257,11 @@ msgstr ""
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:577
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:626
 msgid "The value is not valid."
-msgstr ""
+msgstr "输入值无效。"
 
 #: app/components/taskQueue/templates/task-queue-dialog.html:9
 msgid "There are no {{tabKey}} Tasks."
-msgstr ""
+msgstr "无 {{tabKey}} 任务。"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:30
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:55
@@ -2083,147 +2307,168 @@ msgstr ""
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:24
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:80
 msgid "This field is required!"
-msgstr ""
+msgstr "请填写此栏！"
 
 #: app/components/commandlog/templates/delete-by-date.html:28
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:16
 #: app/components/taskQueue/templates/task-deletion.html:48
 msgid "This field is required."
-msgstr ""
+msgstr "请填写此栏。"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:230
 msgid "This field was decreased with your object size change."
-msgstr ""
+msgstr "此字段随着对象大小的变化减少。"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:168
 msgid "This field was increased with your stripe unit change."
-msgstr ""
+msgstr "此字段随着对象大小的变化增加。"
 
 #: app/components/dashboard/templates/delete-widgets.html:10
-msgid "To confirm, please click <kbd>Clear dashboard</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Clear dashboard</kbd>, or cancel and return to "
+"the page."
+msgstr "点击 <kbd>清除仪表盘</kbd> 确认删除，点击取消则返回之前的页面。"
 
 #: app/components/dashboard/templates/delete-dashboard.html:10
-msgid "To confirm, please click <kbd>Delete dashboard</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Delete dashboard</kbd>, or cancel and return "
+"to the page."
+msgstr "点击<kbd>删除仪表盘</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html:10
-msgid "To confirm, please click <kbd>Delete erasure code profile</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Delete erasure code profile</kbd>, or cancel "
+"and return to the page."
+msgstr "点击<kbd>删除纠删码配置</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/users/templates/delete-user.html:8
-msgid "To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the "
+"page."
+msgstr "点击<kbd>删除</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/dashboard/templates/delete-widget.html:10
-msgid "To confirm, please click <kbd>Delete widget</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Delete widget</kbd>, or cancel and return to "
+"the page."
+msgstr "点击<kbd>删除组件</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/commandlog/templates/delete-by-date.html:10
 #: app/components/commandlog/templates/delete-by-selection.html:11
-msgid "To confirm, please click <kbd>Delete</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Delete</kbd>, or cancel and return to the page."
+msgstr "点击<kbd>删除</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/users/templates/generate-auth-token.html:12
-msgid "To confirm, please click <kbd>Generate</kbd>, or cancel and return to the page."
-msgstr ""
+msgid ""
+"To confirm, please click <kbd>Generate</kbd>, or cancel and return to the "
+"page."
+msgstr "点击<kbd>生成</kbd>确定执行，点击取消则返回之前的页面。"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:7
-msgid "To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page."
+msgid ""
+"To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or "
+"cancel and return to the page."
 msgstr ""
+"确认删除，请输入 <kbd>yes</kbd> 并点击<kbd>删除</kbd>，或点击取消返回之前的页"
+"面。"
 
 #: app/components/taskQueue/templates/task-deletion.html:42
 msgid "To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>."
-msgstr ""
+msgstr "确认删除，请输入 <kbd>yes</kbd> 并点击<kbd>删除</kbd>。"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:14
-msgid "To confirm, please enter the information below and click <kbd>Add erasure code profile</kbd>, or cancel and return to the page."
+msgid ""
+"To confirm, please enter the information below and click <kbd>Add erasure "
+"code profile</kbd>, or cancel and return to the page."
 msgstr ""
+"确认创建，请填写下方信息并点击 <kbd>添加新的纠删码配置</kbd>，否则取消并返回"
+"原页面。"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:58
 msgid "To mount this NFS export, run the following command:"
-msgstr ""
+msgstr "执行以下的命令挂载NFS导出项:"
 
 #: app/components/navigation/templates/navigation.html:9
 msgid "Toggle navigation"
-msgstr ""
+msgstr "切换导航"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:226
 msgid "Transport Protocol"
-msgstr ""
+msgstr "传输协议"
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:33
 msgid "Transports:"
-msgstr ""
+msgstr "传输协议:"
 
 #: app/components/ceph-pools/templates/listing.html:54
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:10
 #: app/components/dashboard/templates/dashboard-compose-modal.html:25
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #: app/components/ceph-pools/templates/status.html:32
 msgid "Type:"
-msgstr ""
+msgstr "类型:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:232
 msgid "UDP"
-msgstr ""
+msgstr "UDP"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:43
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:47
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:64
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:68
 msgid "Unlimited"
-msgstr ""
+msgstr "数目不限"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:480
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:596
 msgid "Unlimited objects"
-msgstr ""
+msgstr "对象数目不限"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:432
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:548
 msgid "Unlimited size"
-msgstr ""
+msgstr "数目不限"
 
 #: app/components/navigation/templates/oa-check-form.html:2
 msgid "Unsaved Changes"
-msgstr ""
+msgstr "未保存的更改"
 
 #: app/components/settings/settings-form/settings-form.component.html:206
 #: app/components/settings/settings-form/settings-form.component.html:285
 msgid "Use SSL"
-msgstr ""
+msgstr "是否启用SSL安全连接"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:51
 msgid "Use a dedicated data pool"
-msgstr ""
+msgstr "使用一个专用的数据池"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:186
 msgid "Use default features"
-msgstr ""
+msgstr "用户默认特性"
 
 #: app/components/ceph-pools/templates/listing.html:48
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:45
 msgid "Used"
-msgstr ""
+msgstr "已用"
 
 #: app/components/ceph-pools/templates/status.html:14
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:33
 msgid "Used:"
-msgstr ""
+msgstr "已用:"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:165
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:10
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:10
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:405
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:33
 msgid "User quota"
-msgstr ""
+msgstr "用户配额"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEdit.html:22
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:9
@@ -2233,287 +2478,350 @@ msgstr ""
 #: app/components/users/templates/add-edit-user.html:12
 #: app/components/users/templates/users.html:30
 msgid "Username"
-msgstr ""
+msgstr "用户名"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:7
 msgid "Username:"
-msgstr ""
+msgstr "用户名:"
 
 #: app/components/ceph-pools/templates/add-pool.html:414
 msgid "Value should be between 0.0 and 1.0"
-msgstr ""
+msgstr "值应当介于0.0和1.0之间"
 
 #: app/components/ceph-pools/templates/add-pool.html:366
 #: app/components/ceph-pools/templates/add-pool.html:390
 msgid "Value should be greater or equal to 0"
-msgstr ""
+msgstr "值应当大于等于0"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketsDetails.html:25
 msgid "Version:"
-msgstr ""
+msgstr "版本:"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditS3KeyModal.html:3
 msgid "View S3 key: {{key.user}}"
-msgstr ""
+msgstr "显示S3钥: {{key.user}}"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSwiftKeyModal.html:3
 msgid "View Swift key: {{key.user}}"
-msgstr ""
+msgstr "显示Swift钥: {{key.user}}"
 
 #: app/components/auth/templates/login.html:7
 msgid "Welcome to openATTIC!"
-msgstr ""
+msgstr "欢迎使用openATTIC!"
 
 #: app/components/ceph-erasure-code-profiles/templates/add-erasure-code-profile.html:10
 msgid "You are about to add a new erasure code profile."
-msgstr ""
+msgstr "您正在创建新的纠删码配置。"
 
 #: app/components/commandlog/templates/delete-by-selection.html:8
-msgid "You are about to delete <strong>{{selectionLength}}</strong> log entries."
-msgstr ""
+msgid ""
+"You are about to delete <strong>{{selectionLength}}</strong> log entries."
+msgstr "您正在删除这<strong>{{selectionLength}}</strong>条日志记录。"
 
 #: app/components/taskQueue/templates/task-deletion.html:15
 msgid ""
 "You are about to delete <strong>{{tasks[0].description}}</strong> task\n"
 "                which is <strong>{{tasks[0].status | lowercase}}</strong>\n"
-"                and was last modified on {{tasks[0].last_modified | date:'medium'}}."
+"                and was last modified on {{tasks[0].last_modified | "
+"date:'medium'}}."
 msgstr ""
+"您正在删除这任务<strong>{{tasks[0].description}}</strong>，\n"
+"                其<strong>{{tasks[0].status | lowercase}}</strong>，\n"
+"                其最后修改时间为：{{tasks[0].last_modified | "
+"date:'medium'}}。"
 
 #: app/components/dashboard/templates/delete-widgets.html:6
-msgid "You are about to delete all widgets of the dashboard <strong>{{data.name}}</strong>."
-msgstr ""
+msgid ""
+"You are about to delete all widgets of the dashboard <strong>{{data.name}}</"
+"strong>."
+msgstr "您正在删除仪表盘下的全部组件: <strong>{{data.name}}</strong>."
 
 #: app/components/ceph-pools/templates/delete-pool.html:17
 msgid "You are about to delete multiple Ceph pools."
-msgstr ""
+msgstr "您正在删除多个Ceph存储池。"
 
 #: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:9
 msgid "You are about to delete multiple NFS exports."
-msgstr ""
+msgstr "您正在删除多个NFS导出项。"
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:17
 msgid "You are about to delete multiple RBDs."
-msgstr ""
+msgstr "您正在删除多个RBD。"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketDeleteModal.html:14
 msgid "You are about to delete multiple buckets."
-msgstr ""
+msgstr "您正在删除多个桶(bucket)"
 
 #: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:10
 msgid "You are about to delete multiple iSCSI target IQNs."
-msgstr ""
+msgstr "您正在删除多个iSCSI目标限定名。"
 
 #: app/components/ceph-rgw/templates/cephRgwUserDeleteModal.html:14
 msgid "You are about to delete multiple users."
-msgstr ""
+msgstr "您正在删除多个用户。"
 
 #: app/components/ceph-pools/templates/delete-pool.html:5
-msgid "You are about to delete the Ceph pool <strong>{{cephPools[0].name}}</strong>."
-msgstr ""
+msgid ""
+"You are about to delete the Ceph pool <strong>{{cephPools[0].name}}</strong>."
+msgstr "您正在删除Ceph存储池: <strong>{{cephPools[0].name}}</strong>。"
 
 #: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:4
-msgid "You are about to delete the NFS export <strong>{{$ctrl.resolve.selectionItems[0].host}}:{{$ctrl.resolve.selectionItems[0].path}}</strong>"
+msgid ""
+"You are about to delete the NFS export <strong>{{$ctrl.resolve."
+"selectionItems[0].host}}:{{$ctrl.resolve.selectionItems[0].path}}</strong>"
 msgstr ""
+"您正在删除NFS导出项:<strong>{{$ctrl.resolve.selectionItems[0].host}}:{{$ctrl."
+"resolve.selectionItems[0].path}}</strong>"
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:5
-msgid "You are about to delete the RBD <strong>{{$ctrl.resolve.rbdSelection[0].name}}</strong>."
+msgid ""
+"You are about to delete the RBD <strong>{{$ctrl.resolve.rbdSelection[0]."
+"name}}</strong>."
 msgstr ""
+"您正在删除RBD: <strong>{{$ctrl.resolve.rbdSelection[0].name}}</strong>。"
 
 #: app/components/ceph-rgw/templates/cephRgwBucketDeleteModal.html:6
-msgid "You are about to delete the bucket <strong>{{buckets[0].bucket}}</strong>."
-msgstr ""
+msgid ""
+"You are about to delete the bucket <strong>{{buckets[0].bucket}}</strong>."
+msgstr "您正在删除桶(bucket): <strong>{{buckets[0].bucket}}</strong>。"
 
 #: app/components/dashboard/templates/delete-dashboard.html:6
 msgid "You are about to delete the dashboard <strong>{{data.name}}</strong>."
-msgstr ""
+msgstr "您正在删除仪表盘: <strong>{{data.name}}</strong>。"
 
 #: app/components/ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html:6
-msgid "You are about to delete the erasure code profile <strong>{{profile.name}}</strong>."
-msgstr ""
+msgid ""
+"You are about to delete the erasure code profile <strong>{{profile.name}}</"
+"strong>."
+msgstr "您正在删除纠删码配置: <strong>{{profile.name}}</strong>。"
 
 #: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:5
-msgid "You are about to delete the iSCSI target IQN <strong>{{$ctrl.resolve.iscsiTargetSelection[0].targetId}}</strong>."
+msgid ""
+"You are about to delete the iSCSI target IQN <strong>{{$ctrl.resolve."
+"iscsiTargetSelection[0].targetId}}</strong>."
 msgstr ""
+"您正在删除iSCSI目标限定名: <strong>{{$ctrl.resolve.iscsiTargetSelection[0]."
+"targetId}}</strong>。"
 
 #: app/components/commandlog/templates/delete-by-selection.html:5
 msgid "You are about to delete the log entry <strong>{{command}}</strong>."
-msgstr ""
+msgstr "您正在删除日志记录:<strong>{{command}}</strong>。"
 
 #: app/components/users/templates/delete-user.html:5
 msgid "You are about to delete the user <strong>{{user.username}}</strong>."
-msgstr ""
+msgstr "您正在删除用户:<strong>{{user.username}}</strong>。"
 
 #: app/components/ceph-rgw/templates/cephRgwUserDeleteModal.html:6
 msgid "You are about to delete the user <strong>{{users[0].user_id}}</strong>."
-msgstr ""
+msgstr "您正在删除用户: <strong>{{users[0].user_id}}</strong>。"
 
 #: app/components/dashboard/templates/delete-widget.html:6
 msgid "You are about to delete the widget <strong>{{data.name}}</strong>."
-msgstr ""
+msgstr "您正在删除组件: <strong>{{data.name}}</strong>。"
 
 #: app/components/taskQueue/templates/task-deletion.html:20
 msgid "You are about to delete {{::tasks.length}} tasks."
-msgstr ""
+msgstr "您正在删除{{::tasks.length}}个任务。"
 
 #: app/components/users/templates/generate-auth-token.html:5
 msgid "You are about to generate a new API authentication token."
-msgstr ""
+msgstr "您正在生成一个新的API授权码。"
 
 #: app/components/ceph-pools/templates/add-pool.html:453
 msgid "You can use up to four application per pool."
-msgstr ""
+msgstr "每个存储池可以使用最多4个应用。"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:146
 msgid "You have to increase the size in order to use striping."
-msgstr ""
+msgstr "您必须增加大小才能使用条带。"
 
 #: app/components/navigation/templates/oa-check-form.html:5
 msgid "You have unsaved changes that will be lost if you decide to continue."
-msgstr ""
+msgstr "当前页面有未保存的更改，如果您选择离开，所有未保存的更改将会丢失。"
 
 #: app/components/dashboard-widgets/templates/ceph-osd-status.html:6
 msgid "Your cluster is full!"
-msgstr ""
+msgstr "你的集群已满!"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:62
 msgid "full"
-msgstr ""
+msgstr "已满"
 
 #: app/components/ceph-pools/templates/cacheTier.html:32
 msgid "hit_set_count:"
-msgstr ""
+msgstr "命中算法命中数:"
 
 #: app/components/ceph-pools/templates/cacheTier.html:36
 msgid "hit_set_params:"
-msgstr ""
+msgstr "命中算法参数:"
 
 #: app/components/ceph-pools/templates/cacheTier.html:28
 msgid "hit_set_period:"
-msgstr ""
+msgstr "命中算法测量时间:"
 
 #: app/components/shared/oadatatable/paginator.directive.html:21
 msgid "of <b> {{pages}}</b>"
-msgstr ""
+msgstr "页，共 <b> {{pages}}</b>页"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:41
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:59
 msgid "read"
-msgstr ""
+msgstr "读"
 
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:61
 msgid "read, write"
-msgstr ""
+msgstr "读.写"
 
 #: app/components/settings/settings-form/settings-form.component.html:115
 #: app/components/settings/settings-form/settings-form.component.html:227
 #: app/components/settings/settings-form/settings-form.component.html:306
 #: app/components/settings/settings-form/settings-form.component.html:379
 msgid "retry"
-msgstr ""
+msgstr "重试"
 
 #: app/components/ceph-pools/templates/cacheTier.html:24
 msgid "target_max_bytes:"
-msgstr ""
+msgstr "缓存池缓存最大字节数:"
 
 #: app/components/ceph-pools/templates/cacheTier.html:9
 msgid "tier_of:"
-msgstr ""
+msgstr "层级:"
 
 #: app/components/ceph-pools/templates/cacheTier.html:16
 msgid "tiers:"
-msgstr ""
+msgstr "层:"
 
 #: app/components/ceph-rgw/templates/CephRgwUserAddEditCapabilityModal.html:42
 #: app/components/ceph-rgw/templates/cephRgwUserAddEditSubuserModal.html:60
 msgid "write"
-msgstr ""
+msgstr "写"
 
 #: app/components/ceph-pools/templates/cacheTier.html:13
 msgid "write_tier:"
-msgstr ""
+msgstr "写入层:"
 
 #: app/components/ceph-crushmap/templates/crushmap.html:73
 msgid ""
-"{{ activeRuleset.min_size|humanizeInt }} replicas means \"the original file + {{ (activeRuleset.min_size - 1)|humanizeInt }}\n"
-"                                    <ng-pluralize count=\"activeRuleset.min_size - 1\" when=\"{1: 'copy', 'other': 'copies'}\"></ng-pluralize>\"."
+"{{ activeRuleset.min_size|humanizeInt }} replicas means \"the original file "
+"+ {{ (activeRuleset.min_size - 1)|humanizeInt }}\n"
+"                                    <ng-pluralize count=\"activeRuleset."
+"min_size - 1\" when=\"{1: 'copy', 'other': 'copies'}\"></ng-pluralize>\"."
 msgstr ""
+"{{ activeRuleset.min_size|humanizeInt }}个副本由原始文件加{{ (activeRuleset."
+"min_size - 1)|humanizeInt }}个\n"
+"                                    拷贝文件组成。"
 
 #: app/components/ceph-rgw/templates/cephRgwUsersDetails.html:16
 msgid "{{ selection.item.suspended ? \"Yes\" : \"No\" }}"
-msgstr ""
+msgstr "{{ selection.item.suspended ? \"是\" : \"否\" }}"
 
 #: app/components/ceph-pools/templates/add-pool.html:512
 msgid ""
 "{{!editing ? \"Create\" : \"Update\"}}\n"
-"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"poolForm.$submitted\"></i>"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"poolForm."
+"$submitted\"></i>"
 msgstr ""
+"{{!editing ? \"创建\" : \"更新\"}}\n"
+"            <i class=\"fa fa-spinner fa-spin fa-fw\" ng-if=\"poolForm."
+"$submitted\"></i>"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:116
-msgid "{{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.oaFreeText}} used"
+msgid ""
+"{{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool."
+"oaFreeText}} used"
 msgstr ""
+"{{$ctrl.data.dataPool.num_bytes | bytes}} / {{$ctrl.data.dataPool."
+"oaFreeText}} 已用 "
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:119
 msgid ""
 "{{$ctrl.data.dataPool.oaFreeText}} free -\n"
-"                <a ng-click=\"$ctrl.data.size = $ctrl.data.dataPool.oaMaxFree\">use max</a>"
+"                <a ng-click=\"$ctrl.data.size = $ctrl.data.dataPool.oaMaxFree"
+"\">use max</a>"
 msgstr ""
+"{{$ctrl.data.dataPool.oaFreeText}} 可用 -\n"
+"                <a ng-click=\"$ctrl.data.size = $ctrl.data.dataPool."
+"oaMaxFree\">最大使用量</a>"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:78
-msgid "{{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used"
+msgid ""
+"{{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used"
 msgstr ""
+"{{$ctrl.data.pool.num_bytes | bytes}} / {{$ctrl.data.pool.oaFreeText}} 已用</"
+"span>"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:81
 msgid ""
 "{{$ctrl.data.pool.oaFreeText}} free -\n"
-"                <a ng-click=\"$ctrl.data.size = $ctrl.data.pool.oaMaxFree\">use max</a>"
+"                <a ng-click=\"$ctrl.data.size = $ctrl.data.pool.oaMaxFree"
+"\">use max</a>"
 msgstr ""
+"{{$ctrl.data.pool.oaFreeText}} 可用 -\n"
+"                <a ng-click=\"$ctrl.data.size = $ctrl.data.pool.oaMaxFree\">最"
+"大使用量</a>"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:60
 msgid "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}Pool"
-msgstr ""
+msgstr "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}存储池"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:11
 msgid "{{$ctrl.selection.item.data_pool ? 'Meta-' : ''}}Pool:"
-msgstr ""
+msgstr "{{$ctrl.selection.item.data_pool ? 'Meta-' : ''}}存储池:"
 
 #: app/components/ceph-pools/templates/delete-pool.html:26
 msgid "{{cephPool.name}} ({{cephPool.num_bytes | bytes}})"
-msgstr ""
+msgstr "{{cephPool.name}} ({{cephPool.num_bytes | bytes}})"
 
 #: app/components/ceph-pools/templates/add-pool.html:18
 msgid "{{editing ? 'Edit' : 'Create'}} Ceph pool: {{pool.name}}"
-msgstr ""
+msgstr "{{editing ? '编辑' : '创建'}} Ceph存储池： {{pool.name}}"
 
 #: app/components/taskQueue/templates/task-deletion.html:71
 msgid ""
 "{{moved[0].description}} changed from {{moved[0].status}} to\n"
-"                            <span ng-class=\"{'text-danger': moved[1].status === 'Exception', 'text-success': moved[1].status === 'Finished'}\" ng-bind=\"moved[1].status\"></span>"
+"                            <span ng-class=\"{'text-danger': moved[1].status "
+"=== 'Exception', 'text-success': moved[1].status === 'Finished'}\" ng-bind="
+"\"moved[1].status\"></span>"
 msgstr ""
+"{{moved[0].description}}已从{{moved[0].status}}变为\n"
+"                            <span ng-class=\"{'text-danger': moved[1].status "
+"=== '例外', 'text-success': moved[1].status === '完成'}\" ng-bind=\"moved[1]."
+"status\"></span>"
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:26
 msgid "{{rad.name}} ({{rad.size | bytes}})"
-msgstr ""
+msgstr "{{rad.name}} ({{rad.size | bytes}})"
 
 #: app/components/ceph-pools/templates/status.html:73
 msgid "{{selection.item.compression_max_blob_size | bytes}}"
-msgstr ""
+msgstr "{{selection.item.compression_max_blob_size | bytes}}"
 
 #: app/components/ceph-pools/templates/status.html:71
 msgid "{{selection.item.compression_min_blob_size | bytes}}"
-msgstr ""
+msgstr "{{selection.item.compression_min_blob_size | bytes}}"
 
 #: app/components/taskQueue/templates/task-deletion.html:34
-msgid "{{task.description}} ({{task.status}}, {{task.last_modified | date:'medium'}})"
+msgid ""
+"{{task.description}} ({{task.status}}, {{task.last_modified | "
+"date:'medium'}})"
 msgstr ""
+"{{task.description}} ({{task.status}}, {{task.last_modified | "
+"date:'medium'}})"
 
 #: app/components/taskQueue/templates/oa-task-queue-directive.html:6
-msgid "{{taskOverview.failed}} Failed-Task{{taskOverview.failed !== 1 ? 's' : ''}}"
+msgid ""
+"{{taskOverview.failed}} Failed-Task{{taskOverview.failed !== 1 ? 's' : ''}}"
 msgstr ""
+"{{taskOverview.failed}} Failed-Task{{taskOverview.failed !== 1 ? 's' : ''}}"
 
 #: app/components/taskQueue/templates/oa-task-queue-directive.html:3
-msgid "{{taskOverview.queue ? taskOverview.queue : ''}} Background-Task{{taskOverview.queue !== 1 ? 's' : ''}}"
+msgid ""
+"{{taskOverview.queue ? taskOverview.queue : ''}} Background-"
+"Task{{taskOverview.queue !== 1 ? 's' : ''}}"
 msgstr ""
+"{{taskOverview.queue ? taskOverview.queue : ''}} Background-"
+"Task{{taskOverview.queue !== 1 ? 's' : ''}}"
 
 #: app/components/notification/templates/oa-notifications.html:25
 msgid "{{value.timestamp | date: 'medium'}}"
-msgstr ""
+msgstr "{{value.timestamp | date: 'medium'}}"

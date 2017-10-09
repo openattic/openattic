@@ -1,6 +1,8 @@
 <div class="openattic-modal-header">
-  <span ng-hide="$ctrl.editing">Add capability: {{$ctrl.cap.type}}</span>
-  <span ng-show="$ctrl.editing">Edit capability: {{$ctrl.cap.type}}</span>
+  <span translate
+        ng-hide="$ctrl.editing">Add capability: {{$ctrl.cap.type}}</span>
+  <span translate
+        ng-show="$ctrl.editing">Edit capability: {{$ctrl.cap.type}}</span>
 </div>
 <form name="form"
       role="form"
@@ -10,7 +12,8 @@
     <!-- Type -->
     <div class="form-group"
          ng-class="{'has-error': (form.$submitted || form.type.$dirty) && form.type.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="type">Type</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -21,10 +24,12 @@
                   ng-options="type for type in $ctrl.enumTypes()"
                   name="type"
                   id="type">
-            <option value="">-- Select a type --</option>
+            <option translate
+                    value="">-- Select a type --</option>
           </select>
         </div>
-        <span class="help-block tc_typeRequired"
+        <span translate
+              class="help-block tc_typeRequired"
               ng-show="(form.$submitted || form.type.$dirty) && form.type.$error.required">
           This field is required!
         </span>
@@ -33,7 +38,8 @@
     <!-- Permission -->
     <div class="form-group"
          ng-class="{'has-error': (form.$submitted || form.perm.$dirty) && form.perm.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="perm">Permission</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -42,13 +48,18 @@
                   name="perm"
                   id="perm"
                   required>
-            <option value="">-- Select a permission --</option>
-            <option value="read">read</option>
-            <option value="write">write</option>
-            <option value="*">*</option>
+            <option translate
+                    value="">-- Select a permission --</option>
+            <option translate
+                    value="read">read</option>
+            <option translate
+                    value="write">write</option>
+            <option translate
+                    value="*">*</option>
           </select>
         </div>
-        <span class="help-block tc_permRequired"
+        <span translate
+              class="help-block tc_permRequired"
               ng-show="(form.$submitted || form.perm.$dirty) && form.perm.$error.required">
           This field is required!
         </span>
@@ -57,11 +68,13 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button form="form"
+      <oa-submit-button translate
+                        form="form"
                         on-submit="$ctrl.submitAction(form)">
         Submit
       </oa-submit-button>
-      <button type="button"
+      <button translate
+              type="button"
               class="btn btn-sm btn-default tc_cancelCapButton"
               ng-click="$ctrl.cancelAction()">
         Cancel

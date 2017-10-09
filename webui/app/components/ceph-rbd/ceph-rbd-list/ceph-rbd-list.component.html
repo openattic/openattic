@@ -16,27 +16,30 @@
                  on-selection-change="$ctrl.onSelectionChange(selection)"
                  on-filter-config-change="$ctrl.getRbdList()">
       <actions>
-        <a class="btn btn-sm btn-primary tc_add_btn"
+        <a translate
+           class="btn btn-sm btn-primary tc_add_btn"
            type="button"
            ng-click="$ctrl.addAction()"
            ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
           <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_delete_btn"
+        <a translate
+           class="btn btn-sm btn-primary tc_delete_btn"
            type="button"
            ng-click="$ctrl.deleteAction()"
            ng-show="$ctrl.hasSelection || $ctrl.multiSelection">
           <i class="fa fa-fw fa-trash-o"></i>Delete
         </a>
         <li>
-          <a ng-click="$ctrl.addAction()">
+          <a translate
+             ng-click="$ctrl.addAction()">
             <i class="fa fa-fw fa-plus"></i>Add
           </a>
         </li>
         <li class="tc_deleteItem"
             ng-click="$ctrl.deleteAction()"
             ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
-          <a>
+          <a translate>
             <i class="fa fa-fw fa-trash-o"></i>Delete
           </a>
         </li>
@@ -49,45 +52,54 @@
               <input type="checkbox"
                      ng-model="selection.checkAll">
             </th>
-            <th ng-show="columns['Name']"
+            <th translate
+                ng-show="columns['Name']"
                 sortfield="name"
                 sortdir="asc"
                 sortheaderclass
                 sortdefault>Name</th>
-            <th sortfield="id"
+            <th translate
+                sortfield="id"
                 sortdir="asc"
                 sortheaderclass
                 ng-show="columns['Poolname']">Poolname</th>
-            <th sortfield="size"
+            <th translate
+                sortfield="size"
                 sortdir="asc"
                 sortheaderclass
                 ng-show="columns['Size']">Size</th>
-            <th sortfield="used_size"
+            <th translate
+                sortfield="used_size"
                 sortdir="asc"
                 sortheaderclass
                 ng-show="columns['Used']">Used</th>
             <!-- The data pool column is only sorted by it's pool id -->
-            <th sortfield="data_pool"
+            <th translate
+                sortfield="data_pool"
                 sortdir="asc"
                 sortheaderclass
                 disabled
                 ng-show="columns['Data-pool']">Data-pool</th>
-            <th sortfield="obj_size"
+            <th translate
+                sortfield="obj_size"
                 sortdir="asc"
                 sortheaderclass
                 disabled
                 ng-show="columns['Object size']">Object size</th>
-            <th sortfield="num_objs"
+            <th translate
+                sortfield="num_objs"
                 sortdir="asc"
                 sortheaderclass
                 disabled
                 ng-show="columns['Number of objects']">Number of objects</th>
-            <th sortfield="stripe_unit"
+            <th translate
+                sortfield="stripe_unit"
                 sortdir="asc"
                 sortheaderclass
                 disabled
                 ng-show="columns['Stripe unit']">Stripe unit</th>
-            <th sortfield="stripe_count"
+            <th translate
+                sortfield="stripe_count"
                 sortdir="asc"
                 sortheaderclass
                 disabled

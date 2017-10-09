@@ -2,16 +2,16 @@
                               on-confirm="$ctrl.deleteNfs()"
                               on-cancel="$ctrl.cancel()">
   <div ng-if="$ctrl.resolve.selectionItems.length === 1">
-    <p>
-      You are about to delete the NFS export
-      <strong>{{$ctrl.resolve.selectionItems[0].host}}:{{$ctrl.resolve.selectionItems[0].path}}</strong>
+    <p translate>
+      You are about to delete the NFS export <strong>{{$ctrl.resolve.selectionItems[0].host}}:{{$ctrl.resolve.selectionItems[0].path}}</strong>
     </p>
   </div>
   <div ng-if="$ctrl.resolve.selectionItems.length > 1">
-    <p>
+    <p translate>
       You are about to delete multiple NFS exports.
     </p>
-    <span class="text-danger">The following NFS exports will be deleted:</span>
+    <span translate
+          class="text-danger">The following NFS exports will be deleted:</span>
     <ul class="text-danger">
       <li ng-repeat="selectionItem in $ctrl.resolve.selectionItems">
         {{selectionItem.host}}:{{selectionItem.path}}

@@ -3,7 +3,7 @@
       class="form-horizontal"
       novalidate>
   <div class="openattic-modal-header">
-    <span>Settings
+    <span translate>Settings
       <small>{{ $ctrl.image.pool }}: {{ $ctrl.image.name }}</small>
     </span>
   </div>
@@ -22,7 +22,8 @@
                required>
         <span class="help-block"
               ng-show="$ctrl.settingsForm.$submitted || $ctrl.settingsForm.lun.$dirty">
-          <span class="tc_imageLunRequired"
+          <span translate
+                class="tc_imageLunRequired"
                 ng-show="$ctrl.settingsForm['lun'].$error.required">Required field</span>
         </span>
       </div>
@@ -83,7 +84,8 @@
                valid-numeric-array>
         <span class="help-block"
               ng-show="$ctrl.settingsForm.$submitted || $ctrl.settingsForm.retry_errors.$dirty">
-          <span class="tc_RetryErrosInvalid"
+          <span translate
+                class="tc_RetryErrosInvalid"
                 ng-show="$ctrl.settingsForm.$error.numericArray">
             Must contain one or more comma-separated numbers
             <br> For example: 95, 96
@@ -99,14 +101,16 @@
                  ng-model="$ctrl.advancedSettingsEnabled"
                  name="advancedSettingsEnabled"
                  id="advancedSettingsEnabled">
-          <label class="tc_advancedSettingsEnabled"
+          <label translate
+                 class="tc_advancedSettingsEnabled"
                  for="advancedSettingsEnabled">Advanced settings</label>
         </div>
       </div>
     </div>
 
     <div ng-if="$ctrl.advancedSettingsEnabled">
-      <div uib-alert
+      <div translate
+           uib-alert
            class="alert-warning">Changing these parameters from their default values is usually not necessary.</div>
 
       <span ng-repeat="setting in $ctrl.cephIscsiImageAdvangedSettings">
@@ -129,11 +133,13 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button form="$ctrl.settingsForm"
+      <oa-submit-button translate
+                        form="$ctrl.settingsForm"
                         on-submit="$ctrl.confirm()">
         Confirm
       </oa-submit-button>
-      <button id="cancelButton"
+      <button translate
+              id="cancelButton"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.cancel()">Cancel</button>
     </div>
