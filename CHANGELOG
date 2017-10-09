@@ -30,6 +30,7 @@ Changed
 Fixed
 ~~~~~
 * Backend: Fixed Erasure Code Profile creation (OP-2758)
+* Backend: Hide the "machine" drop-down on the Nodes tab (OP-2510)
 * WebUI/QA: Fix random ceph pool creation e2e test (OP-2762)
 
 Removed
