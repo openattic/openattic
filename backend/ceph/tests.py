@@ -30,10 +30,12 @@ from django.test import TestCase
 import ceph.models
 import ceph.librados
 import ceph.tasks
+import ceph.status
 import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
+from module_status import UnavailableModule
 
 
 def load_tests(loader, tests, ignore):
@@ -801,3 +803,43 @@ class CephErasureCodeProfileTestCase(TestCase):
         self.assertEqual(ecp.m, 3)
         self.assertEqual(ecp.ruleset_failure_domain, 'rack')
         self.assertEqual(ecp.ruleset_root, 'root')
+
+
+class StatusTestCase(TestCase):
+    def test_keyring(self):
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_keyring_permission(ceph.librados.Keyring('/does/not/exist'))
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_not_connected(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':False})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_connected(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':True})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        self.assertIsNone(ceph.status.check_ceph_api('fsid'))
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_timeout(self, ClusterConf_mock, call_librados_mock):
+        call_librados_mock.side_effect = exception.ExternalCommandError('x')
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_no_cluster(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':False})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.side_effect = KeyError()
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
