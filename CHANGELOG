@@ -24,6 +24,8 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: RBD features: Add more information to features that
+  require another feature to be enabled (OP-2765)
 
 Fixed
 ~~~~~
