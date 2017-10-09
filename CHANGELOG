@@ -28,6 +28,7 @@ Changed
 Fixed
 ~~~~~
 * Backend: Fixed Erasure Code Profile creation (OP-2758)
+* WebUI/QA: Fix random ceph pool creation e2e test (OP-2762)
 
 Removed
 ~~~~~~~
