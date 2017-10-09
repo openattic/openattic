@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRgw");
 app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
-    $stateParams, cephRgwBucketService, oaTabSetService) {
+    $stateParams, cephRgwBucketService, oaTabSetService, Notification) {
   $scope.buckets = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -78,10 +78,29 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })
       .$promise
-      .then(function (res) {
-        $scope.buckets = res;
+      .then((res) => {
+        if (res.results.length > 0) {
+          // Check if the buckets are referenced, e.g. by NFS Ganesha.
+          let buckets = [];
+          res.results.forEach((item) => {
+            buckets.push(item.bucket);
+          });
+          cephRgwBucketService.isReferenced({"bucket": buckets})
+            .$promise
+            .then((references) => {
+              res.results.forEach((item) => {
+                item.referenced = references[item.bucket];
+              });
+              $scope.buckets = res;
+            })
+            .catch((error) => {
+              $scope.error = error;
+            });
+        } else {
+          $scope.buckets = res;
+        }
       })
-      .catch(function (error) {
+      .catch((error) => {
         $scope.error = error;
       });
   }, true);
@@ -118,6 +137,19 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
   $scope.deleteAction = function () {
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
+    }
+    // Check if the selected buckets are referenced.
+    if ($scope.selection.items && $scope.selection.items.length > 0) {
+      const selectionIsReferenced = $scope.selection.items.some((item) => {
+        return item.referenced;
+      });
+      if (selectionIsReferenced) {
+        Notification.warning({
+          title: ($scope.selection.items.length > 1) ? "Delete buckets" : "Delete bucket",
+          msg: "One or more buckets can not be deleted because they are shared via NFS."
+        });
+        return;
+      }
     }
     var modalInstance = $uibModal.open({
       windowTemplate: require("../../../templates/messagebox.html"),

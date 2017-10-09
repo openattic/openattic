@@ -47,6 +47,10 @@ app.factory("cephRgwBucketService", function ($resource, $injector, $q, $filter)
       url: globalConfig.API.URL + "ceph_radosgw/bucket/delete",
       method: "DELETE"
     },
+    isReferenced: {
+      url: globalConfig.API.URL + "ceph_radosgw/bucket/isreferenced",
+      method: "GET"
+    },
     query: {
       method: "GET",
       isArray: true,
