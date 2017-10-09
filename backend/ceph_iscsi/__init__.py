@@ -13,17 +13,8 @@
  *  GNU General Public License for more details.
 """
 import imp
-from deepsea import DeepSea
-from utilities import in_unittest
 
 try:
     imp.find_module('ceph')
 except ImportError:
     raise ImportError('Cannot import app "ceph", disabling app "ceph_iscsi"')
-
-try:
-    if not in_unittest():
-        if not DeepSea.instance().is_service_online():
-            raise ImportError('"salt-api" is offline')
-except Exception:
-    raise ImportError('"salt-api" is offline')

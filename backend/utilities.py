@@ -131,15 +131,6 @@ def is_executable_installed(executable):
     return any([path.isfile(path.join(root, executable)) for root in ['/sbin', '/usr/sbin']])
 
 
-def in_unittest():
-    current_stack = inspect.stack()
-    for stack_frame in current_stack:
-        for program_line in stack_frame[4]:
-            if "unittest" in program_line:
-                return True
-    return False
-
-
 def run_in_external_process(func, timeout=30):
     """
     Runs `func` in an external process. Exceptions and return values are forwarded
