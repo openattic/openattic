@@ -206,14 +206,17 @@ class CephCluster(NodbModel, RadosMixin):
 @contextmanager
 def fsid_context(fsid):
     """
-    .. example:
-        >>> with fsid_context('baad-food-baadfood') as ctx:
-        >>>     print ctx.cluster.name
+    >>> with fsid_context('baad-food-baadfood') as ctx:
+    ...     ctx.fsid,  NodbManager.nodb_context.fsid
+    ('baad-food-baadfood', 'baad-food-baadfood')
     """
     class CTX(object):
         def __init__(self, fsid):
-            self.cluster = CephCluster.objects.get(fsid=fsid)
             self.fsid = fsid
+
+        @property
+        def cluster(self):
+            return CephCluster.objects.get(fsid=fsid)
 
     ctx = CTX(fsid)
     previous_context = NodbManager.nodb_context
@@ -546,10 +549,11 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
         context = self.get_context()
         api = self.mon_api(context.fsid)
 
-        model_args = CephErasureCodeProfile.make_model_args(
-                api.osd_erasure_code_profile_get(self.name),
-                fields_force_none=field_names).items()
-
+        ecp_data = api.osd_erasure_code_profile_get(self.name)
+        ecp_data['ruleset-failure-domain'] = ecp_data.get('crush-failure-domain', None)
+        ecp_data['ruleset-root'] = ecp_data.get('crush-root', None)
+        model_args = CephErasureCodeProfile.make_model_args(ecp_data,
+                                                            fields_force_none=field_names).items()
         for field_name, value in model_args:
             setattr(self, field_name, value)
 
@@ -561,7 +565,7 @@ class CephErasureCodeProfile(NodbModel, RadosMixin):
             raise NotImplementedError('Updating is not supported.')
         profile = ['k={}'.format(self.k), 'm={}'.format(self.m)]
         if self.ruleset_failure_domain:
-            profile.append('ruleset-failure-domain={}'.format(self.ruleset_failure_domain))
+            profile.append('crush-failure-domain={}'.format(self.ruleset_failure_domain))
         try:
             api.osd_erasure_code_profile_set(self.name, profile)
         except ExternalCommandError as e:  # TODO, I'm a bit unsatisfied with this catching

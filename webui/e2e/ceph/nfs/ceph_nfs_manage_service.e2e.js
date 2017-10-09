@@ -9,7 +9,7 @@ describe("ceph nfs", () => {
 
   beforeAll(() => {
     helpers.login();
-    element(by.css(".tc_menuitem_ceph_nfs")).click();
+    helpers.setLocation("ceph/nfs");
     manageService.startAllIfStopped();
   });
 

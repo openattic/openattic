@@ -21,12 +21,24 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+WebUI: Do not delete buckets that are referenced/used, e.g. by NFS (OP-2536)
 
 Changed
 ~~~~~~~
+* WebUI: RBD features: Add more information to features that
+  require another feature to be enabled (OP-2765)
+* WebUI: Do not delete buckets that are referenced/used, e.g.
+  by NFS (OP-2536)
+* WebUI: Add separator between action buttons in Ceph OSD page (OP-2748)
 
 Fixed
 ~~~~~
+* Backend: Fixed Erasure Code Profile creation (OP-2758)
+* Backend: Hide the "machine" drop-down on the Nodes tab (OP-2510)
+* Backend: Fixed `module_status/ceph_deployment`: behave exactly as
+  `module_status/ceph` (OP-2720)
+* WebUI/QA: Fix random ceph pool creation e2e test (OP-2762)
+* WebUI: Fix error when creating RBD without size (OP-2756)
 
 Removed
 ~~~~~~~

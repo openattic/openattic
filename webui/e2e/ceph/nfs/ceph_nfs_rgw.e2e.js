@@ -15,16 +15,16 @@ describe("ceph nfs", () => {
 
   beforeAll(() => {
     helpers.login();
-    element(by.css(".tc_menuitem_ceph_nfs")).click();
+    helpers.setLocation("ceph/nfs");
     table.removeExportsIfExists("e2e-rgw-");
     manageService.startAllIfStopped();
   });
 
-  it("should add a export", () => {
+  it("should add an export (RGW)", () => {
     table.addExport();
     form.selectHost(1);
     form.selectFsal("Object Gateway");
-    form.bucket.sendKeys("e2e-rgw-add");
+    form.bucket.clear().sendKeys("e2e-rgw-add");
     form.selectRgwUser("admin");
     form.tag.clear().sendKeys("e2eTagRgw");
     form.addClientsButton.click();
@@ -33,9 +33,10 @@ describe("ceph nfs", () => {
     form.selectClientsSquash("None");
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.clear_search_for();
   });
 
-  it("should display added export details", () => {
+  it("should display added export details (RGW)", () => {
     table.clickRowByPath("e2e-rgw-add");
     expect(table.rows.get(0).getText()).toBe("e2e-rgw-add");
     expect(table.detailsTab.isDisplayed()).toBe(false);
@@ -57,15 +58,22 @@ describe("ceph nfs", () => {
     expect(details.mountCommand.getText()).toMatch("# mount.nfs .*:/.*/e2e-rgw-add /mnt");
   });
 
-  it("should remove export", () => {
-    table.removeExport("e2e-rgw-add");
-    table.filterInput.clear().sendKeys("e2e-rgw-add");
-    expect(table.rows.get(0).isPresent()).toBe(false);
-    table.filterInput.clear();
+  it("should check the bucket can't be deleted because it's referenced", () => {
+    helpers.setLocation("ceph/rgw/buckets");
+    var bucket = helpers.search_for_element("e2e-rgw-add");
+    bucket.click();
+    helpers.delete_selection(undefined, "$ctrl");
+    // Close the delete dialog.
+    element(by.id("bot1-Msg1")).click();
+    expect(bucket.isDisplayed()).toBe(true);
+    helpers.setLocation("ceph/nfs");
   });
 
-  afterEach(() => {
-    table.filterInput.clear();
+  it("should remove export (RGW)", () => {
+    table.removeExport("e2e-rgw-add");
+    helpers.search_for("e2e-rgw-add");
+    expect(table.rows.get(0).isPresent()).toBe(false);
+    helpers.clear_search_for();
   });
 
   afterAll(() => {

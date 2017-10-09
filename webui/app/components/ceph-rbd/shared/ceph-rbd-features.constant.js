@@ -65,7 +65,7 @@ app.constant("cephRbdFeatures", {
     isDisplayed: true
   },
   "object-map": {
-    desc: "Object map",
+    desc: "Object map (requires exclusive-lock)",
     helpText: "",
     requires: "exclusive-lock",
     excludes: null,
@@ -73,7 +73,7 @@ app.constant("cephRbdFeatures", {
     isDisplayed: true
   },
   "journaling": {
-    desc: "Journaling",
+    desc: "Journaling (requires exclusive-lock)",
     helpText: "",
     requires: "exclusive-lock",
     excludes: null,
@@ -81,7 +81,7 @@ app.constant("cephRbdFeatures", {
     isDisplayed: true
   },
   "fast-diff": {
-    desc: "Fast diff",
+    desc: "Fast diff (requires object-map)",
     helpText: "",
     requires: "object-map",
     excludes: null,

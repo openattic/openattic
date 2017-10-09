@@ -15,7 +15,7 @@ describe("ceph nfs", () => {
 
   beforeAll(() => {
     helpers.login();
-    element(by.css(".tc_menuitem_ceph_nfs")).click();
+    helpers.setLocation("ceph/nfs");
     table.removeExportsIfExists("/e2e/cfs-");
     manageService.startAllIfStopped();
   });
@@ -30,12 +30,12 @@ describe("ceph nfs", () => {
     helpers.leaveForm();
   });
 
-  it("should add a export", () => {
+  it("should add an export", () => {
     table.addExport();
     form.selectHost(1);
     form.selectFsal("CephFS");
-    form.path.sendKeys("/e2e/cfs-add");
-    form.tag.sendKeys("e2eTag");
+    form.path.clear().sendKeys("/e2e/cfs-add");
+    form.tag.clear().sendKeys("e2eTag");
     form.addClientsButton.click();
     form.clients.clear().sendKeys("192.168.0.10");
     form.selectClientsAccessType("MDONLY_RO");
@@ -139,17 +139,13 @@ describe("ceph nfs", () => {
 
   it("should remove export", () => {
     table.removeExport("/e2e/cfs-edit");
-    table.filterInput.clear().sendKeys("/e2e/cfs-edit");
+    helpers.search_for("/e2e/cfs-edit");
     expect(table.rows.get(0).isPresent()).toBe(false);
-    table.filterInput.clear();
+    helpers.clear_search_for();
     table.removeExport("/e2e/cfs-clone");
-    table.filterInput.clear().sendKeys("/e2e/cfs-clone");
+    helpers.search_for("/e2e/cfs-clone");
     expect(table.rows.get(0).isPresent()).toBe(false);
-    table.filterInput.clear();
-  });
-
-  afterEach(() => {
-    table.filterInput.clear();
+    helpers.clear_search_for();
   });
 
   afterAll(() => {

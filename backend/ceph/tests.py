@@ -30,14 +30,17 @@ from django.test import TestCase
 import ceph.models
 import ceph.librados
 import ceph.tasks
+import ceph.status
 import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
+from module_status import UnavailableModule
 
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(ceph.librados))
+    tests.addTests(doctest.DocTestSuite(ceph.models))
     return tests
 
 
@@ -754,3 +757,89 @@ class CephOsdTestCase(TestCase):
             mock.call('osd scrub', {'who': 'name'}, output_format='string'),
             mock.call('osd deep-scrub', {'who': 'name'}, output_format='string')
         ])
+
+
+class CephErasureCodeProfileTestCase(TestCase):
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save(self, _call_mon_command_mock):
+        ecp = ceph.models.CephErasureCodeProfile(k=3, m=3, name='test',
+                                                 ruleset_failure_domain='rack')
+        ecp._context = mock.Mock(fsid='fsid')
+        ecp.save(force_insert=True)
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd erasure-code-profile set',
+                      {'profile': ['k=3', 'm=3', 'crush-failure-domain=rack'], 'name': 'test'},
+                      output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_delete(self, _call_mon_command_mock):
+        ecp = ceph.models.CephErasureCodeProfile(name='test')
+        ecp._context = mock.Mock(fsid='fsid')
+        ecp.delete()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd erasure-code-profile rm',
+                      {'name': 'test'},
+                      output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_get_all_objects(self, _call_mon_command_mock):
+        def side_effect(prefix, *a, **kw):
+            return {
+                'osd erasure-code-profile ls': ['test'],
+                'osd erasure-code-profile get': {'k': 3, 'm': 3, 'plugin': 'jrasure',
+                                                 'technique': 'technique',
+                                                 'jerasure-per-chunk-alignment': 'align',
+                                                 'crush-failure-domain': 'rack',
+                                                 'crush-root': 'root', 'w': 1}
+            }[prefix]
+        _call_mon_command_mock.side_effect = side_effect
+        nodb.models.NodbManager.set_nodb_context(mock.Mock(fsid='fsid'))
+        ecp = ceph.models.CephErasureCodeProfile.objects.get()
+        self.assertEqual(ecp.name, 'test')
+        self.assertEqual(ecp.k, 3)
+        self.assertEqual(ecp.m, 3)
+        self.assertEqual(ecp.ruleset_failure_domain, 'rack')
+        self.assertEqual(ecp.ruleset_root, 'root')
+
+
+class StatusTestCase(TestCase):
+    def test_keyring(self):
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_keyring_permission(ceph.librados.Keyring('/does/not/exist'))
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_not_connected(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':False})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_connected(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':True})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        self.assertIsNone(ceph.status.check_ceph_api('fsid'))
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_timeout(self, ClusterConf_mock, call_librados_mock):
+        call_librados_mock.side_effect = exception.ExternalCommandError('x')
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_no_cluster(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':False})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.side_effect = KeyError()
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
