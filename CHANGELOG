@@ -21,6 +21,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+WebUI: Do not delete buckets that are referenced/used, e.g. by NFS (OP-2536)
 
 Changed
 ~~~~~~~
