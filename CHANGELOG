@@ -29,6 +29,7 @@ Changed
   require another feature to be enabled (OP-2765)
 * WebUI: Do not delete buckets that are referenced/used, e.g.
   by NFS (OP-2536)
+* WebUI: Add separator between action buttons in Ceph OSD page (OP-2748)
 
 Fixed
 ~~~~~
