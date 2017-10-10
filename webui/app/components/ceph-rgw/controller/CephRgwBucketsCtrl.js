@@ -78,29 +78,10 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })
       .$promise
-      .then((res) => {
-        if (res.results.length > 0) {
-          // Check if the buckets are referenced, e.g. by NFS Ganesha.
-          let buckets = [];
-          res.results.forEach((item) => {
-            buckets.push(item.bucket);
-          });
-          cephRgwBucketService.isReferenced({"bucket": buckets})
-            .$promise
-            .then((references) => {
-              res.results.forEach((item) => {
-                item.referenced = references[item.bucket];
-              });
-              $scope.buckets = res;
-            })
-            .catch((error) => {
-              $scope.error = error;
-            });
-        } else {
-          $scope.buckets = res;
-        }
+      .then(function (res) {
+        $scope.buckets = res;
       })
-      .catch((error) => {
+      .catch(function (error) {
         $scope.error = error;
       });
   }, true);
@@ -141,12 +122,13 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
     // Check if the selected buckets are referenced.
     if ($scope.selection.items && $scope.selection.items.length > 0) {
       const selectionIsReferenced = $scope.selection.items.some((item) => {
-        return item.referenced;
+        return item.is_referenced;
       });
       if (selectionIsReferenced) {
+        const numBuckets = $scope.selection.items.length;
         Notification.warning({
-          title: ($scope.selection.items.length > 1) ? "Delete buckets" : "Delete bucket",
-          msg: "One or more buckets can not be deleted because they are shared via NFS."
+          title: (numBuckets > 1) ? "Delete buckets" : "Delete bucket",
+          msg: numBuckets + " bucket(s) can not be deleted because they are shared via NFS."
         });
         return;
       }

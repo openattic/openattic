@@ -40,16 +40,16 @@ app.factory("cephRgwBucketService", function ($resource, $injector, $q, $filter)
       url: globalConfig.API.URL + "ceph_radosgw/bucket/create",
       method: "PUT"
     },
+    get: {
+      url: globalConfig.API.URL + "ceph_radosgw/bucket/get",
+      method: "GET"
+    },
     put: {
       method: "PUT"
     },
     delete: {
       url: globalConfig.API.URL + "ceph_radosgw/bucket/delete",
       method: "DELETE"
-    },
-    isReferenced: {
-      url: globalConfig.API.URL + "ceph_radosgw/bucket/isreferenced",
-      method: "GET"
     },
     query: {
       method: "GET",
