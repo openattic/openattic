@@ -45,6 +45,7 @@ Fixed
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
 * WebUI/QA: Prevent random failure in "2 failed task" test (OP-2735)
 * WebUI/QA: Fix random NFS e2e test failures (OP-2762)
+* WebUI/QA: Prevent random failures in task queue dialog suite (OP-2779)
 
 
 Removed
