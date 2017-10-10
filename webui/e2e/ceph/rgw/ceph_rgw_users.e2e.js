@@ -191,7 +191,7 @@ describe("ceph rgw users", function () {
     expect(element(by.model("subuser.generate_secret")).isSelected()).toBe(true);
     element(by.model("subuser.generate_secret")).click();
     element(by.model("subuser.secret_key")).sendKeys("supersecret");
-    cephRgwCommons.submitSubuserBtn.click();
+    cephRgwCommons.modalSubmitBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
@@ -218,7 +218,7 @@ describe("ceph rgw users", function () {
     element(by.model("key.generate_key")).click();
     element(by.model("key.access_key")).sendKeys("xyz123");
     element(by.model("key.secret_key")).sendKeys("thisismysecret");
-    cephRgwCommons.submitS3KeyBtn.click();
+    cephRgwCommons.modalSubmitBtn.click();
     // Add key for the subuser.
     cephRgwCommons.addS3KeyBtn.click();
     browser.sleep(400);
@@ -228,7 +228,7 @@ describe("ceph rgw users", function () {
     element(by.model("key.generate_key")).click();
     element(by.model("key.access_key")).sendKeys("aaaaaaaaaaaaaa");
     element(by.model("key.secret_key")).sendKeys("xxxxxxxxxxxxxx");
-    cephRgwCommons.submitS3KeyBtn.click();
+    cephRgwCommons.modalSubmitBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
@@ -240,13 +240,13 @@ describe("ceph rgw users", function () {
     browser.sleep(400);
     element(by.model("cap.type")).element(by.cssContainingText("option", "users")).click();
     element(by.model("cap.perm")).element(by.cssContainingText("option", "*")).click();
-    cephRgwCommons.submitCapBtn.click();
+    cephRgwCommons.modalSubmitBtn.click();
     // Add 'metadata:write' capability.
     cephRgwCommons.addCapBtn.click();
     browser.sleep(400);
     element(by.model("cap.type")).element(by.cssContainingText("option", "metadata")).click();
     element(by.model("cap.perm")).element(by.cssContainingText("option", "write")).click();
-    cephRgwCommons.submitCapBtn.click();
+    cephRgwCommons.modalSubmitBtn.click();
     browser.sleep(400);
     cephRgwCommons.submitBtn.click();
   });
@@ -264,7 +264,7 @@ describe("ceph rgw users", function () {
     element.all(by.css(".tc_editCapButton")).get(1).click();
     browser.sleep(400);
     element(by.model("cap.perm")).element(by.cssContainingText("option", "read")).click();
-    cephRgwCommons.submitCapBtn.click();
+    cephRgwCommons.modalSubmitBtn.click();
     cephRgwCommons.submitBtn.click();
   });
 
