@@ -135,7 +135,7 @@ class SettingsView(APIView):
                 serializers.append(serializer)
 
             for serializer in serializers:  # new loop to raise all errors before saving
-                serializer.object.save()
+                serializer.object.save(update_fields=('keyring_file_path', 'keyring_user'))
 
         return Response({'success': True})
 
