@@ -206,6 +206,11 @@ def get_grafana_api_response(request, path):
 
         content = re.sub(r'</body>', tag + '</body>', content)
 
+    if 'node-statistics' in path:
+        content = re.sub(r'</body>', """<style>
+        .submenu-controls { display: none }
+        </style>""" + '</body>', content)
+
     proxy_response = HttpResponse(content, response.status_code)
 
     for key, value in response.headers.items():

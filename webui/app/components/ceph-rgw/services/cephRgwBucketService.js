@@ -43,6 +43,10 @@ app.factory("cephRgwBucketService", function ($resource, $injector, $q, $filter)
     put: {
       method: "PUT"
     },
+    delete: {
+      url: globalConfig.API.URL + "ceph_radosgw/bucket/delete",
+      method: "DELETE"
+    },
     query: {
       method: "GET",
       isArray: true,

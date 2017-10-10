@@ -381,12 +381,20 @@ var CephPoolCommons = function () {
     expect(pool.isPresent()).toBe(false);
   };
 
-  this.fillForm = (name, type, pgs, isCompression, appToUse) => {
+  this.fillForm = (name, type, pgs, isCompression, appToUse, crushRuleSet, erasureProfile) => {
     isCompression = isCompression || false;
     appToUse = appToUse || "cephfs";
     const fe = self.formElements;
     self.getFormElement(fe.name).clear().sendKeys(name);
     self.getFormElement(fe.types).sendKeys(type);
+    if (crushRuleSet) {
+      self.getFormElement(fe.crushRules)
+        .all(by.cssContainingText("option", crushRuleSet)).click();
+    }
+    if (erasureProfile) {
+      self.getFormElement(fe.erasureProfiles)
+        .all(by.cssContainingText("option", erasureProfile)).click();
+    }
     self.getFormElement(fe.pgnum).clear().sendKeys(pgs);
     self.addApplication(appToUse);
     if (isCompression === true) {
@@ -409,10 +417,10 @@ var CephPoolCommons = function () {
     }
   };
 
-  this.createPool = (name, type, pgs, isCompression, appToUse) => {
+  this.createPool = (name, type, pgs, isCompression, appToUse, crushRuleSet, erasureProfile) => {
     isCompression = isCompression || false;
     appToUse = appToUse || "cephfs";
-    self.fillForm(name, type, pgs, isCompression, appToUse);
+    self.fillForm(name, type, pgs, isCompression, appToUse, crushRuleSet, erasureProfile);
     self.submitForm(name, type, pgs);
   };
 

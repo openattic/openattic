@@ -16,6 +16,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from ceph_radosgw.rgw_client import RGWClient
+from ceph_nfs.models import GaneshaExport
 from rest_client import RequestException
 
 
@@ -65,3 +66,18 @@ def bucket_create(request):
         return HttpResponse(e.content, status=e.status_code)
     except RGWClient.NoCredentialsException:
         return NoCredentialsResponse()
+
+
+@api_view(['DELETE'])
+def bucket_delete(request):
+
+    params = request.GET.copy()
+
+    if 'bucket' not in params:
+        raise ValidationError('No bucket parameter provided')
+
+    if GaneshaExport.objects.filter(path__in=params['bucket']):
+        raise ValidationError('Can not delete the bucket \'{}\', it is shared via NFS'.format(
+            params['bucket']))
+
+    return proxy_view(request, 'bucket')

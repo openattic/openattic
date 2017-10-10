@@ -14,7 +14,8 @@
 
 import logging
 
-from ceph.librados import ClusterConf
+from ceph.librados import ClusterConf, call_librados
+from exception import ExternalCommandError
 from module_status import Reason, UnavailableModule
 
 logger = logging.getLogger(__name__)
@@ -24,18 +25,29 @@ def check_keyring_permission(keyring):
     try:
         keyring._check_access()
     except RuntimeError as e:
-        raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CLUSTER_FOUND, e.message)
+        raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CLUSTER_FOUND, str(e))
 
 
 def check_ceph_api(fsid):
     try:
         cluster = ClusterConf.from_fsid(fsid)
-        with cluster.client as client:
-            if not client.connected():
-                raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CONNECTION,
-                                        {'fsid': fsid, 'cluster_name': cluster.name})
     except LookupError:
         raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CLUSTER_FOUND, {'fsid': fsid})
+
+    def test_connection(client):
+        if not client.connected():
+            raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CONNECTION,
+                                    {'fsid': fsid,
+                                     'cluster_name': cluster.name})
+
+    try:
+        call_librados(fsid, test_connection)
+    except ExternalCommandError as e:
+        raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CLUSTER_FOUND, {
+            'fsid': fsid,
+            'message': str(e),
+            'cluster_name': cluster.name,
+        })
 
 
 def status(params):
