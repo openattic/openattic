@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+var app = angular.module("openattic.shared");
 app.directive("validIqn", function () {
   return {
     require: "ngModel",
