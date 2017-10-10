@@ -31,6 +31,7 @@ Fixed
 ~~~~~
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
+* Backend: The currently logged in user can't delete himself anymore (OP-2738)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
 
