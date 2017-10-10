@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRgw");
 app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal,
-    cephRgwUserService, oaTabSetService) {
+    cephRgwUserService, oaTabSetService, settingsFormService, Notification) {
   $scope.users = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -127,20 +127,41 @@ app.controller("CephRgwUsersCtrl", function ($scope, $state, $uibModal,
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
-    var modalInstance = $uibModal.open({
-      windowTemplate: require("../../../templates/messagebox.html"),
-      template: require("../templates/cephRgwUserDeleteModal.html"),
-      controller: "CephRgwUserDeleteModalCtrl",
-      resolve: {
-        userSelection: function () {
-          return $scope.selection.items;
+    // Get the settings for additional checks before deleting the selected users.
+    settingsFormService.get()
+      .$promise
+      .then(function (res) {
+        // Check if one of the selected user is configured to access
+        // the Object Gateway. If this is true, then display a warning
+        // message and abort the deletion process.
+        const abort = $scope.selection.items.some((item) => {
+          return item.user_id === res.rgw.user_id;
+        });
+        if (abort) {
+          const numUsers = $scope.selection.items.length;
+          Notification.warning({
+            title: (numUsers > 1) ? "Delete users" : "Delete user",
+            msg: numUsers + " user(s) can not be deleted because the user '" +
+              res.rgw.user_id + "' is used to access the Object Gateway."
+          });
+          return;
         }
-      }
-    });
-    modalInstance.result.then(function () {
-      // Reload the user list.
-      $scope.filterConfig.refresh = new Date();
-    });
+        // Display the delete dialog.
+        var modalInstance = $uibModal.open({
+          windowTemplate: require("../../../templates/messagebox.html"),
+          template: require("../templates/cephRgwUserDeleteModal.html"),
+          controller: "CephRgwUserDeleteModalCtrl",
+          resolve: {
+            userSelection: function () {
+              return $scope.selection.items;
+            }
+          }
+        });
+        modalInstance.result.then(function () {
+          // Reload the user list.
+          $scope.filterConfig.refresh = new Date();
+        });
+      });
   };
 
   $scope.listBucketsAction = function () {

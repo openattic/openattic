@@ -36,6 +36,10 @@ var app = angular.module("openattic.cephRgw");
 app.factory("cephRgwUserService", function ($resource, $injector, $q, $filter) {
   return $resource(globalConfig.API.URL + "rgw/user", {
   }, {
+    delete: {
+      url: globalConfig.API.URL + "ceph_radosgw/user/delete",
+      method: "DELETE"
+    },
     getQuota: {
       method: "GET",
       url: globalConfig.API.URL + "rgw/user?quota",

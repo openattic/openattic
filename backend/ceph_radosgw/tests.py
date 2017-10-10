@@ -10,10 +10,12 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from django.test import TestCase
-import mock
-
 from ceph_radosgw.rgw_client import RGWClient
+from django.conf import settings
+from django.test import TestCase
+from rest_framework import status
+from sysutils.database_utils import make_default_admin
+import mock
 
 
 class RGWClientTestCase(TestCase):
@@ -37,3 +39,11 @@ class RGWClientTestCase(TestCase):
         instance = RGWClient._user_instances[RGWClient._SYSTEM_USERID]
         self.assertEqual(instance.userid, 'USER_ID')
 
+    @mock.patch('ceph_radosgw.views.Settings')
+    def test_do_not_delete_rgw_api_user(self, Settings_mock):
+        Settings_mock.RGW_API_USER_ID = 'admin'
+        make_default_admin()
+        self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
+        response = self.client.delete('/api/ceph_radosgw/user/delete?uid=admin')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Can not delete the user', response.data['detail'])
