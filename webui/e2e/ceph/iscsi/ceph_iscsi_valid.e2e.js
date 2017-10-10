@@ -12,10 +12,8 @@ describe("ceph iscsi", function () {
   beforeAll(function () {
     helpers.login();
     element(by.css(".tc_menuitem_ceph_iscsi")).click();
-  });
-
-  beforeEach(function () {
     table.addTarget();
+    form.submitButton.click();
   });
 
   it("should validate target id", function () {
@@ -32,8 +30,21 @@ describe("ceph iscsi", function () {
     expect(form.targetIdRequired.isDisplayed()).toBe(false);
   });
 
-  it("should validate lun", function () {
+  it("should validate portals", function () {
+    expect(form.portalsRequired.isDisplayed()).toBe(true);
+
+    form.addPortal(0);
+    expect(form.portalsRequired.isDisplayed()).toBe(false);
+  });
+
+  it("should validate images", function () {
+    expect(form.imagesRequired.isDisplayed()).toBe(true);
+
     form.addImage(0);
+    expect(form.imagesRequired.isDisplayed()).toBe(false);
+  });
+
+  it("should validate lun", function () {
     form.openImageSettingsModal(0);
     form.lunIdInput.clear();
     expect(form.lunIdRequired.isDisplayed()).toBe(true);
@@ -46,7 +57,7 @@ describe("ceph iscsi", function () {
 
   it("should validate user", function () {
     form.authenticationCheckbox.click();
-    form.submitButton.click();
+
     expect(form.userRequired.isDisplayed()).toBe(true);
 
     form.userInput.clear().sendKeys("TargetUser");
@@ -54,8 +65,6 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate password", function () {
-    form.authenticationCheckbox.click();
-    form.submitButton.click();
     expect(form.passwordRequired.isDisplayed()).toBe(true);
 
     form.passwordInput.clear().sendKeys("TargetPassword");
@@ -63,7 +72,6 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate initiators", function () {
-    form.authenticationCheckbox.click();
     form.addInitiator();
     form.initiatorsInput.get(0).clear().sendKeys("...");
     expect(form.initiatorsRequired.get(0).isDisplayed()).toBe(false);
@@ -81,9 +89,8 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate mutual user", function () {
-    form.authenticationCheckbox.click();
     form.mutualAuthenticationCheckbox.click();
-    form.submitButton.click();
+
     expect(form.mutualUserRequired.isDisplayed()).toBe(true);
 
     form.mutualUserInput.sendKeys("TargetMutualUser");
@@ -91,9 +98,6 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate mutual password", function () {
-    form.authenticationCheckbox.click();
-    form.mutualAuthenticationCheckbox.click();
-    form.submitButton.click();
     expect(form.mutualPasswordRequired.isDisplayed()).toBe(true);
 
     form.mutualPasswordInput.sendKeys("TargetMutualPassword");
@@ -101,9 +105,8 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate discovery user", function () {
-    form.authenticationCheckbox.click();
     form.discoveryAuthenticationCheckbox.click();
-    form.submitButton.click();
+
     expect(form.discoveryUserRequired.isDisplayed()).toBe(true);
 
     form.discoveryUserInput.sendKeys("TargetDiscoveryUser");
@@ -111,9 +114,6 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate discovery password", function () {
-    form.authenticationCheckbox.click();
-    form.discoveryAuthenticationCheckbox.click();
-    form.submitButton.click();
     expect(form.discoveryPasswordRequired.isDisplayed()).toBe(true);
 
     form.discoveryPasswordInput.sendKeys("TargetDiscoveryPassword");
@@ -121,10 +121,8 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate discovery mutual user", function () {
-    form.authenticationCheckbox.click();
-    form.discoveryAuthenticationCheckbox.click();
     form.discoveryMutualAuthenticationCheckbox.click();
-    form.submitButton.click();
+
     expect(form.discoveryMutualUserRequired.isDisplayed()).toBe(true);
 
     form.discoveryMutualUserInput.sendKeys("TargetDiscoveryMutualUser");
@@ -132,18 +130,10 @@ describe("ceph iscsi", function () {
   });
 
   it("should validate discovery mutual password", function () {
-    form.authenticationCheckbox.click();
-    form.discoveryAuthenticationCheckbox.click();
-    form.discoveryMutualAuthenticationCheckbox.click();
-    form.submitButton.click();
     expect(form.discoveryMutualPasswordRequired.isDisplayed()).toBe(true);
 
     form.discoveryMutualPasswordInput.sendKeys("TargetDiscoveryMutualPassword");
     expect(form.discoveryMutualPasswordRequired.isDisplayed()).toBe(false);
-  });
-
-  afterEach(function () {
-    helpers.leaveForm();
   });
 
   afterAll(function () {
