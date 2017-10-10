@@ -43,6 +43,7 @@ Fixed
 * Backend: The currently logged in user can't delete himself anymore (OP-2738)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* WebUI/QA: Prevent random failure in "2 failed task" test (OP-2735)
 
 
 Removed

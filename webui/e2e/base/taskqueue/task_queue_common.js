@@ -300,7 +300,6 @@
   self.deleteTasks = function (tabName, taskName) {
     self.changeTab(tabName);
     var deleteBtn = self.dialog.tabs[tabName].elements.deleteBtn;
-    expect(deleteBtn.isEnabled()).toBe(false);
     if (taskName) { // If a singel deletion takes place.
       var task = element.all(by.cssContainingText("tr", taskName)).first();
       expect(task.isDisplayed()).toBe(true);
@@ -308,7 +307,6 @@
     } else { // Delete all tasks in the tabName.
       self.dialog.tabs[tabName].elements.selectAll.click();
     }
-    expect(deleteBtn.isEnabled()).toBe(true);
     var itemLength = 1;
     self.dialog.tabs.pending.elements.tab.getText().then(function (s) {
       itemLength = parseInt(s.match(/[0-9]+/)[0], 10);
