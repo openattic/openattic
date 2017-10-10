@@ -29,6 +29,8 @@ Changed
 * WebUI: Submit buttons should be enabled on invalid forms (OP-2736)
 * WebUI/Backend: Salt-API settings should be optional (OP-2722)
 * WebUI: Prevent modal from closing when clicking on the backdrop (OP-2771)
+* WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
+  (OP-2725)
 
 Fixed
 ~~~~~
