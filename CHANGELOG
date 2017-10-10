@@ -62,6 +62,8 @@ Fixed
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
 * Backend: The currently logged in user can't delete himself anymore (OP-2738)
+* Backend: Fixed `CephCluster` to return the same `keyring_candidates` twice
+  (OP-2782)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
 * WebUI: Allow users to type in any size into the RBD form (OP-2730)

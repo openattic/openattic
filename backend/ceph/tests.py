@@ -21,6 +21,7 @@ import mock
 import tempfile
 import json
 
+from configobj import ConfigObj
 from django.core.exceptions import ValidationError
 
 import exception
@@ -49,12 +50,34 @@ def open_testdata(name):
 
 
 @contextmanager
-def temporary_keyring(user_name='client.admin'):
-    with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
-         as tmpfile:
-        tmpfile.write('[{}]'.format(user_name))
+def temporary_keyring(user='client.admin', users=None, content=None):
+    if users is None:
+        users = [user]
+    if content is None:
+        content = '\n'.join(['[{}]'.format(u) for u in users])
+    with tempfile.NamedTemporaryFile(dir='/tmp', prefix=users[0] + '.',
+                                     suffix=".keyring") as tmpfile:
+        tmpfile.write(content)
         tmpfile.flush()
         yield tmpfile.name
+
+
+@contextmanager
+def temp_ceph_conf(fsid, keyrings):
+    with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph',
+                                     suffix=".conf") as tmpfile_ceph_conf:
+        obj = ConfigObj()
+        obj['global'] = {'fsid': fsid}
+        for keyring in keyrings:
+            if isinstance(keyring, Keyring):
+                users, file_name = keyring.available_user_names, keyring.file_name
+            else:
+                users, file_name = keyring['available_user_names'], keyring['file_name']
+            for user in users:
+                obj[user] = {'keyring':  file_name}
+        obj.write(outfile=tmpfile_ceph_conf)
+        tmpfile_ceph_conf.flush()
+        yield tmpfile_ceph_conf.name
 
 
 class KeyringTestCase(TestCase):
@@ -77,75 +100,44 @@ class KeyringTestCase(TestCase):
         self.assertIn('does not exist', str(context.exception))
 
     def test_invalid_keyring(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
-                as tmpfile:
-            tmpfile.write("abcdef")
-            tmpfile.flush()
-            keyring = Keyring(tmpfile.name)
+        with temporary_keyring(content="abcdef") as file_name:
+            keyring = Keyring(file_name)
             with self.assertRaises(RuntimeError) as context:
                 keyring._check_access()
             self.assertIn('Corrupt keyring', str(context.exception))
 
     def test_users_sorting(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring', suffix='.keyring') \
-             as tmpfile:
-            tmpfile.write('[mon.]\n[client.admin]\n[client.rgw]\n[client.openattic]\n')
-            tmpfile.flush()
-            keyring = Keyring(tmpfile.name)
+        with temporary_keyring(users=['mon.', 'client.admin', 'client.rgw', 'client.openattic'])\
+                as file_name:
+            keyring = Keyring(file_name)
             self.assertEqual(keyring.available_user_names[0], 'client.openattic')
             self.assertEqual(keyring.available_user_names[1], 'client.admin')
 
     def test_sorting(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring1', suffix='.keyring') \
-             as tmpfile1:
-            with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring2', suffix='.keyring') \
-                 as tmpfile2:
-                with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring3', suffix='.keyring') \
-                     as tmpfile3:
-                    tmpfile1.write('[client.rgw]\n')
-                    tmpfile1.flush()
-                    keyring1 = Keyring(tmpfile1.name)
-
-                    tmpfile2.write('[client.openattic]\n')
-                    tmpfile2.flush()
-                    keyring2 = Keyring(tmpfile2.name)
-
-                    tmpfile3.write('[mon.]\n[client.admin]\n')
-                    tmpfile3.flush()
-                    keyring3 = Keyring(tmpfile3.name)
-
-                    keyrings = [keyring1, keyring2, keyring3]
+        with temporary_keyring('client.rgw') as file_name1:
+            with temporary_keyring('client.openattic') as file_name2:
+                with temporary_keyring(users=['[mon.', 'client.admin']) as file_name3:
+                    keyrings = map(Keyring, [file_name1, file_name2, file_name3])
 
                     sorted_keyrings = sorted(
                         keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
-                    self.assertIs(sorted_keyrings[0], keyring2)
-                    self.assertIs(sorted_keyrings[1], keyring3)
-                    self.assertIs(sorted_keyrings[2], keyring1)
+                    self.assertIs(sorted_keyrings[0], keyrings[1])
+                    self.assertIs(sorted_keyrings[1], keyrings[2])
+                    self.assertIs(sorted_keyrings[2], keyrings[0])
 
     def test_empty_keyring(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph', suffix=".conf") \
-             as tmpfile_ceph_conf:
-            with tempfile.NamedTemporaryFile(dir='/tmp', prefix='client.empty.',
-                                             suffix=".keyring") as tmpfile_keyring_empty:
-                with tempfile.NamedTemporaryFile(dir='/tmp', prefix='client.foo.',
-                                                 suffix=".keyring") as tmpfile_keyring_foo:
-                    tmpfile_keyring_foo.write('[client.foo]')
-                    tmpfile_keyring_foo.flush()
-                    tmpfile_ceph_conf.write("""
-                    [global]
-                    fsid = f-s-i-d
-                    [client.empty]
-                    keyring = {}
-                    [client.foo]
-                    keyring = {}
-                    """.format(tmpfile_keyring_empty.name, tmpfile_keyring_foo.name))
-                    tmpfile_ceph_conf.flush()
+        with temporary_keyring('client.empty', content='') as file_name_empty:
+            with temporary_keyring('client.foo') as file_name_foo:
+                with temp_ceph_conf('fsid', [Keyring(file_name_foo),
+                                             {'available_user_names': ['client.empty'],
+                                              'file_name': file_name_empty}]) as ceph_conf:
                     self.assertEqual(
                         [k.file_name for k in
-                         ceph.librados.ClusterConf(
-                             file_path=tmpfile_ceph_conf.name).keyring_candidates],
-                        [tmpfile_keyring_foo.name])
+                         ceph.librados.ClusterConf(file_path=ceph_conf).keyring_candidates],
+                        [file_name_foo])
+
+
 
 
 class CephPoolTestCase(TestCase):
@@ -742,6 +734,42 @@ class CephClusterTestCase(TestCase):
                                               keyring_file_path=file_name,
                                               keyring_user='client.admin')
             cluster.clean()
+
+    def test_keyring_candidates(self):
+        with temporary_keyring(users=['client.admin', 'client.openattic']) as keyring_path:
+            with temp_ceph_conf('fsid', [Keyring(keyring_path)]) as ceph_conf:
+                cluster = ceph.models.CephCluster.from_cluster_conf(ceph.librados.ClusterConf(ceph_conf))
+                self.assertEqual(cluster.keyring_candidates, [{
+                    'file-path': keyring_path,
+                    'user-names': ['client.openattic', 'client.admin']
+                }])
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    @mock.patch('ceph.librados._write_oa_setting')
+    def test_save(self, _write_oa_setting_mock, _call_mon_command_mock, get_modified_fields_mock):
+        with temporary_keyring(users=['client.admin', 'client.openattic']) as keyring_path:
+            with temp_ceph_conf('f-s-i-d', [Keyring(keyring_path)]) as ceph_conf:
+                cluster = ceph.models.CephCluster.from_cluster_conf(ceph.librados.ClusterConf(ceph_conf))
+                get_modified_fields_mock.return_value = ({
+                                                            'keyring_file_path': 'new_path',
+                                                            'keyring_user': 'client.admin',
+                                                            'osd_flags': ['a', 'b'],
+                                                         }, mock.Mock(osd_flags=['a', 'c']))
+                cluster.keyring_file_path = 'new_path'
+                cluster.keyring_user = 'client.admin'
+                cluster.osd_flags = ['a', 'b']
+
+                cluster.save(force_update=True)
+                self.assertEqual(_write_oa_setting_mock.mock_calls, [
+                    mock.call('CEPH_KEYRING_USER_F_S_I_D', 'client.admin'),
+                    mock.call('CEPH_KEYRING_F_S_I_D', 'new_path')
+                ])
+                self.assertEqual(_call_mon_command_mock.mock_calls, [
+                    mock.call('osd unset', {'key': 'c'}, output_format='string'),
+                    mock.call('osd set', {'key': 'b'}, output_format='string')
+                ])
+
 
 
 class CephOsdTestCase(TestCase):
