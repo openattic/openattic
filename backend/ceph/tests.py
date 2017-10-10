@@ -14,11 +14,14 @@
 """
 import doctest
 import os
+from contextlib import contextmanager
 from errno import EPERM
 
 import mock
 import tempfile
 import json
+
+from django.core.exceptions import ValidationError
 
 import exception
 from ceph.restapi import CephPoolSerializer
@@ -27,47 +30,62 @@ from django.test import TestCase
 import ceph.models
 import ceph.librados
 import ceph.tasks
+import ceph.status
 import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction, sort_by_prioritized_users
 from ceph.tasks import track_pg_creation
+from module_status import UnavailableModule
 
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(ceph.librados))
+    tests.addTests(doctest.DocTestSuite(ceph.models))
     return tests
 
 
 def open_testdata(name):
     return open(os.path.join(os.path.dirname(__file__), name))
 
+@contextmanager
+def temporary_keyring(user_name='client.admin'):
+    with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
+        as tmpfile:
+        tmpfile.write('[{}]'.format(user_name))
+        tmpfile.flush()
+        yield tmpfile.name
+
 
 class KeyringTestCase(TestCase):
-    def test_keyring_succeeds(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
-                as tmpfile:
-            tmpfile.write("[client.admin]")
-            tmpfile.flush()
-            keyring = Keyring(tmpfile.name)
+    def test_succeeds(self):
+        with temporary_keyring() as file_name:
+            keyring = Keyring(file_name)
             self.assertEqual(keyring.available_user_names, ['client.admin'])
 
-    def test_keyring_raises_runtime_error(self):
-        try:
-            Keyring('/does/not/exist')
-        except RuntimeError:
-            return True
+    def test_unknown_user(self):
+        with temporary_keyring() as file_name:
+            keyring = Keyring(file_name, user_name='unknownuser')
+            with self.assertRaises(RuntimeError) as context:
+                keyring._check_access()
+            self.assertIn('unknownuser', str(context.exception))
 
-    def test_username_raises_runtime_error(self):
+    def test_does_not_exist(self):
+        keyring = Keyring('/does/not/exist')
+        with self.assertRaises(RuntimeError) as context:
+            keyring._check_access()
+        self.assertIn('does not exist', str(context.exception))
+
+    def test_invalid_keyring(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
                 as tmpfile:
             tmpfile.write("abcdef")
             tmpfile.flush()
-            try:
-                Keyring(tmpfile.name)
-            except RuntimeError:
-                return True
+            keyring = Keyring(tmpfile.name)
+            with self.assertRaises(RuntimeError) as context:
+                keyring._check_access()
+            self.assertIn('Corrupt keyring', str(context.exception))
 
-    def test_keyring_users_sorting(self):
+    def test_users_sorting(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring', suffix='.keyring') as tmpfile:
             tmpfile.write('[mon.]\n[client.admin]\n[client.rgw]\n[client.openattic]\n')
             tmpfile.flush()
@@ -75,7 +93,7 @@ class KeyringTestCase(TestCase):
             self.assertEqual(keyring.available_user_names[0], 'client.openattic')
             self.assertEqual(keyring.available_user_names[1], 'client.admin')
 
-    def test_keyring_sorting(self):
+    def test_sorting(self):
         with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring1', suffix='.keyring') as tmpfile1:
             with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring2', suffix='.keyring') as tmpfile2:
                 with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring3', suffix='.keyring') as tmpfile3:
@@ -580,12 +598,12 @@ class CephRbdTestCase(TestCase):
     @mock.patch('ceph.models.RbdApi', **{'return_value._undo_stack': None})
     @mock.patch('ceph.models.CephPool.get_all_objects')
     @mock.patch('ceph.models.CephRbd.get_all_objects')
-    def rbd_save_no_features(self, rbd_get_all_objects_mock, pool_get_all_objects_mock, rbd_api_mock, nodb_context_moc):
+    def test_rbd_save_no_features(self, rbd_get_all_objects_mock, pool_get_all_objects_mock, rbd_api_mock, nodb_context_moc):
         """
         Regression test for https://tracker.openattic.org/browse/OP-2506
         Creating an RBD without features causes an error
         """
-        pool = ceph.models.CephPool(name='pool', id=1)
+        pool = ceph.models.CephPool(name='pool', id=1, cluster=ceph.models.CephCluster(name='name', fsid='fsid'))
         rbd = ceph.models.CephRbd(pool=pool, name='rbd')
         pool_get_all_objects_mock.return_value = [pool]
         rbd_get_all_objects_mock.return_value = [rbd]  # needed to fake successful `RbdApi.create()`
@@ -664,3 +682,164 @@ class CephClusterTestCase(TestCase):
         self.assertEqual(set(ceph.models.CephCluster(fsid='fsid').osd_flags), {
             'pause', 'sortbitwise', 'recovery_deletes'
         })
+
+    def test_clean_keyring_file_path(self):
+        cluster = ceph.models.CephCluster(config_file_path='/does/not/exist',
+                                          keyring_file_path='/does/not/exist')
+        with self.assertRaises(ValidationError) as context:
+            cluster.clean()
+        self.assertIn('keyring_file_path', context.exception.error_dict)
+
+    def test_clean_keyring_user(self):
+        with temporary_keyring() as file_name:
+            cluster = ceph.models.CephCluster(config_file_path='/does/not/exist',
+                                              keyring_file_path=file_name,
+                                              keyring_user='unknownuser')
+            with self.assertRaises(ValidationError) as context:
+                cluster.clean()
+            self.assertIn('keyring_user', context.exception.error_dict)
+
+    def test_clean(self):
+        with temporary_keyring() as file_name:
+            cluster = ceph.models.CephCluster(config_file_path='/does/not/exist',
+                                              keyring_file_path=file_name,
+                                              keyring_user='client.admin')
+            cluster.clean()
+
+
+class CephOsdTestCase(TestCase):
+
+    def test_save(self):
+        with self.assertRaises(ValidationError):
+            ceph.models.CephOsd(cluster=ceph.models.CephCluster()).save()
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save_osd_in(self, _call_mon_command_mock, get_modified_fields_mock):
+        get_modified_fields_mock.return_value = ({'in_state': 1}, None)
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name').save()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd in', {'name': 'name'}, output_format='string')
+        ])
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save_osd_out(self, _call_mon_command_mock, get_modified_fields_mock):
+        get_modified_fields_mock.return_value = ({'in_state': 0}, None)
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name').save()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd out', {'name': 'name'}, output_format='string')
+        ])
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save_reweight(self, _call_mon_command_mock, get_modified_fields_mock):
+        get_modified_fields_mock.return_value = ({'reweight': 42}, mock.Mock(reweight=0))
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name').save()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd crush reweight', {'name': 'name', 'weight': 42}, output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_scrub(self, _call_mon_command_mock):
+        osd = ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
+                            id=1,
+                            name='name')
+        osd.scrub(False)
+        osd.scrub(True)
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd scrub', {'who': 'name'}, output_format='string'),
+            mock.call('osd deep-scrub', {'who': 'name'}, output_format='string')
+        ])
+
+
+class CephErasureCodeProfileTestCase(TestCase):
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_save(self, _call_mon_command_mock):
+        ecp = ceph.models.CephErasureCodeProfile(k=3, m=3, name='test',
+                                                 ruleset_failure_domain='rack')
+        ecp._context = mock.Mock(fsid='fsid')
+        ecp.save(force_insert=True)
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd erasure-code-profile set',
+                      {'profile': ['k=3', 'm=3', 'crush-failure-domain=rack'], 'name': 'test'},
+                      output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_delete(self, _call_mon_command_mock):
+        ecp = ceph.models.CephErasureCodeProfile(name='test')
+        ecp._context = mock.Mock(fsid='fsid')
+        ecp.delete()
+        self.assertEqual(_call_mon_command_mock.mock_calls, [
+            mock.call('osd erasure-code-profile rm',
+                      {'name': 'test'},
+                      output_format='string')
+        ])
+
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    def test_get_all_objects(self, _call_mon_command_mock):
+        def side_effect(prefix, *a, **kw):
+            return {
+                'osd erasure-code-profile ls': ['test'],
+                'osd erasure-code-profile get': {'k': 3, 'm': 3, 'plugin': 'jrasure',
+                                                 'technique': 'technique',
+                                                 'jerasure-per-chunk-alignment': 'align',
+                                                 'crush-failure-domain': 'rack',
+                                                 'crush-root': 'root', 'w': 1}
+            }[prefix]
+        _call_mon_command_mock.side_effect = side_effect
+        nodb.models.NodbManager.set_nodb_context(mock.Mock(fsid='fsid'))
+        ecp = ceph.models.CephErasureCodeProfile.objects.get()
+        self.assertEqual(ecp.name, 'test')
+        self.assertEqual(ecp.k, 3)
+        self.assertEqual(ecp.m, 3)
+        self.assertEqual(ecp.ruleset_failure_domain, 'rack')
+        self.assertEqual(ecp.ruleset_root, 'root')
+
+
+class StatusTestCase(TestCase):
+    def test_keyring(self):
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_keyring_permission(ceph.librados.Keyring('/does/not/exist'))
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_not_connected(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':False})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_connected(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':True})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        self.assertIsNone(ceph.status.check_ceph_api('fsid'))
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_timeout(self, ClusterConf_mock, call_librados_mock):
+        call_librados_mock.side_effect = exception.ExternalCommandError('x')
+        ClusterConf_mock.from_fsid.return_value.name = 'name'
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')
+
+    @mock.patch('ceph.status.call_librados')
+    @mock.patch('ceph.status.ClusterConf')
+    def test_api_no_cluster(self, ClusterConf_mock, call_librados_mock):
+        client_mock = mock.Mock(**{'connected.return_value':False})
+        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        ClusterConf_mock.from_fsid.side_effect = KeyError()
+        with self.assertRaises(UnavailableModule):
+            ceph.status.check_ceph_api('fsid')

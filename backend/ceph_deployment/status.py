@@ -11,8 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from module_status import check_deepsea_connection
 
+from ceph.status import status
 
-def status(params):
-    check_deepsea_connection()
+__all__ = ['status']

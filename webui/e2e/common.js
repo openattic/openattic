@@ -97,6 +97,17 @@
       element(by.id("bot2-Msg1")).click();
     },
 
+    /**
+     * Clear the search filter.
+     */
+    clear_search_for: () => {
+      element(by.model("filterConfig.search")).clear();
+    },
+
+    /**
+     * Set the given search filter.
+     * @param {string} query The filter query.
+     */
     search_for: function (query) {
       helper.changeInput(element(by.model("filterConfig.search")), query);
     },

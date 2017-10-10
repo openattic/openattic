@@ -19,7 +19,8 @@ describe("ceph pool creation", function () {
       const name = createName(type, pgs);
       it("should create a ceph pool named " + name, function () {
         cephPoolProperties.addButton.click();
-        cephPoolProperties.createPool(name, type, pgs);
+        cephPoolProperties.createPool(name, type, pgs, false, "cephfs", "erasure-code",
+            (type === "erasure" ? "default" : undefined));
       });
       it("should delete pool named " + name, function () {
         cephPoolProperties.deletePool(name);
@@ -31,7 +32,7 @@ describe("ceph pool creation", function () {
     const ecName = createName("erasure", 32);
     it("should create pool with overwrite enabled named " + ecName, function () {
       cephPoolProperties.addButton.click();
-      cephPoolProperties.fillForm(ecName, "erasure", 32);
+      cephPoolProperties.fillForm(ecName, "erasure", 32, false, "cephfs", "erasure-code", "default");
       cephPoolProperties.checkCheckboxToBe(element(by.model("data.flags.ec_overwrites")));
       cephPoolProperties.submitForm(ecName, "erasure", 32);
       expect(element(by.className("tc-flag-ec_overwrites")).isDisplayed()).toBe(true);
@@ -43,7 +44,7 @@ describe("ceph pool creation", function () {
     const compressedName = createName("erasure", 16) + "_compressed";
     it("should create a compressed pool", function () {
       cephPoolProperties.addButton.click();
-      cephPoolProperties.createPool(compressedName, "erasure", 16, true);
+      cephPoolProperties.createPool(compressedName, "erasure", 16, true, "cephfs", "erasure-code", "default");
     });
     it("should delete pool named " + compressedName, function () {
       cephPoolProperties.deletePool(compressedName);
