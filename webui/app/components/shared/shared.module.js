@@ -30,7 +30,11 @@
  */
 "use strict";
 
-angular.module("openattic.shared", []);
+import oaSubmitButton from "./oa-submit-button/oa-submit-button.component"
+
+angular
+  .module("openattic.shared", [])
+  .component("oaSubmitButton", oaSubmitButton);
 
 requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
 

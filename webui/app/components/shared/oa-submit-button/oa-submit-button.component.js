@@ -59,8 +59,7 @@ class OASubmitButton {
 
 }
 
-var app = angular.module("openattic.shared");
-app.component("oaSubmitButton", {
+export default {
   template: require("./oa-submit-button.component.html"),
   transclude: true,
   bindings: {
@@ -68,4 +67,4 @@ app.component("oaSubmitButton", {
     onSubmit: "&"
   },
   controller: OASubmitButton
-});
+}
