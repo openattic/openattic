@@ -16,19 +16,17 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.5.2] - unreleased
+[3.5.2] - 2017-10-10
 --------------------
 
 Added
 ~~~~~
-WebUI: Do not delete buckets that are referenced/used, e.g. by NFS (OP-2536)
+* WebUI: Do not delete buckets that are referenced/used, e.g. by NFS (OP-2536)
 
 Changed
 ~~~~~~~
 * WebUI: RBD features: Add more information to features that
   require another feature to be enabled (OP-2765)
-* WebUI: Do not delete buckets that are referenced/used, e.g.
-  by NFS (OP-2536)
 * WebUI: Add separator between action buttons in Ceph OSD page (OP-2748)
 
 Fixed
