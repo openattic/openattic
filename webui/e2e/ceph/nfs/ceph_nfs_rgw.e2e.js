@@ -62,9 +62,7 @@ describe("ceph nfs", () => {
     helpers.setLocation("ceph/rgw/buckets");
     var bucket = helpers.search_for_element("e2e-rgw-add");
     bucket.click();
-    helpers.delete_selection(undefined, "$ctrl");
-    // Close the delete dialog.
-    element(by.id("bot1-Msg1")).click();
+    helpers.delete_selection(undefined, "$ctrl", false);
     expect(bucket.isDisplayed()).toBe(true);
     helpers.setLocation("ceph/nfs");
   });

@@ -31,6 +31,8 @@ Changed
 * WebUI: Prevent modal from closing when clicking on the backdrop (OP-2771)
 * WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
   (OP-2725)
+* WebUI: Don't allow performing a delete action on buckets shared via
+  NFS (OP-2768)
 
 Fixed
 ~~~~~

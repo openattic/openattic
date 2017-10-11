@@ -76,8 +76,30 @@ def bucket_delete(request):
     if 'bucket' not in params:
         raise ValidationError('No bucket parameter provided')
 
-    if GaneshaExport.objects.filter(path__in=params['bucket']):
+    # Make sure the bucket is not shared via NFS.
+    query = GaneshaExport.objects.filter(path__in=params['bucket'])
+    if query.count() > 0:
         raise ValidationError('Can not delete the bucket \'{}\', it is shared via NFS'.format(
             params['bucket']))
 
     return proxy_view(request, 'bucket')
+
+
+@api_view(['GET'])
+def bucket_get(request):
+
+    params = request.GET.copy()
+
+    if 'bucket' not in params:
+        raise ValidationError('No bucket parameter provided')
+
+    response = proxy_view(request, 'bucket')
+
+    # Check if the bucket is shared via NFS.
+    query = GaneshaExport.objects.filter(path__in=params['bucket'])
+    # Append the 'is_referenced' attribute.
+    content = json.loads(response.content)
+    content['is_referenced'] = query.count() > 0
+    response.content = json.dumps(content)
+
+    return response
