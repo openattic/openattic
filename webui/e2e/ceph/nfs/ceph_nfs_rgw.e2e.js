@@ -31,9 +31,8 @@ describe("ceph nfs", () => {
     form.clients.clear().sendKeys("192.168.0.10");
     form.selectClientsAccessType("MDONLY_RO");
     form.selectClientsSquash("None");
-    expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
-    helpers.clear_search_for();
+    helpers.checkLocation("ceph/nfs");
   });
 
   it("should display added export details (RGW)", () => {
@@ -60,7 +59,7 @@ describe("ceph nfs", () => {
 
   it("should check the bucket can't be deleted because it's referenced", () => {
     helpers.setLocation("ceph/rgw/buckets");
-    var bucket = helpers.search_for_element("e2e-rgw-add");
+    let bucket = helpers.search_for_element("e2e-rgw-add");
     bucket.click();
     helpers.delete_selection(undefined, "$ctrl", false);
     expect(bucket.isDisplayed()).toBe(true);

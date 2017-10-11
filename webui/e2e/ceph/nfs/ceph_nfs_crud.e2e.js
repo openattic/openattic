@@ -27,11 +27,9 @@ describe("ceph nfs", () => {
   it("should check the ceph NFS add export url", () => {
     table.addExport();
     helpers.checkLocation("ceph/.*/nfs/add");
-    helpers.leaveForm();
   });
 
   it("should add an export", () => {
-    table.addExport();
     form.selectHost(1);
     form.selectFsal("CephFS");
     form.path.clear().sendKeys("/e2e/cfs-add");
@@ -40,8 +38,8 @@ describe("ceph nfs", () => {
     form.clients.clear().sendKeys("192.168.0.10");
     form.selectClientsAccessType("MDONLY_RO");
     form.selectClientsSquash("None");
-    expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.checkLocation("ceph/nfs");
   });
 
   it("should display added export details", () => {
@@ -69,14 +67,12 @@ describe("ceph nfs", () => {
   it("should check the ceph NFS edit export url", () => {
     table.editExport("/e2e/cfs-add");
     helpers.checkLocation("ceph/.*/nfs/edit/.*/.*");
-    helpers.leaveForm();
   });
 
   it("should edit export", () => {
-    table.editExport("/e2e/cfs-add");
     form.path.clear().sendKeys("/e2e/cfs-edit");
-    expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.checkLocation("ceph/nfs");
   });
 
   it("should display edited export details", () => {
@@ -104,15 +100,13 @@ describe("ceph nfs", () => {
   it("should check the ceph NFS clone export url", () => {
     table.cloneExport("/e2e/cfs-edit");
     helpers.checkLocation("ceph/.*/nfs/clone/.*/.*");
-    helpers.leaveForm();
   });
 
   it("should clone export", () => {
-    table.cloneExport("/e2e/cfs-edit");
     form.path.clear().sendKeys("/e2e/cfs-clone");
     form.tag.clear().sendKeys("e2eTagClone");
-    expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.checkLocation("ceph/nfs");
   });
 
   it("should display cloned target details", () => {
