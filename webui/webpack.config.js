@@ -137,6 +137,11 @@ module.exports = (function makeWebpackConfig () {
         useEslintrc: false
         // eslint options (if necessary)
       }
+    },
+    {
+      test: /(htm|html|xhtml|hbs|handlebars|php|ejs)$/,
+      loader: "htmllint-loader",
+      exclude: /(node_modules)/
     }
     ]
   };
@@ -147,7 +152,7 @@ module.exports = (function makeWebpackConfig () {
    * List: https://webpack.js.org/plugins/
    */
   config.plugins = [
-   /**
+    /**
    * PostCSS
    * Reference: https://github.com/postcss/autoprefixer
    * Add vendor prefixes to your css
@@ -251,7 +256,7 @@ module.exports = (function makeWebpackConfig () {
     };
   }
 
-    /**
+  /**
    * Dev server configuration
    * use the format described on webpack.config.json.sample
    * Reference: https://webpack.js.org/configuration/dev-server/

@@ -15,7 +15,8 @@
       <dt ng-bind="$ctrl.selection.item.fsal === 'RGW' ? 'Bucket:' : 'Ceph Path:'"></dt>
       <dd ng-bind="$ctrl.selection.item.path"></dd>
       <dt>NFS Protocol:</dt>
-      <dd ng-repeat="protocol in $ctrl.selection.item.protocols" ng-bind="protocol"></dd>
+      <dd ng-repeat="protocol in $ctrl.selection.item.protocols"
+          ng-bind="protocol"></dd>
       <span ng-if="$ctrl.selection.item.tag">
         <dt>NFS Tag:</dt>
         <dd ng-bind="$ctrl.selection.item.tag"></dd>
@@ -31,32 +32,41 @@
       <dt>Squash:</dt>
       <dd ng-bind="$ctrl.selection.item.squash"></dd>
       <dt>Transports:</dt>
-      <dd ng-repeat="transport in $ctrl.selection.item.transports" ng-bind="transport"></dd>
+      <dd ng-repeat="transport in $ctrl.selection.item.transports"
+          ng-bind="transport"></dd>
     </dl>
 
     <span ng-repeat="clientBlock in $ctrl.selection.item.clientBlocks">
       <hr>
-      <dl class="dl-horizontal" >
+      <dl class="dl-horizontal">
         <dt>Clients:</dt>
-        <dd ng-repeat="client in clientBlock.clients" ng-bind="client"></dd>
+        <dd ng-repeat="client in clientBlock.clients"
+            ng-bind="client"></dd>
         <dt>Access Type:</dt>
         <dd ng-if="clientBlock.accessType">
           {{ clientBlock.accessType }} - {{ $ctrl.getAccessTypeHelp(clientBlock.accessType) }}
         </dd>
         <dd ng-if="!clientBlock.accessType && $ctrl.selection.item.accessType">
-          {{ $ctrl.selection.item.accessType }} <span class="text-muted">(inherited from global config)</span>
+          {{ $ctrl.selection.item.accessType }}
+          <span class="text-muted">(inherited from global config)</span>
         </dd>
         <dt>Squash:</dt>
-        <dd ng-if="clientBlock.squash" ng-bind="clientBlock.squash"></dd>
+        <dd ng-if="clientBlock.squash"
+            ng-bind="clientBlock.squash"></dd>
         <dd ng-if="!clientBlock.squash && $ctrl.selection.item.squash">
-          {{ $ctrl.selection.item.squash }} <span class="text-muted">(inherited from global config)</span>
+          {{ $ctrl.selection.item.squash }}
+          <span class="text-muted">(inherited from global config)</span>
         </dd>
       </dl>
     </span>
 
-    <legend><i class="fa fa-book" aria-hidden="true"></i> How to use</legend>
+    <legend>
+      <i class="fa fa-book"
+         aria-hidden="true"></i> How to use</legend>
     <p>To mount this NFS export, run the following command:</p>
-    <p><kbd ng-bind="$ctrl.getMountCommand()"></kbd></p>
+    <p>
+      <kbd ng-bind="$ctrl.getMountCommand()"></kbd>
+    </p>
 
   </div>
 </div>

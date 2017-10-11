@@ -1,25 +1,29 @@
 <div class="openattic-modal-header">
-    <span>Ceph OSD {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
+  <span>Ceph OSD {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
 </div>
 
-<form name="form" role="form" novalidate>
+<form name="form"
+      role="form"
+      novalidate>
   <div class="openattic-modal-content">
-      <p>
-          You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to the Ceph OSD <strong>{{$ctrl.resolve.osd.name}}</strong>.
-      </p>
+    <p>
+      You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to the Ceph OSD
+      <strong>{{$ctrl.resolve.osd.name}}</strong>.
+    </p>
   </div>
 
   <div class="openattic-modal-footer">
-      <div class="button-group text-right">
-          <oa-submit-button form="form" on-submit="$ctrl.scrub()">
-              Submit
-          </oa-submit-button>
+    <div class="button-group text-right">
+      <oa-submit-button form="form"
+                        on-submit="$ctrl.scrub()">
+        Submit
+      </oa-submit-button>
 
-          <button id="cancelButton"
-                  class="btn btn-link btn-sm"
-                  ng-click="$ctrl.cancel()">
-              Cancel
-          </button>
-      </div>
+      <button id="cancelButton"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">
+        Cancel
+      </button>
+    </div>
   </div>
 </form>
