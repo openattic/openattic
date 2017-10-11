@@ -26,6 +26,7 @@ Added
 Changed
 ~~~~~~~
 * WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
+* WebUI: Submit buttons should be enabled on invalid forms (OP-2736)
 
 Fixed
 ~~~~~
