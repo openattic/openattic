@@ -40,6 +40,8 @@ Fixed
 
 Removed
 ~~~~~~~
+* Backend: Removed `utilities.in_unittest` (OP-2776)
+
 
 [3.5.2] - 2017-10-10
 --------------------
