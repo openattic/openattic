@@ -34,6 +34,7 @@ class Reason(object):
     DEEPSEA_FAILED_AUTHENTICATION = 106
     DEEPSEA_INTERNAL_SERVER_ERROR = 107
     DEEPSEA_HTTP_PROBLEM = 108
+    DEEPSEA_INCOMPLETE_CONFIGURATION = 109
 
     DEEPSEA_NFS_UNKNOWN_PROBLEM = 120
     DEEPSEA_NFS_RUNNER_ERROR = 121
@@ -95,6 +96,9 @@ def check_deepsea_connection():
             raise UnavailableModule(Reason.DEEPSEA_HTTP_PROBLEM,
                                     "DeepSea server returned status_code={}".format(status_code))
         raise UnavailableModule(_table[str(status_code)], message)
+
+    if not DeepSea.instance().is_configured():
+        raise UnavailableModule(Reason.DEEPSEA_INCOMPLETE_CONFIGURATION)
 
     try:
         online = DeepSea.instance().is_service_online()

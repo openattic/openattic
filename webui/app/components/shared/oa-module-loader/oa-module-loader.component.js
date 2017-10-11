@@ -112,6 +112,10 @@ app.component("oaModuleLoader", {
         title: "DeepSea - Unexpected response",
         template: "deepsea-http-problem"
       },
+      "109": {
+        title: "DeepSea - Incomplete configuration",
+        template: "deepsea-incomplete-configuration"
+      },
       "120": {
         title: "DeepSea - NFS - Unexpected error",
         template: "deepsea-nfs-unknown-problem"
