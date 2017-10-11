@@ -94,7 +94,7 @@
         enteredNameInput = controllerName + "." + enteredNameInput;
       }
       element(by.model(enteredNameInput)).sendKeys("yes");
-      element(by.id("bot2-Msg1")).click();
+      element(by.css(".tc_submitButton")).click();
     },
 
     /**

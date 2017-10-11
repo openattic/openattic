@@ -51,7 +51,7 @@ var CephIscsiTable = function () {
     element(by.css(".tc_menudropdown")).click();
     element(by.css(".tc_deleteItem")).click();
     element(by.model("$ctrl.input.enteredName")).sendKeys("yes");
-    element(by.id("bot2-Msg1")).click();
+    element(by.css(".tc_submitButton")).click();
     expect(this.rows.get(0).isPresent()).toBe(false);
     this.filterInput.clear();
   };
@@ -63,7 +63,7 @@ var CephIscsiTable = function () {
       element(by.css(".tc_menudropdown")).click();
       element(by.css(".tc_deleteItem")).click();
       element(by.model("$ctrl.input.enteredName")).sendKeys("yes");
-      element(by.id("bot2-Msg1")).click();
+      element(by.css(".tc_submitButton")).click();
       element(by.model("filterConfig.search")).clear();
     }).catch(function () {
     });

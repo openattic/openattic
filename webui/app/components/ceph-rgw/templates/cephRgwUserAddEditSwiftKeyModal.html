@@ -6,7 +6,7 @@
     <div class="openattic-modal-content">
         <!-- User -->
         <div class="form-group"
-             ng-class="{'has-error': form.user.$dirty && form.user.$invalid}">
+             ng-class="{'has-error': (form.$submitted || form.user.$dirty) && form.user.$invalid}">
             <label class="col-sm-3 control-label" for="user">User</label>
             <div class="col-sm-9">
                 <div class="input-group">
@@ -22,10 +22,11 @@
                     </select>
                 </div>
                 <span class="help-block tc_userRequired"
-                      ng-show="form.user.$dirty && form.user.$error.required">
+                      ng-show="(form.$submitted || form.user.$dirty) && form.user.$error.required">
                     This field is required!
                 </span>
-                <span class="help-block tc_userNotUnique" ng-show="form.user.$error.uniqueuser">
+                <span class="help-block tc_userNotUnique"
+                      ng-show="(form.$submitted || form.user.$dirty) && form.user.$error.uniqueuser">
                     The chosen user is already in use.
                 </span>
             </div>
@@ -49,7 +50,7 @@
         </div>
         <!-- Secret key -->
         <div class="form-group"
-             ng-class="{'has-error': form.secret_key.$dirty && form.secret_key.$invalid}"
+             ng-class="{'has-error': (form.$submitted || form.secret_key.$dirty) && form.secret_key.$invalid}"
              ng-hide="key.generate_key">
             <label class="col-sm-3 control-label" for="secret_key">Secret key</label>
             <div class="col-sm-9">
@@ -78,7 +79,7 @@
                     </span>
                 </div>
                 <span class="help-block tc_secretKeyRequired"
-                      ng-show="form.secret_key.$dirty && form.secret_key.$error.required">
+                      ng-show="(form.$submitted || form.secret_key.$dirty) && form.secret_key.$error.required">
                     This field is required!
                 </span>
             </div>
@@ -86,13 +87,9 @@
     </div>
     <div class="openattic-modal-footer">
         <div class="button-group text-right">
-            <button type="submit"
-                    class="btn btn-sm btn-primary tc_submitSwiftKeyButton"
-                    ng-click="submitAction(form)"
-                    ng-disabled="form.$invalid"
-                    ng-show="!editing">
-                Submit
-            </button>
+            <oa-submit-button form="form" on-submit="submitAction(form)" ng-show="!editing">
+              Submit
+            </oa-submit-button>
             <button type="button"
                     class="btn btn-sm btn-default tc_cancelSwiftKeyButton"
                     ng-click="cancelAction()">

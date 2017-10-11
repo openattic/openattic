@@ -30,14 +30,41 @@
  */
 "use strict";
 
-import oaSubmitButton from "./oa-submit-button/oa-submit-button.component"
+class OASubmitButton {
 
-angular
-  .module("openattic.shared", [])
-  .component("oaSubmitButton", oaSubmitButton);
+  constructor ($timeout) {
+    this.$timeout = $timeout;
+    this.loading = false;
+  }
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+  submitAction () {
+    this.$timeout(() => {
+      this.loading = this.form.$valid;
+      if (this.form.$valid) {
+        this.onSubmit();
+      } else {
+        let jQuerySelector = [];
+        angular.forEach(this.form, (value, key) => {
+          if (!key.startsWith("$") && Object.keys(value.$error).length > 0) {
+            jQuerySelector.push(`[name='${key}']`);
+          }
+        });
+        let invalidElements = jQuery(jQuerySelector.join(","), jQuery(`[name='${this.form.$name}']`));
+        if (invalidElements.length > 0) {
+          invalidElements[0].focus();
+        }
+      }
+    });
+  }
 
-function requireAll (require) {
-  require.keys().forEach(require);
+}
+
+export default {
+  template: require("./oa-submit-button.component.html"),
+  transclude: true,
+  bindings: {
+    form: "<",
+    onSubmit: "&"
+  },
+  controller: OASubmitButton
 }

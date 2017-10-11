@@ -32,17 +32,12 @@
 
     <div class="openattic-modal-footer">
         <div class="button-group text-right">
-            <button type="submit"
-                    class="btn btn-sm btn-primary tc_submitButton"
-                    ng-disabled="clusterForm.$invalid || clusterForm.$submitted"
-                    ng-click="$ctrl.submitAction()">
+          <oa-submit-button form="clusterForm" on-submit="$ctrl.submitAction()">
             Submit
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="clusterForm.$submitted"></i>
-          </button>
-
-            <button id="cancelButton"
-                    class="btn btn-link btn-sm"
-                    ng-click="$ctrl.cancel()">Cancel</button>
+          </oa-submit-button>
+          <button id="cancelButton"
+                  class="btn btn-link btn-sm"
+                  ng-click="$ctrl.cancel()">Cancel</button>
         </div>
     </div>
 </form>

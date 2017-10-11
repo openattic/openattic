@@ -58,7 +58,7 @@ var CephIscsiForm = function () {
   };
 
   this.confirmImageSettingsModal = function () {
-    element(by.id("confirmButton")).click();
+    element.all(by.css(".tc_submitButton")).first().click();
   };
 
   this.addInitiator = function () {

@@ -255,12 +255,9 @@
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-                  ng-disabled="nfsForm.$invalid || nfsForm.$submitted"
-                  ng-click="$ctrl.submitAction()">
+          <oa-submit-button form="nfsForm" on-submit="$ctrl.submitAction()">
             Submit
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="nfsForm.$submitted"></i>
-          </button>
+          </oa-submit-button>
           <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
             Back
           </button>

@@ -34,13 +34,10 @@ class CephNodesScrubModal {
 
   constructor (cephNodesService, $q) {
     this.cephNodesService = cephNodesService;
-    this.submitted = false;
     this.$q = $q;
   }
 
   scrub () {
-    this.submitted = true;
-
     let nodes = this.resolve.cephNodes.map((cephNode) => {
       return cephNode.hostname;
     });

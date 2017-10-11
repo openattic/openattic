@@ -93,7 +93,7 @@ option {
 }
 .no-border {
   border: 0px;
-  box-shadow: 0px 0px 0px
+  box-shadow: 0px 0px 0px !important;
 }
 .no-wrap {
   white-space: nowrap;

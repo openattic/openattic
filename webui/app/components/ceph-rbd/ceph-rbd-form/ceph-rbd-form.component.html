@@ -275,11 +275,9 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-              ng-disabled="rbdForm.$invalid || rbdForm.$submitted" ng-click="$ctrl.submitAction(rbdForm)">
+          <oa-submit-button form="rbdForm" on-submit="$ctrl.submitAction(rbdForm)">
             Create
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
-          </button>
+          </oa-submit-button>
           <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
             Back
           </button>
