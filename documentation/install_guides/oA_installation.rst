@@ -67,7 +67,7 @@ make these changes.
 Installation on openSUSE Leap
 =============================
 
-|oA| is available for installation on openSUSE Leap 42.2 and 42.3 from the
+|oA| is available for installation on openSUSE Leap 42.3 from the
 `openSUSE Build Service <https://build.opensuse.org>`_.
 
 The software is delivered in the form of RPM packages via a dedicated zypper
@@ -87,13 +87,9 @@ via "1 Click Install" from the `openSUSE download site
 From the command line, you can run the following command to enable the |oA|
 package repository.
 
-For openSUSE Leap 42.2 run the following as root::
-
-  # zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.2/filesystems:openATTIC:3.x.repo
-  # zypper refresh
-
 For openSUSE Leap 42.3 run the following as root::
 
+  # zypper addrepo https://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
   # zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo
   # zypper refresh
 

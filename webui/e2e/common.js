@@ -83,18 +83,30 @@
 
     /**
      * Will delete the selected items, using the default test classes for this.
-     * @param {number} [dropdown] - which dropdown to get
+     * @param {number} dropdown Which dropdown to get. Defaults to 0.
+     * @param {string} controllerName The name of the controller.
+     * @param {boolean} dialogIsShown If set to TRUE or FALSE, then it is checked
+     *                                whether the dialog is displayed or not. If
+     *                                set to TRUE, the deletion is confirmed by
+     *                                entering 'yes'. Defaults to TRUE.
      */
-    delete_selection: function (dropdown, controllerName) {
+    delete_selection: function (dropdown, controllerName, dialogIsShown) {
       dropdown = dropdown || 0;
+      dialogIsShown = (dialogIsShown === undefined) ? true : dialogIsShown;
       element.all(by.css(".tc_menudropdown")).get(dropdown).click();
       element(by.css(".tc_deleteItem > a")).click();
-      var enteredNameInput = "input.enteredName";
+      let enteredNameInput = "input.enteredName";
       if (controllerName) {
         enteredNameInput = controllerName + "." + enteredNameInput;
       }
-      element(by.model(enteredNameInput)).sendKeys("yes");
-      element(by.id("bot2-Msg1")).click();
+      // Make sure the dialog is shown or not.
+      let enteredNameElement = element(by.model(enteredNameInput));
+      expect(enteredNameElement.isPresent()).toBe(dialogIsShown);
+      // If the dialog is expected to be shown, then confirm the deletion.
+      if (dialogIsShown) {
+        enteredNameElement.sendKeys("yes");
+        element(by.css(".tc_submitButton")).click();
+      }
     },
 
     /**

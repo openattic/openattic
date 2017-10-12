@@ -34,13 +34,10 @@ class CephOdsScrubModal {
 
   constructor ($q, cephOsdService) {
     this.cephOsdService = cephOsdService;
-    this.submitted = false;
     this.$q = $q;
   }
 
   scrub () {
-    this.submitted = true;
-
     return this.$q((resolve, reject) => {
       this.cephOsdService
         .scrub({
@@ -53,7 +50,6 @@ class CephOdsScrubModal {
           resolve();
           this.modalInstance.close("scrubbed");
         }, () => {
-          this.submitted = false;
           reject();
         });
     });

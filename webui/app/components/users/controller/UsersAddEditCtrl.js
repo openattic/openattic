@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic.users");
-app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams, usersService, $filter, $uibModal, $q,
-    Notification) {
+app.controller("UsersAddEditCtrl", function ($scope, $state, $stateParams,
+    usersService, $uibModal, $q, Notification) {
   var promises = [];
 
   $scope.isCurrentUser = false;

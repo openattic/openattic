@@ -12,47 +12,6 @@ describe("settings inputs validations", function () {
     helpers.setLocation("settings");
   });
 
-  it("should validate salt api host", function () {
-    form.saltApiHost.clear();
-    expect(form.saltApiHostRequired.isDisplayed()).toBe(true);
-
-    form.saltApiHost.sendKeys("e2e-host");
-    expect(form.saltApiHostRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api port", function () {
-    form.saltApiPort.clear();
-    expect(form.saltApiPortRequired.isDisplayed()).toBe(true);
-
-    form.saltApiPort.sendKeys("8001");
-    expect(form.saltApiPortRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api eauth", function () {
-    form.selectEauth("-- Select the external auth system --");
-    expect(form.saltApiEauthRequired.isDisplayed()).toBe(true);
-
-    form.selectEauth("auto");
-    expect(form.saltApiEauthRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api username", function () {
-    form.saltApiUsername.clear();
-    expect(form.saltApiUsernameRequired.isDisplayed()).toBe(true);
-
-    form.saltApiUsername.sendKeys("e2e-user");
-    expect(form.saltApiUsernameRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api shared secret", function () {
-    form.selectEauth("sharedsecret");
-    form.saltApiSharedSecret.clear();
-    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(true);
-
-    form.saltApiSharedSecret.sendKeys("mysecretkey");
-    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(false);
-  });
-
   it("should disable object gateway fields", function () {
     browser.refresh();
 

@@ -39,7 +39,10 @@ app.directive("required", function ($document, $timeout) {
         var labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
         if (labelNode) {
           var labelElement = angular.element(labelNode);
-          labelElement.append("<span class=\"required\"> *</span>");
+          let requiredSpan = "<span class=\"required\"> *</span>";
+          if (!labelElement.html().includes(requiredSpan)) {
+            labelElement.append(requiredSpan);
+          }
         }
       });
     }

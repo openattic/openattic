@@ -30,9 +30,9 @@
  */
 "use strict";
 
-import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component"
-import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component"
-import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component"
+import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component";
+import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component";
+import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component";
 
 angular
   .module("openattic.cephNodes", [])

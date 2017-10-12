@@ -41,9 +41,10 @@ class SettingsView(APIView):
         rgw_user_id = Settings.RGW_API_USER_ID
         rgw_use_ssl = Settings.RGW_API_SCHEME == 'https'
         managed_deepsea = False
-        if not all((Settings.RGW_API_HOST, Settings.RGW_API_PORT, Settings.RGW_API_SCHEME,
+        if (not all((Settings.RGW_API_HOST, Settings.RGW_API_PORT, Settings.RGW_API_SCHEME,
                     Settings.RGW_API_ADMIN_RESOURCE, Settings.RGW_API_USER_ID,
-                    Settings.RGW_API_ACCESS_KEY, Settings.RGW_API_SECRET_KEY)):
+                    Settings.RGW_API_ACCESS_KEY, Settings.RGW_API_SECRET_KEY)) and
+                DeepSea.instance().is_configured()):
             try:
                 credentials = DeepSea.instance().get_rgw_api_credentials()
                 if credentials:
@@ -135,7 +136,7 @@ class SettingsView(APIView):
                 serializers.append(serializer)
 
             for serializer in serializers:  # new loop to raise all errors before saving
-                serializer.object.save()
+                serializer.object.save(update_fields=('keyring_file_path', 'keyring_user'))
 
         return Response({'success': True})
 
@@ -245,11 +246,6 @@ class CheckRGWConnectionView(APIView):
 
 class GetRGWConfigurationView(APIView):
     def get(self, request):
-        if 'host' not in request.GET or \
-           'port' not in request.GET or \
-           'eauth' not in request.GET:
-            raise ValidationError('"host", "port", and "eauth" params are required')
-
         if request.GET['eauth'] == 'auto' and \
            ('username' not in request.GET or 'password' not in request.GET):
             raise ValidationError('"username", and "password" params are required')

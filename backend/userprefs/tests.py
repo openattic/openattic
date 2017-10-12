@@ -1,8 +1,15 @@
+# -*- coding: utf-8 -*-
 """
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
+ *   Copyright (c) 2017 SUSE LLC
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
 """
 from contextlib import contextmanager
 

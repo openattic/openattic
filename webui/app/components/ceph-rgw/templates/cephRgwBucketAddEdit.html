@@ -66,7 +66,7 @@
                 </div>
                 <!-- Owner -->
                 <div class="form-group"
-                     ng-class="{'has-error': bucketForm.owner.$dirty && bucketForm.owner.$invalid}">
+                     ng-class="{'has-error': (bucketForm.$submitted || bucketForm.owner.$dirty) && bucketForm.owner.$invalid}">
                     <label class="col-sm-3 control-label" for="owner">Owner</label>
                     <div class="col-sm-9">
                         <div class="input-group">
@@ -81,7 +81,7 @@
                             </select>
                         </div>
                         <span class="help-block tc_ownerRequired"
-                              ng-show="bucketForm.owner.$dirty && bucketForm.owner.$error.required">
+                              ng-show="(bucketForm.$submitted || bucketForm.owner.$dirty) && bucketForm.owner.$error.required">
                             This field is required!
                         </span>
                     </div>
@@ -89,13 +89,9 @@
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">
-                    <button type="submit"
-                            class="btn btn-sm btn-primary tc_submitButton"
-                            ng-click="submitAction(bucketForm)"
-                            ng-disabled="bucketForm.$invalid || bucketForm.$submitted">
-                        Submit
-                        <i class="fa fa-spinner fa-spin fa-fw" ng-if="bucketForm.$submitted"></i>
-                    </button>
+                    <oa-submit-button form="bucketForm" on-submit="submitAction(bucketForm)">
+                      Submit
+                    </oa-submit-button>
                     <button type="button"
                             class="btn btn-sm btn-default tc_backButton"
                             ng-click="goToListView()">

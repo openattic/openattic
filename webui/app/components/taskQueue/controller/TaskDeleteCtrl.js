@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection, $q,
+app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection,
     Notification) {
   $scope.tasks = angular.copy(taskSelection); //Now it can't be changed by a possible current asynchronous call.
   $scope.waiting = false;

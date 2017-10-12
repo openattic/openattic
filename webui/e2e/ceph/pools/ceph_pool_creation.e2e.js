@@ -33,7 +33,7 @@ describe("ceph pool creation", function () {
     it("should create pool with overwrite enabled named " + ecName, function () {
       cephPoolProperties.addButton.click();
       cephPoolProperties.fillForm(ecName, "erasure", 32, false, "cephfs", "erasure-code", "default");
-      cephPoolProperties.checkCheckboxToBe(element(by.model("data.flags.ec_overwrites")));
+      cephPoolProperties.checkCheckboxToBe(element(by.model("$ctrl.data.flags.ec_overwrites")));
       cephPoolProperties.submitForm(ecName, "erasure", 32);
       expect(element(by.className("tc-flag-ec_overwrites")).isDisplayed()).toBe(true);
     });

@@ -30,31 +30,20 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsDeleteCtrl", function ($scope, cephPoolsService, $uibModalInstance, cephPoolSelection, $q) {
-  $scope.cephPools = cephPoolSelection;
+import "../ceph-cluster/module";
+import cephPoolsAdd from "./ceph-pools-add/ceph-pools-add.component";
+import cephPoolsDeleteModal from "./ceph-pools-delete-modal/ceph-pools-delete-modal.component";
+import cephPoolsList from "./ceph-pools-list/ceph-pools-list.component";
 
-  $scope.delete = function () {
-    return $q(function (resolve, reject) {
-      var requests = [];
-      $scope.cephPools.forEach(function (cephPool) {
-        var deferred = $q.defer();
-        cephPoolsService.delete({
-          fsid: cephPool.cluster,
-          id: cephPool.id
-        }, deferred.resolve, deferred.reject);
-        requests.push(deferred.promise);
-      });
-      $q.all(requests).then(function () {
-        resolve();
-        $uibModalInstance.close("deleted");
-      }, function () {
-        reject();
-      });
-    });
-  };
+angular.module("openattic.cephPools", [
+  "openattic.cephCluster",
+  "openattic.cephErasureCodeProfiles",
+  "openattic.cephOsd",
+  "openattic.registry"
+])
+  .component("cephPoolsAdd", cephPoolsAdd)
+  .component("cephPoolsDeleteModal", cephPoolsDeleteModal)
+  .component("cephPoolsList", cephPoolsList);
 
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
-});
+require("./ceph-pools.route");
+require("./shared/ceph-pools.service");

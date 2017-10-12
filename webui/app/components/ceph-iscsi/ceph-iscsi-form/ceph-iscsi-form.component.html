@@ -50,12 +50,13 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group"
+             ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm.portals.$dirty) && iscsiForm.portals.$invalid}">
           <label class="col-sm-3 control-label" for="portals">Portals</label>
-          <input type="hidden" ng-model="$ctrl.model.portals[0]" id="portals" required>
           <div class="col-sm-9">
             <span ng-if="$ctrl.model.portals.length === 0" class="form-control no-border">
               <span class="text-muted">Empty</span>
+              <input type="text" class="no-border" ng-model="$ctrl.model.portals[0]" name="portals" id="portals" required readonly>
             </span>
             <span ng-repeat="selectedPortal in $ctrl.model.portals track by $index">
               <div class="input-group">
@@ -84,20 +85,24 @@
                 </li>
               </ul>
             </span>
+            <span class="help-block" ng-show="iscsiForm.$submitted || iscsiForm.portals.$dirty">
+              <span class="tc_portalsRequired" ng-show="iscsiForm.portals.$error.required">Required field</span>
+            </span>
             <hr>
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group"
+             ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm.images.$dirty) && iscsiForm.images.$invalid}">
           <label class="col-sm-3 control-label" for="images">
             Images <oa-helper helper-data="$ctrl.unsupportedRbdFeatures"
                               helper-template="'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html'">
                    </oa-helper>
           </label>
-          <input type="hidden" ng-model="$ctrl.model.images[0]" id="images" required>
           <div class="col-sm-9">
             <span ng-if="$ctrl.model.images.length === 0" class="form-control no-border">
               <span class="text-muted">Empty</span>
+              <input type="text" class="no-border" ng-model="$ctrl.model.images[0]" name="images" id="images" required readonly>
             </span>
             <span ng-repeat="currentImage in $ctrl.model.images track by $index">
               <div class="input-group">
@@ -142,6 +147,9 @@
                   </a>
                 </li>
               </ul>
+            </span>
+            <span class="help-block" ng-show="iscsiForm.$submitted || iscsiForm.images.$dirty">
+              <span class="tc_imagesRequired" ng-show="iscsiForm.images.$error.required">Required field</span>
             </span>
             <hr>
           </div>
@@ -403,12 +411,9 @@
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-                  ng-disabled="iscsiForm.$invalid || iscsiForm.$submitted"
-                  ng-click="$ctrl.submitAction()">
+          <oa-submit-button form="iscsiForm" on-submit="$ctrl.submitAction()">
             Submit
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="iscsiForm.$submitted"></i>
-          </button>
+          </oa-submit-button>
           <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
             Back
           </button>

@@ -70,7 +70,7 @@ class CephRbdStripingObjectSet {
       classes.push("danger");
     }
     let lastStripeNumber = this.objectSetIndex * this.numStripesObjectSet + this.numStripesCurrentObjectSet - 1;
-    let isBottom =  lastStripeNumber === stripeNumber;
+    let isBottom = lastStripeNumber === stripeNumber;
     let isTop = (this.objectSetIndex * this.numStripesObjectSet) === stripeNumber;
     if (isBottom) {
       classes.push("rbd-striping-cell-bottom");

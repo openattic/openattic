@@ -19,10 +19,6 @@ describe("ceph pool edit form", function () {
       .sendKeys(pgs)
       .sendKeys(protractor.Key.TAB);
 
-  const isSubmitEnabled = () =>
-    cephPoolProperties.getFormElement(cephPoolProperties.formElements.createButton)
-      .isEnabled();
-
   beforeAll(function () {
     helpers.login();
     helpers.setLocation("ceph/pools");
@@ -37,9 +33,9 @@ describe("ceph pool edit form", function () {
 
   it("should not be possible to decrease pgnum", () => {
     setPgNumber(16);
-    expect(isSubmitEnabled()).toBe(false);
+    expect(cephPoolProperties.formElements.pgnum.items.helpPgnum.isDisplayed()).toBe(true);
     setPgNumber(32);
-    expect(isSubmitEnabled()).toBe(true);
+    expect(cephPoolProperties.formElements.pgnum.items.helpPgnum.isDisplayed()).toBe(false);
   });
 
   it("should be possible to increase pgnum", () => {
@@ -50,7 +46,8 @@ describe("ceph pool edit form", function () {
 
   it("should not be possible to submit without any apps", () => {
     cephPoolProperties.deleteFirstApp();
-    expect(isSubmitEnabled()).toBe(false);
+    cephPoolProperties.getFormElement(cephPoolProperties.formElements.createButton).click();
+    expect(cephPoolProperties.formElements.selectApplication.items.appsRequired.isDisplayed()).toBe(true);
     cephPoolProperties.addApplication("cephfs");
   });
 

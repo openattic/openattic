@@ -70,8 +70,9 @@ var rbdCommons = function () {
       testClass: "tc_rbd_size",
       model: "$ctrl.data.size",
       items: {
-        helpSize: "tc_sizeRequired",
-        helpSizeStripe: "tc_sizeIncrease"
+        helpSizeRequired: "tc_sizeRequired",
+        helpSizeStripe: "tc_sizeIncreaseStriping",
+        helpSizeMinimum: "tc_sizeIncrease"
       }
     },
     objectSize: {

@@ -73,15 +73,15 @@
               <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
             </select>
             <div ng-show="$ctrl.data.pool && !$ctrl.data.useDataPool" class="progress-bar-outer clearfix">
-              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.oaUsed">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.percent_used">
                 <span></span>
               </uib-progressbar>
               <span class="pull-left tc_poolSize">
-                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used
+                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.max_avail | bytes}} used
               </span>
               <span class="pull-right tc_poolAvailableSize">
                 {{$ctrl.data.pool.oaFreeText}} free -
-                <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree">use max</a>
+                <a ng-click="$ctrl.useMaxSize($ctrl.data.pool)">use max</a>
               </span>
             </div>
             <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
@@ -111,15 +111,15 @@
               <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
             </select>
             <div ng-show="$ctrl.data.dataPool" class="progress-bar-outer clearfix">
-              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.dataPool.oaUsed">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.dataPool.percent_used">
                 <span></span>
               </uib-progressbar>
               <span class="pull-left tc-data-pool-size">
-                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.oaFreeText}} used
+                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.max_avail | bytes}} used
               </span>
               <span class="pull-right tc-data-pool-available-size">
                 {{$ctrl.data.dataPool.oaFreeText}} free -
-                <a ng-click="$ctrl.data.size = $ctrl.data.dataPool.oaMaxFree">use max</a>
+                <a ng-click="$ctrl.useMaxSize($ctrl.data.dataPool)">use max</a>
               </span>
             </div>
             <span class="help-block tc-data-pool-required" ng-show="(rbdForm.$submitted || rbdForm.dataPool.$dirty)
@@ -136,15 +136,27 @@
             && rbdForm.size.$invalid}">
           <label class="control-label col-sm-3" for="size">Size</label>
           <div class="col-sm-9">
-            <input id="size" class="form-control tc_rbd_size" type="text" name="size"
-                ng-disabled="$ctrl.data.pool == null" max-ng-value="$ctrl.data.pool.oaFree"
-                ng-change="$ctrl.watchDataSize()" ng-model-options="{ updateOn: 'blur' }" ng-model="$ctrl.data.size"
-                placeholder="e.g., 10GB" required>
+            <input id="size"
+                class="form-control tc_rbd_size"
+                type="text"
+                name="size"
+                ng-disabled="$ctrl.data.pool == null"
+                ng-change="$ctrl.watchDataSize()"
+                ng-model-options="{ updateOn: 'blur' }"
+                ng-model="$ctrl.data.size"
+                placeholder="e.g., 10GB"
+                required>
             <span class="help-block tc_sizeRequired" ng-show="(rbdForm.$submitted || rbdForm.size.$dirty)
                 && rbdForm.size.$error.required">
               This field is required!
             </span>
             <span class="help-block tc_sizeIncrease"
+                ng-show="!$ctrl.data.features.stripingv2.checked &&
+                    (rbdForm.$submitted || rbdForm.size.$dirty) &&
+                    rbdForm.size.$invalid">
+              You have to increase the size in order to have at least 1 object in your RBD.
+            </span>
+            <span class="help-block tc_sizeIncreaseStriping"
                 ng-show="$ctrl.data.features.stripingv2.checked &&
                     (rbdForm.$submitted || rbdForm.size.$dirty) &&
                     rbdForm.size.$invalid">
@@ -275,11 +287,9 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-              ng-disabled="rbdForm.$invalid || rbdForm.$submitted" ng-click="$ctrl.submitAction(rbdForm)">
+          <oa-submit-button form="rbdForm" on-submit="$ctrl.submitAction(rbdForm)">
             Create
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="rbdForm.$submitted"></i>
-          </button>
+          </oa-submit-button>
           <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
             Back
           </button>

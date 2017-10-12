@@ -17,12 +17,9 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <button id="confirmButton" class="btn btn-primary btn-sm"
-              ng-click="$ctrl.confirm()"
-              ng-disabled="settingsForm.$invalid || settingsForm.$submitted">
+      <oa-submit-button form="settingsForm" on-submit="$ctrl.confirm()">
         Confirm
-        <i class="fa fa-spinner fa-spin fa-fw" ng-if="deleteForm.$submitted"></i>
-      </button>
+      </oa-submit-button>
       <button id="cancelButton" class="btn btn-link btn-sm" ng-click="$ctrl.cancel()">Cancel</button>
     </div>
   </div>

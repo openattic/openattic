@@ -32,7 +32,7 @@
 
 var app = angular.module("openattic.cephRgw");
 app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
-    $stateParams, cephRgwBucketService, oaTabSetService) {
+    $stateParams, cephRgwBucketService, oaTabSetService, Notification) {
   $scope.buckets = {};
   $scope.error = false;
   $scope.filterConfig = {
@@ -118,6 +118,20 @@ app.controller("CephRgwBucketsCtrl", function ($scope, $state, $uibModal,
   $scope.deleteAction = function () {
     if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
+    }
+    // Check if the selected buckets are referenced.
+    if ($scope.selection.items && $scope.selection.items.length > 0) {
+      const selectionIsReferenced = $scope.selection.items.some((item) => {
+        return item.is_referenced;
+      });
+      if (selectionIsReferenced) {
+        const numBuckets = $scope.selection.items.length;
+        Notification.warning({
+          title: (numBuckets > 1) ? "Delete buckets" : "Delete bucket",
+          msg: numBuckets + " bucket(s) can not be deleted because they are shared via NFS."
+        });
+        return;
+      }
     }
     var modalInstance = $uibModal.open({
       windowTemplate: require("../../../templates/messagebox.html"),

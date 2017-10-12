@@ -30,18 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("validIqn", function () {
-  return {
-    require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
-      var IQN_REGEX = /^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-\.]+)*$/;
-      ctrl.$validators.iqn = function (modelValue, viewValue) {
-        if (ctrl.$isEmpty(modelValue)) {
-          return true;
-        }
-        return IQN_REGEX.test(viewValue);
-      };
-    }
-  };
-});
+angular.module("openattic")
+  .config(["$uibModalProvider", function ($uibModalProvider) {
+    $uibModalProvider.options.backdrop = "static";
+  }]);

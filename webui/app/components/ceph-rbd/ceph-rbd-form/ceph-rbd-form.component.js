@@ -161,7 +161,7 @@ app.component("cephRbdForm", {
       if (size.match(/[+-]+/)) {
         size = size.replace(/[+-]+/, "");
       }
-      size = SizeParserService.parseInt(size, "b", "k"); //default input size is KB
+      size = SizeParserService.parseFloat(size, "b", "k"); //default input size is KiB
       var power = 0;
       if (size !== null && size !== 0) {
         power = Math.round(Math.log(size) / Math.log(2));
@@ -170,9 +170,9 @@ app.component("cephRbdForm", {
         }
       }
       if (power < 12) {
-        size = Math.pow(2, 12); // 1 << 12; Set size to minimum of 4 KB.
+        size = Math.pow(2, 12); // 1 << 12; Set size to minimum of 4 KiB.
       } else if (power > 25) {
-        size = Math.pow(2, 25); // 1 << 25; Set size to maximum of 32 MB.
+        size = Math.pow(2, 25); // 1 << 25; Set size to maximum of 32 MiB.
       } else {
         size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
       }
@@ -190,6 +190,7 @@ app.component("cephRbdForm", {
         self.updateStripingUnit(size);
       }
       self.data.obj_size = $filter("bytes")(size);
+      self.sizeValidator();
     };
 
     self.updateStripingUnit = (newSize, jump) => {
@@ -221,7 +222,7 @@ app.component("cephRbdForm", {
     self.stripingDescription = () => {
       let message = "";
       if (angular.isDefined(self.data.size)) {
-        let size = SizeParserService.parseInt(self.data.size, "b");
+        let size = SizeParserService.parseFloat(self.data.size, "b");
         self.sizeValidator(size);
         const striping = self.data.striping;
         if (self.data.size !== "-" &&
@@ -257,16 +258,19 @@ app.component("cephRbdForm", {
       }
     };
 
-    self.watchDataSize = function () {
-      var size = self.data.size;
-      if (size === "") {
+    self.useMaxSize = pool => {
+      self.data.size = $filter("bytes")(pool.max_avail - pool.num_bytes);
+      self.watchDataSize();
+    }
+
+    self.watchDataSize = () => {
+      if (self.data.size === "") {
         return;
       }
-      size = SizeParserService.parseInt(size, "b");
+      const size = SizeParserService.parseFloat(self.data.size, "b", "m"); //default input size is MiB
       self.sizeValidator(size);
-
       if (angular.isNumber(size)) {
-        if (parseInt(size / self.data.obj_size, 10) < 1) {
+        if (size / self.data.obj_size < 1) {
           self.data.size = $filter("bytes")(self.data.obj_size);
         } else {
           self.data.size = $filter("bytes")(size);
@@ -276,13 +280,13 @@ app.component("cephRbdForm", {
       }
     };
 
-    self.sizeValidator = (size = SizeParserService.parseInt(self.data.size, "b")) => {
-      let valid = angular.isNumber(size);
+    self.sizeValidator = (size = SizeParserService.parseFloat(self.data.size, "b")) => {
+      let valid = angular.isNumber(size) && self.rbd.obj_size <= size;
       if (self.data.features.stripingv2.checked &&
           $scope.rbdForm.stripingCount &&
           $scope.rbdForm.stripingCount.$valid &&
           $scope.rbdForm.obj_size.$valid) {
-        valid = self.data.striping.count * self.rbd.obj_size < size;
+        valid = self.data.striping.count * self.rbd.obj_size <= size;
       }
       $scope.rbdForm.size.$setValidity("valid", valid);
     };
@@ -386,10 +390,7 @@ app.component("cephRbdForm", {
     };
 
     var addPoolAttributes = function (pool) {
-      pool.oaUsed = $filter("number")(pool.num_bytes / pool.max_avail * 100, 2);
-      pool.oaUnused = 100 - pool.oaUsed;
       pool.oaFree = pool.max_avail - pool.num_bytes;
-      pool.oaMaxFree = parseInt((pool.max_avail - pool.num_bytes) / Math.pow(2, 20), 10);
       pool.oaFreeText = $filter("bytes")(pool.oaFree);
     };
 
@@ -450,7 +451,7 @@ app.component("cephRbdForm", {
           self.rbd.data_pool = self.data.dataPool.id;
         }
         self.rbd.fsid = self.fsid;
-        self.rbd.size = SizeParserService.parseInt(self.data.size, "b");
+        self.rbd.size = SizeParserService.parseInt(self.data.size, "b"); // Limit around 868 EiB
         self.submitted = true;
         cephRbdService.save(self.rbd)
           .$promise

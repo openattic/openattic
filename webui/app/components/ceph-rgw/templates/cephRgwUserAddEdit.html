@@ -330,7 +330,8 @@
                     </div>
                     <!-- Access key -->
                     <div class="form-group"
-                         ng-class="{'has-error': userForm.access_key.$dirty && userForm.access_key.$invalid}"
+                         ng-class="{'has-error': (userForm.$submitted || userForm.access_key.$dirty) &&
+                             userForm.access_key.$invalid}"
                          ng-show="!editing && !user.generate_key">
                         <label class="col-sm-3 control-label" for="access_key">Access key</label>
                         <div class="col-sm-9">
@@ -359,14 +360,16 @@
                                 </span>
                             </div>
                             <span class="help-block tc_accessKeyRequired"
-                                  ng-show="userForm.access_key.$dirty && userForm.access_key.$error.required">
+                                  ng-show="(userForm.$submitted || userForm.access_key.$dirty) &&
+                                      userForm.access_key.$error.required">
                                 This field is required!
                             </span>
                         </div>
                     </div>
                     <!-- Secret key -->
                     <div class="form-group"
-                         ng-class="{'has-error': userForm.secret_key.$dirty && userForm.secret_key.$invalid}"
+                         ng-class="{'has-error': (userForm.$submitted || userForm.secret_key.$dirty) &&
+                             userForm.secret_key.$invalid}"
                          ng-show="!editing && !user.generate_key">
                         <label class="col-sm-3 control-label" for="secret_key">Secret key</label>
                         <div class="col-sm-9">
@@ -394,7 +397,8 @@
                                 </span>
                             </div>
                             <span class="help-block tc_secret_keyRequired"
-                                  ng-show="userForm.secret_key.$dirty && userForm.secret_key.$error.required">
+                                  ng-show="(userForm.$submitted || userForm.secret_key.$dirty) &&
+                                      userForm.secret_key.$error.required">
                                 This field is required!
                             </span>
                         </div>
@@ -455,11 +459,12 @@
                                    id="user_quota_max_size"
                                    ceph-rgw-quota-max-size-validate>
                             <span class="help-block tc_requiredUserQuotaMaxSize"
-                                  ng-show="userForm.user_quota_max_size.$dirty && userForm.user_quota_max_size.$error.required">
+                                  ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
+                                      userForm.user_quota_max_size.$error.required">
                                 This field is required!
                             </span>
                             <span class="help-block tc_invalidUserQuotaMaxSize"
-                                  ng-show="userForm.user_quota_max_size.$dirty &&
+                                  ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
                                       userForm.user_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
                                 The value is not valid.
                             </span>
@@ -503,12 +508,12 @@
                                    id="user_quota_max_objects"
                                    min="0">
                             <span class="help-block tc_requiredUserQuotaMaxObjects"
-                                  ng-show="userForm.user_quota_max_objects.$dirty &&
+                                  ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
                                       userForm.user_quota_max_objects.$error.required">
                                 This field is required!
                             </span>
                             <span class="help-block tc_invalidUserQuotaMaxObjects"
-                                  ng-show="userForm.user_quota_max_objects.$dirty &&
+                                  ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
                                     (userForm.user_quota_max_objects.$error.min ||
                                     userForm.user_quota_max_objects.$error.number)">
                                 The value is not valid.
@@ -571,11 +576,12 @@
                                    id="bucket_quota_max_size"
                                    ceph-rgw-quota-max-size-validate>
                             <span class="help-block tc_requiredBucketQuotaMaxSize"
-                                  ng-show="userForm.bucket_quota_max_size.$dirty && userForm.bucket_quota_max_size.$error.required">
+                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
+                                    userForm.bucket_quota_max_size.$error.required">
                                 This field is required!
                             </span>
                             <span class="help-block tc_invalidBucketQuotaMaxSize"
-                                  ng-show="userForm.bucket_quota_max_size.$dirty &&
+                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
                                       userForm.bucket_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
                                 The value is not valid.
                             </span>
@@ -619,12 +625,12 @@
                                    id="bucket_quota_max_objects"
                                    min="0">
                             <span class="help-block tc_requiredBucketQuotaMaxObjects"
-                                  ng-show="userForm.bucket_quota_max_objects.$dirty &&
+                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
                                       userForm.bucket_quota_max_objects.$error.required">
                                 This field is required!
                             </span>
                             <span class="help-block tc_invalidBucketQuotaMaxObjects"
-                                  ng-show="userForm.bucket_quota_max_objects.$dirty &&
+                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
                                     (userForm.bucket_quota_max_objects.$error.min ||
                                     userForm.bucket_quota_max_objects.$error.number)">
                                 The value is not valid.
@@ -635,13 +641,9 @@
             </div>
             <div class="panel-footer">
                 <div class="button-group text-right">
-                    <button type="submit"
-                            class="btn btn-sm btn-primary tc_submitButton"
-                            ng-click="submitAction(userForm)"
-                            ng-disabled="userForm.$invalid || userForm.$submitted">
-                        Submit
-                        <i class="fa fa-spinner fa-spin fa-fw" ng-if="userForm.$submitted"></i>
-                    </button>
+                    <oa-submit-button form="userForm" on-submit="submitAction(userForm)">
+                      Submit
+                    </oa-submit-button>
                     <button type="button"
                             class="btn btn-sm btn-default tc_backButton"
                             ng-click="goToListView()">

@@ -76,12 +76,6 @@ describe("ceph pool creation form", function () {
     helpers.checkLocation("ceph/pools/add");
   });
 
-  it("should check if the submit button is disabled when the required fields are empty", function () {
-    browser.refresh();
-    expect(fe.createButton.byClass.isEnabled()).toBe(false);
-    browser.refresh();
-  });
-
   Object.keys(fe).forEach(function (name) {
     var e = fe[name];
     if (e.type === "select") {

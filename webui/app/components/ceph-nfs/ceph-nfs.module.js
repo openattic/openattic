@@ -30,12 +30,12 @@
  */
 "use strict";
 
-import cephNfsDeleteModal from "./ceph-nfs-delete-modal/ceph-nfs-delete-modal.component"
-import cephNfsDetail from "./ceph-nfs-detail/ceph-nfs-detail.component"
-import cephNfsForm from "./ceph-nfs-form/ceph-nfs-form.component"
-import cephNfsFormClient from "./ceph-nfs-form/ceph-nfs-form-client.component"
-import cephNfsList from "./ceph-nfs-list/ceph-nfs-list.component"
-import cephNfsManageServiceModal from "./ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component"
+import cephNfsDeleteModal from "./ceph-nfs-delete-modal/ceph-nfs-delete-modal.component";
+import cephNfsDetail from "./ceph-nfs-detail/ceph-nfs-detail.component";
+import cephNfsForm from "./ceph-nfs-form/ceph-nfs-form.component";
+import cephNfsFormClient from "./ceph-nfs-form/ceph-nfs-form-client.component";
+import cephNfsList from "./ceph-nfs-list/ceph-nfs-list.component";
+import cephNfsManageServiceModal from "./ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component";
 
 angular
   .module("openattic.cephNfs", [])
