@@ -33,11 +33,11 @@ describe("should test the ceph pools panel", function () {
     expect(element.all(by.binding("row.name")).count()).toBeGreaterThan(0);
   });
 
-  it("should have a status tab when selecting a pool", function () {
+  it("should have a details tab when selecting a pool", function () {
     //choose first element in ceph pools list
     element.all(by.css("tbody > tr > td > input")).get(0).click();
-    helpers.checkLocation("ceph/pools/status#more");
-    expect(cephPoolProperties.statusTab.isDisplayed()).toBe(true);
+    helpers.checkLocation("ceph/pools/details#more");
+    expect(cephPoolProperties.detailsTab.isDisplayed()).toBe(true);
     element.all(by.css("tbody > tr > td > input")).get(0).click();
   });
 
@@ -67,7 +67,7 @@ describe("should test the ceph pools panel", function () {
       it('should have the configured pool "' + pool.name + '" in the pool list of cluster "' + cluster.name + '"',
         function () {
           if (cephClusterCount > 1) {
-            var clusterSelect = element(by.model("registry.selectedCluster"));
+            var clusterSelect = element(by.model("$ctrl.registry.selectedCluster"));
             clusterSelect.sendKeys(cluster.name);
             browser.sleep(800);
             expect(clusterSelect.getText()).toContain(cluster.name);

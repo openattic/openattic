@@ -37,8 +37,7 @@ app.config(function ($stateProvider) {
       url          : "/ceph/pools",
       views        : {
         "main": {
-          template: require("../templates/listing.html"),
-          controller: "CephPoolsCtrl"
+          component: "cephPoolsList"
         }
       },
       ncyBreadcrumb: {
@@ -49,8 +48,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/pools/add",
       views: {
         "main": {
-          template: require("../templates/add-pool.html"),
-          controller: "CephPoolsAddCtrl"
+          component: "cephPoolsAdd"
         }
       },
       params: {
@@ -65,8 +63,7 @@ app.config(function ($stateProvider) {
       url: "/ceph/pools/edit/:fsid/:poolId",
       views: {
         "main": {
-          template: require("../templates/add-pool.html"),
-          controller : "CephPoolsAddCtrl"
+          component : "cephPoolsAdd"
         }
       },
       ncyBreadcrumb: {
@@ -87,7 +84,9 @@ app.config(function ($stateProvider) {
     .state("cephPools.detail.cacheTier", {
       url          : "/cachetier",
       views        : {
-        "tab-content": {template: require("../templates/cacheTier.html")}
+        "tab-content": {
+          template: require("./ceph-pools-cache/ceph-pools-cache.component.html")
+        }
       },
       ncyBreadcrumb: {
         label: "{{selection.item.name}} cache tier"
@@ -97,20 +96,20 @@ app.config(function ($stateProvider) {
       url          : "/statistics",
       views        : {
         "tab-content": {
-          template: require("../templates/statistics.html")
+          template: require("./ceph-pools-statistics/ceph-pools-statistics.component.html")
         }
       },
       ncyBreadcrumb: {
         label: "{{selection.item.name}} statistics"
       }
     })
-    .state("cephPools.detail.status", {
-      url          : "/status",
+    .state("cephPools.detail.details", {
+      url          : "/details",
       views        : {
-        "tab-content": {template: require("../templates/status.html")}
+        "tab-content": {template: require("./ceph-pools-detail/ceph-pools-detail.component.html")}
       },
       ncyBreadcrumb: {
-        label: "{{selection.item.name}} status"
+        label: "{{selection.item.name}} details"
       }
     });
 });
