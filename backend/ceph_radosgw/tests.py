@@ -12,9 +12,11 @@
 """
 from ceph_radosgw.rgw_client import RGWClient
 from django.conf import settings
+from django.http import HttpResponse
 from django.test import TestCase
 from rest_framework import status
 from sysutils.database_utils import make_default_admin
+import json
 import mock
 
 
@@ -40,10 +42,41 @@ class RGWClientTestCase(TestCase):
         self.assertEqual(instance.userid, 'USER_ID')
 
     @mock.patch('ceph_radosgw.views.Settings')
-    def test_do_not_delete_rgw_api_user(self, Settings_mock):
-        Settings_mock.RGW_API_USER_ID = 'admin'
+    def test_user_delete(self, Settings_mock):
         make_default_admin()
         self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
+
+        Settings_mock.RGW_API_USER_ID = 'admin'
         response = self.client.delete('/api/ceph_radosgw/user/delete?uid=admin')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Can not delete the user', response.data['detail'])
+
+    @mock.patch('ceph_nfs.models.GaneshaExport.objects.filter')
+    def test_bucket_delete(self, filter_mock):
+        make_default_admin()
+        self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
+
+        filter_mock.return_value = [4, 8, 15, 16, 23, 42]
+        response = self.client.delete('/api/ceph_radosgw/bucket/delete?bucket=test01')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Can not delete the bucket', response.data['detail'])
+
+    @mock.patch('ceph_radosgw.views.proxy_view')
+    @mock.patch('ceph_nfs.models.GaneshaExport.objects.filter')
+    def test_bucket_get(self, filter_mock, proxy_view_mock):
+        proxy_view_mock.return_value = HttpResponse(json.dumps({'foo': 'bar'}))
+
+        make_default_admin()
+        self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
+
+        filter_mock.return_value = [0, 8, 15]
+        response = self.client.get('/api/ceph_radosgw/bucket/get?bucket=test01')
+        content = json.loads(response.content)
+        self.assertIn('is_referenced', content)
+        self.assertTrue(content['is_referenced'])
+
+        filter_mock.return_value = []
+        response = self.client.get('/api/ceph_radosgw/bucket/get?bucket=test02')
+        content = json.loads(response.content)
+        self.assertIn('is_referenced', content)
+        self.assertFalse(content['is_referenced'])

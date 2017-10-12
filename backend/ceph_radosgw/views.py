@@ -79,7 +79,7 @@ def bucket_delete(request):
 
     # Make sure the bucket is not shared via NFS.
     query = GaneshaExport.objects.filter(path__in=params['bucket'])
-    if query.count() > 0:
+    if bool(query):
         raise ValidationError('Can not delete the bucket \'{}\', it is shared via NFS'.format(
             params['bucket']))
 
@@ -100,7 +100,7 @@ def bucket_get(request):
     query = GaneshaExport.objects.filter(path__in=params['bucket'])
     # Append the 'is_referenced' attribute.
     content = json.loads(response.content)
-    content['is_referenced'] = query.count() > 0
+    content['is_referenced'] = bool(query)
     response.content = json.dumps(content)
 
     return response
