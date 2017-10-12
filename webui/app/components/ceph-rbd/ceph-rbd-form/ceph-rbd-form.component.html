@@ -73,15 +73,15 @@
               <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
             </select>
             <div ng-show="$ctrl.data.pool && !$ctrl.data.useDataPool" class="progress-bar-outer clearfix">
-              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.oaUsed">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.pool.percent_used">
                 <span></span>
               </uib-progressbar>
               <span class="pull-left tc_poolSize">
-                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.oaFreeText}} used
+                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.max_avail | bytes}} used
               </span>
               <span class="pull-right tc_poolAvailableSize">
                 {{$ctrl.data.pool.oaFreeText}} free -
-                <a ng-click="$ctrl.data.size = $ctrl.data.pool.oaMaxFree">use max</a>
+                <a ng-click="$ctrl.useMaxSize($ctrl.data.pool)">use max</a>
               </span>
             </div>
             <span class="help-block tc_poolRequired" ng-show="(rbdForm.$submitted || rbdForm.pool.$dirty)
@@ -111,15 +111,15 @@
               <option class="tc_rbdPoolOption" value="" ng-bind="$ctrl.waitingPoolMsg"></option>
             </select>
             <div ng-show="$ctrl.data.dataPool" class="progress-bar-outer clearfix">
-              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.dataPool.oaUsed">
+              <uib-progressbar max="100" class="progress-striped" value="$ctrl.data.dataPool.percent_used">
                 <span></span>
               </uib-progressbar>
               <span class="pull-left tc-data-pool-size">
-                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.oaFreeText}} used
+                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.max_avail | bytes}} used
               </span>
               <span class="pull-right tc-data-pool-available-size">
                 {{$ctrl.data.dataPool.oaFreeText}} free -
-                <a ng-click="$ctrl.data.size = $ctrl.data.dataPool.oaMaxFree">use max</a>
+                <a ng-click="$ctrl.useMaxSize($ctrl.data.dataPool)">use max</a>
               </span>
             </div>
             <span class="help-block tc-data-pool-required" ng-show="(rbdForm.$submitted || rbdForm.dataPool.$dirty)
