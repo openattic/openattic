@@ -103,7 +103,7 @@
              ng-show="row.is_superuser"></i>
         </td>
         <td ng-show="columns['Last Login']"
-            ng-bind="row.last_login | date:'short'"></td>
+            ng-bind="row.last_login | localeDate"></td>
       </tr>
     </tbody>
   </table>

@@ -14,8 +14,7 @@
 
 from django.contrib.auth.models import User
 from django.test import TestCase
-
-from rest_framework.test import APIClient
+from django.utils.dateparse import parse_datetime
 
 
 class UserTest(TestCase):
@@ -30,19 +29,27 @@ class UserTest(TestCase):
         cls.user.delete()
 
     def test_delete_logged_in_user(self):
-        client = APIClient()
-        client.login(username=self.user.username, password=self.user.password)
-        response = client.delete('/api/users/{}'.format(self.user.id))
-        client.logout()
-
+        self.client.login(username=self.user.username, password=self.user.password)
+        response = self.client.delete('/api/users/{}'.format(self.user.id))
+        self.client.logout()
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['detail'], 'You can\'t delete your own user account.')
 
     def test_delete_another_user(self):
         user2 = User.objects.create_user('testuser2')
-
-        client = APIClient()
-        client.login(username=self.user.username, password=self.user.password)
-        response = client.delete('/api/users/{}'.format(user2.id))
-        client.logout()
+        self.client.login(username=self.user.username, password=self.user.password)
+        response = self.client.delete('/api/users/{}'.format(user2.id))
+        self.client.logout()
         self.assertEqual(response.status_code, 204)
+
+    def test_datetime_format(self):
+        self.client.login(username=self.user.username, password=self.user.password)
+        response = self.client.get('/api/users/{}'.format(self.user.id))
+        self.client.logout()
+        self.assertIn('last_login', response.data)
+        # Check if the date value has the ISO 8601 format '%Y-%m-%dT%H:%M:%S(Z|+-timezone)?'
+        try:
+            parsed = parse_datetime(response.data['last_login'])
+        except (ValueError, TypeError):
+            pass
+        self.assertIsNotNone(parsed)
