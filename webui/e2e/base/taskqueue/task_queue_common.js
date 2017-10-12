@@ -144,7 +144,6 @@
       warning: element(by.className("tc-run-warn")),
       singleDelete: element(by.className("tc_delete_one")),
       multiDelete: element(by.className("tc_delete_multiple")),
-      inputField: element(by.model("input.enteredName")),
       confirmBtn: element(by.className("tc-tab-del-confirm"))
     }
   };
@@ -327,7 +326,6 @@
     var warning = elements.warning;
     var singleDelete = elements.singleDelete;
     var multiDelete = elements.multiDelete;
-    var inputField = elements.inputField;
     var confirmBtn = elements.confirmBtn;
     var showWarning = tabName === "pending";
     // Should only show the warning if you want to delete a pending task.
@@ -342,8 +340,6 @@
     if (itemLength > 1) {
       expect($$("uib-accordion.tc-tasks-to-delete ul > li").count()).toBe(itemLength);
     }
-    expect(inputField.isDisplayed()).toBe(true);
-    inputField.sendKeys("yes");
     expect(confirmBtn.isDisplayed()).toBe(true);
     expect(confirmBtn.getText()).toBe("Delete");
     confirmBtn.click();

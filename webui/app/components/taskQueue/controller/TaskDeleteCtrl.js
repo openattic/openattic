@@ -39,11 +39,6 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
   var pending = ["Running", "Not Started"];
   $scope.pendingDeletionFailure = [];
 
-  $scope.input = {
-    enteredName: "",
-    pattern: "yes"
-  };
-
   /**
    * To detect a pending task.
    * @return {boolean}
