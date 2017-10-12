@@ -30,10 +30,10 @@
  */
 "use strict";
 
-import cephClusterSettingsModal from "./ceph-cluster-settings-modal/ceph-cluster-settings-modal.component"
+import cephClusterSettingsModal from "./ceph-cluster-settings-modal/ceph-cluster-settings-modal.component";
 
-let app = angular.module("openattic.cephCluster", []);
+angular.module("openattic.cephCluster", [])
+  .component("cephClusterSettingsModal", cephClusterSettingsModal);
 
 require("./shared/cephClustersService");
 
-app.component("cephClusterSettingsModal", cephClusterSettingsModal);

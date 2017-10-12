@@ -30,9 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephErasureCodeProfiles", []);
-
-export default app;
+export default angular.module("openattic.cephErasureCodeProfiles", []);
 
 requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
 

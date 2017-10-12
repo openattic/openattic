@@ -39,20 +39,20 @@ app.controller("DashboardComposeModalCtrl", function ($scope, $uibModalInstance,
   }
 
   var reason = [
-    $scope.editMode ? "Edit"  : "Add",
+    $scope.editMode ? "Edit" : "Add",
     $scope.data.type
   ].join(" ");
   $scope.texts = {
     header: [
       reason,
-      $scope.editMode ? "'" + $scope.data.name + "'"  : ""
+      $scope.editMode ? "'" + $scope.data.name + "'" : ""
     ].join(" "),
     content: {
       doing: [
         "You are about to ",
-        $scope.editMode ? "edit the"  : "add a new",
+        $scope.editMode ? "edit the" : "add a new",
         $scope.data.type,
-        $scope.editMode ? "<strong>" + $scope.data.name + "</strong>"  : ""
+        $scope.editMode ? "<strong>" + $scope.data.name + "</strong>" : ""
       ].join(" ") + ".",
       confirm: [
         "To confirm, please enter",

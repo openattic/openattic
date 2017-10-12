@@ -140,5 +140,5 @@ export default {
     resolve: "<"
   },
   controller: cephClusterSettingsModal
-}
+};
 

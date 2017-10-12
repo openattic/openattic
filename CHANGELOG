@@ -35,6 +35,7 @@ Changed
   (OP-2725)
 * WebUI: Don't allow performing a delete action on buckets shared via
   NFS (OP-2768)
+* WebUI: Improve eslint rules (OP-2749)
 
 Fixed
 ~~~~~

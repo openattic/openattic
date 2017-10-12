@@ -174,6 +174,9 @@
     "one-var-declaration-per-line": [
       2,
       "always"
-    ]
+    ],
+    "no-multi-spaces": ["error", { "exceptions": { "Property": true } }],
+    "arrow-spacing": "error",
+    "semi": ["error", "always"]
   }
 }

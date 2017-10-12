@@ -30,7 +30,7 @@
  */
 "use strict";
 
-import FeedbackComponent from "./feedback.component"
+import FeedbackComponent from "./feedback.component";
 
 let app = angular.module("openattic.feedback", []);
 

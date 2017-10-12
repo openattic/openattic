@@ -67,4 +67,4 @@ export default {
     onSubmit: "&"
   },
   controller: OASubmitButton
-}
+};
