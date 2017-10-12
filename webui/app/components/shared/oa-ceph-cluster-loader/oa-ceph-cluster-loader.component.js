@@ -30,48 +30,54 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.component("oaCephClusterLoader", {
+class OaCephClusterLoader {
+  constructor ($state, cephClusterService, registryService) {
+    this.$state = $state;
+    this.cephClusterService = cephClusterService;
+    this.registryService = registryService;
+
+    this.loading = false;
+    this.registry = registryService;
+    this.cluster = undefined;
+
+  }
+
+  $onInit () {
+    this.loadCluster();
+  };
+
+  loadCluster () {
+    this.loading = true;
+    this.cephClusterService.get().$promise
+      .then((res) => {
+        this.cluster = res;
+        // Update the registry. Select the first cluster in the list
+        // if there isn't already a cluster selected.
+        if (angular.isObject(this.cluster) && this.cluster.results &&
+          this.cluster.results.length > 0 &&
+          angular.isUndefined(this.registry.selectedCluster)) {
+          this.registry.selectedCluster = this.cluster.results[0];
+        }
+        // Execute the callback function.
+        if (angular.isFunction(this.onClusterLoad)) {
+          this.onClusterLoad({cluster: this.cluster});
+        }
+      }).finally(() => {
+        this.loading = false;
+      });
+  };
+
+  onClusterChange () {
+  // Reload the current state to apply the newly selected cluster.
+    this.$state.reload();
+  };
+}
+
+export default {
   template: require("./oa-ceph-cluster-loader.component.html"),
   bindings: {
     onClusterLoad: "&"
   },
   transclude: true,
-  controller: function ($state, cephClusterService, registryService) {
-    var self = this;
-
-    self.loading = false;
-    self.registry = registryService;
-    self.cluster = undefined;
-
-    self.$onInit = function () {
-      self.loadCluster();
-    };
-
-    self.loadCluster = function () {
-      self.loading = true;
-      cephClusterService.get().$promise
-        .then(function (res) {
-          self.cluster = res;
-          // Update the registry. Select the first cluster in the list
-          // if there isn't already a cluster selected.
-          if (angular.isObject(self.cluster) && self.cluster.results &&
-              self.cluster.results.length > 0 &&
-              angular.isUndefined(self.registry.selectedCluster)) {
-            self.registry.selectedCluster = self.cluster.results[0];
-          }
-          // Execute the callback function.
-          if (angular.isFunction(self.onClusterLoad)) {
-            self.onClusterLoad({cluster: self.cluster});
-          }
-        }).finally(function () {
-          self.loading = false;
-        });
-    };
-
-    self.onClusterChange = function () {
-      // Reload the current state to apply the newly selected cluster.
-      $state.reload();
-    };
-  }
-});
+  controller: OaCephClusterLoader
+};

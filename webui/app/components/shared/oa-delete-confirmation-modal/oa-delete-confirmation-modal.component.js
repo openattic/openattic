@@ -30,8 +30,27 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.component("oaDeleteConfirmationModal", {
+class OaDeleteConfirmationModal {
+  constructor ($scope) {
+    this.$scope = $scope;
+    this.input = {
+      enteredName: "",
+      pattern: "yes"
+    };
+  }
+
+  confirm () {
+    this.onConfirm()
+      .then(() => {
+        this.$scope.deleteForm.$submitted = true;
+      }, () => {
+        this.$scope.deleteForm.$submitted = false;
+      }
+      );
+  };
+}
+
+export default {
   template: require("./oa-delete-confirmation-modal.component.html"),
   bindings: {
     title: "@",
@@ -39,20 +58,5 @@ app.component("oaDeleteConfirmationModal", {
     onCancel: "&"
   },
   transclude: true,
-  controller: function ($scope) {
-    var self = this;
-    this.input = {
-      enteredName: "",
-      pattern: "yes"
-    };
-    this.confirm = function () {
-      self.onConfirm()
-        .then(function () {
-          $scope.deleteForm.$submitted = true;
-        }, function () {
-          $scope.deleteForm.$submitted = false;
-        }
-        );
-    };
-  }
-});
+  controller: OaDeleteConfirmationModal
+};
