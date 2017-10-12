@@ -67,7 +67,7 @@ make these changes.
 Installation on openSUSE Leap
 =============================
 
-|oA| is available for installation on openSUSE Leap 42.2 and 42.3 from the
+|oA| is available for installation on openSUSE Leap 42.3 from the
 `openSUSE Build Service <https://build.opensuse.org>`_.
 
 The software is delivered in the form of RPM packages via a dedicated zypper
