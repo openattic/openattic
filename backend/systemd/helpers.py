@@ -37,4 +37,3 @@ def get_dbus_object(path="/", timeout=30):
 
     # Raise Exception. In general, this is better than playing dead.
     raise ValueError('Unable to connect to openattic-systemd')
-
