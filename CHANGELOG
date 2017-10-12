@@ -22,6 +22,8 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI: Prevent the removal of RGW user that is in use on the settings
+  page. (OP-2737)
 
 Changed
 ~~~~~~~

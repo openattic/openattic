@@ -18,6 +18,7 @@ from rest_framework.decorators import api_view
 from ceph_radosgw.rgw_client import RGWClient
 from ceph_nfs.models import GaneshaExport
 from rest_client import RequestException
+from oa_settings import Settings
 
 
 class NoCredentialsResponse(HttpResponse):
@@ -103,3 +104,19 @@ def bucket_get(request):
     response.content = json.dumps(content)
 
     return response
+
+
+@api_view(['DELETE'])
+def user_delete(request):
+
+    params = request.GET.copy()
+
+    if 'uid' not in params:
+        raise ValidationError('No uid parameter provided')
+
+    # Ensure the user is not configured to access the Object Gateway.
+    if Settings.RGW_API_USER_ID == params['uid']:
+        raise ValidationError('Can not delete the user \'{}\', it is used to access '
+            'the Object Gateway'.format(params['uid']))
+
+    return proxy_view(request, 'user')
