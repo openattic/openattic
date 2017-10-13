@@ -93,6 +93,18 @@ class SimpleDatabaseUpgrade(object):
                     print 'inserting', stmt
                     cursor.execute(stmt, values)
 
+                # Set the sequence correctly.
+                response = execute_and_fetch(cursor, 'SELECT pg_get_serial_sequence(%s, %s)',
+                                             (table, 'id'))
+                if response:
+                    sequence = response[0]['pg_get_serial_sequence'].split('.')[1]
+                    stmt = """SELECT setval(%s, COALESCE((SELECT MAX(id) FROM {}), %s));""".\
+                        format(table)
+                    response = execute_and_fetch(cursor, stmt, (sequence, 1))
+
+                    print('Setting sequence `{}` of table `{}` to `{}`'.format(
+                        sequence, table, response[0]['setval']))
+
     @staticmethod
     def migrate_from_host(old_data):
         data = deepcopy(old_data)
