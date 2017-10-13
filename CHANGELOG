@@ -38,6 +38,7 @@ Changed
   NFS (OP-2768)
 * WebUI: Improve eslint rules (OP-2749)
 * WebUI: Migration of Ceph Pools controllers to components (OP-2399)
+* WebUI: Migration of Ceph OSDs controllers to components (OP-2401)
 
 Fixed
 ~~~~~
