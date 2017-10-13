@@ -12,13 +12,12 @@
  *  GNU General Public License for more details.
 """
 
-import mock
 from django.core.exceptions import ValidationError
 from django.db import models
 
 from django.db.models import Q, CharField
 from django.test import TestCase
-from django_filters import FilterSet, DateTimeFilter, Filter, CharFilter
+from django_filters import FilterSet
 
 from nodb.models import NodbQuerySet, NodbModel, JsonField, bulk_attribute_setter
 from nodb.restapi import NodbSerializer
@@ -71,7 +70,6 @@ class QuerySetTestCase(TestCase):
 
         cls.empty_qs = NodbQuerySet(EmptyModel)
 
-
     def test_kwargs_filter_by_name(self):
         filter_result = self.qs.filter(name='balkan')
 
@@ -85,7 +83,6 @@ class QuerySetTestCase(TestCase):
 
         filter_result = self.qs.filter(Q() | Q(name='ceph') | Q(name='balkan'))
         self.assertEqual(len(filter_result), 2)
-
 
     def test_kwargs_filter_by_id(self):
         filter_result = self.qs.filter(fsid='e79f3338-f9e4-4656-8af3-7af7357fcd09')
@@ -185,7 +182,6 @@ class QuerySetTestCase(TestCase):
 
         qs = NameInFilterSet({'name_in': 'ceph,balkan'}, self.qs).qs
         self.assertEqual(len(qs), 2)
-
 
 
 class DictFieldSerializerTest(TestCase):

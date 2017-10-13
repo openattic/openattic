@@ -262,7 +262,6 @@ elif django.VERSION[:2] == (1, 7):
 elif django.VERSION[:2] >= (1, 8):
     from django.db.models.manager import BaseManager, Manager
 
-
     class base_manager_class(BaseManager.from_queryset(NodbQuerySet), Manager):
         """in DRF 3, rest_framework.relations.RelatedField#get_queryset checks:
 
@@ -415,7 +414,8 @@ def bulk_attribute_setter(field_names, catch_exceptions=None):
 
         def contribute_to_class(self, cls, name, virtual_only=False):
             for name in self.field_names:
-                setattr(cls, name, LazyProperty(name, self.func, catch_exceptions, self.field_names))
+                setattr(cls, name, LazyProperty(name, self.func, catch_exceptions,
+                                                self.field_names))
 
     def decorator(func):
         return LazyPropertyContributor(field_names, func)
