@@ -145,8 +145,8 @@
       if (browse) {
         browser.get(helper.getUrl("login"));
       }
-      element.all(by.model("username")).clear().sendKeys(username);
-      element.all(by.model("password")).clear().sendKeys(password);
+      element.all(by.model("$ctrl.username")).clear().sendKeys(username);
+      element.all(by.model("$ctrl.password")).clear().sendKeys(password);
       element.all(by.css('input[type="submit"]')).click();
     },
 

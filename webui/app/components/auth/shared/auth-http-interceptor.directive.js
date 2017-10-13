@@ -30,8 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic.auth", []);
-
 var app = angular.module("openattic.auth");
 
 app.factory("AuthHttpInterceptor", function ($q, $injector, $rootScope) {
@@ -53,12 +51,3 @@ app.factory("AuthHttpInterceptor", function ($q, $injector, $rootScope) {
     }
   };
 });
-
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push("AuthHttpInterceptor");
-});
-
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-function requireAll (require) {
-  require.keys().forEach(require);
-}

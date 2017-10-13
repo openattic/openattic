@@ -30,44 +30,7 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
-
 var app = angular.module("openattic.auth");
-app.controller("AuthCtrl", function ($scope, $rootScope, $state, authService) {
-  $scope.fieldRequired = "This field is required.";
-  $scope.correctInput = "The given credentials are not correct.";
-
-  if (angular.isDefined(globalConfig.GUI.quickLogin.username) && globalConfig.GUI.quickLogin.username !== "" &&
-      angular.isDefined(globalConfig.GUI.quickLogin.password) && globalConfig.GUI.quickLogin.password !== "") {
-    $scope.username = globalConfig.GUI.quickLogin.username;
-    $scope.password = globalConfig.GUI.quickLogin.password;
-  }
-
-  $scope.$watchGroup(["username", "password"], function () {
-    $scope.submitted = false;
-  });
-
-  if ($scope.user) {
-    $state.go("dashboard");
-  }
-
-  $scope.login = function () {
-    $scope.submitted = true;
-    $scope.loginFailed = false;
-    var loginData = {
-      "username": $scope.username,
-      "password": $scope.password
-    };
-    authService.login(loginData, function (res) {
-      $rootScope.user = res;
-      $state.go("dashboard");
-    }, function (error) {
-      error.ignoreStatusCode(401);
-      $scope.loginFailed = true;
-    });
-  };
-});
-
 app.directive("autoFocus", function ($timeout) {
   return {
     restrict: "A",

@@ -41,6 +41,7 @@ webui/package-lock.json
 webui/yarn.lock
 webui/webpack.config.json
 webui/e2e/configs.js
+webui/build
 
 # From gatling-rest
 gatling/conf/

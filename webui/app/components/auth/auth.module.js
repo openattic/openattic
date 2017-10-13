@@ -30,16 +30,15 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.config(function ($stateProvider) {
-  $stateProvider
-    .state("login", {
-      url: "/login",
-      views: {
-        "main": {
-          template: require("../templates/login.html"),
-          controller: "AuthCtrl"
-        }
-      }
-    });
-});
+import authComponent from "./auth/auth.component";
+
+angular.module("openattic.auth", [])
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push("AuthHttpInterceptor");
+  })
+  .component("authComponent", authComponent);
+
+requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+function requireAll (require) {
+  require.keys().forEach(require);
+}
