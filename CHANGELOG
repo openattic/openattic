@@ -29,6 +29,8 @@ Added
 
 Changed
 ~~~~~~~
+
+* Backend: Cleaned up pep8 warnings of rest app (OP-1515)
 * WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
 * WebUI: Submit buttons should be enabled on invalid forms (OP-2736)
 * WebUI/Backend: Salt-API settings should be optional (OP-2722)
