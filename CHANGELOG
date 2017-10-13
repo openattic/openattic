@@ -56,6 +56,7 @@ Fixed
 Removed
 ~~~~~~~
 * Backend: Removed `utilities.in_unittest` (OP-2776)
+* WebUI: Removed the need to type "yes" to delete tasks (OP-2770)
 
 
 [3.5.2] - 2017-10-10

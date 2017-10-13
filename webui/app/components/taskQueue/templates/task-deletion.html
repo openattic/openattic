@@ -38,21 +38,6 @@
                     </div>
                 </uib-accordion>
             </div>
-
-            <p>To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>.</p>
-            <div class="form-group"
-                 ng-class="{'has-error': (submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
-                <input type="text" class="form-control" name="enteredName" placeholder="yes" autocomplete="off"
-                       ng-model="input.enteredName" ng-pattern="input.pattern" required autofocus>
-                <!-- Error -->
-                <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
-                    This field is required.
-                </span>
-                <span class="help-block" ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
-                    The input value does not match 'yes'.
-                </span>
-                <!-- end Error -->
-            </div>
         </div>
 
         <div ng-show="waiting">
