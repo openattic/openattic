@@ -42,6 +42,8 @@ Changed
 * WebUI: Improve eslint rules (OP-2749)
 * WebUI: Migration of Ceph Pools controllers to components (OP-2399)
 * WebUI: Migration of Ceph OSDs controllers to components (OP-2401)
+* Documentation: Mentioned the AngularJS style guide as the coding style
+  for frontend development (OP-824)
 
 Fixed
 ~~~~~
