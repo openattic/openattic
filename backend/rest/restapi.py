@@ -169,8 +169,8 @@ class UserViewSet(NoCacheModelViewSet):
         req_user = request.user
 
         if self.object == req_user:
-            return Response(
-                {'detail': 'You can\'t delete your own user account.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'detail': 'You can\'t delete your own user account.'},
+                            status=status.HTTP_403_FORBIDDEN)
 
         return super(UserViewSet, self).destroy(request, args, kwargs)
 

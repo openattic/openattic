@@ -14,9 +14,8 @@
 """
 
 # Don't import Views, otherwise you get a circular import in pagination.PageSizePageNumberPagination
-from django.http.request import QueryDict # Docstring
+from django.http.request import QueryDict  # Docstring
 from django_filters import Filter
-from rest_framework.serializers import Serializer
 from rest_framework.response import Response
 
 

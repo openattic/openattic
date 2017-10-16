@@ -17,6 +17,7 @@ from rest_framework.routers import DefaultRouter
 
 from rest.loader import load_viewsets
 
+
 def get_router():
     router = DefaultRouter(trailing_slash=False)
 
