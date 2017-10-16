@@ -126,6 +126,9 @@ class CephNfsForm {
 
     let resolveHosts = (res) => {
       this.allHosts = res.hosts;
+      if (this.allHosts.length === 1 && angular.isUndefined(this.model.host)) {
+        this.model.host = this.allHosts[0];
+      }
     };
 
     let resolvefsals = (res) => {
