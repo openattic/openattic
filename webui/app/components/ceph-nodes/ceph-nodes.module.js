@@ -30,28 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephOsd");
-app.config(function ($stateProvider) {
-  $stateProvider
-    .state("cephOsds", {
-      url: "/ceph/osds",
-      views: {
-        "main": {
-          template: require("../templates/listing.html"),
-          controller: "CephOsdCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Ceph OSDs"
-      }
-    })
-    .state("cephOsds.statistics", {
-      url: "/statistics",
-      views: {
-        "statistics": {template: require("../templates/statistics.html")}
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    });
-});
+import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component";
+import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component";
+import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component";
+import cephNodesList from "./ceph-nodes-list/ceph-nodes-list.component";
+
+angular
+  .module("openattic.cephNodes", [])
+  .component("cephNodesScrubModal", cephNodesScrubModal)
+  .component("cephNodesDetail", cephNodesDetail)
+  .component("cephNodesStatistics", cephNodesStatistics)
+  .component("cephNodesList", cephNodesList);
+
+require("./ceph-nodes.route");
+require("./shared/ceph-nodes.service");

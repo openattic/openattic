@@ -30,52 +30,12 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.component("oaModuleLoader", {
-  template: require("./oa-module-loader.component.html"),
-  bindings: {
-    module: "@",
-    displayLoadingPanel: "@"
-  },
-  transclude: true,
-  controller: function (oaModuleLoaderService, registryService) {
-    var self = this;
+class OaModuleLoader {
+  constructor (oaModuleLoaderService, registryService) {
+    this.oaModuleLoaderService = oaModuleLoaderService;
+    this.registryService = registryService;
 
-    self.$onInit = function () {
-      self.displayLoadingPanelValue = angular.isUndefined(self.displayLoadingPanel) ||
-        self.displayLoadingPanel === "true";
-      self.loadModule();
-    };
-
-    self.loadModule = function () {
-      if (angular.isDefined(self.module)) {
-        self.moduleAvailable = undefined;
-        var fsid = registryService && registryService.selectedCluster ?
-          registryService.selectedCluster.fsid : undefined;
-        oaModuleLoaderService.get({
-          module: self.module,
-          fsid: fsid
-        })
-          .$promise
-          .then(function (res) {
-            self.moduleAvailable = res;
-          }).catch(function (error) {
-            self.moduleAvailable = {
-              $resolved: true,
-              available: false,
-              reason: 100,
-              message: error.data && error.data.detail ? error.data.detail : undefined
-            };
-          });
-      } else {
-        self.moduleAvailable = {
-          $resolved: true,
-          available: true
-        };
-      }
-    };
-
-    var reasons = {
+    this.reasons = {
       "100": {
         title: "Unexpected error",
         template: "unknown"
@@ -237,20 +197,65 @@ app.component("oaModuleLoader", {
         template: "grafana-http-error"
       }
     };
-
-    self.getErrorTitle = function (reason) {
-      if (angular.isDefined(reasons[reason])) {
-        return reasons[reason].title;
-      }
-      return "Error";
-    };
-
-    self.getErrorTemplate = function (reason) {
-      if (angular.isDefined(reasons[reason])) {
-        return "components/shared/oa-module-loader/reason-" + reason + "-" + reasons[reason].template + ".html";
-      }
-      return "components/shared/oa-module-loader/reason-default.html";
-    };
-
   }
-});
+
+  $onInit () {
+    this.displayLoadingPanelValue = angular.isUndefined(this.displayLoadingPanel) ||
+        this.displayLoadingPanel === "true";
+    this.loadModule();
+  }
+
+  loadModule () {
+    if (angular.isDefined(this.module)) {
+      this.moduleAvailable = undefined;
+      var fsid = this.registryService && this.registryService.selectedCluster ?
+        this.registryService.selectedCluster.fsid : undefined;
+      this.oaModuleLoaderService.get({
+        module: this.module,
+        fsid: fsid
+      })
+        .$promise
+        .then((res) => {
+          this.moduleAvailable = res;
+        }).catch((error) => {
+          this.moduleAvailable = {
+            $resolved: true,
+            available: false,
+            reason: 100,
+            message: error.data && error.data.detail ? error.data.detail : undefined
+          };
+        });
+    } else {
+      this.moduleAvailable = {
+        $resolved: true,
+        available: true
+      };
+    }
+  };
+
+  getErrorTitle (reason) {
+    if (angular.isDefined(this.reasons[reason])) {
+      return this.reasons[reason].title;
+    }
+    return "Error";
+  };
+
+  getErrorTemplate (reason) {
+    if (angular.isDefined(this.reasons[reason])) {
+      return "components/shared/oa-module-loader/reason-" + reason + "-" + this.reasons[reason].template + ".html";
+    }
+    return "components/shared/oa-module-loader/reason-default.html";
+  };
+
+}
+
+export default {
+  template: require("./oa-module-loader.component.html"),
+  bindings: {
+    module: "@",
+    displayLoadingPanel: "@"
+  },
+  transclude: true,
+  controller: OaModuleLoader
+
+};

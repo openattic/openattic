@@ -30,12 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.component("oaLoadingPanel", {
+export default {
   template: require("./oa-loading-panel.component.html"),
   bindings: {
     message: "@"
-  },
-  controller: function () {
   }
-});
+};

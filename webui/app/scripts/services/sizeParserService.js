@@ -36,13 +36,13 @@ app.factory("SizeParserService", () => {
   // If a number can't hold such a large number 1 will be returned.
   // Example: SizeParserService.parseInt(868, "b", "e")
   const _parseInt = (value, outputSize = "m", inputSize) => {
-    return parseInt(_parseFloat(value, outputSize, inputSize), 10)
+    return parseInt(_parseFloat(value, outputSize, inputSize), 10);
   };
 
   const _parseFloat = (value, outputSize, defaultInputSize = "m") => {
     let units = ["b", "k", "m", "g", "t", "p", "e", "z", "y"];
     if (outputSize) {
-      units = units.slice(units.indexOf(outputSize))
+      units = units.slice(units.indexOf(outputSize));
     }
     if (/^[\d.]+$/.test(value)) {
       value += defaultInputSize;
@@ -54,7 +54,7 @@ app.factory("SizeParserService", () => {
     }
     const matched = rgx.exec(value);
     return parseFloat(matched[1], 10) * Math.pow(1024, units.indexOf(matched[2]));
-  }
+  };
 
   const _isValid = (value) => {
     return _parseInt(value) !== null;

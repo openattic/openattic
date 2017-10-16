@@ -7,7 +7,7 @@
     performTaskBtn: element(by.css(".tc_scrub_toggle")),
     scrubLi: element(by.css(".tc_scrub_li")),
     deepScrubLi: element(by.css(".tc_deep_scrub_li")),
-    scrubModal: element(by.css("ceph-ods-scrub-modal")),
+    scrubModal: element(by.css("ceph-osd-scrub-modal")),
     submitBtn: element(by.css(".tc_submitButton")),
     allTd: element.all(by.css("td"))
   };

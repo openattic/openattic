@@ -261,7 +261,7 @@ app.component("cephRbdForm", {
     self.useMaxSize = pool => {
       self.data.size = $filter("bytes")(pool.max_avail - pool.num_bytes);
       self.watchDataSize();
-    }
+    };
 
     self.watchDataSize = () => {
       if (self.data.size === "") {

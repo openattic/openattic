@@ -30,14 +30,37 @@
  */
 "use strict";
 
+import oaCephClusterLoader from "./oa-ceph-cluster-loader/oa-ceph-cluster-loader.component";
+import oaDeleteConfirmationModal from "./oa-delete-confirmation-modal/oa-delete-confirmation-modal.component";
+import oaErrorPanel from "./oa-error-panel/oa-error-panel.component";
+import oaHelper from "./oa-helper/oa-helper.component";
+import oaLoadingPanel from "./oa-loading-panel/oa-loading-panel.component";
+import oaModuleLoader from "./oa-module-loader/oa-module-loader.component";
 import oaSubmitButton from "./oa-submit-button/oa-submit-button.component";
+import oaTabSet from "./oa-tab-set/oa-tab-set.component";
 
 angular
   .module("openattic.shared", [])
-  .component("oaSubmitButton", oaSubmitButton);
+  .component("oaCephClusterLoader", oaCephClusterLoader)
+  .component("oaDeleteConfirmationModal", oaDeleteConfirmationModal)
+  .component("oaErrorPanel", oaErrorPanel)
+  .component("oaHelper", oaHelper)
+  .component("oaLoadingPanel", oaLoadingPanel)
+  .component("oaModuleLoader", oaModuleLoader)
+  .component("oaSubmitButton", oaSubmitButton)
+  .component("oaTabSet", oaTabSet);
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+require("./oa-module-loader/oa-module-loader.service");
+require("./oa-password-button/oa-password-button.directive");
+require("./oa-tab-set/oa-tab-set.service");
+require("./oadatatable/actions.directive");
+require("./oadatatable/additional-actions.directive");
+require("./oadatatable/checklist-model.directive");
+require("./oadatatable/oadatatable.directive");
+require("./oadatatable/paginator.directive");
+require("./oadatatable/showhidecolumns.directive");
+require("./oadatatable/sortfield.directive");
+require("./oadatatable/sortheaderclass.directive");
+require("./required/required.directive");
+require("./validators/equalValidator");
+require("./validators/iqn.validator");

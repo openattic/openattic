@@ -9,7 +9,8 @@
                   ng-if="$ctrl.targetId && $ctrl.error">
   </oa-error-panel>
 
-  <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="iscsiForm" role="form" class="form-horizontal" novalidate>
+  <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="iscsiForm" role="form" class="form-horizontal"
+        novalidate oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title tc_panelTitle">Target IQN: {{ $ctrl.model.targetId }}</h3>

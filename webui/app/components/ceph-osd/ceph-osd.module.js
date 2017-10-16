@@ -30,51 +30,18 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNodes");
-app.config(function ($stateProvider) {
-  $stateProvider
-    .state("cephNodes", {
-      url: "/ceph/nodes",
-      views: {
-        "main": {
-          template: require("../templates/nodes.html"),
-          controller: "CephNodesCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Ceph Nodes"
-      }
-    })
-    .state("cephNodes.detail", {
-      views: {
-        "tab": {
-          component: "oaTabSet"
-        }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("cephNodes.detail.statistics", {
-      url: "/statistics",
-      views: {
-        "tab-content": {
-          component: "cephNodesStatistics"
-        }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    })
-    .state("cephNodes.detail.details", {
-      url: "/details",
-      views: {
-        "tab-content": {
-          component: "cephNodesDetail"
-        }
-      },
-      ncyBreadcrumb: {
-        skip: true
-      }
-    });
-});
+import "../ceph-cluster/module";
+import "../registry/module";
+import cephOsdScrubModal from "./ceph-osd-scrub-modal/ceph-osd-scrub-modal.component";
+import cephOsdList from "./ceph-osd-list/ceph-osd-list.component";
+
+angular
+  .module("openattic.cephOsd", [
+    "openattic.cephCluster",
+    "openattic.registry"
+  ])
+  .component("cephOsdScrubModal", cephOsdScrubModal)
+  .component("cephOsdList", cephOsdList);
+
+require("./ceph-osd.route");
+require("./shared/ceph-osd.service");

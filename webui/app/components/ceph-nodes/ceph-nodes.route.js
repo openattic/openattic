@@ -30,17 +30,50 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
-import "../registry/module";
-import cephOdsScrubModal from "./ceph-osd-scrub-modal/ceph-osd-scrub-modal.component";
-
-angular
-  .module("openattic.cephOsd", [
-    "openattic.cephCluster",
-    "openattic.registry"
-  ])
-  .component("cephOdsScrubModal", cephOdsScrubModal);
-
-require("./config/routeConfig");
-require("./controller/CephOsdCtrl");
-require("./services/cephOsdService");
+var app = angular.module("openattic.cephNodes");
+app.config(function ($stateProvider) {
+  $stateProvider
+    .state("cephNodes", {
+      url: "/ceph/nodes",
+      views: {
+        "main": {
+          component: "cephNodesList"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Ceph Nodes"
+      }
+    })
+    .state("cephNodes.detail", {
+      views: {
+        "tab": {
+          component: "oaTabSet"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephNodes.detail.statistics", {
+      url: "/statistics",
+      views: {
+        "tab-content": {
+          component: "cephNodesStatistics"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephNodes.detail.details", {
+      url: "/details",
+      views: {
+        "tab-content": {
+          component: "cephNodesDetail"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    });
+});
