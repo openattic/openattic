@@ -30,12 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiDetail", {
+export default {
   template: require("./ceph-iscsi-detail.component.html"),
   bindings: {
     selection: "<"
-  },
-  controller: function () {
   }
-});
+};

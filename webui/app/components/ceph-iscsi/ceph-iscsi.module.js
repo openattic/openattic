@@ -30,11 +30,23 @@
  */
 "use strict";
 
-angular.module("openattic.cephIscsi", []);
+import cephIscsiDeleteModal from "./ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component";
+import cephIscsiDetail from "./ceph-iscsi-detail/ceph-iscsi-detail.component";
+import cephIscsiForm from "./ceph-iscsi-form/ceph-iscsi-form.component";
+import cephIscsiFormImageSettingsModal from "./ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component";
+import cephIscsiFormTargetSettingsModal from "./ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component";
+import cephIscsiList from "./ceph-iscsi-list/ceph-iscsi-list.component";
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+angular.module("openattic.cephIscsi", [])
+  .component("cephIscsiDeleteModal", cephIscsiDeleteModal)
+  .component("cephIscsiDetail", cephIscsiDetail)
+  .component("cephIscsiForm", cephIscsiForm)
+  .component("cephIscsiFormImageSettingsModal", cephIscsiFormImageSettingsModal)
+  .component("cephIscsiFormTargetSettingsModal", cephIscsiFormTargetSettingsModal)
+  .component("cephIscsiList", cephIscsiList);
 
-function requireAll (require) {
-  require.keys().forEach(require);
-}
 require("./ceph-iscsi.routes");
+require("./shared/ceph-iscsi-image-advanged-settings.value");
+require("./shared/ceph-iscsi-image-optional-settings.value");
+require("./shared/ceph-iscsi-target-advanged-settings.value");
+require("./shared/ceph-iscsi.service");

@@ -30,23 +30,28 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiForm", {
-  template: require("./ceph-iscsi-form.component.html"),
-  bindings: {
-  },
-  controller: function ($q, $scope, $state, $timeout, $stateParams, $uibModal,
+class CephIscsiForm {
+  constructor ($q, $scope, $state, $timeout, $stateParams, $uibModal,
       cephIscsiTargetAdvangedSettings, cephIscsiImageOptionalSettings,
       cephIscsiImageAdvangedSettings, cephRbdService, cephPoolsService,
       cephIscsiService) {
-    let self = this;
+    this.$scope = $scope;
+    this.$state = $state;
+    this.$stateParams = $stateParams;
+    this.$timeout = $timeout;
+    this.$uibModal = $uibModal;
+    this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
+    this.cephIscsiService = cephIscsiService;
+    this.$q = $q;
+    this.cephRbdService = cephRbdService;
+    this.cephPoolsService = cephPoolsService;
+    this.cephIscsiService = cephIscsiService;
 
-    self.fsid = $stateParams.fsid;
+    this.fsid = $stateParams.fsid;
+    this.targetId = $stateParams.targetId;
 
-    self.targetId = $stateParams.targetId;
-
-    self.model = {
-      fsid: self.fsid,
+    this.model = {
+      fsid: this.fsid,
       targetId: "",
       targetSettings: {},
       portals: [],
@@ -72,116 +77,8 @@ app.component("cephIscsiForm", {
       originalTargetId: null
     };
 
-    var oaPromises = [
-      cephRbdService.get({fsid: self.fsid}).$promise,
-      cephPoolsService.get({fsid: self.fsid}).$promise,
-      cephIscsiService.interfaces({fsid: self.fsid}).$promise
-    ];
-
-    var generateTargetId = function () {
-      return "iqn.1996-10.com.suse:" + Date.now();
-    };
-
-    var hasLunId = function (model) {
-      return model.images.some(function (image) {
-        return angular.isDefined(image.settings.lun);
-      });
-    };
-
-    var initLunId = function (model) {
-      if (!hasLunId(model)) {
-        var i = 0;
-        angular.forEach(model.images, function (image) {
-          image.settings.lun = i;
-          i++;
-        });
-      }
-    };
-
-    // Add new iSCSI target
-    if (angular.isUndefined($stateParams.targetId)) {
-      self.model.targetId = generateTargetId();
-
-      // Edit existing iSCSI target
-    } else {
-      oaPromises.push(cephIscsiService
-        .get({
-          fsid: self.fsid,
-          targetId: $stateParams.targetId
-        }).$promise);
-    }
-
-    var resolveModel = function (res) {
-      self.model = res;
-      self.model.fsid = self.fsid;
-      var auth = self.model.authentication;
-      if (!auth.hasMutualAuthentication) {
-        auth.enabledMutualAuthentication = true;
-      }
-      if (!auth.hasDiscoveryAuthentication) {
-        auth.enabledDiscoveryAuthentication = true;
-      }
-      if (!auth.hasDiscoveryMutualAuthentication) {
-        auth.enabledDiscoveryMutualAuthentication = true;
-      }
-      initLunId(self.model);
-      if ($state.current.name === "cephIscsi-clone") {
-        self.model.targetId = generateTargetId();
-        self.model.originalTargetId = null;
-      } else {
-        self.model.originalTargetId = angular.copy(self.model.targetId);
-      }
-    };
-
-    self.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
-
-    self.openTargetSettingsModal = function () {
-      $uibModal.open({
-        windowTemplate: require("../../../templates/messagebox.html"),
-        component: "cephIscsiFormTargetSettingsModal",
-        resolve: {
-          model: function () {
-            return self.model;
-          }
-        }
-      });
-    };
-
-    self.allPortals = [];
-    var resolvePortals = function (portalsFromServer) {
-      angular.forEach(portalsFromServer, function (portalItem) {
-        angular.forEach(portalItem.interfaces, function (interfaceItem) {
-          self.allPortals.push({
-            hostname: portalItem.hostname,
-            interface: interfaceItem
-          });
-        });
-      });
-    };
-
-    var containsPortalInModel = function (portal) {
-      return self.model.portals.some(function (currentPortal) {
-        return portal.hostname === currentPortal.hostname && portal.interface === currentPortal.interface;
-      });
-    };
-
-    var notContainsPortalInModel = function (portal) {
-      return !containsPortalInModel(portal);
-    };
-
-    self.availablePortals = function () {
-      return self.allPortals.filter(notContainsPortalInModel);
-    };
-
-    self.addPortalAction = function (portal) {
-      self.model.portals.push(portal);
-    };
-
-    self.removePortal = function (index) {
-      self.model.portals.splice(index, 1);
-    };
-
-    self.unsupportedRbdFeatures = [
+    this.allPortals = [];
+    this.unsupportedRbdFeatures = [
       {
         name: "Deep flatten",
         value: "deep-flatten"
@@ -203,175 +100,288 @@ app.component("cephIscsiForm", {
         value: "fast-diff"
       }
     ];
+    this.allImages = [];
 
-    var containsUnsupportedFeature = function (features) {
-      return features.some(function (feature) {
-        return self.unsupportedRbdFeatures
-          .findIndex(function (element) {
-            return element.value === feature;
-          }) !== -1;
+    this.allIscsiImageSettings = cephIscsiImageOptionalSettings.concat(cephIscsiImageAdvangedSettings);
+  }
+
+  $onInit () {
+    let oaPromises = [
+      this.cephRbdService.get({fsid: this.fsid}).$promise,
+      this.cephPoolsService.get({fsid: this.fsid}).$promise,
+      this.cephIscsiService.interfaces({fsid: this.fsid}).$promise
+    ];
+
+    // Add new iSCSI target
+    if (angular.isUndefined(this.$stateParams.targetId)) {
+      this.model.targetId = this.generateTargetId();
+
+      // Edit existing iSCSI target
+    } else {
+      oaPromises.push(this.cephIscsiService
+        .get({
+          fsid: this.fsid,
+          targetId: this.$stateParams.targetId
+        }).$promise);
+    }
+
+    this.$q.all(oaPromises)
+      .then(data => {
+        this.resolveRbdsPools(data[0], data[1]);
+        this.resolvePortals(data[2]);
+        if (data[3]) {
+          this.resolveModel(data[3]);
+        }
+        this.formDataIsReady = true;
+      })
+      .catch((error) => {
+        this.error = error;
       });
-    };
+  }
 
-    self.allImages = [];
-    var resolveRbdsPools = function (rbds, pools) {
-      angular.forEach(rbds.results, function (rbd) {
-        pools.results.some(function (pool) {
-          if (pool.id === rbd.pool) {
-            self.allImages.push({
-              name: rbd.name,
-              pool: pool.name,
-              hasUnsupportedFeature: containsUnsupportedFeature(rbd.features),
-              settings: {}
-            });
-            return true;
-          }
+  generateTargetId () {
+    return "iqn.1996-10.com.suse:" + Date.now();
+  };
+
+  hasLunId (model) {
+    return model.images.some((image) => {
+      return angular.isDefined(image.settings.lun);
+    });
+  };
+
+  initLunId (model) {
+    if (!this.hasLunId(model)) {
+      let i = 0;
+      angular.forEach(model.images, (image) => {
+        image.settings.lun = i;
+        i++;
+      });
+    }
+  };
+
+  resolveModel (res) {
+    this.model = res;
+    this.model.fsid = this.fsid;
+    let auth = this.model.authentication;
+    if (!auth.hasMutualAuthentication) {
+      auth.enabledMutualAuthentication = true;
+    }
+    if (!auth.hasDiscoveryAuthentication) {
+      auth.enabledDiscoveryAuthentication = true;
+    }
+    if (!auth.hasDiscoveryMutualAuthentication) {
+      auth.enabledDiscoveryMutualAuthentication = true;
+    }
+    this.initLunId(this.model);
+    if (this.$state.current.name === "cephIscsi-clone") {
+      this.model.targetId = this.generateTargetId();
+      this.model.originalTargetId = null;
+    } else {
+      this.model.originalTargetId = angular.copy(this.model.targetId);
+    }
+  };
+
+  openTargetSettingsModal () {
+    this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephIscsiFormTargetSettingsModal",
+      resolve: {
+        model: () => {
+          return this.model;
+        }
+      }
+    });
+  };
+
+  resolvePortals (portalsFromServer) {
+    angular.forEach(portalsFromServer, (portalItem) => {
+      angular.forEach(portalItem.interfaces, (interfaceItem) => {
+        this.allPortals.push({
+          hostname: portalItem.hostname,
+          interface: interfaceItem
         });
       });
-    };
+    });
+  };
 
-    $q.all(oaPromises)
-      .then(data => {
-        resolveRbdsPools(data[0], data[1]);
-        resolvePortals(data[2]);
-        if (data[3]) {
-          resolveModel(data[3]);
-        }
-        self.formDataIsReady = true;
-      })
-      .catch(function (error) {
-        self.error = error;
-      });
+  containsPortalInModel (portal) {
+    return this.model.portals.some((currentPortal) => {
+      return portal.hostname === currentPortal.hostname && portal.interface === currentPortal.interface;
+    });
+  };
 
-    self.allIscsiImageSettings = cephIscsiImageOptionalSettings.concat(cephIscsiImageAdvangedSettings);
+  notContainsPortalInModel (portal) {
+    return !this.containsPortalInModel(portal);
+  };
 
-    var containsImageInModel = function (image) {
-      return self.model.images.some(function (currentImage) {
-        return image.name === currentImage.name && image.pool === currentImage.pool;
-      });
-    };
+  availablePortals () {
+    return this.allPortals.filter(this.notContainsPortalInModel, this);
+  };
 
-    var notContainsImageInModel = function (image) {
-      return !containsImageInModel(image);
-    };
+  addPortalAction (portal) {
+    this.model.portals.push(portal);
+  };
 
-    self.availableImages = function () {
-      return self.allImages.filter(notContainsImageInModel);
-    };
+  removePortal (index) {
+    this.model.portals.splice(index, 1);
+  };
 
-    var nextLunId = function () {
-      return self.model.images.reduce(function (nextId, currImage) {
-        return currImage.settings.lun >= nextId ? currImage.settings.lun + 1 : nextId;
-      }, 0);
-    };
+  containsUnsupportedFeature (features) {
+    return features.some((feature) => {
+      return this.unsupportedRbdFeatures
+        .findIndex((element) => {
+          return element.value === feature;
+        }) !== -1;
+    });
+  };
 
-    self.addImageAction = function (image) {
-      var newImage = angular.copy(image);
-      newImage.settings.lun = nextLunId();
-      self.model.images.push(newImage);
-    };
-
-    self.removeImage = function (index) {
-      self.model.images.splice(index, 1);
-    };
-
-    self.openImageSettingsModal = function (selectedImage) {
-      $uibModal.open({
-        windowTemplate: require("../../../templates/messagebox.html"),
-        component: "cephIscsiFormImageSettingsModal",
-        resolve: {
-          image: function () {
-            return selectedImage;
-          }
+  resolveRbdsPools (rbds, pools) {
+    angular.forEach(rbds.results, (rbd) => {
+      pools.results.some((pool) => {
+        if (pool.id === rbd.pool) {
+          this.allImages.push({
+            name: rbd.name,
+            pool: pool.name,
+            hasUnsupportedFeature: this.containsUnsupportedFeature(rbd.features),
+            settings: {}
+          });
+          return true;
         }
       });
-    };
+    });
+  };
 
-    self.addInitiator = function () {
-      self.model.authentication.initiators.push("");
-      $timeout(function () {
-        var initiatorsInputs = jQuery("#initiators input");
-        initiatorsInputs[initiatorsInputs.length - 1].focus();
-      });
-    };
-
-    self.removeInitiator = function (index) {
-      self.model.authentication.initiators.splice(index, 1);
-    };
-
-    self.buildRequest = function () {
-      var requestModel = angular.copy(self.model);
-      var auth = requestModel.authentication;
-      if (!auth.hasAuthentication) {
-        delete auth.user;
-        delete auth.password;
-        auth.initiators = [];
-        delete auth.enabledMutualAuthentication;
-        delete auth.mutualUser;
-        delete auth.mutualPassword;
-        delete auth.enabledDiscoveryAuthentication;
-        delete auth.discoveryUser;
-        delete auth.discoveryPassword;
-        delete auth.enabledDiscoveryMutualAuthentication;
-        delete auth.discoveryMutualUser;
-        delete auth.discoveryMutualPassword;
-      }
-      if (!auth.hasMutualAuthentication) {
-        delete auth.enabledMutualAuthentication;
-        delete auth.mutualUser;
-        delete auth.mutualPassword;
-      }
-      if (!auth.hasDiscoveryAuthentication) {
-        delete auth.enabledDiscoveryAuthentication;
-        delete auth.discoveryUser;
-        delete auth.discoveryPassword;
-        auth.hasDiscoveryMutualAuthentication = false;
-        delete auth.enabledDiscoveryMutualAuthentication;
-        delete auth.discoveryMutualUser;
-        delete auth.discoveryMutualPassword;
-      }
-      if (!auth.hasDiscoveryMutualAuthentication) {
-        delete auth.enabledDiscoveryMutualAuthentication;
-        delete auth.discoveryMutualUser;
-        delete auth.discoveryMutualPassword;
-      }
-      return requestModel;
-    };
-
-    self.addRBD = function () {
-      $state.go("cephRbds-add", {
-        fsid: self.fsid,
-        fromState: "cephIscsi-add"
-      });
-    };
-
-    self.submitAction = function () {
-      var requestModel = self.buildRequest();
-      if (requestModel.originalTargetId !== null) {
-        requestModel.newTargetId = requestModel.targetId;
-        requestModel.targetId = requestModel.originalTargetId;
-        cephIscsiService.update(requestModel)
-          .$promise
-          .then(function () {
-            $state.go("cephIscsi");
-          }, function () {
-            $scope.iscsiForm.$submitted = false;
-          });
-      } else {
-        requestModel.newTargetId = null;
-        cephIscsiService.save(requestModel)
-          .$promise
-          .then(function () {
-            $state.go("cephIscsi");
-          }, function () {
-            $scope.iscsiForm.$submitted = false;
-          });
-      }
-    };
-
-    self.cancelAction = function () {
-      $state.go("cephIscsi");
-    };
-
+  containsImageInModel (image) {
+    return this.model.images.some((currentImage) => {
+      return image.name === currentImage.name && image.pool === currentImage.pool;
+    });
   }
-});
+
+  notContainsImageInModel (image) {
+    return !this.containsImageInModel(image);
+  }
+
+  availableImages () {
+    return this.allImages.filter(this.notContainsImageInModel, this);
+  }
+
+  nextLunId () {
+    return this.model.images.reduce((nextId, currImage) => {
+      return currImage.settings.lun >= nextId ? currImage.settings.lun + 1 : nextId;
+    }, 0);
+  }
+
+  addImageAction (image) {
+    let newImage = angular.copy(image);
+    newImage.settings.lun = this.nextLunId();
+    this.model.images.push(newImage);
+  };
+
+  removeImage (index) {
+    this.model.images.splice(index, 1);
+  };
+
+  openImageSettingsModal (selectedImage) {
+    this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephIscsiFormImageSettingsModal",
+      resolve: {
+        image: () => {
+          return selectedImage;
+        }
+      }
+    });
+  };
+
+  addInitiator () {
+    this.model.authentication.initiators.push("");
+    this.$timeout(() => {
+      let initiatorsInputs = jQuery("#initiators input");
+      initiatorsInputs[initiatorsInputs.length - 1].focus();
+    });
+  };
+
+  removeInitiator (index) {
+    this.model.authentication.initiators.splice(index, 1);
+  };
+
+  buildRequest () {
+    let requestModel = angular.copy(this.model);
+    let auth = requestModel.authentication;
+    if (!auth.hasAuthentication) {
+      delete auth.user;
+      delete auth.password;
+      auth.initiators = [];
+      delete auth.enabledMutualAuthentication;
+      delete auth.mutualUser;
+      delete auth.mutualPassword;
+      delete auth.enabledDiscoveryAuthentication;
+      delete auth.discoveryUser;
+      delete auth.discoveryPassword;
+      delete auth.enabledDiscoveryMutualAuthentication;
+      delete auth.discoveryMutualUser;
+      delete auth.discoveryMutualPassword;
+    }
+    if (!auth.hasMutualAuthentication) {
+      delete auth.enabledMutualAuthentication;
+      delete auth.mutualUser;
+      delete auth.mutualPassword;
+    }
+    if (!auth.hasDiscoveryAuthentication) {
+      delete auth.enabledDiscoveryAuthentication;
+      delete auth.discoveryUser;
+      delete auth.discoveryPassword;
+      auth.hasDiscoveryMutualAuthentication = false;
+      delete auth.enabledDiscoveryMutualAuthentication;
+      delete auth.discoveryMutualUser;
+      delete auth.discoveryMutualPassword;
+    }
+    if (!auth.hasDiscoveryMutualAuthentication) {
+      delete auth.enabledDiscoveryMutualAuthentication;
+      delete auth.discoveryMutualUser;
+      delete auth.discoveryMutualPassword;
+    }
+    return requestModel;
+  };
+
+  addRBD () {
+    this.$state.go("cephRbds-add", {
+      fsid: this.fsid,
+      fromState: "cephIscsi-add"
+    });
+  };
+
+  submitAction () {
+    let requestModel = this.buildRequest();
+    if (requestModel.originalTargetId !== null) {
+      requestModel.newTargetId = requestModel.targetId;
+      requestModel.targetId = requestModel.originalTargetId;
+      this.cephIscsiService.update(requestModel)
+        .$promise
+        .then(() => {
+          this.$state.go("cephIscsi");
+        }, () => {
+          this.$scope.iscsiForm.$submitted = false;
+        });
+    } else {
+      requestModel.newTargetId = null;
+      this.cephIscsiService.save(requestModel)
+        .$promise
+        .then(() => {
+          this.$state.go("cephIscsi");
+        }, () => {
+          this.$scope.iscsiForm.$submitted = false;
+        });
+    }
+  };
+
+  cancelAction () {
+    this.$state.go("cephIscsi");
+  };
+
+}
+
+export default {
+  template: require("./ceph-iscsi-form.component.html"),
+  controller: CephIscsiForm
+};
