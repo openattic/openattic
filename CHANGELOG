@@ -25,6 +25,7 @@ Added
 * WebUI: Prevent the removal of RGW user that is in use on the settings
   page. (OP-2737)
 * WebUI: Unit tests for IQN validator (OP-2783)
+* WebUI: Usage of "unsaved changes" dialog on iSCSI form (OP-2254)
 
 Changed
 ~~~~~~~
