@@ -30,7 +30,7 @@
  */
 "use strict";
 
-class oaErrorPanel {
+class OaErrorPanel {
   $onInit () {
     this.title = this.title || "Error";
   }
@@ -42,13 +42,12 @@ class oaErrorPanel {
   };
 }
 
-var app = angular.module("openattic.shared");
-app.component("oaErrorPanel", {
+export default {
   template: require("./oa-error-panel.component.html"),
   bindings: {
     title: "@?",
     message: "@",
     onBack: "&?"
   },
-  controller: oaErrorPanel
-});
+  controller: OaErrorPanel
+};

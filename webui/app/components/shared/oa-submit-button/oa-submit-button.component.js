@@ -30,7 +30,7 @@
  */
 "use strict";
 
-class OASubmitButton {
+class OaSubmitButton {
 
   constructor ($timeout) {
     this.$timeout = $timeout;
@@ -66,5 +66,5 @@ export default {
     form: "<",
     onSubmit: "&"
   },
-  controller: OASubmitButton
+  controller: OaSubmitButton
 };

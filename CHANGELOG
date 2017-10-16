@@ -45,6 +45,7 @@ Changed
 * Documentation: Mentioned the AngularJS style guide as the coding style
   for frontend development (OP-824)
 * WebUI: Migration of Ceph Nodes controllers to components (OP-2398)
+* WebUI: Convert Shared module to ES6 (OP-2532)
 
 Fixed
 ~~~~~
