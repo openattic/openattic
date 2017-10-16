@@ -358,7 +358,8 @@ class Client(object):
     def change_pool_owner(self, pool_name, auid):
         return self.get_pool(pool_name).change_auid(auid)
 
-    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None, target=None):
+    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None,
+                    target=None):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
@@ -371,7 +372,8 @@ class Client(object):
         :type argdict: dict[str, Any]
         :param output_format: Format of the return value
         :type output_format: str
-        :param default_return: Return value in case of an error - if the answer given by Ceph cluster can't be Json
+        :param default_return: Return value in case of an error - if the answer given by Ceph
+                               cluster can't be Json
             decoded (only for output_format='json')
         :type default_return: any
         :return: Return type is json (aka dict) if output_format == 'json' else str.
@@ -407,8 +409,9 @@ class Client(object):
                     if out:
                         return json.loads(out)
                     else:
-                        logger.warning("Returned default value '{}' for command '{}' because the JSON object of the "
-                                       "Ceph cluster's command output '{}' couldn't be decoded."
+                        logger.warning("Returned default value '{}' for command '{}' because the "
+                                       "JSON object of the Ceph cluster's command output '{}' "
+                                       "couldn't be decoded."
                                        .format(default_return, cmd, out))
                         return default_return
                 return out
@@ -644,7 +647,7 @@ class MonApi(object):
                                                      erasure_code_profile=erasure_code_profile,
                                                      ruleset=ruleset,
                                                      expected_num_objects=expected_num_objects),
-                                                     output_format='string')
+            output_format='string')
         self.osd_pool_delete(pool, pool, "--yes-i-really-really-mean-it")
 
     @undoable
@@ -703,7 +706,8 @@ class MonApi(object):
             pool_delete_args = self._args_to_argdict(pool=pool, pool2=pool2, sure=sure)
 
             try:
-                return client.mon_command('osd pool delete', pool_delete_args, output_format='string')
+                return client.mon_command('osd pool delete', pool_delete_args,
+                                          output_format='string')
             except ExternalCommandError as e:
                 if e.code != EPERM:
                     raise
@@ -768,8 +772,8 @@ class MonApi(object):
         "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
         "enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>",
         "osd", "rw", "cli,rest")"""
-        yield self._call_mon_command('osd pool application enable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
-                                     output_format='string')
+        yield self._call_mon_command('osd pool application enable', self._args_to_argdict(
+            pool=pool, app=app, force='--yes-i-really-mean-it'), output_format='string')
         self.osd_pool_application_disable(pool, app)
 
     @undoable
@@ -780,8 +784,8 @@ class MonApi(object):
         "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
         "disables use of an application <app> on pool <poolname>",
         "osd", "rw", "cli,rest")"""
-        yield self._call_mon_command('osd pool application disable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
-                                     output_format='string')
+        yield self._call_mon_command('osd pool application disable', self._args_to_argdict(
+            pool=pool, app=app, force='--yes-i-really-mean-it'), output_format='string')
         self.osd_pool_application_enable(pool, app)
 
     @undoable
@@ -901,12 +905,14 @@ class MonApi(object):
                                      output_format='string')
         self.osd_out(name)
 
-
     @undoable
     def osd_set(self, key):
         """
         COMMAND("osd set " \
-        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent|sortbitwise|recovery_deletes|require_jewel_osds|require_kraken_osds", \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|
+                                           norecover|noscrub|nodeep-scrub|notieragent|sortbitwise|
+                                           recovery_deletes|require_jewel_osds|
+                                           require_kraken_osds", \
         "set <key>", "osd", "rw", "cli,rest")
         """
         yield self._call_mon_command('osd set', self._args_to_argdict(key=key),
@@ -917,7 +923,8 @@ class MonApi(object):
     def osd_unset(self, key):
         """
         COMMAND("osd unset " \
-        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent", \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|
+                                           norecover|noscrub|nodeep-scrub|notieragent", \
         "unset <key>", "osd", "rw", "cli,rest")
         """
         yield self._call_mon_command('osd unset', self._args_to_argdict(key=key),
@@ -998,7 +1005,8 @@ class MonApi(object):
         "initiate scrub on osd <who>, or use <all|any|*> to scrub all", \
         "osd", "rw", "cli,rest")
         """
-        return self._call_mon_command('osd scrub', self._args_to_argdict(who=who), output_format='string')
+        return self._call_mon_command('osd scrub', self._args_to_argdict(who=who),
+                                      output_format='string')
 
     def osd_deep_scrub(self, who):
         """
@@ -1007,7 +1015,8 @@ class MonApi(object):
         "initiate deep-scrub on osd <who>, or use <all|any|*> to scrub all", \
         "osd", "rw", "cli,rest")
         """
-        return self._call_mon_command('osd deep-scrub', self._args_to_argdict(who=who), output_format='string')
+        return self._call_mon_command('osd deep-scrub', self._args_to_argdict(who=who),
+                                      output_format='string')
 
     def fs_ls(self):
         return self._call_mon_command('fs ls')
@@ -1145,7 +1154,8 @@ class RbdApi(object):
             try:
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,
                                 features=feature_bitmask, order=order,
-                                stripe_unit=stripe_unit, stripe_count=stripe_count, data_pool=data_pool_name)
+                                stripe_unit=stripe_unit, stripe_count=stripe_count,
+                                data_pool=data_pool_name)
             except TypeError:
                 logger.exception('This seems to be Jewel?!')
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,
@@ -1238,7 +1248,6 @@ class RbdApi(object):
 
         return self._call_librados(_action)
 
-
     @undoable
     def image_resize(self, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
@@ -1273,7 +1282,7 @@ class RbdApi(object):
                 image.update_features(bitmask, enabled)
 
         yield self._call_librados(_do)
-        self.image_set_feature(pool_name, name, feature, not enabled) # Undo step
+        self.image_set_feature(pool_name, name, feature, not enabled)  # Undo step
 
     def image_old_format(self, pool_name, name):
         def _action(client):

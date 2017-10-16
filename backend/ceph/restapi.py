@@ -72,7 +72,8 @@ class CephClusterViewSet(NodbViewSet):
 
     @detail_route(methods=['get'])
     def crushmap(self, request, *args, **kwargs):
-        data = CrushmapVersionSerializer(self.get_object().get_crushmap(), many=False, read_only=True).data
+        data = CrushmapVersionSerializer(self.get_object().get_crushmap(), many=False,
+                                         read_only=True).data
         return Response(data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])

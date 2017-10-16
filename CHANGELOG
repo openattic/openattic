@@ -30,6 +30,7 @@ Added
 Changed
 ~~~~~~~
 
+* Backend: Cleaned up pep8 warnings of ceph app (OP-1502)
 * Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
 * Backend: Cleaned up pep8 warnings of rest app (OP-1515)
 * Backend: Cleaned up pep8 warnings of systemd app (OP-1518)
