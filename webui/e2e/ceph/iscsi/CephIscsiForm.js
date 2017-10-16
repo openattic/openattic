@@ -8,6 +8,10 @@ var CephIscsiForm = function () {
   this.targetIdRequired = element(by.css(".tc_targetIdRequired"));
   this.targetIdInvalid = element(by.css(".tc_targetIdInvalid"));
 
+  this.portalsRequired = element(by.css(".tc_portalsRequired"));
+
+  this.imagesRequired = element(by.css(".tc_imagesRequired"));
+
   this.authenticationCheckbox = element(by.model("$ctrl.model.authentication.hasAuthentication"));
   this.userInput = element(by.model("$ctrl.model.authentication.user"));
   this.userRequired = element(by.css(".tc_userRequired"));
