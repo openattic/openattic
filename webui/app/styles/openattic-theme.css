@@ -24,7 +24,6 @@
   FlexElement
   Grafana
   Graph
-  Gridster
   Progressbar
   TagForm
   Trees
@@ -1099,45 +1098,6 @@ h6{
   min-height: 600px;
 }
 
-/* Graph */
-.osd-widget-chart nvd3 .nvd3.nv-pie path {
-  stroke: none;
-}
-
-nvd3 .nvd3.nv-pie path {
-  fill-opacity: 1;
-}
-
-nvd3 .nvd3.nv-pie .nv-pie-title {
-  fill: inherit;
-}
-
-nvd3.errorState {
-  fill: #d9534f; /* Bootstrap danger */
-}
-
-nvd3.okState {
-  fill: #5cb85c; /* Bootstrap success */
-}
-
-nvd3.warnState {
-  fill: #f0ad4e; /* Bootstrap warning */
-}
-
-/* Gridster */
-.gridster {
-  margin: 0 -15px;
-}
-.gridster-loaded .gridster-preview-holder {
-  opacity: 0.4;
-}
-.gridster .toolbar {
-  top: 21px;
-  right: 15px;
-  cursor: pointer;
-  position: absolute;
-}
-
 /* Progressbar */
 .progress-bar {
   background-image: none !important;
@@ -1330,6 +1290,9 @@ uib-accordion .panel-title,
 }
 .clickable {
   cursor: pointer;
+}
+.non-clickable {
+  cursor: initial;
 }
 .locked {
   cursor: default!important;

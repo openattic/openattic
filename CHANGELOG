@@ -50,6 +50,7 @@ Changed
   for frontend development (OP-824)
 * WebUI: Migration of Ceph Nodes controllers to components (OP-2398)
 * WebUI: Convert Shared module to ES6 (OP-2532)
+* WebUI: Unify Grafana and Widgets in a single Dashboard page (2754)
 
 Fixed
 ~~~~~

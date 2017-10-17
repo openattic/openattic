@@ -30,9 +30,9 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+import dashboard from "./dashboard/dashboard.component";
 
-var app = angular.module("openattic.dashboard");
-app.factory("dashboardService", function ($resource) {
-  return $resource(globalConfig.API.URL + "userprofiles");
-});
+angular.module("openattic.dashboard", [])
+  .component("dashboard", dashboard);
+
+require("./dashboard.routes");

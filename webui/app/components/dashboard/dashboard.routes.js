@@ -31,22 +31,17 @@
 "use strict";
 
 var app = angular.module("openattic.dashboard");
-app.controller("DashboardDeleteCtrl", function ($scope, $uibModalInstance, data) {
-  $scope.data = data;
-
-  $scope.clearDashboard = function () {
-    $uibModalInstance.close("cleared");
-  };
-
-  $scope.deleteDashboard = function () {
-    $uibModalInstance.close("deleted");
-  };
-
-  $scope.deleteWidget = function () {
-    $uibModalInstance.close("deleted");
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
+app.config(function ($stateProvider) {
+  $stateProvider
+    .state("dashboard", {
+      url          : "/dashboard",
+      views        : {
+        "main": {
+          component: "dashboard"
+        }
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    });
 });
