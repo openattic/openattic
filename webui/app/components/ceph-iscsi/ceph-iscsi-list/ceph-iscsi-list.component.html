@@ -5,8 +5,8 @@
                       ng-show="!$ctrl.error && !$ctrl.iscsi.$resolved">
     </oa-loading-panel>
     <oa-error-panel title="Couldn't load iSCSI target IQNs"
-                    message="iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed."
                     ng-if="$ctrl.error">
+      iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed.
     </oa-error-panel>
 
     <oadatatable ng-show="!$ctrl.error && $ctrl.iscsi.results"

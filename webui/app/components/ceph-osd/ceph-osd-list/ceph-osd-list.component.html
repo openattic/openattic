@@ -4,8 +4,8 @@
     <oa-loading-panel message="Ceph OSDs are loading..."
                       ng-show="!$ctrl.error && !$ctrl.osd.$resolved">
     </oa-loading-panel>
-    <oa-error-panel message="Ceph OSD resources could not be loaded."
-                    ng-if="$ctrl.error">
+    <oa-error-panel ng-if="$ctrl.error">
+      Ceph OSD resources could not be loaded.
     </oa-error-panel>
 
     <oadatatable ng-show="!$ctrl.error && $ctrl.osd.results"

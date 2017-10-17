@@ -1,10 +1,11 @@
 <div class="col-sm-12 col-lg-6">
+
     <oa-loading-panel message="Form is loading..."
                       ng-show="!$ctrl.clusters && !$ctrl.error">
     </oa-loading-panel>
-    <oa-error-panel message="Failed to load the form data."
-                    on-back="$ctrl.cancelAction()"
+    <oa-error-panel on-back="$ctrl.cancelAction()"
                     ng-if="$ctrl.error">
+      Failed to load the form data.
     </oa-error-panel>
 
     <form name="poolForm"

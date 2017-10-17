@@ -4,8 +4,9 @@
                     ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
   </oa-loading-panel>
   <oa-error-panel title="Couldn't load iSCSI target"
-                  message="iSCSI target '{{ $ctrl.targetId }}' could not be loaded."
-                  on-back="$ctrl.cancelAction()">
+                  on-back="$ctrl.cancelAction()"
+                  ng-if="$ctrl.targetId && $ctrl.error">
+    iSCSI target "{{ $ctrl.targetId }}" could not be loaded.
   </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error"
