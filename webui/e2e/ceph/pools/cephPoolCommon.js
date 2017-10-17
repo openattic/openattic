@@ -15,7 +15,6 @@ var CephPoolCommons = function () {
   this.detailsTab = element(by.className("tc_detailsTab"));
   this.statisticsTab = element(by.className("tc_statisticsTab"));
   //this.cacheTieringTab = element(by.css('.tc_cacheTieringTab'));
-  this.isBluestore = element(by.model("$ctrl.bluestore"));
 
   // Describes the attributes seen in the detail tab.
   this.detailAttributes = [
@@ -221,7 +220,7 @@ var CephPoolCommons = function () {
       byClass: element(by.className("tc_compressionMode")),
       byModel: element(by.model("$ctrl.pool.compression_mode")),
       type: "select",
-      displayed: false, //self.isBluestore && self.formElements.types.byModel ? true : false;
+      displayed: false,
       displayedIf: ["bluestore"],
       items: {
         compressionModeRequired: element(by.className("tc_compressionModeRequired"))
