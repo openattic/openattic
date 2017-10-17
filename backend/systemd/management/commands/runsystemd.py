@@ -60,7 +60,6 @@ class SystemD(dbus.service.Object):
             name: daemon(bus, busname, self) for name, daemon in get_SystemD_classes().items()
         }
 
-
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="s")
     def ping(self):
@@ -68,7 +67,7 @@ class SystemD(dbus.service.Object):
         return "pong"
 
 
-class Command( BaseCommand ):
+class Command(BaseCommand):
     help = "Daemon that executes all commands for which root is needed."
     option_list = BaseCommand.option_list + (
         make_option("-l", "--logfile", help="Ignored for compatibility reason", default=None),

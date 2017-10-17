@@ -21,12 +21,10 @@ import math
 
 from contextlib import contextmanager
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.shortcuts import get_object_or_404
 
 from rados import ObjectNotFound
 
@@ -158,7 +156,6 @@ class CephCluster(NodbModel, RadosMixin):
 
         super(CephCluster, self).save(*args, **kwargs)
 
-
     @property
     def keyring_candidates(self):
         return [{
@@ -166,8 +163,7 @@ class CephCluster(NodbModel, RadosMixin):
                     "user-names": keyring.available_user_names
                 }
                 for keyring
-                in ClusterConf(self.config_file_path).keyring_candidates
-        ]
+                in ClusterConf(self.config_file_path).keyring_candidates]
 
     def get_crushmap(self):
         with fsid_context(self.fsid):
@@ -183,7 +179,8 @@ class CephCluster(NodbModel, RadosMixin):
             logger.exception('failed to get ceph health')
             self.health = 'HEALTH_ERR'
 
-    @bulk_attribute_setter(['osd_flags'], catch_exceptions=(TypeError, ObjectNotFound, librados.ExternalCommandError))
+    @bulk_attribute_setter(['osd_flags'], catch_exceptions=(TypeError, ObjectNotFound,
+                                                            librados.ExternalCommandError))
     def set_osd_flags(self, objects, field_names):
         flags = self.mon_api(self.fsid).osd_dump()['flags'].split(',')
         if 'pauserd' in flags and 'pausewr' in flags:
@@ -276,7 +273,8 @@ class CephPool(NodbModel, RadosMixin):
 
     compression_algorithm = models.CharField(max_length=100, default='none',
                                              choices=[(x, x) for x in _compr_algorithm_choices])
-    compression_required_ratio = models.FloatField(default=0.0, validators=[MinValueValidator(0), MaxValueValidator(1)])
+    compression_required_ratio = models.FloatField(default=0.0, validators=[MinValueValidator(0),
+                                                                            MaxValueValidator(1)])
     compression_max_blob_size = models.IntegerField(default=0)
     compression_min_blob_size = models.IntegerField(default=0)
 
@@ -309,7 +307,8 @@ class CephPool(NodbModel, RadosMixin):
                                                                              # undocumented dump of
                 # https://github.com/ceph/ceph/blob/289c10c9c79c46f7a29b5d2135e3e4302ac378b0/src/osd/osd_types.h#L1035
                 'erasure_code_profile_id':
-                    (pool_data['erasure_code_profile'] if pool_data['erasure_code_profile'] else None),
+                    (pool_data['erasure_code_profile'] if pool_data['erasure_code_profile']
+                     else None),
                 'last_change': pool_data['last_change'],
                 'full': 'full' in pool_data['flags_names'],
                 'min_size': pool_data['min_size'],
@@ -371,7 +370,8 @@ class CephPool(NodbModel, RadosMixin):
             if pool.id in df_per_pool:
                 pool.max_avail = df_per_pool[pool.id]['max_avail']
                 pool.kb_used = df_per_pool[pool.id]['kb_used']
-                pool.percent_used = self._calc_percent_used(pool, df_data['stats'], df_per_pool[pool.id])
+                pool.percent_used = self._calc_percent_used(pool, df_data['stats'],
+                                                            df_per_pool[pool.id])
             else:
                 pool.max_avail = None
                 pool.kb_used = None
@@ -389,21 +389,25 @@ class CephPool(NodbModel, RadosMixin):
         if df_data_pool['bytes_used'] == 0:
             return 0
 
-        # Since http://tracker.ceph.com/issues/20123 has been resolved it's no longer needed to calculate the value in
-        # Luminous - so just return it
+        # Since http://tracker.ceph.com/issues/20123 has been resolved it's no longer needed to
+        # calculate the value in Luminous - so just return it
         if 'percent_used' in df_data_pool:
             return df_data_pool['percent_used']
 
         # Calculate the current object copies rate
         if pool.type == 'replicated':
-            curr_object_copies_rate = df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * pool.size)
+            curr_object_copies_rate = df_data_pool['raw_bytes_used'] / \
+                                      (df_data_pool['bytes_used'] * pool.size)
         else:
-            curr_object_copies_rate = df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * (
-                (pool.erasure_code_profile.m + pool.erasure_code_profile.k) / pool.erasure_code_profile.k))
+            curr_object_copies_rate = \
+                df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * (
+                    (pool.erasure_code_profile.m + pool.erasure_code_profile.k) /
+                    pool.erasure_code_profile.k))
 
-        # 'percent_used' has not been found in ceph df pool output. We assume we're based on the Jewel release - so
-        # calculate the value and return it.
-        return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / df_data_global['total_bytes']
+        # 'percent_used' has not been found in ceph df pool output. We assume we're based on the
+        # Jewel release - so calculate the value and return it.
+        return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / \
+            df_data_global['total_bytes']
 
     def __unicode__(self):
         return self.name
@@ -431,8 +435,9 @@ class CephPool(NodbModel, RadosMixin):
                                     # second pg_num is in fact pgp_num, but we don't want to allow
                                     # different values here.
                                     self.type,
-                                    self.erasure_code_profile.name if (self.erasure_code_profile and self.type == 'erasure')
-                                    else None)
+                                    self.erasure_code_profile.name if
+                                    (self.erasure_code_profile and self.type == 'erasure') else
+                                    None)
 
             diff, original = (self.get_modified_fields(name=self.name) if insert else
                               self.get_modified_fields())
@@ -496,10 +501,12 @@ class CephPool(NodbModel, RadosMixin):
                         api.osd_pool_application_enable(self.name, app)
                 elif key == 'crush_ruleset':
                     logger.info('Setting crush_ruleset` is not yet supported.')
-                elif self.type == 'replicated' and key not in ['name', 'erasure_code_profile_id'] and value is not None:
+                elif self.type == 'replicated' and key not in \
+                        ['name', 'erasure_code_profile_id'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
-                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size'] and value is not None:
+                elif self.type == 'erasure' and key not in ['name', 'size', 'min_size'] \
+                        and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
                                                                                         key))
                 else:
@@ -620,7 +627,7 @@ class CephOsd(NodbModel, RadosMixin):
     def get_all_objects(context, query):
         assert context is not None
         api = RadosMixin.mon_api(context.fsid)
-        osd_tree = api.osd_list() # key=id
+        osd_tree = api.osd_list()  # key=id
         osd_dump_data = api.osd_dump()['osds']  # key=osd
         pg_dump_data = api.pg_dump()['osd_stats']  # key=osd
         osd_metadata = api.osd_metadata()  # key=id
@@ -764,8 +771,9 @@ class CephPg(NodbModel, RadosMixin):
         assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict, default_return=[]))
-        except ExternalCommandError, e:
+            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict,
+                                                                                default_return=[]))
+        except ExternalCommandError as e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []
 
@@ -850,7 +858,6 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                         id=CephRbd.make_key(pool, image_name))))
 
         return [CephRbd(**CephRbd.make_model_args(rbd)) for rbd in rbds]
-
 
     @bulk_attribute_setter(['used_size'])
     def set_disk_usage(self, objects, field_names):
@@ -970,7 +977,6 @@ class CephFs(NodbModel, RadosMixin):
         """:type context: ceph.restapi.FsidContext"""
         assert context is not None
         api = RadosMixin.mon_api(context.fsid)
-
 
         ret = []
         for fs in api.fs_ls():

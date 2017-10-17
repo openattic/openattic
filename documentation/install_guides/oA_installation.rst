@@ -15,7 +15,7 @@ Availability
 Installable packages of |oA| |version| are currently available for the following
 Linux distributions:
 
-* openSUSE Leap 42.2 and 42.3 (via the openSUSE Build Service) - see
+* openSUSE Leap 42.3 (via the openSUSE Build Service) - see
   :ref:`installation on opensuse leap` for details.
 
 .. note::
@@ -93,6 +93,14 @@ For openSUSE Leap 42.3 run the following as root::
   # zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo
   # zypper refresh
 
+To enable the |oA| nightly package repository, run the following as root::
+
+  # zypper addrepo https://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
+  # zypper addrepo http://download.openattic.org/rpm/openattic-nightly-leap42.3-x86_64/ openattic_repo
+  # rpm --import http://download.openattic.org/A7D3EAFA.txt
+  # zypper refresh
+  # zypper dist-upgrade
+  
 Package Installation
 --------------------
 
@@ -100,5 +108,4 @@ To install the |oA| base packages on SUSE Linux, run the following command::
 
   # zypper install openattic
 
-Proceed with the installation by following the steps outlined in
-:ref:`post-installation configuration`.
+Proceed with the installation by following the steps outlined in :ref:`post-installation configuration`.

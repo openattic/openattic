@@ -8,242 +8,274 @@
 
 <div class="col-sm-12 col-lg-6"
      ng-show="!editing || (editing && !error && user.$resolved)">
-    <form name="userForm" role="form" class="form-horizontal" novalidate oa-check-form>
-        <div class="panel panel-default">
-            <div class="panel-heading tc_formHeadline">
-                <h3 ng-hide="editing" class="panel-title tc_userAddTitle">Add user: {{user.user_id}}</h3>
-                <h3 ng-show="editing" class="panel-title tc_userEditTitle">Edit user: {{user.user_id}}</h3>
-            </div>
-            <div class="panel-body">
-                <!-- Username -->
-                <div class="form-group"
-                     ng-class="{'has-error': (userForm.$submitted || userForm.user_id.$dirty) &&
+  <form name="userForm"
+        role="form"
+        class="form-horizontal"
+        novalidate
+        oa-check-form>
+    <div class="panel panel-default">
+      <div class="panel-heading tc_formHeadline">
+        <h3 ng-hide="editing"
+            class="panel-title tc_userAddTitle">Add user: {{user.user_id}}</h3>
+        <h3 ng-show="editing"
+            class="panel-title tc_userEditTitle">Edit user: {{user.user_id}}</h3>
+      </div>
+      <div class="panel-body">
+        <!-- Username -->
+        <div class="form-group"
+             ng-class="{'has-error': (userForm.$submitted || userForm.user_id.$dirty) &&
                          userForm.user_id.$invalid}">
-                    <label class="col-sm-3 control-label" for="user_id">Username</label>
-                    <div class="col-sm-9">
-                        <div class="input-group">
-                            <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
-                            <input class="form-control"
-                                   type="text"
-                                   placeholder="User ID..."
-                                   ng-model="user.user_id"
-                                   ng-readonly="editing"
-                                   ng-required="!editing"
-                                   name="user_id"
-                                   id="user_id"
-                                   autofocus
-                                   ceph-rgw-user-id-unique>
-                        </div>
-                        <span class="help-block tc_userIdRequired"
-                              ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
+          <label class="col-sm-3 control-label"
+                 for="user_id">Username</label>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <i class="icon-prepend fa fa-user"></i>
+              </span>
+              <input class="form-control"
+                     type="text"
+                     placeholder="User ID..."
+                     ng-model="user.user_id"
+                     ng-readonly="editing"
+                     ng-required="!editing"
+                     name="user_id"
+                     id="user_id"
+                     autofocus
+                     ceph-rgw-user-id-unique>
+            </div>
+            <span class="help-block tc_userIdRequired"
+                  ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
                                   userForm.user_id.$error.required">
-                            This field is required!
-                        </span>
-                        <span class="help-block tc_userIdNotUnique"
-                              ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
+              This field is required!
+            </span>
+            <span class="help-block tc_userIdNotUnique"
+                  ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
                                   userForm.user_id.$error.cephRgwUserIdUnique">
-                            The chosen user ID is already in use.
-                        </span>
-                    </div>
-                </div>
-                <!-- Full name -->
-                <div class="form-group"
-                     ng-class="{'has-error': (userForm.$submitted ||
+              The chosen user ID is already in use.
+            </span>
+          </div>
+        </div>
+        <!-- Full name -->
+        <div class="form-group"
+             ng-class="{'has-error': (userForm.$submitted ||
                          userForm.display_name.$dirty) && userForm.display_name.$invalid}">
-                    <label class="col-sm-3 control-label" for="display_name">Full name</label>
-                    <div class="col-sm-9">
-                        <div class="input-group">
-                            <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
-                            <input class="form-control"
-                                   type="text"
-                                   placeholder="Display name..."
-                                   ng-model="user.display_name"
-                                   name="display_name"
-                                   id="display_name"
-                                   required>
-                        </div>
-                        <span class="help-block tc_displayNameRequired"
-                              ng-show="(userForm.$submitted || userForm.display_name.$dirty) &&
+          <label class="col-sm-3 control-label"
+                 for="display_name">Full name</label>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <i class="icon-prepend fa fa-user"></i>
+              </span>
+              <input class="form-control"
+                     type="text"
+                     placeholder="Display name..."
+                     ng-model="user.display_name"
+                     name="display_name"
+                     id="display_name"
+                     required>
+            </div>
+            <span class="help-block tc_displayNameRequired"
+                  ng-show="(userForm.$submitted || userForm.display_name.$dirty) &&
                                   userForm.display_name.$error.required">
-                            This field is required!
-                        </span>
-                    </div>
-                </div>
-                <!-- Email address -->
-                <div class="form-group"
-                     ng-class="{'has-error': (userForm.$submitted || userForm.email.$dirty) &&
+              This field is required!
+            </span>
+          </div>
+        </div>
+        <!-- Email address -->
+        <div class="form-group"
+             ng-class="{'has-error': (userForm.$submitted || userForm.email.$dirty) &&
                          userForm.email.$invalid}">
-                    <label class="col-sm-3 control-label" for="email">Email address</label>
-                    <div class="col-sm-9">
-                        <div class="input-group">
-                            <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
-                            <input class="form-control"
-                                   type="email"
-                                   placeholder="Email Address..."
-                                   ng-model="user.email"
-                                   name="email"
-                                   id="email">
-                        </div>
-                        <span class="tc_emailNotValid"
-                              ng-show="(userForm.$submitted || userForm.email.$dirty) &&
+          <label class="col-sm-3 control-label"
+                 for="email">Email address</label>
+          <div class="col-sm-9">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <i class="icon-prepend fa fa-envelope-o"></i>
+              </span>
+              <input class="form-control"
+                     type="email"
+                     placeholder="Email Address..."
+                     ng-model="user.email"
+                     name="email"
+                     id="email">
+            </div>
+            <span class="tc_emailNotValid"
+                  ng-show="(userForm.$submitted || userForm.email.$dirty) &&
                                   userForm.email.$error.email">
-                            It's not a valid email address.
-                        </span>
-                    </div>
-                </div>
-                <!-- Max. buckets -->
-                <div class="form-group"
-                     ng-class="{'has-error': (userForm.$submitted || userForm.max_buckets.$dirty) &&
+              It's not a valid email address.
+            </span>
+          </div>
+        </div>
+        <!-- Max. buckets -->
+        <div class="form-group"
+             ng-class="{'has-error': (userForm.$submitted || userForm.max_buckets.$dirty) &&
                         userForm.max_buckets.$invalid}">
-                    <label class="col-sm-3 control-label" for="max_buckets">Max. buckets</label>
-                    <div class="col-sm-9">
-                        <input class="form-control"
-                               type="number"
-                               name="max_buckets"
-                               id="max_buckets"
-                               ng-model="user.max_buckets"
-                               placeholder="e.g., 1000"
-                               min="0">
-                    </div>
-                </div>
-                <!-- Suspended -->
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <div class="checkbox checkbox-primary">
-                            <input type="checkbox"
-                                   ng-model="user.suspended"
-                                   ng-true-value="1"
-                                   ng-false-value="0"
-                                   name="suspended"
-                                   id="suspended">
-                            <label for="suspended">
-                                Suspended
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <!-- Subusers -->
-                <legend ng-show="editing">Subusers</legend>
-                <div class="form-group"
-                     ng-show="editing">
-                    <label class="col-sm-3 control-label" for="subusers">&nbsp;</label>
-                    <input type="hidden" ng-model="user.subusers[0]" id="subusers">
-                    <div class="col-sm-9">
-                        <span ng-if="!user.subusers || user.subusers.length === 0"
-                              class="form-control no-border">
-                            <span class="text-muted">Empty</span>
-                        </span>
-                        <span ng-repeat="subuser in user.subusers track by $index">
-                            <div class="input-group">
-                                <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
-                                <input type="text"
-                                       class="form-control"
-                                       value="{{ subuser.id }}"
-                                       readonly>
-                                <span class="input-group-addon" style="border-left: 0; border-right: 0;">
-                                    <i class="icon-prepend fa-share-alt"></i>
-                                </span>
-                                <input type="text"
-                                       class="form-control"
-                                       value="{{ ('full-control' === subuser.permissions) ? 'full' : subuser.permissions }}"
-                                       readonly>
-                                <span class="input-group-btn">
-                                    <button type="button"
-                                            class="btn btn-default tc_editSubuserButton"
-                                            uib-tooltip="Edit"
-                                            ng-click="addEditSubuser($index)">
-                                        <i class="fa fa-cogs"></i>
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-default tc_deleteSubuserButton"
-                                            uib-tooltip="Delete"
-                                            ng-click="removeSubuser($index)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <span class="help-block"></span>
-                        </span>
-                        <span class="form-control no-border">
-                            <button type="button"
-                                    class="btn btn-default btn-label pull-right tc_addSubuserButton"
-                                    ng-click="addEditSubuser()">
-                                <i class="fa fa-fw fa-plus"></i>Add subuser
-                            </button>
-                        </span>
-                    </div>
-                </div>
-                <!-- Keys -->
-                <legend ng-show="editing">Keys</legend>
-                <!-- S3 keys -->
-                <div class="form-group"
-                     ng-show="editing">
-                    <label class="col-sm-3 control-label" for="keys">S3 keys</label>
-                    <input type="hidden" ng-model="user.keys[0]" id="keys">
-                    <div class="col-sm-9">
-                        <span ng-if="!user.keys || user.keys.length === 0"
-                              class="form-control no-border">
-                            <span class="text-muted">Empty</span>
-                        </span>
-                        <span ng-repeat="key in user.keys track by $index">
-                            <div class="input-group">
-                                <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
-                                <input type="text"
-                                       class="form-control"
-                                       value="{{ key.user }}"
-                                       readonly>
-                                <span class="input-group-btn">
-                                    <button type="button"
-                                            class="btn btn-default tc_editS3KeyButton"
-                                            uib-tooltip="View"
-                                            ng-click="addViewS3Key($index)">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-default tc_deleteS3KeyButton"
-                                            uib-tooltip="Delete"
-                                            ng-click="removeS3Key($index)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <span class="help-block"></span>
-                        </span>
-                        <span class="form-control no-border">
-                            <button type="button"
-                                    class="btn btn-default btn-label pull-right tc_addS3KeyButton"
-                                    ng-click="addViewS3Key()">
-                                <i class="fa fa-fw fa-plus"></i>Add S3 key
-                            </button>
-                        </span>
-                        <hr>
-                    </div>
-                </div>
-                <!-- Swift keys -->
-                <div class="form-group"
-                     ng-show="editing">
-                    <label class="col-sm-3 control-label" for="swift_keys">Swift keys</label>
-                    <input type="hidden" ng-model="user.swift_keys[0]" id="swift_keys">
-                    <div class="col-sm-9">
-                        <span ng-if="!user.swift_keys || user.swift_keys.length === 0"
-                              class="form-control no-border">
-                            <span class="text-muted">Empty</span>
-                        </span>
-                        <span ng-repeat="key in user.swift_keys track by $index">
-                            <div class="input-group">
-                                <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
-                                <input type="text"
-                                       class="form-control"
-                                       value="{{ key.user }}"
-                                       readonly>
-                                <span class="input-group-btn">
-                                    <button type="button"
-                                            class="btn btn-default tc_editSwiftKeyButton"
-                                            uib-tooltip="View"
-                                            ng-click="addViewSwiftKey($index)">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                    <!--
+          <label class="col-sm-3 control-label"
+                 for="max_buckets">Max. buckets</label>
+          <div class="col-sm-9">
+            <input class="form-control"
+                   type="number"
+                   name="max_buckets"
+                   id="max_buckets"
+                   ng-model="user.max_buckets"
+                   placeholder="e.g., 1000"
+                   min="0">
+          </div>
+        </div>
+        <!-- Suspended -->
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <div class="checkbox checkbox-primary">
+              <input type="checkbox"
+                     ng-model="user.suspended"
+                     ng-true-value="1"
+                     ng-false-value="0"
+                     name="suspended"
+                     id="suspended">
+              <label for="suspended">
+                Suspended
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Subusers -->
+        <legend ng-show="editing">Subusers</legend>
+        <div class="form-group"
+             ng-show="editing">
+          <label class="col-sm-3 control-label"
+                 for="subusers">&nbsp;</label>
+          <input type="hidden"
+                 ng-model="user.subusers[0]"
+                 id="subusers">
+          <div class="col-sm-9">
+            <span ng-if="!user.subusers || user.subusers.length === 0"
+                  class="form-control no-border">
+              <span class="text-muted">Empty</span>
+            </span>
+            <span ng-repeat="subuser in user.subusers track by $index">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-user"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       value="{{ subuser.id }}"
+                       readonly>
+                <span class="input-group-addon"
+                      style="border-left: 0; border-right: 0;">
+                  <i class="icon-prepend fa-share-alt"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       value="{{ ('full-control' === subuser.permissions) ? 'full' : subuser.permissions }}"
+                       readonly>
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default tc_editSubuserButton"
+                          uib-tooltip="Edit"
+                          ng-click="addEditSubuser($index)">
+                    <i class="fa fa-cogs"></i>
+                  </button>
+                  <button type="button"
+                          class="btn btn-default tc_deleteSubuserButton"
+                          uib-tooltip="Delete"
+                          ng-click="removeSubuser($index)">
+                    <i class="fa fa-trash-o"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block"></span>
+            </span>
+            <span class="form-control no-border">
+              <button type="button"
+                      class="btn btn-default btn-label pull-right tc_addSubuserButton"
+                      ng-click="addEditSubuser()">
+                <i class="fa fa-fw fa-plus"></i>Add subuser
+              </button>
+            </span>
+          </div>
+        </div>
+        <!-- Keys -->
+        <legend ng-show="editing">Keys</legend>
+        <!-- S3 keys -->
+        <div class="form-group"
+             ng-show="editing">
+          <label class="col-sm-3 control-label"
+                 for="keys">S3 keys</label>
+          <input type="hidden"
+                 ng-model="user.keys[0]"
+                 id="keys">
+          <div class="col-sm-9">
+            <span ng-if="!user.keys || user.keys.length === 0"
+                  class="form-control no-border">
+              <span class="text-muted">Empty</span>
+            </span>
+            <span ng-repeat="key in user.keys track by $index">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-key"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       value="{{ key.user }}"
+                       readonly>
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default tc_editS3KeyButton"
+                          uib-tooltip="View"
+                          ng-click="addViewS3Key($index)">
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <button type="button"
+                          class="btn btn-default tc_deleteS3KeyButton"
+                          uib-tooltip="Delete"
+                          ng-click="removeS3Key($index)">
+                    <i class="fa fa-trash-o"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block"></span>
+            </span>
+            <span class="form-control no-border">
+              <button type="button"
+                      class="btn btn-default btn-label pull-right tc_addS3KeyButton"
+                      ng-click="addViewS3Key()">
+                <i class="fa fa-fw fa-plus"></i>Add S3 key
+              </button>
+            </span>
+            <hr>
+          </div>
+        </div>
+        <!-- Swift keys -->
+        <div class="form-group"
+             ng-show="editing">
+          <label class="col-sm-3 control-label"
+                 for="swift_keys">Swift keys</label>
+          <input type="hidden"
+                 ng-model="user.swift_keys[0]"
+                 id="swift_keys">
+          <div class="col-sm-9">
+            <span ng-if="!user.swift_keys || user.swift_keys.length === 0"
+                  class="form-control no-border">
+              <span class="text-muted">Empty</span>
+            </span>
+            <span ng-repeat="key in user.swift_keys track by $index">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-key"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       value="{{ key.user }}"
+                       readonly>
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default tc_editSwiftKeyButton"
+                          uib-tooltip="View"
+                          ng-click="addViewSwiftKey($index)">
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <!--
                                     <button type="button"
                                             class="btn btn-default"
                                             uib-tooltip="Delete"
@@ -251,11 +283,11 @@
                                         <i class="fa fa-trash-o"></i>
                                     </button>
                                     -->
-                                </span>
-                            </div>
-                            <span class="help-block"></span>
-                        </span>
-                        <!--
+                </span>
+              </div>
+              <span class="help-block"></span>
+            </span>
+            <!--
                         <span class="form-control no-border">
                             <button type="button"
                                     class="btn btn-default btn-label pull-right tc_addSwiftKeyButton"
@@ -264,393 +296,411 @@
                             </button>
                         </span>
                         -->
-                    </div>
-                </div>
-                <!-- Capabilities -->
-                <legend ng-show="editing">Capabilities</legend>
-                <div class="form-group"
-                     ng-show="editing">
-                    <label class="col-sm-3 control-label" for="caps">&nbsp;</label>
-                    <input type="hidden" ng-model="user.caps[0]" id="caps">
-                    <div class="col-sm-9">
-                        <span ng-if="!user.caps || user.caps.length === 0"
-                              class="form-control no-border">
-                            <span class="text-muted">Empty</span>
-                        </span>
-                        <span ng-repeat="cap in user.caps track by $index">
-                            <div class="input-group">
-                                <span class="input-group-addon"> <i class="icon-prepend fa fa-share-alt"></i></span>
-                                <input type="text"
-                                       class="form-control"
-                                       value="{{ cap.type }}:{{ cap.perm }}"
-                                       readonly>
-                                <span class="input-group-btn">
-                                    <button type="button"
-                                            class="btn btn-default tc_editCapButton"
-                                            uib-tooltip="Edit"
-                                            ng-click="addEditCapability($index)">
-                                        <i class="fa fa-cogs"></i>
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-default tc_deleteCapButton"
-                                            uib-tooltip="Delete"
-                                            ng-click="removeCapability($index)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <span class="help-block"></span>
-                        </span>
-                        <span class="form-control no-border">
-                            <button type="button"
-                                    class="btn btn-default btn-label pull-right tc_addCapButton"
-                                    ng-click="addEditCapability()">
-                                <i class="fa fa-fw fa-plus"></i>Add capability
-                            </button>
-                        </span>
-                    </div>
-                </div>
-                <!-- S3 key -->
-                <fieldset ng-show="!editing">
-                    <legend>S3 key</legend>
-                    <!-- Generate key -->
-                    <div class="form-group"
-                         ng-show="!editing">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.generate_key"
-                                       name="generate_key"
-                                       id="generate_key">
-                                <label for="generate_key">
-                                    Generate key
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Access key -->
-                    <div class="form-group"
-                         ng-class="{'has-error': (userForm.$submitted || userForm.access_key.$dirty) &&
+          </div>
+        </div>
+        <!-- Capabilities -->
+        <legend ng-show="editing">Capabilities</legend>
+        <div class="form-group"
+             ng-show="editing">
+          <label class="col-sm-3 control-label"
+                 for="caps">&nbsp;</label>
+          <input type="hidden"
+                 ng-model="user.caps[0]"
+                 id="caps">
+          <div class="col-sm-9">
+            <span ng-if="!user.caps || user.caps.length === 0"
+                  class="form-control no-border">
+              <span class="text-muted">Empty</span>
+            </span>
+            <span ng-repeat="cap in user.caps track by $index">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-share-alt"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       value="{{ cap.type }}:{{ cap.perm }}"
+                       readonly>
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default tc_editCapButton"
+                          uib-tooltip="Edit"
+                          ng-click="addEditCapability($index)">
+                    <i class="fa fa-cogs"></i>
+                  </button>
+                  <button type="button"
+                          class="btn btn-default tc_deleteCapButton"
+                          uib-tooltip="Delete"
+                          ng-click="removeCapability($index)">
+                    <i class="fa fa-trash-o"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block"></span>
+            </span>
+            <span class="form-control no-border">
+              <button type="button"
+                      class="btn btn-default btn-label pull-right tc_addCapButton"
+                      ng-click="addEditCapability()">
+                <i class="fa fa-fw fa-plus"></i>Add capability
+              </button>
+            </span>
+          </div>
+        </div>
+        <!-- S3 key -->
+        <fieldset ng-show="!editing">
+          <legend>S3 key</legend>
+          <!-- Generate key -->
+          <div class="form-group"
+               ng-show="!editing">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.generate_key"
+                       name="generate_key"
+                       id="generate_key">
+                <label for="generate_key">
+                  Generate key
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Access key -->
+          <div class="form-group"
+               ng-class="{'has-error': (userForm.$submitted || userForm.access_key.$dirty) &&
                              userForm.access_key.$invalid}"
-                         ng-show="!editing && !user.generate_key">
-                        <label class="col-sm-3 control-label" for="access_key">Access key</label>
-                        <div class="col-sm-9">
-                            <div class="input-group">
-                                <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
-                                <input class="form-control"
-                                       type="password"
-                                       placeholder="Access key..."
-                                       ng-model="user.access_key"
-                                       ng-readonly="editing"
-                                       ng-required="!editing && !user.generate_key"
-                                       name="access_key"
-                                       id="access_key">
-                                <span class="input-group-btn">
-                                    <button type="button"
-                                            class="btn btn-default"
-                                            oa-password-button="access_key">
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-default"
-                                            uib-tooltip="Copy to clipboard"
-                                            oa-clipboard oa-clipboard-target="access_key"
-                                            oa-clipboard-text="access key">
-                                        <i class="icon-prepend fa fa-clipboard"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <span class="help-block tc_accessKeyRequired"
-                                  ng-show="(userForm.$submitted || userForm.access_key.$dirty) &&
+               ng-show="!editing && !user.generate_key">
+            <label class="col-sm-3 control-label"
+                   for="access_key">Access key</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-key"></i>
+                </span>
+                <input class="form-control"
+                       type="password"
+                       placeholder="Access key..."
+                       ng-model="user.access_key"
+                       ng-readonly="editing"
+                       ng-required="!editing && !user.generate_key"
+                       name="access_key"
+                       id="access_key">
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default"
+                          oa-password-button="access_key">
+                  </button>
+                  <button type="button"
+                          class="btn btn-default"
+                          uib-tooltip="Copy to clipboard"
+                          oa-clipboard
+                          oa-clipboard-target="access_key"
+                          oa-clipboard-text="access key">
+                    <i class="icon-prepend fa fa-clipboard"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block tc_accessKeyRequired"
+                    ng-show="(userForm.$submitted || userForm.access_key.$dirty) &&
                                       userForm.access_key.$error.required">
-                                This field is required!
-                            </span>
-                        </div>
-                    </div>
-                    <!-- Secret key -->
-                    <div class="form-group"
-                         ng-class="{'has-error': (userForm.$submitted || userForm.secret_key.$dirty) &&
+                This field is required!
+              </span>
+            </div>
+          </div>
+          <!-- Secret key -->
+          <div class="form-group"
+               ng-class="{'has-error': (userForm.$submitted || userForm.secret_key.$dirty) &&
                              userForm.secret_key.$invalid}"
-                         ng-show="!editing && !user.generate_key">
-                        <label class="col-sm-3 control-label" for="secret_key">Secret key</label>
-                        <div class="col-sm-9">
-                            <div class="input-group">
-                                <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
-                                <input class="form-control"
-                                       type="password"
-                                       placeholder="Secret key..."
-                                       ng-model="user.secret_key"
-                                       ng-required="!editing && !user.generate_key"
-                                       name="secret_key"
-                                       id="secret_key">
-                                <span class="input-group-btn">
-                                    <button type="button"
-                                            class="btn btn-default"
-                                            oa-password-button="secret_key">
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-default"
-                                            uib-tooltip="Copy to clipboard"
-                                            oa-clipboard oa-clipboard-target="secret_key"
-                                            oa-clipboard-text="secret key">
-                                        <i class="icon-prepend fa fa-clipboard"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <span class="help-block tc_secret_keyRequired"
-                                  ng-show="(userForm.$submitted || userForm.secret_key.$dirty) &&
+               ng-show="!editing && !user.generate_key">
+            <label class="col-sm-3 control-label"
+                   for="secret_key">Secret key</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-envelope-o"></i>
+                </span>
+                <input class="form-control"
+                       type="password"
+                       placeholder="Secret key..."
+                       ng-model="user.secret_key"
+                       ng-required="!editing && !user.generate_key"
+                       name="secret_key"
+                       id="secret_key">
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default"
+                          oa-password-button="secret_key">
+                  </button>
+                  <button type="button"
+                          class="btn btn-default"
+                          uib-tooltip="Copy to clipboard"
+                          oa-clipboard
+                          oa-clipboard-target="secret_key"
+                          oa-clipboard-text="secret key">
+                    <i class="icon-prepend fa fa-clipboard"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block tc_secret_keyRequired"
+                    ng-show="(userForm.$submitted || userForm.secret_key.$dirty) &&
                                       userForm.secret_key.$error.required">
-                                This field is required!
-                            </span>
-                        </div>
-                    </div>
-                </fieldset>
-                <!-- User quota -->
-                <fieldset>
-                    <legend>User quota</legend>
-                    <!-- Enabled -->
-                    <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.user_quota.enabled"
-                                       name="user_quota_enabled"
-                                       id="user_quota_enabled">
-                                <label for="user_quota_enabled">
-                                    Enabled
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Unlimited size -->
-                    <div class="form-group"
-                         ng-show="user.user_quota.enabled">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.user_quota.max_size_unlimited"
-                                       ng-change="onChangeUnlimited(
+                This field is required!
+              </span>
+            </div>
+          </div>
+        </fieldset>
+        <!-- User quota -->
+        <fieldset>
+          <legend>User quota</legend>
+          <!-- Enabled -->
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.user_quota.enabled"
+                       name="user_quota_enabled"
+                       id="user_quota_enabled">
+                <label for="user_quota_enabled">
+                  Enabled
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Unlimited size -->
+          <div class="form-group"
+               ng-show="user.user_quota.enabled">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.user_quota.max_size_unlimited"
+                       ng-change="onChangeUnlimited(
                                            user.user_quota.max_size_unlimited,
                                            'user_quota_max_size')"
-                                       name="user_quota_max_size_unlimited"
-                                       id="user_quota_max_size_unlimited">
-                                <label for="user_quota_max_size_unlimited">
-                                    Unlimited size
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Maximum size -->
-                    <div class="form-group"
-                         ng-class="{'has-error': (userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
+                       name="user_quota_max_size_unlimited"
+                       id="user_quota_max_size_unlimited">
+                <label for="user_quota_max_size_unlimited">
+                  Unlimited size
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Maximum size -->
+          <div class="form-group"
+               ng-class="{'has-error': (userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
                              userForm.user_quota_max_size.$invalid}"
-                         ng-show="user.user_quota.enabled && !user.user_quota.max_size_unlimited">
-                        <label class="col-sm-3 control-label" for="user_quota_max_size">
-                            Maximum size
-                        </label>
-                        <div class="col-sm-9">
-                            <input class="form-control"
-                                   type="text"
-                                   placeholder="e.g., 1GB"
-                                   ng-model="user.user_quota.max_size"
-                                   ng-show="!user.user_quota.max_size_unlimited"
-                                   ng-required="user.user_quota.enabled &&
+               ng-show="user.user_quota.enabled && !user.user_quota.max_size_unlimited">
+            <label class="col-sm-3 control-label"
+                   for="user_quota_max_size">
+              Maximum size
+            </label>
+            <div class="col-sm-9">
+              <input class="form-control"
+                     type="text"
+                     placeholder="e.g., 1GB"
+                     ng-model="user.user_quota.max_size"
+                     ng-show="!user.user_quota.max_size_unlimited"
+                     ng-required="user.user_quota.enabled &&
                                        !user.user_quota.max_size_unlimited"
-                                   name="user_quota_max_size"
-                                   id="user_quota_max_size"
-                                   ceph-rgw-quota-max-size-validate>
-                            <span class="help-block tc_requiredUserQuotaMaxSize"
-                                  ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
+                     name="user_quota_max_size"
+                     id="user_quota_max_size"
+                     ceph-rgw-quota-max-size-validate>
+              <span class="help-block tc_requiredUserQuotaMaxSize"
+                    ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
                                       userForm.user_quota_max_size.$error.required">
-                                This field is required!
-                            </span>
-                            <span class="help-block tc_invalidUserQuotaMaxSize"
-                                  ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
+                This field is required!
+              </span>
+              <span class="help-block tc_invalidUserQuotaMaxSize"
+                    ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
                                       userForm.user_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
-                                The value is not valid.
-                            </span>
-                        </div>
-                    </div>
-                    <!-- Unlimited objects -->
-                    <div class="form-group"
-                         ng-show="user.user_quota.enabled">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.user_quota.max_objects_unlimited"
-                                       ng-change="onChangeUnlimited(
+                The value is not valid.
+              </span>
+            </div>
+          </div>
+          <!-- Unlimited objects -->
+          <div class="form-group"
+               ng-show="user.user_quota.enabled">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.user_quota.max_objects_unlimited"
+                       ng-change="onChangeUnlimited(
                                            user.user_quota.max_objects_unlimited,
                                            'user_quota_max_objects')"
-                                       name="user_quota_max_objects_unlimited"
-                                       id="user_quota_max_objects_unlimited">
-                                <label for="user_quota_max_objects_unlimited">
-                                    Unlimited objects
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Maximum objects -->
-                    <div class="form-group"
-                         ng-class="{'has-error': (userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
+                       name="user_quota_max_objects_unlimited"
+                       id="user_quota_max_objects_unlimited">
+                <label for="user_quota_max_objects_unlimited">
+                  Unlimited objects
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Maximum objects -->
+          <div class="form-group"
+               ng-class="{'has-error': (userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
                              userForm.user_quota_max_objects.$invalid}"
-                         ng-show="user.user_quota.enabled && !user.user_quota.max_objects_unlimited">
-                        <label class="col-sm-3 control-label" for="user_quota_max_objects">
-                            Maximum objects
-                        </label>
-                        <div class="col-sm-9">
-                            <input class="form-control"
-                                   type="number"
-                                   placeholder="e.g., 500"
-                                   ng-model="user.user_quota.max_objects"
-                                   ng-show="!user.user_quota.max_objects_unlimited"
-                                   ng-required="user.user_quota.enabled &&
+               ng-show="user.user_quota.enabled && !user.user_quota.max_objects_unlimited">
+            <label class="col-sm-3 control-label"
+                   for="user_quota_max_objects">
+              Maximum objects
+            </label>
+            <div class="col-sm-9">
+              <input class="form-control"
+                     type="number"
+                     placeholder="e.g., 500"
+                     ng-model="user.user_quota.max_objects"
+                     ng-show="!user.user_quota.max_objects_unlimited"
+                     ng-required="user.user_quota.enabled &&
                                        !user.user_quota.max_objects_unlimited"
-                                   name="user_quota_max_objects"
-                                   id="user_quota_max_objects"
-                                   min="0">
-                            <span class="help-block tc_requiredUserQuotaMaxObjects"
-                                  ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
+                     name="user_quota_max_objects"
+                     id="user_quota_max_objects"
+                     min="0">
+              <span class="help-block tc_requiredUserQuotaMaxObjects"
+                    ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
                                       userForm.user_quota_max_objects.$error.required">
-                                This field is required!
-                            </span>
-                            <span class="help-block tc_invalidUserQuotaMaxObjects"
-                                  ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
+                This field is required!
+              </span>
+              <span class="help-block tc_invalidUserQuotaMaxObjects"
+                    ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
                                     (userForm.user_quota_max_objects.$error.min ||
                                     userForm.user_quota_max_objects.$error.number)">
-                                The value is not valid.
-                            </span>
-                        </div>
-                    </div>
-                </fieldset>
-                <!-- Bucket quota -->
-                <fieldset>
-                    <legend>Bucket quota</legend>
-                    <!-- Enabled -->
-                    <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.bucket_quota.enabled"
-                                       name="bucket_quota_enabled"
-                                       id="bucket_quota_enabled">
-                                <label for="bucket_quota_enabled">
-                                    Enabled
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Unlimited size -->
-                    <div class="form-group"
-                         ng-show="user.bucket_quota.enabled">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.bucket_quota.max_size_unlimited"
-                                       ng-change="onChangeUnlimited(
+                The value is not valid.
+              </span>
+            </div>
+          </div>
+        </fieldset>
+        <!-- Bucket quota -->
+        <fieldset>
+          <legend>Bucket quota</legend>
+          <!-- Enabled -->
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.bucket_quota.enabled"
+                       name="bucket_quota_enabled"
+                       id="bucket_quota_enabled">
+                <label for="bucket_quota_enabled">
+                  Enabled
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Unlimited size -->
+          <div class="form-group"
+               ng-show="user.bucket_quota.enabled">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.bucket_quota.max_size_unlimited"
+                       ng-change="onChangeUnlimited(
                                            user.bucket_quota.max_size_unlimited,
                                            'bucket_quota_max_size')"
-                                       name="bucket_quota_max_size_unlimited"
-                                       id="bucket_quota_max_size_unlimited">
-                                <label for="bucket_quota_max_size_unlimited">
-                                    Unlimited size
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Maximum size -->
-                    <div class="form-group"
-                         ng-class="{'has-error': (userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
+                       name="bucket_quota_max_size_unlimited"
+                       id="bucket_quota_max_size_unlimited">
+                <label for="bucket_quota_max_size_unlimited">
+                  Unlimited size
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Maximum size -->
+          <div class="form-group"
+               ng-class="{'has-error': (userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
                              userForm.bucket_quota_max_size.$invalid}"
-                         ng-show="user.bucket_quota.enabled && !user.bucket_quota.max_size_unlimited">
-                        <label class="col-sm-3 control-label" for="bucket_quota_max_size">
-                            Maximum size
-                        </label>
-                        <div class="col-sm-9">
-                            <input class="form-control"
-                                   type="text"
-                                   placeholder="e.g., 1GB"
-                                   ng-model="user.bucket_quota.max_size"
-                                   ng-show="!user.bucket_quota.max_size_unlimited"
-                                   ng-required="user.bucket_quota.enabled &&
+               ng-show="user.bucket_quota.enabled && !user.bucket_quota.max_size_unlimited">
+            <label class="col-sm-3 control-label"
+                   for="bucket_quota_max_size">
+              Maximum size
+            </label>
+            <div class="col-sm-9">
+              <input class="form-control"
+                     type="text"
+                     placeholder="e.g., 1GB"
+                     ng-model="user.bucket_quota.max_size"
+                     ng-show="!user.bucket_quota.max_size_unlimited"
+                     ng-required="user.bucket_quota.enabled &&
                                        !user.bucket_quota.max_size_unlimited"
-                                   name="bucket_quota_max_size"
-                                   id="bucket_quota_max_size"
-                                   ceph-rgw-quota-max-size-validate>
-                            <span class="help-block tc_requiredBucketQuotaMaxSize"
-                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
+                     name="bucket_quota_max_size"
+                     id="bucket_quota_max_size"
+                     ceph-rgw-quota-max-size-validate>
+              <span class="help-block tc_requiredBucketQuotaMaxSize"
+                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
                                     userForm.bucket_quota_max_size.$error.required">
-                                This field is required!
-                            </span>
-                            <span class="help-block tc_invalidBucketQuotaMaxSize"
-                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
+                This field is required!
+              </span>
+              <span class="help-block tc_invalidBucketQuotaMaxSize"
+                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
                                       userForm.bucket_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
-                                The value is not valid.
-                            </span>
-                        </div>
-                    </div>
-                    <!-- Unlimited objects -->
-                    <div class="form-group"
-                         ng-show="user.bucket_quota.enabled">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="checkbox checkbox-primary">
-                                <input type="checkbox"
-                                       ng-model="user.bucket_quota.max_objects_unlimited"
-                                       ng-change="onChangeUnlimited(
+                The value is not valid.
+              </span>
+            </div>
+          </div>
+          <!-- Unlimited objects -->
+          <div class="form-group"
+               ng-show="user.bucket_quota.enabled">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="user.bucket_quota.max_objects_unlimited"
+                       ng-change="onChangeUnlimited(
                                            user.bucket_quota.max_objects_unlimited,
                                            'bucket_quota_max_objects')"
-                                       name="bucket_quota_max_objects_unlimited"
-                                       id="bucket_quota_max_objects_unlimited">
-                                <label for="bucket_quota_max_objects_unlimited">
-                                    Unlimited objects
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Maximum objects -->
-                    <div class="form-group"
-                         ng-class="{'has-error': (userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
+                       name="bucket_quota_max_objects_unlimited"
+                       id="bucket_quota_max_objects_unlimited">
+                <label for="bucket_quota_max_objects_unlimited">
+                  Unlimited objects
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Maximum objects -->
+          <div class="form-group"
+               ng-class="{'has-error': (userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
                              userForm.bucket_quota_max_objects.$invalid}"
-                         ng-show="user.bucket_quota.enabled && !user.bucket_quota.max_objects_unlimited">
-                        <label class="col-sm-3 control-label" for="bucket_quota_max_objects">
-                            Maximum objects
-                        </label>
-                        <div class="col-sm-9">
-                            <input class="form-control"
-                                   type="number"
-                                   placeholder="e.g., 500"
-                                   ng-model="user.bucket_quota.max_objects"
-                                   ng-show="!user.bucket_quota.max_objects_unlimited"
-                                   ng-required="user.bucket_quota.enabled &&
+               ng-show="user.bucket_quota.enabled && !user.bucket_quota.max_objects_unlimited">
+            <label class="col-sm-3 control-label"
+                   for="bucket_quota_max_objects">
+              Maximum objects
+            </label>
+            <div class="col-sm-9">
+              <input class="form-control"
+                     type="number"
+                     placeholder="e.g., 500"
+                     ng-model="user.bucket_quota.max_objects"
+                     ng-show="!user.bucket_quota.max_objects_unlimited"
+                     ng-required="user.bucket_quota.enabled &&
                                        !user.bucket_quota.max_objects_unlimited"
-                                   name="bucket_quota_max_objects"
-                                   id="bucket_quota_max_objects"
-                                   min="0">
-                            <span class="help-block tc_requiredBucketQuotaMaxObjects"
-                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
+                     name="bucket_quota_max_objects"
+                     id="bucket_quota_max_objects"
+                     min="0">
+              <span class="help-block tc_requiredBucketQuotaMaxObjects"
+                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
                                       userForm.bucket_quota_max_objects.$error.required">
-                                This field is required!
-                            </span>
-                            <span class="help-block tc_invalidBucketQuotaMaxObjects"
-                                  ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
+                This field is required!
+              </span>
+              <span class="help-block tc_invalidBucketQuotaMaxObjects"
+                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
                                     (userForm.bucket_quota_max_objects.$error.min ||
                                     userForm.bucket_quota_max_objects.$error.number)">
-                                The value is not valid.
-                            </span>
-                        </div>
-                    </div>
-                </fieldset>
+                The value is not valid.
+              </span>
             </div>
-            <div class="panel-footer">
-                <div class="button-group text-right">
-                    <oa-submit-button form="userForm" on-submit="submitAction(userForm)">
-                      Submit
-                    </oa-submit-button>
-                    <button type="button"
-                            class="btn btn-sm btn-default tc_backButton"
-                            ng-click="goToListView()">
-                        Back
-                    </button>
-                </div>
-            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="panel-footer">
+        <div class="button-group text-right">
+          <oa-submit-button form="userForm"
+                            on-submit="submitAction(userForm)">
+            Submit
+          </oa-submit-button>
+          <button type="button"
+                  class="btn btn-sm btn-default tc_backButton"
+                  ng-click="goToListView()">
+            Back
+          </button>
         </div>
-    </form>
+      </div>
+    </div>
+  </form>
 </div>

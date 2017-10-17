@@ -12,27 +12,6 @@ var globalConfig = {
       "warning": 6000
     },
     "defaultTaskReloadTime": 5000,
-    "defaultDashboard": {
-      "boards": [{
-        "name": "Ceph",
-        "widgets": [{
-          "name": "Ceph Health",
-          "manager": {
-            "name": "Ceph Health",
-            "manager": "ceph-health",
-            "group": "Ceph"
-          },
-          "settings": {}
-        }]
-      }, {
-        "name": "Grafana",
-        "widgets": []
-      }],
-      "settings": {
-        "activeBoard": 1,
-        "locked": false
-      }
-    },
     "quickLogin": {
       "username": "",
       "password": ""

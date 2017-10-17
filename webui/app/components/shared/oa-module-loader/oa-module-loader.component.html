@@ -3,7 +3,8 @@
 </oa-loading-panel>
 
 <span ng-if="$ctrl.moduleAvailable.$resolved">
-  <span ng-transclude ng-if="$ctrl.moduleAvailable.available"></span>
+  <span ng-transclude
+        ng-if="$ctrl.moduleAvailable.available"></span>
   <span ng-if="!$ctrl.moduleAvailable.available">
     <div class="panel panel-default">
       <div class="panel-heading">

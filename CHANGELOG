@@ -26,11 +26,15 @@ Added
   page. (OP-2737)
 * WebUI: Unit tests for IQN validator (OP-2783)
 * WebUI: Usage of "unsaved changes" dialog on iSCSI form (OP-2254)
+* WebUI: Add HTML linter with a few new rules (OP-2544)
 
 Changed
 ~~~~~~~
 
+* Backend: Cleaned up pep8 warnings of ceph app (OP-1502)
+* Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
 * Backend: Cleaned up pep8 warnings of rest app (OP-1515)
+* Backend: Cleaned up pep8 warnings of systemd app (OP-1518)
 * WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
 * WebUI: Submit buttons should be enabled on invalid forms (OP-2736)
 * WebUI/Backend: Salt-API settings should be optional (OP-2722)
@@ -40,12 +44,14 @@ Changed
 * WebUI: Don't allow performing a delete action on buckets shared via
   NFS (OP-2768)
 * WebUI: Improve eslint rules (OP-2749)
+* WebUI: Now it is possible to delete a RGW user with buckets (OP-2790)
 * WebUI: Migration of Ceph Pools controllers to components (OP-2399)
 * WebUI: Migration of Ceph OSDs controllers to components (OP-2401)
 * Documentation: Mentioned the AngularJS style guide as the coding style
   for frontend development (OP-824)
 * WebUI: Migration of Ceph Nodes controllers to components (OP-2398)
 * WebUI: Convert Shared module to ES6 (OP-2532)
+* WebUI: Unify Grafana and Widgets in a single Dashboard page (2754)
 
 Fixed
 ~~~~~
@@ -59,6 +65,7 @@ Fixed
 * WebUI/QA: Fix random NFS e2e test failures (OP-2762)
 * WebUI/QA: Prevent random failures in task queue dialog suite (OP-2779)
 * WebUI: Fix "use max" links in RBD form (OP-2727)
+* WebUI/QA: Fix random iSCSI e2e test failures (OP-2807)
 
 Removed
 ~~~~~~~
