@@ -4,7 +4,6 @@ var CephIscsiTable = function () {
 
   this.filterInput = element(by.model("filterConfig.search"));
   this.rows = element.all(by.binding("row.targetId"));
-  this.detailsTab = element(by.css(".tc_detailsTab"));
 
   this.addTarget = function () {
     element(by.css(".tc_add_btn")).click();
@@ -41,9 +40,7 @@ var CephIscsiTable = function () {
 
   this.clickRowByTargetId = function (targetId) {
     this.filterInput.clear().sendKeys(targetId);
-    expect(this.rows.get(0).getText()).toBe(targetId);
     element(by.cssContainingText("tr", targetId)).click();
-    expect(this.detailsTab.isDisplayed()).toBe(true);
   };
 
   this.removeTarget = function (targetId) {
