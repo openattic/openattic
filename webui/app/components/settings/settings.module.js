@@ -30,11 +30,11 @@
  */
 "use strict";
 
-angular.module("openattic.settings", []);
+import settingsForm from "./settings-form/settings-form.component";
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+angular.module("openattic.settings", [])
+  .component("settingsForm", settingsForm);
 
-function requireAll (require) {
-  require.keys().forEach(require);
-}
 require("./settings.routes");
+require("./settings-form/settings-form.service");
+require("./settings-form/hosts.service");
