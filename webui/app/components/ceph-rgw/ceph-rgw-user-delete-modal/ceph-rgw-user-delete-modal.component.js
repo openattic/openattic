@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,24 +30,46 @@
  */
 "use strict";
 
-import "../components/ceph-crushmap/module";
-import "../components/ceph-erasure-code-profiles/module";
-import "../components/ceph-nodes/ceph-nodes.module";
-import "../components/ceph-iscsi/ceph-iscsi.module";
-import "../components/ceph-nfs/ceph-nfs.module";
-import "../components/ceph-osd/ceph-osd.module";
-import "../components/ceph-pools/ceph-pools.module";
-import "../components/ceph-rbd/ceph-rbd.module";
-import "../components/ceph-rgw/ceph-rgw.module";
+class CephRgwUserDeleteModal {
+  constructor (cephRgwUserService, $q) {
+    this.cephRgwUserService = cephRgwUserService;
+    this.$q = $q;
+  }
 
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephIscsi",
-  "openattic.cephNfs",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.cephRgw"
-]);
+  $onInit () {
+    this.users = this.resolve.userSelection;
+  }
+
+  deleteUser () {
+    return this.$q((resolve, reject) => {
+      let requests = [];
+      this.users.forEach((user) => {
+        let deferred = this.$q.defer();
+        this.cephRgwUserService.delete({
+          "uid": user.user_id,
+          "purge-data": true
+        }, deferred.resolve, deferred.reject);
+        requests.push(deferred.promise);
+      });
+      this.$q.all(requests).then(() => {
+        resolve();
+        this.modalInstance.close("deleted");
+      }, () => {
+        reject();
+      });
+    });
+  }
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  }
+}
+
+export default{
+  template: require("./ceph-rgw-user-delete-modal.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  },
+  controller: CephRgwUserDeleteModal
+};

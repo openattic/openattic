@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,24 +30,27 @@
  */
 "use strict";
 
-import "../components/ceph-crushmap/module";
-import "../components/ceph-erasure-code-profiles/module";
-import "../components/ceph-nodes/ceph-nodes.module";
-import "../components/ceph-iscsi/ceph-iscsi.module";
-import "../components/ceph-nfs/ceph-nfs.module";
-import "../components/ceph-osd/ceph-osd.module";
-import "../components/ceph-pools/ceph-pools.module";
-import "../components/ceph-rbd/ceph-rbd.module";
-import "../components/ceph-rgw/ceph-rgw.module";
-
-angular.module("openattic.ceph", [
-  "openattic.cephCrushmap",
-  "openattic.cephErasureCodeProfiles",
-  "openattic.cephNodes",
-  "openattic.cephIscsi",
-  "openattic.cephNfs",
-  "openattic.cephOsd",
-  "openattic.cephPools",
-  "openattic.cephRbd",
-  "openattic.cephRgw"
-]);
+let app = angular.module("openattic.cephRgw");
+/**
+ * Validate the bucket name.
+ */
+app.directive("cephRgwBucketNameValidate", () => {
+  return {
+    // Restrict to an attribute type.
+    restrict: "A",
+    // Element must have ng-model attribute.
+    require: "ngModel",
+    // scope = The parent scope
+    // elem  = The element the directive is on
+    // attrs = A dictionary of attributes on the element
+    // ctrl  = The controller for ngModel
+    link: (scope, elem, attrs, ctrl) => {
+      ctrl.$validators.cephRgwBucketNameValidate = (value) => {
+        if (ctrl.$isEmpty(value)) {
+          return true;
+        }
+        return value.length > 2;
+      };
+    }
+  };
+});
