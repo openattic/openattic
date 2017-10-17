@@ -6,6 +6,10 @@
     <p>
       You are about to delete the user <strong>{{users[0].user_id}}</strong>.
     </p>
+    <p>
+      Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by
+      this user and that this operation <strong>cannot be undone</strong>.
+    </p>
   </div>
   <!-- end single user -->
 
@@ -13,6 +17,10 @@
   <div ng-if="users.length > 1">
     <p>
       You are about to delete multiple users.
+    </p>
+    <p>
+      Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by
+      these users and that this operation <strong>cannot be undone</strong>.
     </p>
     <span class="text-danger">The following users will be deleted:</span>
       <ul class="text-danger">
