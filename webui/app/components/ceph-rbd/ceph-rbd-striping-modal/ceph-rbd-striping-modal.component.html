@@ -25,47 +25,46 @@
 
   <br>
 
-  <ceph-rbd-striping-object-set
-      size-str="$ctrl.resolve.size"
-      object-size-str="$ctrl.resolve.objectSize"
-      stripe-unit-str="$ctrl.resolve.stripeUnit"
-      stripe-count="$ctrl.resolve.stripeCount"
-      object-set-index="0">
+  <ceph-rbd-striping-object-set size-str="$ctrl.resolve.size"
+                                object-size-str="$ctrl.resolve.objectSize"
+                                stripe-unit-str="$ctrl.resolve.stripeUnit"
+                                stripe-count="$ctrl.resolve.stripeCount"
+                                object-set-index="0">
   </ceph-rbd-striping-object-set>
 
-  <ceph-rbd-striping-object-set
-      ng-if="$ctrl.numObjectSets >= 2"
-      size-str="$ctrl.resolve.size"
-      object-size-str="$ctrl.resolve.objectSize"
-      stripe-unit-str="$ctrl.resolve.stripeUnit"
-      stripe-count="$ctrl.resolve.stripeCount"
-      object-set-index="1">
+  <ceph-rbd-striping-object-set ng-if="$ctrl.numObjectSets >= 2"
+                                size-str="$ctrl.resolve.size"
+                                object-size-str="$ctrl.resolve.objectSize"
+                                stripe-unit-str="$ctrl.resolve.stripeUnit"
+                                stripe-count="$ctrl.resolve.stripeCount"
+                                object-set-index="1">
   </ceph-rbd-striping-object-set>
 
-  <h2 ng-if="$ctrl.numObjectSets > 4" class="text-muted">&#8942;</h2>
+  <h2 ng-if="$ctrl.numObjectSets > 4"
+      class="text-muted">&#8942;</h2>
 
-  <ceph-rbd-striping-object-set
-      ng-if="$ctrl.numObjectSets >= 4"
-      size-str="$ctrl.resolve.size"
-      object-size-str="$ctrl.resolve.objectSize"
-      stripe-unit-str="$ctrl.resolve.stripeUnit"
-      stripe-count="$ctrl.resolve.stripeCount"
-      object-set-index="$ctrl.numObjectSets - 2">
+  <ceph-rbd-striping-object-set ng-if="$ctrl.numObjectSets >= 4"
+                                size-str="$ctrl.resolve.size"
+                                object-size-str="$ctrl.resolve.objectSize"
+                                stripe-unit-str="$ctrl.resolve.stripeUnit"
+                                stripe-count="$ctrl.resolve.stripeCount"
+                                object-set-index="$ctrl.numObjectSets - 2">
   </ceph-rbd-striping-object-set>
 
-  <ceph-rbd-striping-object-set
-      ng-if="$ctrl.numObjectSets >= 3"
-      size-str="$ctrl.resolve.size"
-      object-size-str="$ctrl.resolve.objectSize"
-      stripe-unit-str="$ctrl.resolve.stripeUnit"
-      stripe-count="$ctrl.resolve.stripeCount"
-      object-set-index="$ctrl.numObjectSets - 1">
+  <ceph-rbd-striping-object-set ng-if="$ctrl.numObjectSets >= 3"
+                                size-str="$ctrl.resolve.size"
+                                object-size-str="$ctrl.resolve.objectSize"
+                                stripe-unit-str="$ctrl.resolve.stripeUnit"
+                                stripe-count="$ctrl.resolve.stripeCount"
+                                object-set-index="$ctrl.numObjectSets - 1">
   </ceph-rbd-striping-object-set>
 
 </div>
 
 <div class="openattic-modal-footer">
   <div class="button-group text-right">
-    <button id="close" class="btn btn-default btn-sm" ng-click="$ctrl.close()">Close</button>
+    <button id="close"
+            class="btn btn-default btn-sm"
+            ng-click="$ctrl.close()">Close</button>
   </div>
 </div>

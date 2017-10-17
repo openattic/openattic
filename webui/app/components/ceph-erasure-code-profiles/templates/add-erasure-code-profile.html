@@ -3,21 +3,26 @@
 </div>
 
 <oa-loading-panel message="Form is loading..."
-    ng-show="!rulesetFailureDomains"></oa-loading-panel>
+                  ng-show="!rulesetFailureDomains"></oa-loading-panel>
 
-<form name="addForm" role="form" ng-if="rulesetFailureDomains" novalidate>
+<form name="addForm"
+      role="form"
+      ng-if="rulesetFailureDomains"
+      novalidate>
   <div class="openattic-modal-content">
     <p>
       You are about to add a new erasure code profile.
     </p>
 
     <p>
-      To confirm, please enter the information below and click <kbd>Add erasure code profile</kbd>, or cancel and return to the page.
+      To confirm, please enter the information below and click
+      <kbd>Add erasure code profile</kbd>, or cancel and return to the page.
     </p>
 
     <div class="form-group"
          ng-class="{'has-error': (addForm.$submitted || addForm.name.$dirty) && addForm.name.$invalid}">
-      <label for="name" class="control-label">Name</label>
+      <label for="name"
+             class="control-label">Name</label>
       <input type="text"
              id="name"
              name="name"
@@ -43,7 +48,8 @@
 
     <div class="form-group"
          ng-class="{'has-error': (addForm.$submitted || addForm.dataChunks.$dirty) && addForm.dataChunks.$invalid}">
-      <label for="dataChunks" class="control-label">Data chunks (k)</label>
+      <label for="dataChunks"
+             class="control-label">Data chunks (k)</label>
       <input type="number"
              id="dataChunks"
              name="dataChunks"
@@ -68,7 +74,8 @@
 
     <div class="form-group"
          ng-class="{'has-error': (addForm.$submitted || addForm.codingChunks.$dirty) && addForm.codingChunks.$invalid}">
-      <label for="codingChunks" class="control-label">Coding chunks (m)</label>
+      <label for="codingChunks"
+             class="control-label">Coding chunks (m)</label>
       <input type="number"
              id="codingChunks"
              name="codingChunks"
@@ -97,7 +104,8 @@
     </div>
 
     <div class="form-group">
-      <label for="rulesetFailureDomain" class="control-label">Ruleset-failure-domain</label>
+      <label for="rulesetFailureDomain"
+             class="control-label">Ruleset-failure-domain</label>
       <select id="rulesetFailureDomain"
               name="rulesetFailureDomain"
               class="form-control tc_rulesetFailureDomain"
@@ -109,13 +117,17 @@
 
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+      <button id="bot2-Msg1"
+              class="btn btn-primary btn-sm"
               ng-click="addErasureCodeProfile()"
               ng-disabled="addForm.$invalid || addForm.$submitted">
         Add erasure code profile
-        <i class="fa fa-spinner fa-spin fa-fw" ng-if="addForm.$submitted"></i>
+        <i class="fa fa-spinner fa-spin fa-fw"
+           ng-if="addForm.$submitted"></i>
       </button>
-      <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+      <button id="bot1-Msg1"
+              class="btn btn-link btn-sm"
+              ng-click="cancel()">Cancel</button>
     </div>
   </div>
 </form>

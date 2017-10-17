@@ -1,24 +1,25 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
-            <i class="fa fa-exclamation-triangle fa-fw icon-danger" aria-hidden="true"></i> Error
-        </h3>
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <i class="fa fa-exclamation-triangle fa-fw icon-danger"
+         aria-hidden="true"></i> Error
+    </h3>
+  </div>
+  <div class="panel-body">
+    {{ $ctrl.message }}
+  </div>
+  <form ng-show="$ctrl.onBack"
+        name="errorForm"
+        role="form"
+        novalidate>
+    <div class="panel-footer">
+      <div class="button-group text-right">
+        <button class="btn btn-sm btn-default tc_backButton"
+                type="button"
+                ng-click="$ctrl.backAction()">
+          Back
+        </button>
+      </div>
     </div>
-    <div class="panel-body">
-        {{ $ctrl.message }}
-    </div>
-    <form ng-show="$ctrl.onBack"
-          name="errorForm"
-          role="form"
-          novalidate>
-        <div class="panel-footer">
-            <div class="button-group text-right">
-              <button class="btn btn-sm btn-default tc_backButton"
-                      type="button"
-                      ng-click="$ctrl.backAction()">
-                  Back
-              </button>
-            </div>
-        </div>
-    </form>
+  </form>
 </div>

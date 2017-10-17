@@ -10,8 +10,9 @@
         <span ng-if="$ctrl.selection.item.targetSettings">
           <br>
           <span ng-repeat="setting in $ctrl.selection.item.cephIscsiTargetAdvangedSettings">
-            <span ng-if="$ctrl.selection.item.targetSettings.hasOwnProperty(setting.property)" class="nowrap margin-right-md">
-                <label>&#10551; {{ setting.property }}</label>: {{ $ctrl.selection.item.targetSettings[setting.property] }}
+            <span ng-if="$ctrl.selection.item.targetSettings.hasOwnProperty(setting.property)"
+                  class="nowrap margin-right-md">
+              <label>&#10551; {{ setting.property }}</label>: {{ $ctrl.selection.item.targetSettings[setting.property] }}
             </span>
           </span>
         </span>
@@ -26,12 +27,14 @@
     <dl class="dl-horizontal">
       <dt>Images:</dt>
       <dd ng-repeat="image in $ctrl.selection.item.images">
-        {{ image.pool }}: {{ image.name }} <span class="text-muted">(lun: {{ (image.settings.lun || 0) }})</span>
+        {{ image.pool }}: {{ image.name }}
+        <span class="text-muted">(lun: {{ (image.settings.lun || 0) }})</span>
         <span ng-if="image.settings">
           <br>
           <span ng-repeat="setting in $ctrl.selection.item.allIscsiImageSettings">
-            <span ng-if="image.settings.hasOwnProperty(setting.property)" class="nowrap margin-right-md">
-                <label>&#10551; {{ setting.property }}</label>: {{ image.settings[setting.property] }}
+            <span ng-if="image.settings.hasOwnProperty(setting.property)"
+                  class="nowrap margin-right-md">
+              <label>&#10551; {{ setting.property }}</label>: {{ image.settings[setting.property] }}
             </span>
           </span>
         </span>
@@ -39,7 +42,8 @@
     </dl>
     <dl class="dl-horizontal">
       <dt>Authentication:</dt>
-      <dd ng-if="!$ctrl.selection.item.authentication.hasAuthentication" class="tc_noAuthentication">No authentication</dd>
+      <dd ng-if="!$ctrl.selection.item.authentication.hasAuthentication"
+          class="tc_noAuthentication">No authentication</dd>
       <dd ng-if="$ctrl.selection.item.authentication.hasAuthentication">{{ $ctrl.selection.item.authentication.user }}</dd>
     </dl>
     <dl class="dl-horizontal"
@@ -49,28 +53,31 @@
         {{ initiator }}
       </dd>
     </dl>
-    <dl class="dl-horizontal" ng-if="$ctrl.selection.item.authentication.hasMutualAuthentication">
+    <dl class="dl-horizontal"
+        ng-if="$ctrl.selection.item.authentication.hasMutualAuthentication">
       <dt>Mutual auth:</dt>
       <dd>{{ $ctrl.selection.item.authentication.mutualUser }}
-          <span class="text-muted">
-              ({{ $ctrl.selection.item.authentication.enabledMutualAuthentication ? 'Enabled' : 'Disabled' }})
-          </span>
+        <span class="text-muted">
+          ({{ $ctrl.selection.item.authentication.enabledMutualAuthentication ? 'Enabled' : 'Disabled' }})
+        </span>
       </dd>
     </dl>
-    <dl class="dl-horizontal" ng-if="$ctrl.selection.item.authentication.hasDiscoveryAuthentication">
+    <dl class="dl-horizontal"
+        ng-if="$ctrl.selection.item.authentication.hasDiscoveryAuthentication">
       <dt>Discovery auth:</dt>
       <dd>{{ $ctrl.selection.item.authentication.discoveryUser }}
-          <span class="text-muted">
-              ({{ $ctrl.selection.item.authentication.enabledDiscoveryAuthentication ? 'Enabled' : 'Disabled' }})
-          </span>
+        <span class="text-muted">
+          ({{ $ctrl.selection.item.authentication.enabledDiscoveryAuthentication ? 'Enabled' : 'Disabled' }})
+        </span>
       </dd>
     </dl>
-    <dl class="dl-horizontal" ng-if="$ctrl.selection.item.authentication.hasDiscoveryMutualAuthentication">
+    <dl class="dl-horizontal"
+        ng-if="$ctrl.selection.item.authentication.hasDiscoveryMutualAuthentication">
       <dt>Discovery mutual auth:</dt>
       <dd>{{ $ctrl.selection.item.authentication.discoveryMutualUser }}
-          <span class="text-muted">
-              ({{ $ctrl.selection.item.authentication.enabledDiscoveryMutualAuthentication ? 'Enabled' : 'Disabled' }})
-          </span>
+        <span class="text-muted">
+          ({{ $ctrl.selection.item.authentication.enabledDiscoveryMutualAuthentication ? 'Enabled' : 'Disabled' }})
+        </span>
       </dd>
     </dl>
   </div>
