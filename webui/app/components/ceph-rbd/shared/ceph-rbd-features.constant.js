@@ -82,7 +82,7 @@ app.constant("cephRbdFeatures", {
   },
   "fast-diff": {
     desc: "Fast diff (requires object-map)",
-    helpText: "",
+    helperTemplate: "components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html",
     requires: "object-map",
     excludes: null,
     isSupportedISCSI: false,
