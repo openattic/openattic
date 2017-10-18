@@ -45,6 +45,7 @@ describe("ceph pool creation form", function () {
     e.displayedIf.forEach((displayedIf) => {
       it('should display the form element "' + e.name + '" if "' + displayedIf + '"', function () {
         cephPoolProperties.selectNeededSelection(displayedIf);
+        helpers.waitForElement(cephPoolProperties.getFormElement(e));
         expect(cephPoolProperties.getFormElement(e).isDisplayed()).toBe(true);
       });
       verifySubitems(e);

@@ -46,7 +46,7 @@ describe("Pagination", function () {
       userForm.confirmPassword.sendKeys("password");
       userForm.submit();
     }
-    browser.sleep(400);
+    helpers.waitForElement(firstPage);
   });
 
   beforeEach(function () {

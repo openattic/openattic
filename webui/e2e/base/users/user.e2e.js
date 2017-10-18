@@ -63,25 +63,16 @@ describe("Should add an user", function () {
 
   it("should create an user", function () {
     addBtn.click();
-    browser.sleep(400);
     element(by.model("user.username")).sendKeys(testUser.username);
-    browser.sleep(400);
     element(by.model("user.password")).sendKeys(testUser.userpasswd);
-    browser.sleep(400);
     element(by.model("user.confirmPassword")).sendKeys(testUser.userpasswd);
-    browser.sleep(400);
     element(by.model("user.first_name")).sendKeys(testUser.firstname);
-    browser.sleep(400);
     element(by.model("user.last_name")).sendKeys(testUser.lastname);
-    browser.sleep(400);
     element(by.model("user.email")).sendKeys(testUser.email);
-    browser.sleep(400);
     element(by.model("user.is_active")).click();
-    browser.sleep(400);
     element(by.model("user.is_staff")).click();
-    browser.sleep(400);
     element(by.css(".tc_submitButton")).click();
-    browser.sleep(400);
+    helpers.waitForElementRemoval("submit");
   });
 
   it('should display the "protractor_test_user" in the users panel', function () {

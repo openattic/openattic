@@ -183,6 +183,19 @@
 
       element(by.css(".tc_entries_dropdown")).click();
       element(by.css(".tc_entries_10")).click();
+    },
+
+    waitForElement (elem) {
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.presenceOf(elem), 5000, "Element taking too long to appear in the DOM");
+    },
+
+    waitForElementRemoval (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.stalenessOf(elem), 5000, "Element taking too long to disappear in the DOM");
     }
   };
   module.exports = helper;
