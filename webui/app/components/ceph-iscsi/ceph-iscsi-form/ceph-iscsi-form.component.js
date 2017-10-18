@@ -338,6 +338,13 @@ app.component("cephIscsiForm", {
       return requestModel;
     };
 
+    self.addRBD = function () {
+      $state.go("cephRbds-add", {
+        fsid: self.fsid,
+        fromState: "cephIscsi-add"
+      });
+    };
+
     self.submitAction = function () {
       var requestModel = self.buildRequest();
       if (requestModel.originalTargetId !== null) {
