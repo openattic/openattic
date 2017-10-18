@@ -60,6 +60,7 @@ Changed
 * WebUI: Migration of Auth controllers to components (OP-2801)
 * WebUI: Convert Settings components to ES6 (OP-2806)
 * WebUI: Convert Grafana components to ES6 (OP-2805)
+* WebUI: Convert Ceph RBD components to ES6 (OP-2803)
 
 Fixed
 ~~~~~

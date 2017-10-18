@@ -30,15 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.component("cephRbdDetail", {
+class CephRbdDetail {
+  constructor (cephRbdFeatures) {
+    this.features = cephRbdFeatures;
+  }
+}
+
+export default {
   template: require("./ceph-rbd-detail.component.html"),
   bindings: {
     selection: "<"
   },
-  controller: function (cephRbdFeatures) {
-    var self = this;
+  controller: CephRbdDetail
+};
 
-    self.features = cephRbdFeatures;
-  }
-});

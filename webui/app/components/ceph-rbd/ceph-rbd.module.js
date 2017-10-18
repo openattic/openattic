@@ -32,15 +32,26 @@
 
 import "../ceph-cluster/module";
 import "../registry/module";
+import cephRbdStripingModal from "./ceph-rbd-striping-modal/ceph-rbd-striping-modal.component";
+import cephRbdStripingObjectSet from "./ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component";
+import cephRbdDeleteModal from "./ceph-rbd-delete-modal/ceph-rbd-delete-modal.component";
+import cephRbdDetail from "./ceph-rbd-detail/ceph-rbd-detail.component";
+import cephRbdForm from "./ceph-rbd-form/ceph-rbd-form.component";
+import cephRbdList from "./ceph-rbd-list/ceph-rbd-list.component";
+import cephRbdStatistics from "./ceph-rbd-statistics/ceph-rbd-statistics.component";
 
 angular.module("openattic.cephRbd", [
   "openattic.cephCluster",
   "openattic.registry"
-]);
+])
+  .component("cephRbdStripingModal", cephRbdStripingModal)
+  .component("cephRbdStripingObjectSet", cephRbdStripingObjectSet)
+  .component("cephRbdDeleteModal", cephRbdDeleteModal)
+  .component("cephRbdDetail", cephRbdDetail)
+  .component("cephRbdForm", cephRbdForm)
+  .component("cephRbdList", cephRbdList)
+  .component("cephRbdStatistics", cephRbdStatistics);
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
 require("./ceph-rbd.routes");
+require("./shared/ceph-rbd-features.constant");
+require("./shared/ceph-rbd.service");
