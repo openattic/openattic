@@ -75,6 +75,7 @@
     "server": "webpack-dev-server --history-api-fallback --inline --progress",
     "start": "npm run build:npm && npm run server",
     "test": "karma start --single-run --log-level info",
+    "devTest": "karma start --log-level info --browsers Chrome",
     "watch": "webpack --watch --watch-poll --progress --profile",
     "webdriver": "webdriver-manager update && webdriver-manager start"
   }
