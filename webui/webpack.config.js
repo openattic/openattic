@@ -219,6 +219,10 @@ module.exports = (function makeWebpackConfig () {
       to: __dirname + "/dist/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html"
     },
     {
+      from: __dirname + "/app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html",
+      to: __dirname + "/dist/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html"
+    },
+    {
       from: __dirname + "/app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html",
       to: __dirname + "/dist/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html"
     },

@@ -27,6 +27,7 @@ Added
 * WebUI: Unit tests for IQN validator (OP-2783)
 * WebUI: Usage of "unsaved changes" dialog on iSCSI form (OP-2254)
 * WebUI: Add HTML linter with a few new rules (OP-2544)
+* WebUI: Add fast-diff help text used in RBD form (OP-2767)
 
 Changed
 ~~~~~~~
