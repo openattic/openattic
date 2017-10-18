@@ -14,7 +14,7 @@ describe("ceph pool creation", () => {
 
   it("should create replicated pool", () => {
     cephPoolProperties.addButton.click();
-    cephPoolProperties.createPool("e2e_replicated_with_128_pgs", "replicated", 128, false, "cephfs", "erasure-code");
+    cephPoolProperties.createPool("e2e_replicated_with_128_pgs", "replicated", 128, false, "cephfs", "replicated_rule");
   });
 
   it("should delete replicated pool", () => {
