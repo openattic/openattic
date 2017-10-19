@@ -28,12 +28,34 @@
  * for the JavaScript code in this page.
  *
  */
-"use strict";
 
-angular.module("openattic.apirecorder", []);
+/*
+ * This class is need because of the way AngularJS deals with interceptors, as
+ * explained in https://stackoverflow.com/a/34163273.
+ */
+class HttpInterceptor {
+  constructor () {
+    ["request"]
+      .forEach((method) => {
+        if (this[method]) {
+          this[method] = this[method].bind(this);
+        }
+      });
+  }
+}
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+export default class ApiRecorderHttpInterceptor extends HttpInterceptor {
+  constructor (ApiRecorderService) {
+    super();
+    this.ApiRecorderService = ApiRecorderService;
+  }
 
-function requireAll (require) {
-  require.keys().forEach(require);
+  request (config) {
+    if (config.method !== "GET") {
+      // Create Clone
+      let configClone = Object.assign({}, config);
+      this.ApiRecorderService.recordCommand(configClone);
+    }
+    return config;
+  }
 }

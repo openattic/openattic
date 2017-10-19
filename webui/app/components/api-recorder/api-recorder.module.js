@@ -30,43 +30,16 @@
  */
 "use strict";
 
-var app = angular.module("openattic.apirecorder");
-app.service("ApiRecorderService", function () {
-  var recording = false;
-  var recordedCommands = [];
-  return {
-    startRecording: function () {
-      recording = true;
-      recordedCommands = [];
-    },
-    isRecording: function () {
-      return recording;
-    },
-    stopRecording: function () {
-      recording = false;
-      return recordedCommands;
-    },
-    recordCommand: function (config) {
-      if (recording) {
-        recordedCommands.push(config);
-      }
-    }
-  };
-});
+import ApiRecorderHttpInterceptor from "./shared/api-recorder-http-interceptor.service";
+import ApiRecorderService from "./shared/api-recorder.service";
+import apiRecorder from "./api-recorder/api-recorder.component";
+import apiRecorderModal from "./api-recorder-modal/api-recorder-modal.component";
 
-app.factory("ApiRecordHttpInterceptor", function (ApiRecorderService) {
-  return {
-    "request": function (config) {
-      if (config.method !== "GET") {
-        // Create Clone
-        var configClone = angular.copy(config);
-        ApiRecorderService.recordCommand(configClone);
-      }
-      return config;
-    }
-  };
-});
-
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push("ApiRecordHttpInterceptor");
-});
+angular.module("openattic.apirecorder", [])
+  .component("apiRecorder", apiRecorder)
+  .component("apiRecorderModal", apiRecorderModal)
+  .service("ApiRecorderHttpInterceptor", ApiRecorderHttpInterceptor)
+  .service("ApiRecorderService", ApiRecorderService)
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push("ApiRecorderHttpInterceptor");
+  });
