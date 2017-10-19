@@ -56,6 +56,7 @@ Changed
 * WebUI: Unify Grafana and Widgets in a single Dashboard page (2754)
 * WebUI: Select the NFS Host automatically, if only one is available (OP-2711)
 * WebUI/QA: Optimize "ceph_pool_creation" e2e test suite (OP-2812)
+* WebUI: Guide user through RBD creation for iSCSI (OP-2181)
 
 Fixed
 ~~~~~
