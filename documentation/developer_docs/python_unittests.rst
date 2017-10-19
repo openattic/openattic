@@ -27,6 +27,12 @@ and generate a report with::
 
   $ coverage report
 
+It's also possible to generate detailed HTML reports to identify uncovered code lines by running::
+
+  $ coverage html
+
+It will create the directory ``htmlcov`` containing ``index.html`` as a starting point.
+
 
 Starting Only a Specific Test Suite
 -----------------------------------
