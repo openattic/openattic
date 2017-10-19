@@ -3,8 +3,8 @@
   <oa-loading-panel message="Object Gateway buckets are loading..."
                     ng-show="!error && !buckets.results">
   </oa-loading-panel>
-  <oa-error-panel message="The list of buckets could not be loaded."
-                  ng-if="error">
+  <oa-error-panel ng-if="error">
+    The list of buckets could not be loaded.
   </oa-error-panel>
 
   <oadatatable ng-show="!error && buckets.results"

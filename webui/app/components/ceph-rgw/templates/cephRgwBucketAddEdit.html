@@ -1,9 +1,9 @@
 <oa-loading-panel message="Loading bucket data..."
                   ng-show="!error && !formDataIsReady">
 </oa-loading-panel>
-<oa-error-panel message="The bucket data could not be loaded."
-                on-back="goToListView()"
+<oa-error-panel on-back="goToListView()"
                 ng-if="editing && error">
+  The bucket data could not be loaded.
 </oa-error-panel>
 
 <div class="col-sm-12 col-lg-6">

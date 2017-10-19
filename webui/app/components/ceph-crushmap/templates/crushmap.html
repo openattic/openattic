@@ -4,8 +4,8 @@
     <oa-loading-panel message="Ceph CRUSH map is loading..."
                       ng-show="!error && !cluster.$resolved">
     </oa-loading-panel>
-    <oa-error-panel ng-if="error && error.statusText === 'NOT FOUND'"
-                    message="Ceph cluster with fsid <strong>'{{registry.selectedCluster.fsid}}'</strong> couldn't be found.">
+    <oa-error-panel ng-if="error && error.statusText === 'NOT FOUND'">
+      Ceph cluster with fsid <strong>'{{registry.selectedCluster.fsid}}'</strong> couldn't be found.
     </oa-error-panel>
 
     <div class="row"

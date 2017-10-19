@@ -2,11 +2,11 @@
   <div class="panel-heading">
     <h3 class="panel-title">
       <i class="fa fa-exclamation-triangle fa-fw icon-danger"
-         aria-hidden="true"></i> Error
+         aria-hidden="true"></i> {{ $ctrl.title }}
     </h3>
   </div>
   <div class="panel-body">
-    {{ $ctrl.message }}
+    <span ng-transclude></span>
   </div>
   <form ng-show="$ctrl.onBack"
         name="errorForm"

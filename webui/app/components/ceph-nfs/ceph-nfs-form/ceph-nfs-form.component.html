@@ -3,9 +3,9 @@
                     ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
   </oa-loading-panel>
   <oa-error-panel title="Couldn't load NFS export"
-                  message="NFS export could not be loaded."
                   on-back="$ctrl.cancelAction()"
                   ng-if="$ctrl.isEditMode() && $ctrl.error">
+    NFS export could not be loaded.
   </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error"

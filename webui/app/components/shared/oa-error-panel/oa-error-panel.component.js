@@ -44,9 +44,9 @@ class OaErrorPanel {
 
 export default {
   template: require("./oa-error-panel.component.html"),
+  transclude: true,
   bindings: {
     title: "@?",
-    message: "@",
     onBack: "&?"
   },
   controller: OaErrorPanel

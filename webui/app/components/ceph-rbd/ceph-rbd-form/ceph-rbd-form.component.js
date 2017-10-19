@@ -292,10 +292,13 @@ app.component("cephRbdForm", {
     };
 
     var goToListView = function () {
-      $state.go("cephRbds");
+      $state.go(self.fromState, {
+        fsid: self.fsid
+      });
     };
 
     self.fsid = $stateParams.fsid;
+    self.fromState = $stateParams.fromState;
 
     self.waitingClusterMsg = "Retrieving cluster list...";
     cephClusterService.get()

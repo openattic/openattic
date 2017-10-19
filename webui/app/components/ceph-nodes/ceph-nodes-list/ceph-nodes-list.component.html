@@ -4,8 +4,8 @@
                     ng-show="!$ctrl.error && !$ctrl.data.$resolved">
   </oa-loading-panel>
   <oa-error-panel title="Error {{$ctrl.error.status}}"
-                  message="The resource could not be found."
                   ng-if="$ctrl.error.statusText === 'NOT FOUND'">
+    The resource could not be found.
   </oa-error-panel>
 
   <oadatatable ng-show="!$ctrl.error && $ctrl.data.results"

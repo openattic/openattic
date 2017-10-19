@@ -3,8 +3,8 @@
   <oa-loading-panel message="Object Gateway users are loading..."
                     ng-show="!error && !users.results">
   </oa-loading-panel>
-  <oa-error-panel message="The list of users could not be loaded."
-                  ng-if="error">
+  <oa-error-panel ng-if="error">
+    The list of users could not be loaded.
   </oa-error-panel>
 
   <oadatatable ng-show="!error && users.results"

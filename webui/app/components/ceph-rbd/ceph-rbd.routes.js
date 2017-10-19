@@ -62,7 +62,8 @@ app.config(function ($stateProvider) {
         }
       },
       params: {
-        fsid: null
+        fsid: null,
+        fromState: "cephRbds"
       },
       ncyBreadcrumb: {
         parent: "cephRbds",
