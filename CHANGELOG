@@ -31,7 +31,6 @@ Added
 
 Changed
 ~~~~~~~
-
 * Backend: Cleaned up pep8 warnings of ceph app (OP-1502)
 * Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
 * Backend: Cleaned up pep8 warnings of rest app (OP-1515)
@@ -56,6 +55,7 @@ Changed
 * WebUI: Convert Shared module to ES6 (OP-2532)
 * WebUI: Unify Grafana and Widgets in a single Dashboard page (2754)
 * WebUI: Select the NFS Host automatically, if only one is available (OP-2711)
+* WebUI/QA: Optimize "ceph_pool_creation" e2e test suite (OP-2812)
 
 Fixed
 ~~~~~
