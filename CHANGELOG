@@ -69,6 +69,7 @@ Fixed
 * WebUI/QA: Prevent random failures in task queue dialog suite (OP-2779)
 * WebUI: Fix "use max" links in RBD form (OP-2727)
 * WebUI/QA: Fix random iSCSI e2e test failures (OP-2807)
+* WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
 
 Removed
 ~~~~~~~

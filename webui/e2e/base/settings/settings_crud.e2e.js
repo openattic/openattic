@@ -76,6 +76,7 @@ describe("settings form", function () {
 
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.waitForElementRemoval("submit");
   });
 
   it("should get saved settings", function () {
@@ -124,6 +125,7 @@ describe("settings form", function () {
     form.cephClusterKeyringUser.clear().sendKeys(initialSettings.ceph.keyringUser);
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.waitForElementRemoval("submit");
   });
 
   it("should get restored initial settings", function () {
@@ -144,5 +146,4 @@ describe("settings form", function () {
   afterAll(function () {
     console.log("settings -> settings_crud.e2e.js");
   });
-
 });
