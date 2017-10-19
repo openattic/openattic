@@ -23,9 +23,12 @@ Some general recommendations for making changes and for documenting and
 tracking them:
 
 * New Python code should adhere to the `Style Guide for Python Code
-  <https://www.python.org/dev/peps/pep-0008/>`_ (PEP 8). Use the ``flake8``
-  tool to verify that your changes don't violate this style before comitting
-  your modifications.
+  <https://www.python.org/dev/peps/pep-0008/>`_ (PEP 8) with the exception of
+  using 100 instead of 80 characters per line. Use the ``flake8``
+  tool to verify that your changes don't violate this style before committing
+  your modifications. Also, please have a look at the `Django coding style guides
+  <https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/>`_
+  as a reference.
 
 * Existing code can be refactored to adhere to PEP 8, if you feel like it.
   However, such style changes must be committed separately from other code
