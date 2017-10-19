@@ -1,15 +1,11 @@
 {
   "plugins": [
-    "protractor",
-    "jasmine"
+    "protractor"
   ],
   "env": {
-    "protractor": true,
-    "es6": true,
-    "jasmine": true
+    "protractor": true
   },
   "parserOptions": {
-    "ecmaVersion": 6,
     "sourceType": "script"
   },
   "rules": {
