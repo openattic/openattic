@@ -16,8 +16,8 @@ import logging
 import sys
 
 from configobj import ConfigObj
-
 from utilities import set_globals_from_file
+from rest_framework import ISO_8601
 
 PROJECT_ROOT = None
 PROJECT_URL = '/openattic'
@@ -78,6 +78,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50,  # Setting required by DRF 3. Set to 50 to prevent dropdown inputs from being
     # truncated, which don't handle pagination.
     'URL_FIELD_NAME': 'url',
+    'DATETIME_FORMAT': ISO_8601
 }
 
 
