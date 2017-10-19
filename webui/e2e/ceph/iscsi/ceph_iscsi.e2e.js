@@ -13,7 +13,7 @@ describe("ceph iscsi", function () {
 
   beforeAll(function () {
     helpers.login();
-    element(by.css(".tc_menuitem_ceph_iscsi")).click();
+    helpers.setLocation("ceph/iscsi");
     table.removeTargetIfExists("iqn.2016-06.org.openattic.test:storage:disk.tc-");
     table.removeTargetIfExists("iqn.2016-06.org.openattic.test:storage:disk.tc-");
     table.removeTargetIfExists("iqn.2016-06.org.openattic.test:storage:disk.tc-");
@@ -27,11 +27,9 @@ describe("ceph iscsi", function () {
   it("should check the ceph iSCSI add target url", function () {
     table.addTarget();
     helpers.checkLocation("ceph/.*/iscsi/add");
-    form.backButton.click();
   });
 
   it("should add a target", function () {
-    table.addTarget();
     form.targetIdInput.clear().sendKeys("iqn.2016-06.org.openattic.test:storage:disk.tc-add");
     expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-add");
     form.addPortal(0);
@@ -71,11 +69,9 @@ describe("ceph iscsi", function () {
   it("should check the ceph iSCSI edit target url", function () {
     table.editTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-add");
     helpers.checkLocation("ceph/.*/iscsi/edit/iqn.2016-06.org.openattic.test:storage:disk.tc-add");
-    form.backButton.click();
   });
 
   it("should edit target", function () {
-    table.editTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-add");
     form.targetIdInput.clear().sendKeys("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     expect(form.submitButton.isEnabled()).toBe(true);
@@ -98,11 +94,9 @@ describe("ceph iscsi", function () {
   it("should check the ceph iSCSI clone target url", function () {
     table.cloneTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     helpers.checkLocation("ceph/.*/iscsi/clone/iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    form.backButton.click();
   });
 
   it("should clone target", function () {
-    table.cloneTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     form.targetIdInput.clear().sendKeys("iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
     expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
     expect(form.submitButton.isEnabled()).toBe(true);
@@ -135,10 +129,6 @@ describe("ceph iscsi", function () {
   it("should remove target", function () {
     table.removeTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     table.removeTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
-  });
-
-  afterEach(function () {
-    table.filterInput.clear();
   });
 
   afterAll(function () {
