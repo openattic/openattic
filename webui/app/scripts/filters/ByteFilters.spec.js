@@ -1,8 +1,3 @@
-const angular = require("angular");
-require("angular-mocks");
-
-require("../../app");
-
 describe("byteFilter", () => {
   let $filter;
   beforeEach(angular.mock.module("openattic"));
@@ -10,7 +5,7 @@ describe("byteFilter", () => {
     $filter = _$filter_;
   }));
 
-  it ("should convert bytes into human readable formats", () => {
+  it("should convert bytes into human readable formats", () => {
     expect($filter("bytes")(Math.pow(1024, 0))).toBe("1.00 B");
     expect($filter("bytes")(Math.pow(1024, 1))).toBe("1.00 KiB");
     expect($filter("bytes")(Math.pow(1024, 2))).toBe("1.00 MiB");
@@ -23,7 +18,7 @@ describe("byteFilter", () => {
     expect($filter("bytes")(Math.pow(1024, 9))).toBe("1024.00 YiB");
   });
 
-  it ("should use a defined input unit as number", () => {
+  it("should use a defined input unit as number", () => {
     expect($filter("bytes")(1, 0)).toBe("1.00 B");
     expect($filter("bytes")(1, 1)).toBe("1.00 KiB");
     expect($filter("bytes")(1, 2)).toBe("1.00 MiB");
@@ -36,7 +31,7 @@ describe("byteFilter", () => {
     expect($filter("bytes")(1, 9)).toBe("1024.00 YiB");
   });
 
-  it ("should use a defined input unit as string", () => {
+  it("should use a defined input unit as string", () => {
     expect($filter("bytes")(1, "B")).toBe("1.00 B");
     expect($filter("bytes")(1, "KiB")).toBe("1.00 KiB");
     expect($filter("bytes")(1, "MiB")).toBe("1.00 MiB");
@@ -48,7 +43,7 @@ describe("byteFilter", () => {
     expect($filter("bytes")(1, "YiB")).toBe("1.00 YiB");
   });
 
-  it ("should use a defined precision", () => {
+  it("should use a defined precision", () => {
     expect($filter("bytes")(1.456456, 3, 0)).toBe("1 GiB");
     expect($filter("bytes")(1.456456, 3, 1)).toBe("1.5 GiB");
     expect($filter("bytes")(1.456456, 3, 2)).toBe("1.46 GiB");
@@ -59,7 +54,7 @@ describe("byteFilter", () => {
     expect($filter("bytes")(1.456456, 3, 7)).toBe("1.4564560 GiB");
   });
 
-  it ("should have a defined output unit", () => {
+  it("should have a defined output unit", () => {
     expect($filter("bytes")(1, 0, 5, 1)).toBe("0.00098 KiB");
     expect($filter("bytes")(1, 1, 0, 0)).toBe("1024 B");
     expect($filter("bytes")(1, 2, 0, 1)).toBe("1024 KiB");
@@ -72,7 +67,7 @@ describe("byteFilter", () => {
     expect($filter("bytes")(1, 9, 0, 9)).toBe("1 undefined"); // Because the unit not in the list
   });
 
-  it ("should have no unit appended", () => {
+  it("should have no unit appended", () => {
     expect($filter("bytes")(1, 3, 0, 2, false)).toBe("1024");
     expect($filter("bytes")(1.456456, 3, 7, undefined, false)).toBe("1.4564560");
     expect($filter("bytes")(1, 0, 5, 1, false)).toBe("0.00098");
