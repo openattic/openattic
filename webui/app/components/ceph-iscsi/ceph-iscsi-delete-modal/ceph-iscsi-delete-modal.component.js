@@ -30,38 +30,44 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiDeleteModal", {
+class CephIscsiDeleteModal {
+  constructor ($q, cephIscsiService) {
+    this.$q = $q;
+    this.cephIscsiService = cephIscsiService;
+
+  }
+
+  delete () {
+    return this.$q((resolve, reject) => {
+      let targetIds = [];
+      this.resolve.iscsiTargetSelection.forEach((isciTarget) => {
+        targetIds.push(isciTarget.targetId);
+      });
+      this.cephIscsiService.bulk_delete({
+        fsid: this.resolve.fsid,
+        targetIds: targetIds
+      })
+        .$promise
+        .then(() => {
+          resolve();
+          this.modalInstance.close("deleted");
+        }, () => {
+          reject();
+        });
+    });
+  };
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  };
+
+}
+
+export default {
   template: require("./ceph-iscsi-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function ($q, cephIscsiService) {
-    var self = this;
-
-    self.delete = function () {
-      return $q(function (resolve, reject) {
-        var targetIds = [];
-        self.resolve.iscsiTargetSelection.forEach(function (isciTarget) {
-          targetIds.push(isciTarget.targetId);
-        });
-        cephIscsiService.bulk_delete({
-          fsid: self.resolve.fsid,
-          targetIds: targetIds
-        })
-          .$promise
-          .then(function () {
-            resolve();
-            self.modalInstance.close("deleted");
-          }, function () {
-            reject();
-          });
-      });
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-    };
-  }
-});
+  controller: CephIscsiDeleteModal
+};

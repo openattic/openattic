@@ -30,44 +30,45 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiFormImageSettingsModal", {
+class CephIscsiFormImageSettingsModal {
+  constructor (cephIscsiImageAdvangedSettings) {
+    this.image = this.resolve.image;
+    this.cephIscsiImageAdvangedSettings = cephIscsiImageAdvangedSettings;
+
+    this.settings = angular.copy(this.image.settings);
+
+    this.advancedSettingsEnabled = cephIscsiImageAdvangedSettings.some((value) => {
+      return this.settings.hasOwnProperty(value.property);
+    });
+  }
+
+  confirm () {
+    angular.forEach(this.settings, (value, key) => {
+      if (value === "" || value === null) {
+        delete this.settings[key];
+      } else if (key === "retry_errors" && angular.isString(this.settings[key])) {
+        this.settings[key] = angular.fromJson("[" + value + "]");
+      }
+    });
+    if (!this.advancedSettingsEnabled) {
+      angular.forEach(this.cephIscsiImageAdvangedSettings, (value) => {
+        delete this.settings[value.property];
+      });
+    }
+    this.image.settings = this.settings;
+    this.modalInstance.close("confirmed");
+  };
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  };
+}
+
+export default {
   template: require("./ceph-iscsi-form-image-settings-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function (cephIscsiImageAdvangedSettings) {
-    var self = this;
-
-    self.image = self.resolve.image;
-    self.cephIscsiImageAdvangedSettings = cephIscsiImageAdvangedSettings;
-
-    self.settings = angular.copy(self.image.settings);
-
-    self.advancedSettingsEnabled = cephIscsiImageAdvangedSettings.some(function (value) {
-      return self.settings.hasOwnProperty(value.property);
-    });
-
-    self.confirm = function () {
-      angular.forEach(self.settings, function (value, key) {
-        if (value === "" || value === null) {
-          delete self.settings[key];
-        } else if (key === "retry_errors" && angular.isString(self.settings[key])) {
-          self.settings[key] = angular.fromJson("[" + value + "]");
-        }
-      });
-      if (!self.advancedSettingsEnabled) {
-        angular.forEach(cephIscsiImageAdvangedSettings, function (value) {
-          delete self.settings[value.property];
-        });
-      }
-      self.image.settings = self.settings;
-      self.modalInstance.close("confirmed");
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-    };
-  }
-});
+  controller: CephIscsiFormImageSettingsModal
+};

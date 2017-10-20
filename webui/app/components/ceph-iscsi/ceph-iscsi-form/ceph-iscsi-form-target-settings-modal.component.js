@@ -30,34 +30,34 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiFormTargetSettingsModal", {
+class CephIscsiFormTargetSettingsModal {
+  constructor (cephIscsiTargetAdvangedSettings) {
+    this.model = this.resolve.model;
+    this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
+    this.targetSettings = angular.copy(this.model.targetSettings);
+  }
+
+  confirm () {
+    angular.forEach(this.targetSettings, (value, key) => {
+      if (value === "" || value === null) {
+        delete this.targetSettings[key];
+      }
+    });
+    this.model.targetSettings = this.targetSettings;
+    this.modalInstance.close("confirmed");
+  };
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  };
+}
+
+export default {
   template: require("./ceph-iscsi-form-target-settings-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function (cephIscsiTargetAdvangedSettings) {
-    var self = this;
+  controller:CephIscsiFormTargetSettingsModal
+};
 
-    self.model = self.resolve.model;
-    self.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
-
-    self.targetSettings = angular.copy(self.model.targetSettings);
-
-    self.confirm = function () {
-      angular.forEach(self.targetSettings, function (value, key) {
-        if (value === "" || value === null) {
-          delete self.targetSettings[key];
-        }
-      });
-      self.model.targetSettings = self.targetSettings;
-      self.modalInstance.close("confirmed");
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-    };
-
-  }
-});
