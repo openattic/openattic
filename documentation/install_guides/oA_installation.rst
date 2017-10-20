@@ -94,7 +94,7 @@ For openSUSE Leap 42.3 run the following as root::
   # zypper refresh
 
 .. note:: 
-  If you're interested to test the latest state of the master branch (the master branch is our development branch) 
+  If you're interested in testing the latest state of the master branch (which is our development branch) 
   please add the following repositorys to your system:
 
   # zypper addrepo https://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
