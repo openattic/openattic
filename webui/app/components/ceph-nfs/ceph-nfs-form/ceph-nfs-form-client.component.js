@@ -44,14 +44,14 @@ class CephNfsFormClient {
       let clientsInputs = jQuery("#clients input");
       clientsInputs[clientsInputs.length - 1].focus();
     });
-  };
+  }
 
   getNoAccessTypeDescr (clientBlock) {
     if (!clientBlock.accessType && this.accessType) {
       return this.accessType + " (inherited from global config)";
     }
     return "-- Select the access type --";
-  };
+  }
 
   getAccessTypeHelp (accessType) {
     let accessTypeItem = this.cephNfsAccessType.find((currentAccessTypeItem) => {
@@ -60,18 +60,18 @@ class CephNfsFormClient {
       }
     });
     return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
-  };
+  }
 
   getNoSquashDescr (clientBlock) {
     if (!clientBlock.squash && this.squash) {
       return this.squash + " (inherited from global config)";
     }
     return "-- Select what kind of user id squashing is performed --";
-  };
+  }
 
   removeClientBlock (index) {
     this.clientBlocks.splice(index, 1);
-  };
+  }
 
   addClientBlock () {
     this.clientBlocks.push({
@@ -82,7 +82,7 @@ class CephNfsFormClient {
     this.$timeout(() => {
       jQuery("#clients" + (this.clientBlocks.length - 1)).focus();
     });
-  };
+  }
 }
 
 export default {

@@ -90,7 +90,7 @@ class CephRbdList {
 
   onClusterLoad (cluster) {
     this.cluster = cluster;
-  };
+  }
 
   getRbdList () {
     if (this.cluster.results.length > 0 && this.registry.selectedCluster) {
@@ -151,7 +151,7 @@ class CephRbdList {
           this.error = error;
         });
     }
-  };
+  }
 
   onSelectionChange (selection) {
     this.selection = selection;
@@ -172,13 +172,13 @@ class CephRbdList {
       this.oaTabSetService.changeTab(this.$state.current.name, this.tabData,
         this.tabConfig, selection);
     }
-  };
+  }
 
   addAction () {
     this.$state.go("cephRbds-add", {
       fsid: this.registry.selectedCluster.fsid
     });
-  };
+  }
 
   deleteAction () {
     if (!this.hasSelection && !this.multiSelection) {
@@ -200,7 +200,7 @@ class CephRbdList {
     modalInstance.result.then(() => {
       this.filterConfig.refresh = new Date();
     });
-  };
+  }
 
 }
 

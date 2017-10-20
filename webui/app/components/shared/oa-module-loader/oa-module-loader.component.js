@@ -231,22 +231,21 @@ class OaModuleLoader {
         available: true
       };
     }
-  };
+  }
 
   getErrorTitle (reason) {
     if (angular.isDefined(this.reasons[reason])) {
       return this.reasons[reason].title;
     }
     return "Error";
-  };
+  }
 
   getErrorTemplate (reason) {
     if (angular.isDefined(this.reasons[reason])) {
       return "components/shared/oa-module-loader/reason-" + reason + "-" + this.reasons[reason].template + ".html";
     }
     return "components/shared/oa-module-loader/reason-default.html";
-  };
-
+  }
 }
 
 export default {
@@ -257,5 +256,4 @@ export default {
   },
   transclude: true,
   controller: OaModuleLoader
-
 };

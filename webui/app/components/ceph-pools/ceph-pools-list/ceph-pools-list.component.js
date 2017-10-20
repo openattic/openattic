@@ -104,11 +104,11 @@ class CephPoolsList {
       pool.showApps = pool.application_metadata.join(", ");
     });
     return res;
-  };
+  }
 
   onClusterLoad (cluster) {
     this.cluster = cluster;
-  };
+  }
 
   getPoolList () {
     if (angular.isObject(this.cluster) && this.cluster.results &&
@@ -137,7 +137,7 @@ class CephPoolsList {
           this.error = error;
         });
     }
-  };
+  }
 
   onSelectionChange (selection) {
     this.selection = selection;
@@ -162,20 +162,20 @@ class CephPoolsList {
           this.tabConfig, selection);
       }
     }
-  };
+  }
 
   addAction () {
     this.$state.go("ceph-pools-add", {
       fsid: this.registry.selectedCluster.fsid
     });
-  };
+  }
 
   editAction () {
     this.$state.go("ceph-pools-edit", {
       fsid: this.selection.item.cluster,
       poolId: this.selection.item.id
     });
-  };
+  }
 
   deleteAction () {
     if (!this.hasSelection && !this.multiSelection) {
@@ -194,7 +194,7 @@ class CephPoolsList {
     modalInstance.result.then(() => {
       this.filterConfig.refresh = new Date();
     });
-  };
+  }
 }
 
 export default{

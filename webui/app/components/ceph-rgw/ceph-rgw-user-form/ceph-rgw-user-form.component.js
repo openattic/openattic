@@ -698,7 +698,7 @@ class CephRgwUserForm {
     // Finally remove the subuser itself.
     this.user.subusers.splice(index, 1);
     this._markFormAsDirty();
-  };
+  }
 
   addViewS3Key (index) {
     let modalInstance = this._showModalDialog("s3key", index);

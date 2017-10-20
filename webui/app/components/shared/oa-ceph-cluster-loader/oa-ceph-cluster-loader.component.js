@@ -44,7 +44,7 @@ class OaCephClusterLoader {
 
   $onInit () {
     this.loadCluster();
-  };
+  }
 
   loadCluster () {
     this.loading = true;
@@ -65,12 +65,12 @@ class OaCephClusterLoader {
       }).finally(() => {
         this.loading = false;
       });
-  };
+  }
 
   onClusterChange () {
   // Reload the current state to apply the newly selected cluster.
     this.$state.reload();
-  };
+  }
 }
 
 export default {
