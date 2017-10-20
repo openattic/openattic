@@ -49,7 +49,8 @@ class SimpleDatabaseUpgrade(object):
             self.db_content = self.read_from_file()
         except Exception:
             try:
-                self.db_content = run_in_external_process(self.get_all_users_and_prefs)
+                self.db_content = run_in_external_process(self.get_all_users_and_prefs,
+                                                          'get all users and prefs')
             except Exception:
                 pass
             if self.db_content:

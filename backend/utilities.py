@@ -131,7 +131,7 @@ def is_executable_installed(executable):
     return any([path.isfile(path.join(root, executable)) for root in ['/sbin', '/usr/sbin']])
 
 
-def run_in_external_process(func, timeout=30):
+def run_in_external_process(func, cmd_name, timeout=30):
     """
     Runs `func` in an external process. Exceptions and return values are forwarded
 
@@ -165,8 +165,8 @@ def run_in_external_process(func, timeout=30):
             from exception import ExternalCommandError
 
             p.terminate()
-            raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
-                                       '({} sec).'.format(p.name, p.pid, timeout))
+            raise ExternalCommandError(
+                'Command \'{}\' terminated because of timeout ({} sec).'.format(cmd_name, timeout))
 
 
 def set_globals_from_file(my_globals, file_name):

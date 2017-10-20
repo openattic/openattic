@@ -300,7 +300,7 @@ class CheckCephCofigurationView(APIView):
                 msg = 'Connection Error: {}'.format(str(e))
                 return {'success': False, 'message': msg}
         try:
-            return Response(run_in_external_process(do_connect))
+            return Response(run_in_external_process(do_connect, 'cluster connection test'))
         except ExternalCommandError:
             logger.exception('run_in_external_process failed.')
             return Response({'success': False, 'message': 'Failed to connect to Ceph'})

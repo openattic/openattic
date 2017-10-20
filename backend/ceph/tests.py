@@ -655,7 +655,7 @@ class OsdPoolDeleteTest(TestCase):
     @mock.patch('ceph.librados.call_librados')
     def test_delete_allowed(self, call_librados_mock):
         client_mock = mock.MagicMock(spec=ceph.librados.Client)
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
         api = ceph.librados.MonApi('fsid')
         api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
         self.assertTrue(client_mock.mon_command.called)
@@ -666,7 +666,7 @@ class OsdPoolDeleteTest(TestCase):
     @mock.patch('ceph.librados.call_librados')
     def test_delete_forbidden(self, call_librados_mock):
         client_mock = mock.MagicMock(spec=ceph.librados.Client)
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
 
         client_mock.mon_command.side_effect = [
             ceph.librados.ExternalCommandError('mon_allow_pool_delete', cmd="cmd", code=EPERM),
@@ -873,7 +873,7 @@ class StatusTestCase(TestCase):
     @mock.patch('ceph.status.ClusterConf')
     def test_api_not_connected(self, ClusterConf_mock, call_librados_mock):
         client_mock = mock.Mock(**{'connected.return_value': False})
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
         ClusterConf_mock.from_fsid.return_value.name = 'name'
         with self.assertRaises(UnavailableModule):
             ceph.status.check_ceph_api('fsid')
@@ -882,7 +882,7 @@ class StatusTestCase(TestCase):
     @mock.patch('ceph.status.ClusterConf')
     def test_api_connected(self, ClusterConf_mock, call_librados_mock):
         client_mock = mock.Mock(**{'connected.return_value': True})
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
         ClusterConf_mock.from_fsid.return_value.name = 'name'
         self.assertIsNone(ceph.status.check_ceph_api('fsid'))
 
