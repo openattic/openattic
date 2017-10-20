@@ -3,8 +3,8 @@
   <oa-loading-panel message="Settings are loading..."
                     ng-show="!$ctrl.error && !$ctrl.model.$resolved">
   </oa-loading-panel>
-  <oa-error-panel message="Setting could not be loaded."
-                  ng-if="$ctrl.error">
+  <oa-error-panel ng-if="$ctrl.error">
+    Setting could not be loaded.
   </oa-error-panel>
 
   <form ng-show="!$ctrl.error && $ctrl.model.$resolved"

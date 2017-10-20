@@ -28,18 +28,22 @@ Added
 * WebUI: Usage of "unsaved changes" dialog on iSCSI form (OP-2254)
 * WebUI: Add HTML linter with a few new rules (OP-2544)
 * WebUI: Add fast-diff help text used in RBD form (OP-2767)
+* Documentation: Added our line length PEP-8 exception to the backend
+  contributing guidelines (OP-823)
 
 Changed
 ~~~~~~~
-
 * Backend: Cleaned up pep8 warnings of ceph app (OP-1502)
 * Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
 * Backend: Cleaned up pep8 warnings of rest app (OP-1515)
 * Backend: Cleaned up pep8 warnings of systemd app (OP-1518)
+* WebUI: Display dates in locale date format. All Django DateTimeFields will
+  be returned as ISO 8601 (OP-591)
 * WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
 * WebUI: Submit buttons should be enabled on invalid forms (OP-2736)
 * WebUI/Backend: Salt-API settings should be optional (OP-2722)
 * WebUI: Prevent modal from closing when clicking on the backdrop (OP-2771)
+* WebUI/QA: Refactored unit test setup (OP-2827)
 * WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
   (OP-2725)
 * WebUI: Don't allow performing a delete action on buckets shared via
@@ -53,20 +57,36 @@ Changed
 * WebUI: Migration of Ceph Nodes controllers to components (OP-2398)
 * WebUI: Convert Shared module to ES6 (OP-2532)
 * WebUI: Unify Grafana and Widgets in a single Dashboard page (2754)
+* WebUI: Select the NFS Host automatically, if only one is available (OP-2711)
+* WebUI/QA: Optimize "ceph_pool_creation" e2e test suite (OP-2812)
+* WebUI: Guide user through RBD creation for iSCSI (OP-2181)
+* WebUI: Migration of Ceph RGW controllers to components (OP-2397)
+* WebUI: Migration of Auth controllers to components (OP-2801)
+* WebUI: Convert Settings components to ES6 (OP-2806)
+* WebUI: Convert Grafana components to ES6 (OP-2805)
+* WebUI: Convert Ceph RBD components to ES6 (OP-2803)
+* WebUI: Convert iSCSI components to ES6 (OP-2802)
 
 Fixed
 ~~~~~
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
 * Backend: The currently logged in user can't delete himself anymore (OP-2738)
+* Backend: Fixed `CephCluster` to return the same `keyring_candidates` twice
+  (OP-2782)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* Development: Lint unit test correctly (OP-2828)
 * WebUI: Allow users to type in any size into the RBD form (OP-2730)
 * WebUI/QA: Prevent random failure in "2 failed task" test (OP-2735)
 * WebUI/QA: Fix random NFS e2e test failures (OP-2762)
+* WebUI/QA: Fix style issues in protractor.conf.js (OP-2793)
 * WebUI/QA: Prevent random failures in task queue dialog suite (OP-2779)
+* WebUI: Fix the indentation in pool list and form template (OP-2829)
 * WebUI: Fix "use max" links in RBD form (OP-2727)
-* WebUI/QA: Fix random iSCSI e2e test failures (OP-2807)
+* WebUI/QA: Fix random iSCSI e2e test failures (OP-2807, OP-2830)
+* WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
+* WebUI: Fix RGW name validation (OP-2825)
 
 Removed
 ~~~~~~~

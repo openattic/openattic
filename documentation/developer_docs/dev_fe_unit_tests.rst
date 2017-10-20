@@ -14,6 +14,15 @@ same directory as the file being tested::
   |   '-- oa-sample.service.js
   |   '-- oa-sample.service.specjs
 
+Writing Unit Tests
+------------------
+
+Use "angular.mock.module" instead of "module" seen in most examples.
+The reason behind that is the usage of "webpack". It has a assigned module
+variable which is a constant this way it can't be overwritten by the import
+of "angular-mocks". To be consistent call other mock methods via
+"angular.mock".
+
 Run Unit Tests
 --------------
 
@@ -21,6 +30,11 @@ To run |oA| Web UI unit tests, you should guarantee that your dependencies are u
 (``$ npm install``), and perform the following command::
 
     $ npm test
+
+If you are a developer and want to run the tests on each change automatically
+use this command::
+
+    $ npm run devTest
 
 Coverage Report
 ---------------

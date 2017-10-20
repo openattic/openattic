@@ -3,6 +3,13 @@
     "angular",
     "./webpack.eslintrc.json"
   ],
+  "plugins": [
+    "jasmine"
+  ],
+  "env": {
+    "es6": true,
+    "jasmine": true
+  },
   "parserOptions": {
     "ecmaVersion": 6
   },

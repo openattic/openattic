@@ -1,7 +1,7 @@
 "use strict";
 
-var CephRgwCommons = function () {
-  var helpers = require("../../common.js");
+let CephRgwCommons = function () {
+  let helpers = require("../../common.js");
 
   this.submitBtn = element(by.css(".tc_submitButton"));
   this.backBtn = element(by.css(".tc_backButton"));

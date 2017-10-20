@@ -32,7 +32,7 @@
 
 import "../components/apidecorator/module";
 import "../components/apirecorder/module";
-import "../components/auth/module";
+import "../components/auth/auth.module";
 import "../components/dashboard/dashboard.module";
 import "../components/grafana/grafana.module";
 import "../components/navigation/module";

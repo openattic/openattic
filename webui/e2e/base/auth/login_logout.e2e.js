@@ -4,8 +4,8 @@ var helpers = require("../../common.js");
 
 describe("should test the login", function () {
 
-  var name = element(by.model("username"));
-  var passwd = element(by.model("password"));
+  var name = element(by.model("$ctrl.username"));
+  var passwd = element(by.model("$ctrl.password"));
   var nameRequired = element(by.css(".tc_usernameRequired"));
   var passwdRequired = element(by.css(".tc_passwdRequired"));
   var correctInput = element(by.css(".tc_correctInput"));
@@ -40,7 +40,7 @@ describe("should test the login", function () {
   });
 
   it("should have an password input field", function () {
-    expect(element(by.model("password")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.password")).isDisplayed()).toBe(true);
   });
 
   it("should show an error if user input field has no data", function () {

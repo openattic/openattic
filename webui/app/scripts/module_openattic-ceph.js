@@ -38,7 +38,7 @@ import "../components/ceph-nfs/ceph-nfs.module";
 import "../components/ceph-osd/ceph-osd.module";
 import "../components/ceph-pools/ceph-pools.module";
 import "../components/ceph-rbd/ceph-rbd.module";
-import "../components/ceph-rgw/module";
+import "../components/ceph-rgw/ceph-rgw.module";
 
 angular.module("openattic.ceph", [
   "openattic.cephCrushmap",

@@ -31,7 +31,6 @@
 "use strict";
 
 class CephRbdStripingModal {
-
   constructor (SizeParserService) {
     this.SizeParserService = SizeParserService;
   }
@@ -48,12 +47,11 @@ class CephRbdStripingModal {
   }
 }
 
-var app = angular.module("openattic.cephRbd");
-app.component("cephRbdStripingModal", {
+export default {
   template: require("./ceph-rbd-striping-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
   controller: CephRbdStripingModal
-});
+};

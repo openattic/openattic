@@ -5,8 +5,8 @@
                       ng-show="!$ctrl.error && !$ctrl.nfs.$resolved">
     </oa-loading-panel>
     <oa-error-panel title="Couldn't load NFS shares"
-                    message="NFS shares could not be loaded. Make sure that the ceph module is installed."
                     ng-if="$ctrl.error">
+      NFS shares could not be loaded. Make sure that the ceph module is installed.
     </oa-error-panel>
 
     <span ng-show="!$ctrl.error && $ctrl.nfs.results">

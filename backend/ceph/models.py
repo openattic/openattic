@@ -103,16 +103,15 @@ class CephCluster(NodbModel, RadosMixin):
 
     @staticmethod
     def get_all_objects(context, query):
-        result = []
-        for conf in ClusterConf.all_configs():
-            cluster = CephCluster(fsid=conf.fsid,
-                                  name=conf.name,
-                                  config_file_path=conf.file_path,
-                                  keyring_file_path=conf.keyring.file_name,
-                                  keyring_user=conf.keyring.user_name)
-            result.append(cluster)
+        return map(CephCluster.from_cluster_conf, ClusterConf.all_configs())
 
-        return result
+    @staticmethod
+    def from_cluster_conf(conf):
+        return CephCluster(fsid=conf.fsid,
+                           name=conf.name,
+                           config_file_path=conf.file_path,
+                           keyring_file_path=conf.keyring.file_name,
+                           keyring_user=conf.keyring.user_name)
 
     def clean(self):
         try:
@@ -124,7 +123,7 @@ class CephCluster(NodbModel, RadosMixin):
         if self.keyring_user not in keyring.available_user_names:
             raise ValidationError({'keyring_user': ["Unknown keyring user."]})
 
-    def save(self, update_fields=None, *args, **kwargs):
+    def save(self, update_fields=None, force_update=False, *args, **kwargs):
         """
         This method implements three purposes.
 
@@ -134,7 +133,7 @@ class CephCluster(NodbModel, RadosMixin):
         """
         insert = self._state.adding  # there seems to be no id field.
 
-        if insert:
+        if insert and not force_update:
             raise ValidationError('Cannot create Ceph cluster.')
 
         diff, original = self.get_modified_fields(update_fields=update_fields)

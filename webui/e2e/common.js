@@ -145,8 +145,8 @@
       if (browse) {
         browser.get(helper.getUrl("login"));
       }
-      element.all(by.model("username")).clear().sendKeys(username);
-      element.all(by.model("password")).clear().sendKeys(password);
+      element.all(by.model("$ctrl.username")).clear().sendKeys(username);
+      element.all(by.model("$ctrl.password")).clear().sendKeys(password);
       element.all(by.css('input[type="submit"]')).click();
     },
 
@@ -183,6 +183,19 @@
 
       element(by.css(".tc_entries_dropdown")).click();
       element(by.css(".tc_entries_10")).click();
+    },
+
+    waitForElement (elem) {
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.presenceOf(elem), 5000, "Element taking too long to appear in the DOM");
+    },
+
+    waitForElementRemoval (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.stalenessOf(elem), 5000, "Element taking too long to disappear in the DOM");
     }
   };
   module.exports = helper;

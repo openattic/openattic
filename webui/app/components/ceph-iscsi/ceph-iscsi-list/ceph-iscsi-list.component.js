@@ -30,23 +30,28 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.component("cephIscsiList", {
-  template: require("./ceph-iscsi-list.component.html"),
-  controller: function ($scope, $state, $filter, $timeout, $uibModal, registryService,
-      oaTabSetService, cephIscsiService, cephIscsiImageOptionalSettings, cephIscsiImageAdvangedSettings,
-      cephIscsiTargetAdvangedSettings, Notification) {
+class CephIscsiList {
+  constructor ($scope, $state, $filter, $uibModal, registryService,
+      oaTabSetService, cephIscsiService, cephIscsiImageOptionalSettings,
+      cephIscsiImageAdvangedSettings, cephIscsiTargetAdvangedSettings,
+      Notification) {
+    this.cephIscsiService = cephIscsiService;
+    this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
+    this.$state = $state;
+    this.$uibModal = $uibModal;
+    this.$filter = $filter;
+    this.registry = registryService;
+    this.oaTabSetService = oaTabSetService;
+    this.Notification = Notification;
 
-    let self = this;
+    this.cluster = undefined;
+    this.iscsi = {};
+    this.error = false;
 
-    self.registry = registryService;
-    self.cluster = undefined;
-    self.iscsi = {};
-    self.error = false;
+    this.allIscsiImageSettings =
+      cephIscsiImageOptionalSettings.concat(cephIscsiImageAdvangedSettings);
 
-    let allIscsiImageSettings = cephIscsiImageOptionalSettings.concat(cephIscsiImageAdvangedSettings);
-
-    self.filterConfig = {
+    this.filterConfig = {
       page     : 0,
       entries  : 10,
       search   : "",
@@ -54,109 +59,14 @@ app.component("cephIscsiList", {
       sortorder: null
     };
 
-    self.selection = {};
+    this.selection = {};
 
-    self.deployed = {
+    this.deployed = {
       $resolved: false,
       deployed: undefined
     };
 
-    self.deployIscsi = function () {
-      self.deployed.$resolved = false;
-      cephIscsiService
-        .iscsideploy({
-          fsid: self.registry.selectedCluster.fsid
-        })
-        .$promise
-        .then(function (res) {
-          if (res.result) {
-            Notification.success({
-              msg: "iSCSI targets started successfully"
-            });
-            res.status = true;
-          } else {
-            Notification.error({
-              msg: "Failed to start iSCSI targets"
-            });
-            res.status = false;
-          }
-          self.deployed = res;
-        });
-    };
-
-    self.undeployIscsi = function () {
-      self.deployed.$resolved = false;
-      cephIscsiService
-        .iscsiundeploy({
-          fsid: self.registry.selectedCluster.fsid
-        })
-        .$promise
-        .then(function (res) {
-          if (res.result) {
-            Notification.success({
-              msg: "iSCSI targets stopped successfully"
-            });
-            res.status = false;
-          } else {
-            Notification.error({
-              msg: "Failed to stop iSCSI targets"
-            });
-            res.status = true;
-          }
-          self.deployed = res;
-        });
-    };
-
-    self.onClusterLoad = function (cluster) {
-      self.cluster = cluster;
-    };
-
-    self.getIscsiList = function () {
-      if (angular.isObject(self.cluster) && self.cluster.results &&
-          self.cluster.results.length > 0 && self.registry.selectedCluster) {
-        var obj = $filter("filter")(self.cluster.results, {
-          fsid: self.registry.selectedCluster.fsid
-        }, true);
-        if (obj.length === 0) {
-          self.registry.selectedCluster = self.cluster.results[0];
-        }
-
-        self.iscsi = {};
-        self.error = false;
-
-        cephIscsiService
-          .get({
-            fsid: self.registry.selectedCluster.fsid,
-            page: self.filterConfig.page + 1,
-            pageSize: self.filterConfig.entries,
-            search: self.filterConfig.search,
-            ordering: (self.filterConfig.sortorder === "ASC" ? "" : "-") + self.filterConfig.sortfield
-          })
-          .$promise
-          .then(function (res) {
-            self.iscsi = res;
-            angular.forEach(self.iscsi.results, function (target) {
-              target.allIscsiImageSettings = allIscsiImageSettings;
-              target.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
-              target.fsid = self.registry.selectedCluster.fsid;
-            });
-          })
-          .catch(function (error) {
-            self.error = error;
-          });
-
-        cephIscsiService
-          .iscsistatus({
-            fsid: self.registry.selectedCluster.fsid
-          })
-          .$promise
-          .then(function (res) {
-            self.deployed = res;
-          });
-      }
-    };
-
-    self.tabData = {
+    this.tabData = {
       active: 0,
       tabs: {
         status: {
@@ -167,77 +77,176 @@ app.component("cephIscsiList", {
         }
       }
     };
-    self.tabConfig = {
+    this.tabConfig = {
       type: "cephIscsi",
       linkedBy: "id",
       jumpTo: "more"
     };
 
-    $scope.$watch("$ctrl.filterConfig", function (newValue, oldValue) {
+    $scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
       if (angular.equals(newValue, oldValue)) {
         return;
       }
-      self.getIscsiList();
+      this.getIscsiList();
     }, true);
 
-    self.onSelectionChange = function (selection) {
-      self.selection = selection;
-      var items = selection.items;
-
-      self.multiSelection = items && items.length > 1;
-      self.hasSelection = items && items.length === 1;
-      if (!items || items.length !== 1) {
-        $state.go("cephIscsi");
-        return;
-      }
-      if ($state.current.name === "cephIscsi") {
-        oaTabSetService.changeTab("cephIscsi.detail.details", self.tabData, self.tabConfig, selection);
-      } else {
-        oaTabSetService.changeTab($state.current.name, self.tabData, self.tabConfig, selection);
-      }
-    };
-
-    self.addAction = function () {
-      $state.go("cephIscsi-add", {
-        fsid: self.registry.selectedCluster.fsid
-      });
-    };
-
-    self.deleteAction = function () {
-      if (!self.hasSelection && !self.multiSelection) {
-        return;
-      }
-      var modalInstance = $uibModal.open({
-        windowTemplate: require("../../../templates/messagebox.html"),
-        component: "cephIscsiDeleteModal",
-        resolve: {
-          fsid: function () {
-            return self.registry.selectedCluster.fsid;
-          },
-          iscsiTargetSelection: function () {
-            return self.selection.items;
-          }
-        }
-      });
-
-      modalInstance.result.then(function () {
-        self.filterConfig.refresh = new Date();
-      });
-    };
-
-    self.editAction = function () {
-      $state.go("cephIscsi-edit", {
-        fsid: self.registry.selectedCluster.fsid,
-        targetId: self.selection.items[0].targetId
-      });
-    };
-
-    self.cloneAction = function () {
-      $state.go("cephIscsi-clone", {
-        fsid: self.registry.selectedCluster.fsid,
-        targetId: self.selection.items[0].targetId
-      });
-    };
-
   }
-});
+
+  deployIscsi () {
+    this.deployed.$resolved = false;
+    this.cephIscsiService
+      .iscsideploy({
+        fsid: this.registry.selectedCluster.fsid
+      })
+      .$promise
+      .then((res) => {
+        if (res.result) {
+          this.Notification.success({
+            msg: "iSCSI targets started successfully"
+          });
+          res.status = true;
+        } else {
+          this.Notification.error({
+            msg: "Failed to start iSCSI targets"
+          });
+          res.status = false;
+        }
+        this.deployed = res;
+      });
+  };
+
+  undeployIscsi () {
+    this.deployed.$resolved = false;
+    this.cephIscsiService
+      .iscsiundeploy({
+        fsid: this.registry.selectedCluster.fsid
+      })
+      .$promise
+      .then((res) => {
+        if (res.result) {
+          this.Notification.success({
+            msg: "iSCSI targets stopped successfully"
+          });
+          res.status = false;
+        } else {
+          this.Notification.error({
+            msg: "Failed to stop iSCSI targets"
+          });
+          res.status = true;
+        }
+        this.deployed = res;
+      });
+  };
+
+  onClusterLoad (cluster) {
+    this.cluster = cluster;
+  };
+
+  getIscsiList () {
+    if (angular.isObject(this.cluster) && this.cluster.results &&
+          this.cluster.results.length > 0 && this.registry.selectedCluster) {
+      var obj = this.$filter("filter")(this.cluster.results, {
+        fsid: this.registry.selectedCluster.fsid
+      }, true);
+      if (obj.length === 0) {
+        this.registry.selectedCluster = this.cluster.results[0];
+      }
+
+      this.iscsi = {};
+      this.error = false;
+
+      this.cephIscsiService
+        .get({
+          fsid: this.registry.selectedCluster.fsid,
+          page: this.filterConfig.page + 1,
+          pageSize: this.filterConfig.entries,
+          search: this.filterConfig.search,
+          ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") + this.filterConfig.sortfield
+        })
+        .$promise
+        .then((res) => {
+          this.iscsi = res;
+          angular.forEach(this.iscsi.results, (target) => {
+            target.allIscsiImageSettings = this.allIscsiImageSettings;
+            target.cephIscsiTargetAdvangedSettings = this.cephIscsiTargetAdvangedSettings;
+            target.fsid = this.registry.selectedCluster.fsid;
+          });
+        })
+        .catch((error) => {
+          this.error = error;
+        });
+
+      this.cephIscsiService
+        .iscsistatus({
+          fsid: this.registry.selectedCluster.fsid
+        })
+        .$promise
+        .then((res) => {
+          this.deployed = res;
+        });
+    }
+  };
+
+  onSelectionChange (selection) {
+    this.selection = selection;
+    var items = selection.items;
+
+    this.multiSelection = items && items.length > 1;
+    this.hasSelection = items && items.length === 1;
+    if (!items || items.length !== 1) {
+      this.$state.go("cephIscsi");
+      return;
+    }
+    if (this.$state.current.name === "cephIscsi") {
+      this.oaTabSetService.changeTab("cephIscsi.detail.details", this.tabData, this.tabConfig, selection);
+    } else {
+      this.oaTabSetService.changeTab(this.$state.current.name, this.tabData, this.tabConfig, selection);
+    }
+  };
+
+  addAction () {
+    this.$state.go("cephIscsi-add", {
+      fsid: this.registry.selectedCluster.fsid
+    });
+  };
+
+  deleteAction () {
+    if (!this.hasSelection && !this.multiSelection) {
+      return;
+    }
+    var modalInstance = this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephIscsiDeleteModal",
+      resolve: {
+        fsid: () => {
+          return this.registry.selectedCluster.fsid;
+        },
+        iscsiTargetSelection: () => {
+          return this.selection.items;
+        }
+      }
+    });
+
+    modalInstance.result.then(() => {
+      this.filterConfig.refresh = new Date();
+    });
+  };
+  editAction () {
+    this.$state.go("cephIscsi-edit", {
+      fsid: this.registry.selectedCluster.fsid,
+      targetId: this.selection.items[0].targetId
+    });
+  };
+
+  cloneAction () {
+    this.$state.go("cephIscsi-clone", {
+      fsid: this.registry.selectedCluster.fsid,
+      targetId: this.selection.items[0].targetId
+    });
+  };
+}
+
+export default {
+  template: require("./ceph-iscsi-list.component.html"),
+  controller: CephIscsiList
+};
