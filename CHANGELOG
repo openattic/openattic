@@ -86,6 +86,7 @@ Fixed
 * WebUI: Fix "use max" links in RBD form (OP-2727)
 * WebUI/QA: Fix random iSCSI e2e test failures (OP-2807, OP-2830)
 * WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
+* WebUI: Fix RGW name validation (OP-2825)
 
 Removed
 ~~~~~~~

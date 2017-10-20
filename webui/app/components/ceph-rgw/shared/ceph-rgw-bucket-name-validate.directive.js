@@ -49,7 +49,9 @@ app.directive("cephRgwBucketNameValidate", () => {
         if (ctrl.$isEmpty(value)) {
           return true;
         }
-        return value.length > 2;
+
+        let reg = /^[0-9A-Za-z][\w-\.]{2,254}$/;
+        return reg.test(value);
       };
     }
   };
