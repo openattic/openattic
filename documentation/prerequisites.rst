@@ -9,8 +9,8 @@ You need to make sure that your Linux distribution of choice supports the
 hardware you intend to use. Check the respective hardware compatibility lists
 or consult your hardware vendor for details.
 
-Availability
-------------
+Supported distributions
+-----------------------
 
 Installable packages of |oA| |version| are currently available for the following
 Linux distributions:
