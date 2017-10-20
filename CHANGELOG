@@ -80,6 +80,7 @@ Fixed
 * WebUI/QA: Fix random NFS e2e test failures (OP-2762)
 * WebUI/QA: Fix style issues in protractor.conf.js (OP-2793)
 * WebUI/QA: Prevent random failures in task queue dialog suite (OP-2779)
+* WebUI: Fix the indentation in pool list and form template (OP-2829)
 * WebUI: Fix "use max" links in RBD form (OP-2727)
 * WebUI/QA: Fix random iSCSI e2e test failures (OP-2807, OP-2830)
 * WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
