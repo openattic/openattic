@@ -195,7 +195,7 @@ class ClusterConf(object):
             except RuntimeError:
                 return None
 
-        keyrings = filter(None, map(keyring_or_none, keyrings))
+        keyrings = filter(None, map(keyring_or_none, set(keyrings)))
         return sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
     @property
@@ -283,6 +283,9 @@ class Keyring(object):
     def set_user_name(self, fsid, user_name):
         if self.user_name != user_name:
             _write_oa_setting('CEPH_KEYRING_USER_' + fsid.upper().replace('-', '_'), user_name)
+
+    def __repr__(self):
+        return "Keyring(file_name='{}', user_name='{}')".format(self.file_name, self.user_name)
 
 
 class Client(object):
