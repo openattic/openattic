@@ -82,6 +82,8 @@ Fixed
 * Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
 * Development: Lint unit test correctly (OP-2828)
 * WebUI: Allow users to type in any size into the RBD form (OP-2730)
+* WebUI/QA: RGW bucket "e2e-rgw-add" is not deleted after RGW suite
+  run (OP-2512)
 * WebUI/QA: Prevent random failure in "2 failed task" test (OP-2735)
 * WebUI/QA: Fix random NFS e2e test failures (OP-2762)
 * WebUI/QA: Fix style issues in protractor.conf.js (OP-2793)
