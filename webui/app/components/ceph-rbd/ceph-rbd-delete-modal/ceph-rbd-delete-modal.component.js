@@ -30,44 +30,50 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.component("cephRbdDeleteModal", {
+class CephRbdDeleteModal {
+  constructor (cephRbdService, $q, Notification) {
+    this.$q = $q;
+    this.Notification = Notification;
+    this.cephRbdService = cephRbdService;
+
+  }
+
+  delete () {
+    return this.$q((resolve, reject) => {
+      let requests = [];
+      this.resolve.rbdSelection.forEach((rbd) => {
+        let deferred = this.$q.defer();
+        this.cephRbdService.delete({
+          fsid: this.resolve.fsid,
+          pool: rbd.pool.name,
+          name: rbd.name
+        }, deferred.resolve, deferred.reject);
+        requests.push(deferred.promise);
+      });
+      this.$q.all(requests).then(() => {
+        resolve();
+        this.modalInstance.close("deleted");
+      }, () => {
+        reject();
+      });
+    });
+  };
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+
+    this.Notification.warning({
+      title: "Delete RBD",
+      msg: "Cancelled"
+    });
+  };
+}
+
+export default {
   template: require("./ceph-rbd-delete-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
-  controller: function (cephRbdService, $q, Notification) {
-    var self = this;
-
-    self.delete = function () {
-      return $q(function (resolve, reject) {
-        var requests = [];
-        self.resolve.rbdSelection.forEach(function (rbd) {
-          var deferred = $q.defer();
-          cephRbdService.delete({
-            fsid: self.resolve.fsid,
-            pool: rbd.pool.name,
-            name: rbd.name
-          }, deferred.resolve, deferred.reject);
-          requests.push(deferred.promise);
-        });
-        $q.all(requests).then(function () {
-          resolve();
-          self.modalInstance.close("deleted");
-        }, function () {
-          reject();
-        });
-      });
-    };
-
-    self.cancel = function () {
-      self.modalInstance.dismiss("cancel");
-
-      Notification.warning({
-        title: "Delete RBD",
-        msg: "Cancelled"
-      });
-    };
-  }
-});
+  controller: CephRbdDeleteModal
+};

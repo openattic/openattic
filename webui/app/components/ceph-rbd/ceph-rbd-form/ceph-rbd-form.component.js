@@ -30,24 +30,28 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.component("cephRbdForm", {
-  template: require("./ceph-rbd-form.component.html"),
-  bindings: {},
-  controller: function ($scope, $state, $stateParams, cephRbdService,
-      cephPoolsService, SizeParserService, $filter, Notification,
-      cephClusterService, cephRbdFeatures, $uibModal) {
-    var self = this;
+class CephRbdForm {
+  constructor ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
+      SizeParserService, $filter, Notification, cephClusterService,
+      cephRbdFeatures, $uibModal) {
+    this.$filter = $filter;
+    this.$scope = $scope;
+    this.$state = $state;
+    this.$uibModal = $uibModal;
+    this.Notification = Notification;
+    this.SizeParserService = SizeParserService;
+    this.cephPoolsService = cephPoolsService;
+    this.cephRbdService = cephRbdService;
 
-    self.submitted = false;
-    self.rbd = {
+    this.submitted = false;
+    this.rbd = {
       name: "",
       size: 0,
       pool: -1,
       obj_size: 4194304
     };
 
-    self.data = {
+    this.data = {
       cluster: null,
       pool: null,
       striping: {
@@ -92,390 +96,402 @@ app.component("cephRbdForm", {
       expert: false
     };
 
-    self.pools = {
+    this.pools = {
       replicated: [],
       erasure: []
     };
-    self.clusters = undefined;
+    this.clusters = undefined;
 
-    self.features = cephRbdFeatures;
+    this.features = cephRbdFeatures;
 
-    self.defaultFeatureValues = {};
-    angular.copy(self.data.features, self.defaultFeatureValues);
+    this.defaultFeatureValues = {};
+    angular.copy(this.data.features, this.defaultFeatureValues);
 
-    var deepBoxCheck = function (key, checked) {
-      angular.forEach(self.features, function (details, feature) {
-        if (details.requires === key) {
-          self.data.features[feature].disabled = !checked;
-          if (!checked) {
-            self.data.features[feature].checked = checked; // Always.
-            self.watchDataFeatures(feature);
-            deepBoxCheck(feature, checked);
-          }
-        }
-        if (details.excludes === key) {
-          self.data.features[feature].disabled = checked;
-        }
-      });
-    };
+    this.fsid = $stateParams.fsid;
+    this.fromState = $stateParams.fromState;
 
-    var featureFormUpdate = function (key) {
-      var checked = self.data.features[key].checked;
-      if (checked) {
-        var required = self.features[key].requires;
-        var excluded = self.features[key].excludes;
-        if (excluded && self.data.features[excluded].checked || required && !self.data.features[required].checked) {
-          self.data.features[key].checked = false;
-          return;
-        }
-      }
-      deepBoxCheck(key, checked);
-    };
-
-    self.watchDataFeatures = function (key) {
-      if (key === "stripingv2") {
-        self.sizeValidator();
-      }
-      var defaults = self.data.defaultFeatures;
-      if (!defaults) {
-        if (key) {
-          featureFormUpdate(key);
-        }
-        var noneSelected = Object.keys(self.data.features).every(function (feature) {
-          return !self.data.features[feature].checked;
-        });
-        $scope.rbdForm.$setValidity("noFeatureSelected", !noneSelected);
-      } else {
-        $scope.rbdForm.$setValidity("noFeatureSelected", defaults);
-      }
-    };
-
-    self.defaultFeatures = function () {
-      angular.copy(self.defaultFeatureValues, self.data.features);
-    };
-
-    self.getSizeInBytes = (size, jump) => {
-      if (!size) {
-        return Math.pow(2, 12);
-      }
-      if (size.match(/[+-]+/)) {
-        size = size.replace(/[+-]+/, "");
-      }
-      size = SizeParserService.parseFloat(size, "b", "k"); //default input size is KiB
-      var power = 0;
-      if (size !== null && size !== 0) {
-        power = Math.round(Math.log(size) / Math.log(2));
-        if (angular.isNumber(jump)) {
-          power += jump;
-        }
-      }
-      if (power < 12) {
-        size = Math.pow(2, 12); // 1 << 12; Set size to minimum of 4 KiB.
-      } else if (power > 25) {
-        size = Math.pow(2, 25); // 1 << 25; Set size to maximum of 32 MiB.
-      } else {
-        size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
-      }
-      return size;
-    };
-
-    self.updateObjSize = function (newSize, jump) {
-      self.setMutex("obj_size", newSize);
-      self.rbd.obj_size = newSize || self.getSizeInBytes(self.data.obj_size, jump);
-      let size = self.rbd.obj_size;
-      if (!$scope.rbdForm.stripingUnit) {
-        self.updateStripingUnit(size);
-      }
-      if (self.data.striping.unit > size) {
-        self.updateStripingUnit(size);
-      }
-      self.data.obj_size = $filter("bytes")(size);
-      self.sizeValidator();
-    };
-
-    self.updateStripingUnit = (newSize, jump) => {
-      self.setMutex("stripingUnit", newSize);
-      self.data.striping.unit = newSize || self.getSizeInBytes(self.data.striping.unitDisplayed, jump);
-      let unit = self.data.striping.unit;
-      if (unit > self.rbd.obj_size) {
-        self.updateObjSize(unit);
-      }
-      self.data.striping.unitDisplayed = $filter("bytes")(unit);
-      self.data.striping.unit = unit;
-    };
-
-    self.setMutex = (inputName, setLock) => {
-      if (!$scope.rbdForm[inputName]) {
-        return;
-      }
-      if (setLock) {
-        self.changedField = inputName;
-        $scope.rbdForm[inputName].$touched = false;
-        $scope.rbdForm[inputName].$untouched = true;
-      } else {
-        if (self.changedField === inputName) {
-          self.changedField = undefined;
-        }
-      }
-    };
-
-    self.stripingDescription = () => {
-      let message = "";
-      if (angular.isDefined(self.data.size)) {
-        let size = SizeParserService.parseFloat(self.data.size, "b");
-        self.sizeValidator(size);
-        const striping = self.data.striping;
-        if (self.data.size !== "-" &&
-            angular.isDefined(self.data.obj_size) && self.data.obj_size !== "0 B" &&
-            angular.isDefined(striping.unitDisplayed) && striping.unitDisplayed !== "0 B" &&
-            angular.isDefined(striping.count)) {
-          const stripeSize = striping.count * striping.unit;
-          const objectSetSize = striping.count * self.rbd.obj_size;
-          let maxSets = Math.ceil(size / objectSetSize);
-          let maxStripes = Math.ceil(size / stripeSize);
-          let isLastStripePartial = size % stripeSize !== 0;
-          let stripeSizeStr = $filter("bytes")(stripeSize);
-          let numCompleteStripes = isLastStripePartial ? (maxStripes - 1) : maxStripes;
-
-          message += `Each stripe has ${stripeSizeStr} spanned across ${striping.count} objects.`;
-          message += "<br>";
-          message += `The RBD can hold up to ${maxSets} `;
-          message += maxSets === 1 ? "object set" : "object sets";
-          message += ` (${numCompleteStripes} `;
-          message += numCompleteStripes === 1 ? "stripe" : "stripes";
-          message += isLastStripePartial ? " + 1 partial stripe" : "";
-          message += ").";
-        }
-      }
-      return message;
-    };
-
-    self.sizeChange = function (event, callback) {
-      if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
-        callback(undefined, 39 - event.keyCode);
-      } else if (event.keyCode === 187 || event.keyCode === 189) {
-        callback(undefined, 188 - event.keyCode);
-      }
-    };
-
-    self.useMaxSize = pool => {
-      self.data.size = $filter("bytes")(pool.max_avail - pool.num_bytes);
-      self.watchDataSize();
-    };
-
-    self.watchDataSize = () => {
-      if (self.data.size === "") {
-        return;
-      }
-      const size = SizeParserService.parseFloat(self.data.size, "b", "m"); //default input size is MiB
-      self.sizeValidator(size);
-      if (angular.isNumber(size)) {
-        if (size / self.data.obj_size < 1) {
-          self.data.size = $filter("bytes")(self.data.obj_size);
-        } else {
-          self.data.size = $filter("bytes")(size);
-        }
-      } else {
-        self.data.size = "";
-      }
-    };
-
-    self.sizeValidator = (size = SizeParserService.parseFloat(self.data.size, "b")) => {
-      let valid = angular.isNumber(size) && self.rbd.obj_size <= size;
-      if (self.data.features.stripingv2.checked &&
-          $scope.rbdForm.stripingCount &&
-          $scope.rbdForm.stripingCount.$valid &&
-          $scope.rbdForm.obj_size.$valid) {
-        valid = self.data.striping.count * self.rbd.obj_size <= size;
-      }
-      $scope.rbdForm.size.$setValidity("valid", valid);
-    };
-
-    var goToListView = function () {
-      $state.go(self.fromState, {
-        fsid: self.fsid
-      });
-    };
-
-    self.fsid = $stateParams.fsid;
-    self.fromState = $stateParams.fromState;
-
-    self.waitingClusterMsg = "Retrieving cluster list...";
+    this.waitingClusterMsg = "Retrieving cluster list...";
     cephClusterService.get()
       .$promise
-      .then(function (res) {
-        self.clusters = res.results;
-        self.waitingClusterMsg = "-- Select a cluster --";
-        if (self.fsid) {
-          self.clusters.some(function (cluster) {
-            if (cluster.fsid === self.fsid) {
-              self.data.cluster = cluster;
-              self.watchDataCluster();
+      .then((res) => {
+        this.clusters = res.results;
+        this.waitingClusterMsg = "-- Select a cluster --";
+        if (this.fsid) {
+          this.clusters.some((cluster) => {
+            if (cluster.fsid === this.fsid) {
+              this.data.cluster = cluster;
+              this.watchDataCluster();
             }
           });
         }
-        if (!self.data.cluster) {
+        if (!this.data.cluster) {
           if (res.count > 0) {
-            self.data.cluster = res.results[0];
-            self.watchDataCluster();
+            this.data.cluster = res.results[0];
+            this.watchDataCluster();
           } else {
-            self.waitingClusterMsg = "No cluster avialable.";
-            Notification.warning({
-              title: self.waitingClusterMsg,
+            this.waitingClusterMsg = "No cluster avialable.";
+            this.Notification.warning({
+              title: this.waitingClusterMsg,
               msg: "You can't create any RBDs with your configuration."
             });
           }
         }
-        self.data.pools = null;
+        this.data.pools = null;
       })
-      .catch(function (clusterError) {
-        if (!self.clusterFailure) {
-          self.clusterFailure = true;
-          self.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
-          self.clusterFailureError = clusterError;
-          self.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
+      .catch((clusterError) => {
+        if (!this.clusterFailure) {
+          this.clusterFailure = true;
+          this.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
+          this.clusterFailureError = clusterError;
+          this.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
           $scope.rbdForm.$setValidity("clusterLoading", false);
         }
       });
 
-    self.waitingPoolMsg = "Select a cluster first";
-    self.getCephPools = function () {
-      getReplicatedPools();
-      getEcOverwritesPools();
-    };
+    this.waitingPoolMsg = "Select a cluster first";
+  }
 
-    var getReplicatedPools = function () {
-      self.waitingPoolMsg = "Retrieving pool list...";
-      cephPoolsService.get({
-        fsid: self.fsid,
-        type: "replicated"
-      })
-        .$promise
-        .then(function (res) {
-          self.poolFailure = false;
-          $scope.rbdForm.$setValidity("poolLoading", true);
-          angular.forEach(res.results, addPoolAttributes);
-          if (res.count === 1 && !self.data.pool) {
-            self.data.pool = res.results[0];
-          }
-          self.pools.replicated = res.results;
-          if (res.count === 0) {
-            self.waitingPoolMsg = "No suitable pool aviable.";
-            Notification.warning({
-              title: self.waitingPoolMsg,
-              msg: "You can't create any RBDs in the selected cluster."
-            });
-          } else {
-            self.waitingPoolMsg = "-- Select a pool --";
-          }
-        })
-        .catch(function (poolError) {
-          if (!self.poolFailure) {
-            self.poolFailure = true;
-            self.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
-            self.poolFailureError = poolError;
-            $scope.rbdForm.$setValidity("poolLoading", false);
-            self.waitingPoolMsg = "Error: List couldn't be loaded!";
-          }
-        });
-    };
-
-    var getEcOverwritesPools = function () {
-      cephPoolsService.get({
-        fsid: self.fsid,
-        flags: "ec_overwrites"
-      })
-        .$promise
-        .then(function (res) {
-          angular.forEach(res.results, addPoolAttributes);
-          self.pools.erasure = res.results;
-        });
-    };
-
-    var addPoolAttributes = function (pool) {
-      pool.oaFree = pool.max_avail - pool.num_bytes;
-      pool.oaFreeText = $filter("bytes")(pool.oaFree);
-    };
-
-    self.getDataPools = function () {
-      if (!self.data.pool) {
-        return [];
+  deepBoxCheck (key, checked) {
+    angular.forEach(this.features, (details, feature) => {
+      if (details.requires === key) {
+        this.data.features[feature].disabled = !checked;
+        if (!checked) {
+          this.data.features[feature].checked = checked; // Always.
+          this.watchDataFeatures(feature);
+          this.deepBoxCheck(feature, checked);
+        }
       }
-      return self.pools.erasure.concat(self.pools.replicated.filter(function (pool) {
-        return self.data.pool.id !== pool.id;
-      }));
-    };
-
-    self.watchDataCluster = function () {
-      if (self.data.cluster) {
-        self.fsid = self.data.cluster.fsid;
-        self.getCephPools();
+      if (details.excludes === key) {
+        this.data.features[feature].disabled = checked;
       }
-    };
+    });
+  };
 
-    self.previewStriping = function () {
-      $uibModal.open({
-        windowTemplate: require("../../../templates/messagebox.html"),
-        component: "cephRbdStripingModal",
-        resolve: {
-          size: () => {
-            return self.data.size;
-          },
-          objectSize: () => {
-            return self.data.obj_size;
-          },
-          stripeUnit: () => {
-            return self.data.striping.unitDisplayed;
-          },
-          stripeCount: () => {
-            return self.data.striping.count;
-          }
+  featureFormUpdate (key) {
+    let checked = this.data.features[key].checked;
+    if (checked) {
+      let required = this.features[key].requires;
+      let excluded = this.features[key].excludes;
+      if (excluded && this.data.features[excluded].checked || required && !this.data.features[required].checked) {
+        this.data.features[key].checked = false;
+        return;
+      }
+    }
+    this.deepBoxCheck(key, checked);
+  };
+
+  watchDataFeatures (key) {
+    if (key === "stripingv2") {
+      this.sizeValidator();
+    }
+    let defaults = this.data.defaultFeatures;
+    if (!defaults) {
+      if (key) {
+        this.featureFormUpdate(key);
+      }
+      let noneSelected = Object.keys(this.data.features).every((feature) => {
+        return !this.data.features[feature].checked;
+      });
+      this.$scope.rbdForm.$setValidity("noFeatureSelected", !noneSelected);
+    } else {
+      this.$scope.rbdForm.$setValidity("noFeatureSelected", defaults);
+    }
+  };
+
+  defaultFeatures () {
+    angular.copy(this.defaultFeatureValues, this.data.features);
+  };
+
+  getSizeInBytes (size, jump) {
+    if (!size) {
+      return Math.pow(2, 12);
+    }
+    if (size.match(/[+-]+/)) {
+      size = size.replace(/[+-]+/, "");
+    }
+    size = this.SizeParserService.parseFloat(size, "b", "k"); //default input size is KiB
+    let power = 0;
+    if (size !== null && size !== 0) {
+      power = Math.round(Math.log(size) / Math.log(2));
+      if (angular.isNumber(jump)) {
+        power += jump;
+      }
+    }
+    if (power < 12) {
+      size = Math.pow(2, 12); // 1 << 12; Set size to minimum of 4 KiB.
+    } else if (power > 25) {
+      size = Math.pow(2, 25); // 1 << 25; Set size to maximum of 32 MiB.
+    } else {
+      size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
+    }
+    return size;
+  };
+
+  updateObjSize (newSize, jump) {
+    this.setMutex("obj_size", newSize);
+    this.rbd.obj_size = newSize || this.getSizeInBytes(this.data.obj_size, jump);
+    let size = this.rbd.obj_size;
+    if (!this.$scope.rbdForm.stripingUnit) {
+      this.updateStripingUnit(size);
+    }
+    if (this.data.striping.unit > size) {
+      this.updateStripingUnit(size);
+    }
+    this.data.obj_size = this.$filter("bytes")(size);
+    this.sizeValidator();
+  };
+
+  updateStripingUnit (newSize, jump) {
+    this.setMutex("stripingUnit", newSize);
+    this.data.striping.unit = newSize || this.getSizeInBytes(this.data.striping.unitDisplayed, jump);
+    let unit = this.data.striping.unit;
+    if (unit > this.rbd.obj_size) {
+      this.updateObjSize(unit);
+    }
+    this.data.striping.unitDisplayed = this.$filter("bytes")(unit);
+    this.data.striping.unit = unit;
+  };
+
+  setMutex (inputName, setLock) {
+    if (!this.$scope.rbdForm[inputName]) {
+      return;
+    }
+    if (setLock) {
+      this.changedField = inputName;
+      this.$scope.rbdForm[inputName].$touched = false;
+      this.$scope.rbdForm[inputName].$untouched = true;
+    } else {
+      if (this.changedField === inputName) {
+        this.changedField = undefined;
+      }
+    }
+  };
+
+  stripingDescription () {
+    let message = "";
+    if (angular.isDefined(this.data.size)) {
+      let size = this.SizeParserService.parseFloat(this.data.size, "b");
+      this.sizeValidator(size);
+      const striping = this.data.striping;
+      if (this.data.size !== "-" &&
+        angular.isDefined(this.data.obj_size) && this.data.obj_size !== "0 B" &&
+        angular.isDefined(striping.unitDisplayed) && striping.unitDisplayed !== "0 B" &&
+        angular.isDefined(striping.count)) {
+        const stripeSize = striping.count * striping.unit;
+        const objectSetSize = striping.count * this.rbd.obj_size;
+        let maxSets = Math.ceil(size / objectSetSize);
+        let maxStripes = Math.ceil(size / stripeSize);
+        let isLastStripePartial = size % stripeSize !== 0;
+        let stripeSizeStr = this.$filter("bytes")(stripeSize);
+        let numCompleteStripes = isLastStripePartial ? (maxStripes - 1) : maxStripes;
+
+        message += `Each stripe has ${stripeSizeStr} spanned across ${striping.count} objects.`;
+        message += "<br>";
+        message += `The RBD can hold up to ${maxSets} `;
+        message += maxSets === 1 ? "object set" : "object sets";
+        message += ` (${numCompleteStripes} `;
+        message += numCompleteStripes === 1 ? "stripe" : "stripes";
+        message += isLastStripePartial ? " + 1 partial stripe" : "";
+        message += ").";
+      }
+    }
+    return message;
+  };
+
+  sizeChange (event, callback) {
+    if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
+      callback(undefined, 39 - event.keyCode);
+    } else if (event.keyCode === 187 || event.keyCode === 189) {
+      callback(undefined, 188 - event.keyCode);
+    }
+  };
+
+  useMaxSize (pool) {
+    this.data.size = this.$filter("bytes")(pool.max_avail - pool.num_bytes);
+    this.watchDataSize();
+  };
+
+  watchDataSize () {
+    if (this.data.size === "") {
+      return;
+    }
+    const size = this.SizeParserService.parseFloat(this.data.size, "b", "m"); //default input size is MiB
+    this.sizeValidator(size);
+    if (angular.isNumber(size)) {
+      if (size / this.data.obj_size < 1) {
+        this.data.size = this.$filter("bytes")(this.data.obj_size);
+      } else {
+        this.data.size = this.$filter("bytes")(size);
+      }
+    } else {
+      this.data.size = "";
+    }
+  };
+
+  sizeValidator (size = this.SizeParserService.parseFloat(this.data.size, "b")) {
+    let valid = angular.isNumber(size) && this.rbd.obj_size <= size;
+    if (this.data.features.stripingv2.checked &&
+      this.$scope.rbdForm.stripingCount &&
+      this.$scope.rbdForm.stripingCount.$valid &&
+      this.$scope.rbdForm.obj_size.$valid) {
+      valid = this.data.striping.count * this.rbd.obj_size <= size;
+    }
+    this.$scope.rbdForm.size.$setValidity("valid", valid);
+  };
+
+  goToListView () {
+    this.$state.go(this.fromState, {
+      fsid: this.fsid
+    });
+  };
+
+  getCephPools () {
+    this.getReplicatedPools();
+    this.getEcOverwritesPools();
+  };
+
+  getReplicatedPools () {
+    this.waitingPoolMsg = "Retrieving pool list...";
+    this.cephPoolsService.get({
+      fsid: this.fsid,
+      type: "replicated"
+    })
+      .$promise
+      .then((res) => {
+        this.poolFailure = false;
+        this.$scope.rbdForm.$setValidity("poolLoading", true);
+
+        res.results.forEach((pool) => this.addPoolAttributes(pool));
+
+        if (res.count === 1 && !this.data.pool) {
+          this.data.pool = res.results[0];
+        }
+        this.pools.replicated = res.results;
+        if (res.count === 0) {
+          this.waitingPoolMsg = "No suitable pool aviable.";
+          this.Notification.warning({
+            title: this.waitingPoolMsg,
+            msg: "You can't create any RBDs in the selected cluster."
+          });
+        } else {
+          this.waitingPoolMsg = "-- Select a pool --";
+        }
+      })
+      .catch((poolError) => {
+        if (!this.poolFailure) {
+          this.poolFailure = true;
+          this.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
+          this.poolFailureError = poolError;
+          this.$scope.rbdForm.$setValidity("poolLoading", false);
+          this.waitingPoolMsg = "Error: List couldn't be loaded!";
         }
       });
-    };
+  };
 
-    self.submitAction = function (rbdForm) {
-      if (rbdForm.$valid) {
-        if (!self.data.defaultFeatures) {
-          let features = [];
-          angular.forEach(self.data.features, (feature, featureName) => {
-            if (feature.checked) {
-              features.push(featureName);
-            }
-          });
-          self.rbd.features = features;
-          if (features.indexOf("stripingv2") !== -1) {
-            self.rbd.stripe_count = self.data.striping.count;
-            self.rbd.stripe_unit = self.data.striping.unit;
-          }
+  getEcOverwritesPools () {
+    this.cephPoolsService.get({
+      fsid: this.fsid,
+      flags: "ec_overwrites"
+    })
+      .$promise
+      .then((res) => {
+        res.results.forEach((pool) => {
+          this.addPoolAttributes(pool);
+        });
+
+        this.pools.erasure = res.results;
+      });
+  };
+
+  addPoolAttributes (pool) {
+    pool.oaFree = pool.max_avail - pool.num_bytes;
+    pool.oaFreeText = this.$filter("bytes")(pool.oaFree);
+  };
+
+  getDataPools () {
+    if (!this.data.pool) {
+      return [];
+    }
+    return this.pools.erasure.concat(this.pools.replicated.filter((pool) => {
+      return this.data.pool.id !== pool.id;
+    }));
+  };
+
+  watchDataCluster () {
+    if (this.data.cluster) {
+      this.fsid = this.data.cluster.fsid;
+      this.getCephPools();
+    }
+  };
+
+  previewStriping () {
+    this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephRbdStripingModal",
+      resolve: {
+        size: () => {
+          return this.data.size;
+        },
+        objectSize: () => {
+          return this.data.obj_size;
+        },
+        stripeUnit: () => {
+          return this.data.striping.unitDisplayed;
+        },
+        stripeCount: () => {
+          return this.data.striping.count;
         }
-        self.rbd.pool = self.data.pool.id;
-        if (self.data.useDataPool) {
-          self.rbd.data_pool = self.data.dataPool.id;
-        }
-        self.rbd.fsid = self.fsid;
-        self.rbd.size = SizeParserService.parseInt(self.data.size, "b"); // Limit around 868 EiB
-        self.submitted = true;
-        cephRbdService.save(self.rbd)
-          .$promise
-          .then(function (res) {
-            self.rbd = res;
-            goToListView();
-          }, function (error) {
-            $scope.rbdForm.$submitted = false;
-            if (error.status === 400 && error.data.size) {
-              var size = error.data.size[0].match(/[0-9]+/)[0];
-              Notification.error({
-                title: "RBD creation error " + error.status,
-                msg: "Chosen RBD size is too big. Choose a size lower than " + $filter("bytes")(size) + "."
-              }, error);
-            }
-          });
       }
-    };
+    });
+  };
 
-    self.cancelAction = function () {
-      goToListView();
-    };
-  }
-});
+  submitAction (rbdForm) {
+    if (rbdForm.$valid) {
+      if (!this.data.defaultFeatures) {
+        let features = [];
+        angular.forEach(this.data.features, (feature, featureName) => {
+          if (feature.checked) {
+            features.push(featureName);
+          }
+        });
+        this.rbd.features = features;
+        if (features.indexOf("stripingv2") !== -1) {
+          this.rbd.stripe_count = this.data.striping.count;
+          this.rbd.stripe_unit = this.data.striping.unit;
+        }
+      }
+      this.rbd.pool = this.data.pool.id;
+      if (this.data.useDataPool) {
+        this.rbd.data_pool = this.data.dataPool.id;
+      }
+      this.rbd.fsid = this.fsid;
+      this.rbd.size = this.SizeParserService.parseInt(this.data.size, "b"); // Limit around 868 EiB
+      this.submitted = true;
+      this.cephRbdService.save(this.rbd)
+        .$promise
+        .then((res) => {
+          this.rbd = res;
+          this.goToListView();
+        }, (error) => {
+          this.$scope.rbdForm.$submitted = false;
+          if (error.status === 400 && error.data.size) {
+            let size = error.data.size[0].match(/[0-9]+/)[0];
+            this.Notification.error({
+              title: "RBD creation error " + error.status,
+              msg: "Chosen RBD size is too big. Choose a size lower than " + this.$filter("bytes")(size) + "."
+            }, error);
+          }
+        });
+    }
+  };
+
+  cancelAction () {
+    this.goToListView();
+  };
+}
+
+export default {
+  template: require("./ceph-rbd-form.component.html"),
+  bindings: {},
+  controller: CephRbdForm
+};

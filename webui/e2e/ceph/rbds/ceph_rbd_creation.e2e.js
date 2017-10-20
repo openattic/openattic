@@ -22,7 +22,7 @@ describe("ceph rbd creation and deletion", function () {
    * @param {string} rbdConfig.objSize
    * @param {number[]} rbdConfig.features
    */
-  var fullRbdCreation = (rbdConfig) =>  {
+  var fullRbdCreation = (rbdConfig) => {
     var desc = [
       'should create "' + rbdConfig.rbdName + '" rbd',
       rbdConfig.features ? 'with the following feature case: "[' + rbdConfig.features + ']" options' : "",
