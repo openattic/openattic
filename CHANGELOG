@@ -60,6 +60,7 @@ Changed
 * WebUI: Select the NFS Host automatically, if only one is available (OP-2711)
 * WebUI/QA: Optimize "ceph_pool_creation" e2e test suite (OP-2812)
 * WebUI: Guide user through RBD creation for iSCSI (OP-2181)
+* WebUI: Migration of Ceph RGW controllers to components (OP-2397)
 * WebUI: Migration of Auth controllers to components (OP-2801)
 * WebUI: Convert Settings components to ES6 (OP-2806)
 * WebUI: Convert Grafana components to ES6 (OP-2805)
