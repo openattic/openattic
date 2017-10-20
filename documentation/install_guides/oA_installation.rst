@@ -95,7 +95,7 @@ For openSUSE Leap 42.3 run the following as root::
 
 .. note:: 
   If you're interested in testing the latest state of the master branch (which is our development branch) 
-  please add the following repositorys to your system:
+  please add the following repositories to your system:
 
   # zypper addrepo https://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
   # zypper addrepo http://download.openattic.org/rpm/openattic-nightly-master-openSUSE_Leap_42.3-x86_64/ openattic_repo
