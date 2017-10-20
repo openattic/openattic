@@ -57,20 +57,28 @@ describe("ceph nfs", () => {
     expect(details.mountCommand.getText()).toMatch("# mount.nfs .*:/.*/e2e-rgw-add /mnt");
   });
 
-  it("should check the bucket can't be deleted because it's referenced", () => {
+  it("should check the RGW bucket can't be deleted because it's referenced", () => {
     helpers.setLocation("ceph/rgw/buckets");
-    let bucket = helpers.search_for_element("e2e-rgw-add");
+    let bucket = helpers.get_list_element("e2e-rgw-add");
     bucket.click();
     helpers.delete_selection(undefined, "$ctrl", false);
     expect(bucket.isDisplayed()).toBe(true);
-    helpers.setLocation("ceph/nfs");
   });
 
   it("should remove export (RGW)", () => {
-    table.removeExport("e2e-rgw-add");
-    helpers.search_for("e2e-rgw-add");
-    expect(table.rows.get(0).isPresent()).toBe(false);
-    helpers.clear_search_for();
+    helpers.setLocation("ceph/nfs");
+    let nfsexport = helpers.get_list_element("e2e-rgw-add");
+    nfsexport.click();
+    helpers.delete_selection(undefined, "$ctrl");
+    expect(nfsexport.isPresent()).toBe(false);
+  });
+
+  it("should remove the RGW bucket", () => {
+    helpers.setLocation("ceph/rgw/buckets");
+    let bucket = helpers.get_list_element("e2e-rgw-add");
+    bucket.click();
+    helpers.delete_selection(undefined, "$ctrl");
+    expect(bucket.isPresent()).toBe(false);
   });
 
   afterAll(() => {
