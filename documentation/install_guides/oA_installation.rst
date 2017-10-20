@@ -93,10 +93,12 @@ For openSUSE Leap 42.3 run the following as root::
   # zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo
   # zypper refresh
 
-To enable the |oA| nightly package repository, run the following as root::
+.. note:: 
+  If you're interested to test the latest state of the master branch (the master branch is our development branch) 
+  please add the following repositorys to your system:
 
   # zypper addrepo https://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
-  # zypper addrepo http://download.openattic.org/rpm/openattic-nightly-leap42.3-x86_64/ openattic_repo
+  # zypper addrepo http://download.openattic.org/rpm/openattic-nightly-master-openSUSE_Leap_42.3-x86_64/ openattic_repo
   # rpm --import http://download.openattic.org/A7D3EAFA.txt
   # zypper refresh
   # zypper dist-upgrade
