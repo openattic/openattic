@@ -45,11 +45,11 @@ class CephIscsiFormTargetSettingsModal {
     });
     this.model.targetSettings = this.targetSettings;
     this.modalInstance.close("confirmed");
-  };
+  }
 
   cancel () {
     this.modalInstance.dismiss("cancel");
-  };
+  }
 }
 
 export default {

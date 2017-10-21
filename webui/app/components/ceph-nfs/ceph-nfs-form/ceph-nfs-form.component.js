@@ -177,14 +177,14 @@ class CephNfsForm {
 
   isEditMode () {
     return angular.isDefined(this.$stateParams.host) && angular.isDefined(this.$stateParams.exportId);
-  };
+  }
 
   getId () {
     if (angular.isDefined(this.model.host) && angular.isDefined(this.model.path)) {
       return this.model.host + ":" + this.model.path;
     }
     return "";
-  };
+  }
 
   getPathTypeahead (path, setNewDirectory) {
     let rootDir = "/";
@@ -205,7 +205,7 @@ class CephNfsForm {
         }
         return res.paths;
       });
-  };
+  }
 
   getBucketTypeahead (path, setNewBucket) {
     if (angular.isDefined(this.model.rgwUserId) && this.model.rgwUserId !== null) {
@@ -223,7 +223,7 @@ class CephNfsForm {
           return res.buckets;
         });
     }
-  };
+  }
 
   _generateTag () {
     let newTag = this.model.tag;
@@ -234,7 +234,7 @@ class CephNfsForm {
       }
     }
     return newTag;
-  };
+  }
 
   _generatePseudo () {
     let newPseudo = this.model.pseudo;
@@ -255,25 +255,25 @@ class CephNfsForm {
       }
     }
     return newPseudo;
-  };
+  }
 
   fsalChangeHandler () {
     this.model.tag = this._generateTag();
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   rgwUserIdChangeHandler () {
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   pathChangeHandler () {
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   bucketChangeHandler () {
     this.model.tag = this._generateTag();
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   getAccessTypeHelp (accessType) {
     let accessTypeItem = this.cephNfsAccessType.find((currentAccessTypeItem) => {
@@ -282,7 +282,7 @@ class CephNfsForm {
       }
     });
     return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
-  };
+  }
 
   _buildRequest () {
     let requestModel = angular.copy(this.model);
@@ -324,7 +324,7 @@ class CephNfsForm {
       }
     });
     return requestModel;
-  };
+  }
 
   submitAction () {
     let requestModel = this._buildRequest();
@@ -346,11 +346,11 @@ class CephNfsForm {
           this.$scope.nfsForm.$submitted = false;
         });
     }
-  };
+  }
 
   cancelAction () {
     this.$state.go("cephNfs");
-  };
+  }
 }
 
 export default {

@@ -57,11 +57,11 @@ class CephIscsiFormImageSettingsModal {
     }
     this.image.settings = this.settings;
     this.modalInstance.close("confirmed");
-  };
+  }
 
   cancel () {
     this.modalInstance.dismiss("cancel");
-  };
+  }
 }
 
 export default {

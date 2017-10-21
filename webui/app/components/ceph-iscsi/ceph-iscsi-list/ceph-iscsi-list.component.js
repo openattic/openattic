@@ -113,7 +113,7 @@ class CephIscsiList {
         }
         this.deployed = res;
       });
-  };
+  }
 
   undeployIscsi () {
     this.deployed.$resolved = false;
@@ -136,11 +136,11 @@ class CephIscsiList {
         }
         this.deployed = res;
       });
-  };
+  }
 
   onClusterLoad (cluster) {
     this.cluster = cluster;
-  };
+  }
 
   getIscsiList () {
     if (angular.isObject(this.cluster) && this.cluster.results &&
@@ -185,7 +185,7 @@ class CephIscsiList {
           this.deployed = res;
         });
     }
-  };
+  }
 
   onSelectionChange (selection) {
     this.selection = selection;
@@ -202,13 +202,13 @@ class CephIscsiList {
     } else {
       this.oaTabSetService.changeTab(this.$state.current.name, this.tabData, this.tabConfig, selection);
     }
-  };
+  }
 
   addAction () {
     this.$state.go("cephIscsi-add", {
       fsid: this.registry.selectedCluster.fsid
     });
-  };
+  }
 
   deleteAction () {
     if (!this.hasSelection && !this.multiSelection) {
@@ -230,20 +230,20 @@ class CephIscsiList {
     modalInstance.result.then(() => {
       this.filterConfig.refresh = new Date();
     });
-  };
+  }
   editAction () {
     this.$state.go("cephIscsi-edit", {
       fsid: this.registry.selectedCluster.fsid,
       targetId: this.selection.items[0].targetId
     });
-  };
+  }
 
   cloneAction () {
     this.$state.go("cephIscsi-clone", {
       fsid: this.registry.selectedCluster.fsid,
       targetId: this.selection.items[0].targetId
     });
-  };
+  }
 }
 
 export default {

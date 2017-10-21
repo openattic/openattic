@@ -141,13 +141,13 @@ class CephIscsiForm {
 
   generateTargetId () {
     return "iqn.1996-10.com.suse:" + Date.now();
-  };
+  }
 
   hasLunId (model) {
     return model.images.some((image) => {
       return angular.isDefined(image.settings.lun);
     });
-  };
+  }
 
   initLunId (model) {
     if (!this.hasLunId(model)) {
@@ -157,7 +157,7 @@ class CephIscsiForm {
         i++;
       });
     }
-  };
+  }
 
   resolveModel (res) {
     this.model = res;
@@ -179,7 +179,7 @@ class CephIscsiForm {
     } else {
       this.model.originalTargetId = angular.copy(this.model.targetId);
     }
-  };
+  }
 
   openTargetSettingsModal () {
     this.$uibModal.open({
@@ -191,7 +191,7 @@ class CephIscsiForm {
         }
       }
     });
-  };
+  }
 
   resolvePortals (portalsFromServer) {
     angular.forEach(portalsFromServer, (portalItem) => {
@@ -202,29 +202,29 @@ class CephIscsiForm {
         });
       });
     });
-  };
+  }
 
   containsPortalInModel (portal) {
     return this.model.portals.some((currentPortal) => {
       return portal.hostname === currentPortal.hostname && portal.interface === currentPortal.interface;
     });
-  };
+  }
 
   notContainsPortalInModel (portal) {
     return !this.containsPortalInModel(portal);
-  };
+  }
 
   availablePortals () {
     return this.allPortals.filter(this.notContainsPortalInModel, this);
-  };
+  }
 
   addPortalAction (portal) {
     this.model.portals.push(portal);
-  };
+  }
 
   removePortal (index) {
     this.model.portals.splice(index, 1);
-  };
+  }
 
   containsUnsupportedFeature (features) {
     return features.some((feature) => {
@@ -233,7 +233,7 @@ class CephIscsiForm {
           return element.value === feature;
         }) !== -1;
     });
-  };
+  }
 
   resolveRbdsPools (rbds, pools) {
     angular.forEach(rbds.results, (rbd) => {
@@ -249,7 +249,7 @@ class CephIscsiForm {
         }
       });
     });
-  };
+  }
 
   containsImageInModel (image) {
     return this.model.images.some((currentImage) => {
@@ -275,11 +275,11 @@ class CephIscsiForm {
     let newImage = angular.copy(image);
     newImage.settings.lun = this.nextLunId();
     this.model.images.push(newImage);
-  };
+  }
 
   removeImage (index) {
     this.model.images.splice(index, 1);
-  };
+  }
 
   openImageSettingsModal (selectedImage) {
     this.$uibModal.open({
@@ -291,7 +291,7 @@ class CephIscsiForm {
         }
       }
     });
-  };
+  }
 
   addInitiator () {
     this.model.authentication.initiators.push("");
@@ -299,11 +299,11 @@ class CephIscsiForm {
       let initiatorsInputs = jQuery("#initiators input");
       initiatorsInputs[initiatorsInputs.length - 1].focus();
     });
-  };
+  }
 
   removeInitiator (index) {
     this.model.authentication.initiators.splice(index, 1);
-  };
+  }
 
   buildRequest () {
     let requestModel = angular.copy(this.model);
@@ -342,14 +342,14 @@ class CephIscsiForm {
       delete auth.discoveryMutualPassword;
     }
     return requestModel;
-  };
+  }
 
   addRBD () {
     this.$state.go("cephRbds-add", {
       fsid: this.fsid,
       fromState: "cephIscsi-add"
     });
-  };
+  }
 
   submitAction () {
     let requestModel = this.buildRequest();
@@ -373,11 +373,11 @@ class CephIscsiForm {
           this.$scope.iscsiForm.$submitted = false;
         });
     }
-  };
+  }
 
   cancelAction () {
     this.$state.go("cephIscsi");
-  };
+  }
 
 }
 

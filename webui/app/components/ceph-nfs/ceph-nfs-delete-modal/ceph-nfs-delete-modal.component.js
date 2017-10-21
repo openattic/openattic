@@ -55,11 +55,11 @@ class CephNfsDeleteModal {
           reject();
         });
     });
-  };
+  }
 
   cancel () {
     this.modalInstance.dismiss("cancel");
-  };
+  }
 }
 
 export default {

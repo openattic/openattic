@@ -62,7 +62,7 @@ class CephPoolsDeleteModal {
 
   cancel () {
     this.modalInstance.dismiss("cancel");
-  };
+  }
 }
 
 export default{

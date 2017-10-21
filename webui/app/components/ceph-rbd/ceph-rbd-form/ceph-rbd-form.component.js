@@ -165,7 +165,7 @@ class CephRbdForm {
         this.data.features[feature].disabled = checked;
       }
     });
-  };
+  }
 
   featureFormUpdate (key) {
     let checked = this.data.features[key].checked;
@@ -178,7 +178,7 @@ class CephRbdForm {
       }
     }
     this.deepBoxCheck(key, checked);
-  };
+  }
 
   watchDataFeatures (key) {
     if (key === "stripingv2") {
@@ -196,11 +196,11 @@ class CephRbdForm {
     } else {
       this.$scope.rbdForm.$setValidity("noFeatureSelected", defaults);
     }
-  };
+  }
 
   defaultFeatures () {
     angular.copy(this.defaultFeatureValues, this.data.features);
-  };
+  }
 
   getSizeInBytes (size, jump) {
     if (!size) {
@@ -225,7 +225,7 @@ class CephRbdForm {
       size = Math.pow(2, power); // 1 << power; Set size the nearest accurate size.
     }
     return size;
-  };
+  }
 
   updateObjSize (newSize, jump) {
     this.setMutex("obj_size", newSize);
@@ -239,7 +239,7 @@ class CephRbdForm {
     }
     this.data.obj_size = this.$filter("bytes")(size);
     this.sizeValidator();
-  };
+  }
 
   updateStripingUnit (newSize, jump) {
     this.setMutex("stripingUnit", newSize);
@@ -250,7 +250,7 @@ class CephRbdForm {
     }
     this.data.striping.unitDisplayed = this.$filter("bytes")(unit);
     this.data.striping.unit = unit;
-  };
+  }
 
   setMutex (inputName, setLock) {
     if (!this.$scope.rbdForm[inputName]) {
@@ -265,7 +265,7 @@ class CephRbdForm {
         this.changedField = undefined;
       }
     }
-  };
+  }
 
   stripingDescription () {
     let message = "";
@@ -296,7 +296,7 @@ class CephRbdForm {
       }
     }
     return message;
-  };
+  }
 
   sizeChange (event, callback) {
     if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
@@ -304,12 +304,12 @@ class CephRbdForm {
     } else if (event.keyCode === 187 || event.keyCode === 189) {
       callback(undefined, 188 - event.keyCode);
     }
-  };
+  }
 
   useMaxSize (pool) {
     this.data.size = this.$filter("bytes")(pool.max_avail - pool.num_bytes);
     this.watchDataSize();
-  };
+  }
 
   watchDataSize () {
     if (this.data.size === "") {
@@ -326,7 +326,7 @@ class CephRbdForm {
     } else {
       this.data.size = "";
     }
-  };
+  }
 
   sizeValidator (size = this.SizeParserService.parseFloat(this.data.size, "b")) {
     let valid = angular.isNumber(size) && this.rbd.obj_size <= size;
@@ -337,18 +337,18 @@ class CephRbdForm {
       valid = this.data.striping.count * this.rbd.obj_size <= size;
     }
     this.$scope.rbdForm.size.$setValidity("valid", valid);
-  };
+  }
 
   goToListView () {
     this.$state.go(this.fromState, {
       fsid: this.fsid
     });
-  };
+  }
 
   getCephPools () {
     this.getReplicatedPools();
     this.getEcOverwritesPools();
-  };
+  }
 
   getReplicatedPools () {
     this.waitingPoolMsg = "Retrieving pool list...";
@@ -386,7 +386,7 @@ class CephRbdForm {
           this.waitingPoolMsg = "Error: List couldn't be loaded!";
         }
       });
-  };
+  }
 
   getEcOverwritesPools () {
     this.cephPoolsService.get({
@@ -401,12 +401,12 @@ class CephRbdForm {
 
         this.pools.erasure = res.results;
       });
-  };
+  }
 
   addPoolAttributes (pool) {
     pool.oaFree = pool.max_avail - pool.num_bytes;
     pool.oaFreeText = this.$filter("bytes")(pool.oaFree);
-  };
+  }
 
   getDataPools () {
     if (!this.data.pool) {
@@ -415,14 +415,14 @@ class CephRbdForm {
     return this.pools.erasure.concat(this.pools.replicated.filter((pool) => {
       return this.data.pool.id !== pool.id;
     }));
-  };
+  }
 
   watchDataCluster () {
     if (this.data.cluster) {
       this.fsid = this.data.cluster.fsid;
       this.getCephPools();
     }
-  };
+  }
 
   previewStriping () {
     this.$uibModal.open({
@@ -443,7 +443,7 @@ class CephRbdForm {
         }
       }
     });
-  };
+  }
 
   submitAction (rbdForm) {
     if (rbdForm.$valid) {
@@ -483,11 +483,11 @@ class CephRbdForm {
           }
         });
     }
-  };
+  }
 
   cancelAction () {
     this.goToListView();
-  };
+  }
 }
 
 export default {

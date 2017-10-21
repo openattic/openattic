@@ -30,6 +30,7 @@ Added
 * WebUI: Add fast-diff help text used in RBD form (OP-2767)
 * Documentation: Added our line length PEP-8 exception to the backend
   contributing guidelines (OP-823)
+* WebUI: Add no-extra-semi rule to eslint (OP-2844)
 
 Changed
 ~~~~~~~

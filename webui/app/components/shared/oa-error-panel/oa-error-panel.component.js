@@ -39,7 +39,7 @@ class OaErrorPanel {
     if (angular.isFunction(this.onBack)) {
       this.onBack();
     }
-  };
+  }
 }
 
 export default {

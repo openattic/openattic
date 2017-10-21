@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org> 
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -59,7 +59,7 @@ class DashboardComponent {
 
   $onDestroy () {
     this.stopInterval();
-  };
+  }
 
   getStatus () {
     this.cephClusterService
@@ -70,7 +70,7 @@ class DashboardComponent {
         this.processSummaries();
         this.processMessages();
       });
-  };
+  }
 
   processData (data) {
     angular.extend(data, {
@@ -98,7 +98,7 @@ class DashboardComponent {
     });
 
     this.data = data;
-  };
+  }
 
   processSummaries () {
     var data = this.data;
@@ -122,13 +122,13 @@ class DashboardComponent {
           });
       });
     }
-  };
+  }
 
   filterSummary (summaries, severity) {
     return summaries.filter((summary) => {
       return summary.severity === severity;
     });
-  };
+  }
 
   processMessages () {
     angular.forEach(this.data, (clusters, attribute) => {
@@ -136,7 +136,7 @@ class DashboardComponent {
         this.messages[attribute] = this.clusterMessage(attribute);
       }
     });
-  };
+  }
 
   clusterMessage (attribute) {
     var data = this.data[attribute];
@@ -165,7 +165,7 @@ class DashboardComponent {
       msg += counting.warn === 1 ? "a warning" : counting.warn + " warnings";
     }
     return msg;
-  };
+  }
 
   getCountErrosAndWarnings (attribute) {
     if (["err", "warn"].indexOf(attribute) === -1) {
@@ -183,11 +183,11 @@ class DashboardComponent {
       }
     });
     return counting;
-  };
+  }
 
   stopInterval () {
     this.$interval.cancel(this.promise);
-  };
+  }
 }
 
 export default {

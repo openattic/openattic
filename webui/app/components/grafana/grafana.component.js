@@ -87,14 +87,14 @@ class Grafana {
     angular.element(this.$window).bind("resize", () => {
       this.resize();
     });
-  };
+  }
 
   $onChanges (values) {
     // Only update the source if binding "data" changes
     if (angular.isDefined(values.data)) {
       this.src = this.src.replace(values.data.previousValue, values.data.currentValue);
     }
-  };
+  }
 
   /**
    * Resize the iframe in a certain period of time
@@ -103,7 +103,7 @@ class Grafana {
     // Use height of the main-view div, because that"s the div of the content
     var h = $(".grafana").contents().find(".main-view").height();
     $(".grafana").height(h);
-  };
+  }
 }
 
 export default {

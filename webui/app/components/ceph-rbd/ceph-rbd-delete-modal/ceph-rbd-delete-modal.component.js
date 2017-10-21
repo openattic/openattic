@@ -57,7 +57,7 @@ class CephRbdDeleteModal {
         reject();
       });
     });
-  };
+  }
 
   cancel () {
     this.modalInstance.dismiss("cancel");
@@ -66,7 +66,7 @@ class CephRbdDeleteModal {
       title: "Delete RBD",
       msg: "Cancelled"
     });
-  };
+  }
 }
 
 export default {

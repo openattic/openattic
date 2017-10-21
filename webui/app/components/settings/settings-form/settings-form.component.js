@@ -109,7 +109,7 @@ class SettingsForm {
         (deepsea.eauth === "auto" && isUsernameDefined && isPasswordDefined) ||
         (deepsea.eauth === "sharedsecret" && isUsernameDefined && isSharedSecretDefined)
       );
-  };
+  }
 
   checkDeepSeaConnection () {
     this.deepseaConnectionStatus = undefined;
@@ -151,7 +151,7 @@ class SettingsForm {
           });
       }, this.animationTimeout);
     }
-  };
+  }
 
   isAllRgwPropsDefined (rgw) {
     let isHostDefined = rgw.host !== undefined && rgw.host !== "";
@@ -162,7 +162,7 @@ class SettingsForm {
     let isUseSSLDefined = rgw.use_ssl !== undefined;
     return isHostDefined && isPortDefined && isAccessKeyDefined &&
       isSecretKeyDefined && isUserIdDefined && isUseSSLDefined;
-  };
+  }
 
   checkRgwConnection () {
     this.rgwConnectionStatus = undefined;
@@ -184,14 +184,14 @@ class SettingsForm {
           });
       }, this.animationTimeout);
     }
-  };
+  }
 
   rgwManagedByDeepSeaChangeHandler () {
     if (this.model.rgw.managed_by_deepsea) {
       this.model.rgw = angular.copy(this.rgwDeepSeaSettings);
     }
     this.checkRgwConnection();
-  };
+  }
 
   isAllGrafanaPropsDefined (grafana) {
     let isHostDefined = grafana.host !== undefined && grafana.host !== "";
@@ -200,7 +200,7 @@ class SettingsForm {
     let isPasswordDefined = grafana.password !== undefined && grafana.password !== "";
     let isUseSSLDefined = grafana.password !== grafana.use_ssl;
     return isHostDefined && isPortDefined && isUsernameDefined && isPasswordDefined && isUseSSLDefined;
-  };
+  }
 
   checkGrafanaConnection () {
     this.grafanaConnectionStatus = undefined;
@@ -222,14 +222,14 @@ class SettingsForm {
           });
       }, this.animationTimeout);
     }
-  };
+  }
 
   isAllCephPropsDefined (ceph) {
     let isConfigFilePathDefined = ceph.config_file_path !== undefined && ceph.config_file_path !== "";
     let isKeyringFilePathDefined = ceph.keyring_file_path !== undefined && ceph.keyring_file_path !== "";
     let isKeyringUserDefined = ceph.keyring_user !== undefined && ceph.keyring_user !== "";
     return isConfigFilePathDefined && isKeyringFilePathDefined && isKeyringUserDefined;
-  };
+  }
 
   checkCephConnection (ceph) {
     this.cephConnectionStatus = undefined;
@@ -251,7 +251,7 @@ class SettingsForm {
           });
       }, this.animationTimeout);
     }
-  };
+  }
 
   getKeyringFileTypeahead (fsid) {
     var clusterKeyringCandidates = this.clustersKeyringCandidates[fsid];
@@ -261,7 +261,7 @@ class SettingsForm {
       }, []);
     }
     return [];
-  };
+  }
 
   getKeyringUserTypeahead (fsid, keyringFile) {
     var clusterKeyringCandidates = this.clustersKeyringCandidates[fsid];
@@ -275,7 +275,7 @@ class SettingsForm {
       }, []);
     }
     return [];
-  };
+  }
 
   saveAction () {
     this.settingsFormService.save(this.model)
@@ -289,7 +289,7 @@ class SettingsForm {
       }, () => {
         this.$scope.settingsForm.$submitted = false;
       });
-  };
+  }
 }
 
 export default {
