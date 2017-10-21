@@ -238,7 +238,7 @@ class CephPoolsAdd {
     } else {
       this.prepareAddForm();
     }
-  };
+  }
 
   goToListView () {
     this.$state.go("cephPools");
@@ -275,7 +275,7 @@ class CephPoolsAdd {
         return apps.indexOf(app) === index;
       });
     });
-  };
+  }
 
   prepareAddForm () {
     this.fsid = this.$stateParams.fsid;
@@ -308,7 +308,7 @@ class CephPoolsAdd {
         this.pool.crush_ruleset = undefined;
       }
     });
-  };
+  }
 
   pgUpdate (pgs, jump) {
     pgs = pgs || this.data.pg_num;
@@ -322,7 +322,7 @@ class CephPoolsAdd {
     } else {
       this.data.pg_num = pgs;
     }
-  };
+  }
 
   pgSizeChange () {
     if (this.editing) {
@@ -337,7 +337,7 @@ class CephPoolsAdd {
       pgs = pgs / (eprofile.k + eprofile.m);
     }
     this.pgUpdate(pgs);
-  };
+  }
 
   pgKeyChange (event) {
     if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
@@ -345,13 +345,13 @@ class CephPoolsAdd {
     } else if (event.keyCode === 187 || event.keyCode === 189) { // 187 == plus sign && 189 == minus sign
       this.pgUpdate(undefined, 188 - event.keyCode);
     }
-  };
+  }
 
   ecProfileChange () {
     if (this.data.profiles.length === 1) {
       this.pool.erasure.profile = this.data.profiles[0];
     }
-  };
+  }
 
   getMaxSize () {
     let osdCount = this.data.osdCount;
@@ -360,7 +360,7 @@ class CephPoolsAdd {
       return ruleset.max_size;
     }
     return osdCount;
-  };
+  }
 
   describeStep (step) {
     return [
@@ -368,7 +368,7 @@ class CephPoolsAdd {
       step.item_name || "",
       step.type ? step.num + " type " + step.type : ""
     ].join(" ");
-  };
+  }
 
   rulesetChange () {
     if (!this.pool.type || !this.data.cluster.loaded) {
@@ -384,7 +384,7 @@ class CephPoolsAdd {
     this.data.ruleset = ruleset;
     this.useRulesetSize();
     this.pgSizeChange();
-  };
+  }
 
   useRulesetSize () {
     let ruleset = this.data.ruleset;
@@ -397,12 +397,12 @@ class CephPoolsAdd {
     } else if (size > ruleset.max_size) {
       this.pool.size = ruleset.max_size;
     }
-  };
+  }
 
   onSizeChange () {
     this.useRulesetSize();
     this.pgSizeChange();
-  };
+  }
 
   submitAction () {
     this.$timeout(() => {
@@ -423,7 +423,7 @@ class CephPoolsAdd {
         }
       }
     });
-  };
+  }
 
   submitEdit (pool) {
     pool.id = this.$stateParams.poolId;
@@ -437,7 +437,7 @@ class CephPoolsAdd {
       }, () => {
         this.$scope.poolForm.$submitted = false;
       });
-  };
+  }
 
   submitAdd (pool) {
     angular.extend(pool, {
@@ -475,11 +475,11 @@ class CephPoolsAdd {
       }, () => {
         this.$scope.poolForm.$submitted = false;
       });
-  };
+  }
 
   cancelAction () {
     this.goToListView();
-  };
+  }
 
   // Erasure Code Profile
   addErasureCodeProfile () {
@@ -502,7 +502,7 @@ class CephPoolsAdd {
       let len = this.data.profiles.push(profile);
       this.pool.erasure.profile = this.data.profiles[len - 1];
     });
-  };
+  }
 
   deleteErasureCodeProfile () {
     let modalInstance = this.$uibModal.open({
@@ -524,19 +524,19 @@ class CephPoolsAdd {
       let idx = this.data.profiles.indexOf(this.pool.erasure.profile);
       this.data.profiles.splice(idx, 1);
     });
-  };
+  }
 
   updateCompressionMaxBlobSize () {
     let size = this.SizeParserService
       .parseInt(this.data.compression_max_blob_size, "b");
     this.data.compression_max_blob_size = this.$filter("bytes")(size);
-  };
+  }
 
   updateCompressionMinBlobSize () {
     let size = this.SizeParserService
       .parseInt(this.data.compression_min_blob_size, "b");
     this.data.compression_min_blob_size = this.$filter("bytes")(size);
-  };
+  }
 }
 
 export default {

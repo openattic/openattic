@@ -55,11 +55,11 @@ class CephIscsiDeleteModal {
           reject();
         });
     });
-  };
+  }
 
   cancel () {
     this.modalInstance.dismiss("cancel");
-  };
+  }
 
 }
 

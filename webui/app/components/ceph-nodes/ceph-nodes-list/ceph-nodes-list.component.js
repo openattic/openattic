@@ -105,7 +105,7 @@ class CephNodesList {
       .catch((error) => {
         this.error = error;
       });
-  };
+  }
 
   onSelectionChange (selection) {
     this.selection = selection;
@@ -123,7 +123,7 @@ class CephNodesList {
 
     this.oaTabSetService.changeTab("cephNodes.detail.details", this.tabData,
       this.tabConfig, selection);
-  };
+  }
 
   scrubAction (deep) {
     if (!(this.hasSelection || this.multiSelection)) {
@@ -145,7 +145,7 @@ class CephNodesList {
     modalInstance.result.then(() => {
       this.filterConfig.refresh = new Date();
     });
-  };
+  }
 }
 
 export default {

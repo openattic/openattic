@@ -47,7 +47,7 @@ class OaDeleteConfirmationModal {
         this.$scope.deleteForm.$submitted = false;
       }
       );
-  };
+  }
 }
 
 export default {

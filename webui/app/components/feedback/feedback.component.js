@@ -33,7 +33,7 @@
 class FeedbackController {
   constructor () {
     this.opened = false;
-  };
+  }
 
   toggle () {
     if (this.opened) {
@@ -41,15 +41,15 @@ class FeedbackController {
     } else {
       this.open();
     }
-  };
+  }
 
   open () {
     this.opened = true;
-  };
+  }
 
   close () {
     this.opened = false;
-  };
+  }
 }
 
 export default {
