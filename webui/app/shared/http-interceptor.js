@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -28,20 +28,20 @@
  * for the JavaScript code in this page.
  *
  */
+
 "use strict";
 
-import "../notification/module";
-
-angular.module("openattic.apidecorator", [
-  "openattic.notification"
-])
-  .config(function ($httpProvider) {
-    $httpProvider.interceptors.push("ApiHttpErrorInterceptor");
-    $httpProvider.interceptors.push("ApiHttpTimeoutInterceptor");
-  });
-
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
+/*
+ * This class is need because of the way AngularJS deals with interceptors, as
+ * explained in https://stackoverflow.com/a/34163273.
+ */
+export default class HttpInterceptor {
+  constructor () {
+    ["request", "requestError", "response", "responseError"]
+      .forEach((method) => {
+        if (this[method]) {
+          this[method] = this[method].bind(this);
+        }
+      });
+  }
 }
