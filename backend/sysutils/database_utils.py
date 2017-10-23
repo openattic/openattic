@@ -68,7 +68,6 @@ class SimpleDatabaseUpgrade(object):
         except Exception:
             pass
 
-
     @classmethod
     def get_all_users_and_prefs(cls):
         """:rtype: list[tuple[str, list[dict]]] | None"""
@@ -92,6 +91,10 @@ class SimpleDatabaseUpgrade(object):
                                                ', '.join(['%s'] * len(values)))
                     print 'inserting', stmt
                     cursor.execute(stmt, values)
+
+                # Set the sequence correctly.
+                sequence, value = fix_sequence_for_table(cursor, table)
+                print('Setting sequence `{}` of table `{}` to `{}`'.format(sequence, table, value))
 
     @staticmethod
     def migrate_from_host(old_data):
@@ -140,7 +143,26 @@ def fetch_all_dict(cursor):
         for row in cursor.fetchall()
     ]
 
+
+def fix_sequence_for_table(cursor, table):
+    response = execute_and_fetch(cursor, 'SELECT pg_get_serial_sequence(%s, %s)', (table, 'id'))
+    if response:
+        sequence = response[0]['pg_get_serial_sequence'].split('.')[1]
+        stmt = "SELECT setval(%s, COALESCE((SELECT MAX(id) FROM {}) + 1, 1), false);".format(table)
+        response = execute_and_fetch(cursor, stmt, (sequence,))
+        return sequence, response[0]['setval']
+
+
 @contextmanager
 def database_cursor():
     with closing(connection.cursor()) as cursor:  # type: CursorWrapper
-        yield cursor
+        try:
+            yield cursor
+        except Exception as e:
+            # Django 1.6: There is a problem that unittest2 expects Exceptions to have a cause
+            # with a traceback.
+            if not hasattr(e, '__cause__'):
+                e.__cause__ = None
+            if e.__cause__ is not None and not hasattr(e.__cause__, '__traceback__'):
+                e.__cause__.__traceback__ = None
+            raise
