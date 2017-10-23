@@ -30,24 +30,30 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
+import HttpInterceptor from "../../../shared/http-interceptor";
 
-app.factory("AuthHttpInterceptor", function ($q, $injector, $rootScope) {
-  return {
-    request: function (config) {
-      // Give the backend a clue that we're using AJAX here...
-      config.headers["X-Requested-With"] = "XMLHttpRequest";
-      return config;
-    },
-    responseError: function (rejection) {
-      // Just depending on $state would create a circular dependency,
-      // so we need to get $state via the $injector.
-      var $state = $injector.get("$state");
-      if (rejection.status === 401) {
-        $rootScope.user = null;
-        $state.go("login");
-      }
-      return $q.reject(rejection);
+export default class AuthHttpInterceptor extends HttpInterceptor {
+  constructor ($q, $injector, authUserService) {
+    super();
+    this.$q = $q;
+    this.$injector = $injector;
+    this.authUserService = authUserService;
+  }
+
+  request (config) {
+    // Give the backend a clue that we're using AJAX here...
+    config.headers["X-Requested-With"] = "XMLHttpRequest";
+    return config;
+  }
+
+  responseError (rejection) {
+    // Just depending on $state would create a circular dependency,
+    // so we need to get $state via the $injector.
+    var $state = this.$injector.get("$state");
+    if (rejection.status === 401) {
+      this.authUserService.user = null;
+      $state.go("login");
     }
-  };
-});
+    return this.$q.reject(rejection);
+  }
+}

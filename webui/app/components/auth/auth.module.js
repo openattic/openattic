@@ -31,14 +31,21 @@
 "use strict";
 
 import authComponent from "./auth/auth.component";
+import authRoutes from "./auth.routes";
+import authLogout from "./auth-logout/auth-logout.component";
+import authService from "./shared/auth.service";
+import authUserService from "./shared/auth-user.service";
+import autoFocus from "./shared/auto-focus.directive";
+import AuthHttpInterceptor from "./shared/auth-http-interceptor.directive";
 
 angular.module("openattic.auth", [])
-  .config(function ($httpProvider) {
+  .component("authComponent", authComponent)
+  .component("authLogout", authLogout)
+  .service("authService", authService)
+  .service("authUserService", authUserService)
+  .service("autoFocus", autoFocus)
+  .service("AuthHttpInterceptor", AuthHttpInterceptor)
+  .config(authRoutes)
+  .config(($httpProvider) => {
     $httpProvider.interceptors.push("AuthHttpInterceptor");
-  })
-  .component("authComponent", authComponent);
-
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+  });

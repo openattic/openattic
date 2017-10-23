@@ -35,12 +35,12 @@ app.directive("userinfo", function () {
   return {
     restrict: "A",
     template: require("../templates/userinfo.html"),
-    controller: function ($scope, usersService, $rootScope) {
+    controller: function (authUserService, usersService, $scope) {
       usersService.current()
         .$promise
         .then(function (res) {
+          authUserService.user = res;
           $scope.user = res;
-          $rootScope.user = res;
         })
         .catch(function (error) {
           error.ignoreStatusCode(401);

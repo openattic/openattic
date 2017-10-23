@@ -31,31 +31,26 @@
 "use strict";
 
 import globalConfig from "globalConfig";
+import _ from "lodash";
 
 class AuthComponent {
-  constructor ($scope, $rootScope, $state, authService) {
-    this.$rootScope = $rootScope;
-    this.$scope = $scope;
+  constructor ($state, authService, authUserService) {
     this.$state = $state;
     this.authService = authService;
+    this.authUserService = authUserService;
 
     this.fieldRequired = "This field is required.";
     this.correctInput = "The given credentials are not correct.";
-
-    this.$scope.$watchGroup(["$ctrl.username", "$ctrl.password"], () => {
-      this.submitted = false;
-    });
   }
 
   $onInit () {
-
-    if (angular.isDefined(globalConfig.GUI.quickLogin.username) && globalConfig.GUI.quickLogin.username !== "" &&
-    angular.isDefined(globalConfig.GUI.quickLogin.password) && globalConfig.GUI.quickLogin.password !== "") {
+    if (_.isString(globalConfig.GUI.quickLogin.username) && globalConfig.GUI.quickLogin.username !== "" &&
+        _.isString(globalConfig.GUI.quickLogin.password) && globalConfig.GUI.quickLogin.password !== "") {
       this.username = globalConfig.GUI.quickLogin.username;
       this.password = globalConfig.GUI.quickLogin.password;
     }
 
-    if (this.user) {
+    if (this.authUserService.user) {
       this.$state.go("dashboard");
     }
   }
@@ -68,7 +63,8 @@ class AuthComponent {
       "password": this.password
     };
     this.authService.login(loginData, (res) => {
-      this.$rootScope.user = res;
+      this.authUserService.user = res;
+
       this.$state.go("dashboard");
     }, (error) => {
       error.ignoreStatusCode(401);

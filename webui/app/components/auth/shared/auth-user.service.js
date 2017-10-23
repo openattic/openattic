@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,23 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.directive("logout", function () {
-  return {
-    template: [
-      "<a title=\"Sign Out\" ng-click=\"handleLogout()\">",
-      "<i class=\"fa fa-sign-out\"></i> Logout",
-      "</a>"
-    ].join(""),
-    controller: function ($scope, $rootScope, $state, authService) {
-      $scope.handleLogout = function () {
-        authService.logout()
-          .$promise
-          .then(function () {
-            $rootScope.user = null;
-            $state.go("login");
-          });
-      };
-    }
-  };
-});
+export default class AuthUserService {
+  constructor () {
+    this.loggedIn = false;
+    this.user = null;
+  }
+}
