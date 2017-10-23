@@ -77,6 +77,7 @@ Fixed
   (OP-2782)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
 * Development: Lint unit test correctly (OP-2828)
 * WebUI: Allow users to type in any size into the RBD form (OP-2730)
 * WebUI/QA: Prevent random failure in "2 failed task" test (OP-2735)
