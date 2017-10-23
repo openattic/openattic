@@ -38,6 +38,7 @@ Changed
 * Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
 * Backend: Cleaned up pep8 warnings of rest app (OP-1515)
 * Backend: Cleaned up pep8 warnings of systemd app (OP-1518)
+* Backend: Use health's "status" instead of "overall_status" (OP-2845)
 * WebUI: Display dates in locale date format. All Django DateTimeFields will
   be returned as ISO 8601 (OP-591)
 * WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
