@@ -25,6 +25,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Migration of Dashboard module into Angular (OP-2835)
 
 Fixed
 ~~~~~
