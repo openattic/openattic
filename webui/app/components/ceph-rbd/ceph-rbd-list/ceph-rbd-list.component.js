@@ -34,7 +34,7 @@ import _ from "lodash";
 
 class CephRbdList {
   constructor ($scope, $state, $filter, $uibModal, $q, cephRbdService,
-      registryService, cephPoolsService, oaTabSetService) {
+      registryService, cephPoolsService, oaTabSetService, cephRbdStateService) {
     this.$filter = $filter;
     this.$q = $q;
     this.$state = $state;
@@ -42,6 +42,7 @@ class CephRbdList {
     this.cephPoolsService = cephPoolsService;
     this.cephRbdService = cephRbdService;
     this.oaTabSetService = oaTabSetService;
+    this.cephRbdStateService = cephRbdStateService;
 
     this.registry = registryService;
     this.cluster = undefined;
@@ -140,6 +141,7 @@ class CephRbdList {
             rbd.freePercent = rbd.free / rbd.size * 100;
           });
           this.rbd = rbds;
+          this._updateStates();
         })
         .catch((error) => {
           this.error = error;
@@ -174,6 +176,23 @@ class CephRbdList {
     });
   }
 
+  _updateStates () {
+    this.cephRbdStateService.updateStates((rbdToUpdate) => {
+      this.rbd.results.forEach((rbdImage) => {
+        console.log(rbdImage);
+        if (rbdImage.name === rbdToUpdate.image &&
+            rbdImage.pool.name === rbdToUpdate.pool &&
+            this.registry.selectedCluster.fsid === rbdToUpdate.fsid) {
+          if (rbdToUpdate.state === "DELETED") {
+            this.filterConfig.refresh = new Date();
+          } else {
+            rbdImage.state = rbdToUpdate.state;
+          }
+        }
+      });
+    });
+  }
+
   deleteAction () {
     if (!this.hasSelection && !this.multiSelection) {
       return;
@@ -192,7 +211,7 @@ class CephRbdList {
     });
 
     modalInstance.result.then(() => {
-      this.filterConfig.refresh = new Date();
+      this._updateStates();
     });
   }
 
@@ -202,4 +221,3 @@ export default {
   template: require("./ceph-rbd-list.component.html"),
   controller: CephRbdList
 };
-
