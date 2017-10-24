@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 Tiago Melo <tspmelo@gmail.com>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,20 +30,16 @@
  */
 "use strict";
 
-var app = angular.module("openattic.notification");
-app.directive("oaNotifications", function () {
-  return {
-    template: require("../templates/oa-notifications.html"),
-    controller: function ($scope, Notification) {
-      $scope.notifications = [];
-
-      Notification.subscribe(function (notifications) {
-        $scope.notifications = notifications;
-      });
-
-      $scope.removeAll = function () {
-        Notification.removeAll();
-      };
-    }
-  };
-});
+export default {
+  default: "default",
+  info: "info",
+  wait: "wait",
+  success: "success",
+  error: "error",
+  warning: "warning",
+  options: {
+    title: "",
+    msg: "",
+    type: "error"
+  }
+};

@@ -31,13 +31,14 @@
 "use strict";
 
 import "angular-toasty/dist/angular-toasty";
+import Notification from "./shared/notification.service";
+import oaNotifications from "./oa-notifications/oa-notifications.component";
+import twdefaults from "./shared/twdefaults.value";
 
 angular.module("openattic.notification", [
   "angular-toasty"
-]);
+])
+  .component("oaNotifications", oaNotifications)
+  .service("Notification", Notification)
+  .value("TWDEFAULTS", twdefaults);
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
