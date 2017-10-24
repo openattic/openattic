@@ -30,34 +30,16 @@
  */
 "use strict";
 
-import "../components/api-decorator/api-decorator.module";
-import "../components/apirecorder/module";
-import "../components/auth/auth.module";
-import "../components/dashboard/dashboard.module";
-import "../components/grafana/grafana.module";
-import "../components/navigation/module";
-import "../components/notification/module";
-import "../components/settings/settings.module";
-import "../components/shared/shared.module";
-import "../scripts/services/sizeParserService";
-import "../components/userinfo/module";
-import "../components/taskQueue/module";
-import "../components/users/module";
-import "../components/feedback/feedback.module";
+import HttpInterceptor from "../../../shared/http-interceptor";
 
-angular.module("openattic.core", [
-  "openattic.apidecorator",
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.dashboard",
-  "openattic.feedback",
-  "openattic.grafana",
-  "openattic.navigation",
-  "openattic.notification",
-  "openattic.settings",
-  "openattic.shared",
-  "openattic.sizeparser",
-  "openattic.userinfo",
-  "openattic.taskQueue",
-  "openattic.users"
-]);
+export default class ApiHttpErrorInterceptorService extends HttpInterceptor {
+  constructor ($q, ApiErrorDecoratorService) {
+    super();
+    this.$q = $q;
+    this.ApiErrorDecoratorService = ApiErrorDecoratorService;
+  }
+
+  responseError (rejection) {
+    return this.$q.reject(this.ApiErrorDecoratorService.decorate(rejection));
+  }
+}

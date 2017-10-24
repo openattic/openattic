@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,34 +30,16 @@
  */
 "use strict";
 
-import "../components/api-decorator/api-decorator.module";
-import "../components/apirecorder/module";
-import "../components/auth/auth.module";
-import "../components/dashboard/dashboard.module";
-import "../components/grafana/grafana.module";
-import "../components/navigation/module";
-import "../components/notification/module";
-import "../components/settings/settings.module";
-import "../components/shared/shared.module";
-import "../scripts/services/sizeParserService";
-import "../components/userinfo/module";
-import "../components/taskQueue/module";
-import "../components/users/module";
-import "../components/feedback/feedback.module";
+import globalConfig from "globalConfig";
+import HttpInterceptor from "../../../shared/http-interceptor";
 
-angular.module("openattic.core", [
-  "openattic.apidecorator",
-  "openattic.apirecorder",
-  "openattic.auth",
-  "openattic.dashboard",
-  "openattic.feedback",
-  "openattic.grafana",
-  "openattic.navigation",
-  "openattic.notification",
-  "openattic.settings",
-  "openattic.shared",
-  "openattic.sizeparser",
-  "openattic.userinfo",
-  "openattic.taskQueue",
-  "openattic.users"
-]);
+export default class ApiHttpTimeoutInterceptorService extends HttpInterceptor {
+  constructor () {
+    super();
+  }
+
+  request (config) {
+    config.timeout = parseInt(globalConfig.GUI.uiTimeout, 10) || 30000;
+    return config;
+  }
+}
