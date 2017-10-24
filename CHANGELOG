@@ -73,6 +73,7 @@ Changed
 * WebUI: Convert iSCSI components to ES6 (OP-2802)
 * WebUI: Migration of Api Decorator module into Angular (OP-2850)
 * WebUI: Migration of Grafana module into Angular (OP-2863)
+* WebUI: Migration of Ceph Cluster module into Angular (OP-2852)
 
 Fixed
 ~~~~~

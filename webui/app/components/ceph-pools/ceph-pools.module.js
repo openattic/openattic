@@ -30,7 +30,7 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
+import "../ceph-cluster/ceph-cluster.module";
 import cephPoolsAdd from "./ceph-pools-add/ceph-pools-add.component";
 import cephPoolsDeleteModal from "./ceph-pools-delete-modal/ceph-pools-delete-modal.component";
 import cephPoolsList from "./ceph-pools-list/ceph-pools-list.component";

@@ -30,7 +30,7 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
+import "../ceph-cluster/ceph-cluster.module";
 import "../registry/module";
 import cephRbdStripingModal from "./ceph-rbd-striping-modal/ceph-rbd-striping-modal.component";
 import cephRbdStripingObjectSet from "./ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component";

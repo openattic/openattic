@@ -30,7 +30,7 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
+import "../ceph-cluster/ceph-cluster.module";
 import "../registry/module";
 import cephOsdScrubModal from "./ceph-osd-scrub-modal/ceph-osd-scrub-modal.component";
 import cephOsdList from "./ceph-osd-list/ceph-osd-list.component";
