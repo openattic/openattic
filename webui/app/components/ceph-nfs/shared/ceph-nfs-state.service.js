@@ -148,8 +148,17 @@ export default class CephNfsStateService {
                   }
                 });
                 updateHosts(hosts);
+              })
+              .catch(() => {
+                updateHosts([]);
               });
+          })
+          .catch(() => {
+            updateHosts([]);
           });
+      })
+      .catch(() => {
+        updateHosts([]);
       });
   }
 

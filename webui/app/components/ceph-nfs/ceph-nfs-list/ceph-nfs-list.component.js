@@ -98,12 +98,12 @@ class CephNfsList {
   }
 
   _updateStates () {
-    this.nfs.results.forEach((nfsExport) => {
+    _.forEach(this.nfs.results, (nfsExport) => {
       nfsExport.state = "LOADING";
     });
     this.cephNfsStateService.updateStates(this.registry.selectedCluster.fsid, (hostsToUpdate) => {
-      this.nfs.results.forEach((nfsExport) => {
-        let currentHost = hostsToUpdate[nfsExport.host];
+      _.forEach(this.nfs.results, (nfsExport) => {
+        const currentHost = hostsToUpdate[nfsExport.host];
         if (_.isObject(currentHost)) {
           if (_.isObject(currentHost.exports) &&
               _.isObject(currentHost.exports[nfsExport.exportId])) {
@@ -111,6 +111,8 @@ class CephNfsList {
           } else {
             nfsExport.state = currentHost.state;
           }
+        } else {
+          nfsExport.state = "UNKNOWN";
         }
       });
     });
