@@ -71,6 +71,7 @@ Changed
 * WebUI: Convert Ceph RBD components to ES6 (OP-2803)
 * WebUI: Convert iSCSI components to ES6 (OP-2802)
 * WebUI: Migration of Api Decorator module into Angular (OP-2850)
+* WebUI: Migration of Grafana module into Angular (OP-2863)
 
 Fixed
 ~~~~~
