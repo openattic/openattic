@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 SUSE LLC
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,15 +30,19 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+import "../notification/module";
 
-var app = angular.module("openattic.apidecorator");
+import ApiErrorDecoratorService from "./shared/api-error-decorator.service";
+import ApiHttpErrorInterceptorService from "./shared/api-http-error-interceptor.service";
+import ApiHttpTimeoutInterceptorService from "./shared/api-http-timeout-interceptor.service";
 
-app.factory("ApiHttpTimeoutInterceptor", function () {
-  return {
-    request: function (config) {
-      config.timeout = parseInt(globalConfig.GUI.uiTimeout, 10) || 30000;
-      return config;
-    }
-  };
-});
+angular.module("openattic.apidecorator", [
+  "openattic.notification"
+])
+  .service("ApiErrorDecoratorService", ApiErrorDecoratorService)
+  .service("ApiHttpErrorInterceptorService", ApiHttpErrorInterceptorService)
+  .service("ApiHttpTimeoutInterceptorService", ApiHttpTimeoutInterceptorService)
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push("ApiHttpErrorInterceptorService");
+    $httpProvider.interceptors.push("ApiHttpTimeoutInterceptorService");
+  });

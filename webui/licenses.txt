@@ -20,6 +20,7 @@ bootstrap-notifications           1.0.3               MIT                       
 fontawesome                       4.7.0               MIT, OFL-1.1, CC-BY-3.0     https://github.com/FortAwesome/Font-Awesome/tree/v4.7.0
 jquery                            2.2.3               MIT                         https://github.com/jquery/jquery-dist/tree/2.2.3
 jquery-ui                         1.11.4              MIT                         https://github.com/jquery/jquery-ui/tree/1.11.4
+lodash                            4.17.4              MIT                         https://github.com/lodash/lodash/tree/4.17.4
 ng-tags-input                     3.0.0               MIT                         https://github.com/mbenford/ngTagsInput/tree/v3.0.0
 ngstorage                         0.3.10              MIT                         https://github.com/gsklee/ngStorage/tree/0.3.10
 
