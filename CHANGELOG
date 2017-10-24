@@ -75,6 +75,7 @@ Changed
 * WebUI: Migration of Grafana module into Angular (OP-2863)
 * WebUI: Migration of Ceph Cluster module into Angular (OP-2852)
 * WebUI: Migration of ApiRecorder module into Angular (OP-2848)
+* WebUI: Migration of Registry module into Angular (OP-2866)
 
 Fixed
 ~~~~~

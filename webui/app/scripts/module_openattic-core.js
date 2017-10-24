@@ -44,6 +44,7 @@ import "../components/userinfo/module";
 import "../components/taskQueue/module";
 import "../components/users/module";
 import "../components/feedback/feedback.module";
+import RegistryService from "./shared/registry.service";
 
 angular.module("openattic.core", [
   "openattic.apidecorator",
@@ -60,4 +61,5 @@ angular.module("openattic.core", [
   "openattic.userinfo",
   "openattic.taskQueue",
   "openattic.users"
-]);
+])
+  .service("registryService", RegistryService);

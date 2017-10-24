@@ -38,8 +38,7 @@ import cephPoolsList from "./ceph-pools-list/ceph-pools-list.component";
 angular.module("openattic.cephPools", [
   "openattic.cephCluster",
   "openattic.cephErasureCodeProfiles",
-  "openattic.cephOsd",
-  "openattic.registry"
+  "openattic.cephOsd"
 ])
   .component("cephPoolsAdd", cephPoolsAdd)
   .component("cephPoolsDeleteModal", cephPoolsDeleteModal)
