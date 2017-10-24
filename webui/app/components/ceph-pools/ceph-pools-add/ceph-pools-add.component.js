@@ -50,7 +50,7 @@ class CephPoolsAdd {
     this.$filter = $filter;
     this.SizeParserService = SizeParserService;
 
-    this.PG_MIN = 16;
+    this.PG_MIN = 1;
 
     this.pool = {
       name: "",
