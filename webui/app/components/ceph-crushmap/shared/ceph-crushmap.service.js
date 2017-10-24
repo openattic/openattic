@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 SUSE LLC
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,14 +30,14 @@
  */
 "use strict";
 
-import "../ceph-cluster/ceph-cluster.module";
+import globalConfig from "globalConfig";
 
-angular.module("openattic.cephCrushmap", [
-  "openattic.cephCluster"
-]);
+export default class CephCrushmapService {
+  constructor ($resource) {
+    let resource = $resource(globalConfig.API.URL + "ceph/:fsid/crushmap", {
+      fsid: "@fsid"
+    }, {});
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
+    Object.assign(this, resource);
+  }
 }

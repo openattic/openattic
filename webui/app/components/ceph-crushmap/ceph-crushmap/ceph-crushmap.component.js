@@ -30,70 +30,104 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCrushmap");
-app.controller("CephCrushmapCtrl", function ($scope, $timeout,
-    cephCrushmapService, registryService) {
-  $scope.cluster = undefined;
-  $scope.clusters = undefined;
-  $scope.registry = registryService;
-  $scope.repsize = 3;
+class CephCrushmapComponent {
+  constructor (cephCrushmapService, registryService) {
+    this.cephCrushmapService = cephCrushmapService;
+    this.registryService = registryService;
 
-  $scope.onClusterLoad = function (cluster) {
-    $scope.clusters = cluster;
-    $scope.getCrushmap();
-  };
+    this.cluster = undefined;
+    this.clusters = undefined;
+    this.registry = registryService;
+    this.repsize = 3;
 
-  $scope.getCrushmap = function () {
-    if (angular.isObject($scope.clusters) && $scope.clusters.results &&
-        $scope.clusters.results.length > 0 && $scope.registry.selectedCluster) {
-      $scope.error = false;
-      cephCrushmapService
-        .get({fsid: $scope.registry.selectedCluster.fsid})
+    this.treeOptions = {
+      accept: (sourceNodeScope, destNodesScope) => {
+        if (!destNodesScope.$parent.$modelValue) {
+          return true; // moved to the root level
+        }
+        // If there are any other nodes in the destination, only accept if their types match ours
+        for (var i = 0; i < destNodesScope.$modelValue.length; i++) {
+          if (destNodesScope.$modelValue[i].type_id !== sourceNodeScope.$modelValue.type_id) {
+            return false;
+          }
+        }
+        // Now make sure we put racks in datacenters and not vice versa
+        return sourceNodeScope.$modelValue.type_id < destNodesScope.$parent.$modelValue.type_id;
+      },
+      beforeDrag: (sourceNodeScope) => {
+      // ok, so beforeDrag gets fired once for the node clicked, and if that returns
+      // false, it gets fired AGAIN for each parent node right up to the root.
+      // So, if we're supposed to find a new "take" node, defer setting
+      // edittakenode to false by 25 ms, so we can return false for ALL tree nodes,
+      // and then only execute the first update (otherwise we'd choose the root
+      // node instead of the one that has actually been clicked).
+        if (this.edittakenode) {
+
+          setTimeout(() => {
+            if (this.edittakenode) {
+              this.newstepset.take = sourceNodeScope.$modelValue;
+              this.edittakenode = false;
+            }
+          }, 25);
+          return false;
+        }
+        return true;
+      },
+      dropped: () => {
+        this.rerenderNodes();
+      }
+    };
+  }
+
+  $onInit () {
+    this.setActiveRuleset(null);
+  }
+
+  getCrushmap () {
+    if (angular.isObject(this.clusters) && this.clusters.results &&
+        this.clusters.results.length > 0 && this.registry.selectedCluster) {
+      this.error = false;
+      this.cephCrushmapService
+        .get({fsid: this.registry.selectedCluster.fsid})
         .$promise
-        .then(function (res) {
-          $scope.cluster = res;
+        .then((res) => {
+          this.cluster = res;
         })
-        .catch(function (error) {
-          $scope.error = error;
+        .catch((error) => {
+          this.error = error;
         });
     }
-  };
+  }
 
-  $scope.setActiveRuleset = function (activeRuleset) {
-    $scope.activeRuleset = activeRuleset;
-  };
-  $scope.setActiveRuleset(null);
+  onClusterLoad (cluster) {
+    this.clusters = cluster;
+    this.getCrushmap();
+  }
 
-  $scope.findNodeByName = function (name) {
+  setActiveRuleset (activeRuleset) {
+    this.activeRuleset = activeRuleset;
+  }
+
+  findNodeByName (name) {
     var node = null;
-    var iterfn = function (item) {
+    var iterfn = (item) => {
       if (item.name === name) {
         node = item;
       } else {
         item.items.map(iterfn);
       }
     };
-    $scope.cluster.crushmap.buckets.map(iterfn);
+    this.cluster.crushmap.buckets.map(iterfn);
     return node;
-  };
-  $scope.findTypeByName = function (name) {
-    return $scope.cluster.crushmap.types.find(function (item) {
+  }
+
+  findTypeByName (name) {
+    return this.cluster.crushmap.types.find((item) => {
       return item.name === name;
     });
-  };
+  }
 
-  $scope.$watch("repsize", function (repsize) {
-    if ($scope.activeRuleset) {
-      if (repsize < $scope.activeRuleset.min_size) {
-        $scope.repsize = $scope.activeRuleset.min_size;
-      }
-      if (repsize > $scope.activeRuleset.max_size) {
-        $scope.repsize = $scope.activeRuleset.max_size;
-      }
-    }
-  });
-
-  var rerenderNodes = function () {
+  rerenderNodes () {
     // deep watcher that keeps track of min/max sanity etc
     var resetNodes;
     var renderNodes;
@@ -102,12 +136,12 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout,
     var step;
     var stepset;
     var prevStepCount;
-    var activeRuleset = $scope.activeRuleset;
-    if (!$scope.cluster) {
+    var activeRuleset = this.activeRuleset;
+    if (!this.cluster) {
       return;
     }
-    $scope.repsize = 3;
-    $scope.stepsets = [];
+    this._changeRepSize(3);
+    this.stepsets = [];
     if (activeRuleset) {
       // Force sensible min/max
       if (activeRuleset.min_size < 1) {
@@ -118,32 +152,32 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout,
       }
       // Try to keep the repsize to 3 if the ruleset allows it
       if (activeRuleset.min_size <= 3 && 3 <= activeRuleset.max_size) {
-        $scope.repsize = 3;
+        this._changeRepSize(3);
       } else if (activeRuleset.min_size <= 2 && 2 <= activeRuleset.max_size) {
         // It does not. Try 2...
-        $scope.repsize = 2;
+        this._changeRepSize(2);
       } else {
         // Seems we'll just have to use whatever the minimum is then :(
-        $scope.repsize = activeRuleset.min_size;
+        this. _changeRepSize(activeRuleset.min_size);
       }
       // Split the steps into stepsets, where each describes steps from "take" to "emit".
       for (s = 0; s < activeRuleset.steps.length; s++) {
         step = activeRuleset.steps[s];
         if (step.op === "take") {
           stepset = {};
-          stepset.take = $scope.findNodeByName(step.item_name);
+          stepset.take = this.findNodeByName(step.item_name);
         } else if (step.op === "choose_firstn") {
-          stepset.groupbytype = $scope.findTypeByName(step.type);
+          stepset.groupbytype = this.findTypeByName(step.type);
         } else if (step.op === "chooseleaf_firstn") {
-          stepset.acrosstype = $scope.findTypeByName(step.type);
+          stepset.acrosstype = this.findTypeByName(step.type);
           stepset.num = step.num;
-          stepset.replicas = $scope.getRealNum(stepset);
+          stepset.replicas = this.getRealNum(stepset);
         } else if (step.op === "emit") {
-          $scope.stepsets.push(stepset);
+          this.stepsets.push(stepset);
         }
       }
     }
-    resetNodes = function (nodes) {
+    resetNodes = (nodes) => {
       var i;
       var node;
       for (i = 0; i < nodes.length; i++) {
@@ -155,7 +189,7 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout,
         resetNodes(node.items);
       }
     };
-    renderNodes = function (steps, nodes, isBelowRootNode) {
+    renderNodes = (steps, nodes, isBelowRootNode) => {
       var i;
       var node;
       var substeps;
@@ -195,68 +229,48 @@ app.controller("CephCrushmapCtrl", function ($scope, $timeout,
     };
 
     rendersteps = (activeRuleset ? activeRuleset.steps.slice() : []);
-    resetNodes($scope.cluster.crushmap.buckets);
+    resetNodes(this.cluster.crushmap.buckets);
     while (rendersteps.length > 0) {
       prevStepCount = rendersteps.length;
-      renderNodes(rendersteps, $scope.cluster.crushmap.buckets, false);
+      renderNodes(rendersteps, this.cluster.crushmap.buckets, false);
       if (rendersteps.length >= prevStepCount) {
         // Safety measure: renderNodes should consume a coupl'a steps. If it
         // didn't, something seems to be wrong.
         throw "The CRUSH map renderer seems unable to render this CRUSH map ruleset.";
       }
     }
-  };
-  $scope.$watch("activeRuleset", rerenderNodes, true);
+  }
 
-  $scope.treeOptions = {
-    accept: function (sourceNodeScope, destNodesScope) {
-      if (!destNodesScope.$parent.$modelValue) {
-        return true; // moved to the root level
-      }
-      // If there are any other nodes in the destination, only accept if their types match ours
-      for (var i = 0; i < destNodesScope.$modelValue.length; i++) {
-        if (destNodesScope.$modelValue[i].type_id !== sourceNodeScope.$modelValue.type_id) {
-          return false;
-        }
-      }
-      // Now make sure we put racks in datacenters and not vice versa
-      return sourceNodeScope.$modelValue.type_id < destNodesScope.$parent.$modelValue.type_id;
-    },
-    beforeDrag: function (sourceNodeScope) {
-      // ok, so beforeDrag gets fired once for the node clicked, and if that returns
-      // false, it gets fired AGAIN for each parent node right up to the root.
-      // So, if we're supposed to find a new "take" node, defer setting
-      // edittakenode to false by 25 ms, so we can return false for ALL tree nodes,
-      // and then only execute the first update (otherwise we'd choose the root
-      // node instead of the one that has actually been clicked).
-      if ($scope.edittakenode) {
-        $timeout(function () {
-          if ($scope.edittakenode) {
-            $scope.newstepset.take = sourceNodeScope.$modelValue;
-            $scope.edittakenode = false;
-          }
-        }, 25);
-        return false;
-      }
-      return true;
-    },
-    dropped: function () {
-      rerenderNodes();
-    }
-  };
-
-  $scope.getRealNum = function (step) {
+  getRealNum (step) {
     if (!step) {
       return;
     }
     if (step.num <= 0) {
       return {
-        min: $scope.activeRuleset.min_size + step.num,
-        max: $scope.activeRuleset.max_size + step.num
+        min: this.activeRuleset.min_size + step.num,
+        max: this.activeRuleset.max_size + step.num
       };
     }
     return {
       min: step.num
     };
-  };
-});
+  }
+
+  _changeRepSize (repsize) {
+    this.repsize = repsize;
+
+    if (this.activeRuleset) {
+      if (repsize < this.activeRuleset.min_size) {
+        this.repsize = this.activeRuleset.min_size;
+      }
+      if (repsize > this.activeRuleset.max_size) {
+        this.repsize = this.activeRuleset.max_size;
+      }
+    }
+  }
+}
+
+export default{
+  controller: CephCrushmapComponent,
+  template: require("./ceph-crushmap.component.html")
+};

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,11 +30,17 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+import CephCrushmapService from "./shared/ceph-crushmap.service";
+import cephCrushmapComponent from "./ceph-crushmap/ceph-crushmap.component";
+import cephCrushmapStepsetComponent from "./ceph-crushmap-stepset/ceph-crushmap-stepset.component";
+import humanizeRuleNum from "./shared/humanize-rule-num.filter";
+import cephCrushmapRoutes from "./ceph-crushmap-route.config";
 
-var app = angular.module("openattic.cephCrushmap");
-app.factory("cephCrushmapService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/crushmap", {
-    fsid: "@fsid"
-  }, {});
-});
+angular.module("openattic.cephCrushmap", [
+  "openattic.cephCluster"
+])
+  .component("cephCrushmap", cephCrushmapComponent)
+  .component("cephCrushmapStepset", cephCrushmapStepsetComponent)
+  .filter("humanizeRuleNum", humanizeRuleNum)
+  .service("cephCrushmapService", CephCrushmapService)
+  .config(cephCrushmapRoutes);
