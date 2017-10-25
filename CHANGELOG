@@ -18,7 +18,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 
 [3.5.3] - unreleased
--------------------- 
+--------------------
 
 Added
 ~~~~~
@@ -31,6 +31,7 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
 
 Removed
 ~~~~~~~

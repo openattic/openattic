@@ -16,11 +16,13 @@ import os
 import pickle
 
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.utils.unittest import TestCase
 
 from rest.management import create_auth_token
 from rest_client import _ResponseValidator
-from sysutils.database_utils import make_default_admin, SimpleDatabaseUpgrade
+from sysutils.database_utils import make_default_admin, SimpleDatabaseUpgrade, database_cursor, \
+    fix_sequence_for_table, execute_and_fetch
 from userprefs.models import UserProfile, UserPreference
 
 
@@ -115,6 +117,50 @@ class SimpleDatabaseUpgradeTestCase(TestCase):
         self.assertEqual(SimpleDatabaseUpgrade.migrate_from_host(self._expected_content),
                          self._expected_content)
 
+class FixSequenceForTableableTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        User.objects.all().delete()
 
+    def test_correct_sequence_of_table(self):
+        with database_cursor() as cursor:
+            def set_seqval_0():
+                stmt = "SELECT setval('auth_user_id_seq', 1);"
+                response = execute_and_fetch(cursor, stmt)
+                self.assertEqual(response[0]['setval'], 1)
 
+            def fix_seqval():
+                sequence, new_sequence_value = fix_sequence_for_table(cursor, 'auth_user')
+                self.assertGreaterEqual(new_sequence_value, 2)
+                self.assertEqual(sequence, 'auth_user_id_seq')
+                response = execute_and_fetch(cursor,
+                                             'SELECT MAX(id) FROM {}'.format('auth_user'))
+                expected_value = response[0]['max'] + 1
+                self.assertEqual(new_sequence_value, expected_value)
 
+            def user_creation_works():
+                user = User.objects.create_user('my_test_user')
+                self.assertEqual(user.id, 3)
+                user.delete()
+
+            def user_creation_fails():
+                with self.assertRaises(IntegrityError) as context:
+                    user_creation_works()
+                self.assertIn('auth_user_pkey', str(context.exception))
+
+            _, first_sequence_value = fix_sequence_for_table(cursor, 'auth_user')
+            self.assertEqual(first_sequence_value, 1)
+            make_default_admin()
+            self.assertEqual(User.objects.get().id, 1)
+            tmp_user = User.objects.create_user('tmp_user')
+            self.assertEqual(tmp_user.id, 2)
+
+            user_creation_works()
+            fix_seqval()
+            user_creation_works()
+            set_seqval_0()
+            user_creation_fails()
+            fix_seqval()
+            user_creation_works()
+            fix_seqval()
+            user_creation_works()
