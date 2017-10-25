@@ -11,11 +11,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-
+import logging
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from ceph_iscsi import tasks
 from deepsea import DeepSea
 
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def iscsi_status(request):
@@ -24,9 +27,13 @@ def iscsi_status(request):
 
 @api_view(['POST'])
 def iscsi_deploy(request):
-    return Response({'result': DeepSea.instance().iscsi_deploy()})
+    my_task = tasks.async_deploy_exports.delay()
+    logger.info("Scheduled deploy of iSCSI exports: task_id=%s", my_task.id)
+    return Response({'task_id': my_task.id})
 
 
 @api_view(['POST'])
 def iscsi_undeploy(request):
-    return Response({'result': DeepSea.instance().iscsi_undeploy()})
+    my_task = tasks.async_stop_exports.delay()
+    logger.info("Scheduled stop of iSCSI: task_id=%s", my_task.id)
+    return Response({'task_id': my_task.id})
