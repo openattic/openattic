@@ -30,46 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.users");
-app.config(function ($stateProvider) {
-  $stateProvider
-    .state("users", {
-      url: "/users",
-      views: {
-        "main": {
-          template: require("../templates/users.html"),
-          controller: "UsersCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Users"
-      }
-    })
-    .state("users-add", {
-      url: "/users/add",
-      views: {
-        "main": {
-          template: require("../templates/add-edit-user.html"),
-          controller: "UsersAddEditCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Add",
-        parent: "users"
-      }
-    })
-    .state("users-edit", {
-      url: "/users/edit/:user",
-      views: {
-        "main": {
-          template: require("../templates/add-edit-user.html"),
-          controller: "UsersAddEditCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Edit {{user.username}}",
-        parent: "users"
-      }
-    }
-    );
-});
+import UsersService from "./shared/users.service";
+import usersAuthTokenModalComponent from "./users-auth-token-modal/users-auth-token-modal.component";
+import usersDeleteModalComponent from "./users-delete-modal/users-delete-modal.component";
+import usersFormComponent from "./users-form/users-form.component";
+import usersListComponent from "./users-list/users-list.component";
+import usersRoutes from "./users.routes";
+
+angular.module("openattic.users", [])
+  .component("usersAuthTokenModalComponent", usersAuthTokenModalComponent)
+  .component("usersDeleteModalComponent", usersDeleteModalComponent)
+  .component("usersFormComponent", usersFormComponent)
+  .component("usersListComponent", usersListComponent)
+  .service("usersService", UsersService)
+  .config(usersRoutes);

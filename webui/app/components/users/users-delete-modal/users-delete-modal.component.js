@@ -30,31 +30,43 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+class UsersDeleteModalComponent {
 
-var app = angular.module("openattic.users");
-app.factory("usersService", function ($resource) {
-  return $resource(globalConfig.API.URL + "users/:id", {
-    id: "@id"
-  }, {
-    update: {method: "PUT"},
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
-      }
-    },
-    filter: {
-      method: "GET"
-    },
-    current: {
-      method: "GET",
-      url: globalConfig.API.URL + "users/current"
-    },
-    generateAuthToken: {
-      method: "POST",
-      url: globalConfig.API.URL + "users/:id/gen_new_token"
-    }
-  });
-});
+  constructor (usersService, Notification) {
+    this.Notification = Notification;
+    this.usersService = usersService;
+  }
+
+  $onInit () {
+    this.user = this.resolve.user;
+  }
+
+  delete () {
+    this.usersService.delete({id: this.user.id})
+      .$promise
+      .then(() => {
+        this.modalInstance.close("deleted");
+      }, () => {
+        this.deleteForm.$submitted = false;
+      });
+  }
+
+  $cancel () {
+    this.modalInstance.dismiss("cancel");
+
+    this.Notification.warning({
+      title: "Delete user",
+      msg: "Cancelled"
+    });
+  }
+
+}
+
+export default{
+  controller: UsersDeleteModalComponent,
+  template: require("./users-delete-modal.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  }
+};

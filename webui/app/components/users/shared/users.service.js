@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,19 +30,35 @@
  */
 "use strict";
 
-var app = angular.module("openattic.users");
-app.controller("UsersModalCtrl", function ($scope, usersService, $uibModalInstance, user) {
-  $scope.user = user;
+import globalConfig from "globalConfig";
 
-  $scope.generateAuthToken = function () {
-    usersService.generateAuthToken({id: $scope.user.id})
-      .$promise
-      .then(function (res) {
-        $uibModalInstance.close(res.auth_token.token);
-      });
-  };
+export default class UsersService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "users/:id", {
+      id: "@id"
+    }, {
+      update: {method: "PUT"},
+      query: {
+        method: "GET",
+        isArray: true,
+        transformResponse: (data) => {
+          return JSON.parse(data).results;
+        }
+      },
+      filter: {
+        method: "GET"
+      },
+      current: {
+        method: "GET",
+        url: globalConfig.API.URL + "users/current"
+      },
+      generateAuthToken: {
+        method: "POST",
+        url: globalConfig.API.URL + "users/:id/gen_new_token"
+      }
+    });
 
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
-});
+    Object.assign(this, res);
+  }
+}
+

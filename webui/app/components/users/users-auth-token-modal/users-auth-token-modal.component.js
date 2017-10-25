@@ -30,10 +30,34 @@
  */
 "use strict";
 
-angular.module("openattic.users", []);
+class UsersAuthTokenModalComponent {
+  constructor (usersService) {
+    this.usersService = usersService;
+  }
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+  $onInit () {
+    this.user = this.resolve.user;
+  }
 
-function requireAll (require) {
-  require.keys().forEach(require);
+  generateAuthToken () {
+    this.usersService.generateAuthToken({id: this.user.id})
+      .$promise
+      .then((res) => {
+        this.modalInstance.close(res.auth_token.token);
+      });
+  }
+
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  }
 }
+
+export default{
+  controller: UsersAuthTokenModalComponent,
+  template: require("./users-auth-token-modal.component"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  }
+};
+

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,26 +30,42 @@
  */
 "use strict";
 
-var app = angular.module("openattic.users");
-app.controller("UsersDeleteCtrl", function ($scope, usersService, $uibModalInstance, user, Notification) {
-  $scope.user = user;
-
-  $scope.delete = function () {
-    usersService.delete({id: $scope.user.id})
-      .$promise
-      .then(function () {
-        $uibModalInstance.close("deleted");
-      }, function () {
-        $scope.deleteForm.$submitted = false;
-      });
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-
-    Notification.warning({
-      title: "Delete user",
-      msg: "Cancelled"
-    });
-  };
-});
+export default ($stateProvider) => {
+  $stateProvider
+    .state("users", {
+      url: "/users",
+      views: {
+        "main": {
+          component: "usersListComponent"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Users"
+      }
+    })
+    .state("users-add", {
+      url: "/users/add",
+      views: {
+        "main": {
+          component: "usersFormComponent"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Add",
+        parent: "users"
+      }
+    })
+    .state("users-edit", {
+      url: "/users/edit/:user",
+      views: {
+        "main": {
+          component: "usersFormComponent"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Edit {{$ctrl.user.username}}",
+        parent: "users"
+      }
+    }
+    );
+};

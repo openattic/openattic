@@ -44,6 +44,7 @@ Changed
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
 * Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors 
   when deleting large RBD images. (OP-2742)
+* WebUI: Migration of Users module into Angular (OP-2871)
 
 Fixed
 ~~~~~

@@ -1,36 +1,38 @@
 <oadatatable class="oadatatable tc_oadatatable_users"
-             data="data"
-             filter-config="filterConfig"
-             selection="selection"
-             on-filter-config-change="onFilterConfigChange()">
+             data="$ctrl.data"
+             filter-config="$ctrl.filterConfig"
+             special="$ctrl"
+             selection="$ctrl.selection"
+             on-selection-change="$ctrl.onSelectionChange(selection)"
+             on-filter-config-change="$ctrl.onFilterConfigChange()">
   <actions>
     <a class="btn btn-sm btn-primary tc_addUser"
        type="button"
-       ng-click="addAction()"
-       ng-hide="hasSelection">
+       ng-click="$ctrl.addAction()"
+       ng-hide="$ctrl.hasSelection">
       <i class="fa fa-fw fa-plus"></i>Add
     </a>
     <a class="btn btn-sm btn-primary tc_editUser"
        type="button"
-       ng-click="editAction()"
-       ng-show="hasSelection">
+       ng-click="$ctrl.editAction()"
+       ng-show="$ctrl.hasSelection">
       <i class="fa fa-fw fa-pencil"></i>Edit
     </a>
     <li>
-      <a ng-click="addAction()">
+      <a ng-click="$ctrl.addAction()">
         <i class="fa fa-fw fa-plus"></i>Add
       </a>
     </li>
-    <li ng-class="{disabled: !hasSelection}">
+    <li ng-class="{disabled: !$ctrl.hasSelection}">
       <a>
         <i class="fa fa-fw fa-pencil"></i>Edit
       </a>
     </li>
     <li class="divider"></li>
     <li class="tc_deleteUser"
-        ng-class="{disabled: !hasSelection}"
+        ng-class="{disabled: !$ctrl.hasSelection}"
         max-selected="1">
-      <a ng-click="deleteAction()">
+      <a ng-click="$ctrl.deleteAction()">
         <i class="fa fa-fw fa-trash-o"></i>Delete
       </a>
     </li>
