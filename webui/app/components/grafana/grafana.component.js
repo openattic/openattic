@@ -84,14 +84,14 @@ class Grafana {
       this.src = this.baseUrl + "dashboard/db/" + this.dashboardName + "?" + this.urlParameterName + "=" + this.data;
     }
 
-    angular.element(this.$window).bind("resize", () => {
+    window.addEventListener("resize", () => {
       this.resize();
     });
   }
 
   $onChanges (values) {
     // Only update the source if binding "data" changes
-    if (angular.isDefined(values.data)) {
+    if (typeof values.data !== "undefined") {
       this.src = this.src.replace(values.data.previousValue, values.data.currentValue);
     }
   }
