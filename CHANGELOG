@@ -38,6 +38,7 @@ Fixed
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
 * Backend: The Grafana dashboard will now be shown automatically when
   upgrading from oA 2.x to 3.x (OP-2843)
+* Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
 
 Removed
 ~~~~~~~
