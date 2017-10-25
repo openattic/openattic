@@ -25,6 +25,8 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
+  (OP-2725)
 
 Fixed
 ~~~~~
