@@ -18,13 +18,14 @@ To describe their impact on the project, changes are grouped as follows:
 
 
 [3.5.3] - unreleased
--------------------- 
+--------------------
 
 Added
 ~~~~~
 
 Changed
 ~~~~~~~
+* WebUI: Now it is possible to delete a RGW user with buckets (OP-2790)
 * WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
   (OP-2725)
 * Backend: Use health's "status" instead of "overall_status" (OP-2845)
