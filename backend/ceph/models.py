@@ -178,7 +178,7 @@ class CephCluster(NodbModel, RadosMixin):
         try:
             health = self.mon_api(self.fsid).health()
             # Ceph Luminous > 12.1 renamed `overall_status` to `status`
-            self.health = health['overall_status' if 'overall_status' in health else 'status']
+            self.health = health['status']
         except (TypeError, ExternalCommandError, ObjectNotFound):
             logger.exception('failed to get ceph health')
             self.health = 'HEALTH_ERR'
