@@ -442,13 +442,13 @@ class ClientManager(object):
 clients = ClientManager()
 
 
-def call_librados(fsid, method, timeout=30):
+def call_librados(fsid, method, cmd_name, timeout=30):
     def with_client():
         with ClusterConf.from_fsid(fsid).client as client:
             return method(client)
 
     if settings.SEPARATE_LIBRADOS_PROCESS:
-        return run_in_external_process(with_client, timeout)
+        return run_in_external_process(with_client, cmd_name, timeout)
     else:
         client = clients[fsid]
         return method(client)
@@ -705,12 +705,13 @@ class MonApi(object):
         :return: empty string
         """
 
+        cmd = 'osd pool delete'
+
         def impl(client):
             pool_delete_args = self._args_to_argdict(pool=pool, pool2=pool2, sure=sure)
 
             try:
-                return client.mon_command('osd pool delete', pool_delete_args,
-                                          output_format='string')
+                return client.mon_command(cmd, pool_delete_args, output_format='string')
             except ExternalCommandError as e:
                 if e.code != EPERM:
                     raise
@@ -730,9 +731,7 @@ class MonApi(object):
                                                     injected_args=['--mon-allow-pool-delete=true']),
                                            output_format='string',
                                            target=mon_name)
-                    res = client.mon_command('osd pool delete',
-                                             pool_delete_args,
-                                             output_format='string')
+                    res = client.mon_command(cmd, pool_delete_args, output_format='string')
                 finally:
                     for mon_name in mon_names:
                         client.mon_command('injectargs',
@@ -742,7 +741,7 @@ class MonApi(object):
                                            target=mon_name)
                 return res
 
-        return call_librados(self.fsid, impl)
+        return call_librados(self.fsid, impl, cmd)
 
     @undoable
     def osd_pool_mksnap(self, pool, snap):
@@ -1068,7 +1067,7 @@ class MonApi(object):
 
     def _call_mon_command(self, cmd, argdict=None, output_format='json', timeout=30):
         return call_librados(self.fsid,
-                             lambda client: client.mon_command(cmd, argdict, output_format),
+                             lambda client: client.mon_command(cmd, argdict, output_format), cmd,
                              timeout)
 
 
@@ -1148,7 +1147,7 @@ class RbdApi(object):
         :type stripe_count: int
         :type data_pool_name: str
         """
-        def _do(client):
+        def _create(client):
             ioctx = client.get_pool(pool_name)
             rbd_inst = rbd.RBD()
             default_features = 0 if old_format else 61  # FIXME: hardcoded int
@@ -1164,28 +1163,28 @@ class RbdApi(object):
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,
                                 features=feature_bitmask, order=order)
 
-        yield self._call_librados(_do)
+        yield self._call_librados(_create)
         self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
-        def _action(client):
+        def _remove(client):
             ioctx = client.get_pool(pool_name)
             rbd_inst = rbd.RBD()
             rbd_inst.remove(ioctx, image_name)
 
-        self._call_librados(_action)
+        self._call_librados(_remove)
 
     def list(self, pool_name):
         """
         :returns: list -- a list of image names
         :rtype: list[str]
         """
-        def _action(client):
+        def _list(client):
             ioctx = client.get_pool(pool_name)
             rbd_inst = rbd.RBD()
             return rbd_inst.list(ioctx)
 
-        return self._call_librados(_action)
+        return self._call_librados(_list)
 
     def image_stat(self, pool_name, name, snapshot=None):
         """
@@ -1196,12 +1195,12 @@ class RbdApi(object):
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """
-        def _action(client):
+        def _get_image_status(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
                 return image.stat()
 
-        return self._call_librados(_action)
+        return self._call_librados(_get_image_status)
 
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.
@@ -1241,7 +1240,7 @@ class RbdApi(object):
 
     def image_stripe_info(self, pool_name, name, snapshot=None):
         """:returns: tuple of count and unit"""
-        def _action(client):
+        def _get_stripe_infos(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
                 try:
@@ -1249,34 +1248,34 @@ class RbdApi(object):
                 except AttributeError:
                     return None, None
 
-        return self._call_librados(_action)
+        return self._call_librados(_get_stripe_infos)
 
     @undoable
     def image_resize(self, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
-        def _do(client):
+        def _image_resize(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 original_size = image.size()
                 return original_size, image.resize(size)
 
-        original_size, result = self._call_librados(_do)
+        original_size, result = self._call_librados(_image_resize)
         yield result
         self.image_resize(pool_name, name, original_size)
 
     def image_features(self, pool_name, name):
-        def _action(client):
+        def _get_image_features(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 return RbdApi._bitmask_to_list(image.features())
 
-        return self._call_librados(_action)
+        return self._call_librados(_get_image_features)
 
     @undoable
     def image_set_feature(self, pool_name, name, feature, enabled):
         """:type enabled: bool"""
-        def _do(client):
+        def _set_image_features(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 bitmask = RbdApi._list_to_bitmask([feature])
@@ -1284,16 +1283,18 @@ class RbdApi(object):
                     raise ValueError(u'Feature "{}" is unknown.'.format(feature))
                 image.update_features(bitmask, enabled)
 
-        yield self._call_librados(_do)
+        yield self._call_librados(_set_image_features)
         self.image_set_feature(pool_name, name, feature, not enabled)  # Undo step
 
     def image_old_format(self, pool_name, name):
-        def _action(client):
+        def _check_format_type(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 return image.old_format()
 
-        return self._call_librados(_action)
+        return self._call_librados(_check_format_type)
 
     def _call_librados(self, func, timeout=30):
-        return call_librados(self.fsid, func, timeout)
+        cmd = func.__name__[1:].replace('_', ' ')
+        cmd = 'rbd {}'.format(cmd)
+        return call_librados(self.fsid, func, cmd, timeout)

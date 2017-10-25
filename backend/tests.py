@@ -31,20 +31,22 @@ class RunInExternalProcessTestCase(TestCase):
         def return1():
             return 1
 
-        self.assertEqual(utilities.run_in_external_process(return1, timeout=1), 1)
+        self.assertEqual(utilities.run_in_external_process(return1, 'test simple', timeout=1), 1)
 
     def test_huge(self):
         def return_big():
             return 'x' * (1024 * 1024)
 
-        self.assertEqual(utilities.run_in_external_process(return_big, timeout=1), return_big())
+        self.assertEqual(utilities.run_in_external_process(return_big, 'test huge', timeout=1),
+                         return_big())
 
     def test_exception(self):
         def raise_exception():
             raise KeyError()
 
         self.assertRaises(KeyError,
-                          lambda: utilities.run_in_external_process(raise_exception, timeout=1))
+                          lambda: utilities.run_in_external_process(raise_exception,
+                                                                    'test exception', timeout=1))
 
     def test_exit(self):
         def just_exit():
@@ -55,8 +57,8 @@ class RunInExternalProcessTestCase(TestCase):
         # ... multiprocessing seems to have a bug where we end up in a timeout, if the child
         # died prematurely.
         self.assertRaises(exception.ExternalCommandError,
-                          lambda: utilities.run_in_external_process(just_exit, timeout=1))
-
+                          lambda: utilities.run_in_external_process(just_exit, 'test exit',
+                                                                    timeout=1))
 
     def test_timeout(self):
         def just_wait():
@@ -64,4 +66,5 @@ class RunInExternalProcessTestCase(TestCase):
             time.sleep(3)
 
         self.assertRaises(exception.ExternalCommandError,
-                          lambda: utilities.run_in_external_process(just_wait, timeout=1))
+                          lambda: utilities.run_in_external_process(just_wait, 'test timeout',
+                                                                    timeout=1))
