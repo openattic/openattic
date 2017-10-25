@@ -91,6 +91,7 @@ Fixed
 * WebUI/QA: Fix random iSCSI e2e test failures (OP-2807, OP-2830)
 * WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
 * WebUI: Fix RGW name validation (OP-2825)
+* Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
 
 Removed
 ~~~~~~~
