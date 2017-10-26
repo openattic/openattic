@@ -35,6 +35,8 @@ Fixed
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* Backend: The Grafana dashboard will now be shown automatically when
+  upgrading from oA 2.x to 3.x (OP-2843)
 
 Removed
 ~~~~~~~
