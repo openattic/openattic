@@ -49,7 +49,8 @@ class SimpleDatabaseUpgrade(object):
             self.db_content = self.read_from_file()
         except Exception:
             try:
-                self.db_content = run_in_external_process(self.get_all_users_and_prefs)
+                self.db_content = run_in_external_process(self.get_all_users_and_prefs,
+                                                          'get all users and prefs')
             except Exception:
                 pass
             if self.db_content:
@@ -83,7 +84,8 @@ class SimpleDatabaseUpgrade(object):
     def insert_all_users_and_prefs(self):
         stmt_pattern = """INSERT INTO {} ({}) VALUES ({});"""
         with database_cursor() as cursor:
-            for table, rows in self.migrate_from_host(self.db_content):
+            migrated_host = self.migrate_from_host(self.db_content)
+            for table, rows in self.migrate_dashboard_preferences(migrated_host):
                 for row in rows:
                     keys, values = zip(*row.items())
                     stmt = stmt_pattern.format(table,
@@ -115,6 +117,25 @@ class SimpleDatabaseUpgrade(object):
             del data[keys.index('ifconfig_host')]
         return data
 
+    @staticmethod
+    def migrate_dashboard_preferences(old_data):
+        data = deepcopy(old_data)
+
+        keys = [key for key, _ in data]
+
+        if 'userprefs_userpreference' in keys:
+            index = keys.index('userprefs_userpreference')
+            (_, old_settings) = data[index]
+
+            settings = []
+            for setting in old_settings:
+                if setting['setting'] == 'oa_dashboard' and 'Grafana' not in setting['value']:
+                    continue
+                settings.append(setting)
+
+            data[index] = ('userprefs_userpreference', settings)
+
+        return data
 
 def make_default_admin():
     if User.objects.filter(is_superuser=True).count() == 0:

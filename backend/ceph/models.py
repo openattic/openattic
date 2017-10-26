@@ -379,7 +379,8 @@ class CephPool(NodbModel, RadosMixin):
     @bulk_attribute_setter(['num_bytes', 'num_objects'],
                            catch_exceptions=librados.rados.ObjectNotFound)
     def set_stats(self, pools, field_names):
-        stats = call_librados(self.cluster.fsid, lambda client: client.get_stats(self.name))
+        stats = call_librados(self.cluster.fsid, lambda client: client.get_stats(self.name),
+                              'pool set stats')
         self.num_bytes = stats['num_bytes'] if 'num_bytes' in stats else None
         self.num_objects = stats['num_objects'] if 'num_objects' in stats else None
 
@@ -770,8 +771,8 @@ class CephPg(NodbModel, RadosMixin):
         assert context is not None
         cmd, argdict = CephPg.get_mon_command_by_query(query)
         try:
-            pgs = call_librados(context.fsid, lambda client: client.mon_command(cmd, argdict,
-                                                                                default_return=[]))
+            pgs = call_librados(context.fsid, lambda client: client.mon_command(
+                cmd, argdict, default_return=[]), cmd)
         except ExternalCommandError as e:
             logger.exception('failed to get pgs: "%s" "%s" "%s"', cmd, argdict, e)
             return []

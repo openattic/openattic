@@ -35,6 +35,7 @@ BuildRequires: postgresql
 BuildRequires: postgresql-server
 BuildRequires: python
 BuildRequires: rsync
+PreReq:        %fillup_prereq
 
 Recommends: logrotate
 

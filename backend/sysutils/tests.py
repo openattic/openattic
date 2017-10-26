@@ -35,7 +35,8 @@ class SimpleDatabaseUpgradeTestCase(TestCase):
             {'username': u'openattic', 'first_name': u'', 'last_name': u'', 'is_active': True,
              'email': u'', 'is_superuser': True, 'is_staff': True,
              'last_login': datetime.datetime(2017, 8, 24, 14, 36, 10, 906874),
-             'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZd/k8vsNXs=',
+             'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZd/k8'
+                         u'vsNXs=',
              'id': 1, 'date_joined': datetime.datetime(2017, 8, 24, 14, 36, 10, 906933)}]),
         ('authtoken_token', [{'user_id': 1, 'key': u'6d4517a36d806775de9a0509fdd2f6f36d01841a',
                               'created': datetime.datetime(2017, 8, 24, 14, 36, 10, 958377)}]),
@@ -50,7 +51,8 @@ class SimpleDatabaseUpgradeTestCase(TestCase):
             {'username': u'openattic', 'first_name': u'', 'last_name': u'', 'is_active': True,
              'email': u'', 'is_superuser': True, 'is_staff': True,
              'last_login': datetime.datetime(2017, 8, 24, 14, 36, 10, 906874),
-             'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZd/k8vsNXs=',
+             'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZd/k8'
+                         u'vsNXs=',
              'id': 1, 'date_joined': datetime.datetime(2017, 8, 24, 14, 36, 10, 906933)}]),
         ('authtoken_token', [{'user_id': 1, 'key': u'6d4517a36d806775de9a0509fdd2f6f36d01841a',
                               'created': datetime.datetime(2017, 8, 24, 14, 36, 10, 958377)}]),
@@ -74,7 +76,8 @@ class SimpleDatabaseUpgradeTestCase(TestCase):
         for key in dict(self._expected_content):
             self.assertGreaterEqual(len(db_content[key]), 1, msg=str(key))
         _ResponseValidator.validate(
-            '[*] > (username & first_name & last_name & is_active & email & last_login & password & id & date_joined)',
+            '[*] > (username & first_name & last_name & is_active & email & last_login & password '
+            '& id & date_joined)',
             db_content['auth_user'])
         _ResponseValidator.validate(
             '[*] > (user_id & key & created)',
@@ -116,6 +119,7 @@ class SimpleDatabaseUpgradeTestCase(TestCase):
                          self._expected_content)
         self.assertEqual(SimpleDatabaseUpgrade.migrate_from_host(self._expected_content),
                          self._expected_content)
+
 
 class FixSequenceForTableableTestCase(TestCase):
     @classmethod
@@ -164,3 +168,57 @@ class FixSequenceForTableableTestCase(TestCase):
             user_creation_works()
             fix_seqval()
             user_creation_works()
+
+    def test_migrate_dashboard_grafana(self):
+        content = [
+            ('auth_user', [
+                {'username': u'openattic', 'first_name': u'', 'last_name': u'', 'is_active': True,
+                 'email': u'', 'is_superuser': True, 'is_staff': True,
+                 'last_login': datetime.datetime(2017, 8, 24, 14, 36, 10, 906874),
+                 'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZ'
+                             u'd/k8vsNXs=',
+                 'id': 1, 'date_joined': datetime.datetime(2017, 8, 24, 14, 36, 10, 906933)}]),
+            ('authtoken_token', [{'user_id': 1, 'key': u'6d4517a36d806775de9a0509fdd2f6f36d01841a',
+                                  'created': datetime.datetime(2017, 8, 24, 14, 36, 10, 958377)}]),
+            ('userprefs_userprofile', [{'host_id': 1, 'id': 1, 'user_id': 1}]),
+            ('userprefs_userpreference', [{'id': 1, 'profile_id': 1, 'setting': u'setting',
+                                           'value': u'value'},
+                                          {'id': 2, 'profile_id': 1, 'setting': u'oa_dashboard',
+                                           'value': u'boards: [{"widgets":[], "name":"Ceph",'
+                                                    u'"id":0}, {"widgets":[], "name":"Grafana", '
+                                                    u'"id":1}]'}])]
+        self.assertEqual(SimpleDatabaseUpgrade.migrate_dashboard_preferences(content), content)
+
+    def test_migrate_dashboard_without_grafana(self):
+        old_content = [
+            ('auth_user', [
+                {'username': u'openattic', 'first_name': u'', 'last_name': u'', 'is_active': True,
+                 'email': u'', 'is_superuser': True, 'is_staff': True,
+                 'last_login': datetime.datetime(2017, 8, 24, 14, 36, 10, 906874),
+                 'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZ'
+                             u'd/k8vsNXs=',
+                 'id': 1, 'date_joined': datetime.datetime(2017, 8, 24, 14, 36, 10, 906933)}]),
+            ('authtoken_token', [{'user_id': 1, 'key': u'6d4517a36d806775de9a0509fdd2f6f36d01841a',
+                                  'created': datetime.datetime(2017, 8, 24, 14, 36, 10, 958377)}]),
+            ('userprefs_userprofile', [{'host_id': 1, 'id': 1, 'user_id': 1}]),
+            ('userprefs_userpreference', [{'id': 1, 'profile_id': 1, 'setting': u'setting',
+                                           'value': u'value'},
+                                          {'id': 2, 'profile_id': 1, 'setting': u'oa_dashboard',
+                                           'value': u'boards: [{"widgets":[], "name":"Ceph", '
+                                                    u'"id":0},'}])]
+        expected_content = [
+            ('auth_user', [
+                {'username': u'openattic', 'first_name': u'', 'last_name': u'', 'is_active': True,
+                 'email': u'', 'is_superuser': True, 'is_staff': True,
+                 'last_login': datetime.datetime(2017, 8, 24, 14, 36, 10, 906874),
+                 'password': u'pbkdf2_sha256$12000$8Ef1FMiwNFoX$az09mpIULEGfujbZPwevc9vgSGOd5Y1rjZ'
+                             u'd/k8vsNXs=',
+                 'id': 1, 'date_joined': datetime.datetime(2017, 8, 24, 14, 36, 10, 906933)}]),
+            ('authtoken_token', [{'user_id': 1, 'key': u'6d4517a36d806775de9a0509fdd2f6f36d01841a',
+                                  'created': datetime.datetime(2017, 8, 24, 14, 36, 10, 958377)}]),
+            ('userprefs_userprofile', [{'host_id': 1, 'id': 1, 'user_id': 1}]),
+            ('userprefs_userpreference', [{'id': 1, 'profile_id': 1, 'setting': u'setting',
+                                           'value': u'value'}])]
+
+        self.assertEqual(SimpleDatabaseUpgrade.migrate_dashboard_preferences(old_content),
+                         expected_content)
