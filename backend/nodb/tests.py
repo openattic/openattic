@@ -319,10 +319,25 @@ class NodbModelTest(TestCase):
 
         @staticmethod
         def get_all_objects(context, query):
-            raise NotImplementedError()
+            return [
+                NodbModelTest.SimpleModel(a=1, b=2),
+                NodbModelTest.SimpleModel(a=10, b=20)
+            ]
 
     def test_make_model_args(self):
         args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3))
         self.assertEqual(args, dict(a=1))
         args = NodbModelTest.SimpleModel.make_model_args(dict(a=1, bad=3), fields_force_none=['b'])
         self.assertEqual(args, dict(a=1, b=None))
+
+    def test_get_modified_fields(self):
+        first, second = NodbModelTest.SimpleModel.objects.all()
+        m = NodbModelTest.SimpleModel.objects.all()[0]
+        self.assertEqual(m.get_modified_fields(), ({}, first))
+        m.b = 4
+        self.assertEqual(m.get_modified_fields(), ({'b': 4}, first))
+        self.assertEqual(m.get_modified_fields(update_fields=['a']), ({}, first))
+        self.assertEqual(m.get_modified_fields(update_fields=['b']), ({'b': 4}, first))
+
+        self.assertEqual(m.get_modified_fields(a=second.a), ({'a': 1, 'b': 4}, second))
+        self.assertEqual(m.get_modified_fields(a=second.a, update_fields=['a']), ({'a': 1}, second))
