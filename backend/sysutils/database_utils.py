@@ -68,7 +68,6 @@ class SimpleDatabaseUpgrade(object):
         except Exception:
             pass
 
-
     @classmethod
     def get_all_users_and_prefs(cls):
         """:rtype: list[tuple[str, list[dict]]] | None"""
@@ -84,7 +83,8 @@ class SimpleDatabaseUpgrade(object):
     def insert_all_users_and_prefs(self):
         stmt_pattern = """INSERT INTO {} ({}) VALUES ({});"""
         with database_cursor() as cursor:
-            for table, rows in self.migrate_from_host(self.db_content):
+            migrated_host = self.migrate_from_host(self.db_content)
+            for table, rows in self.migrate_dashboard_preferences(migrated_host):
                 for row in rows:
                     keys, values = zip(*row.items())
                     stmt = stmt_pattern.format(table,
@@ -92,6 +92,10 @@ class SimpleDatabaseUpgrade(object):
                                                ', '.join(['%s'] * len(values)))
                     print 'inserting', stmt
                     cursor.execute(stmt, values)
+
+                # Set the sequence correctly.
+                sequence, value = fix_sequence_for_table(cursor, table)
+                print('Setting sequence `{}` of table `{}` to `{}`'.format(sequence, table, value))
 
     @staticmethod
     def migrate_from_host(old_data):
@@ -112,6 +116,25 @@ class SimpleDatabaseUpgrade(object):
             del data[keys.index('ifconfig_host')]
         return data
 
+    @staticmethod
+    def migrate_dashboard_preferences(old_data):
+        data = deepcopy(old_data)
+
+        keys = [key for key, _ in data]
+
+        if 'userprefs_userpreference' in keys:
+            index = keys.index('userprefs_userpreference')
+            (_, old_settings) = data[index]
+
+            settings = []
+            for setting in old_settings:
+                if setting['setting'] == 'oa_dashboard' and 'Grafana' not in setting['value']:
+                    continue
+                settings.append(setting)
+
+            data[index] = ('userprefs_userpreference', settings)
+
+        return data
 
 def make_default_admin():
     if User.objects.filter(is_superuser=True).count() == 0:
@@ -140,7 +163,26 @@ def fetch_all_dict(cursor):
         for row in cursor.fetchall()
     ]
 
+
+def fix_sequence_for_table(cursor, table):
+    response = execute_and_fetch(cursor, 'SELECT pg_get_serial_sequence(%s, %s)', (table, 'id'))
+    if response:
+        sequence = response[0]['pg_get_serial_sequence'].split('.')[1]
+        stmt = "SELECT setval(%s, COALESCE((SELECT MAX(id) FROM {}) + 1, 1), false);".format(table)
+        response = execute_and_fetch(cursor, stmt, (sequence,))
+        return sequence, response[0]['setval']
+
+
 @contextmanager
 def database_cursor():
     with closing(connection.cursor()) as cursor:  # type: CursorWrapper
-        yield cursor
+        try:
+            yield cursor
+        except Exception as e:
+            # Django 1.6: There is a problem that unittest2 expects Exceptions to have a cause
+            # with a traceback.
+            if not hasattr(e, '__cause__'):
+                e.__cause__ = None
+            if e.__cause__ is not None and not hasattr(e.__cause__, '__traceback__'):
+                e.__cause__.__traceback__ = None
+            raise

@@ -15,7 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
 Name: openattic
-Version: 3.5.2
+Version: 3.5.3
 Release: 0
 Summary: Open Source Management and Monitoring System for Ceph
 Group: System Environment/Libraries
@@ -35,6 +35,7 @@ BuildRequires: postgresql
 BuildRequires: postgresql-server
 BuildRequires: python
 BuildRequires: rsync
+PreReq:        %fillup_prereq
 
 Recommends: logrotate
 

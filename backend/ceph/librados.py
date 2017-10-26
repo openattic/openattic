@@ -24,7 +24,6 @@ import glob
 import logging
 import ConfigParser
 
-from django.utils.functional import cached_property
 from django.conf import settings as django_settings
 
 import rados
@@ -60,6 +59,8 @@ def _write_oa_setting(key, value):
             logger.warning('Removing old keys {}'.format(old_keys))
             oa_settings.save_settings_generic(old_keys, lambda _: '', lambda _: str, lambda _: '')
 
+    clients.clear()
+
 
 def _read_oa_settings(conf_obj, settings_obj):
     """
@@ -87,6 +88,8 @@ def _read_oa_settings(conf_obj, settings_obj):
                 logger.warning('found old key {}'.format(old_key))
             key = key.replace('-', '_')
             setattr(settings_obj, key, conf_obj[old_key])
+
+    clients.clear()
 
 
 class _ClusterSettingsListener(oa_settings.SettingsListener):
@@ -133,7 +136,7 @@ class ClusterConf(object):
 
         return True
 
-    @cached_property
+    @property
     def config_parser(self):
         cp = ConfigParser.RawConfigParser()
         with open(self.file_path) as f:
@@ -161,7 +164,7 @@ class ClusterConf(object):
         if self.keyring_file_path != file_path:
             _write_oa_setting('CEPH_KEYRING_' + self.fsid.upper().replace('-', '_'), file_path)
 
-    @cached_property
+    @property
     def keyring(self):
         user_name = getattr(django_settings,
                             'CEPH_KEYRING_USER_' + self.fsid.upper().replace('-', '_'), None)
@@ -195,7 +198,7 @@ class ClusterConf(object):
         keyrings = filter(None, map(keyring_or_none, keyrings))
         return sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
-    @cached_property
+    @property
     def client(self):
         return Client(self.file_path, self.keyring)
 
@@ -426,6 +429,9 @@ class ClientManager(object):
             self.instances[fsid] = ClusterConf.from_fsid(fsid).client
 
         return self.instances[fsid]
+
+    def clear(self):
+        self.instances.clear()
 
 clients = ClientManager()
 

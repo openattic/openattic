@@ -16,6 +16,33 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+
+[3.5.3] - unreleased
+--------------------
+
+Added
+~~~~~
+
+Changed
+~~~~~~~
+* WebUI: Now it is possible to delete a RGW user with buckets (OP-2790)
+* WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
+  (OP-2725)
+* Backend: Use health's "status" instead of "overall_status" (OP-2845)
+
+Fixed
+~~~~~
+* Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
+* Backend: Fixed Settings page doesn't save new keyring information properly
+  (OP-2729)
+* Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* Backend: The Grafana dashboard will now be shown automatically when
+  upgrading from oA 2.x to 3.x (OP-2843)
+* Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
+
+Removed
+~~~~~~~
+
 [3.5.2] - 2017-10-10
 --------------------
 

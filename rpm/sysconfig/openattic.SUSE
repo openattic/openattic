@@ -31,57 +31,57 @@ OADIR="/usr/share/openattic"
 WEBSERVER_SERVICE="apache2"
 
 # Host of the Salt-API which shall be used by openATTIC. Can be an IP address or a hostname.
-#SALT_API_HOST="salt"
+SALT_API_HOST="salt"
 
 # Port of the Salt-API.
-#SALT_API_PORT=8000
+SALT_API_PORT=8000
 
 # Salt-API External Authentication System:
 #  -"auto": An "Always Approved" eauth interface to test against, not intended for production use;
 #  -"sharedsecret": Provide authentication using configured shared secret.
-#SALT_API_EAUTH="sharedsecret"
+SALT_API_EAUTH="sharedsecret"
 
 # The username for Salt-API authentication.
-#SALT_API_USERNAME="admin"
+SALT_API_USERNAME="admin"
 
 # The password for Salt-API authentication.
-#SALT_API_PASSWORD="admin"
+SALT_API_PASSWORD="admin"
 
 # The shared secret for Salt-API authentication.
-#SALT_API_SHARED_SECRET=""
+SALT_API_SHARED_SECRET=""
 
 # Host of the Ceph Object Gateway instance. Can be an IP address or a hostname.
-#RGW_API_HOST=""
+RGW_API_HOST=""
 
 # Port of the Ceph Object Gateway instance.
-#RGW_API_PORT=80
+RGW_API_PORT=80
 
 # Access key for Ceph Object Gateway.
-#RGW_API_ACCESS_KEY=""
+RGW_API_ACCESS_KEY=""
 
 # Secret key for Ceph Object Gateway.
-#RGW_API_SECRET_KEY=""
+RGW_API_SECRET_KEY=""
 
 # The entry point for an admin request URL.
-#RGW_API_ADMIN_RESOURCE="admin"
+RGW_API_ADMIN_RESOURCE="admin"
 
 # The user ID.
-#RGW_API_USER_ID=""
+RGW_API_USER_ID=""
 
 # The HTTP Scheme to be used. Either 'http' or 'https'.
-#RGW_API_SCHEME="http"
+RGW_API_SCHEME="http"
 
 # Host of the Grafana instance which shall be used by openATTIC.
-#GRAFANA_API_HOST="localhost"
+GRAFANA_API_HOST="localhost"
 
 # Default port necessary as DeepSea doesn't provide one. Also, 80 is the default port of DeepSea.
-#GRAFANA_API_PORT="3000"
+GRAFANA_API_PORT="3000"
 
 # The username to log into Grafana.
-#GRAFANA_API_USERNAME="admin"
+GRAFANA_API_USERNAME="admin"
 
 # The password to log into Grafana.
-#GRAFANA_API_PASSWORD="admin"
+GRAFANA_API_PASSWORD="admin"
 
 # The HTTP Scheme to be used. Either 'http' or 'https'.
-#GRAFANA_API_SCHEME="http"
+GRAFANA_API_SCHEME="http"
