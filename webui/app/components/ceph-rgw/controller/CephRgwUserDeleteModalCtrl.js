@@ -41,7 +41,8 @@ app.controller("CephRgwUserDeleteModalCtrl", function ($scope, $q, $uibModalInst
       $scope.users.forEach(function (user) {
         var deferred = $q.defer();
         cephRgwUserService.delete({
-          "uid": user.user_id
+          "uid": user.user_id,
+          "purge-data": true
         }, undefined, deferred.resolve, deferred.reject);
         requests.push(deferred.promise);
       });
