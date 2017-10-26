@@ -83,6 +83,7 @@ Fixed
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
 * Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
 * Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
+* Backend: Django SECRET_KEY generated using insufficient entropy (OP-2874)
 * Backend: The Grafana dashboard will now be shown automatically when
   upgrading from oA 2.x to 3.x (OP-2843)
 * Development: Lint unit test correctly (OP-2828)
