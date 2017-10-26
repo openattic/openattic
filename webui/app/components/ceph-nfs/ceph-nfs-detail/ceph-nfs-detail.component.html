@@ -1,6 +1,11 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title tc_panelTitle">Details of {{ $ctrl.selection.item.host }}:{{ $ctrl.selection.item.path }}</h3>
+    <h3 class="panel-title tc_panelTitle">
+      <translate translate-params-host="$ctrl.selection.item.host"
+                 translate-params-path="$ctrl.selection.item.path">
+        Details of {{ host }}:{{ path }}
+      </translate>
+    </h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
@@ -48,28 +53,30 @@
         </dd>
         <dd ng-if="!clientBlock.accessType && $ctrl.selection.item.accessType">
           {{ $ctrl.selection.item.accessType }}
-          <span class="text-muted">(inherited from global config)</span>
+          <span translate
+                class="text-muted">(inherited from global config)</span>
         </dd>
         <dt translate>Squash:</dt>
         <dd ng-if="clientBlock.squash"
             ng-bind="clientBlock.squash"></dd>
         <dd ng-if="!clientBlock.squash && $ctrl.selection.item.squash">
           {{ $ctrl.selection.item.squash }}
-          <span class="text-muted">(inherited from global config)</span>
+          <span translate
+                class="text-muted">(inherited from global config)</span>
         </dd>
       </dl>
     </span>
 
-    <legend translate>
+    <legend>
       <i class="fa fa-book"
-         aria-hidden="true"></i> How to use
+         aria-hidden="true"></i>
+      <translate>How to use</translate>
     </legend>
     <p translate>
       To mount this NFS export, run the following command:
     </p>
-    <p translate>
+    <p>
       <kbd ng-bind="$ctrl.getMountCommand()"></kbd>
     </p>
-
   </div>
 </div>

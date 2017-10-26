@@ -14,7 +14,7 @@
       <input type="text"
              class="form-control"
              name="enteredName"
-             placeholder="yes"
+             placeholder="{{ 'yes' | translate }}"
              autocomplete="off"
              ng-model="$ctrl.input.enteredName"
              ng-pattern="$ctrl.input.pattern"
@@ -37,10 +37,9 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button translate
-                        form="$ctrl.deleteForm"
+      <oa-submit-button form="$ctrl.deleteForm"
                         on-submit="$ctrl.confirm()">
-        Delete
+        <translate>Delete</translate>
       </oa-submit-button>
       <button translate
               id="bot1-Msg1"

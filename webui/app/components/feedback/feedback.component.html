@@ -2,7 +2,7 @@
      ng-click="$ctrl.toggle()"
      ng-class="{'feedback-button-active': $ctrl.opened }">
   <span class="glyphicon glyphicon-comment"
-        aria-hidden="true"></span> Feedback
+        aria-hidden="true"></span> <translate>Feedback</translate>
 </div>
 <div class="feedback-panel feedback-transition tc_feedbackPanel"
      ng-class="{'feedback-panel-active': $ctrl.opened }">
@@ -31,7 +31,7 @@
          target="_blank">
         <i class="fa fa-home"
            aria-hidden="true"></i>
-        <span>openATTIC blog</span>
+        <span translate>openATTIC blog</span>
       </a>
     </p>
 
@@ -41,10 +41,16 @@
   </div>
 
   <div>
-    <a translate href="https://tracker.openattic.org" target="_blank" class="btn btn-default tc_feedbackReportBug">
+    <a translate
+       href="https://tracker.openattic.org"
+       target="_blank"
+       class="btn btn-default tc_feedbackReportBug">
       Report a bug
     </a>
-    <a translate href="https://www.openattic.org/get-involved.html" target="_blank" class="btn btn-openattic tc_feedbackGetInvolved">
+    <a translate
+       href="https://www.openattic.org/get-involved.html"
+       target="_blank"
+       class="btn btn-openattic tc_feedbackGetInvolved">
       Get involved
     </a>
   </div>

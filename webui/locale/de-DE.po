@@ -1,0 +1,3159 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.0.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de-DE\n"
+
+#: app/components/settings/settings-form/settings-form-helper-features.html:7
+msgid "# salt-run sharedsecret.show"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:159
+msgid "(DeepSea is not able to provide Object Gateway credentials)"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:45
+msgid "(Used: {{ usedSize }} - Free: {{ free }})"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/oa-module-loader.component.html:21
+msgid "(code {{ reason }})"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:124
+msgid "(deleting...)"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:45
+msgid "(disabled)"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:56
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:64
+msgid "(inherited from global config)"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:63
+msgid "*"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:552
+msgid "- Select an application to use -"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:81
+msgid "-- Select a cluster --"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:416
+msgid "-- Select a compression algorithm --"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:383
+msgid "-- Select a compression mode --"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:150
+msgid "-- Select a crush ruleset --"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:57
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:89
+msgid "-- Select a permission --"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:117
+msgid "-- Select a pool type --"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:36
+msgid "-- Select a subuser --"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:33
+msgid "-- Select a type --"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:102
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:36
+msgid "-- Select a user --"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:270
+msgid "-- Select an erasure code profile --"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:268
+msgid "-- Select the access type --"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:67
+msgid "-- Select the external auth system --"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:41
+msgid "-- Select the host --"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:94
+msgid "-- Select the object gateway user --"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:67
+msgid "-- Select the storage backend --"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:295
+msgid "-- Select what kind of user id squashing is performed --"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:51
+msgid "10"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:66
+msgid "100"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:46
+msgid "2"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:56
+msgid "25"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:61
+msgid "50"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:7
+msgid ""
+"<a ui-sref=\"settings\">\n"
+"      <strong>Salt API Host</strong> and\n"
+"      <strong>TCP Port</strong> settings</a> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-109-deepsea-incomplete-configuration.html:7
+msgid "<a ui-sref=\"settings\"><strong>DeepSea / Salt REST API</strong> settings are defined correctly</a>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-183-grafana-unknown-host.html:7
+#: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:7
+msgid "<a ui-sref=\"settings\"><strong>Grafana Host</strong> setting</a> is defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:7
+msgid ""
+"<a ui-sref=\"settings\"><strong>Object Gateway Access Key</strong>, <strong>Secret Key</strong> and <strong>Admin User</strong>\n"
+"    settings</a> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:12
+msgid ""
+"<a ui-sref=\"settings\"><strong>Object Gateway Admin Resource Path</strong> setting</a> matches\n"
+"    the RGW configuration option rgw_admin_entry in ceph.conf file.<br>\n"
+"    Run <kbd>salt -I 'roles:rgw' cmd.run 'cat /etc/ceph/ceph.conf | grep rgw'</kbd> to check the configuration options in RGW nodes.<br>\n"
+"    The default value of rgw_admin_entry is \"admin\"."
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:7
+msgid ""
+"<a ui-sref=\"settings\"><strong>Object Gateway Admin User</strong> setting</a> is a \"system\" user.<br>\n"
+"    Run <kbd>radosgw-admin user info --uid=<userid> | grep system</userid></kbd> to check whether the user &lt;USERID&gt; has system capabilities."
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:7
+#: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:7
+msgid "<a ui-sref=\"settings\"><strong>Object Gateway Host</strong> and <strong>Port</strong> settings</a> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:7
+#: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:7
+msgid "<a ui-sref=\"settings\"><strong>Object Gateway Host</strong> setting</a> is defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-171-openattic-rgw-no-deepsea-conn.html:7
+#: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:7
+msgid ""
+"<a ui-sref=\"settings\"><strong>Object Gateway Host</strong>, <strong>Port</strong>,\n"
+"    <strong>Access Key</strong>, <strong>Secret Key</strong>, <strong>Admin User</strong> and <strong>Use SSL</strong>\n"
+"    settings</a> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-101-deepsea-conn-unknown-problem.html:7
+msgid "<a ui-sref=\"settings\"><strong>Salt API Host</strong> and <strong>TCP Port</strong> settings</a> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:7
+#: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:7
+msgid "<a ui-sref=\"settings\"><strong>Salt API Host</strong> setting</a> is defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-106-deepsea-failed-authentication.html:7
+msgid "<a ui-sref=\"settings\"><strong>Salt API Username</strong>, <strong>Shared Secret</strong> and <strong>External Auth System</strong> settings</a> are defined correctly."
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:24
+msgid "<i class=\"fa fa-refresh\"></i> Refresh"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-122-deepsea-nfs-no-hosts.html:9
+msgid "<li>At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>ganesha</strong> exists</li>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:10
+msgid "<strong>/etc/ceph/*.keyring</strong> can be read by the <strong>openattic</strong> user"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:8
+msgid "<strong>/etc/ceph/*.keyring</strong> exists and has <strong>mds</strong> capabilities"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:8
+msgid "<strong>Grafana Host</strong> and <strong>Port</strong> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-181-grafana-failed-authentication.html:8
+msgid "<strong>Grafana Username</strong> and <strong>Password</strong> are defined correctly"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-180-grafana-incomplete-credentials.html:8
+#: app/components/shared/oa-module-loader/reason-186-grafana-connection-error.html:8
+#: app/components/shared/oa-module-loader/reason-187-grafana-http-error.html:8
+msgid "<strong>Grafana</strong> settings are defined correctly"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:38
+msgid "<strong>Remember</strong>, for bugs and issues, you need to open a Jira ticket."
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:17
+msgid "<strong>Your feedback</strong><br>makes openATTIC better"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:7
+msgid "<strong>python-cephfs</strong> package is correctly installed in the openATTIC host"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:3
+msgid "<strong>{{ clusterName }}</strong> with fsid <strong>{{ fsid }}</strong>"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:102
+msgid "A password is required."
+msgstr ""
+
+#: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:2
+msgid "API Recorder"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:219
+msgid "API authentication token"
+msgstr ""
+
+#: app/components/api-recorder/api-recorder/api-recorder.component.html:5
+msgid "API-Recorder"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:203
+msgid "Access Key"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:55
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:258
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:100
+msgid "Access Type"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:33
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:50
+msgid "Access Type:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:67
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:408
+msgid "Access key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:77
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:418
+msgid "Access key..."
+msgstr ""
+
+#: app/components/users/users-list/users-list.component.html:71
+msgid "Active"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:25
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:44
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:27
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:46
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:25
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:44
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:24
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:36
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:23
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:42
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:23
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:42
+#: app/components/users/users-list/users-list.component.html:14
+#: app/components/users/users-list/users-list.component.html:26
+msgid "Add"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:271
+msgid "Add S3 key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:3
+msgid "Add S3 key: {{ user }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:3
+msgid "Add Swift key: {{ user }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:539
+msgid "Add applications"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:20
+msgid "Add bucket: {{ bucket }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:378
+msgid "Add capability"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:3
+msgid "Add capability: {{ type }}"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:98
+msgid "Add clients"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:136
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:2
+msgid "Add erasure code profile"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:229
+msgid "Add image"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:372
+msgid "Add initiator"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:132
+msgid "Add portal"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:217
+msgid "Add subuser"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:3
+msgid "Add subuser: {{ subuser }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:20
+msgid "Add user: {{ userId }}"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:60
+msgid "Addresses"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:12
+msgid "Addresses:"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:259
+msgid "Admin Resource Path"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:243
+msgid "Admin User"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:5
+msgid "Advanced Settings"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:26
+msgid "Advanced information:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:106
+msgid "Advanced settings"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:401
+msgid "Algorithm"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:73
+msgid "Algorithm:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:2
+msgid "Alternative access for <strong>NFS v3</strong> mounts (it must not have a leading /)."
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:11
+#: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:12
+#: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:13
+msgid ""
+"Alternatively check that <strong>DeepSea</strong> is returning the correct <strong>RGW</strong> information\n"
+"      by running the following command on the Salt master:\n"
+"      <kbd># salt-run ui_rgw.credentials</kbd>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-171-openattic-rgw-no-deepsea-conn.html:12
+msgid "Alternatively check that <strong>DeepSea</strong> is running correctly"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:353
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:66
+msgid "An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:19
+msgid ""
+"And this is why we wanted to let you know that you can get in contact with us on many social media platforms. Your comments,\n"
+"      your ideas, and everything you think will help make your work at openATTIC better."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:8
+msgid "Any client can access"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:537
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:578
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:84
+msgid "Applications"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:21
+msgid "Applications:"
+msgstr ""
+
+#: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:9
+msgid "Are you sure you want to leave this page?"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-142-deepsea-iscsi-no-interfaces.html:10
+msgid "At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>igw</strong> exists"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-123-deepsea-nfs-no-fsals.html:10
+msgid ""
+"At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>mds</strong> or\n"
+"    <strong>rgw</strong> exists"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-132-openattic-nfs-no-rgw.html:7
+msgid "At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>rgw</strong> exists"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-132-openattic-nfs-no-rgw.html:8
+msgid "At least one active <a ui-sref=\"ceph-rgw-users\">Object Gateway user</a> exists"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:327
+msgid "At least one feature has to be selected"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:258
+msgid "Authentication"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:72
+msgid "Authentication:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:614
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:364
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:652
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:422
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:120
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:759
+#: app/components/shared/oa-error-panel/oa-error-panel.component.html:17
+#: app/components/users/users-form/users-form.component.html:305
+msgid "Back"
+msgstr ""
+
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:2
+msgid "Background-Tasks"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:10
+msgid "Basic information:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:23
+msgid ""
+"Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by these users and that this operation\n"
+"      <strong>cannot be undone</strong>."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:11
+msgid ""
+"Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by this user and that this operation\n"
+"      <strong>cannot be undone</strong>."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:10
+msgid ""
+"Be aware that you will <strong>lose all data</strong>\n"
+"      in that RBD and that this operation <strong>cannot be undone</strong>."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:22
+msgid ""
+"Be aware that you will <strong>lose all data</strong>\n"
+"      in the RBDs and that this operation <strong>cannot be undone</strong>."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:10
+msgid "Be aware that you will <strong>lose all data</strong> in that Ceph pool and that this operation <strong>cannot be undone</strong>."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:21
+msgid "Be aware that you will <strong>lose all data</strong> in the Ceph pools and that this operation <strong>cannot be undone</strong>."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:13
+msgid "Block name prefix:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:143
+msgid "Bucket"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:60
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:624
+msgid "Bucket quota"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:86
+msgid "Buckets"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html:5
+msgid "By using different Pseudo options, the same Path may be exported multiple times."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:4
+msgid "By using different Tag options, the same Path may be exported multiple times."
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:94
+msgid "CRUSH Map"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:4
+msgid "Cache tier of {{ name }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:332
+msgid "Calculation help"
+msgstr ""
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.html:43
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:140
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:30
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:143
+#: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:35
+#: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:52
+#: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:28
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:81
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:155
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:179
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:120
+#: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:18
+#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:44
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:113
+#: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:29
+#: app/components/users/users-delete-modal/users-delete-modal.component.html:29
+msgid "Cancel"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:332
+msgid "Capabilities"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:30
+msgid "Capabilities:"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:4
+msgid "Ceph CRUSH map is loading..."
+msgstr ""
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.html:1
+msgid "Ceph Cluster settings are loading..."
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:439
+msgid "Ceph Clusters"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:3
+msgid "Ceph Nodes {{ deep }}Scrub"
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:8
+msgid "Ceph OSD resources could not be loaded."
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:3
+msgid "Ceph OSD {{ deep }}Scrub"
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:4
+msgid "Ceph OSDs are loading..."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:110
+msgid "Ceph Path"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:8
+msgid "Ceph RBD resources could not be loaded."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:4
+msgid "Ceph RBDs are loading..."
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:8
+msgid ""
+"Ceph cluster with fsid\n"
+"        <strong>'{{fsid}}'</strong> couldn't be found."
+msgstr ""
+
+#: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:2
+msgid "Ceph clusters are loading..."
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:528
+msgid "Ceph connection established successfully"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:534
+msgid "Ceph connection failed"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:17
+msgid "Ceph is correctly configured in file"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:14
+msgid "Ceph is correctly configured in file <strong>/etc/ceph/{{ clusterName }}.conf</strong>"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:8
+msgid "Ceph pool resources could not be loaded."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:4
+msgid "Ceph pools are loading..."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:114
+#: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:10
+msgid "Changing these parameters from their default values is usually not necessary."
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:119
+#: app/components/settings/settings-form/settings-form.component.html:295
+#: app/components/settings/settings-form/settings-form.component.html:413
+#: app/components/settings/settings-form/settings-form.component.html:522
+msgid "Checking connection"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:2
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:26
+msgid "Clients"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:3
+msgid "Clients may not mount subdirectories (i.e. if Tag = foo, the client may not mount foo/baz)."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:47
+msgid "Clients:"
+msgstr ""
+
+#: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:23
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:59
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:59
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:64
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:119
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:156
+msgid "Close"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:65
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:66
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:55
+msgid "Cluster"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:49
+msgid "Cluster ID:"
+msgstr ""
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.html:18
+msgid "Cluster-wide OSD Flags"
+msgstr ""
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.html:10
+#: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:18
+msgid "Cluster:"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:83
+msgid "Coding chunks (m)"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:365
+msgid "Compression"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:100
+msgid "Compression algorithm"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:69
+msgid "Compression information:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:106
+msgid "Compression max. blob size"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:103
+msgid "Compression min. blob size"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:98
+msgid "Compression mode"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:109
+msgid "Compression required ratio"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:514
+msgid "Compression required ratio..."
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:453
+msgid "Config file"
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:53
+msgid "Configure Cluster-wide OSD Flags"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:141
+#: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:33
+msgid "Confirm"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:112
+msgid "Confirm password"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:59
+msgid "Content"
+msgstr ""
+
+#: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:17
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:52
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:54
+msgid "Copy"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:5
+msgid "Could not load NFS export"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:7
+msgid "Could not load NFS shares"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:6
+msgid "Could not load iSCSI target"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:85
+msgid "Couldn't delete the following {{ amount }} Tasks"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:72
+msgid "Couldn't delete {{ amount }} task{{$ctrl.pendingDeletionFailure.length === 1 ? '' : 's'}}."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:92
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:77
+msgid "Couldn't load any cluster, please contact your administrator for details."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:148
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:206
+msgid "Couldn't load any pool, please contact your administrator for details."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:420
+msgid "Create"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:14
+msgid "Create RBD: {{ name }}"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:11
+msgid "Create User: {{ username }}"
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:83
+msgid "Crush Weight"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:136
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:96
+msgid "Crush ruleset"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:39
+msgid "Crush ruleset:"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-183-grafana-unknown-host.html:10
+msgid "DNS is configured correctly and the host name defined in <strong>Grafana Host</strong> is resolvable"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:10
+msgid "DNS is configured correctly and the host name defined in <strong>Object Gateway Host</strong> is resolvable"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:10
+msgid "DNS is configured correctly and the host name defined in <strong>Salt API Host</strong> is resolvable"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:31
+msgid "Dashboard"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:53
+msgid "Data chunks (k)"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:162
+msgid "Data-Pool"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:22
+msgid "Data-Pool:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
+msgid "Data-pool"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:40
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:40
+msgid "Deep Scrub"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:23
+msgid "DeepSea / Salt REST API"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:116
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:338
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:39
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:60
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:41
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:62
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:39
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:58
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:31
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:44
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:37
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:57
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:37
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:64
+#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:42
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:107
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:28
+#: app/components/users/users-list/users-list.component.html:41
+msgid "Delete"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:2
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:26
+msgid "Delete erasure code profile"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:9
+msgid "Delete task"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:11
+msgid "Delete tasks"
+msgstr ""
+
+#: app/components/users/users-delete-modal/users-delete-modal.component.html:2
+#: app/components/users/users-delete-modal/users-delete-modal.component.html:25
+msgid "Delete user"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:4
+msgid "Details of {{ bucket }}"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:4
+msgid "Details of {{ host }}:{{ path }}"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:4
+msgid "Details of {{ hostname }}"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:4
+msgid "Details of {{ name }}"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:4
+msgid "Details of {{ targetId }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:4
+msgid "Details of {{ userId }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:41
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:43
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:64
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:66
+msgid "Disabled"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:96
+msgid "Discovery auth:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:461
+msgid "Discovery authentication"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:105
+msgid "Discovery mutual auth:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:538
+msgid "Discovery mutual authentication"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:577
+msgid "Discovery mutual password"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:557
+msgid "Discovery mutual user"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:500
+msgid "Discovery password"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:480
+msgid "Discovery user"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:85
+msgid "Display name..."
+msgstr ""
+
+#: app/components/users/users-list/users-list.component.html:67
+msgid "E-Mail address"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:205
+msgid "E-Mail-Address..."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:353
+msgid "EC Overwrite"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:32
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:34
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:32
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:50
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:30
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:49
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:30
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:49
+#: app/components/users/users-list/users-list.component.html:21
+#: app/components/users/users-list/users-list.component.html:32
+msgid "Edit"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:17
+msgid "Edit User: {{ username }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:26
+msgid "Edit bucket: {{ bucket }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:8
+msgid "Edit capability: {{ type }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:8
+msgid "Edit subuser: {{ subuser }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:26
+msgid "Edit user: {{ userId }}"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:195
+msgid "Email Address"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:114
+msgid "Email Address..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:104
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:86
+msgid "Email address"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:16
+msgid "Email address:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:165
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:321
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:97
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:175
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:237
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:289
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:344
+msgid "Empty"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:503
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:633
+msgid "Enabled"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:38
+msgid "Endpoint"
+msgstr ""
+
+#: app/components/auth/auth/auth.component.html:43
+msgid "Enter your password..."
+msgstr "Passwort eingeben"
+
+#: app/components/auth/auth/auth.component.html:20
+msgid "Enter your username..."
+msgstr "Benutzername eingeben"
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:255
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:90
+msgid "Erasure code profile"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:33
+msgid "Erasure code profile:"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:6
+msgid "Error"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:84
+msgid "Export"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:57
+msgid "External Auth System"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:7
+msgid "Failed to load the form data."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:289
+msgid "Features"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:32
+msgid "Features:"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:5
+msgid "Feedback"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:18
+msgid ""
+"File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>\n"
+"    can be read by the <strong>openattic</strong> user<br>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:19
+msgid "File <strong>/etc/ceph/{{ clusterName }}.conf</strong> has the correct permissions"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:158
+#: app/components/users/users-list/users-list.component.html:59
+msgid "Firstname"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:168
+msgid "Firstname..."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:341
+msgid "Flags"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:43
+msgid "Flags:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:47
+msgid "For example:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:355
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:68
+msgid "For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:5
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:2
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:2
+msgid "Form is loading..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:75
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:82
+msgid "Full name"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:13
+msgid "Full name:"
+msgstr ""
+
+#: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:23
+msgid "Generate"
+msgstr ""
+
+#: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:2
+msgid "Generate API authentication token"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:395
+msgid "Generate key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:56
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:120
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:63
+msgid "Generate secret"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:50
+msgid "Get involved"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:321
+msgid "Grafana"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:419
+msgid "Grafana connection established successfully"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:425
+msgid "Grafana connection failed"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:1
+#: app/components/shared/oa-module-loader/reason-183-grafana-unknown-host.html:1
+#: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:1
+#: app/components/shared/oa-module-loader/reason-186-grafana-connection-error.html:1
+#: app/components/shared/oa-module-loader/reason-187-grafana-http-error.html:1
+msgid "Graphics cannot be loaded due to a problem while trying to connect to <strong>Grafana</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-184-grafana-connection-timeout.html:1
+msgid "Graphics cannot be loaded due to a timeout while trying to connect to Grafana"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-181-grafana-failed-authentication.html:1
+msgid "Graphics cannot be loaded due to an authentication problem while connecting to <strong>Grafana</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-180-grafana-incomplete-credentials.html:1
+msgid "Graphics cannot be loaded due to incomplete <strong>Grafana</strong> configuration"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:290
+#: app/components/users/users-list/users-list.component.html:79
+msgid "Has all privileges"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:12
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:31
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:90
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:12
+msgid "Host"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:12
+msgid "Host:"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:54
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:71
+msgid "Hostname"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:171
+#: app/components/settings/settings-form/settings-form.component.html:27
+#: app/components/settings/settings-form/settings-form.component.html:325
+msgid "Hostname / IP Address"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:73
+msgid "How to use"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:76
+msgid "ID"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:11
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:13
+msgid "ID:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:74
+msgid "Id"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:35
+msgid "If you delete running tasks, it will abort the execution and won't roll back what has been done so far!"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:157
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:94
+msgid "Images"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:56
+msgid "Images:"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:24
+msgid ""
+"In order to stay up-to-date you can visit our blog for the latest release notes and other information about openATTIC and\n"
+"      interesting topics in general."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:22
+msgid "Index pool:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:316
+msgid "Initiators"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:80
+msgid "Initiators:"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:260
+msgid "Is active"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:275
+#: app/components/users/users-list/users-list.component.html:75
+msgid "Is administrator"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:119
+#: app/components/users/users-form/users-form.component.html:210
+msgid "It's not a valid email address."
+msgstr ""
+
+#: app/components/auth/auth/auth.component.html:70
+msgid "Keep me logged in"
+msgstr "Eingeloggt bleiben"
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:72
+msgid "Key status"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:23
+msgid "Key status:"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:469
+msgid "Keyring file"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:495
+msgid "Keyring user"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:223
+msgid "Keys"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:92
+msgid "Last Change"
+msgstr ""
+
+#: app/components/users/users-list/users-list.component.html:83
+msgid "Last Login"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:52
+msgid "Last change:"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:176
+#: app/components/users/users-list/users-list.component.html:63
+msgid "Lastname"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:186
+msgid "Lastname..."
+msgstr ""
+
+#: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:15
+msgid "Leave this page"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:56
+msgid "List buckets"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:1
+msgid "Loading bucket data..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:1
+msgid "Loading user data..."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:21
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:21
+#: app/components/shared/oa-loading-panel/oa-loading-panel.component.html:6
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:11
+msgid "Loading..."
+msgstr ""
+
+#: app/components/auth/auth/auth.component.html:80
+msgid "Login"
+msgstr "Einloggen"
+
+#: app/components/auth/auth-logout/auth-logout.component.html:3
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:1
+msgid "Manage NFS service"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:2
+msgid "Manage iSCSI service"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:71
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:73
+msgid "Manage service"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:158
+msgid "Managed by DeepSea"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:25
+msgid "Marker:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:31
+msgid "Master version:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:132
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:94
+msgid "Max. buckets"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:89
+msgid "Maximum"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:467
+msgid "Maximum blob size"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:77
+msgid "Maximum blob size:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:21
+msgid "Maximum buckets:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:27
+msgid "Maximum marker:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:588
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:718
+msgid "Maximum objects"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:42
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:51
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:65
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:74
+msgid "Maximum objects:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:533
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:663
+msgid "Maximum size"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:40
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:46
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:63
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:69
+msgid "Maximum size:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:176
+msgid "Maximum size: {{ maxSize }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:234
+msgid "Maximum: {{ maxSize }}"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:82
+msgid "Minimum"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:433
+msgid "Minimum blob size"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:75
+msgid "Minimum blob size:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:171
+msgid "Minimum size: {{ minSize }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:229
+msgid "Minimum: {{ minSize }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:369
+msgid "Mode"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:71
+msgid "Mode:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:33
+msgid "Modification time:"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-default.html:1
+msgid "Module cannot be loaded"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/oa-module-loader.component.html:1
+msgid "Module is loading..."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:357
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:70
+msgid "More information"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:100
+msgid "Must be equal to or greater than 1."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:69
+msgid "Must be equal to or greater than 2."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:105
+msgid "Must be equal to or smaller than the number of osds."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:93
+msgid "Must contain one or more comma-separated numbers, e.g. example: 95, 96"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:45
+msgid "Must contain one or more comma-separated values"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:87
+msgid "Mutual auth:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:385
+msgid "Mutual authentication"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:424
+msgid "Mutual password"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:404
+msgid "Mutual user"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:68
+msgid "NFS"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:177
+msgid "NFS Protocol"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:22
+msgid "NFS Protocol:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:218
+msgid "NFS Tag"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:26
+msgid "NFS Tag:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:8
+msgid "NFS export could not be loaded."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:2
+msgid "NFS export is loading..."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:20
+msgid "NFS export {{ id }}"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:4
+msgid "NFS shares are loading..."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:9
+msgid "NFS shares could not be loaded. Make sure that the ceph module is installed."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:191
+msgid "NFSv3"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:200
+msgid "NFSv4"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:23
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:65
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:28
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:70
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:23
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:56
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:36
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:69
+msgid "Name"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:38
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:42
+msgid "Name..."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:11
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:11
+msgid "Name:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:166
+msgid "New bucket will be created"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:133
+msgid "New directory will be created"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:443
+msgid "No Ceph clusters configured"
+msgstr ""
+
+#: app/components/notification/oa-notifications/oa-notifications.component.html:46
+msgid "No Notifications"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:16
+msgid "No RBD images"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:613
+msgid ""
+"No application added\n"
+"                  <input type=\"text\" class=\"no-border\" ng-model=\"$ctrl.apps.used[0]\" name=\"apps\" id=\"apps\" ng-if=\"$ctrl.apps.used.length === 0\" required readonly>"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:73
+msgid "No authentication"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:11
+msgid "No firewall is enabled on the Grafana host that blocks access to Grafana"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:11
+msgid "No firewall is enabled on the Object Gateway host that blocks access to the RGW S3 API"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:16
+msgid "No firewall is enabled on the Salt Master host that blocks access to the Salt REST API"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:87
+msgid "No matching records found"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:56
+msgid "Nodes"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:3
+msgid "Nodes are loading..."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:110
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:74
+msgid "Not a valid number!"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:52
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:154
+msgid "Not available"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html:2
+msgid "Note that if the \"fast-diff\" feature is not enabled on images, openATTIC won't display the \"used\" size, as this operation will require querying the OSDs for every potential object within the image, which is a time-consuming and I/O-intensive operation. However, images with this feature enabled can't be mapped by the Ceph kernel client \"kRBD\"."
+msgstr ""
+
+#: app/components/notification/oa-notifications/oa-notifications.component.html:8
+msgid "Notifications"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:90
+msgid "Number of objects"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:29
+msgid "Number of objects:"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:38
+msgid "OSDs"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:34
+msgid "OSDs:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:13
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:20
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:27
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:38
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:6
+msgid "Object"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:48
+msgid ""
+"Object\n"
+"          <br>set"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:75
+#: app/components/settings/settings-form/settings-form.component.html:145
+msgid "Object Gateway"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:301
+msgid "Object Gateway API connection established successfully"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:307
+msgid "Object Gateway API connection failed"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:83
+msgid "Object Gateway User"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:17
+msgid "Object Gateway User:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:3
+msgid "Object Gateway buckets are loading..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:3
+msgid "Object Gateway users are loading..."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:10
+msgid "Object Size"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:257
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:84
+msgid "Object size"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:27
+msgid "Object size:"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:95
+msgid "One replica means <em>no copies</em>. If you lose a storage node, your data is lost."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:88
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:74
+msgid "Owner"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:15
+msgid "Owner:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:289
+#: app/components/settings/settings-form/settings-form.component.html:370
+#: app/components/users/users-form/users-form.component.html:66
+msgid "Password"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:122
+#: app/components/users/users-form/users-form.component.html:76
+msgid "Password..."
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:25
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:25
+msgid "Perform Task"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:47
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:79
+msgid "Permission"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:19
+msgid "Physical setup"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:10
+msgid "Place"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:1
+msgid ""
+"Place {{ stepset }} replica\n"
+"  <span ng-show=\"$ctrl.getRealNum($ctrl.stepset).max && $ctrl.getRealNum($ctrl.stepset).max > 1\">s on different {{ $ctrl.stepset.acrosstype.name }}s</span>\n"
+"  <span ng-show=\"$ctrl.stepset.groupbytype\">in the same {{ $ctrl.stepset.groupbytype.name }}</span>\n"
+"  in the {{ $ctrl.stepset.take.name }} {{ $ctrl.stepset.take.type_name === 'root' ? 'tree' : $ctrl.stepset.take.type_name }}."
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:116
+msgid "Placement"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:26
+msgid "Placement Groups:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:304
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:86
+msgid "Placement groups"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-184-grafana-connection-timeout.html:3
+msgid "Please check the network connections and that Grafana is reachable"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-164-rgw-connection-timeout.html:3
+msgid "Please check the network connections and that the RGW S3 API host is reachable"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-104-deepsea-connection-timeout.html:3
+msgid "Please check the network connections and that the Salt REST API host is reachable"
+msgstr ""
+
+#: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:10
+msgid "Please note that this will invalidate the existing token and make sure to update any applications still using the old token."
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-101-deepsea-conn-unknown-problem.html:5
+#: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:5
+#: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:5
+#: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:5
+#: app/components/shared/oa-module-loader/reason-106-deepsea-failed-authentication.html:5
+#: app/components/shared/oa-module-loader/reason-109-deepsea-incomplete-configuration.html:5
+#: app/components/shared/oa-module-loader/reason-122-deepsea-nfs-no-hosts.html:8
+#: app/components/shared/oa-module-loader/reason-123-deepsea-nfs-no-fsals.html:8
+#: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:5
+#: app/components/shared/oa-module-loader/reason-132-openattic-nfs-no-rgw.html:5
+#: app/components/shared/oa-module-loader/reason-142-deepsea-iscsi-no-interfaces.html:8
+#: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:11
+#: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:15
+#: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:5
+#: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:5
+#: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:5
+#: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:5
+#: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:5
+#: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:5
+#: app/components/shared/oa-module-loader/reason-171-openattic-rgw-no-deepsea-conn.html:5
+#: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:5
+#: app/components/shared/oa-module-loader/reason-180-grafana-incomplete-credentials.html:5
+#: app/components/shared/oa-module-loader/reason-181-grafana-failed-authentication.html:5
+#: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:5
+#: app/components/shared/oa-module-loader/reason-183-grafana-unknown-host.html:5
+#: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:5
+#: app/components/shared/oa-module-loader/reason-186-grafana-connection-error.html:5
+#: app/components/shared/oa-module-loader/reason-187-grafana-http-error.html:5
+msgid "Please verify that:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:14
+msgid "Pool size:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:103
+msgid "Pool type"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:18
+msgid "Pool:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:62
+msgid "Poolname"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:50
+msgid "Pools"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:91
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:90
+msgid "Portals"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:42
+msgid "Portals:"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:566
+msgid "Powered by openATTIC"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:6
+msgid "Prevents single node bottleneck for large or busy RBDs"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:65
+msgid "Processing deletion requests: {{ finishedTasks }} of {{ amount }}"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:236
+msgid "Pseudo"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:30
+msgid "Pseudo:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:59
+msgid "Quota max bytes:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:63
+msgid "Quota max objects:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:9
+msgid "RBD Size"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:2
+msgid "RBD images are striped over many objects, which are then stored by the Ceph distributed object store (RADOS)."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html:2
+msgid "RBD images with the following features are not supported by iSCSI:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html:2
+msgid "RBD images with the following features will not be supported by iSCSI:"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:44
+msgid "RBDs"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:5
+msgid "Read and write requests distributed across many nodes"
+msgstr ""
+
+#: app/components/notification/oa-notifications/oa-notifications.component.html:19
+msgid "Recent Notifications"
+msgstr ""
+
+#: app/components/notification/oa-notifications/oa-notifications.component.html:15
+msgid "Remove all"
+msgstr ""
+
+#: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:5
+msgid "Replay the actions you recorded by running this Python script:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:88
+msgid "Replica size"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:76
+msgid "Replicas"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:203
+msgid "Replicated size"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:29
+msgid "Replicated size:"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:48
+msgid "Replication rules"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:44
+msgid "Report a bug"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:25
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:145
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:243
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:281
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:309
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:416
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:444
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:492
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:520
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:569
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:597
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:61
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:40
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:127
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:160
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:205
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:248
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:275
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:300
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:340
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:46
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:72
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:99
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:628
+#: app/components/settings/settings-form/settings-form.component.html:484
+#: app/components/settings/settings-form/settings-form.component.html:510
+msgid "Required field"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:501
+msgid "Required ratio"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:79
+msgid "Required ratio:"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:70
+msgid "Roles"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:28
+msgid "Roles:"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:10
+msgid ""
+"Routing settings are configured correctly and the host defined in <strong>Grafana Host</strong> is reachable\n"
+"    (e.g. via <kbd>ping</kbd>)"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:10
+msgid ""
+"Routing settings are configured correctly and the host defined in <strong>Object Gateway Host</strong> is reachable\n"
+"    (e.g. via <kbd>ping</kbd>)"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:10
+msgid ""
+"Routing settings are configured correctly and the host defined in <strong>Salt API Host</strong> is reachable\n"
+"    (e.g. via <kbd>ping</kbd>)"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:118
+msgid "Ruleset-failure-domain"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:385
+msgid "S3 key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:228
+msgid "S3 keys"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:40
+msgid "S3:"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:125
+msgid "Salt API connection established successfully"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:131
+msgid "Salt API connection failed"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:554
+msgid "Save"
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:33
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:33
+msgid "Scrub"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:219
+msgid "Secret Key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:109
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:133
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:74
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:453
+msgid "Secret key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:119
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:143
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:84
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:463
+msgid "Secret key..."
+msgstr ""
+
+#: app/components/shared/oa-ceph-cluster-loader/oa-ceph-cluster-loader.component.html:8
+msgid "Select a Cluster"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:68
+msgid "Select a ruleset..."
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:7
+msgid "Setting could not be loaded."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:6
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:53
+#: app/components/navigation/navigation/navigation.component.html:112
+#: app/components/settings/settings-form/settings-form.component.html:18
+msgid "Settings"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:3
+msgid "Settings are loading..."
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:94
+msgid "Shared Secret"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form-helper-features.html:2
+msgid ""
+"Shared Secret can be obtained by running the\n"
+"        following command on the Salt master:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:35
+msgid "Shared via NFS:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:346
+msgid "Should not be empty"
+msgstr ""
+
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:117
+msgid ""
+"Showing\n"
+"              <strong>{{ current }}</strong> to\n"
+"              <strong>{{ to }}</strong>\n"
+"              of\n"
+"              <strong>{{ amount }}</strong> items"
+msgstr ""
+
+#: app/components/shared/oadatatable/oadatatable.directive.html:98
+msgid "Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong> of <strong>{{totalEntries}}</strong> items"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:217
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:67
+msgid "Size"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:25
+msgid "Size:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:75
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:285
+msgid "Squash"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:37
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:59
+msgid "Squash:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:41
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:41
+msgid "Start"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:88
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:13
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:93
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:13
+msgid "State"
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:75
+msgid "Status"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:4
+msgid "Status of {{ name }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:184
+msgid "Steps"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:48
+#: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:48
+msgid "Stop"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:56
+#: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:96
+#: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:79
+msgid "Storage Backend"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:14
+msgid "Storage Backend:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:143
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:211
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:257
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component.html:96
+msgid "Stripe"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:12
+msgid "Stripe Count"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:11
+msgid "Stripe Unit"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:102
+msgid "Stripe count"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:96
+msgid "Stripe unit"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:55
+msgid "Stripe width:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:334
+msgid "Striping"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:409
+#: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:2
+msgid "Striping Preview"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:372
+msgid "Striping count"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:37
+msgid "Striping count:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:3
+msgid "Striping features:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:339
+msgid "Striping unit"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:35
+msgid "Striping unit:"
+msgstr ""
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.html:41
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:612
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:362
+#: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:49
+#: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:25
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:118
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:79
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:153
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:177
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:118
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:757
+#: app/components/users/users-form/users-form.component.html:303
+msgid "Submit"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:42
+msgid "Subuser"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:52
+msgid "Subuser..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:163
+msgid "Subusers"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:24
+msgid "Subusers:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:155
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:90
+msgid "Suspended"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:19
+msgid "Suspended:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:110
+msgid "Swift key"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:280
+msgid "Swift keys"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:44
+msgid "Swift:"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:101
+msgid "System"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:335
+msgid "TCP"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:187
+#: app/components/settings/settings-form/settings-form.component.html:340
+#: app/components/settings/settings-form/settings-form.component.html:42
+msgid "TCP port"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:38
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:82
+msgid "Target IQN"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:27
+msgid "Target IQN:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:29
+msgid "Target IQN: {{ targetId }}"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:47
+msgid "Tasks to delete ({{ amount }})"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:12
+msgid ""
+"The\n"
+"    <strong>salt-api</strong> daemon is installed and running on the salt master node\n"
+"    <kbd># systemctl status salt-api</kbd>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-190-deepsea-old_version.html:1
+msgid "The <strong>DeepSea</strong> version that you are using is too old and should be updated"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:10
+msgid "The <strong>ceph-radosgw.target</strong> daemon is installed and running on the Object Gateway node <kbd># systemctl status ceph-radosgw.target</kbd>"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:203
+msgid "The RBD you've chosen contains one or more feature(s) that are not supported by iSCSI. Please choose another RBD."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:6
+msgid "The bucket data could not be loaded."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:54
+msgid "The chosen Ceph pool name is already in use."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:44
+msgid "The chosen RBD name is already in use."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:44
+msgid "The chosen erasure code profile name is already in use."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:57
+msgid "The chosen name is already in use."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:66
+msgid "The chosen subuser ID is already in use."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:62
+msgid "The chosen user ID is already in use."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:45
+msgid "The chosen user is already in use."
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:55
+msgid "The chosen user name is already in use."
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:32
+msgid "The following Ceph nodes will be {{ deep }}scrubbed:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:24
+msgid "The following Ceph pools will be deleted:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:16
+msgid "The following NFS exports will be deleted:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:26
+msgid "The following RBDs will be deleted:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:19
+msgid "The following buckets will be deleted:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:606
+msgid "The following characters are valid: _ a-z A-Z 0-9"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:16
+msgid "The following iSCSI target IQNs will be deleted:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:27
+msgid "The following users will be deleted:"
+msgstr ""
+
+#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:30
+msgid "The input value does not match 'yes'."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:7
+msgid "The list of buckets could not be loaded."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:7
+msgid "The list of users could not be loaded."
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:136
+msgid "The password confirmation is required."
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:142
+#: app/components/users/users-form/users-form.component.html:97
+msgid "The password must be of minimum length 6 characters."
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:148
+msgid "The passwords are not equal."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:321
+msgid "The pg size of a pool can only be increased in edit mode."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html:2
+msgid ""
+"The position that this <strong>NFS v4</strong> export occupies in the <strong>Pseudo FS</strong>\n"
+"    (it must be unique)."
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:8
+msgid "The resource could not be found."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:242
+msgid ""
+"The size specified is out of range.\n"
+"                    A value from {{ minSize }} to {{ maxSize }} is valid."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:392
+msgid "The striping count has to be a value higher than 1."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:6
+msgid "The user data could not be loaded."
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:44
+msgid "The username is required."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:63
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:556
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:611
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:686
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:741
+msgid "The value is not valid."
+msgstr ""
+
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:14
+msgid "There are no {{tabKey}} Tasks."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:35
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:64
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:95
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:123
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:156
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:220
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:293
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:326
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:389
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:422
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:45
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:451
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:485
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:518
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:87
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:142
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:200
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:231
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:272
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:357
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:37
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:387
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:71
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:106
+#: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:51
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:37
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:67
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:140
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:40
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:98
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:101
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:163
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:60
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:105
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:40
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:439
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:483
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:549
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:56
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:604
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:679
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:734
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:91
+msgid "This field is required!"
+msgstr ""
+
+#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:25
+msgid "This field is required."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:362
+msgid "This field was decreased with your object size change."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:278
+msgid "This field was increased with your stripe unit change."
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:8
+msgid "This module cannot be loaded because no Ceph cluster is configured"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-122-deepsea-nfs-no-hosts.html:1
+msgid ""
+"This module cannot be loaded because there are no Salt Minion nodes assigned to the\n"
+"  <strong>ganesha</strong> role"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-142-deepsea-iscsi-no-interfaces.html:1
+msgid ""
+"This module cannot be loaded because there are no Salt Minion nodes assigned to the\n"
+"  <strong>igw</strong> role"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-123-deepsea-nfs-no-fsals.html:1
+msgid ""
+"This module cannot be loaded because there are no Salt Minion nodes assigned to the\n"
+"  <strong>mds</strong> role neither to the <strong>rgw</strong> role"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-132-openattic-nfs-no-rgw.html:1
+#: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:1
+#: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:1
+#: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:1
+msgid "This module cannot be loaded due to a problem while trying to connect to <strong>RGW S3 API</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:1
+msgid "This module cannot be loaded due to a problem while trying to connect to CephFS"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-101-deepsea-conn-unknown-problem.html:1
+#: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:1
+#: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:1
+#: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:1
+msgid "This module cannot be loaded due to a problem while trying to connect to DeepSea via the Salt REST API"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:1
+msgid "This module cannot be loaded due to a problem while trying to connect to RGW S3 API"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:2
+msgid "This module cannot be loaded due to a problem while trying to connect to the Ceph cluster"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:3
+msgid ""
+"This module cannot be loaded due to a problem while trying to connect to the Ceph cluster\n"
+"    with fsid <strong>{{ fsid }}</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-164-rgw-connection-timeout.html:1
+msgid "This module cannot be loaded due to a timeout while trying to connect to <strong>RGW S3 API</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-104-deepsea-connection-timeout.html:1
+msgid "This module cannot be loaded due to a timeout while trying to connect to DeepSea via the Salt REST API"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:1
+#: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:1
+msgid "This module cannot be loaded due to an authentication problem while connecting to the RGW S3 API"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-106-deepsea-failed-authentication.html:1
+msgid "This module cannot be loaded due to an authentication problem while connecting to the Salt REST API"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-100-unknown.html:1
+#: app/components/shared/oa-module-loader/reason-120-deepsea-nfs-unknown-problem.html:1
+#: app/components/shared/oa-module-loader/reason-140-deepsea-iscsi-unknown-problem.html:1
+msgid "This module cannot be loaded due to an unexpected error"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-107-deepsea-internal-server-error.html:1
+msgid "This module cannot be loaded due to an unexpected error in DeepSea"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-167-rgw-internal-server-error.html:1
+msgid "This module cannot be loaded due to an unexpected error in RGW"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-121-deepsea-nfs-runner-error.html:1
+msgid "This module cannot be loaded due to an unexpected error while executing <strong>DeepSea ui_ganesha runner</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-141-deepsea-iscsi-runner-error.html:1
+msgid "This module cannot be loaded due to an unexpected error while executing <strong>DeepSea ui_iscsi runner</strong>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-108-deepsea-http-problem.html:1
+msgid "This module cannot be loaded due to an unexpected response from DeepSea"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-168-rgw-http-problem.html:1
+msgid "This module cannot be loaded due to an unexpected response from RGW"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-109-deepsea-incomplete-configuration.html:1
+msgid "This module cannot be loaded due to incomplete <strong>DeepSea / Salt REST API</strong> configuration"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-171-openattic-rgw-no-deepsea-conn.html:1
+#: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:1
+msgid "This module cannot be loaded due to missing configuration problem"
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:12
+msgid "To confirm, please click <kbd>Delete erasure code profile</kbd>, or cancel and return to the page."
+msgstr ""
+
+#: app/components/users/users-delete-modal/users-delete-modal.component.html:11
+msgid "To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the page."
+msgstr ""
+
+#: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:14
+msgid "To confirm, please click <kbd>Generate</kbd>, or cancel and return to the page."
+msgstr ""
+
+#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:9
+msgid "To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:17
+msgid "To confirm, please enter the information below and click <kbd>Add erasure code profile</kbd>, or cancel and return to the page."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:75
+msgid "To mount this NFS export, run the following command:"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:16
+msgid "Toggle navigation"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:312
+msgid "Transport Protocol"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:39
+msgid "Transports:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:94
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:21
+msgid "Type"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:36
+msgid "Type:"
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:326
+msgid "UDP"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:47
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:52
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:70
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:75
+msgid "Unlimited"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:575
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:705
+msgid "Unlimited objects"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:520
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:650
+msgid "Unlimited size"
+msgstr ""
+
+#: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:2
+msgid "Unsaved Changes"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:283
+#: app/components/settings/settings-form/settings-form.component.html:401
+msgid "Use SSL"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:93
+msgid "Use a dedicated data pool"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:306
+msgid "Use default features"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:80
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:72
+msgid "Used"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:18
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:41
+msgid "Used:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:269
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:21
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:21
+msgid "User"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:47
+msgid "User ID..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:37
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:494
+msgid "User quota"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:20
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:37
+#: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:76
+#: app/components/settings/settings-form/settings-form.component.html:355
+#: app/components/settings/settings-form/settings-form.component.html:76
+#: app/components/users/users-form/users-form.component.html:26
+#: app/components/users/users-list/users-list.component.html:53
+msgid "Username"
+msgstr ""
+
+#: app/components/users/users-form/users-form.component.html:36
+msgid "Username..."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:11
+msgid "Username:"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:106
+#: app/components/navigation/navigation/navigation.component.html:80
+msgid "Users"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:524
+msgid "Value should be between 0.0 and 1.0"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:457
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:491
+msgid "Value should be greater or equal to 0"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:29
+msgid "Version:"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:8
+msgid "View S3 key: {{ user }}"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:8
+msgid "View Swift key: {{ user }}"
+msgstr ""
+
+#: app/components/auth/auth/auth.component.html:9
+msgid "Welcome to openATTIC!"
+msgstr "Willkommen bei openATTIC!"
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:13
+msgid "You are about to add a new erasure code profile."
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:27
+msgid "You are about to apply a {{ deep }}scrub to multiple Ceph nodes."
+msgstr ""
+
+#: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:14
+msgid "You are about to apply a {{ deep }}scrub to the Ceph OSD <strong>{{ name }}</strong>."
+msgstr ""
+
+#: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:16
+msgid "You are about to apply a {{ deep }}scrub to the Ceph node <strong>{{ hostname }}</strong>."
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:22
+msgid ""
+"You are about to delete <strong>{{ description }}</strong> task which is\n"
+"          <strong>{{ status}}</strong> and was last modified on {{ lastModified}}."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:18
+msgid "You are about to delete multiple Ceph pools."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:13
+msgid "You are about to delete multiple NFS exports."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:19
+msgid "You are about to delete multiple RBDs."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:16
+msgid "You are about to delete multiple buckets."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:13
+msgid "You are about to delete multiple iSCSI target IQNs."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:20
+msgid "You are about to delete multiple users."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:6
+msgid "You are about to delete the Ceph pool <strong>{{ name }}</strong>."
+msgstr ""
+
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:6
+msgid "You are about to delete the NFS export <strong>{{ host }}:{{ path }}</strong>"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:6
+msgid "You are about to delete the RBD <strong>{{ name }}</strong>."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:7
+msgid "You are about to delete the bucket <strong>{{ bucket }}</strong>."
+msgstr ""
+
+#: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:7
+msgid "You are about to delete the erasure code profile <strong>{{ profileName }}</strong>."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:7
+msgid "You are about to delete the iSCSI target IQN <strong>{{ targetId }}</strong>."
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:7
+msgid "You are about to delete the user <strong>{{ userId }}</strong>."
+msgstr ""
+
+#: app/components/users/users-delete-modal/users-delete-modal.component.html:6
+msgid "You are about to delete the user <strong>{{ username }}</strong>."
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:31
+msgid "You are about to delete {{ amount }} tasks."
+msgstr ""
+
+#: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:5
+msgid "You are about to generate a new API authentication token."
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:15
+msgid ""
+"You can change the user group\n"
+"          by running the following commands:\n"
+"          <br>\n"
+"          <kbd># chgrp openattic /etc/ceph/*.keyring</kbd><br>\n"
+"          <kbd># chmod g+r /etc/ceph/*.keyring</kbd>"
+msgstr ""
+
+#: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:24
+msgid ""
+"You can change the user group\n"
+"        by running the following commands:\n"
+"        <br>\n"
+"        <kbd># chgrp openattic /etc/ceph/*.{conf,keyring}</kbd><br>\n"
+"        <kbd># chmod g+r /etc/ceph/*.{conf,keyring}</kbd>"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:569
+msgid "You can use up to four application per pool."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:237
+msgid "You have to increase the size in order to have at least 1 object in your RBD."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:244
+msgid "You have to increase the size in order to use striping."
+msgstr ""
+
+#: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:6
+msgid "You have unsaved changes that will be lost if you decide to continue."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:17
+msgid "You must <a ng-click=\"$ctrl.addRBD()\">create an RBD image</a> before adding an iSCSI target."
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:50
+msgid "all but"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:25
+msgid "all replicas"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:141
+msgid "e.g., 1000"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:445
+msgid "e.g., 128K"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:541
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:671
+msgid "e.g., 1GB"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:596
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:726
+msgid "e.g., 500"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:477
+msgid "e.g., 512K"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:34
+msgid "exactly"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:97
+msgid "full"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:37
+msgid "hit_set_count:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:41
+msgid "hit_set_params:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:33
+msgid "hit_set_period:"
+msgstr ""
+
+#: app/components/navigation/navigation/navigation.component.html:62
+msgid "iSCSI"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:9
+msgid "iSCSI target \"{{ targetId }}\" could not be loaded."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:9
+msgid "iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:3
+msgid "iSCSI target is loading..."
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:4
+msgid "iSCSI targets are loading..."
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:77
+msgid "in the"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:179
+msgid "lun"
+msgstr ""
+
+#: app/components/shared/oadatatable/paginator.directive.html:23
+msgid "of <b>{{pages}}</b>"
+msgstr ""
+
+#: app/components/feedback/feedback.component.html:34
+msgid "openATTIC blog"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:59
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:91
+msgid "read"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:95
+msgid "read, write"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:61
+msgid "replicas on different"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:51
+msgid "retries"
+msgstr ""
+
+#: app/components/settings/settings-form/settings-form.component.html:139
+#: app/components/settings/settings-form/settings-form.component.html:315
+#: app/components/settings/settings-form/settings-form.component.html:433
+#: app/components/settings/settings-form/settings-form.component.html:542
+msgid "retry"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:79
+msgid "retry_errors"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:65
+msgid "sleep"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:29
+msgid "target_max_bytes:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:13
+msgid "tier_of:"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:20
+msgid "tiers:"
+msgstr ""
+
+#: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:34
+msgid "uuid"
+msgstr ""
+
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:61
+#: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:93
+msgid "write"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:17
+msgid "write_tier:"
+msgstr ""
+
+#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:17
+msgid "yes"
+msgstr ""
+
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:91
+msgid ""
+"{{ description }} changed from {{ status }} to\n"
+"                <span ng-class=\"{'text-danger': moved[1].status === 'Exception', 'text-success': moved[1].status === 'Finished'}\" ng-bind=\"moved[1].status\"></span>"
+msgstr ""
+
+#: app/components/task-queue/oa-task-queue/oa-task-queue.component.html:12
+msgid "{{ failed }} Failed-Task{{$ctrl.taskOverview.failed !== 1 ? 's' : ''}}"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:16
+msgid "{{ meta }}Pool:"
+msgstr ""
+
+#: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:101
+msgid ""
+"{{ minSize }} replicas means \"the original file + {{ minSizeLess }}\n"
+"                      <ng-pluralize count=\"$ctrl.activeRuleset.min_size - 1\" when=\"{1: 'copy', 'other': 'copies'}\"></ng-pluralize>\"."
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:648
+msgid "{{ mode }}"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:19
+msgid "{{ mode }} Ceph pool: {{ name }}"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:131
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:189
+msgid "{{ numBytes }} of {{ maxAvail }} used"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:195
+msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.dataPool)\">use max</a>"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:137
+msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.pool)\">use max</a>"
+msgstr ""
+
+#: app/components/task-queue/oa-task-queue/oa-task-queue.component.html:7
+msgid "{{ queue }} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:104
+msgid "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}Pool"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:41
+msgid "{{errortext}}"
+msgstr ""

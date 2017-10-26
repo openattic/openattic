@@ -3,15 +3,18 @@
                               on-cancel="$ctrl.cancel()">
 
   <div ng-if="$ctrl.resolve.iscsiTargetSelection.length === 1">
-    <p translate>
-      You are about to delete the iSCSI target IQN <strong>{{$ctrl.resolve.iscsiTargetSelection[0].targetId}}</strong>.
+    <p>
+      <translate translate-params-target-id="$ctrl.resolve.iscsiTargetSelection[0].targetId">
+        You are about to delete the iSCSI target IQN <strong>{{ targetId }}</strong>.
+      </translate>
     </p>
   </div>
   <div ng-if="$ctrl.resolve.iscsiTargetSelection.length > 1">
     <p translate>
       You are about to delete multiple iSCSI target IQNs.
     </p>
-    <span translate class="text-danger">The following iSCSI target IQNs will be deleted:</span>
+    <span translate
+          class="text-danger">The following iSCSI target IQNs will be deleted:</span>
     <ul class="text-danger">
       <li ng-repeat="iscsiTarget in $ctrl.resolve.iscsiTargetSelection">
         {{iscsiTarget.targetId}}

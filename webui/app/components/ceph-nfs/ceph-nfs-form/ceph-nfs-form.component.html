@@ -1,11 +1,11 @@
 <div class="col-sm-12 col-lg-6">
-  <oa-loading-panel message="NFS export is loading..."
+  <oa-loading-panel message="{{ 'NFS export is loading...' | translate }}"
                     ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
   </oa-loading-panel>
-  <oa-error-panel title="Couldn't load NFS export"
+  <oa-error-panel title="{{ 'Could not load NFS export' | translate }}"
                   on-back="$ctrl.cancelAction()"
                   ng-if="$ctrl.isEditMode() && $ctrl.error">
-    NFS export could not be loaded.
+    <translate>NFS export could not be loaded.</translate>
   </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error"
@@ -16,8 +16,11 @@
         oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 translate
-            class="panel-title">NFS export {{ $ctrl.getId() }}</h3>
+        <h3 class="panel-title">
+          <translate translate-params-id="$ctrl.getId()">
+            NFS export {{ id }}
+          </translate>
+        </h3>
       </div>
 
       <div class="panel-body">
@@ -35,7 +38,8 @@
                     name="host"
                     id="host"
                     required>
-              <option translate value="">-- Select the host --</option>
+              <option translate
+                      value="">-- Select the host --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.host.$dirty">
@@ -60,7 +64,8 @@
                     id="fsal"
                     ng-change="$ctrl.fsalChangeHandler()"
                     required>
-              <option translate value="">-- Select the storage backend --</option>
+              <option translate
+                      value="">-- Select the storage backend --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.fsal.$dirty">
@@ -208,10 +213,9 @@
         <!-- Tag -->
         <div class="form-group"
              ng-if="$ctrl.model.protocolNfsv3">
-          <label translate
-                 class="col-sm-3 control-label"
+          <label class="col-sm-3 control-label"
                  for="tag">
-            NFS Tag
+            <translate>NFS Tag</translate>
             <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
@@ -227,10 +231,9 @@
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.pseudo.$dirty) && $ctrl.nfsForm.pseudo.$invalid}"
              ng-if="$ctrl.model.protocolNfsv4">
-          <label translate
-                 class="col-sm-3 control-label"
+          <label class="col-sm-3 control-label"
                  for="pseudo">
-            Pseudo
+            <translate>Pseudo</translate>
             <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
@@ -354,10 +357,9 @@
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button translate
-                            form="$ctrl.nfsForm"
+          <oa-submit-button form="$ctrl.nfsForm"
                             on-submit="$ctrl.submitAction()">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
           <button translate
                   type="button"

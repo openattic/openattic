@@ -1,8 +1,14 @@
 <div class="openattic-modal-header">
-  <span translate
-        ng-hide="$ctrl.editing">Add subuser: {{$ctrl.subuser.subuser}}</span>
-  <span translate
-        ng-show="$ctrl.editing">Edit subuser: {{$ctrl.subuser.subuser}}</span>
+  <span ng-hide="$ctrl.editing">
+    <translate translate-params-subuser="$ctrl.subuser.subuser">
+      Add subuser: {{ subuser }}
+    </translate>
+  </span>
+  <span ng-show="$ctrl.editing">
+    <translate translate-params-subuser="$ctrl.subuser.subuser">
+      Edit subuser: {{ subuser }}
+    </translate>
+  </span>
 </div>
 <form name="$ctrl.subuserForm"
       role="form"
@@ -43,7 +49,7 @@
           </span>
           <input class="form-control"
                  type="text"
-                 placeholder="Subuser..."
+                 placeholder="{{ 'Subuser...' | translate }}"
                  ng-model="$ctrl.subuser.subuser"
                  ng-change="$ctrl.validateSubuser()"
                  ng-readonly="$ctrl.editing"
@@ -134,7 +140,7 @@
             </span>
             <input class="form-control"
                    type="password"
-                   placeholder="Secret key..."
+                   placeholder="{{ 'Secret key...' | translate }}"
                    ng-model="$ctrl.subuser.secret_key"
                    ng-required="!$ctrl.editing && !$ctrl.subuser.generate_secret"
                    name="secret_key"
@@ -166,10 +172,9 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button translate
-                        form="$ctrl.subuserForm"
+      <oa-submit-button form="$ctrl.subuserForm"
                         on-submit="$ctrl.submitAction($ctrl.subuserForm)">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
       <button translate
               type="button"

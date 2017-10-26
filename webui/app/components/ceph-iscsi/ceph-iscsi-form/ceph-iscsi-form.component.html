@@ -1,20 +1,20 @@
 <div class="col-sm-12 col-lg-6">
 
-  <oa-loading-panel message="iSCSI target is loading..."
+  <oa-loading-panel message="{{ 'iSCSI target is loading...' | translate }}"
                     ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
   </oa-loading-panel>
-  <oa-error-panel translate
-                  title="Couldn't load iSCSI target"
+  <oa-error-panel title="{{ 'Could not load iSCSI target' | translate }}"
                   on-back="$ctrl.cancelAction()"
                   ng-if="$ctrl.targetId && $ctrl.error">
-    iSCSI target "{{ $ctrl.targetId }}" could not be loaded.
+    <translate translate-params-target-id="$ctrl.targetId">
+      iSCSI target "{{ targetId }}" could not be loaded.
+    </translate>
   </oa-error-panel>
 
   <div ng-show="$ctrl.formDataIsReady && !$ctrl.error">
     <div ng-show="$ctrl.allImages.length === 0">
-      <oa-error-panel translate
-                      title="No RBD images">
-        You must <a ng-click="$ctrl.addRBD()">create an RBD image</a> before adding an iSCSI target.
+      <oa-error-panel title="{{ 'No RBD images' | translate }}">
+        <translate>You must <a ng-click="$ctrl.addRBD()">create an RBD image</a> before adding an iSCSI target.</translate>
       </oa-error-panel>
     </div>
     <form ng-show="$ctrl.allImages.length !== 0"
@@ -25,8 +25,11 @@
           oa-check-form>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 translate
-              class="panel-title tc_panelTitle">Target IQN: {{ $ctrl.model.targetId }}</h3>
+          <h3 class="panel-title tc_panelTitle">
+            <translate translate-params-target-id="$ctrl.model.targetId">
+              Target IQN: {{ targetId }}
+            </translate>
+          </h3>
         </div>
         <div class="panel-body">
 
@@ -47,7 +50,7 @@
                 <span class="input-group-btn">
                   <button class="btn btn-default"
                           type="button"
-                          uib-tooltip="Settings"
+                          uib-tooltip="{{ 'Settings' | translate }}"
                           ng-click="$ctrl.openTargetSettingsModal()">
                     <i class="fa fa-cogs"></i>
                   </button>
@@ -58,11 +61,11 @@
                 <span translate
                       class="tc_targetIdRequired"
                       ng-show="$ctrl.iscsiForm.targetId.$error.required">Required field</span>
-                <span translate
-                      class="tc_targetIdInvalid"
+                <span class="tc_targetIdInvalid"
                       ng-show="$ctrl.iscsiForm.targetId.$error.iqn">
-                  An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'
-                  <br> For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309
+                  <translate>An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'</translate>
+                  <br>
+                  <translate>For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309</translate>
                   <br>
                   <a translate
                      target="_blank"
@@ -110,7 +113,7 @@
                   <span class="input-group-btn">
                     <button class="btn btn-default"
                             type="button"
-                            uib-tooltip="Delete"
+                            uib-tooltip="{{ 'Delete' | translate }}"
                             ng-click="$ctrl.removePortal($index)">
                       <i class="fa fa-trash-o"></i>
                     </button>
@@ -121,12 +124,12 @@
               <span uib-dropdown
                     on-toggle="toggled(open)"
                     class="form-control no-border">
-                <button translate
-                        type="button"
+                <button type="button"
                         class="btn btn-default btn-label pull-right tc_addPortalButton"
                         uib-dropdown-toggle
                         ng-disabled="$ctrl.availablePortals().length === 0">
-                  <i class="fa fa-fw fa-plus"></i>Add portal
+                  <i class="fa fa-fw fa-plus"></i>
+                  <translate>Add portal</translate>
                 </button>
                 <ul class="dropdown-menu scrollable-menu pull-right"
                     uib-dropdown-menu
@@ -149,10 +152,9 @@
 
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.images.$dirty) && $ctrl.iscsiForm.images.$invalid}">
-            <label translate
-                   class="col-sm-3 control-label"
+            <label class="col-sm-3 control-label"
                    for="images">
-              Images
+              <translate>Images</translate>
               <oa-helper helper-data="$ctrl.unsupportedRbdFeatures"
                          helper-template="'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html'">
               </oa-helper>
@@ -174,7 +176,7 @@
                     id="images">
                 <div ng-class="{'has-error': $ctrl.iscsiForm['image'+$index].$invalid}">
                   <div class="input-group">
-                    <div class="input-group-addon"><translate>lun:</translate> {{ currentImage.settings.lun }}</div>
+                    <div class="input-group-addon"><translate>lun</translate>: {{ currentImage.settings.lun }}</div>
                     <input type="text"
                            class="form-control"
                            name="image{{ $index }}"
@@ -219,12 +221,12 @@
               <span uib-dropdown
                     on-toggle="toggled(open)"
                     class="form-control no-border">
-                <button translate
-                        type="button"
+                <button type="button"
                         class="btn btn-default btn-label pull-right tc_addImageButton"
                         uib-dropdown-toggle
                         ng-disabled="$ctrl.availableImages().length === 0">
-                  <i class="fa fa-fw fa-plus"></i>Add image
+                  <i class="fa fa-fw fa-plus"></i>
+                  <translate>Add image</translate>
                 </button>
                 <ul class="dropdown-menu scrollable-menu pull-right"
                     uib-dropdown-menu
@@ -333,7 +335,7 @@
                       <span class="input-group-btn">
                         <button class="btn btn-default tc_initiatorRemoveButton"
                                 type="button"
-                                uib-tooltip="Delete"
+                                uib-tooltip="{{ 'Delete' | translate }}"
                                 ng-click="$ctrl.removeInitiator($index)">
                           <i class="fa fa-trash-o"></i>
                         </button>
@@ -346,13 +348,14 @@
                               ng-show="$ctrl.iscsiForm['initiator'+$index].$error.required">
                           Should not be empty
                         </span>
-                        <span translate
-                              class="tc_InitiatorInvalid"
+                        <span class="tc_InitiatorInvalid"
                               ng-show="$ctrl.iscsiForm['initiator'+$index].$error.iqn">
-                          An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'
-                          <br> For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309
+                          <translate>An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'</translate>
                           <br>
-                          <a target="_blank"
+                          <translate>For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309</translate>
+                          <br>
+                          <a translate
+                             target="_blank"
                              href="https://en.wikipedia.org/wiki/ISCSI#Addressing">More information</a>
                         </span>
                       </span>
@@ -362,11 +365,11 @@
                 <span uib-dropdown
                       on-toggle="toggled(open)"
                       class="form-control no-border">
-                  <button translate
-                          type="button"
+                  <button type="button"
                           class="btn btn-default btn-label pull-right tc_addInitiatorButton"
                           ng-click="$ctrl.addInitiator()">
-                    <i class="fa fa-fw fa-plus"></i>Add initiator
+                    <i class="fa fa-fw fa-plus"></i>
+                    <translate>Add initiator</translate>
                   </button>
                 </span>
                 <hr>
@@ -604,10 +607,9 @@
 
         <div class="panel-footer">
           <div class="button-group text-right">
-            <oa-submit-button translate
-                              form="$ctrl.iscsiForm"
+            <oa-submit-button form="$ctrl.iscsiForm"
                               on-submit="$ctrl.submitAction()">
-              Submit
+              <translate>Submit</translate>
             </oa-submit-button>
             <button translate
                     type="button"

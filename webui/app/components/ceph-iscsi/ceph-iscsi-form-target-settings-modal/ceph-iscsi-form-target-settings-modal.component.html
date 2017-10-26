@@ -2,8 +2,9 @@
       role="form"
       class="form-horizontal"
       novalidate>
-  <div class="openattic-modal-header">
-    <span translate >Advanced Settings</span>
+  <div translate
+       class="openattic-modal-header">
+    Advanced Settings
   </div>
   <div class="openattic-modal-content">
     <div translate
@@ -27,10 +28,9 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button translate
-                        form="$ctrl.settingsForm"
+      <oa-submit-button form="$ctrl.settingsForm"
                         on-submit="$ctrl.confirm()">
-        Confirm
+        <translate>Confirm</translate>
       </oa-submit-button>
       <button translate
               id="cancelButton"

@@ -1,9 +1,9 @@
-<oa-loading-panel message="Loading user data..."
+<oa-loading-panel message="{{ 'Loading user data...' | translate }}"
                   ng-show="$ctrl.editing && !$ctrl.error && !$ctrl.user.$resolved">
 </oa-loading-panel>
 <oa-error-panel on-back="$ctrl.goToListView()"
                 ng-if="$ctrl.editing && $ctrl.error">
-  The user data could not be loaded.
+  <translate>The user data could not be loaded.</translate>
 </oa-error-panel>
 
 <div class="col-sm-12 col-lg-6"
@@ -15,12 +15,18 @@
         oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
-        <h3 translate
-            ng-hide="$ctrl.editing"
-            class="panel-title tc_userAddTitle">Add user: {{$ctrl.user.user_id}}</h3>
-        <h3 translate
-            ng-show="$ctrl.editing"
-            class="panel-title tc_userEditTitle">Edit user: {{$ctrl.user.user_id}}</h3>
+        <h3 ng-hide="$ctrl.editing"
+            class="panel-title tc_userAddTitle">
+          <translate translate-params-user-id="$ctrl.user.user_id">
+            Add user: {{ userId }}
+          </translate>
+        </h3>
+        <h3 ng-show="$ctrl.editing"
+            class="panel-title tc_userEditTitle">
+          <translate translate-params-user-id="$ctrl.user.user_id">
+            Edit user: {{ userId }}
+          </translate>
+        </h3>
       </div>
       <div class="panel-body">
         <!-- Username -->
@@ -38,7 +44,7 @@
               </span>
               <input class="form-control"
                      type="text"
-                     placeholder="User ID..."
+                     placeholder="{{ 'User ID...' | translate }}"
                      ng-model="$ctrl.user.user_id"
                      ng-readonly="$ctrl.editing"
                      ng-required="!$ctrl.editing"
@@ -76,7 +82,7 @@
               </span>
               <input class="form-control"
                      type="text"
-                     placeholder="Display name..."
+                     placeholder="{{ 'Display name...' | translate }}"
                      ng-model="$ctrl.user.display_name"
                      name="display_name"
                      id="display_name"
@@ -105,7 +111,7 @@
               </span>
               <input class="form-control"
                      type="email"
-                     placeholder="Email Address..."
+                     placeholder="{{ 'Email Address...' | translate }}"
                      ng-model="$ctrl.user.email"
                      name="email"
                      id="email">
@@ -132,7 +138,7 @@
                    name="max_buckets"
                    id="max_buckets"
                    ng-model="$ctrl.user.max_buckets"
-                   placeholder="e.g., 1000"
+                   placeholder="{{ 'e.g., 1000' | translate }}"
                    min="0">
           </div>
         </div>
@@ -204,11 +210,11 @@
               <span class="help-block"></span>
             </span>
             <span class="form-control no-border">
-              <button translate
-                      type="button"
+              <button type="button"
                       class="btn btn-default btn-label pull-right tc_addSubuserButton"
                       ng-click="$ctrl.addEditSubuser()">
-                <i class="fa fa-fw fa-plus"></i>Add subuser
+                <i class="fa fa-fw fa-plus"></i>
+                <translate>Add subuser</translate>
               </button>
             </span>
           </div>
@@ -258,11 +264,11 @@
               <span class="help-block"></span>
             </span>
             <span class="form-control no-border">
-              <button translate
-                      type="button"
+              <button type="button"
                       class="btn btn-default btn-label pull-right tc_addS3KeyButton"
                       ng-click="$ctrl.addViewS3Key()">
-                <i class="fa fa-fw fa-plus"></i>Add S3 key
+                <i class="fa fa-fw fa-plus"></i>
+                <translate>Add S3 key</translate>
               </button>
             </span>
             <hr>
@@ -365,11 +371,11 @@
               <span class="help-block"></span>
             </span>
             <span class="form-control no-border">
-              <button translate
-                      type="button"
+              <button type="button"
                       class="btn btn-default btn-label pull-right tc_addCapButton"
                       ng-click="$ctrl.addEditCapability()">
-                <i class="fa fa-fw fa-plus"></i>Add capability
+                <i class="fa fa-fw fa-plus"></i>
+                <translate>Add capability</translate>
               </button>
             </span>
           </div>
@@ -409,7 +415,7 @@
                 </span>
                 <input class="form-control"
                        type="password"
-                       placeholder="Access key..."
+                       placeholder="{{ 'Access key...' | translate }}"
                        ng-model="$ctrl.user.access_key"
                        ng-readonly="$ctrl.editing"
                        ng-required="!$ctrl.editing && !$ctrl.user.generate_key"
@@ -454,7 +460,7 @@
                 </span>
                 <input class="form-control"
                        type="password"
-                       placeholder="Secret key..."
+                       placeholder="{{ 'Secret key...' | translate }}"
                        ng-model="$ctrl.user.secret_key"
                        ng-required="!$ctrl.editing && !$ctrl.user.generate_key"
                        name="secret_key"
@@ -532,7 +538,7 @@
             <div class="col-sm-9">
               <input class="form-control"
                      type="text"
-                     placeholder="e.g., 1GB"
+                     placeholder="{{ 'e.g., 1GB' | translate }}"
                      ng-model="$ctrl.user.user_quota.max_size"
                      ng-show="!$ctrl.user.user_quota.max_size_unlimited"
                      ng-required="$ctrl.user.user_quota.enabled &&
@@ -587,7 +593,7 @@
             <div class="col-sm-9">
               <input class="form-control"
                      type="number"
-                     placeholder="e.g., 500"
+                     placeholder="{{ 'e.g., 500' | translate }}"
                      ng-model="$ctrl.user.user_quota.max_objects"
                      ng-show="!$ctrl.user.user_quota.max_objects_unlimited"
                      ng-required="$ctrl.user.user_quota.enabled &&
@@ -662,7 +668,7 @@
             <div class="col-sm-9">
               <input class="form-control"
                      type="text"
-                     placeholder="e.g., 1GB"
+                     placeholder="{{ 'e.g., 1GB' | translate }}"
                      ng-model="$ctrl.user.bucket_quota.max_size"
                      ng-show="!$ctrl.user.bucket_quota.max_size_unlimited"
                      ng-required="$ctrl.user.bucket_quota.enabled &&
@@ -717,7 +723,7 @@
             <div class="col-sm-9">
               <input class="form-control"
                      type="number"
-                     placeholder="e.g., 500"
+                     placeholder="{{ 'e.g., 500' | translate }}"
                      ng-model="$ctrl.user.bucket_quota.max_objects"
                      ng-show="!$ctrl.user.bucket_quota.max_objects_unlimited"
                      ng-required="$ctrl.user.bucket_quota.enabled &&
@@ -746,10 +752,9 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button translate
-                            form="$ctrl.userForm"
+          <oa-submit-button form="$ctrl.userForm"
                             on-submit="$ctrl.submitAction($ctrl.userForm)">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
           <button translate
                   type="button"

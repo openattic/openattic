@@ -29,8 +29,7 @@
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_dashboard">
         <a translate
-           data-ui-sref="dashboard"
-           title="Dashboard">Dashboard
+           data-ui-sref="dashboard">Dashboard
         </a>
       </li>
       <li data-ui-sref-active="active"
@@ -70,10 +69,9 @@
         </a>
       </li>
       <li class="dropdown tc_menuitem tc_menuitem_ceph_rgw">
-        <a translate
-           href=""
+        <a href=""
            class="dropdown-toggle"
-           data-toggle="dropdown">Object Gateway <span class="caret"></span>
+           data-toggle="dropdown"><translate>Object Gateway</translate> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
           <li data-ui-sref-active="active"
@@ -97,10 +95,9 @@
         </a>
       </li>
       <li class="dropdown tc_menuitem tc_menuitem_system">
-        <a translate
-           href=""
+        <a href=""
            class="dropdown-toggle"
-           data-toggle="dropdown">System <span class="caret"></span>
+           data-toggle="dropdown"><translate>System</translate> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
           <li data-ui-sref-active="active"
@@ -122,13 +119,16 @@
 
     <ul class="nav navbar-nav navbar-utility">
       <li>
+        <userinfo class="oa-navbar"></userinfo>
+      </li>
+      <li>
+        <language class="oa-navbar"></language>
+      </li>
+      <li>
         <oa-notifications class="oa-navbar dropdown dropdown-notifications"></oa-notifications>
       </li>
       <li>
         <oa-task-queue class="oa-navbar"></oa-task-queue>
-      </li>
-      <li>
-        <userinfo class="oa-navbar"></userinfo>
       </li>
       <li class="tc_api-recorder">
         <api-recorder class="oa-navbar"></api-recorder>

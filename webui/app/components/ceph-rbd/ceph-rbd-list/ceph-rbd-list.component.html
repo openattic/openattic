@@ -1,11 +1,11 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
   <oa-module-loader module="ceph">
 
-    <oa-loading-panel message="Ceph RBDs are loading..."
+    <oa-loading-panel message="{{ 'Ceph RBDs are loading...' | translate }}"
                       ng-show="!$ctrl.error && !$ctrl.rbd.$resolved">
     </oa-loading-panel>
     <oa-error-panel ng-if="$ctrl.error">
-      Ceph RBD resources could not be loaded.
+      <translate>Ceph RBD resources could not be loaded.</translate>
     </oa-error-panel>
 
     <oadatatable ng-show="!$ctrl.error && $ctrl.rbd.results"
@@ -16,31 +16,32 @@
                  on-selection-change="$ctrl.onSelectionChange(selection)"
                  on-filter-config-change="$ctrl.getRbdList()">
       <actions>
-        <a translate
-           class="btn btn-sm btn-primary tc_add_btn"
+        <a class="btn btn-sm btn-primary tc_add_btn"
            type="button"
            ng-click="$ctrl.addAction()"
            ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
-          <i class="fa fa-fw fa-plus"></i>Add
+          <i class="fa fa-fw fa-plus"></i>
+          <translate>Add</translate>
         </a>
-        <a translate
-           class="btn btn-sm btn-primary tc_delete_btn"
+        <a class="btn btn-sm btn-primary tc_delete_btn"
            type="button"
            ng-click="$ctrl.deleteAction()"
            ng-show="$ctrl.hasSelection || $ctrl.multiSelection">
-          <i class="fa fa-fw fa-trash-o"></i>Delete
+          <i class="fa fa-fw fa-trash-o"></i>
+          <translate>Delete</translate>
         </a>
         <li>
-          <a translate
-             ng-click="$ctrl.addAction()">
-            <i class="fa fa-fw fa-plus"></i>Add
+          <a ng-click="$ctrl.addAction()">
+            <i class="fa fa-fw fa-plus"></i>
+            <translate>Add</translate>
           </a>
         </li>
         <li class="tc_deleteItem"
             ng-click="$ctrl.deleteAction()"
             ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
-          <a translate>
-            <i class="fa fa-fw fa-trash-o"></i>Delete
+          <a>
+            <i class="fa fa-fw fa-trash-o"></i>
+            <translate>Delete</translate>
           </a>
         </li>
       </actions>
@@ -120,7 +121,8 @@
               <i ng-if="row.state === 'DELETING'"
                  class="fa fa-spinner fa-spin fa-fw"></i>
               {{ row.name }}
-              <span ng-if="row.state === 'DELETING'"
+              <span translate
+                    ng-if="row.state === 'DELETING'"
                     class="italic"> (deleting...)</span>
             </td>
             <td ng-show="columns['Poolname']"
@@ -149,7 +151,8 @@
                      style="width: {{row.freePercent}}%">
                 </div>
               </div>
-              <div class="text-muted text-center"
+              <div translate
+                   class="text-muted text-center"
                    ng-show="row.used_size === null">
                 Not available
               </div>

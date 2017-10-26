@@ -1,9 +1,9 @@
-<oa-loading-panel message="Loading bucket data..."
+<oa-loading-panel message="{{ 'Loading bucket data...' | translate }}"
                   ng-show="!$ctrl.error && !$ctrl.formDataIsReady">
 </oa-loading-panel>
 <oa-error-panel on-back="$ctrl.goToListView()"
                 ng-if="$ctrl.editing && $ctrl.error">
-  The bucket data could not be loaded.
+  <translate>The bucket data could not be loaded.</translate>
 </oa-error-panel>
 
 <div class="col-sm-12 col-lg-6">
@@ -15,12 +15,18 @@
         oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
-        <h3 translate
-            ng-hide="$ctrl.editing"
-            class="panel-title tc_bucketAddTitle">Add bucket: {{$ctrl.bucket.bucket}}</h3>
-        <h3 translate
-            ng-show="$ctrl.editing"
-            class="panel-title tc_bucketEditTitle">Edit bucket: {{$ctrl.bucket.bucket}}</h3>
+        <h3 ng-hide="$ctrl.editing"
+            class="panel-title tc_bucketAddTitle">
+          <translate translate-params-bucket="$ctrl.bucket.bucket">
+            Add bucket: {{ bucket }}
+          </translate>
+        </h3>
+        <h3 ng-show="$ctrl.editing"
+            class="panel-title tc_bucketEditTitle">
+          <translate translate-params-bucket="$ctrl.bucket.bucket">
+            Edit bucket: {{ bucket }}
+          </translate>
+        </h3>
       </div>
       <div class="panel-body">
         <!-- Name -->
@@ -33,7 +39,7 @@
           <div class="col-sm-9">
             <input class="form-control"
                    type="text"
-                   placeholder="Name..."
+                   placeholder="{{ 'Name...' | translate }}"
                    ng-model="$ctrl.bucket.bucket"
                    ng-readonly="$ctrl.editing"
                    ng-required="!$ctrl.editing"
@@ -107,10 +113,9 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button translate
-                            form="bucketForm"
+          <oa-submit-button form="bucketForm"
                             on-submit="$ctrl.submitAction(bucketForm)">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
           <button translate
                   type="button"

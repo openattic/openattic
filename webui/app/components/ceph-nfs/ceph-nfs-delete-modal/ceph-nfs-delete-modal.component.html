@@ -2,8 +2,11 @@
                               on-confirm="$ctrl.deleteNfs()"
                               on-cancel="$ctrl.cancel()">
   <div ng-if="$ctrl.resolve.selectionItems.length === 1">
-    <p translate>
-      You are about to delete the NFS export <strong>{{$ctrl.resolve.selectionItems[0].host}}:{{$ctrl.resolve.selectionItems[0].path}}</strong>
+    <p>
+      <translate translate-params-host="$ctrl.resolve.selectionItems[0].host"
+                 translate-params-path="$ctrl.resolve.selectionItems[0].path">
+        You are about to delete the NFS export <strong>{{ host }}:{{ path }}</strong>
+      </translate>
     </p>
   </div>
   <div ng-if="$ctrl.resolve.selectionItems.length > 1">

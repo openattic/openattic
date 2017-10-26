@@ -2,8 +2,10 @@
                               on-confirm="$ctrl.deletePool()" on-cancel="$ctrl.cancel()">
   <!-- single cephPool -->
   <div ng-if="$ctrl.cephPools.length === 1">
-    <p translate>
-      You are about to delete the Ceph pool <strong>{{$ctrl.cephPools[0].name}}</strong>.
+    <p>
+      <translate translate-params-name="$ctrl.cephPools[0].name">
+        You are about to delete the Ceph pool <strong>{{ name }}</strong>.
+      </translate>
     </p>
     <p translate>
       Be aware that you will <strong>lose all data</strong> in that Ceph pool and that this operation <strong>cannot be undone</strong>.

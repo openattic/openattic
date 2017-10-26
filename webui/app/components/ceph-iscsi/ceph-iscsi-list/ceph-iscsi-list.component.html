@@ -1,12 +1,12 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
   <oa-module-loader module="ceph_iscsi">
 
-    <oa-loading-panel message="iSCSI targets are loading..."
+    <oa-loading-panel message="{{ 'iSCSI targets are loading...' | translate }}"
                       ng-show="!$ctrl.error && !$ctrl.iscsi.$resolved">
     </oa-loading-panel>
     <oa-error-panel title="Couldn't load iSCSI target IQNs"
                     ng-if="$ctrl.error">
-      iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed.
+      <translate>iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed.</translate>
     </oa-error-panel>
 
     <oadatatable ng-show="!$ctrl.error && $ctrl.iscsi.results"
@@ -17,45 +17,47 @@
                  on-selection-change="$ctrl.onSelectionChange(selection)"
                  on-filter-config-change="$ctrl.getIscsiList()">
       <actions>
-        <a translate
-           class="btn btn-sm btn-primary tc_add_btn"
+        <a class="btn btn-sm btn-primary tc_add_btn"
            type="button"
            ng-click="$ctrl.addAction()"
            ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
-          <i class="fa fa-fw fa-plus"></i>Add
+          <i class="fa fa-fw fa-plus"></i>
+          <translate>Add</translate>
         </a>
-        <a translate
-           class="btn btn-sm btn-primary tc_edit_btn"
+        <a class="btn btn-sm btn-primary tc_edit_btn"
            type="button"
            ng-click="$ctrl.editAction()"
            ng-show="$ctrl.hasSelection">
-          <i class="fa fa-fw fa-pencil"></i>Edit
+          <i class="fa fa-fw fa-pencil"></i>
+          <translate>Edit</translate>
         </a>
-        <a translate
-           class="btn btn-sm btn-primary tc_delete_btn"
+        <a class="btn btn-sm btn-primary tc_delete_btn"
            type="button"
            ng-click="$ctrl.deleteAction()"
            ng-show="$ctrl.multiSelection">
-          <i class="fa fa-fw fa-trash-o"></i>Delete
+          <i class="fa fa-fw fa-trash-o"></i>
+          <translate>Delete</translate>
         </a>
         <li>
-          <a translate
-             ng-click="$ctrl.addAction()">
-            <i class="fa fa-fw fa-plus"></i>Add
+          <a ng-click="$ctrl.addAction()">
+            <i class="fa fa-fw fa-plus"></i>
+            <translate>Add</translate>
           </a>
         </li>
         <li class="tc_cloneItem"
             ng-click="$ctrl.cloneAction()"
             ng-class="{disabled: !$ctrl.hasSelection}">
-          <a translate>
-            <i class="fa fa-fw fa-clone"></i>Copy
+          <a>
+            <i class="fa fa-fw fa-clone"></i>
+            <translate>Copy</translate>
           </a>
         </li>
         <li class="tc_deleteItem"
             ng-click="$ctrl.deleteAction()"
             ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
-          <a translate>
-            <i class="fa fa-fw fa-trash-o"></i>Delete
+          <a>
+            <i class="fa fa-fw fa-trash-o"></i>
+            <translate>Delete</translate>
           </a>
         </li>
       </actions>

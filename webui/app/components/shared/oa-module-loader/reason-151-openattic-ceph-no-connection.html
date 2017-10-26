@@ -1,12 +1,23 @@
 <p>
-  This module cannot be loaded due to a problem while trying to connect to the Ceph cluster
-  <strong>{{ $ctrl.moduleAvailable.cluster_name }}</strong> with fsid <strong>{{ $ctrl.moduleAvailable.fsid }}</strong>
+  <translate>This module cannot be loaded due to a problem while trying to connect to the Ceph cluster</translate>
+  <translate translate-params-cluster-name="$ctrl.moduleAvailable.cluster_name"
+             translate-params-fsid="$ctrl.moduleAvailable.fsid">
+    <strong>{{ clusterName }}</strong> with fsid <strong>{{ fsid }}</strong>
+  </translate>
 </p>
 
 <hr>
 
-<p>Please verify that:</p>
+<p translate>Please verify that:</p>
 <ul>
-  <li>Ceph is correctly configured in file <strong>/etc/ceph/{{ $ctrl.moduleAvailable.cluster_name }}.conf</strong></li>
-  <li>File <strong>/etc/ceph/{{ $ctrl.moduleAvailable.cluster_name }}.conf</strong> has the correct permissions</li>
+  <li>
+    <translate translate-params-cluster-name="$ctrl.moduleAvailable.cluster_name">
+      Ceph is correctly configured in file <strong>/etc/ceph/{{ clusterName }}.conf</strong>
+    </translate>
+  </li>
+  <li>
+    <translate translate-params-cluster-name="$ctrl.moduleAvailable.cluster_name">
+      File <strong>/etc/ceph/{{ clusterName }}.conf</strong> has the correct permissions
+    </translate>
+  </li>
 </ul>

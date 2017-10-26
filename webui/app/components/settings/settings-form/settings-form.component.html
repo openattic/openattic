@@ -1,10 +1,10 @@
 <div class="col-sm-12 col-lg-6">
 
-  <oa-loading-panel message="Settings are loading..."
+  <oa-loading-panel message="{{ 'Settings are loading...' | translate }}"
                     ng-show="!$ctrl.error && !$ctrl.model.$resolved">
   </oa-loading-panel>
   <oa-error-panel ng-if="$ctrl.error">
-    Setting could not be loaded.
+    <translate>Setting could not be loaded.</translate>
   </oa-error-panel>
 
   <form ng-show="!$ctrl.error && $ctrl.model.$resolved"
@@ -89,10 +89,9 @@
         <!-- Salt API Shared Secret -->
         <div class="form-group"
              ng-if="$ctrl.model.deepsea.eauth === 'sharedsecret'">
-          <label translate
-                 class="col-sm-3 control-label"
+          <label class="col-sm-3 control-label"
                  for="saltApiSharedSecret">
-            Shared Secret
+            <translate>Shared Secret</translate>
             <oa-helper helper-template="'components/settings/settings-form/settings-form-helper-features.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
@@ -114,22 +113,22 @@
         </div>
 
         <div class="pull-right">
-          <span translate
-                ng-if="$ctrl.deepseaConnectionStatus.loading">
+          <span ng-if="$ctrl.deepseaConnectionStatus.loading">
             <i class="fa fa-fw fa-spinner fa-spin"
-               aria-hidden="true"></i>Checking connection
+               aria-hidden="true"></i>
+            <translate>Checking connection</translate>
           </span>
-          <span translate
-                class="text-success tc_deepseaConnectionSuccess"
+          <span class="text-success tc_deepseaConnectionSuccess"
                 ng-show="$ctrl.deepseaConnectionStatus.success === true">
             <i class="fa fa-fw fa-check"
-               aria-hidden="true"></i>Salt API connection established successfully
+               aria-hidden="true"></i>
+            <translate>Salt API connection established successfully</translate>
           </span>
-          <span translate
-                class="text-danger tc_deepseaConnectionFail"
+          <span class="text-danger tc_deepseaConnectionFail"
                 ng-show="$ctrl.deepseaConnectionStatus.success === false">
             <i class="fa fa-fw fa-times"
-               aria-hidden="true"></i>Salt API connection failed
+               aria-hidden="true"></i>
+            <translate>Salt API connection failed</translate>
           </span>
         </div>
         <br>
@@ -155,9 +154,8 @@
                      id="rgwManagedByDeepSea"
                      ng-change="$ctrl.rgwManagedByDeepSeaChangeHandler()"
                      ng-disabled="!$ctrl.managedByDeepSeaEnabled">
-              <label translate
-                     for="rgwManagedByDeepSea">
-                Managed by DeepSea
+              <label for="rgwManagedByDeepSea">
+                <translate>Managed by DeepSea</translate>
                 <span translate
                       ng-if="!$ctrl.managedByDeepSeaEnabled"
                       class="text-muted">
@@ -291,22 +289,22 @@
         </div>
 
         <div class="pull-right">
-          <span translate
-                ng-if="$ctrl.rgwConnectionStatus.loading">
+          <span ng-if="$ctrl.rgwConnectionStatus.loading">
             <i class="fa fa-fw fa-spinner fa-spin"
-               aria-hidden="true"></i>Checking connection
+               aria-hidden="true"></i>
+            <translate>Checking connection</translate>
           </span>
-          <span translate
-                class="text-success tc_rgwConnectionSuccess"
+          <span class="text-success tc_rgwConnectionSuccess"
                 ng-show="$ctrl.rgwConnectionStatus.success === true">
             <i class="fa fa-fw fa-check"
-               aria-hidden="true"></i>Object Gateway API connection established successfully
+               aria-hidden="true"></i>
+            <translate>Object Gateway API connection established successfully</translate>
           </span>
-          <span translate
-                class="text-danger tc_rgwConnectionFail"
+          <span class="text-danger tc_rgwConnectionFail"
                 ng-show="$ctrl.rgwConnectionStatus.success === false">
             <i class="fa fa-fw fa-times"
-               aria-hidden="true"></i>Object Gateway API connection failed
+               aria-hidden="true"></i>
+            <translate>Object Gateway API connection failed</translate>
           </span>
         </div>
         <br>
@@ -409,22 +407,22 @@
         </div>
 
         <div class="pull-right">
-          <span translate
-                ng-if="$ctrl.grafanaConnectionStatus.loading">
+          <span ng-if="$ctrl.grafanaConnectionStatus.loading">
             <i class="fa fa-fw fa-spinner fa-spin"
-               aria-hidden="true"></i>Checking connection
+               aria-hidden="true"></i>
+            <translate>Checking connection</translate>
           </span>
-          <span translate
-                class="text-success tc_grafanaConnectionSuccess"
+          <span class="text-success tc_grafanaConnectionSuccess"
                 ng-show="$ctrl.grafanaConnectionStatus.success === true">
             <i class="fa fa-fw fa-check"
-               aria-hidden="true"></i>Grafana connection established successfully
+               aria-hidden="true"></i>
+            <translate>Grafana connection established successfully</translate>
           </span>
-          <span translate
-                class="text-danger tc_grafanaConnectionFail"
+          <span class="text-danger tc_grafanaConnectionFail"
                 ng-show="$ctrl.grafanaConnectionStatus.success === false">
             <i class="fa fa-fw fa-times"
-               aria-hidden="true"></i>Grafana connection failed
+               aria-hidden="true"></i>
+            <translate>Grafana connection failed</translate>
           </span>
         </div>
         <br>
@@ -518,22 +516,22 @@
           </div>
 
           <div class="pull-right">
-            <span translate
-                  ng-if="$ctrl.cephConnectionStatus.loading">
+            <span ng-if="$ctrl.cephConnectionStatus.loading">
               <i class="fa fa-fw fa-spinner fa-spin"
-                 aria-hidden="true"></i>Checking connection
+                 aria-hidden="true"></i>
+              <translate>Checking connection</translate>
             </span>
-            <span translate
-                  class="text-success tc_cephConnectionSuccess"
+            <span class="text-success tc_cephConnectionSuccess"
                   ng-show="$ctrl.cephConnectionStatus.success === true">
               <i class="fa fa-fw fa-check"
-                 aria-hidden="true"></i>Ceph connection established successfully
+                 aria-hidden="true"></i>
+              <translate>Ceph connection established successfully</translate>
             </span>
-            <span translate
-                  class="text-danger tc_cephConnectionFail"
+            <span class="text-danger tc_cephConnectionFail"
                   ng-show="$ctrl.cephConnectionStatus.success === false">
               <i class="fa fa-fw fa-times"
-                 aria-hidden="true"></i>Ceph connection failed
+                 aria-hidden="true"></i>
+              <translate>Ceph connection failed</translate>
             </span>
           </div>
           <br>
@@ -546,17 +544,14 @@
             </span>
             <span ng-if="!$ctrl.cephConnectionStatus.message">&nbsp;</span>
           </div>
-
         </div>
-
       </div>
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button translate
-                            form="$ctrl.settingsForm"
+          <oa-submit-button form="$ctrl.settingsForm"
                             on-submit="$ctrl.saveAction()">
-            Save
+            <translate>Save</translate>
           </oa-submit-button>
         </div>
       </div>
@@ -566,10 +561,9 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <div translate
-         class="page-footer"
+    <div class="page-footer"
          ng-if="$ctrl.openatticVersion">
-      <hr> Powered by openATTIC v{{ $ctrl.openatticVersion }}
+      <hr> <translate>Powered by openATTIC</translate> v{{ $ctrl.openatticVersion }}
     </div>
   </div>
 </div>

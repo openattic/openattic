@@ -2,8 +2,10 @@
                            on-confirm="$ctrl.delete()" on-cancel="$ctrl.cancel()">
   <!-- single rbd -->
   <div ng-if="$ctrl.resolve.rbdSelection.length === 1">
-    <p translate>
-      You are about to delete the RBD <strong>{{$ctrl.resolve.rbdSelection[0].name}}</strong>.
+    <p>
+      <translate translate-params-name="$ctrl.resolve.rbdSelection[0].name">
+        You are about to delete the RBD <strong>{{ name }}</strong>.
+      </translate>
     </p>
     <p translate>
       Be aware that you will <strong>lose all data</strong>
@@ -24,8 +26,7 @@
     <span translate
           class="text-danger">The following RBDs will be deleted:</span>
       <ul class="text-danger">
-        <li translate
-            ng-repeat="rad in $ctrl.resolve.rbdSelection">
+        <li ng-repeat="rad in $ctrl.resolve.rbdSelection">
           {{rad.name}} ({{rad.size | bytes}})
         </li>
       </ul>

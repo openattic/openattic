@@ -17,7 +17,7 @@
                  ng-model="$ctrl.username"
                  ng-change="$ctrl.submitted = false;"
                  type="text"
-                 placeholder="Enter your username..."
+                 placeholder="{{ 'Enter your username...' | translate }}"
                  class="form-control"
                  required
                  autofocus
@@ -40,7 +40,7 @@
                    type="password"
                    ng-model="$ctrl.password"
                    ng-change="$ctrl.submitted = false;"
-                   placeholder="Enter your password..."
+                   placeholder="{{ 'Enter your password...' | translate }}"
                    class="form-control"
                    required
                    uib-tooltip="{{$ctrl.fieldRequired}}"
@@ -67,7 +67,8 @@
                    ng-model="$ctrl.staySignedIn"
                    name="staysignedin"
                    id="staysignedin">
-            <label for="staysignedin">
+            <label translate
+                   for="staysignedin">
               Keep me logged in
             </label>
           </div>
@@ -76,7 +77,7 @@
 
         <input type="submit"
                class="btn btn-openattic btn-block"
-               value="Login"
+               value="{{ 'Login' | translate }}"
                uib-tooltip="{{$ctrl.correctInput}}"
                tooltip-class="tc_correctInput"
                tooltip-trigger="'none'"
@@ -84,7 +85,7 @@
       </form>
     </div>
   </div>
-  <div class="row icon-bar">
+  <div class="icon-bar">
     <a href="http://openattic.org"
        target="_blank">
       <span class="fa-stack fa">
@@ -114,4 +115,5 @@
       </span>
     </a>
   </div>
+  <language class="utility-bar"></language>
 </div>

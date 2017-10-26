@@ -40,11 +40,11 @@
                 <span translate
                       class="tc_clientsRequired"
                       ng-show="$ctrl.form['clients'+$index].$error.required">Required field</span>
-                <span translate
-                      class="tc_clientsInvalid"
+                <span class="tc_clientsInvalid"
                       ng-show="$ctrl.form['clients'+$index].$error.stringArray">
-                  Must contain one or more comma-separated values
-                  <br> For example: 192.168.0.10, 192.168.1.0/8
+                  <translate>Must contain one or more comma-separated values</translate>
+                  <br>
+                  <translate>For example:</translate> 192.168.0.10, 192.168.1.0/8
                 </span>
               </span>
             </div>
@@ -91,11 +91,11 @@
     </div>
 
     <span class="form-control no-border">
-      <button translate
-              class="btn btn-default btn-label pull-right tc_addClients"
+      <button class="btn btn-default btn-label pull-right tc_addClients"
               type="button"
               ng-click="$ctrl.addClientBlock()">
-        <i class="fa fa-fw fa-plus"></i>Add clients
+        <i class="fa fa-fw fa-plus"></i>
+        <translate>Add clients</translate>
       </button>
     </span>
     <hr>

@@ -1,9 +1,8 @@
 <div class="openattic-modal-header">
-  <span translate>Add erasure code profile</span>
+  <translate>Add erasure code profile</translate>
 </div>
 
-<oa-loading-panel translate
-                  message="Form is loading..."
+<oa-loading-panel message="{{ 'Form is loading...' | translate }}"
                   ng-show="!$ctrl.rulesetFailureDomains"></oa-loading-panel>
 
 <form name="$ctrl.addForm"
@@ -130,12 +129,11 @@
 
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <button translate
-              id="bot2-Msg1"
+      <button id="bot2-Msg1"
               class="btn btn-primary btn-sm"
               ng-click="$ctrl.addErasureCodeProfile()"
               ng-disabled="$ctrl.addForm.$invalid || $ctrl.addForm.$submitted">
-        Add erasure code profile
+        <translate>Add erasure code profile</translate>
         <i class="fa fa-spinner fa-spin fa-fw"
            ng-if="$ctrl.addForm.$submitted"></i>
       </button>

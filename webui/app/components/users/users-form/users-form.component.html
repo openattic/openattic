@@ -6,12 +6,18 @@
         oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
-        <h3 translate
-            ng-hide="$ctrl.editing"
-            class="panel-title tc_userAddTitle">Create User: {{$ctrl.user.username}}</h3>
-        <h3 translate
-            ng-show="$ctrl.editing"
-            class="panel-title tc_userEditTitle">Edit User: {{$ctrl.user.username}}</h3>
+        <h3 ng-hide="$ctrl.editing"
+            class="panel-title tc_userAddTitle">
+          <translate translate-params-username="$ctrl.user.username">
+            Create User: {{ username }}
+          </translate>
+        </h3>
+        <h3 ng-show="$ctrl.editing"
+            class="panel-title tc_userEditTitle">
+          <translate translate-params-username="$ctrl.user.username">
+            Edit User: {{ username }}
+          </translate>
+        </h3>
       </div>
       <div class="panel-body">
         <fieldset>
@@ -27,7 +33,7 @@
                 </span>
                 <input class="form-control"
                        type="text"
-                       placeholder="Username..."
+                       placeholder="{{ 'Username...' | translate }}"
                        ng-model="$ctrl.user.username"
                        name="username"
                        id="userUsername"
@@ -67,7 +73,7 @@
                 </span>
                 <input class="form-control"
                        type="password"
-                       placeholder="Password..."
+                       placeholder="{{ 'Password...' | translate }}"
                        ng-model="$ctrl.user.password"
                        name="password"
                        id="userPassword"
@@ -113,7 +119,7 @@
                 </span>
                 <input class="form-control"
                        type="password"
-                       placeholder="Password..."
+                       placeholder="{{ 'Password...' | translate }}"
                        id="userConfirmPassword"
                        name="confirmPassword"
                        ng-model="$ctrl.user.confirmPassword"
@@ -159,7 +165,7 @@
                 </span>
                 <input class="form-control"
                        type="text"
-                       placeholder="Firstname..."
+                       placeholder="{{ 'Firstname...' | translate }}"
                        ng-model="$ctrl.user.first_name"
                        name="firstname"
                        id="userFirstname">
@@ -177,7 +183,7 @@
                 </span>
                 <input class="form-control"
                        type="text"
-                       placeholder="Lastname..."
+                       placeholder="{{ 'Lastname...' | translate }}"
                        ng-model="$ctrl.user.last_name"
                        name="last"
                        id="userLastname">
@@ -196,7 +202,7 @@
                 </span>
                 <input class="form-control"
                        type="email"
-                       placeholder="Email Address..."
+                       placeholder="{{ 'E-Mail address...' | translate }}"
                        ng-model="$ctrl.user.email"
                        name="email"
                        id="userEmail">
@@ -292,10 +298,9 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button translate
-                            form="$ctrl.userForm"
+          <oa-submit-button form="$ctrl.userForm"
                             on-submit="$ctrl.submitAction($ctrl.userForm)">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
           <button translate
                   type="button"

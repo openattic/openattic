@@ -8,7 +8,8 @@
              heading="{{tab.name}}
                       {{tab.count >= 0 ? ' (' + tab.count + ')' : ''}}"
              index="$index">
-      <p class="tc_loading_{{tabKey}}"
+      <p translate
+         class="tc_loading_{{tabKey}}"
          ng-hide="tab.loaded">Loading...</p>
       <h3 translate
           class="tc_no_elements_{{tabKey}}"
@@ -112,13 +113,16 @@
         </div>
         <div class="dataTables_footer tc_datatableFooter">
           <!-- number of items -->
-          <div translate
-               class="dataTables_info">
-            Showing
-            <strong>{{tab.page.lastItem === 0 ? tab.page.firstItem : tab.page.firstItem + 1}}</strong> to
-            <strong>{{tab.page.lastItem}}</strong>
-            of
-            <strong>{{tab.page.itemLength}}</strong> items
+          <div class="dataTables_info">
+            <translate translate-params-from="tab.page.lastItem === 0 ? tab.page.firstItem : tab.page.firstItem + 1"
+                       translate-params-to="tab.page.lastItem"
+                       translate-params-amount="tab.page.itemLength">
+              Showing
+              <strong>{{ current }}</strong> to
+              <strong>{{ to }}</strong>
+              of
+              <strong>{{ amount }}</strong> items
+            </translate>
           </div>
           <!-- end number of items -->
 

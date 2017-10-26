@@ -1,7 +1,10 @@
 <div class="panel panel-default tc_detailsTab">
     <div class="panel-heading">
-        <h3 translate
-            class="panel-title">Details of {{selection.item.bucket}}</h3>
+        <h3 class="panel-title">
+            <translate translate-params-bucket="selection.item.bucket">
+                Details of {{ bucket }}
+            </translate>
+        </h3>
     </div>
     <div class="panel-body">
         <dl class="dl-horizontal">
@@ -29,16 +32,16 @@
             <dd ng-bind="$ctrl.selection.item.master_ver"></dd>
             <dt translate>Modification time:</dt>
             <dd ng-bind="$ctrl.selection.item.mtime"></dd>
-            <dt>Shared via NFS:</dt>
+            <dt translate>Shared via NFS:</dt>
             <dd>{{ $ctrl.selection.item.is_referenced ? "Yes" : "No" }}</dd>
         </dl>
-        <legend>Endpoint</legend>
+        <legend translate>Endpoint</legend>
         <dl class="dl-horizontal">
-            <dt>S3:</dt>
+            <dt translate>S3:</dt>
             <dd>
                 <a>{{ $ctrl.selection.item.endpoint.s3 }}</a>
             </dd>
-            <dt>Swift:</dt>
+            <dt translate>Swift:</dt>
             <dd>
                 <a>{{ $ctrl.selection.item.endpoint.swift }}</a>
             </dd>

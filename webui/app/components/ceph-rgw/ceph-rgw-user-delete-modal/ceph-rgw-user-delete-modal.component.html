@@ -3,8 +3,10 @@
                               title="{{ ($ctrl.users.length > 1) ? 'Delete users' : 'Delete user' }}">
   <!-- single user -->
   <div ng-if="$ctrl.users.length === 1">
-    <p translate>
-      You are about to delete the user <strong>{{$ctrl.users[0].user_id}}</strong>.
+    <p>
+      <translate translate-params-user-id="$ctrl.users[0].user_id">
+        You are about to delete the user <strong>{{ userId }}</strong>.
+      </translate>
     </p>
     <p translate>
       Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by this user and that this operation

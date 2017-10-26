@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,35 +30,8 @@
  */
 "use strict";
 
-import "angular-gettext";
-
-class LanguageService {
-  constructor ($http, gettextCatalog) {
-    this._$http = $http;
-    this._lib = gettextCatalog;
-    this._language = "de";
-    this._debug = false;
-
-    console.log(gettextCatalog);
-    this.selectLanguage();
-    this.setLanguage();
-  }
-
-  selectLanguage () {
-    this._$http({
-      method: "GET",
-      url: "locale/" + this._language + ".json"
-    }).then(function (response) {
-      console.log(response);
-    });
-  }
-
-  setLanguage () {
-    this._lib.setCurrentLanguage(this._language);
-    this._lib.loadRemote("locale/" + this._language + ".json");
-  }
-}
-
-angular
-  .module("openattic.i18n", ["gettext"])
-  .service("LanguageService", LanguageService);
+export default {
+  "en-US": "English",
+  "de-DE": "Deutsch",
+  "zh-CN": "简体中文"
+};

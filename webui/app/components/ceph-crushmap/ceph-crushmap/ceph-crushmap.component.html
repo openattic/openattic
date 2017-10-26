@@ -1,12 +1,14 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
   <oa-module-loader module="ceph">
 
-    <oa-loading-panel message="Ceph CRUSH map is loading..."
+    <oa-loading-panel message="{{ 'Ceph CRUSH map is loading...' | translate }}"
                       ng-show="!$ctrl.error && !$ctrl.cluster.$resolved">
     </oa-loading-panel>
     <oa-error-panel ng-if="$ctrl.error && $ctrl.error.statusText === 'NOT FOUND'">
-      Ceph cluster with fsid
-      <strong>'{{$ctrl.registry.selectedCluster.fsid}}'</strong> couldn't be found.
+      <translate translate-params-fsid="$ctrl.registry.selectedCluster.fsid">
+        Ceph cluster with fsid
+        <strong>'{{fsid}}'</strong> couldn't be found.
+      </translate>
     </oa-error-panel>
 
     <div class="row"
@@ -19,9 +21,10 @@
 
             <div class="panel-toolbar"
                  role="menu">
-              <a translate
-                 ng-click="$ctrl.getCrushmap()">
-                <i class="fa fa-refresh"></i> Refresh</a>
+              <a ng-click="$ctrl.getCrushmap()">
+                <i class="fa fa-refresh"></i>
+                <translate>Refresh</translate>
+              </a>
             </div>
 
             <div class="clearfix"></div>
@@ -94,15 +97,15 @@
                        class="text-danger"
                        style="padding-top: 7px"
                        ng-show="$ctrl.activeRuleset.min_size === 1">
-                      One replica means
-                      <em>no copies</em>. If you lose a storage node, your data is lost.
+                      One replica means <em>no copies</em>. If you lose a storage node, your data is lost.
                     </p>
                     <p translate
+                       translate-params-min-size="$ctrl.activeRuleset.min_size | humanizeInt"
+                       translate-params-min-size-less="($ctrl.activeRuleset.min_size - 1) | humanizeInt"
                        ng-show="$ctrl.activeRuleset.min_size > 1"
                        style="padding-top: 7px"
                        ng-class="{ 'text-warning': $ctrl.activeRuleset.min_size == 2, 'text-muted': $ctrl.activeRuleset.min_size > 2 }">
-                      {{ $ctrl.activeRuleset.min_size | humanizeInt }} replicas means "the original file + {{ ($ctrl.activeRuleset.min_size - 1)
-                      | humanizeInt }}
+                      {{ minSize }} replicas means "the original file + {{ minSizeLess }}
                       <ng-pluralize count="$ctrl.activeRuleset.min_size - 1"
                                     when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
                     </p>
@@ -111,7 +114,8 @@
               </fieldset>
               <fieldset ng-show="$ctrl.activeRuleset">
                 <div class="form-group">
-                  <label class="col-md-2 control-label">Placement</label>
+                  <label translate
+                         class="col-md-2 control-label">Placement</label>
                   <div class="col-md-10"
                        style="padding-top: 7px">
                     <ceph-crushmap-stepset ng-repeat="stepset in $ctrl.stepsets"

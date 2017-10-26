@@ -1,27 +1,33 @@
 
 <p ng-if="$ctrl.moduleAvailable.fsid.length">
-  This module cannot be loaded due to a problem while trying to connect to the Ceph cluster
-  with fsid <strong>{{ $ctrl.moduleAvailable.fsid }}</strong>
+  <translate translate-params-fsid="$ctrl.moduleAvailable.fsid">
+    This module cannot be loaded due to a problem while trying to connect to the Ceph cluster
+    with fsid <strong>{{ fsid }}</strong>
+  </translate>
 </p>
-<p ng-if="!$ctrl.moduleAvailable.fsid.length">
+<p translate
+   ng-if="!$ctrl.moduleAvailable.fsid.length">
   This module cannot be loaded because no Ceph cluster is configured
 </p>
 
 <hr>
 
-<p>Please verify that:</p>
+<p translate>Please verify that:</p>
 <ul>
-  <li>Ceph is correctly configured in file <strong>/etc/ceph/*.conf</strong></li>
-  <li>
+  <li><translate>Ceph is correctly configured in file</translate> <strong>/etc/ceph/*.conf</strong></li>
+  <li translate>
     File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>
     can be read by the <strong>openattic</strong> user<br>
   </li>
   <ul>
     <li>
-      You can change the user group
-      by running the following commands:<br>
-      <kbd># chgrp openattic /etc/ceph/*.{conf,keyring}</kbd><br>
-      <kbd># chmod g+r /etc/ceph/*.{conf,keyring}</kbd>
+      <translate>
+        You can change the user group
+        by running the following commands:
+        <br>
+        <kbd># chgrp openattic /etc/ceph/*.{conf,keyring}</kbd><br>
+        <kbd># chmod g+r /etc/ceph/*.{conf,keyring}</kbd>
+      </translate>
     </li>
   </ul>
 </ul>

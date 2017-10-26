@@ -1,10 +1,12 @@
 <div class="openattic-modal-header">
-  <span translate>Delete erasure code profile</span>
+  <translate>Delete erasure code profile</translate>
 </div>
 
 <div class="openattic-modal-content">
-  <p translate>
-    You are about to delete the erasure code profile <strong>{{$ctrl.profile.name}}</strong>.
+  <p>
+    <translate translate-params-profile-name="$ctrl.profile.name">
+      You are about to delete the erasure code profile <strong>{{ profileName }}</strong>.
+    </translate>
   </p>
 
   <p translate>
@@ -16,13 +18,12 @@
   <form name="deleteForm"
         role="form">
     <div class="button-group text-right">
-      <button translate
-              id="bot2-Msg1"
+      <button id="bot2-Msg1"
               class="btn btn-primary btn-sm"
               ng-click="$ctrl.deleteErasureCodeProfile()"
               ng-disabled="$ctrl.deleteForm.$invalid || $ctrl.deleteForm.$submitted"
               autofocus>
-        Delete erasure code profile
+        <translate>Delete erasure code profile</translate>
         <i class="fa fa-spinner fa-spin fa-fw"
            ng-if="$ctrl.deleteForm.$submitted"></i>
       </button>

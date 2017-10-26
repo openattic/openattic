@@ -1,8 +1,14 @@
 <div class="openattic-modal-header">
-  <span translate
-        ng-hide="$ctrl.editing">Add capability: {{$ctrl.cap.type}}</span>
-  <span translate
-        ng-show="$ctrl.editing">Edit capability: {{$ctrl.cap.type}}</span>
+  <span ng-hide="$ctrl.editing">
+    <translate translate-params-type="$ctrl.cap.type">
+      Add capability: {{ type }}
+    </translate>
+  </span>
+  <span ng-show="$ctrl.editing">
+    <translate translate-params-type="$ctrl.cap.type">
+      Edit capability: {{ type }}
+    </translate>
+  </span>
 </div>
 <form name="form"
       role="form"
@@ -68,10 +74,9 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button translate
-                        form="form"
+      <oa-submit-button form="form"
                         on-submit="$ctrl.submitAction(form)">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
       <button translate
               type="button"

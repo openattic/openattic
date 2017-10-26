@@ -73,7 +73,7 @@ describe("ceph rgw buckets", () => {
     helpers.get_list_element(testBucket.name).click();
     helpers.checkLocation("ceph/rgw/buckets/details");
     expect(element(by.cssContainingText("dt", "Name:")).isDisplayed()).toBe(true);
-    expect(element(by.cssContainingText("dt", "Id:")).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText("dt", "ID:")).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText("dt", "Owner:")).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText("dt", "Marker:")).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText("dt", "Maximum marker:")).isDisplayed()).toBe(true);

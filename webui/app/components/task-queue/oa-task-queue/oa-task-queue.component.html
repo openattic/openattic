@@ -4,9 +4,13 @@
    tooltip-placement="bottom">
   <i class="fa {{$ctrl.taskOverview.icon}}"></i>
   <span ng-hide="$ctrl.taskOverview.failed > 0">
-    {{$ctrl.taskOverview.queue ? $ctrl.taskOverview.queue : ''}} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}
+    <translate translate-params-queue="$ctrl.taskOverview.queue ? $ctrl.taskOverview.queue : ''">
+      {{ queue }} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}
+    </translate>
   </span>
   <span ng-show="$ctrl.taskOverview.failed > 0">
-    {{$ctrl.taskOverview.failed}} Failed-Task{{$ctrl.taskOverview.failed !== 1 ? 's' : ''}}
+    <translate translate-params-failed="$ctrl.taskOverview.failed">
+      {{ failed }} Failed-Task{{$ctrl.taskOverview.failed !== 1 ? 's' : ''}}
+    </translate>
   </span>
 </a>

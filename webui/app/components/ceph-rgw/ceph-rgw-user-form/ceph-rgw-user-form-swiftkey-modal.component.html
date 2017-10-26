@@ -1,8 +1,14 @@
 <div class="openattic-modal-header">
-  <span translate
-        ng-hide="$ctrl.editing">Add Swift key: {{$ctrl.key.user}}</span>
-  <span translate
-        ng-show="$ctrl.editing">View Swift key: {{$ctrl.key.user}}</span>
+  <span ng-hide="$ctrl.editing">
+    <translate translate-params-user="$ctrl.key.user">
+      Add Swift key: {{ user }}
+    </translate>
+  </span>
+  <span ng-show="$ctrl.editing">
+    <translate translate-params-user="$ctrl.key.user">
+      View Swift key: {{ user }}
+    </translate>
+  </span>
 </div>
 <form name="form"
       role="form"
@@ -75,7 +81,7 @@
           </span>
           <input class="form-control"
                  type="password"
-                 placeholder="Secret key..."
+                 placeholder="{{ 'Secret key...' | translate }}"
                  ng-model="$ctrl.key.secret_key"
                  ng-readonly="$ctrl.editing"
                  ng-required="!$ctrl.editing && !$ctrl.key.generate_key"
@@ -106,11 +112,10 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button translate
-                        form="form"
+      <oa-submit-button form="form"
                         on-submit="$ctrl.submitAction(form)"
                         ng-show="!$ctrl.editing">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
       <button translate
               type="button"

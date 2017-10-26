@@ -3,7 +3,7 @@
       class="form-horizontal"
       novalidate>
   <div class="openattic-modal-header">
-    <span translate>Settings
+    <span><translate>Settings</translate>
       <small>{{ $ctrl.image.pool }}: {{ $ctrl.image.name }}</small>
     </span>
   </div>
@@ -31,7 +31,8 @@
 
     <div class="form-group"
          ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.uuid.$dirty) && $ctrl.settingsForm.uuid.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="uuid">uuid</label>
       <div class="col-sm-9">
         <input type="text"
@@ -47,7 +48,8 @@
 
     <div class="form-group"
          ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.retries.$dirty) && $ctrl.settingsForm.retries.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="retries">retries</label>
       <div class="col-sm-9">
         <input type="number"
@@ -60,7 +62,8 @@
 
     <div class="form-group"
          ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.sleep.$dirty) && $ctrl.settingsForm.sleep.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="sleep">sleep</label>
       <div class="col-sm-9">
         <input type="number"
@@ -73,7 +76,8 @@
 
     <div class="form-group"
          ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.retry_errors.$dirty) && $ctrl.settingsForm.retry_errors.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="retry_errors">retry_errors</label>
       <div class="col-sm-9">
         <input type="text"
@@ -84,11 +88,9 @@
                valid-numeric-array>
         <span class="help-block"
               ng-show="$ctrl.settingsForm.$submitted || $ctrl.settingsForm.retry_errors.$dirty">
-          <span translate
-                class="tc_RetryErrosInvalid"
+          <span class="tc_RetryErrosInvalid"
                 ng-show="$ctrl.settingsForm.$error.numericArray">
-            Must contain one or more comma-separated numbers
-            <br> For example: 95, 96
+            <translate>Must contain one or more comma-separated numbers, e.g. example: 95, 96</translate>
           </span>
         </span>
       </div>
@@ -133,10 +135,10 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button translate
-                        form="$ctrl.settingsForm"
+      <oa-submit-button form="$ctrl.settingsForm"
                         on-submit="$ctrl.confirm()">
-        Confirm
+
+        <translate>Confirm</translate>
       </oa-submit-button>
       <button translate
               id="cancelButton"

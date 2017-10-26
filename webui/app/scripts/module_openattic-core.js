@@ -35,6 +35,7 @@ import "../components/api-recorder/api-recorder.module";
 import "../components/auth/auth.module";
 import "../components/dashboard/dashboard.module";
 import "../components/grafana/grafana.module";
+import "../components/i18n/i18n.module";
 import "../components/navigation/navigation.module";
 import "../components/notification/notification.module";
 import "../components/settings/settings.module";

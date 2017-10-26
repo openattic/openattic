@@ -1,5 +1,5 @@
 <div class="col-sm-12 col-lg-6">
-  <oa-loading-panel message="Form is loading..."
+  <oa-loading-panel message="{{ 'Form is loading...' | translate }}"
                     ng-show="!$ctrl.clusters"></oa-loading-panel>
 
   <form name="$ctrl.rbdForm"
@@ -10,8 +10,11 @@
         ng-show="$ctrl.clusters">
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
-        <h3 translate
-            class="panel-title">Create RBD: {{$ctrl.rbd.name}}</h3>
+        <h3 class="panel-title">
+          <translate translate-params-name="$ctrl.rbd.name">
+            Create RBD: {{ name }}
+          </translate>
+        </h3>
       </div>
       <div class="panel-body">
         <div class="form-group"
@@ -124,13 +127,16 @@
                                value="$ctrl.data.pool.percent_used">
                 <span></span>
               </uib-progressbar>
-              <span translate
-                    class="pull-left tc_poolSize">
-                {{$ctrl.data.pool.num_bytes | bytes}} of {{$ctrl.data.pool.max_avail | bytes}} used
+              <span class="pull-left tc_poolSize">
+                <translate translate-params-num-bytes="$ctrl.data.pool.num_bytes | bytes"
+                           translate-params-max-avail="$ctrl.data.pool.max_avail | bytes">
+                  {{ numBytes }} of {{ maxAvail }} used
+                </translate>
               </span>
-              <span translate
-                    class="pull-right tc_poolAvailableSize">
-                {{$ctrl.data.pool.oaFreeText}} free - <a ng-click="$ctrl.useMaxSize($ctrl.data.pool)">use max</a>
+              <span class="pull-right tc_poolAvailableSize">
+                <translate translate-params-oa-free-text="$ctrl.data.pool.oaFreeText">
+                  {{ oaFreeText }} free - <a ng-click="$ctrl.useMaxSize($ctrl.data.pool)">use max</a>
+                </translate>
               </span>
             </div>
             <span translate
@@ -151,10 +157,10 @@
              ng-if="$ctrl.data.useDataPool"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted ||
             $ctrl.rbdForm.dataPool.$dirty) && $ctrl.rbdForm.dataPool.$invalid}">
-          <label translate
-                 class="control-label col-sm-3"
+          <label class="control-label col-sm-3"
                  for="dataPool">
-            <span tooltip-placement="top"
+            <span translate
+                  tooltip-placement="top"
                   uib-tooltip="Dedicated pool that stores the object-data of the RBD">
               Data-Pool
             </span>
@@ -179,13 +185,16 @@
                                value="$ctrl.data.dataPool.percent_used">
                 <span></span>
               </uib-progressbar>
-              <span translate
-                    class="pull-left tc-data-pool-size">
-                {{$ctrl.data.dataPool.num_bytes | bytes}} of {{$ctrl.data.dataPool.max_avail | bytes}} used
+              <span class="pull-left tc-data-pool-size">
+                <translate translate-params-num-bytes="$ctrl.data.dataPool.num_bytes | bytes"
+                           translate-params-max-avail="$ctrl.data.dataPool.max_avail | bytes">
+                  {{ numBytes }} of {{ maxAvail }} used
+                </translate>
               </span>
-              <span translate
-                    class="pull-right tc-data-pool-available-size">
-                {{$ctrl.data.dataPool.oaFreeText}} free - <a ng-click="$ctrl.useMaxSize($ctrl.data.dataPool)">use max</a>
+              <span class="pull-right tc-data-pool-available-size">
+                <translate translate-params-oa-free-text="$ctrl.data.dataPool.oaFreeText">
+                  {{ oaFreeText }} free - <a ng-click="$ctrl.useMaxSize($ctrl.data.dataPool)">use max</a>
+                </translate>
               </span>
             </div>
             <span translate
@@ -275,10 +284,9 @@
         </div>
         <div class="form-group tc_features"
              ng-class="{'has-error': $ctrl.rbdForm.$error.noFeatureSelected}">
-          <label translate
-                 class="col-sm-3 control-label"
+          <label class="col-sm-3 control-label"
                  for="features">
-            Features
+            <translate>Features</translate>
             <oa-helper helper-data="$ctrl.features"
                        helper-template="'components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html'">
             </oa-helper>
@@ -407,10 +415,9 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button translate
-                            form="$ctrl.rbdForm"
+          <oa-submit-button form="$ctrl.rbdForm"
                             on-submit="$ctrl.submitAction($ctrl.rbdForm)">
-            Create
+            <translate>Create</translate>
           </oa-submit-button>
           <button translate
                   type="button"
