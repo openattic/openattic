@@ -34,6 +34,7 @@ Fixed
 * Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
 * Backend: Fixed Settings page doesn't save new keyring information properly
   (OP-2729)
+* Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
 
 Removed
 ~~~~~~~
