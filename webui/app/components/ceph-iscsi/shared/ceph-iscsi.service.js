@@ -32,42 +32,46 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephIscsi");
-app.factory("cephIscsiService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets/:targetId", {
-    fsid: "@fsid",
-    targetId: "@targetId"
-  }, {
-    save: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets"
-    },
-    update: {
-      method: "PUT"
-    },
-    bulk_delete: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets/bulk_delete"
-    },
-    iscsistatus: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsistatus"
-    },
-    iscsideploy: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsideploy"
-    },
-    iscsiundeploy: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsiundeploy"
-    },
-    interfaces: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
+export default class CephIscsiService {
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets/:targetId", {
+      fsid: "@fsid",
+      targetId: "@targetId"
+    }, {
+      save: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets"
       },
-      url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsiinterfaces"
-    }
-  });
-});
+      update: {
+        method: "PUT"
+      },
+      bulk_delete: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsitargets/bulk_delete"
+      },
+      iscsistatus: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsistatus"
+      },
+      iscsideploy: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsideploy"
+      },
+      iscsiundeploy: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsiundeploy"
+      },
+      interfaces: {
+        method: "GET",
+        isArray: true,
+        transformResponse: function (data) {
+          return JSON.parse(data).results;
+        },
+        url: globalConfig.API.URL + "ceph_iscsi/:fsid/iscsiinterfaces"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}
+

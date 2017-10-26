@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.value("cephIscsiImageOptionalSettings", [
+export default [
   {
     property: "uuid",
     help: ""
@@ -48,4 +47,4 @@ app.value("cephIscsiImageOptionalSettings", [
     property: "retry_errors",
     help: ""
   }
-]);
+];

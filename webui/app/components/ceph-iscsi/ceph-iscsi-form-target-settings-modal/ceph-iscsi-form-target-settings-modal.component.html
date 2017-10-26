@@ -1,4 +1,4 @@
-<form name="settingsForm"
+<form name="$ctrl.settingsForm"
       role="form"
       class="form-horizontal"
       novalidate>
@@ -10,7 +10,7 @@
          class="alert-warning">Changing these parameters from their default values is usually not necessary.</div>
     <span ng-repeat="setting in $ctrl.cephIscsiTargetAdvangedSettings">
       <div class="form-group"
-           ng-class="{'has-error': (settingsForm.$submitted || settingsForm[setting.property].$dirty) && settingsForm[setting.property].$invalid}">
+           ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm[setting.property].$dirty) && $ctrl.settingsForm[setting.property].$invalid}">
         <div class="col-sm-12">
           <label class="control-label"
                  for="{{ setting.property }}">{{ setting.property }}</label>
@@ -26,7 +26,7 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button form="settingsForm"
+      <oa-submit-button form="$ctrl.settingsForm"
                         on-submit="$ctrl.confirm()">
         Confirm
       </oa-submit-button>

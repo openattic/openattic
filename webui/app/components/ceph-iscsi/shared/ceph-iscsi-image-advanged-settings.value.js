@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.value("cephIscsiImageAdvangedSettings", [
+export default [
   {
     property: "backstore_block_size",
     help: "Block size of the underlying device"
@@ -148,4 +147,4 @@ app.value("cephIscsiImageAdvangedSettings", [
     property: "backstore_unmap_granularity_alignment",
     help: "UNMAP granularity alignment"
   }
-]);
+];

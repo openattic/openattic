@@ -136,7 +136,7 @@ class CephIscsiList {
   }
 
   getIscsiList () {
-    if (angular.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObject(this.cluster) && this.cluster.results &&
           this.cluster.results.length > 0 && this.registry.selectedCluster) {
       var obj = this.$filter("filter")(this.cluster.results, {
         fsid: this.registry.selectedCluster.fsid
@@ -159,7 +159,7 @@ class CephIscsiList {
         .$promise
         .then((res) => {
           this.iscsi = res;
-          angular.forEach(this.iscsi.results, (target) => {
+          this.iscsi.results.forEach((target) => {
             target.allIscsiImageSettings = this.allIscsiImageSettings;
             target.cephIscsiTargetAdvangedSettings = this.cephIscsiTargetAdvangedSettings;
             target.fsid = this.registry.selectedCluster.fsid;

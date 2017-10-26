@@ -37,6 +37,7 @@ Changed
 * WebUI: Migration of User Info module into Angular (OP-2870)
 * WebUI: Migration of Ceph NFS module into Angular (OP-2856)
 * WebUI: Migration of Ceph OSDs module into Angular (OP-2858)
+* WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
 
 Fixed
 ~~~~~

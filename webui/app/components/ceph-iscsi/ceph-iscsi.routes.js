@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("cephIscsi", {
       url: "/ceph/iscsi",
@@ -104,4 +103,4 @@ app.config(function ($stateProvider) {
         label: "{{$ctrl.selection.item.targetId}} details"
       }
     });
-});
+};
