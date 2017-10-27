@@ -19,6 +19,7 @@ import logging
 
 from rest_framework import exceptions
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.fields import BooleanField
 
 from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
@@ -27,30 +28,36 @@ def oa_authenticate(request=None, username=None, password=None):
     """AUTHENTICATION
     :type request: django.http.HttpRequest
     """
-
     # If username + password given, check PAM and our database through authenticate().
     if username is not None and password is not None:
-        return django_authenticate( username=username, password=password )
+        return django_authenticate(username=username, password=password)
 
     if request is None:
         return None
 
     body = request.body  # Django 1.8: request.body will be inaccessible after calling request.POST
 
+    if 'stay_signed_in' in request.POST:
+        stay_signed_in = BooleanField().from_native(request.POST['stay_signed_in'])
+        request.session.set_expiry(settings.SESSION_COOKIE_AGE if stay_signed_in else 0)
+
     if "username" in request.POST and "password" in request.POST:
         username = request.POST['username']
         password = request.POST['password']
-        return django_authenticate( username=username, password=password )
+        return django_authenticate(username=username, password=password)
 
     # Otherwise, take a look at the REMOTE_USER.
     if "REMOTE_USER" in request.META:
-        return django_authenticate( remote_user=request.META["REMOTE_USER"] )
+        return django_authenticate(remote_user=request.META["REMOTE_USER"])
 
     # username + password may also be given as a JSON object.
     try:
         rawjson = json.loads(body)
         username = rawjson['username']
         password = rawjson['password']
+        if 'stay_signed_in' in rawjson:
+            stay_signed_in = BooleanField().from_native(rawjson['stay_signed_in'])
+            request.session.set_expiry(settings.SESSION_COOKIE_AGE if stay_signed_in else 0)
         return django_authenticate(username=username, password=password)
     except (ValueError, KeyError):
         return None

@@ -60,7 +60,8 @@ class AuthComponent {
     this.loginFailed = false;
     var loginData = {
       "username": this.username,
-      "password": this.password
+      "password": this.password,
+      "stay_signed_in": this.staySignedIn === true
     };
     this.authService.login(loginData, (res) => {
       this.authUserService.user = res;
