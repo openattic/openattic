@@ -183,16 +183,17 @@ except NameError:
         SECRET_KEY = open(SECRET_FILE).read().strip()
     except IOError:
         try:
-            from random import choice
+            import string
+            from django.utils.crypto import get_random_string
 
-            SECRET_KEY = ''.join(
-                [choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+            SECRET_KEY = get_random_string(50, string.ascii_letters + string.digits +
+                                           string.punctuation)
             secret = file(SECRET_FILE, 'w')
             secret.write(SECRET_KEY)
             secret.close()
         except IOError:
-            Exception(
-                'Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
+            raise Exception('Please create a %s file with random characters to generate '
+                            'your secret key!' % SECRET_FILE)
 
 
 def read_version():
