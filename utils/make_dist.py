@@ -39,7 +39,7 @@
 
         If the --tag switch is used without a revision but with the order to
         create a 'release', then the latest existing git tag will *not*
-        be used by default, but the 'stable' branch. For more information see
+        be used by default, but the '3.5' branch. For more information see
         the documentation of --tag.
 
         The --revision argument will be ignored if a path to a local repository
@@ -459,14 +459,14 @@ class DistBuilder(object):
         revision argument, so that the revision has to be determined automatically.
 
         If the channel is 'release', the revision will resolve to the latest existing git tag.
-        If it's 'snapshot' it will resolve to the tip of the stable branch.
+        If it's 'snapshot' it will resolve to the tip of the 3.5 branch.
 
         :param channel: 'release' | 'snapshot'
         :type channel: str
         :return: A valid git revision
         """
         assert channel in ('release', 'snapshot')
-        return self._get_latest_existing_tag() if channel == 'release' else 'origin/stable'
+        return self._get_latest_existing_tag() if channel == 'release' else 'origin/3.5'
 
     def _remove_npmrc_prefix(self):
         """Remove the `prefix` variable from the `~/.npmrc` file."""
@@ -660,7 +660,7 @@ class DistBuilder(object):
         if self._args['--revision']:
             revision = self._args['--revision']
         elif self._args['--tag'] and self._args['release']:
-            revision = 'origin/stable'
+            revision = 'origin/3.5'
         else:
             revision = self._get_revision_by_channel(channel)
 
