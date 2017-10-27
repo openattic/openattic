@@ -31,153 +31,156 @@
 "use strict";
 
 import globalConfig from "globalConfig";
+import _ from "lodash";
 
-let app = angular.module("openattic.cephRgw");
-app.factory("cephRgwUserService", ($resource, $injector, $q, $filter) => {
-  return $resource(globalConfig.API.URL + "rgw/user", {
-  }, {
-    delete: {
-      url: globalConfig.API.URL + "ceph_radosgw/user/delete",
-      method: "DELETE"
-    },
-    getQuota: {
-      method: "GET",
-      url: globalConfig.API.URL + "rgw/user?quota",
-      transformResponse: (data) => {
-        let result = angular.fromJson(data);
-        // !!! Attention !!!
-        // The returned object contains other attributes depending on the ceph version:
-        // 10.2.6: max_size_kb
-        // 12.0.3: max_size
-        if (angular.isObject(result.user_quota)) {
-          if ((result.user_quota.max_size_kb === -1) || (result.user_quota.max_size <= -1)) {
-            result.user_quota.max_size = "";
-            result.user_quota.max_size_unlimited = true;
-          } else {
-            result.user_quota.max_size = result.user_quota.max_size_kb + "K";
-            result.user_quota.max_size_unlimited = false;
-          }
-          if (result.user_quota.max_objects === -1) {
-            result.user_quota.max_objects = "";
-            result.user_quota.max_objects_unlimited = true;
-          } else {
-            result.user_quota.max_objects_unlimited = false;
-          }
-        }
-        if (angular.isObject(result.bucket_quota)) {
-          if ((result.bucket_quota.max_size_kb === -1) || (result.bucket_quota.max_size <= -1)) {
-            result.bucket_quota.max_size = "";
-            result.bucket_quota.max_size_unlimited = true;
-          } else {
-            result.bucket_quota.max_size = result.bucket_quota.max_size_kb + "K";
-            result.bucket_quota.max_size_unlimited = false;
-          }
-          if (result.bucket_quota.max_objects === -1) {
-            result.bucket_quota.max_objects = "";
-            result.bucket_quota.max_objects_unlimited = true;
-          } else {
-            result.bucket_quota.max_objects_unlimited = false;
-          }
-        }
-        return result;
-      }
-    },
-    putQuota: {
-      method: "PUT",
-      url: globalConfig.API.URL + "rgw/user?quota"
-    },
-    put: {
-      method: "PUT"
-    },
-    putType: {
-      method: "PUT",
-      params: {
-        type: "@type"
+export default class CephRgwUserService {
+  constructor ($resource, $injector, $q, $filter) {
+    let res = $resource(globalConfig.API.URL + "rgw/user", {}, {
+      delete: {
+        url: globalConfig.API.URL + "ceph_radosgw/user/delete",
+        method: "DELETE"
       },
-      url: globalConfig.API.URL + "rgw/user?:type",
-      isArray: true
-    },
-    post: {
-      method: "POST"
-    },
-    postType: {
-      method: "POST",
-      params: {
-        type: "@type"
-      },
-      url: globalConfig.API.URL + "rgw/user?:type",
-      isArray: true
-    },
-    deleteType: {
-      method: "DELETE",
-      params: {
-        type: "@type"
-      },
-      url: globalConfig.API.URL + "rgw/user?:type",
-      isArray: true
-    },
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: (data, headersGetter, status) => {
-        // Make sure we have received valid data.
-        if (!angular.isString(data)) {
-          return [];
-        }
-        data = angular.fromJson(data);
-        if (status !== 200) {
-          return data;
-        }
-        // Return an array to be able to support wildcard searching someday.
-        return [ data ];
-      }
-    },
-    enumerate: {
-      method: "GET",
-      url: globalConfig.API.URL + "rgw/metadata/user",
-      isArray: true
-    },
-    filter: {
-      url: globalConfig.API.URL + "rgw/metadata/user",
-      method: "GET",
-      isArray: true,
-      interceptor: {
-        response: (response) => {
-          // Get the filter parameters.
-          let filterParams = angular.copy(response.config.params);
-          let matches = filterParams.ordering.match(/(-?)(.+)/);
-          filterParams.sortorder = (matches[1] === "") ? "ASC" : "DESC";
-          filterParams.sortfield = matches[2];
-          // Get more user data per UID.
-          let requests = [];
-          let me = $injector.get("cephRgwUserService");
-          response.data.forEach((uid) => {
-            let deferred = $q.defer();
-            me.get({"uid": uid}, undefined, deferred.resolve, deferred.reject);
-            requests.push(deferred.promise);
-          });
-          return $q.all(requests).then((users) => {
-            // Apply the filter.
-            if (filterParams.search) {
-              let expression = {};
-              expression[filterParams.sortfield] = filterParams.search;
-              users = $filter("filter")(users, expression);
+      getQuota: {
+        method: "GET",
+        url: globalConfig.API.URL + "rgw/user?quota",
+        transformResponse: (data) => {
+          let result = JSON.parse(data);
+          // !!! Attention !!!
+          // The returned object contains other attributes depending on the ceph version:
+          // 10.2.6: max_size_kb
+          // 12.0.3: max_size
+          if (_.isObject(result.user_quota)) {
+            if ((result.user_quota.max_size_kb === -1) || (result.user_quota.max_size <= -1)) {
+              result.user_quota.max_size = "";
+              result.user_quota.max_size_unlimited = true;
+            } else {
+              result.user_quota.max_size = result.user_quota.max_size_kb + "K";
+              result.user_quota.max_size_unlimited = false;
             }
-            users = $filter("orderBy")(users, filterParams.sortfield,
-              filterParams.sortorder === "DESC");
-            users = $filter("limitTo")(users, filterParams.pageSize,
-              (filterParams.page - 1) * filterParams.pageSize);
-            // Prepare the response object.
-            return {
-              $resolved: true,
-              count: users.length,
-              next: undefined,
-              previous: undefined,
-              results: users
-            };
-          });
+            if (result.user_quota.max_objects === -1) {
+              result.user_quota.max_objects = "";
+              result.user_quota.max_objects_unlimited = true;
+            } else {
+              result.user_quota.max_objects_unlimited = false;
+            }
+          }
+          if (_.isObject(result.bucket_quota)) {
+            if ((result.bucket_quota.max_size_kb === -1) || (result.bucket_quota.max_size <= -1)) {
+              result.bucket_quota.max_size = "";
+              result.bucket_quota.max_size_unlimited = true;
+            } else {
+              result.bucket_quota.max_size = result.bucket_quota.max_size_kb + "K";
+              result.bucket_quota.max_size_unlimited = false;
+            }
+            if (result.bucket_quota.max_objects === -1) {
+              result.bucket_quota.max_objects = "";
+              result.bucket_quota.max_objects_unlimited = true;
+            } else {
+              result.bucket_quota.max_objects_unlimited = false;
+            }
+          }
+          return result;
+        }
+      },
+      putQuota: {
+        method: "PUT",
+        url: globalConfig.API.URL + "rgw/user?quota"
+      },
+      put: {
+        method: "PUT"
+      },
+      putType: {
+        method: "PUT",
+        params: {
+          type: "@type"
+        },
+        url: globalConfig.API.URL + "rgw/user?:type",
+        isArray: true
+      },
+      post: {
+        method: "POST"
+      },
+      postType: {
+        method: "POST",
+        params: {
+          type: "@type"
+        },
+        url: globalConfig.API.URL + "rgw/user?:type",
+        isArray: true
+      },
+      deleteType: {
+        method: "DELETE",
+        params: {
+          type: "@type"
+        },
+        url: globalConfig.API.URL + "rgw/user?:type",
+        isArray: true
+      },
+      query: {
+        method: "GET",
+        isArray: true,
+        transformResponse: (data, headersGetter, status) => {
+          // Make sure we have received valid data.
+          if (!_.isString(data)) {
+            return [];
+          }
+          data = JSON.parse(data);
+          if (status !== 200) {
+            return data;
+          }
+          // Return an array to be able to support wildcard searching someday.
+          return [data];
+        }
+      },
+      enumerate: {
+        method: "GET",
+        url: globalConfig.API.URL + "rgw/metadata/user",
+        isArray: true
+      },
+      filter: {
+        url: globalConfig.API.URL + "rgw/metadata/user",
+        method: "GET",
+        isArray: true,
+        interceptor: {
+          response: (response) => {
+            // Get the filter parameters.
+            let filterParams = _.cloneDeep(response.config.params);
+            let matches = filterParams.ordering.match(/(-?)(.+)/);
+            filterParams.sortorder = (matches[1] === "") ? "ASC" : "DESC";
+            filterParams.sortfield = matches[2];
+            // Get more user data per UID.
+            let requests = [];
+            let me = $injector.get("cephRgwUserService");
+            response.data.forEach((uid) => {
+              let deferred = $q.defer();
+              me.get({"uid": uid}, undefined, deferred.resolve, deferred.reject);
+              requests.push(deferred.promise);
+            });
+            return $q.all(requests).then((users) => {
+              // Apply the filter.
+              if (filterParams.search) {
+                let expression = {};
+                expression[filterParams.sortfield] = filterParams.search;
+                users = $filter("filter")(users, expression);
+              }
+              users = $filter("orderBy")(users, filterParams.sortfield,
+                filterParams.sortorder === "DESC");
+              users = $filter("limitTo")(users, filterParams.pageSize,
+                (filterParams.page - 1) * filterParams.pageSize);
+              // Prepare the response object.
+              return {
+                $resolved: true,
+                count: users.length,
+                next: undefined,
+                previous: undefined,
+                results: users
+              };
+            });
+          }
         }
       }
-    }
-  });
-});
+    });
+
+    Object.assign(this, res);
+  }
+}

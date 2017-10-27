@@ -30,36 +30,37 @@
  */
 "use strict";
 
-let app = angular.module("openattic.cephRgw");
-app.factory("cephRgwHelpersService", () => {
+import _ from "lodash";
+
+export default class CephRgwHelpersService {
   /**
    * Check if the given name is a subuser.
    * @param user The user object.
    * @param name The name to check.
-   * @returns Returns TRUE if the specified name is a subuser.
+   * @returns {Boolean} Returns TRUE if the specified name is a subuser.
    * @private
    */
-  let _isSubuser = (user, name) => {
+  isSubuser (user, name) {
     let result = false;
-    if (angular.isArray(user.subusers)) {
-      angular.forEach(user.subusers, (subuser) => {
+    if (_.isArray(user.subusers)) {
+      _.forEach(user.subusers, (subuser) => {
         if (subuser.id === name) {
           result = true;
         }
       });
     }
     return result;
-  };
+  }
 
   /**
    * Build the subuser ID, e.g. 'johndoe:swift'.
    * @param uid The user ID to which the subuser is assigned.
    * @param subuser The subuser name.
-   * @returns Returns the subuser ID.
+   * @returns {string} Returns the subuser ID.
    */
-  let _buildSubuserId = (uid, subuser) => {
+  buildSubuserId (uid, subuser) {
     return (uid === subuser) ? uid : uid + ":" + subuser;
-  };
+  }
 
   /**
    * Get the subuser name.
@@ -67,29 +68,29 @@ app.factory("cephRgwHelpersService", () => {
    *   'johndoe' => 'johndoe'
    *   'janedoe:xyz' => 'xyz'
    * @param value The value to process.
-   * @returns Returns the user ID.
+   * @returns {string} Returns the user ID.
    */
-  let _getSubuserName = (value) => {
+  getSubuserName (value) {
     const re = /([^:]+)(:(.+))?/;
     let matches = value.match(re);
     return matches[2] ? matches[3] : matches[1];
-  };
+  }
 
   /**
    * Enumerate the user candidates to for the specified key type.
    * @param user The user object.
    * @param keyType The key type, e.g. 's3' or 'swift'.
-   * @returns Returns a list of user identifiers.
+   * @returns {Array} Returns a list of user identifiers.
    */
-  let _enumKeyUserCandidates = (user, keyType) => {
+  enumKeyUserCandidates (user, keyType) {
     let result = [];
-    if (!angular.isObject(user)) {
+    if (!_.isObject(user)) {
       return result;
     }
     // Get possible users.
     let possible = [];
     // Add the user id for s3.
-    if (angular.isString(user.user_id) && user.user_id.length &&
+    if (_.isString(user.user_id) && user.user_id.length &&
       (keyType === "s3")) {
       possible.push(user.user_id);
     }
@@ -113,12 +114,5 @@ app.factory("cephRgwHelpersService", () => {
       }
     });
     return result;
-  };
-
-  return {
-    isSubuser: _isSubuser,
-    buildSubuserId: _buildSubuserId,
-    getSubuserName: _getSubuserName,
-    enumKeyUserCandidates: _enumKeyUserCandidates
-  };
-});
+  }
+}

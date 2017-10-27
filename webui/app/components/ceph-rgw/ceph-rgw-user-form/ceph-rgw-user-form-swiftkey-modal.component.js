@@ -30,9 +30,10 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwUserFormSwiftKeyModal {
-  constructor ($scope, cephRgwHelpersService) {
-    this.$scope = $scope;
+  constructor (cephRgwHelpersService) {
     this.cephRgwHelpersService = cephRgwHelpersService;
 
     this.editing = false;
@@ -43,20 +44,11 @@ class CephRgwUserFormSwiftKeyModal {
     this.user = this.resolve.user;
     this.index = this.resolve.index;
 
-    if (!angular.isNumber(this.index)) { // Add
+    if (!_.isNumber(this.index)) { // Add
       this.editing = false;
-      // Check if user already exists.
-      this.$scope.$watch("$ctrl.key.user", (localUser) => {
-        if (!angular.isString(localUser) || (localUser === "")) {
-          return;
-        }
-        this.user.swift_keys.forEach((key) => {
-          this.$scope.form.user.$setValidity("uniqueuser", key.user !== localUser);
-        });
-      });
     } else { // Edit
       this.editing = true;
-      this.key = angular.copy(this.user.swift_keys[this.index]);
+      this.key = _.cloneDeep(this.user.swift_keys[this.index]);
     }
   }
 

@@ -8,7 +8,7 @@
 
 <div class="col-sm-12 col-lg-6"
      ng-show="!$ctrl.editing || ($ctrl.editing && !$ctrl.error && $ctrl.user.$resolved)">
-  <form name="userForm"
+  <form name="$ctrl.userForm"
         role="form"
         class="form-horizontal"
         novalidate
@@ -23,8 +23,9 @@
       <div class="panel-body">
         <!-- Username -->
         <div class="form-group"
-             ng-class="{'has-error': (userForm.$submitted || userForm.user_id.$dirty) &&
-                         userForm.user_id.$invalid}">
+             ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                      $ctrl.userForm.user_id.$dirty) &&
+                                      $ctrl.userForm.user_id.$invalid}">
           <label class="col-sm-3 control-label"
                  for="user_id">Username</label>
           <div class="col-sm-9">
@@ -44,21 +45,22 @@
                      ceph-rgw-user-id-unique>
             </div>
             <span class="help-block tc_userIdRequired"
-                  ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
-                            userForm.user_id.$error.required">
+                  ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.user_id.$dirty) &&
+                            $ctrl.userForm.user_id.$error.required">
               This field is required!
             </span>
             <span class="help-block tc_userIdNotUnique"
-                  ng-show="(userForm.$submitted || userForm.user_id.$dirty) &&
-                            userForm.user_id.$error.cephRgwUserIdUnique">
+                  ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.user_id.$dirty) &&
+                            $ctrl.userForm.user_id.$error.cephRgwUserIdUnique">
               The chosen user ID is already in use.
             </span>
           </div>
         </div>
         <!-- Full name -->
         <div class="form-group"
-             ng-class="{'has-error': (userForm.$submitted ||
-                         userForm.display_name.$dirty) && userForm.display_name.$invalid}">
+             ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                      $ctrl.userForm.display_name.$dirty) &&
+                                      $ctrl.userForm.display_name.$invalid}">
           <label class="col-sm-3 control-label"
                  for="display_name">Full name</label>
           <div class="col-sm-9">
@@ -75,16 +77,17 @@
                      required>
             </div>
             <span class="help-block tc_displayNameRequired"
-                  ng-show="(userForm.$submitted || userForm.display_name.$dirty) &&
-                            userForm.display_name.$error.required">
+                  ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.display_name.$dirty) &&
+                            $ctrl.userForm.display_name.$error.required">
               This field is required!
             </span>
           </div>
         </div>
         <!-- Email address -->
         <div class="form-group"
-             ng-class="{'has-error': (userForm.$submitted || userForm.email.$dirty) &&
-                         userForm.email.$invalid}">
+             ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                      $ctrl.userForm.email.$dirty) &&
+                                      $ctrl.userForm.email.$invalid}">
           <label class="col-sm-3 control-label"
                  for="email">Email address</label>
           <div class="col-sm-9">
@@ -100,16 +103,17 @@
                      id="email">
             </div>
             <span class="tc_emailNotValid"
-                  ng-show="(userForm.$submitted || userForm.email.$dirty) &&
-                            userForm.email.$error.email">
+                  ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.email.$dirty) &&
+                            $ctrl.userForm.email.$error.email">
               It's not a valid email address.
             </span>
           </div>
         </div>
         <!-- Max. buckets -->
         <div class="form-group"
-             ng-class="{'has-error': (userForm.$submitted || userForm.max_buckets.$dirty) &&
-                        userForm.max_buckets.$invalid}">
+             ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                      $ctrl.userForm.max_buckets.$dirty) &&
+                                      $ctrl.userForm.max_buckets.$invalid}">
           <label class="col-sm-3 control-label"
                  for="max_buckets">Max. buckets</label>
           <div class="col-sm-9">
@@ -367,8 +371,9 @@
           </div>
           <!-- Access key -->
           <div class="form-group"
-               ng-class="{'has-error': (userForm.$submitted || userForm.access_key.$dirty) &&
-                             userForm.access_key.$invalid}"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                        $ctrl.userForm.access_key.$dirty) &&
+                                        $ctrl.userForm.access_key.$invalid}"
                ng-show="!$ctrl.editing && !$ctrl.user.generate_key">
             <label class="col-sm-3 control-label"
                    for="access_key">Access key</label>
@@ -401,16 +406,17 @@
                 </span>
               </div>
               <span class="help-block tc_accessKeyRequired"
-                    ng-show="(userForm.$submitted || userForm.access_key.$dirty) &&
-                              userForm.access_key.$error.required">
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.access_key.$dirty) &&
+                              $ctrl.userForm.access_key.$error.required">
                 This field is required!
               </span>
             </div>
           </div>
           <!-- Secret key -->
           <div class="form-group"
-               ng-class="{'has-error': (userForm.$submitted || userForm.secret_key.$dirty) &&
-                            userForm.secret_key.$invalid}"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                        $ctrl.userForm.secret_key.$dirty) &&
+                                        $ctrl.userForm.secret_key.$invalid}"
                ng-show="!$ctrl.editing && !$ctrl.user.generate_key">
             <label class="col-sm-3 control-label"
                    for="secret_key">Secret key</label>
@@ -442,8 +448,8 @@
                 </span>
               </div>
               <span class="help-block tc_secret_keyRequired"
-                    ng-show="(userForm.$submitted || userForm.secret_key.$dirty) &&
-                              userForm.secret_key.$error.required">
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.secret_key.$dirty) &&
+                              $ctrl.userForm.secret_key.$error.required">
                 This field is required!
               </span>
             </div>
@@ -473,9 +479,7 @@
               <div class="checkbox checkbox-primary">
                 <input type="checkbox"
                        ng-model="$ctrl.user.user_quota.max_size_unlimited"
-                       ng-change="$ctrl.onChangeUnlimited(
-                         $ctrl.user.user_quota.max_size_unlimited,
-                         'user_quota_max_size')"
+                       ng-change="$ctrl.onChangeUserQuotaMaxSizeUnlimited()"
                        name="user_quota_max_size_unlimited"
                        id="user_quota_max_size_unlimited">
                 <label for="user_quota_max_size_unlimited">
@@ -486,8 +490,9 @@
           </div>
           <!-- Maximum size -->
           <div class="form-group"
-               ng-class="{'has-error': (userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
-                             userForm.user_quota_max_size.$invalid}"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                        $ctrl.userForm.user_quota_max_size.$dirty) &&
+                                        $ctrl.userForm.user_quota_max_size.$invalid}"
                ng-show="$ctrl.user.user_quota.enabled && !$ctrl.user.user_quota.max_size_unlimited">
             <label class="col-sm-3 control-label"
                    for="user_quota_max_size">
@@ -505,13 +510,15 @@
                      id="user_quota_max_size"
                      ceph-rgw-quota-max-size-validate>
               <span class="help-block tc_requiredUserQuotaMaxSize"
-                    ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
-                              userForm.user_quota_max_size.$error.required">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.user_quota_max_size.$dirty) &&
+                              $ctrl.userForm.user_quota_max_size.$error.required">
                 This field is required!
               </span>
               <span class="help-block tc_invalidUserQuotaMaxSize"
-                    ng-show="(userForm.$submitted || userForm.user_quota_max_size.$dirty) &&
-                              userForm.user_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.user_quota_max_size.$dirty) &&
+                              $ctrl.userForm.user_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
                 The value is not valid.
               </span>
             </div>
@@ -523,9 +530,7 @@
               <div class="checkbox checkbox-primary">
                 <input type="checkbox"
                        ng-model="$ctrl.user.user_quota.max_objects_unlimited"
-                       ng-change="$ctrl.onChangeUnlimited(
-                         $ctrl.user.user_quota.max_objects_unlimited,
-                         'user_quota_max_objects')"
+                       ng-change="$ctrl.onChangeUserQuotaMaxObjectsUnlimited()"
                        name="user_quota_max_objects_unlimited"
                        id="user_quota_max_objects_unlimited">
                 <label for="user_quota_max_objects_unlimited">
@@ -536,8 +541,9 @@
           </div>
           <!-- Maximum objects -->
           <div class="form-group"
-               ng-class="{'has-error': (userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
-                             userForm.user_quota_max_objects.$invalid}"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                        $ctrl.userForm.user_quota_max_objects.$dirty) &&
+                                        $ctrl.userForm.user_quota_max_objects.$invalid}"
                ng-show="$ctrl.user.user_quota.enabled && !$ctrl.user.user_quota.max_objects_unlimited">
             <label class="col-sm-3 control-label"
                    for="user_quota_max_objects">
@@ -555,14 +561,16 @@
                      id="user_quota_max_objects"
                      min="0">
               <span class="help-block tc_requiredUserQuotaMaxObjects"
-                    ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
-                              userForm.user_quota_max_objects.$error.required">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.user_quota_max_objects.$dirty) &&
+                              $ctrl.userForm.user_quota_max_objects.$error.required">
                 This field is required!
               </span>
               <span class="help-block tc_invalidUserQuotaMaxObjects"
-                    ng-show="(userForm.$submitted || userForm.user_quota_max_objects.$dirty) &&
-                             (userForm.user_quota_max_objects.$error.min ||
-                              userForm.user_quota_max_objects.$error.number)">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.user_quota_max_objects.$dirty) &&
+                             ($ctrl.userForm.user_quota_max_objects.$error.min ||
+                              $ctrl.userForm.user_quota_max_objects.$error.number)">
                 The value is not valid.
               </span>
             </div>
@@ -592,9 +600,7 @@
               <div class="checkbox checkbox-primary">
                 <input type="checkbox"
                        ng-model="$ctrl.user.bucket_quota.max_size_unlimited"
-                       ng-change="$ctrl.onChangeUnlimited(
-                         $ctrl.user.bucket_quota.max_size_unlimited,
-                         'bucket_quota_max_size')"
+                       ng-change="$ctrl.onChangeBucketQuotaMaxSizeUnlimited()"
                        name="bucket_quota_max_size_unlimited"
                        id="bucket_quota_max_size_unlimited">
                 <label for="bucket_quota_max_size_unlimited">
@@ -605,8 +611,9 @@
           </div>
           <!-- Maximum size -->
           <div class="form-group"
-               ng-class="{'has-error': (userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
-                             userForm.bucket_quota_max_size.$invalid}"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                        $ctrl.userForm.bucket_quota_max_size.$dirty) &&
+                                        $ctrl.userForm.bucket_quota_max_size.$invalid}"
                ng-show="$ctrl.user.bucket_quota.enabled && !$ctrl.user.bucket_quota.max_size_unlimited">
             <label class="col-sm-3 control-label"
                    for="bucket_quota_max_size">
@@ -624,13 +631,15 @@
                      id="bucket_quota_max_size"
                      ceph-rgw-quota-max-size-validate>
               <span class="help-block tc_requiredBucketQuotaMaxSize"
-                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
-                              userForm.bucket_quota_max_size.$error.required">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.bucket_quota_max_size.$dirty) &&
+                              $ctrl.userForm.bucket_quota_max_size.$error.required">
                 This field is required!
               </span>
               <span class="help-block tc_invalidBucketQuotaMaxSize"
-                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_size.$dirty) &&
-                              userForm.bucket_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.bucket_quota_max_size.$dirty) &&
+                              $ctrl.userForm.bucket_quota_max_size.$error.cephRgwQuotaMaxSizeValidate">
                 The value is not valid.
               </span>
             </div>
@@ -642,9 +651,7 @@
               <div class="checkbox checkbox-primary">
                 <input type="checkbox"
                        ng-model="$ctrl.user.bucket_quota.max_objects_unlimited"
-                       ng-change="$ctrl.onChangeUnlimited(
-                         $ctrl.user.bucket_quota.max_objects_unlimited,
-                         'bucket_quota_max_objects')"
+                       ng-change="$ctrl.onChangeBucketQuotaMaxObjectsUnlimited()"
                        name="bucket_quota_max_objects_unlimited"
                        id="bucket_quota_max_objects_unlimited">
                 <label for="bucket_quota_max_objects_unlimited">
@@ -655,8 +662,9 @@
           </div>
           <!-- Maximum objects -->
           <div class="form-group"
-               ng-class="{'has-error': (userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
-                             userForm.bucket_quota_max_objects.$invalid}"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted ||
+                                        $ctrl.userForm.bucket_quota_max_objects.$dirty) &&
+                                        $ctrl.userForm.bucket_quota_max_objects.$invalid}"
                ng-show="$ctrl.user.bucket_quota.enabled && !$ctrl.user.bucket_quota.max_objects_unlimited">
             <label class="col-sm-3 control-label"
                    for="bucket_quota_max_objects">
@@ -674,14 +682,16 @@
                      id="bucket_quota_max_objects"
                      min="0">
               <span class="help-block tc_requiredBucketQuotaMaxObjects"
-                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
-                              userForm.bucket_quota_max_objects.$error.required">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.bucket_quota_max_objects.$dirty) &&
+                              $ctrl.userForm.bucket_quota_max_objects.$error.required">
                 This field is required!
               </span>
               <span class="help-block tc_invalidBucketQuotaMaxObjects"
-                    ng-show="(userForm.$submitted || userForm.bucket_quota_max_objects.$dirty) &&
-                             (userForm.bucket_quota_max_objects.$error.min ||
-                              userForm.bucket_quota_max_objects.$error.number)">
+                    ng-show="($ctrl.userForm.$submitted ||
+                              $ctrl.userForm.bucket_quota_max_objects.$dirty) &&
+                             ($ctrl.userForm.bucket_quota_max_objects.$error.min ||
+                              $ctrl.userForm.bucket_quota_max_objects.$error.number)">
                 The value is not valid.
               </span>
             </div>
@@ -690,8 +700,8 @@
       </div>
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button form="userForm"
-                            on-submit="$ctrl.submitAction(userForm)">
+          <oa-submit-button form="$ctrl.userForm"
+                            on-submit="$ctrl.submitAction($ctrl.userForm)">
             Submit
           </oa-submit-button>
           <button type="button"

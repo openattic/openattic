@@ -30,9 +30,10 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwUserFormSubuserModal {
-  constructor ($scope, cephRgwHelpersService) {
-    this.$scope = $scope;
+  constructor (cephRgwHelpersService) {
     this.cephRgwHelpersService = cephRgwHelpersService;
 
     this.editing = false;
@@ -43,25 +44,15 @@ class CephRgwUserFormSubuserModal {
     this.user = this.resolve.user;
     this.index = this.resolve.index;
 
-    if (!angular.isNumber(this.index)) { // Add
+    if (!_.isNumber(this.index)) { // Add
       this.editing = false;
       this.subuser = {
         generate_secret: true,
         secret_key: ""
       };
-      // Check if subuser already exists.
-      this.$scope.$watch("$ctrl.subuser.subuser", (subuserId) => {
-        if (!angular.isString(subuserId) || (subuserId === "")) {
-          return;
-        }
-        this.user.subusers.forEach((subuser) => {
-          this.$scope.form.subuser.$setValidity("uniquesubuser",
-            this.cephRgwHelpersService.getSubuserName(subuser.id) !== subuserId);
-        });
-      });
     } else { // Edit
       this.editing = true;
-      this.subuser = angular.copy(this.user.subusers[this.index]);
+      this.subuser = _.cloneDeep(this.user.subusers[this.index]);
       // Modify the subuser data.
       this.subuser.subuser = this.cephRgwHelpersService.getSubuserName(this.subuser.id);
     }
@@ -87,6 +78,24 @@ class CephRgwUserFormSubuserModal {
 
   cancelAction () {
     this.modalInstance.dismiss("close");
+  }
+
+  /**
+   * Check if the subuser already exists.
+   * Note, this is only done in 'Add' mode.
+   */
+  validateSubuser () {
+    if (this.editing) {
+      return;
+    }
+    if (!_.isString(this.subuser.subuser) || _.isEmpty(this.subuser.subuser)) {
+      return;
+    }
+    let found = this.user.subusers.some((subuser) => {
+      return _.isEqual(this.cephRgwHelpersService.getSubuserName(subuser.id),
+        this.subuser.subuser);
+    });
+    this.subuserForm.subuser.$setValidity("uniquesubuser", !found);
   }
 }
 

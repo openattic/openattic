@@ -30,11 +30,12 @@
  */
 "use strict";
 
-let app = angular.module("openattic.cephRgw");
+import _ from "lodash";
+
 /**
  * Validate the bucket name.
  */
-app.directive("cephRgwBucketNameUnique", ($q, cephRgwBucketService) => {
+export default ($q, cephRgwBucketService) => {
   return {
     // Restrict to an attribute type.
     restrict: "A",
@@ -68,7 +69,7 @@ app.directive("cephRgwBucketNameUnique", ($q, cephRgwBucketService) => {
             .catch((error) => {
               // Display an error toasty for all errors except whether the bucket does not
               // exist (the Admin Ops API returns a 404 in this case).
-              if (angular.isObject(error) && (error.status === 404)) {
+              if (_.isObject(error) && (error.status === 404)) {
                 error.preventDefault();
               }
               // Mark the field as valid if the remote validation fails.
@@ -79,4 +80,4 @@ app.directive("cephRgwBucketNameUnique", ($q, cephRgwBucketService) => {
       };
     }
   };
-});
+};
