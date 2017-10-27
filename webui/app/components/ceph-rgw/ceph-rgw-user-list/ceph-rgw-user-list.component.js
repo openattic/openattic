@@ -33,9 +33,8 @@
 import _ from "lodash";
 
 class CephRgwUserList {
-  constructor ($scope, $state, $stateParams, $filter, $uibModal, cephRgwUserService,
+  constructor ($state, $stateParams, $filter, $uibModal, cephRgwUserService,
       oaTabSetService, settingsFormService, Notification) {
-    this.$scope = $scope;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$filter = $filter;
@@ -59,13 +58,13 @@ class CephRgwUserList {
       active: 0,
       tabs: {
         status: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "ceph-rgw-users.detail.details",
           class: "tc_statusTab",
           name: "Details"
         },
         statistics: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "ceph-rgw-users.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
@@ -77,15 +76,6 @@ class CephRgwUserList {
       linkedBy: "user_id",
       jumpTo: "more"
     };
-  }
-
-  $onInit () {
-    this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (_.isEqual(newValue, oldValue)) {
-        return;
-      }
-      this.getUserList();
-    }, true);
   }
 
   getUserList () {

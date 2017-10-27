@@ -36,7 +36,7 @@ class OaErrorPanel {
   }
 
   backAction () {
-    if (angular.isFunction(this.onBack)) {
+    if (_.isFunction(this.onBack)) {
       this.onBack();
     }
   }

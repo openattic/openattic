@@ -1,7 +1,7 @@
 <div class="openattic-modal-header">
   <span>{{ $ctrl.title }}</span>
 </div>
-<form name="deleteForm"
+<form name="$ctrl.deleteForm"
       role="form"
       novalidate>
   <div class="openattic-modal-content">
@@ -12,7 +12,7 @@
       <kbd>Delete</kbd>, or cancel and return to the page.
     </p>
     <div class="form-group"
-         ng-class="{'has-error': (deleteForm.$submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$invalid}">
+         ng-class="{'has-error': ($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$invalid}">
       <input type="text"
              class="form-control"
              name="enteredName"
@@ -25,11 +25,11 @@
 
       <!-- Error -->
       <span class="help-block"
-            ng-show="(deleteForm.$submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$error.required">
+            ng-show="($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$error.required">
         This field is required.
       </span>
       <span class="help-block"
-            ng-show="(deleteForm.$submitted || deleteForm.enteredName.$dirty) && deleteForm.enteredName.$error.pattern">
+            ng-show="($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$error.pattern">
         The input value does not match 'yes'.
       </span>
       <!-- end Error -->
@@ -37,7 +37,7 @@
   </div>
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button form="deleteForm"
+      <oa-submit-button form="$ctrl.deleteForm"
                         on-submit="$ctrl.confirm()">
         Delete
       </oa-submit-button>

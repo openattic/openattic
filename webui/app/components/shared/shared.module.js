@@ -30,14 +30,21 @@
  */
 "use strict";
 
+import OaModuleLoaderService from "./oa-module-loader/oa-module-loader.service";
+import OaTabSetService from "./oa-tab-set/oa-tab-set.service";
+import equalValidator from "./validators/equalValidator";
+import ngRequired from "./required/ng-required.directive";
 import oaCephClusterLoader from "./oa-ceph-cluster-loader/oa-ceph-cluster-loader.component";
 import oaDeleteConfirmationModal from "./oa-delete-confirmation-modal/oa-delete-confirmation-modal.component";
 import oaErrorPanel from "./oa-error-panel/oa-error-panel.component";
 import oaHelper from "./oa-helper/oa-helper.component";
 import oaLoadingPanel from "./oa-loading-panel/oa-loading-panel.component";
 import oaModuleLoader from "./oa-module-loader/oa-module-loader.component";
+import oaPasswordButton from "./oa-password-button/oa-password-button.directive";
 import oaSubmitButton from "./oa-submit-button/oa-submit-button.component";
 import oaTabSet from "./oa-tab-set/oa-tab-set.component";
+import required from "./required/required.directive";
+import validIqn from "./validators/iqn.validator";
 
 angular
   .module("openattic.shared", [])
@@ -48,11 +55,15 @@ angular
   .component("oaLoadingPanel", oaLoadingPanel)
   .component("oaModuleLoader", oaModuleLoader)
   .component("oaSubmitButton", oaSubmitButton)
-  .component("oaTabSet", oaTabSet);
+  .component("oaTabSet", oaTabSet)
+  .directive("equalValidator", equalValidator)
+  .directive("ngRequired", ngRequired)
+  .directive("oaPasswordButton", oaPasswordButton)
+  .directive("required", required)
+  .directive("validIqn", validIqn)
+  .service("oaModuleLoaderService", OaModuleLoaderService)
+  .service("oaTabSetService", OaTabSetService);
 
-require("./oa-module-loader/oa-module-loader.service");
-require("./oa-password-button/oa-password-button.directive");
-require("./oa-tab-set/oa-tab-set.service");
 require("./oadatatable/actions.directive");
 require("./oadatatable/additional-actions.directive");
 require("./oadatatable/checklist-model.directive");
@@ -61,6 +72,3 @@ require("./oadatatable/paginator.directive");
 require("./oadatatable/showhidecolumns.directive");
 require("./oadatatable/sortfield.directive");
 require("./oadatatable/sortheaderclass.directive");
-require("./required/required.directive");
-require("./validators/equalValidator");
-require("./validators/iqn.validator");

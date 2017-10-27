@@ -30,9 +30,10 @@
  */
 "use strict";
 
-class CephNodesList {
-  constructor ($scope, $state, $uibModal, cephNodesService, oaTabSetService) {
+import _ from "lodash";
 
+class CephNodesList {
+  constructor ($state, $uibModal, cephNodesService, oaTabSetService) {
     this.oaTabSetService = oaTabSetService;
     this.cephNodesService = cephNodesService;
     this.$state = $state;
@@ -54,13 +55,13 @@ class CephNodesList {
       active: 0,
       tabs: {
         details: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephNodes.detail.details",
           class: "tc_detailsTab",
           name: "Details"
         },
         statistics: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephNodes.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
@@ -74,15 +75,6 @@ class CephNodesList {
     };
 
     this.error = false;
-
-    // Watcher
-    $scope.$watch("$ctrl.filterConfig", (newVal) => {
-      if (newVal.entries === null) {
-        return;
-      }
-      this.getNodes();
-    }, true);
-
   }
 
   $onInit () {

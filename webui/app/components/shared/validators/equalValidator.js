@@ -30,22 +30,21 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.directive("equalValidator", function () {
+export default () => {
   return {
     require: "ngModel",
     restrict: "A",
     scope: {
       equalValidator: "="
     },
-    link: function (scope, element, attrs, ngModel) {
-      ngModel.$validators.equalValidator = function (modelValue) {
+    link: (scope, element, attrs, ngModel) => {
+      ngModel.$validators.equalValidator = (modelValue) => {
         return modelValue === scope.equalValidator;
       };
 
-      scope.$watch("equalValidator", function () {
+      scope.$watch("equalValidator", () => {
         ngModel.$validate();
       });
     }
   };
-});
+};

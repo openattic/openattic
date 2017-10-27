@@ -30,8 +30,10 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephPoolsList {
-  constructor ($scope, $state, $filter, cephPoolsService, registryService,
+  constructor ($state, $filter, cephPoolsService, registryService,
       $uibModal, oaTabSetService) {
     this.$filter = $filter;
     this.$state = $state;
@@ -39,7 +41,6 @@ class CephPoolsList {
     this.cephPoolsService = cephPoolsService;
     this.oaTabSetService = oaTabSetService;
     this.registry = registryService;
-    this.$scope = $scope;
 
     this.cluster = undefined;
     this.pools = {};
@@ -59,19 +60,22 @@ class CephPoolsList {
       active: 0,
       tabs: {
         details: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephPools.detail.details",
           class: "tc_detailsTab",
           name: "Details"
         },
         cacheTier: {
-          show: "$ctrl.selection.item.tiers.length > 0",
+          show: () => {
+            return _.isObject(this.selection.item) &&
+              this.selection.item.tiers.length > 0;
+          },
           state: "cephPools.detail.cacheTier",
           class: "tc_cacheTieringTab",
           name: "Cache Tier"
         },
         statistics: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephPools.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
@@ -83,17 +87,6 @@ class CephPoolsList {
       linkedBy: "id",
       jumpTo: "more"
     };
-
-  }
-
-  $onInit () {
-    this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
-        return;
-      }
-
-      this.getPoolList();
-    }, true);
   }
 
   modifyResult (res) {

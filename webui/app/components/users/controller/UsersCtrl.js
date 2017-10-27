@@ -44,8 +44,8 @@ app.controller("UsersCtrl", function ($scope, $state, usersService, $uibModal) {
 
   $scope.selection = {};
 
-  $scope.$watch("filterConfig", function (newVal) {
-    if (newVal.entries === null) {
+  $scope.onFilterConfigChange = function () {
+    if ($scope.filterConfig.entries === null) {
       return;
     }
     usersService.filter({
@@ -58,7 +58,7 @@ app.controller("UsersCtrl", function ($scope, $state, usersService, $uibModal) {
       .then(function (res) {
         $scope.data = res;
       });
-  }, true);
+  };
 
   $scope.$watchCollection("selection.item", function (item) {
     $scope.hasSelection = Boolean(item);
