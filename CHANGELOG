@@ -17,11 +17,8 @@ To describe their impact on the project, changes are grouped as follows:
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
 
-[3.5.3] - unreleased
+[3.5.3] - 2017-10-27
 --------------------
-
-Added
-~~~~~
 
 Changed
 ~~~~~~~
@@ -39,9 +36,6 @@ Fixed
 * Backend: The Grafana dashboard will now be shown automatically when
   upgrading from oA 2.x to 3.x (OP-2843)
 * Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
-
-Removed
-~~~~~~~
 
 [3.5.2] - 2017-10-10
 --------------------
