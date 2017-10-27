@@ -1,3 +1,9 @@
+openattic (3.5.3-1) unstable; urgency=medium
+
+  * New upstream release 3.5.3-1, see CHANGELOG for details
+
+ -- openATTIC Build Daemon <info@openattic.org>  Fri, 27 Oct 2017 14:13:27 +0200
+
 openattic (3.5.2-1) unstable; urgency=medium
 
   * New upstream release 3.5.2-1, see CHANGELOG for details
