@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwBucketList {
   constructor ($scope, $state, $stateParams, $filter, $uibModal, cephRgwBucketService,
       oaTabSetService, Notification) {
@@ -72,7 +74,7 @@ class CephRgwBucketList {
 
   $onInit () {
     this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
+      if (_.isEqual(newValue, oldValue)) {
         return;
       }
       this.getBucketList();
@@ -84,7 +86,7 @@ class CephRgwBucketList {
 
     // Apply filter parameters given via non-URL route parameters.
     Object.keys(this.filterConfig).forEach((param) => {
-      if (angular.isDefined(this.$stateParams[param])) {
+      if (!_.isUndefined(this.$stateParams[param])) {
         this.filterConfig[param] = this.$stateParams[param];
       }
     });

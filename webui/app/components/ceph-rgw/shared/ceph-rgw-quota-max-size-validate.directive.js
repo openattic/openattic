@@ -30,11 +30,10 @@
  */
 "use strict";
 
-let app = angular.module("openattic.cephRgw");
 /**
  * Validate the quota maximum size, e.g. 1096, 1K, 30M.
  */
-app.directive("cephRgwQuotaMaxSizeValidate", ($filter) => {
+export default ($filter) => {
   return {
     // Restrict to an attribute type.
     restrict: "A",
@@ -58,4 +57,4 @@ app.directive("cephRgwQuotaMaxSizeValidate", ($filter) => {
       };
     }
   };
-});
+};

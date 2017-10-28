@@ -30,16 +30,15 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwUserForm {
-  constructor ($scope, $state, $stateParams, $uibModal, $q, $filter, $window, $timeout,
+  constructor ($state, $stateParams, $uibModal, $q, $filter,
       cephRgwHelpersService, cephRgwUserService) {
-    this.$scope = $scope;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$uibModal = $uibModal;
     this.$filter = $filter;
-    this.$window = $window;
-    this.$timeout = $timeout;
     this.$q = $q;
     this.cephRgwHelpersService = cephRgwHelpersService;
     this.cephRgwUserService = cephRgwUserService;
@@ -73,7 +72,7 @@ class CephRgwUserForm {
     if (!this.$stateParams.user_id) { // Add
       this.editing = false;
       // Set default values.
-      angular.extend(this.user, {
+      _.extend(this.user, {
         generate_key: true,
         access_key: "",
         secret_key: ""
@@ -111,34 +110,6 @@ class CephRgwUserForm {
         .catch((error) => {
           this.error = error;
         });
-
-      this.$scope.$watch("$ctrl.user.user_quota.max_size_unlimited", (checked) => {
-        // Reset an invalid value to ensure that the form is not blocked.
-        if (checked && this.$scope.userForm.user_quota_max_size.$invalid) {
-          this.user.user_quota.max_size = "";
-        }
-      });
-
-      this.$scope.$watch("$ctrl.user.user_quota.max_objects_unlimited", (checked) => {
-        // Reset an invalid value to ensure that the form is not blocked.
-        if (checked && this.$scope.userForm.user_quota_max_objects.$invalid) {
-          this.user.user_quota.max_objects = "";
-        }
-      });
-
-      this.$scope.$watch("$ctrl.user.bucket_quota.max_size_unlimited", (checked) => {
-        // Reset an invalid value to ensure that the form is not blocked.
-        if (checked && this.$scope.userForm.bucket_quota_max_size.$invalid) {
-          this.user.bucket_quota.max_size = "";
-        }
-      });
-
-      this.$scope.$watch("$ctrl.user.bucket_quota.max_objects_unlimited", (checked) => {
-        // Reset an invalid value to ensure that the form is not blocked.
-        if (checked && this.$scope.userForm.bucket_quota_max_objects.$invalid) {
-          this.user.bucket_quota.max_objects = "";
-        }
-      });
     }
   }
 
@@ -195,17 +166,57 @@ class CephRgwUserForm {
     }
   }
 
+  onChangeUserQuotaMaxSizeUnlimited () {
+    const checked = this.user.user_quota.max_size_unlimited;
+    // Reset an invalid value to ensure that the form is not blocked.
+    if (checked && this.userForm.user_quota_max_size.$invalid) {
+      this.user.user_quota.max_size = "";
+    }
+    this._onChangeUnlimitedSetFocus(checked,
+      this.userForm.user_quota_max_size.$name);
+  }
+
+  onChangeUserQuotaMaxObjectsUnlimited () {
+    const checked = this.user.user_quota.max_objects_unlimited;
+    // Reset an invalid value to ensure that the form is not blocked.
+    if (checked && this.userForm.user_quota_max_objects.$invalid) {
+      this.user.user_quota.max_objects = "";
+    }
+    this._onChangeUnlimitedSetFocus(checked,
+      this.userForm.user_quota_max_objects.$name);
+  }
+
+  onChangeBucketQuotaMaxSizeUnlimited () {
+    const checked = this.user.bucket_quota.max_size_unlimited;
+    // Reset an invalid value to ensure that the form is not blocked.
+    if (checked && this.userForm.bucket_quota_max_size.$invalid) {
+      this.user.bucket_quota.max_size = "";
+    }
+    this._onChangeUnlimitedSetFocus(checked,
+      this.userForm.bucket_quota_max_size.$name);
+  }
+
+  onChangeBucketQuotaMaxObjectsUnlimited () {
+    const checked = this.user.bucket_quota.max_objects_unlimited;
+    // Reset an invalid value to ensure that the form is not blocked.
+    if (checked && this.userForm.bucket_quota_max_objects.$invalid) {
+      this.user.bucket_quota.max_objects = "";
+    }
+    this._onChangeUnlimitedSetFocus(checked,
+      this.userForm.bucket_quota_max_objects.$name);
+  }
+
   /**
    * Select the specified input field when the checkbox is unchecked.
    * @param checked The status of the checkbox.
    * @param id The HTML ID of the input field that should be focused.
    */
-  onChangeUnlimited (checked, id) {
-    const element = this.$window.document.getElementById(id);
+  _onChangeUnlimitedSetFocus (checked, id) {
+    const element = document.getElementById(id);
     if (element && !checked) {
-      this.$timeout(() => {
-        element.focus();
+      setTimeout(() => {
         element.select();
+        element.focus();
       });
     }
   }
@@ -289,32 +300,32 @@ class CephRgwUserForm {
       "display-name": this.user.display_name
     };
     if (this.user.suspended) {
-      angular.extend(args, {
+      _.extend(args, {
         "suspended": Boolean(this.user.suspended)
       });
     }
-    if (angular.isString(this.user.email) && this.user.email !== "") {
-      angular.extend(args, {
+    if (_.isString(this.user.email) && this.user.email !== "") {
+      _.extend(args, {
         "email": this.user.email
       });
     }
     if (caps.length > 0) {
-      angular.extend(args, {
+      _.extend(args, {
         "user-caps": caps.join(";")
       });
     }
     if (this.user.max_buckets > 0) {
-      angular.extend(args, {
+      _.extend(args, {
         "max-buckets": this.user.max_buckets
       });
     }
     if (!this.user.generate_key) {
-      angular.extend(args, {
+      _.extend(args, {
         "access-key": this.user.access_key,
         "secret-key": this.user.secret_key
       });
     } else {
-      angular.extend(args, {
+      _.extend(args, {
         "generate-key": true
       });
     }
@@ -373,7 +384,7 @@ class CephRgwUserForm {
     map.forEach((item) => {
       if (userForm[item.formName].$dirty === true) {
         let value = this.user[item.srcName];
-        if (angular.isFunction(item.convertFn)) {
+        if (_.isFunction(item.convertFn)) {
           value = item.convertFn.apply(this, [value]);
         }
         args[item.dstName] = value;
@@ -386,7 +397,7 @@ class CephRgwUserForm {
    * Helper method to mark the formular as dirty.
    */
   _markFormAsDirty () {
-    this.$scope.userForm.$setDirty();
+    this.userForm.$setDirty();
   }
 
   /**
@@ -508,7 +519,7 @@ class CephRgwUserForm {
       case "add":
         switch (type) {
           case "subuser":
-            angular.extend(args, {
+            _.extend(args, {
               "subuser": data.subuser,
               "access": (data.permissions in mapPermission) ?
                 mapPermission[data.permissions] :
@@ -516,28 +527,28 @@ class CephRgwUserForm {
               "key-type": "swift"
             });
             if (!data.generate_secret) {
-              angular.extend(args, {
+              _.extend(args, {
                 "secret-key": data.secret_key
               });
             } else {
-              angular.extend(args, {
+              _.extend(args, {
                 "generate-secret": true
               });
             }
             break;
           case "s3key":
-            angular.extend(args, {
+            _.extend(args, {
               "type": "key",
               "key-type": "s3",
               "generate-key": Boolean(data.generate_key)
             });
             if (this.cephRgwHelpersService.isSubuser(this.user, data.user)) {
-              angular.extend(args, {
+              _.extend(args, {
                 "subuser": data.user
               });
             }
             if (!data.generate_key) {
-              angular.extend(args, {
+              _.extend(args, {
                 "access-key": data.access_key,
                 "secret-key": data.secret_key
               });
@@ -546,21 +557,21 @@ class CephRgwUserForm {
           case "swiftkey":
             /* A key is automatically created with a subuser. It is not possible to
              * apply multiple Swift keys per user.
-            angular.extend(args, {
+            _.extend(args, {
               "type": "key",
               "subuser": data.user,
               "key-type": "swift",
               "generate-key": Boolean(data.generate_key)
             });
             if (!data.generate_key) {
-              angular.extend(args, {
+              _.extend(args, {
                 "secret-key": data.secret_key
               });
             }
             */
             break;
           case "caps":
-            angular.extend(args, {
+            _.extend(args, {
               "user-caps": data.type + "=" + data.perm
             });
             break;
@@ -569,7 +580,7 @@ class CephRgwUserForm {
       case "modify":
         switch (type) {
           case "subuser":
-            angular.extend(args, {
+            _.extend(args, {
               "subuser": data.subuser,
               "access": (data.permissions in mapPermission) ?
                 mapPermission[data.permissions] :
@@ -587,13 +598,13 @@ class CephRgwUserForm {
       case "delete":
         switch (type) {
           case "subuser":
-            angular.extend(args, {
+            _.extend(args, {
               "subuser": data.id,
               "purge-keys": true
             });
             break;
           case "s3key":
-            angular.extend(args, {
+            _.extend(args, {
               "type": "key",
               "key-type": "s3",
               "access-key": data.access_key
@@ -601,7 +612,7 @@ class CephRgwUserForm {
             break;
           case "swiftkey":
             /* A Swift key is purged when the subuser is deleted.
-            angular.extend(args, {
+            _.extend(args, {
               "type": "key",
               "key-type": "swift",
               "subuser": data.user
@@ -609,7 +620,7 @@ class CephRgwUserForm {
             */
             break;
           case "caps":
-            angular.extend(args, {
+            _.extend(args, {
               "user-caps": data.type + "=" + data.perm
             });
             break;
@@ -654,7 +665,7 @@ class CephRgwUserForm {
   _addRequest (fn, args) {
     this.requests.push({
       getPromiseFn: fn,
-      args: angular.copy(args)
+      args: _.cloneDeep(args)
     });
   }
 
@@ -756,7 +767,7 @@ class CephRgwUserForm {
       switch (result.action) {
         case "add":
           this._addRequest(this._getPromiseByType, ["caps", result.action, result.data]);
-          this.user.caps.push(angular.copy(result.data));
+          this.user.caps.push(_.cloneDeep(result.data));
           break;
         case "modify":
           // Note, the RadosGW Admin OPS API does not support the modification of
@@ -764,7 +775,7 @@ class CephRgwUserForm {
           // then to re-add the capability with its new value/permission.
           this._addRequest(this._getPromiseByType, ["caps", "delete", this.user.caps[index]]);
           this._addRequest(this._getPromiseByType, ["caps", "add", result.data]);
-          this.user.caps[index] = angular.copy(result.data);
+          this.user.caps[index] = _.cloneDeep(result.data);
           break;
       }
       this._markFormAsDirty();

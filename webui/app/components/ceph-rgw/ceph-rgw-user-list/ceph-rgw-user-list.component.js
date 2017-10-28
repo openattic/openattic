@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwUserList {
   constructor ($scope, $state, $stateParams, $filter, $uibModal, cephRgwUserService,
       oaTabSetService, settingsFormService, Notification) {
@@ -79,7 +81,7 @@ class CephRgwUserList {
 
   $onInit () {
     this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
+      if (_.isEqual(newValue, oldValue)) {
         return;
       }
       this.getUserList();

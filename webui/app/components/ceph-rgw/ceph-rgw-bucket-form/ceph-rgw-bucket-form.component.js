@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwBucketForm {
   constructor ($state, $stateParams, $q, cephRgwUserService, cephRgwBucketService) {
     this.$state = $state;
@@ -170,7 +172,7 @@ class CephRgwBucketForm {
   _addRequest (fn, args) {
     this.requests.push({
       getPromiseFn: fn,
-      args: angular.copy(args)
+      args: _.cloneDeep(args)
     });
   }
 }

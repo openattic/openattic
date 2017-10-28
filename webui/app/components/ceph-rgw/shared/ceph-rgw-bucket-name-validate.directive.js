@@ -30,11 +30,10 @@
  */
 "use strict";
 
-let app = angular.module("openattic.cephRgw");
 /**
  * Validate the bucket name.
  */
-app.directive("cephRgwBucketNameValidate", () => {
+export default () => {
   return {
     // Restrict to an attribute type.
     restrict: "A",
@@ -55,4 +54,4 @@ app.directive("cephRgwBucketNameValidate", () => {
       };
     }
   };
-});
+};

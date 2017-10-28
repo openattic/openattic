@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwUserFormS3KeyModal {
   constructor (cephRgwHelpersService) {
     this.cephRgwHelpersService = cephRgwHelpersService;
@@ -42,7 +44,7 @@ class CephRgwUserFormS3KeyModal {
     this.user = this.resolve.user;
     this.index = this.resolve.index;
 
-    if (!angular.isNumber(this.index)) { // Add
+    if (!_.isNumber(this.index)) { // Add
       this.editing = false;
       this.key = {
         generate_key: true,
@@ -51,7 +53,7 @@ class CephRgwUserFormS3KeyModal {
       };
     } else { // Edit
       this.editing = true;
-      this.key = angular.copy(this.user.keys[this.index]);
+      this.key = _.cloneDeep(this.user.keys[this.index]);
     }
   }
 
