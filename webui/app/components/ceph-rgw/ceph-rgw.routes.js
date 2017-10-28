@@ -30,8 +30,7 @@
  */
 "use strict";
 
-let app = angular.module("openattic.cephRgw");
-app.config(($stateProvider) => {
+export default ($stateProvider) => {
   $stateProvider
     .state("ceph-rgw", {
       url: "/ceph/rgw",
@@ -169,4 +168,4 @@ app.config(($stateProvider) => {
         label: "Edit {{bucket.bucket}}"
       }
     });
-});
+};

@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 var app = angular.module("openattic.navigation");
 app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
 
@@ -76,15 +78,19 @@ app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
 
   return {
     restrict: "A",
-    link: function (scope, element) {
-      var name = element.attr("name");
+    link: (scope, element) => {
+      // Get the associated form. Note, the name can be 'userForm' or '$ctrl.userForm'.
+      // Because of that use the lodash _.get() function to be able to access forms
+      // declared in dotted notation.
+      const name = element.attr("name");
+      const form = _.get(scope, name);
 
-      //Checks if another form was already registered
-      if (scope.oaCheckForm) {
-        scope.oaCheckForm.push(scope[name]);
+      // Checks if another form was already registered.
+      if (_.isArray(scope.oaCheckForm)) {
+        scope.oaCheckForm.push(form);
       } else {
         registerListener(scope);
-        scope.oaCheckForm = [scope[name]];
+        scope.oaCheckForm = [form];
       }
     }
   };

@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRgwUserFormCapabilityModal {
   constructor () {
     this.editing = false;
@@ -40,11 +42,11 @@ class CephRgwUserFormCapabilityModal {
     this.user = this.resolve.user;
     this.index = this.resolve.index;
 
-    if (!angular.isNumber(this.index)) { // Add
+    if (!_.isNumber(this.index)) { // Add
       this.editing = false;
     } else { // Edit
       this.editing = true;
-      this.cap = angular.copy(this.user.caps[this.index]);
+      this.cap = _.cloneDeep(this.user.caps[this.index]);
     }
   }
 

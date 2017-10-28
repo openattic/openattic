@@ -30,6 +30,7 @@
  */
 "use strict";
 
+import cephRgwRoutes from "./ceph-rgw.routes";
 import cephRgwBucketForm from "./ceph-rgw-bucket-form/ceph-rgw-bucket-form.component";
 import cephRgwBucketDeleteModal from "./ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component";
 import cephRgwBucketDetail from "./ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component";
@@ -43,9 +44,17 @@ import cephRgwUserDeleteModal from "./ceph-rgw-user-delete-modal/ceph-rgw-user-d
 import cephRgwUserDetail from "./ceph-rgw-user-detail/ceph-rgw-user-detail.component";
 import cephRgwUserList from "./ceph-rgw-user-list/ceph-rgw-user-list.component";
 import cephRgwUserStatistics from "./ceph-rgw-user-statistics/ceph-rgw-user-statistics.component";
+import cephRgwBucketService from "./shared/ceph-rgw-bucket.service";
+import cephRgwBucketNameUnique from "./shared/ceph-rgw-bucket-name-unique.directive";
+import cephRgwBucketNameValidate from "./shared/ceph-rgw-bucket-name-validate.directive";
+import cephRgwHelpersService from "./shared/ceph-rgw-helpers.service";
+import cephRgwQuotaMaxSizeValidate from "./shared/ceph-rgw-quota-max-size-validate.directive";
+import cephRgwUserService from "./shared/ceph-rgw-user.service";
+import cephRgwUserIdUnique from "./shared/ceph-rgw-user-id-unique.directive";
 
 angular
   .module("openattic.cephRgw", [])
+  .config(cephRgwRoutes)
   .component("cephRgwBucketForm", cephRgwBucketForm)
   .component("cephRgwBucketDeleteModal", cephRgwBucketDeleteModal)
   .component("cephRgwBucketDetail", cephRgwBucketDetail)
@@ -58,11 +67,11 @@ angular
   .component("cephRgwUserDeleteModal", cephRgwUserDeleteModal)
   .component("cephRgwUserDetail", cephRgwUserDetail)
   .component("cephRgwUserList", cephRgwUserList)
-  .component("cephRgwUserStatistics", cephRgwUserStatistics);
-
-require("./ceph-rgw.routes");
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+  .component("cephRgwUserStatistics", cephRgwUserStatistics)
+  .directive("cephRgwBucketNameUnique", cephRgwBucketNameUnique)
+  .directive("cephRgwBucketNameValidate", cephRgwBucketNameValidate)
+  .directive("cephRgwQuotaMaxSizeValidate", cephRgwQuotaMaxSizeValidate)
+  .directive("cephRgwUserIdUnique", cephRgwUserIdUnique)
+  .service("cephRgwBucketService", cephRgwBucketService)
+  .service("cephRgwHelpersService", cephRgwHelpersService)
+  .service("cephRgwUserService", cephRgwUserService);
