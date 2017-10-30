@@ -30,6 +30,7 @@ Changed
 * WebUI: Migration of Navigation module into Angular (OP-2864)
 * WebUI: Migration of Auth module into Angular (OP-2851)
 * WebUI: Migration of Notification module into Angular (OP-2865)
+* WebUI: Migration of Settings module into Angular (OP-2867)
 
 Fixed
 ~~~~~
