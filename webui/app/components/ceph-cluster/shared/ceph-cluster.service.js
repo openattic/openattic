@@ -32,29 +32,31 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephCluster");
+export default class CephClusterService {
+  constructor ($resource) {
+    let resource = $resource(globalConfig.API.URL + "ceph/:fsid", {
+      fsid: "@fsid"
+    }, {
+      update: {
+        url: globalConfig.API.URL + "ceph/:fsid",
+        method: "PUT"
+      },
+      performancedata: {
+        url: globalConfig.API.URL + "ceph/:fsid/performancedata",
+        method: "GET",
+        isArray: true
+      },
+      status: {
+        url: globalConfig.API.URL + "ceph/:fsid/status",
+        method: "GET"
+      },
+      keyringCandidates: {
+        url: globalConfig.API.URL + "ceph/:fsid/keyring_candidates",
+        method: "GET",
+        isArray: true
+      }
+    });
 
-app.factory("cephClusterService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid", {
-    fsid: "@fsid"
-  }, {
-    update: {
-      url: globalConfig.API.URL + "ceph/:fsid",
-      method: "PUT"
-    },
-    performancedata: {
-      url: globalConfig.API.URL + "ceph/:fsid/performancedata",
-      method: "GET",
-      isArray: true
-    },
-    status: {
-      url: globalConfig.API.URL + "ceph/:fsid/status",
-      method: "GET"
-    },
-    keyringCandidates: {
-      url: globalConfig.API.URL + "ceph/:fsid/keyring_candidates",
-      method: "GET",
-      isArray: true
-    }
-  });
-});
+    Object.assign(this, resource);
+  }
+}
