@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNodes");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("cephNodes", {
       url: "/ceph/nodes",
@@ -76,4 +75,4 @@ app.config(function ($stateProvider) {
         skip: true
       }
     });
-});
+};

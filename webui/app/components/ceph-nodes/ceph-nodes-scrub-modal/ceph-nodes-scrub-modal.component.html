@@ -2,7 +2,7 @@
   <span>Ceph Nodes {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
 </div>
 
-<form name="form"
+<form name="$ctrl.form"
       role="form"
       novalidate>
   <div class="openattic-modal-content">
@@ -32,7 +32,7 @@
 
   <div class="openattic-modal-footer">
     <div class="button-group text-right">
-      <oa-submit-button form="form"
+      <oa-submit-button form="$ctrl.form"
                         on-submit="$ctrl.scrub()">
         Submit
       </oa-submit-button>
