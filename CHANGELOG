@@ -35,6 +35,7 @@ Changed
 * WebUI: Migration of Ceph Crushmap module into Angular (OP-2853)
 * WebUI: Migration of Shared module into Angular (OP-2868)
 * WebUI: Migration of User Info module into Angular (OP-2870)
+* WebUI: Migration of Ceph NFS module into Angular (OP-2856)
 
 Fixed
 ~~~~~

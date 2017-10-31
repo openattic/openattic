@@ -30,17 +30,18 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephNfsFormClient {
 
-  constructor ($timeout, cephNfsAccessType, cephNfsSquash) {
-    this.$timeout = $timeout;
+  constructor (cephNfsAccessType, cephNfsSquash) {
     this.cephNfsAccessType = cephNfsAccessType;
     this.cephNfsSquash = cephNfsSquash;
   }
 
   addClient (clientBlock) {
     clientBlock.clients.push("");
-    this.$timeout(() => {
+    setTimeout(() => {
       let clientsInputs = jQuery("#clients input");
       clientsInputs[clientsInputs.length - 1].focus();
     });
@@ -59,7 +60,7 @@ class CephNfsFormClient {
         return currentAccessTypeItem;
       }
     });
-    return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
+    return _.isObject(accessTypeItem) ? accessTypeItem.help : "";
   }
 
   getNoSquashDescr (clientBlock) {
@@ -79,7 +80,7 @@ class CephNfsFormClient {
       accessType: "",
       squash: ""
     });
-    this.$timeout(() => {
+    setTimeout(() => {
       jQuery("#clients" + (this.clientBlocks.length - 1)).focus();
     });
   }
