@@ -30,9 +30,17 @@
 */
 "use strict";
 
-var app = angular.module("openattic.apirecorder");
-app.controller("ApiRecorderCtrl", function ($scope, $uibModalInstance) {
-  $scope.close = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
-});
+class ApiRecorderModal {
+  close () {
+    this.modalInstance.dismiss("cancel");
+  }
+}
+
+export default {
+  controller: ApiRecorderModal,
+  template: require("./api-recorder-modal.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  }
+};

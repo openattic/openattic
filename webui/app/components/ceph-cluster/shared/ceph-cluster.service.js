@@ -30,10 +30,33 @@
  */
 "use strict";
 
-import cephClusterSettingsModal from "./ceph-cluster-settings-modal/ceph-cluster-settings-modal.component";
+import globalConfig from "globalConfig";
 
-angular.module("openattic.cephCluster", [])
-  .component("cephClusterSettingsModal", cephClusterSettingsModal);
+export default class CephClusterService {
+  constructor ($resource) {
+    let resource = $resource(globalConfig.API.URL + "ceph/:fsid", {
+      fsid: "@fsid"
+    }, {
+      update: {
+        url: globalConfig.API.URL + "ceph/:fsid",
+        method: "PUT"
+      },
+      performancedata: {
+        url: globalConfig.API.URL + "ceph/:fsid/performancedata",
+        method: "GET",
+        isArray: true
+      },
+      status: {
+        url: globalConfig.API.URL + "ceph/:fsid/status",
+        method: "GET"
+      },
+      keyringCandidates: {
+        url: globalConfig.API.URL + "ceph/:fsid/keyring_candidates",
+        method: "GET",
+        isArray: true
+      }
+    });
 
-require("./shared/cephClustersService");
-
+    Object.assign(this, resource);
+  }
+}

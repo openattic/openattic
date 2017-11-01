@@ -30,8 +30,7 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
-import "../registry/module";
+import "../ceph-cluster/ceph-cluster.module";
 import cephRbdStripingModal from "./ceph-rbd-striping-modal/ceph-rbd-striping-modal.component";
 import cephRbdStripingObjectSet from "./ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component";
 import cephRbdDeleteModal from "./ceph-rbd-delete-modal/ceph-rbd-delete-modal.component";
@@ -41,8 +40,7 @@ import cephRbdList from "./ceph-rbd-list/ceph-rbd-list.component";
 import cephRbdStatistics from "./ceph-rbd-statistics/ceph-rbd-statistics.component";
 
 angular.module("openattic.cephRbd", [
-  "openattic.cephCluster",
-  "openattic.registry"
+  "openattic.cephCluster"
 ])
   .component("cephRbdStripingModal", cephRbdStripingModal)
   .component("cephRbdStripingObjectSet", cephRbdStripingObjectSet)

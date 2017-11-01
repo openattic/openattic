@@ -30,7 +30,7 @@
  */
 "use strict";
 
-import "../ceph-cluster/module";
+import "../ceph-cluster/ceph-cluster.module";
 
 angular.module("openattic.cephCrushmap", [
   "openattic.cephCluster"

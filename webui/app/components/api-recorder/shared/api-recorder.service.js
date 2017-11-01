@@ -30,7 +30,29 @@
  */
 "use strict";
 
-var app = angular.module("openattic.registry");
-app.factory("registryService", function () {
-  return {};
-});
+export default class ApiRecorderService {
+  constructor () {
+    this.recording = false;
+    this.recordedCommands = [];
+  }
+
+  startRecording () {
+    this.recording = true;
+    this.recordedCommands = [];
+  }
+
+  isRecording () {
+    return this.recording;
+  }
+
+  stopRecording () {
+    this.recording = false;
+    return this.recordedCommands;
+  }
+
+  recordCommand (config) {
+    if (this.recording) {
+      this.recordedCommands.push(config);
+    }
+  }
+}

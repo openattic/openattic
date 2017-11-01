@@ -352,21 +352,31 @@ ul.task-queue-pagination {
 .navbar-openattic .navbar-collapse {
   padding: 0;
 }
-.navbar-openattic .navbar-nav>li>a {
+.navbar-openattic .navbar-nav>li>a,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a {
   color: #ececec;
   line-height: 1;
   padding: 10px 20px;
+  position: relative;
+  display: block;
+  text-decoration: none;
 }
 .navbar-openattic .navbar-nav>li>a:focus,
-.navbar-openattic .navbar-nav>li>a:hover {
+.navbar-openattic .navbar-nav>li>a:hover,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a:focus,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a:hover {
   color: #ececec;
 }
-.navbar-openattic .navbar-nav>li>a:hover {
+.navbar-openattic .navbar-nav>li>a:hover,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a:hover {
   background-color: #505050;
 }
 .navbar-openattic .navbar-nav>.open>a,
 .navbar-openattic .navbar-nav>.open>a:hover,
-.navbar-openattic .navbar-nav>.open>a:focus {
+.navbar-openattic .navbar-nav>.open>a:focus,
+.navbar-openattic .navbar-nav>.open>.oa-navbar>a,
+.navbar-openattic .navbar-nav>.open>.oa-navbar>a:hover,
+.navbar-openattic .navbar-nav>.open>.oa-navbar>a:focus {
   color: #ececec;
   border-color: transparent;
   background-color: transparent;

@@ -30,10 +30,5 @@
  */
 "use strict";
 
-angular.module("openattic.registry", []);
-
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
+export default class RegistryService {
 }
