@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("login", {
       url: "/login",
@@ -41,4 +40,4 @@ app.config(function ($stateProvider) {
         }
       }
     });
-});
+};

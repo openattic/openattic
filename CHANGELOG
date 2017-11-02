@@ -20,6 +20,22 @@ To describe their impact on the project, changes are grouped as follows:
 [3.6.1] - unreleased
 --------------------
 
+Added
+~~~~~
+
+Changed
+~~~~~~~
+* WebUI: Migration of Dashboard module into Angular (OP-2861)
+* WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
+* WebUI: Migration of Navigation module into Angular (OP-2864)
+* WebUI: Migration of Auth module into Angular (OP-2851)
+
+Fixed
+~~~~~
+
+Removed
+~~~~~~~
+
 [3.6.0] - 2017-11-01
 --------------------
 

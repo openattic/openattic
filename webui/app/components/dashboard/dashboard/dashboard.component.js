@@ -30,10 +30,11 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class DashboardComponent {
-  constructor ($interval, cephClusterService) {
+  constructor (cephClusterService) {
     this.cephClusterService = cephClusterService;
-    this.$interval = $interval;
 
     this.promise = undefined;
     this.data = {};
@@ -52,9 +53,9 @@ class DashboardComponent {
 
     // stops any running interval to avoid two intervals running at the same time
     this.stopInterval();
-    this.promise = this.$interval(() => {
+    this.promise = setInterval(() => {
       this.getStatus();
-    }, 60000, false);
+    }, 60000);
   }
 
   $onDestroy () {
@@ -73,7 +74,7 @@ class DashboardComponent {
   }
 
   processData (data) {
-    angular.extend(data, {
+    Object.assign(data, {
       ok: [],
       warn: [],
       err: [],
@@ -103,7 +104,7 @@ class DashboardComponent {
   processSummaries () {
     var data = this.data;
     if (data.warn.length > 0 || data.err.length > 0) {
-      angular.forEach(data.warn.concat(data.err), (cluster) => {
+      data.warn.concat(data.err).forEach((cluster) => {
         this.cephClusterService
           .status({ fsid: cluster.fsid })
           .$promise
@@ -131,8 +132,8 @@ class DashboardComponent {
   }
 
   processMessages () {
-    angular.forEach(this.data, (clusters, attribute) => {
-      if (angular.isArray(clusters)) {
+    _.forIn(this.data, (clusters, attribute) => {
+      if (Array.isArray(clusters)) {
         this.messages[attribute] = this.clusterMessage(attribute);
       }
     });
@@ -176,7 +177,7 @@ class DashboardComponent {
       warn: 0,
       err: 0
     };
-    angular.forEach(clusters, (cluster) => {
+    clusters.forEach((cluster) => {
       if (cluster.summary) {
         counting.warn += cluster.summary.warn.length;
         counting.err += cluster.summary.err.length;
@@ -186,7 +187,7 @@ class DashboardComponent {
   }
 
   stopInterval () {
-    this.$interval.cancel(this.promise);
+    clearInterval(this.promise);
   }
 }
 

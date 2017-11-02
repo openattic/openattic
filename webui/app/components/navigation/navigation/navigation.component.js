@@ -30,11 +30,6 @@
  */
 "use strict";
 
-var app = angular.module("openattic.navigation");
-app.directive("navigation", function () {
-  return {
-    restrict: "E",
-    replace: true,
-    template: require("../templates/navigation.html")
-  };
-});
+export default {
+  template: require("./navigation.component.html")
+};

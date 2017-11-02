@@ -3,11 +3,11 @@
 </div>
 
 <oa-loading-panel message="Form is loading..."
-                  ng-show="!rulesetFailureDomains"></oa-loading-panel>
+                  ng-show="!$ctrl.rulesetFailureDomains"></oa-loading-panel>
 
-<form name="addForm"
+<form name="$ctrl.addForm"
       role="form"
-      ng-if="rulesetFailureDomains"
+      ng-if="$ctrl.rulesetFailureDomains"
       novalidate>
   <div class="openattic-modal-content">
     <p>
@@ -20,85 +20,85 @@
     </p>
 
     <div class="form-group"
-         ng-class="{'has-error': (addForm.$submitted || addForm.name.$dirty) && addForm.name.$invalid}">
+         ng-class="{'has-error': ($ctrl.addForm.$submitted || $ctrl.addForm.name.$dirty) && $ctrl.addForm.name.$invalid}">
       <label for="name"
              class="control-label">Name</label>
       <input type="text"
              id="name"
              name="name"
              class="form-control tc_name"
-             ng-model="erasureCodeProfile.name"
+             ng-model="$ctrl.erasureCodeProfile.name"
              validname
              uniquename="erasure-code-profiles"
              required
              autofocus>
       <span class="help-block tc_nameRequired"
-            ng-show="(addForm.$submitted || addForm.name.$dirty) && addForm.name.$error.required">
+            ng-show="($ctrl.addForm.$submitted || $ctrl.addForm.name.$dirty) && $ctrl.addForm.name.$error.required">
         This field is required!
       </span>
       <span class="help-block tc_noValidName"
-            ng-show="addForm.name.$error.validname">
-        {{errortext}}
+            ng-show="$ctrl.addForm.name.$error.validname">
+        {{$ctrl.errortext}}
       </span>
       <span class="help-block tc_noUniqueName"
-            ng-show="addForm.name.$error.uniquename">
+            ng-show="$ctrl.addForm.name.$error.uniquename">
         The chosen erasure code profile name is already in use.
       </span>
     </div>
 
     <div class="form-group"
-         ng-class="{'has-error': (addForm.$submitted || addForm.dataChunks.$dirty) && addForm.dataChunks.$invalid}">
+         ng-class="{'has-error': ($ctrl.addForm.$submitted || $ctrl.addForm.dataChunks.$dirty) && $ctrl.addForm.dataChunks.$invalid}">
       <label for="dataChunks"
              class="control-label">Data chunks (k)</label>
       <input type="number"
              id="dataChunks"
              name="dataChunks"
              class="form-control tc_dataChunks"
-             ng-model="erasureCodeProfile.k"
+             ng-model="$ctrl.erasureCodeProfile.k"
              min="2"
              ng-pattern="/^[0-9]+$/"
              required>
       <span class="help-block tc_dataChunksRequired"
-            ng-show="(addForm.$submitted || addForm.dataChunks.$dirty) && addForm.dataChunks.$error.required">
+            ng-show="($ctrl.addForm.$submitted || $ctrl.addForm.dataChunks.$dirty) && $ctrl.addForm.dataChunks.$error.required">
         This field is required!
       </span>
       <span class="help-block tc_dataChunksMin"
-            ng-show="addForm.dataChunks.$error.min">
+            ng-show="$ctrl.addForm.dataChunks.$error.min">
         Must be equal to or greater than 2.
       </span>
       <span class="help-block tc_dataChunksNoInt"
-            ng-show="addForm.dataChunks.$error.pattern">
+            ng-show="$ctrl.addForm.dataChunks.$error.pattern">
         Not a valid number!
       </span>
     </div>
 
     <div class="form-group"
-         ng-class="{'has-error': (addForm.$submitted || addForm.codingChunks.$dirty) && addForm.codingChunks.$invalid}">
+         ng-class="{'has-error': ($ctrl.addForm.$submitted || $ctrl.addForm.codingChunks.$dirty) && $ctrl.addForm.codingChunks.$invalid}">
       <label for="codingChunks"
              class="control-label">Coding chunks (m)</label>
       <input type="number"
              id="codingChunks"
              name="codingChunks"
              class="form-control tc_codingChunks"
-             ng-model="erasureCodeProfile.m"
+             ng-model="$ctrl.erasureCodeProfile.m"
              min="1"
              max="{{osdCount}}"
              ng-pattern="/^[0-9]+$/"
              required>
       <span class="help-block tc_dataChunksRequired"
-            ng-show="(addForm.$submitted || addForm.codingChunks.$dirty) && addForm.codingChunks.$error.required">
+            ng-show="($ctrl.addForm.$submitted || $ctrl.addForm.codingChunks.$dirty) && $ctrl.addForm.codingChunks.$error.required">
         This field is required!
       </span>
       <span class="help-block tc_codingChunksMin"
-            ng-show="addForm.codingChunks.$error.min">
+            ng-show="$ctrl.addForm.codingChunks.$error.min">
         Must be equal to or greater than 1.
       </span>
       <span class="help-block tc_codingChunksMax"
-            ng-show="addForm.codingChunks.$error.max">
+            ng-show="$ctrl.addForm.codingChunks.$error.max">
         Must be equal to or smaller than the number of osds.
       </span>
       <span class="help-block tc_codingChunksNoInt"
-            ng-show="addForm.codingChunks.$error.pattern">
+            ng-show="$ctrl.addForm.codingChunks.$error.pattern">
         Not a valid number!
       </span>
     </div>
@@ -109,8 +109,8 @@
       <select id="rulesetFailureDomain"
               name="rulesetFailureDomain"
               class="form-control tc_rulesetFailureDomain"
-              ng-model="erasureCodeProfile.ruleset_failure_domain"
-              ng-options="ruleset.name as ruleset.name for ruleset in rulesetFailureDomains">
+              ng-model="$ctrl.erasureCodeProfile.ruleset_failure_domain"
+              ng-options="ruleset.name as ruleset.name for ruleset in $ctrl.rulesetFailureDomains">
       </select>
     </div>
   </div>
@@ -119,15 +119,15 @@
     <div class="button-group text-right">
       <button id="bot2-Msg1"
               class="btn btn-primary btn-sm"
-              ng-click="addErasureCodeProfile()"
-              ng-disabled="addForm.$invalid || addForm.$submitted">
+              ng-click="$ctrl.addErasureCodeProfile()"
+              ng-disabled="$ctrl.addForm.$invalid || $ctrl.addForm.$submitted">
         Add erasure code profile
         <i class="fa fa-spinner fa-spin fa-fw"
-           ng-if="addForm.$submitted"></i>
+           ng-if="$ctrl.addForm.$submitted"></i>
       </button>
       <button id="bot1-Msg1"
               class="btn btn-link btn-sm"
-              ng-click="cancel()">Cancel</button>
+              ng-click="$ctrl.cancel()">Cancel</button>
     </div>
   </div>
 </form>

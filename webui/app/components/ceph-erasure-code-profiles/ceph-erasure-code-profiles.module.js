@@ -30,9 +30,14 @@
  */
 "use strict";
 
-import dashboard from "./dashboard/dashboard.component";
-import dashboardRoutes from "./dashboard.routes";
+import CephErasureCodeProfilesService
+  from "./shared/cephErasureCodeProfilesService";
+import cephErasureCodeProfilesAddComponent
+  from "./ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component";
+import cephErasureCodeProfilesDeleteComponent
+  from "./ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component";
 
-angular.module("openattic.dashboard", [])
-  .component("dashboard", dashboard)
-  .config(dashboardRoutes);
+angular.module("openattic.cephErasureCodeProfiles", [])
+  .component("cephErasureCodeProfilesAddComponent", cephErasureCodeProfilesAddComponent)
+  .component("cephErasureCodeProfilesDeleteComponent", cephErasureCodeProfilesDeleteComponent)
+  .service("cephErasureCodeProfilesService", CephErasureCodeProfilesService);

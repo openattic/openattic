@@ -59,7 +59,7 @@
     },
 
     checkForUnsavedChanges: function (dialogIsShown) {
-      var dialog =  new UnsavedChangesDialog();
+      var dialog = new UnsavedChangesDialog();
       if (dialogIsShown !== undefined) {
         expect(dialog.leaveBtn.isPresent()).toBe(dialogIsShown);
       }
@@ -196,6 +196,38 @@
       }
       var until = protractor.ExpectedConditions;
       browser.wait(until.stalenessOf(elem), 5000, "Element taking too long to disappear in the DOM");
+    },
+
+    waitForElementVisible (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.visibilityOf(elem), 5000, "Element taking too long to disappear in the DOM");
+    },
+
+    waitForElementInvisible (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.invisibilityOf(elem), 5000, "Element taking too long to disappear in the DOM");
+    },
+
+    waitForElementVisible (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.visibilityOf(elem), 5000, "Element taking too long to show in the DOM");
+    },
+
+    waitForElementInvisible (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.invisibilityOf(elem), 5000, "Element taking too long to disappear in the DOM");
     }
   };
   module.exports = helper;

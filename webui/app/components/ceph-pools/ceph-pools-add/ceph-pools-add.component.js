@@ -484,8 +484,7 @@ class CephPoolsAdd {
   // Erasure Code Profile
   addErasureCodeProfile () {
     let modalInstance = this.$uibModal.open({
-      controller: "CephErasureCodeProfilesAddCtrl",
-      template: require("../../ceph-erasure-code-profiles/templates/add-erasure-code-profile.html"),
+      component: "cephErasureCodeProfilesAddComponent",
       windowTemplate: require("../../../templates/messagebox.html"),
       resolve: {
         cluster:  () => {
@@ -506,8 +505,7 @@ class CephPoolsAdd {
 
   deleteErasureCodeProfile () {
     let modalInstance = this.$uibModal.open({
-      controller: "CephErasureCodeProfilesDeleteCtrl",
-      template: require("../../ceph-erasure-code-profiles/templates/delete-erasure-code-profile.html"),
+      component: "CephErasureCodeProfilesDeleteComponent",
       windowTemplate: require("../../../templates/messagebox.html"),
       resolve: {
         cluster: () => {

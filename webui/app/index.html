@@ -35,7 +35,7 @@
     </div>
   </noscript>
 
-  <navigation ng-hide="loginActive()"></navigation>
+  <navigation ng-if="!loginActive()"></navigation>
 
   <div class="container-fluid"
        ng-class="{'full-height':loginActive()}">

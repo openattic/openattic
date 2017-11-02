@@ -32,22 +32,25 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephErasureCodeProfiles");
-app.factory("cephErasureCodeProfilesService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/erasure-code-profiles/:id", {
-    fsid: "@fsid",
-    id: "@id"
-  }, {
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
+export default class CephErasureCodeProfilesService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "ceph/:fsid/erasure-code-profiles/:id", {
+      fsid: "@fsid",
+      id: "@id"
+    }, {
+      query: {
+        method: "GET",
+        isArray: true,
+        transformResponse: (data) => {
+          return JSON.parse(data).results;
+        }
+      },
+      getfailureDomains: {
+        url: globalConfig.API.URL + "ceph/:fsid/crushmap",
+        method: "GET"
       }
-    },
-    getfailureDomains: {
-      url: globalConfig.API.URL + "ceph/:fsid/crushmap",
-      method: "GET"
-    }
-  });
-});
+    });
+
+    Object.assign(this, res);
+  }
+}

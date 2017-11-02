@@ -30,9 +30,19 @@
  */
 "use strict";
 
-import dashboard from "./dashboard/dashboard.component";
-import dashboardRoutes from "./dashboard.routes";
+import globalConfig from "globalConfig";
 
-angular.module("openattic.dashboard", [])
-  .component("dashboard", dashboard)
-  .config(dashboardRoutes);
+export default class AuthService {
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "auth", {}, {
+      login: {method: "POST"},
+      logout: {method: "DELETE"},
+      kerberos: {
+        method: "GET",
+        url: "/openattic/accounts/kerblogin.js"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}

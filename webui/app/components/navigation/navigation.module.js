@@ -30,10 +30,11 @@
  */
 "use strict";
 
-angular.module("openattic.navigation", []);
+import navigation from "./navigation/navigation.component";
+import oaCheckForm from "./oa-check-form/oa-check-form.directive";
+import oaCheckFormModal from "./oa-check-form-modal/oa-check-form-modal.component";
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+angular.module("openattic.navigation", [])
+  .component("navigation", navigation)
+  .component("oaCheckFormModal", oaCheckFormModal)
+  .directive("oaCheckForm", oaCheckForm);

@@ -78,20 +78,21 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, usersService, $state, $transitions) {
+app.run(function ($rootScope, usersService, $state, $transitions,
+    authUserService) {
   $transitions.onSuccess({}, function (trans) {
     usersService.current().$promise.then(function () {
-      $rootScope.loggedIn = true;
+      authUserService.loggedIn = true;
       if (trans.to().name === "login") {
         $state.go("dashboard");
       }
     }).catch(function (error) {
       error.ignoreStatusCode(401);
-      $rootScope.loggedIn = false;
+      authUserService.loggedIn = false;
     });
   });
   $rootScope.loginActive = function () {
-    return !$rootScope.loggedIn;
+    return !authUserService.loggedIn;
   };
   var hostname = window.location.host.split(".")[0];
   // check if the hostname looks like the first octet of an IP address

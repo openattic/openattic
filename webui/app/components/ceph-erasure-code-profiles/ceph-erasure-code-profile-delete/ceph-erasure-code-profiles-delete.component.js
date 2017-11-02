@@ -30,36 +30,50 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephErasureCodeProfiles");
-app.controller("CephErasureCodeProfilesDeleteCtrl", function ($scope, $uibModalInstance, cephErasureCodeProfilesService,
-    cluster, profile, Notification) {
-  $scope.cluster = cluster;
-  $scope.profile = profile;
+class CephErasureCodeProfilesDeleteComponent {
+  constructor (cephErasureCodeProfilesService, Notification) {
+    this.cephErasureCodeProfilesService = cephErasureCodeProfilesService;
+    this.Notification = Notification;
+  }
 
-  $scope.deleteErasureCodeProfile = function () {
-    cephErasureCodeProfilesService
+  $onInit () {
+    this.cluster = this.resolve.cluster;
+    this.profile = this.resolve.profile;
+  }
+
+  deleteErasureCodeProfile () {
+    this.cephErasureCodeProfilesService
       .delete({
-        fsid: $scope.cluster.fsid,
-        id  : $scope.profile.name
+        fsid: this.cluster.fsid,
+        id  : this.profile.name
       })
       .$promise
-      .then(function () {
-        // Trigger notification message on success
-        Notification.success({
+      .then(() => {
+      // Trigger notification message on success
+        this.Notification.success({
           title: "Erasure code profile deleted",
-          msg  : "Erasure code profile '" + $scope.profile.name + "' successfully deleted."
+          msg: "Erasure code profile '" + this.profile.name + "' successfully deleted."
         });
 
         // Close dialog
-        $uibModalInstance.close("deleted");
+        this.modalInstance.close("deleted");
       })
-      .catch(function () {
-        $scope.deleteForm.$submitted = false;
-        $scope.cancel();
+      .catch(() => {
+        this.deleteForm.$submitted = false;
+        this.cancel();
       });
-  };
+  }
 
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
-});
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  }
+}
+
+export default{
+  controller: CephErasureCodeProfilesDeleteComponent,
+  template: require("./ceph-erasure-code-profiles-delete.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  }
+};

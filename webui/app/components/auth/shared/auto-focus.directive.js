@@ -30,14 +30,15 @@
  */
 "use strict";
 
-var app = angular.module("openattic.auth");
-app.directive("autoFocus", function ($timeout) {
+//autoFocus
+export default ($timeout) => {
   return {
     restrict: "A",
-    link: function ($scope, $element) {
-      $timeout(function () {
+    link: function ($element) {
+      $timeout(() => {
         $element.focus();
       }, 0);
     }
   };
-});
+};
+

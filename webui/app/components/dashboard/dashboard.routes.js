@@ -30,12 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.dashboard");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("dashboard", {
-      url          : "/dashboard",
-      views        : {
+      url: "/dashboard",
+      views: {
         "main": {
           component: "dashboard"
         }
@@ -44,4 +43,4 @@ app.config(function ($stateProvider) {
         skip: true
       }
     });
-});
+};
