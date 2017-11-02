@@ -33,6 +33,7 @@ describe("task queue dialog test", () => {
     // 1. Show at least one task in the current tab.
     it('should show at least one task in tab "' + tabName + '"', () => {
       qProperties.changeTab(tabName);
+      helpers.waitForElementVisible(elements.listing);
       expect(elements.listing.isDisplayed()).toBe(true); // If at least one task is there the listing is shown.
     });
 

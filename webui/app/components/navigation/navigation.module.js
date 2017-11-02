@@ -30,11 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic.navigation");
-app.directive("navigation", function () {
-  return {
-    restrict: "E",
-    replace: true,
-    template: require("../templates/navigation.html")
-  };
-});
+import navigation from "./navigation/navigation.component";
+import oaCheckForm from "./oa-check-form/oa-check-form.directive";
+import oaCheckFormModal from "./oa-check-form-modal/oa-check-form-modal.component";
+
+angular.module("openattic.navigation", [])
+  .component("navigation", navigation)
+  .component("oaCheckFormModal", oaCheckFormModal)
+  .directive("oaCheckForm", oaCheckForm);

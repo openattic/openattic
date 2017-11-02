@@ -30,21 +30,6 @@
  */
 "use strict";
 
-var app = angular.module("openattic.userinfo");
-app.directive("userinfo", function () {
-  return {
-    restrict: "A",
-    template: require("../templates/userinfo.html"),
-    controller: function ($scope, usersService, $rootScope) {
-      usersService.current()
-        .$promise
-        .then(function (res) {
-          $scope.user = res;
-          $rootScope.user = res;
-        })
-        .catch(function (error) {
-          error.ignoreStatusCode(401);
-        });
-    }
-  };
-});
+export default {
+  template: require("./navigation.component.html")
+};

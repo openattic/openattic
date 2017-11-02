@@ -27,6 +27,7 @@ describe("Feedback", function () {
     feedbackButton.click();
 
     // Verify that the feedback panel is displayed
+    helpers.waitForElementVisible(feedbackPanel);
     expect(feedbackPanel.isDisplayed()).toBe(true);
 
     // Refresh browser to restore defaults
@@ -38,12 +39,14 @@ describe("Feedback", function () {
     feedbackButton.click();
 
     // Verify that the feedback panel is displayed
+    helpers.waitForElementVisible(feedbackPanel);
     expect(feedbackPanel.isDisplayed()).toBe(true);
 
     // Close the feedback panel
     feedbackButton.click();
 
     // Verify that the feedback panel is hidden
+    helpers.waitForElementInvisible(feedbackPanel);
     expect(feedbackPanel.isDisplayed()).toBe(false);
   });
 
@@ -52,12 +55,14 @@ describe("Feedback", function () {
     feedbackButton.click();
 
     // Verify that the feedback panel is displayed
+    helpers.waitForElementVisible(feedbackPanel);
     expect(feedbackPanel.isDisplayed()).toBe(true);
 
     // Close the feedback panel
     feedbackClose.click();
 
     // Verify that the feedback panel is hidden
+    helpers.waitForElementInvisible(feedbackPanel);
     expect(feedbackPanel.isDisplayed()).toBe(false);
   });
 
@@ -69,6 +74,7 @@ describe("Feedback", function () {
     feedbackButton.click();
 
     // Verify that the information text is displayed
+    helpers.waitForElementVisible(feedbackInformation);
     expect(feedbackInformation.isDisplayed()).toBe(true);
 
     // Close the feedback panel
@@ -83,6 +89,7 @@ describe("Feedback", function () {
     feedbackButton.click();
 
     // Verify that the report bug button is displayed
+    helpers.waitForElementVisible(feedbackReportBug);
     expect(feedbackReportBug.isDisplayed()).toBe(true);
 
     // Close the feedback panel
@@ -94,6 +101,7 @@ describe("Feedback", function () {
     feedbackButton.click();
 
     // Verify that the get involved button is displayed
+    helpers.waitForElementVisible(feedbackGetInvolved);
     expect(feedbackGetInvolved.isDisplayed()).toBe(true);
 
     // Close the feedback panel

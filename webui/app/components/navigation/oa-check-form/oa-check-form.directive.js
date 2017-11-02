@@ -32,20 +32,19 @@
 
 import _ from "lodash";
 
-var app = angular.module("openattic.navigation");
-app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
+export default ($uibModal, $transitions) => {
 
-  var registerListener = function (scope) {
-    scope.cancelTrans = $transitions.onStart({}, function (trans) {
-      var isDirty = false;
-      scope.oaCheckForm.forEach(function (element) {
+  let registerListener = (scope) => {
+    let cancelTrans = $transitions.onStart({}, (trans) => {
+      let isDirty = false;
+      scope.oaCheckForm.forEach((element) => {
         if (!element.$submitted && element.$dirty) {
           isDirty = true;
         }
       }, this);
 
       if (!isDirty) {
-        scope.cancelTrans();
+        cancelTrans();
         return;
       }
 
@@ -55,21 +54,18 @@ app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
        */
       trans.abort();
 
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         animation: true,
         ariaLabelledBy: "modal-title-bottom",
         ariaDescribedBy: "modal-body-bottom",
-        template: require("../templates/oa-check-form.html"),
-        controller: function ($scope) {
-          $scope.ok = function () {
-            scope.cancelTrans();
-            modalInstance.close();
-            $state.go(trans.to().name, trans.params());
-          };
-
-          $scope.cancel = function () {
-            modalInstance.dismiss("cancel");
-          };
+        component: "oaCheckFormModal",
+        resolve: {
+          trans: () => {
+            return trans;
+          },
+          cancelTrans: () => {
+            return cancelTrans;
+          }
         }
       });
 
@@ -94,4 +90,4 @@ app.directive("oaCheckForm", function ($uibModal, $state, $transitions) {
       }
     }
   };
-});
+};

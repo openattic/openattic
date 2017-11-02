@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 Tiago Melo <tspmelo@gmail.com>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,10 +30,27 @@
  */
 "use strict";
 
-angular.module("openattic.navigation", []);
+class oaCheckFormModal {
+  constructor ($state) {
+    this.$state = $state;
+  }
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+  ok () {
+    this.resolve.cancelTrans();
+    this.modalInstance.close();
+    this.$state.go(this.resolve.trans.to().name, this.resolve.trans.params());
+  }
 
-function requireAll (require) {
-  require.keys().forEach(require);
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  }
 }
+
+export default {
+  template: require("./oa-check-form-modal.component.html"),
+  controller: oaCheckFormModal,
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  }
+};

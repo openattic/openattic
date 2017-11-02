@@ -27,6 +27,8 @@ django_jenkins
 installed_apps.d/coverage
 installed_apps.d/django_jenkins
 reports/
+.protractor-fail-fast
+build/
 
 # From openattic-gui
 webui/.protractor-fail-fast
@@ -58,5 +60,3 @@ env/
 
 # VS Code
 .vscode
-
-
