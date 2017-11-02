@@ -30,10 +30,27 @@
  */
 "use strict";
 
-export default angular.module("openattic.cephErasureCodeProfiles", []);
+import globalConfig from "globalConfig";
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
+export default class CephErasureCodeProfilesService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "ceph/:fsid/erasure-code-profiles/:id", {
+      fsid: "@fsid",
+      id: "@id"
+    }, {
+      query: {
+        method: "GET",
+        isArray: true,
+        transformResponse: (data) => {
+          return JSON.parse(data).results;
+        }
+      },
+      getfailureDomains: {
+        url: globalConfig.API.URL + "ceph/:fsid/crushmap",
+        method: "GET"
+      }
+    });
 
-function requireAll (require) {
-  require.keys().forEach(require);
+    Object.assign(this, res);
+  }
 }

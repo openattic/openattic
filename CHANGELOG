@@ -26,6 +26,7 @@ Added
 Changed
 ~~~~~~~
 * WebUI: Migration of Dashboard module into Angular (OP-2861)
+* WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 
 Fixed
 ~~~~~
