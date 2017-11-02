@@ -31,8 +31,8 @@
 "use strict";
 
 import dashboard from "./dashboard/dashboard.component";
+import dashboardRoutes from "./dashboard.routes";
 
 angular.module("openattic.dashboard", [])
-  .component("dashboard", dashboard);
-
-require("./dashboard.routes");
+  .component("dashboard", dashboard)
+  .config(dashboardRoutes);
