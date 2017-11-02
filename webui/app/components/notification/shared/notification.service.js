@@ -31,100 +31,107 @@
 "use strict";
 
 import globalConfig from "globalConfig";
+import _ from "lodash";
 
-var app = angular.module("openattic.notification");
+/**
+ * Notification class used as UI presentational widget to show API errors.
+ * @param {Object} config configuration object with properties
+ * @property {Object} toastyOptions toasty compatible options, used when creating a toasty
+ * @property {string} type toasty type
+ * @property {string} type type of the notification
+ */
+export default class Notification {
+  constructor (toasty, TWDEFAULTS, $localStorage) {
+    this.$localStorage = $localStorage;
+    this.TWDEFAULTS = TWDEFAULTS;
+    this.toasty = toasty;
 
-app.value("TWDEFAULTS", {
-  default: "default",
-  info: "info",
-  wait: "wait",
-  success: "success",
-  error: "error",
-  warning: "warning",
-  options: {
-    title: "",
-    msg: "",
-    type: "error"
+    /**
+     * Array with the last shown notifications
+     */
+    if (!$localStorage.notifications) {
+      $localStorage.notifications = [];
+    }
+    this.recent = $localStorage.notifications;
+
+    /**
+     * Method to be called when there is a new notification
+     */
+    this.notify = null;
+
+    /*
+     * Creates the different notification types.
+     */
+    _.forIn(TWDEFAULTS, (value, key) => {
+      if (["default", "options"].indexOf(key) > -1) {
+        return;
+      }
+      this[key] = (opts, error) => {
+        let options = Object.assign({}, opts, {
+          type: value,
+          timeout: globalConfig.GUI.defaultNotificationTimes[key]
+        });
+        return this.show(options, error);
+      };
+    });
+
   }
-});
 
-app.factory("Notification", function ($timeout, toasty, TWDEFAULTS, $localStorage) {
-  /**
-   * Notification class used as UI presentational widget to show API errors.
-   * @param {Object} config configuration object with properties
-   * @property {Object} toastyOptions toasty compatible options, used when creating a toasty
-   * @property {string} type toasty type
-   * @property {string} type type of the notification
-   * @return {Notification}       current Notification instance
-   */
-  var Notification = function (config) {
+  setConfig (config) {
     this.delayPromise = undefined;
     this.delay = 5;
-    this.options = angular.extend({}, TWDEFAULTS.options, config);
+    this.options = Object.assign({}, this.TWDEFAULTS.options, config);
     return this;
-  };
-
-  /**
-   * Array with the last shown notifications
-   */
-  if (!$localStorage.notifications) {
-    $localStorage.notifications = [];
   }
-  var recent = $localStorage.notifications;
-
-  /**
-   * Method to be called when there is a new notification
-   */
-  var notify = null;
 
   /**
    * Method used for subscribing to notifications
    * @param {method} callback the method to be called
    */
-  Notification.subscribe = function (callback) {
-    notify = callback;
-    notify(recent);
-  };
+  subscribe (callback) {
+    this.notify = callback;
+    this.notify(this.recent);
+  }
 
   /**
    * Method used to remove all current saved notifications
    */
-  Notification.removeAll = function () {
-    recent = [];
-    $localStorage.notifications = [];
-    notify(recent);
-  };
+  removeAll () {
+    this.recent = [];
+    this.$localStorage.notifications = [];
+    this.notify(this.recent);
+  }
 
   /**
    * Method used for saving a shown notification (check show() method).
    * @param {Object} notification
    */
-  var save = function (notification) {
+  save (notification) {
     /* string representation of the Date object so it can be directly compared
     with the timestamps parsed from localStorage */
     notification.timestamp = (new Date()).toJSON();
 
-    recent.push(notification);
-    while (recent.length > 10) {
-      recent.shift();
+    this.recent.push(notification);
+    while (this.recent.length > 10) {
+      this.recent.shift();
     }
 
-    $localStorage.notifications = recent;
+    this.$localStorage.notifications = this.recent;
 
-    if (notify) {
-      notify(recent);
+    if (this.notify) {
+      this.notify(this.recent);
     }
-  };
+  }
 
   /**
    * Method used for setting/resetting the delay (check show() method).
    * @param {number} delay the delay to be used (in milliseconds). Defaults to 0 (non-cancelable notifications)
    * @return {Notification}       current Notification instance
    */
-  Notification.prototype.setDelay = function (delay) {
+  setDelay (delay) {
     this.delay = delay;
     return this;
-  };
+  }
 
   /**
    * Method showing (displaying) the notification.
@@ -136,55 +143,35 @@ app.factory("Notification", function ($timeout, toasty, TWDEFAULTS, $localStorag
    * @param  {Object} error object whose default notification we want to cancel
    * @return {Notification}       current Notification instance
    */
-  Notification.prototype.show = function (opts, error) {
+  show (opts, error) {
     if (error && error.preventDefault) {
       error.preventDefault();
     }
-    if (angular.isUndefined(this.delay) || this.delay < 5) {
+    if (_.isUndefined(this.delay) || this.delay < 5) {
       this.setDelay(5);
     }
-    var options = angular.extend({}, TWDEFAULTS.options, this.options, opts);
-    this.delayPromise = $timeout(function () {
-      if (angular.isUndefined(options.timeout)) {
+    let options = Object.assign({}, this.TWDEFAULTS.options, this.options, opts);
+    this.delayPromise = setTimeout(() => {
+      if (_.isUndefined(options.timeout)) {
         options.timeout = globalConfig.GUI.defaultNotificationTimes[options.type];
       }
-      save(options);
-      toasty[options.type](options);
+      this.save(options);
+      this.toasty[options.type](options);
     }, this.delay);
     return this;
-  };
+  }
 
   /**
    * Method preventing notification from being shown (displayed)
    * @return {Notification}       current Notification instance
    */
-  Notification.prototype.cancel = function () {
+  cancel () {
     if (this.delayPromise) {
-      $timeout.cancel(this.delayPromise);
+      clearTimeout(this.delayPromise);
       this.delay = 0;
     }
+
     return this;
-  };
+  }
 
-  Notification.show = function (opts, error) {
-    return Notification.prototype.show.call(Notification.prototype, opts, error);
-  };
-
-  /*
-   * Creates the different notification types.
-   */
-  angular.forEach(TWDEFAULTS, function (key) {
-    if (["default", "options"].indexOf(key) > -1) {
-      return;
-    }
-    Notification[key] = function (opts, error) {
-      var options = angular.extend({}, opts, {
-        type: TWDEFAULTS[key],
-        timeout: globalConfig.GUI.defaultNotificationTimes[key]
-      });
-      return Notification.prototype.show.call(Notification.prototype, options, error);
-    };
-  });
-
-  return Notification;
-});
+}

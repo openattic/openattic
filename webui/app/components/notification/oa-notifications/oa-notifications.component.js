@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 Tiago Melo <tspmelo@gmail.com>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,17 +30,24 @@
  */
 "use strict";
 
-import ApiErrorDecoratorService from "./shared/api-error-decorator.service";
-import ApiHttpErrorInterceptorService from "./shared/api-http-error-interceptor.service";
-import ApiHttpTimeoutInterceptorService from "./shared/api-http-timeout-interceptor.service";
+class OaNotifications {
+  constructor (Notification) {
+    this.Notification = Notification;
+    this.notifications = [];
+  }
 
-angular.module("openattic.apidecorator", [
-  "openattic.notification"
-])
-  .service("ApiErrorDecoratorService", ApiErrorDecoratorService)
-  .service("ApiHttpErrorInterceptorService", ApiHttpErrorInterceptorService)
-  .service("ApiHttpTimeoutInterceptorService", ApiHttpTimeoutInterceptorService)
-  .config(function ($httpProvider) {
-    $httpProvider.interceptors.push("ApiHttpErrorInterceptorService");
-    $httpProvider.interceptors.push("ApiHttpTimeoutInterceptorService");
-  });
+  $onInit () {
+    this.Notification.subscribe((notifications) => {
+      this.notifications = notifications;
+    });
+  }
+
+  removeAll () {
+    this.Notification.removeAll();
+  }
+}
+
+export default{
+  template: require("./oa-notifications.component.html"),
+  controller: OaNotifications
+};

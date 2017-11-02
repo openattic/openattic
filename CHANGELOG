@@ -29,6 +29,7 @@ Changed
 * WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 * WebUI: Migration of Navigation module into Angular (OP-2864)
 * WebUI: Migration of Auth module into Angular (OP-2851)
+* WebUI: Migration of Notification module into Angular (OP-2865)
 
 Fixed
 ~~~~~
