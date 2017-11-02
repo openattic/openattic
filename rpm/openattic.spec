@@ -130,6 +130,7 @@ mkdir -p %{buildroot}/srv/www/htdocs/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/apache2/conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
@@ -183,6 +184,9 @@ install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_prefix}/lib/tmpfiles.d
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/apache2/conf.d/
+
+# Install daily cron job
+install -m 755 etc/cron.daily/%{name} %{buildroot}%{_sysconfdir}/cron.daily/
 
 %if 0%{?suse_version} >= 1020
 %fdupes %{buildroot}
@@ -260,6 +264,8 @@ systemctl try-restart apache2
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
 %config %{_sysconfdir}/apache2/conf.d/%{name}.conf
 %config %{_sysconfdir}/logrotate.d/%{name}
+
+%{_sysconfdir}/cron.daily/%{name}
 
 %if 0%{?suse_version}
 /var/adm/fillup-templates/sysconfig.%{name}
