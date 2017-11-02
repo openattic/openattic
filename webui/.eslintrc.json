@@ -45,7 +45,7 @@
     "angular/component-name": [2,"/^[a-z].*$/"],
     "angular/directive-name": [2,"/^[a-z].*$/"],
     "angular/factory-name": [2,"/^[a-z].*$/"],
-    "angular/service-name": [2,"/^[a-z].*$/"],
+    "angular/service-name": 0,
     "angular/file-name": 0,
     "angular/filter-name": [2,"/^[a-z].*$/"],
     "angular/module-name": [2,"/^openattic.[a-z].*$/"],
@@ -53,7 +53,7 @@
     // Conventions,
     "angular/di-order": 0, // Order injections alphabetically
     "angular/di": [2,"function"], // Only inject through function parameters
-    "angular/function-type": [2,"anonymous"],
+    "angular/function-type": 0,
     "angular/module-dependency-order": 0,
     "angular/no-service-method": 0,
     "angular/one-dependency-per-line": 0,

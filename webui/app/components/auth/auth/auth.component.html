@@ -15,6 +15,7 @@
              ng-class="{'has-error': ($ctrl.submitted || loginForm.username.$dirty) && loginForm.username.$invalid}">
           <input name="username"
                  ng-model="$ctrl.username"
+                 ng-change="$ctrl.submitted = false;"
                  type="text"
                  placeholder="Enter your username..."
                  class="form-control"
@@ -38,6 +39,7 @@
                    name="password"
                    type="password"
                    ng-model="$ctrl.password"
+                   ng-change="$ctrl.submitted = false;"
                    placeholder="Enter your password..."
                    class="form-control"
                    required

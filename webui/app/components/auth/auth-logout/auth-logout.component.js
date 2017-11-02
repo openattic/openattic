@@ -30,16 +30,23 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+class AuthLogoutComponent {
+  constructor ($state, authService, authUserService) {
+    this.$state = $state;
+    this.authService = authService;
+    this.authUserService = authUserService;
+  }
+  handleLogout () {
+    this.authService.logout()
+      .$promise
+      .then(() => {
+        this.authUserService.user = null;
+        this.$state.go("login");
+      });
+  }
+}
 
-var app = angular.module("openattic.auth");
-app.factory("authService", function ($resource) {
-  return $resource(globalConfig.API.URL + "auth", {}, {
-    login: {method: "POST"},
-    logout: {method: "DELETE"},
-    kerberos: {
-      method: "GET",
-      url: "/openattic/accounts/kerblogin.js"
-    }
-  });
-});
+export default {
+  template: require("./auth-logout.component.html"),
+  controller: AuthLogoutComponent
+};

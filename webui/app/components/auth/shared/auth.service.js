@@ -30,15 +30,19 @@
  */
 "use strict";
 
-//autoFocus
-export default ($timeout) => {
-  return {
-    restrict: "A",
-    link: function ($element) {
-      $timeout(() => {
-        $element.focus();
-      }, 0);
-    }
-  };
-};
+import globalConfig from "globalConfig";
 
+export default class AuthService {
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "auth", {}, {
+      login: {method: "POST"},
+      logout: {method: "DELETE"},
+      kerberos: {
+        method: "GET",
+        url: "/openattic/accounts/kerblogin.js"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}
