@@ -75,7 +75,7 @@ export default class ApiErrorDecoratorService {
       }
       notificationConfig.msg = detailMsg || simpleMsg;
       error.message = notificationConfig.msg;
-      notification = new this.Notification(notificationConfig, error)
+      notification = this.Notification.setConfig(notificationConfig)
         .show();
 
       /**

@@ -36,7 +36,7 @@ import "../components/auth/auth.module";
 import "../components/dashboard/dashboard.module";
 import "../components/grafana/grafana.module";
 import "../components/navigation/navigation.module";
-import "../components/notification/module";
+import "../components/notification/notification.module";
 import "../components/settings/settings.module";
 import "../components/shared/shared.module";
 import "../scripts/services/sizeParserService";

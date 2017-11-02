@@ -10,9 +10,9 @@
 <div class="dropdown-container">
   <div class="dropdown-toolbar">
     <div class="dropdown-toolbar-actions"
-         ng-show="notifications.length > 0">
+         ng-show="$ctrl.notifications.length > 0">
       <a href=""
-         ng-click="removeAll()">Remove all</a>
+         ng-click="$ctrl.removeAll()">Remove all</a>
     </div>
     <h3 class="dropdown-toolbar-title">Recent Notifications</h3>
   </div>
@@ -20,7 +20,7 @@
   <ul class="dropdown-menu">
     <li class="notification"
         ng-class="[{'active' : $odd}, value.type]"
-        ng-repeat="value in notifications  | orderBy : 'timestamp' : true track by $index">
+        ng-repeat="value in $ctrl.notifications  | orderBy : 'timestamp' : true track by $index">
       <div class="media">
         <div class="media-left">
           <div class="media-object img-circle"
@@ -41,7 +41,7 @@
   </ul>
 
   <div class="dropdown-footer text-center"
-       ng-show="notifications.length == 0">
+       ng-show="$ctrl.notifications.length == 0">
     No Notifications
   </div>
 </div>
