@@ -40,7 +40,7 @@ class AuthLogoutComponent {
     this.authService.logout()
       .$promise
       .then(() => {
-        this.authUserService.user = null;
+        this.authUserService.remove();
         this.$state.go("login");
       });
   }

@@ -50,7 +50,7 @@ class AuthComponent {
       this.password = globalConfig.GUI.quickLogin.password;
     }
 
-    if (this.authUserService.user) {
+    if (this.authUserService.isLoggedIn()) {
       this.$state.go("dashboard");
     }
   }
@@ -64,7 +64,7 @@ class AuthComponent {
       "stay_signed_in": this.staySignedIn === true
     };
     this.authService.login(loginData, (res) => {
-      this.authUserService.user = res;
+      this.authUserService.set(res);
 
       this.$state.go("dashboard");
     }, (error) => {

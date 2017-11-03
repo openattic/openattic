@@ -40,7 +40,7 @@ class Userinfo {
     this.usersService.current()
       .$promise
       .then((res) => {
-        this.authUserService.user = res;
+        this.authUserService.set(res);
         this.user = res;
       })
       .catch((error) => {

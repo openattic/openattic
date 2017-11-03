@@ -79,20 +79,36 @@ app.config(function ($httpProvider) {
 });
 
 app.run(function ($rootScope, usersService, $state, $transitions,
-    authUserService) {
-  $transitions.onSuccess({}, function (trans) {
-    usersService.current().$promise.then(function () {
-      authUserService.loggedIn = true;
-      if (trans.to().name === "login") {
-        $state.go("dashboard");
-      }
-    }).catch(function (error) {
-      error.ignoreStatusCode(401);
-      authUserService.loggedIn = false;
-    });
+    authUserService, $q) {
+
+  $transitions.onStart({}, (trans) => {
+    const deferred = $q.defer();
+
+    usersService.current()
+      .$promise
+      .then((user) => {
+        authUserService.set(user);
+        if (trans.to().name === "login") {
+          deferred.resolve($state.target("dashboard", undefined, { location: true }));
+        } else {
+          deferred.resolve(true);
+        }
+      }).catch((error) => {
+        error.ignoreStatusCode(401);
+        authUserService.remove();
+
+        if (trans.to().name === "login") {
+          deferred.resolve(true);
+        } else {
+          deferred.resolve($state.target("login", undefined, { location: true }));
+        }
+      });
+
+    return deferred.promise;
   });
+
   $rootScope.loginActive = function () {
-    return !authUserService.loggedIn;
+    return !authUserService.isLoggedIn();
   };
   var hostname = window.location.host.split(".")[0];
   // check if the hostname looks like the first octet of an IP address

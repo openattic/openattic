@@ -32,7 +32,18 @@
 
 export default class AuthUserService {
   constructor () {
-    this.loggedIn = false;
-    this.user = null;
+    this.user = undefined;
+  }
+
+  set (user) {
+    this.user = user;
+  }
+
+  remove () {
+    this.user = undefined;
+  }
+
+  isLoggedIn () {
+    return _.isObject(this.user);
   }
 }
