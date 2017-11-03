@@ -30,9 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCrushmap");
-app.filter("humanizeRuleNum", function (humanizeIntFilter) {
-  var getRealNum = function (activeRuleset, step) {
+export default (humanizeIntFilter) => {
+  let getRealNum = (activeRuleset, step) => {
     if (!step) {
       return;
     }
@@ -46,12 +45,12 @@ app.filter("humanizeRuleNum", function (humanizeIntFilter) {
     return { min: step.num };
   };
 
-  return function (inp, activeRuleset) {
+  return (inp, activeRuleset) => {
     if (!inp || !activeRuleset) {
       return "";
     }
-    var num = getRealNum(activeRuleset, inp);
-    var ret = humanizeIntFilter(num.min);
+    let num = getRealNum(activeRuleset, inp);
+    let ret = humanizeIntFilter(num.min);
     if (num.min === 0 && num.max > 0) {
       // if num is 0 but max is > 0, say "up to x" instead of "no to x"
       ret = "up";
@@ -61,4 +60,4 @@ app.filter("humanizeRuleNum", function (humanizeIntFilter) {
     }
     return ret;
   };
-});
+};

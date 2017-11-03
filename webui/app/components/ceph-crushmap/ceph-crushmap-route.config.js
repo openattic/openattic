@@ -30,19 +30,17 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephCrushmap");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("crushmap", {
       url: "/ceph/crushmap",
       views: {
         "main": {
-          template: require("../templates/crushmap.html"),
-          controller: "CephCrushmapCtrl"
+          component: "cephCrushmap"
         }
       },
       ncyBreadcrumb: {
         label: "CRUSH Map Editor"
       }
     });
-});
+};

@@ -32,6 +32,7 @@ Changed
 * WebUI: Migration of Notification module into Angular (OP-2865)
 * WebUI: Migration of Settings module into Angular (OP-2867)
 * WebUI: Migration of Ceph Nodes module into Angular (OP-2857)
+* WebUI: Migration of Ceph Crushmap module into Angular (OP-2853)
 
 Fixed
 ~~~~~
