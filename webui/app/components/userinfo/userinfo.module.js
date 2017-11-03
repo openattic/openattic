@@ -30,21 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.userinfo");
-app.directive("userinfo", function () {
-  return {
-    restrict: "A",
-    template: require("../templates/userinfo.html"),
-    controller: function (authUserService, usersService, $scope) {
-      usersService.current()
-        .$promise
-        .then(function (res) {
-          authUserService.user = res;
-          $scope.user = res;
-        })
-        .catch(function (error) {
-          error.ignoreStatusCode(401);
-        });
-    }
-  };
-});
+import userinfo from "./userinfo/userinfo.component";
+
+angular.module("openattic.userinfo", [
+  "openattic.users"
+])
+  .component("userinfo", userinfo);

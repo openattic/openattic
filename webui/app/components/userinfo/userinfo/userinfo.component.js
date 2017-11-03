@@ -30,14 +30,26 @@
  */
 "use strict";
 
-import "../users/module";
+class Userinfo {
+  constructor (authUserService, usersService) {
+    this.authUserService = authUserService;
+    this.usersService = usersService;
+  }
 
-angular.module("openattic.userinfo", [
-  "openattic.users"
-]);
-
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
+  $onInit () {
+    this.usersService.current()
+      .$promise
+      .then((res) => {
+        this.authUserService.user = res;
+        this.user = res;
+      })
+      .catch((error) => {
+        error.ignoreStatusCode(401);
+      });
+  }
 }
+
+export default{
+  template: require("./userinfo.component.html"),
+  controller: Userinfo
+};
