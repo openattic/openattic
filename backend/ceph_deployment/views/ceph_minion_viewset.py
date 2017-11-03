@@ -47,6 +47,7 @@ class CephMinionViewSet(NodbViewSet):
 
     serializer_class = CephMinionSerializer
     filter_class = CephMinionFilter
+    search_fields = ("hostname",)
     lookup_value_regex = r'[^/]+'
 
     def get_queryset(self):

@@ -15,11 +15,13 @@ import json
 from django.test import TestCase
 from mock import mock
 from requests import ConnectionError
-
 from ceph_deployment.models.ceph_minion import all_metadata, merge_pillar_metadata, CephMinion
 from deepsea import DeepSea
 from ifconfig.models import get_host_name
 from rest_client import BadResponseFormatException, RequestException
+from django.conf import settings
+from sysutils.database_utils import make_default_admin
+from nodb.models import NodbQuerySet
 
 
 class DeepSeaTestCase(TestCase):
@@ -616,3 +618,50 @@ class MetadataTestCase(TestCase):
         self.assertTrue(m.attribute_is_unevaluated_lazy_property('addresses'))
         print m.addresses
         self.assertEqual(m.addresses, {'172.217.22.35', '2a00:1450:4001:81b::2003'})
+
+
+class CephMinionViewSetTestCase(TestCase):
+    def get_queryset():
+        class MyCephMinion(CephMinion):
+
+            @staticmethod
+            def get_all_objects(context, query):
+                minions = [{
+                    'hostname': 'aaa',
+                    'roles': ['storage', 'master', 'mon', 'igw', 'mgr'],
+                    'public_network': '192.142.110.0/24',
+                    'cluster_id': 'b24c8ef2-3b64-38a6-c15d-aa3f62305f34',
+                    'addresses': ['192.142.110.124']
+                }, {
+                    'hostname': 'bbb',
+                    'roles': ['storage', 'mon', 'igw', 'mgr'],
+                    'public_network': '192.142.110.0/24',
+                    'cluster_id': 'b24c8ef2-3b64-38a6-c15d-aa3f62305f34',
+                    'addresses': ['192.142.110.125']
+                }]
+                return [CephMinion(**CephMinion.make_model_args(host)) for host in minions]
+
+        return NodbQuerySet(MyCephMinion)
+
+    @classmethod
+    def setUpClass(self):
+        make_default_admin()
+
+    def setUp(self):
+        self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
+
+    @mock.patch('ceph_deployment.views.ceph_minion_viewset.CephMinionViewSet.get_queryset',
+                side_effect=get_queryset)
+    def test_search_wo_value(self, view_mock):
+        response = self.client.get('/api/cephminions?ordering=hostname&page=1'
+                                   '&pageSize=10&search=')
+        content = json.loads(response.content)
+        self.assertEqual(content['count'], 2)
+
+    @mock.patch('ceph_deployment.views.ceph_minion_viewset.CephMinionViewSet.get_queryset',
+                side_effect=get_queryset)
+    def test_search_w_value(self, view_mock):
+        response = self.client.get('/api/cephminions?ordering=hostname&page=1'
+                                   '&pageSize=10&search=aaa')
+        content = json.loads(response.content)
+        self.assertEqual(content['count'], 1)

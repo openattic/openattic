@@ -39,6 +39,7 @@ Changed
 Fixed
 ~~~~~
 * Backend: Fix namespace issue with backend/views.py (OP-2896)
+* Backend: Node search field isn't working (OP-2886)
 
 Removed
 ~~~~~~~
