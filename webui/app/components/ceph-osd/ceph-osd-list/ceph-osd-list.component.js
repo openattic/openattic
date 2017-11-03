@@ -31,8 +31,7 @@
 "use strict";
 
 class CephOsdList {
-  constructor ($scope, $state, $filter, $uibModal, cephOsdService, registryService) {
-    this.$scope = $scope;
+  constructor ($state, $filter, $uibModal, cephOsdService, registryService) {
     this.$state = $state;
     this.$filter = $filter;
     this.$uibModal = $uibModal;
@@ -53,14 +52,6 @@ class CephOsdList {
     };
 
     this.selection = {};
-
-    $scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
-        return;
-      }
-
-      this.getOsdList();
-    }, true);
   }
 
   onClusterLoad (cluster) {

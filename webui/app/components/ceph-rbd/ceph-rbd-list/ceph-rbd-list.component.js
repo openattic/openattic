@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRbdList {
   constructor ($scope, $state, $filter, $uibModal, $q, cephRbdService,
       registryService, cephPoolsService, oaTabSetService) {
@@ -60,13 +62,13 @@ class CephRbdList {
       active: 0,
       tabs: {
         status: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephRbds.detail.details",
           class: "tc_statusTab",
           name: "Status"
         },
         statistics: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephRbds.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
@@ -78,14 +80,6 @@ class CephRbdList {
       linkedBy: "id",
       jumpTo: "more"
     };
-
-    $scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
-        return;
-      }
-
-      this.getRbdList();
-    }, true);
   }
 
   onClusterLoad (cluster) {

@@ -48,7 +48,6 @@ class CephCrushmapStepsetComponent {
   }
 
   onUpdate () {
-  // this.$watchGroup(["replicas_source", "replicas_pos", "replicas_neg"], function 
     if (this.replicas_source === "fix") {
       this.stepset.num = 0;
     } else if (this.replicas_source === "pos") {

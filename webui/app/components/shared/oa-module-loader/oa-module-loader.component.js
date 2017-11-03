@@ -200,15 +200,15 @@ class OaModuleLoader {
   }
 
   $onInit () {
-    this.displayLoadingPanelValue = angular.isUndefined(this.displayLoadingPanel) ||
+    this.displayLoadingPanelValue = _.isUndefined(this.displayLoadingPanel) ||
         this.displayLoadingPanel === "true";
     this.loadModule();
   }
 
   loadModule () {
-    if (angular.isDefined(this.module)) {
+    if (_.isString(this.module)) {
       this.moduleAvailable = undefined;
-      var fsid = this.registryService && this.registryService.selectedCluster ?
+      const fsid = this.registryService && this.registryService.selectedCluster ?
         this.registryService.selectedCluster.fsid : undefined;
       this.oaModuleLoaderService.get({
         module: this.module,
@@ -234,14 +234,14 @@ class OaModuleLoader {
   }
 
   getErrorTitle (reason) {
-    if (angular.isDefined(this.reasons[reason])) {
+    if (_.isObject(this.reasons[reason])) {
       return this.reasons[reason].title;
     }
     return "Error";
   }
 
   getErrorTemplate (reason) {
-    if (angular.isDefined(this.reasons[reason])) {
+    if (_.isUndefined(this.reasons[reason])) {
       return "components/shared/oa-module-loader/reason-" + reason + "-" + this.reasons[reason].template + ".html";
     }
     return "components/shared/oa-module-loader/reason-default.html";

@@ -32,19 +32,18 @@
 
 class OaSubmitButton {
 
-  constructor ($timeout) {
-    this.$timeout = $timeout;
+  constructor () {
     this.loading = false;
   }
 
   submitAction () {
-    this.$timeout(() => {
+    setTimeout(() => {
       this.loading = this.form.$valid;
       if (this.form.$valid) {
         this.onSubmit();
       } else {
         let jQuerySelector = [];
-        angular.forEach(this.form, (value, key) => {
+        _.forIn(this.form, (value, key) => {
           if (!key.startsWith("$") && Object.keys(value.$error).length > 0) {
             jQuerySelector.push(`[name='${key}']`);
           }

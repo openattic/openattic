@@ -30,11 +30,12 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephNfsList {
 
-  constructor ($scope, $filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
+  constructor ($filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
       cephNfsService, cephNfsStateService, cephNfsFsal) {
-    this.$scope = $scope;
     this.$filter = $filter;
     this.$state = $state;
     this.$uibModal = $uibModal;
@@ -63,7 +64,7 @@ class CephNfsList {
       active: 0,
       tabs: {
         status: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephNfs.detail.details",
           class: "tc_detailsTab",
           name: "Details"
@@ -78,28 +79,19 @@ class CephNfsList {
     };
   }
 
-  $onInit () {
-    this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
-        return;
-      }
-      this.getNfsList();
-    }, true);
-
-    this.$scope.$watchCollection("$ctrl.selection", (selection) => {
-      let items = selection.items;
-      this.multiSelection = items && items.length > 1;
-      this.hasSelection = items && items.length === 1;
-      if (!items || items.length !== 1) {
-        this.$state.go("cephNfs");
-        return;
-      }
-      if (this.$state.current.name === "cephNfs") {
-        this.oaTabSetService.changeTab("cephNfs.detail.details", this.tabData, this.tabConfig, selection);
-      } else {
-        this.oaTabSetService.changeTab(this.$state.current.name, this.tabData, this.tabConfig, selection);
-      }
-    });
+  onSelectionChange (selection) {
+    const items = selection.items;
+    this.multiSelection = items && items.length > 1;
+    this.hasSelection = items && items.length === 1;
+    if (!items || items.length !== 1) {
+      this.$state.go("cephNfs");
+      return;
+    }
+    if (this.$state.current.name === "cephNfs") {
+      this.oaTabSetService.changeTab("cephNfs.detail.details", this.tabData, this.tabConfig, selection);
+    } else {
+      this.oaTabSetService.changeTab(this.$state.current.name, this.tabData, this.tabConfig, selection);
+    }
   }
 
   onClusterLoad (cluster) {

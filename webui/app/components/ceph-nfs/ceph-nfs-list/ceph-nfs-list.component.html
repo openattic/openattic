@@ -15,7 +15,9 @@
                    class="oadatatable tc_cephNfsTable"
                    filter-config="$ctrl.filterConfig"
                    selection="$ctrl.selection"
-                   special="$ctrl">
+                   special="$ctrl"
+                   on-filter-config-change="$ctrl.getNfsList()"
+                   on-selection-change="$ctrl.onSelectionChange(selection)">
         <actions>
           <a class="btn btn-sm btn-primary tc_add_btn"
              type="button"

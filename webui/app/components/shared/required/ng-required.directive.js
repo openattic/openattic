@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 SUSE LLC
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -28,34 +28,36 @@
  * for the JavaScript code in this page.
  *
  */
+
 "use strict";
 
-class OaDeleteConfirmationModal {
-  constructor () {
-    this.input = {
-      enteredName: "",
-      pattern: "yes"
-    };
-  }
-
-  confirm () {
-    this.onConfirm()
-      .then(() => {
-        this.deleteForm.$submitted = true;
-      }, () => {
-        this.deleteForm.$submitted = false;
-      }
-      );
-  }
-}
-
-export default {
-  template: require("./oa-delete-confirmation-modal.component.html"),
-  bindings: {
-    title: "@",
-    onConfirm: "&",
-    onCancel: "&"
-  },
-  transclude: true,
-  controller: OaDeleteConfirmationModal
+/**
+ * @name ngRequired
+ * @restrict A
+ * @description
+ *
+ * This directive adds a '*' sign to the label of the associated form field to visualize that
+ * the field is required.
+ *
+ * An optional expression can be set. If the expression is truthy, then the '*' sign is added
+ * to the label of the form field.
+ */
+export default ($document, $compile) => {
+  return {
+    restrict: "A",
+    link: (scope, element, attrs) => {
+      setTimeout(() => {
+        let labelNode = $document[0].body.querySelector("label[for='" + attrs.id + "']");
+        if (labelNode) {
+          let labelElement = angular.element(labelNode);
+          let spanElement = angular.element("<span class=\"required\"> *</span>");
+          labelElement.append(spanElement);
+          if (attrs.ngRequired) {
+            spanElement.attr("ng-if", attrs.ngRequired);
+            $compile(spanElement)(scope);
+          }
+        }
+      });
+    }
+  };
 };

@@ -30,7 +30,6 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
 /**
  * You need to define some things in order to use it correctly and well, here is an short example and explanation
  * how to use it in a controller (look at the directive for an directive usage example):
@@ -53,23 +52,26 @@ var app = angular.module("openattic.shared");
  *      jumpTo: "<css id of the content element>"
  *    };
  */
-app.service("oaTabSetService", function ($state) {
-  this.changeTab = function (goHere, tabData, tabConfig, selection, index) {
-    if (angular.isUndefined(index)) {
-      Object.keys(tabData.tabs).some(function (tabName, i) {
+export default class OaTabSetService {
+  constructor ($state) {
+    this.$state = $state;
+  }
+  changeTab (goHere, tabData, tabConfig, selection, index) {
+    if (_.isUndefined(index)) {
+      Object.keys(tabData.tabs).some((tabName, i) => {
         index = i;
         return tabData.tabs[tabName].state === goHere;
       });
     }
     tabData.active = index;
     // Make sure that the first object in the selection is an object.
-    if (!angular.isArray(selection.items) || !selection.items.length ||
-        !angular.isObject(selection.items[0])) {
+    if (!_.isArray(selection.items) || !selection.items.length ||
+        !_.isObject(selection.items[0])) {
       return;
     }
-    var stateJump = {};
+    let stateJump = {};
     stateJump[tabConfig.type] = selection.items[0][tabConfig.linkedBy];
     stateJump["#"] = tabConfig.jumpTo;
-    $state.go(goHere, stateJump);
-  };
-});
+    this.$state.go(goHere, stateJump);
+  }
+}

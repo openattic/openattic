@@ -15,7 +15,8 @@
                  filter-config="$ctrl.filterConfig"
                  special="$ctrl.deployed"
                  selection="$ctrl.selection"
-                 on-selection-change="$ctrl.onSelectionChange(selection)">
+                 on-selection-change="$ctrl.onSelectionChange(selection)"
+                 on-filter-config-change="$ctrl.getIscsiList()">
       <actions>
         <a class="btn btn-sm btn-primary tc_add_btn"
            type="button"

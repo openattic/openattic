@@ -30,7 +30,6 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
 /**
  * Show or hide the password of the associated input field in plain text or encrypted when
  * the button is pressed. An icon visualizes the current status.
@@ -41,15 +40,15 @@ var app = angular.module("openattic.shared");
  * </button>
  * @param {string} The identifier of the password input field.
  */
-app.directive("oaPasswordButton", function () {
+export default () => {
   return {
     restrict: "A",
     template: "<i class=\"icon-prepend {{iconClass}}\" uib-tooltip=\"{{iconTooltip}}\"></i>",
     scope: {},
-    link: function (scope, element, attrs) {
-      var inputElement = $("#" + attrs.oaPasswordButton);
+    link: (scope, element, attrs) => {
+      const inputElement = $("#" + attrs.oaPasswordButton);
 
-      var update = function () {
+      const update = () => {
         if (inputElement.attr("type") === "text") {
           scope.iconClass = "fa fa-eye-slash";
           scope.iconTooltip = "Hide";
@@ -59,7 +58,7 @@ app.directive("oaPasswordButton", function () {
         }
       };
 
-      var onClick = function () {
+      const onClick = () => {
         // Modify the type of the input field.
         inputElement.attr("type", (inputElement.attr("type") === "password") ?
           "text" : "password");
@@ -75,4 +74,4 @@ app.directive("oaPasswordButton", function () {
       }
     }
   };
-});
+};
