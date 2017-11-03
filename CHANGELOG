@@ -60,7 +60,6 @@ Changed
 * Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
 * Backend: Cleaned up pep8 warnings of rest app (OP-1515)
 * Backend: Cleaned up pep8 warnings of systemd app (OP-1518)
-* Backend: Use health's "status" instead of "overall_status" (OP-2845)
 * WebUI: Display dates in locale date format. All Django DateTimeFields will
   be returned as ISO 8601 (OP-591)
 * WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
@@ -68,12 +67,9 @@ Changed
 * WebUI/Backend: Salt-API settings should be optional (OP-2722)
 * WebUI: Prevent modal from closing when clicking on the backdrop (OP-2771)
 * WebUI/QA: Refactored unit test setup (OP-2827)
-* WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
-  (OP-2725)
 * WebUI: Don't allow performing a delete action on buckets shared via
   NFS (OP-2768)
 * WebUI: Improve eslint rules (OP-2749)
-* WebUI: Now it is possible to delete a RGW user with buckets (OP-2790)
 * WebUI: Migration of Ceph Pools controllers to components (OP-2399)
 * WebUI: Migration of Ceph OSDs controllers to components (OP-2401)
 * Documentation: Mentioned the AngularJS style guide as the coding style
@@ -99,17 +95,11 @@ Changed
 
 Fixed
 ~~~~~
-* Backend: Fixed Settings page doesn't save new keyring information properly
-  (OP-2729)
 * Backend: The currently logged in user can't delete himself anymore (OP-2738)
 * Backend: Fixed `CephCluster` to return the same `keyring_candidates` twice
   (OP-2782)
 * Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
-* Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
-* Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
 * Backend: Django SECRET_KEY generated using insufficient entropy (OP-2874)
-* Backend: The Grafana dashboard will now be shown automatically when
-  upgrading from oA 2.x to 3.x (OP-2843)
 * Development: Lint unit test correctly (OP-2828)
 * WebUI: Allow users to type in any size into the RBD form (OP-2730)
 * WebUI/QA: RGW bucket "e2e-rgw-add" is not deleted after RGW suite
@@ -123,13 +113,31 @@ Fixed
 * WebUI/QA: Fix random iSCSI e2e test failures (OP-2807, OP-2830)
 * WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
 * WebUI: Fix RGW name validation (OP-2825)
-* Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
 
 Removed
 ~~~~~~~
 * Backend: Removed `utilities.in_unittest` (OP-2776)
 * WebUI: Removed the need to type "yes" to delete tasks (OP-2770)
 
+[3.5.3] - 2017-10-27
+--------------------
+
+Changed
+~~~~~~~
+* WebUI: Now it is possible to delete a RGW user with buckets (OP-2790)
+* WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
+  (OP-2725)
+* Backend: Use health's "status" instead of "overall_status" (OP-2845)
+
+Fixed
+~~~~~
+* Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
+* Backend: Fixed Settings page doesn't save new keyring information properly
+  (OP-2729)
+* Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* Backend: The Grafana dashboard will now be shown automatically when
+  upgrading from oA 2.x to 3.x (OP-2843)
+* Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
 
 [3.5.2] - 2017-10-10
 --------------------
