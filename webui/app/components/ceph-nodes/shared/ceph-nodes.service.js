@@ -32,22 +32,26 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephNodes");
-app.factory("cephNodesService", function ($resource) {
-  return $resource(globalConfig.API.URL + "cephminions/", {
-    hostname: "@hostname",
-    hostnames: "@hostnames"
-  }, {
-    filter: {
-      method: "GET"
-    },
-    scrub: {
-      method: "POST",
-      url: globalConfig.API.URL + "cephminions/:hostname/scrub"
-    },
-    scrub_many: {
-      method: "POST",
-      url: globalConfig.API.URL + "cephminions/scrub_many?hostname_in=:hostnames"
-    }
-  });
-});
+export default class CephNodesService {
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "cephminions/", {
+      hostname: "@hostname",
+      hostnames: "@hostnames"
+    }, {
+      filter: {
+        method: "GET"
+      },
+      scrub: {
+        method: "POST",
+        url: globalConfig.API.URL + "cephminions/:hostname/scrub"
+      },
+      scrub_many: {
+        method: "POST",
+        url: globalConfig.API.URL + "cephminions/scrub_many?hostname_in=:hostnames"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}
+

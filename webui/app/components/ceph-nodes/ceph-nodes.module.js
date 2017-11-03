@@ -34,13 +34,15 @@ import cephNodesScrubModal from "./ceph-nodes-scrub-modal/ceph-nodes-scrub-modal
 import cephNodesDetail from "./ceph-nodes-detail/ceph-nodes-detail.component";
 import cephNodesStatistics from "./ceph-nodes-statistics/ceph-nodes-statistics.component";
 import cephNodesList from "./ceph-nodes-list/ceph-nodes-list.component";
+import CephNodesService from "./shared/ceph-nodes.service";
+import cephNodesRoute from "./ceph-nodes.route";
 
 angular
   .module("openattic.cephNodes", [])
   .component("cephNodesScrubModal", cephNodesScrubModal)
   .component("cephNodesDetail", cephNodesDetail)
   .component("cephNodesStatistics", cephNodesStatistics)
-  .component("cephNodesList", cephNodesList);
+  .component("cephNodesList", cephNodesList)
+  .service("cephNodesService", CephNodesService)
+  .config(cephNodesRoute);
 
-require("./ceph-nodes.route");
-require("./shared/ceph-nodes.service");

@@ -31,6 +31,7 @@ Changed
 * WebUI: Migration of Auth module into Angular (OP-2851)
 * WebUI: Migration of Notification module into Angular (OP-2865)
 * WebUI: Migration of Settings module into Angular (OP-2867)
+* WebUI: Migration of Ceph Nodes module into Angular (OP-2857)
 
 Fixed
 ~~~~~
