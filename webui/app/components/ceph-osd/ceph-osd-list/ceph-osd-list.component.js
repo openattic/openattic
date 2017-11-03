@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephOsdList {
   constructor ($state, $filter, $uibModal, cephOsdService, registryService) {
     this.$state = $state;
@@ -59,7 +61,7 @@ class CephOsdList {
   }
 
   getOsdList () {
-    if (angular.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObject(this.cluster) && this.cluster.results &&
         this.cluster.results.length > 0 && this.registry.selectedCluster) {
       let obj = this.$filter("filter")(this.cluster.results, {fsid: this.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {
