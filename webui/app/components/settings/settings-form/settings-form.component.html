@@ -8,7 +8,7 @@
   </oa-error-panel>
 
   <form ng-show="!$ctrl.error && $ctrl.model.$resolved"
-        name="settingsForm"
+        name="$ctrl.settingsForm"
         role="form"
         class="form-horizontal"
         novalidate
@@ -432,7 +432,7 @@
 
           <!--  Ceph Cluster Keyring File -->
           <div class="form-group"
-               ng-class="{'has-error': (settingsForm.$submitted || settingsForm['cephClusterKeyringFilePath'].$dirty) && settingsForm['cephClusterKeyringFilePath'].$invalid}">
+               ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringFilePath'].$dirty) && $ctrl.settingsForm['cephClusterKeyringFilePath'].$invalid}">
             <label class="col-sm-3 control-label"
                    for="cephClusterKeyringFilePath">Keyring file</label>
             <div class="col-sm-9">
@@ -448,7 +448,7 @@
                      typeahead-on-select="$ctrl.checkCephConnection(cephCluster)"
                      required>
               <span class="help-block tc_cephClusterKeyringFilePathRequired"
-                    ng-show="(settingsForm.$submitted || settingsForm['cephClusterKeyringFilePath'].$dirty) && settingsForm['cephClusterKeyringFilePath'].$error.required">
+                    ng-show="($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringFilePath'].$dirty) && $ctrl.settingsForm['cephClusterKeyringFilePath'].$error.required">
                 Required field
               </span>
             </div>
@@ -456,7 +456,7 @@
 
           <!--  Ceph Cluster Keyring User -->
           <div class="form-group"
-               ng-class="{'has-error': (settingsForm.$submitted || settingsForm['cephClusterKeyringUser'].$dirty) && settingsForm['cephClusterKeyringUser'].$invalid}">
+               ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringUser'].$dirty) && $ctrl.settingsForm['cephClusterKeyringUser'].$invalid}">
             <label class="col-sm-3 control-label"
                    for="cephClusterKeyringUser">Keyring user</label>
             <div class="col-sm-9">
@@ -473,7 +473,7 @@
                      typeahead-on-select="$ctrl.checkCephConnection(cephCluster)"
                      required>
               <span class="help-block tc_cephClusterKeyringUserRequired"
-                    ng-show="(settingsForm.$submitted || settingsForm['cephClusterKeyringUser'].$dirty) && settingsForm['cephClusterKeyringUser'].$error.required">
+                    ng-show="($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringUser'].$dirty) && $ctrl.settingsForm['cephClusterKeyringUser'].$error.required">
                 Required field
               </span>
             </div>
@@ -511,7 +511,7 @@
 
       <div class="panel-footer">
         <div class="button-group text-right">
-          <oa-submit-button form="settingsForm"
+          <oa-submit-button form="$ctrl.settingsForm"
                             on-submit="$ctrl.saveAction()">
             Save
           </oa-submit-button>

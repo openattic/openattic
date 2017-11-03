@@ -32,30 +32,34 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.settings");
-app.factory("settingsFormService", function ($resource) {
-  return $resource(globalConfig.API.URL + "settings",
-    {},
-    {
-      checkDeepSeaConnection: {
-        method: "GET",
-        url: globalConfig.API.URL + "settings/check_deepsea_connection"
-      },
-      checkRgwConnection: {
-        method: "GET",
-        url: globalConfig.API.URL + "settings/check_rgw_connection"
-      },
-      checkGrafanaConnection: {
-        method: "GET",
-        url: globalConfig.API.URL + "settings/check_grafana_connection"
-      },
-      getRgwConfiguration: {
-        method: "GET",
-        url: globalConfig.API.URL + "settings/get_rgw_configuration"
-      },
-      checkCephConnection: {
-        method: "GET",
-        url: globalConfig.API.URL + "settings/check_ceph_configuration"
-      }
-    });
-});
+export default class SettingsFormService {
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "settings",
+      {},
+      {
+        checkDeepSeaConnection: {
+          method: "GET",
+          url: globalConfig.API.URL + "settings/check_deepsea_connection"
+        },
+        checkRgwConnection: {
+          method: "GET",
+          url: globalConfig.API.URL + "settings/check_rgw_connection"
+        },
+        checkGrafanaConnection: {
+          method: "GET",
+          url: globalConfig.API.URL + "settings/check_grafana_connection"
+        },
+        getRgwConfiguration: {
+          method: "GET",
+          url: globalConfig.API.URL + "settings/get_rgw_configuration"
+        },
+        checkCephConnection: {
+          method: "GET",
+          url: globalConfig.API.URL + "settings/check_ceph_configuration"
+        }
+      });
+
+    Object.assign(this, res);
+  }
+}
+

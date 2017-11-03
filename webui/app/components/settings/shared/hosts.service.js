@@ -32,15 +32,19 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.settings");
-app.factory("hostsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "hosts/:id", {
-    id: "@id"
-  },
-  {
-    current: {
-      method: "GET",
-      url: globalConfig.API.URL + "hosts/current"
-    }
-  });
-});
+export default class HostsService {
+
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "hosts/:id", {
+      id: "@id"
+    },
+    {
+      current: {
+        method: "GET",
+        url: globalConfig.API.URL + "hosts/current"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}

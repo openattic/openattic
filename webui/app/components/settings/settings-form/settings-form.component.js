@@ -30,13 +30,13 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class SettingsForm {
-  constructor ($scope, $state, $timeout, $q, settingsFormService,
-      cephClusterService, hostsService, Notification) {
+  constructor ($state, $q, settingsFormService, cephClusterService,
+      hostsService, Notification) {
     this.$q = $q;
-    this.$scope = $scope;
     this.$state = $state;
-    this.$timeout = $timeout;
     this.Notification = Notification;
     this.cephClusterService = cephClusterService;
     this.hostsService = hostsService;
@@ -56,7 +56,7 @@ class SettingsForm {
     this.defaultRgwDeepseaSettings = {
       managed_by_deepsea: true
     };
-    this.rgwDeepseaSettings = angular.copy(this.defaultRgwDeepseaSettings);
+    this.rgwDeepseaSettings = _.cloneDeep(this.defaultRgwDeepseaSettings);
 
     this.managedByDeepSeaEnabled = true;
     this.deepseaConnectionStatus = undefined;
@@ -76,7 +76,7 @@ class SettingsForm {
         if (!this.model.rgw.managed_by_deepsea) {
           this.managedByDeepSeaEnabled = false;
         }
-        angular.forEach(this.model.ceph, (cluster) => {
+        this.model.ceph.forEach((cluster) => {
           this.checkCephConnection(cluster);
           this.cephClusterService.keyringCandidates(cluster)
             .$promise
@@ -114,14 +114,14 @@ class SettingsForm {
   checkDeepSeaConnection () {
     this.deepseaConnectionStatus = undefined;
     if (this.checkDeepSeaConnectionTimeout) {
-      this.$timeout.cancel(this.checkDeepSeaConnectionTimeout);
+      clearTimeout(this.checkDeepSeaConnectionTimeout);
     }
     if (this.isAllDeepSeaPropsDefined(this.model.deepsea)) {
       this.deepseaConnectionStatus = {
         loading: true
       };
-      this.checkDeepSeaConnectionTimeout = this.$timeout(() => {
-        this.rgwDeepSeaSettings = angular.copy(this.defaultRgwDeepseaSettings);
+      this.checkDeepSeaConnectionTimeout = setTimeout(() => {
+        this.rgwDeepSeaSettings = _.cloneDeep(this.defaultRgwDeepseaSettings);
         this.settingsFormService.checkDeepSeaConnection(this.model.deepsea)
           .$promise
           .then((res) => {
@@ -133,7 +133,7 @@ class SettingsForm {
                   if (result.success) {
                     this.rgwDeepSeaSettings = result.rgw;
                     this.managedByDeepSeaEnabled = true;
-                    angular.extend(this.rgwDeepSeaSettings, this.defaultRgwDeepseaSettings);
+                    _.extend(this.rgwDeepSeaSettings, this.defaultRgwDeepseaSettings);
                   } else {
                     this.model.rgw.managed_by_deepsea = false;
                     this.managedByDeepSeaEnabled = false;
@@ -167,13 +167,13 @@ class SettingsForm {
   checkRgwConnection () {
     this.rgwConnectionStatus = undefined;
     if (this.checkRgwConnectionTimeout) {
-      this.$timeout.cancel(this.checkRgwConnectionTimeout);
+      clearTimeout(this.checkRgwConnectionTimeout);
     }
     if (this.isAllRgwPropsDefined(this.model.rgw)) {
       this.rgwConnectionStatus = {
         loading: true
       };
-      this.checkRgwConnectionTimeout = this.$timeout(() => {
+      this.checkRgwConnectionTimeout = setTimeout(() => {
         this.settingsFormService.checkRgwConnection(this.model.rgw)
           .$promise
           .then((res) => {
@@ -188,7 +188,7 @@ class SettingsForm {
 
   rgwManagedByDeepSeaChangeHandler () {
     if (this.model.rgw.managed_by_deepsea) {
-      this.model.rgw = angular.copy(this.rgwDeepSeaSettings);
+      this.model.rgw = _.cloneDeep(this.rgwDeepSeaSettings);
     }
     this.checkRgwConnection();
   }
@@ -205,13 +205,13 @@ class SettingsForm {
   checkGrafanaConnection () {
     this.grafanaConnectionStatus = undefined;
     if (this.checkGrafanaConnectionTimeout) {
-      this.$timeout.cancel(this.checkGrafanaConnectionTimeout);
+      clearTimeout(this.checkGrafanaConnectionTimeout);
     }
     if (this.isAllGrafanaPropsDefined(this.model.grafana)) {
       this.grafanaConnectionStatus = {
         loading: true
       };
-      this.checkGrafanaConnectionTimeout = this.$timeout(() => {
+      this.checkGrafanaConnectionTimeout = setTimeout(() => {
         this.settingsFormService.checkGrafanaConnection(this.model.grafana)
           .$promise
           .then((res) => {
@@ -234,13 +234,13 @@ class SettingsForm {
   checkCephConnection (ceph) {
     this.cephConnectionStatus = undefined;
     if (this.checkCephConnectionTimeout) {
-      this.$timeout.cancel(this.checkCephConnectionTimeout);
+      clearTimeout(this.checkCephConnectionTimeout);
     }
     if (this.isAllCephPropsDefined(ceph)) {
       this.cephConnectionStatus = {
         loading: true
       };
-      this.checkCephConnectionTimeout = this.$timeout(() => {
+      this.checkCephConnectionTimeout = setTimeout(() => {
         this.settingsFormService.checkCephConnection(ceph)
           .$promise
           .then((res) => {
@@ -255,7 +255,7 @@ class SettingsForm {
 
   getKeyringFileTypeahead (fsid) {
     var clusterKeyringCandidates = this.clustersKeyringCandidates[fsid];
-    if (angular.isDefined(clusterKeyringCandidates)) {
+    if (_.isArray(clusterKeyringCandidates)) {
       return clusterKeyringCandidates.reduce((result, item) => {
         return result.concat(item["file-path"]);
       }, []);
@@ -265,7 +265,7 @@ class SettingsForm {
 
   getKeyringUserTypeahead (fsid, keyringFile) {
     var clusterKeyringCandidates = this.clustersKeyringCandidates[fsid];
-    if (angular.isDefined(clusterKeyringCandidates)) {
+    if (_.isArray(clusterKeyringCandidates)) {
       return clusterKeyringCandidates.reduce((result, item) => {
         if (item["file-path"] === keyringFile) {
           return result.concat(item["user-names"]);
@@ -284,10 +284,10 @@ class SettingsForm {
         this.Notification.success({
           msg: "Settings has been saved successfully"
         });
-        this.$scope.settingsForm.$submitted = false;
-        this.$scope.settingsForm.$dirty = false;
+        this.settingsForm.$submitted = false;
+        this.settingsForm.$dirty = false;
       }, () => {
-        this.$scope.settingsForm.$submitted = false;
+        this.settingsForm.$submitted = false;
       });
   }
 }

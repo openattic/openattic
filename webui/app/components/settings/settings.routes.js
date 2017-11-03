@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.settings");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("settings", {
       url: "/settings",
@@ -44,4 +43,4 @@ app.config(function ($stateProvider) {
         label: "Settings"
       }
     });
-});
+};
