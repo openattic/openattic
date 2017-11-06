@@ -272,10 +272,16 @@ class LazyPropertyTest(TestCase):
         def __unicode__(self):
             return u'<TestModel {}>'.format(self.a)
 
+
     def test_simple(self):
         os = list(LazyPropertyTest.TestModel.objects.all())
         for o in os:
             self.assertIsInstance(o.__dict__['a'], int)
+            self.assertTrue(o.attribute_is_unevaluated_lazy_property('b'))
+            self.assertTrue(o.attribute_is_unevaluated_lazy_property('c'))
+            self.assertTrue(o.attribute_is_unevaluated_lazy_property('d'))
+            self.assertTrue(o.attribute_is_unevaluated_lazy_property('e'))
+
         for o in os:
             self.assertEqual(o.b, o.a)
             self.assertIsInstance(o.__dict__['b'], int)
@@ -306,12 +312,36 @@ class LazyPropertyTest(TestCase):
         self.assertIn('d', o1.__dict__)
         self.assertIn('e', o1.__dict__)
 
+    def test_lazy_fkey(self):
+        o1, o2 = LazyFKey.objects.all()
+        self.assertTrue(o1.attribute_is_unevaluated_lazy_property('f_id'))
+        self.assertTrue(o2.attribute_is_unevaluated_lazy_property('f_id'))
+        self.assertIsNone(o1.f)
+        self.assertIsInstance(o2.f, LazyPropertyTest.TestModel)
+        self.assertEqual(o2.f.a, 2)
+
+
+class LazyFKey(NodbModel):
+    f = models.ForeignKey(LazyPropertyTest.TestModel, blank=True, null=True)
+
+    @bulk_attribute_setter(['f_id'])
+    def set_f_id(self, objects, field_names):
+        self.f_id = 2 if self.id == 2 else None
+
+    @staticmethod
+    def get_all_objects(context, query):
+        return [
+            LazyFKey(id=1),
+            LazyFKey(id=2)
+        ]
+
 
 class NodbModelTest(TestCase):
 
     class SimpleModel(NodbModel):
         a = models.IntegerField(primary_key=True)
         b = models.IntegerField()
+        with_default = models.IntegerField(default=42)
 
         @staticmethod
         def get_all_objects(context, query):
@@ -337,3 +367,8 @@ class NodbModelTest(TestCase):
 
         self.assertEqual(m.get_modified_fields(a=second.a), ({'a': 1, 'b': 4}, second))
         self.assertEqual(m.get_modified_fields(a=second.a, update_fields=['a']), ({'a': 1}, second))
+
+    def test_default(self):
+        first, second = NodbModelTest.SimpleModel.objects.all()
+        self.assertEqual(first.with_default, 42)
+        self.assertEqual(second.with_default, 42)
