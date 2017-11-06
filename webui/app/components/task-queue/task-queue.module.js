@@ -30,10 +30,17 @@
  */
 "use strict";
 
-angular.module("openattic.taskQueue", []);
+import TaskQueueFetcher from "./shared/task-queue-fetcher.service";
+import TaskQueueService from "./shared/task-queue.service";
+import TaskQueueSubscriber from "./shared/task-queue-subscriber.service";
+import oaTaskQueueComponent from "./oa-task-queue/oa-task-queue.component";
+import taskQueueDeleteModalComponent from "./task-queue-delete-modal/task-queue-delete-modal.component";
+import taskQueueModalComponent from "./task-queue-modal/task-queue-modal.component";
 
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+angular.module("openattic.taskQueue", [])
+  .component("taskQueueDeleteModalComponent", taskQueueDeleteModalComponent)
+  .component("taskQueueModalComponent", taskQueueModalComponent)
+  .component("oaTaskQueue", oaTaskQueueComponent)
+  .service("taskQueueSubscriber", TaskQueueSubscriber)
+  .service("taskQueueService", TaskQueueService)
+  .service("taskQueueFetcher", TaskQueueFetcher);
