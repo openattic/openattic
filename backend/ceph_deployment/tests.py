@@ -621,27 +621,6 @@ class MetadataTestCase(TestCase):
 
 
 class CephMinionViewSetTestCase(TestCase):
-    def get_queryset():
-        class MyCephMinion(CephMinion):
-
-            @staticmethod
-            def get_all_objects(context, query):
-                minions = [{
-                    'hostname': 'aaa',
-                    'roles': ['storage', 'master', 'mon', 'igw', 'mgr'],
-                    'public_network': '192.142.110.0/24',
-                    'cluster_id': 'b24c8ef2-3b64-38a6-c15d-aa3f62305f34',
-                    'addresses': ['192.142.110.124']
-                }, {
-                    'hostname': 'bbb',
-                    'roles': ['storage', 'mon', 'igw', 'mgr'],
-                    'public_network': '192.142.110.0/24',
-                    'cluster_id': 'b24c8ef2-3b64-38a6-c15d-aa3f62305f34',
-                    'addresses': ['192.142.110.125']
-                }]
-                return [CephMinion(**CephMinion.make_model_args(host)) for host in minions]
-
-        return NodbQuerySet(MyCephMinion)
 
     @classmethod
     def setUpClass(self):
@@ -650,18 +629,30 @@ class CephMinionViewSetTestCase(TestCase):
     def setUp(self):
         self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
 
-    @mock.patch('ceph_deployment.views.ceph_minion_viewset.CephMinionViewSet.get_queryset',
-                side_effect=get_queryset)
-    def test_search_wo_value(self, view_mock):
+    @mock.patch('ceph_deployment.models.ceph_minion.DeepSea')
+    @mock.patch('ceph_deployment.models.ceph_minion.all_metadata')
+    def test_search_wo_value(self, all_metadata_mock, DeepSea_mock):
+        with open('ceph_deployment/tests/metadata.json') as f:
+            _, _, _, _, all_metadata, pillar_data, _ = json.load(f)
+
+        all_metadata_mock.return_value = all_metadata
+        DeepSea_mock.instance.return_value.get_minions.return_value = pillar_data
+
         response = self.client.get('/api/cephminions?ordering=hostname&page=1'
                                    '&pageSize=10&search=')
         content = json.loads(response.content)
-        self.assertEqual(content['count'], 2)
+        self.assertEqual(content['count'], 4)
 
-    @mock.patch('ceph_deployment.views.ceph_minion_viewset.CephMinionViewSet.get_queryset',
-                side_effect=get_queryset)
-    def test_search_w_value(self, view_mock):
+    @mock.patch('ceph_deployment.models.ceph_minion.DeepSea')
+    @mock.patch('ceph_deployment.models.ceph_minion.all_metadata')
+    def test_search_w_value(self, all_metadata_mock, DeepSea_mock):
+        with open('ceph_deployment/tests/metadata.json') as f:
+            _, _, _, _, all_metadata, pillar_data, _ = json.load(f)
+
+        all_metadata_mock.return_value = all_metadata
+        DeepSea_mock.instance.return_value.get_minions.return_value = pillar_data
+
         response = self.client.get('/api/cephminions?ordering=hostname&page=1'
-                                   '&pageSize=10&search=aaa')
+                                   '&pageSize=10&search=host2')
         content = json.loads(response.content)
         self.assertEqual(content['count'], 1)
