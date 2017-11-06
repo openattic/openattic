@@ -33,8 +33,8 @@
 import _ from "lodash";
 
 class CephRbdList {
-  constructor ($scope, $state, $filter, $uibModal, $q, cephRbdService,
-      registryService, cephPoolsService, oaTabSetService, taskQueueSubscriber) {
+  constructor ($state, $filter, $uibModal, $q, cephRbdService, registryService,
+      cephPoolsService, oaTabSetService, taskQueueSubscriber) {
     this.$filter = $filter;
     this.$q = $q;
     this.$state = $state;
