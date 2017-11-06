@@ -34,6 +34,8 @@ import "../ceph-cluster/ceph-cluster.module";
 import cephPoolsAdd from "./ceph-pools-add/ceph-pools-add.component";
 import cephPoolsDeleteModal from "./ceph-pools-delete-modal/ceph-pools-delete-modal.component";
 import cephPoolsList from "./ceph-pools-list/ceph-pools-list.component";
+import cephPoolsRoute from "./ceph-pools.route";
+import CephPoolsService from "./shared/ceph-pools.service";
 
 angular.module("openattic.cephPools", [
   "openattic.cephCluster",
@@ -42,7 +44,6 @@ angular.module("openattic.cephPools", [
 ])
   .component("cephPoolsAdd", cephPoolsAdd)
   .component("cephPoolsDeleteModal", cephPoolsDeleteModal)
-  .component("cephPoolsList", cephPoolsList);
-
-require("./ceph-pools.route");
-require("./shared/ceph-pools.service");
+  .component("cephPoolsList", cephPoolsList)
+  .service("cephPoolsService", CephPoolsService)
+  .config(cephPoolsRoute);

@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephPools");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("cephPools", {
       url          : "/ceph/pools",
@@ -112,4 +111,4 @@ app.config(function ($stateProvider) {
         label: "{{selection.item.name}} details"
       }
     });
-});
+};
