@@ -9,7 +9,6 @@ describe("should test the login", function () {
   var nameRequired = element(by.css(".tc_usernameRequired"));
   var passwdRequired = element(by.css(".tc_passwdRequired"));
   var correctInput = element(by.css(".tc_correctInput"));
-
   var submitBtn = element(by.css('input[type="submit"]'));
 
   it("should login and get to the dashboard site", function () {
@@ -39,8 +38,12 @@ describe("should test the login", function () {
     expect(name.isDisplayed()).toBe(true);
   });
 
-  it("should have an password input field", function () {
+  it("should have a password input field", function () {
     expect(element(by.model("$ctrl.password")).isDisplayed()).toBe(true);
+  });
+
+  it("should have a 'stay signed in' checkbox", function () {
+    expect(element(by.model("$ctrl.staySignedIn")).isPresent()).toBe(true);
   });
 
   it("should show an error if user input field has no data", function () {

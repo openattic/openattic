@@ -44,3 +44,32 @@ class TokenAuthTestCase(TokenAuthTestScenario):
         self.assertEqual(err.exception.response.status_code, 400)
         self.assertEqual(err_message["non_field_errors"][0], "Unable to log in with provided "
                                                              "credentials.")
+
+    def test_get_expire_at_browser_close(self):
+        request_url = self.base_url + "auth"
+
+        # Request a cookie that expires after 2 weeks (Django default).
+        res = requests.post(request_url, json={
+            "username": self.conf.get("options", "admin"),
+            "password": self.conf.get("options", "password"),
+            "stay_signed_in": True
+        })
+        res.raise_for_status()
+        # We can not import django.conf.settings here to get SESSION_COOKIE_NAME,
+        # so we need to hardcode the default name.
+        self.assertIn('sessionid', res.cookies.keys())
+        for cookie in res.cookies:
+            if cookie.name == 'sessionid':
+                self.assertIsInstance(cookie.expires, int)
+
+        # Request a cookie that expires when the browser window is closed.
+        res = requests.post(request_url, data={
+            "username": self.conf.get("options", "admin"),
+            "password": self.conf.get("options", "password"),
+            "stay_signed_in": False
+        })
+        res.raise_for_status()
+        self.assertIn('sessionid', res.cookies.keys())
+        for cookie in res.cookies:
+            if cookie.name == 'sessionid':
+                self.assertIsNone(cookie.expires)

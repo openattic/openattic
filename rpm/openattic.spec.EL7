@@ -197,6 +197,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
+mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/default/
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -261,6 +262,9 @@ install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconf
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
+
+# Install daily cron job
+install -m 755 etc/cron.daily/%{name} %{buildroot}%{_sysconfdir}/cron.daily/
 
 %pre base
 # create openattic user/group  if it does not exist
@@ -348,6 +352,7 @@ fi
 %dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_sbindir}/oaconfig
+%{_sysconfdir}/cron.daily/%{name}
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
 /lib/systemd/system/%{name}-systemd.service
 /lib/tmpfiles.d/%{name}.conf
