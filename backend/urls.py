@@ -14,20 +14,13 @@
 """
 
 from django.conf.urls import url, patterns, include
-from django.views.generic import TemplateView
-
 from django.contrib import admin
 
 admin.autodiscover()
 
 from django.conf import settings
-
 from rest.router import ROUTER
-
 from rest_framework.authtoken import views
-
-from views import AuthView
-
 from module_status import StatusView
 
 
@@ -47,15 +40,9 @@ def _get_openattic_apps():
 js_info_dict = {"packages": list(_get_openattic_apps())}
 
 urlpatterns = [
-    (r'^api/auth$', AuthView.as_view(), {}, 'authenticate'),
-
     (r'^api/', include(ROUTER.urls)),
     (r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     (r'^api/api-token-auth$', views.obtain_auth_token),
-
-    # we need a second URL for the do_login view which can be configured using an Apache
-    # <Location> directive to authenticate using Kerberos
-    (r'^accounts/kerblogin.js$', 'views.do_login', {}, 'kerblogin'),
 
     # module status service
     (r'^api/status/(?P<module_name>[^/]+)', StatusView.as_view(), {}, 'module_status'),

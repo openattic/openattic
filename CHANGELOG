@@ -38,6 +38,7 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: Fix namespace issue with backend/views.py (OP-2896)
 
 Removed
 ~~~~~~~

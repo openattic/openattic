@@ -414,6 +414,7 @@ def __loadmods__():
     modprobe('oa_settings')
     modprobe('oa_logging')
     modprobe('ifconfig')
+    modprobe('rest')
 
 
 __loadmods__()
