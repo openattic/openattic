@@ -15,11 +15,13 @@ import json
 from django.test import TestCase
 from mock import mock
 from requests import ConnectionError
-
 from ceph_deployment.models.ceph_minion import all_metadata, merge_pillar_metadata, CephMinion
 from deepsea import DeepSea
 from ifconfig.models import get_host_name
 from rest_client import BadResponseFormatException, RequestException
+from django.conf import settings
+from sysutils.database_utils import make_default_admin
+from nodb.models import NodbQuerySet
 
 
 class DeepSeaTestCase(TestCase):
@@ -616,3 +618,41 @@ class MetadataTestCase(TestCase):
         self.assertTrue(m.attribute_is_unevaluated_lazy_property('addresses'))
         print m.addresses
         self.assertEqual(m.addresses, {'172.217.22.35', '2a00:1450:4001:81b::2003'})
+
+
+class CephMinionViewSetTestCase(TestCase):
+
+    @classmethod
+    def setUpClass(self):
+        make_default_admin()
+
+    def setUp(self):
+        self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))
+
+    @mock.patch('ceph_deployment.models.ceph_minion.DeepSea')
+    @mock.patch('ceph_deployment.models.ceph_minion.all_metadata')
+    def test_search_wo_value(self, all_metadata_mock, DeepSea_mock):
+        with open('ceph_deployment/tests/metadata.json') as f:
+            _, _, _, _, all_metadata, pillar_data, _ = json.load(f)
+
+        all_metadata_mock.return_value = all_metadata
+        DeepSea_mock.instance.return_value.get_minions.return_value = pillar_data
+
+        response = self.client.get('/api/cephminions?ordering=hostname&page=1'
+                                   '&pageSize=10&search=')
+        content = json.loads(response.content)
+        self.assertEqual(content['count'], 4)
+
+    @mock.patch('ceph_deployment.models.ceph_minion.DeepSea')
+    @mock.patch('ceph_deployment.models.ceph_minion.all_metadata')
+    def test_search_w_value(self, all_metadata_mock, DeepSea_mock):
+        with open('ceph_deployment/tests/metadata.json') as f:
+            _, _, _, _, all_metadata, pillar_data, _ = json.load(f)
+
+        all_metadata_mock.return_value = all_metadata
+        DeepSea_mock.instance.return_value.get_minions.return_value = pillar_data
+
+        response = self.client.get('/api/cephminions?ordering=hostname&page=1'
+                                   '&pageSize=10&search=host2')
+        content = json.loads(response.content)
+        self.assertEqual(content['count'], 1)
