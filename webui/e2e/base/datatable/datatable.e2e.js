@@ -5,7 +5,7 @@ var helpers = require("../../common.js");
 var columnListButton = element(by.css(".tc_columnBtn"));
 var typeListItem = element(by.cssContainingText(".tc_columnItem", "Type"));
 var typeColumn = element(by.cssContainingText("th", "Type"));
-var searchField = element.all(by.model("filterConfig.search")).get(0);
+var searchField = element(by.model("filterConfig.search"));
 var entriesDropDown = element(by.css(".tc_entries_dropdown"));
 var poolRowElements = element.all(by.css(".tc_cephPoolTable tbody tr"));
 
@@ -197,9 +197,16 @@ describe("Should test oadatatable and its options", function () {
     expect(poolRowElements.count()).toBe(1);
   });*/
 
-  it("should clear the filter search field and display max. 10 elements", function () {
-    searchField.clear();
+  it("should apply search filter and display 0 elements", function () {
+    helpers.search_for("ABCxyz123");
+    expect(poolRowElements.count()).toEqual(0);
+  });
+
+  it("should clear the search filter field and display max. 10 elements", function () {
+    const clearInputBtn = element(by.css(".tc_clearInputBtn"));
+    clearInputBtn.click();
     expect(poolRowElements.count()).toBeGreaterThan(0);
+    expect(searchField.getText()).toEqual("");
   });
 
   it('should have "10" as default max. listed elements per page', function () {
