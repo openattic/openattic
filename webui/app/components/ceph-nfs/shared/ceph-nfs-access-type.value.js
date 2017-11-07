@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.value("cephNfsAccessType", [
+export default [
   {
     value: "RW",
     help: "Allows all operations"
@@ -52,4 +51,4 @@ app.value("cephNfsAccessType", [
     value: "NONE",
     help: "Allows no access at all"
   }
-]);
+];

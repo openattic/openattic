@@ -31,7 +31,6 @@
 "use strict";
 
 class CephNfsDeleteModal {
-
   constructor ($q, cephNfsService) {
     this.$q = $q;
     this.cephNfsService = cephNfsService;

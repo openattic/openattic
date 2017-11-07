@@ -34,12 +34,11 @@ import _ from "lodash";
 
 class CephNfsList {
 
-  constructor ($filter, $state, $uibModal, $timeout, registryService, oaTabSetService,
+  constructor ($filter, $state, $uibModal, registryService, oaTabSetService,
       cephNfsService, cephNfsStateService, cephNfsFsal) {
     this.$filter = $filter;
     this.$state = $state;
     this.$uibModal = $uibModal;
-    this.$timeout = $timeout;
     this.registry = registryService;
     this.oaTabSetService = oaTabSetService;
     this.cephNfsService = cephNfsService;
@@ -99,15 +98,15 @@ class CephNfsList {
   }
 
   _updateStates () {
-    angular.forEach(this.nfs.results, (nfsExport) => {
+    this.nfs.results.forEach((nfsExport) => {
       nfsExport.state = "LOADING";
     });
     this.cephNfsStateService.updateStates(this.registry.selectedCluster.fsid, (hostsToUpdate) => {
-      angular.forEach(this.nfs.results, (nfsExport) => {
+      this.nfs.results.forEach((nfsExport) => {
         let currentHost = hostsToUpdate[nfsExport.host];
-        if (angular.isDefined(currentHost)) {
-          if (angular.isDefined(currentHost.exports) &&
-              angular.isDefined(currentHost.exports[nfsExport.exportId])) {
+        if (_.isObject(currentHost)) {
+          if (_.isObject(currentHost.exports) &&
+              _.isObject(currentHost.exports[nfsExport.exportId])) {
             nfsExport.state = currentHost.exports[nfsExport.exportId].state;
           } else {
             nfsExport.state = currentHost.state;
@@ -118,7 +117,7 @@ class CephNfsList {
   }
 
   getNfsList () {
-    if (angular.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObject(this.cluster) && this.cluster.results &&
         this.cluster.results.length > 0 && this.registry.selectedCluster) {
       let obj = this.$filter("filter")(this.cluster.results, {
         fsid: this.registry.selectedCluster.fsid
@@ -155,7 +154,7 @@ class CephNfsList {
         return currentFsalItem;
       }
     });
-    return angular.isDefined(fsalItem) ? fsalItem.descr : fsal;
+    return _.isObject(fsalItem) ? fsalItem.descr : fsal;
   }
 
   addAction () {

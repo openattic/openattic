@@ -30,31 +30,34 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.service("cephNfsStateService", function (cephNfsService, taskQueueSubscriber, taskQueueService,
-    Notification) {
+export default class CephNfsStateService {
+  constructor (cephNfsService, taskQueueSubscriber, taskQueueService,
+      Notification) {
+    this.cephNfsService = cephNfsService;
+    this.taskQueueSubscriber = taskQueueSubscriber;
+    this.taskQueueService = taskQueueService;
+    this.Notification = Notification;
 
-  var self = this;
+    this.stopTaskDescr = "NFS-Ganesha stop exports";
+    this.deployTaskDescr = "NFS-Ganesha deploy exports";
+  }
 
-  var stopTaskDescr = "NFS-Ganesha stop exports";
-  var deployTaskDescr = "NFS-Ganesha deploy exports";
-
-  var getState = function (host, hostname, notStartedTasksResult, runningTasksResult) {
-    var startingHosts = {};
-    var stoppingHosts = {};
-    angular.forEach(notStartedTasksResult.results, function (notStartedTask) {
-      var localHostname = notStartedTask.host;
-      if (notStartedTask.description === stopTaskDescr) {
+  getState (host, hostname, notStartedTasksResult, runningTasksResult) {
+    let startingHosts = {};
+    let stoppingHosts = {};
+    notStartedTasksResult.results.forEach((notStartedTask) => {
+      const localHostname = notStartedTask.host;
+      if (notStartedTask.description === this.stopTaskDescr) {
         stoppingHosts[localHostname] = true;
-      } else if (notStartedTask.description === deployTaskDescr) {
+      } else if (notStartedTask.description === this.deployTaskDescr) {
         startingHosts[localHostname] = true;
       }
     });
-    angular.forEach(runningTasksResult.results, function (runningTask) {
-      var localHostname = runningTask.host;
-      if (runningTask.description === stopTaskDescr) {
+    runningTasksResult.results.forEach((runningTask) => {
+      const localHostname = runningTask.host;
+      if (runningTask.description === this.stopTaskDescr) {
         stoppingHosts[localHostname] = true;
-      } else if (runningTask.description === deployTaskDescr) {
+      } else if (runningTask.description === this.deployTaskDescr) {
         startingHosts[localHostname] = true;
       }
     });
@@ -74,65 +77,67 @@ app.service("cephNfsStateService", function (cephNfsService, taskQueueSubscriber
       return "LOADING";
     }
     return "UNKNOWN";
-  };
+  }
 
-  self.updateStates = function (fsid, updateHosts) {
-    var taskIds = [];
-    taskQueueService
+  updateStates (fsid, updateHosts) {
+    let taskIds = [];
+    this.taskQueueService
       .get({
         status: "Not Started"
       })
       .$promise
-      .then(function (notStartedTasksResult) {
-        angular.forEach(notStartedTasksResult.results, function (notStartedTask) {
-          if (notStartedTask.description === stopTaskDescr || notStartedTask.description === deployTaskDescr) {
+      .then((notStartedTasksResult) => {
+        notStartedTasksResult.results.forEach((notStartedTask) => {
+          if (notStartedTask.description === this.stopTaskDescr ||
+              notStartedTask.description === this.deployTaskDescr) {
             taskIds.push(notStartedTask.id);
-            var hostname = notStartedTask.host;
-            var hostsToUpdate = {};
+            let hostname = notStartedTask.host;
+            let hostsToUpdate = {};
             hostsToUpdate[hostname] = {};
-            hostsToUpdate[hostname].state = notStartedTask.description === stopTaskDescr ? "STOPPING" : "STARTING";
+            hostsToUpdate[hostname].state = notStartedTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
             updateHosts(hostsToUpdate);
           }
         });
 
-        taskQueueService
+        this.taskQueueService
           .get({
             status: "Running"
           })
           .$promise
-          .then(function (runningTasksResult) {
-            angular.forEach(runningTasksResult.results, function (runningTask) {
-              if (runningTask.description === stopTaskDescr || runningTask.description === deployTaskDescr) {
+          .then((runningTasksResult) => {
+            runningTasksResult.results.forEach((runningTask) => {
+              if (runningTask.description === this.stopTaskDescr || runningTask.description === this.deployTaskDescr) {
                 if (taskIds.indexOf(runningTask.id) === -1) {
                   taskIds.push(runningTask.id);
-                  var hostname = runningTask.host;
-                  var hostsToUpdate = {};
+                  let hostname = runningTask.host;
+                  let hostsToUpdate = {};
                   hostsToUpdate[hostname] = {};
-                  hostsToUpdate[hostname].state = runningTask.description === stopTaskDescr ? "STOPPING" : "STARTING";
+                  hostsToUpdate[hostname].state =
+                    runningTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
                   updateHosts(hostsToUpdate);
                 }
               }
             });
-            angular.forEach(taskIds, function (taskId) {
-              taskQueueSubscriber.subscribe(taskId, function () {
-                self.updateStates(fsid, updateHosts);
+            taskIds.forEach((taskId) => {
+              this.taskQueueSubscriber.subscribe(taskId, () => {
+                this.updateStates(fsid, updateHosts);
               });
             });
 
-            cephNfsService
+            this.cephNfsService
               .status({
                 fsid: fsid
               })
               .$promise
-              .then(function (res) {
-                var hosts = res;
-                angular.forEach(hosts, function (host, hostname) {
+              .then((res) => {
+                let hosts = res;
+                _.forIn(hosts, (host, hostname) => {
                   // angular internal properties
                   if (!hostname.startsWith("$")) {
-                    host.state = getState(host, hostname, notStartedTasksResult, runningTasksResult);
-                    var exports = {};
+                    host.state = this.getState(host, hostname, notStartedTasksResult, runningTasksResult);
+                    let exports = {};
                     if (host.state === "ACTIVE") {
-                      angular.forEach(host.exports, function (exportItem) {
+                      host.exports.forEach((exportItem) => {
                         exports[exportItem.export_id] = {
                           state: exportItem.active ? "ACTIVE" : "INACTIVE",
                           message: exportItem.message
@@ -146,90 +151,89 @@ app.service("cephNfsStateService", function (cephNfsService, taskQueueSubscriber
               });
           });
       });
-  };
+  }
 
-  var tryGetStatusAfterStart = function (host, hostname, fsid, numRetries) {
-    cephNfsService
+  tryGetStatusAfterStart (host, hostname, fsid, numRetries) {
+    this.cephNfsService
       .status({
         fsid: fsid
       })
       .$promise
-      .then(function (res) {
+      .then((res) => {
         if (res[hostname].active) {
           host.active = true;
           host.state = "ACTIVE";
           host.message = res[hostname].message;
-          Notification.success({
+          this.Notification.success({
             title: hostname + " started successfully"
           });
         } else {
           if (res[hostname].message.indexOf("Timed out") > -1 && numRetries > 0) {
-            tryGetStatusAfterStart(host, hostname, fsid, numRetries--);
+            this.tryGetStatusAfterStart(host, hostname, fsid, numRetries--);
           } else {
             host.active = false;
             host.state = "INACTIVE";
             host.message = res[hostname].message;
-            Notification.error({
+            this.Notification.error({
               title: "Error starting " + hostname
             });
           }
         }
       });
-  };
+  }
 
-  self.start = function (host, hostname, fsid) {
+  start (host, hostname, fsid) {
     host.active = undefined;
     host.state = "STARTING";
     delete host.message;
     delete host.messages;
-    cephNfsService
+    this.cephNfsService
       .start({
         fsid: fsid,
         host: hostname
       })
       .$promise
-      .then(function (res) {
-        taskQueueSubscriber.subscribe(res.task_id, function () {
-          tryGetStatusAfterStart(host, hostname, fsid, 3);
+      .then((res) => {
+        this.taskQueueSubscriber.subscribe(res.task_id, () => {
+          this.tryGetStatusAfterStart(host, hostname, fsid, 3);
         });
       });
-  };
+  }
 
-  self.stop = function (host, hostname, fsid) {
+  stop (host, hostname, fsid) {
     host.active = undefined;
     host.state = "STOPPING";
     delete host.message;
     delete host.messages;
-    cephNfsService
+    this.cephNfsService
       .stop({
         fsid: fsid,
         host: hostname
       })
       .$promise
-      .then(function (res) {
-        taskQueueSubscriber.subscribe(res.task_id, function () {
-          cephNfsService
+      .then((res) => {
+        this.taskQueueSubscriber.subscribe(res.task_id, () => {
+          this.cephNfsService
             .status({
               fsid: fsid
             })
             .$promise
-            .then(function (result) {
+            .then((result) => {
               host.active = result[hostname].active;
               host.message = result[hostname].message;
               if (!result[hostname].active) {
                 host.state = "INACTIVE";
-                Notification.success({
+                this.Notification.success({
                   title: hostname + " stopped successfully"
                 });
               } else {
                 host.state = "ACTIVE";
-                Notification.error({
+                this.Notification.error({
                   title: "Error stopping " + hostname
                 });
               }
             });
         });
       });
-  };
-
-});
+  }
+}
