@@ -45,6 +45,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Get all frontend unit tests working again (OP-2889)
 * Backend: Fix namespace issue with backend/views.py (OP-2896)
 * Backend: Node search field isn't working (OP-2886)
 * WebUI: Fix current user validation on page load (OP-2887)

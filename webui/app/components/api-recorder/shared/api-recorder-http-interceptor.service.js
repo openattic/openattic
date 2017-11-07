@@ -29,20 +29,7 @@
  *
  */
 
-/*
- * This class is need because of the way AngularJS deals with interceptors, as
- * explained in https://stackoverflow.com/a/34163273.
- */
-class HttpInterceptor {
-  constructor () {
-    ["request"]
-      .forEach((method) => {
-        if (this[method]) {
-          this[method] = this[method].bind(this);
-        }
-      });
-  }
-}
+import HttpInterceptor from "./../../../shared/http-interceptor";
 
 export default class ApiRecorderHttpInterceptor extends HttpInterceptor {
   constructor (ApiRecorderService) {
