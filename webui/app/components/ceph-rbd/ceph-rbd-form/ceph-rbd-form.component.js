@@ -42,6 +42,7 @@ class CephRbdForm {
     this.SizeParserService = SizeParserService;
     this.cephPoolsService = cephPoolsService;
     this.cephRbdService = cephRbdService;
+    this.cephClusterService = cephClusterService;
 
     this.submitted = false;
     this.rbd = {
@@ -111,7 +112,12 @@ class CephRbdForm {
     this.fromState = $stateParams.fromState;
 
     this.waitingClusterMsg = "Retrieving cluster list...";
-    cephClusterService.get()
+
+    this.waitingPoolMsg = "Select a cluster first";
+  }
+
+  $onInit () {
+    this.cephClusterService.get()
       .$promise
       .then((res) => {
         this.clusters = res.results;
@@ -144,11 +150,9 @@ class CephRbdForm {
           this.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
           this.clusterFailureError = clusterError;
           this.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
-          $scope.rbdForm.$setValidity("clusterLoading", false);
+          this.$scope.rbdForm.$setValidity("clusterLoading", false);
         }
       });
-
-    this.waitingPoolMsg = "Select a cluster first";
   }
 
   deepBoxCheck (key, checked) {
