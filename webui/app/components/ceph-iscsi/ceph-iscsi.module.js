@@ -30,12 +30,19 @@
  */
 "use strict";
 
+import CephIscsiService from "./shared/ceph-iscsi.service";
 import cephIscsiDeleteModal from "./ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component";
 import cephIscsiDetail from "./ceph-iscsi-detail/ceph-iscsi-detail.component";
 import cephIscsiForm from "./ceph-iscsi-form/ceph-iscsi-form.component";
-import cephIscsiFormImageSettingsModal from "./ceph-iscsi-form/ceph-iscsi-form-image-settings-modal.component";
-import cephIscsiFormTargetSettingsModal from "./ceph-iscsi-form/ceph-iscsi-form-target-settings-modal.component";
+import cephIscsiFormImageSettingsModal
+  from "./ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component";
+import cephIscsiFormTargetSettingsModal
+  from "./ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component";
+import cephIscsiImageAdvangedSettings from "./shared/ceph-iscsi-image-advanged-settings.value";
+import cephIscsiImageOptionalSettings from "./shared/ceph-iscsi-image-optional-settings.value";
 import cephIscsiList from "./ceph-iscsi-list/ceph-iscsi-list.component";
+import cephIscsiRoutes from "./ceph-iscsi.routes";
+import cephIscsiTargetAdvangedSettings from "./shared/ceph-iscsi-target-advanged-settings.value";
 
 angular.module("openattic.cephIscsi", [])
   .component("cephIscsiDeleteModal", cephIscsiDeleteModal)
@@ -43,10 +50,9 @@ angular.module("openattic.cephIscsi", [])
   .component("cephIscsiForm", cephIscsiForm)
   .component("cephIscsiFormImageSettingsModal", cephIscsiFormImageSettingsModal)
   .component("cephIscsiFormTargetSettingsModal", cephIscsiFormTargetSettingsModal)
-  .component("cephIscsiList", cephIscsiList);
-
-require("./ceph-iscsi.routes");
-require("./shared/ceph-iscsi-image-advanged-settings.value");
-require("./shared/ceph-iscsi-image-optional-settings.value");
-require("./shared/ceph-iscsi-target-advanged-settings.value");
-require("./shared/ceph-iscsi.service");
+  .component("cephIscsiList", cephIscsiList)
+  .config(cephIscsiRoutes)
+  .service("cephIscsiService", CephIscsiService)
+  .value("cephIscsiImageAdvangedSettings", cephIscsiImageAdvangedSettings)
+  .value("cephIscsiImageOptionalSettings", cephIscsiImageOptionalSettings)
+  .value("cephIscsiTargetAdvangedSettings", cephIscsiTargetAdvangedSettings);

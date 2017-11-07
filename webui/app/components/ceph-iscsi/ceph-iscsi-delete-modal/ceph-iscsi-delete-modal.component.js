@@ -34,7 +34,6 @@ class CephIscsiDeleteModal {
   constructor ($q, cephIscsiService) {
     this.$q = $q;
     this.cephIscsiService = cephIscsiService;
-
   }
 
   delete () {
@@ -60,7 +59,6 @@ class CephIscsiDeleteModal {
   cancel () {
     this.modalInstance.dismiss("cancel");
   }
-
 }
 
 export default {

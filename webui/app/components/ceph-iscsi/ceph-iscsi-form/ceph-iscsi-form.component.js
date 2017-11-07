@@ -31,14 +31,12 @@
 "use strict";
 
 class CephIscsiForm {
-  constructor ($q, $scope, $state, $timeout, $stateParams, $uibModal,
+  constructor ($q, $state, $stateParams, $uibModal,
       cephIscsiTargetAdvangedSettings, cephIscsiImageOptionalSettings,
       cephIscsiImageAdvangedSettings, cephRbdService, cephPoolsService,
       cephIscsiService) {
-    this.$scope = $scope;
     this.$state = $state;
     this.$stateParams = $stateParams;
-    this.$timeout = $timeout;
     this.$uibModal = $uibModal;
     this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
     this.cephIscsiService = cephIscsiService;
@@ -113,7 +111,7 @@ class CephIscsiForm {
     ];
 
     // Add new iSCSI target
-    if (angular.isUndefined(this.$stateParams.targetId)) {
+    if (_.isUndefined(this.$stateParams.targetId)) {
       this.model.targetId = this.generateTargetId();
 
       // Edit existing iSCSI target
@@ -145,14 +143,14 @@ class CephIscsiForm {
 
   hasLunId (model) {
     return model.images.some((image) => {
-      return angular.isDefined(image.settings.lun);
+      return _.isNumber(image.settings.lun);
     });
   }
 
   initLunId (model) {
     if (!this.hasLunId(model)) {
       let i = 0;
-      angular.forEach(model.images, (image) => {
+      model.images.forEach((image) => {
         image.settings.lun = i;
         i++;
       });
@@ -177,7 +175,7 @@ class CephIscsiForm {
       this.model.targetId = this.generateTargetId();
       this.model.originalTargetId = null;
     } else {
-      this.model.originalTargetId = angular.copy(this.model.targetId);
+      this.model.originalTargetId = _.cloneDeep(this.model.targetId);
     }
   }
 
@@ -194,8 +192,8 @@ class CephIscsiForm {
   }
 
   resolvePortals (portalsFromServer) {
-    angular.forEach(portalsFromServer, (portalItem) => {
-      angular.forEach(portalItem.interfaces, (interfaceItem) => {
+    portalsFromServer.forEach((portalItem) => {
+      portalItem.interfaces.forEach((interfaceItem) => {
         this.allPortals.push({
           hostname: portalItem.hostname,
           interface: interfaceItem
@@ -236,7 +234,7 @@ class CephIscsiForm {
   }
 
   resolveRbdsPools (rbds, pools) {
-    angular.forEach(rbds.results, (rbd) => {
+    rbds.results.forEach((rbd) => {
       pools.results.some((pool) => {
         if (pool.id === rbd.pool) {
           this.allImages.push({
@@ -272,7 +270,7 @@ class CephIscsiForm {
   }
 
   addImageAction (image) {
-    let newImage = angular.copy(image);
+    let newImage = _.cloneDeep(image);
     newImage.settings.lun = this.nextLunId();
     this.model.images.push(newImage);
   }
@@ -295,7 +293,7 @@ class CephIscsiForm {
 
   addInitiator () {
     this.model.authentication.initiators.push("");
-    this.$timeout(() => {
+    setTimeout(() => {
       let initiatorsInputs = jQuery("#initiators input");
       initiatorsInputs[initiatorsInputs.length - 1].focus();
     });
@@ -306,7 +304,7 @@ class CephIscsiForm {
   }
 
   buildRequest () {
-    let requestModel = angular.copy(this.model);
+    let requestModel = _.cloneDeep(this.model);
     let auth = requestModel.authentication;
     if (!auth.hasAuthentication) {
       delete auth.user;
@@ -361,7 +359,7 @@ class CephIscsiForm {
         .then(() => {
           this.$state.go("cephIscsi");
         }, () => {
-          this.$scope.iscsiForm.$submitted = false;
+          this.iscsiForm.$submitted = false;
         });
     } else {
       requestModel.newTargetId = null;
@@ -370,7 +368,7 @@ class CephIscsiForm {
         .then(() => {
           this.$state.go("cephIscsi");
         }, () => {
-          this.$scope.iscsiForm.$submitted = false;
+          this.iscsiForm.$submitted = false;
         });
     }
   }

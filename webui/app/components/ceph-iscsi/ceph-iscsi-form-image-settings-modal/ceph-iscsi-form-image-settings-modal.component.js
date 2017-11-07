@@ -29,21 +29,34 @@
  *
  */
 "use strict";
+import _ from "lodash";
 
-class CephIscsiFormTargetSettingsModal {
-  constructor (cephIscsiTargetAdvangedSettings) {
-    this.model = this.resolve.model;
-    this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
-    this.targetSettings = angular.copy(this.model.targetSettings);
+class CephIscsiFormImageSettingsModal {
+  constructor (cephIscsiImageAdvangedSettings) {
+    this.image = this.resolve.image;
+    this.cephIscsiImageAdvangedSettings = cephIscsiImageAdvangedSettings;
+
+    this.settings = _.cloneDeep(this.image.settings);
+
+    this.advancedSettingsEnabled = cephIscsiImageAdvangedSettings.some((value) => {
+      return this.settings.hasOwnProperty(value.property);
+    });
   }
 
   confirm () {
-    angular.forEach(this.targetSettings, (value, key) => {
+    _.forIn(this.settings, (value, key) => {
       if (value === "" || value === null) {
-        delete this.targetSettings[key];
+        delete this.settings[key];
+      } else if (key === "retry_errors" && _.isString(this.settings[key])) {
+        this.settings[key] = JSON.parse("[" + value + "]");
       }
     });
-    this.model.targetSettings = this.targetSettings;
+    if (!this.advancedSettingsEnabled) {
+      this.cephIscsiImageAdvangedSettings.forEach((value) => {
+        delete this.settings[value.property];
+      });
+    }
+    this.image.settings = this.settings;
     this.modalInstance.close("confirmed");
   }
 
@@ -53,11 +66,10 @@ class CephIscsiFormTargetSettingsModal {
 }
 
 export default {
-  template: require("./ceph-iscsi-form-target-settings-modal.component.html"),
+  template: require("./ceph-iscsi-form-image-settings-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
   },
-  controller:CephIscsiFormTargetSettingsModal
+  controller: CephIscsiFormImageSettingsModal
 };
-
