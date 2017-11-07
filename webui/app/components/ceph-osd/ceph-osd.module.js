@@ -33,13 +33,14 @@
 import "../ceph-cluster/ceph-cluster.module";
 import cephOsdScrubModal from "./ceph-osd-scrub-modal/ceph-osd-scrub-modal.component";
 import cephOsdList from "./ceph-osd-list/ceph-osd-list.component";
+import cephOsdRoutes from "./ceph-osd.route";
+import CephOsdService from "./shared/ceph-osd.service";
 
 angular
   .module("openattic.cephOsd", [
     "openattic.cephCluster"
   ])
   .component("cephOsdScrubModal", cephOsdScrubModal)
-  .component("cephOsdList", cephOsdList);
-
-require("./ceph-osd.route");
-require("./shared/ceph-osd.service");
+  .component("cephOsdList", cephOsdList)
+  .service("cephOsdService", CephOsdService)
+  .config(cephOsdRoutes);

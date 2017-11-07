@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephOsd");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("cephOsds", {
       url: "/ceph/osds",
@@ -53,4 +52,4 @@ app.config(function ($stateProvider) {
         skip: true
       }
     });
-});
+};
