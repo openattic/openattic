@@ -34,7 +34,7 @@ import _ from "lodash";
 
 class CephRbdList {
   constructor ($scope, $state, $filter, $uibModal, $q, cephRbdService,
-      registryService, cephPoolsService, oaTabSetService, cephRbdStateService) {
+      registryService, cephPoolsService, oaTabSetService, taskQueueSubscriber) {
     this.$filter = $filter;
     this.$q = $q;
     this.$state = $state;
@@ -42,7 +42,7 @@ class CephRbdList {
     this.cephPoolsService = cephPoolsService;
     this.cephRbdService = cephRbdService;
     this.oaTabSetService = oaTabSetService;
-    this.cephRbdStateService = cephRbdStateService;
+    this.taskQueueSubscriber = taskQueueSubscriber;
 
     this.registry = registryService;
     this.cluster = undefined;
@@ -99,49 +99,58 @@ class CephRbdList {
       this.rbd = {};
       this.error = false;
 
-      // Load the list of RBDs and Pools in parallel to increase the
-      // loading speed.
-      let requests = [];
-      requests.push(
-        this.cephRbdService.get({
-          fsid: this.registry.selectedCluster.fsid,
-          page: this.filterConfig.page + 1,
-          pageSize: this.filterConfig.entries,
-          search: this.filterConfig.search,
-          ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") +
-          this.filterConfig.sortfield
-        }).$promise
-      );
-      requests.push(
-        this.cephPoolsService.get({
-          fsid: this.registry.selectedCluster.fsid
-        }).$promise
-      );
-      this.$q.all(requests)
-        .then((res) => {
-          let rbds = res[0];
-          let pools = res[1];
-          rbds.results.forEach((rbd) => {
-            pools.results.some((pool) => {
-              if (pool.id === rbd.pool) {
-                rbd.pool = pool;
-                return true;
-              }
-            });
-            if (rbd.data_pool) {
-              pools.results.some((pool) => {
-                if (pool.id === rbd.data_pool) {
-                  rbd.data_pool = pool;
-                  return true;
+      this.taskQueueSubscriber.pendingTasksPromise()
+        .then((tasks) => {
+
+          // Load the list of RBDs and Pools in parallel to increase the
+          // loading speed.
+          let requests = [];
+          requests.push(
+            this.cephRbdService.get({
+              fsid: this.registry.selectedCluster.fsid,
+              page: this.filterConfig.page + 1,
+              pageSize: this.filterConfig.entries,
+              search: this.filterConfig.search,
+              ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") +
+              this.filterConfig.sortfield
+            }).$promise
+          );
+          requests.push(
+            this.cephPoolsService.get({
+              fsid: this.registry.selectedCluster.fsid
+            }).$promise
+          );
+          this.$q.all(requests)
+            .then((res) => {
+              let rbds = res[0];
+              let pools = res[1];
+              rbds.results.forEach((rbd) => {
+                pools.results.some((pool) => {
+                  if (pool.id === rbd.pool) {
+                    rbd.pool = pool;
+                    return true;
+                  }
+                });
+                if (rbd.data_pool) {
+                  pools.results.some((pool) => {
+                    if (pool.id === rbd.data_pool) {
+                      rbd.data_pool = pool;
+                      return true;
+                    }
+                  });
                 }
+                rbd.free = rbd.size - rbd.used_size;
+                rbd.usedPercent = rbd.used_size / rbd.size * 100;
+                rbd.freePercent = rbd.free / rbd.size * 100;
               });
-            }
-            rbd.free = rbd.size - rbd.used_size;
-            rbd.usedPercent = rbd.used_size / rbd.size * 100;
-            rbd.freePercent = rbd.free / rbd.size * 100;
-          });
-          this.rbd = rbds;
-          this._updateStates();
+
+              this._updateState(rbds, tasks);
+              this.rbd = rbds;
+            })
+            .catch((error) => {
+              this.error = error;
+            });
+
         })
         .catch((error) => {
           this.error = error;
@@ -170,26 +179,37 @@ class CephRbdList {
     }
   }
 
-  addAction () {
-    this.$state.go("cephRbds-add", {
-      fsid: this.registry.selectedCluster.fsid
+  _updateState (rbds, deletingTasks) {
+    let notStartedTasks = deletingTasks[0].results || [];
+    let runningTasks = deletingTasks[1].results || [];
+    let results = notStartedTasks.concat(runningTasks);
+    let taskIds = [];
+    results.forEach((task) => {
+      if (task.description.startsWith("Delete RBD ") && taskIds.indexOf(task.id) === -1) {
+        taskIds.push(task.id);
+        rbds.results.forEach((rbdImage) => {
+          if (rbdImage.name === task.image &&
+              rbdImage.pool.name === task.pool &&
+              this.registry.selectedCluster.fsid === task.fsid) {
+            rbdImage.state = "DELETING";
+          }
+        });
+      }
+    });
+    let finishedTasksCounter = 0;
+    taskIds.forEach((taskId) => {
+      this.taskQueueSubscriber.subscribe(taskId, () => {
+        finishedTasksCounter++;
+        if (taskIds.length === finishedTasksCounter) {
+          this.filterConfig.refresh = new Date();
+        }
+      });
     });
   }
 
-  _updateStates () {
-    this.cephRbdStateService.updateStates((rbdToUpdate) => {
-      this.rbd.results.forEach((rbdImage) => {
-        console.log(rbdImage);
-        if (rbdImage.name === rbdToUpdate.image &&
-            rbdImage.pool.name === rbdToUpdate.pool &&
-            this.registry.selectedCluster.fsid === rbdToUpdate.fsid) {
-          if (rbdToUpdate.state === "DELETED") {
-            this.filterConfig.refresh = new Date();
-          } else {
-            rbdImage.state = rbdToUpdate.state;
-          }
-        }
-      });
+  addAction () {
+    this.$state.go("cephRbds-add", {
+      fsid: this.registry.selectedCluster.fsid
     });
   }
 
@@ -211,7 +231,10 @@ class CephRbdList {
     });
 
     modalInstance.result.then(() => {
-      this._updateStates();
+      this.taskQueueSubscriber.pendingTasksPromise()
+        .then((tasks) => {
+          this._updateState(this.rbd, tasks);
+        });
     });
   }
 

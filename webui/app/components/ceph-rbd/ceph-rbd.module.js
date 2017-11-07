@@ -38,7 +38,6 @@ import cephRbdDetail from "./ceph-rbd-detail/ceph-rbd-detail.component";
 import cephRbdForm from "./ceph-rbd-form/ceph-rbd-form.component";
 import cephRbdList from "./ceph-rbd-list/ceph-rbd-list.component";
 import cephRbdStatistics from "./ceph-rbd-statistics/ceph-rbd-statistics.component";
-import CephRbdStateService from "./shared/ceph-rbd-state.service";
 
 angular.module("openattic.cephRbd", [
   "openattic.cephCluster"
@@ -49,8 +48,7 @@ angular.module("openattic.cephRbd", [
   .component("cephRbdDetail", cephRbdDetail)
   .component("cephRbdForm", cephRbdForm)
   .component("cephRbdList", cephRbdList)
-  .component("cephRbdStatistics", cephRbdStatistics)
-  .service("cephRbdStateService", CephRbdStateService);
+  .component("cephRbdStatistics", cephRbdStatistics);
 
 require("./ceph-rbd.routes");
 require("./shared/ceph-rbd-features.constant");
