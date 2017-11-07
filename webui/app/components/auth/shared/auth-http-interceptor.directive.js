@@ -51,8 +51,10 @@ export default class AuthHttpInterceptor extends HttpInterceptor {
     // so we need to get $state via the $injector.
     var $state = this.$injector.get("$state");
     if (rejection.status === 401) {
-      this.authUserService.user = null;
-      $state.go("login");
+      this.authUserService.remove();
+      if ($state.current.name !== "" && $state.current.name !== "login") {
+        $state.go("login");
+      }
     }
     return this.$q.reject(rejection);
   }

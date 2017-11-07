@@ -30,7 +30,7 @@
     "angular/empty-controller": 2,
     "angular/no-controller": 2,
     "angular/no-inline-template": 0,
-    "angular/no-run-logic": 1,
+    "angular/no-run-logic": 0,
     "angular/no-services": 0,
     "angular/on-watch": 2,
     "angular/prefer-component": 2,
