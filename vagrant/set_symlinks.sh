@@ -1,7 +1,13 @@
 #!/bin/bash
 
-set -e
-set -u
+# TODO: merge with install.sh!
+# There are subtle differences between the vagrant setup and this set_symlinks.sh:
+# 1. In a vagrant setup, oaconfig doesn't work at all.
+# 2. /etc/dbus-1/system.d/openattic.conf is not a symlink but a file with some different content.
+# Therefore, I didn't merged both files at the moment.
+# Nevertheless, this script should still work for the classic development environment and the CI.
+
+set -eu
 
 if grep -q  debian /etc/*-release; then
     IS_DEBIAN="1"
@@ -11,27 +17,26 @@ elif grep -q suse /etc/*-release; then
     IS_DEBIAN=""
 fi
 
-oadir=/srv/openattic
+OADIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")"
 
 rm -rf /usr/share/openattic
-ln -s $oadir/backend /usr/share/openattic
-ln -fs $oadir/backend/settings.py /etc/openattic/settings.py
-
+ln -s $OADIR/backend /usr/share/openattic
 rm -rf /usr/share/openattic-gui
-ln -s $oadir/webui/app /usr/share/openattic-gui
+ln -s $OADIR/webui/app /usr/share/openattic-gui
 
-ln -sf $oadir/bin/oaconfig /usr/sbin/oaconfig
+# Not needed anymore.
+# ln -fs $OADIR/backend/settings.py /etc/openattic/settings.py
+
+ln -sf $OADIR/bin/oaconfig /usr/sbin/oaconfig
 
 rm -f /etc/dbus-1/system.d/openattic.conf #if it was a symlink before
-cp -f $oadir/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
+cp -f $OADIR/etc/dbus-1/system.d/openattic.conf /etc/dbus-1/system.d/openattic.conf
 
-rm -rf /etc/sysconfig/openattic
 
 if [ "$IS_DEBIAN" ]; then
-    ln -sf $oadir/debian/default/openattic                      /etc/default/openattic
+    ln -sf $OADIR/debian/default/openattic /etc/default/openattic
 fi
- 
+
 if [ "$IS_SUSE" ]; then
-    #TODO test symlinks for suse
-    cp $oadir/rpm/sysconfig/openattic.SUSE                  /etc/sysconfig/openattic
+    ln -sf $OADIR/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
 fi
