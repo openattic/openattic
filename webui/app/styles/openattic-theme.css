@@ -923,6 +923,12 @@ h6{
 .dataTables_header .input-group .form-control {
   height: 30px;
 }
+.dataTables_header .input-group .clear-input {
+  height: 30px;
+}
+.dataTables_header .input-group .clear-input i {
+  vertical-align: text-top;
+}
 .dataTables_no-match {
   border: 1px solid #d1d1d1;
   padding: 10px 0;

@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI: Add a 'Clear' button to the datatable search field (OP-2900)
 
 Changed
 ~~~~~~~
