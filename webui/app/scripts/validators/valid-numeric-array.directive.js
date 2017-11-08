@@ -30,28 +30,24 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.factory("$exceptionHandler", function ($log, $injector, $window) {
-  return function (exception, cause) {
-    try {
-      $log.error(exception, cause);
+import _ from "lodash";
 
-      $injector.get("exceptionHandlerService")
-        .save({
-          url: $window.location.href,
-          errorMessage: exception && exception.message,
-          errorStack: exception && exception.stack,
-          errorCause: cause
-        })
-        .$promise
-        .then(() => {});
-
-      $injector.get("Notification").error({
-        title: "Unexpected error from client",
-        msg: "An unexpected error occurred, see browser console for details."
-      }, exception);
-    } catch (err) {
-      $log.error(err);
+export default () => {
+  return {
+    require: "ngModel",
+    link: (scope, elem, attrs, ctrl) => {
+      ctrl.$validators.numericArray = (modelValue) => {
+        if (ctrl.$isEmpty(modelValue)) {
+          return true;
+        }
+        try {
+          return JSON.parse("[" + modelValue + "]").every((item) => {
+            return _.isNumber(item);
+          });
+        } catch (err) {
+          return false;
+        }
+      };
     }
   };
-});
+};

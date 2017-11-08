@@ -62,6 +62,7 @@ Changed
   timeouts (OP-2788)
 * Development: Make ``make_dist.py`` always use the current HEAD revision
   (OP-2883)
+* WebUI: Migration of OA module into Angular (OP-2904)
 
 Fixed
 ~~~~~

@@ -30,16 +30,15 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("validname", function () {
+export default () => {
   return {
     require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
-      ctrl.$parsers.unshift(function (viewValue) {
+    link: (scope, elem, attrs, ctrl) => {
+      ctrl.$parsers.unshift((viewValue) => {
         ctrl.$setValidity("validname", true);
 
         if (typeof viewValue !== "undefined" && viewValue.length > 0) {
-          var match = viewValue.match("[^a-zA-Z0-9+_.-]") || [];
+          let match = viewValue.match("[^a-zA-Z0-9+_.-]") || [];
 
           if (viewValue === "." || viewValue === "..") {
             ctrl.$setValidity("validname", false);
@@ -64,4 +63,4 @@ app.directive("validname", function () {
       });
     }
   };
-});
+};

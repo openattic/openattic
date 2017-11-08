@@ -30,23 +30,20 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("validNumericArray", function () {
-  return {
-    require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
-      ctrl.$validators.numericArray = function (modelValue) {
-        if (ctrl.$isEmpty(modelValue)) {
-          return true;
-        }
-        try {
-          return angular.fromJson("[" + modelValue + "]").every(function (item) {
-            return angular.isNumber(item);
-          });
-        } catch (err) {
-          return false;
-        }
-      };
+export default () => {
+  /**
+   * Return the ordinal value of a number:
+   * i.e 1->1st, 2->2nd, etc.
+   */
+  return function (value) {
+    let num = parseInt(value, 10);
+    if (isNaN(num)) {
+      return value;
     }
+    return value + (Math.floor(num / 10) === 1 ? "th" :
+      (num % 10 === 1 ? "st" :
+        (num % 10 === 2 ? "nd" :
+          (num % 10 === 3 ? "rd" :
+            "th"))));
   };
-});
+};

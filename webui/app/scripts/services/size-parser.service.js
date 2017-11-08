@@ -30,15 +30,32 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("ngRightClick", function ($parse) {
-  return function (scope, element, attrs) {
-    var fn = $parse(attrs.ngRightClick);
-    element.bind("contextmenu", function (event) {
-      scope.$apply(function () {
-        event.preventDefault();
-        fn(scope, {$event:event});
-      });
-    });
-  };
-});
+export default class SizeParserService {
+
+  // If a number can't hold such a large number 1 will be returned.
+  // Example: SizeParserService.parseInt(868, "b", "e")
+  parseInt (value, outputSize = "m", inputSize) {
+    return parseInt(this.parseFloat(value, outputSize, inputSize), 10);
+  }
+
+  parseFloat (value, outputSize, defaultInputSize = "m") {
+    let units = ["b", "k", "m", "g", "t", "p", "e", "z", "y"];
+    if (outputSize) {
+      units = units.slice(units.indexOf(outputSize));
+    }
+    if (/^[\d.]+$/.test(value)) {
+      value += defaultInputSize;
+    }
+    value = value.toLowerCase().replace(/\s/g, "");
+    const rgx = new RegExp("^([\\d.]+)([" + units.join("") + "]?)(i?)(b?)$");
+    if (!rgx.test(value)) {
+      return null;
+    }
+    const matched = rgx.exec(value);
+    return parseFloat(matched[1], 10) * Math.pow(1024, units.indexOf(matched[2]));
+  }
+
+  isValid (value) {
+    return this.parseInt(value) !== null;
+  }
+}

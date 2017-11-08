@@ -30,17 +30,21 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("ngEnter", function () {
-  return function (scope, element, attrs) {
-    element.bind("keydown keypress", function (event) {
-      if (event.which === 13) {
-        scope.$apply(function () {
-          scope.$eval(attrs.ngEnter);
-        });
-
-        event.preventDefault();
-      }
-    });
+export default ($parse) => {
+  return {
+    link: (scope, element, attrs) => {
+      let model = $parse(attrs.focusMe);
+      scope.$watch(model, (value) => {
+        if (value === true) {
+          setTimeout(() => {
+            element[0].focus();
+            element[0].select();
+          });
+        }
+      });
+      element.bind("blur", () => {
+        scope.$apply(model.assign(scope, false));
+      });
+    }
   };
-});
+};

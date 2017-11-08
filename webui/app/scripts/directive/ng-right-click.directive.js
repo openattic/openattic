@@ -30,20 +30,14 @@
  */
 "use strict";
 
-angular.module("openattic").config(function ($stateProvider, $urlRouterProvider) {
-
-  $urlRouterProvider.otherwise("/dashboard");
-
-  $stateProvider
-    .state("apikeys", {
-      url: "/apikeys",
-      views: {
-        "main": {
-          template: require("../../templates/apikeys.html")
-        }
-      },
-      ncyBreadcrumb: {
-        label: "Apikeys"
-      }
+export default ($parse) => {
+  return (scope, element, attrs) => {
+    const fn = $parse(attrs.ngRightClick);
+    element.bind("contextmenu", (event) => {
+      scope.$apply(() => {
+        event.preventDefault();
+        fn(scope, {$event:event});
+      });
     });
-});
+  };
+};

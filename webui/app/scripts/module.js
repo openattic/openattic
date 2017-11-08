@@ -50,6 +50,32 @@ import globalConfig from "globalConfig";
 require("./module_openattic-ceph");
 require("./module_openattic-core");
 
+import modalConfig from "./config/modal.config";
+import routeConfig from "./config/route.config";
+import toastyConfig from "./config/toasty.config";
+import tooltipConfig from "./config/tooltip.config";
+
+import focusMe from "./directive/focus-me.directive";
+import ngAltSrc from "./directive/ng-alt-src.directive";
+import ngEnter from "./directive/ng-enter.directive";
+import oaClipboard from "./directive/oa-clipboard.directive";
+import ngRightClick from "./directive/ng-right-click.directive";
+
+import bytes from "./filters/bytes.filter";
+import toBytes from "./filters/to-bytes.filter";
+import humanizeInt from "./filters/humanize-int.filter";
+import split from "./filters/split.filter";
+import getAt from "./filters/get-at.filter";
+import localeDate from "./filters/locale-date.filter";
+import objLength from "./filters/obj-length.filter";
+import ordinal from "./filters/ordinal.filter";
+import SizeParserService from "./services/size-parser.service";
+import ExceptionHandlerService from "./services/exception-handler.service";
+import validNumericArray from "./validators/valid-numeric-array.directive";
+import validStringArray from "./validators/valid-string-array.directive";
+import uniquename from "./validators/uniquename.directive";
+import validname from "./validators/validname.directive";
+
 angular.module("openattic", [
   "angular-md5",
   "angular-toasty",
@@ -66,20 +92,42 @@ angular.module("openattic", [
   "ui.tree",
   "openattic.core",
   "openattic.ceph"
-]);
+])
+  .config(modalConfig)
+  .config(routeConfig)
+  .config(toastyConfig)
+  .config(tooltipConfig)
+  .directive("focusMe", focusMe)
+  .directive("ngAltSrc", ngAltSrc)
+  .directive("ngEnter", ngEnter)
+  .directive("ngRightClick", ngRightClick)
+  .directive("oaClipboard", oaClipboard)
+  .filter("bytes", bytes)
+  .filter("getAt", getAt)
+  .filter("humanizeInt", humanizeInt)
+  .filter("localeDate", localeDate)
+  .filter("objLength", objLength)
+  .filter("ordinal", ordinal)
+  .filter("split", split)
+  .filter("toBytes", toBytes)
+  .service("SizeParserService", SizeParserService)
+  .service("exceptionHandlerService", ExceptionHandlerService)
+  .directive("validNumericArray", validNumericArray)
+  .directive("validStringArray", validStringArray)
+  .directive("uniquename", uniquename)
+  .directive("validname", validname);
 
-var app = angular.module("openattic");
+let app = angular.module("openattic");
 // Start configuration
 
 // End configuration
 
-app.config(function ($httpProvider) {
+app.config(($httpProvider) => {
   $httpProvider.defaults.xsrfCookieName = "csrftoken";
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, usersService, $state, $transitions,
-    authUserService, $q) {
+app.run(($rootScope, usersService, $state, $transitions, authUserService, $q) => {
 
   $transitions.onStart({}, (trans) => {
     const deferred = $q.defer();
@@ -107,10 +155,10 @@ app.run(function ($rootScope, usersService, $state, $transitions,
     return deferred.promise;
   });
 
-  $rootScope.loginActive = function () {
+  $rootScope.loginActive = () => {
     return !authUserService.isLoggedIn();
   };
-  var hostname = window.location.host.split(".")[0];
+  const hostname = window.location.host.split(".")[0];
   // check if the hostname looks like the first octet of an IP address
   // and only change pageTitle if it does not
   //if (parseInt(hostname, 10) !== hostname) {
@@ -121,7 +169,7 @@ app.run(function ($rootScope, usersService, $state, $transitions,
   }
 });
 
-app.config(function ($sceDelegateProvider) {
+app.config(($sceDelegateProvider) => {
   $sceDelegateProvider.resourceUrlWhitelist([
     // Allow same origin resource loads.
     "self",
@@ -130,12 +178,4 @@ app.config(function ($sceDelegateProvider) {
   ]);
 });
 
-requireAll(require.context("./config/", true, /^(?!.*\.spec\.js$).*\.js$/));
-requireAll(require.context("./directive/", true, /^(?!.*\.spec\.js$).*\.js$/));
-requireAll(require.context("./filters/", true, /^(?!.*\.spec\.js$).*\.js$/));
-requireAll(require.context("./services/", true, /^(?!.*\.spec\.js$).*\.js$/));
-requireAll(require.context("./validators/", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+require("./services/exception-handler");

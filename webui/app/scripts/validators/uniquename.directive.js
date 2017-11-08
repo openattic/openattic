@@ -30,29 +30,30 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, cephPoolsService, cephRbdService,
-    usersService) {
+import _ from "lodash";
+
+export default (cephErasureCodeProfilesService, cephPoolsService,
+    cephRbdService, usersService) => {
   return {
     restrict: "A",
     require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
-      var stopTimeout;
+    link: (scope, elem, attrs, ctrl) => {
+      let stopTimeout;
       ctrl.model = attrs.uniquename;
       ctrl.field = attrs.name;
 
-      return scope.$watch(function () {
+      return scope.$watch(() => {
         return ctrl.$modelValue;
-      }, function (modelValue) {
+      }, (modelValue) => {
         ctrl.$setValidity("uniquename", true);
-        $timeout.cancel(stopTimeout);
+        clearTimeout(stopTimeout);
 
-        if (modelValue === "" || angular.isUndefined(modelValue)) {
+        if (modelValue === "" || _.isUndefined(modelValue)) {
           return;
         }
-        stopTimeout = $timeout(function () {
-          var obj;
-          var query = {};
+        stopTimeout = setTimeout(() => {
+          let obj;
+          let query = {};
           switch (ctrl.model) {
             case "user":
               obj = {
@@ -110,4 +111,4 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
       });
     }
   };
-});
+};
