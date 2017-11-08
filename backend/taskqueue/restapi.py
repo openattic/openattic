@@ -95,6 +95,14 @@ class TaskQueueLocationMixin(object):
                                                          kwargs={'pk': task_queue.pk},
                                                          request=self.request)
 
+    def post_delete(self, obj):
+        super(TaskQueueLocationMixin, self).post_delete(obj)
+        task_queue = getattr(obj, '_task_queue', None)
+        if isinstance(task_queue, TaskQueue):
+            self.headers['Taskqueue-Location'] = reverse('taskqueue-detail',
+                                                         kwargs={'pk': task_queue.pk},
+                                                         request=self.request)
+
 
 RESTAPI_VIEWSETS = [
     ('taskqueue',     TaskQueueViewSet,     'taskqueue'),

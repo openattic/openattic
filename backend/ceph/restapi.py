@@ -316,7 +316,7 @@ class CephRbdSerializer(NodbSerializer):
         model = CephRbd
 
 
-class CephRbdViewSet(NodbViewSet):
+class CephRbdViewSet(TaskQueueLocationMixin, NodbViewSet):
     """Represents a Ceph RADOS block device aka RBD."""
 
     filter_fields = ("name",)

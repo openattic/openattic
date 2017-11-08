@@ -13,6 +13,8 @@
  *  GNU General Public License for more details.
 """
 
+import time
+
 from testcase import GatlingTestCase
 
 
@@ -88,7 +90,18 @@ class RbdDataPoolTestScenario(GatlingTestCase):
         return res['response']
 
     @classmethod
+    def _wait_for_pending_tasks(cls):
+        while True:
+            count = cls.send_request('GET', "taskqueue", search_param="status=Not+Started")["count"]
+            if count == 0:
+                count = cls.send_request('GET', "taskqueue", search_param="status=Running")["count"]
+            if count == 0:
+                break
+            time.sleep(1)
+
+    @classmethod
     def _check_for_rbd_in_list(cls, rbd_name):
+        cls._wait_for_pending_tasks()
         res = cls.send_ceph_request('GET', cls.fsid, 'rbds')
 
         for rbd in res['response']['results']:

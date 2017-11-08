@@ -630,6 +630,29 @@ class CephRbdTestCase(TestCase):
         rbd.save()
 
 
+class TaskTest(TestCase):
+
+    @mock.patch('ceph.librados.rbd.RBD')
+    @mock.patch('ceph.librados.RbdApi._call_librados')
+    @mock.patch('ceph.librados.ClusterConf.from_fsid')
+    def test_rbd_delete_task(self, from_fsid_mock, call_librados_mock, RBD_mock):
+
+        pool_name = 'pool-name'
+        image_name = 'image-name'
+
+        ioctx = mock.Mock()
+        client_mock = mock.Mock()
+        client_mock.get_pool.return_value = ioctx
+
+        call_librados_mock.side_effect = lambda fn, timeout: fn(client_mock)
+
+        task = ceph.tasks.delete_rbd('fsid', pool_name, image_name)
+        task.run_once()
+
+        self.assertEqual(client_mock.mock_calls, [mock.call.get_pool(pool_name)])
+        RBD_mock.assert_has_calls([mock.call().remove(ioctx, 'image-name')], any_order=True)
+
+
 class PerformanceTaskTest(TestCase):
 
     @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
