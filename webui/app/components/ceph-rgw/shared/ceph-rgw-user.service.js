@@ -34,7 +34,7 @@ import globalConfig from "globalConfig";
 import _ from "lodash";
 
 export default class CephRgwUserService {
-  constructor ($resource, $injector, $q, $filter) {
+  constructor ($resource, $injector, $q, oaApiFilter) {
     let res = $resource(globalConfig.API.URL + "rgw/user", {}, {
       delete: {
         url: globalConfig.API.URL + "ceph_radosgw/user/delete",
@@ -143,37 +143,44 @@ export default class CephRgwUserService {
         isArray: true,
         interceptor: {
           response: (response) => {
-            // Get the filter parameters.
             let filterParams = _.cloneDeep(response.config.params);
-            let matches = filterParams.ordering.match(/(-?)(.+)/);
-            filterParams.sortorder = (matches[1] === "") ? "ASC" : "DESC";
-            filterParams.sortfield = matches[2];
+            let count = undefined;
+            let userIds = response.data;
+
+            // Pre-filter if sort field is 'user_id', thus it is not necessary to request the
+            // whole user information for users that we are not interested in.
+            if (filterParams.sortfield === "user_id") {
+              // Apply the filters. Note, set 'sortfield' to empty because we are processing
+              // an array of strings.
+              let result = oaApiFilter.filter(userIds, _.merge({}, filterParams,
+                {sortfield: ""}));
+              count = result.count;
+              userIds = result.results;
+
+              // Modify filter parameters to do not apply them twice.
+              filterParams.search = "";
+              filterParams.entries = 0;
+            }
+
             // Get more user data per UID.
             let requests = [];
             let me = $injector.get("cephRgwUserService");
-            response.data.forEach((uid) => {
+            _.forEach(userIds, (userId) => {
               let deferred = $q.defer();
-              me.get({"uid": uid}, undefined, deferred.resolve, deferred.reject);
+              me.get({"uid": userId}, undefined, deferred.resolve, deferred.reject);
               requests.push(deferred.promise);
             });
             return $q.all(requests).then((users) => {
               // Apply the filter.
-              if (filterParams.search) {
-                let expression = {};
-                expression[filterParams.sortfield] = filterParams.search;
-                users = $filter("filter")(users, expression);
-              }
-              users = $filter("orderBy")(users, filterParams.sortfield,
-                filterParams.sortorder === "DESC");
-              users = $filter("limitTo")(users, filterParams.pageSize,
-                (filterParams.page - 1) * filterParams.pageSize);
+              let result = oaApiFilter.filter(users, filterParams);
+
               // Prepare the response object.
               return {
                 $resolved: true,
-                count: users.length,
+                count: count || result.count,
                 next: undefined,
                 previous: undefined,
-                results: users
+                results: result.results
               };
             });
           }

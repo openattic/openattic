@@ -34,7 +34,7 @@ import globalConfig from "globalConfig";
 import _ from "lodash";
 
 export default class CephRgwBucketService {
-  constructor ($resource, $injector, $q, $filter) {
+  constructor ($resource, $injector, $q, oaApiFilter) {
     let res = $resource(globalConfig.API.URL + "rgw/bucket", {}, {
       create: {
         url: globalConfig.API.URL + "ceph_radosgw/bucket/create",
@@ -73,37 +73,44 @@ export default class CephRgwBucketService {
         isArray: true,
         interceptor: {
           response: (response) => {
-            // Get the filter parameters.
             let filterParams = _.cloneDeep(response.config.params);
-            let matches = filterParams.ordering.match(/(-?)(.+)/);
-            filterParams.sortorder = (matches[1] === "") ? "ASC" : "DESC";
-            filterParams.sortfield = matches[2];
+            let count = undefined;
+            let bucketNames = response.data;
+
+            // Pre-filter if sort field is 'bucket', thus it is not necessary to request the
+            // whole bucket information for buckets that we are not interested in.
+            if (filterParams.sortfield === "bucket") {
+              // Apply the filters. Note, set 'sortfield' to empty because we are processing
+              // an array of strings.
+              let result = oaApiFilter.filter(bucketNames, _.merge({}, filterParams,
+                {sortfield: ""}));
+              count = result.count;
+              bucketNames = result.results;
+
+              // Modify filter parameters to do not apply them twice.
+              filterParams.search = "";
+              filterParams.entries = 0;
+            }
+
             // Get more bucket information.
             let requests = [];
             let me = $injector.get("cephRgwBucketService");
-            _.forEach(response.data, (bucket) => {
+            _.forEach(bucketNames, (bucketName) => {
               let deferred = $q.defer();
-              me.get({"bucket": bucket}, undefined, deferred.resolve, deferred.reject);
+              me.get({"bucket": bucketName}, undefined, deferred.resolve, deferred.reject);
               requests.push(deferred.promise);
             });
             return $q.all(requests).then((buckets) => {
-              // Apply the filter.
-              if (filterParams.search) {
-                let expression = {};
-                expression[filterParams.sortfield] = filterParams.search;
-                buckets = $filter("filter")(buckets, expression);
-              }
-              buckets = $filter("orderBy")(buckets, filterParams.sortfield,
-                filterParams.sortorder === "DESC");
-              buckets = $filter("limitTo")(buckets, filterParams.pageSize,
-                (filterParams.page - 1) * filterParams.pageSize);
+              // Apply the filters.
+              let result = oaApiFilter.filter(buckets, filterParams);
+
               // Prepare the response object.
               return {
                 $resolved: true,
-                count: buckets.length,
+                count: count || result.count,
                 next: undefined,
                 previous: undefined,
-                results: buckets
+                results: result.results
               };
             });
           }
