@@ -31,8 +31,9 @@
 "use strict";
 
 export default class CephNfsStateService {
-  constructor (cephNfsService, taskQueueSubscriber, taskQueueService,
+  constructor ($q, cephNfsService, taskQueueSubscriber, taskQueueService,
       Notification) {
+    this.$q = $q;
     this.cephNfsService = cephNfsService;
     this.taskQueueSubscriber = taskQueueSubscriber;
     this.taskQueueService = taskQueueService;
@@ -80,13 +81,15 @@ export default class CephNfsStateService {
   }
 
   updateStates (fsid, updateHosts) {
-    let taskIds = [];
-    this.taskQueueService
-      .get({
-        status: "Not Started"
-      })
-      .$promise
-      .then((notStartedTasksResult) => {
+    let requests = [];
+    requests.push(this.taskQueueService.get({status: "Not Started"}).$promise);
+    requests.push(this.taskQueueService.get({status: "Running"}).$promise);
+    this.$q.all(requests)
+      .then((res) => {
+        let notStartedTasksResult = res[0];
+        let runningTasksResult = res[1];
+        let taskIds = [];
+
         notStartedTasksResult.results.forEach((notStartedTask) => {
           if (notStartedTask.description === this.stopTaskDescr ||
               notStartedTask.description === this.deployTaskDescr) {
@@ -94,64 +97,57 @@ export default class CephNfsStateService {
             let hostname = notStartedTask.host;
             let hostsToUpdate = {};
             hostsToUpdate[hostname] = {};
-            hostsToUpdate[hostname].state = notStartedTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
+            hostsToUpdate[hostname].state = notStartedTask.description === this.stopTaskDescr ?
+              "STOPPING" : "STARTING";
             updateHosts(hostsToUpdate);
           }
         });
 
-        this.taskQueueService
-          .get({
-            status: "Running"
+        runningTasksResult.results.forEach((runningTask) => {
+          if (runningTask.description === this.stopTaskDescr ||
+              runningTask.description === this.deployTaskDescr) {
+            if (taskIds.indexOf(runningTask.id) === -1) {
+              taskIds.push(runningTask.id);
+              let hostname = runningTask.host;
+              let hostsToUpdate = {};
+              hostsToUpdate[hostname] = {};
+              hostsToUpdate[hostname].state =
+                runningTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
+              updateHosts(hostsToUpdate);
+            }
+          }
+        });
+
+        taskIds.forEach((taskId) => {
+          this.taskQueueSubscriber.subscribe(taskId, () => {
+            this.updateStates(fsid, updateHosts);
+          });
+        });
+
+        this.cephNfsService
+          .status({
+            fsid: fsid
           })
           .$promise
-          .then((runningTasksResult) => {
-            runningTasksResult.results.forEach((runningTask) => {
-              if (runningTask.description === this.stopTaskDescr || runningTask.description === this.deployTaskDescr) {
-                if (taskIds.indexOf(runningTask.id) === -1) {
-                  taskIds.push(runningTask.id);
-                  let hostname = runningTask.host;
-                  let hostsToUpdate = {};
-                  hostsToUpdate[hostname] = {};
-                  hostsToUpdate[hostname].state =
-                    runningTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
-                  updateHosts(hostsToUpdate);
+          .then((hosts) => {
+            _.forIn(hosts, (host, hostname) => {
+              // angular internal properties
+              if (!hostname.startsWith("$")) {
+                host.state = this.getState(host, hostname, notStartedTasksResult,
+                  runningTasksResult);
+                let exports = {};
+                if (host.state === "ACTIVE") {
+                  host.exports.forEach((exportItem) => {
+                    exports[exportItem.export_id] = {
+                      state: exportItem.active ? "ACTIVE" : "INACTIVE",
+                      message: exportItem.message
+                    };
+                  });
                 }
+                host.exports = exports;
               }
             });
-            taskIds.forEach((taskId) => {
-              this.taskQueueSubscriber.subscribe(taskId, () => {
-                this.updateStates(fsid, updateHosts);
-              });
-            });
-
-            this.cephNfsService
-              .status({
-                fsid: fsid
-              })
-              .$promise
-              .then((res) => {
-                let hosts = res;
-                _.forIn(hosts, (host, hostname) => {
-                  // angular internal properties
-                  if (!hostname.startsWith("$")) {
-                    host.state = this.getState(host, hostname, notStartedTasksResult, runningTasksResult);
-                    let exports = {};
-                    if (host.state === "ACTIVE") {
-                      host.exports.forEach((exportItem) => {
-                        exports[exportItem.export_id] = {
-                          state: exportItem.active ? "ACTIVE" : "INACTIVE",
-                          message: exportItem.message
-                        };
-                      });
-                    }
-                    host.exports = exports;
-                  }
-                });
-                updateHosts(hosts);
-              })
-              .catch(() => {
-                updateHosts([]);
-              });
+            updateHosts(hosts);
           })
           .catch(() => {
             updateHosts([]);
