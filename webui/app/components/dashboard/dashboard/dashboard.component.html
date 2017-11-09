@@ -21,8 +21,11 @@
        ng-class="{'bg-danger': $ctrl.messages.err, 'bg-warning': $ctrl.messages.warn}">
     <i class="fa fa-2x"
        ng-class="{'fa-bomb': $ctrl.messages.err, 'fa-warning': $ctrl.messages.warn}"></i>
+    <strong>{{ $ctrl.lastUpdateDate | localeDate }}: </strong>
     <strong class="clickable"
             ng-bind="$ctrl.messages.err || $ctrl.messages.warn"></strong>
+    <i class="fa fa-spinner fa-pulse fa-fw"
+       ng-show="$ctrl.isUpdating"></i>
     <div class="pull-right">
       <i class="fa fa-caret-down"
          ng-if="$ctrl.summaryCollapsed"></i>
