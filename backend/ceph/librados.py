@@ -1148,7 +1148,7 @@ class RbdApi(object):
         :param old_format: Some features are not supported by the old format.
         :type stripe_unit: int
         :type stripe_count: int
-        :type data_pool_name: str
+        :type data_pool_name: str | None
         """
         def _create(client):
             ioctx = client.get_pool(pool_name)
@@ -1194,7 +1194,7 @@ class RbdApi(object):
 
         obj_size is similar to the block size of ordinary hard drives.
         :param name: the name of the image
-        :type name: str
+        :type name: str | unicode
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """

@@ -350,9 +350,9 @@ class CephPool(NodbModel, RadosMixin):
         return result
 
     def __init__(self, **kwargs):
+        if 'cluster' not in kwargs and 'cluster_id' not in kwargs:
+            kwargs['cluster_id'] = CephPool.objects.nodb_context.fsid
         super(CephPool, self).__init__(**kwargs)
-        if self.cluster is None:
-            self.cluster = CephPool.objects.nodb_context.cluster
 
     @bulk_attribute_setter(['max_avail', 'kb_used', 'percent_used'])
     def ceph_df(self, pools, field_names):
@@ -836,28 +836,50 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         api = RadosMixin.rbd_api(context.fsid)
 
         pools = CephPool.objects.all()
-        rbd_name_pools = (itertools.chain.from_iterable((((image, pool)
-                                                          for image in api.list(pool.name))
-                                                         for pool in pools)))
+        rbd_name_pools = itertools.chain.from_iterable(
+            (((image, pool) for image in api.list(pool.name))
+            for pool
+            in pools))
 
         rbds = []
         for (image_name, pool) in rbd_name_pools:
-            data_pool_id = None
-            image_info = api.image_info(pool.name, image_name)
-
-            if 'data_pool' in image_info:
-                data_pool = CephPool.objects.get(name=image_info['data_pool'])
-                data_pool_id = data_pool.id if data_pool else None
-
-            rbds.append((aggregate_dict(api.image_stat(pool.name, image_name),
-                                        old_format=api.image_old_format(pool.name, image_name),
-                                        features=api.image_features(pool.name, image_name),
-                                        name=image_name,
-                                        pool_id=pool.id,
-                                        data_pool_id=data_pool_id,
-                                        id=CephRbd.make_key(pool, image_name))))
+            rbds.append(aggregate_dict(name=image_name,
+                                       pool_id=pool.id,
+                                       id=CephRbd.make_key(pool, image_name)))
 
         return [CephRbd(**CephRbd.make_model_args(rbd)) for rbd in rbds]
+
+    # TODO: `rbd info` also delivers 'flags' and 'create_timestamp'
+    @bulk_attribute_setter(['num_objs', 'obj_size', 'size', 'data_pool_id', 'features', 'old_format'])
+    def set_image_info(self, objects, field_names):
+        """
+        `rbd info` and `rbd.Image.stat` are really similar: The first one calls the second one.
+        As the first one is the only provider of the data_pool, we have to call `rbd info` anyway.
+        For performance reasons, let's use it as much as possible. Although, I still prefer a
+        native Python API.
+
+        Also, the format of `features` is compatible to our format.
+        """
+        api = RadosMixin.rbd_api(self.pool.cluster.fsid)
+        image_info = api.image_info(self.pool.name, self.name)
+
+        if 'data_pool' in image_info:
+            data_pool = CephPool.objects.get(name=image_info['data_pool'])
+            image_info['data_pool_id'] = data_pool.id if data_pool else None
+        else:
+            image_info['data_pool_id'] = None
+
+        # the rbd info command does some fancy renaming. Undo it:
+        image_info['num_objs'] = image_info['objects']
+        image_info['obj_size'] = image_info['object_size']
+        image_info['features'] = [f if f != 'striping' else 'stripingv2'
+                                  for f in image_info['features']]
+
+        # https://github.com/ceph/ceph/blob/luminous/src/tools/rbd/action/Info.cc#L169
+        image_info['old_format'] = image_info['format'] == 1
+
+        for field_name in field_names:
+            setattr(self, field_name, image_info[field_name])
 
     @bulk_attribute_setter(['used_size'])
     def set_disk_usage(self, objects, field_names):
