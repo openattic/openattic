@@ -42,7 +42,7 @@ import "../components/shared/shared.module";
 import "../scripts/services/sizeParserService";
 import "../components/userinfo/userinfo.module";
 import "../components/taskQueue/module";
-import "../components/users/module";
+import "../components/users/users.module";
 import "../components/feedback/feedback.module";
 import RegistryService from "./shared/registry.service";
 

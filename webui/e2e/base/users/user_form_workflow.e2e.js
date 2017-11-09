@@ -1,14 +1,13 @@
 "use strict";
 
-var helpers = require("../../common.js");
+const helpers = require("../../common.js");
 
 describe("should test the user form", function () {
-  var name = element(by.model("user.username"));
-  var passwd = element(by.model("user.password"));
-  var confirmPasswd = element(by.model("user.confirmPassword"));
+  const name = element(by.model("$ctrl.user.username"));
+  const passwd = element(by.model("$ctrl.user.password"));
+  const confirmPasswd = element(by.model("$ctrl.user.confirmPassword"));
 
-  var username = "herpderp";
-  var submitButton = element(by.css(".tc_submitButton"));
+  const username = "herpderp";
 
   beforeAll(function () {
     helpers.login();
@@ -16,6 +15,7 @@ describe("should test the user form", function () {
 
   beforeEach(function () {
     helpers.setLocation("users");
+    // helpers.waitForElement(element(by.css(".tc_addUser")));
     element(by.css(".tc_addUser")).click();
   });
 
@@ -36,15 +36,15 @@ describe("should test the user form", function () {
   });
 
   it('should have a "Firstname" input field', function () {
-    expect(element(by.model("user.first_name")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.user.first_name")).isDisplayed()).toBe(true);
   });
 
   it("should have a Lastname input field", function () {
-    expect(element(by.model("user.last_name")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.user.last_name")).isDisplayed()).toBe(true);
   });
 
   it('should have an "Email Address" input field', function () {
-    expect(element(by.model("user.email")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.user.email")).isDisplayed()).toBe(true);
   });
 
   it("should have three checkboxes", function () {
@@ -71,8 +71,8 @@ describe("should test the user form", function () {
 
   it('should check if an error is displayed when the "Username" is empty',
     function () {
-      element(by.model("user.username")).sendKeys(username);
-      element(by.model("user.password")).sendKeys("test");
+      element(by.model("$ctrl.user.username")).sendKeys(username);
+      element(by.model("$ctrl.user.password")).sendKeys("test");
       name.clear();
       expect(element(by.css(".tc_usernameRequired")).isDisplayed()).toBe(true);
     });
@@ -122,12 +122,12 @@ describe("should test the user form", function () {
   });
 
   it('should show an error message when data for field "username" does not match', function () {
-    element(by.model("user.username")).sendKeys("öäüfasd  sadof");
+    element(by.model("$ctrl.user.username")).sendKeys("öäüfasd  sadof");
     expect(element(by.css(".tc_userNameNotValid")).isDisplayed()).toBe(true);
   });
 
   it('should show an error message when input for field "Email Address" is not valid', function () {
-    element(by.model("user.email")).sendKeys("äü adsfo vfoe");
+    element(by.model("$ctrl.user.email")).sendKeys("äü adsfo vfoe");
     expect(element(by.css(".tc_emailNotValid")).isDisplayed()).toBe(true);
   });
 

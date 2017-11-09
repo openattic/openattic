@@ -57,7 +57,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
             case "user":
               obj = {
                 model: usersService,
-                current: scope.user.id,
+                current: scope.$ctrl.user.id,
                 attribute: "id"
               };
               break;
