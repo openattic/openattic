@@ -173,6 +173,9 @@ STATICFILES_DIRS = (MEDIA_ROOT,)
 LOGIN_URL = PROJECT_URL + '/accounts/login/'
 LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 
+# Use cookies that expire as soon as the user closes their browser.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 # Automatically generate a .secret.txt file containing the SECRET_KEY.
 # Shamelessly stolen from ByteFlow: <http://www.byteflow.su>
 try:
@@ -414,6 +417,7 @@ def __loadmods__():
     modprobe('oa_settings')
     modprobe('oa_logging')
     modprobe('ifconfig')
+    modprobe('rest')
 
 
 __loadmods__()

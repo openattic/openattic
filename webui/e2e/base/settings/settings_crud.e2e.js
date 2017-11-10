@@ -115,6 +115,7 @@ describe("settings form", function () {
     form.selectEauth(initialSettings.deepsea.eauth);
     form.saltApiUsername.clear().sendKeys(initialSettings.deepsea.username);
     form.saltApiSharedSecret.clear().sendKeys(initialSettings.deepsea.shared_secret);
+    helpers.waitForElementVisible(form.saltApiConnectionSuccess);
     form.checkManagedByDeepSea(true);
     form.grafanaHost.clear().sendKeys(initialSettings.grafana.host);
     form.grafanaPort.clear().sendKeys(initialSettings.grafana.port);

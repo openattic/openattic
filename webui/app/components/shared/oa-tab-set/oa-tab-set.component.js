@@ -31,16 +31,15 @@
 "use strict";
 
 class OaTabSet {
-  constructor ($scope, oaTabSetService) {
-    this.$scope = $scope;
+  constructor (oaTabSetService) {
     this.oaTabSetService = oaTabSetService;
   }
 
   $onInit () {
     Object.keys(this.tabData.tabs).forEach((tabName) => {
-      var tab = this.tabData.tabs[tabName];
+      let tab = this.tabData.tabs[tabName];
       if (!tab.show) {
-        tab.show = "true";
+        tab.show = () => true;
       }
       if (!tab.class) {
         tab.class = "";
@@ -57,7 +56,7 @@ class OaTabSet {
 
   showTabSet () {
     return Object.keys(this.tabData.tabs).filter((tabName) => {
-      return this.$scope.$eval(this.tabData.tabs[tabName].show);
+      return this.tabData.tabs[tabName].show();
     }).length > 1;
   }
 }

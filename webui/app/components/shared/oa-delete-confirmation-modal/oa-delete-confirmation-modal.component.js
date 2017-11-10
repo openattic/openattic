@@ -31,8 +31,7 @@
 "use strict";
 
 class OaDeleteConfirmationModal {
-  constructor ($scope) {
-    this.$scope = $scope;
+  constructor () {
     this.input = {
       enteredName: "",
       pattern: "yes"
@@ -42,9 +41,9 @@ class OaDeleteConfirmationModal {
   confirm () {
     this.onConfirm()
       .then(() => {
-        this.$scope.deleteForm.$submitted = true;
+        this.deleteForm.$submitted = true;
       }, () => {
-        this.$scope.deleteForm.$submitted = false;
+        this.deleteForm.$submitted = false;
       }
       );
   }

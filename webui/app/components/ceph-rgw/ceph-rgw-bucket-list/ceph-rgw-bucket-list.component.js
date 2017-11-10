@@ -33,9 +33,8 @@
 import _ from "lodash";
 
 class CephRgwBucketList {
-  constructor ($scope, $state, $stateParams, $filter, $uibModal, cephRgwBucketService,
+  constructor ($state, $stateParams, $filter, $uibModal, cephRgwBucketService,
       oaTabSetService, Notification) {
-    this.$scope = $scope;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$filter = $filter;
@@ -58,7 +57,7 @@ class CephRgwBucketList {
       active: 0,
       tabs: {
         status: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "ceph-rgw-buckets.detail.details",
           class: "tc_statusTab",
           name: "Details"
@@ -70,15 +69,6 @@ class CephRgwBucketList {
       linkedBy: "bucket",
       jumpTo: "more"
     };
-  }
-
-  $onInit () {
-    this.$scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (_.isEqual(newValue, oldValue)) {
-        return;
-      }
-      this.getBucketList();
-    }, true);
   }
 
   getBucketList () {

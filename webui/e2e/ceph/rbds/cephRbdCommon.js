@@ -272,6 +272,7 @@ var rbdCommons = function () {
     var rbd = helpers.get_list_element(rbdName).click();
     expect(rbd.isDisplayed()).toBe(true);
     helpers.delete_selection(undefined, "$ctrl");
+    taskQueueHelpers.waitForPendingTasks();
     expect(element(by.cssContainingText("tr", rbdName)).isPresent()).toBe(false);
   };
 

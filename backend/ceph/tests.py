@@ -145,10 +145,11 @@ class CephPoolTestCase(TestCase):
                                                                            fsid='hallo'))
 
     @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.ClusterConf')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_insert(self, monApi_mock, cephpool_objects_mock):
+    def test_insert(self, monApi_mock, clusterconf_mock, cephpool_objects_mock):
         cephpool_objects_mock.nodb_context = self.mock_context
-        nodb.models.NodbManager.nodb_context = self.mock_context
+        clusterconf_mock.all_configs.return_value = [mock.Mock(fsid='hallo', name='test')]
 
         cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0,
                                                                       type='replicated')
@@ -178,13 +179,14 @@ class CephPoolTestCase(TestCase):
         monApi_mock.return_value.osd_tier_add.assert_called_with('test1', 'test1')
 
     @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.ClusterConf')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_cache_tier(self, monApi_mock, cephpool_objects_mock):
+    def test_call_cache_tier(self, monApi_mock, clusterconf_mock, cephpool_objects_mock):
         """
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
         cephpool_objects_mock.nodb_context = self.mock_context
-        nodb.models.NodbManager.nodb_context = self.mock_context
+        clusterconf_mock.all_configs.return_value = [mock.Mock(fsid='hallo', name='test')]
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   erasure_code_profile_id=None,
                                                   tier_of_id=None, cache_mode=None)
@@ -192,7 +194,7 @@ class CephPoolTestCase(TestCase):
 
         # Checking the order of different calls.
         pool = ceph.models.CephPool(name='test1', pg_num=0, type='replicated', tier_of_id=1,
-                                    tier_of=ceph.models.CephPool(id=1, name="test", cluser_id=None),
+                                    tier_of=ceph.models.CephPool(id=1, name="test"),
                                     cache_mode='writeback',
                                     erasure_code_profile_id=None)
         pool.save()
@@ -204,15 +206,16 @@ class CephPoolTestCase(TestCase):
         monApi_mock.return_value.assert_has_calls(calls)
 
     @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.ClusterConf')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_tier_remove(self, monApi_mock, cephpool_objects_mock):
+    def test_call_tier_remove(self, monApi_mock, clusterconf_mock, cephpool_objects_mock):
         """
         Checking the reverse order.
         FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of,
                resulting in weird parameters to osd_tier_remove.
         """
         cephpool_objects_mock.nodb_context = self.mock_context
-        nodb.models.NodbManager.nodb_context = self.mock_context
+        clusterconf_mock.all_configs.return_value = [mock.Mock(fsid='hallo', name='test')]
 
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   cache_mode='writeback', tier_of_id=0,
@@ -628,6 +631,47 @@ class CephRbdTestCase(TestCase):
         pool_get_all_objects_mock.return_value = [pool]
         rbd_get_all_objects_mock.return_value = [rbd]  # needed to fake successful `RbdApi.create()`
         rbd.save()
+
+    @mock.patch('nodb.models.NodbManager.nodb_context', fsid='hallo')
+    @mock.patch('ceph.models.RadosMixin')
+    @mock.patch('ceph.models.CephPool.get_all_objects')
+    def test_rbd_assert_lazy(self, pool_get_all_objects_mock,
+                             RadosMixing_mock, nodb_context_moc):
+        """
+        We have to make sure, all interesting fields are lazy evaluated. Otherwise listing
+        them is too slow.
+        """
+        pool_get_all_objects_mock.return_value = [ceph.models.CephPool(name='pool', id=1)]
+        RadosMixing_mock.rbd_api.return_value.list.return_value = ['rbd1']
+        rbd = ceph.models.CephRbd.objects.get()
+        self.assertEqual(rbd.name, 'rbd1')
+        for field in ['num_objs', 'obj_size', 'size', 'data_pool_id', 'features', 'old_format',
+                      'used_size', 'stripe_unit', 'stripe_count']:
+            self.assertTrue(rbd.attribute_is_unevaluated_lazy_property(field),
+                            '{} is already evaluated'.format(field))
+
+
+class TaskTest(TestCase):
+
+    @mock.patch('ceph.librados.rbd.RBD')
+    @mock.patch('ceph.librados.RbdApi._call_librados')
+    @mock.patch('ceph.librados.ClusterConf.from_fsid')
+    def test_rbd_delete_task(self, from_fsid_mock, call_librados_mock, RBD_mock):
+
+        pool_name = 'pool-name'
+        image_name = 'image-name'
+
+        ioctx = mock.Mock()
+        client_mock = mock.Mock()
+        client_mock.get_pool.return_value = ioctx
+
+        call_librados_mock.side_effect = lambda fn, timeout: fn(client_mock)
+
+        task = ceph.tasks.delete_rbd('fsid', pool_name, image_name)
+        task.run_once()
+
+        self.assertEqual(client_mock.mock_calls, [mock.call.get_pool(pool_name)])
+        RBD_mock.assert_has_calls([mock.call().remove(ioctx, 'image-name')], any_order=True)
 
 
 class PerformanceTaskTest(TestCase):

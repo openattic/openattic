@@ -1,0 +1,38 @@
+<form name="$ctrl.settingsForm"
+      role="form"
+      class="form-horizontal"
+      novalidate>
+  <div class="openattic-modal-header">
+    <span>Advanced Settings</span>
+  </div>
+  <div class="openattic-modal-content">
+    <div uib-alert
+         class="alert-warning">Changing these parameters from their default values is usually not necessary.</div>
+    <span ng-repeat="setting in $ctrl.cephIscsiTargetAdvangedSettings">
+      <div class="form-group"
+           ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm[setting.property].$dirty) && $ctrl.settingsForm[setting.property].$invalid}">
+        <div class="col-sm-12">
+          <label class="control-label"
+                 for="{{ setting.property }}">{{ setting.property }}</label>
+          <input type="number"
+                 class="form-control"
+                 name="{{ setting.property }}"
+                 id="{{ setting.property }}"
+                 ng-model="$ctrl.targetSettings[setting.property]">
+          <span class="help-block">{{ setting.help }}</span>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="$ctrl.settingsForm"
+                        on-submit="$ctrl.confirm()">
+        Confirm
+      </oa-submit-button>
+      <button id="cancelButton"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

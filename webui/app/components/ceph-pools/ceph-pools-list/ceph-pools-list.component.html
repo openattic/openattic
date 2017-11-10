@@ -14,7 +14,8 @@
                  class="oadatatable tc_cephPoolTable"
                  filter-config="$ctrl.filterConfig"
                  selection="$ctrl.selection"
-                 on-selection-change="$ctrl.onSelectionChange(selection)">
+                 on-selection-change="$ctrl.onSelectionChange(selection)"
+                 on-filter-config-change="$ctrl.getPoolList()">
       <actions>
         <a class="btn btn-sm btn-primary tc_add_btn"
            type="button"

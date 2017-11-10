@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.constant("cephRbdFeatures", {
+export default {
   "deep-flatten": {
     desc: "Deep flatten",
     helpText: "",
@@ -96,4 +95,4 @@ app.constant("cephRbdFeatures", {
     isSupportedISCSI: true,
     isDisplayed: false
   }
-});
+};

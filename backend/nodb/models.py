@@ -559,12 +559,11 @@ class NodbModel(models.Model):
         for field in self._meta.concrete_fields:
             is_related_field = isinstance(field.rel, ForeignObjectRel)
 
-            if not self.attribute_is_unevaluated_lazy_property(field.name) \
-                and not hasattr(self, field.name):
-                if is_related_field:
-                    setattr(self, field.attname, field.get_default())
-                else:
-                    setattr(self, field.name, field.get_default())
+            # set defaults:
+            if not is_related_field \
+                    and not self.attribute_is_unevaluated_lazy_property(field.name) \
+                    and not hasattr(self, field.name):
+                setattr(self, field.name, field.get_default())
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

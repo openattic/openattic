@@ -1,0 +1,123 @@
+<oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
+  <oa-module-loader module="ceph">
+
+    <oa-loading-panel message="Ceph CRUSH map is loading..."
+                      ng-show="!$ctrl.error && !$ctrl.cluster.$resolved">
+    </oa-loading-panel>
+    <oa-error-panel ng-if="$ctrl.error && $ctrl.error.statusText === 'NOT FOUND'">
+      Ceph cluster with fsid
+      <strong>'{{$ctrl.registry.selectedCluster.fsid}}'</strong> couldn't be found.
+    </oa-error-panel>
+
+    <div class="row"
+         ng-show="!$ctrl.error && $ctrl.cluster.crushmap">
+      <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title pull-left">Physical setup</h3>
+
+            <div class="panel-toolbar"
+                 role="menu">
+              <a ng-click="$ctrl.getCrushmap()">
+                <i class="fa fa-refresh"></i> Refresh</a>
+            </div>
+
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">
+            <div class="tree"
+                 ui-tree="$ctrl.treeOptions">
+              <ul ui-tree-nodes=""
+                  ng-model="$ctrl.cluster.crushmap.buckets">
+                <li ui-tree-node
+                    ng-repeat="data in $ctrl.cluster.crushmap.buckets"
+                    ng-include="'components/ceph-crushmap/templates/crushMapNode.html'"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title pull-left">Replication rules</h3>
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">
+            <form name="$ctrl.hostForm"
+                  role="form"
+                  class="form-horizontal"
+                  novalidate>
+              <fieldset>
+                <div class="form-group">
+                  <label class="col-md-2 control-label"
+                         for="ruleset">Content</label>
+                  <div class="col-md-10">
+                    <select id="ruleset"
+                            class="form-control"
+                            ng-model="$ctrl.activeRuleset"
+                            ng-change="$ctrl.rerenderNodes()"
+                            ng-options="ruleset as ruleset.rule_name for ruleset in $ctrl.cluster.crushmap.rules track by ruleset.rule_id">
+                      <option value="">Select a ruleset...</option>
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset ng-show="$ctrl.activeRuleset">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">Replicas</label>
+                  <div class="col-md-10">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <p>
+                          <label class="control-label"
+                                 for="min_size">Minimum</label>
+                        </p>
+                        {{$ctrl.activeRuleset.min_size}}
+                      </div>
+                      <div class="col-md-6">
+                        <p>
+                          <label class="control-label"
+                                 for="max_size">Maximum</label>
+                        </p>
+                        {{$ctrl.activeRuleset.max_size}}
+                      </div>
+                    </div>
+                    <p class="text-danger"
+                       style="padding-top: 7px"
+                       ng-show="$ctrl.activeRuleset.min_size === 1">
+                      One replica means
+                      <em>no copies</em>. If you lose a storage node, your data is lost.
+                    </p>
+                    <p ng-show="$ctrl.activeRuleset.min_size > 1"
+                       style="padding-top: 7px"
+                       ng-class="{ 'text-warning': $ctrl.activeRuleset.min_size == 2, 'text-muted': $ctrl.activeRuleset.min_size > 2 }">
+                      {{ $ctrl.activeRuleset.min_size | humanizeInt }} replicas means "the original file + {{ ($ctrl.activeRuleset.min_size - 1)
+                      | humanizeInt }}
+                      <ng-pluralize count="$ctrl.activeRuleset.min_size - 1"
+                                    when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
+                    </p>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset ng-show="$ctrl.activeRuleset">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">Placement</label>
+                  <div class="col-md-10"
+                       style="padding-top: 7px">
+                    <ceph-crushmap-stepset ng-repeat="stepset in $ctrl.stepsets"
+                                           stepset="stepset"
+                                           rule="$ctrl.activeRuleset"
+                                           cluster="$ctrl.cluster"></ceph-crushmap-stepset>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </oa-module-loader>
+</oa-ceph-cluster-loader>

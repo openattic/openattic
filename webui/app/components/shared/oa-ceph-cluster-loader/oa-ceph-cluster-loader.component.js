@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class OaCephClusterLoader {
   constructor ($state, cephClusterService, registryService) {
     this.$state = $state;
@@ -39,7 +41,6 @@ class OaCephClusterLoader {
     this.loading = false;
     this.registry = registryService;
     this.cluster = undefined;
-
   }
 
   $onInit () {
@@ -53,13 +54,13 @@ class OaCephClusterLoader {
         this.cluster = res;
         // Update the registry. Select the first cluster in the list
         // if there isn't already a cluster selected.
-        if (angular.isObject(this.cluster) && this.cluster.results &&
+        if (_.isObject(this.cluster) && this.cluster.results &&
           this.cluster.results.length > 0 &&
-          angular.isUndefined(this.registry.selectedCluster)) {
+          _.isUndefined(this.registry.selectedCluster)) {
           this.registry.selectedCluster = this.cluster.results[0];
         }
         // Execute the callback function.
-        if (angular.isFunction(this.onClusterLoad)) {
+        if (_.isFunction(this.onClusterLoad)) {
           this.onClusterLoad({cluster: this.cluster});
         }
       }).finally(() => {

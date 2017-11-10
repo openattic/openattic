@@ -30,8 +30,9 @@
  */
 "use strict";
 
-class CephNfsDetail {
+import _ from "lodash";
 
+class CephNfsDetail {
   constructor (cephNfsFsal, cephNfsAccessType) {
     this.cephNfsFsal = cephNfsFsal;
     this.cephNfsAccessType = cephNfsAccessType;
@@ -43,7 +44,7 @@ class CephNfsDetail {
         return currentFsalItem;
       }
     });
-    return angular.isDefined(fsalItem) ? fsalItem.descr : fsal;
+    return _.isObject(fsalItem) ? fsalItem.descr : fsal;
   }
 
   getAccessTypeHelp (accessType) {
@@ -52,7 +53,7 @@ class CephNfsDetail {
         return currentAccessTypeItem;
       }
     });
-    return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
+    return _.isObject(accessTypeItem) ? accessTypeItem.help : "";
   }
 
   getMountCommand () {

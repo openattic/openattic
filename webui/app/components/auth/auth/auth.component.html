@@ -60,9 +60,23 @@
         </div>
         <!-- end password -->
 
+        <!-- stay signed in -->
+        <div class="form-group has-feedback">
+          <div class="checkbox checkbox-primary">
+            <input type="checkbox"
+                   ng-model="$ctrl.staySignedIn"
+                   name="staysignedin"
+                   id="staysignedin">
+            <label for="staysignedin">
+              Keep me logged in
+            </label>
+          </div>
+        </div>
+        <!-- end stay signed in -->
+
         <input type="submit"
                class="btn btn-openattic btn-block"
-               value="login"
+               value="Login"
                uib-tooltip="{{$ctrl.correctInput}}"
                tooltip-class="tc_correctInput"
                tooltip-trigger="'none'"

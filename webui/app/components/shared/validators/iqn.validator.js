@@ -30,13 +30,12 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.directive("validIqn", function () {
+export default () => {
   return {
     require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
-      var IQN_REGEX = /^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-\.]+)*$/;
-      ctrl.$validators.iqn = function (modelValue, viewValue) {
+    link: (scope, elem, attrs, ctrl) => {
+      const IQN_REGEX = /^iqn\.(19|20)\d\d-(0[1-9]|1[0-2])\.\D{2,3}(\.[A-Za-z0-9-]+)+(:[A-Za-z0-9-\.]+)*$/;
+      ctrl.$validators.iqn = (modelValue, viewValue) => {
         if (ctrl.$isEmpty(modelValue)) {
           return true;
         }
@@ -44,4 +43,4 @@ app.directive("validIqn", function () {
       };
     }
   };
-});
+};

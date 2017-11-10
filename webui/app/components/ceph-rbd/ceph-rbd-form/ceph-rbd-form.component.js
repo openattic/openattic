@@ -30,18 +30,20 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRbdForm {
-  constructor ($scope, $state, $stateParams, cephRbdService, cephPoolsService,
+  constructor ($state, $stateParams, cephRbdService, cephPoolsService,
       SizeParserService, $filter, Notification, cephClusterService,
       cephRbdFeatures, $uibModal) {
     this.$filter = $filter;
-    this.$scope = $scope;
     this.$state = $state;
     this.$uibModal = $uibModal;
     this.Notification = Notification;
     this.SizeParserService = SizeParserService;
     this.cephPoolsService = cephPoolsService;
     this.cephRbdService = cephRbdService;
+    this.cephClusterService = cephClusterService;
 
     this.submitted = false;
     this.rbd = {
@@ -105,13 +107,18 @@ class CephRbdForm {
     this.features = cephRbdFeatures;
 
     this.defaultFeatureValues = {};
-    angular.copy(this.data.features, this.defaultFeatureValues);
+    _.cloneDeep(this.data.features, this.defaultFeatureValues);
 
     this.fsid = $stateParams.fsid;
     this.fromState = $stateParams.fromState;
 
     this.waitingClusterMsg = "Retrieving cluster list...";
-    cephClusterService.get()
+
+    this.waitingPoolMsg = "Select a cluster first";
+  }
+
+  $onInit () {
+    this.cephClusterService.get()
       .$promise
       .then((res) => {
         this.clusters = res.results;
@@ -144,15 +151,13 @@ class CephRbdForm {
           this.clusterFailureTitle = clusterError.status + ": " + clusterError.statusText.toLowerCase();
           this.clusterFailureError = clusterError;
           this.waitingClusterMsg = "Error: Cluster couldn't be loaded!";
-          $scope.rbdForm.$setValidity("clusterLoading", false);
+          this.rbdForm.$setValidity("clusterLoading", false);
         }
       });
-
-    this.waitingPoolMsg = "Select a cluster first";
   }
 
   deepBoxCheck (key, checked) {
-    angular.forEach(this.features, (details, feature) => {
+    _.forIn(this.features, (details, feature) => {
       if (details.requires === key) {
         this.data.features[feature].disabled = !checked;
         if (!checked) {
@@ -192,14 +197,14 @@ class CephRbdForm {
       let noneSelected = Object.keys(this.data.features).every((feature) => {
         return !this.data.features[feature].checked;
       });
-      this.$scope.rbdForm.$setValidity("noFeatureSelected", !noneSelected);
+      this.rbdForm.$setValidity("noFeatureSelected", !noneSelected);
     } else {
-      this.$scope.rbdForm.$setValidity("noFeatureSelected", defaults);
+      this.rbdForm.$setValidity("noFeatureSelected", defaults);
     }
   }
 
   defaultFeatures () {
-    angular.copy(this.defaultFeatureValues, this.data.features);
+    _.cloneDeep(this.defaultFeatureValues, this.data.features);
   }
 
   getSizeInBytes (size, jump) {
@@ -213,7 +218,7 @@ class CephRbdForm {
     let power = 0;
     if (size !== null && size !== 0) {
       power = Math.round(Math.log(size) / Math.log(2));
-      if (angular.isNumber(jump)) {
+      if (_.isNumber(jump)) {
         power += jump;
       }
     }
@@ -231,7 +236,7 @@ class CephRbdForm {
     this.setMutex("obj_size", newSize);
     this.rbd.obj_size = newSize || this.getSizeInBytes(this.data.obj_size, jump);
     let size = this.rbd.obj_size;
-    if (!this.$scope.rbdForm.stripingUnit) {
+    if (!this.rbdForm.stripingUnit) {
       this.updateStripingUnit(size);
     }
     if (this.data.striping.unit > size) {
@@ -253,13 +258,13 @@ class CephRbdForm {
   }
 
   setMutex (inputName, setLock) {
-    if (!this.$scope.rbdForm[inputName]) {
+    if (!this.rbdForm[inputName]) {
       return;
     }
     if (setLock) {
       this.changedField = inputName;
-      this.$scope.rbdForm[inputName].$touched = false;
-      this.$scope.rbdForm[inputName].$untouched = true;
+      this.rbdForm[inputName].$touched = false;
+      this.rbdForm[inputName].$untouched = true;
     } else {
       if (this.changedField === inputName) {
         this.changedField = undefined;
@@ -269,14 +274,14 @@ class CephRbdForm {
 
   stripingDescription () {
     let message = "";
-    if (angular.isDefined(this.data.size)) {
+    if (_.isString(this.data.size)) {
       let size = this.SizeParserService.parseFloat(this.data.size, "b");
       this.sizeValidator(size);
       const striping = this.data.striping;
       if (this.data.size !== "-" &&
-        angular.isDefined(this.data.obj_size) && this.data.obj_size !== "0 B" &&
-        angular.isDefined(striping.unitDisplayed) && striping.unitDisplayed !== "0 B" &&
-        angular.isDefined(striping.count)) {
+        _.isString(this.data.obj_size) && this.data.obj_size !== "0 B" &&
+        _.isString(striping.unitDisplayed) && striping.unitDisplayed !== "0 B" &&
+        _.isNumber(striping.count)) {
         const stripeSize = striping.count * striping.unit;
         const objectSetSize = striping.count * this.rbd.obj_size;
         let maxSets = Math.ceil(size / objectSetSize);
@@ -300,9 +305,9 @@ class CephRbdForm {
 
   sizeChange (event, callback) {
     if (event.keyCode === 38 || event.keyCode === 40) { // 38 == up arrow && 40 == down arrow
-      callback(undefined, 39 - event.keyCode);
+      callback.call(this, undefined, 39 - event.keyCode);
     } else if (event.keyCode === 187 || event.keyCode === 189) {
-      callback(undefined, 188 - event.keyCode);
+      callback.call(this, undefined, 188 - event.keyCode);
     }
   }
 
@@ -317,7 +322,7 @@ class CephRbdForm {
     }
     const size = this.SizeParserService.parseFloat(this.data.size, "b", "m"); //default input size is MiB
     this.sizeValidator(size);
-    if (angular.isNumber(size)) {
+    if (_.isNumber(size)) {
       if (size / this.data.obj_size < 1) {
         this.data.size = this.$filter("bytes")(this.data.obj_size);
       } else {
@@ -329,14 +334,14 @@ class CephRbdForm {
   }
 
   sizeValidator (size = this.SizeParserService.parseFloat(this.data.size, "b")) {
-    let valid = angular.isNumber(size) && this.rbd.obj_size <= size;
+    let valid = _.isNumber(size) && this.rbd.obj_size <= size;
     if (this.data.features.stripingv2.checked &&
-      this.$scope.rbdForm.stripingCount &&
-      this.$scope.rbdForm.stripingCount.$valid &&
-      this.$scope.rbdForm.obj_size.$valid) {
+      this.rbdForm.stripingCount &&
+      this.rbdForm.stripingCount.$valid &&
+      this.rbdForm.obj_size.$valid) {
       valid = this.data.striping.count * this.rbd.obj_size <= size;
     }
-    this.$scope.rbdForm.size.$setValidity("valid", valid);
+    this.rbdForm.size.$setValidity("valid", valid);
   }
 
   goToListView () {
@@ -359,7 +364,7 @@ class CephRbdForm {
       .$promise
       .then((res) => {
         this.poolFailure = false;
-        this.$scope.rbdForm.$setValidity("poolLoading", true);
+        this.rbdForm.$setValidity("poolLoading", true);
 
         res.results.forEach((pool) => this.addPoolAttributes(pool));
 
@@ -382,7 +387,7 @@ class CephRbdForm {
           this.poolFailure = true;
           this.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
           this.poolFailureError = poolError;
-          this.$scope.rbdForm.$setValidity("poolLoading", false);
+          this.rbdForm.$setValidity("poolLoading", false);
           this.waitingPoolMsg = "Error: List couldn't be loaded!";
         }
       });
@@ -449,7 +454,7 @@ class CephRbdForm {
     if (rbdForm.$valid) {
       if (!this.data.defaultFeatures) {
         let features = [];
-        angular.forEach(this.data.features, (feature, featureName) => {
+        _.forIn(this.data.features, (feature, featureName) => {
           if (feature.checked) {
             features.push(featureName);
           }
@@ -473,7 +478,7 @@ class CephRbdForm {
           this.rbd = res;
           this.goToListView();
         }, (error) => {
-          this.$scope.rbdForm.$submitted = false;
+          this.rbdForm.$submitted = false;
           if (error.status === 400 && error.data.size) {
             let size = error.data.size[0].match(/[0-9]+/)[0];
             this.Notification.error({

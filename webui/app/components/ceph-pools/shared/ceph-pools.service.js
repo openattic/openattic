@@ -32,28 +32,31 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephPools");
-app.factory("cephPoolsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/pools/:id", {
-    fsid: "@fsid",
-    id: "@id"
-  }, {
-    update: {
-      method: "PUT"
-    },
-    delete: {
-      method: "DELETE"
-    },
-    performancedata: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph/:fsid/performancedata_pools"
-    },
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        return JSON.parse(data).results;
+export default class CephPoolsService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "ceph/:fsid/pools/:id", {
+      fsid: "@fsid",
+      id: "@id"
+    }, {
+      update: {
+        method: "PUT"
+      },
+      delete: {
+        method: "DELETE"
+      },
+      performancedata: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph/:fsid/performancedata_pools"
+      },
+      query: {
+        method: "GET",
+        isArray: true,
+        transformResponse: function (data) {
+          return JSON.parse(data).results;
+        }
       }
-    }
-  });
-});
+    });
+
+    Object.assign(this, res);
+  }
+}

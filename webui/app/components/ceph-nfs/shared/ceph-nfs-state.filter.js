@@ -30,11 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-
-app.filter("cephNfsState", function () {
-
-  return function (value) {
+export default () => {
+  return (value) => {
     if (value === "STARTING") {
       return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Starting...</span>";
     }
@@ -52,4 +49,4 @@ app.filter("cephNfsState", function () {
     }
     return "<span>Unknown</span>";
   };
-});
+};

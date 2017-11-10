@@ -45,6 +45,7 @@ class DashboardComponent {
       err: undefined,
       unknown: undefined
     };
+    this.isUpdating = false;
   }
 
   $onInit () {
@@ -54,6 +55,7 @@ class DashboardComponent {
     // stops any running interval to avoid two intervals running at the same time
     this.stopInterval();
     this.promise = setInterval(() => {
+      this.isUpdating = true;
       this.getStatus();
     }, 60000);
   }
@@ -67,9 +69,11 @@ class DashboardComponent {
       .get()
       .$promise
       .then((res) => {
+        this.lastUpdateDate = new Date();
         this.processData(res);
         this.processSummaries();
         this.processMessages();
+        this.isUpdating = false;
       });
   }
 

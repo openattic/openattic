@@ -30,16 +30,16 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephPoolsAdd {
-  constructor ($scope, $state, $stateParams, $q, $timeout, $uibModal,
-      Notification, cephOsdService, cephCrushmapService, cephClusterService,
+  constructor ($state, $stateParams, $q, $uibModal, Notification,
+      cephOsdService, cephCrushmapService, cephClusterService,
       cephErasureCodeProfilesService, cephPoolsService, $filter,
       SizeParserService) {
-    this.$scope = $scope;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$q = $q;
-    this.$timeout = $timeout;
     this.$uibModal = $uibModal;
     this.Notification = Notification;
     this.cephOsdService = cephOsdService;
@@ -135,7 +135,7 @@ class CephPoolsAdd {
     this.app = {
       selected: undefined,
       add: (_app) => {
-        if (!angular.isString(_app) || _app === "") {
+        if (!_.isString(_app) || _app === "") {
           return;
         }
         // A custom app without a name will be undefined
@@ -172,64 +172,6 @@ class CephPoolsAdd {
         return appList;
       }
     };
-
-    this.$scope.$watch("$ctrl.data.cluster", (cluster) => {
-      if (cluster) {
-        this.data.cluster.loaded = false;
-        this.fsid = cluster.fsid;
-
-        let promises = [];
-        promises.push(
-          cephClusterService.status({
-            fsid: cluster.fsid
-          }).$promise
-        );
-        promises.push(
-          cephErasureCodeProfilesService.get({
-            fsid: cluster.fsid
-          }).$promise
-        );
-        promises.push(
-          cephOsdService.get({
-            fsid: cluster.fsid,
-            osd_objectstore: "bluestore"
-          }).$promise
-        );
-        promises.push(
-          cephCrushmapService.get({
-            fsid: cluster.fsid
-          }).$promise
-        );
-        $q.all(promises)
-          .then((res) => {
-            this.data.osdCount = res[0].osdmap.osdmap.num_osds;
-            this.data.profiles = res[1].results;
-            this.bluestore = res[2].count > 0;
-            this.data.cluster.rules = {
-              replicated: [],
-              erasure: []
-            };
-            /* Confusing types because of:
-               * https://bitbucket.org/openattic/openattic/src/2a054091ffb56d69b7ccee9ee7070b5116261d6b/backend/ceph/
-               * models.py?at=master&fileviewer=file-view-default#models.py-327
-               */
-            const type = {
-              1: "replicated",
-              3: "erasure"
-            };
-            angular.forEach(res[3].crushmap.rules, (ruleset) => {
-              this.data.cluster.rules[type[ruleset.type]].push(ruleset);
-            });
-            this.rulesetChange();
-            this.data.cluster.loaded = true;
-            this.pgSizeChange();
-            this.ecProfileChange();
-          })
-          .catch((error) => {
-            this.error = error;
-          });
-      }
-    });
   }
 
   $onInit () {
@@ -237,6 +179,64 @@ class CephPoolsAdd {
       this.prepareEditForm();
     } else {
       this.prepareAddForm();
+    }
+  }
+
+  onDataClusterChange () {
+    if (this.data.cluster) {
+      this.data.cluster.loaded = false;
+      this.fsid = this.data.cluster.fsid;
+
+      let promises = [];
+      promises.push(
+        this.cephClusterService.status({
+          fsid: this.data.cluster.fsid
+        }).$promise
+      );
+      promises.push(
+        this.cephErasureCodeProfilesService.get({
+          fsid: this.data.cluster.fsid
+        }).$promise
+      );
+      promises.push(
+        this.cephOsdService.get({
+          fsid: this.data.cluster.fsid,
+          osd_objectstore: "bluestore"
+        }).$promise
+      );
+      promises.push(
+        this.cephCrushmapService.get({
+          fsid: this.data.cluster.fsid
+        }).$promise
+      );
+      this.$q.all(promises)
+        .then((res) => {
+          this.data.osdCount = res[0].osdmap.osdmap.num_osds;
+          this.data.profiles = res[1].results;
+          this.bluestore = res[2].count > 0;
+          this.data.cluster.rules = {
+            replicated: [],
+            erasure: []
+          };
+          /* Confusing types because of:
+           * https://bitbucket.org/openattic/openattic/src/2a054091ffb56d69b7ccee9ee7070b5116261d6b/backend/ceph/
+           * models.py?at=master&fileviewer=file-view-default#models.py-327
+           */
+          const type = {
+            1: "replicated",
+            3: "erasure"
+          };
+          _.forIn(res[3].crushmap.rules, (ruleset) => {
+            this.data.cluster.rules[type[ruleset.type]].push(ruleset);
+          });
+          this.rulesetChange();
+          this.data.cluster.loaded = true;
+          this.pgSizeChange();
+          this.ecProfileChange();
+        })
+        .catch((error) => {
+          this.error = error;
+        });
     }
   }
 
@@ -253,12 +253,13 @@ class CephPoolsAdd {
       .then((cluster) => {
         this.clusters = [cluster];
         this.data.cluster = cluster;
+        this.onDataClusterChange();
       });
     this.cephPoolsService.get({
       id: this.$stateParams.poolId,
       fsid: this.$stateParams.fsid
     }).$promise.then((res) => {
-      angular.extend(this.pool, res);
+      _.extend(this.pool, res);
       this.data.pg_num = this.pool.pg_num;
       this.data.ruleset = this.pool.crush_ruleset;
       this.data.compression_min_blob_size = this.pool.compression_min_blob_size + "b";
@@ -274,6 +275,9 @@ class CephPoolsAdd {
       this.apps.all = this.apps.all.concat(this.apps.used).filter((app, index, apps) => {
         return apps.indexOf(app) === index;
       });
+
+      this.rulesetChange();
+      this.onDataClusterChange();
     });
   }
 
@@ -283,7 +287,7 @@ class CephPoolsAdd {
       .$promise
       .then((clusters) => {
         this.clusters = clusters.results;
-        angular.forEach(this.clusters, (cluster) => {
+        this.clusters.forEach((cluster) => {
           if (cluster.fsid === this.fsid) {
             this.data.cluster = cluster;
           }
@@ -298,22 +302,16 @@ class CephPoolsAdd {
             });
           }
         }
-      });
 
-    this.$scope.$watch("data.ruleset", (ruleset) => {
-      if (ruleset) {
-        this.pool.crush_ruleset = ruleset.rule_id;
-        this.useRulesetSize();
-      } else {
-        this.pool.crush_ruleset = undefined;
-      }
-    });
+        this.rulesetChange();
+        this.onDataClusterChange();
+      });
   }
 
   pgUpdate (pgs, jump) {
     pgs = pgs || this.data.pg_num;
     let power = Math.round(Math.log(pgs) / Math.log(2));
-    if (angular.isNumber(jump)) {
+    if (_.isNumber(jump)) {
       power += jump;
     }
     pgs = Math.pow(2, power); // Set size the nearest accurate size.
@@ -371,6 +369,13 @@ class CephPoolsAdd {
   }
 
   rulesetChange () {
+    if (this.data.ruleset) {
+      this.pool.crush_ruleset = this.data.ruleset.rule_id;
+      this.useRulesetSize();
+    } else {
+      this.pool.crush_ruleset = undefined;
+    }
+
     if (!this.pool.type || !this.data.cluster.loaded) {
       return;
     }
@@ -405,8 +410,8 @@ class CephPoolsAdd {
   }
 
   submitAction () {
-    this.$timeout(() => {
-      if (this.$scope.poolForm.$valid) {
+    setTimeout(() => {
+      if (this.poolForm.$valid) {
         let pool = {
           name: this.pool.name,
           pg_num: this.data.pg_num
@@ -435,12 +440,12 @@ class CephPoolsAdd {
       .then(() => {
         this.goToListView();
       }, () => {
-        this.$scope.poolForm.$submitted = false;
+        this.poolForm.$submitted = false;
       });
   }
 
   submitAdd (pool) {
-    angular.extend(pool, {
+    _.extend(pool, {
       type: this.pool.type,
       fsid: this.fsid,
       crush_ruleset: this.data.ruleset && this.data.ruleset.rule_id
@@ -451,8 +456,8 @@ class CephPoolsAdd {
     } else if (pool.type === "erasure") {
       pool.erasure_code_profile = this.pool.erasure.profile.name;
     }
-    angular.forEach(this.data.flags, (isSet, flag) => {
-      if (angular.isUndefined(pool.flags) && isSet) {
+    _.forIn(this.data.flags, (isSet, flag) => {
+      if (_.isUndefined(pool.flags) && isSet) {
         pool.flags = [];
       }
       return isSet && pool.flags.push(flag);
@@ -473,7 +478,7 @@ class CephPoolsAdd {
       .then(() => {
         this.goToListView();
       }, () => {
-        this.$scope.poolForm.$submitted = false;
+        this.poolForm.$submitted = false;
       });
   }
 

@@ -30,9 +30,11 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephRbdList {
-  constructor ($scope, $state, $filter, $uibModal, $q, cephRbdService,
-      registryService, cephPoolsService, oaTabSetService) {
+  constructor ($state, $filter, $uibModal, $q, cephRbdService, registryService,
+      cephPoolsService, oaTabSetService, taskQueueSubscriber) {
     this.$filter = $filter;
     this.$q = $q;
     this.$state = $state;
@@ -40,6 +42,7 @@ class CephRbdList {
     this.cephPoolsService = cephPoolsService;
     this.cephRbdService = cephRbdService;
     this.oaTabSetService = oaTabSetService;
+    this.taskQueueSubscriber = taskQueueSubscriber;
 
     this.registry = registryService;
     this.cluster = undefined;
@@ -60,13 +63,13 @@ class CephRbdList {
       active: 0,
       tabs: {
         status: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephRbds.detail.details",
           class: "tc_statusTab",
           name: "Status"
         },
         statistics: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephRbds.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
@@ -78,14 +81,6 @@ class CephRbdList {
       linkedBy: "id",
       jumpTo: "more"
     };
-
-    $scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
-        return;
-      }
-
-      this.getRbdList();
-    }, true);
   }
 
   onClusterLoad (cluster) {
@@ -104,48 +99,58 @@ class CephRbdList {
       this.rbd = {};
       this.error = false;
 
-      // Load the list of RBDs and Pools in parallel to increase the
-      // loading speed.
-      let requests = [];
-      requests.push(
-        this.cephRbdService.get({
-          fsid: this.registry.selectedCluster.fsid,
-          page: this.filterConfig.page + 1,
-          pageSize: this.filterConfig.entries,
-          search: this.filterConfig.search,
-          ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") +
-          this.filterConfig.sortfield
-        }).$promise
-      );
-      requests.push(
-        this.cephPoolsService.get({
-          fsid: this.registry.selectedCluster.fsid
-        }).$promise
-      );
-      this.$q.all(requests)
-        .then((res) => {
-          let rbds = res[0];
-          let pools = res[1];
-          rbds.results.forEach((rbd) => {
-            pools.results.some((pool) => {
-              if (pool.id === rbd.pool) {
-                rbd.pool = pool;
-                return true;
-              }
-            });
-            if (rbd.data_pool) {
-              pools.results.some((pool) => {
-                if (pool.id === rbd.data_pool) {
-                  rbd.data_pool = pool;
-                  return true;
+      this.taskQueueSubscriber.pendingTasksPromise()
+        .then((tasks) => {
+
+          // Load the list of RBDs and Pools in parallel to increase the
+          // loading speed.
+          let requests = [];
+          requests.push(
+            this.cephRbdService.get({
+              fsid: this.registry.selectedCluster.fsid,
+              page: this.filterConfig.page + 1,
+              pageSize: this.filterConfig.entries,
+              search: this.filterConfig.search,
+              ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") +
+              this.filterConfig.sortfield
+            }).$promise
+          );
+          requests.push(
+            this.cephPoolsService.get({
+              fsid: this.registry.selectedCluster.fsid
+            }).$promise
+          );
+          this.$q.all(requests)
+            .then((res) => {
+              let rbds = res[0];
+              let pools = res[1];
+              rbds.results.forEach((rbd) => {
+                pools.results.some((pool) => {
+                  if (pool.id === rbd.pool) {
+                    rbd.pool = pool;
+                    return true;
+                  }
+                });
+                if (rbd.data_pool) {
+                  pools.results.some((pool) => {
+                    if (pool.id === rbd.data_pool) {
+                      rbd.data_pool = pool;
+                      return true;
+                    }
+                  });
                 }
+                rbd.free = rbd.size - rbd.used_size;
+                rbd.usedPercent = rbd.used_size / rbd.size * 100;
+                rbd.freePercent = rbd.free / rbd.size * 100;
               });
-            }
-            rbd.free = rbd.size - rbd.used_size;
-            rbd.usedPercent = rbd.used_size / rbd.size * 100;
-            rbd.freePercent = rbd.free / rbd.size * 100;
-          });
-          this.rbd = rbds;
+
+              this._updateState(rbds, tasks);
+              this.rbd = rbds;
+            })
+            .catch((error) => {
+              this.error = error;
+            });
+
         })
         .catch((error) => {
           this.error = error;
@@ -174,6 +179,34 @@ class CephRbdList {
     }
   }
 
+  _updateState (rbds, deletingTasks) {
+    let notStartedTasks = deletingTasks[0].results || [];
+    let runningTasks = deletingTasks[1].results || [];
+    let results = notStartedTasks.concat(runningTasks);
+    let taskIds = [];
+    results.forEach((task) => {
+      if (task.description.startsWith("Delete RBD ") && taskIds.indexOf(task.id) === -1) {
+        taskIds.push(task.id);
+        rbds.results.forEach((rbdImage) => {
+          if (rbdImage.name === task.image &&
+              rbdImage.pool.name === task.pool &&
+              this.registry.selectedCluster.fsid === task.fsid) {
+            rbdImage.state = "DELETING";
+          }
+        });
+      }
+    });
+    let finishedTasksCounter = 0;
+    taskIds.forEach((taskId) => {
+      this.taskQueueSubscriber.subscribe(taskId, () => {
+        finishedTasksCounter++;
+        if (taskIds.length === finishedTasksCounter) {
+          this.filterConfig.refresh = new Date();
+        }
+      });
+    });
+  }
+
   addAction () {
     this.$state.go("cephRbds-add", {
       fsid: this.registry.selectedCluster.fsid
@@ -198,7 +231,10 @@ class CephRbdList {
     });
 
     modalInstance.result.then(() => {
-      this.filterConfig.refresh = new Date();
+      this.taskQueueSubscriber.pendingTasksPromise()
+        .then((tasks) => {
+          this._updateState(this.rbd, tasks);
+        });
     });
   }
 
@@ -208,4 +244,3 @@ export default {
   template: require("./ceph-rbd-list.component.html"),
   controller: CephRbdList
 };
-

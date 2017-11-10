@@ -13,7 +13,8 @@
                  class="oadatatable tc_cephRbdTable"
                  filter-config="$ctrl.filterConfig"
                  selection="$ctrl.selection"
-                 on-selection-change="$ctrl.onSelectionChange(selection)">
+                 on-selection-change="$ctrl.onSelectionChange(selection)"
+                 on-filter-config-change="$ctrl.getRbdList()">
       <actions>
         <a class="btn btn-sm btn-primary tc_add_btn"
            type="button"
@@ -103,8 +104,13 @@
                      checklist-model="selection.items"
                      checklist-value="row">
             </td>
-            <td ng-show="columns['Name']"
-                ng-bind="row.name"></td>
+            <td ng-show="columns['Name']">
+              <i ng-if="row.state === 'DELETING'"
+                 class="fa fa-spinner fa-spin fa-fw"></i>
+              {{ row.name }}
+              <span ng-if="row.state === 'DELETING'"
+                    class="italic"> (deleting...)</span>
+            </td>
             <td ng-show="columns['Poolname']"
                 ng-bind="row.pool.name"></td>
             <td ng-show="columns['Size']"

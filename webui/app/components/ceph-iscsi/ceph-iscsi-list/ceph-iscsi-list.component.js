@@ -30,11 +30,12 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephIscsiList {
-  constructor ($scope, $state, $filter, $uibModal, registryService,
-      oaTabSetService, cephIscsiService, cephIscsiImageOptionalSettings,
-      cephIscsiImageAdvangedSettings, cephIscsiTargetAdvangedSettings,
-      Notification) {
+  constructor ($state, $filter, $uibModal, registryService, oaTabSetService,
+      cephIscsiService, cephIscsiImageOptionalSettings, Notification,
+      cephIscsiImageAdvangedSettings, cephIscsiTargetAdvangedSettings) {
     this.cephIscsiService = cephIscsiService;
     this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
     this.$state = $state;
@@ -70,7 +71,7 @@ class CephIscsiList {
       active: 0,
       tabs: {
         status: {
-          show: "$ctrl.selection.item",
+          show: () => _.isObject(this.selection.item),
           state: "cephIscsi.detail.details",
           class: "tc_statusTab",
           name: "Status"
@@ -82,14 +83,6 @@ class CephIscsiList {
       linkedBy: "id",
       jumpTo: "more"
     };
-
-    $scope.$watch("$ctrl.filterConfig", (newValue, oldValue) => {
-      if (angular.equals(newValue, oldValue)) {
-        return;
-      }
-      this.getIscsiList();
-    }, true);
-
   }
 
   deployIscsi () {
@@ -143,7 +136,7 @@ class CephIscsiList {
   }
 
   getIscsiList () {
-    if (angular.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObject(this.cluster) && this.cluster.results &&
           this.cluster.results.length > 0 && this.registry.selectedCluster) {
       var obj = this.$filter("filter")(this.cluster.results, {
         fsid: this.registry.selectedCluster.fsid
@@ -166,7 +159,7 @@ class CephIscsiList {
         .$promise
         .then((res) => {
           this.iscsi = res;
-          angular.forEach(this.iscsi.results, (target) => {
+          this.iscsi.results.forEach((target) => {
             target.allIscsiImageSettings = this.allIscsiImageSettings;
             target.cephIscsiTargetAdvangedSettings = this.cephIscsiTargetAdvangedSettings;
             target.fsid = this.registry.selectedCluster.fsid;

@@ -1078,6 +1078,9 @@ class RbdApi(object):
     Exported features are defined here:
        https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
     """
+
+    RBD_DELETION_TIMEOUT = 3600
+
     @staticmethod
     def get_feature_mapping():
         ret = {
@@ -1145,7 +1148,7 @@ class RbdApi(object):
         :param old_format: Some features are not supported by the old format.
         :type stripe_unit: int
         :type stripe_count: int
-        :type data_pool_name: str
+        :type data_pool_name: str | None
         """
         def _create(client):
             ioctx = client.get_pool(pool_name)
@@ -1172,7 +1175,7 @@ class RbdApi(object):
             rbd_inst = rbd.RBD()
             rbd_inst.remove(ioctx, image_name)
 
-        self._call_librados(_remove)
+        self._call_librados(_remove, timeout=self.RBD_DELETION_TIMEOUT)
 
     def list(self, pool_name):
         """
@@ -1191,7 +1194,7 @@ class RbdApi(object):
 
         obj_size is similar to the block size of ordinary hard drives.
         :param name: the name of the image
-        :type name: str
+        :type name: str | unicode
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """

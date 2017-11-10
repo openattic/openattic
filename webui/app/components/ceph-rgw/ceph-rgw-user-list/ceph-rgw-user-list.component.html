@@ -12,7 +12,8 @@
              data="$ctrl.users"
              filter-config="$ctrl.filterConfig"
              selection="$ctrl.selection"
-             on-selection-change="$ctrl.onSelectionChange(selection)">
+             on-selection-change="$ctrl.onSelectionChange(selection)"
+             on-filter-config-change="$ctrl.getUserList()">
     <actions>
         <a class="btn btn-sm btn-primary tc_addUser"
            type="button"

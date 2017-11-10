@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephIscsi");
-app.value("cephIscsiTargetAdvangedSettings", [
+export default [
   {
     property: "tpg_default_cmdsn_depth",
     help: "Default CmdSN (Command Sequence Number) depth. Limits the amount of requests that an iSCSI initiator " +
@@ -57,4 +56,4 @@ app.value("cephIscsiTargetAdvangedSettings", [
     property: "tpg_t10_pi",
     help: ""
   }
-]);
+];

@@ -48,6 +48,7 @@ webui/build
 # From gatling-rest
 gatling/conf/
 gatling/test/reports/
+gatling/test-reports/
 
 documentation/_build
 vagrant/.vagrant/
