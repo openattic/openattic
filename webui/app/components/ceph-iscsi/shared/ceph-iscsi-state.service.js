@@ -119,7 +119,7 @@ export default class CephIscsiStateService {
       })
       .$promise
       .then((res) => {
-        this.taskQueueSubscriber.subscribe(res.task_id, () => {
+        this.taskQueueSubscriber.subscribe(res.taskqueue_id, () => {
           this._updateStates(fsid, (state) => {
             deployed.state = state;
             if (state === "RUNNING") {
@@ -147,7 +147,7 @@ export default class CephIscsiStateService {
       })
       .$promise
       .then((res) => {
-        this.taskQueueSubscriber.subscribe(res.task_id, () => {
+        this.taskQueueSubscriber.subscribe(res.taskqueue_id, () => {
           this._updateStates(fsid, (state) => {
             deployed.state = state;
             if (state === "STOPPED") {

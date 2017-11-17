@@ -28,12 +28,12 @@ def iscsi_status(request):
 @api_view(['POST'])
 def iscsi_deploy(request):
     my_task = tasks.async_deploy_exports.delay()
-    logger.info("Scheduled deploy of iSCSI exports: task_id=%s", my_task.id)
-    return Response({'task_id': my_task.id})
+    logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", my_task.id)
+    return Response({'taskqueue_id': my_task.id})
 
 
 @api_view(['POST'])
 def iscsi_undeploy(request):
     my_task = tasks.async_stop_exports.delay()
-    logger.info("Scheduled stop of iSCSI: task_id=%s", my_task.id)
-    return Response({'task_id': my_task.id})
+    logger.info("Scheduled stop of iSCSI: taskqueue_id=%s", my_task.id)
+    return Response({'taskqueue_id': my_task.id})

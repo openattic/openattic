@@ -69,9 +69,9 @@ class iSCSITargetViewSet(NodbViewSet):
 
         if new_targets and status:
             task = tasks.async_deploy_exports.delay()
-            logger.info("Scheduled deploy of iSCSI exports: task_id=%s", task.id)
+            logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", task.id)
         elif status:
             task = tasks.async_stop_exports.delay()
-            logger.info("Scheduled stop of iSCSI: task_id=%s", task.id)
+            logger.info("Scheduled stop of iSCSI: taskqueue_id=%s", task.id)
 
         return Response()

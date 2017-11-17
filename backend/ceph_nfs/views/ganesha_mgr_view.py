@@ -73,8 +73,8 @@ def deploy(request):
         my_task = tasks.async_deploy_exports.delay(host)
     else:
         my_task = tasks.async_deploy_exports.delay()
-        logger.info("Scheduled deploy of NFS exports: task_id=%s", my_task.id)
-    return Response({'task_id': my_task.id})
+        logger.info("Scheduled deploy of NFS exports: taskqueue_id=%s", my_task.id)
+    return Response({'taskqueue_id': my_task.id})
 
 
 @api_view(['POST'])
@@ -82,11 +82,11 @@ def stop(request):
     if 'host' in request.DATA:
         host = request.DATA['host']
         my_task = tasks.async_stop_exports.delay(host)
-        logger.info("Scheduled stop of NFS exports for host=%s: task_id=%s", host, my_task.id)
+        logger.info("Scheduled stop of NFS exports for host=%s: taskqueue_id=%s", host, my_task.id)
     else:
         my_task = tasks.async_stop_exports.delay()
-        logger.info("Scheduled stop of NFS exports: task_id=%s", my_task.id)
-    return Response({'task_id': my_task.id})
+        logger.info("Scheduled stop of NFS exports: taskqueue_id=%s", my_task.id)
+    return Response({'taskqueue_id': my_task.id})
 
 
 @api_view(['GET'])

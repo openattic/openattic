@@ -97,6 +97,6 @@ class iSCSITarget(NodbModel):
         status = DeepSea.instance().iscsi_status()
         if status:
             task = tasks.async_deploy_exports.delay()
-            logger.info("Scheduled deploy of iSCSI exports: task_id=%s", task.id)
+            logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", task.id)
 
         super(iSCSITarget, self).save(force_insert, force_update, using, update_fields)
