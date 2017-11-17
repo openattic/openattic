@@ -1,8 +1,3 @@
-const angular = require("angular");
-require("angular-mocks");
-
-require("../../../app");
-
 describe("cephRgwBucketNameValidate", function () {
   let $scope;
   let form;

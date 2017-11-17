@@ -58,6 +58,8 @@ Fixed
 
 Removed
 ~~~~~~~
+* WebUI: Removed unnecessary heading in RGW name validation unit
+  tests (OP-2901)
 
 [3.6.0] - 2017-11-01
 --------------------
