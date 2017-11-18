@@ -65,10 +65,6 @@ class CephIscsiList {
 
     this.selection = {};
 
-    this.deployed = {
-      state: undefined
-    };
-
     this.tabData = {
       active: 0,
       tabs: {
@@ -85,14 +81,6 @@ class CephIscsiList {
       linkedBy: "id",
       jumpTo: "more"
     };
-  }
-
-  deployIscsi () {
-    this.cephIscsiStateService.start(this.registry.selectedCluster.fsid, this.deployed);
-  }
-
-  undeployIscsi () {
-    this.cephIscsiStateService.stop(this.registry.selectedCluster.fsid, this.deployed);
   }
 
   onClusterLoad (cluster) {
@@ -128,12 +116,11 @@ class CephIscsiList {
             target.cephIscsiTargetAdvangedSettings = this.cephIscsiTargetAdvangedSettings;
             target.fsid = this.registry.selectedCluster.fsid;
           });
+          this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.iscsi.results);
         })
         .catch((error) => {
           this.error = error;
         });
-
-      this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.deployed);
     }
   }
 
@@ -192,6 +179,21 @@ class CephIscsiList {
     this.$state.go("cephIscsi-clone", {
       fsid: this.registry.selectedCluster.fsid,
       targetId: this.selection.items[0].targetId
+    });
+  }
+
+  stateAction () {
+    let modalInstance = this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephIscsiManageServiceModal",
+      resolve: {
+        fsid: () => {
+          return this.registry.selectedCluster.fsid;
+        }
+      }
+    });
+    modalInstance.result.catch(() => {
+      this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.iscsi.results);
     });
   }
 }

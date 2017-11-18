@@ -15,11 +15,11 @@ from deepsea import DeepSea
 from taskqueue.models import task
 
 
-@task(description='iSCSI deploy exports')
-def async_deploy_exports():
-    return DeepSea.instance().iscsi_deploy()
+@task(description='iSCSI deploy exports', metadata=lambda minions: {'hosts': minions})
+def async_deploy_exports(minions=None):
+    return DeepSea.instance().iscsi_deploy(minions)
 
 
-@task(description='iSCSI stop exports')
-def async_stop_exports():
-    return DeepSea.instance().iscsi_undeploy()
+@task(description='iSCSI stop exports', metadata=lambda minions: {'hosts': minions})
+def async_stop_exports(minions=None):
+    return DeepSea.instance().iscsi_undeploy(minions)

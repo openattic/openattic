@@ -22,18 +22,26 @@ logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def iscsi_status(request):
-    return Response({'status': DeepSea.instance().iscsi_status()})
+    return Response(DeepSea.instance().iscsi_status())
 
 
 @api_view(['POST'])
 def iscsi_deploy(request):
-    my_task = tasks.async_deploy_exports.delay()
+    if 'minions' in request.DATA:
+        minions = request.DATA['minions']
+        my_task = tasks.async_deploy_exports.delay(minions)
+    else:
+        my_task = tasks.async_deploy_exports.delay()
     logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", my_task.id)
     return Response({'taskqueue_id': my_task.id})
 
 
 @api_view(['POST'])
 def iscsi_undeploy(request):
-    my_task = tasks.async_stop_exports.delay()
+    if 'minions' in request.DATA:
+        minions = request.DATA['minions']
+        my_task = tasks.async_stop_exports.delay(minions)
+    else:
+        my_task = tasks.async_stop_exports.delay()
     logger.info("Scheduled stop of iSCSI: taskqueue_id=%s", my_task.id)
     return Response({'taskqueue_id': my_task.id})
