@@ -3,10 +3,10 @@
 Post-installation Configuration - (Manual deployment)
 =====================================================
 
-If you want to use openATTIC without DeepSea or if you've deployed oA and DeepSea independently
-you have to configure a few things manually.
-Also be aware of that only a subset of the functionality is available without DeepSea. 
-
+If you want to use |oA| without DeepSea or if you've deployed oA and DeepSea
+independently you have to configure a few things manually. Also be aware of that
+only a subset of the management functionality is available without DeepSea, e.g.
+the NFS Ganesha or iSCSI target configuration.
 
 .. _enabling_ceph_support:
 
