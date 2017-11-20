@@ -42,6 +42,8 @@ Changed
 * WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
 * WebUI: Migration of Ceph Pools module into Angular (OP-2859)
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
+* WebUI: The datatable does not show any progress if filter options are
+  changed (OP-2920)
 * Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors
   when deleting large RBD images. (OP-2742)
 * WebUI: Migration of Users module into Angular (OP-2871)
