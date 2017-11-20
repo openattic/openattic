@@ -30,22 +30,19 @@
  */
 "use strict";
 
-/**
- * deprecated: serviceState filter should be used
- */
 export default () => {
-  return (value) => {
 
+  return (value) => {
     if (value === "STARTING") {
       return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Starting...</span>";
     }
     if (value === "STOPPING") {
       return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Stopping...</span>";
     }
-    if (value === "ACTIVE") {
+    if (value === "RUNNING") {
       return "<span> Running</span>";
     }
-    if (value === "INACTIVE") {
+    if (value === "STOPPED") {
       return "<i class=\"fa fa-angle-double-down fa-lg icon-danger\"></i><span> Stopped</span>";
     }
     if (value === "LOADING") {

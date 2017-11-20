@@ -45,6 +45,7 @@ import oaSubmitButton from "./oa-submit-button/oa-submit-button.component";
 import oaTabSet from "./oa-tab-set/oa-tab-set.component";
 import required from "./required/required.directive";
 import validIqn from "./validators/iqn.validator";
+import serviceState from "./filters/service-state.filter";
 
 angular
   .module("openattic.shared", [])
@@ -61,6 +62,7 @@ angular
   .directive("oaPasswordButton", oaPasswordButton)
   .directive("required", required)
   .directive("validIqn", validIqn)
+  .filter("serviceState", serviceState)
   .service("oaModuleLoaderService", OaModuleLoaderService)
   .service("oaTabSetService", OaTabSetService);
 
@@ -72,3 +74,4 @@ require("./oadatatable/paginator.directive");
 require("./oadatatable/showhidecolumns.directive");
 require("./oadatatable/sortfield.directive");
 require("./oadatatable/sortheaderclass.directive");
+
