@@ -199,7 +199,7 @@ export default class CephNfsStateService {
       })
       .$promise
       .then((res) => {
-        this.taskQueueSubscriber.subscribe(res.task_id, () => {
+        this.taskQueueSubscriber.subscribe(res.taskqueue_id, () => {
           this.tryGetStatusAfterStart(host, hostname, fsid, 3);
         });
       });
@@ -217,7 +217,7 @@ export default class CephNfsStateService {
       })
       .$promise
       .then((res) => {
-        this.taskQueueSubscriber.subscribe(res.task_id, () => {
+        this.taskQueueSubscriber.subscribe(res.taskqueue_id, () => {
           this.cephNfsService
             .status({
               fsid: fsid

@@ -33,9 +33,11 @@
 import _ from "lodash";
 
 class CephIscsiList {
+
   constructor ($state, $filter, $uibModal, registryService, oaTabSetService,
       cephIscsiService, cephIscsiImageOptionalSettings, Notification,
-      cephIscsiImageAdvangedSettings, cephIscsiTargetAdvangedSettings) {
+      cephIscsiImageAdvangedSettings, cephIscsiTargetAdvangedSettings,
+      cephIscsiStateService) {
     this.cephIscsiService = cephIscsiService;
     this.cephIscsiTargetAdvangedSettings = cephIscsiTargetAdvangedSettings;
     this.$state = $state;
@@ -43,6 +45,7 @@ class CephIscsiList {
     this.$filter = $filter;
     this.registry = registryService;
     this.oaTabSetService = oaTabSetService;
+    this.cephIscsiStateService = cephIscsiStateService;
     this.Notification = Notification;
 
     this.cluster = undefined;
@@ -63,8 +66,7 @@ class CephIscsiList {
     this.selection = {};
 
     this.deployed = {
-      $resolved: false,
-      deployed: undefined
+      state: undefined
     };
 
     this.tabData = {
@@ -86,49 +88,11 @@ class CephIscsiList {
   }
 
   deployIscsi () {
-    this.deployed.$resolved = false;
-    this.cephIscsiService
-      .iscsideploy({
-        fsid: this.registry.selectedCluster.fsid
-      })
-      .$promise
-      .then((res) => {
-        if (res.result) {
-          this.Notification.success({
-            msg: "iSCSI targets started successfully"
-          });
-          res.status = true;
-        } else {
-          this.Notification.error({
-            msg: "Failed to start iSCSI targets"
-          });
-          res.status = false;
-        }
-        this.deployed = res;
-      });
+    this.cephIscsiStateService.start(this.registry.selectedCluster.fsid, this.deployed);
   }
 
   undeployIscsi () {
-    this.deployed.$resolved = false;
-    this.cephIscsiService
-      .iscsiundeploy({
-        fsid: this.registry.selectedCluster.fsid
-      })
-      .$promise
-      .then((res) => {
-        if (res.result) {
-          this.Notification.success({
-            msg: "iSCSI targets stopped successfully"
-          });
-          res.status = false;
-        } else {
-          this.Notification.error({
-            msg: "Failed to stop iSCSI targets"
-          });
-          res.status = true;
-        }
-        this.deployed = res;
-      });
+    this.cephIscsiStateService.stop(this.registry.selectedCluster.fsid, this.deployed);
   }
 
   onClusterLoad (cluster) {
@@ -169,14 +133,7 @@ class CephIscsiList {
           this.error = error;
         });
 
-      this.cephIscsiService
-        .iscsistatus({
-          fsid: this.registry.selectedCluster.fsid
-        })
-        .$promise
-        .then((res) => {
-          this.deployed = res;
-        });
+      this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.deployed);
     }
   }
 
