@@ -42,7 +42,7 @@ Changed
 * WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
 * WebUI: Migration of Ceph Pools module into Angular (OP-2859)
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
-* Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors 
+* Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors
   when deleting large RBD images. (OP-2742)
 * WebUI: Migration of Users module into Angular (OP-2871)
 * WebUI: Migration of Ceph RBD module into Angular (OP-2860)
@@ -53,11 +53,15 @@ Fixed
 * Backend: Fix namespace issue with backend/views.py (OP-2896)
 * Backend: Node search field isn't working (OP-2886)
 * Backend: Performance Improvements when listing RBDs (OP-2688)
+* Backend: Fixed Internal Server Error when listing RBDs with missing
+  (OP-2895)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 
 Removed
 ~~~~~~~
+* WebUI: Removed unnecessary heading in RGW name validation unit
+  tests (OP-2901)
 
 [3.6.0] - 2017-11-01
 --------------------
