@@ -16,9 +16,6 @@ The main log file to consult in case of errors is the file
 Django application and should provide a detailed error message including the
 traceback that explains which Python module the error originated in.
 
-The second log file that should be checked for errors is the |oA| systemd log
-file located at ``/var/log/openattic/openattic_systemd.log``.
-
 Other logfiles worth checking in case of errors include the Apache HTTP server's
 error log. Its location depends on the Linux distribution that |oA| has been
 installed on - please consult the distribution's documentation for details.
