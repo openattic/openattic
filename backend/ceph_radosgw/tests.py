@@ -64,7 +64,10 @@ class RGWClientTestCase(TestCase):
     @mock.patch('ceph_radosgw.views.proxy_view')
     @mock.patch('ceph_nfs.models.GaneshaExport.objects.filter')
     def test_bucket_get(self, filter_mock, proxy_view_mock):
-        proxy_view_mock.return_value = HttpResponse(json.dumps({'foo': 'bar'}))
+        proxy_view_mock.return_value = HttpResponse(json.dumps({
+            'owner': 'floyd',
+            'bucket': 'my_data'
+        }))
 
         make_default_admin()
         self.assertTrue(self.client.login(username=settings.OAUSER, password='openattic'))

@@ -31,5 +31,16 @@
             <dt>Shared via NFS:</dt>
             <dd>{{ $ctrl.selection.item.is_referenced ? "Yes" : "No" }}</dd>
         </dl>
+        <legend>Endpoint</legend>
+        <dl class="dl-horizontal">
+            <dt>S3:</dt>
+            <dd>
+                <a>{{ $ctrl.selection.item.endpoint.s3 }}</a>
+            </dd>
+            <dt>Swift:</dt>
+            <dd>
+                <a>{{ $ctrl.selection.item.endpoint.swift }}</a>
+            </dd>
+        </dl>
     </div>
 </div>

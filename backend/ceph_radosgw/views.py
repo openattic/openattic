@@ -96,11 +96,24 @@ def bucket_get(request):
 
     response = proxy_view(request, 'bucket')
 
-    # Check if the bucket is shared via NFS.
-    query = GaneshaExport.objects.filter(path__in=params['bucket'])
-    # Append the 'is_referenced' attribute.
+    # Get the response content.
     content = json.loads(response.content)
+
+    # Check if the bucket is shared via NFS and append the
+    # 'is_referenced' attribute.
+    query = GaneshaExport.objects.filter(path__in=params['bucket'])
     content['is_referenced'] = bool(query)
+
+    # Append the 'endpoint' attribute.
+    instance = RGWClient.admin_instance()
+    scheme = 'https' if instance._ssl else 'http'
+    content['endpoint'] = {
+        's3': '{}://{}.{}'.format(scheme, content['bucket'], instance.service_url),
+        'swift': '{}://{}/v1/{}/{}'.format(scheme, instance.service_url,
+                                           content['owner'], content['bucket'])
+    }
+
+    # Update the response content.
     response.content = json.dumps(content)
 
     return response
