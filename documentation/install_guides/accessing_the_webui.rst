@@ -1,17 +1,13 @@
-.. _getting started:
-
-Getting started
-===============
+.. _accessing the webui:
 
 Accessing the Web UI
---------------------
+====================
 
 After |oA|  has been installed, it can be managed using the web-based user
 interface.
 
 Open a web browser and navigate to http://openattic.yourdomain.com/openattic
 
-The default login username is **openattic**. Use the password you defined during
-the :ref:`post-installation configuration`.
+The default login username and password is **openattic**.
 
 See the :ref:`gui_docs_index` for further information.
