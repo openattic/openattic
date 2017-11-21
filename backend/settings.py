@@ -174,6 +174,7 @@ LOGIN_URL = PROJECT_URL + '/accounts/login/'
 LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 
 # Use cookies that expire as soon as the user closes their browser.
+SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Automatically generate a .secret.txt file containing the SECRET_KEY.
