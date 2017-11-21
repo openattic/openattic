@@ -276,6 +276,13 @@ var rbdCommons = function () {
     expect(element(by.cssContainingText("tr", rbdName)).isPresent()).toBe(false);
   };
 
+  this.deleteRbdIfExists = function (rbdName) {
+    browser.findElement(by.cssContainingText("td", rbdName)).then(function () {
+      self.deleteRbd(rbdName);
+    }).catch(function () {
+    });
+  };
+
   this.fillForm = function (rbdName, size, rbdObjSize, featureCase) {
     helpers.changeInput(self.name, rbdName);
     helpers.changeInput(self.size, size);
