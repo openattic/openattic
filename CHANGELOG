@@ -27,6 +27,8 @@ Added
 
 Changed
 ~~~~~~~
+* Backend/QA: Improve auth Gatling tests to check the browser cookie
+  expiry (OP-2921)
 * WebUI: Migration of Dashboard module into Angular (OP-2861)
 * WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 * WebUI: Migration of Navigation module into Angular (OP-2864)

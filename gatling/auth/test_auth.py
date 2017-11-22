@@ -49,11 +49,9 @@ class TokenAuthTestCase(TokenAuthTestScenario):
         self.assertEqual(err_message["non_field_errors"][0], "Unable to log in with provided "
                                                              "credentials.")
 
-    def test_get_expire_at_browser_close(self):
-        request_url = self.base_url + "auth"
-
+    def test_cookie_dont_expire_at_browser_close(self):
         # Request a cookie that expires after 2 weeks (Django default).
-        res = requests.post(request_url, json={
+        res = requests.post(self.base_url + "auth", json={
             "username": self.conf.get("options", "admin"),
             "password": self.conf.get("options", "password"),
             "stay_signed_in": True
@@ -66,13 +64,30 @@ class TokenAuthTestCase(TokenAuthTestScenario):
             if cookie.name == 'sessionid':
                 self.assertIsInstance(cookie.expires, int)
 
+    def test_cookie_expire_at_browser_close_default(self):
         # Request a cookie that expires when the browser window is closed.
-        res = requests.post(request_url, data={
+        res = requests.post(self.base_url + "auth", data={
+            "username": self.conf.get("options", "admin"),
+            "password": self.conf.get("options", "password")
+        })
+        res.raise_for_status()
+        # We can not import django.conf.settings here to get SESSION_COOKIE_NAME,
+        # so we need to hardcode the default name.
+        self.assertIn('sessionid', res.cookies.keys())
+        for cookie in res.cookies:
+            if cookie.name == 'sessionid':
+                self.assertIsNone(cookie.expires)
+
+    def test_cookie_expire_at_browser_close_force(self):
+        # Request a cookie that expires when the browser window is closed.
+        res = requests.post(self.base_url + "auth", data={
             "username": self.conf.get("options", "admin"),
             "password": self.conf.get("options", "password"),
             "stay_signed_in": False
         })
         res.raise_for_status()
+        # We can not import django.conf.settings here to get SESSION_COOKIE_NAME,
+        # so we need to hardcode the default name.
         self.assertIn('sessionid', res.cookies.keys())
         for cookie in res.cookies:
             if cookie.name == 'sessionid':
