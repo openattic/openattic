@@ -121,6 +121,8 @@ class UserManagementTestCase(UserTestScenario):
     def test_set_new_password_for_other_user_by_admin_user(self):
         """ Try to refresh the password of an user by an adminitrator. """
         # create a second test user
+        self._delete_user('testuser_2')
+
         testuser_2 = self._create_test_user('testuser_2')
         self.addCleanup(requests.request, 'DELETE', testuser_2['cleanup_url'],
                         headers=testuser_2['headers'])
@@ -139,6 +141,8 @@ class UserManagementTestCase(UserTestScenario):
     def test_set_new_password_by_user_without_admin_privileges(self):
         """ Try to refresh the password on an user by another user how is not an administrator. """
         # create the second test user (without administrator privileges)
+        self._delete_user('testuser_2')
+
         testuser_2 = self._create_test_user('testuser_2', False)
         self.addCleanup(requests.request, 'DELETE', testuser_2['cleanup_url'],
                         headers=testuser_2['headers'])

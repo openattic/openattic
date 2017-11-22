@@ -1298,6 +1298,7 @@ class RbdApi(object):
         return self._call_librados(_check_format_type)
 
     def _call_librados(self, func, timeout=30):
+        """:type func: (Client) -> Any"""
         cmd = func.__name__[1:].replace('_', ' ')
         cmd = 'rbd {}'.format(cmd)
         return call_librados(self.fsid, func, cmd, timeout)

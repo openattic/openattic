@@ -27,6 +27,8 @@ Added
 
 Changed
 ~~~~~~~
+* Backend/QA: Improve auth Gatling tests to check the browser cookie
+  expiry (OP-2921)
 * WebUI: Migration of Dashboard module into Angular (OP-2861)
 * WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 * WebUI: Migration of Navigation module into Angular (OP-2864)
@@ -59,6 +61,7 @@ Fixed
 * Backend: Performance Improvements when listing RBDs (OP-2688)
 * Backend: Fixed Internal Server Error when listing RBDs with missing
   (OP-2895)
+* Backend: Made Gatling tests more idempotent (OP-2913)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
@@ -517,6 +520,9 @@ Added
 * Backend: Add time-sync-status to the API (OP-2495)
 * WebUI: Display help text for shared secret key configuration in
   settings page (OP-2479)
+* Backend/QA: Added test to check that the `version.txt` matches the server
+  version (OP-2921)
+
 
 Changed
 ~~~~~~~

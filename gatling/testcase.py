@@ -345,7 +345,7 @@ class GatlingTestCase(unittest.TestCase):
         return res
 
     @classmethod
-    def send_ceph_request(cls, method, fsid, subresource=None, data=None):
+    def send_ceph_request(cls, method, fsid, subresource=None, data=None, search_param=None):
         """
         Helper function to send the request to the Ceph REST API.
 
@@ -364,6 +364,10 @@ class GatlingTestCase(unittest.TestCase):
 
         if subresource:
             url = '{}/{}'.format(url, subresource)
+
+        if search_param:
+            url = '{}?{}'.format(url, search_param)
+
 
         headers = dict()
         headers['content-type'] = 'application/json'

@@ -22,7 +22,10 @@ class RbdCreateDataPoolTestCase(RbdDataPoolTestScenario):
 
     def test_create_delete_rbd_replicated_pool(self):
         """ Try to create an RBD where the pool and the data-pool are replicated pools. """
-        rbd_name = 'gatling_rbd_data_pool'
+        rbd_name = 'test_create_delete_rbd_replicated_pool'
+
+        self._delete_rbd(rbd_name)
+        self.assertFalse(self._rbd_exist(rbd_name))
 
         data = {
             'name': rbd_name,
@@ -36,16 +39,19 @@ class RbdCreateDataPoolTestCase(RbdDataPoolTestScenario):
 
         res = self.send_ceph_request('POST', self.fsid, 'rbds', data=data)
         self.assertEqual(res['status_code'], 201)
-        self.assertEqual(self._check_for_rbd_in_list(rbd_name), True)
+        self.assertEqual(self._rbd_exist(rbd_name), True)
         res_delete = self.send_ceph_request('DELETE', self.fsid, 'rbds/{}/{}'.format(
             self.replicated_pool_1['name'], rbd_name))
         self.assertEqual(res_delete['status_code'], 204)
-        self.assertEqual(self._check_for_rbd_in_list(rbd_name), False)
+        self.assertEqual(self._rbd_exist(rbd_name), False)
 
     def test_create_delete_rbd_ec_pool_ec_overwrites(self):
         """ Try to create an RBD where the pool is an replicated pool and the data-pool an erasure coded pool with
             'ec_overwrites' flag. """
-        rbd_name = 'gatling_rbd_data_pool'
+        rbd_name = 'test_create_delete_rbd_ec_pool_ec_overwrites'
+
+        self._delete_rbd(rbd_name)
+        self.assertFalse(self._rbd_exist(rbd_name))
 
         data = {
             'name': rbd_name,
@@ -59,17 +65,20 @@ class RbdCreateDataPoolTestCase(RbdDataPoolTestScenario):
 
         res = self.send_ceph_request('POST', self.fsid, 'rbds', data=data)
         self.assertEqual(res['status_code'], 201)
-        self.assertEqual(self._check_for_rbd_in_list(rbd_name), True)
+        self.assertEqual(self._rbd_exist(rbd_name), True)
         res_delete = self.send_ceph_request('DELETE', self.fsid, 'rbds/{}/{}'.format(
             self.replicated_pool_1['name'], rbd_name))
         self.assertEqual(res_delete['status_code'], 204)
-        self.assertEqual(self._check_for_rbd_in_list(rbd_name), False)
+        self.assertEqual(self._rbd_exist(rbd_name), False)
 
     def test_create_delete_rbd_ec_pool_no_ec_overwrites(self):
         """ Try to create an RBD where the pool is an replicated pool and the data-pool an erasure coded pool without
             'ec_overwrites' flag and see if it fails. """
 
-        rbd_name = 'gatling_rbd_data_pool'
+        rbd_name = 'test_create_delete_rbd_ec_pool_no_ec_overwrites'
+
+        self._delete_rbd(rbd_name)
+        self.assertFalse(self._rbd_exist(rbd_name))
 
         data = {
             'name': rbd_name,
@@ -84,4 +93,4 @@ class RbdCreateDataPoolTestCase(RbdDataPoolTestScenario):
         with self.assertRaises(requests.HTTPError) as err:
             self.send_ceph_request('POST', self.fsid, 'rbds', data=data)
         self.assertEqual(err.exception.response.status_code, 500)
-        self.assertEqual(self._check_for_rbd_in_list(rbd_name), False)
+        self.assertEqual(self._rbd_exist(rbd_name), False)
