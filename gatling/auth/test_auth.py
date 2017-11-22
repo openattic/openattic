@@ -12,13 +12,17 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import json
+from os.path import dirname, realpath
 
 import requests
+from configobj import ConfigObj
 
 from auth.scenarios import TokenAuthTestScenario
 
 
 class TokenAuthTestCase(TokenAuthTestScenario):
+    longMessage = True
 
     def test_get_authtoken_by_username_and_password(self):
         """ Try to request the auth token with correct user data. """
@@ -73,3 +77,11 @@ class TokenAuthTestCase(TokenAuthTestScenario):
         for cookie in res.cookies:
             if cookie.name == 'sessionid':
                 self.assertIsNone(cookie.expires)
+
+    def test_server_version(self):
+        res = self._do_request('GET', self.base_url + 'hosts/current', self.get_auth_header())
+        server_version = json.loads(res.text)[u'oa_version'][u'package'][u'VERSION']
+        version_txt = ConfigObj(dirname(dirname(dirname(realpath(__file__)))) + '/version.txt')
+        # If this fails, check your testing setup.
+        self.assertEqual(server_version, version_txt[u'package'][u'VERSION'],
+                         'Server version does not match version.txt')
