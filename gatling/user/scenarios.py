@@ -28,17 +28,18 @@ class UserTestScenario(GatlingTestCase):
         super(UserTestScenario, cls).setUpClass()
         cls.require_enabled("user")
 
-    @classmethod
-    def setUp(cls):
-        cls.testuser = cls._create_test_user()['response']
+    def setUp(self):
+        self.testuser = self._create_test_user()['response']
 
-    @classmethod
-    def tearDown(cls):
-        super(UserTestScenario, cls).tearDownClass()
-        res = cls.send_request("GET", "users", search_param=("username=%s" % cls.username))
+    def tearDown(self):
+        super(UserTestScenario, self).tearDownClass()
+        self._delete_user(self.username)
+
+    def _delete_user(self, user_name):
+        res = self.send_request("GET", "users", search_param=("username=%s" % user_name))
         if res["count"] > 0:
             for entry in res["response"]:
-                cls.send_request("DELETE", "users", obj_id=entry["id"])
+                self.send_request("DELETE", "users", obj_id=entry["id"])
 
     @classmethod
     def _create_test_user(cls, username=None, is_superuser=True):

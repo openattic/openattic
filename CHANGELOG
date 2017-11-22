@@ -59,6 +59,7 @@ Fixed
 * Backend: Performance Improvements when listing RBDs (OP-2688)
 * Backend: Fixed Internal Server Error when listing RBDs with missing
   (OP-2895)
+* Backend: Made Gatling tests more idempotent (OP-2913)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
