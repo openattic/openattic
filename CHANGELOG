@@ -517,6 +517,9 @@ Added
 * Backend: Add time-sync-status to the API (OP-2495)
 * WebUI: Display help text for shared secret key configuration in
   settings page (OP-2479)
+* Backend/QA: Added test to check that the `version.txt` matches the server
+  version (OP-2921)
+
 
 Changed
 ~~~~~~~
