@@ -125,7 +125,6 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/openattic-gui
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
-mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}/srv/www/htdocs/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
@@ -136,7 +135,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_unitdir}
-mkdir -p %{buildroot}%{_prefix}/lib/tmpfiles.d/
 %if 0%{?suse_version}
 mkdir -p %{buildroot}/var/adm/fillup-templates
 %else
@@ -180,7 +178,6 @@ gzip %{buildroot}%{_mandir}/man1/*.1
 
 install -m 444 etc/systemd/%{name}-systemd.service.SUSE %{buildroot}%{_unitdir}/%{name}-systemd.service
 ln -s %{_sbindir}/service %{buildroot}%{_sbindir}/rcopenattic-systemd
-install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}%{_prefix}/lib/tmpfiles.d/
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/apache2/conf.d/
@@ -213,7 +210,6 @@ exit 0
 %post
 %service_add_post %{name}-systemd.service
 %fillup_and_insserv
-systemd-tmpfiles --create %{_prefix}/lib/tmpfiles.d/%{name}.conf
 # These steps should probably be moved to oaconfig instead
 systemctl enable postgresql
 systemctl start postgresql
@@ -227,7 +223,6 @@ systemctl enable apache2
 systemctl start apache2
 
 %preun
-systemd-tmpfiles --remove %{_prefix}/lib/tmpfiles.d/%{name}.conf
 %service_del_preun %{name}-systemd.service
 
 %postun
@@ -252,7 +247,6 @@ systemctl try-restart apache2
 %dir %{_localstatedir}/lib/%{name}
 %attr(0755,-,root) %dir %{_localstatedir}/log/%{name}
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
-%ghost %dir %{_localstatedir}/lock/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/database.ini
 
 %defattr(-,root,root,-)
@@ -276,7 +270,6 @@ systemctl try-restart apache2
 /srv/www/htdocs/index.html
 %{_datadir}/%{name}
 %{_datadir}/%{name}-gui
-%{_prefix}/lib/tmpfiles.d/%{name}.conf
 %{_sbindir}/oaconfig
 %{_sbindir}/rcopenattic-systemd
 %{_unitdir}/%{name}-systemd.service
