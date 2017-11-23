@@ -93,11 +93,6 @@ if ! getent passwd openattic ; then
 	    --create-home --comment "openATTIC system user" openattic
 fi
 
-# Create various directories that are normally created by the Debian/RPM packages.
-# openattic-base
-mkdir -p -m 0755 /var/lock/openattic
-chown vagrant: /var/lock/openattic
-
 # Installing Ceph
 # http://docs.ceph.com/docs/master/install/get-packages/
 if [ "${DISABLE_CEPH_REPO}" == false ] ; then
@@ -249,12 +244,6 @@ EOF
 fi
 popd
 
-# Modify the configuration for creation, deletion and cleaning of volatile and temporary files.
-mkdir -p /etc/tempfiles.d
-cat <<EOF > /etc/tempfiles.d/openattic.conf
-d /run/lock/openattic 0755 vagrant users -
-EOF
-
 # Create the DBUS configuration.
 cat <<EOF > /etc/dbus-1/system.d/openattic.conf
 <!DOCTYPE busconfig PUBLIC
@@ -278,12 +267,6 @@ cat <<EOF > /etc/dbus-1/system.d/openattic.conf
 EOF
 
 service dbus reload
-
-# Make sure the directory /run/lock/openattic is created with the
-# correct privileges.
-if [ -z "$IS_TRUSTY" ] ; then
-    systemd-tmpfiles --create
-fi
 
 if [ "$IS_XENIAL" ]
 then

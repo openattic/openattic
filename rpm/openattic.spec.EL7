@@ -193,7 +193,6 @@ mkdir -p %{buildroot}%{_datadir}/openattic-gui
 mkdir -p %{buildroot}%{_libdir}/nagios/plugins/
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
-mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/www/html/
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
@@ -208,7 +207,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
-mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
@@ -255,7 +253,6 @@ for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
 done
 
 install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
-install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
 
 #configure ceph
 install -m 644 etc/nagios-plugins/config/%{name}-ceph.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
@@ -349,13 +346,11 @@ fi
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
 %attr(660,-,-) %{_localstatedir}/log/%{name}/%{name}.log
-%dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_sbindir}/oaconfig
 %{_sysconfdir}/cron.daily/%{name}
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
 /lib/systemd/system/%{name}-systemd.service
-/lib/tmpfiles.d/%{name}.conf
 %config %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config %{_sysconfdir}/logrotate.d/%{name}
 %dir %{_datadir}/%{name}

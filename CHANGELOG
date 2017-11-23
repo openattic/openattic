@@ -75,6 +75,8 @@ Removed
 ~~~~~~~
 * WebUI: Removed unnecessary heading in RGW name validation unit
   tests (OP-2901)
+* Packaging: Removed creation of /var/lock/openattic (and /run/lock/openattic
+  respectively) during installation (OP-2946)
 
 [3.6.0] - 2017-11-01
 --------------------
