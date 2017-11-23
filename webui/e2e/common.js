@@ -158,6 +158,35 @@
     changeInput: (e, val) => e.clear().sendKeys(val).sendKeys(protractor.Key.TAB),
 
     /**
+     * Selects option from a drop down option list.
+     * Select through option position or part of the option name.
+     *
+     * @param {object} select element
+     * @param {string|number} query
+     */
+    selectOption: (select, query) => {
+      select.click();
+      let option = {};
+      if (typeof query === "string") {
+        option = select.element(by.cssContainingText("option", query));
+      } else {
+        option = select.all(by.tagName("option")).get(query);
+      }
+      option.isPresent().then(present => {
+        if (present) {
+          option.click();
+        }
+        select.click();
+      });
+    },
+
+    getOptionText: select => {
+      return select.getAttribute("value").then(value => {
+        return select.element(by.css("option[value='" + value + "']")).getText();
+      });
+    },
+
+    /**
      * Check if the given element has the given class.
      * @param {object} element The element to check.
      * @param {string} cls The name of the class to check for.
