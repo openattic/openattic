@@ -81,12 +81,7 @@ class CephRgwUserList {
   getUserList () {
     this.error = false;
 
-    this.cephRgwUserService.filter({
-      page: this.filterConfig.page + 1,
-      pageSize: this.filterConfig.entries,
-      search: this.filterConfig.search,
-      ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") + this.filterConfig.sortfield
-    })
+    this.cephRgwUserService.filter(this.filterConfig)
       .$promise
       .then((res) => {
         this.users = res;
