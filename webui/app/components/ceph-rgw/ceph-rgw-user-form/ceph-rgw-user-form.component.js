@@ -34,7 +34,7 @@ import _ from "lodash";
 
 class CephRgwUserForm {
   constructor ($state, $stateParams, $uibModal, $q, $filter,
-      cephRgwHelpersService, cephRgwUserService) {
+      cephRgwHelpersService, cephRgwUserService, Notification) {
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$uibModal = $uibModal;
@@ -42,6 +42,7 @@ class CephRgwUserForm {
     this.$q = $q;
     this.cephRgwHelpersService = cephRgwHelpersService;
     this.cephRgwUserService = cephRgwUserService;
+    this.Notification = Notification;
 
     this.user = {
       "subusers": [],
@@ -244,7 +245,18 @@ class CephRgwUserForm {
         } else {
           this.goToListView();
         }
-      }, () => {
+      }, (error) => {
+        if (_.isObjectLike(error.data) && error.data.Code === "EmailExists") {
+          // Do not display the default error message, instead display a more
+          // meaningful error message. Additionally mark the input field as
+          // invalid.
+          error.preventDefault();
+          this.Notification.error({
+            title: "Email already exists",
+            msg: `The email address ${this.user.email} is already assigned to another user.`
+          });
+          userForm.email.$invalid = true;
+        }
         userForm.$submitted = false;
         // Clear all requests.
         this.requests = [];

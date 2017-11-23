@@ -49,6 +49,8 @@ Changed
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
 * WebUI: The datatable does not show any progress if filter options are
   changed (OP-2920)
+* WebUI: Display meaningful error when creating a RGW user using an existing
+  email address (OP-2902)
 * Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors
   when deleting large RBD images. (OP-2742)
 * WebUI: Migration of Users module into Angular (OP-2871)
