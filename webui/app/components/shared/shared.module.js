@@ -46,6 +46,7 @@ import oaTabSet from "./oa-tab-set/oa-tab-set.component";
 import required from "./required/required.directive";
 import validIqn from "./validators/iqn.validator";
 import serviceState from "./filters/service-state.filter";
+import OaApiFilter from "./oa-api-filter/oa-api-filter.service";
 
 angular
   .module("openattic.shared", [])
@@ -63,6 +64,7 @@ angular
   .directive("required", required)
   .directive("validIqn", validIqn)
   .filter("serviceState", serviceState)
+  .service("oaApiFilter", OaApiFilter)
   .service("oaModuleLoaderService", OaModuleLoaderService)
   .service("oaTabSetService", OaTabSetService);
 
@@ -74,4 +76,3 @@ require("./oadatatable/paginator.directive");
 require("./oadatatable/showhidecolumns.directive");
 require("./oadatatable/sortfield.directive");
 require("./oadatatable/sortheaderclass.directive");
-

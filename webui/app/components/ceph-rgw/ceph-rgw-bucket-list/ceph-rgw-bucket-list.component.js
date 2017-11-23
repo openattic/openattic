@@ -81,12 +81,7 @@ class CephRgwBucketList {
       }
     });
 
-    this.cephRgwBucketService.filter({
-      page: this.filterConfig.page + 1,
-      pageSize: this.filterConfig.entries,
-      search: this.filterConfig.search,
-      ordering: (this.filterConfig.sortorder === "ASC" ? "" : "-") + this.filterConfig.sortfield
-    })
+    this.cephRgwBucketService.filter(this.filterConfig)
       .$promise
       .then((res) => {
         this.buckets = res;

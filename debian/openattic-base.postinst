@@ -21,7 +21,6 @@ if [ "$1" = "configure" ] ; then
 
     setperm "/usr/share/openattic" 0750
     setperm "/var/lib/openattic"   0755
-    setperm "/var/lock/openattic"  0755
     setperm "/var/log/openattic"   0755
 
     touch "$OPENATTIC_LOGFILE"

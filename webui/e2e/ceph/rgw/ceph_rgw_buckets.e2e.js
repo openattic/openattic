@@ -80,6 +80,8 @@ describe("ceph rgw buckets", () => {
     expect(element(by.cssContainingText("dt", "Version:")).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText("dt", "Master version:")).isDisplayed()).toBe(true);
     expect(element(by.cssContainingText("dt", "Modification time:")).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText("dt", "S3:")).isDisplayed()).toBe(true);
+    expect(element(by.cssContainingText("dt", "Swift:")).isDisplayed()).toBe(true);
   });
 
   it("should change owner (owner=tuxdoe)", () => {

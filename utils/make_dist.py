@@ -30,33 +30,15 @@
 
    --revision=<revision>
 
-        A valid git revision. An existing git tag for 'release'.
+        Ignored for compatibility reasons. Will always be HEAD.
 
-        If no revision is provided, the defaults are used. The default for
-        'release' is the latest existing git tag. The default for
-        'snapshot' is the master branch, which actually results in the tip
-        of the master branch being used.
+   --source=<source>  [default: .]
 
-        If the --tag switch is used without a revision but with the order to
-        create a 'release', then the latest existing git tag will *not*
-        be used by default, but the 'stable' branch. For more information see
-        the documentation of --tag.
+        The source to be used. A local path to a git repository.
 
-        The --revision argument will be ignored if a path to a local repository
-        is used as argument for --source and if that repo contains uncommitted
-        changes. In that case these uncommited changes are committed in a
-        temporary directory to be able include them in the tar archive.
-
-   --source=<source>  [default: https://bitbucket.org/openattic/openattic]
-
-        The source to be used. Either an URL to a git repository or local
-        path to a git repository.
-
-        If a local path is used, uncommited changes will be automatically
-        committed and used to create the tarball. Because of that the
-        --push-changes switch is ignored if a local path is given to --source.
-        The local repository is never altered, only a temporary copy of it will
-        be adapted.
+        If the --push-changes switch is used but there are uncommited changes in
+        the source directory, the switch will be ignored and a appropriate
+        warning will be printed.
 
    --destination=<destination>  [default: ~/src]
 
@@ -290,28 +272,7 @@ def _get_md5_of_file(file_name):
     return md5(open(file_name, 'r').read()).hexdigest()
 
 
-def _sort_version_number_desc(iterable):
-    def extract_version_numbers(entry):
-        match = re.search(r'v?([\d]+)\.([\d]+)\.([\d]+).*', entry)
-        return map(int, match.groups()) if match else None
-
-    return sorted(iterable, key=extract_version_numbers, reverse=True)
-
-
-def _strip_repo_tag(tag):
-    """Strip the given tag to a version-only format.
-
-    It omits the 'v' prefix and '-1' suffix. The latter is only used by packaging systems and
-    unnecessary in this context.
-
-    :type tag: str
-    :return: `None` or the stripped git tag
-    """
-    hits = re.findall(r'v?([^\-]+)(-\d)?', tag)
-    return hits[0][0] if hits else None  # Return first hit of first group or None.
-
-
-def _get_current_revision_hash(repo_dir):
+def _get_current_revision_hash(repo_dir=None):
     """Retrieve the hash of the current revision.
 
     Returns the long hash of the currently active revision of the given
@@ -394,9 +355,12 @@ class DistBuilder(object):
             destination = os.path.expanduser(self._args['--destination'])
             self._destination_dir = os.path.abspath(destination)
         self._source = self._args['--source']
-        if not is_url(self._source):
+        if self._source == '.':
+            self._source = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        else:
             self._source = os.path.expanduser(self._source)
             self._source = os.path.abspath(self._source)
+        logging.warning(self._source)
         self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
         self._tmp_oa_clone_dir = os.path.join(self._tmp_dir, 'openattic')
         self._version_txt_path = os.path.join(self._tmp_oa_clone_dir, 'version.txt')
@@ -412,13 +376,6 @@ class DistBuilder(object):
         self._npmrc_file_path = os.path.join(self._home_dir, '.npmrc')
         self._fe_cache_dir = os.path.join(self._home_dir, '.cache', 'openattic-build', 'oa_cache')
         self._datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
-
-    def _get_latest_existing_tag(self, strip_tag=False):
-        tags = _get_all_tags(self._tmp_oa_clone_dir)
-        latest_tag = _sort_version_number_desc(tags)[0]
-        latest_tag = _strip_repo_tag(latest_tag) if strip_tag else latest_tag
-
-        return latest_tag
 
     def _get_version_of_revision(self, revision, update_allowed):
         """Return the version of `version.txt` using the given revision.
@@ -451,22 +408,6 @@ class DistBuilder(object):
             version = config.get('package', 'VERSION')
 
         return version
-
-    def _get_revision_by_channel(self, channel):
-        """Return the revision corresponding to the given release channel.
-
-        This function provides the default revision for calls of this script which do NOT provide a
-        revision argument, so that the revision has to be determined automatically.
-
-        If the channel is 'release', the revision will resolve to the latest existing git tag.
-        If it's 'snapshot' it will resolve to the tip of the stable branch.
-
-        :param channel: 'release' | 'snapshot'
-        :type channel: str
-        :return: A valid git revision
-        """
-        assert channel in ('release', 'snapshot')
-        return self._get_latest_existing_tag() if channel == 'release' else 'origin/stable'
 
     def _remove_npmrc_prefix(self):
         """Remove the `prefix` variable from the `~/.npmrc` file."""
@@ -652,41 +593,26 @@ class DistBuilder(object):
                               self._fe_cache_dir, skip_if_exists=True)
         process_run(['git', 'pull'], cwd=self._fe_cache_dir)
 
-        if not is_url(self._source) and isdir(self._tmp_oa_clone_dir):
+        if isdir(self._tmp_oa_clone_dir):
             _rmtree(self._tmp_oa_clone_dir)
         self._retrieve_source(self._source, self._tmp_oa_clone_dir, skip_if_exists=True)
 
         channel = self._get_release_channel()
-        if self._args['--revision']:
-            revision = self._args['--revision']
-        elif self._args['--tag'] and self._args['release']:
-            revision = 'origin/stable'
-        else:
-            revision = self._get_revision_by_channel(channel)
+        current_revision = _get_current_revision_hash()
 
         tmp_files_commited = False
         repo_updated = False
-        if not is_url(self._source):
-            try:
-                _commit_changes('Testbuild', self._tmp_oa_clone_dir)
-                tmp_files_commited = True
-            except Exception:
-                log.exception('failed to commit. Ignoring')
+        try:
+            _commit_changes('Testbuild', self._tmp_oa_clone_dir)
+            tmp_files_commited = True
+        except Exception:
+            log.exception('failed to commit. Ignoring')
 
-            if self._args['--revision']:
-                if tmp_files_commited:
-                    log.warning('Ignoring the --revision switch because you have uncommitted files '
-                                'in your local repository which are about to be used to create the '
-                                'tarball. If I updated to the given revision, these changes '
-                                'wouldn\'t be included in the tar archive anymore.')
-                else:
-                    _git_reset_hard(revision, self._tmp_oa_clone_dir)
-                    repo_updated = True
-        else:
-            _git_reset_hard(revision, self._tmp_oa_clone_dir)
+        if not tmp_files_commited:
+            _git_reset_hard(current_revision, self._tmp_oa_clone_dir)
             repo_updated = True
 
-        version = self._get_version_of_revision(revision, update_allowed=repo_updated)
+        version = self._get_version_of_revision(current_revision, update_allowed=repo_updated)
         
         debchange_installed = bool(find_executable('debchange'))
         enable_debchange = False
@@ -714,7 +640,7 @@ class DistBuilder(object):
             adapt_debian_changelog(debian_channel,
                                    version + ('-1' if channel == 'release' else ''),
                                    self._datestring,
-                                   _get_current_revision_hash(self._tmp_oa_clone_dir),
+                                   current_revision,
                                    self._tmp_oa_clone_dir)
             _commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
@@ -752,67 +678,6 @@ class DistBuilder(object):
                 print(abs_tarball_file_path)
             else:
                 print('Tarball has been created: %s' % abs_tarball_file_path)
-
-    @staticmethod
-    def get_basename(source):
-        return os.path.basename(os.path.normpath(source))
-
-
-class DistBuilderTestCase(unittest.TestCase):
-
-    def test_get_basename(self):
-        sources = [
-            'http://bitbucket.org/openattic/openattic',
-            'http://bitbucket.org/openattic/openattic/',
-            '/root/src/openattic',
-            '/root/src/openattic/',
-        ]
-        self.assertEqual([DistBuilder.get_basename(source) for source in sources],
-                         ['openattic'] * len(sources))
-
-    def test_sort_version_numbers(self):
-        version_numbers = [
-            'v1.2.0-2',
-            'v1.2.0-1',
-            'v1.1.1-1',
-            'v1.0.7-1',
-            'v0.7.4-2',
-            'v0.7.4-1',
-            'v2.0.1-gui',
-            'v2.0.0-gui',
-            'v2.0.1',
-            'v2.0.0',
-            'v1.2.1',
-            'v1.2.0',
-            'v1.1.1',
-            'v1.1.0',
-            'v1.0.7',
-            'v0.7.4',
-            'v2.0.2-1',
-            'v0.7.3',
-        ]
-        expected = [
-            'v2.0.2-1',
-            'v2.0.1-gui',
-            'v2.0.1',
-            'v2.0.0-gui',
-            'v2.0.0',
-            'v1.2.1',
-            'v1.2.0-2',
-            'v1.2.0-1',
-            'v1.2.0',
-            'v1.1.1-1',
-            'v1.1.1',
-            'v1.1.0',
-            'v1.0.7-1',
-            'v1.0.7',
-            'v0.7.4-2',
-            'v0.7.4-1',
-            'v0.7.4',
-            'v0.7.3'
-        ]
-        self.assertNotEqual(version_numbers, expected)
-        self.assertEqual(_sort_version_number_desc(version_numbers), expected)
 
 
 if __name__ == '__main__':

@@ -24,6 +24,8 @@ Added
 ~~~~~
 * WebUI: Add a 'Clear' button to the datatable search field (OP-2900)
 * WebUI: Add a timestamp of last update on the dashboard (OP-2837)
+* Development: Import ``set_symlinks.sh`` in order to create symlinks for
+  building a development environment (OP-2899)
 
 Changed
 ~~~~~~~
@@ -43,6 +45,7 @@ Changed
 * WebUI: Migration of Ceph OSDs module into Angular (OP-2858)
 * WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
 * WebUI: Migration of Ceph Pools module into Angular (OP-2859)
+* WebUI: Improve Object Gateway user/bucket filtering (OP-2912)
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
 * WebUI: The datatable does not show any progress if filter options are
   changed (OP-2920)
@@ -50,8 +53,10 @@ Changed
   when deleting large RBD images. (OP-2742)
 * WebUI: Migration of Users module into Angular (OP-2871)
 * WebUI: Migration of Ceph RBD module into Angular (OP-2860)
-* Backend/WebUI: Usage of task queue on iSCSI service management to prevent 
+* WebUI: Object Gateway Buckets now provides endpoint addresses (OP-2908)
+* Backend/WebUI: Usage of task queue on iSCSI service management to prevent
   timeouts (OP-2788)
+* Development: Make ``make_dist.py`` always use the current HEAD revision (OP-2883)
 
 Fixed
 ~~~~~
@@ -70,6 +75,8 @@ Removed
 ~~~~~~~
 * WebUI: Removed unnecessary heading in RGW name validation unit
   tests (OP-2901)
+* Packaging: Removed creation of /var/lock/openattic (and /run/lock/openattic
+  respectively) during installation (OP-2946)
 
 [3.6.0] - 2017-11-01
 --------------------
