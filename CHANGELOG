@@ -31,6 +31,7 @@ Changed
 ~~~~~~~
 * Backend/QA: Improve auth Gatling tests to check the browser cookie
   expiry (OP-2921)
+* Backend: Migrated .secret.txt into a setting in the settings file (OP-2873)
 * WebUI: Migration of Dashboard module into Angular (OP-2861)
 * WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 * WebUI: Migration of Navigation module into Angular (OP-2864)
@@ -56,7 +57,8 @@ Changed
 * WebUI: Object Gateway Buckets now provides endpoint addresses (OP-2908)
 * Backend/WebUI: Usage of task queue on iSCSI service management to prevent
   timeouts (OP-2788)
-* Development: Make ``make_dist.py`` always use the current HEAD revision (OP-2883)
+* Development: Make ``make_dist.py`` always use the current HEAD revision
+  (OP-2883)
 
 Fixed
 ~~~~~

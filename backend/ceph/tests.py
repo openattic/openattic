@@ -25,6 +25,7 @@ from configobj import ConfigObj
 from django.core.exceptions import ValidationError
 
 import exception
+import utilities
 from ceph.restapi import CephPoolSerializer
 from django.test import TestCase
 
@@ -469,6 +470,29 @@ class LibradosTest(TestCase):
         self.assertEqual(names, [u'osd.0', u'osd.1', u'osd.2', u'osd.4', u'osd.5', u'osd.6',
                                  u'osd.7', u'osd.8', u'osd.9', u'osd.11', u'osd.12', u'osd.13',
                                  u'osd.14', u'osd.15'])
+
+    def test_config_migration(self):
+        utilities.write_single_setting('CEPH_KEYRING_USER_FSID-WITH-MINUS', 'dummy')
+        self.assertEqual(utilities.read_single_setting('CEPH_KEYRING_USER_FSID-WITH-MINUS'),
+                         'dummy')
+
+        utilities.write_single_setting('CEPH_KEYRING_USER_FSID_WITH_MINUS', '')
+
+
+        obj = mock.Mock()
+        ceph.librados._read_oa_settings(ConfigObj(ceph.librados.oa_settings.settings_file), obj)
+
+        self.assertNotIn('CEPH_KEYRING_USER_FSID-WITH-MINUS', obj.__dict__)
+        self.assertEqual(obj.CEPH_KEYRING_USER_FSID_WITH_MINUS, 'dummy')
+        self.assertEqual(utilities.read_single_setting('CEPH_KEYRING_USER_FSID-WITH-MINUS'),
+                         'dummy')
+
+        ceph.librados._write_oa_setting('CEPH_KEYRING_USER_FSID_WITH_MINUS', 'dummy2')
+        with self.assertRaises(KeyError):
+            utilities.read_single_setting('CEPH_KEYRING_USER_FSID-WITH-MINUS')
+
+        self.assertEqual(utilities.read_single_setting('CEPH_KEYRING_USER_FSID_WITH_MINUS'),
+                         'dummy2')
 
 
 class CephPgTest(TestCase):

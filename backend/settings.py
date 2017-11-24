@@ -16,7 +16,7 @@ import logging
 import sys
 
 from configobj import ConfigObj
-from utilities import set_globals_from_file
+from utilities import set_globals_from_file, write_single_setting, read_single_setting
 from rest_framework import ISO_8601
 
 PROJECT_ROOT = None
@@ -177,27 +177,49 @@ LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# Automatically generate a .secret.txt file containing the SECRET_KEY.
-# Shamelessly stolen from ByteFlow: <http://www.byteflow.su>
-try:
-    SECRET_KEY
-except NameError:
-    SECRET_FILE = join(PROJECT_ROOT, '.secret.txt')
-    try:
-        SECRET_KEY = open(SECRET_FILE).read().strip()
-    except IOError:
-        try:
-            import string
-            from django.utils.crypto import get_random_string
 
-            SECRET_KEY = get_random_string(50, string.ascii_letters + string.digits +
-                                           string.punctuation)
-            secret = file(SECRET_FILE, 'w')
-            secret.write(SECRET_KEY)
-            secret.close()
-        except IOError:
-            raise Exception('Please create a %s file with random characters to generate '
-                            'your secret key!' % SECRET_FILE)
+def read_secret_from_config():
+    try:
+        secret = read_single_setting('DJANGO_SECRET')
+        if secret:
+            return secret, False
+    except KeyError:
+        pass
+
+    # Pre 3.6.1: we have used a dedicated file to store the django secret.
+    try:
+        secret = open(join(PROJECT_ROOT, '.secret.txt')).read().strip()
+        if secret:
+            return secret, True
+    except IOError:
+        pass
+    except Exception:
+        logging.exception('failed')
+
+    import string
+    from django.utils.crypto import get_random_string
+
+    secret = get_random_string(50, string.ascii_letters + string.digits +
+                               string.punctuation)
+
+    return secret, True
+
+
+def write_secret_to_config(secret):
+    import dbus
+    try:
+        write_single_setting('DJANGO_SECRET', secret, set_in_django_settings=False)
+        secret_file_name = join(PROJECT_ROOT, '.secret.txt')
+        try:
+            os.remove(secret_file_name)
+        except OSError:
+            logging.info('failed to delete')
+
+    except dbus.DBusException:
+        logging.exception('Failed to write secret key. Ignoring')
+
+
+SECRET_KEY, needs_to_write_secret_to_settings = read_secret_from_config()
 
 
 def read_version():
@@ -430,3 +452,6 @@ oa_settings.load_settings()
 
 # This enables developers and test systems to override settings in a non-versioned file.
 set_globals_from_file(globals(), join(os.getcwd(), 'settings_local.conf'))
+
+if needs_to_write_secret_to_settings:
+    write_secret_to_config(SECRET_KEY)

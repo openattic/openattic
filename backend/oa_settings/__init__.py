@@ -177,6 +177,7 @@ def load_settings():
 
     _notify_settings_listeners()
 
+
 def save_settings():
     def get_default(key):
         return setting_init_dict[key][0]
@@ -223,19 +224,24 @@ def save_settings_generic(this_settings_list, get_default, get_type, get_value):
 
     logger.debug("Writing %s contents:\n%s", settings_file, conf_content)
 
-    settings_dbus = get_dbus_object("/oa_settings")
-    ret = settings_dbus.write_openattic_config(settings_file, conf_content)
-    if ret == 0:
-        return
+    # try without dbus, if we have write access
+    try:
+        with open(settings_file, "w") as f:
+            f.write(conf_content)
+    except IOError:
+        settings_dbus = get_dbus_object("/oa_settings")
+        ret = settings_dbus.write_openattic_config(settings_file, conf_content)
+        if ret == 0:
+            return
 
-    logger.error("Error while writing settings: errno=%s", ret)
-    if ret == 13:
-        raise Exception("Permission denied while writting settings to {}.\n"
-                        "Please check file permissions for user \"openattic\""
-                        .format(settings_file))
-    else:
-        raise Exception("Error while writting settings to {}: IOError errno={}"
-                        .format(settings_file, ret))
+        logger.error("Error while writing settings: errno=%s", ret)
+        if ret == 13:
+            raise Exception("Permission denied while writting settings to {}.\n"
+                            "Please check file permissions for user \"openattic\""
+                            .format(settings_file))
+        else:
+            raise Exception("Error while writting settings to {}: IOError errno={}"
+                            .format(settings_file, ret))
 
 
 # Settings listener implementation
