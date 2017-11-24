@@ -236,11 +236,11 @@ def save_settings_generic(this_settings_list, get_default, get_type, get_value):
 
         logger.error("Error while writing settings: errno=%s", ret)
         if ret == 13:
-            raise Exception("Permission denied while writting settings to {}.\n"
+            raise Exception("Permission denied while writing settings to {}.\n"
                             "Please check file permissions for user \"openattic\""
                             .format(settings_file))
         else:
-            raise Exception("Error while writting settings to {}: IOError errno={}"
+            raise Exception("Error while writing settings to {}: IOError errno={}"
                             .format(settings_file, ret))
 
 
