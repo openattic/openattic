@@ -212,8 +212,8 @@ def write_secret_to_config(secret):
         secret_file_name = join(PROJECT_ROOT, '.secret.txt')
         try:
             os.remove(secret_file_name)
-        except OSError:
-            logging.info('failed to delete')
+        except OSError as e:
+            logging.info('failed to delete {}: {}'.format(secret_file_name, str(e)))
 
     except dbus.DBusException:
         logging.exception('Failed to write secret key. Ignoring')
