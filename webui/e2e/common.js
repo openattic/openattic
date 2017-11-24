@@ -185,7 +185,10 @@
      * @param {object} e is the input field element.
      * @param {string} val is the value the field will be changed to.
      */
-    changeInput: (e, val) => e.clear().sendKeys(val).sendKeys(protractor.Key.TAB),
+    changeInput (e, val) {
+      this.waitForElementVisible(e);
+      e.clear().sendKeys(val).sendKeys(protractor.Key.TAB);
+    },
 
     /**
      * Selects option from a drop down option list.
@@ -271,6 +274,27 @@
       }
       var until = protractor.ExpectedConditions;
       browser.wait(until.invisibilityOf(elem), 360000, "Element taking too long to disappear in the DOM");
+    },
+
+    /**
+     * This method is a shortcut for selecting an item in the datatable and then
+     * picking the edit action.
+     * It will result in opening the edit page for that element.
+     *
+     * @param {any} itemName string or regex that represents the name of the item you want to edit
+     */
+    selectAndEdit (itemName) {
+      this.get_list_element(itemName).click();
+      element(by.className("tc_edit_btn")).click();
+    },
+
+    /**
+     * Shortcut for verifying if a given property is displayed in the details tab
+     *
+     * @param {string} value name of the property that should be displayed
+     */
+    checkDetailIsDisplayed (value) {
+      expect(element(by.cssContainingText("dd", value)).isDisplayed()).toBe(true);
     }
 
   };

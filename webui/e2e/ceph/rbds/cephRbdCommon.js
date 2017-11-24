@@ -35,6 +35,7 @@ var rbdCommons = function () {
   var taskQueueHelpers = require("../../base/taskqueue/task_queue_common.js");
   this.cephRBDs = element(by.css(".tc_menuitem_ceph_rbds"));
   this.addButton = element(by.css("oadatatable .tc_add_btn"));
+  this.submitButton = element(by.className("tc_submitButton"));
   this.statisticsTab = element(by.className("tc_statisticsTab"));
 
   this.detailAttributes = [
@@ -235,6 +236,7 @@ var rbdCommons = function () {
   });
 
   this.checkCheckboxToBe = function (e, bool) {
+    helpers.waitForElement(e);
     e.getAttribute("checked").then(function (value) {
       if (Boolean(value) !== bool) {
         e.click();
@@ -284,8 +286,17 @@ var rbdCommons = function () {
 
   this.selectPool = function (poolName) {
     self.addButton.click();
-    self.poolSelect.sendKeys(poolName);
-    expect(self.poolSelect.getText()).toContain(poolName);
+    helpers.waitForElement(self.poolSelect);
+    if (poolName) {
+      self.poolSelect.sendKeys(poolName);
+      expect(self.poolSelect.getText()).toContain(poolName);
+    } else {
+      self.poolSelect
+        .findElements(by.tagName("option"))
+        .then((options) => {
+          options[1].click();
+        });
+    }
   };
 
   var self = this;
@@ -326,7 +337,7 @@ var rbdCommons = function () {
     rbdObjSize = rbdObjSize || "4.00 MiB";
     size = size || rbdObjSize;
     self.fillForm(rbdName, size, rbdObjSize, featureCase);
-    element(by.className("tc_submitButton")).click();
+    self.submitButton.click();
 
     taskQueueHelpers.waitForPendingTasks();
     self.cephRBDs.click();

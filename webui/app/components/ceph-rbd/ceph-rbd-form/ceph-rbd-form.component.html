@@ -1,19 +1,18 @@
 <div class="col-sm-12 col-lg-6">
   <oa-loading-panel message="{{ 'Form is loading...' | translate }}"
-                    ng-show="!$ctrl.clusters"></oa-loading-panel>
+                    ng-show="!$ctrl.loadingFinished()"></oa-loading-panel>
 
   <form name="$ctrl.rbdForm"
         role="form"
         class="form-horizontal"
         novalidate
         oa-check-form
-        ng-show="$ctrl.clusters">
+        ng-show="$ctrl.loadingFinished()">
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 class="panel-title">
-          <translate translate-params-name="$ctrl.rbd.name">
-            Create RBD: {{ name }}
-          </translate>
+          {{ $ctrl.editing ? "Edit" : "Create" | translate }} 
+          <translate translate-params-name="$ctrl.rbd.name">RBD: {{ name }}</translate>
         </h3>
       </div>
       <div class="panel-body">
@@ -29,6 +28,7 @@
                    class="form-control tc_rbd_name"
                    placeholder="Name..."
                    ng-model="$ctrl.rbd.name"
+                   ng-disabled="$ctrl.editing"
                    name="name"
                    validname
                    uniquename="rbd"
@@ -43,7 +43,7 @@
                   ng-show="$ctrl.rbdForm.name.$error.validname">{{errortext}}</span>
             <span translate
                   class="help-block tc_noUniqueName"
-                  ng-show="$ctrl.rbdForm.name.$error.uniquename">
+                  ng-show="$ctrl.rbdForm.name.$error.uniquename && !$ctrl.editing">
               The chosen RBD name is already in use.
             </span>
           </div>
@@ -57,7 +57,7 @@
                  for="cluster">Cluster</label>
           <div class="col-sm-9">
             <select id="cluster"
-                    ng-disabled="!$ctrl.clusters"
+                    ng-disabled="!$ctrl.clusters || $ctrl.editing"
                     class="form-control tc_cluster_selection"
                     ng-model="$ctrl.data.cluster"
                     ng-options="(cluster.name + ' (' + cluster.fsid + ')')
@@ -87,6 +87,7 @@
             <div class="checkbox checkbox-primary"
                  ng-show="$ctrl.pools.replicated.length + $ctrl.pools.erasure.length > 1">
               <input id="use-data-pool"
+                     ng-disabled="$ctrl.editing"
                      type="checkbox"
                      ng-model="$ctrl.data.useDataPool"
                      ng-name="useDataPool">
@@ -109,7 +110,7 @@
           </label>
           <div class="col-sm-9">
             <select id="pool"
-                    ng-disabled="!$ctrl.pools"
+                    ng-disabled="!$ctrl.pools || $ctrl.editing"
                     class="form-control tc_pool_selection"
                     ng-model="$ctrl.data.pool"
                     ng-options="(pool.name + ' (' + pool.oaFreeText + ' free)' ) for pool in $ctrl.pools.replicated
@@ -167,7 +168,7 @@
           </label>
           <div class="col-sm-9">
             <select id="dataPool"
-                    ng-disabled="!$ctrl.data.pool"
+                    ng-disabled="!$ctrl.data.pool || $ctrl.editing"
                     class="form-control"
                     name="dataPool"
                     ng-model="$ctrl.data.dataPool"
@@ -262,7 +263,7 @@
                    class="form-control tc_rbd_obj_size"
                    type="text"
                    name="obj_size"
-                   ng-disabled="$ctrl.data.pool == null"
+                   ng-disabled="$ctrl.data.pool == null || $ctrl.editing"
                    ng-change="$ctrl.updateObjSize()"
                    ng-model-options="{ updateOn: 'blur' }"
                    ng-keyup="$ctrl.sizeChange($event, $ctrl.updateObjSize)"
@@ -302,7 +303,7 @@
                      ng-change="$ctrl.watchDataFeatures()"
                      id="default-features"
                      name="default-features"
-                     ng-disabled="$ctrl.data.pool == null">
+                     ng-disabled="$ctrl.data.pool == null || $ctrl.editing">
               <label translate
                      for="default-features">Use default features</label>
             </div>
@@ -314,7 +315,7 @@
                 <input type="checkbox"
                        ng-model="$ctrl.data.features[key].checked"
                        id="{{key}}"
-                       ng-disabled="$ctrl.data.features[key].disabled"
+                       ng-disabled="$ctrl.data.features[key].disabled || ($ctrl.editing && !$ctrl.data.features[key].canUpdate)"
                        ng-change="$ctrl.watchDataFeatures(key)"
                        class="tc_feature_{{key}}"
                        ng-name="key">
@@ -347,7 +348,7 @@
                      type="text"
                      name="stripingUnit"
                      ng-init="$ctrl.updateStripingUnit($ctrl.rbd.obj_size)"
-                     ng-disabled="$ctrl.data.pool == null"
+                     ng-disabled="$ctrl.data.pool == null || $ctrl.editing"
                      ng-change="$ctrl.updateStripingUnit()"
                      ng-model-options="{ updateOn: 'blur' }"
                      ng-keyup="$ctrl.sizeChange($event, $ctrl.updateStripingUnit)"
@@ -380,7 +381,7 @@
                      type="number"
                      name="stripingCount"
                      min="2"
-                     ng-disabled="$ctrl.data.pool == null"
+                     ng-disabled="$ctrl.data.pool == null || $ctrl.editing"
                      ng-model-options="{ updateOn: 'blur' }"
                      ng-model="$ctrl.data.striping.count"
                      required>
@@ -417,7 +418,7 @@
         <div class="button-group text-right">
           <oa-submit-button form="$ctrl.rbdForm"
                             on-submit="$ctrl.submitAction($ctrl.rbdForm)">
-            <translate>Create</translate>
+            {{ $ctrl.editing ? "Update" : "Create" | translate }}
           </oa-submit-button>
           <button translate
                   type="button"
