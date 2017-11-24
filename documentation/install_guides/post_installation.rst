@@ -1,12 +1,17 @@
 .. _post-installation configuration:
 
-Post-installation Configuration
-===============================
+Post-installation Configuration - (Manual deployment)
+=====================================================
+
+If you want to use |oA| without DeepSea or if you've deployed oA and DeepSea
+independently you have to configure a few things manually. Also be aware of that
+only a subset of the management functionality is available without DeepSea, e.g.
+the NFS Ganesha or iSCSI target configuration.
 
 .. _enabling_ceph_support:
 
 Enabling Basic Ceph Support in |oA|
-===================================
+-----------------------------------
 
 |oA| depends on Ceph's `librados Python bindings
 <http://docs.ceph.com/docs/master/rados/api/python/>`_ for performing many Ceph
@@ -82,7 +87,7 @@ The last step is to recreate your |oA| configuration::
 .. _deepsea_integration:
 
 DeepSea integration in |oA|
-===========================
+---------------------------
 
 `DeepSea <https://github.com/SUSE/DeepSea>`_ is a Ceph installation and
 management framework developed by SUSE which is based on the `Salt Open
@@ -173,7 +178,7 @@ immediately::
 
 Now, your |oA| storage system can be managed via the user interface.
 
-See :ref:`getting started` for instructions on how to access the web user
+See :ref:`accessing the webui` for instructions on how to access the web user
 interface.
 
 If you don't want to manage your users locally, consult the chapter

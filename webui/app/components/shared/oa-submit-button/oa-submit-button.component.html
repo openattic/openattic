@@ -1,0 +1,9 @@
+<button type="submit"
+        class="btn btn-sm btn-primary tc_submitButton"
+        ng-disabled="$ctrl.form.$submitted && $ctrl.loading"
+        ng-click="$ctrl.submitAction()">
+    <span ng-transclude></span>
+    <span ng-if="$ctrl.form.$submitted && $ctrl.loading">
+        <i class="fa fa-spinner fa-spin fa-fw"></i>
+    </span>
+</button>

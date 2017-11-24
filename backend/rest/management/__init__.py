@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 
 from rest_framework.authtoken.models import Token
 
+
 def create_auth_token(**kwargs):
     if User.objects.count() == 0:
         print "Can't create authentication token, no users have been configured yet"

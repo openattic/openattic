@@ -14,6 +14,8 @@
 import logging
 
 from django.db import models
+
+from ceph_iscsi import tasks
 from nodb.models import NodbModel, JsonField
 from deepsea import DeepSea
 from ceph_iscsi.lrbd_conf import LRBDConf, LRBDUi
@@ -94,10 +96,7 @@ class iSCSITarget(NodbModel):
 
         status = DeepSea.instance().iscsi_status()
         if status:
-            if DeepSea.instance().iscsi_deploy():
-                logger.info("Successfully deployed iSCSI targets")
-            else:
-                logger.info("Failed to deploy iSCSI targets")
-                raise Exception('Failed to deploy iSCSI targets')
+            task = tasks.async_deploy_exports.delay()
+            logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", task.id)
 
         super(iSCSITarget, self).save(force_insert, force_update, using, update_fields)

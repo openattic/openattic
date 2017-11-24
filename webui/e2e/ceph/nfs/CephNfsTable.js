@@ -18,7 +18,7 @@ class CephNfsTable {
       element(by.css(".tc_menudropdown")).click();
       element(by.css(".tc_deleteItem")).click();
       element(by.model("$ctrl.input.enteredName")).sendKeys("yes");
-      element(by.id("bot2-Msg1")).click();
+      element(by.css(".tc_submitButton")).click();
       helpers.clear_search_for();
       this.removeExportsIfExists(path);
     }).catch(() => {});
@@ -45,7 +45,7 @@ class CephNfsTable {
     element(by.css(".tc_menudropdown")).click();
     element(by.css(".tc_deleteItem")).click();
     element(by.model("$ctrl.input.enteredName")).sendKeys("yes");
-    element(by.id("bot2-Msg1")).click();
+    element(by.css(".tc_submitButton")).click();
     helpers.clear_search_for();
   };
 }

@@ -30,11 +30,12 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class cephClusterSettingsModal {
 
-  constructor (cephClusterService, $scope) {
+  constructor (cephClusterService) {
     this.cephClusterService = cephClusterService;
-    this.$scope = $scope;
 
     this.model = undefined;
     this.data = {
@@ -96,7 +97,7 @@ class cephClusterSettingsModal {
       .then((res) => {
         this.model = res;
 
-        angular.forEach(res.osd_flags, (value) => {
+        res.osd_flags.forEach((value) => {
           if (this.data.osd_flags[value]) {
             this.data.osd_flags[value].value = true;
           }
@@ -108,12 +109,12 @@ class cephClusterSettingsModal {
   }
 
   submitAction () {
-    let requestModel = angular.copy(this.model);
+    let requestModel = _.cloneDeep(this.model);
     let allFlags = Object.keys(this.data.osd_flags);
     requestModel.osd_flags =
       requestModel.osd_flags.filter(flag => !allFlags.includes(flag));
 
-    angular.forEach(this.data.osd_flags, (flag, key) => {
+    _.forIn(this.data.osd_flags, (flag, key) => {
       if (flag.value) {
         requestModel.osd_flags.push(key);
       }
@@ -124,7 +125,7 @@ class cephClusterSettingsModal {
       .then(() => {
         this.modalInstance.dismiss("cancel");
       }, () => {
-        this.$scope.clusterForm.$submitted = false;
+        this.clusterForm.$submitted = false;
       });
   }
 
@@ -140,5 +141,5 @@ export default {
     resolve: "<"
   },
   controller: cephClusterSettingsModal
-}
+};
 

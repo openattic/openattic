@@ -23,29 +23,41 @@ Some general recommendations for making changes and for documenting and
 tracking them:
 
 * New Python code should adhere to the `Style Guide for Python Code
-  <https://www.python.org/dev/peps/pep-0008/>`_ (PEP 8). Use the ``flake8``
-  tool to verify that your changes don't violate this style before comitting
-  your modifications.
+  <https://www.python.org/dev/peps/pep-0008/>`_ (PEP 8) with the exception of
+  using 100 instead of 80 characters per line. Use the ``flake8``
+  tool to verify that your changes don't violate this style before committing
+  your modifications. Also, please have a look at the `Django coding style guides
+  <https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/>`_
+  as a reference.
+
 * Existing code can be refactored to adhere to PEP 8, if you feel like it.
   However, such style changes must be committed separately from other code
   modifications, to ease the reviewing of such pull requests.
-* For JavaScript code, we use
+
+* For JavaScript code, we use `ESLint <https://eslint.org/>`_ using the
   `eslint-loader <https://github.com/MoOx/eslint-loader/>`_ to perform
-  automated syntax and style checks of the JavaScript code. The configuration
-  files for these WebUI tests can be found in file ``webui/.eslintrc.json`` and
-  ``webui/webpack.eslintrc.json``, please consult them for more details on the
-  coding style and conventions.
+  automated syntax and style checks of the JavaScript code.  ESLint is
+  configured to adhere to the official `AngularJS style guide
+  <https://angular.io/guide/styleguide>`_.  Please consult this style guide for
+  more details on the coding style and conventions.  The configuration files
+  for these WebUI rules can be found in ``webui/.eslintrc.json`` and
+  ``webui/webpack.eslintrc.json``. 
+
 * Every bug fix or notable change made to a release branch must be accompanied
   by a `JIRA issue <https://tracker.openattic.org/>`_. The issue ID must be
   mentioned in the summary of the commit message and pull request in the
   following format: ``<summary> (OP-xxxx)``.
+
 * Pull requests must be accompanied by a suggested ``CHANGELOG`` entry that
   documents the change.
+
 * New features and other larger changes also require a related JIRA issue that
   provides detailed background information about the change.
+
 * Code and the related changes to the documentation should be committed
   in the same change set, if possible. This way, both the code and
   documentation are changed at the same time.
+
 * Write meaningful commit messages and pull request descriptions. Commit
   messages should include a detailed description of the change, including a
   reference to the related JIRA issue, if appropriate. "Fixed OP-xxx" is not a
@@ -53,6 +65,7 @@ tracking them:
   Science (or Art?) of Commit Messages
   <http://www.joinfu.com/2012/01/the-science-of-commit-messages/>`_ and `How to
   Write a Git Commit Message <http://chris.beams.io/posts/git-commit/>`_
+
 * When resolving a JIRA issue as fixed, include the resulting git
   revision ID or add a link to the ChangeSet or related pull request on
   BitBucket for reference. This makes it easier to review the code changes

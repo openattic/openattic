@@ -1,0 +1,33 @@
+<div class="openattic-modal-header">
+  <span>Delete user</span>
+</div>
+<div class="openattic-modal-content">
+  <p>
+    You are about to delete the user
+    <strong>{{$ctrl.user.username}}</strong>.
+  </p>
+  <p>
+    To confirm, please click
+    <kbd>Delete user</kbd>, or cancel and return to the page.
+  </p>
+</div>
+
+<div class="openattic-modal-footer">
+  <form name="$ctrl.deleteForm"
+        role="form"
+        novalidate>
+    <div class="button-group text-right">
+      <button id="bot2-Msg1"
+              class="btn btn-primary btn-sm"
+              ng-click="$ctrl.delete()"
+              ng-disabled="$ctrl.deleteForm.$invalid || $ctrl.deleteForm.$submitted">
+        Delete user
+        <i class="fa fa-spinner fa-spin fa-fw"
+           ng-if="$ctrl.deleteForm.$submitted"></i>
+      </button>
+      <button id="bot1-Msg1"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">Cancel</button>
+    </div>
+  </form>
+</div>

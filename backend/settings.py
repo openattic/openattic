@@ -16,8 +16,8 @@ import logging
 import sys
 
 from configobj import ConfigObj
-
 from utilities import set_globals_from_file
+from rest_framework import ISO_8601
 
 PROJECT_ROOT = None
 PROJECT_URL = '/openattic'
@@ -78,6 +78,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50,  # Setting required by DRF 3. Set to 50 to prevent dropdown inputs from being
     # truncated, which don't handle pagination.
     'URL_FIELD_NAME': 'url',
+    'DATETIME_FORMAT': ISO_8601
 }
 
 
@@ -172,6 +173,10 @@ STATICFILES_DIRS = (MEDIA_ROOT,)
 LOGIN_URL = PROJECT_URL + '/accounts/login/'
 LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 
+# Use cookies that expire as soon as the user closes their browser.
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 # Automatically generate a .secret.txt file containing the SECRET_KEY.
 # Shamelessly stolen from ByteFlow: <http://www.byteflow.su>
 try:
@@ -182,16 +187,17 @@ except NameError:
         SECRET_KEY = open(SECRET_FILE).read().strip()
     except IOError:
         try:
-            from random import choice
+            import string
+            from django.utils.crypto import get_random_string
 
-            SECRET_KEY = ''.join(
-                [choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+            SECRET_KEY = get_random_string(50, string.ascii_letters + string.digits +
+                                           string.punctuation)
             secret = file(SECRET_FILE, 'w')
             secret.write(SECRET_KEY)
             secret.close()
         except IOError:
-            Exception(
-                'Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
+            raise Exception('Please create a %s file with random characters to generate '
+                            'your secret key!' % SECRET_FILE)
 
 
 def read_version():
@@ -412,6 +418,7 @@ def __loadmods__():
     modprobe('oa_settings')
     modprobe('oa_logging')
     modprobe('ifconfig')
+    modprobe('rest')
 
 
 __loadmods__()

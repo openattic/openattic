@@ -12,47 +12,6 @@ describe("settings inputs validations", function () {
     helpers.setLocation("settings");
   });
 
-  it("should validate salt api host", function () {
-    form.saltApiHost.clear();
-    expect(form.saltApiHostRequired.isDisplayed()).toBe(true);
-
-    form.saltApiHost.sendKeys("e2e-host");
-    expect(form.saltApiHostRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api port", function () {
-    form.saltApiPort.clear();
-    expect(form.saltApiPortRequired.isDisplayed()).toBe(true);
-
-    form.saltApiPort.sendKeys("8001");
-    expect(form.saltApiPortRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api eauth", function () {
-    form.selectEauth("-- Select the external auth system --");
-    expect(form.saltApiEauthRequired.isDisplayed()).toBe(true);
-
-    form.selectEauth("auto");
-    expect(form.saltApiEauthRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api username", function () {
-    form.saltApiUsername.clear();
-    expect(form.saltApiUsernameRequired.isDisplayed()).toBe(true);
-
-    form.saltApiUsername.sendKeys("e2e-user");
-    expect(form.saltApiUsernameRequired.isDisplayed()).toBe(false);
-  });
-
-  it("should validate salt api shared secret", function () {
-    form.selectEauth("sharedsecret");
-    form.saltApiSharedSecret.clear();
-    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(true);
-
-    form.saltApiSharedSecret.sendKeys("mysecretkey");
-    expect(form.saltApiSharedSecretRequired.isDisplayed()).toBe(false);
-  });
-
   it("should disable object gateway fields", function () {
     browser.refresh();
 
@@ -102,7 +61,9 @@ describe("settings inputs validations", function () {
     expect(form.saltApiConnectionFail.isDisplayed()).toBe(false);
 
     form.saltApiHost.clear().sendKeys("e2e-host");
+    helpers.waitForElementInvisible(form.saltApiConnectionSuccess);
     expect(form.saltApiConnectionSuccess.isDisplayed()).toBe(false);
+    helpers.waitForElementVisible(form.saltApiConnectionFail);
     expect(form.saltApiConnectionFail.isDisplayed()).toBe(true);
   });
 
@@ -110,14 +71,17 @@ describe("settings inputs validations", function () {
     browser.refresh();
 
     form.checkManagedByDeepSea(true);
+    helpers.waitForElementVisible(form.rgwConnectionSuccess);
     expect(form.rgwConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.rgwConnectionFail.isDisplayed()).toBe(false);
 
     form.checkManagedByDeepSea(false);
+    helpers.waitForElementVisible(form.rgwConnectionSuccess);
     expect(form.rgwConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.rgwConnectionFail.isDisplayed()).toBe(false);
 
     form.rgwHost.clear().sendKeys("e2e-host");
+    helpers.waitForElementVisible(form.rgwConnectionFail);
     expect(form.rgwConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.rgwConnectionFail.isDisplayed()).toBe(true);
   });
@@ -127,6 +91,7 @@ describe("settings inputs validations", function () {
     expect(form.grafanaConnectionFail.isDisplayed()).toBe(false);
 
     form.grafanaHost.clear().sendKeys("e2e-host");
+    helpers.waitForElementVisible(form.grafanaConnectionFail);
     expect(form.grafanaConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.grafanaConnectionFail.isDisplayed()).toBe(true);
   });
@@ -138,6 +103,7 @@ describe("settings inputs validations", function () {
     expect(form.cephClusterConnectionFail.isDisplayed()).toBe(false);
 
     form.cephClusterKeyringUser.clear().sendKeys("e2e-keyring-user");
+    helpers.waitForElementVisible(form.cephClusterConnectionFail);
     expect(form.cephClusterConnectionSuccess.isDisplayed()).toBe(false);
     expect(form.cephClusterConnectionFail.isDisplayed()).toBe(true);
   });

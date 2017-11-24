@@ -76,6 +76,7 @@ describe("settings form", function () {
 
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.waitForElementRemoval("submit");
   });
 
   it("should get saved settings", function () {
@@ -114,6 +115,7 @@ describe("settings form", function () {
     form.selectEauth(initialSettings.deepsea.eauth);
     form.saltApiUsername.clear().sendKeys(initialSettings.deepsea.username);
     form.saltApiSharedSecret.clear().sendKeys(initialSettings.deepsea.shared_secret);
+    helpers.waitForElementVisible(form.saltApiConnectionSuccess);
     form.checkManagedByDeepSea(true);
     form.grafanaHost.clear().sendKeys(initialSettings.grafana.host);
     form.grafanaPort.clear().sendKeys(initialSettings.grafana.port);
@@ -124,6 +126,7 @@ describe("settings form", function () {
     form.cephClusterKeyringUser.clear().sendKeys(initialSettings.ceph.keyringUser);
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
+    helpers.waitForElementRemoval("submit");
   });
 
   it("should get restored initial settings", function () {
@@ -144,5 +147,4 @@ describe("settings form", function () {
   afterAll(function () {
     console.log("settings -> settings_crud.e2e.js");
   });
-
 });

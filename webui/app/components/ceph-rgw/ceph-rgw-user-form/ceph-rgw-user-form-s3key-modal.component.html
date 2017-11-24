@@ -1,0 +1,146 @@
+<div class="openattic-modal-header">
+  <span ng-hide="$ctrl.editing">Add S3 key: {{$ctrl.key.user}}</span>
+  <span ng-show="$ctrl.editing">View S3 key: {{$ctrl.key.user}}</span>
+</div>
+<form name="form"
+      role="form"
+      class="form-horizontal"
+      novalidate>
+  <div class="openattic-modal-content">
+    <!-- User -->
+    <div class="form-group"
+         ng-class="{'has-error': (form.$submitted || form.user.$dirty) && form.user.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="user">User</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="icon-prepend fa fa-user"></i>
+          </span>
+          <select class="form-control"
+                  ng-model="$ctrl.key.user"
+                  ng-disabled="$ctrl.editing"
+                  ng-required="!$ctrl.editing"
+                  ng-options="user for user in $ctrl.enumKeySubuserCandidates()"
+                  name="user"
+                  id="user">
+            <option value="">-- Select a user --</option>
+          </select>
+        </div>
+        <span class="help-block tc_userRequired"
+              ng-show="(form.$submitted || form.user.$dirty) && form.user.$error.required">
+          This field is required!
+        </span>
+      </div>
+    </div>
+    <!-- Generate secret -->
+    <div class="form-group"
+         ng-show="!$ctrl.editing">
+      <div class="col-sm-offset-3 col-sm-9">
+        <div class="checkbox checkbox-primary">
+          <input type="checkbox"
+                 ng-model="$ctrl.key.generate_key"
+                 name="generate_key"
+                 id="generate_key">
+          <label for="generate_key">
+            Generate secret
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- Access key -->
+    <div class="form-group"
+         ng-class="{'has-error': (form.$submitted || form.access_key.$dirty) && form.access_key.$invalid}"
+         ng-hide="$ctrl.key.generate_key">
+      <label class="col-sm-3 control-label"
+             for="access_key">Access key</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="icon-prepend fa fa-key"></i>
+          </span>
+          <input class="form-control"
+                 type="password"
+                 placeholder="Access key..."
+                 ng-model="$ctrl.key.access_key"
+                 ng-readonly="$ctrl.editing"
+                 ng-required="!$ctrl.editing && !$ctrl.key.generate_key"
+                 name="access_key"
+                 id="access_key">
+          <span class="input-group-btn">
+            <button type="button"
+                    class="btn btn-default"
+                    oa-password-button="access_key">
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    uib-tooltip="Copy to clipboard"
+                    oa-clipboard
+                    oa-clipboard-target="access_key"
+                    oa-clipboard-text="access key">
+              <i class="icon-prepend fa fa-clipboard"></i>
+            </button>
+          </span>
+        </div>
+        <span class="help-block tc_accessKeyRequired"
+              ng-show="(form.$submitted || form.access_key.$dirty) && form.access_key.$error.required">
+          This field is required!
+        </span>
+      </div>
+    </div>
+    <!-- Secret key -->
+    <div class="form-group"
+         ng-class="{'has-error': (form.$submitted || form.secret_key.$dirty) && form.secret_key.$invalid}"
+         ng-hide="$ctrl.key.generate_key">
+      <label class="col-sm-3 control-label"
+             for="secret_key">Secret key</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="icon-prepend fa fa-key"></i>
+          </span>
+          <input class="form-control"
+                 type="password"
+                 placeholder="Secret key..."
+                 ng-model="$ctrl.key.secret_key"
+                 ng-readonly="$ctrl.editing"
+                 ng-required="!$ctrl.editing && !$ctrl.key.generate_key"
+                 name="secret_key"
+                 id="secret_key">
+          <span class="input-group-btn">
+            <button type="button"
+                    class="btn btn-default"
+                    oa-password-button="secret_key">
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    uib-tooltip="Copy to clipboard"
+                    oa-clipboard
+                    oa-clipboard-target="secret_key"
+                    oa-clipboard-text="secret key">
+              <i class="icon-prepend fa fa-clipboard"></i>
+            </button>
+          </span>
+        </div>
+        <span class="help-block tc_secretKeyRequired"
+              ng-show="(form.$submitted || form.secret_key.$dirty) && form.secret_key.$error.required">
+          This field is required!
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="form"
+                        on-submit="$ctrl.submitAction(form)"
+                        ng-show="!$ctrl.editing">
+        Submit
+      </oa-submit-button>
+      <button type="button"
+              class="btn btn-sm btn-default tc_cancelS3KeyButton"
+              ng-click="$ctrl.cancelAction()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,71 @@
+<div class="openattic-modal-header">
+  <span ng-hide="$ctrl.editing">Add capability: {{$ctrl.cap.type}}</span>
+  <span ng-show="$ctrl.editing">Edit capability: {{$ctrl.cap.type}}</span>
+</div>
+<form name="form"
+      role="form"
+      class="form-horizontal"
+      novalidate>
+  <div class="openattic-modal-content">
+    <!-- Type -->
+    <div class="form-group"
+         ng-class="{'has-error': (form.$submitted || form.type.$dirty) && form.type.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="type">Type</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <select class="form-control"
+                  ng-model="$ctrl.cap.type"
+                  ng-disabled="$ctrl.editing"
+                  ng-required="!$ctrl.editing"
+                  ng-options="type for type in $ctrl.enumTypes()"
+                  name="type"
+                  id="type">
+            <option value="">-- Select a type --</option>
+          </select>
+        </div>
+        <span class="help-block tc_typeRequired"
+              ng-show="(form.$submitted || form.type.$dirty) && form.type.$error.required">
+          This field is required!
+        </span>
+      </div>
+    </div>
+    <!-- Permission -->
+    <div class="form-group"
+         ng-class="{'has-error': (form.$submitted || form.perm.$dirty) && form.perm.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="perm">Permission</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <select class="form-control"
+                  ng-model="$ctrl.cap.perm"
+                  name="perm"
+                  id="perm"
+                  required>
+            <option value="">-- Select a permission --</option>
+            <option value="read">read</option>
+            <option value="write">write</option>
+            <option value="*">*</option>
+          </select>
+        </div>
+        <span class="help-block tc_permRequired"
+              ng-show="(form.$submitted || form.perm.$dirty) && form.perm.$error.required">
+          This field is required!
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="form"
+                        on-submit="$ctrl.submitAction(form)">
+        Submit
+      </oa-submit-button>
+      <button type="button"
+              class="btn btn-sm btn-default tc_cancelCapButton"
+              ng-click="$ctrl.cancelAction()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</form>

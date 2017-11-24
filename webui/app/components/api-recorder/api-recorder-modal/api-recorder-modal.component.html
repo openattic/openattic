@@ -1,0 +1,26 @@
+<div class="openattic-modal-header">
+  <span>API Recorder</span>
+</div>
+<div class="openattic-modal-content">
+  <p>
+    Replay the actions you recorded by running this Python script:
+  </p>
+  <div class="form-group">
+    <textarea id="apiRecorderScript"
+              rows="14"
+              class="apirecorder"
+              readonly>{{$ctrl.resolve.script}}</textarea>
+  </div>
+</div>
+<div class="openattic-modal-footer">
+  <div class="button-group text-right">
+    <button id="bot2-Msg1"
+            class="btn btn-link btn-sm"
+            oa-clipboard
+            oa-clipboard-target="apiRecorderScript"
+            oa-clipboard-text="script">Copy</button>
+    <button id="bot1-Msg1"
+            class="btn btn-primary btn-sm"
+            ng-click="$ctrl.close()">Close</button>
+  </div>
+</div>

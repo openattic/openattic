@@ -30,7 +30,6 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
 /**
  * Displays an helper icon that will show a popover when clicked.
  * The content of the popover can be customized through one of the following
@@ -44,7 +43,7 @@ var app = angular.module("openattic.shared");
  * @param {string} helperTemplate A URL representing the location of a template.
  * @param {string} helperData Data that will be used on the template.
  */
-app.component("oaHelper", {
+export default {
   template: require("./oa-helper.component.html"),
   transclude: false,
   bindings: {
@@ -52,7 +51,5 @@ app.component("oaHelper", {
     helperHtml: "<",
     helperTemplate: "<",
     helperData: "<"
-  },
-  controller: function () {
   }
-});
+};

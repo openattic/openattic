@@ -27,6 +27,8 @@ django_jenkins
 installed_apps.d/coverage
 installed_apps.d/django_jenkins
 reports/
+.protractor-fail-fast
+build/
 
 # From openattic-gui
 webui/.protractor-fail-fast
@@ -41,10 +43,12 @@ webui/package-lock.json
 webui/yarn.lock
 webui/webpack.config.json
 webui/e2e/configs.js
+webui/build
 
 # From gatling-rest
 gatling/conf/
 gatling/test/reports/
+gatling/test-reports/
 
 documentation/_build
 vagrant/.vagrant/
@@ -57,5 +61,3 @@ env/
 
 # VS Code
 .vscode
-
-

@@ -1,0 +1,32 @@
+<oa-delete-confirmation-modal title="{{ ($ctrl.cephPools.length > 1) ? 'Delete Ceph pools' : 'Delete Ceph pool' }}"
+                           on-confirm="$ctrl.deletePool()" on-cancel="$ctrl.cancel()">
+  <!-- single cephPool -->
+  <div ng-if="$ctrl.cephPools.length === 1">
+    <p>
+      You are about to delete the Ceph pool <strong>{{$ctrl.cephPools[0].name}}</strong>.
+    </p>
+    <p>
+      Be aware that you will <strong>lose all data</strong>
+      in that Ceph pool and that this operation <strong>cannot be undone</strong>.
+    </p>
+  </div>
+  <!-- end single cephPool -->
+
+  <!-- multiple cephPools -->
+  <div ng-if="$ctrl.cephPools.length > 1">
+    <p>
+      You are about to delete multiple Ceph pools.
+    </p>
+    <p>
+      Be aware that you will <strong>lose all data</strong>
+      in the Ceph pools and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <span class="text-danger">The following Ceph pools will be deleted:</span>
+      <ul class="text-danger">
+        <li ng-repeat="cephPool in $ctrl.cephPools">
+          {{$ctrl.cephPool.name}} ({{$ctrl.cephPool.num_bytes | bytes}})
+        </li>
+      </ul>
+  </div>
+  <!-- end multiple cephPools -->
+</oa-delete-confirmation-modal>

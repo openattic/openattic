@@ -32,10 +32,8 @@
 
 class CephNfsForm {
 
-  constructor ($scope, $state, $stateParams, $q, cephNfsAccessType,
-      cephNfsSquash, cephNfsFsal, cephNfsService, cephNfsFormService,
-      cephRgwUserService) {
-    this.$scope = $scope;
+  constructor ($state, $stateParams, $q, cephNfsAccessType, cephNfsSquash,
+      cephNfsFsal, cephNfsService, cephNfsFormService, cephRgwUserService) {
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$q = $q;
@@ -97,10 +95,10 @@ class CephNfsForm {
         delete this.model.path;
       }
       if (this.model.tag !== this._generateTag()) {
-        this.$scope.nfsForm.tag.$dirty = true;
+        this.nfsForm.tag.$dirty = true;
       }
       if (this.model.pseudo !== this._generatePseudo()) {
-        this.$scope.nfsForm.pseudo.$dirty = true;
+        this.nfsForm.pseudo.$dirty = true;
       }
       this.model.protocolNfsv3 = this.model.protocols.indexOf("NFSv3") !== -1;
       this.model.protocolNfsv4 = this.model.protocols.indexOf("NFSv4") !== -1;
@@ -108,9 +106,9 @@ class CephNfsForm {
       this.model.transportTCP = this.model.transports.indexOf("TCP") !== -1;
       this.model.transportUDP = this.model.transports.indexOf("UDP") !== -1;
       delete this.model.transports;
-      angular.forEach(this.model.clientBlocks, (clientBlock) => {
+      this.model.clientBlocks.forEach((clientBlock) => {
         let clientsStr = "";
-        angular.forEach(clientBlock.clients, (client) => {
+        clientBlock.clients.forEach((client) => {
           clientsStr += client + ", ";
         });
         if (clientsStr.length >= 2) {
@@ -126,16 +124,19 @@ class CephNfsForm {
 
     let resolveHosts = (res) => {
       this.allHosts = res.hosts;
+      if (_.isArray(this.allHosts) && this.allHosts.length === 1 && _.isUndefined(this.model.host)) {
+        this.model.host = this.allHosts[0];
+      }
     };
 
     let resolvefsals = (res) => {
-      angular.forEach(res.fsals, (fsal) => {
+      res.fsals.forEach((fsal) => {
         let fsalItem = this.cephNfsFsal.find((currentFsalItem) => {
           if (fsal === currentFsalItem.value) {
             return currentFsalItem;
           }
         });
-        if (angular.isDefined(fsalItem)) {
+        if (_.isObject(fsalItem)) {
           this.allFsals.push(fsalItem);
           if (fsalItem.value === "RGW") {
             this.cephRgwUserService.filter({
@@ -143,7 +144,7 @@ class CephNfsForm {
             })
               .$promise
               .then((result) => {
-                angular.forEach(result.results, (user) => {
+                result.results.forEach((user) => {
                   if (user.suspended === 0) {
                     this.allRgwUsers.push(user.user_id);
                   }
@@ -152,7 +153,7 @@ class CephNfsForm {
           }
         }
       });
-      if (this.allFsals.length === 1 && angular.isUndefined(this.model.fsal)) {
+      if (this.allFsals.length === 1 && _.isUndefined(this.model.fsal)) {
         this.model.fsal = this.allFsals[0];
       }
     };
@@ -173,19 +174,19 @@ class CephNfsForm {
   }
 
   isEditMode () {
-    return angular.isDefined(this.$stateParams.host) && angular.isDefined(this.$stateParams.exportId);
-  };
+    return _.isString(this.$stateParams.host) && _.isString(this.$stateParams.exportId);
+  }
 
   getId () {
-    if (angular.isDefined(this.model.host) && angular.isDefined(this.model.path)) {
+    if (_.isString(this.model.host) && _.isString(this.model.path)) {
       return this.model.host + ":" + this.model.path;
     }
     return "";
-  };
+  }
 
   getPathTypeahead (path, setNewDirectory) {
     let rootDir = "/";
-    if (angular.isDefined(path) && path.length > 1 && path[0] === "/") {
+    if (_.isString(path) && path.length > 1 && path[0] === "/") {
       rootDir = path.substring(0, path.lastIndexOf("/") + 1);
     }
     return this.cephNfsFormService.lsDir({
@@ -202,10 +203,10 @@ class CephNfsForm {
         }
         return res.paths;
       });
-  };
+  }
 
   getBucketTypeahead (path, setNewBucket) {
-    if (angular.isDefined(this.model.rgwUserId) && this.model.rgwUserId !== null) {
+    if (_.isString(this.model.rgwUserId)) {
       return this.cephNfsFormService.buckets({
         fsid: this.$stateParams.fsid,
         userid: this.model.rgwUserId
@@ -220,57 +221,57 @@ class CephNfsForm {
           return res.buckets;
         });
     }
-  };
+  }
 
   _generateTag () {
     let newTag = this.model.tag;
-    if (!this.$scope.nfsForm.tag.$dirty) {
+    if (!this.nfsForm.tag.$dirty) {
       newTag = undefined;
       if (this.model.fsal === "RGW") {
         newTag = this.model.bucket;
       }
     }
     return newTag;
-  };
+  }
 
   _generatePseudo () {
     let newPseudo = this.model.pseudo;
-    if (this.$scope.nfsForm.pseudo && !this.$scope.nfsForm.pseudo.$dirty) {
+    if (this.nfsForm.pseudo && !this.nfsForm.pseudo.$dirty) {
       newPseudo = undefined;
       if (this.model.fsal === "CEPH") {
         newPseudo = "/cephfs";
-        if (angular.isDefined(this.model.path)) {
+        if (_.isString(this.model.path)) {
           newPseudo += this.model.path;
         }
       } else if (this.model.fsal === "RGW") {
-        if (angular.isDefined(this.model.rgwUserId) && this.model.rgwUserId !== null) {
+        if (_.isString(this.model.rgwUserId)) {
           newPseudo = "/" + this.model.rgwUserId;
-          if (angular.isDefined(this.model.bucket)) {
+          if (_.isString(this.model.bucket)) {
             newPseudo += "/" + this.model.bucket;
           }
         }
       }
     }
     return newPseudo;
-  };
+  }
 
   fsalChangeHandler () {
     this.model.tag = this._generateTag();
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   rgwUserIdChangeHandler () {
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   pathChangeHandler () {
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   bucketChangeHandler () {
     this.model.tag = this._generateTag();
     this.model.pseudo = this._generatePseudo();
-  };
+  }
 
   getAccessTypeHelp (accessType) {
     let accessTypeItem = this.cephNfsAccessType.find((currentAccessTypeItem) => {
@@ -278,15 +279,15 @@ class CephNfsForm {
         return currentAccessTypeItem;
       }
     });
-    return angular.isDefined(accessTypeItem) ? accessTypeItem.help : "";
-  };
+    return _.isObject(accessTypeItem) ? accessTypeItem.help : "";
+  }
 
   _buildRequest () {
-    let requestModel = angular.copy(this.model);
+    let requestModel = _.cloneDeep(this.model);
     if (requestModel.fsal === "RGW") {
       requestModel.path = requestModel.bucket;
     }
-    if (angular.isUndefined(requestModel.tag) || requestModel.tag === "") {
+    if (_.isUndefined(requestModel.tag) || requestModel.tag === "") {
       requestModel.tag = null;
     }
     requestModel.protocols = [];
@@ -311,28 +312,28 @@ class CephNfsForm {
       delete requestModel.transportUDP;
       requestModel.transports.push("UDP");
     }
-    angular.forEach(requestModel.clientBlocks, (clientBlock) => {
-      if (angular.isDefined(clientBlock.clients)) {
+    requestModel.clientBlocks.forEach((clientBlock) => {
+      if (_.isString(clientBlock.clients)) {
         let clients = clientBlock.clients.replace(/\s/g, "");
         clients = "\"" + clients.replace(/,/g, "\",\"") + "\"";
-        clientBlock.clients = angular.fromJson("[" + clients + "]");
+        clientBlock.clients = JSON.parse("[" + clients + "]");
       } else {
         clientBlock.clients = [];
       }
     });
     return requestModel;
-  };
+  }
 
   submitAction () {
     let requestModel = this._buildRequest();
     // Add
-    if (angular.isUndefined(requestModel.id)) {
+    if (_.isUndefined(requestModel.id)) {
       this.cephNfsService.save(requestModel)
         .$promise
         .then(() => {
           this.$state.go("cephNfs");
         }, () => {
-          this.$scope.nfsForm.$submitted = false;
+          this.nfsForm.$submitted = false;
         });
     } else { // Edit
       this.cephNfsService.update(requestModel)
@@ -340,14 +341,14 @@ class CephNfsForm {
         .then(() => {
           this.$state.go("cephNfs");
         }, () => {
-          this.$scope.nfsForm.$submitted = false;
+          this.nfsForm.$submitted = false;
         });
     }
-  };
+  }
 
   cancelAction () {
     this.$state.go("cephNfs");
-  };
+  }
 }
 
 export default {

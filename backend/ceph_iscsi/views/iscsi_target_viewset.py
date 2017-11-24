@@ -16,6 +16,7 @@ import logging
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 
+from ceph_iscsi import tasks
 from deepsea import DeepSea
 from ceph_iscsi.lrbd_conf import LRBDUi
 from ceph_iscsi.models import iSCSITarget
@@ -67,12 +68,10 @@ class iSCSITargetViewSet(NodbViewSet):
             raise Exception('Failed to delete iSCSI targets')
 
         if new_targets and status:
-            if DeepSea.instance().iscsi_deploy():
-                logger.info('Successfully deployed iSCSI targets')
-            else:
-                logger.info('Failed to deploy iSCSI targets')
-                raise Exception('Failed to deploy iSCSI targets')
+            task = tasks.async_deploy_exports.delay()
+            logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", task.id)
         elif status:
-            DeepSea.instance().iscsi_undeploy()
+            task = tasks.async_stop_exports.delay()
+            logger.info("Scheduled stop of iSCSI: taskqueue_id=%s", task.id)
 
         return Response()

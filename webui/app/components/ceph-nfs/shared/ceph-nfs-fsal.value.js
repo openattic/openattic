@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.value("cephNfsFsal", [
+export default [
   {
     value: "CEPH",
     descr: "CephFS"
@@ -40,4 +39,4 @@ app.value("cephNfsFsal", [
     value: "RGW",
     descr: "Object Gateway"
   }
-]);
+];

@@ -32,29 +32,32 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephRbd");
-app.factory("cephRbdService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {
-    fsid: "@fsid",
-    pool: "@pool",
-    name: "@name"
-  }, {
-    query: {
-      method: "GET",
-      isArray: true,
-      transformResponse: function (data) {
-        var res = angular.fromJson(data);
-        return res && res.results || [];
+export default class CephRbdService {
+  constructor ($resource) {
+    const resource = $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {
+      fsid: "@fsid",
+      pool: "@pool",
+      name: "@name"
+    }, {
+      query: {
+        method: "GET",
+        isArray: true,
+        transformResponse: (data) => {
+          const res = JSON.parse(data);
+          return res && res.results || [];
+        }
+      },
+      delete: {
+        method: "DELETE",
+        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
+      },
+      performancedata: {
+        method: "GET",
+        isArray: true,
+        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
       }
-    },
-    delete: {
-      method: "DELETE",
-      url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
-    },
-    performancedata: {
-      method: "GET",
-      isArray: true,
-      url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
-    }
-  });
-});
+    });
+
+    Object.assign(this, resource);
+  }
+}

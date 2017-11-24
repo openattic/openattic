@@ -1,0 +1,164 @@
+<div class="openattic-modal-header">
+  <span ng-hide="$ctrl.editing">Add subuser: {{$ctrl.subuser.subuser}}</span>
+  <span ng-show="$ctrl.editing">Edit subuser: {{$ctrl.subuser.subuser}}</span>
+</div>
+<form name="$ctrl.subuserForm"
+      role="form"
+      class="form-horizontal"
+      novalidate>
+  <div class="openattic-modal-content">
+    <!-- Username -->
+    <div class="form-group">
+      <label class="col-sm-3 control-label"
+             for="user_id">Username</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="icon-prepend fa fa-user"></i>
+          </span>
+          <input class="form-control"
+                 type="text"
+                 ng-model="$ctrl.user.user_id"
+                 name="user_id"
+                 id="user_id"
+                 readonly>
+        </div>
+      </div>
+    </div>
+    <!-- Subuser -->
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.subuserForm.$submitted ||
+                                  $ctrl.subuserForm.subuser.$dirty) &&
+                                  $ctrl.subuserForm.subuser.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="subuser">Subuser</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="icon-prepend fa fa-user"></i>
+          </span>
+          <input class="form-control"
+                 type="text"
+                 placeholder="Subuser..."
+                 ng-model="$ctrl.subuser.subuser"
+                 ng-change="$ctrl.validateSubuser()"
+                 ng-readonly="$ctrl.editing"
+                 ng-required="!$ctrl.editing"
+                 name="subuser"
+                 id="subuser">
+        </div>
+        <span class="help-block tc_subuserRequired"
+              ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.subuser.$dirty) &&
+                        $ctrl.subuserForm.subuser.$error.required">
+          This field is required!
+        </span>
+        <span class="help-block tc_subuserNotUnique"
+              ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.subuser.$dirty) &&
+                        $ctrl.subuserForm.subuser.$error.uniquesubuser">
+          The chosen subuser ID is already in use.
+        </span>
+      </div>
+    </div>
+    <!-- Permission -->
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.subuserForm.$submitted ||
+                                  $ctrl.subuserForm.permissions.$dirty) &&
+                                  $ctrl.subuserForm.permissions.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="permissions">Permission</label>
+      <div class="col-sm-9">
+        <div class="input-group">
+          <select class="form-control"
+                  ng-model="$ctrl.subuser.permissions"
+                  name="permissions"
+                  id="permissions"
+                  required>
+            <option value="">-- Select a permission --</option>
+            <option value="read">read</option>
+            <option value="write">write</option>
+            <option value="read-write">read, write</option>
+            <option value="full-control">full</option>
+          </select>
+        </div>
+        <span class="help-block tc_permissionsRequired"
+              ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.permissions.$dirty) &&
+                        $ctrl.subuserForm.permissions.$error.required">
+          This field is required!
+        </span>
+      </div>
+    </div>
+    <fieldset ng-show="!$ctrl.editing">
+      <legend>Swift key</legend>
+      <!-- Generate secret -->
+      <div class="form-group"
+           ng-show="!$ctrl.editing">
+        <div class="col-sm-offset-3 col-sm-9">
+          <div class="checkbox checkbox-primary">
+            <input type="checkbox"
+                   ng-model="$ctrl.subuser.generate_secret"
+                   name="generate_secret"
+                   id="generate_secret">
+            <label for="generate_secret">
+              Generate secret
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- Secret key -->
+      <div class="form-group"
+           ng-class="{'has-error': ($ctrl.subuserForm.$submitted ||
+                                    $ctrl.subuserForm.secret_key.$dirty) &&
+                                    $ctrl.subuserForm.secret_key.$invalid}"
+           ng-show="!$ctrl.editing && !$ctrl.subuser.generate_secret">
+        <label class="col-sm-3 control-label"
+               for="secret_key">Secret key</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <i class="icon-prepend fa fa-envelope-o"></i>
+            </span>
+            <input class="form-control"
+                   type="password"
+                   placeholder="Secret key..."
+                   ng-model="$ctrl.subuser.secret_key"
+                   ng-required="!$ctrl.editing && !$ctrl.subuser.generate_secret"
+                   name="secret_key"
+                   id="secret_key">
+            <span class="input-group-btn">
+              <button type="button"
+                      class="btn btn-default"
+                      oa-password-button="secret_key">
+              </button>
+              <button type="button"
+                      class="btn btn-default"
+                      uib-tooltip="Copy to clipboard"
+                      oa-clipboard
+                      oa-clipboard-target="secret_key"
+                      oa-clipboard-text="secret key">
+                <i class="icon-prepend fa fa-clipboard"></i>
+              </button>
+            </span>
+          </div>
+          <span class="help-block tc_secret_keyRequired"
+                ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.secret_key.$dirty) &&
+                          $ctrl.subuserForm.secret_key.$error.required">
+            This field is required!
+          </span>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="$ctrl.subuserForm"
+                        on-submit="$ctrl.submitAction($ctrl.subuserForm)">
+        Submit
+      </oa-submit-button>
+      <button type="button"
+              class="btn btn-sm btn-default tc_cancelSubuserButton"
+              ng-click="$ctrl.cancelAction()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</form>

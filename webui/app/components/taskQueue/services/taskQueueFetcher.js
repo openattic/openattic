@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $rootScope, $q) {
+app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, authUserService, $q) {
   this.taskTimeout = {};
   this.tasks = {
     "Running": [],
@@ -53,7 +53,7 @@ app.service("taskQueueFetcher", function ($http, $interval, taskQueueService, $r
       self.deferredOverview = $q.defer();
       self.update = true;
     }
-    if ($http.pendingRequests.length > 0 || !$rootScope.user) {
+    if ($http.pendingRequests.length > 0 || !authUserService.isLoggedIn()) {
       self.taskTimeout = $interval(self.loadOverview, 50, 1);
       return self.deferredOverview.promise;
     }

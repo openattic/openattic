@@ -30,40 +30,43 @@
  */
 "use strict";
 
-var app = angular.module("openattic.shared");
-app.component("oaTabSet", {
+class OaTabSet {
+  constructor (oaTabSetService) {
+    this.oaTabSetService = oaTabSetService;
+  }
+
+  $onInit () {
+    Object.keys(this.tabData.tabs).forEach((tabName) => {
+      let tab = this.tabData.tabs[tabName];
+      if (!tab.show) {
+        tab.show = () => true;
+      }
+      if (!tab.class) {
+        tab.class = "";
+      }
+      if (!tab.state || !tab.name) {
+        throw "Error wrong tab format in " + tab;
+      }
+    });
+  }
+
+  changeTab (state, index) {
+    this.oaTabSetService.changeTab(state, this.tabData, this.tabConfig, this.selection, index);
+  }
+
+  showTabSet () {
+    return Object.keys(this.tabData.tabs).filter((tabName) => {
+      return this.tabData.tabs[tabName].show();
+    }).length > 1;
+  }
+}
+
+export default {
   template: require("./oa-tab-set.component.html"),
   bindings: {
     tabData: "=",
     tabConfig: "=",
     selection: "="
   },
-  controller: function ($scope, oaTabSetService) {
-    var self = this;
-
-    self.$onInit = function () {
-      Object.keys(self.tabData.tabs).forEach(function (tabName) {
-        var tab = self.tabData.tabs[tabName];
-        if (!tab.show) {
-          tab.show = "true";
-        }
-        if (!tab.class) {
-          tab.class = "";
-        }
-        if (!tab.state || !tab.name) {
-          throw "Error wrong tab format in " + tab;
-        }
-      });
-    };
-
-    self.changeTab = function (state, index) {
-      oaTabSetService.changeTab(state, self.tabData, self.tabConfig, self.selection, index);
-    };
-
-    self.showTabSet = function () {
-      return Object.keys(self.tabData.tabs).filter(function (tabName) {
-        return $scope.$eval(self.tabData.tabs[tabName].show);
-      }).length > 1;
-    };
-  }
-});
+  controller: OaTabSet
+};

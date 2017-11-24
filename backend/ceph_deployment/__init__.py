@@ -12,19 +12,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
-from __future__ import absolute_import  # prevent import of old ./deepsea.py
 import imp
-from deepsea import DeepSea
-from utilities import in_unittest
 
 try:
     imp.find_module('ceph')
 except ImportError:
     raise ImportError('Cannot import app "ceph", disabling app "ceph_deployment"')
-
-try:
-    if not in_unittest():
-        if not DeepSea.instance().is_service_online():
-            raise ImportError('"salt-api" is offline')
-except Exception:
-    raise ImportError('"salt-api" is offline')

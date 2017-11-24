@@ -1,0 +1,46 @@
+<div class="panel panel-default tc_detailsTab">
+    <div class="panel-heading">
+        <h3 class="panel-title">Details of {{$ctrl.selection.item.bucket}}</h3>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd ng-bind="$ctrl.selection.item.bucket"></dd>
+            <dt>Id:</dt>
+            <dd ng-bind="$ctrl.selection.item.id"></dd>
+            <dt>Owner:</dt>
+            <dd ng-bind="$ctrl.selection.item.owner"></dd>
+            <span ng-if="$ctrl.selection.item.pool.length">
+                <dt>Pool:</dt>
+                <dd ng-bind="$ctrl.selection.item.pool"></dd>
+            </span>
+            <span ng-if="$ctrl.selection.item.index_pool.length">
+                <dt>Index pool:</dt>
+                <dd ng-bind="$ctrl.selection.item.index_pool"></dd>
+            </span>
+            <dt>Marker:</dt>
+            <dd ng-bind="$ctrl.selection.item.marker"></dd>
+            <dt>Maximum marker:</dt>
+            <dd ng-bind="$ctrl.selection.item.max_marker"></dd>
+            <dt>Version:</dt>
+            <dd ng-bind="$ctrl.selection.item.ver"></dd>
+            <dt>Master version:</dt>
+            <dd ng-bind="$ctrl.selection.item.master_ver"></dd>
+            <dt>Modification time:</dt>
+            <dd ng-bind="$ctrl.selection.item.mtime"></dd>
+            <dt>Shared via NFS:</dt>
+            <dd>{{ $ctrl.selection.item.is_referenced ? "Yes" : "No" }}</dd>
+        </dl>
+        <legend>Endpoint</legend>
+        <dl class="dl-horizontal">
+            <dt>S3:</dt>
+            <dd>
+                <a>{{ $ctrl.selection.item.endpoint.s3 }}</a>
+            </dd>
+            <dt>Swift:</dt>
+            <dd>
+                <a>{{ $ctrl.selection.item.endpoint.swift }}</a>
+            </dd>
+        </dl>
+    </div>
+</div>

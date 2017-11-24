@@ -33,21 +33,32 @@ import taskqueue.manager
 logger = logging.getLogger(__name__)
 
 
+def get_SystemD_classes():
+    modules = {}
+    for module in get_django_app_modules('systemapi'):
+        try:
+            daemon = getattr(module, "SystemD")
+            modules[module.__name__] = daemon
+        except:
+            if not hasattr(module, 'no_SystemD_class'):
+                logger.exception('No SystemD in {}'.format(module.__name__))
+                raise
+
+    return modules
+
+
 class SystemD(dbus.service.Object):
     """ Implements the main DBus section (/). """
 
-    def __init__(self, detected_modules):
+    def __init__(self):
         bus = dbus.SystemBus()
         dbus.service.Object.__init__(self, bus, "/")
         busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, bus)
 
-        self.modules = {}  # store references to these modules in memory
-        for module in detected_modules:
-            try:
-                daemon = getattr(module, "SystemD")
-                self.modules[module.__name__] = daemon(bus, busname, self)
-            except:
-                logger.exception('No SystemD in {}'.format(module.__name__))
+        # store references to these modules in memory
+        self.modules = {
+            name: daemon(bus, busname, self) for name, daemon in get_SystemD_classes().items()
+        }
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="s")
@@ -56,7 +67,7 @@ class SystemD(dbus.service.Object):
         return "pong"
 
 
-class Command( BaseCommand ):
+class Command(BaseCommand):
     help = "Daemon that executes all commands for which root is needed."
     option_list = BaseCommand.option_list + (
         make_option("-l", "--logfile", help="Ignored for compatibility reason", default=None),
@@ -70,12 +81,10 @@ class Command( BaseCommand ):
 
         os.environ["LANG"] = "en_US.UTF-8"
 
-        sysdplugins = get_django_app_modules('systemapi')
-
         logging.info("Running")
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
         loop = gobject.MainLoop()
-        master = SystemD(sysdplugins)  # We need the object itself to stay
+        master = SystemD()  # We need the object itself to stay
 
         taskqueue_manager = taskqueue.manager.TaskQueueManager()  # The object need to stay in mem.
 

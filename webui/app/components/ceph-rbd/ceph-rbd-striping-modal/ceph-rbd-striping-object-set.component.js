@@ -70,7 +70,7 @@ class CephRbdStripingObjectSet {
       classes.push("danger");
     }
     let lastStripeNumber = this.objectSetIndex * this.numStripesObjectSet + this.numStripesCurrentObjectSet - 1;
-    let isBottom =  lastStripeNumber === stripeNumber;
+    let isBottom = lastStripeNumber === stripeNumber;
     let isTop = (this.objectSetIndex * this.numStripesObjectSet) === stripeNumber;
     if (isBottom) {
       classes.push("rbd-striping-cell-bottom");
@@ -85,8 +85,7 @@ class CephRbdStripingObjectSet {
   }
 }
 
-var app = angular.module("openattic.cephRbd");
-app.component("cephRbdStripingObjectSet", {
+export default {
   template: require("./ceph-rbd-striping-object-set.component.html"),
   bindings: {
     sizeStr: "<",
@@ -96,4 +95,4 @@ app.component("cephRbdStripingObjectSet", {
     objectSetIndex: "<"
   },
   controller: CephRbdStripingObjectSet
-});
+};

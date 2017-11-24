@@ -1,45 +1,47 @@
 <div class="openattic-modal-header">
-    <span>Ceph Nodes {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
+  <span>Ceph Nodes {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
 </div>
 
-<div class="openattic-modal-content">
+<form name="$ctrl.form"
+      role="form"
+      novalidate>
+  <div class="openattic-modal-content">
     <!-- single cephMNode -->
     <div ng-if="$ctrl.resolve.cephNodes.length === 1">
-        <p>
-            You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to the Ceph node <strong>{{$ctrl.resolve.cephNodes[0].hostname}}</strong>.
-        </p>
+      <p>
+        You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to the Ceph node
+        <strong>{{$ctrl.resolve.cephNodes[0].hostname}}</strong>.
+      </p>
     </div>
     <!-- end single cephMNode -->
 
     <!-- multiple cephMNodes -->
     <div ng-if="$ctrl.resolve.cephNodes.length > 1">
-        <p>
-            You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to multiple Ceph nodes.
-        </p>
-        <span>The following Ceph nodes will be {{$ctrl.resolve.deep ? 'deep ' : ''}}scrubbed:</span>
-        <ul>
-            <li ng-repeat="cephNode in $ctrl.resolve.cephNodes">
-                {{cephNode.hostname}}
-            </li>
-        </ul>
+      <p>
+        You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to multiple Ceph nodes.
+      </p>
+      <span>The following Ceph nodes will be {{$ctrl.resolve.deep ? 'deep ' : ''}}scrubbed:</span>
+      <ul>
+        <li ng-repeat="cephNode in $ctrl.resolve.cephNodes">
+          {{cephNode.hostname}}
+        </li>
+      </ul>
     </div>
     <!-- end multiple cephMNodes -->
-</div>
+  </div>
 
-<div class="openattic-modal-footer">
+  <div class="openattic-modal-footer">
     <div class="button-group text-right">
-        <button type="submit"
-                class="btn btn-sm btn-primary tc_submitButton"
-                ng-disabled="$ctrl.submitted"
-                ng-click="$ctrl.scrub()">
-            Submit
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="$ctrl.submitted"></i>
-        </button>
+      <oa-submit-button form="$ctrl.form"
+                        on-submit="$ctrl.scrub()">
+        Submit
+      </oa-submit-button>
 
-        <button id="cancelButton"
-                class="btn btn-link btn-sm"
-                ng-click="$ctrl.cancel()">
-            Cancel
-        </button>
+      <button id="cancelButton"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">
+        Cancel
+      </button>
     </div>
-</div>
+  </div>
+</form>

@@ -1,0 +1,47 @@
+<a class="dropdown-toggle"
+   data-toggle="dropdown"
+   role="button"
+   aria-haspopup="true"
+   aria-expanded="false"
+   title="Recent Notifications">
+  <i class="fa fa-bell"></i> Notifications
+</a>
+
+<div class="dropdown-container">
+  <div class="dropdown-toolbar">
+    <div class="dropdown-toolbar-actions"
+         ng-show="$ctrl.notifications.length > 0">
+      <a href=""
+         ng-click="$ctrl.removeAll()">Remove all</a>
+    </div>
+    <h3 class="dropdown-toolbar-title">Recent Notifications</h3>
+  </div>
+
+  <ul class="dropdown-menu">
+    <li class="notification"
+        ng-class="[{'active' : $odd}, value.type]"
+        ng-repeat="value in $ctrl.notifications  | orderBy : 'timestamp' : true track by $index">
+      <div class="media">
+        <div class="media-left">
+          <div class="media-object img-circle"
+               title="{{value.type}}">
+            <span class="icon"></span>
+          </div>
+        </div>
+        <div class="media-body">
+          <strong class="notification-title">{{value.title}}</strong>
+          <p class="notification-desc"
+             ng-bind-html="value.msg"></p>
+          <div class="notification-meta">
+            <small class="timestamp">{{value.timestamp | date: 'medium'}}</small>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="dropdown-footer text-center"
+       ng-show="$ctrl.notifications.length == 0">
+    No Notifications
+  </div>
+</div>

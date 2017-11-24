@@ -1,9 +1,11 @@
 <oa-delete-confirmation-modal title="{{ ($ctrl.resolve.iscsiTargetSelection.length > 1) ? 'Delete iSCSI target IQNs' : 'Delete iSCSI target IQN' }}"
-                           on-confirm="$ctrl.delete()" on-cancel="$ctrl.cancel()">
+                              on-confirm="$ctrl.delete()"
+                              on-cancel="$ctrl.cancel()">
 
   <div ng-if="$ctrl.resolve.iscsiTargetSelection.length === 1">
     <p>
-      You are about to delete the iSCSI target IQN <strong>{{$ctrl.resolve.iscsiTargetSelection[0].targetId}}</strong>.
+      You are about to delete the iSCSI target IQN
+      <strong>{{$ctrl.resolve.iscsiTargetSelection[0].targetId}}</strong>.
     </p>
   </div>
   <div ng-if="$ctrl.resolve.iscsiTargetSelection.length > 1">
@@ -11,10 +13,10 @@
       You are about to delete multiple iSCSI target IQNs.
     </p>
     <span class="text-danger">The following iSCSI target IQNs will be deleted:</span>
-      <ul class="text-danger">
-        <li ng-repeat="iscsiTarget in $ctrl.resolve.iscsiTargetSelection">
-          {{iscsiTarget.targetId}}
-        </li>
-      </ul>
+    <ul class="text-danger">
+      <li ng-repeat="iscsiTarget in $ctrl.resolve.iscsiTargetSelection">
+        {{iscsiTarget.targetId}}
+      </li>
+    </ul>
   </div>
 </oa-delete-confirmation-modal>

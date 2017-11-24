@@ -41,7 +41,7 @@ def check_ceph_api(fsid):
                                      'cluster_name': cluster.name})
 
     try:
-        call_librados(fsid, test_connection)
+        call_librados(fsid, test_connection, 'cluster connection test')
     except ExternalCommandError as e:
         raise UnavailableModule(Reason.OPENATTIC_CEPH_NO_CLUSTER_FOUND, {
             'fsid': fsid,

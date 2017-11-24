@@ -1,0 +1,33 @@
+<oa-delete-confirmation-modal on-confirm="$ctrl.deleteUser()"
+                              on-cancel="$ctrl.cancel()"
+                              title="{{ ($ctrl.users.length > 1) ? 'Delete users' : 'Delete user' }}">
+  <!-- single user -->
+  <div ng-if="$ctrl.users.length === 1">
+    <p>
+      You are about to delete the user <strong>{{$ctrl.users[0].user_id}}</strong>.
+    </p>
+    <p>
+      Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by
+      this user and that this operation <strong>cannot be undone</strong>.
+    </p>
+  </div>
+  <!-- end single user -->
+
+  <!-- multiple users -->
+  <div ng-if="$ctrl.users.length > 1">
+    <p>
+      You are about to delete multiple users.
+    </p>
+    <p>
+      Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by
+      these users and that this operation <strong>cannot be undone</strong>.
+    </p>
+    <span class="text-danger">The following users will be deleted:</span>
+      <ul class="text-danger">
+        <li ng-repeat="user in $ctrl.users | orderBy:'+user_id'">
+          {{user.user_id}}
+        </li>
+      </ul>
+  </div>
+  <!-- end multiple users -->
+</oa-delete-confirmation-modal>

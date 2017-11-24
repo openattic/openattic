@@ -15,10 +15,6 @@ describe("ceph nfs", () => {
     table.addExport();
   });
 
-  beforeEach(() => {
-    browser.refresh();
-  });
-
   it("should validate host", () => {
     form.selectHost(1);
     expect(form.hostRequired.isDisplayed()).toBe(false);

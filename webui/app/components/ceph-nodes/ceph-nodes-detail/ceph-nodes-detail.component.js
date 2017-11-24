@@ -31,14 +31,13 @@
 "use strict";
 
 class CephNodesDetail {
-
   constructor (cephNodesService) {
     this.cephNodesService = cephNodesService;
   }
 
   $doCheck () {
     if (this.selection.item && this.selection.item.daemons &&
-      angular.isObject(this.selection.item.daemons)) {
+      _.isObject(this.selection.item.daemons)) {
       this.osds = this.selection.item.daemons.filter((daemon) => {
         return daemon.startsWith("osd.");
       });

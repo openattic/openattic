@@ -1,0 +1,124 @@
+<oa-module-loader module="ceph_radosgw">
+
+<oa-loading-panel message="Object Gateway users are loading..."
+                  ng-show="!$ctrl.error && !$ctrl.users.results">
+</oa-loading-panel>
+<oa-error-panel ng-if="$ctrl.error">
+    The list of users could not be loaded.
+</oa-error-panel>
+
+<oadatatable ng-show="!$ctrl.error && $ctrl.users.results"
+             class="oadatatable tc_oadatatable_users"
+             data="$ctrl.users"
+             filter-config="$ctrl.filterConfig"
+             selection="$ctrl.selection"
+             on-selection-change="$ctrl.onSelectionChange(selection)"
+             on-filter-config-change="$ctrl.getUserList()">
+    <actions>
+        <a class="btn btn-sm btn-primary tc_addUser"
+           type="button"
+           ng-click="$ctrl.addAction()"
+           ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
+            <i class="fa fa-fw fa-plus"></i>Add
+        </a>
+        <a class="btn btn-sm btn-primary tc_editUser"
+           type="button"
+           ng-click="$ctrl.editAction()"
+           ng-show="$ctrl.hasSelection">
+            <i class="fa fa-fw fa-pencil"></i>Edit
+        </a>
+        <a class="btn btn-sm btn-primary tc_deleteUser"
+           type="button"
+           ng-click="$ctrl.deleteAction()"
+           ng-show="$ctrl.multiSelection">
+          <i class="fa fa-fw fa-trash-o"></i>Delete
+        </a>
+        <li>
+            <a ng-click="$ctrl.addAction()">
+                <i class="fa fa-fw fa-plus"></i>Add
+            </a>
+        </li>
+        <li class="tc_editUser"
+            ng-class="{disabled: !$ctrl.hasSelection}">
+            <a ng-click="$ctrl.editAction()">
+                <i class="fa fa-fw fa-pencil"></i>Edit
+            </a>
+        </li>
+        <li class="tc_listBucketsItem"
+            ng-class="{disabled: !$ctrl.hasSelection || $ctrl.multiSelection}">
+            <a ng-click="$ctrl.listBucketsAction()">
+                <i class="fa fa-fw fa-list"></i>List buckets
+            </a>
+        </li>
+        <li class="divider"></li>
+        <li class="tc_deleteItem"
+            ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
+            <a ng-click="$ctrl.deleteAction()">
+                <i class="fa fa-fw fa-trash-o"></i>Delete
+            </a>
+        </li>
+    </actions>
+    <table class="datatable table table-striped table-bordered table-hover dataTable">
+        <thead>
+            <tr>
+                <th class="oadatatablecheckbox"
+                    ng-if="selection.available">
+                    <input type="checkbox"
+                           ng-model="selection.checkAll">
+                </th>
+                <th sortfield="user_id"
+                    sortheaderclass
+                    ng-show="columns['Username']"
+                    sortdir="ASC"
+                    sortdefault>Username</th>
+                <th sortfield="display_name"
+                    sortheaderclass
+                    ng-show="columns['Full name']">Full name</th>
+                <th sortfield="email"
+                    sortheaderclass
+                    ng-show="columns['Email address']">Email address</th>
+                <th sortfield="suspended"
+                    sortheaderclass
+                    ng-show="columns['Suspended']">Suspended</th>
+                <th sortfield="max_buckets"
+                    sortheaderclass
+                    ng-show="columns['Max. buckets']">Max. buckets</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data.results"
+                ng-class="{info: isRowSelected(row)}"
+                class="clickable"
+                ng-click="toggleSelection(row, $event)">
+                <td ng-if="selection.available">
+                    <input type="checkbox"
+                           checklist-model="selection.items"
+                           checklist-value="row">
+                </td>
+                <td ng-show="columns['Username']">
+                    <a ui-sref="ceph-rgw-user-edit({user_id:row.user_id})"
+                       ng-bind="row.user_id"></a>
+                </td>
+                <td ng-show="columns['Full name']"
+                    ng-bind="row.display_name"></td>
+                <td ng-show="columns['Email address']"
+                    ng-bind="row.email"></td>
+                <td ng-show="columns['Suspended']">
+                    <i class="fa fa-check fa-fw"
+                       ng-show="row.suspended"></i>
+                </td>
+                <td ng-show="columns['Max. buckets']"
+                    ng-bind="row.max_buckets"></td>
+            </tr>
+        </tbody>
+    </table>
+</oadatatable>
+
+<div id="more"
+     ui-view="tab"
+     tab-data="$ctrl.tabData"
+     tab-config="$ctrl.tabConfig"
+     selection="$ctrl.selection">
+</div>
+
+</oa-module-loader>

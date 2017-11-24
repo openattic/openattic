@@ -14,7 +14,7 @@
 """
 
 from rest_framework.relations import \
-    HyperlinkedRelatedField  as RestFramework_HyperlinkedRelatedField,  \
+    HyperlinkedRelatedField as RestFramework_HyperlinkedRelatedField,  \
     HyperlinkedIdentityField as RestFramework_HyperlinkedIdentityField
 
 from rest.utilities import drf_version
@@ -125,7 +125,6 @@ else:
             if "url" in value:
                 return super(HyperlinkedRelatedField, self).to_internal_value(value["url"])
             raise KeyError("need id or url field (id preferred)")
-
 
     class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
         def to_representation(self, obj):

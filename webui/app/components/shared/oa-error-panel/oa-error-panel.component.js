@@ -30,25 +30,24 @@
  */
 "use strict";
 
-class oaErrorPanel {
+class OaErrorPanel {
   $onInit () {
     this.title = this.title || "Error";
   }
 
   backAction () {
-    if (angular.isFunction(this.onBack)) {
+    if (_.isFunction(this.onBack)) {
       this.onBack();
     }
-  };
+  }
 }
 
-var app = angular.module("openattic.shared");
-app.component("oaErrorPanel", {
+export default {
   template: require("./oa-error-panel.component.html"),
+  transclude: true,
   bindings: {
     title: "@?",
-    message: "@",
     onBack: "&?"
   },
-  controller: oaErrorPanel
-});
+  controller: OaErrorPanel
+};
