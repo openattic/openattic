@@ -259,3 +259,11 @@ class DeepSea(RestClient, SettingsListener):
             'client': 'runner', 'fun': 'ui_ganesha.stop_exports', 'minion': minion
         })
         return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.requires_login
+    def get_deepsea_version(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'deepsea.version'
+        })
+        return response['return'][0]

@@ -15,6 +15,7 @@ import doctest
 import os
 
 from django.utils.unittest import TestCase
+from mock import mock
 from os.path import dirname, abspath, exists
 
 import module_status
@@ -105,3 +106,17 @@ class SettingsTest(TestCase):
         settings.write_secret_to_config('mysecret')
         self.assertEqual(utilities.read_single_setting('DJANGO_SECRET'), 'mysecret')
         self.assertFalse(exists(SettingsTest.secret_file_path))
+
+
+class ModuleStatusTest(TestCase):
+
+    @mock.patch('deepsea.DeepSea.get_deepsea_version')
+    def test_check_deepsea_version_updated(self, get_deepsea_version_mock):
+        get_deepsea_version_mock.return_value = module_status.MIN_DEEPSEA_VERSION
+        module_status.check_deepsea_version()
+
+    @mock.patch('deepsea.DeepSea.get_deepsea_version')
+    def test_check_deepsea_version_not_updated(self, get_deepsea_version_mock):
+        get_deepsea_version_mock.return_value = "0.7.0"
+        with self.assertRaises(module_status.UnavailableModule):
+            module_status.check_deepsea_version()

@@ -195,6 +195,10 @@ class OaModuleLoader {
       "187": {
         title: "Grafana - HTTP error",
         template: "grafana-http-error"
+      },
+      "190": {
+        title: "DeepSea - Update required",
+        template: "deepsea-old_version"
       }
     };
   }

@@ -17,7 +17,7 @@ from django.core.exceptions import ValidationError
 
 from ceph.status import check_ceph_api
 from deepsea import DeepSea
-from module_status import check_deepsea_connection, Reason, UnavailableModule
+from module_status import check_deepsea_connection, check_deepsea_version, Reason, UnavailableModule
 from rest_client import RequestException
 
 
@@ -54,4 +54,5 @@ def status(params):
 
     check_deepsea_connection()
     check_deepsea_iscsi_api()
+    check_deepsea_version()
     check_ceph_api(params['fsid'])
