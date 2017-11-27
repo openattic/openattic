@@ -78,6 +78,7 @@ Fixed
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
 * Installation: Secure permissions on sysconfig file (OP-2949)
 * WebUI: Fix problem with persistent notification options (OP-2952)
+* WebUI: Fix typo in settings notification (OP-2953)
 
 Removed
 ~~~~~~~
