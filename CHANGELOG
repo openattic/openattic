@@ -16,6 +16,174 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+
+[3.6.1] - unreleased
+--------------------
+
+Added
+~~~~~
+* WebUI: Add a 'Clear' button to the datatable search field (OP-2900)
+* WebUI: Add a timestamp of last update on the dashboard (OP-2837)
+* Development: Import ``set_symlinks.sh`` in order to create symlinks for
+  building a development environment (OP-2899)
+
+Changed
+~~~~~~~
+* Backend/QA: Improve auth Gatling tests to check the browser cookie
+  expiry (OP-2921)
+* WebUI: Migration of Dashboard module into Angular (OP-2861)
+* WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
+* WebUI: Migration of Navigation module into Angular (OP-2864)
+* WebUI: Migration of Auth module into Angular (OP-2851)
+* WebUI: Migration of Notification module into Angular (OP-2865)
+* WebUI: Migration of Settings module into Angular (OP-2867)
+* WebUI: Migration of Ceph Nodes module into Angular (OP-2857)
+* WebUI: Migration of Ceph Crushmap module into Angular (OP-2853)
+* WebUI: Migration of Shared module into Angular (OP-2868)
+* WebUI: Migration of User Info module into Angular (OP-2870)
+* WebUI: Migration of Ceph NFS module into Angular (OP-2856)
+* WebUI: Migration of Ceph OSDs module into Angular (OP-2858)
+* WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
+* WebUI: Migration of Ceph Pools module into Angular (OP-2859)
+* WebUI: Improve Object Gateway user/bucket filtering (OP-2912)
+* WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
+* WebUI: The datatable does not show any progress if filter options are
+  changed (OP-2920)
+* Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors
+  when deleting large RBD images. (OP-2742)
+* WebUI: Migration of Users module into Angular (OP-2871)
+* WebUI: Migration of Ceph RBD module into Angular (OP-2860)
+* WebUI: Object Gateway Buckets now provides endpoint addresses (OP-2908)
+* Backend/WebUI: Usage of task queue on iSCSI service management to prevent
+  timeouts (OP-2788)
+* Development: Make ``make_dist.py`` always use the current HEAD revision (OP-2883)
+
+Fixed
+~~~~~
+* WebUI: Get all frontend unit tests working again (OP-2889)
+* Backend: Fix namespace issue with backend/views.py (OP-2896)
+* Backend: Node search field isn't working (OP-2886)
+* Backend: Performance Improvements when listing RBDs (OP-2688)
+* Backend: Fixed Internal Server Error when listing RBDs with missing
+  (OP-2895)
+* Backend: Made Gatling tests more idempotent (OP-2913)
+* WebUI: Fix current user validation on page load (OP-2887)
+* WebUI: Fix random javascript error on RBD form (OP-2824)
+* Installation: Removed executable bit from CHANGELOG (OP-2934)
+
+Removed
+~~~~~~~
+* WebUI: Removed unnecessary heading in RGW name validation unit
+  tests (OP-2901)
+* Packaging: Removed creation of /var/lock/openattic (and /run/lock/openattic
+  respectively) during installation (OP-2946)
+
+[3.6.0] - 2017-11-01
+--------------------
+
+Added
+~~~~~
+* Backend: The error string of a failed call in an external process does now
+  include the command name (OP-2780)
+* WebUI: Prevent the removal of RGW user that is in use on the settings
+  page. (OP-2737)
+* WebUI: Unit tests for IQN validator (OP-2783)
+* WebUI: Usage of "unsaved changes" dialog on iSCSI form (OP-2254)
+* WebUI: Add HTML linter with a few new rules (OP-2544)
+* WebUI: Add fast-diff help text used in RBD form (OP-2767)
+* Documentation: Added our line length PEP-8 exception to the backend
+  contributing guidelines (OP-823)
+* WebUI: Add no-extra-semi rule to eslint (OP-2844)
+* WebUI/Backend: Use cookies that expire as soon as the user closes their
+  browser (OP-2872)
+
+Changed
+~~~~~~~
+* Backend: Cleaned up pep8 warnings of ceph app (OP-1502)
+* Backend: Cleaned up pep8 warnings of nodb app (OP-1512)
+* Backend: Cleaned up pep8 warnings of rest app (OP-1515)
+* Backend: Cleaned up pep8 warnings of systemd app (OP-1518)
+* WebUI: Display dates in locale date format. All Django DateTimeFields will
+  be returned as ISO 8601 (OP-591)
+* WebUI: Replace babel-preset-es2015 with babel-preset-env (OP-2772)
+* WebUI: Submit buttons should be enabled on invalid forms (OP-2736)
+* WebUI/Backend: Salt-API settings should be optional (OP-2722)
+* WebUI: Prevent modal from closing when clicking on the backdrop (OP-2771)
+* WebUI/QA: Refactored unit test setup (OP-2827)
+* WebUI: Don't allow performing a delete action on buckets shared via
+  NFS (OP-2768)
+* WebUI: Improve eslint rules (OP-2749)
+* WebUI: Migration of Ceph Pools controllers to components (OP-2399)
+* WebUI: Migration of Ceph OSDs controllers to components (OP-2401)
+* Documentation: Mentioned the AngularJS style guide as the coding style
+  for frontend development (OP-824)
+* WebUI: Migration of Ceph Nodes controllers to components (OP-2398)
+* WebUI: Set the minimum pg size to 1 (OP-2875)
+* WebUI: Convert Shared module to ES6 (OP-2532)
+* WebUI: Unify Grafana and Widgets in a single Dashboard page (2754)
+* WebUI: Select the NFS Host automatically, if only one is available (OP-2711)
+* WebUI/QA: Optimize "ceph_pool_creation" e2e test suite (OP-2812)
+* WebUI: Guide user through RBD creation for iSCSI (OP-2181)
+* WebUI: Migration of Ceph RGW controllers to components (OP-2397)
+* WebUI: Migration of Auth controllers to components (OP-2801)
+* WebUI: Convert Settings components to ES6 (OP-2806)
+* WebUI: Convert Grafana components to ES6 (OP-2805)
+* WebUI: Convert Ceph RBD components to ES6 (OP-2803)
+* WebUI: Convert iSCSI components to ES6 (OP-2802)
+* WebUI: Migration of Api Decorator module into Angular (OP-2850)
+* WebUI: Migration of Grafana module into Angular (OP-2863)
+* WebUI: Migration of Ceph Cluster module into Angular (OP-2852)
+* WebUI: Migration of ApiRecorder module into Angular (OP-2848)
+* WebUI: Migration of Registry module into Angular (OP-2866)
+
+Fixed
+~~~~~
+* Backend: The currently logged in user can't delete himself anymore (OP-2738)
+* Backend: Fixed `CephCluster` to return the same `keyring_candidates` twice
+  (OP-2782)
+* Backend/QA: Added missing license header in userprefs/tests.py (OP-2769)
+* Backend: Django SECRET_KEY generated using insufficient entropy (OP-2874)
+* Development: Lint unit test correctly (OP-2828)
+* WebUI: Allow users to type in any size into the RBD form (OP-2730)
+* WebUI/QA: RGW bucket "e2e-rgw-add" is not deleted after RGW suite
+  run (OP-2512)
+* WebUI/QA: Prevent random failure in "2 failed task" test (OP-2735)
+* WebUI/QA: Fix random NFS e2e test failures (OP-2762)
+* WebUI/QA: Fix style issues in protractor.conf.js (OP-2793)
+* WebUI/QA: Prevent random failures in task queue dialog suite (OP-2779)
+* WebUI: Fix the indentation in pool list and form template (OP-2829)
+* WebUI: Fix "use max" links in RBD form (OP-2727)
+* WebUI/QA: Fix random iSCSI e2e test failures (OP-2807, OP-2830)
+* WebUI/QA: Improve e2e testing when running in a slower system (OP-2831)
+* WebUI: Update the displayed NFS state in case of a failed API request
+  (OP-2880)
+* WebUI: Fix RGW name validation (OP-2825)
+
+Removed
+~~~~~~~
+* Backend: Removed `utilities.in_unittest` (OP-2776)
+* WebUI: Removed the need to type "yes" to delete tasks (OP-2770)
+
+[3.5.3] - 2017-10-27
+--------------------
+
+Changed
+~~~~~~~
+* WebUI: Now it is possible to delete a RGW user with buckets (OP-2790)
+* WebUI/QA: Update Karma config with Cobertura report and ChromeHeadless
+  (OP-2725)
+* Backend: Use health's "status" instead of "overall_status" (OP-2845)
+
+Fixed
+~~~~~
+* Backend: Fixed db corruption when running `oaconfig install` (OP-2784)
+* Backend: Fixed Settings page doesn't save new keyring information properly
+  (OP-2729)
+* Backend: Fixed "No SystemD in ifconfig.systemapi" Message (OP-2774)
+* Backend: The Grafana dashboard will now be shown automatically when
+  upgrading from oA 2.x to 3.x (OP-2843)
+* Deployment: Add "PreReq: %fillup_prereq" to SUSE spec file (OP-2808)
+
 [3.5.2] - 2017-10-10
 --------------------
 
@@ -359,6 +527,9 @@ Added
 * Backend: Add time-sync-status to the API (OP-2495)
 * WebUI: Display help text for shared secret key configuration in
   settings page (OP-2479)
+* Backend/QA: Added test to check that the `version.txt` matches the server
+  version (OP-2921)
+
 
 Changed
 ~~~~~~~

@@ -1,0 +1,288 @@
+<div class="col-sm-12 col-lg-6">
+  <form name="$ctrl.userForm"
+        role="form"
+        class="form-horizontal"
+        novalidate
+        oa-check-form>
+    <div class="panel panel-default">
+      <div class="panel-heading tc_formHeadline">
+        <h3 ng-hide="$ctrl.editing"
+            class="panel-title tc_userAddTitle">Create User: {{$ctrl.user.username}}</h3>
+        <h3 ng-show="$ctrl.editing"
+            class="panel-title tc_userEditTitle">Edit User: {{$ctrl.user.username}}</h3>
+      </div>
+      <div class="panel-body">
+        <fieldset>
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) && $ctrl.userForm.username.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="userUsername">Username</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-user fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="text"
+                       placeholder="Username..."
+                       ng-model="$ctrl.user.username"
+                       name="username"
+                       id="userUsername"
+                       required
+                       validname
+                       uniquename="user">
+              </div>
+              <span class="help-block tc_usernameRequired"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) &&
+                                        $ctrl.userForm.username.$error.required">
+                The username is required.
+              </span>
+              <span class="help-block tc_userNameNotValid"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) &&
+                                        $ctrl.userForm.username.$error.validname">
+                {{$ctrl.errortext}}
+              </span>
+              <span class="help-block tc_noUniqueName"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) &&
+                                        $ctrl.userForm.username.$error.uniquename">
+                The chosen user name is already in use.
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.password.$dirty) && $ctrl.userForm.password.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="userPassword">Password</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-key fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="password"
+                       placeholder="Password..."
+                       ng-model="$ctrl.user.password"
+                       name="password"
+                       id="userPassword"
+                       ng-required="!$ctrl.editing"
+                       ng-minlength="6">
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default tc_showPassword"
+                          oa-password-button="userPassword">
+                  </button>
+                  <button type="button"
+                          class="btn btn-default tc_copyPasswordToClipboard"
+                          uib-tooltip="Copy to clipboard"
+                          oa-clipboard
+                          oa-clipboard-target="userPassword"
+                          oa-clipboard-text="password">
+                    <i class="icon-prepend fa fa-clipboard fa-fw"></i>
+                  </button>
+                </span>
+              </div>
+              <span class="help-block tc_passwdMinlength"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.password.$dirty) && $ctrl.userForm.password.$error.minlength">
+                The password must be of minimum length 6 characters.
+              </span>
+              <span class="help-block tc_passwdRequired"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.password.$dirty) && $ctrl.userForm.password.$error.required">
+                A password is required.
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) && $ctrl.userForm.confirmPassword.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="userConfirmPassword">Confirm password</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-key fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="password"
+                       placeholder="Password..."
+                       id="userConfirmPassword"
+                       name="confirmPassword"
+                       ng-model="$ctrl.user.confirmPassword"
+                       equal-validator="$ctrl.user.password"
+                       ng-required="!$ctrl.editing"
+                       ng-minlength="6">
+                <span class="input-group-btn">
+                  <button type="button"
+                          class="btn btn-default"
+                          oa-password-button="userConfirmPassword">
+                  </button>
+                </span>
+              </div>
+              <span class="help-block tc_confirmPasswdRequired"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) &&
+                                    $ctrl.userForm.confirmPassword.$error.required">
+                The password confirmation is required.
+              </span>
+              <span class="help-block tc_confirmPasswdMinlength"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) &&
+                                    $ctrl.userForm.confirmPassword.$error.minlength">
+                The password must be of minimum length 6 characters.
+              </span>
+              <span class="help-block tc_passwdEqual"
+                    ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) &&
+                                    $ctrl.userForm.confirmPassword.$error.equalValidator && !$ctrl.userForm.confirmPassword.$error.minlength">
+                The passwords are not equal.
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-3 control-label"
+                   for="userFirstname">Firstname</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-user fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="text"
+                       placeholder="Firstname..."
+                       ng-model="$ctrl.user.first_name"
+                       name="firstname"
+                       id="userFirstname">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label"
+                   for="userLastname">Lastname</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-user fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="text"
+                       placeholder="Lastname..."
+                       ng-model="$ctrl.user.last_name"
+                       name="last"
+                       id="userLastname">
+              </div>
+            </div>
+          </div>
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.email.$dirty) && $ctrl.userForm.email.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="userEmail">Email Address</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-envelope-o fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="email"
+                       placeholder="Email Address..."
+                       ng-model="$ctrl.user.email"
+                       name="email"
+                       id="userEmail">
+              </div>
+              <span class="help-block tc_emailNotValid"
+                    ng-show="($ctrl.userForm.$submitted ||$ctrl.userForm.email.$dirty) && $ctrl.userForm.email.$error.email">
+                It's not a valid email address.
+              </span>
+            </div>
+          </div>
+          <div class="form-group"
+               ng-if="$ctrl.isCurrentUser">
+            <label class="col-sm-3 control-label"
+                   for="userAuthToken">API authentication token</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="icon-prepend fa fa-user-secret fa-fw"></i>
+                </span>
+                <input class="form-control"
+                       type="text"
+                       ng-model="$ctrl.user.auth_token.token"
+                       name="authtoken"
+                       id="userAuthToken"
+                       readonly>
+                <span class="input-group-btn">
+                  <button class="btn btn-default tc_generate_btn"
+                          type="button"
+                          uib-tooltip="Generate"
+                          ng-click="$ctrl.generateAuthToken()">
+                    <i class="icon-prepend fa fa-refresh fa-fw"></i>
+                  </button>
+                  <button class="btn btn-default"
+                          type="button"
+                          uib-tooltip="Copy to clipboard"
+                          oa-clipboard
+                          oa-clipboard-target="userAuthToken"
+                          oa-clipboard-text="API authentication token">
+                    <i class="icon-prepend fa fa-clipboard fa-fw"></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group"
+               ng-if="!$ctrl.isCurrentUser">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="$ctrl.user.is_active"
+                       name="active"
+                       id="userActive">
+                <label for="userActive">
+                  Is active
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group"
+               ng-if="!$ctrl.isCurrentUser">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="$ctrl.user.is_staff"
+                       name="staff"
+                       id="userStaff">
+                <label for="userStaff">
+                  Is administrator
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group"
+               ng-if="!$ctrl.isCurrentUser">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox"
+                       ng-model="$ctrl.user.is_superuser"
+                       name="superuser"
+                       id="userSuperuser">
+                <label for="userSuperuser">
+                  Has all privileges
+                </label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="panel-footer">
+        <div class="button-group text-right">
+          <oa-submit-button form="$ctrl.userForm"
+                            on-submit="$ctrl.submitAction($ctrl.userForm)">
+            Submit
+          </oa-submit-button>
+          <button type="button"
+                  class="btn btn-sm btn-default tc_backButton"
+                  ng-click="$ctrl.cancelAction()">
+            Back
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

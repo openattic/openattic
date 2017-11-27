@@ -24,7 +24,6 @@
   FlexElement
   Grafana
   Graph
-  Gridster
   Progressbar
   TagForm
   Trees
@@ -93,7 +92,7 @@ option {
 }
 .no-border {
   border: 0px;
-  box-shadow: 0px 0px 0px
+  box-shadow: 0px 0px 0px !important;
 }
 .no-wrap {
   white-space: nowrap;
@@ -353,21 +352,31 @@ ul.task-queue-pagination {
 .navbar-openattic .navbar-collapse {
   padding: 0;
 }
-.navbar-openattic .navbar-nav>li>a {
+.navbar-openattic .navbar-nav>li>a,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a {
   color: #ececec;
   line-height: 1;
   padding: 10px 20px;
+  position: relative;
+  display: block;
+  text-decoration: none;
 }
 .navbar-openattic .navbar-nav>li>a:focus,
-.navbar-openattic .navbar-nav>li>a:hover {
+.navbar-openattic .navbar-nav>li>a:hover,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a:focus,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a:hover {
   color: #ececec;
 }
-.navbar-openattic .navbar-nav>li>a:hover {
+.navbar-openattic .navbar-nav>li>a:hover,
+.navbar-openattic .navbar-nav>li>.oa-navbar>a:hover {
   background-color: #505050;
 }
 .navbar-openattic .navbar-nav>.open>a,
 .navbar-openattic .navbar-nav>.open>a:hover,
-.navbar-openattic .navbar-nav>.open>a:focus {
+.navbar-openattic .navbar-nav>.open>a:focus,
+.navbar-openattic .navbar-nav>.open>.oa-navbar>a,
+.navbar-openattic .navbar-nav>.open>.oa-navbar>a:hover,
+.navbar-openattic .navbar-nav>.open>.oa-navbar>a:focus {
   color: #ececec;
   border-color: transparent;
   background-color: transparent;
@@ -914,6 +923,12 @@ h6{
 .dataTables_header .input-group .form-control {
   height: 30px;
 }
+.dataTables_header .input-group .clear-input {
+  height: 30px;
+}
+.dataTables_header .input-group .clear-input i {
+  vertical-align: text-top;
+}
 .dataTables_no-match {
   border: 1px solid #d1d1d1;
   padding: 10px 0;
@@ -1097,45 +1112,6 @@ h6{
 .grafana {
   width: 100%;
   min-height: 600px;
-}
-
-/* Graph */
-.osd-widget-chart nvd3 .nvd3.nv-pie path {
-  stroke: none;
-}
-
-nvd3 .nvd3.nv-pie path {
-  fill-opacity: 1;
-}
-
-nvd3 .nvd3.nv-pie .nv-pie-title {
-  fill: inherit;
-}
-
-nvd3.errorState {
-  fill: #d9534f; /* Bootstrap danger */
-}
-
-nvd3.okState {
-  fill: #5cb85c; /* Bootstrap success */
-}
-
-nvd3.warnState {
-  fill: #f0ad4e; /* Bootstrap warning */
-}
-
-/* Gridster */
-.gridster {
-  margin: 0 -15px;
-}
-.gridster-loaded .gridster-preview-holder {
-  opacity: 0.4;
-}
-.gridster .toolbar {
-  top: 21px;
-  right: 15px;
-  cursor: pointer;
-  position: absolute;
 }
 
 /* Progressbar */
@@ -1330,6 +1306,9 @@ uib-accordion .panel-title,
 }
 .clickable {
   cursor: pointer;
+}
+.non-clickable {
+  cursor: initial;
 }
 .locked {
   cursor: default!important;

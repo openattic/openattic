@@ -39,6 +39,7 @@ app.directive("oadatatable", function () {
     scope: {
       selection: "=",
       onSelectionChange: "&",
+      onFilterConfigChange: "&",
       data: "=",
       filterConfig: "=",
       special: "="
@@ -232,6 +233,10 @@ app.directive("oadatatable", function () {
         // Reset the selection, e.g. otherwise the statistic/detail tab page of the
         // previous selected row is still shown during the datatable is reloaded.
         $scope.selection.items = [];
+        // Reset the data, thus the loading panel will be displayed automatically.
+        $scope.data = [];
+        // Reload the data.
+        $scope.onFilterConfigChange();
       });
 
       $scope.$watch("filterConfig.entries", function (newVal, oldVal) {

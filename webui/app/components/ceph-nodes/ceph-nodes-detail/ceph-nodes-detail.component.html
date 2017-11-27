@@ -1,36 +1,36 @@
 <div class="panel panel-default tc_details">
-    <div class="panel-heading">
-        <h3 class="panel-title tc_panelTitle">Details of {{ $ctrl.selection.item.hostname }}</h3>
-    </div>
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <div ng-show="$ctrl.selection.item.addresses.length > 0 ">
-                <dt>Addresses:</dt>
-                <dd ng-repeat="address in $ctrl.selection.item.addresses"
-                    ng-bind="address"></dd>
-            </div>
+  <div class="panel-heading">
+    <h3 class="panel-title tc_panelTitle">Details of {{ $ctrl.selection.item.hostname }}</h3>
+  </div>
+  <div class="panel-body">
+    <dl class="dl-horizontal">
+      <div ng-show="$ctrl.selection.item.addresses.length > 0 ">
+        <dt>Addresses:</dt>
+        <dd ng-repeat="address in $ctrl.selection.item.addresses"
+            ng-bind="address"></dd>
+      </div>
 
-            <div ng-show="$ctrl.selection.item.cluster">
-                <dt>Cluster:</dt>
-                <dd ng-bind="$ctrl.selection.item.cluster"></dd>
-            </div>
+      <div ng-show="$ctrl.selection.item.cluster">
+        <dt>Cluster:</dt>
+        <dd ng-bind="$ctrl.selection.item.cluster"></dd>
+      </div>
 
-            <div ng-show="$ctrl.selection.item.key_status">
-                <dt>Key status:</dt>
-                <dd ng-bind="$ctrl.selection.item.key_status"></dd>
-            </div>
+      <div ng-show="$ctrl.selection.item.key_status">
+        <dt>Key status:</dt>
+        <dd ng-bind="$ctrl.selection.item.key_status"></dd>
+      </div>
 
-            <div ng-show="$ctrl.selection.item.roles.length > 0 ">
-                <dt>Roles:</dt>
-                <dd ng-repeat="role in $ctrl.selection.item.roles"
-                    ng-bind="role"></dd>
-            </div>
+      <div ng-show="$ctrl.selection.item.roles.length > 0 ">
+        <dt>Roles:</dt>
+        <dd ng-repeat="role in $ctrl.selection.item.roles"
+            ng-bind="role"></dd>
+      </div>
 
-            <div ng-show="$ctrl.osds.length > 0">
-                <dt>OSDs:</dt>
-                <dd ng-repeat="osd in $ctrl.osds"
-                    ng-bind="osd"></dd>
-            </div>
-        </dl>
-    </div>
+      <div ng-show="$ctrl.osds.length > 0">
+        <dt>OSDs:</dt>
+        <dd ng-repeat="osd in $ctrl.osds"
+            ng-bind="osd"></dd>
+      </div>
+    </dl>
+  </div>
 </div>

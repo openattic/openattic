@@ -30,5 +30,6 @@ cluster_router.register(r'ceph', CephClusterViewSet, 'ceph')
 
 urlpatterns = patterns('',
                        url(r'^api/', include(cluster_router.urls, namespace='api'), name='ceph'),
-                       url(r'^api/ceph/[a-zA-Z0-9-]+/', include(router.urls, namespace='api/ceph/'), name='details'),
+                       url(r'^api/ceph/[a-zA-Z0-9-]+/', include(router.urls, namespace='api/ceph/'),
+                           name='details'),
                        )

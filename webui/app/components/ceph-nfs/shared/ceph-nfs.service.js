@@ -32,43 +32,46 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephNfs");
-app.factory("cephNfsService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph_nfs/:fsid/exports/:host/:exportId", {
-    fsid: "@fsid",
-    host: "@host",
-    exportId: "@exportId"
-  }, {
-    save: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/exports"
-    },
-    update: {
-      method: "PUT"
-    },
-    bulk_delete: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/exports/bulk_delete"
-    },
-    hosts: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/hosts"
-    },
-    fsals: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/fsals"
-    },
-    status: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/status"
-    },
-    start: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/deploy"
-    },
-    stop: {
-      method: "POST",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/stop"
-    }
-  });
-});
+export default class CephNfsService {
+  constructor ($resource) {
+    let res = $resource(globalConfig.API.URL + "ceph_nfs/:fsid/exports/:host/:exportId", {
+      fsid: "@fsid",
+      host: "@host",
+      exportId: "@exportId"
+    }, {
+      save: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/exports"
+      },
+      update: {
+        method: "PUT"
+      },
+      bulk_delete: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/exports/bulk_delete"
+      },
+      hosts: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/hosts"
+      },
+      fsals: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/fsals"
+      },
+      status: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/status"
+      },
+      start: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/deploy"
+      },
+      stop: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/stop"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}

@@ -32,81 +32,85 @@
 
 import globalConfig from "globalConfig";
 
-angular.module("openattic.grafana").component("grafana", {
+class Grafana {
+  constructor ($window) {
+    this.baseUrl = globalConfig.API.URL + "grafana/";
+    this.dashboardName = "";
+    this.src = "";
+    this.urlParameterName = "";
+    this.$window = $window;
+  }
+
+  /**
+   * Set some information to determine the correct iframe source
+   */
+  $onInit () {
+    /*
+     * Check the given mode and set the correct dashboard name and url parameter name
+     */
+    switch (this.mode) {
+      case "rbd":
+        this.dashboardName = "ceph-rbd";
+        this.urlParameterName = "var-image";
+        break;
+      case "pool":
+        this.dashboardName = "ceph-pools";
+        this.urlParameterName = "var-pool";
+        break;
+      case "osd":
+        this.dashboardName = "ceph-osd";
+        this.urlParameterName = "var-osd";
+        break;
+      case "node":
+        this.dashboardName = "node-statistics";
+        this.urlParameterName = "var-instance";
+        break;
+      case "rgwusers":
+        this.dashboardName = "ceph-object-gateway-users";
+        this.urlParameterName = "var-owner";
+        break;
+      default:
+        this.dashboardName = "ceph-cluster";
+        this.mode = "dashboard";
+        break;
+    }
+
+    /*
+     * Set src of the iframe.
+     */
+    if (this.mode === "dashboard") {
+      this.src = this.baseUrl + "dashboard/db/" + this.dashboardName;
+    } else {
+      this.src = this.baseUrl + "dashboard/db/" + this.dashboardName + "?" + this.urlParameterName + "=" + this.data;
+    }
+
+    window.addEventListener("resize", () => {
+      this.resize();
+    });
+  }
+
+  $onChanges (values) {
+    // Only update the source if binding "data" changes
+    if (typeof values.data !== "undefined") {
+      this.src = this.src.replace(values.data.previousValue, values.data.currentValue);
+    }
+  }
+
+  /**
+   * Resize the iframe in a certain period of time
+   */
+  resize () {
+    // Use height of the main-view div, because that"s the div of the content
+    var h = $(".grafana").contents().find(".main-view").height();
+    $(".grafana").height(h);
+  }
+}
+
+export default {
   template: require("./grafana.component.html"),
   bindings: {
     data: "<",
     mode: "<"
   },
-  controller: function GrafanaController ($interval, $window) {
-    var vm = this;
-    vm.baseUrl = globalConfig.API.URL + "grafana/";
-    vm.dashboardName = "";
-    vm.src = "";
-    vm.urlParameterName = "";
-
-    /**
-     * Set some information to determine the correct iframe source
-     */
-    vm.$onInit = function () {
-      /*
-       * Check the given mode and set the correct dashboard name and url parameter name
-       */
-      switch (vm.mode) {
-        case "rbd":
-          vm.dashboardName = "ceph-rbd";
-          vm.urlParameterName = "var-image";
-          break;
-        case "pool":
-          vm.dashboardName = "ceph-pools";
-          vm.urlParameterName = "var-pool";
-          break;
-        case "osd":
-          vm.dashboardName = "ceph-osd";
-          vm.urlParameterName = "var-osd";
-          break;
-        case "node":
-          vm.dashboardName = "node-statistics";
-          vm.urlParameterName = "var-instance";
-          break;
-        case "rgwusers":
-          vm.dashboardName = "ceph-object-gateway-users";
-          vm.urlParameterName = "var-owner";
-          break;
-        default:
-          vm.dashboardName = "ceph-cluster";
-          vm.mode = "dashboard";
-          break;
-      }
-
-      /*
-       * Set src of the iframe.
-       */
-      if (vm.mode === "dashboard") {
-        vm.src = vm.baseUrl + "dashboard/db/" + vm.dashboardName;
-      } else {
-        vm.src = vm.baseUrl + "dashboard/db/" + vm.dashboardName + "?" + vm.urlParameterName + "=" + vm.data;
-      }
-
-      angular.element($window).bind("resize", function () {
-        vm.resize();
-      });
-    };
-
-    vm.$onChanges = function (values) {
-      // Only update the source if binding "data" changes
-      if (angular.isDefined(values.data)) {
-        vm.src = vm.src.replace(values.data.previousValue, values.data.currentValue);
-      }
-    };
-
-    /**
-     * Resize the iframe in a certain period of time
-     */
-    vm.resize = function () {
-      // Use height of the main-view div, because that"s the div of the content
-      var h = $(".grafana").contents().find(".main-view").height();
-      $(".grafana").height(h);
-    };
-  }
-});
+  controller: Grafana
+};

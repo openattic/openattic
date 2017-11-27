@@ -126,7 +126,7 @@ class TaskQueue(Model):
         task = deserialize_task(task_val)
         try:
             return task.metadata()
-        except ImportError:
+        except (ImportError, AttributeError) as _:
             logger.exception('Failed to find task={} taskqueue={}'.format(task.func_reference,
                                                                           self.id))
             return {}
@@ -243,6 +243,7 @@ class Task(object):
         """
         :rtype: TaskFactory
         :raise ImportError: raised, if task doesn't exist.
+        :raise AttributeError: raised, if task doesn't exist within that module.
         """
         module_name, func_name = self.func_reference.rsplit('.', 1)
         m = __import__(module_name, fromlist=[func_name], level=0)

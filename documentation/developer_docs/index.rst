@@ -43,7 +43,8 @@ documentation.
   architecture
   developer-documentation
   ui_customizing
-  taskqueue
+  fe_taskqueue
+  be_taskqueue
   dev_fe_unit_tests
   dev_e2e
   dev_gatling

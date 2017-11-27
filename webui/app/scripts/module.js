@@ -78,20 +78,37 @@ app.config(function ($httpProvider) {
   $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
-app.run(function ($rootScope, usersService, $state, $transitions) {
-  $transitions.onSuccess({}, function (trans) {
-    usersService.current().$promise.then(function () {
-      $rootScope.loggedIn = true;
-      if (trans.to().name === "login") {
-        $state.go("dashboard");
-      }
-    }).catch(function (error) {
-      error.ignoreStatusCode(401);
-      $rootScope.loggedIn = false;
-    });
+app.run(function ($rootScope, usersService, $state, $transitions,
+    authUserService, $q) {
+
+  $transitions.onStart({}, (trans) => {
+    const deferred = $q.defer();
+
+    usersService.current()
+      .$promise
+      .then((user) => {
+        authUserService.set(user);
+        if (trans.to().name === "login") {
+          deferred.resolve($state.target("dashboard", undefined, { location: true }));
+        } else {
+          deferred.resolve(true);
+        }
+      }).catch((error) => {
+        error.ignoreStatusCode(401);
+        authUserService.remove();
+
+        if (trans.to().name === "login") {
+          deferred.resolve(true);
+        } else {
+          deferred.resolve($state.target("login", undefined, { location: true }));
+        }
+      });
+
+    return deferred.promise;
   });
+
   $rootScope.loginActive = function () {
-    return !$rootScope.loggedIn;
+    return !authUserService.isLoggedIn();
   };
   var hostname = window.location.host.split(".")[0];
   // check if the hostname looks like the first octet of an IP address

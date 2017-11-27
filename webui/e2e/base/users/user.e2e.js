@@ -1,22 +1,22 @@
 "use strict";
-var helpers = require("../../common.js");
-var UserTable = require("./UserTable.js");
+const helpers = require("../../common.js");
+const UserTable = require("./UserTable.js");
 
 describe("Should add an user", function () {
   const userTable = new UserTable();
 
-  var testUser = {
+  const testUser = {
     username: "protractor_test_user",
     userpasswd: "test123",
     firstname: "Herp",
     lastname: "Derp",
     email: "herp.derp@openattic.org"
   };
-  var user = element(by.cssContainingText("tr", testUser.username));
-  var correctInput = element(by.css(".tc_correctInput"));
-  var logout = element(by.css(".tc_logout a"));
-  var addBtn = element(by.css(".tc_addUser"));
-  var noUniqueName = element(by.css(".tc_noUniqueName"));
+  const user = element(by.cssContainingText("tr", testUser.username));
+  const correctInput = element(by.css(".tc_correctInput"));
+  const logout = element(by.css(".tc_logout a"));
+  const addBtn = element(by.css(".tc_addUser"));
+  const noUniqueName = element(by.css(".tc_noUniqueName"));
 
   beforeAll(function () {
     helpers.login();
@@ -38,7 +38,7 @@ describe("Should add an user", function () {
   it("should show the password in plain text", function () {
     addBtn.click();
     browser.sleep(400);
-    var password = element(by.model("user.password"));
+    const password = element(by.model("$ctrl.user.password"));
     expect(password.getAttribute("type")).toEqual("password");
     password.sendKeys(testUser.userpasswd);
     element(by.css(".tc_showPassword")).click();
@@ -49,13 +49,13 @@ describe("Should add an user", function () {
   it("should copy the password to the clipboard", function () {
     addBtn.click();
     browser.sleep(400);
-    var password = element(by.model("user.password"));
+    const password = element(by.model("$ctrl.user.password"));
     expect(password.getAttribute("type")).toEqual("password");
     password.sendKeys(testUser.userpasswd);
     // Copy text to clipboard.
     element(by.css(".tc_copyPasswordToClipboard")).click();
     // Paste text into another field to compare the value.
-    var firstName = element(by.model("user.first_name"));
+    const firstName = element(by.model("$ctrl.user.first_name"));
     firstName.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "v"));
     expect(firstName.getAttribute("value")).toEqual(testUser.userpasswd);
     helpers.leaveForm();
@@ -63,25 +63,16 @@ describe("Should add an user", function () {
 
   it("should create an user", function () {
     addBtn.click();
-    browser.sleep(400);
-    element(by.model("user.username")).sendKeys(testUser.username);
-    browser.sleep(400);
-    element(by.model("user.password")).sendKeys(testUser.userpasswd);
-    browser.sleep(400);
-    element(by.model("user.confirmPassword")).sendKeys(testUser.userpasswd);
-    browser.sleep(400);
-    element(by.model("user.first_name")).sendKeys(testUser.firstname);
-    browser.sleep(400);
-    element(by.model("user.last_name")).sendKeys(testUser.lastname);
-    browser.sleep(400);
-    element(by.model("user.email")).sendKeys(testUser.email);
-    browser.sleep(400);
-    element(by.model("user.is_active")).click();
-    browser.sleep(400);
-    element(by.model("user.is_staff")).click();
-    browser.sleep(400);
+    element(by.model("$ctrl.user.username")).sendKeys(testUser.username);
+    element(by.model("$ctrl.user.password")).sendKeys(testUser.userpasswd);
+    element(by.model("$ctrl.user.confirmPassword")).sendKeys(testUser.userpasswd);
+    element(by.model("$ctrl.user.first_name")).sendKeys(testUser.firstname);
+    element(by.model("$ctrl.user.last_name")).sendKeys(testUser.lastname);
+    element(by.model("$ctrl.user.email")).sendKeys(testUser.email);
+    element(by.model("$ctrl.user.is_active")).click();
+    element(by.model("$ctrl.user.is_staff")).click();
     element(by.css(".tc_submitButton")).click();
-    browser.sleep(400);
+    helpers.waitForElementRemoval("submit");
   });
 
   it('should display the "protractor_test_user" in the users panel', function () {
@@ -94,7 +85,7 @@ describe("Should add an user", function () {
   });
 
   it('should verify that if the "already in use" error message is still working', function () {
-    element(by.model("user.username")).clear().sendKeys("openattic");
+    element(by.model("$ctrl.user.username")).clear().sendKeys("openattic");
     expect(element(by.css(".tc_noUniqueName")).isDisplayed()).toBe(true);
     helpers.leaveForm(true);
   });
@@ -120,7 +111,7 @@ describe("Should add an user", function () {
   it("should display an error message if one tries to add an user with already taken username", function () {
     addBtn.click();
     browser.sleep(400);
-    element(by.model("user.username")).sendKeys(testUser.username);
+    element(by.model("$ctrl.user.username")).sendKeys(testUser.username);
     expect(noUniqueName.isDisplayed()).toBe(true);
   });
 

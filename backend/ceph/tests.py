@@ -21,6 +21,7 @@ import mock
 import tempfile
 import json
 
+from configobj import ConfigObj
 from django.core.exceptions import ValidationError
 
 import exception
@@ -47,13 +48,36 @@ def load_tests(loader, tests, ignore):
 def open_testdata(name):
     return open(os.path.join(os.path.dirname(__file__), name))
 
+
 @contextmanager
-def temporary_keyring(user_name='client.admin'):
-    with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
-        as tmpfile:
-        tmpfile.write('[{}]'.format(user_name))
+def temporary_keyring(user='client.admin', users=None, content=None):
+    if users is None:
+        users = [user]
+    if content is None:
+        content = '\n'.join(['[{}]'.format(u) for u in users])
+    with tempfile.NamedTemporaryFile(dir='/tmp', prefix=users[0] + '.',
+                                     suffix=".keyring") as tmpfile:
+        tmpfile.write(content)
         tmpfile.flush()
         yield tmpfile.name
+
+
+@contextmanager
+def temp_ceph_conf(fsid, keyrings):
+    with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph',
+                                     suffix=".conf") as tmpfile_ceph_conf:
+        obj = ConfigObj()
+        obj['global'] = {'fsid': fsid}
+        for keyring in keyrings:
+            if isinstance(keyring, Keyring):
+                users, file_name = keyring.available_user_names, keyring.file_name
+            else:
+                users, file_name = keyring['available_user_names'], keyring['file_name']
+            for user in users:
+                obj[user] = {'keyring':  file_name}
+        obj.write(outfile=tmpfile_ceph_conf)
+        tmpfile_ceph_conf.flush()
+        yield tmpfile_ceph_conf.name
 
 
 class KeyringTestCase(TestCase):
@@ -76,78 +100,56 @@ class KeyringTestCase(TestCase):
         self.assertIn('does not exist', str(context.exception))
 
     def test_invalid_keyring(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph.client.', suffix=".keyring") \
-                as tmpfile:
-            tmpfile.write("abcdef")
-            tmpfile.flush()
-            keyring = Keyring(tmpfile.name)
+        with temporary_keyring(content="abcdef") as file_name:
+            keyring = Keyring(file_name)
             with self.assertRaises(RuntimeError) as context:
                 keyring._check_access()
             self.assertIn('Corrupt keyring', str(context.exception))
 
     def test_users_sorting(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring', suffix='.keyring') as tmpfile:
-            tmpfile.write('[mon.]\n[client.admin]\n[client.rgw]\n[client.openattic]\n')
-            tmpfile.flush()
-            keyring = Keyring(tmpfile.name)
+        with temporary_keyring(users=['mon.', 'client.admin', 'client.rgw', 'client.openattic'])\
+                as file_name:
+            keyring = Keyring(file_name)
             self.assertEqual(keyring.available_user_names[0], 'client.openattic')
             self.assertEqual(keyring.available_user_names[1], 'client.admin')
 
     def test_sorting(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring1', suffix='.keyring') as tmpfile1:
-            with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring2', suffix='.keyring') as tmpfile2:
-                with tempfile.NamedTemporaryFile(dir='/tmp', prefix='keyring3', suffix='.keyring') as tmpfile3:
-                    tmpfile1.write('[client.rgw]\n')
-                    tmpfile1.flush()
-                    keyring1 = Keyring(tmpfile1.name)
+        with temporary_keyring('client.rgw') as file_name1:
+            with temporary_keyring('client.openattic') as file_name2:
+                with temporary_keyring(users=['[mon.', 'client.admin']) as file_name3:
+                    keyrings = map(Keyring, [file_name1, file_name2, file_name3])
 
-                    tmpfile2.write('[client.openattic]\n')
-                    tmpfile2.flush()
-                    keyring2 = Keyring(tmpfile2.name)
+                    sorted_keyrings = sorted(
+                        keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
-                    tmpfile3.write('[mon.]\n[client.admin]\n')
-                    tmpfile3.flush()
-                    keyring3 = Keyring(tmpfile3.name)
-
-                    keyrings = [keyring1, keyring2, keyring3]
-
-                    sorted_keyrings = sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
-
-                    self.assertIs(sorted_keyrings[0], keyring2)
-                    self.assertIs(sorted_keyrings[1], keyring3)
-                    self.assertIs(sorted_keyrings[2], keyring1)
+                    self.assertIs(sorted_keyrings[0], keyrings[1])
+                    self.assertIs(sorted_keyrings[1], keyrings[2])
+                    self.assertIs(sorted_keyrings[2], keyrings[0])
 
     def test_empty_keyring(self):
-        with tempfile.NamedTemporaryFile(dir='/tmp', prefix='ceph', suffix=".conf") as tmpfile_ceph_conf:
-            with tempfile.NamedTemporaryFile(dir='/tmp', prefix='client.empty.',
-                                             suffix=".keyring") as tmpfile_keyring_empty:
-                with tempfile.NamedTemporaryFile(dir='/tmp', prefix='client.foo.',
-                                                 suffix=".keyring") as tmpfile_keyring_foo:
-                    tmpfile_keyring_foo.write('[client.foo]')
-                    tmpfile_keyring_foo.flush()
-                    tmpfile_ceph_conf.write("""
-                    [global]
-                    fsid = f-s-i-d
-                    [client.empty]
-                    keyring = {}
-                    [client.foo]
-                    keyring = {}
-                    """.format(tmpfile_keyring_empty.name, tmpfile_keyring_foo.name))
-                    tmpfile_ceph_conf.flush()
+        with temporary_keyring('client.empty', content='') as file_name_empty:
+            with temporary_keyring('client.foo') as file_name_foo:
+                with temp_ceph_conf('fsid', [Keyring(file_name_foo),
+                                             {'available_user_names': ['client.empty'],
+                                              'file_name': file_name_empty}]) as ceph_conf:
                     self.assertEqual(
                         [k.file_name for k in
-                         ceph.librados.ClusterConf(file_path=tmpfile_ceph_conf.name).keyring_candidates],
-                        [tmpfile_keyring_foo.name])
+                         ceph.librados.ClusterConf(file_path=ceph_conf).keyring_candidates],
+                        [file_name_foo])
+
+
 
 
 class CephPoolTestCase(TestCase):
-    mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
+    mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test',
+                                                                           fsid='hallo'))
 
     @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.ClusterConf')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_insert(self, monApi_mock, cephpool_objects_mock):
+    def test_insert(self, monApi_mock, clusterconf_mock, cephpool_objects_mock):
         cephpool_objects_mock.nodb_context = self.mock_context
-        nodb.models.NodbManager.nodb_context = self.mock_context
+        clusterconf_mock.all_configs.return_value = [mock.Mock(fsid='hallo', name='test')]
 
         cephpool_objects_mock.get.return_value = ceph.models.CephPool(id=0, name='test', pg_num=0,
                                                                       type='replicated')
@@ -177,13 +179,14 @@ class CephPoolTestCase(TestCase):
         monApi_mock.return_value.osd_tier_add.assert_called_with('test1', 'test1')
 
     @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.ClusterConf')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_cache_tier(self, monApi_mock, cephpool_objects_mock):
+    def test_call_cache_tier(self, monApi_mock, clusterconf_mock, cephpool_objects_mock):
         """
         .. seealso: http://stackoverflow.com/questions/7242433/asserting-successive-calls-to-a-mock-method
         """
         cephpool_objects_mock.nodb_context = self.mock_context
-        nodb.models.NodbManager.nodb_context = self.mock_context
+        clusterconf_mock.all_configs.return_value = [mock.Mock(fsid='hallo', name='test')]
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   erasure_code_profile_id=None,
                                                   tier_of_id=None, cache_mode=None)
@@ -191,7 +194,7 @@ class CephPoolTestCase(TestCase):
 
         # Checking the order of different calls.
         pool = ceph.models.CephPool(name='test1', pg_num=0, type='replicated', tier_of_id=1,
-                                    tier_of=ceph.models.CephPool(id=1, name="test", cluser_id=None),
+                                    tier_of=ceph.models.CephPool(id=1, name="test"),
                                     cache_mode='writeback',
                                     erasure_code_profile_id=None)
         pool.save()
@@ -203,15 +206,16 @@ class CephPoolTestCase(TestCase):
         monApi_mock.return_value.assert_has_calls(calls)
 
     @mock.patch('ceph.models.CephPool.objects')
+    @mock.patch('ceph.models.ClusterConf')
     @mock.patch('ceph.models.MonApi', autospec=True)
-    def test_call_tier_remove(self, monApi_mock, cephpool_objects_mock):
+    def test_call_tier_remove(self, monApi_mock, clusterconf_mock, cephpool_objects_mock):
         """
         Checking the reverse order.
         FIXME: as get() returns pool with id=0, save() cannot determine the original tier_of,
                resulting in weird parameters to osd_tier_remove.
         """
         cephpool_objects_mock.nodb_context = self.mock_context
-        nodb.models.NodbManager.nodb_context = self.mock_context
+        clusterconf_mock.all_configs.return_value = [mock.Mock(fsid='hallo', name='test')]
 
         existing_test_pool = ceph.models.CephPool(id=0, name='test', pg_num=0, type='replicated',
                                                   cache_mode='writeback', tier_of_id=0,
@@ -253,6 +257,7 @@ class CephPoolTestCase(TestCase):
 
         percent_used = ceph.models.CephPool._calc_percent_used(pool, df_data_global, df_data_pool)
         self.assertEqual(percent_used, 50)
+
 
 class UndoFrameworkTest(TestCase):
     class Foo(object):
@@ -503,7 +508,8 @@ class CephPoolSerializerTest(TestCase):
     minimal_ersaure_pool = {'name': 'erasure_coded_pool', 'erasure_code_profile': 'default',
                             'type': 'erasure', 'pg_num': 3, 'crush_ruleset': 0}
 
-    mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test', fsid='hallo'))
+    mock_context = mock.Mock(fsid='hallo', cluster=ceph.models.CephCluster(name='test',
+                                                                           fsid='hallo'))
 
     @mock.patch('ceph.models.CephPool.objects')
     @mock.patch('ceph.models.CephErasureCodeProfile.get_all_objects')
@@ -546,50 +552,65 @@ class JsonFieldFilterTest(TestCase):
 
         @staticmethod
         def get_all_objects(context, query):
-            return [JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': a1, 'attr2': a2})
+            return [JsonFieldFilterTest.JsonFieldObjectFilterModel(my_object_list={'attr1': a1,
+                                                                                   'attr2': a2})
                     for (a1, a2) in
-                    [('a', 'b'), ('b', 'a'), ('x', 'y'), ('x', 'y'), ('a', 'y'), ('b', 'k'), ('a', 'i')]]
+                    [('a', 'b'), ('b', 'a'), ('x', 'y'), ('x', 'y'), ('a', 'y'), ('b', 'k'),
+                     ('a', 'i')]]
 
     def test_list_icontains(self):
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(my_list__icontains='a')), 1)
+            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(
+                my_list__icontains='a')), 1)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(my_list__icontains='x')), 0)
+            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(
+                my_list__icontains='x')), 0)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(my_list__icontains='b')), 2)
+            len(JsonFieldFilterTest.JsonFieldListFilterModel.objects.filter(
+                my_list__icontains='b')), 2)
 
     def test_object_icontains(self):
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a')), 3)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='a')), 3)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='b')), 2)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='b')), 2)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='x')), 2)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='x')), 2)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='o')), 0)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='o')), 0)
 
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='y')), 3)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr2='y')), 3)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='a')), 1)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr2='a')), 1)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='b')), 1)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr2='b')), 1)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='i')), 1)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr2='i')), 1)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='o')), 0)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr2='o')), 0)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr2='x')), 0)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr2='x')), 0)
 
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='x',
-                                                                              my_object_list__attr2='y')), 2)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='x', my_object_list__attr2='y')), 2)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a',
-                                                                              my_object_list__attr2='b')), 1)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='a', my_object_list__attr2='b')), 1)
         self.assertEqual(
-            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(my_object_list__attr1='a',
-                                                                              my_object_list__attr2='z')), 0)
+            len(JsonFieldFilterTest.JsonFieldObjectFilterModel.objects.filter(
+                my_object_list__attr1='a', my_object_list__attr2='z')), 0)
 
 
 class CephRbdTestCase(TestCase):
@@ -598,16 +619,59 @@ class CephRbdTestCase(TestCase):
     @mock.patch('ceph.models.RbdApi', **{'return_value._undo_stack': None})
     @mock.patch('ceph.models.CephPool.get_all_objects')
     @mock.patch('ceph.models.CephRbd.get_all_objects')
-    def test_rbd_save_no_features(self, rbd_get_all_objects_mock, pool_get_all_objects_mock, rbd_api_mock, nodb_context_moc):
+    def test_rbd_save_no_features(self, rbd_get_all_objects_mock, pool_get_all_objects_mock,
+                                  rbd_api_mock, nodb_context_moc):
         """
         Regression test for https://tracker.openattic.org/browse/OP-2506
         Creating an RBD without features causes an error
         """
-        pool = ceph.models.CephPool(name='pool', id=1, cluster=ceph.models.CephCluster(name='name', fsid='fsid'))
+        pool = ceph.models.CephPool(name='pool', id=1, cluster=ceph.models.CephCluster(name='name',
+                                                                                       fsid='fsid'))
         rbd = ceph.models.CephRbd(pool=pool, name='rbd')
         pool_get_all_objects_mock.return_value = [pool]
         rbd_get_all_objects_mock.return_value = [rbd]  # needed to fake successful `RbdApi.create()`
         rbd.save()
+
+    @mock.patch('nodb.models.NodbManager.nodb_context', fsid='hallo')
+    @mock.patch('ceph.models.RadosMixin')
+    @mock.patch('ceph.models.CephPool.get_all_objects')
+    def test_rbd_assert_lazy(self, pool_get_all_objects_mock,
+                             RadosMixing_mock, nodb_context_moc):
+        """
+        We have to make sure, all interesting fields are lazy evaluated. Otherwise listing
+        them is too slow.
+        """
+        pool_get_all_objects_mock.return_value = [ceph.models.CephPool(name='pool', id=1)]
+        RadosMixing_mock.rbd_api.return_value.list.return_value = ['rbd1']
+        rbd = ceph.models.CephRbd.objects.get()
+        self.assertEqual(rbd.name, 'rbd1')
+        for field in ['num_objs', 'obj_size', 'size', 'data_pool_id', 'features', 'old_format',
+                      'used_size', 'stripe_unit', 'stripe_count']:
+            self.assertTrue(rbd.attribute_is_unevaluated_lazy_property(field),
+                            '{} is already evaluated'.format(field))
+
+
+class TaskTest(TestCase):
+
+    @mock.patch('ceph.librados.rbd.RBD')
+    @mock.patch('ceph.librados.RbdApi._call_librados')
+    @mock.patch('ceph.librados.ClusterConf.from_fsid')
+    def test_rbd_delete_task(self, from_fsid_mock, call_librados_mock, RBD_mock):
+
+        pool_name = 'pool-name'
+        image_name = 'image-name'
+
+        ioctx = mock.Mock()
+        client_mock = mock.Mock()
+        client_mock.get_pool.return_value = ioctx
+
+        call_librados_mock.side_effect = lambda fn, timeout: fn(client_mock)
+
+        task = ceph.tasks.delete_rbd('fsid', pool_name, image_name)
+        task.run_once()
+
+        self.assertEqual(client_mock.mock_calls, [mock.call.get_pool(pool_name)])
+        RBD_mock.assert_has_calls([mock.call().remove(ioctx, 'image-name')], any_order=True)
 
 
 class PerformanceTaskTest(TestCase):
@@ -635,17 +699,18 @@ class OsdPoolDeleteTest(TestCase):
     @mock.patch('ceph.librados.call_librados')
     def test_delete_allowed(self, call_librados_mock):
         client_mock = mock.MagicMock(spec=ceph.librados.Client)
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
         api = ceph.librados.MonApi('fsid')
         api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
         self.assertTrue(client_mock.mon_command.called)
-        self.assertEqual(client_mock.mon_command.mock_calls, [mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string')])
-
+        self.assertEqual(client_mock.mon_command.mock_calls, [
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it',
+                                          'pool': 'name'}, output_format='string')])
 
     @mock.patch('ceph.librados.call_librados')
     def test_delete_forbidden(self, call_librados_mock):
         client_mock = mock.MagicMock(spec=ceph.librados.Client)
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
 
         client_mock.mon_command.side_effect = [
             ceph.librados.ExternalCommandError('mon_allow_pool_delete', cmd="cmd", code=EPERM),
@@ -659,15 +724,23 @@ class OsdPoolDeleteTest(TestCase):
         api.osd_pool_delete('name', 'name', '--yes-i-really-really-mean-it')
         self.assertTrue(client_mock.mon_command.called)
         calls = [
-            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it',
+                                          'pool': 'name'}, output_format='string'),
             mock.call('mon dump'),
-            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='a'),
-            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='b'),
-            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']}, output_format='string', target='c'),
-            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it', 'pool': 'name'}, output_format='string'),
-            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='a'),
-            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='b'),
-            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']}, output_format='string', target='c')
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']},
+                      output_format='string', target='a'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']},
+                      output_format='string', target='b'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=true']},
+                      output_format='string', target='c'),
+            mock.call('osd pool delete', {'pool2': 'name', 'sure': '--yes-i-really-really-mean-it',
+                                          'pool': 'name'}, output_format='string'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']},
+                      output_format='string', target='a'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']},
+                      output_format='string', target='b'),
+            mock.call('injectargs', {'injected_args': ['--mon-allow-pool-delete=false']},
+                      output_format='string', target='c')
         ]
 
         self.assertEqual(client_mock.mon_command.mock_calls, calls)
@@ -706,6 +779,42 @@ class CephClusterTestCase(TestCase):
                                               keyring_user='client.admin')
             cluster.clean()
 
+    def test_keyring_candidates(self):
+        with temporary_keyring(users=['client.admin', 'client.openattic']) as keyring_path:
+            with temp_ceph_conf('fsid', [Keyring(keyring_path)]) as ceph_conf:
+                cluster = ceph.models.CephCluster.from_cluster_conf(ceph.librados.ClusterConf(ceph_conf))
+                self.assertEqual(cluster.keyring_candidates, [{
+                    'file-path': keyring_path,
+                    'user-names': ['client.openattic', 'client.admin']
+                }])
+
+    @mock.patch('ceph.models.NodbModel.get_modified_fields')
+    @mock.patch('ceph.models.MonApi._call_mon_command')
+    @mock.patch('ceph.librados._write_oa_setting')
+    def test_save(self, _write_oa_setting_mock, _call_mon_command_mock, get_modified_fields_mock):
+        with temporary_keyring(users=['client.admin', 'client.openattic']) as keyring_path:
+            with temp_ceph_conf('f-s-i-d', [Keyring(keyring_path)]) as ceph_conf:
+                cluster = ceph.models.CephCluster.from_cluster_conf(ceph.librados.ClusterConf(ceph_conf))
+                get_modified_fields_mock.return_value = ({
+                                                            'keyring_file_path': 'new_path',
+                                                            'keyring_user': 'client.admin',
+                                                            'osd_flags': ['a', 'b'],
+                                                         }, mock.Mock(osd_flags=['a', 'c']))
+                cluster.keyring_file_path = 'new_path'
+                cluster.keyring_user = 'client.admin'
+                cluster.osd_flags = ['a', 'b']
+
+                cluster.save(force_update=True)
+                self.assertEqual(_write_oa_setting_mock.mock_calls, [
+                    mock.call('CEPH_KEYRING_USER_F_S_I_D', 'client.admin'),
+                    mock.call('CEPH_KEYRING_F_S_I_D', 'new_path')
+                ])
+                self.assertEqual(_call_mon_command_mock.mock_calls, [
+                    mock.call('osd unset', {'key': 'c'}, output_format='string'),
+                    mock.call('osd set', {'key': 'b'}, output_format='string')
+                ])
+
+
 
 class CephOsdTestCase(TestCase):
 
@@ -728,9 +837,7 @@ class CephOsdTestCase(TestCase):
     @mock.patch('ceph.models.MonApi._call_mon_command')
     def test_save_osd_out(self, _call_mon_command_mock, get_modified_fields_mock):
         get_modified_fields_mock.return_value = ({'in_state': 0}, None)
-        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
-                            id=1,
-                            name='name').save()
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(), id=1, name='name').save()
         self.assertEqual(_call_mon_command_mock.mock_calls, [
             mock.call('osd out', {'name': 'name'}, output_format='string')
         ])
@@ -739,18 +846,14 @@ class CephOsdTestCase(TestCase):
     @mock.patch('ceph.models.MonApi._call_mon_command')
     def test_save_reweight(self, _call_mon_command_mock, get_modified_fields_mock):
         get_modified_fields_mock.return_value = ({'reweight': 42}, mock.Mock(reweight=0))
-        ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
-                            id=1,
-                            name='name').save()
+        ceph.models.CephOsd(cluster=ceph.models.CephCluster(), id=1, name='name').save()
         self.assertEqual(_call_mon_command_mock.mock_calls, [
             mock.call('osd crush reweight', {'name': 'name', 'weight': 42}, output_format='string')
         ])
 
     @mock.patch('ceph.models.MonApi._call_mon_command')
     def test_scrub(self, _call_mon_command_mock):
-        osd = ceph.models.CephOsd(cluster=ceph.models.CephCluster(),
-                            id=1,
-                            name='name')
+        osd = ceph.models.CephOsd(cluster=ceph.models.CephCluster(), id=1, name='name')
         osd.scrub(False)
         osd.scrub(True)
         self.assertEqual(_call_mon_command_mock.mock_calls, [
@@ -813,8 +916,8 @@ class StatusTestCase(TestCase):
     @mock.patch('ceph.status.call_librados')
     @mock.patch('ceph.status.ClusterConf')
     def test_api_not_connected(self, ClusterConf_mock, call_librados_mock):
-        client_mock = mock.Mock(**{'connected.return_value':False})
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        client_mock = mock.Mock(**{'connected.return_value': False})
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
         ClusterConf_mock.from_fsid.return_value.name = 'name'
         with self.assertRaises(UnavailableModule):
             ceph.status.check_ceph_api('fsid')
@@ -822,8 +925,8 @@ class StatusTestCase(TestCase):
     @mock.patch('ceph.status.call_librados')
     @mock.patch('ceph.status.ClusterConf')
     def test_api_connected(self, ClusterConf_mock, call_librados_mock):
-        client_mock = mock.Mock(**{'connected.return_value':True})
-        call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
+        client_mock = mock.Mock(**{'connected.return_value': True})
+        call_librados_mock.side_effect = lambda fsid, func, cmd: func(client_mock)
         ClusterConf_mock.from_fsid.return_value.name = 'name'
         self.assertIsNone(ceph.status.check_ceph_api('fsid'))
 
@@ -838,7 +941,7 @@ class StatusTestCase(TestCase):
     @mock.patch('ceph.status.call_librados')
     @mock.patch('ceph.status.ClusterConf')
     def test_api_no_cluster(self, ClusterConf_mock, call_librados_mock):
-        client_mock = mock.Mock(**{'connected.return_value':False})
+        client_mock = mock.Mock(**{'connected.return_value': False})
         call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
         ClusterConf_mock.from_fsid.side_effect = KeyError()
         with self.assertRaises(UnavailableModule):

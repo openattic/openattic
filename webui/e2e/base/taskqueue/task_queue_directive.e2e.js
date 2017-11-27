@@ -47,7 +47,7 @@ describe("task queue directive test", function () {
   });
 
   it("Should display the 1 Failed-Task", function () {
-    qProperties.createTask(10);
+    qProperties.createTask(25);
     qProperties.open();
     qProperties.deleteTasks("pending", "wait");
     qProperties.close();
@@ -58,8 +58,8 @@ describe("task queue directive test", function () {
   });
 
   it("Should display the 2 Failed-Tasks", function () {
-    qProperties.createTask(10);
-    qProperties.createTask(10);
+    qProperties.createTask(25);
+    qProperties.createTask(25);
     qProperties.open();
     qProperties.deleteTasks("pending", "wait");
     qProperties.deleteTasks("pending", "wait");

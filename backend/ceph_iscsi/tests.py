@@ -18,6 +18,7 @@ from mock import mock
 from deepsea import DeepSea
 from ceph_iscsi.lrbd_conf import LRBDConf, LRBDUi
 from ceph_iscsi.models import iSCSITarget
+import ceph_iscsi.tasks
 
 
 class DeepSeaTestCase(TestCase):
@@ -270,3 +271,20 @@ class LRBDTestCase(TestCase):
         targets = [iSCSITarget(**iSCSITarget.make_model_args(t)) for t in self.lrbd_ui]
         conf = LRBDUi(targets)
         self.assertEquals(json.loads(conf.lrbd_conf_json()), self.lrbd_config)
+
+
+class TaskTest(TestCase):
+
+    @mock.patch('deepsea.DeepSea.iscsi_deploy')
+    def test_async_deploy_exports(self, iscsi_deploy_mock):
+        task = ceph_iscsi.tasks.async_deploy_exports()
+        task.run_once()
+
+        iscsi_deploy_mock.assert_called_once()
+
+    @mock.patch('deepsea.DeepSea.iscsi_undeploy')
+    def test_async_undeploy_exports(self, iscsi_undeploy_mock):
+        task = ceph_iscsi.tasks.async_stop_exports()
+        task.run_once()
+
+        iscsi_undeploy_mock.assert_called_once()

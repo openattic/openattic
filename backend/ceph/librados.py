@@ -24,7 +24,6 @@ import glob
 import logging
 import ConfigParser
 
-from django.utils.functional import cached_property
 from django.conf import settings as django_settings
 
 import rados
@@ -60,6 +59,8 @@ def _write_oa_setting(key, value):
             logger.warning('Removing old keys {}'.format(old_keys))
             oa_settings.save_settings_generic(old_keys, lambda _: '', lambda _: str, lambda _: '')
 
+    clients.clear()
+
 
 def _read_oa_settings(conf_obj, settings_obj):
     """
@@ -87,6 +88,8 @@ def _read_oa_settings(conf_obj, settings_obj):
                 logger.warning('found old key {}'.format(old_key))
             key = key.replace('-', '_')
             setattr(settings_obj, key, conf_obj[old_key])
+
+    clients.clear()
 
 
 class _ClusterSettingsListener(oa_settings.SettingsListener):
@@ -133,7 +136,7 @@ class ClusterConf(object):
 
         return True
 
-    @cached_property
+    @property
     def config_parser(self):
         cp = ConfigParser.RawConfigParser()
         with open(self.file_path) as f:
@@ -161,7 +164,7 @@ class ClusterConf(object):
         if self.keyring_file_path != file_path:
             _write_oa_setting('CEPH_KEYRING_' + self.fsid.upper().replace('-', '_'), file_path)
 
-    @cached_property
+    @property
     def keyring(self):
         user_name = getattr(django_settings,
                             'CEPH_KEYRING_USER_' + self.fsid.upper().replace('-', '_'), None)
@@ -192,10 +195,10 @@ class ClusterConf(object):
             except RuntimeError:
                 return None
 
-        keyrings = filter(None, map(keyring_or_none, keyrings))
+        keyrings = filter(None, map(keyring_or_none, set(keyrings)))
         return sorted(keyrings, key=lambda keyring: sort_by_prioritized_users(keyring.user_name))
 
-    @cached_property
+    @property
     def client(self):
         return Client(self.file_path, self.keyring)
 
@@ -281,6 +284,9 @@ class Keyring(object):
         if self.user_name != user_name:
             _write_oa_setting('CEPH_KEYRING_USER_' + fsid.upper().replace('-', '_'), user_name)
 
+    def __repr__(self):
+        return "Keyring(file_name='{}', user_name='{}')".format(self.file_name, self.user_name)
+
 
 class Client(object):
     """Represents the connection to a single ceph cluster."""
@@ -355,7 +361,8 @@ class Client(object):
     def change_pool_owner(self, pool_name, auid):
         return self.get_pool(pool_name).change_auid(auid)
 
-    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None, target=None):
+    def mon_command(self, cmd, argdict=None, output_format='json', default_return=None,
+                    target=None):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
@@ -368,7 +375,8 @@ class Client(object):
         :type argdict: dict[str, Any]
         :param output_format: Format of the return value
         :type output_format: str
-        :param default_return: Return value in case of an error - if the answer given by Ceph cluster can't be Json
+        :param default_return: Return value in case of an error - if the answer given by Ceph
+                               cluster can't be Json
             decoded (only for output_format='json')
         :type default_return: any
         :return: Return type is json (aka dict) if output_format == 'json' else str.
@@ -404,8 +412,9 @@ class Client(object):
                     if out:
                         return json.loads(out)
                     else:
-                        logger.warning("Returned default value '{}' for command '{}' because the JSON object of the "
-                                       "Ceph cluster's command output '{}' couldn't be decoded."
+                        logger.warning("Returned default value '{}' for command '{}' because the "
+                                       "JSON object of the Ceph cluster's command output '{}' "
+                                       "couldn't be decoded."
                                        .format(default_return, cmd, out))
                         return default_return
                 return out
@@ -427,16 +436,19 @@ class ClientManager(object):
 
         return self.instances[fsid]
 
+    def clear(self):
+        self.instances.clear()
+
 clients = ClientManager()
 
 
-def call_librados(fsid, method, timeout=30):
+def call_librados(fsid, method, cmd_name, timeout=30):
     def with_client():
         with ClusterConf.from_fsid(fsid).client as client:
             return method(client)
 
     if settings.SEPARATE_LIBRADOS_PROCESS:
-        return run_in_external_process(with_client, timeout)
+        return run_in_external_process(with_client, cmd_name, timeout)
     else:
         client = clients[fsid]
         return method(client)
@@ -638,7 +650,7 @@ class MonApi(object):
                                                      erasure_code_profile=erasure_code_profile,
                                                      ruleset=ruleset,
                                                      expected_num_objects=expected_num_objects),
-                                                     output_format='string')
+            output_format='string')
         self.osd_pool_delete(pool, pool, "--yes-i-really-really-mean-it")
 
     @undoable
@@ -693,11 +705,13 @@ class MonApi(object):
         :return: empty string
         """
 
+        cmd = 'osd pool delete'
+
         def impl(client):
             pool_delete_args = self._args_to_argdict(pool=pool, pool2=pool2, sure=sure)
 
             try:
-                return client.mon_command('osd pool delete', pool_delete_args, output_format='string')
+                return client.mon_command(cmd, pool_delete_args, output_format='string')
             except ExternalCommandError as e:
                 if e.code != EPERM:
                     raise
@@ -717,9 +731,7 @@ class MonApi(object):
                                                     injected_args=['--mon-allow-pool-delete=true']),
                                            output_format='string',
                                            target=mon_name)
-                    res = client.mon_command('osd pool delete',
-                                             pool_delete_args,
-                                             output_format='string')
+                    res = client.mon_command(cmd, pool_delete_args, output_format='string')
                 finally:
                     for mon_name in mon_names:
                         client.mon_command('injectargs',
@@ -729,7 +741,7 @@ class MonApi(object):
                                            target=mon_name)
                 return res
 
-        return call_librados(self.fsid, impl)
+        return call_librados(self.fsid, impl, cmd)
 
     @undoable
     def osd_pool_mksnap(self, pool, snap):
@@ -762,8 +774,8 @@ class MonApi(object):
         "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
         "enable use of an application <app> [cephfs,rbd,rgw] on pool <poolname>",
         "osd", "rw", "cli,rest")"""
-        yield self._call_mon_command('osd pool application enable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
-                                     output_format='string')
+        yield self._call_mon_command('osd pool application enable', self._args_to_argdict(
+            pool=pool, app=app, force='--yes-i-really-mean-it'), output_format='string')
         self.osd_pool_application_disable(pool, app)
 
     @undoable
@@ -774,8 +786,8 @@ class MonApi(object):
         "name=force,type=CephChoices,strings=--yes-i-really-mean-it,req=false", \
         "disables use of an application <app> on pool <poolname>",
         "osd", "rw", "cli,rest")"""
-        yield self._call_mon_command('osd pool application disable', self._args_to_argdict(pool=pool, app=app, force='--yes-i-really-mean-it'),
-                                     output_format='string')
+        yield self._call_mon_command('osd pool application disable', self._args_to_argdict(
+            pool=pool, app=app, force='--yes-i-really-mean-it'), output_format='string')
         self.osd_pool_application_enable(pool, app)
 
     @undoable
@@ -895,12 +907,14 @@ class MonApi(object):
                                      output_format='string')
         self.osd_out(name)
 
-
     @undoable
     def osd_set(self, key):
         """
         COMMAND("osd set " \
-        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent|sortbitwise|recovery_deletes|require_jewel_osds|require_kraken_osds", \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|
+                                           norecover|noscrub|nodeep-scrub|notieragent|sortbitwise|
+                                           recovery_deletes|require_jewel_osds|
+                                           require_kraken_osds", \
         "set <key>", "osd", "rw", "cli,rest")
         """
         yield self._call_mon_command('osd set', self._args_to_argdict(key=key),
@@ -911,7 +925,8 @@ class MonApi(object):
     def osd_unset(self, key):
         """
         COMMAND("osd unset " \
-        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|norecover|noscrub|nodeep-scrub|notieragent", \
+        "name=key,type=CephChoices,strings=full|pause|noup|nodown|noout|noin|nobackfill|norebalance|
+                                           norecover|noscrub|nodeep-scrub|notieragent", \
         "unset <key>", "osd", "rw", "cli,rest")
         """
         yield self._call_mon_command('osd unset', self._args_to_argdict(key=key),
@@ -992,7 +1007,8 @@ class MonApi(object):
         "initiate scrub on osd <who>, or use <all|any|*> to scrub all", \
         "osd", "rw", "cli,rest")
         """
-        return self._call_mon_command('osd scrub', self._args_to_argdict(who=who), output_format='string')
+        return self._call_mon_command('osd scrub', self._args_to_argdict(who=who),
+                                      output_format='string')
 
     def osd_deep_scrub(self, who):
         """
@@ -1001,7 +1017,8 @@ class MonApi(object):
         "initiate deep-scrub on osd <who>, or use <all|any|*> to scrub all", \
         "osd", "rw", "cli,rest")
         """
-        return self._call_mon_command('osd deep-scrub', self._args_to_argdict(who=who), output_format='string')
+        return self._call_mon_command('osd deep-scrub', self._args_to_argdict(who=who),
+                                      output_format='string')
 
     def fs_ls(self):
         return self._call_mon_command('fs ls')
@@ -1050,7 +1067,7 @@ class MonApi(object):
 
     def _call_mon_command(self, cmd, argdict=None, output_format='json', timeout=30):
         return call_librados(self.fsid,
-                             lambda client: client.mon_command(cmd, argdict, output_format),
+                             lambda client: client.mon_command(cmd, argdict, output_format), cmd,
                              timeout)
 
 
@@ -1061,6 +1078,9 @@ class RbdApi(object):
     Exported features are defined here:
        https://github.com/ceph/ceph/blob/master/src/tools/rbd/ArgumentTypes.cc
     """
+
+    RBD_DELETION_TIMEOUT = 3600
+
     @staticmethod
     def get_feature_mapping():
         ret = {
@@ -1128,9 +1148,9 @@ class RbdApi(object):
         :param old_format: Some features are not supported by the old format.
         :type stripe_unit: int
         :type stripe_count: int
-        :type data_pool_name: str
+        :type data_pool_name: str | None
         """
-        def _do(client):
+        def _create(client):
             ioctx = client.get_pool(pool_name)
             rbd_inst = rbd.RBD()
             default_features = 0 if old_format else 61  # FIXME: hardcoded int
@@ -1139,50 +1159,51 @@ class RbdApi(object):
             try:
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,
                                 features=feature_bitmask, order=order,
-                                stripe_unit=stripe_unit, stripe_count=stripe_count, data_pool=data_pool_name)
+                                stripe_unit=stripe_unit, stripe_count=stripe_count,
+                                data_pool=data_pool_name)
             except TypeError:
                 logger.exception('This seems to be Jewel?!')
                 rbd_inst.create(ioctx, image_name, size, old_format=old_format,
                                 features=feature_bitmask, order=order)
 
-        yield self._call_librados(_do)
+        yield self._call_librados(_create)
         self.remove(pool_name, image_name)
 
     def remove(self, pool_name, image_name):
-        def _action(client):
+        def _remove(client):
             ioctx = client.get_pool(pool_name)
             rbd_inst = rbd.RBD()
             rbd_inst.remove(ioctx, image_name)
 
-        self._call_librados(_action)
+        self._call_librados(_remove, timeout=self.RBD_DELETION_TIMEOUT)
 
     def list(self, pool_name):
         """
         :returns: list -- a list of image names
         :rtype: list[str]
         """
-        def _action(client):
+        def _list(client):
             ioctx = client.get_pool(pool_name)
             rbd_inst = rbd.RBD()
             return rbd_inst.list(ioctx)
 
-        return self._call_librados(_action)
+        return self._call_librados(_list)
 
     def image_stat(self, pool_name, name, snapshot=None):
         """
 
         obj_size is similar to the block size of ordinary hard drives.
         :param name: the name of the image
-        :type name: str
+        :type name: str | unicode
         :param snapshot: which snapshot to read from
         :type snapshot: str
         """
-        def _action(client):
+        def _get_image_status(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
                 return image.stat()
 
-        return self._call_librados(_action)
+        return self._call_librados(_get_image_status)
 
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.
@@ -1222,7 +1243,7 @@ class RbdApi(object):
 
     def image_stripe_info(self, pool_name, name, snapshot=None):
         """:returns: tuple of count and unit"""
-        def _action(client):
+        def _get_stripe_infos(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name, snapshot=snapshot) as image:
                 try:
@@ -1230,35 +1251,34 @@ class RbdApi(object):
                 except AttributeError:
                     return None, None
 
-        return self._call_librados(_action)
-
+        return self._call_librados(_get_stripe_infos)
 
     @undoable
     def image_resize(self, pool_name, name, size):
         """This is marked as 'undoable' but as resizing an image is inherently destructive,
         we cannot magically restore lost data."""
-        def _do(client):
+        def _image_resize(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 original_size = image.size()
                 return original_size, image.resize(size)
 
-        original_size, result = self._call_librados(_do)
+        original_size, result = self._call_librados(_image_resize)
         yield result
         self.image_resize(pool_name, name, original_size)
 
     def image_features(self, pool_name, name):
-        def _action(client):
+        def _get_image_features(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 return RbdApi._bitmask_to_list(image.features())
 
-        return self._call_librados(_action)
+        return self._call_librados(_get_image_features)
 
     @undoable
     def image_set_feature(self, pool_name, name, feature, enabled):
         """:type enabled: bool"""
-        def _do(client):
+        def _set_image_features(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 bitmask = RbdApi._list_to_bitmask([feature])
@@ -1266,16 +1286,19 @@ class RbdApi(object):
                     raise ValueError(u'Feature "{}" is unknown.'.format(feature))
                 image.update_features(bitmask, enabled)
 
-        yield self._call_librados(_do)
-        self.image_set_feature(pool_name, name, feature, not enabled) # Undo step
+        yield self._call_librados(_set_image_features)
+        self.image_set_feature(pool_name, name, feature, not enabled)  # Undo step
 
     def image_old_format(self, pool_name, name):
-        def _action(client):
+        def _check_format_type(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
                 return image.old_format()
 
-        return self._call_librados(_action)
+        return self._call_librados(_check_format_type)
 
     def _call_librados(self, func, timeout=30):
-        return call_librados(self.fsid, func, timeout)
+        """:type func: (Client) -> Any"""
+        cmd = func.__name__[1:].replace('_', ' ')
+        cmd = 'rbd {}'.format(cmd)
+        return call_librados(self.fsid, func, cmd, timeout)

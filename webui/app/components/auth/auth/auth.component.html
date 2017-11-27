@@ -1,0 +1,92 @@
+<div class="login">
+  <div class="row full-height vertical-align">
+    <div class="col-sm-6 hidden-xs">
+      <img src="images/suse_logo_256x256.png"
+           alt="SUSE Enterprise Storage"
+           class="pull-right">
+    </div>
+    <div class="col-xs-10 col-sm-4 col-lg-3 col-xs-offset-1 col-sm-offset-0 col-md-offset-0 col-lg-offset-0">
+      <h1>Welcome to SUSE Enterprise Storage</h1>
+      <form name="loginForm"
+            ng-submit="$ctrl.login()"
+            novalidate>
+        <!-- username -->
+        <div class="form-group has-feedback"
+             ng-class="{'has-error': ($ctrl.submitted || loginForm.username.$dirty) && loginForm.username.$invalid}">
+          <input name="username"
+                 ng-model="$ctrl.username"
+                 ng-change="$ctrl.submitted = false;"
+                 type="text"
+                 placeholder="Enter your username..."
+                 class="form-control"
+                 required
+                 autofocus
+                 uib-tooltip="{{$ctrl.fieldRequired}}"
+                 tooltip-class="tc_usernameRequired"
+                 tooltip-trigger="'none'"
+                 tooltip-is-open="($ctrl.submitted || loginForm.username.$dirty)&& loginForm.username.$error.required">
+          <span class="glyphicon glyphicon-remove form-control-feedback"
+                aria-hidden="true"
+                ng-show="($ctrl.submitted || loginForm.username.$dirty) && loginForm.username.$invalid"></span>
+        </div>
+        <!-- end username -->
+
+        <!-- password -->
+        <div class="form-group has-feedback"
+             ng-class="{'has-error': ($ctrl.submitted || loginForm.password.$dirty) && loginForm.password.$invalid}">
+          <div class="input-group">
+            <input id="password"
+                   name="password"
+                   type="password"
+                   ng-model="$ctrl.password"
+                   ng-change="$ctrl.submitted = false;"
+                   placeholder="Enter your password..."
+                   class="form-control"
+                   required
+                   uib-tooltip="{{$ctrl.fieldRequired}}"
+                   tooltip-class="tc_passwdRequired"
+                   tooltip-trigger="'none'"
+                   tooltip-is-open="($ctrl.submitted || loginForm.password.$dirty) && loginForm.password.$error.required">
+            <span class="input-group-btn">
+              <button type="button"
+                      class="btn btn-default btn-password"
+                      oa-password-button="password">
+              </button>
+            </span>
+          </div>
+          <span class="glyphicon glyphicon-remove form-control-feedback"
+                aria-hidden="true"
+                ng-show="($ctrl.submitted || loginForm.password.$dirty) && loginForm.password.$invalid"></span>
+        </div>
+        <!-- end password -->
+
+        <!-- stay signed in -->
+        <div class="form-group has-feedback">
+          <div class="checkbox checkbox-primary">
+            <input type="checkbox"
+                   ng-model="$ctrl.staySignedIn"
+                   name="staysignedin"
+                   id="staysignedin">
+            <label for="staysignedin">
+              Keep me logged in
+            </label>
+          </div>
+        </div>
+        <!-- end stay signed in -->
+
+        <input type="submit"
+               class="btn btn-openattic btn-block"
+               value="Login"
+               uib-tooltip="{{$ctrl.correctInput}}"
+               tooltip-class="tc_correctInput"
+               tooltip-trigger="'none'"
+               tooltip-is-open="$ctrl.submitted && $ctrl.loginFailed && (!loginForm.username.$error.required && !loginForm.password.$error.required)">
+      </form>
+    </div>
+  </div>
+  <div class="row icon-bar">
+    <a href="http://openattic.org" target="_blank">
+      <i>Powered by openATTIC</i>
+    </a>
+  </div>
+</div>

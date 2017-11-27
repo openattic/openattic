@@ -32,8 +32,7 @@
 
 class CephNfsManageServiceModal {
 
-  constructor ($timeout, cephNfsService, cephNfsStateService, $filter) {
-    this.$timeout = $timeout;
+  constructor (cephNfsService, cephNfsStateService, $filter) {
     this.cephNfsService = cephNfsService;
     this.cephNfsStateService = cephNfsStateService;
     this.$filter = $filter;
@@ -55,20 +54,20 @@ class CephNfsManageServiceModal {
   }
 
   _updateStates () {
-    angular.forEach(this.hostnames, (hostname) => {
-      if (angular.isUndefined(this.hosts[hostname])) {
+    this.hostnames.forEach((hostname) => {
+      if (_.isUndefined(this.hosts[hostname])) {
         this.hosts[hostname] = {};
       }
       this.hosts[hostname].state = "LOADING";
     });
     this.cephNfsStateService.updateStates(this.resolve.fsid, (hostsToUpdate) => {
-      angular.forEach(this.hosts, (host, hostname) => {
+      _.forIn(this.hosts, (host, hostname) => {
         let hostToUpdate = hostsToUpdate[hostname];
-        if (angular.isDefined(hostToUpdate)) {
+        if (_.isObject(hostToUpdate)) {
           host.state = hostToUpdate.state;
           host.messages = [];
-          angular.forEach(hostToUpdate.exports, (exportItem) => {
-            if (exportItem.state === "INACTIVE" && angular.isDefined(exportItem.message)) {
+          _.forIn(hostToUpdate.exports, (exportItem) => {
+            if (exportItem.state === "INACTIVE" && _.isString(exportItem.message)) {
               host.messages.push(exportItem.message);
             }
           });

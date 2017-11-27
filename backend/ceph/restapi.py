@@ -17,6 +17,7 @@ from rest_framework import serializers, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
+from rest_framework_bulk import BulkDestroyAPIView, BulkDestroyModelMixin
 
 from ceph.models import CephCluster, CrushmapVersion, CephPool, CephErasureCodeProfile, CephOsd, \
     CephPg, CephRbd, CephFs
@@ -72,7 +73,8 @@ class CephClusterViewSet(NodbViewSet):
 
     @detail_route(methods=['get'])
     def crushmap(self, request, *args, **kwargs):
-        data = CrushmapVersionSerializer(self.get_object().get_crushmap(), many=False, read_only=True).data
+        data = CrushmapVersionSerializer(self.get_object().get_crushmap(), many=False,
+                                         read_only=True).data
         return Response(data, status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
@@ -315,7 +317,7 @@ class CephRbdSerializer(NodbSerializer):
         model = CephRbd
 
 
-class CephRbdViewSet(NodbViewSet):
+class CephRbdViewSet(TaskQueueLocationMixin, BulkDestroyModelMixin, NodbViewSet):
     """Represents a Ceph RADOS block device aka RBD."""
 
     filter_fields = ("name",)
@@ -329,6 +331,10 @@ class CephRbdViewSet(NodbViewSet):
 
     def get_queryset(self):
         return CephRbd.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        return self.bulk_destroy(request, *args, **kwargs)
+
 
 
 class CephFsSerializer(NodbSerializer):

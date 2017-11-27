@@ -26,4 +26,4 @@ indent_size = 2
 # Indentation override for all HTML under webui directory
 [webui/**.html]
 indent_style = space
-indent_size = 4
+indent_size = 2

@@ -59,7 +59,7 @@
     },
 
     checkForUnsavedChanges: function (dialogIsShown) {
-      var dialog =  new UnsavedChangesDialog();
+      var dialog = new UnsavedChangesDialog();
       if (dialogIsShown !== undefined) {
         expect(dialog.leaveBtn.isPresent()).toBe(dialogIsShown);
       }
@@ -83,18 +83,30 @@
 
     /**
      * Will delete the selected items, using the default test classes for this.
-     * @param {number} [dropdown] - which dropdown to get
+     * @param {number} dropdown Which dropdown to get. Defaults to 0.
+     * @param {string} controllerName The name of the controller.
+     * @param {boolean} dialogIsShown If set to TRUE or FALSE, then it is checked
+     *                                whether the dialog is displayed or not. If
+     *                                set to TRUE, the deletion is confirmed by
+     *                                entering 'yes'. Defaults to TRUE.
      */
-    delete_selection: function (dropdown, controllerName) {
+    delete_selection: function (dropdown, controllerName, dialogIsShown) {
       dropdown = dropdown || 0;
+      dialogIsShown = (dialogIsShown === undefined) ? true : dialogIsShown;
       element.all(by.css(".tc_menudropdown")).get(dropdown).click();
       element(by.css(".tc_deleteItem > a")).click();
-      var enteredNameInput = "input.enteredName";
+      let enteredNameInput = "input.enteredName";
       if (controllerName) {
         enteredNameInput = controllerName + "." + enteredNameInput;
       }
-      element(by.model(enteredNameInput)).sendKeys("yes");
-      element(by.id("bot2-Msg1")).click();
+      // Make sure the dialog is shown or not.
+      let enteredNameElement = element(by.model(enteredNameInput));
+      expect(enteredNameElement.isPresent()).toBe(dialogIsShown);
+      // If the dialog is expected to be shown, then confirm the deletion.
+      if (dialogIsShown) {
+        enteredNameElement.sendKeys("yes");
+        element(by.css(".tc_submitButton")).click();
+      }
     },
 
     /**
@@ -133,8 +145,8 @@
       if (browse) {
         browser.get(helper.getUrl("login"));
       }
-      element.all(by.model("username")).clear().sendKeys(username);
-      element.all(by.model("password")).clear().sendKeys(password);
+      element.all(by.model("$ctrl.username")).clear().sendKeys(username);
+      element.all(by.model("$ctrl.password")).clear().sendKeys(password);
       element.all(by.css('input[type="submit"]')).click();
     },
 
@@ -171,7 +183,37 @@
 
       element(by.css(".tc_entries_dropdown")).click();
       element(by.css(".tc_entries_10")).click();
+    },
+
+    waitForElement (elem) {
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.presenceOf(elem), 5000, "Element taking too long to appear in the DOM");
+    },
+
+    waitForElementRemoval (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.stalenessOf(elem), 5000, "Element taking too long to disappear in the DOM");
+    },
+
+    waitForElementVisible (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.visibilityOf(elem), 5000, "Element taking too long to show in the DOM");
+    },
+
+    waitForElementInvisible (elem) {
+      if (elem === "submit") {
+        elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
+      }
+      var until = protractor.ExpectedConditions;
+      browser.wait(until.invisibilityOf(elem), 5000, "Element taking too long to disappear in the DOM");
     }
+
   };
   module.exports = helper;
 }());

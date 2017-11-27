@@ -14,10 +14,23 @@
 """
 import doctest
 
-from systemd import plugins  # test imports
-from systemd import helpers
+from dbus.service import InterfaceType
+from django.utils.unittest import TestCase
+
+from systemd import plugins
+from systemd import helpers  # test imports
+from systemd.management.commands.runsystemd import get_SystemD_classes
+from systemd.plugins import BasePlugin
 
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(plugins))
     return tests
+
+
+class SystemDTestCase(TestCase):
+    def test_get_SystemD_classes(self):
+        modules = get_SystemD_classes()
+        self.assertEqual(set(modules.keys()), {'oa_settings.systemapi', 'ceph_nfs.systemapi'})
+        for val in modules.values():
+            self.assertIsInstance(val, InterfaceType)

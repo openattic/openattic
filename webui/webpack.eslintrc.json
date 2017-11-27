@@ -11,7 +11,6 @@
   "globals": {
     "_": false,
     "angular": false,
-    "d3": false,
     "EventSource": false,
     "globalConfig": false
   },
@@ -174,6 +173,10 @@
     "one-var-declaration-per-line": [
       2,
       "always"
-    ]
+    ],
+    "no-multi-spaces": ["error", { "exceptions": { "Property": true } }],
+    "arrow-spacing": "error",
+    "semi": ["error", "always"],
+    "no-extra-semi": "error"
   }
 }

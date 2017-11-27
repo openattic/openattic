@@ -15,8 +15,8 @@
 from utilities import is_executable_installed
 
 if not is_executable_installed('ceph'):
-    raise ImportError('ERROR:ceph:Ceph executable couldn\'t be found. ' +
-        'The `ceph` package provided by your distribution is probably not installed.')
+    raise ImportError('ERROR:ceph:Ceph executable couldn\'t be found. The `ceph` package provided '
+                      'by your distribution is probably not installed.')
 
 try:
     import rados

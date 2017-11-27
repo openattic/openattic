@@ -32,9 +32,13 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.shared");
-app.factory("oaModuleLoaderService", function ($resource) {
-  return $resource(globalConfig.API.URL + "status/:module", {
-    module: "@module"
-  });
-});
+export default class OaModuleLoaderService {
+
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "status/:module", {
+      module: "@module"
+    });
+
+    Object.assign(this, res);
+  }
+}

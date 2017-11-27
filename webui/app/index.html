@@ -1,47 +1,64 @@
 <!DOCTYPE html>
-<html ng-app="openattic">
+<html ng-app="openattic"
+      lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+  <meta charset="utf-8">
+  <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
 
-    <title ng-bind="pageTitle">openATTIC</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title ng-bind="pageTitle">openATTIC</title>
+  <meta name="description"
+        content="">
+  <meta name="author"
+        content="">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- favicons -->
-    <link rel="shortcut icon" href="images/suse_favicon_32x32.png" type="image/x-icon">
-    <link rel="icon" href="images/suse_favicon_32x32.png" type="image/x-icon">
+  <!-- favicons -->
+  <link rel="shortcut icon"
+        href="images/suse_favicon_32x32.png"
+        type="image/x-icon">
+  <link rel="icon"
+        href="images/suse_favicon_32x32.png"
+        type="image/x-icon">
 </head>
+
 <body>
-    <noscript>
-        <div class="noscript container" ng-if="false">
-            <div class="jumbotron alert alert-danger">
-                <h2>JavaScript required!</h2>
-                <p>A browser with JavaScript enabled is required in order to use this service.</p>
-                <p>When using Internet Explorer, please check your security settings and add this address to your trusted sites.</p>
-            </div>
-        </div>
-    </noscript>
-
-    <navigation ng-hide="loginActive()"></navigation>
-
-    <div class="container-fluid" ng-class="{'full-height':loginActive()}">
-        <div class="row" ng-class="{'full-height':loginActive()}">
-            <div class="col-md-12" ng-class="{'full-height':loginActive()}">
-                <!-- breadcrumb -->
-                <div ncy-breadcrumb ng-hide="loginActive()"></div>
-                <!-- end breadcrumb -->
-
-                <!-- content -->
-                <div ui-view="main" ng-class="{'full-height':loginActive()}"></div>
-                <!-- end content -->
-            </div>
-        </div>
+  <noscript>
+    <div class="noscript container"
+         ng-if="false">
+      <div class="jumbotron alert alert-danger">
+        <h2>JavaScript required!</h2>
+        <p>A browser with JavaScript enabled is required in order to use this service.</p>
+        <p>When using Internet Explorer, please check your security settings and add this address to your trusted sites.</p>
+      </div>
     </div>
+  </noscript>
 
-    <!-- toasty -->
-    <toasty></toasty>
-    <!-- end toasty -->
+  <navigation ng-if="!loginActive()"></navigation>
+
+  <div class="container-fluid"
+       ng-class="{'full-height':loginActive()}">
+    <div class="row"
+         ng-class="{'full-height':loginActive()}">
+      <div class="col-md-12"
+           ng-class="{'full-height':loginActive()}">
+        <!-- breadcrumb -->
+        <div ncy-breadcrumb
+             ng-hide="loginActive()"></div>
+        <!-- end breadcrumb -->
+
+        <!-- content -->
+        <div ui-view="main"
+             ng-class="{'full-height':loginActive()}"></div>
+        <!-- end content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- toasty -->
+  <toasty></toasty>
+  <!-- end toasty -->
 </body>
+
 </html>

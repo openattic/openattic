@@ -1,0 +1,141 @@
+<form name="$ctrl.settingsForm"
+      role="form"
+      class="form-horizontal"
+      novalidate>
+  <div class="openattic-modal-header">
+    <span>Settings
+      <small>{{ $ctrl.image.pool }}: {{ $ctrl.image.name }}</small>
+    </span>
+  </div>
+  <div class="openattic-modal-content">
+
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.lun.$dirty) && $ctrl.settingsForm.lun.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="lun">lun</label>
+      <div class="col-sm-9">
+        <input type="number"
+               class="form-control"
+               name="lun"
+               id="lun"
+               ng-model="$ctrl.settings.lun"
+               required>
+        <span class="help-block"
+              ng-show="$ctrl.settingsForm.$submitted || $ctrl.settingsForm.lun.$dirty">
+          <span class="tc_imageLunRequired"
+                ng-show="$ctrl.settingsForm['lun'].$error.required">Required field</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.uuid.$dirty) && $ctrl.settingsForm.uuid.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="uuid">uuid</label>
+      <div class="col-sm-9">
+        <input type="text"
+               class="form-control"
+               name="uuid"
+               id="uuid"
+               ng-model="$ctrl.settings.uuid">
+        <span class="help-block"
+              ng-show="$ctrl.settingsForm.$submitted || $ctrl.settingsForm.uuid.$dirty">
+        </span>
+      </div>
+    </div>
+
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.retries.$dirty) && $ctrl.settingsForm.retries.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="retries">retries</label>
+      <div class="col-sm-9">
+        <input type="number"
+               class="form-control"
+               name="retries"
+               id="retries"
+               ng-model="$ctrl.settings.retries">
+      </div>
+    </div>
+
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.sleep.$dirty) && $ctrl.settingsForm.sleep.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="sleep">sleep</label>
+      <div class="col-sm-9">
+        <input type="number"
+               class="form-control"
+               name="sleep"
+               id="sleep"
+               ng-model="$ctrl.settings.sleep">
+      </div>
+    </div>
+
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm.retry_errors.$dirty) && $ctrl.settingsForm.retry_errors.$invalid}">
+      <label class="col-sm-3 control-label"
+             for="retry_errors">retry_errors</label>
+      <div class="col-sm-9">
+        <input type="text"
+               class="form-control"
+               name="retry_errors"
+               id="retry_errors"
+               ng-model="$ctrl.settings.retry_errors"
+               valid-numeric-array>
+        <span class="help-block"
+              ng-show="$ctrl.settingsForm.$submitted || $ctrl.settingsForm.retry_errors.$dirty">
+          <span class="tc_RetryErrosInvalid"
+                ng-show="$ctrl.settingsForm.$error.numericArray">
+            Must contain one or more comma-separated numbers
+            <br> For example: 95, 96
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <div class="checkbox checkbox-primary">
+          <input type="checkbox"
+                 ng-model="$ctrl.advancedSettingsEnabled"
+                 name="advancedSettingsEnabled"
+                 id="advancedSettingsEnabled">
+          <label class="tc_advancedSettingsEnabled"
+                 for="advancedSettingsEnabled">Advanced settings</label>
+        </div>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.advancedSettingsEnabled">
+      <div uib-alert
+           class="alert-warning">Changing these parameters from their default values is usually not necessary.</div>
+
+      <span ng-repeat="setting in $ctrl.cephIscsiImageAdvangedSettings">
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm[setting.property].$dirty) && $ctrl.settingsForm[setting.property].$invalid}">
+          <div class="col-sm-12">
+            <label class="control-label"
+                   for="{{ setting.property }}">{{ setting.property }}</label>
+            <input type="number"
+                   class="form-control"
+                   name="{{ setting.property }}"
+                   id="{{ setting.property }}"
+                   ng-model="$ctrl.settings[setting.property]">
+            <span class="help-block">{{ setting.help }}</span>
+          </div>
+        </div>
+      </span>
+    </div>
+
+  </div>
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="$ctrl.settingsForm"
+                        on-submit="$ctrl.confirm()">
+        Confirm
+      </oa-submit-button>
+      <button id="cancelButton"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

@@ -30,10 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.component("cephRbdStatistics", {
+export default {
   template: require("./ceph-rbd-statistics.component.html"),
   bindings: {
     selection: "<"
   }
-});
+};

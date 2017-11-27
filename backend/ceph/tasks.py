@@ -22,6 +22,15 @@ from ceph import librados
 logger = logging.getLogger(__name__)
 
 
+@task(description='Delete RBD {1}/{2}',
+      metadata=lambda fsid, pool_name, image_name: {'fsid': fsid, 'pool': pool_name, 'image': image_name})
+def delete_rbd(fsid, pool_name, image_name):
+    from ceph.models import fsid_context
+    with fsid_context(fsid) as ctx:
+        rbd_api = librados.RbdApi(fsid)
+        rbd_api.remove(pool_name, image_name)
+
+
 @task(description='Setting number of PGs to {2}')
 def set_pgs(fsid, pool_id, pgs):
     from ceph.models import CephPool, fsid_context

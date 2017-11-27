@@ -131,20 +131,12 @@ def is_executable_installed(executable):
     return any([path.isfile(path.join(root, executable)) for root in ['/sbin', '/usr/sbin']])
 
 
-def in_unittest():
-    current_stack = inspect.stack()
-    for stack_frame in current_stack:
-        for program_line in stack_frame[4]:
-            if "unittest" in program_line:
-                return True
-    return False
-
-
-def run_in_external_process(func, timeout=30):
+def run_in_external_process(func, cmd_name, timeout=30):
     """
     Runs `func` in an external process. Exceptions and return values are forwarded
 
     :type func: () -> T
+    :type timeout: int
     :rtype: T
     """
     class LibradosProcess(multiprocessing.Process):
@@ -174,15 +166,15 @@ def run_in_external_process(func, timeout=30):
             from exception import ExternalCommandError
 
             p.terminate()
-            raise ExternalCommandError('Process {} with ID {} terminated because of timeout '
-                                       '({} sec).'.format(p.name, p.pid, timeout))
+            raise ExternalCommandError(
+                'Command \'{}\' terminated because of timeout ({} sec).'.format(cmd_name, timeout))
 
 
 def set_globals_from_file(my_globals, file_name):
     """
     >>> for settings_file in ('/etc/default/openattic', '/etc/sysconfig/openattic'): # doctest: +ELLIPSIS
     ...     set_globals_from_file(globals(), settings_file)
-    Reading settingss from /etc/.../openattic
+    Reading settings from /etc/.../openattic
     >>> OAUSER
     'openattic'
 
@@ -192,6 +184,6 @@ def set_globals_from_file(my_globals, file_name):
     :return:
     """
     if os.access(file_name, os.R_OK):
-        print('Reading settingss from {}'.format(file_name))
+        print('Reading settings from {}'.format(file_name))
         for key, val in ConfigObj(file_name).items():
             my_globals[key] = val

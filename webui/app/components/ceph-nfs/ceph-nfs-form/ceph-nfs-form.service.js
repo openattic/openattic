@@ -32,18 +32,21 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.cephNfs");
-app.factory("cephNfsFormService", function ($resource) {
-  return $resource(globalConfig.API.URL + "ceph_nfs/:fsid", {
-    fsid: "@fsid"
-  }, {
-    lsDir: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/ls_dir"
-    },
-    buckets: {
-      method: "GET",
-      url: globalConfig.API.URL + "ceph_nfs/:fsid/buckets"
-    }
-  });
-});
+export default class CephNfsFormService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "ceph_nfs/:fsid", {
+      fsid: "@fsid"
+    }, {
+      lsDir: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/ls_dir"
+      },
+      buckets: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph_nfs/:fsid/buckets"
+      }
+    });
+
+    Object.assign(this, res);
+  }
+}

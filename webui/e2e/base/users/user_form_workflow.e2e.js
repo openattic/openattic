@@ -1,14 +1,13 @@
 "use strict";
 
-var helpers = require("../../common.js");
+const helpers = require("../../common.js");
 
 describe("should test the user form", function () {
-  var name = element(by.model("user.username"));
-  var passwd = element(by.model("user.password"));
-  var confirmPasswd = element(by.model("user.confirmPassword"));
+  const name = element(by.model("$ctrl.user.username"));
+  const passwd = element(by.model("$ctrl.user.password"));
+  const confirmPasswd = element(by.model("$ctrl.user.confirmPassword"));
 
-  var username = "herpderp";
-  var submitButton = element(by.css(".tc_submitButton"));
+  const username = "herpderp";
 
   beforeAll(function () {
     helpers.login();
@@ -16,6 +15,7 @@ describe("should test the user form", function () {
 
   beforeEach(function () {
     helpers.setLocation("users");
+    // helpers.waitForElement(element(by.css(".tc_addUser")));
     element(by.css(".tc_addUser")).click();
   });
 
@@ -36,15 +36,15 @@ describe("should test the user form", function () {
   });
 
   it('should have a "Firstname" input field', function () {
-    expect(element(by.model("user.first_name")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.user.first_name")).isDisplayed()).toBe(true);
   });
 
   it("should have a Lastname input field", function () {
-    expect(element(by.model("user.last_name")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.user.last_name")).isDisplayed()).toBe(true);
   });
 
   it('should have an "Email Address" input field', function () {
-    expect(element(by.model("user.email")).isDisplayed()).toBe(true);
+    expect(element(by.model("$ctrl.user.email")).isDisplayed()).toBe(true);
   });
 
   it("should have three checkboxes", function () {
@@ -69,35 +69,32 @@ describe("should test the user form", function () {
     expect(element(by.id("userSuperuser")).isPresent()).toBe(true);
   });
 
-  it('should check if the submit button is disabled and an error is displayed when the "Username" is empty',
+  it('should check if an error is displayed when the "Username" is empty',
     function () {
-      element(by.model("user.username")).sendKeys(username);
-      element(by.model("user.password")).sendKeys("test");
+      element(by.model("$ctrl.user.username")).sendKeys(username);
+      element(by.model("$ctrl.user.password")).sendKeys("test");
       name.clear();
-      expect(submitButton.isEnabled()).toBe(false);
       expect(element(by.css(".tc_usernameRequired")).isDisplayed()).toBe(true);
     });
 
   // The password is only required in the user add and not the user edit form
-  it('should check if the submit button is disabled and an error is displayed when the "Password" is empty',
+  it('should check if an error is displayed when the "Password" is empty',
     function () {
       name.sendKeys(username);
       passwd.sendKeys("test123");
       passwd.clear();
       // Click another field that the error appears, because of state $touched
       name.click();
-      expect(submitButton.isEnabled()).toBe(false);
       expect(element(by.css(".tc_passwdRequired")).isDisplayed()).toBe(true);
     });
 
-  it('should check if the submit button is disabled and an error is displayed when the "Confirm password" is empty',
+  it('should check if an error is displayed when the "Confirm password" is empty',
     function () {
       name.sendKeys(username);
       confirmPasswd.sendKeys("test123");
       confirmPasswd.clear();
       // Click another field that the error appears, because of state $touched
       name.click();
-      expect(submitButton.isEnabled()).toBe(false);
       expect(element(by.css(".tc_confirmPasswdRequired")).isDisplayed()).toBe(true);
     });
 
@@ -125,21 +122,14 @@ describe("should test the user form", function () {
   });
 
   it('should show an error message when data for field "username" does not match', function () {
-    element(by.model("user.username")).sendKeys("öäüfasd  sadof");
+    element(by.model("$ctrl.user.username")).sendKeys("öäüfasd  sadof");
     expect(element(by.css(".tc_userNameNotValid")).isDisplayed()).toBe(true);
   });
 
   it('should show an error message when input for field "Email Address" is not valid', function () {
-    element(by.model("user.email")).sendKeys("äü adsfo vfoe");
+    element(by.model("$ctrl.user.email")).sendKeys("äü adsfo vfoe");
     expect(element(by.css(".tc_emailNotValid")).isDisplayed()).toBe(true);
   });
-
-  it('should check if the submit button is disabled when "Username" and "Password" are without any given input data',
-    function () {
-      name.clear();
-      passwd.clear();
-      expect(submitButton.isEnabled()).toBe(false);
-    });
 
   it("should have a submit button", function () {
     expect(element(by.css(".tc_submitButton")).isPresent()).toBe(true);

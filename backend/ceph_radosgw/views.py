@@ -18,6 +18,7 @@ from rest_framework.decorators import api_view
 from ceph_radosgw.rgw_client import RGWClient
 from ceph_nfs.models import GaneshaExport
 from rest_client import RequestException
+from oa_settings import Settings
 
 
 class NoCredentialsResponse(HttpResponse):
@@ -76,8 +77,59 @@ def bucket_delete(request):
     if 'bucket' not in params:
         raise ValidationError('No bucket parameter provided')
 
-    if GaneshaExport.objects.filter(path__in=params['bucket']):
+    # Make sure the bucket is not shared via NFS.
+    query = GaneshaExport.objects.filter(path__in=params['bucket'])
+    if bool(query):
         raise ValidationError('Can not delete the bucket \'{}\', it is shared via NFS'.format(
             params['bucket']))
 
     return proxy_view(request, 'bucket')
+
+
+@api_view(['GET'])
+def bucket_get(request):
+
+    params = request.GET.copy()
+
+    if 'bucket' not in params:
+        raise ValidationError('No bucket parameter provided')
+
+    response = proxy_view(request, 'bucket')
+
+    # Get the response content.
+    content = json.loads(response.content)
+
+    # Check if the bucket is shared via NFS and append the
+    # 'is_referenced' attribute.
+    query = GaneshaExport.objects.filter(path__in=params['bucket'])
+    content['is_referenced'] = bool(query)
+
+    # Append the 'endpoint' attribute.
+    instance = RGWClient.admin_instance()
+    scheme = 'https' if instance._ssl else 'http'
+    content['endpoint'] = {
+        's3': '{}://{}.{}'.format(scheme, content['bucket'], instance.service_url),
+        'swift': '{}://{}/v1/{}/{}'.format(scheme, instance.service_url,
+                                           content['owner'], content['bucket'])
+    }
+
+    # Update the response content.
+    response.content = json.dumps(content)
+
+    return response
+
+
+@api_view(['DELETE'])
+def user_delete(request):
+
+    params = request.GET.copy()
+
+    if 'uid' not in params:
+        raise ValidationError('No uid parameter provided')
+
+    # Ensure the user is not configured to access the Object Gateway.
+    if Settings.RGW_API_USER_ID == params['uid']:
+        raise ValidationError('Can not delete the user \'{}\', it is used to access '
+            'the Object Gateway'.format(params['uid']))
+
+    return proxy_view(request, 'user')

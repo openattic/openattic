@@ -1,0 +1,80 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Status of {{$ctrl.selection.item.name}}</h3>
+  </div>
+  <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt>ID:</dt>
+      <dd ng-bind="$ctrl.selection.item.id"></dd>
+      <div ng-show="$ctrl.selection.item.max_avail">
+        <dt>Pool size:</dt>
+        <dd ng-bind="$ctrl.selection.item.max_avail | bytes"></dd>
+      </div>
+      <div ng-show="$ctrl.selection.item.num_bytes">
+        <dt>Used:</dt>
+        <dd ng-bind="$ctrl.selection.item.num_bytes | bytes"></dd>
+      </div>
+      <dt>Applications:</dt>
+      <dd ng-bind="$ctrl.selection.item.showApps"
+          ng-hide="$ctrl.selection.item.application_metadata.length === 0">
+      </dd>
+      <dd ng-show="$ctrl.selection.item.application_metadata.length === 0">None</dd>
+      <dt>Placement Groups:</dt>
+      <dd ng-bind="$ctrl.selection.item.pg_num"></dd>
+      <div ng-show="$ctrl.selection.item.type === 'replicated'">
+        <dt>Replicated size:</dt>
+        <dd ng-bind="$ctrl.selection.item.size"></dd>
+      </div>
+      <div ng-show="$ctrl.selection.item.erasure_code_profile">
+        <dt>Erasure code profile:</dt>
+        <dd ng-bind="$ctrl.selection.item.erasure_code_profile"></dd>
+      </div>
+      <dt>Type:</dt>
+      <dd ng-bind="$ctrl.selection.item.type"></dd>
+      <div ng-show="$ctrl.selection.item.crush_ruleset !== 0">
+        <dt>Crush ruleset:</dt>
+        <dd ng-bind="$ctrl.selection.item.crush_ruleset"></dd>
+      </div>
+      <div ng-show="$ctrl.selection.item.flags.length > 0">
+        <dt>Flags:</dt>
+        <dd ng-bind="flag"
+            class="tc-flag-{{flag}}"
+            ng-repeat="flag in $ctrl.selection.item.flags"></dd>
+      </div>
+      <div ng-show="$ctrl.selection.item.cluster.id">
+        <dt>Cluster ID:</dt>
+        <dd ng-bind="$ctrl.selection.item.cluster.id"></dd>
+      </div>
+      <dt>Last change:</dt>
+      <dd ng-bind="$ctrl.selection.item.last_change"></dd>
+      <div ng-show="$ctrl.selection.item.stripe_width !== 0">
+        <dt>Stripe width:</dt>
+        <dd ng-bind="$ctrl.selection.item.stripe_width"></dd>
+      </div>
+      <div ng-show="$ctrl.selection.item.quota_max_bytes !== 0">
+        <dt>Quota max bytes:</dt>
+        <dd ng-bind="$ctrl.selection.item.quota_max_bytes"></dd>
+      </div>
+      <div ng-show="$ctrl.selection.item.quota_max_objects !== 0">
+        <dt>Quota max objects:</dt>
+        <dd ng-bind="$ctrl.selection.item.quota_max_objects"></dd>
+      </div>
+    </dl>
+
+    <div ng-show="$ctrl.selection.item.compression_mode !== 'none'">
+      <h2>Compression information:</h2>
+      <dl class="dl-horizontal">
+        <dt>Mode:</dt>
+        <dd ng-bind="$ctrl.selection.item.compression_mode"></dd>
+        <dt>Algorithm:</dt>
+        <dd ng-bind="$ctrl.selection.item.compression_algorithm"></dd>
+        <dt>Minimum blob size:</dt>
+        <dd>{{$ctrl.selection.item.compression_min_blob_size | bytes}}</dd>
+        <dt>Maximum blob size:</dt>
+        <dd>{{$ctrl.selection.item.compression_max_blob_size | bytes}}</dd>
+        <dt>Required ratio:</dt>
+        <dd ng-bind="$ctrl.selection.item.compression_required_ratio"></dd>
+      </dl>
+    </div>
+  </div>
+</div>

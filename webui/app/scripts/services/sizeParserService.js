@@ -31,65 +31,32 @@
 "use strict";
 
 var app = angular.module("openattic.sizeparser", []);
-app.factory("SizeParserService", function () {
-  var mult = ["b", "k", "m", "g", "t", "p", "e"];
+app.factory("SizeParserService", () => {
 
-  var _parseInt = function (value, outputSize, inputSize) {
-    if (outputSize === undefined) {
-      outputSize = "m";
-    }
-    if (inputSize === undefined) {
-      inputSize = "m";
-    }
-    mult = mult.slice(mult.indexOf(outputSize));
-    // If it's a plain number, just parseInt() it
-    if (!value) {
-      return null;
-    }
-
-    if (/^[\d.]+$/.test(value)) {
-      value += inputSize;
-    }
-
-    value = value.toLowerCase().replace(/\s/g, "");
-    // If it's a valid size string, calc its int value
-    var facs = mult.join("");
-    var rgx = new RegExp("^([\\d.]+)([" + facs + "]?)(i?)(b?)$");
-
-    if (rgx.test(value)) {
-      var matched = rgx.exec(value);
-      return parseInt(parseFloat(matched[1], 10) * Math.pow(1024, mult.indexOf(matched[2])), 10);
-    }
-
-    // It didn't parse...
-    return null;
+  // If a number can't hold such a large number 1 will be returned.
+  // Example: SizeParserService.parseInt(868, "b", "e")
+  const _parseInt = (value, outputSize = "m", inputSize) => {
+    return parseInt(_parseFloat(value, outputSize, inputSize), 10);
   };
 
-  var _parseFloat = function (value) {
-    // If it's a plain number, just parseInt() it
-    if (!value) {
+  const _parseFloat = (value, outputSize, defaultInputSize = "m") => {
+    let units = ["b", "k", "m", "g", "t", "p", "e", "z", "y"];
+    if (outputSize) {
+      units = units.slice(units.indexOf(outputSize));
+    }
+    if (/^[\d.]+$/.test(value)) {
+      value += defaultInputSize;
+    }
+    value = value.toLowerCase().replace(/\s/g, "");
+    const rgx = new RegExp("^([\\d.]+)([" + units.join("") + "]?)(i?)(b?)$");
+    if (!rgx.test(value)) {
       return null;
     }
-
-    if (/^[\d.]+$/.test(value)) {
-      return parseFloat(value);
-    }
-
-    value = value.toLowerCase().replace(/\s/g, "");
-    // If it's a valid size string, calc its int value
-    var facs = mult.join("");
-    var rgx = new RegExp("^([\\d.]+)([" + facs + "]?)(i?)(b?)$");
-
-    if (rgx.test(value)) {
-      var matched = rgx.exec(value);
-      return parseFloat(matched[1], 10) * Math.pow(1024, mult.indexOf(matched[2]));
-    }
-
-    // It didn't parse...
-    return null;
+    const matched = rgx.exec(value);
+    return parseFloat(matched[1], 10) * Math.pow(1024, units.indexOf(matched[2]));
   };
 
-  var _isValid = function (value) {
+  const _isValid = (value) => {
     return _parseInt(value) !== null;
   };
 

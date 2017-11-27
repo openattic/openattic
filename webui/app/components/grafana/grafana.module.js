@@ -30,6 +30,7 @@
  */
 "use strict";
 
-angular.module("openattic.grafana", []);
+import grafana from "./grafana.component";
 
-require("./grafana.component");
+angular.module("openattic.grafana", [])
+  .component("grafana", grafana);

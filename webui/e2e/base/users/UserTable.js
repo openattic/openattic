@@ -1,6 +1,6 @@
 "use strict";
 
-var UserTable = function () {
+const UserTable = function () {
 
   this.addUser = function () {
     element(by.css(".tc_addUser")).click();

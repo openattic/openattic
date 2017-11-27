@@ -45,6 +45,7 @@ describe("ceph pool creation form", function () {
     e.displayedIf.forEach((displayedIf) => {
       it('should display the form element "' + e.name + '" if "' + displayedIf + '"', function () {
         cephPoolProperties.selectNeededSelection(displayedIf);
+        helpers.waitForElement(cephPoolProperties.getFormElement(e));
         expect(cephPoolProperties.getFormElement(e).isDisplayed()).toBe(true);
       });
       verifySubitems(e);
@@ -74,12 +75,6 @@ describe("ceph pool creation form", function () {
 
   it("should show the right url", function () {
     helpers.checkLocation("ceph/pools/add");
-  });
-
-  it("should check if the submit button is disabled when the required fields are empty", function () {
-    browser.refresh();
-    expect(fe.createButton.byClass.isEnabled()).toBe(false);
-    browser.refresh();
   });
 
   Object.keys(fe).forEach(function (name) {

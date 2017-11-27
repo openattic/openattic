@@ -31,14 +31,28 @@
 "use strict";
 
 var app = angular.module("openattic.taskQueue");
-app.service("taskQueueSubscriber", function ($interval, taskQueueService) {
+app.service("taskQueueSubscriber", function ($q, $interval, taskQueueService) {
 
   var self = this;
 
+  var pendingStatus = ["Not Started", "Running"];
   var finalStatus = ["Exception", "Aborted", "Finished"];
 
   var isFinalStatus = function (task) {
     return finalStatus.indexOf(task.status) > -1;
+  };
+
+  self.pendingTasksPromise = function () {
+    let requests = [];
+    pendingStatus.forEach((status) => {
+      requests.push(
+        taskQueueService
+          .get({
+            status: status
+          }).$promise
+      );
+    });
+    return $q.all(requests);
   };
 
   self.subscribe = function (taskId, callback) {

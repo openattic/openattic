@@ -13,6 +13,8 @@
  *  GNU General Public License for more details.
 """
 
+import time
+
 from testcase import GatlingTestCase
 
 
@@ -62,36 +64,23 @@ class RbdDataPoolTestScenario(GatlingTestCase):
         res = cls.send_ceph_request('POST', cls.fsid, 'pools', data=pool_data)
         return res['response']
 
-    @classmethod
-    def create_test_pool(cls, name, type, flags=None):
-        pool_data = dict()
-        pool_data['fsid'] = cls.fsid
-        pool_data['name'] = name
-        pool_data['pg_num'] = 1
+    def _wait_for_pending_tasks(self):
+        while True:
+            count = self.send_request('GET', "taskqueue", search_param="status=Not+Started")["count"]
+            if count == 0:
+                count = self.send_request('GET', "taskqueue", search_param="status=Running")["count"]
+            if count == 0:
+                break
+            time.sleep(1)
 
-        if type == 'erasure':
-            pool_data.update(
-                {'erasure_code_profile': 'default',
-                 'min_size': 2,
-                 'type': 'erasure'})
-        else:
-            pool_data.update(
-                {'crush_ruleset': 0,
-                 'min_size': 1,
-                 'size': 1,
-                 'type': 'replicated'})
+    def _rbd_exist(self, rbd_name):
+        self._wait_for_pending_tasks()
+        res = self.send_ceph_request('GET', self.fsid, 'rbds', search_param='name={}'.format(rbd_name))
+        return bool(res['response']['results'])
 
-        if flags:
-            pool_data["flags"] = flags
+    def _delete_rbd(self, rbd_name):
+        self._wait_for_pending_tasks()
+        res = self.send_ceph_request('DELETE', self.fsid, 'rbds', search_param='name={}'.format(rbd_name))
+        self._wait_for_pending_tasks()
+        return res
 
-        res = cls.send_ceph_request('POST', cls.fsid, 'pools', data=pool_data)
-        return res['response']
-
-    @classmethod
-    def _check_for_rbd_in_list(cls, rbd_name):
-        res = cls.send_ceph_request('GET', cls.fsid, 'rbds')
-
-        for rbd in res['response']['results']:
-            if rbd['name'] == rbd_name:
-                return True
-        return False

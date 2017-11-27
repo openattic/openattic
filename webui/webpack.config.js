@@ -137,6 +137,11 @@ module.exports = (function makeWebpackConfig () {
         useEslintrc: false
         // eslint options (if necessary)
       }
+    },
+    {
+      test: /(htm|html|xhtml|hbs|handlebars|php|ejs)$/,
+      loader: "htmllint-loader",
+      exclude: /(node_modules)/
     }
     ]
   };
@@ -147,7 +152,7 @@ module.exports = (function makeWebpackConfig () {
    * List: https://webpack.js.org/plugins/
    */
   config.plugins = [
-   /**
+    /**
    * PostCSS
    * Reference: https://github.com/postcss/autoprefixer
    * Add vendor prefixes to your css
@@ -180,8 +185,7 @@ module.exports = (function makeWebpackConfig () {
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
-      "window.jQuery": "jquery",
-      "nv": "nvd3"
+      "window.jQuery": "jquery"
     }),
 
     // Copy assets from the public folder
@@ -213,6 +217,10 @@ module.exports = (function makeWebpackConfig () {
     {
       from: __dirname + "/app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html",
       to: __dirname + "/dist/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html"
+    },
+    {
+      from: __dirname + "/app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html",
+      to: __dirname + "/dist/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html"
     },
     {
       from: __dirname + "/app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html",
@@ -252,7 +260,7 @@ module.exports = (function makeWebpackConfig () {
     };
   }
 
-    /**
+  /**
    * Dev server configuration
    * use the format described on webpack.config.json.sample
    * Reference: https://webpack.js.org/configuration/dev-server/

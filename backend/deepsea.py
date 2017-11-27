@@ -54,6 +54,9 @@ class DeepSea(RestClient, SettingsListener):
         logger.debug("DeepSea was notified that settings changed!")
         DeepSea._instance = None
 
+    def is_configured(self):
+        return all((self.host, self.port, self.eauth, self.username, self.password))
+
     @RestClient.api_get('/', resp_structure='return')
     @RestClient.requires_login
     def is_service_online(self, request=None):

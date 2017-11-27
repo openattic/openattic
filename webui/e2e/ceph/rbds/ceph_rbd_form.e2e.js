@@ -10,67 +10,67 @@ describe("should test the ceph rbd creation form", function () {
   var stripingPreview = new CephRBDStripingPreview();
 
   var objSizeInput = [
-    {input: "", output: "4.00 KiB"},
-    {input: "blub", output: "4.00 KiB"},
-    {input: "0", output: "4.00 KiB"},
-    {input: "5", output: "4.00 KiB"},
-    {input: "6",  output: "8.00 KiB"},
-    {input: "11", output: "8.00 KiB"},
-    {input: "12", output: "16.00 KiB"},
-    {input: "22", output: "16.00 KiB"},
-    {input: "23", output: "32.00 KiB"},
-    {input: "45", output: "32.00 KiB"},
-    {input: "46", output: "64.00 KiB"},
-    {input: "90", output: "64.00 KiB"},
-    {input: "91",  output: "128.00 KiB"},
-    {input: "181", output: "128.00 KiB"},
-    {input: "182", output: "256.00 KiB"},
-    {input: "362", output: "256.00 KiB"},
-    {input: "363", output: "512.00 KiB"},
-    {input: "724", output: "512.00 KiB"},
-    {input: "725",  output: "1.00 MiB"},
-    {input: "1448", output: "1.00 MiB"},
-    {input: "1449", output: "2.00 MiB"},
-    {input: "2896", output: "2.00 MiB"},
-    {input: "2897", output: "4.00 MiB"},
-    {input: "5792", output: "4.00 MiB"},
-    {input: "5793",  output: "8.00 MiB"},
-    {input: "11585", output: "8.00 MiB"},
-    {input: "11586", output: "16.00 MiB"},
-    {input: "23170", output: "16.00 MiB"},
-    {input: "23171",  output: "32.00 MiB"},
-    {input: "666666", output: "32.00 MiB"},
-    {input: "1 gb",  output: "32.00 MiB"},
-    {input: "0.017 gb",  output: "16.00 MiB"},
-    {input: "0.017 mb",  output: "16.00 KiB"},
-    {input: "0.5 mb",  output: "512.00 KiB"},
-    {input: "0.000007 gb",  output: "8.00 KiB"}
+    { input: "", output: "4.00 KiB" },
+    { input: "blub", output: "4.00 KiB" },
+    { input: "0", output: "4.00 KiB" },
+    { input: "5", output: "4.00 KiB" },
+    { input: "6", output: "8.00 KiB" },
+    { input: "11", output: "8.00 KiB" },
+    { input: "12", output: "16.00 KiB" },
+    { input: "22", output: "16.00 KiB" },
+    { input: "23", output: "32.00 KiB" },
+    { input: "45", output: "32.00 KiB" },
+    { input: "46", output: "64.00 KiB" },
+    { input: "90", output: "64.00 KiB" },
+    { input: "91", output: "128.00 KiB" },
+    { input: "181", output: "128.00 KiB" },
+    { input: "182", output: "256.00 KiB" },
+    { input: "362", output: "256.00 KiB" },
+    { input: "363", output: "512.00 KiB" },
+    { input: "724", output: "512.00 KiB" },
+    { input: "725", output: "1.00 MiB" },
+    { input: "1448", output: "1.00 MiB" },
+    { input: "1449", output: "2.00 MiB" },
+    { input: "2896", output: "2.00 MiB" },
+    { input: "2897", output: "4.00 MiB" },
+    { input: "5792", output: "4.00 MiB" },
+    { input: "5793", output: "8.00 MiB" },
+    { input: "11585", output: "8.00 MiB" },
+    { input: "11586", output: "16.00 MiB" },
+    { input: "23170", output: "16.00 MiB" },
+    { input: "23171", output: "32.00 MiB" },
+    { input: "666666", output: "32.00 MiB" },
+    { input: "1 gb", output: "32.00 MiB" },
+    { input: "0.017 gb", output: "16.00 MiB" },
+    { input: "0.017 mb", output: "16.00 KiB" },
+    { input: "0.5 mb", output: "512.00 KiB" },
+    { input: "0.000007 gb", output: "8.00 KiB" }
   ];
 
   var sizeInput = [
-    {input: "1", output: "1.00 MiB"},
-    {input: "512", output: "512.00 MiB"},
-    {input: "1024", output: "1.00 GiB"},
-    {input: "2048", output: "2.00 GiB"},
-    {input: "4096", output: "4.00 GiB"},
-    {input: "8192", output: "8.00 GiB"},
-    {input: "16384", output: "16.00 GiB"},
-    {input: "32768", output: "32.00 GiB"},
-    {input: "65536", output: "64.00 GiB"},
-    {input: "131072", output: "128.00 GiB"},
-    {input: "262144", output: "256.00 GiB"},
-    {input: "524288", output: "512.00 GiB"},
-    {input: "1048576", output: "1.00 TiB"},
-    {input: "2097152", output: "2.00 TiB"},
-    {input: "4194304", output: "4.00 TiB"},
-    {input: "8388608", output: "8.00 TiB"},
-    {input: "16777216", output: "16.00 TiB"},
-    {input: "33554432", output: "32.00 TiB"},
-    {input: "67108864", output: "64.00 TiB"},
-    {input: "134217728", output: "128.00 TiB"},
-    {input: "268435456", output: "256.00 TiB"},
-    {input: "536870912", output: "512.00 TiB"},
-    {input: "1073741824", output: "1.00 PiB"}
+    { input: "1", output: "1.00 MiB" },
+    { input: "512", output: "512.00 MiB" },
+    { input: "1024", output: "1.00 GiB" },
+    { input: "2048", output: "2.00 GiB" },
+    { input: "4096", output: "4.00 GiB" },
+    { input: "8192", output: "8.00 GiB" },
+    { input: "16384", output: "16.00 GiB" },
+    { input: "32768", output: "32.00 GiB" },
+    { input: "65536", output: "64.00 GiB" },
+    { input: "131072", output: "128.00 GiB" },
+    { input: "262144", output: "256.00 GiB" },
+    { input: "524288", output: "512.00 GiB" },
+    { input: "1048576", output: "1.00 TiB" },
+    { input: "2097152", output: "2.00 TiB" },
+    { input: "4194304", output: "4.00 TiB" },
+    { input: "8388608", output: "8.00 TiB" },
+    { input: "16777216", output: "16.00 TiB" },
+    { input: "33554432", output: "32.00 TiB" },
+    { input: "67108864", output: "64.00 TiB" },
+    { input: "134217728", output: "128.00 TiB" },
+    { input: "268435456", output: "256.00 TiB" },
+    { input: "536870912", output: "512.00 TiB" },
+    { input: "1073741824", output: "1.00 PiB" }
   ];
 
   var isItemPresent = function (name, item, className) {
@@ -107,6 +107,18 @@ describe("should test the ceph rbd creation form", function () {
     rbdProperties.addButton.click();
     rbdProperties.firstPool.click();
     rbdProperties.selectFeatures([1, 1, 1, 1, 1, 1, 1]); // Selects all features
+  });
+
+  it("should show an required error if the size is smaller than the object size", () => {
+    rbdProperties.selectFeatures([1, 1, 0, 1, 1, 1, 1]); // delects striping
+    const size = rbdProperties.size;
+    const helpSizeMinimum = element(by.className(fe.size.items.helpSizeMinimum));
+    expect(helpSizeMinimum.isPresent()).toBe(true);
+    helpers.changeInput(size, "1 k");
+    expect(helpSizeMinimum.isDisplayed()).toBe(true);
+    helpers.changeInput(size, "200 M");
+    expect(helpSizeMinimum.isDisplayed()).toBe(false);
+    rbdProperties.selectFeatures([1, 1, 1, 1, 1, 1, 1]); // enables striping again
   });
 
   it("should show a warning on object size if stripe unit is increased", () => {

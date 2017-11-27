@@ -1,0 +1,166 @@
+<oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
+  <oa-module-loader module="ceph">
+
+    <oa-loading-panel message="Ceph pools are loading..."
+                      ng-show="!$ctrl.error && !$ctrl.pools.$resolved">
+    </oa-loading-panel>
+    <oa-error-panel ng-if="$ctrl.error">
+      Ceph pool resources could not be loaded.
+    </oa-error-panel>
+
+    <oadatatable ng-show="!$ctrl.error && $ctrl.pools.results"
+                 data="$ctrl.pools"
+                 special="$ctrl"
+                 class="oadatatable tc_cephPoolTable"
+                 filter-config="$ctrl.filterConfig"
+                 selection="$ctrl.selection"
+                 on-selection-change="$ctrl.onSelectionChange(selection)"
+                 on-filter-config-change="$ctrl.getPoolList()">
+      <actions>
+        <a class="btn btn-sm btn-primary tc_add_btn"
+           type="button"
+           ng-click="$ctrl.addAction()"
+           ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
+          <i class="fa fa-fw fa-plus"></i>Add
+        </a>
+        <a class="btn btn-sm btn-primary tc_edit_btn"
+           type="button"
+           ng-click="$ctrl.editAction()"
+           ng-show="$ctrl.hasSelection">
+          <i class="fa fa-fw fa-pencil"></i>Edit
+        </a>
+        <a class="btn btn-sm btn-primary tc_delete_btn"
+           type="button"
+           ng-click="$ctrl.deleteAction()"
+           ng-show="$ctrl.multiSelection">
+          <i class="fa fa-fw fa-trash-o"></i>Delete
+        </a>
+        <li>
+          <a ng-click="$ctrl.addAction()">
+            <i class="fa fa-fw fa-plus"></i>Add
+          </a>
+        </li>
+        <li ng-class="{disabled: !$ctrl.hasSelection}">
+          <a ng-click="$ctrl.editAction()">
+            <i class="fa fa-fw fa-pencil"></i>Edit
+          </a>
+        </li>
+        <li class="tc_deleteItem"
+            ng-click="$ctrl.deleteAction()"
+            ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
+          <a>
+            <i class="fa fa-fw fa-trash-o"></i>Delete
+          </a>
+        </li>
+      </actions>
+      <table class="table table-striped table-bordered table-hover dataTable datatable">
+        <thead>
+          <tr>
+            <th class="oadatatablecheckbox"
+                ng-if="selection.available">
+              <input type="checkbox"
+                     ng-model="selection.checkAll">
+            </th>
+            <th ng-show="columns['Name']"
+                sortfield="name"
+                sortdir="asc"
+                sortheaderclass
+                sortdefault>Name</th>
+            <th ng-show="columns['ID']"
+                sortfield="id"
+                sortheaderclass>ID</th>
+            <th ng-show="columns['Used']"
+                sortfield="kb_used"
+                sortheaderclass>Used</th>
+            <th ng-show="columns['Applications']">Applications</th>
+            <th ng-show="columns['Placement groups']">Placement groups</th>
+            <th ng-show="columns['Replica size']">Replica size</th>
+            <th ng-show="columns['Erasure code profile']">Erasure code profile</th>
+            <th ng-show="columns['Last change']">Last Change</th>
+            <th ng-show="columns['Type']">Type</th>
+            <th ng-show="columns['Crush ruleset']">Crush ruleset</th>
+            <th ng-show="columns['Compression mode']">Compression mode</th>
+            <th ng-show="columns['Compression algorithm']"
+                disabled>Compression algorithm</th>
+            <th ng-show="columns['Compression min. blob size']"
+                disabled>Compression min. blob size</th>
+            <th ng-show="columns['Compression max. blob size']"
+                disabled>Compression max. blob size</th>
+            <th ng-show="columns['Compression required ratio']"
+                disabled>Compression required ratio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="row in data.results"
+              ng-class="{ info: isRowSelected(row) }"
+              class="clickable"
+              ng-click="toggleSelection(row, $event)">
+            <td ng-if="selection.available">
+              <input type="checkbox"
+                     checklist-model="selection.items"
+                     checklist-value="row">
+            </td>
+            <td ng-show="columns['Name']">
+              <a ui-sref="ceph-pools-edit({fsid:row.cluster,poolId:row.id})"
+                 ng-bind="row.name"></a>
+            </td>
+            <td ng-show="columns['ID']"
+                ng-bind="row.id"></td>
+            <td ng-show="columns['Used']">
+              <div class="progress oaprogress"
+                   data-toggle="tooltip"
+                   data-placement="right"
+                   title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.oaFree | bytes}}">
+                <div class="progress-bar"
+                     role="progressbar"
+                     aria-valuenow="{{row.percent_used | number: 2}}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     ng-style="{'width': {{row.percent_used | number: 2}}+'%'}">
+                  <span>{{row.percent_used | number: 2}}%</span>
+                </div>
+                <div class="progress-bar progress-bar-freespace"
+                     role="progressbar"
+                     aria-valuenow="{{row.oaUnused}}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     ng-style="{'width': {{row.oaUnused | number: 2}}+'%'}">
+                </div>
+              </div>
+            </td>
+            <td ng-show="columns['Applications']"
+                ng-bind="row.showApps"></td>
+            <td ng-show="columns['Placement groups']"
+                ng-bind="row.pg_num"></td>
+            <td ng-show="columns['Replica size']"
+                ng-bind="row.size"></td>
+            <td ng-show="columns['Erasure code profile']"
+                ng-bind="row.erasure_code_profile"></td>
+            <td ng-show="columns['Last change']"
+                ng-bind="row.last_change"></td>
+            <td ng-show="columns['Type']"
+                ng-bind="row.type"></td>
+            <td ng-show="columns['Crush ruleset']"
+                ng-bind="row.crush_ruleset"></td>
+            <td ng-show="columns['Compression mode']"
+                ng-bind="row.compression_mode"></td>
+            <td ng-show="columns['Compression algorithm']"
+                ng-bind="row.compression_algorithm"></td>
+            <td ng-show="columns['Compression min. blob size']">{{row.compression_min_blob_size | bytes}}</td>
+            <td ng-show="columns['Compression max. blob size']">{{row.compression_max_blob_size | bytes}}</td>
+            <td ng-show="columns['Compression required ratio']"
+                ng-bind="row.compression_required_ratio"></td>
+          </tr>
+        </tbody>
+      </table>
+    </oadatatable>
+
+    <div id="more"
+         ui-view="tab"
+         tab-data="$ctrl.tabData"
+         tab-config="$ctrl.tabConfig"
+         selection="$ctrl.selection">
+    </div>
+
+  </oa-module-loader>
+</oa-ceph-cluster-loader>

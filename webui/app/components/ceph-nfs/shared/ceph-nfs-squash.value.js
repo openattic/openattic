@@ -30,5 +30,4 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.value("cephNfsSquash", ["None", "Root", "All"]);
+export default ["None", "Root", "All"];

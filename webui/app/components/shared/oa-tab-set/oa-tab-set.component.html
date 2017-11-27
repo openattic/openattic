@@ -1,8 +1,14 @@
 <div ng-show="$ctrl.selection.item">
-  <uib-tabset active="$ctrl.tabData.active" ng-show="{{ $ctrl.showTabSet() }}">
+  <uib-tabset active="$ctrl.tabData.active"
+              ng-show="$ctrl.showTabSet()">
     <uib-tab ng-repeat="(key, tab) in $ctrl.tabData.tabs"
-             ng-click="$ctrl.changeTab(tab.state, $index)" class="{{ tab.class }}" heading="{{ tab.name }}"
-             ng-show="{{ tab.show }}" index="$index"></uib-tab>
+             ng-click="$ctrl.changeTab(tab.state, $index)"
+             class="{{ tab.class }}"
+             heading="{{ tab.name }}"
+             ng-show="tab.show()"
+             index="$index"></uib-tab>
   </uib-tabset>
-  <div class="tab-content" ui-view="tab-content" selection="$ctrl.selection"></div>
+  <div class="tab-content"
+       ui-view="tab-content"
+       selection="$ctrl.selection"></div>
 </div>

@@ -1,0 +1,95 @@
+<div class="form-group">
+  <label class="col-sm-3 control-label">Clients</label>
+  <div class="col-sm-9">
+
+    <span ng-if="$ctrl.clientBlocks.length === 0"
+          class="form-control no-border">
+      <span class="text-muted">Any client can access</span>
+    </span>
+
+    <div ng-repeat="clientBlock in $ctrl.clientBlocks">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ ($index + 1) | ordinal }}
+            <span class="pull-right clickable"
+                  ng-click="$ctrl.removeClientBlock($index)"
+                  uib-tooltip="Remove">&times;</span>
+          </h3>
+        </div>
+        <div class="panel-body">
+
+          <!-- Clients -->
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.form.$submitted || $ctrl.form['clients'+$index].$dirty) && $ctrl.form['clients'+$index].$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="clients{{ $index }}">Clients</label>
+            <div class="col-sm-9">
+              <input type="text"
+                     class="form-control tc_clientsInput"
+                     name="clients{{ $index }}"
+                     id="clients{{ $index }}"
+                     ng-model="clientBlock.clients"
+                     placeholder="192.168.0.10, 192.168.1.0/8"
+                     valid-string-array
+                     required>
+              <span class="help-block"
+                    ng-show="$ctrl.form.$submitted || $ctrl.form['clients'+$index].$dirty">
+                <span class="tc_clientsRequired"
+                      ng-show="$ctrl.form['clients'+$index].$error.required">Required field</span>
+                <span class="tc_clientsInvalid"
+                      ng-show="$ctrl.form['clients'+$index].$error.stringArray">
+                  Must contain one or more comma-separated values
+                  <br> For example: 192.168.0.10, 192.168.1.0/8
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Access Type-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label"
+                   for="accessType{{ $index }}">Access Type</label>
+            <div class="col-sm-9">
+              <select class="form-control"
+                      ng-model="clientBlock.accessType"
+                      ng-options="accessType.value as accessType.value for accessType in $ctrl.cephNfsAccessType"
+                      name="accessType{{ $index }}"
+                      id="accessType{{ $index }}">
+                <option value="">{{ $ctrl.getNoAccessTypeDescr(clientBlock) }}</option>
+              </select>
+              <span class="help-block"
+                    ng-show="clientBlock.accessType">
+                {{ $ctrl.getAccessTypeHelp(clientBlock.accessType) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Squash -->
+          <div class="form-group">
+            <label class="col-sm-3 control-label"
+                   for="squash{{ $index }}">Squash</label>
+            <div class="col-sm-9">
+              <select class="form-control"
+                      ng-model="clientBlock.squash"
+                      ng-options="squash for squash in $ctrl.cephNfsSquash"
+                      name="squash{{ $index }}"
+                      id="squash{{ $index }}">
+                <option value="">{{ $ctrl.getNoSquashDescr(clientBlock) }}</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <span class="form-control no-border">
+      <button class="btn btn-default btn-label pull-right tc_addClients"
+              type="button"
+              ng-click="$ctrl.addClientBlock()">
+        <i class="fa fa-fw fa-plus"></i>Add clients
+      </button>
+    </span>
+    <hr>
+  </div>
+</div>

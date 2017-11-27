@@ -4,384 +4,535 @@
                     ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
   </oa-loading-panel>
   <oa-error-panel title="Couldn't load iSCSI target"
-                  message="iSCSI target "{{ $ctrl.targetId }}" could not be loaded."
                   on-back="$ctrl.cancelAction()"
                   ng-if="$ctrl.targetId && $ctrl.error">
+    iSCSI target "{{ $ctrl.targetId }}" could not be loaded.
   </oa-error-panel>
 
-  <form ng-show="$ctrl.formDataIsReady && !$ctrl.error" name="iscsiForm" role="form" class="form-horizontal" novalidate>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title tc_panelTitle">Target IQN: {{ $ctrl.model.targetId }}</h3>
-      </div>
-      <div class="panel-body">
+  <div ng-show="$ctrl.formDataIsReady && !$ctrl.error">
+    <div ng-show="$ctrl.allImages.length === 0">
+      <oa-error-panel title="No RBD images">
+        You must <a ng-click="$ctrl.addRBD()">create an RBD image</a> before adding an iSCSI target.
+      </oa-error-panel>
+    </div>
+    <form ng-show="$ctrl.allImages.length !== 0"
+          name="$ctrl.iscsiForm"
+          role="form"
+          class="form-horizontal"
+          novalidate
+          oa-check-form>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title tc_panelTitle">Target IQN: {{ $ctrl.model.targetId }}</h3>
+        </div>
+        <div class="panel-body">
 
-        <div class="form-group"
-             ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm.targetId.$dirty) && iscsiForm.targetId.$invalid}">
-          <label class="col-sm-3 control-label" for="targetId">Target IQN</label>
-          <div class="col-sm-9">
-            <div class="input-group">
-              <input type="text" class="form-control" name="targetId" id="targetId"
-                     ng-model="$ctrl.model.targetId" required valid-iqn>
-              <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" uib-tooltip="Settings" ng-click="$ctrl.openTargetSettingsModal()">
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.targetId.$dirty) && $ctrl.iscsiForm.targetId.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="targetId">Target IQN</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <input type="text"
+                       class="form-control"
+                       name="targetId"
+                       id="targetId"
+                       ng-model="$ctrl.model.targetId"
+                       required
+                       valid-iqn>
+                <span class="input-group-btn">
+                  <button class="btn btn-default"
+                          type="button"
+                          uib-tooltip="Settings"
+                          ng-click="$ctrl.openTargetSettingsModal()">
                     <i class="fa fa-cogs"></i>
                   </button>
                 </span>
-            </div>
-            <span class="help-block" ng-show="iscsiForm.$submitted || iscsiForm.targetId.$dirty">
-              <span class="tc_targetIdRequired" ng-show="iscsiForm.targetId.$error.required">Required field</span>
-              <span class="tc_targetIdInvalid" ng-show="iscsiForm.targetId.$error.iqn">
-                An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'<br>
-                For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309<br>
-                <a target="_blank" href="https://en.wikipedia.org/wiki/ISCSI#Addressing">More information</a>
+              </div>
+              <span class="help-block"
+                    ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.targetId.$dirty">
+                <span class="tc_targetIdRequired"
+                      ng-show="$ctrl.iscsiForm.targetId.$error.required">Required field</span>
+                <span class="tc_targetIdInvalid"
+                      ng-show="$ctrl.iscsiForm.targetId.$error.iqn">
+                  An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'
+                  <br> For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309
+                  <br>
+                  <a target="_blank"
+                     href="https://en.wikipedia.org/wiki/ISCSI#Addressing">More information</a>
+                </span>
               </span>
-            </span>
-            <div class="row">
-              <div class="col-sm-12">
-                <span ng-repeat="setting in $ctrl.cephIscsiTargetAdvangedSettings">
-                  <span ng-if="$ctrl.model.targetSettings.hasOwnProperty(setting.property)" class="no-wrap margin-right-md">
-                      <label>&#10551; {{ setting.property }}</label>: {{ $ctrl.model.targetSettings[setting.property] }}
-                  </span>
-                </span>
-              </div>
-            </div>
-            <hr>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="portals">Portals</label>
-          <input type="hidden" ng-model="$ctrl.model.portals[0]" id="portals" required>
-          <div class="col-sm-9">
-            <span ng-if="$ctrl.model.portals.length === 0" class="form-control no-border">
-              <span class="text-muted">Empty</span>
-            </span>
-            <span ng-repeat="selectedPortal in $ctrl.model.portals track by $index">
-              <div class="input-group">
-                <input type="text" class="form-control"
-                       value="{{ selectedPortal.hostname }}: {{ selectedPortal.interface }}"
-                       readonly>
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" uib-tooltip="Delete"
-                          ng-click="$ctrl.removePortal($index)">
-                    <i class="fa fa-trash-o"></i>
-                  </button>
-                </span>
-              </div>
-              <span class="help-block"></span>
-            </span>
-            <span uib-dropdown on-toggle="toggled(open)" class="form-control no-border">
-              <button type="button" class="btn btn-default btn-label pull-right tc_addPortalButton" uib-dropdown-toggle
-                      ng-disabled="$ctrl.availablePortals().length === 0">
-                <i class="fa fa-fw fa-plus"></i>Add portal
-              </button>
-              <ul class="dropdown-menu scrollable-menu pull-right" uib-dropdown-menu
-                  aria-labelledby="simple-dropdown">
-                <li ng-repeat="currentPortal in $ctrl.availablePortals()">
-                  <a ng-click="$ctrl.addPortalAction(currentPortal)"
-                     class="tc_addPortalItem">{{ currentPortal.hostname }}: {{ currentPortal.interface }}</a>
-                </li>
-              </ul>
-            </span>
-            <hr>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="images">
-            Images <oa-helper helper-data="$ctrl.unsupportedRbdFeatures"
-                              helper-template="'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html'">
-                   </oa-helper>
-          </label>
-          <input type="hidden" ng-model="$ctrl.model.images[0]" id="images" required>
-          <div class="col-sm-9">
-            <span ng-if="$ctrl.model.images.length === 0" class="form-control no-border">
-              <span class="text-muted">Empty</span>
-            </span>
-            <span ng-repeat="currentImage in $ctrl.model.images track by $index">
-              <div class="input-group">
-                <div class="input-group-addon">lun: {{ currentImage.settings.lun }}</div>
-                <input type="text" class="form-control"
-                       value="{{ currentImage.pool }}: {{ currentImage.name }}"
-                       readonly>
-                <span class="input-group-btn">
-                  <button class="btn btn-default tc_imageSettingsButton" type="button" uib-tooltip="Settings"
-                          ng-click="$ctrl.openImageSettingsModal(currentImage)">
-                    <i class="fa fa-cogs"></i>
-                  </button>
-                  <button class="btn btn-default" type="button" uib-tooltip="Delete"
-                          ng-click="$ctrl.removeImage($index)">
-                    <i class="fa fa-trash-o"></i>
-                  </button>
-                </span>
-              </div>
               <div class="row">
-                  <div class="col-sm-12">
-                    <span ng-repeat="setting in $ctrl.allIscsiImageSettings">
-                      <span ng-if="currentImage.settings.hasOwnProperty(setting.property)" class="no-wrap margin-right-md">
-                          <label>&#10551; {{ setting.property }}</label>: {{ currentImage.settings[setting.property] }}
-                      </span>
-                    </span>
-                  </div>
-              </div>
-              <span class="help-block"></span>
-            </span>
-            <span uib-dropdown on-toggle="toggled(open)" class="form-control no-border">
-              <button type="button" class="btn btn-default btn-label pull-right tc_addImageButton" uib-dropdown-toggle
-                      ng-disabled="$ctrl.availableImages().length === 0">
-                <i class="fa fa-fw fa-plus"></i>Add image
-              </button>
-              <ul class="dropdown-menu scrollable-menu pull-right" uib-dropdown-menu
-                  aria-labelledby="simple-dropdown">
-                <li ng-repeat="currentImage in $ctrl.availableImages()"
-                    ng-class="{disabled: currentImage.hasUnsupportedFeature}">
-                  <a ng-click="$ctrl.addImageAction(currentImage)"
-                     class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}
-                    <span ng-if="currentImage.hasUnsupportedFeature">(unsupported)</span>
-                  </a>
-                </li>
-              </ul>
-            </span>
-            <hr>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="col-sm-offset-3 col-sm-9">
-            <div class="checkbox checkbox-primary">
-              <input type="checkbox" ng-model="$ctrl.model.authentication.hasAuthentication" name="active"
-                     id="hasAuthentication">
-              <label for="hasAuthentication">
-                Authentication
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div ng-if="$ctrl.model.authentication.hasAuthentication">
-          <div class="form-group"
-               ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['user'].$dirty) && iscsiForm['user'].$invalid}">
-            <label class="col-sm-3 control-label" for="user">User</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" name="user" id="user" ng-model="$ctrl.model.authentication.user" required>
-              <span class="help-block" ng-show="iscsiForm.$submitted || iscsiForm['user'].$dirty">
-                  <span class="tc_userRequired" ng-show="iscsiForm['user'].$error.required">Required field</span>
-              </span>
-            </div>
-          </div>
-          <div class="form-group"
-               ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['password'].$dirty) && iscsiForm['password'].$invalid}">
-            <label class="col-sm-3 control-label" for="password">Password</label>
-            <div class="col-sm-9">
-              <div class="input-group">
-                <input type="password" class="form-control" name="password"
-                       id="password"
-                       ng-model="$ctrl.model.authentication.password" required>
-                <span class="input-group-btn">
-                  <button type="button"
-                          class="btn btn-default"
-                          oa-password-button="password">
-                  </button>
-                </span>
-              </div>
-              <span class="help-block" ng-show="iscsiForm.$submitted || iscsiForm['password'].$dirty">
-                <span class="tc_passwordRequired" ng-show="iscsiForm['password'].$error.required">Required field</span>
-              </span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-3 control-label">Initiators</label>
-            <div class="col-sm-9">
-              <span ng-if="$ctrl.model.authentication.initiators.length === 0" class="form-control no-border">
-                <span class="text-muted">Empty</span>
-              </span>
-              <span ng-repeat="currentInitiator in $ctrl.model.authentication.initiators track by $index" id="initiators">
-                <div ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['initiator'+$index].$dirty) && iscsiForm['initiator'+$index].$invalid}">
-                  <div class="input-group">
-                    <input type="text" class="form-control"
-                           name="initiator{{ $index }}"
-                           id="initiator{{ $index }}"
-                           ng-model="$ctrl.model.authentication.initiators[$index]"
-                           class="tc_initiatorInput"
-                           required valid-iqn>
-                    <span class="input-group-btn">
-                      <button class="btn btn-default tc_initiatorRemoveButton" type="button" uib-tooltip="Delete"
-                              ng-click="$ctrl.removeInitiator($index)">
-                        <i class="fa fa-trash-o"></i>
-                      </button>
-                    </span>
-                  </div>
-                  <span class="help-block">
-                    <span ng-show="iscsiForm.$submitted || iscsiForm['initiator'+$index].$dirty">
-                      <span class="tc_InitiatorRequired" ng-show="iscsiForm['initiator'+$index].$error.required">
-                          Should not be empty
-                      </span>
-                      <span class="tc_InitiatorInvalid" ng-show="iscsiForm['initiator'+$index].$error.iqn">
-                          An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'<br>
-                          For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309<br>
-                        <a target="_blank" href="https://en.wikipedia.org/wiki/ISCSI#Addressing">More information</a>
-                      </span>
+                <div class="col-sm-12">
+                  <span ng-repeat="setting in $ctrl.cephIscsiTargetAdvangedSettings">
+                    <span ng-if="$ctrl.model.targetSettings.hasOwnProperty(setting.property)"
+                          class="no-wrap margin-right-md">
+                      <label>&#10551; {{ setting.property }}</label>: {{ $ctrl.model.targetSettings[setting.property] }}
                     </span>
                   </span>
                 </div>
+              </div>
+              <hr>
+            </div>
+          </div>
+
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.portals.$dirty) && $ctrl.iscsiForm.portals.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="portals">Portals</label>
+            <div class="col-sm-9">
+              <span ng-if="$ctrl.model.portals.length === 0"
+                    class="form-control no-border">
+                <span class="text-muted">Empty</span>
+                <input type="text"
+                       class="no-border"
+                       ng-model="$ctrl.model.portals[0]"
+                       name="portals"
+                       id="portals"
+                       required
+                       readonly>
               </span>
-              <span uib-dropdown on-toggle="toggled(open)" class="form-control no-border">
-                <button type="button" class="btn btn-default btn-label pull-right tc_addInitiatorButton" ng-click="$ctrl.addInitiator()">
-                  <i class="fa fa-fw fa-plus"></i>Add initiator
+              <span ng-repeat="selectedPortal in $ctrl.model.portals track by $index">
+                <div class="input-group">
+                  <input type="text"
+                         class="form-control"
+                         value="{{ selectedPortal.hostname }}: {{ selectedPortal.interface }}"
+                         readonly>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default"
+                            type="button"
+                            uib-tooltip="Delete"
+                            ng-click="$ctrl.removePortal($index)">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </span>
+                </div>
+                <span class="help-block"></span>
+              </span>
+              <span uib-dropdown
+                    on-toggle="toggled(open)"
+                    class="form-control no-border">
+                <button type="button"
+                        class="btn btn-default btn-label pull-right tc_addPortalButton"
+                        uib-dropdown-toggle
+                        ng-disabled="$ctrl.availablePortals().length === 0">
+                  <i class="fa fa-fw fa-plus"></i>Add portal
                 </button>
+                <ul class="dropdown-menu scrollable-menu pull-right"
+                    uib-dropdown-menu
+                    aria-labelledby="simple-dropdown">
+                  <li ng-repeat="currentPortal in $ctrl.availablePortals()">
+                    <a ng-click="$ctrl.addPortalAction(currentPortal)"
+                       class="tc_addPortalItem">{{ currentPortal.hostname }}: {{ currentPortal.interface }}</a>
+                  </li>
+                </ul>
+              </span>
+              <span class="help-block"
+                    ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.portals.$dirty">
+                <span class="tc_portalsRequired"
+                      ng-show="$ctrl.iscsiForm.portals.$error.required">Required field</span>
               </span>
               <hr>
             </div>
           </div>
+
+          <div class="form-group"
+               ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.images.$dirty) && $ctrl.iscsiForm.images.$invalid}">
+            <label class="col-sm-3 control-label"
+                   for="images">
+              Images
+              <oa-helper helper-data="$ctrl.unsupportedRbdFeatures"
+                         helper-template="'components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html'">
+              </oa-helper>
+            </label>
+            <div class="col-sm-9">
+              <span ng-if="$ctrl.model.images.length === 0"
+                    class="form-control no-border">
+                <span class="text-muted">Empty</span>
+                <input type="text"
+                       class="no-border"
+                       ng-model="$ctrl.model.images[0]"
+                       name="images"
+                       id="images"
+                       required
+                       readonly>
+              </span>
+              <span ng-repeat="currentImage in $ctrl.model.images track by $index">
+                <div class="input-group">
+                  <div class="input-group-addon">lun: {{ currentImage.settings.lun }}</div>
+                  <input type="text"
+                         class="form-control"
+                         value="{{ currentImage.pool }}: {{ currentImage.name }}"
+                         readonly>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default tc_imageSettingsButton"
+                            type="button"
+                            uib-tooltip="Settings"
+                            ng-click="$ctrl.openImageSettingsModal(currentImage)">
+                      <i class="fa fa-cogs"></i>
+                    </button>
+                    <button class="btn btn-default"
+                            type="button"
+                            uib-tooltip="Delete"
+                            ng-click="$ctrl.removeImage($index)">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                  </span>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <span ng-repeat="setting in $ctrl.allIscsiImageSettings">
+                      <span ng-if="currentImage.settings.hasOwnProperty(setting.property)"
+                            class="no-wrap margin-right-md">
+                        <label>&#10551; {{ setting.property }}</label>: {{ currentImage.settings[setting.property] }}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <span class="help-block"></span>
+              </span>
+              <span uib-dropdown
+                    on-toggle="toggled(open)"
+                    class="form-control no-border">
+                <button type="button"
+                        class="btn btn-default btn-label pull-right tc_addImageButton"
+                        uib-dropdown-toggle
+                        ng-disabled="$ctrl.availableImages().length === 0">
+                  <i class="fa fa-fw fa-plus"></i>Add image
+                </button>
+                <ul class="dropdown-menu scrollable-menu pull-right"
+                    uib-dropdown-menu
+                    aria-labelledby="simple-dropdown">
+                  <li ng-repeat="currentImage in $ctrl.availableImages()"
+                      ng-class="{disabled: currentImage.hasUnsupportedFeature}">
+                    <a ng-click="$ctrl.addImageAction(currentImage)"
+                       class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}
+                      <span ng-if="currentImage.hasUnsupportedFeature">(unsupported)</span>
+                    </a>
+                  </li>
+                </ul>
+              </span>
+              <span class="help-block"
+                    ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm.images.$dirty">
+                <span class="tc_imagesRequired"
+                      ng-show="$ctrl.iscsiForm.images.$error.required">Required field</span>
+              </span>
+              <hr>
+            </div>
+          </div>
+
           <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-6">
+            <div class="col-sm-offset-3 col-sm-9">
               <div class="checkbox checkbox-primary">
-                <input type="checkbox" ng-model="$ctrl.model.authentication.hasMutualAuthentication" name="active" id="hasMutualAuthentication">
-                <label for="hasMutualAuthentication"
-                       ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasMutualAuthentication && !$ctrl.model.authentication.enabledMutualAuthentication}">
-                  Mutual authentication
+                <input type="checkbox"
+                       ng-model="$ctrl.model.authentication.hasAuthentication"
+                       name="active"
+                       id="hasAuthentication">
+                <label for="hasAuthentication">
+                  Authentication
                 </label>
               </div>
             </div>
-            <div class="col-sm-3">
-              <span ng-if="$ctrl.model.authentication.hasMutualAuthentication" class="pull-right">
-                <toggle ng-model="$ctrl.model.authentication.enabledMutualAuthentication" size="btn-sm" onstyle="btn-primary"></toggle>
-              </span>
-            </div>
           </div>
-          <div ng-if="$ctrl.model.authentication.hasMutualAuthentication">
+
+          <div ng-if="$ctrl.model.authentication.hasAuthentication">
             <div class="form-group"
-                 ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['mutualUser'].$dirty) && iscsiForm['mutualUser'].$invalid}">
-              <label class="col-sm-3 control-label" for="mutualUser">Mutual user</label>
+                 ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['user'].$dirty) && $ctrl.iscsiForm['user'].$invalid}">
+              <label class="col-sm-3 control-label"
+                     for="user">User</label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" name="mutualUser" id="mutualUser"
-                       ng-model="$ctrl.model.authentication.mutualUser" required>
+                <input type="text"
+                       class="form-control"
+                       name="user"
+                       id="user"
+                       ng-model="$ctrl.model.authentication.user"
+                       required>
                 <span class="help-block"
-                      ng-show="iscsiForm.$submitted || iscsiForm['mutualUser'].$dirty">
-                  <span class="tc_mutualUserRequired" ng-show="iscsiForm['mutualUser'].$error.required">Required field</span>
+                      ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['user'].$dirty">
+                  <span class="tc_userRequired"
+                        ng-show="$ctrl.iscsiForm['user'].$error.required">Required field</span>
                 </span>
               </div>
             </div>
             <div class="form-group"
-                 ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['mutualPassword'+$index].$dirty) && iscsiForm['mutualPassword'+$index].$invalid}">
-              <label class="col-sm-3 control-label" for="mutualPassword">Mutual password</label>
+                 ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['password'].$dirty) && $ctrl.iscsiForm['password'].$invalid}">
+              <label class="col-sm-3 control-label"
+                     for="password">Password</label>
               <div class="col-sm-9">
                 <div class="input-group">
-                  <input type="password" class="form-control" name="mutualPassword" id="mutualPassword"
-                         ng-model="$ctrl.model.authentication.mutualPassword" required>
+                  <input type="password"
+                         class="form-control"
+                         name="password"
+                         id="password"
+                         ng-model="$ctrl.model.authentication.password"
+                         required>
                   <span class="input-group-btn">
                     <button type="button"
                             class="btn btn-default"
-                            oa-password-button="mutualPassword">
+                            oa-password-button="password">
                     </button>
                   </span>
                 </div>
                 <span class="help-block"
-                      ng-show="iscsiForm.$submitted || iscsiForm['mutualPassword'].$dirty">
-                    <span class="tc_mutualPasswordRequired" ng-show="iscsiForm['mutualPassword'].$error.required">Required field</span>
+                      ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['password'].$dirty">
+                  <span class="tc_passwordRequired"
+                        ng-show="$ctrl.iscsiForm['password'].$error.required">Required field</span>
                 </span>
               </div>
             </div>
-          </div>
-          <div class="col-sm-offset-3 col-sm-9">
-            <hr>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-6">
-              <div class="checkbox checkbox-primary">
-                <input type="checkbox" ng-model="$ctrl.model.authentication.hasDiscoveryAuthentication" name="active" id="hasDiscoveryAuthentication">
-                <label for="hasDiscoveryAuthentication"
-                       ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasDiscoveryAuthentication && !$ctrl.model.authentication.enabledDiscoveryAuthentication}">
-                  Discovery authentication
-                </label>
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Initiators</label>
+              <div class="col-sm-9">
+                <span ng-if="$ctrl.model.authentication.initiators.length === 0"
+                      class="form-control no-border">
+                  <span class="text-muted">Empty</span>
+                </span>
+                <span ng-repeat="currentInitiator in $ctrl.model.authentication.initiators track by $index"
+                      id="initiators">
+                  <div ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['initiator'+$index].$dirty) && $ctrl.iscsiForm['initiator'+$index].$invalid}">
+                    <div class="input-group">
+                      <input type="text"
+                             class="form-control tc_initiatorInput"
+                             name="initiator{{ $index }}"
+                             id="initiator{{ $index }}"
+                             ng-model="$ctrl.model.authentication.initiators[$index]"
+                             required
+                             valid-iqn>
+                      <span class="input-group-btn">
+                        <button class="btn btn-default tc_initiatorRemoveButton"
+                                type="button"
+                                uib-tooltip="Delete"
+                                ng-click="$ctrl.removeInitiator($index)">
+                          <i class="fa fa-trash-o"></i>
+                        </button>
+                      </span>
+                    </div>
+                    <span class="help-block">
+                      <span ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['initiator'+$index].$dirty">
+                        <span class="tc_InitiatorRequired"
+                              ng-show="$ctrl.iscsiForm['initiator'+$index].$error.required">
+                          Should not be empty
+                        </span>
+                        <span class="tc_InitiatorInvalid"
+                              ng-show="$ctrl.iscsiForm['initiator'+$index].$error.iqn">
+                          An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'
+                          <br> For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309
+                          <br>
+                          <a target="_blank"
+                             href="https://en.wikipedia.org/wiki/ISCSI#Addressing">More information</a>
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                </span>
+                <span uib-dropdown
+                      on-toggle="toggled(open)"
+                      class="form-control no-border">
+                  <button type="button"
+                          class="btn btn-default btn-label pull-right tc_addInitiatorButton"
+                          ng-click="$ctrl.addInitiator()">
+                    <i class="fa fa-fw fa-plus"></i>Add initiator
+                  </button>
+                </span>
+                <hr>
               </div>
             </div>
-            <div class="col-sm-3">
-              <span ng-if="$ctrl.model.authentication.hasDiscoveryAuthentication" class="pull-right">
-                <toggle ng-model="$ctrl.model.authentication.enabledDiscoveryAuthentication" size="btn-sm" onstyle="btn-primary"></toggle>
-              </span>
-            </div>
-          </div>
-          <div ng-if="$ctrl.model.authentication.hasDiscoveryAuthentication">
-            <div class="form-group"
-                 ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['discoveryUser'].$dirty) && iscsiForm['discoveryUser'].$invalid}">
-              <label class="col-sm-3 control-label" for="discoveryUser">Discovery user</label>
-              <div class="col-sm-9">
-                <input type="text" class="form-control" name="discoveryUser" id="discoveryUser"
-                       ng-model="$ctrl.model.authentication.discoveryUser" required>
-                <span class="help-block"
-                      ng-show="iscsiForm.$submitted || iscsiForm['discoveryUser'].$dirty">
-                  <span class="tc_discoveryUserRequired"
-                        ng-show="iscsiForm['discoveryUser'].$error.required">Required field</span>
+            <div class="form-group">
+              <div class="col-sm-offset-3 col-sm-6">
+                <div class="checkbox checkbox-primary">
+                  <input type="checkbox"
+                         ng-model="$ctrl.model.authentication.hasMutualAuthentication"
+                         name="active"
+                         id="hasMutualAuthentication">
+                  <label for="hasMutualAuthentication"
+                         ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasMutualAuthentication && !$ctrl.model.authentication.enabledMutualAuthentication}">
+                    Mutual authentication
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <span ng-if="$ctrl.model.authentication.hasMutualAuthentication"
+                      class="pull-right">
+                  <toggle ng-model="$ctrl.model.authentication.enabledMutualAuthentication"
+                          size="btn-sm"
+                          onstyle="btn-primary"></toggle>
                 </span>
               </div>
             </div>
-            <div class="form-group"
-                 ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['discoveryPassword'].$dirty) && iscsiForm['discoveryPassword'].$invalid}">
-              <label class="col-sm-3 control-label" for="discoveryPassword">Discovery password</label>
-              <div class="col-sm-9">
-                <div class="input-group">
-                  <input type="password" class="form-control" name="discoveryPassword" id="discoveryPassword"
-                         ng-model="$ctrl.model.authentication.discoveryPassword" required>
-                  <span class="input-group-btn">
-                    <button type="button"
-                            class="btn btn-default"
-                            oa-password-button="discoveryPassword">
-                    </button>
+            <div ng-if="$ctrl.model.authentication.hasMutualAuthentication">
+              <div class="form-group"
+                   ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['mutualUser'].$dirty) && $ctrl.iscsiForm['mutualUser'].$invalid}">
+                <label class="col-sm-3 control-label"
+                       for="mutualUser">Mutual user</label>
+                <div class="col-sm-9">
+                  <input type="text"
+                         class="form-control"
+                         name="mutualUser"
+                         id="mutualUser"
+                         ng-model="$ctrl.model.authentication.mutualUser"
+                         required>
+                  <span class="help-block"
+                        ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['mutualUser'].$dirty">
+                    <span class="tc_mutualUserRequired"
+                          ng-show="$ctrl.iscsiForm['mutualUser'].$error.required">Required field</span>
                   </span>
                 </div>
-                <span class="help-block"
-                      ng-show="iscsiForm.$submitted || iscsiForm['discoveryPassword'].$dirty">
-                  <span class="tc_discoveryPasswordRequired"
-                        ng-show="iscsiForm['discoveryPassword'].$error.required">Required field</span>
-                </span>
+              </div>
+              <div class="form-group"
+                   ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['mutualPassword'+$index].$dirty) && $ctrl.iscsiForm['mutualPassword'+$index].$invalid}">
+                <label class="col-sm-3 control-label"
+                       for="mutualPassword">Mutual password</label>
+                <div class="col-sm-9">
+                  <div class="input-group">
+                    <input type="password"
+                           class="form-control"
+                           name="mutualPassword"
+                           id="mutualPassword"
+                           ng-model="$ctrl.model.authentication.mutualPassword"
+                           required>
+                    <span class="input-group-btn">
+                      <button type="button"
+                              class="btn btn-default"
+                              oa-password-button="mutualPassword">
+                      </button>
+                    </span>
+                  </div>
+                  <span class="help-block"
+                        ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['mutualPassword'].$dirty">
+                    <span class="tc_mutualPasswordRequired"
+                          ng-show="$ctrl.iscsiForm['mutualPassword'].$error.required">Required field</span>
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <span ng-if="$ctrl.model.authentication.hasDiscoveryAuthentication">
             <div class="col-sm-offset-3 col-sm-9">
               <hr>
             </div>
             <div class="form-group">
               <div class="col-sm-offset-3 col-sm-6">
                 <div class="checkbox checkbox-primary">
-                  <input type="checkbox" ng-model="$ctrl.model.authentication.hasDiscoveryMutualAuthentication"
-                         name="active" id="hasDiscoveryMutualAuthentication">
-                  <label for="hasDiscoveryMutualAuthentication"
-                         ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasDiscoveryMutualAuthentication && !$ctrl.model.authentication.enabledDiscoveryMutualAuthentication}">
-                      Discovery mutual authentication
+                  <input type="checkbox"
+                         ng-model="$ctrl.model.authentication.hasDiscoveryAuthentication"
+                         name="active"
+                         id="hasDiscoveryAuthentication">
+                  <label for="hasDiscoveryAuthentication"
+                         ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasDiscoveryAuthentication && !$ctrl.model.authentication.enabledDiscoveryAuthentication}">
+                    Discovery authentication
                   </label>
                 </div>
               </div>
               <div class="col-sm-3">
-                <span ng-if="$ctrl.model.authentication.hasDiscoveryMutualAuthentication" class="pull-right">
-                  <toggle ng-model="$ctrl.model.authentication.enabledDiscoveryMutualAuthentication" size="btn-sm" onstyle="btn-primary"></toggle>
+                <span ng-if="$ctrl.model.authentication.hasDiscoveryAuthentication"
+                      class="pull-right">
+                  <toggle ng-model="$ctrl.model.authentication.enabledDiscoveryAuthentication"
+                          size="btn-sm"
+                          onstyle="btn-primary"></toggle>
                 </span>
               </div>
             </div>
-            <div ng-if="$ctrl.model.authentication.hasDiscoveryMutualAuthentication">
+            <div ng-if="$ctrl.model.authentication.hasDiscoveryAuthentication">
               <div class="form-group"
-                   ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['discoveryMutualUser'].$dirty) && iscsiForm['discoveryMutualUser'].$invalid}">
+                   ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryUser'].$dirty) && $ctrl.iscsiForm['discoveryUser'].$invalid}">
                 <label class="col-sm-3 control-label"
-                       for="discoveryMutualUser">Discovery mutual user</label>
+                       for="discoveryUser">Discovery user</label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" name="discoveryMutualUser" id="discoveryMutualUser"
-                         ng-model="$ctrl.model.authentication.discoveryMutualUser" required>
+                  <input type="text"
+                         class="form-control"
+                         name="discoveryUser"
+                         id="discoveryUser"
+                         ng-model="$ctrl.model.authentication.discoveryUser"
+                         required>
                   <span class="help-block"
-                        ng-show="iscsiForm.$submitted || iscsiForm['discoveryMutualUser'].$dirty">
-                    <span class="tc_discoveryMutualUserRequired"
-                          ng-show="iscsiForm['discoveryMutualUser'].$error.required">Required field</span>
+                        ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryUser'].$dirty">
+                    <span class="tc_discoveryUserRequired"
+                          ng-show="$ctrl.iscsiForm['discoveryUser'].$error.required">Required field</span>
                   </span>
                 </div>
               </div>
+              <div class="form-group"
+                   ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryPassword'].$dirty) && $ctrl.iscsiForm['discoveryPassword'].$invalid}">
+                <label class="col-sm-3 control-label"
+                       for="discoveryPassword">Discovery password</label>
+                <div class="col-sm-9">
+                  <div class="input-group">
+                    <input type="password"
+                           class="form-control"
+                           name="discoveryPassword"
+                           id="discoveryPassword"
+                           ng-model="$ctrl.model.authentication.discoveryPassword"
+                           required>
+                    <span class="input-group-btn">
+                      <button type="button"
+                              class="btn btn-default"
+                              oa-password-button="discoveryPassword">
+                      </button>
+                    </span>
+                  </div>
+                  <span class="help-block"
+                        ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryPassword'].$dirty">
+                    <span class="tc_discoveryPasswordRequired"
+                          ng-show="$ctrl.iscsiForm['discoveryPassword'].$error.required">Required field</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <span ng-if="$ctrl.model.authentication.hasDiscoveryAuthentication">
+              <div class="col-sm-offset-3 col-sm-9">
+                <hr>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-6">
+                  <div class="checkbox checkbox-primary">
+                    <input type="checkbox"
+                           ng-model="$ctrl.model.authentication.hasDiscoveryMutualAuthentication"
+                           name="active"
+                           id="hasDiscoveryMutualAuthentication">
+                    <label for="hasDiscoveryMutualAuthentication"
+                           ng-class="{'strikethrough text-muted': $ctrl.model.authentication.hasDiscoveryMutualAuthentication && !$ctrl.model.authentication.enabledDiscoveryMutualAuthentication}">
+                      Discovery mutual authentication
+                    </label>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <span ng-if="$ctrl.model.authentication.hasDiscoveryMutualAuthentication"
+                        class="pull-right">
+                    <toggle ng-model="$ctrl.model.authentication.enabledDiscoveryMutualAuthentication"
+                            size="btn-sm"
+                            onstyle="btn-primary"></toggle>
+                  </span>
+                </div>
+              </div>
+              <div ng-if="$ctrl.model.authentication.hasDiscoveryMutualAuthentication">
                 <div class="form-group"
-                     ng-class="{'has-error': (iscsiForm.$submitted || iscsiForm['discoveryMutualPassword'].$dirty) && iscsiForm['discoveryMutualPassword'].$invalid}">
-                  <label class="col-sm-3 control-label" for="discoveryMutualPassword">Discovery mutual password</label>
+                     ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryMutualUser'].$dirty) && $ctrl.iscsiForm['discoveryMutualUser'].$invalid}">
+                  <label class="col-sm-3 control-label"
+                         for="discoveryMutualUser">Discovery mutual user</label>
+                  <div class="col-sm-9">
+                    <input type="text"
+                           class="form-control"
+                           name="discoveryMutualUser"
+                           id="discoveryMutualUser"
+                           ng-model="$ctrl.model.authentication.discoveryMutualUser"
+                           required>
+                    <span class="help-block"
+                          ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryMutualUser'].$dirty">
+                      <span class="tc_discoveryMutualUserRequired"
+                            ng-show="$ctrl.iscsiForm['discoveryMutualUser'].$error.required">Required field</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group"
+                     ng-class="{'has-error': ($ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryMutualPassword'].$dirty) && $ctrl.iscsiForm['discoveryMutualPassword'].$invalid}">
+                  <label class="col-sm-3 control-label"
+                         for="discoveryMutualPassword">Discovery mutual password</label>
                   <div class="col-sm-9">
                     <div class="input-group">
-                      <input type="password" class="form-control" name="discoveryMutualPassword" id="discoveryMutualPassword"
-                             ng-model="$ctrl.model.authentication.discoveryMutualPassword" required>
+                      <input type="password"
+                             class="form-control"
+                             name="discoveryMutualPassword"
+                             id="discoveryMutualPassword"
+                             ng-model="$ctrl.model.authentication.discoveryMutualPassword"
+                             required>
                       <span class="input-group-btn">
                         <button type="button"
                                 class="btn btn-default"
@@ -390,30 +541,31 @@
                       </span>
                     </div>
                     <span class="help-block"
-                          ng-show="iscsiForm.$submitted || iscsiForm['discoveryMutualPassword'].$dirty">
+                          ng-show="$ctrl.iscsiForm.$submitted || $ctrl.iscsiForm['discoveryMutualPassword'].$dirty">
                       <span class="tc_discoveryMutualPasswordRequired"
-                            ng-show="iscsiForm['discoveryMutualPassword'].$error.required">Required field</span>
+                            ng-show="$ctrl.iscsiForm['discoveryMutualPassword'].$error.required">Required field</span>
                     </span>
                   </div>
                 </div>
-            </div>
-          </span>
+              </div>
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div class="panel-footer">
-        <div class="button-group text-right">
-          <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
-                  ng-disabled="iscsiForm.$invalid || iscsiForm.$submitted"
-                  ng-click="$ctrl.submitAction()">
-            Submit
-            <i class="fa fa-spinner fa-spin fa-fw" ng-if="iscsiForm.$submitted"></i>
-          </button>
-          <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="$ctrl.cancelAction()">
-            Back
-          </button>
+        <div class="panel-footer">
+          <div class="button-group text-right">
+            <oa-submit-button form="$ctrl.iscsiForm"
+                              on-submit="$ctrl.submitAction()">
+              Submit
+            </oa-submit-button>
+            <button type="button"
+                    class="btn btn-sm btn-default tc_backButton"
+                    ng-click="$ctrl.cancelAction()">
+              Back
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

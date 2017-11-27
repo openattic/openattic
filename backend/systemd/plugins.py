@@ -19,6 +19,7 @@ from functools import partial, wraps
 
 from django.conf import settings
 
+
 class BasePlugin(dbus.service.Object):
     """ Basic SystemD plugin that handles DBus object initialization properly.
 
@@ -32,8 +33,8 @@ class BasePlugin(dbus.service.Object):
         dbus.service.Object.__init__(self, self.bus, self.dbus_path)
 
 
-method = partial( dbus.service.method, settings.DBUS_IFACE_SYSTEMD )
-signal = partial( dbus.service.signal, settings.DBUS_IFACE_SYSTEMD )
+method = partial(dbus.service.method, settings.DBUS_IFACE_SYSTEMD)
+signal = partial(dbus.service.signal, settings.DBUS_IFACE_SYSTEMD)
 
 method.__doc__ = "Method decorator that has the DBus Interface pre-defined."
 signal.__doc__ = "Signal decorator that has the DBus Interface pre-defined."
@@ -73,7 +74,7 @@ def logged(cls):
         if hasattr(func, "_dbus_is_method") and \
            func._dbus_is_method and func.__name__ != "Introspect" and \
            getattr(func, "_enable_logging", True):
-            setattr( cls, attr, makeloggedfunc(func, "Calling") )
+            setattr(cls, attr, makeloggedfunc(func, "Calling"))
         elif hasattr(func, "_dbus_is_signal") and func._dbus_is_signal:
-            setattr( cls, attr, makeloggedfunc(func, "Emitting") )
+            setattr(cls, attr, makeloggedfunc(func, "Emitting"))
     return cls

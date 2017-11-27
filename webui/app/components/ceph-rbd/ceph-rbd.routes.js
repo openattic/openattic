@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephRbd");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("cephRbds", {
       url: "/ceph/rbds",
@@ -62,7 +61,8 @@ app.config(function ($stateProvider) {
         }
       },
       params: {
-        fsid: null
+        fsid: null,
+        fromState: "cephRbds"
       },
       ncyBreadcrumb: {
         parent: "cephRbds",
@@ -91,4 +91,4 @@ app.config(function ($stateProvider) {
         label: "{{$ctrl.selection.item.name}} details"
       }
     });
-});
+};

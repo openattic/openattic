@@ -30,11 +30,12 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
+/**
+ * deprecated: serviceState filter should be used
+ */
+export default () => {
+  return (value) => {
 
-app.filter("cephNfsState", function () {
-
-  return function (value) {
     if (value === "STARTING") {
       return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Starting...</span>";
     }
@@ -52,4 +53,4 @@ app.filter("cephNfsState", function () {
     }
     return "<span>Unknown</span>";
   };
-});
+};

@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic.cephNfs");
-app.config(function ($stateProvider) {
+export default ($stateProvider) => {
   $stateProvider
     .state("cephNfs", {
       url: "/ceph/nfs",
@@ -104,4 +103,4 @@ app.config(function ($stateProvider) {
         label: "{{$ctrl.selection.item.host}}:{{$ctrl.selection.item.path}} details"
       }
     });
-});
+};

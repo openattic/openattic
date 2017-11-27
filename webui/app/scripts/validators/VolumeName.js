@@ -51,7 +51,7 @@ app.directive("validname", function () {
             ctrl.$setValidity("validname", false);
             scope.errortext = "The following characters are valid: " +
             "a-z A-Z 0-9 + _ . -";
-          }  else if (viewValue.indexOf("snapshot") === 0 || viewValue.indexOf("pvmove") === 0) {
+          } else if (viewValue.indexOf("snapshot") === 0 || viewValue.indexOf("pvmove") === 0) {
             ctrl.$setValidity("validname", false);
             scope.errortext = "The volume name must not begin with \"snapshot\" or \"pvmove\".";
           } else if (viewValue.indexOf("_mlog") !== -1 || viewValue.indexOf("_mimage") !== -1) {

@@ -164,6 +164,16 @@ class UserViewSet(NoCacheModelViewSet):
                 .format(self.object.username)},
             status=status.HTTP_403_FORBIDDEN)
 
+    def destroy(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        req_user = request.user
+
+        if self.object == req_user:
+            return Response({'detail': 'You can\'t delete your own user account.'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        return super(UserViewSet, self).destroy(request, args, kwargs)
+
 
 RESTAPI_VIEWSETS = [
     ('users', UserViewSet),
