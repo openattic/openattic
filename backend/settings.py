@@ -179,6 +179,14 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 def read_secret_from_config():
+    """
+    Try to read from our config file. Then try to read from old .secret.txt file. Then
+    generate a new secret.
+
+    :return: tuple. First element is the secret, second element is a boolean telling if we should
+     write the secret later on. We cannot write the secret here, because django is not yet fully
+     functional.
+    """
     try:
         secret = read_single_setting('DJANGO_SECRET')
         if secret:
