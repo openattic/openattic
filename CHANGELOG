@@ -69,6 +69,7 @@ Fixed
 * Backend: Made Gatling tests more idempotent (OP-2913)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
+* WebUI: Display error message when no cluster exists (OP-2948)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
 * Installation: Secure permissions on sysconfig file (OP-2949)
 

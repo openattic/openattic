@@ -943,6 +943,6 @@ class StatusTestCase(TestCase):
     def test_api_no_cluster(self, ClusterConf_mock, call_librados_mock):
         client_mock = mock.Mock(**{'connected.return_value': False})
         call_librados_mock.side_effect = lambda fsid, func: func(client_mock)
-        ClusterConf_mock.from_fsid.side_effect = KeyError()
+        ClusterConf_mock.from_fsid.side_effect = LookupError()
         with self.assertRaises(UnavailableModule):
             ceph.status.check_ceph_api('fsid')

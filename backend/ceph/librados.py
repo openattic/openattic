@@ -220,7 +220,7 @@ class ClusterConf(object):
         for c in cls.all_configs():
             if c.fsid == fsid:
                 return c
-        raise ValueError('Unknown cluster {}'.format(fsid))
+        raise LookupError('Unknown cluster {}'.format(fsid))
 
 
 class Keyring(object):
