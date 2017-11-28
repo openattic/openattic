@@ -32,25 +32,13 @@ import rbd
 import oa_settings
 from ceph.conf import settings
 from exception import ExternalCommandError
-from utilities import run_in_external_process
+from utilities import run_in_external_process, write_single_setting
 
 logger = logging.getLogger(__name__)
 
 
 def _write_oa_setting(key, value):
-    assert '-' not in key
-    setattr(django_settings, key, value)
-    conf_obj = ConfigObj(oa_settings.settings_file)
-
-    def get_default(this_key):
-        return '' if not conf_obj.has_key(this_key) else conf_obj[this_key]
-
-    def get_type(this_key):
-        return type(value) if not conf_obj.has_key(this_key) else type(conf_obj[this_key])
-
-    def get_value(this_key):
-        return value if this_key == key else conf_obj[this_key]
-    oa_settings.save_settings_generic([key], get_default, get_type, get_value)
+    conf_obj = write_single_setting(key, value)
 
     # Added in 3.5.1: Remove old and broken keys containing '-'.
     for pattern in ['CEPH_KEYRING_*', 'CEPH_KEYRING_USER_*']:

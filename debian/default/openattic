@@ -75,3 +75,8 @@ WINBIND_SERVICE="winbind"
 
 # The HTTP Scheme to be used. Either 'http' or 'https'.
 #GRAFANA_API_SCHEME="http"
+
+# Automatically generated. Don't modify.
+#DJANGO_SECRET=""
+CEPH_KEYRING_USER_FSID_WITH_MINUS="dummy2"
+DJANGO_SECRET="mysecret"
