@@ -60,14 +60,14 @@ class CephPoolsList {
       active: 0,
       tabs: {
         details: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephPools.detail.details",
           class: "tc_detailsTab",
           name: "Details"
         },
         cacheTier: {
           show: () => {
-            return _.isObject(this.selection.item) &&
+            return _.isObjectLike(this.selection.item) &&
               this.selection.item.tiers.length > 0;
           },
           state: "cephPools.detail.cacheTier",
@@ -75,7 +75,7 @@ class CephPoolsList {
           name: "Cache Tier"
         },
         statistics: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephPools.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
@@ -104,7 +104,7 @@ class CephPoolsList {
   }
 
   getPoolList () {
-    if (_.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObjectLike(this.cluster) && this.cluster.results &&
         this.cluster.results.length > 0 && this.registry.selectedCluster) {
       let obj = this.$filter("filter")(this.cluster.results, {fsid: this.registry.selectedCluster.fsid}, true);
       if (obj.length === 0) {

@@ -56,6 +56,7 @@ Changed
 * WebUI: Migration of Users module into Angular (OP-2871)
 * WebUI: Migration of Ceph RBD module into Angular (OP-2860)
 * WebUI: Object Gateway Buckets now provides endpoint addresses (OP-2908)
+* WebUI: Replace _.isObject with _.isObjectLike (OP-2955)
 * Backend/WebUI: Usage of task queue on iSCSI service management to prevent
   timeouts (OP-2788)
 * Development: Make ``make_dist.py`` always use the current HEAD revision (OP-2883)
