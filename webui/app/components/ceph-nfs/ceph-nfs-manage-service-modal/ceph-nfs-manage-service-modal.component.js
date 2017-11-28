@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephNfsManageServiceModal {
 
   constructor (cephNfsService, cephNfsStateService, $filter) {
@@ -63,7 +65,7 @@ class CephNfsManageServiceModal {
     this.cephNfsStateService.updateStates(this.resolve.fsid, (hostsToUpdate) => {
       _.forIn(this.hosts, (host, hostname) => {
         let hostToUpdate = hostsToUpdate[hostname];
-        if (_.isObject(hostToUpdate)) {
+        if (_.isObjectLike(hostToUpdate)) {
           host.state = hostToUpdate.state;
           host.messages = [];
           _.forIn(hostToUpdate.exports, (exportItem) => {

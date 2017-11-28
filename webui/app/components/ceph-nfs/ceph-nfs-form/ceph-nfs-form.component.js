@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephNfsForm {
 
   constructor ($state, $stateParams, $q, cephNfsAccessType, cephNfsSquash,
@@ -136,7 +138,7 @@ class CephNfsForm {
             return currentFsalItem;
           }
         });
-        if (_.isObject(fsalItem)) {
+        if (_.isObjectLike(fsalItem)) {
           this.allFsals.push(fsalItem);
           if (fsalItem.value === "RGW") {
             this.cephRgwUserService.filter({
@@ -279,7 +281,7 @@ class CephNfsForm {
         return currentAccessTypeItem;
       }
     });
-    return _.isObject(accessTypeItem) ? accessTypeItem.help : "";
+    return _.isObjectLike(accessTypeItem) ? accessTypeItem.help : "";
   }
 
   _buildRequest () {

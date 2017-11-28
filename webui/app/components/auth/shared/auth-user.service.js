@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 export default class AuthUserService {
   constructor () {
     this.user = undefined;
@@ -44,6 +46,6 @@ export default class AuthUserService {
   }
 
   isLoggedIn () {
-    return _.isObject(this.user);
+    return _.isObjectLike(this.user);
   }
 }

@@ -73,7 +73,7 @@ class CephIscsiList {
       active: 0,
       tabs: {
         status: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephIscsi.detail.details",
           class: "tc_statusTab",
           name: "Status"
@@ -100,7 +100,7 @@ class CephIscsiList {
   }
 
   getIscsiList () {
-    if (_.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObjectLike(this.cluster) && this.cluster.results &&
           this.cluster.results.length > 0 && this.registry.selectedCluster) {
       var obj = this.$filter("filter")(this.cluster.results, {
         fsid: this.registry.selectedCluster.fsid
