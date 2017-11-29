@@ -81,7 +81,7 @@ app.directive("uniquename", function ($timeout, cephErasureCodeProfilesService, 
               };
               break;
             case "erasure-code-profiles":
-              query.fsid = scope.cluster.fsid;
+              query.fsid = scope.$ctrl.cluster.fsid;
               obj = {
                 model: cephErasureCodeProfilesService,
                 current: null, // Has no renaming feature.
