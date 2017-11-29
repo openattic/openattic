@@ -30,17 +30,16 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("ngAltSrc", function () {
-  return {
-    link: function (scope, element, attrs) {
-      element.bind("error", function () {
-        // Display an alternative image if the original image failed to load.
-        if (!angular.isString(attrs.ngAltSrc) || attrs.ngAltSrc.length === 0) {
-          attrs.ngAltSrc = "fa fa-bug fa-4x";
-        }
-        element.hide().after('<i class="' + attrs.ngAltSrc + '"></i>');
-      });
+export default () => {
+  return (object) => {
+    let count = 0;
+
+    for (let i in object) {
+      if (!object.hasOwnProperty(i)) {
+        continue;
+      }
+      count++;
     }
+    return count;
   };
-});
+};

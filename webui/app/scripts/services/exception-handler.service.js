@@ -32,7 +32,9 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic");
-app.factory("exceptionHandlerService", function ($resource) {
-  return $resource(globalConfig.API.URL + "logging/js-exception", {}, {});
-});
+export default class ExceptionHandlerService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "logging/js-exception", {}, {});
+    Object.assign(this, res);
+  }
+}
