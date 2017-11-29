@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,22 +30,28 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("focusMe", function ($timeout, $parse) {
-  return {
-    link: function (scope, element, attrs) {
-      var model = $parse(attrs.focusMe);
-      scope.$watch(model, function (value) {
-        if (value === true) {
-          $timeout(function () {
-            element[0].focus();
-            element[0].select();
-          });
-        }
-      });
-      element.bind("blur", function () {
-        scope.$apply(model.assign(scope, false));
-      });
+let app = angular.module("openattic");
+app.factory("$exceptionHandler", ($log, $injector, $window) => {
+  return (exception, cause) => {
+    try {
+      $log.error(exception, cause);
+
+      $injector.get("exceptionHandlerService")
+        .save({
+          url: $window.location.href,
+          errorMessage: exception && exception.message,
+          errorStack: exception && exception.stack,
+          errorCause: cause
+        })
+        .$promise
+        .then(() => {});
+
+      $injector.get("Notification").error({
+        title: "Unexpected error from client",
+        msg: "An unexpected error occurred, see browser console for details."
+      }, exception);
+    } catch (err) {
+      $log.error(err);
     }
   };
 });

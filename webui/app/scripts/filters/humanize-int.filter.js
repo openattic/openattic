@@ -30,9 +30,8 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.filter("humanizeInt", function () {
-  return function (inp) {
+export default () => {
+  return (inp) => {
     inp = parseInt(inp, 10);
     if (inp < 0 || inp > 12) {
       return inp;
@@ -53,36 +52,4 @@ app.filter("humanizeInt", function () {
       12: "twelve"
     }[inp];
   };
-});
-
-/**
- * Split a string into an array of substrings.
- * @param {string} separator Specifies the character, or the regular expression, to use for
- *   splitting the string.
- * @param {number} limit Optional. An integer that specifies the number of splits, items after
- *   the split limit will not be included in the array.
- * @return Returns an array containing the substrings or undefined in case of an error.
- */
-app.filter("split", function () {
-  return function (input, separator, limit) {
-    if (!angular.isString(input)) {
-      return undefined;
-    }
-    var parts = input.split(separator, limit);
-    return parts;
-  };
-});
-
-/**
- * Get the item at the specified index.
- * @param {number} Specifies the index of the item.
- * @return Returns the item at the specified index.
- */
-app.filter("getAt", function () {
-  return function (input, index) {
-    if (!angular.isArray(input) || index > input.length) {
-      return undefined;
-    }
-    return input[index];
-  };
-});
+};

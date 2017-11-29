@@ -30,39 +30,16 @@
  */
 "use strict";
 
-var app = angular.module("openattic.sizeparser", []);
-app.factory("SizeParserService", () => {
+export default () => {
+  return (scope, element, attrs) => {
+    element.bind("keydown keypress", (event) => {
+      if (event.which === 13) {
+        scope.$apply(() => {
+          scope.$eval(attrs.ngEnter);
+        });
 
-  // If a number can't hold such a large number 1 will be returned.
-  // Example: SizeParserService.parseInt(868, "b", "e")
-  const _parseInt = (value, outputSize = "m", inputSize) => {
-    return parseInt(_parseFloat(value, outputSize, inputSize), 10);
+        event.preventDefault();
+      }
+    });
   };
-
-  const _parseFloat = (value, outputSize, defaultInputSize = "m") => {
-    let units = ["b", "k", "m", "g", "t", "p", "e", "z", "y"];
-    if (outputSize) {
-      units = units.slice(units.indexOf(outputSize));
-    }
-    if (/^[\d.]+$/.test(value)) {
-      value += defaultInputSize;
-    }
-    value = value.toLowerCase().replace(/\s/g, "");
-    const rgx = new RegExp("^([\\d.]+)([" + units.join("") + "]?)(i?)(b?)$");
-    if (!rgx.test(value)) {
-      return null;
-    }
-    const matched = rgx.exec(value);
-    return parseFloat(matched[1], 10) * Math.pow(1024, units.indexOf(matched[2]));
-  };
-
-  const _isValid = (value) => {
-    return _parseInt(value) !== null;
-  };
-
-  return {
-    parseInt: _parseInt,
-    parseFloat: _parseFloat,
-    isValid: _isValid
-  };
-});
+};

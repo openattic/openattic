@@ -30,9 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+import _ from "lodash";
 
-app.filter("bytes", function () {
+export default () => {
   /**
    * Display the given size in the best matching unit.
    * @param {number} value The value to be displayed.
@@ -49,21 +49,22 @@ app.filter("bytes", function () {
    * @param {boolean} shortPrefixes Set to TRUE to use short binary prefixes,
    *   e.g. B, M, G, T. Defaults to FALSE.
    */
-  return function (value, inUnit, outPrecision, outUnit, appendUnit, separator, shortPrefixes) {
-    if (angular.isObject(arguments[1]) && (arguments.length === 2)) {
-      inUnit = arguments[1].inUnit;
-      outPrecision = arguments[1].outPrecision;
-      outUnit = arguments[1].outUnit;
-      appendUnit = arguments[1].appendUnit;
-      separator = arguments[1].separator;
-      shortPrefixes = arguments[1].shortPrefixes;
+  return (value, inUnit, outPrecision, outUnit, appendUnit, separator, shortPrefixes) => {
+    if (_.isObjectLike(inUnit)) {
+      let args = _.cloneDeep(inUnit);
+      inUnit = args.inUnit;
+      outPrecision = args.outPrecision;
+      outUnit = args.outUnit;
+      appendUnit = args.appendUnit;
+      separator = args.separator;
+      shortPrefixes = args.shortPrefixes;
     }
     // Set default values.
-    appendUnit = angular.isDefined(appendUnit) ? appendUnit : true;
-    separator = angular.isDefined(separator) ? separator : " ";
-    shortPrefixes = angular.isDefined(shortPrefixes) ? shortPrefixes : false;
-    var result;
-    var units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+    appendUnit = !_.isUndefined(appendUnit) ? appendUnit : true;
+    separator = !_.isUndefined(separator) ? separator : " ";
+    shortPrefixes = !_.isUndefined(shortPrefixes) ? shortPrefixes : false;
+    let result;
+    let units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
     if (shortPrefixes) {
       units = ["B", "K", "M", "G", "T", "P", "E", "Z", "Y"];
     }
@@ -79,8 +80,8 @@ app.filter("bytes", function () {
       return result;
     }
     // Get the input unit.
-    if (angular.isDefined(inUnit)) {
-      if (angular.isString(inUnit)) {
+    if (!_.isUndefined(inUnit)) {
+      if (_.isString(inUnit)) {
         inUnit = units.indexOf(inUnit);
       }
       if (!inUnit || inUnit < 0 || inUnit > units.length) {
@@ -94,9 +95,9 @@ app.filter("bytes", function () {
       value = (value * Math.pow(1024, inUnit)).toFixed(0);
     }
     // Set the output precision and unit.
-    outPrecision = angular.isDefined(outPrecision) ? outPrecision : 2;
-    if (angular.isDefined(outUnit)) {
-      if (angular.isString(outUnit)) {
+    outPrecision = !_.isUndefined(outPrecision) ? outPrecision : 2;
+    if (!_.isUndefined(outUnit)) {
+      if (_.isString(outUnit)) {
         outUnit = units.indexOf(outUnit);
       }
       if (!outUnit || outUnit < 0 || outUnit > units.length) {
@@ -115,52 +116,4 @@ app.filter("bytes", function () {
     }
     return result;
   };
-});
-
-app.filter("toBytes", function () {
-  /**
-   * Convert the given value into bytes.
-   * @param {string} value The value to be converted, e.g. 1024B, 10M, 300KiB or 1ZB.
-   * @returns Returns the given value in bytes without any appended unit.
-   */
-  return function (value) {
-    var base = 1024;
-    var units = {
-      "b": 1,
-      "k": Math.pow(base, 1),
-      "kb": Math.pow(base, 1),
-      "kib": Math.pow(base, 1),
-      "m": Math.pow(base, 2),
-      "mb": Math.pow(base, 2),
-      "mib": Math.pow(base, 2),
-      "g": Math.pow(base, 3),
-      "gb": Math.pow(base, 3),
-      "gib": Math.pow(base, 3),
-      "t": Math.pow(base, 4),
-      "tb": Math.pow(base, 4),
-      "tib": Math.pow(base, 4),
-      "p": Math.pow(base, 5),
-      "pb": Math.pow(base, 5),
-      "pib": Math.pow(base, 5),
-      "e": Math.pow(base, 6),
-      "eb": Math.pow(base, 6),
-      "eib": Math.pow(base, 6),
-      "z": Math.pow(base, 7),
-      "zb": Math.pow(base, 7),
-      "zib": Math.pow(base, 7),
-      "y": Math.pow(base, 8),
-      "yb": Math.pow(base, 8),
-      "yib": Math.pow(base, 8)
-    };
-    var m = RegExp("^(\\d+)\\s*(B|K(B|iB)?|M(B|iB)?|G(B|iB)?|T(B|iB)?|P(B|iB)?|" +
-      "E(B|iB)?|Z(B|iB)?|Y(B|iB)?)?$", "i").exec(value);
-    if (m === null) {
-      return value;
-    }
-    var bytes = m[1];
-    if (angular.isString(m[2])) {
-      bytes = bytes * units[m[2].toLowerCase()];
-    }
-    return bytes;
-  };
-});
+};

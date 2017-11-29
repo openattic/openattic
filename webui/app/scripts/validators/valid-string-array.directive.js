@@ -30,22 +30,23 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-
-app.filter("ordinal", function () {
-  /**
-   * Return the ordinal value of a number:
-   * i.e 1->1st, 2->2nd, etc.
-   */
-  return function (value) {
-    var num = parseInt(value, 10);
-    if (isNaN(num)) {
-      return value;
+export default () => {
+  return {
+    require: "ngModel",
+    link: (scope, elem, attrs, ctrl) => {
+      ctrl.$validators.stringArray = (modelValue) => {
+        if (ctrl.$isEmpty(modelValue)) {
+          return true;
+        }
+        try {
+          let value = "\"" + modelValue.replace(/,/g, "\",\"") + "\"";
+          return JSON.parse("[" + value + "]").every((item) => {
+            return item.trim() !== "";
+          });
+        } catch (err) {
+          return false;
+        }
+      };
     }
-    return value + (Math.floor(num / 10) === 1 ? "th" :
-      (num % 10 === 1 ? "st" :
-        (num % 10 === 2 ? "nd" :
-          (num % 10 === 3 ? "rd" :
-            "th"))));
   };
-});
+};

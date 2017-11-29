@@ -30,7 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
+import _ from "lodash";
 /**
  * @param {string} oaClipboardTarget The identifer of the DOM element whose
  *   text is copied into the clipboard. Take care that the identifier is
@@ -38,21 +38,21 @@ var app = angular.module("openattic");
  *   the element value into the clipboard.
  * @param {string} oaClipboardText An alternative text. Default is 'text'.
  */
-app.directive("oaClipboard", function (Notification) {
+export default (Notification) => {
   return {
     restrict: "A",
     scope: {
       oaClipboardTarget: "@",
       oaClipboardText: "@"
     },
-    link: function (scope, element, attrs) {
-      element.bind("click", function () {
-        var toastyOptions = {};
-        attrs.oaClipboardText = angular.isString(attrs.oaClipboardText) ?
+    link: (scope, element, attrs) => {
+      element.bind("click", () => {
+        let toastyOptions = {};
+        attrs.oaClipboardText = _.isString(attrs.oaClipboardText) ?
           attrs.oaClipboardText : "text";
         try {
           // Get the DOM element by id.
-          var node = $("#" + attrs.oaClipboardTarget);
+          const node = $("#" + attrs.oaClipboardTarget);
           // Create the input to hold our text.
           element = document.createElement("input");
           element.value = node.val();
@@ -79,10 +79,10 @@ app.directive("oaClipboard", function (Notification) {
         // Display a toasty/message.
         // Note, the scope is not updated automatically because we are inside
         // a click event, so we need to do this ourself.
-        scope.$apply(function () {
+        scope.$apply(() => {
           Notification[toastyOptions.type](toastyOptions);
         });
       });
     }
   };
-});
+};
