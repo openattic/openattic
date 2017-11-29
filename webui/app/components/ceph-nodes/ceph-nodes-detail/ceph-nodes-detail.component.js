@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephNodesDetail {
   constructor (cephNodesService) {
     this.cephNodesService = cephNodesService;
@@ -37,7 +39,7 @@ class CephNodesDetail {
 
   $doCheck () {
     if (this.selection.item && this.selection.item.daemons &&
-      _.isObject(this.selection.item.daemons)) {
+      _.isArray(this.selection.item.daemons)) {
       this.osds = this.selection.item.daemons.filter((daemon) => {
         return daemon.startsWith("osd.");
       });

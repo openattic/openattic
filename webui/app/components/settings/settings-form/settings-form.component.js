@@ -282,7 +282,7 @@ class SettingsForm {
       .$promise
       .then(() => {
         this.Notification.success({
-          msg: "Settings has been saved successfully"
+          msg: "Settings have been saved successfully"
         });
         this.settingsForm.$submitted = false;
         this.settingsForm.$dirty = false;

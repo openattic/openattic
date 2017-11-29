@@ -150,11 +150,11 @@ export default class CephNfsStateService {
             updateHosts(hosts);
           })
           .catch(() => {
-            updateHosts([]);
+            updateHosts();
           });
       })
       .catch(() => {
-        updateHosts([]);
+        updateHosts();
       });
   }
 
