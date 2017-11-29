@@ -22,7 +22,7 @@ Group: System Environment/Libraries
 License: GPL-2.0
 URL: http://www.openattic.org
 BuildArch: noarch
-Source:	%{name}-ses5-%{version}.tar.bz2
+Source:	%{name}-ses6-%{version}.tar.bz2
 BuildRequires: -post-build-checks
 %if 0%{?suse_version} >= 1210
 BuildRequires: systemd-rpm-macros
@@ -118,7 +118,7 @@ make changes to the Ceph cluster's resources using external command-line tools.
 Upstream URL: http://www.openattic.org
 
 %prep
-%setup -q -n %{name}-ses5-%{version}
+%setup -q -n %{name}-ses6-%{version}
 
 %build
 
