@@ -21,8 +21,9 @@ import mock
 
 
 class RGWClientTestCase(TestCase):
-    @mock.patch('ceph_radosgw.rgw_client.Settings')
-    def test_load_settings(self, Settings_mock):
+
+    @staticmethod
+    def _mock_settings(Settings_mock):
         Settings_mock.RGW_API_HOST = 'host'
         Settings_mock.RGW_API_PORT = 42
         Settings_mock.RGW_API_SCHEME = 'https'
@@ -30,6 +31,10 @@ class RGWClientTestCase(TestCase):
         Settings_mock.RGW_API_USER_ID = 'USER_ID'
         Settings_mock.RGW_API_ACCESS_KEY = 'ak'
         Settings_mock.RGW_API_SECRET_KEY = 'sk'
+
+    @mock.patch('ceph_radosgw.rgw_client.Settings')
+    def test_load_settings(self, Settings_mock):
+        RGWClientTestCase._mock_settings(Settings_mock)
 
         RGWClient._load_settings()  # Also test import of awsauth.S3Auth
 
@@ -61,9 +66,12 @@ class RGWClientTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Can not delete the bucket', response.data['detail'])
 
+    @mock.patch('ceph_radosgw.rgw_client.Settings')
     @mock.patch('ceph_radosgw.views.proxy_view')
     @mock.patch('ceph_nfs.models.GaneshaExport.objects.filter')
-    def test_bucket_get(self, filter_mock, proxy_view_mock):
+    def test_bucket_get(self, filter_mock, proxy_view_mock, Settings_mock):
+        RGWClientTestCase._mock_settings(Settings_mock)
+
         proxy_view_mock.return_value = HttpResponse(json.dumps({
             'owner': 'floyd',
             'bucket': 'my_data'
