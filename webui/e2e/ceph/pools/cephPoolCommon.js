@@ -395,7 +395,7 @@ var CephPoolCommons = function () {
     });
   };
 
-  this.getFormElement = (e) =>  e.byModel || e.byClass;
+  this.getFormElement = (e) => e.byModel || e.byClass;
 
   this.deletePool = (name) => {
     self.cephPools.click();
@@ -414,6 +414,15 @@ var CephPoolCommons = function () {
     if (crushRuleSet) {
       self.getFormElement(fe.crushRules)
         .all(by.cssContainingText("option", crushRuleSet)).click();
+    } else {
+      self.getFormElement(fe.crushRules).isPresent().then((isVisible) => {
+        if (isVisible) {
+          self.getFormElement(fe.crushRules)
+            .all(by.tagName("option"))
+            .get(1)
+            .click();
+        }
+      });
     }
     if (erasureProfile) {
       self.getFormElement(fe.erasureProfiles)

@@ -48,8 +48,8 @@ var allSuites = {
   // ceph suites - They only run if a ceph pool is configured.
   ceph_clusters        : "./e2e/ceph/ceph_clusters.e2e.js",
   ceph_pools           : "./e2e/ceph/pools/ceph_pools.e2e.js",
-  ceph_pool_form       : "./e2e/ceph/pools/ceph_pool_form.e2e.js",
   ceph_pool_creation   : "./e2e/ceph/pools/ceph_pool_creation.e2e.js",
+  ceph_pool_form       : "./e2e/ceph/pools/ceph_pool_form.e2e.js",
   ceph_pool_edit       : "./e2e/ceph/pools/ceph_pool_edit.e2e.js",
   ec_profiles          : "./e2e/ceph/pools/ec_profile/ec_profiles.e2e.js",
   ceph_osds            : "./e2e/ceph/osds/*.e2e.js",

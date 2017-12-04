@@ -53,7 +53,7 @@ describe("ceph pool creation", () => {
 
   it("should create erasure code pool with overwrite enabled", () => {
     cephPoolProperties.addButton.click();
-    cephPoolProperties.fillForm("e2e_erasure_overwrite", "erasure", 32, false, "cephfs", "erasure-code", "default");
+    cephPoolProperties.fillForm("e2e_erasure_overwrite", "erasure", 32, false, "cephfs", null, "default");
     cephPoolProperties.checkCheckboxToBe(element(by.model("$ctrl.data.flags.ec_overwrites")));
     cephPoolProperties.submitForm("e2e_erasure_overwrite", "erasure", 32);
     expect(element(by.className("tc-flag-ec_overwrites")).isDisplayed()).toBe(true);

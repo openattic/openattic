@@ -66,22 +66,18 @@ describe("should test the ceph pools panel", function () {
   it("should have a details tab when selecting a pool", function () {
     //choose first element in ceph pools list
     element.all(by.css("tbody > tr > td > input")).get(0).click();
+
     helpers.checkLocation("ceph/pools/details#more");
     expect(cephPoolProperties.detailsTab.isDisplayed()).toBe(true);
-    element.all(by.css("tbody > tr > td > input")).get(0).click();
   });
 
   cephPoolProperties.detailAttributes.forEach(function (attr) {
     it('should check the content attribute "' + attr.name + '" in the details tab when selecting a pool', function () {
-      element.all(by.css("tbody > tr > td > input")).get(0).click();
       expect(element.all(by.cssContainingText("dt", attr.name + ":")).first().isDisplayed()).toBe(attr.displayed);
-      element.all(by.css("tbody > tr > td > input")).get(0).click();
     });
   });
 
   it("should have a statistic tab when selecting a pool", function () {
-    //choose first element in ceph pools list
-    element.all(by.css("tbody > tr > td > input")).get(0).click();
     cephPoolProperties.statisticsTab.click();
     helpers.checkLocation("ceph/pools/statistics#more");
     expect(cephPoolProperties.statisticsTab.isDisplayed()).toBe(true);
