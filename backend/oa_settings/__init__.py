@@ -28,13 +28,13 @@ logger = logging.getLogger(__name__)
 
 
 class Settings(object):
-    '''
+    """
     This class will be used to access the settings values that are declared in settings.py
     For instance if there is a setting declared in settings.py as:
       CUSTOM_SETTING = ("some_value", str)
     Then to access the value of this setting, one can just do:
       Settings.CUSTOM_SETTING
-    '''
+    """
     pass
 
     @staticmethod
@@ -93,7 +93,6 @@ def get_containing_folder_follow_links(file_path):
     ret = os.path.dirname(file_path)
 
     return ret
-
 
 
 settings_list = [i for i in dir(settings) if not inspect.ismethod(i) and not i.startswith('_')]
