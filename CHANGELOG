@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend/QA: Increased unit test coverage of rest and userprefs app (OP-2809)
 * WebUI: Add a 'Clear' button to the datatable search field (OP-2900)
 * WebUI: Add a timestamp of last update on the dashboard (OP-2837)
 * Development: Import ``set_symlinks.sh`` in order to create symlinks for
