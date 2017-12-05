@@ -85,6 +85,7 @@ Fixed
 * WebUI: Fix typo in settings notification (OP-2953)
 * Backend: Fix "test_bucket_get" Django unit test (OP-2947)
 * WebUI: Fix javascript error after remove RBD size (OP-2966)
+* WebUI: Hide striping preview until RBD size is set (OP-2968)
 
 Removed
 ~~~~~~~
