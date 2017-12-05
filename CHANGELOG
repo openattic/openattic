@@ -84,6 +84,7 @@ Fixed
 * WebUI: Fix problem with persistent notification options (OP-2952)
 * WebUI: Fix typo in settings notification (OP-2953)
 * Backend: Fix "test_bucket_get" Django unit test (OP-2947)
+* WebUI: Fix javascript error after remove RBD size (OP-2966)
 
 Removed
 ~~~~~~~
