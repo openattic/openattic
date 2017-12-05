@@ -46,7 +46,7 @@ export default class SizeParserService {
     if (/^[\d.]+$/.test(value)) {
       value += defaultInputSize;
     }
-    value = value.toLowerCase().replace(/\s/g, "");
+    value = value && value.toLowerCase().replace(/\s/g, "");
     const rgx = new RegExp("^([\\d.]+)([" + units.join("") + "]?)(i?)(b?)$");
     if (!rgx.test(value)) {
       return null;
