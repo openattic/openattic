@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,15 +30,11 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("ngRightClick", function ($parse) {
-  return function (scope, element, attrs) {
-    var fn = $parse(attrs.ngRightClick);
-    element.bind("contextmenu", function (event) {
-      scope.$apply(function () {
-        event.preventDefault();
-        fn(scope, {$event:event});
-      });
-    });
-  };
-});
+import globalConfig from "globalConfig";
+
+export default class ExceptionHandlerService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "logging/js-exception", {}, {});
+    Object.assign(this, res);
+  }
+}

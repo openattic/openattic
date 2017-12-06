@@ -208,8 +208,10 @@ class OaModuleLoader {
   loadModule () {
     if (_.isString(this.module)) {
       this.moduleAvailable = undefined;
+      // Set fsid to empty if no cluster is available, otherwise the backend will
+      // not return the correct error reason (code=152).
       const fsid = this.registryService && this.registryService.selectedCluster ?
-        this.registryService.selectedCluster.fsid : undefined;
+        this.registryService.selectedCluster.fsid : "";
       this.oaModuleLoaderService.get({
         module: this.module,
         fsid: fsid
@@ -234,14 +236,14 @@ class OaModuleLoader {
   }
 
   getErrorTitle (reason) {
-    if (_.isObject(this.reasons[reason])) {
+    if (_.isObjectLike(this.reasons[reason])) {
       return this.reasons[reason].title;
     }
     return "Error";
   }
 
   getErrorTemplate (reason) {
-    if (_.isUndefined(this.reasons[reason])) {
+    if (_.isObjectLike(this.reasons[reason])) {
       return "components/shared/oa-module-loader/reason-" + reason + "-" + this.reasons[reason].template + ".html";
     }
     return "components/shared/oa-module-loader/reason-default.html";

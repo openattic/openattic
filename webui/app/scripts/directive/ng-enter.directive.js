@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 SUSE LLC
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,24 +30,16 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.directive("validStringArray", function () {
-  return {
-    require: "ngModel",
-    link: function (scope, elem, attrs, ctrl) {
-      ctrl.$validators.stringArray = function (modelValue) {
-        if (ctrl.$isEmpty(modelValue)) {
-          return true;
-        }
-        try {
-          var value = "\"" + modelValue.replace(/,/g, "\",\"") + "\"";
-          return angular.fromJson("[" + value + "]").every(function (item) {
-            return item.trim() !== "";
-          });
-        } catch (err) {
-          return false;
-        }
-      };
-    }
+export default () => {
+  return (scope, element, attrs) => {
+    element.bind("keydown keypress", (event) => {
+      if (event.which === 13) {
+        scope.$apply(() => {
+          scope.$eval(attrs.ngEnter);
+        });
+
+        event.preventDefault();
+      }
+    });
   };
-});
+};

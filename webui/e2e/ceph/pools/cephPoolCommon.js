@@ -204,6 +204,8 @@ var CephPoolCommons = function () {
       presented: false,
       displayedIf: ["erasure"],
       items: {
+        addProfile: element(by.className("tc-add-ec-profile")),
+        deleteProfile: element(by.className("tc-delete-ec-profile")),
         erasureSelection: element(by.className("tc_erasureProfilesOption")),
         erasureRequired: element(by.className("tc_erasureRequired"))
       }
@@ -322,15 +324,7 @@ var CephPoolCommons = function () {
 
   this.addApplication = (select) => {
     const fe = self.formElements;
-    const selection = self.getFormElement(fe.selectApplication);
-    selection.click();
-    let option = {};
-    if (typeof select === "string") {
-      option = selection.element(by.cssContainingText("option", select));
-    } else {
-      option = selection.all(by.tagName("option")).get(select);
-    }
-    option.click();
+    helpers.selectOption(self.getFormElement(fe.selectApplication), select);
     self.getFormElement(fe.addApplication).click();
   };
 

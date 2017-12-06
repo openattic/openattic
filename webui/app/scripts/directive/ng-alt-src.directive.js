@@ -30,17 +30,18 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.filter("objLength", function () {
-  return function (object) {
-    var count = 0;
+import _ from "lodash";
 
-    for (var i in object) {
-      if (!object.hasOwnProperty(i)) {
-        continue;
-      }
-      count++;
+export default () => {
+  return {
+    link: (scope, element, attrs) => {
+      element.bind("error", () => {
+        // Display an alternative image if the original image failed to load.
+        if (!_.isString(attrs.ngAltSrc) || attrs.ngAltSrc.length === 0) {
+          attrs.ngAltSrc = "fa fa-bug fa-4x";
+        }
+        element.hide().after('<i class="' + attrs.ngAltSrc + '"></i>');
+      });
     }
-    return count;
   };
-});
+};

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 SUSE LLC
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,9 +30,22 @@
  */
 "use strict";
 
-import globalConfig from "globalConfig";
+import _ from "lodash";
 
-var app = angular.module("openattic");
-app.factory("exceptionHandlerService", function ($resource) {
-  return $resource(globalConfig.API.URL + "logging/js-exception", {}, {});
-});
+/**
+ * Split a string into an array of substrings.
+ * @param {string} separator Specifies the character, or the regular expression, to use for
+ *   splitting the string.
+ * @param {number} limit Optional. An integer that specifies the number of splits, items after
+ *   the split limit will not be included in the array.
+ * @return Returns an array containing the substrings or undefined in case of an error.
+ */
+export default () => {
+  return (input, separator, limit) => {
+    if (!_.isString(input)) {
+      return undefined;
+    }
+    const parts = input.split(separator, limit);
+    return parts;
+  };
+};

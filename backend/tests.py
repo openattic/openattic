@@ -12,12 +12,15 @@
 """
 
 import doctest
+import os
 
 from django.utils.unittest import TestCase
+from os.path import dirname, abspath, exists
 
 import module_status
 import utilities
 import exception
+import settings
 
 
 def load_tests(loader, tests, ignore):
@@ -68,3 +71,37 @@ class RunInExternalProcessTestCase(TestCase):
         self.assertRaises(exception.ExternalCommandError,
                           lambda: utilities.run_in_external_process(just_wait, 'test timeout',
                                                                     timeout=1))
+
+
+class SettingsTest(TestCase):
+    secret_file_path = file_path = dirname(abspath(__file__)) + '/.secret.txt'
+
+    def test_new_secret(self):
+        utilities.write_single_setting('DJANGO_SECRET', '')
+        if exists(SettingsTest.secret_file_path):
+            os.remove(SettingsTest.secret_file_path)
+
+        secret_1, should_write_1 = settings.read_secret_from_config()
+        self.assertTrue(should_write_1)
+        settings.write_secret_to_config(secret_1)
+
+        secret_2, should_write_2  = settings.read_secret_from_config()
+        self.assertEqual(secret_1, secret_2)
+        self.assertFalse(should_write_2)
+
+        self.assertEqual(utilities.read_single_setting('DJANGO_SECRET'), secret_2)
+
+    def test_secret_migration_read(self):
+
+        with open(SettingsTest.secret_file_path, 'w') as f:
+            f.write('mysecret')
+
+        utilities.write_single_setting('DJANGO_SECRET', '')
+
+        secret, should_write_secret = settings.read_secret_from_config()
+        self.assertTrue(should_write_secret)
+        self.assertEqual(secret, 'mysecret')
+
+        settings.write_secret_to_config('mysecret')
+        self.assertEqual(utilities.read_single_setting('DJANGO_SECRET'), 'mysecret')
+        self.assertFalse(exists(SettingsTest.secret_file_path))

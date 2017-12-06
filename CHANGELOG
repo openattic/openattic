@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend/QA: Increased unit test coverage of rest and userprefs app (OP-2809)
 * WebUI: Add a 'Clear' button to the datatable search field (OP-2900)
 * WebUI: Add a timestamp of last update on the dashboard (OP-2837)
 * Development: Import ``set_symlinks.sh`` in order to create symlinks for
@@ -31,6 +32,7 @@ Changed
 ~~~~~~~
 * Backend/QA: Improve auth Gatling tests to check the browser cookie
   expiry (OP-2921)
+* Backend: Migrated .secret.txt into a setting in the settings file (OP-2873)
 * WebUI: Migration of Dashboard module into Angular (OP-2861)
 * WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 * WebUI: Migration of Navigation module into Angular (OP-2864)
@@ -49,14 +51,19 @@ Changed
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
 * WebUI: The datatable does not show any progress if filter options are
   changed (OP-2920)
+* WebUI: Display meaningful error when creating a RGW user using an existing
+  email address (OP-2902)
 * Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors
   when deleting large RBD images. (OP-2742)
 * WebUI: Migration of Users module into Angular (OP-2871)
 * WebUI: Migration of Ceph RBD module into Angular (OP-2860)
 * WebUI: Object Gateway Buckets now provides endpoint addresses (OP-2908)
+* WebUI: Replace _.isObject with _.isObjectLike (OP-2955)
 * Backend/WebUI: Usage of task queue on iSCSI service management to prevent
   timeouts (OP-2788)
-* Development: Make ``make_dist.py`` always use the current HEAD revision (OP-2883)
+* Development: Make ``make_dist.py`` always use the current HEAD revision
+  (OP-2883)
+* WebUI: Migration of OA module into Angular (OP-2904)
 
 Fixed
 ~~~~~
@@ -66,10 +73,19 @@ Fixed
 * Backend: Performance Improvements when listing RBDs (OP-2688)
 * Backend: Fixed Internal Server Error when listing RBDs with missing
   (OP-2895)
+* Backend: Fixed an error message in the openATTIC log file when
+  issuing `oaconfig install` (OP-2898)
 * Backend: Made Gatling tests more idempotent (OP-2913)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
+* WebUI: Display error message when no cluster exists (OP-2948)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
+* Installation: Secure permissions on sysconfig file (OP-2949)
+* WebUI: Fix problem with persistent notification options (OP-2952)
+* WebUI: Fix typo in settings notification (OP-2953)
+* Backend: Fix "test_bucket_get" Django unit test (OP-2947)
+* WebUI: Fix javascript error after remove RBD size (OP-2966)
+* WebUI: Hide striping preview until RBD size is set (OP-2968)
 
 Removed
 ~~~~~~~

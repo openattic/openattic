@@ -57,7 +57,7 @@ class CephRgwBucketList {
       active: 0,
       tabs: {
         status: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "ceph-rgw-buckets.detail.details",
           class: "tc_statusTab",
           name: "Details"

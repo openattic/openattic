@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2017 SUSE LLC
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,6 +30,18 @@
  */
 "use strict";
 
-export default ($uibModalProvider) => {
-  $uibModalProvider.options.backdrop = "static";
+import _ from "lodash";
+
+/**
+ * Get the item at the specified index.
+ * @param {number} Specifies the index of the item.
+ * @return Returns the item at the specified index.
+ */
+export default () => {
+  return (input, index) => {
+    if (!_.isArray(input) || index > input.length) {
+      return undefined;
+    }
+    return input[index];
+  };
 };

@@ -139,11 +139,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_unitdir}
-%if 0%{?suse_version}
 mkdir -p %{buildroot}/var/adm/fillup-templates
-%else
-mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
-%endif
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
@@ -161,11 +157,7 @@ sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/
 # Install HTML redirect
 install -m 644 webui/redirect.html %{buildroot}/srv/www/htdocs/index.html
 
-%if 0%{?suse_version}
 install -m 644 rpm/sysconfig/%{name}.SUSE %{buildroot}/var/adm/fillup-templates/sysconfig.%{name}
-%else
-install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}%{_sysconfdir}/sysconfig/%{name}
-%endif
 
 # Install db file
 install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
@@ -214,6 +206,8 @@ exit 0
 %post
 %service_add_post %{name}-systemd.service
 %fillup_and_insserv
+chown openattic:root %{_sysconfdir}/sysconfig/%{name}
+chmod 640 %{_sysconfdir}/sysconfig/%{name}
 # These steps should probably be moved to oaconfig instead
 systemctl enable postgresql
 systemctl start postgresql
@@ -265,11 +259,7 @@ systemctl try-restart apache2
 
 %{_sysconfdir}/cron.daily/%{name}
 
-%if 0%{?suse_version}
 /var/adm/fillup-templates/sysconfig.%{name}
-%else
-%config %{_sysconfdir}/sysconfig/openattic
-%endif
 
 /srv/www/htdocs/index.html
 %{_datadir}/%{name}

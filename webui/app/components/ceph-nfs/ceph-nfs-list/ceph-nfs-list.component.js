@@ -63,7 +63,7 @@ class CephNfsList {
       active: 0,
       tabs: {
         status: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephNfs.detail.details",
           class: "tc_detailsTab",
           name: "Details"
@@ -103,13 +103,15 @@ class CephNfsList {
     });
     this.cephNfsStateService.updateStates(this.registry.selectedCluster.fsid, (hostsToUpdate) => {
       _.forEach(this.nfs.results, (nfsExport) => {
-        const currentHost = hostsToUpdate[nfsExport.host];
-        if (_.isObject(currentHost)) {
-          if (_.isObject(currentHost.exports) &&
-              _.isObject(currentHost.exports[nfsExport.exportId])) {
-            nfsExport.state = currentHost.exports[nfsExport.exportId].state;
-          } else {
-            nfsExport.state = currentHost.state;
+        if (_.isObjectLike(hostsToUpdate)) {
+          const currentHost = hostsToUpdate[nfsExport.host];
+          if (_.isObjectLike(currentHost)) {
+            if (_.isObjectLike(currentHost.exports) &&
+                _.isObjectLike(currentHost.exports[nfsExport.exportId])) {
+              nfsExport.state = currentHost.exports[nfsExport.exportId].state;
+            } else {
+              nfsExport.state = currentHost.state;
+            }
           }
         } else {
           nfsExport.state = "UNKNOWN";
@@ -119,7 +121,7 @@ class CephNfsList {
   }
 
   getNfsList () {
-    if (_.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObjectLike(this.cluster) && this.cluster.results &&
         this.cluster.results.length > 0 && this.registry.selectedCluster) {
       let obj = this.$filter("filter")(this.cluster.results, {
         fsid: this.registry.selectedCluster.fsid
@@ -156,7 +158,7 @@ class CephNfsList {
         return currentFsalItem;
       }
     });
-    return _.isObject(fsalItem) ? fsalItem.descr : fsal;
+    return _.isObjectLike(fsalItem) ? fsalItem.descr : fsal;
   }
 
   addAction () {

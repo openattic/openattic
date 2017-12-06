@@ -58,13 +58,13 @@ class CephRgwUserList {
       active: 0,
       tabs: {
         status: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "ceph-rgw-users.detail.details",
           class: "tc_statusTab",
           name: "Details"
         },
         statistics: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "ceph-rgw-users.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
