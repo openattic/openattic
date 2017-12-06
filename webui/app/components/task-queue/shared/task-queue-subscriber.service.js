@@ -30,42 +30,43 @@
  */
 "use strict";
 
-var app = angular.module("openattic.taskQueue");
-app.service("taskQueueSubscriber", function ($q, $interval, taskQueueService) {
+export default class TaskQueueSubscriber {
+  constructor ($q, taskQueueService) {
+    this.$q = $q;
+    this.taskQueueService = taskQueueService;
 
-  var self = this;
+    this.pendingStatus = ["Not Started", "Running"];
+    this.finalStatus = ["Exception", "Aborted", "Finished"];
+  }
 
-  var pendingStatus = ["Not Started", "Running"];
-  var finalStatus = ["Exception", "Aborted", "Finished"];
+  isFinalStatus (task) {
+    return this.finalStatus.indexOf(task.status) > -1;
+  }
 
-  var isFinalStatus = function (task) {
-    return finalStatus.indexOf(task.status) > -1;
-  };
-
-  self.pendingTasksPromise = function () {
+  pendingTasksPromise () {
     let requests = [];
-    pendingStatus.forEach((status) => {
+    this.pendingStatus.forEach((status) => {
       requests.push(
-        taskQueueService
+        this.taskQueueService
           .get({
             status: status
           }).$promise
       );
     });
-    return $q.all(requests);
-  };
+    return this.$q.all(requests);
+  }
 
-  self.subscribe = function (taskId, callback) {
+  subscribe (taskId, callback) {
     let isWaiting = false;
-    let stop = $interval(function () {
+    let stop = setInterval(() => {
       if (!isWaiting) {
         isWaiting = true;
 
-        taskQueueService.get({id: taskId})
+        this.taskQueueService.get({id: taskId})
           .$promise
           .then((res) => {
-            if (isFinalStatus(res)) {
-              $interval.cancel(stop);
+            if (this.isFinalStatus(res)) {
+              clearInterval(stop);
               callback(res);
             }
           })
@@ -74,5 +75,5 @@ app.service("taskQueueSubscriber", function ($q, $interval, taskQueueService) {
           });
       }
     }, 1000);
-  };
-});
+  }
+}

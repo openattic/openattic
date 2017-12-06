@@ -32,10 +32,12 @@
 
 import globalConfig from "globalConfig";
 
-var app = angular.module("openattic.taskQueue");
-app.factory("taskQueueService", function ($resource) {
-  return $resource(globalConfig.API.URL + "taskqueue/:id", {
-    id: "@id"
-  });
-});
+export default class TaskQueueService {
+  constructor ($resource) {
+    const res = $resource(globalConfig.API.URL + "taskqueue/:id", {
+      id: "@id"
+    });
 
+    Object.assign(this, res);
+  }
+}

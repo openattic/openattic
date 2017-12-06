@@ -64,6 +64,7 @@ Changed
 * Development: Make ``make_dist.py`` always use the current HEAD revision
   (OP-2883)
 * WebUI: Migration of OA module into Angular (OP-2904)
+* WebUI: Migration of Task Queue module into Angular (OP-2869)
 
 Fixed
 ~~~~~

@@ -31,10 +31,13 @@ describe("task queue moved deletion dialog", function () {
     expect(qProperties.movedElements.close.isDisplayed()).toBe(true);
   });
 
-  afterAll(function () {
+  it("should delete all finished tasks", function () {
     qProperties.movedElements.close.click();
     qProperties.deleteTasks("finished");
     qProperties.close(); // This will open the task queue dialogue.
+  });
+
+  afterAll(function () {
     console.log("task_queue_deletion -> task_queue_deletion.e2e.js");
   });
 });

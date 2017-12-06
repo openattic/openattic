@@ -30,22 +30,32 @@
  */
 "use strict";
 
-var app = angular.module("openattic.taskQueue");
-app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalInstance, taskSelection,
-    Notification) {
-  $scope.tasks = angular.copy(taskSelection); //Now it can't be changed by a possible current asynchronous call.
-  $scope.waiting = false;
-  $scope.finishedTasks = 0;
-  var pending = ["Running", "Not Started"];
-  $scope.pendingDeletionFailure = [];
+import _ from "lodash";
+
+class TaskQueueDeleteModalComponent {
+
+  constructor (taskQueueService, Notification) {
+    this.Notification = Notification;
+    this.taskQueueService = taskQueueService;
+
+    this.waiting = false;
+    this.finishedTasks = 0;
+    this.pending = ["Running", "Not Started"];
+    this.pendingDeletionFailure = [];
+  }
+
+  $onInit () {
+    //Now it can't be changed by a possible current asynchronous call.
+    this.tasks = _.cloneDeep(this.resolve.taskSelection);
+  }
 
   /**
    * To detect a pending task.
    * @return {boolean}
    */
-  $scope.isPendingTask = function (task) {
-    return pending.indexOf(task.status) > -1;
-  };
+  isPendingTask (task) {
+    return this.pending.indexOf(task.status) > -1;
+  }
 
   /**
    * Deletes all tasks sequentially.
@@ -57,71 +67,79 @@ app.controller("TaskDeleteCtrl", function ($scope, taskQueueService, $uibModalIn
    * The method calls it self recursively in order to process sequentially.
    * @param {iterator} entries - The iterator contains the remaining tasks.
    */
-  $scope.deleteTasks = function (entries) {
-    var taskEntry = entries.next().value;
-    var task = {};
+  deleteTasks (entries) {
+    let taskEntry = entries.next().value;
+    let task = {};
     if (taskEntry) {
       if (taskEntry[0] === 0) {
-        $scope.waiting = true;
+        this.waiting = true;
       }
       task = taskEntry[1];
-      $scope.finishedTasks++;
-      if ($scope.isPendingTask(task)) {
-        taskQueueService.get({id: task.id})
+      this.finishedTasks++;
+      if (this.isPendingTask(task)) {
+        this.taskQueueService.get({id: task.id})
           .$promise
-          .then(function (res) {
-            if ($scope.isPendingTask(res)) {
-              $scope.taskDelete(task, entries);
+          .then((res) => {
+            if (this.isPendingTask(res)) {
+              this.taskDelete(task, entries);
             } else {
-              $scope.pendingDeletionFailure.push([task, res]);
-              $scope.deleteTasks(entries);
+              this.pendingDeletionFailure.push([task, res]);
+              this.deleteTasks(entries);
             }
-          }, function () {
-            $scope.deleteTasks(entries);
+          }, () => {
+            this.deleteTasks(entries);
           });
       } else {
-        $scope.taskDelete(task, entries);
+        this.taskDelete(task, entries);
       }
     } else {
-      $scope.waiting = false;
-      if ($scope.pendingDeletionFailure.length > 0) {
-        Notification.warning({
-          title: "Couldn't delete " + $scope.pendingDeletionFailure.length + " tasks",
+      this.waiting = false;
+      if (this.pendingDeletionFailure.length > 0) {
+        this.Notification.warning({
+          title: "Couldn't delete " + this.pendingDeletionFailure.length + " tasks",
           msg: "More details are shown in the dialog."
         });
       } else {
-        $uibModalInstance.close("deleted");
+        this.modalInstance.close("deleted");
       }
     }
-  };
+  }
 
   /**
    * This will close the dialog, if there were moved tasks during deletion.
    */
-  $scope.closeWithWarnings = function () {
-    $uibModalInstance.close("Deleted without " + $scope.pendingDeletionFailure.length + " moved tasks.");
-  };
+  closeWithWarnings () {
+    this.modalInstance.close("Deleted without " + this.pendingDeletionFailure.length + " moved tasks.");
+  }
 
   /**
    * This will delete a task and call deleteTask if successfully deleted the task.
    */
-  $scope.taskDelete = function (task, entries) {
-    taskQueueService.delete({id: task.id})
+  taskDelete (task, entries) {
+    this.taskQueueService.delete({id: task.id})
       .$promise
-      .then(function () {
-        $scope.deleteTasks(entries);
-      }, function (error) {
-        Notification.error({
+      .then(() => {
+        this.deleteTasks(entries);
+      }, (error) => {
+        this.Notification.error({
           title: "Task deletion failure",
           msg: "Task " + task.description + "(" + task.id + ") couldn't be deleted.",
           timeout: 10000
         }, error);
-        $scope.deleteTasks(entries);
+        this.deleteTasks(entries);
       });
-  };
+  }
 
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  };
-});
+  cancel () {
+    this.modalInstance.dismiss("cancel");
+  }
+}
 
+export default {
+  template: require("./task-queue-delete-modal.component.html"),
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  },
+  controller: TaskQueueDeleteModalComponent
+};
