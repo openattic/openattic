@@ -71,64 +71,6 @@ configured.  During the authorization phase, if a user is active but not a
 staff member, |oA| will then check if the user is a member of the
 configured user group, and if so, make them a staff member automatically.
 
-.. _install_domainjoin:
-
-Joining |oA| to a Windows Active Directory Domain Using ``oaconfig``
---------------------------------------------------------------------
-
-It is possible to configure |oA| to join an Microsoft Windows Active Directory
-Domain for authentication and authorization purposes.
-
-.. note::
-  The automatic Domain join using `oaconfig` currently works on Debian/Ubuntu
-  Linux only.
-
-The ``oaconfig`` tool performs the required steps for joining an Active
-Directory (AD) domain.
-
-This process requires the following packages and their dependencies to be
-installed: `openattic-auth-kerberos`, `openattic-module-samba`.
-
-You need to provide your Windows domain name and administrator username and
-password::
-
-   # oaconfig domainjoin username yourdomain.com YOURDOMAIN
-   User:            username
-   Domain:          yourdomain.com
-   Realm:           YOURDOMAIN.COM
-   Workgroup:       YOURDOMAIN
-   Machine Account: HOSTNAME$
-   Updating krb5.conf...
-   Probing Kerberos...
-   Password for username@YOURDOMAIN.COM: ********
-   Configuring Samba...
-   method return sender=:1.248 -> dest=:1.251 reply_serial=2
-   Removing old keytab...
-   Joining Domain...
-   Enter username's password: ********
-   Using short domain name -- YOURDOMAIN
-   Joined 'HOSTNAME' to realm 'yourdomain.com'
-   Processing principals to add...
-   Logging in as HOSTNAME$ (this may fail a couple of times)...
-   kinit: Preauthentication failed while getting initial credentials
-   kinit: Preauthentication failed while getting initial credentials
-   Configuring openATTIC...
-   [ ok ] Stopping: openATTIC systemd.
-   [ ok ] Starting: openATTIC systemd.
-   [ ok ] Reloading web server config: apache2.
-   Configuring libnss...
-   Restarting Samba and Winbind...
-   Initialized config from /etc/openattic/cli.conf
-   Could not connect to the server: [Errno 111] Connection refused
-   Initialized config from /etc/openattic/cli.conf
-   pong
-   method return sender=:1.252 -> dest=:1.253 reply_serial=2
-   [ ok ] Stopping Samba daemons: nmbd smbd.
-   [ ok ] Starting Samba daemons: nmbd smbd.
-   [ ok ] Stopping the Winbind daemon: winbind.
-   [ ok ] Starting the Winbind daemon: winbind.
-   To see if it worked, let's try 'getent passwd "username"':
-   username:*:20422:10513:Lastname, Firstname:/home/YOURDOMAIN/username:/bin/true
 
 .. _install_kerberos:
 
@@ -204,12 +146,6 @@ Below is a list of common error messages and their usual meanings.
 
     Possible reason: The KDC doesn't know the service (i.e., your domain join
     failed).
-
-*   ``Preauthentication failed while getting initial credentials``
-
-    Possible reason: Wrong password or ``/etc/krb5.keytab`` is outdated (the
-    latter should not happen because ``oaconfig domainjoin`` ensures that it
-    is up to date).
 
 *   ``Generic preauthentication failure while getting initial credentials``
 
