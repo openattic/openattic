@@ -55,6 +55,15 @@ export default class CephRbdService {
         method: "GET",
         isArray: true,
         url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
+      },
+      basicData: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph/:fsid/rbds/basic_data",
+        isArray: true
+      },
+      getDetail: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
       }
     });
 
