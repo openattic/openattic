@@ -25,7 +25,8 @@ Setup a Ceph cluster with DeepSea
 ---------------------------------
 
 The way how to setup a Ceph cluster with DeepSea is well described in the
-upstream `README <https://github.com/SUSE/DeepSea/blob/master/README.md>`_.
+upstream `README <https://github.com/SUSE/DeepSea/blob/master/README.md>`_ and
+the `DeepSea Wiki <https://github.com/SUSE/DeepSea/wiki>`_.
 
 In this quick walkthrough we'll highlight the most important parts of the
 installation. 
@@ -34,26 +35,38 @@ DeepSea uses `salt <https://github.com/saltstack/salt>`_ to deploy, setup and
 manage the cluster. Therefore we have to define one of our nodes as the "master"
 (management) node.
 
+.. note::
+  DeepSea currently only supports Salt 2016.11.04, while openSUSE Leap ships
+  with a newer version (2017.7.2) by default. We therefore need to add a
+  dedicated package repository that provides the older version and make sure
+  that the package management system does not update it to a newer version by
+  accident.
+
 1. Log into the "master" node and run the following commands to add the
    DeepSea/openATTIC repository, install DeepSea and to start the ``salt-master``
    service::
 
     # zypper addrepo http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo
-    # zypper refresh
-    # zypper install deepsea
+    # zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:saltstack:products/openSUSE_Leap_42.3/systemsmanagement:saltstack:products.repo
     # zypper addrepo http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo
+    # zypper refresh
+    # zypper install salt-2016.11.04
+    # zypper install deepsea
     # systemctl enable salt-master.service
     # systemctl start salt-master.service
 
-2. Log into all your "clients" to install and configure the ``salt-minion``
-   with the following commands::
-   
-    # zypper install salt-minion
-   
-   Configure all minions (**including the master node**) to connect to the
-   master. If your Salt master is not reachable by the host name "salt", edit
-   the file ``/etc/salt/minion`` or create a new file
-   ``/etc/salt/minion.d/master.conf`` with the following content::
+2. Next, install and configure the ``salt-minion`` service on all your nodes
+   (**including the "master" node**) with the following commands::
+
+    # zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:saltstack:products/openSUSE_Leap_42.3/systemsmanagement:saltstack:products.repo
+    # zypper refresh
+    # zypper install salt-minion-2016.11.04
+    # zypper al 'salt*'
+
+   Configure all minions to connect to the master. If your Salt master is not
+   reachable by the host name "salt", edit the file ``/etc/salt/minion`` or
+   create a new file ``/etc/salt/minion.d/master.conf`` with the following
+   content::
    
     master: host_name_of_salt_master
    
@@ -78,7 +91,7 @@ manage the cluster. Therefore we have to define one of our nodes as the "master"
 
    Verify that the keys have been accepted::
 
-   # salt-key --list-all
+   # salt-key --list accepted
 
 In order to avoid conflicts with other minions managed by the Salt master,
 DeepSea needs to know which Salt minions should be considered part of the Ceph
@@ -98,8 +111,8 @@ any valid Salt target definition. See `man deepsea-minions` for details.
 
 4. We can now start the Ceph cluster deployment from the "master" node:
 
-   Stage 0 - During this stage all required updates are applied and your systems
-   may be rebooted::
+   **Stage 0** - During this stage all required updates are applied and your
+   systems may be rebooted::
 
    # deepsea stage run ceph.stage.0 
 
@@ -118,7 +131,8 @@ any valid Salt target definition. See `man deepsea-minions` for details.
    
    For this deployment we've chosen the `rolebased policy
    <https://github.com/SUSE/DeepSea/blob/master/doc/examples/policy.cfg-rolebased>`_.
-   Please change this file to your needs.
+   Please change this file according to your environment. See ``man 5
+   policy.cfg`` for details.
 
    **Stage 2** - The configuration stage parses the ``policy.cfg`` file and
    merges the included files into their final form::
