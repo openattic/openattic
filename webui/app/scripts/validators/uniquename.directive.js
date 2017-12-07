@@ -33,7 +33,7 @@
 import _ from "lodash";
 
 export default (cephErasureCodeProfilesService, cephPoolsService,
-    cephRbdService, usersService) => {
+    cephRbdService, usersService, Notification) => {
   return {
     restrict: "A",
     require: "ngModel",

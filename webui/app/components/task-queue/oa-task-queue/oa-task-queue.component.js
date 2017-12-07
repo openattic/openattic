@@ -181,7 +181,7 @@ class OaTaskQueueComponent {
       });
       _.forIn(categories, (category, status) => {
         if (category.tasks.length > 0 && category.toastType !== "success") {
-          Notification[category.toastType]({
+          this.Notification[category.toastType]({
             title: status,
             msg: category.tasks.map((task) => {
               return task.description;
