@@ -44,6 +44,8 @@ import cephIscsiList from "./ceph-iscsi-list/ceph-iscsi-list.component";
 import cephIscsiRoutes from "./ceph-iscsi.routes";
 import cephIscsiTargetAdvangedSettings from "./shared/ceph-iscsi-target-advanged-settings.value";
 import CephIscsiStateService from "./shared/ceph-iscsi-state.service";
+import cephIscsiRbdFeaturesValidator from "./shared/ceph-iscsi-rbd-features.validator";
+import cephIscsiRbdUnsupportedFeatures from "./shared/ceph-iscsi-rbd-unsupported-features.value";
 
 angular.module("openattic.cephIscsi", [])
   .component("cephIscsiDeleteModal", cephIscsiDeleteModal)
@@ -53,8 +55,10 @@ angular.module("openattic.cephIscsi", [])
   .component("cephIscsiFormTargetSettingsModal", cephIscsiFormTargetSettingsModal)
   .component("cephIscsiList", cephIscsiList)
   .config(cephIscsiRoutes)
+  .directive("cephIscsiRbdFeaturesValidator", cephIscsiRbdFeaturesValidator)
   .service("cephIscsiService", CephIscsiService)
   .service("cephIscsiStateService", CephIscsiStateService)
   .value("cephIscsiImageAdvangedSettings", cephIscsiImageAdvangedSettings)
   .value("cephIscsiImageOptionalSettings", cephIscsiImageOptionalSettings)
-  .value("cephIscsiTargetAdvangedSettings", cephIscsiTargetAdvangedSettings);
+  .value("cephIscsiTargetAdvangedSettings", cephIscsiTargetAdvangedSettings)
+  .value("cephIscsiRbdUnsupportedFeatures", cephIscsiRbdUnsupportedFeatures);

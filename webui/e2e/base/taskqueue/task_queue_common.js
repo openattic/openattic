@@ -23,6 +23,7 @@
 
   // The element to click to open the modal dialogue.
   self.taskQueue = element(by.className("tc_task-queue"));
+  self.loadingElem = element(by.className("tc_loading_pending"));
 
   // Describes the dialog elements.
   self.dialog = {
@@ -168,9 +169,13 @@
    * @param {String} tabName
    */
   self.changeTab = function (tabName) {
-    browser.sleep(helpers.configs.sleep / 2);
-    element(by.className(self.dialog.tabElements.tab + tabName)).click();
+    // browser.sleep(helpers.configs.sleep / 2);
+    let elem = self.dialog.tabs[tabName].elements.tab;
+    helpers.waitForElementVisible(elem);
+    elem.click();
     self.expectDefaultModalElements(true);
+    helpers.waitForElementInvisible(self.dialog.tabs[tabName].elements.loadingParagraph);
+    // browser.sleep(helpers.configs.sleep / 2);
   };
 
   /**
@@ -215,6 +220,7 @@
    */
   self.validateDisplayedTab = function (tabName) {
     self.open();
+    helpers.waitForElementVisible(self.dialog.tabs[tabName].elements.deleteBtn);
     expect(self.dialog.tabs[tabName].elements.deleteBtn.isDisplayed()).toBe(true);
     self.close();
   };
@@ -245,29 +251,11 @@
    * Expecting the dialog to be closed.
    * @param {int} [depth] - Given by the recursive call.
    */
-  self.waitForPendingTasks = function (depth) {
-    if (!depth) {
-      self.open(); // Opens the dialog at first call.
-      self.changeTab("pending");
-      depth = 1;
-    }
-    browser.sleep(helpers.configs.sleep / 2);
-    // Because it won't be displayed if no task is there anymore.
-    const refreshBtn = self.dialog.tabs.pending.elements.refreshBtn;
-    refreshBtn.isDisplayed().then((isDisplayed) => {
-      if (isDisplayed) {
-        // This will click even if protractor says that another element would receive the click.
-        // This can only happen if some error - mostly cluster related - has poped up.
-        browser.actions().mouseMove(refreshBtn).click().perform();
-      }
-    });
-    self.dialog.tabs.pending.elements.tab.getText().then(function (s) {
-      if (parseInt(s.match(/[0-9]+/)[0], 10) === 0) {
-        self.close(); // Closes the dialog when there are zero pending tasks.
-      } else {
-        self.waitForPendingTasks(depth + 1); // Calls itself if there are pending tasks.
-      }
-    });
+  self.waitForPendingTasks = function () {
+    self.open(); // Opens the dialog
+    self.changeTab("pending");
+    helpers.waitForElementVisible(self.dialog.tabs.pending.elements.noElements); //Make sure the element is visible
+    self.close(); // Closes the dialog when there are zero pending tasks.
   };
 
   /**
@@ -300,10 +288,12 @@
     self.changeTab(tabName);
     var deleteBtn = self.dialog.tabs[tabName].elements.deleteBtn;
     if (taskName) { // If a singel deletion takes place.
+      helpers.waitForElementVisible(element(by.cssContainingText("tr", taskName)));
       var task = element.all(by.cssContainingText("tr", taskName)).first();
       expect(task.isDisplayed()).toBe(true);
       task.click();
     } else { // Delete all tasks in the tabName.
+      helpers.waitForElementVisible(self.dialog.tabs[tabName].elements.selectAll);
       self.dialog.tabs[tabName].elements.selectAll.click();
     }
     var itemLength = 1;

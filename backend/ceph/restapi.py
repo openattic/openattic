@@ -335,6 +335,10 @@ class CephRbdViewSet(TaskQueueLocationMixin, BulkDestroyModelMixin, NodbViewSet)
     def delete(self, request, *args, **kwargs):
         return self.bulk_destroy(request, *args, **kwargs)
 
+    @list_route()
+    def basic_data(self, request, *args, **kwargs):
+        return Response([{'id': rbd.id, 'name': rbd.name, 'pool': rbd.pool.name}
+                         for rbd in CephRbd.objects.all()])
 
 
 class CephFsSerializer(NodbSerializer):

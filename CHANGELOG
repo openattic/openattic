@@ -64,6 +64,7 @@ Changed
 * Development: Make ``make_dist.py`` always use the current HEAD revision
   (OP-2883)
 * WebUI: Migration of OA module into Angular (OP-2904)
+* WebUI: Migration of Task Queue module into Angular (OP-2869)
 
 Fixed
 ~~~~~
@@ -76,6 +77,8 @@ Fixed
 * Backend: Fixed an error message in the openATTIC log file when
   issuing `oaconfig install` (OP-2898)
 * Backend: Made Gatling tests more idempotent (OP-2913)
+* Backend/WebUI: Fixed the limitation of the RBD dropdown list to 50
+  elements in the iSCSI add form (OP-2907)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 * WebUI: Display error message when no cluster exists (OP-2948)

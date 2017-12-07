@@ -30,11 +30,13 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 class CephIscsiForm {
   constructor ($q, $state, $stateParams, $uibModal,
       cephIscsiTargetAdvangedSettings, cephIscsiImageOptionalSettings,
-      cephIscsiImageAdvangedSettings, cephRbdService, cephPoolsService,
-      cephIscsiService) {
+      cephIscsiImageAdvangedSettings, cephRbdService, cephIscsiRbdUnsupportedFeatures,
+      cephIscsiService, Notification) {
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$uibModal = $uibModal;
@@ -42,8 +44,8 @@ class CephIscsiForm {
     this.cephIscsiService = cephIscsiService;
     this.$q = $q;
     this.cephRbdService = cephRbdService;
-    this.cephPoolsService = cephPoolsService;
     this.cephIscsiService = cephIscsiService;
+    this.Notification = Notification;
 
     this.fsid = $stateParams.fsid;
     this.targetId = $stateParams.targetId;
@@ -76,28 +78,7 @@ class CephIscsiForm {
     };
 
     this.allPortals = [];
-    this.unsupportedRbdFeatures = [
-      {
-        name: "Deep flatten",
-        value: "deep-flatten"
-      },
-      {
-        name: "Exclusive lock",
-        value: "exclusive-lock"
-      },
-      {
-        name: "Object map",
-        value: "object-map"
-      },
-      {
-        name: "Journaling",
-        value: "journaling"
-      },
-      {
-        name: "Fast diff",
-        value: "fast-diff"
-      }
-    ];
+    this.unsupportedRbdFeatures = cephIscsiRbdUnsupportedFeatures;
     this.allImages = [];
 
     this.allIscsiImageSettings = cephIscsiImageOptionalSettings.concat(cephIscsiImageAdvangedSettings);
@@ -105,8 +86,7 @@ class CephIscsiForm {
 
   $onInit () {
     let oaPromises = [
-      this.cephRbdService.get({fsid: this.fsid}).$promise,
-      this.cephPoolsService.get({fsid: this.fsid}).$promise,
+      this.cephRbdService.basicData({fsid: this.fsid}).$promise,
       this.cephIscsiService.interfaces({fsid: this.fsid}).$promise
     ];
 
@@ -125,10 +105,10 @@ class CephIscsiForm {
 
     this.$q.all(oaPromises)
       .then(data => {
-        this.resolveRbdsPools(data[0], data[1]);
-        this.resolvePortals(data[2]);
-        if (data[3]) {
-          this.resolveModel(data[3]);
+        this.resolveRbds(data[0]);
+        this.resolvePortals(data[1]);
+        if (_.isObjectLike(data[2])) {
+          this.resolveModel(data[2]);
         }
         this.formDataIsReady = true;
       })
@@ -159,6 +139,11 @@ class CephIscsiForm {
 
   resolveModel (res) {
     this.model = res;
+    this.model.images.forEach((image) => {
+      image.toString = () => {
+        return image.pool + ": " + image.name;
+      };
+    });
     this.model.fsid = this.fsid;
     let auth = this.model.authentication;
     if (!auth.hasMutualAuthentication) {
@@ -224,28 +209,17 @@ class CephIscsiForm {
     this.model.portals.splice(index, 1);
   }
 
-  containsUnsupportedFeature (features) {
-    return features.some((feature) => {
-      return this.unsupportedRbdFeatures
-        .findIndex((element) => {
-          return element.value === feature;
-        }) !== -1;
-    });
-  }
-
-  resolveRbdsPools (rbds, pools) {
-    rbds.results.forEach((rbd) => {
-      pools.results.some((pool) => {
-        if (pool.id === rbd.pool) {
-          this.allImages.push({
-            name: rbd.name,
-            pool: pool.name,
-            hasUnsupportedFeature: this.containsUnsupportedFeature(rbd.features),
-            settings: {}
-          });
-          return true;
+  resolveRbds (rbds) {
+    rbds.forEach((rbd) => {
+      this.allImages.push({
+        name: rbd.name,
+        pool: rbd.pool,
+        settings: {},
+        toString: () => {
+          return rbd.pool + ": " + rbd.name;
         }
       });
+      return true;
     });
   }
 

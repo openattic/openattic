@@ -216,7 +216,7 @@
 
     waitForElement (elem) {
       var until = protractor.ExpectedConditions;
-      browser.wait(until.presenceOf(elem), 5000, "Element taking too long to appear in the DOM");
+      browser.wait(until.presenceOf(elem), 360000, "Element taking too long to appear in the DOM");
     },
 
     waitForElementRemoval (elem) {
@@ -224,7 +224,7 @@
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
       var until = protractor.ExpectedConditions;
-      browser.wait(until.stalenessOf(elem), 5000, "Element taking too long to disappear in the DOM");
+      browser.wait(until.stalenessOf(elem), 360000, "Element taking too long to disappear in the DOM");
     },
 
     waitForElementVisible (elem) {
@@ -232,7 +232,7 @@
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
       var until = protractor.ExpectedConditions;
-      browser.wait(until.visibilityOf(elem), 5000, "Element taking too long to show in the DOM");
+      browser.wait(until.visibilityOf(elem), 360000, "Element taking too long to show in the DOM");
     },
 
     waitForElementInvisible (elem) {
@@ -240,7 +240,7 @@
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
       var until = protractor.ExpectedConditions;
-      browser.wait(until.invisibilityOf(elem), 5000, "Element taking too long to disappear in the DOM");
+      browser.wait(until.invisibilityOf(elem), 360000, "Element taking too long to disappear in the DOM");
     }
 
   };
