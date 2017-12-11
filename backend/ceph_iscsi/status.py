@@ -12,6 +12,7 @@
  *  GNU General Public License for more details.
 """
 import logging
+import settings
 
 from django.core.exceptions import ValidationError
 
@@ -54,5 +55,5 @@ def status(params):
 
     check_deepsea_connection()
     check_deepsea_iscsi_api()
-    check_deepsea_version()
+    check_deepsea_version(settings.DEEPSEA_MIN_VERSION_ISCSI)
     check_ceph_api(params['fsid'])
