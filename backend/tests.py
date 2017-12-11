@@ -112,7 +112,9 @@ class ModuleStatusTest(TestCase):
 
     @mock.patch('deepsea.DeepSea.get_deepsea_version')
     def test_check_deepsea_version_updated(self, get_deepsea_version_mock):
-        get_deepsea_version_mock.return_value = settings.DEEPSEA_MIN_VERSION_ISCSI
+        get_deepsea_version_mock.return_value = {
+            "version": settings.DEEPSEA_MIN_VERSION_ISCSI
+        }
         try:
             module_status.check_deepsea_version(settings.DEEPSEA_MIN_VERSION_ISCSI)
         except:
@@ -120,6 +122,8 @@ class ModuleStatusTest(TestCase):
 
     @mock.patch('deepsea.DeepSea.get_deepsea_version')
     def test_check_deepsea_version_not_updated(self, get_deepsea_version_mock):
-        get_deepsea_version_mock.return_value = "0.7.0"
+        get_deepsea_version_mock.return_value = {
+            "version": "0.7.0"
+        }
         with self.assertRaises(module_status.UnavailableModule):
             module_status.check_deepsea_version(settings.DEEPSEA_MIN_VERSION_ISCSI)

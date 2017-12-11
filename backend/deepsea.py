@@ -264,6 +264,6 @@ class DeepSea(RestClient, SettingsListener):
     @RestClient.requires_login
     def get_deepsea_version(self, request=None):
         response = request({
-            'client': 'runner', 'fun': 'deepsea.version'
+            'client': 'runner', 'fun': 'deepsea.version', 'format': 'json'
         })
         return response['return'][0]

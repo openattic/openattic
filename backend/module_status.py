@@ -122,13 +122,13 @@ def check_deepsea_connection():
 def check_deepsea_version(min_version):
     message = "Minimum DeepSea version required is {}".format(min_version)
     try:
-        version = DeepSea.instance().get_deepsea_version()
+        deepsea_version = DeepSea.instance().get_deepsea_version()
+        if not 'version' in deepsea_version:
+            raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
+        version = deepsea_version['version']
         if not version:
             raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
-        match = re.match(r'^([\d\.]+)(\+git\.(\d+).(\w+))?', version)
-        if not match:
-            raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
-        if StrictVersion(match.group(1)) < StrictVersion(min_version):
+        if StrictVersion(version) < StrictVersion(min_version):
             raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
     except RequestException:
         raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
