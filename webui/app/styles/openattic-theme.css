@@ -1317,6 +1317,16 @@ uib-accordion .panel-title,
   margin: 0;
 }
 
+.has-error .has-error-btn {
+  background-color: #f2dede;
+  border-color: #a94442;
+}
+
+.has-error .has-error-btn:disabled:hover {
+  background-color: #f2dede;
+  border-color: #a94442;
+}
+
 /* If javascript is disabled. */
 .noscript {
   padding-top: 5em;

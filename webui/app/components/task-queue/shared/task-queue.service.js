@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2016 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -32,41 +32,12 @@
 
 import globalConfig from "globalConfig";
 
-export default class CephRbdService {
+export default class TaskQueueService {
   constructor ($resource) {
-    const resource = $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {
-      fsid: "@fsid",
-      pool: "@pool",
-      name: "@name"
-    }, {
-      query: {
-        method: "GET",
-        isArray: true,
-        transformResponse: (data) => {
-          const res = JSON.parse(data);
-          return res && res.results || [];
-        }
-      },
-      delete: {
-        method: "DELETE",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
-      },
-      performancedata: {
-        method: "GET",
-        isArray: true,
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
-      },
-      basicData: {
-        method: "GET",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/basic_data",
-        isArray: true
-      },
-      getDetail: {
-        method: "GET",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
-      }
+    const res = $resource(globalConfig.API.URL + "taskqueue/:id", {
+      id: "@id"
     });
 
-    Object.assign(this, resource);
+    Object.assign(this, res);
   }
 }

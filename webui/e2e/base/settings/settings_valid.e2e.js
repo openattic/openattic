@@ -57,6 +57,7 @@ describe("settings inputs validations", function () {
   it("should check salt api connection", function () {
     browser.refresh();
 
+    helpers.waitForElementVisible(form.saltApiConnectionSuccess);
     expect(form.saltApiConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.saltApiConnectionFail.isDisplayed()).toBe(false);
 
@@ -99,6 +100,7 @@ describe("settings inputs validations", function () {
   it("should check ceph connection", function () {
     browser.refresh();
 
+    helpers.waitForElementVisible(form.cephClusterConnectionSuccess);
     expect(form.cephClusterConnectionSuccess.isDisplayed()).toBe(true);
     expect(form.cephClusterConnectionFail.isDisplayed()).toBe(false);
 

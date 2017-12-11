@@ -2,9 +2,9 @@
   <span>Background-Tasks</span>
 </div>
 <div class="openattic-modal-content task-queue-modal-content">
-  <uib-tabset active="modalTabData.active">
+  <uib-tabset active="$ctrl.modalTabData.active">
     <uib-tab class="tc_tab_{{tabKey}}"
-             ng-repeat="(tabKey, tab) in tabs"
+             ng-repeat="(tabKey, tab) in $ctrl.tabs"
              heading="{{tab.name}}
                       {{tab.count >= 0 ? ' (' + tab.count + ')' : ''}}"
              index="$index">
@@ -15,7 +15,7 @@
         There are no {{tabKey}} Tasks.
       </h3>
       <form class="tc_listing_{{tabKey}}"
-            name="{{tab.name}}Tasks"
+            name="$ctrl.{{tab.name}}Tasks"
             role="form"
             novalidate
             ng-show="tab.data.length > 0">
@@ -26,7 +26,7 @@
                 <button type="button"
                         class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
                         ng-disabled="tab.selection.items.length === 0"
-                        ng-click="taskDeleteAction()">
+                        ng-click="$ctrl.taskDeleteAction()">
                   Delete</button>
               </div>
             </div>
@@ -36,32 +36,32 @@
               </span>
               <input class="form-control"
                      type="search"
-                     ng-model="search"
-                     ng-change="searchDescriptions(search)"
-                     ng-model-options="searchModelOptions">
+                     ng-model="$ctrl.search"
+                     ng-change="$ctrl.searchDescriptions(search)"
+                     ng-model-options="$ctrl.searchModelOptions">
             </div>
             <div class="dataTables_length widget-toolbar">
               <button type="button"
                       class="btn btn-sm btn-default dropdown-toggle tc_entries_dropdown"
                       data-toggle="dropdown"
                       aria-expanded="false">
-                {{ pageSize }}
+                {{ $ctrl.pageSize }}
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu arrow-box-up-right oa-dropdown-menu oa-dropdown-numbers"
                   role="menu">
                 <li ng-repeat="size in [2, 10, 25, 50, 100]"
-                    class="tc_entries_{{size}}"
-                    ng-class="{active: size === pageSize}">
+                    class="tc_entries_{{$ctrl.size}}"
+                    ng-class="{active: size === $ctrl.pageSize}">
                   <a ng-click="updateEntries(size)"
                      ng-bind="size"></a>
                 </li>
               </ul>
             </div>
             <div class="widget-toolbar tc_refreshBtn_{{tabKey}}">
-              <a ng-click="loadAllTabs(true)">
+              <a ng-click="$ctrl.loadAllTabs(true)">
                 <i class="fa fa-lg fa-refresh"
-                   ng-class="{'fa-refresh fa-lg': !update, 'fa-spinner fa-spin fa-fw': update}"></i>
+                   ng-class="{'fa-refresh fa-lg': !$ctrl.update, 'fa-spinner fa-spin fa-fw': $ctrl.update}"></i>
               </a>
             </div>
           </div>
@@ -74,33 +74,33 @@
                     <input type="checkbox"
                            class="tc_select_all_{{tabKey}}"
                            ng-model="tab.selection.checkAll"
-                           ng-change="checkAllTasks()">
+                           ng-change="$ctrl.checkAllTasks()">
                   </th>
                   <th ng-repeat="col in tab.tableColumns"
-                      ng-click="order(col.attribute)"
-                      class="{{orderClass(col.attribute)}} tc-col-{{tabKey}}-{{col.attribute}}"
+                      ng-click="$ctrl.order(col.attribute)"
+                      class="{{$ctrl.orderClass(col.attribute)}} tc-col-{{tabKey}}-{{col.attribute}}"
                       ng-bind="col.name">
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="task in tab.pageData track by task.id"
-                    ng-class="{ info: isTaskSelected(task) }">
+                    ng-class="{ info: $ctrl.isTaskSelected(task) }">
                   <td class="oadatatablecheckbox">
                     <input class="tc_checkboxes"
                            type="checkbox"
-                           ng-checked="isTaskSelected(task)"
-                           ng-click="toggleTaskSelection(task, $event)">
+                           ng-checked="$ctrl.isTaskSelected(task)"
+                           ng-click="$ctrl.toggleTaskSelection(task, $event)">
                   </td>
-                  <td ng-click="toggleTaskSelection(task, $event)"
+                  <td ng-click="$ctrl.toggleTaskSelection(task, $event)"
                       ng-repeat="attr in tab.tableColumns">
                     <span ng-if="attr.type === 'text'"
-                          ng-bind="getColumnData(attr, task)"></span>
+                          ng-bind="$ctrl.getColumnData(attr, task)"></span>
                     <span ng-if="attr.type === 'date'"
-                          ng-bind="getColumnData(attr, task) | date:'medium'"></span>
+                          ng-bind="$ctrl.getColumnData(attr, task) | date:'medium'"></span>
                     <span ng-if="attr.type === 'percent'">
-                      <uib-progressbar value="getColumnData(attr, task)"
-                                       class="oaprogress">{{getColumnData(attr, task)}}%</uib-progressbar>
+                      <uib-progressbar value="$ctrl.getColumnData(attr, task)"
+                                       class="oaprogress">{{$ctrl.getColumnData(attr, task)}}%</uib-progressbar>
                     </span>
                   </td>
                 </tr>
@@ -147,6 +147,6 @@
 <div class="openattic-modal-footer">
   <div class="button-group text-right">
     <button class="btn btn-default btn-sm modal-close-btn"
-            ng-click="closeTaskQueue()">Close</button>
+            ng-click="$ctrl.closeTaskQueue()">Close</button>
   </div>
 </div>

@@ -31,175 +31,221 @@
 "use strict";
 
 import globalConfig from "globalConfig";
+import _ from "lodash";
 
-var app = angular.module("openattic.taskQueue");
-app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filter, $uibModal, $interval,
-    taskQueueFetcher) {
-  var refresh = true; // Will prevent auto refreshing if set to false.
+class TaskQueueModalComponent {
+  constructor ($scope, $filter, $uibModal, taskQueueFetcher) {
+    this.$scope = $scope;
+    this.$filter = $filter;
+    this.taskQueueFetcher = taskQueueFetcher;
+    this.$uibModal = $uibModal;
 
-  /* Variables for every tab. */
-  $scope.pageSize = 50;
+    this.refresh = true; // Will prevent auto refreshing if set to false.
 
-  $scope.search = "";
-  $scope.searchModelOptions = {
-    updateOn: "default blur",
-    debounce: {
-      "default": 500,
-      "blur": 0
-    }
-  };
+    /* Variables for every tab. */
+    this.pageSize = 50;
 
-  /**
+    this.search = "";
+    this.searchModelOptions = {
+      updateOn: "default blur",
+      debounce: {
+        "default": 500,
+        "blur": 0
+      }
+    };
+
+    /**
    * Describes and configures all displayed tabs and tables.
    */
-  var defaultTab = {
-    name: null,
-    data: [],
-    workingData: [],
-    page: {
-      current: 0,
-      last: null,
-      firstItem: 1,
-      lastItem: null,
-      itemLength: 0
-    },
-    pageData: [],
-    states: null,
-    count: -1,
-    loaded: false,
-    tableSort: {
-      attribute: null,
-      reverse: true
-    },
-    selection: {
-      item: null,
-      items: [],
-      checkAll: false
-    },
-    tableColumns: []
-  };
-  $scope.tabs = {
-    pending: angular.extend({}, angular.copy(defaultTab), {
-      name: "Pending",
-      states: ["Running", "Not Started"],
+    const defaultTab = {
+      name: null,
+      data: [],
+      workingData: [],
+      page: {
+        current: 0,
+        last: null,
+        firstItem: 1,
+        lastItem: null,
+        itemLength: 0
+      },
+      pageData: [],
+      states: null,
+      count: -1,
+      loaded: false,
       tableSort: {
-        attribute: "percent",
+        attribute: null,
         reverse: true
       },
-      tableColumns: [
-        {
-          name: "Name",
-          attribute: "description",
-          type: "text"
-        },
-        {
-          name: "Created",
-          attribute: "created",
-          type: "date"
-        },
-        {
-          name: "Complete",
+      selection: {
+        item: null,
+        items: [],
+        checkAll: false
+      },
+      tableColumns: []
+    };
+    this.tabs = {
+      pending: _.extend({}, _.cloneDeep(defaultTab), {
+        name: "Pending",
+        states: ["Running", "Not Started"],
+        tableSort: {
           attribute: "percent",
-          type: "percent"
+          reverse: true
         },
-        {
-          name: "Estimated",
-          attribute: "approx",
-          displayAttr: "approxFormat",
-          type: "text"
-        }
-      ]
-    }),
-    failed: angular.extend({}, angular.copy(defaultTab), {
-      name: "Failed",
-      states: ["Exception", "Aborted"],
-      tableSort: {
-        attribute: "last_modified",
-        reverse: true
-      },
-      tableColumns: [
-        {
-          name: "Name",
-          type: "text",
-          attribute: "description"
+        tableColumns: [
+          {
+            name: "Name",
+            attribute: "description",
+            type: "text"
+          },
+          {
+            name: "Created",
+            attribute: "created",
+            type: "date"
+          },
+          {
+            name: "Complete",
+            attribute: "percent",
+            type: "percent"
+          },
+          {
+            name: "Estimated",
+            attribute: "approx",
+            displayAttr: "approxFormat",
+            type: "text"
+          }
+        ]
+      }),
+      failed: _.extend({}, _.cloneDeep(defaultTab), {
+        name: "Failed",
+        states: ["Exception", "Aborted"],
+        tableSort: {
+          attribute: "last_modified",
+          reverse: true
         },
-        {
-          name: "Reason",
-          type: "text",
-          attribute: "status"
+        tableColumns: [
+          {
+            name: "Name",
+            type: "text",
+            attribute: "description"
+          },
+          {
+            name: "Reason",
+            type: "text",
+            attribute: "status"
+          },
+          {
+            name: "Created",
+            type: "date",
+            attribute: "created"
+          },
+          {
+            name: "Runtime",
+            attribute: "approx",
+            displayAttr: "approxFormat",
+            type: "date"
+          },
+          {
+            name: "Failed",
+            type: "date",
+            attribute: "last_modified"
+          }
+        ]
+      }),
+      finished: _.extend({}, _.cloneDeep(defaultTab), {
+        name: "Finished",
+        states: ["Finished"],
+        tableSort: {
+          attribute: "last_modified",
+          reverse: true
         },
-        {
-          name: "Created",
-          type: "date",
-          attribute: "created"
-        },
-        {
-          name: "Runtime",
-          attribute: "approx",
-          displayAttr: "approxFormat",
-          type: "date"
-        },
-        {
-          name: "Failed",
-          type: "date",
-          attribute: "last_modified"
-        }
-      ]
-    }),
-    finished: angular.extend({}, angular.copy(defaultTab), {
-      name: "Finished",
-      states: ["Finished"],
-      tableSort: {
-        attribute: "last_modified",
-        reverse: true
-      },
-      tableColumns: [
-        {
-          name: "Name",
-          type: "text",
-          attribute: "description"
-        },
-        {
-          name: "Created",
-          type: "date",
-          attribute: "created"
-        },
-        {
-          name: "Runtime",
-          attribute: "approx",
-          displayAttr: "approxFormat",
-          type: "date"
-        },
-        {
-          name: "Finished",
-          type: "date",
-          attribute: "last_modified"
-        }
-      ]
-    })
-  };
+        tableColumns: [
+          {
+            name: "Name",
+            type: "text",
+            attribute: "description"
+          },
+          {
+            name: "Created",
+            type: "date",
+            attribute: "created"
+          },
+          {
+            name: "Runtime",
+            attribute: "approx",
+            displayAttr: "approxFormat",
+            type: "date"
+          },
+          {
+            name: "Finished",
+            type: "date",
+            attribute: "last_modified"
+          }
+        ]
+      })
+    };
 
-  var firstLoad = true; // Needed to select a tab after the first load.
-  $scope.tqf = taskQueueFetcher; // Added to scope for $watch.
+    this.firstLoad = true; // Needed to select a tab after the first load.
+
+    /**
+   * Triggers instant table update on tab change.
+   */
+    this.$scope.$watch("modalTabData.active", (tabNew, tabOld) => {
+      if (tabOld !== null && tabNew !== null) {
+        this.loadAllTabs(true);
+      }
+    });
+
+    /**
+   * Adds a watch for each tab to watch it's page number, in order to change the
+   * page if it does.
+   */
+    _.forIn(this.tabs, (tab, key) => {
+      this.$scope.$watch("tabs." + key + ".page.current", (pgNr) => {
+        this.tabs[key].page.current = pgNr;
+        this.pageChange();
+      });
+    });
+
+    /**
+   * Triggers instant table update when the modal dialog is fully opened..
+   */
+    this.modalInstance.opened.then(() => {
+      this.loadAllTabs();
+    });
+
+    /**
+   * Cancels any refresh call, when the dialog is closed.
+   */
+    this.modalInstance.closed.then(() => {
+      clearInterval(this.timeout);
+    });
+  }
+
+  $onInit () {
+    this.taskQueueFetcher.setOnUpdateChange((update, prev) => {
+      this.onUpdateChange(update, prev);
+    });
+  }
+
   /**
    * Watches if the task queue fetcher is doing an update and it will select
    * the tab with the highest priority after the first load.
    */
-  $scope.$watch("tqf.update", function (update, prev) {
-    $scope.update = update;
-    if (prev && !update && firstLoad && $scope.modalTabData) {
-      firstLoad = false;
-      $scope.selectUrgentTab();
+  onUpdateChange (update, prev) {
+    this.update = update;
+    if (prev && !update && this.firstLoad && this.modalTabData) {
+      this.firstLoad = false;
+      this.selectUrgentTab();
     }
-  });
+  }
 
   /**
    * Returns the data of the active tab.
    * @returns {object} - Data of active tab.
    */
-  $scope.getActiveTab = function () {
-    return $scope.tabs[Object.keys($scope.tabs)[$scope.modalTabData ? $scope.modalTabData.active : 0]];
-  };
+  getActiveTab () {
+    return this.tabs[Object.keys(this.tabs)[this.modalTabData ? this.modalTabData.active : 0]];
+  }
 
   /**
    * This will search and sort the tasks in a tab and set the current available
@@ -208,18 +254,18 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {object} [tab] - Set the page content of this tab object.
    * @returns {object} the current or the given tab.
    */
-  $scope.updateWorkingData = function (tab) {
-    tab = tab || $scope.getActiveTab();
-    var search = $scope.search.toLowerCase();
-    tab.workingData = search === "" ? tab.data : tab.data.filter(function (e) {
+  updateWorkingData (tab) {
+    tab = tab || this.getActiveTab();
+    let search = this.search.toLowerCase();
+    tab.workingData = search === "" ? tab.data : tab.data.filter((e) => {
       return e.description.toLowerCase().match(search);
     });
-    tab.workingData = $filter("orderBy")(tab.workingData, [
+    tab.workingData = this.$filter("orderBy")(tab.workingData, [
       (tab.tableSort.reverse ? "-" : "+") + tab.tableSort.attribute,
       "-last_modified"
     ]);
-    return $scope.pageChange($scope.updateCompleteSelection(tab));
-  };
+    return this.pageChange(this.updateCompleteSelection(tab));
+  }
 
   /**
    * Sets all page content of the table.
@@ -229,10 +275,10 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {object} [tab] - Set the page content of this tab object.
    * @returns {object} the current or the given tab.
    */
-  $scope.pageChange = function (tab) {
-    tab = tab || $scope.getActiveTab();
-    var page = tab.page;
-    var pgSize = $scope.pageSize;
+  pageChange (tab) {
+    tab = tab || this.getActiveTab();
+    let page = tab.page;
+    let pgSize = this.pageSize;
     page.itemLength = tab.workingData.length;
     page.last = Math.ceil(page.itemLength / pgSize, 0) || 1;
     page.firstItem = pgSize * page.current;
@@ -242,19 +288,19 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
     }
     tab.pageData = tab.workingData.slice(page.firstItem, page.lastItem);
     return tab;
-  };
+  }
 
   /**
    * Updates the entry size of each page and the current page in the current tab.
    * After that it will update the page, through a page change.
    * @param {number} size - Sets the new entry size.
    */
-  $scope.updateEntries = function (size) {
-    $scope.pageSize = size;
-    var tab = $scope.getActiveTab();
+  updateEntries (size) {
+    this.pageSize = size;
+    let tab = this.getActiveTab();
     tab.page.current = Math.ceil((tab.page.firstItem + 1) / size, 0);
-    $scope.pageChange(tab);
-  };
+    this.pageChange(tab);
+  }
 
   /**
    * Updates the search value of each page, the search value will search
@@ -262,10 +308,10 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * After that it will update the working data.
    * @param {number} size - Sets the new entry size.
    */
-  $scope.searchDescriptions = function (search) {
-    $scope.search = search;
-    $scope.updateWorkingData();
-  };
+  searchDescriptions (search) {
+    this.search = search;
+    this.updateWorkingData();
+  }
 
   /**
    * Sets the new sorting attribute or changes the order of it if it's already
@@ -273,28 +319,28 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * After that it will update the working data.
    * @param {String} attribute
    */
-  $scope.order = function (attribute) {
-    var tab = $scope.getActiveTab();
+  order (attribute) {
+    let tab = this.getActiveTab();
     if (tab.tableSort.attribute === attribute) {
       tab.tableSort.reverse = !tab.tableSort.reverse;
     }
     tab.tableSort.attribute = attribute;
-    $scope.updateWorkingData(tab);
-  };
+    this.updateWorkingData(tab);
+  }
 
   /**
    * Sets the sorting classes of the attribute that the table is sorted by.
    * @param {String} attribute
    * @returns {string} - A string with the classes to set.
    */
-  $scope.orderClass = function (attribute) {
-    var tab = $scope.getActiveTab();
-    var cssClass = "sorting";
+  orderClass (attribute) {
+    let tab = this.getActiveTab();
+    let cssClass = "sorting";
     if (tab.tableSort.attribute === attribute) {
       cssClass = tab.tableSort.reverse ? "sorting_desc" : "sorting_asc";
     }
     return cssClass;
-  };
+  }
 
   /**
    * Returns column data of a row. The attribute name can differ.
@@ -302,20 +348,20 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {object} data
    * @returns {*}
    */
-  $scope.getColumnData = function (attr, data) {
-    var attribute = attr.displayAttr || attr.attribute;
+  getColumnData (attr, data) {
+    let attribute = attr.displayAttr || attr.attribute;
     return data[attribute];
-  };
+  }
 
   /**
    * Checks if a specific row is selected or not.
    * @param {object} task
    * @returns {boolean} State of the selection.
    */
-  $scope.isTaskSelected = function (task) {
-    var tab = $scope.getActiveTab();
+  isTaskSelected (task) {
+    let tab = this.getActiveTab();
     return tab.selection.items.indexOf(task.id) !== -1;
-  };
+  }
 
   /**
    * Filters the selection, if all selected tasks are still available.
@@ -324,22 +370,22 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {object} tab
    * @returns {object} Updated tab object.
    */
-  $scope.updateCompleteSelection = function (tab) {
-    var data = tab.workingData.map($scope.getTaskId);
-    var selection = tab.selection.items.filter(function (id) {
+  updateCompleteSelection (tab) {
+    let data = tab.workingData.map(this.getTaskId);
+    let selection = tab.selection.items.filter((id) => {
       return data.indexOf(id) !== -1;
     });
-    return $scope.updateSelectedTasks(tab, selection);
-  };
+    return this.updateSelectedTasks(tab, selection);
+  }
 
   /**
    * Returns the id of a task.
    * @param {object} task
    * @return {number} Id of task.
    */
-  $scope.getTaskId = function (task) {
+  getTaskId (task) {
     return task.id;
-  };
+  }
 
   /**
    * Refreshes and updates the selection in the given tab with the given selection.
@@ -348,16 +394,16 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {numbers[]} selection
    * @returns {object} Updated tab object.
    */
-  $scope.updateSelectedTasks = function (tab, selection) {
+  updateSelectedTasks (tab, selection) {
     tab.selection.checkAll = selection.length === tab.workingData.length;
-    tab.selection.item = selection.length === 1 ? $scope.getTaskFromId(tab, selection[0]) : null;
+    tab.selection.item = selection.length === 1 ? this.getTaskFromId(tab, selection[0]) : null;
     tab.selection.items = selection;
     tab.loaded = true;
     return tab;
-  };
+  }
 
   /**
-   * Updates the selection in various ways.
+   * Updates the selection in letious ways.
    * It deselects from selection, appends to selection and sets a new selection.
    * Multiple selections can be achieved by holding down shift on your click on
    * a row or append tasks separately by holding ctrl down while clicking on a
@@ -367,14 +413,14 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {object} task
    * @param {event} $event
    */
-  $scope.toggleTaskSelection = function (task, $event) {
-    var tab = $scope.getActiveTab();
-    var items = tab.selection.items;
-    var exists = items.indexOf(task.id);
-    var sorted = [];
-    var iPrev = 0;
-    var iNow = 0;
-    var newItems = [];
+  toggleTaskSelection (task, $event) {
+    let tab = this.getActiveTab();
+    let items = tab.selection.items;
+    let exists = items.indexOf(task.id);
+    let sorted = [];
+    let iPrev = 0;
+    let iNow = 0;
+    let newItems = [];
     if (!$event.shiftKey) {
       if (exists !== -1) {
         items.splice(exists, 1);
@@ -384,11 +430,11 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
         items = [task.id];
       }
     } else {
-      sorted = angular.copy(tab.workingData).map($scope.getTaskId);
+      sorted = _.cloneDeep(tab.workingData).map(this.getTaskId);
       iPrev = sorted.indexOf(items[items.length - 1]);
       iNow = sorted.indexOf(task.id);
       newItems = iPrev < iNow ? sorted.slice(iPrev + 1, iNow + 1) : sorted.slice(iNow, iPrev);
-      newItems.forEach(function (id) {
+      newItems.forEach((id) => {
         exists = items.indexOf(id);
         if (exists !== -1) {
           items.splice(exists, 1);
@@ -397,44 +443,44 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
         }
       });
     }
-    $scope.updateSelectedTasks(tab, items);
-  };
+    this.updateSelectedTasks(tab, items);
+  }
 
   /**
    * Select all task in the table or none depends of what state is checked.
    */
-  $scope.checkAllTasks = function () {
-    var tab = $scope.getActiveTab();
+  checkAllTasks () {
+    let tab = this.getActiveTab();
     tab.selection.items = tab.selection.checkAll ?
-      tab.workingData.map($scope.getTaskId) : [];
-  };
+      tab.workingData.map(this.getTaskId) : [];
+  }
 
   /**
    * Closes the task queue modal dialog.
    */
-  $scope.closeTaskQueue = function () {
-    $uibModalInstance.dismiss("close");
-  };
+  closeTaskQueue () {
+    this.modalInstance.dismiss("close");
+  }
 
   /**
    * Counts all tasks in the tabs and adds all tasks to the active tab.
    * @param {String} tabKey - Attribute of the tab.
    * @param {object} allTasks - Holds all old and new tasks.
    */
-  $scope.loadTabTasks = function (tabKey, allTasks) {
-    var tasks = allTasks.tasks;
-    var tab = $scope.tabs[tabKey];
-    var activeTab = $scope.modalTabData && tabKey === Object.keys($scope.tabs)[$scope.modalTabData.active];
+  loadTabTasks (tabKey, allTasks) {
+    let tasks = allTasks.tasks;
+    let tab = this.tabs[tabKey];
+    let activeTab = this.modalTabData && tabKey === Object.keys(this.tabs)[this.modalTabData.active];
     tab.tempCount = 0;
     tab.tempData = [];
-    tab.states.forEach(function (state) {
-      var current = tasks[state];
+    tab.states.forEach((state) => {
+      let current = tasks[state];
       tab.tempCount += current.length;
       if (activeTab) {
         if (state === "Running") {
-          current.forEach($scope.calcApprox);
+          current.forEach(this.calcApprox, this);
         } else if (["Exception", "Aborted", "Finished"].indexOf(state) !== -1) {
-          current.forEach($scope.calcRuntime);
+          current.forEach(this.calcRuntime, this);
         }
         tab.tempData = tab.tempData.concat(current);
       }
@@ -442,11 +488,11 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
     tab.count = tab.tempCount;
     if (activeTab) {
       tab.data = tab.tempData;
-      $scope.tabs[tabKey] = $scope.updateWorkingData(tab);
+      this.tabs[tabKey] = this.updateWorkingData(tab);
     }
-    $scope.tabs[tabKey] = tab;
-    $scope.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
-  };
+    this.tabs[tabKey] = tab;
+    this.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
+  }
 
   /**
    * Calculates the time between to dates, with different preciseness.
@@ -455,25 +501,25 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {boolean} precise - Should the calculation be precise?
    * @return {Object[]} - Diff Date and time String.
    */
-  $scope.timeBetween = function (first, last, precise) {
-    var approx = new Date(last.getTime() - first.getTime());
-    var days = approx.getDate() - 1;
-    var h = approx.getHours() - 1;
-    var m = approx.getMinutes();
-    var approxFormat = (days > 0) ? days + "d " : "";
+  timeBetween (first, last, precise) {
+    let approx = new Date(last.getTime() - first.getTime());
+    let days = approx.getDate() - 1;
+    let h = approx.getHours() - 1;
+    let m = approx.getMinutes();
+    let approxFormat = (days > 0) ? days + "d " : "";
     approxFormat += (h > 0) ? h + "h " : "";
     if (!precise) {
       approxFormat += (approxFormat !== "" || m > 0) ? m + "m" : "< 1m";
     } else {
       approxFormat += (m > 0) ? m + "m " : "";
-      var s = approx.getSeconds();
+      let s = approx.getSeconds();
       approxFormat += (s > 0) ? s + "s" : "";
     }
     return {
       approx: approx,
       approxFormat: approxFormat
     };
-  };
+  }
 
   /**
    * Appends the calculation of the precise runtime to a finished or failed task.
@@ -481,11 +527,11 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {Number} index
    * @param {[]} arr
    */
-  $scope.calcRuntime = function (task, index, arr) {
+  calcRuntime (task, index, arr) {
     task.created = new Date(task.created);
     task.last_modified = new Date(task.last_modified);
-    arr[index] = angular.merge({}, task, $scope.timeBetween(task.created, task.last_modified, true));
-  };
+    arr[index] = _.merge({}, task, this.timeBetween(task.created, task.last_modified, true));
+  }
 
   /**
    * Appends the calculation of the estimated left runtime to a running task.
@@ -493,15 +539,15 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {Number} index
    * @param {[]} arr
    */
-  $scope.calcApprox = function (task, index, arr) {
+  calcApprox (task, index, arr) {
     if (task.estimated !== null) {
       task.last_modified = new Date(task.last_modified);
       task.estimated = new Date(task.estimated);
-      arr[index] = angular.merge({}, task, $scope.timeBetween(task.last_modified, task.estimated));
+      arr[index] = _.merge({}, task, this.timeBetween(task.last_modified, task.estimated));
     } else {
       task.approxFormat = "NA";
     }
-  };
+  }
 
   /**
    * Gets task object to the given id.
@@ -509,44 +555,43 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {Number} id - Task id.
    * @return {Object} Task object.
    */
-  $scope.getTaskFromId = function (tab, id) {
-    return tab.data.filter(function (item) {
+  getTaskFromId (tab, id) {
+    return tab.data.filter((item) => {
       return item.id === id;
     })[0];
-  };
+  }
 
   /**
    * Opens a modal dialog to delete the selected tasks.
    * Stops refresh till the dialog closes.
    */
-  $scope.taskDeleteAction = function () {
-    var tab = $scope.getActiveTab();
-    var items = tab.selection.items;
-    var modalInstance = {};
+  taskDeleteAction () {
+    let tab = this.getActiveTab();
+    let items = tab.selection.items;
+    let modalInstance = {};
     if (items.length === 0) {
       return;
     }
-    modalInstance = $uibModal.open({
+    modalInstance = this.$uibModal.open({
       windowTemplate: require("../../../templates/messagebox.html"),
-      template: require("../templates/task-deletion.html"),
-      controller: "TaskDeleteCtrl",
+      component: "taskQueueDeleteModalComponent",
       resolve: {
-        taskSelection: function () {
-          return items.map(function (id) {
-            return $scope.getTaskFromId(tab, id);
+        taskSelection: () => {
+          return items.map((id) => {
+            return this.getTaskFromId(tab, id);
           });
         }
       }
     });
-    modalInstance.opened.then(function () {
-      refresh = false;
-      $interval.cancel($scope.timeout);
+    modalInstance.opened.then(() => {
+      this.refresh = false;
+      clearInterval(this.timeout);
     });
-    modalInstance.closed.then(function () {
-      refresh = true;
-      $scope.loadAllTabs(true);
+    modalInstance.closed.then(() => {
+      this.refresh = true;
+      this.loadAllTabs(true);
     });
-  };
+  }
 
   /**
    * Triggers a refresh over all tabs, but only if there are no pending requests
@@ -554,19 +599,19 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * @param {Boolean} force - If set a reload will be forced even if there is a
    *   selection.
    */
-  $scope.loadAllTabs = function (force) {
-    var tab = $scope.getActiveTab();
-    var items = tab.selection.items;
-    if (!refresh || !force && items.length > 0) {
-      $scope.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
+  loadAllTabs (force) {
+    let tab = this.getActiveTab();
+    let items = tab.selection.items;
+    if (!this.refresh || !force && items.length > 0) {
+      this.reloadTaskIn(globalConfig.GUI.defaultTaskReloadTime);
       return;
     }
-    taskQueueFetcher.loadOverview().then(function (allTasks) {
-      Object.keys($scope.tabs).forEach(function (tabKey) {
-        $scope.loadTabTasks(tabKey, allTasks);
+    this.taskQueueFetcher.loadOverview().then((allTasks) => {
+      Object.keys(this.tabs).forEach((tabKey) => {
+        this.loadTabTasks(tabKey, allTasks);
       });
     });
-  };
+  }
 
   /**
    * Selects the tab with tasks and the highest priority.
@@ -576,62 +621,37 @@ app.controller("TaskQueueModalCtrl", function ($scope, $uibModalInstance, $filte
    * 2. Pending
    * 3. Finished
    */
-  $scope.selectUrgentTab = function () {
-    var setActive = 0;
-    if ($scope.tabs.failed.count > 0) {
+  selectUrgentTab () {
+    let setActive = 0;
+    if (this.tabs.failed.count > 0) {
       setActive = 1;
-    } else if ($scope.tabs.pending.count === 0 &&
-        $scope.tabs.finished.count > 0) {
+    } else if (this.tabs.pending.count === 0 &&
+        this.tabs.finished.count > 0) {
       setActive = 2;
     }
-    $scope.modalTabData.active = setActive;
-  };
+    this.modalTabData.active = setActive;
+  }
 
   /**
    * Stops old timeout if any and sets a new time out which will be triggered
    * in "time" seconds.
    * @param {Number} time - Number represents seconds.
    */
-  $scope.reloadTaskIn = function (time) {
-    if ($scope.timeout) {
-      $interval.cancel($scope.timeout);
+  reloadTaskIn (time) {
+    if (this.timeout) {
+      clearInterval(this.timeout);
     }
-    $scope.timeout = $interval(function () {
-      $scope.loadAllTabs();
-    }, time, 1);
-  };
+    this.timeout = setTimeout(() => {
+      this.loadAllTabs();
+    }, time);
+  }
+}
 
-  /**
-   * Triggers instant table update on tab change.
-   */
-  $scope.$watch("modalTabData.active", function (tabNew, tabOld) {
-    if (tabOld !== null && tabNew !== null) {
-      $scope.loadAllTabs(true);
-    }
-  });
-
-  /**
-   * Adds a watch for each tab to watch it's page number, in order to change the
-   * page if it does.
-   */
-  angular.forEach($scope.tabs, function (tab, key) {
-    $scope.$watch("tabs." + key + ".page.current", function (pgNr) {
-      $scope.tabs[key].page.current = pgNr;
-      $scope.pageChange();
-    });
-  });
-
-  /**
-   * Triggers instant table update when the modal dialog is fully opened..
-   */
-  $uibModalInstance.opened.then(function () {
-    $scope.loadAllTabs();
-  });
-
-  /**
-   * Cancels any refresh call, when the dialog is closed.
-   */
-  $uibModalInstance.closed.then(function () {
-    $interval.cancel($scope.timeout);
-  });
-});
+export default {
+  template: require("./task-queue-modal.component.html"),
+  controller: TaskQueueModalComponent,
+  bindings: {
+    modalInstance: "<",
+    resolve: "<"
+  }
+};

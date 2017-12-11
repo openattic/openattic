@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2017 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,10 +30,25 @@
  */
 "use strict";
 
-angular.module("openattic.taskQueue", []);
-
-requireAll(require.context("./", true, /^(?!.*\.spec\.js$).*\.js$/));
-
-function requireAll (require) {
-  require.keys().forEach(require);
-}
+export default [
+  {
+    name: "Deep flatten",
+    value: "deep-flatten"
+  },
+  {
+    name: "Exclusive lock",
+    value: "exclusive-lock"
+  },
+  {
+    name: "Object map",
+    value: "object-map"
+  },
+  {
+    name: "Journaling",
+    value: "journaling"
+  },
+  {
+    name: "Fast diff",
+    value: "fast-diff"
+  }
+];

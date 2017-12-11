@@ -30,49 +30,30 @@
  */
 "use strict";
 
-var app = angular.module("openattic.taskQueue");
-app.service("taskQueueSubscriber", function ($q, $interval, taskQueueService) {
+export default (cephRbdService, cephIscsiRbdUnsupportedFeatures, $stateParams, $q) => {
+  return {
+    require: "ngModel",
+    link: (scope, elem, attrs, ctrl) => {
+      let containsUnsupportedFeature = (features) => {
+        return features.some((feature) => {
+          return cephIscsiRbdUnsupportedFeatures.findIndex((element) => {
+            return element.value === feature;
+          }) !== -1;
+        });
+      };
 
-  var self = this;
-
-  var pendingStatus = ["Not Started", "Running"];
-  var finalStatus = ["Exception", "Aborted", "Finished"];
-
-  var isFinalStatus = function (task) {
-    return finalStatus.indexOf(task.status) > -1;
+      ctrl.$asyncValidators.featuresValidator = (modelValue) => {
+        return cephRbdService.getDetail({
+          fsid: $stateParams.fsid,
+          pool: modelValue.pool,
+          name: modelValue.name
+        }).$promise.then((res) => {
+          if (containsUnsupportedFeature(res.features)) {
+            return $q.reject();
+          }
+          return true;
+        });
+      };
+    }
   };
-
-  self.pendingTasksPromise = function () {
-    let requests = [];
-    pendingStatus.forEach((status) => {
-      requests.push(
-        taskQueueService
-          .get({
-            status: status
-          }).$promise
-      );
-    });
-    return $q.all(requests);
-  };
-
-  self.subscribe = function (taskId, callback) {
-    let isWaiting = false;
-    let stop = $interval(function () {
-      if (!isWaiting) {
-        isWaiting = true;
-
-        taskQueueService.get({id: taskId})
-          .$promise
-          .then((res) => {
-            if (isFinalStatus(res)) {
-              $interval.cancel(stop);
-              callback(res);
-            }
-          })
-          .finally(() => {
-            isWaiting = false;
-          });
-      }
-    }, 1000);
-  };
-});
+};

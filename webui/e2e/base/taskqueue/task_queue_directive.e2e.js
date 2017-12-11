@@ -12,8 +12,8 @@ describe("task queue directive test", function () {
    * Task-Queue has to be closed for this.
    */
   var validateTaskTabText = function (taskText, tabName) {
-    qProperties.validateTaskText(taskText);
     qProperties.validateDisplayedTab(tabName);
+    qProperties.validateTaskText(taskText);
   };
 
   /**
