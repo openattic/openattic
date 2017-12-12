@@ -27,6 +27,8 @@ Added
 * WebUI: Add a timestamp of last update on the dashboard (OP-2837)
 * Development: Import ``set_symlinks.sh`` in order to create symlinks for
   building a development environment (OP-2899)
+* Backend/WebUI: Manage iSCSI service per node (OP-2763)
+* Backend/WebUI: Check for DeepSea version requirements (OP-2543)
 
 Changed
 ~~~~~~~
@@ -91,6 +93,8 @@ Fixed
 * WebUI: Fix javascript error after remove RBD size (OP-2966)
 * WebUI: Hide striping preview until RBD size is set (OP-2968)
 * WebUI: Fix Notification call (OP-2978)
+* Backend/WebUI: Adding an iSCSI target in one iSCSI gateway causes the lrbd 
+  service to restart all iSCSI targets (OP-2926)
 
 Removed
 ~~~~~~~
