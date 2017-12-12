@@ -95,6 +95,7 @@ Fixed
 * WebUI: Fix Notification call (OP-2978)
 * Backend/WebUI: Adding an iSCSI target in one iSCSI gateway causes the lrbd 
   service to restart all iSCSI targets (OP-2926)
+* WebUI: Fix typo on Ceph OSD scrub buttons (OP-2988)
 
 Removed
 ~~~~~~~
