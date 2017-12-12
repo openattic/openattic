@@ -24,7 +24,6 @@ from exception import NotSupportedError
 from nodb.models import JsonField, NodbModel, bulk_attribute_setter
 from utilities import aggregate_dict
 import rest_client
-import requests.exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -99,10 +98,7 @@ def merge_pillar_metadata():
     metadata = all_metadata()
     try:
         minions = DeepSea.instance().get_minions()
-    except (rest_client.RequestException, requests.exceptions.InvalidURL):
-        # Catch exceptions and continue when:
-        # - the DeepSea request fails
-        # - the request URL is invalid, e.g. SALT API hostname is empty
+    except rest_client.RequestException:
         logger.exception('failed to get minions')
         minions = []
     ret = []

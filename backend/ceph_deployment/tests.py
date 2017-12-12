@@ -14,14 +14,13 @@ import json
 
 from django.test import TestCase
 from mock import mock
-from requests import ConnectionError
+from requests.exceptions import ConnectionError, InvalidURL
 from ceph_deployment.models.ceph_minion import all_metadata, merge_pillar_metadata, CephMinion
 from deepsea import DeepSea
 from ifconfig.models import get_host_name
 from rest_client import BadResponseFormatException, RequestException
 from django.conf import settings
 from sysutils.database_utils import make_default_admin
-from nodb.models import NodbQuerySet
 
 
 class DeepSeaTestCase(TestCase):
@@ -570,6 +569,17 @@ class DeepSeaTestCase(TestCase):
                     }
                 ]
             )
+
+    def test_deepsea_invalid_url_error(self):
+        with mock.patch("requests.Session") as mock_requests_session:
+            mock_requests_session().post.side_effect = InvalidURL("test")
+
+            api = DeepSea('', 8000, 'auto', 'hello', 'world')
+            with self.assertRaisesRegexp(RequestException, "^test$") as context:
+                api._login()
+                
+            self.assertEqual(context.exception.status_code, None)
+            self.assertTrue(mock_requests_session().post.called)
 
 
 class MetadataTestCase(TestCase):
