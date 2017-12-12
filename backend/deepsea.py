@@ -166,7 +166,9 @@ class DeepSea(RestClient, SettingsListener):
 
     @RestClient.api_post('/', resp_structure='return[0] > (success & minions)')
     @RestClient.requires_login
-    def iscsi_deploy(self, minions=[], request=None):
+    def iscsi_deploy(self, minions=None, request=None):
+        if minions is None:
+            minions = []
         response = request({
             'client': 'runner', 'fun': 'ui_iscsi.deploy', 'minions': ','.join(minions)
         })
@@ -174,7 +176,9 @@ class DeepSea(RestClient, SettingsListener):
 
     @RestClient.api_post('/', resp_structure='return[0]')
     @RestClient.requires_login
-    def iscsi_undeploy(self, minions=[], request=None):
+    def iscsi_undeploy(self, minions=None, request=None):
+        if minions is None:
+            minions = []
         response = request({
             'client': 'runner', 'fun': 'ui_iscsi.undeploy', 'minions': ','.join(minions)
         })
