@@ -84,6 +84,7 @@ Fixed
 * WebUI: Display error message when no cluster exists (OP-2948)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
 * Installation: Secure permissions on sysconfig file (OP-2949)
+* Installation: oaconfig: Only parse required settings from config file (OP-2985)
 * WebUI: Fix problem with persistent notification options (OP-2952)
 * WebUI: Fix typo in settings notification (OP-2953)
 * Backend: Fix "test_bucket_get" Django unit test (OP-2947)
