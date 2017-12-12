@@ -13,7 +13,6 @@
 """
 from __future__ import absolute_import
 
-import re
 from distutils.version import StrictVersion
 from importlib import import_module
 from deepsea import DeepSea
