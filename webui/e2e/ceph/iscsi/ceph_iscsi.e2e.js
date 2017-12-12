@@ -1,15 +1,17 @@
 "use strict";
 
-var helpers = require("../../common.js");
-var CephIscsiTable = require("./CephIscsiTable.js");
-var CephIscsiForm = require("./CephIscsiForm.js");
-var CephIscsiDetails = require("./CephIscsiDetails.js");
+const helpers = require("../../common.js");
+const CephIscsiTable = require("./CephIscsiTable.js");
+const CephIscsiForm = require("./CephIscsiForm.js");
+const CephIscsiDetails = require("./CephIscsiDetails.js");
+const CephIscsiManageService = require("./CephIscsiManageService");
 
 describe("ceph iscsi", function () {
 
-  var table = new CephIscsiTable();
-  var form = new CephIscsiForm();
-  var details = new CephIscsiDetails();
+  const table = new CephIscsiTable();
+  const form = new CephIscsiForm();
+  const details = new CephIscsiDetails();
+  const manageService = new CephIscsiManageService();
 
   beforeAll(function () {
     helpers.login();
@@ -17,7 +19,7 @@ describe("ceph iscsi", function () {
     table.removeTargetIfExists("iqn.2016-06.org.openattic.test:storage:disk.tc-");
     table.removeTargetIfExists("iqn.2016-06.org.openattic.test:storage:disk.tc-");
     table.removeTargetIfExists("iqn.2016-06.org.openattic.test:storage:disk.tc-");
-    table.startAllIfStopped();
+    manageService.startAllIfStopped();
   });
 
   it("should check the ceph iSCSI list target url", function () {
@@ -114,16 +116,6 @@ describe("ceph iscsi", function () {
     expect(details.mutualUserDD.get(0).getText()).toBe("TargetMutualUser (Enabled)");
     expect(details.discoveryUserDD.get(0).getText()).toBe("TargetDiscoveryUser (Enabled)");
     expect(details.discoveryMutualUserDD.get(0).getText()).toBe("TargetDiscoveryMutualUser (Enabled)");
-  });
-
-  it("should stop lrbd service", function () {
-    table.startAllIfStopped();
-    table.stopAllTargets();
-  });
-
-  it("should start lrbd service", function () {
-    table.stopAllIfStarted();
-    table.startAllTargets();
   });
 
   it("should remove target", function () {
