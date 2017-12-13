@@ -44,7 +44,7 @@ class CephNfsDetail {
         return currentFsalItem;
       }
     });
-    return _.isObject(fsalItem) ? fsalItem.descr : fsal;
+    return _.isObjectLike(fsalItem) ? fsalItem.descr : fsal;
   }
 
   getAccessTypeHelp (accessType) {
@@ -53,7 +53,7 @@ class CephNfsDetail {
         return currentAccessTypeItem;
       }
     });
-    return _.isObject(accessTypeItem) ? accessTypeItem.help : "";
+    return _.isObjectLike(accessTypeItem) ? accessTypeItem.help : "";
   }
 
   getMountCommand () {

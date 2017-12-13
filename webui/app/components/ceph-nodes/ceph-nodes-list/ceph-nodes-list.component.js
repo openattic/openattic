@@ -55,13 +55,13 @@ class CephNodesList {
       active: 0,
       tabs: {
         details: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephNodes.detail.details",
           class: "tc_detailsTab",
           name: "Details"
         },
         statistics: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephNodes.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"

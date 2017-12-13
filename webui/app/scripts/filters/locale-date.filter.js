@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 /**
  * @description
  * Returns a string with a language sensitive representation of the
@@ -45,11 +47,10 @@
  * @returns {string} Formatted string or the input if input is not recognized
  *   as date.
  */
-var app = angular.module("openattic");
-app.filter("localeDate", () => {
+export default () => {
   return (value) => {
     let dt;
-    if (angular.isNumber(value)) {
+    if (_.isNumber(value)) {
       // If value is a number, then assume it is an UNIX time stamp and
       // convert it into milliseconds.
       dt = new Date(value * 1000);
@@ -62,4 +63,4 @@ app.filter("localeDate", () => {
     }
     return dt.toLocaleString();
   };
-});
+};

@@ -23,26 +23,6 @@ var CephIscsiTable = function () {
     element(by.css(".tc_cloneItem")).click();
   };
 
-  this.startAllTargets = function () {
-    element(by.css(".tc_manageService")).click();
-    element(by.css(".tc_deployItem")).click();
-    element(by.css(".tc_manageService")).click();
-    taskQueueHelpers.waitForPendingTasks();
-    expect(element(by.css(".tc_deployItem")).getAttribute("class")).toContain("disabled");
-    expect(element(by.css(".tc_undeployItem")).getAttribute("class")).not.toContain("disabled");
-    this.filterInput.click();
-  };
-
-  this.stopAllTargets = function () {
-    element(by.css(".tc_manageService")).click();
-    element(by.css(".tc_undeployItem")).click();
-    element(by.css(".tc_manageService")).click();
-    taskQueueHelpers.waitForPendingTasks();
-    expect(element(by.css(".tc_deployItem")).getAttribute("class")).not.toContain("disabled");
-    expect(element(by.css(".tc_undeployItem")).getAttribute("class")).toContain("disabled");
-    this.filterInput.click();
-  };
-
   this.clickRowByTargetId = function (targetId) {
     this.filterInput.clear().sendKeys(targetId);
     element(by.cssContainingText("tr", targetId)).click();
@@ -71,20 +51,5 @@ var CephIscsiTable = function () {
     });
   };
 
-  this.stopAllIfStarted = function () {
-    browser.findElement(by.css(".tc_deployItem.disabled")).then(function () {
-      element(by.css(".tc_manageService")).click();
-      element(by.css(".tc_undeployItem")).click();
-    }).catch(function () {});
-    taskQueueHelpers.waitForPendingTasks();
-  };
-
-  this.startAllIfStopped = function () {
-    browser.findElement(by.css(".tc_undeployItem.disabled")).then(function () {
-      element(by.css(".tc_manageService")).click();
-      element(by.css(".tc_deployItem")).click();
-    }).catch(function () {});
-    taskQueueHelpers.waitForPendingTasks();
-  };
 };
 module.exports = CephIscsiTable;

@@ -32,8 +32,8 @@ logger = logging.getLogger(__name__)
 
 class SimpleDatabaseUpgrade(object):
     _file_name = '/tmp/openattic-upgrade-backup-data'
-    _tables = ['auth_user', 'authtoken_token', 'userprefs_userprofile',
-                  'userprefs_userpreference']
+    _tables = ['auth_user', 'authtoken_token', 'userprefs_userprofile', 'userprefs_userpreference']
+    _tables_without_primary_id = ['authtoken_token']
 
     def __init__(self, file_name=None):
         self.file_name = self._file_name if file_name is None else file_name
@@ -95,6 +95,9 @@ class SimpleDatabaseUpgrade(object):
                     cursor.execute(stmt, values)
 
                 # Set the sequence correctly.
+                if table in self._tables_without_primary_id:
+                    continue
+
                 sequence, value = fix_sequence_for_table(cursor, table)
                 print('Setting sequence `{}` of table `{}` to `{}`'.format(sequence, table, value))
 

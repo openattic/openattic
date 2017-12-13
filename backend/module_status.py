@@ -12,6 +12,8 @@
  *  GNU General Public License for more details.
 """
 from __future__ import absolute_import
+
+from distutils.version import StrictVersion
 from importlib import import_module
 from deepsea import DeepSea
 from rest_client import RequestException
@@ -73,6 +75,8 @@ class Reason(object):
     GRAFANA_CONNECTION_ERROR = 186
     GRAFANA_HTTP_ERROR = 187
 
+    DEEPSEA_OLD_VERSION = 190
+
 
 def check_deepsea_connection():
     def map_errno_to_reason(errno):
@@ -112,6 +116,21 @@ def check_deepsea_connection():
             return map_status_code(
                 ex.status_code, ex.content if ex.status_code == 500 else None)
         raise UnavailableModule(Reason.DEEPSEA_HTTP_PROBLEM, str(ex))
+
+
+def check_deepsea_version(min_version):
+    message = "Minimum DeepSea version required is {}".format(min_version)
+    try:
+        deepsea_version = DeepSea.instance().get_deepsea_version()
+        if not 'version' in deepsea_version:
+            raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
+        version = deepsea_version['version']
+        if not version:
+            raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
+        if StrictVersion(version) < StrictVersion(min_version):
+            raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
+    except RequestException:
+        raise UnavailableModule(Reason.DEEPSEA_OLD_VERSION, message)
 
 
 class UnavailableModule(Exception):

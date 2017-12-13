@@ -296,7 +296,7 @@ class CephPoolsAdd {
           if (clusters.count > 0) {
             this.data.cluster = this.clusters[0];
           } else {
-            Notification.warning({
+            this.Notification.warning({
               title: "No cluster available",
               msg: "You can't create any pools with your configuration."
             });

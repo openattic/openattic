@@ -1,0 +1,12 @@
+<a ng-click="$ctrl.runnersDialog()"
+   uib-tooltip="{{$ctrl.taskOverview.tooltip}}"
+   class="tc_task-queue"
+   tooltip-placement="bottom">
+  <i class="fa {{$ctrl.taskOverview.icon}}"></i>
+  <span ng-hide="$ctrl.taskOverview.failed > 0">
+    {{$ctrl.taskOverview.queue ? $ctrl.taskOverview.queue : ''}} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}
+  </span>
+  <span ng-show="$ctrl.taskOverview.failed > 0">
+    {{$ctrl.taskOverview.failed}} Failed-Task{{$ctrl.taskOverview.failed !== 1 ? 's' : ''}}
+  </span>
+</a>

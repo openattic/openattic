@@ -1,6 +1,10 @@
-<p>
+
+<p ng-if="$ctrl.moduleAvailable.fsid.length">
   This module cannot be loaded due to a problem while trying to connect to the Ceph cluster
   with fsid <strong>{{ $ctrl.moduleAvailable.fsid }}</strong>
+</p>
+<p ng-if="!$ctrl.moduleAvailable.fsid.length">
+  This module cannot be loaded because no Ceph cluster is configured
 </p>
 
 <hr>

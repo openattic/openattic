@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 /**
  * You need to define some things in order to use it correctly and well, here is an short example and explanation
  * how to use it in a controller (look at the directive for an directive usage example):
@@ -66,7 +68,7 @@ export default class OaTabSetService {
     tabData.active = index;
     // Make sure that the first object in the selection is an object.
     if (!_.isArray(selection.items) || !selection.items.length ||
-        !_.isObject(selection.items[0])) {
+        !_.isObjectLike(selection.items[0])) {
       return;
     }
     let stateJump = {};

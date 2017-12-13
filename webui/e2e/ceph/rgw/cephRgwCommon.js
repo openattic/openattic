@@ -4,7 +4,6 @@ let CephRgwCommons = function () {
   let helpers = require("../../common.js");
 
   this.submitBtn = element(by.css(".tc_submitButton"));
-  this.backBtn = element(by.css(".tc_backButton"));
   this.addSubuserBtn = element(by.css(".tc_addSubuserButton"));
   this.modalSubmitBtn = element.all(by.css(".tc_submitButton")).first();
   this.cancelSubuserBtn = element(by.css(".tc_cancelSubuserButton"));

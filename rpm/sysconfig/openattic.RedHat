@@ -71,3 +71,6 @@ WEBSERVER_SERVICE="httpd"
 
 # The HTTP Scheme to be used. Either 'http' or 'https'.
 #GRAFANA_API_SCHEME="http"
+
+# Automatically generated. Don't modify.
+#DJANGO_SECRET=""

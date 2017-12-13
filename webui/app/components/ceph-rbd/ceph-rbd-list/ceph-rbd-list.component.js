@@ -63,13 +63,13 @@ class CephRbdList {
       active: 0,
       tabs: {
         status: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephRbds.detail.details",
           class: "tc_statusTab",
           name: "Status"
         },
         statistics: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephRbds.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"

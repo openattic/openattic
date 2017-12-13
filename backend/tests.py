@@ -12,12 +12,16 @@
 """
 
 import doctest
+import os
 
 from django.utils.unittest import TestCase
+from mock import mock
+from os.path import dirname, abspath, exists
 
 import module_status
 import utilities
 import exception
+import settings
 
 
 def load_tests(loader, tests, ignore):
@@ -68,3 +72,58 @@ class RunInExternalProcessTestCase(TestCase):
         self.assertRaises(exception.ExternalCommandError,
                           lambda: utilities.run_in_external_process(just_wait, 'test timeout',
                                                                     timeout=1))
+
+
+class SettingsTest(TestCase):
+    secret_file_path = file_path = dirname(abspath(__file__)) + '/.secret.txt'
+
+    def test_new_secret(self):
+        utilities.write_single_setting('DJANGO_SECRET', '')
+        if exists(SettingsTest.secret_file_path):
+            os.remove(SettingsTest.secret_file_path)
+
+        secret_1, should_write_1 = settings.read_secret_from_config()
+        self.assertTrue(should_write_1)
+        settings.write_secret_to_config(secret_1)
+
+        secret_2, should_write_2  = settings.read_secret_from_config()
+        self.assertEqual(secret_1, secret_2)
+        self.assertFalse(should_write_2)
+
+        self.assertEqual(utilities.read_single_setting('DJANGO_SECRET'), secret_2)
+
+    def test_secret_migration_read(self):
+
+        with open(SettingsTest.secret_file_path, 'w') as f:
+            f.write('mysecret')
+
+        utilities.write_single_setting('DJANGO_SECRET', '')
+
+        secret, should_write_secret = settings.read_secret_from_config()
+        self.assertTrue(should_write_secret)
+        self.assertEqual(secret, 'mysecret')
+
+        settings.write_secret_to_config('mysecret')
+        self.assertEqual(utilities.read_single_setting('DJANGO_SECRET'), 'mysecret')
+        self.assertFalse(exists(SettingsTest.secret_file_path))
+
+
+class ModuleStatusTest(TestCase):
+
+    @mock.patch('deepsea.DeepSea.get_deepsea_version')
+    def test_check_deepsea_version_updated(self, get_deepsea_version_mock):
+        get_deepsea_version_mock.return_value = {
+            "version": settings.DEEPSEA_MIN_VERSION_ISCSI
+        }
+        try:
+            module_status.check_deepsea_version(settings.DEEPSEA_MIN_VERSION_ISCSI)
+        except:
+            self.fail("Encountered an unexpected exception.")
+
+    @mock.patch('deepsea.DeepSea.get_deepsea_version')
+    def test_check_deepsea_version_not_updated(self, get_deepsea_version_mock):
+        get_deepsea_version_mock.return_value = {
+            "version": "0.7.0"
+        }
+        with self.assertRaises(module_status.UnavailableModule):
+            module_status.check_deepsea_version(settings.DEEPSEA_MIN_VERSION_ISCSI)

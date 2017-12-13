@@ -1,0 +1,99 @@
+<div class="oa-overlay overlay"
+     ng-show="$ctrl.waiting">
+  <div class="oa-overlay-content overlay-content">
+    <i class="fa fa-4x fa-spinner fa-spin"></i>
+  </div>
+</div>
+
+<div class="openattic-modal-header">
+  <span ng-show="$ctrl.task">Delete task</span>
+  <span ng-show="!$ctrl.task && $ctrl.tasks">Delete tasks</span>
+</div>
+
+<form name="$ctrl.deleteForm"
+      role="form"
+      novalidate>
+  <div class="openattic-modal-content">
+    <div ng-hide="$ctrl.waiting || $ctrl.pendingDeletionFailure.length > 0">
+      <p ng-show="$ctrl.tasks.length === 1 && !$ctrl.waiting"
+         class="tc_delete_one">
+        You are about to delete
+        <strong>{{$ctrl.tasks[0].description}}</strong> task which is
+        <strong>{{$ctrl.tasks[0].status | lowercase}}</strong>
+        and was last modified on {{$ctrl.tasks[0].last_modified | date:'medium'}}.
+      </p>
+      <p ng-show="$ctrl.tasks.length > 1"
+         class="tc_delete_multiple">
+        You are about to delete {{::$ctrl.tasks.length}} tasks.
+      </p>
+      <p class="text-danger tc-run-warn"
+         ng-show="$ctrl.isPendingTask($ctrl.tasks[0])">
+        If you delete running tasks, it will abort the execution and won't roll back what has been done so far!
+      </p>
+      <div ng-show="$ctrl.tasks.length > 1">
+        <uib-accordion class="tc-tasks-to-delete">
+          <div ng-hide="$ctrl.waiting"
+               uib-accordion-group
+               class="panel-default modal-scroll"
+               is-open="$ctrl.status.open">
+            <uib-accordion-heading>
+              Tasks to delete ({{::$ctrl.tasks.length}})
+              <i class="pull-right glyphicon"
+                 ng-class="{'glyphicon-chevron-down': $ctrl.status.open, 'glyphicon-chevron-right': !$ctrl.status.open}"></i>
+            </uib-accordion-heading>
+            <ul>
+              <li ng-repeat="task in $ctrl.tasks track by task.id">
+                {{task.description}} ({{task.status}}, {{task.last_modified | date:'medium'}})
+              </li>
+            </ul>
+          </div>
+        </uib-accordion>
+      </div>
+    </div>
+
+    <div ng-show="waiting">
+      <p>Processing deletion requests: {{$ctrl.finishedTasks}} of {{$ctrl.tasks.length}}</p>
+      <p class="text-warning"
+         ng-show="pendingDeletionFailure.length > 0">
+        Couldn't delete {{$ctrl.pendingDeletionFailure.length}} task{{$ctrl.pendingDeletionFailure.length === 1 ? '' : 's'}}.</p>
+    </div>
+
+    <div ng-show="!$ctrl.waiting && $ctrl.pendingDeletionFailure.length > 0">
+      <uib-accordion class="tc-moved-tasks">
+        <div ng-hide="$ctrl.waiting"
+             uib-accordion-group
+             class="panel-warning modal-scroll"
+             is-open="true">
+          <uib-accordion-heading>
+            Couldn't delete the following {{$ctrl.pendingDeletionFailure.length}} Tasks
+          </uib-accordion-heading>
+          <ul>
+            <li ng-repeat="moved in $ctrl.pendingDeletionFailure track by moved[0].id">
+              {{moved[0].description}} changed from {{moved[0].status}} to
+              <span ng-class="{'text-danger': moved[1].status === 'Exception', 'text-success': moved[1].status === 'Finished'}"
+                    ng-bind="moved[1].status"></span>
+            </li>
+          </ul>
+        </div>
+      </uib-accordion>
+    </div>
+  </div>
+
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right"
+         ng-hide="$ctrl.waiting || $ctrl.pendingDeletionFailure.length > 0">
+      <button class="btn btn-primary btn-sm tc-tab-del-confirm"
+              ng-click="$ctrl.deleteTasks($ctrl.tasks.entries())"
+              ng-disabled="$ctrl.deleteForm.$invalid">
+        Delete
+      </button>
+      <button class="btn btn-link btn-sm tc-tab-del-cancel"
+              ng-click="$ctrl.cancel()">Cancel</button>
+    </div>
+    <div class="button-group text-right"
+         ng-show="$ctrl.waiting || $ctrl.pendingDeletionFailure.length > 0">
+      <button class="btn btn-primary btn-sm tc-tab-del-close"
+              ng-click="$ctrl.closeWithWarnings()">Close</button>
+    </div>
+  </div>
+</form>

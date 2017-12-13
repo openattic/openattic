@@ -1,0 +1,60 @@
+<div class="openattic-modal-header">
+  <span>Manage iSCSI service</span>
+</div>
+<form name="serviceForm"
+      role="form"
+      novalidate>
+  <div class="openattic-modal-content">
+
+    <table class="table table-hover table-no-background">
+      <thead>
+        <tr>
+          <th>Host</th>
+          <th>State</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-show="!$ctrl.hosts">
+          <td colspan="3">
+            <i class="fa fa-spinner fa-spin fa-fw"></i> Loading...</td>
+        </tr>
+        <tr ng-repeat="(key, value) in $ctrl.hosts">
+          <td>{{ key }}</td>
+          <td class="tc_state">
+            <span ng-bind-html="value.state | serviceState"></span>
+            <span ng-if="value.message"
+                  class="text-muted">
+              <br>{{ value.message }}</span>
+            <span ng-repeat="message in value.messages"
+                  class="text-muted">
+              <br>{{ message }}</span>
+          </td>
+          <td align="center">
+            <button class="btn btn-default btn-sm btn-label tc_startService"
+                    ng-if="value.state === 'STOPPED' || value.state === 'STARTING'"
+                    ng-click="$ctrl.start(key)"
+                    ng-disabled="value.state === 'STARTING'">
+              <i class="fa fa-fw fa-play"></i>Start
+            </button>
+            <button class="btn btn-default btn-sm btn-label tc_stopService"
+                    ng-if="value.state === 'RUNNING' || value.state === 'STOPPING'"
+                    ng-click="$ctrl.stop(key)"
+                    ng-disabled="value.state === 'STOPPING'">
+              <i class="fa fa-fw fa-stop icon-danger"></i>Stop
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <button id="close"
+              class="btn btn-default btn-sm"
+              ng-click="$ctrl.close()">Close</button>
+    </div>
+  </div>
+</form>

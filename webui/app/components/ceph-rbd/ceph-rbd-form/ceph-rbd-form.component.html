@@ -356,7 +356,10 @@
             </div>
           </div>
           <div class="form-group"
-               ng-show="$ctrl.rbdForm.obj_size.$valid && $ctrl.rbdForm.stripingUnit.$valid && $ctrl.rbdForm.stripingCount.$valid">
+               ng-show="$ctrl.rbdForm.size.$valid &&
+                        $ctrl.rbdForm.obj_size.$valid &&
+                        $ctrl.rbdForm.stripingUnit.$valid &&
+                        $ctrl.rbdForm.stripingCount.$valid">
             <span class="help-block tc-striping-help col-sm-offset-4 col-sm-8"
                   ng-bind-html="$ctrl.stripingDescription()">
             </span>

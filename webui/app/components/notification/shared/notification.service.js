@@ -41,7 +41,8 @@ import _ from "lodash";
  * @property {string} type type of the notification
  */
 export default class Notification {
-  constructor (toasty, TWDEFAULTS, $localStorage) {
+  constructor ($rootScope, toasty, TWDEFAULTS, $localStorage) {
+    this.$rootScope = $rootScope;
     this.$localStorage = $localStorage;
     this.TWDEFAULTS = TWDEFAULTS;
     this.toasty = toasty;
@@ -75,13 +76,6 @@ export default class Notification {
       };
     });
 
-  }
-
-  setConfig (config) {
-    this.delayPromise = undefined;
-    this.delay = 5;
-    this.options = Object.assign({}, this.TWDEFAULTS.options, config);
-    return this;
   }
 
   /**
@@ -124,51 +118,42 @@ export default class Notification {
   }
 
   /**
-   * Method used for setting/resetting the delay (check show() method).
-   * @param {number} delay the delay to be used (in milliseconds). Defaults to 0 (non-cancelable notifications)
-   * @return {Notification}       current Notification instance
-   */
-  setDelay (delay) {
-    this.delay = delay;
-    return this;
-  }
-
-  /**
    * Method showing (displaying) the notification.
    * If second argument is provided, its cancel method will be called.
    * @param {Object} opts configuration object with properties
    *   @property {Object} toastyOptions toasty compatible options, used when creating a toasty
    *   @property {string} type toasty type
    *   @property {string} type type of the notification
+   *   @property {number} delay time in seconds to be applied in the timeout
    * @param  {Object} error object whose default notification we want to cancel
-   * @return {Notification}       current Notification instance
+   * @return {number} A number representing the ID value of the timeout that is set
    */
   show (opts, error) {
     if (error && error.preventDefault) {
       error.preventDefault();
     }
-    if (_.isUndefined(this.delay) || this.delay < 5) {
-      this.setDelay(5);
-    }
+    let delay = opts.delay || 5;
     let options = Object.assign({}, this.TWDEFAULTS.options, this.options, opts);
-    this.delayPromise = setTimeout(() => {
+    let timeoutID = setTimeout(() => {
       if (_.isUndefined(options.timeout)) {
         options.timeout = globalConfig.GUI.defaultNotificationTimes[options.type];
       }
       this.save(options);
-      this.toasty[options.type](options);
-    }, this.delay);
-    return this;
+      this.$rootScope.$apply(() => {
+        this.toasty[options.type](options);
+      });
+    }, delay);
+    return timeoutID;
   }
 
   /**
    * Method preventing notification from being shown (displayed)
-   * @return {Notification}       current Notification instance
+   * @param {Number} timeoutID A number representing the ID of the timeout to be canceled
+   * @return {Notification} current Notification instance
    */
-  cancel () {
-    if (this.delayPromise) {
-      clearTimeout(this.delayPromise);
-      this.delay = 0;
+  cancel (timeoutID) {
+    if (timeoutID) {
+      clearTimeout(timeoutID);
     }
 
     return this;

@@ -17,15 +17,18 @@ To describe their impact on the project, changes are grouped as follows:
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
 
-[3.6.1] - unreleased
+[3.6.1] - 2017-12-13
 --------------------
 
 Added
 ~~~~~
+* Backend/QA: Increased unit test coverage of rest and userprefs app (OP-2809)
 * WebUI: Add a 'Clear' button to the datatable search field (OP-2900)
 * WebUI: Add a timestamp of last update on the dashboard (OP-2837)
 * Development: Import ``set_symlinks.sh`` in order to create symlinks for
   building a development environment (OP-2899)
+* Backend/WebUI: Manage iSCSI service per node (OP-2763)
+* Backend/WebUI: Check for DeepSea version requirements (OP-2543)
 
 Changed
 ~~~~~~~
@@ -45,18 +48,24 @@ Changed
 * WebUI: Migration of Ceph OSDs module into Angular (OP-2858)
 * WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
 * WebUI: Migration of Ceph Pools module into Angular (OP-2859)
+* WebUI: Migration of OA module into Angular (OP-2904)
+* WebUI: Migration of Task Queue module into Angular (OP-2869)
 * WebUI: Improve Object Gateway user/bucket filtering (OP-2912)
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
 * WebUI: The datatable does not show any progress if filter options are
   changed (OP-2920)
+* WebUI: Display meaningful error when creating a RGW user using an existing
+  email address (OP-2902)
 * Backend/WebUI: Usage of task queue on RBD deletion to prevent timeout errors
   when deleting large RBD images. (OP-2742)
 * WebUI: Migration of Users module into Angular (OP-2871)
 * WebUI: Migration of Ceph RBD module into Angular (OP-2860)
 * WebUI: Object Gateway Buckets now provides endpoint addresses (OP-2908)
+* WebUI: Replace _.isObject with _.isObjectLike (OP-2955)
 * Backend/WebUI: Usage of task queue on iSCSI service management to prevent
   timeouts (OP-2788)
-* Development: Make ``make_dist.py`` always use the current HEAD revision (OP-2883)
+* Development: Make ``make_dist.py`` always use the current HEAD revision
+  (OP-2883)
 
 Fixed
 ~~~~~
@@ -66,10 +75,26 @@ Fixed
 * Backend: Performance Improvements when listing RBDs (OP-2688)
 * Backend: Fixed Internal Server Error when listing RBDs with missing
   (OP-2895)
+* Backend: Fixed an error message in the openATTIC log file when
+  issuing `oaconfig install` (OP-2898)
 * Backend: Made Gatling tests more idempotent (OP-2913)
+* Backend/WebUI: Fixed the limitation of the RBD dropdown list to 50
+  elements in the iSCSI add form (OP-2907)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
+* WebUI: Display error message when no cluster exists (OP-2948)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
+* Installation: oaconfig: Only parse required settings from config file
+  (OP-2985)
+* WebUI: Fix problem with persistent notification options (OP-2952)
+* WebUI: Fix typo in settings notification (OP-2953)
+* Backend: Fix "test_bucket_get" Django unit test (OP-2947)
+* WebUI: Fix javascript error after remove RBD size (OP-2966)
+* WebUI: Hide striping preview until RBD size is set (OP-2968)
+* WebUI: Fix Notification call (OP-2978)
+* Backend/WebUI: Adding an iSCSI target in one iSCSI gateway causes the lrbd
+  service to restart all iSCSI targets (OP-2926)
+* WebUI: Fix typo on Ceph OSD scrub buttons (OP-2988)
 
 Removed
 ~~~~~~~
@@ -77,6 +102,11 @@ Removed
   tests (OP-2901)
 * Packaging: Removed creation of /var/lock/openattic (and /run/lock/openattic
   respectively) during installation (OP-2946)
+
+Security
+~~~~~~~~
+* Backend: Migrated .secret.txt into a setting in the settings file (OP-2873)
+* Installation: Secure permissions on sysconfig file (OP-2949)
 
 [3.6.0] - 2017-11-01
 --------------------
