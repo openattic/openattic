@@ -114,12 +114,6 @@ DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
 AUTH_PROFILE_MODULE = 'userprefs.UserProfile'
 
-# Log execution of "lvs" and "vgs" commands.
-# Those don't usually fail and are executed quite often (tm) to generate the LV and VG lists,
-# so logging them might not make too much sense, but it's up to you. :)
-# Logging commands like lvcreate/lvresize/lvremove won't be affected by this.
-LVM_LOG_COMMANDS = False
-
 # Auto-Configure distro defaults
 try:
     import platform
@@ -177,6 +171,8 @@ LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# DeepSea settings.
+DEEPSEA_MIN_VERSION_ISCSI = "0.8.0"
 
 def read_secret_from_config():
     """

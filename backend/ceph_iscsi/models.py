@@ -59,6 +59,10 @@ class iSCSITarget(NodbModel):
 
         return targets
 
+    @staticmethod
+    def extract_hostnames(portals):
+        return set(map(lambda portal: portal['hostname'], portals))
+
     def _validate(self):
         luns = set()
         uuids = set()
@@ -80,7 +84,13 @@ class iSCSITarget(NodbModel):
 
         self._validate()
 
-        targets = [t for t in self.__class__.objects.exclude(targetId=self.targetId)]
+        targets = []
+        old_target = None
+        for target in self.__class__.objects.all():
+            if target.targetId == self.targetId:
+                old_target = target
+                continue
+            targets.append(target)
         if self.newTargetId and self.newTargetId != self.targetId:
             same_target_id = [t for t in targets if t.targetId == self.newTargetId]
             if same_target_id:
@@ -96,7 +106,10 @@ class iSCSITarget(NodbModel):
 
         status = DeepSea.instance().iscsi_status()
         if status:
-            task = tasks.async_deploy_exports.delay()
+            minions = iSCSITarget.extract_hostnames(self.portals)
+            if old_target:
+                minions = minions.union(iSCSITarget.extract_hostnames(old_target.portals))
+            task = tasks.async_deploy_exports.delay(list(minions))
             logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", task.id)
 
         super(iSCSITarget, self).save(force_insert, force_update, using, update_fields)

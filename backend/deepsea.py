@@ -164,19 +164,23 @@ class DeepSea(RestClient, SettingsListener):
         })
         return response['return'][0]
 
-    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.api_post('/', resp_structure='return[0] > (success & minions)')
     @RestClient.requires_login
-    def iscsi_deploy(self, request=None):
+    def iscsi_deploy(self, minions=None, request=None):
+        if minions is None:
+            minions = []
         response = request({
-            'client': 'runner', 'fun': 'ui_iscsi.deploy'
+            'client': 'runner', 'fun': 'ui_iscsi.deploy', 'minions': ','.join(minions)
         })
         return response['return'][0]
 
     @RestClient.api_post('/', resp_structure='return[0]')
     @RestClient.requires_login
-    def iscsi_undeploy(self, request=None):
+    def iscsi_undeploy(self, minions=None, request=None):
+        if minions is None:
+            minions = []
         response = request({
-            'client': 'runner', 'fun': 'ui_iscsi.undeploy'
+            'client': 'runner', 'fun': 'ui_iscsi.undeploy', 'minions': ','.join(minions)
         })
         return response['return'][0]
 
@@ -257,5 +261,13 @@ class DeepSea(RestClient, SettingsListener):
     def nfs_stop_exports(self, minion=None, request=None):
         response = request({
             'client': 'runner', 'fun': 'ui_ganesha.stop_exports', 'minion': minion
+        })
+        return response['return'][0]
+
+    @RestClient.api_post('/', resp_structure='return[0]')
+    @RestClient.requires_login
+    def get_deepsea_version(self, request=None):
+        response = request({
+            'client': 'runner', 'fun': 'deepsea.version', 'format': 'json'
         })
         return response['return'][0]

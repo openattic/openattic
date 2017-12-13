@@ -16,7 +16,11 @@ export OACONFIG="True"
 
 for settings in "/etc/default/openattic" "/etc/sysconfig/openattic"
 do
-	[ -f $settings ] && . $settings
+	if [[ -f $settings ]]; then
+		for var in "OAUSER" "OADIR" "WEBSERVER_SERVICE"; do
+			eval `grep "^$var" $settings`
+		done
+	fi
 done
 
 if [[ -z $OAUSER ]]; then

@@ -42,6 +42,9 @@ export default () => {
     if (value === "RUNNING") {
       return "<span> Running</span>";
     }
+    if (value === "RUNNING_WARN") {
+      return "<i class=\"fa fa-exclamation-triangle icon-warning\"></i><span> Running</span>";
+    }
     if (value === "STOPPED") {
       return "<i class=\"fa fa-angle-double-down fa-lg icon-danger\"></i><span> Stopped</span>";
     }

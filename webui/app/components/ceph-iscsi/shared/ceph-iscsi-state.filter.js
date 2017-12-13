@@ -30,21 +30,24 @@
  */
 "use strict";
 
-class CephIscsiDetail {
+export default () => {
 
-  constructor (cephIscsiStateService) {
-    this.cephIscsiStateService = cephIscsiStateService;
-  }
-
-  containsHost (hosts, host) {
-    return this.cephIscsiStateService.containsHost(hosts, host);
-  }
-}
-
-export default {
-  template: require("./ceph-iscsi-detail.component.html"),
-  bindings: {
-    selection: "<"
-  },
-  controller: CephIscsiDetail
+  return (value) => {
+    switch (value) {
+      case "STARTING":
+        return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Enabling...</span>";
+      case "STOPPING":
+        return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Disabling...</span>";
+      case "RUNNING":
+        return "<span> Enabled</span>";
+      case "RUNNING_WARN":
+        return "<i class=\"fa fa-exclamation-triangle icon-warning\"></i><span> Enabled</span>";
+      case "STOPPED":
+        return "<i class=\"fa fa-angle-double-down fa-lg icon-danger\"></i><span> Disabled</span>";
+      case "LOADING":
+        return "<i class=\"fa fa-spinner fa-spin fa-fw\"></i><span> Loading...</span>";
+      default:
+        return "<span>Unknown</span>";
+    }
+  };
 };
