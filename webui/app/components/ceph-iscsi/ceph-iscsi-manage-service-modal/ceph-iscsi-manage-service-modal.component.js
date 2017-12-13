@@ -9,7 +9,7 @@
  *
  *
  * The JavaScript code in this page is free software: you can
- * redistribute it and/or modify it under the terms of the GNU
+ * redistribute it and/or modify it under th7e terms of the GNU
  * General Public License as published by the Free Software
  * Foundation; version 2.
  *
@@ -30,21 +30,52 @@
  */
 "use strict";
 
-class CephIscsiDetail {
+class CephIscsiManageServiceModal {
 
-  constructor (cephIscsiStateService) {
+  constructor (cephIscsiService, cephIscsiStateService) {
+    this.cephIscsiService = cephIscsiService;
     this.cephIscsiStateService = cephIscsiStateService;
+
+    this.hosts = undefined;
+    this._dirty = false;
   }
 
-  containsHost (hosts, host) {
-    return this.cephIscsiStateService.containsHost(hosts, host);
+  $onInit () {
+    this.cephIscsiService.iscsistatus({
+      fsid: this.resolve.fsid
+    })
+      .$promise
+      .then((res) => {
+        this.hosts = res;
+        this.cephIscsiStateService.updateHosts(this.resolve.fsid, this.hosts);
+      });
   }
+
+  start (hostname) {
+    this._dirty = true;
+    this.cephIscsiStateService.start(this.hosts[hostname], hostname, this.resolve.fsid);
+  }
+
+  stop (hostname) {
+    this._dirty = true;
+    this.cephIscsiStateService.stop(this.hosts[hostname], hostname, this.resolve.fsid);
+  }
+
+  close () {
+    if (this._dirty) {
+      this.modalInstance.dismiss("close");
+    } else {
+      this.modalInstance.close("close");
+    }
+  }
+
 }
 
 export default {
-  template: require("./ceph-iscsi-detail.component.html"),
+  template: require("./ceph-iscsi-manage-service-modal.component.html"),
   bindings: {
-    selection: "<"
+    modalInstance: "<",
+    resolve: "<"
   },
-  controller: CephIscsiDetail
+  controller: CephIscsiManageServiceModal
 };

@@ -27,6 +27,8 @@ Added
 * WebUI: Add a timestamp of last update on the dashboard (OP-2837)
 * Development: Import ``set_symlinks.sh`` in order to create symlinks for
   building a development environment (OP-2899)
+* Backend/WebUI: Manage iSCSI service per node (OP-2763)
+* Backend/WebUI: Check for DeepSea version requirements (OP-2543)
 
 Changed
 ~~~~~~~
@@ -84,12 +86,16 @@ Fixed
 * WebUI: Display error message when no cluster exists (OP-2948)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
 * Installation: Secure permissions on sysconfig file (OP-2949)
+* Installation: oaconfig: Only parse required settings from config file (OP-2985)
 * WebUI: Fix problem with persistent notification options (OP-2952)
 * WebUI: Fix typo in settings notification (OP-2953)
 * Backend: Fix "test_bucket_get" Django unit test (OP-2947)
 * WebUI: Fix javascript error after remove RBD size (OP-2966)
 * WebUI: Hide striping preview until RBD size is set (OP-2968)
 * WebUI: Fix Notification call (OP-2978)
+* Backend/WebUI: Adding an iSCSI target in one iSCSI gateway causes the lrbd 
+  service to restart all iSCSI targets (OP-2926)
+* WebUI: Fix typo on Ceph OSD scrub buttons (OP-2988)
 
 Removed
 ~~~~~~~

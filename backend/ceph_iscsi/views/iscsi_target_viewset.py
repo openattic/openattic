@@ -68,7 +68,10 @@ class iSCSITargetViewSet(NodbViewSet):
             raise Exception('Failed to delete iSCSI targets')
 
         if new_targets and status:
-            task = tasks.async_deploy_exports.delay()
+            portals_to_deploy_lists = [t.portals for t in targets if t.targetId in targets_to_delete]
+            portals_to_deploy = [val for sublist in portals_to_deploy_lists for val in sublist]
+            minions = iSCSITarget.extract_hostnames(portals_to_deploy)
+            task = tasks.async_deploy_exports.delay(list(minions))
             logger.info("Scheduled deploy of iSCSI exports: taskqueue_id=%s", task.id)
         elif status:
             task = tasks.async_stop_exports.delay()
