@@ -30,10 +30,9 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.config(["$uibTooltipProvider", function ($uibTooltipProvider) {
+export default ($uibTooltipProvider) => {
   $uibTooltipProvider.options({
     "placement": "right",
     "appendToBody": true
   });
-}]);
+};

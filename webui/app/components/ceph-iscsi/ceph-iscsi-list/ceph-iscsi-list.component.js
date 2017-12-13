@@ -65,15 +65,11 @@ class CephIscsiList {
 
     this.selection = {};
 
-    this.deployed = {
-      state: undefined
-    };
-
     this.tabData = {
       active: 0,
       tabs: {
         status: {
-          show: () => _.isObject(this.selection.item),
+          show: () => _.isObjectLike(this.selection.item),
           state: "cephIscsi.detail.details",
           class: "tc_statusTab",
           name: "Status"
@@ -87,20 +83,12 @@ class CephIscsiList {
     };
   }
 
-  deployIscsi () {
-    this.cephIscsiStateService.start(this.registry.selectedCluster.fsid, this.deployed);
-  }
-
-  undeployIscsi () {
-    this.cephIscsiStateService.stop(this.registry.selectedCluster.fsid, this.deployed);
-  }
-
   onClusterLoad (cluster) {
     this.cluster = cluster;
   }
 
   getIscsiList () {
-    if (_.isObject(this.cluster) && this.cluster.results &&
+    if (_.isObjectLike(this.cluster) && this.cluster.results &&
           this.cluster.results.length > 0 && this.registry.selectedCluster) {
       var obj = this.$filter("filter")(this.cluster.results, {
         fsid: this.registry.selectedCluster.fsid
@@ -128,12 +116,11 @@ class CephIscsiList {
             target.cephIscsiTargetAdvangedSettings = this.cephIscsiTargetAdvangedSettings;
             target.fsid = this.registry.selectedCluster.fsid;
           });
+          this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.iscsi.results);
         })
         .catch((error) => {
           this.error = error;
         });
-
-      this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.deployed);
     }
   }
 
@@ -192,6 +179,21 @@ class CephIscsiList {
     this.$state.go("cephIscsi-clone", {
       fsid: this.registry.selectedCluster.fsid,
       targetId: this.selection.items[0].targetId
+    });
+  }
+
+  stateAction () {
+    let modalInstance = this.$uibModal.open({
+      windowTemplate: require("../../../templates/messagebox.html"),
+      component: "cephIscsiManageServiceModal",
+      resolve: {
+        fsid: () => {
+          return this.registry.selectedCluster.fsid;
+        }
+      }
+    });
+    modalInstance.result.catch(() => {
+      this.cephIscsiStateService.update(this.registry.selectedCluster.fsid, this.iscsi.results);
     });
   }
 }

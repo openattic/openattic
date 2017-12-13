@@ -30,8 +30,7 @@
  */
 "use strict";
 
-var app = angular.module("openattic");
-app.config(["toastyConfigProvider", function (toastyConfigProvider) {
+export default (toastyConfigProvider) => {
   toastyConfigProvider.setConfig({
     sound:        false,
     shake:        false,
@@ -43,4 +42,4 @@ app.config(["toastyConfigProvider", function (toastyConfigProvider) {
     html:         true,
     theme:        "bootstrap"
   });
-}]);
+};

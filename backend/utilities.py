@@ -187,3 +187,50 @@ def set_globals_from_file(my_globals, file_name):
         print('Reading settings from {}'.format(file_name))
         for key, val in ConfigObj(file_name).items():
             my_globals[key] = val
+
+
+def read_single_setting(key):
+    """
+    >>> read_single_setting('OAUSER')
+    'openattic'
+
+    >>> read_single_setting('notfound')
+    Traceback (most recent call last):
+      File "/utilities.py", line 216, in read_single_setting
+        return ConfigObj(file_name)[key]
+      File "/site-packages/configobj.py", line 554, in __getitem__
+        val = dict.__getitem__(self, key)
+    KeyError: 'notfound'
+
+    :raise KeyError: If the key isn't found
+    """
+    file_name = \
+    [f for f in ('/etc/default/openattic', '/etc/sysconfig/openattic') if os.access(f, os.R_OK)][0]
+    return ConfigObj(file_name)[key]
+
+
+def write_single_setting(key, value, set_in_django_settings=True):
+    """
+    :raise dbus.DBusException: If connection to dbus failed.
+    """
+    import oa_settings
+
+    if '-' in key:
+        logger.warning('- in key "{}"'.format(key))
+
+    if set_in_django_settings:
+        from django.conf import settings as django_settings
+        setattr(django_settings, key, value)
+    conf_obj = ConfigObj(oa_settings.settings_file)
+
+    def get_default(this_key):
+        return '' if not conf_obj.has_key(this_key) else type(value)()
+
+    def get_type(this_key):
+        return type(value) if not conf_obj.has_key(this_key) else type(conf_obj[this_key])
+
+    def get_value(this_key):
+        return value if this_key == key else conf_obj[this_key]
+
+    oa_settings.save_settings_generic([key], get_default, get_type, get_value)
+    return conf_obj

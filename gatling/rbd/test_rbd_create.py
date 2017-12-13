@@ -46,8 +46,8 @@ class RbdCreateDataPoolTestCase(RbdDataPoolTestScenario):
         self.assertEqual(self._rbd_exist(rbd_name), False)
 
     def test_create_delete_rbd_ec_pool_ec_overwrites(self):
-        """ Try to create an RBD where the pool is an replicated pool and the data-pool an erasure coded pool with
-            'ec_overwrites' flag. """
+        """ Try to create an RBD where the pool is an replicated pool and the data-pool an erasure
+        coded pool with 'ec_overwrites' flag. """
         rbd_name = 'test_create_delete_rbd_ec_pool_ec_overwrites'
 
         self._delete_rbd(rbd_name)
@@ -72,8 +72,8 @@ class RbdCreateDataPoolTestCase(RbdDataPoolTestScenario):
         self.assertEqual(self._rbd_exist(rbd_name), False)
 
     def test_create_delete_rbd_ec_pool_no_ec_overwrites(self):
-        """ Try to create an RBD where the pool is an replicated pool and the data-pool an erasure coded pool without
-            'ec_overwrites' flag and see if it fails. """
+        """ Try to create an RBD where the pool is an replicated pool and the data-pool an erasure
+        coded pool without 'ec_overwrites' flag and see if it fails. """
 
         rbd_name = 'test_create_delete_rbd_ec_pool_no_ec_overwrites'
 

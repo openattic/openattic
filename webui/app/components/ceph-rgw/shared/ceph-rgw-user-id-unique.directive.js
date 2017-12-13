@@ -69,7 +69,7 @@ export default ($q, cephRgwUserService) => {
             .catch((error) => {
               // Display an error toasty for all errors except whether the user does not
               // exist (the Admin Ops API returns a 404 in this case).
-              if (_.isObject(error) && (error.status === 404)) {
+              if (_.isObjectLike(error) && (error.status === 404)) {
                 error.preventDefault();
               }
               // Mark the field as valid if the remote validation fails.

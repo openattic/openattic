@@ -28,13 +28,13 @@ logger = logging.getLogger(__name__)
 
 
 class Settings(object):
-    '''
+    """
     This class will be used to access the settings values that are declared in settings.py
     For instance if there is a setting declared in settings.py as:
       CUSTOM_SETTING = ("some_value", str)
     Then to access the value of this setting, one can just do:
       Settings.CUSTOM_SETTING
-    '''
+    """
     pass
 
     @staticmethod
@@ -93,7 +93,6 @@ def get_containing_folder_follow_links(file_path):
     ret = os.path.dirname(file_path)
 
     return ret
-
 
 
 settings_list = [i for i in dir(settings) if not inspect.ismethod(i) and not i.startswith('_')]
@@ -177,6 +176,7 @@ def load_settings():
 
     _notify_settings_listeners()
 
+
 def save_settings():
     def get_default(key):
         return setting_init_dict[key][0]
@@ -223,19 +223,24 @@ def save_settings_generic(this_settings_list, get_default, get_type, get_value):
 
     logger.debug("Writing %s contents:\n%s", settings_file, conf_content)
 
-    settings_dbus = get_dbus_object("/oa_settings")
-    ret = settings_dbus.write_openattic_config(settings_file, conf_content)
-    if ret == 0:
-        return
+    # try without dbus, if we have write access
+    try:
+        with open(settings_file, "w") as f:
+            f.write(conf_content)
+    except IOError:
+        settings_dbus = get_dbus_object("/oa_settings")
+        ret = settings_dbus.write_openattic_config(settings_file, conf_content)
+        if ret == 0:
+            return
 
-    logger.error("Error while writing settings: errno=%s", ret)
-    if ret == 13:
-        raise Exception("Permission denied while writting settings to {}.\n"
-                        "Please check file permissions for user \"openattic\""
-                        .format(settings_file))
-    else:
-        raise Exception("Error while writting settings to {}: IOError errno={}"
-                        .format(settings_file, ret))
+        logger.error("Error while writing settings: errno=%s", ret)
+        if ret == 13:
+            raise Exception("Permission denied while writing settings to {}.\n"
+                            "Please check file permissions for user \"openattic\""
+                            .format(settings_file))
+        else:
+            raise Exception("Error while writing settings to {}: IOError errno={}"
+                            .format(settings_file, ret))
 
 
 # Settings listener implementation

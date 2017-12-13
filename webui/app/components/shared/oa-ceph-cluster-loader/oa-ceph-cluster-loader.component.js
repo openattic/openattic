@@ -54,7 +54,7 @@ class OaCephClusterLoader {
         this.cluster = res;
         // Update the registry. Select the first cluster in the list
         // if there isn't already a cluster selected.
-        if (_.isObject(this.cluster) && this.cluster.results &&
+        if (_.isObjectLike(this.cluster) && this.cluster.results &&
           this.cluster.results.length > 0 &&
           _.isUndefined(this.registry.selectedCluster)) {
           this.registry.selectedCluster = this.cluster.results[0];

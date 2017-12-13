@@ -41,7 +41,6 @@ export default class ApiErrorDecoratorService {
 
   decorate (error) {
     var simpleMsg;
-    var notification;
     var detailMsg = "";
 
     if (error) {
@@ -75,15 +74,14 @@ export default class ApiErrorDecoratorService {
       }
       notificationConfig.msg = detailMsg || simpleMsg;
       error.message = notificationConfig.msg;
-      notification = this.Notification.setConfig(notificationConfig)
-        .show();
+      let timeoutID = this.Notification.show(notificationConfig, error);
 
       /**
        * Decorated preventDefault method (in case error previously had preventDefault method defined).
        * If called, it will prevent a toasty to pop up.
        */
       error.preventDefault = () => {
-        notification.cancel();
+        this.Notification.cancel(timeoutID);
       };
 
       /**

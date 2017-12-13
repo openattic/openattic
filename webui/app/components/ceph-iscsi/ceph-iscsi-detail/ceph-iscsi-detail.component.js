@@ -30,9 +30,21 @@
  */
 "use strict";
 
+class CephIscsiDetail {
+
+  constructor (cephIscsiStateService) {
+    this.cephIscsiStateService = cephIscsiStateService;
+  }
+
+  containsHost (hosts, host) {
+    return this.cephIscsiStateService.containsHost(hosts, host);
+  }
+}
+
 export default {
   template: require("./ceph-iscsi-detail.component.html"),
   bindings: {
     selection: "<"
-  }
+  },
+  controller: CephIscsiDetail
 };
