@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI: Validate hostname in settings page (OP-2993)
 * WebUI: Add support for multiple languages (OP-995)
 
 Changed
