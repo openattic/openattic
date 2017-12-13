@@ -25,6 +25,7 @@ Added
 
 Changed
 ~~~~~~~
+* Backend: DeepSea min version for iSCSI should be 0.8.2 (OP-3001)
 
 Fixed
 ~~~~~
