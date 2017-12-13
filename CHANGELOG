@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend/QA: Increased unit test coverage of ceph app (OP-2809)
 * WebUI: Validate hostname in settings page (OP-2993)
 * WebUI: Add support for multiple languages (OP-995)
 * Documentation: Added note about how to give the openattic user permissions to
