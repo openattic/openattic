@@ -172,7 +172,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # DeepSea settings.
-DEEPSEA_MIN_VERSION_ISCSI = "0.8.0"
+DEEPSEA_MIN_VERSION_ISCSI = "0.8.2"
 
 def read_secret_from_config():
     """
