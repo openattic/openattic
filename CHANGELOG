@@ -17,7 +17,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
 
-[3.6.1] - unreleased
+[3.6.1] - 2017-12-13
 --------------------
 
 Added
@@ -34,7 +34,6 @@ Changed
 ~~~~~~~
 * Backend/QA: Improve auth Gatling tests to check the browser cookie
   expiry (OP-2921)
-* Backend: Migrated .secret.txt into a setting in the settings file (OP-2873)
 * WebUI: Migration of Dashboard module into Angular (OP-2861)
 * WebUI: Migration of Ceph Erasure Code Profiles module into Angular (OP-2854)
 * WebUI: Migration of Navigation module into Angular (OP-2864)
@@ -49,6 +48,8 @@ Changed
 * WebUI: Migration of Ceph OSDs module into Angular (OP-2858)
 * WebUI: Migration of Ceph ISCSI module into Angular(OP-2855)
 * WebUI: Migration of Ceph Pools module into Angular (OP-2859)
+* WebUI: Migration of OA module into Angular (OP-2904)
+* WebUI: Migration of Task Queue module into Angular (OP-2869)
 * WebUI: Improve Object Gateway user/bucket filtering (OP-2912)
 * WebUI: Refactor ceph-nfs-state service to improve execution time (OP-2882)
 * WebUI: The datatable does not show any progress if filter options are
@@ -65,8 +66,6 @@ Changed
   timeouts (OP-2788)
 * Development: Make ``make_dist.py`` always use the current HEAD revision
   (OP-2883)
-* WebUI: Migration of OA module into Angular (OP-2904)
-* WebUI: Migration of Task Queue module into Angular (OP-2869)
 
 Fixed
 ~~~~~
@@ -85,15 +84,15 @@ Fixed
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 * WebUI: Display error message when no cluster exists (OP-2948)
 * Installation: Removed executable bit from CHANGELOG (OP-2934)
-* Installation: Secure permissions on sysconfig file (OP-2949)
-* Installation: oaconfig: Only parse required settings from config file (OP-2985)
+* Installation: oaconfig: Only parse required settings from config file
+  (OP-2985)
 * WebUI: Fix problem with persistent notification options (OP-2952)
 * WebUI: Fix typo in settings notification (OP-2953)
 * Backend: Fix "test_bucket_get" Django unit test (OP-2947)
 * WebUI: Fix javascript error after remove RBD size (OP-2966)
 * WebUI: Hide striping preview until RBD size is set (OP-2968)
 * WebUI: Fix Notification call (OP-2978)
-* Backend/WebUI: Adding an iSCSI target in one iSCSI gateway causes the lrbd 
+* Backend/WebUI: Adding an iSCSI target in one iSCSI gateway causes the lrbd
   service to restart all iSCSI targets (OP-2926)
 * WebUI: Fix typo on Ceph OSD scrub buttons (OP-2988)
 
@@ -103,6 +102,11 @@ Removed
   tests (OP-2901)
 * Packaging: Removed creation of /var/lock/openattic (and /run/lock/openattic
   respectively) during installation (OP-2946)
+
+Security
+~~~~~~~~
+* Backend: Migrated .secret.txt into a setting in the settings file (OP-2873)
+* Installation: Secure permissions on sysconfig file (OP-2949)
 
 [3.6.0] - 2017-11-01
 --------------------
