@@ -30,6 +30,8 @@
  */
 "use strict";
 
+import _ from "lodash";
+
 export default class CephIscsiStateService {
 
   constructor (taskQueueSubscriber, taskQueueService, Notification, cephIscsiService) {
@@ -42,8 +44,63 @@ export default class CephIscsiStateService {
     this.deployTaskDescr = "iSCSI deploy exports";
   }
 
-  _updateStates (fsid, updateHosts) {
-    let state;
+  _getHostnameWithoutFqdn (hostname) {
+    return hostname.indexOf(".") !== -1 ? hostname.substring(0, hostname.indexOf(".")) : hostname;
+  }
+
+  containsHost (hosts, hostname) {
+    if (!_.isArrayLike(hosts) || hosts.length === 0) {
+      return false;
+    }
+    if (hosts.indexOf(hostname) !== -1) {
+      return true;
+    }
+    let hostsWithoutFqdn = hosts.map((h) => {
+      return h.indexOf(".") !== -1 ? h.substring(0, h.indexOf(".")) : h;
+    });
+    let hostWithoutFqdn = this._getHostnameWithoutFqdn(hostname);
+    return hostsWithoutFqdn.indexOf(hostWithoutFqdn) !== -1;
+  }
+
+  _getHostState (hosts, hostname) {
+    if (!_.isUndefined(hosts[hostname])) {
+      return hosts[hostname];
+    }
+    let hostsWithoutFqdn = {};
+    _.forEach(hosts, (currHost, currHostname) => {
+      let currentHostnameWithoutFqdn = this._getHostnameWithoutFqdn(currHostname);
+      hostsWithoutFqdn[currentHostnameWithoutFqdn] = currHost;
+    });
+    let hostWithoutFqdn = this._getHostnameWithoutFqdn(hostname);
+    return hostsWithoutFqdn[hostWithoutFqdn];
+  }
+
+  _getStatesByHosts (rows, hosts, state) {
+    let states = {};
+    rows.forEach((row) => {
+      row.portals.forEach((portal) => {
+        if (this.containsHost(hosts, portal.hostname)) {
+          if (_.isUndefined(states[row.targetId])) {
+            states[row.targetId] = {
+              hostsStarting: [],
+              hostsStopping: [],
+              hostsEnabled: [],
+              hostsDisabled: []
+            };
+          }
+          if (state === "STARTING") {
+            states[row.targetId].hostsStarting.push(portal.hostname);
+
+          } else if (state === "STOPPING") {
+            states[row.targetId].hostsStopping.push(portal.hostname);
+          }
+        }
+      });
+    });
+    return states;
+  }
+
+  _updateStates (fsid, rows, updateHosts) {
     let taskIds = [];
     this.taskQueueService
       .get({
@@ -55,8 +112,15 @@ export default class CephIscsiStateService {
           if (notStartedTask.description === this.stopTaskDescr ||
               notStartedTask.description === this.deployTaskDescr) {
             taskIds.push(notStartedTask.id);
-            state = notStartedTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
-            updateHosts(state);
+            const state = notStartedTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
+            const statesTargets = this._getStatesByHosts(rows, notStartedTask.hosts, state);
+            let statesHosts = {};
+            notStartedTask.hosts.forEach((hostname) => {
+              statesHosts[hostname] = {
+                state: state
+              };
+            });
+            updateHosts(state, {targets: statesTargets, hosts: statesHosts});
           }
         });
 
@@ -70,25 +134,62 @@ export default class CephIscsiStateService {
               if (runningTask.description === this.stopTaskDescr || runningTask.description === this.deployTaskDescr) {
                 if (taskIds.indexOf(runningTask.id) === -1) {
                   taskIds.push(runningTask.id);
-                  state = runningTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
-                  updateHosts(state);
+                  const state = runningTask.description === this.stopTaskDescr ? "STOPPING" : "STARTING";
+                  const statesTargets = this._getStatesByHosts(rows, runningTask.hosts, state);
+                  let statesHosts = {};
+                  runningTask.hosts.forEach((hostname) => {
+                    statesHosts[hostname] = {
+                      state: state
+                    };
+                  });
+                  updateHosts(state, {targets: statesTargets, hosts: statesHosts});
                 }
               }
             });
             taskIds.forEach((taskId) => {
               this.taskQueueSubscriber.subscribe(taskId, () => {
-                this._updateStates(fsid, updateHosts);
+                this._updateStates(fsid, rows, updateHosts);
               });
             });
 
-            if (!state) {
+            if (taskIds.length === 0) {
               this.cephIscsiService
                 .iscsistatus({
                   fsid: fsid
                 })
                 .$promise
                 .then((res) => {
-                  updateHosts(res.status ? "RUNNING" : "STOPPED");
+                  let states = {};
+                  rows.forEach((row) => {
+                    row.portals.forEach((portal) => {
+                      if (_.isUndefined(states[row.targetId])) {
+                        states[row.targetId] = {
+                          hostsStarting: [],
+                          hostsStopping: [],
+                          hostsEnabled: [],
+                          hostsDisabled: []
+                        };
+                      }
+                      let hostState = this._getHostState(res, portal.hostname);
+                      if (_.isObjectLike(hostState) &&
+                          _.isObjectLike(hostState.targets) &&
+                          _.isObjectLike(hostState.targets[row.targetId])) {
+                        if (hostState.targets[row.targetId].enabled) {
+                          states[row.targetId].hostsEnabled.push(portal.hostname);
+                        } else {
+                          states[row.targetId].hostsDisabled.push(portal.hostname);
+                        }
+                      } else {
+                        states[row.targetId].hostsDisabled.push(portal.hostname);
+                      }
+                    });
+                  });
+                  _.forEach(res, (hostState) => {
+                    if (!_.isUndefined(hostState.active)) {
+                      hostState.state = hostState.active ? "RUNNING" : "STOPPED";
+                    }
+                  });
+                  updateHosts(res.status ? "RUNNING" : "STOPPED", {targets: states, hosts: res}, true);
                 })
                 .catch(() => {
                   updateHosts();
@@ -104,66 +205,148 @@ export default class CephIscsiStateService {
       });
   }
 
-  update (fsid, deployed) {
-    deployed.state = "LOADING";
-    this._updateStates(fsid, (state) => {
-      deployed.state = state;
+  updateHosts (fsid, hosts) {
+    _.forEach(hosts, (host, hostname) => {
+      if (!_.isUndefined(host.active)) {
+        hosts[hostname] = {
+          state: "LOADING"
+        };
+      }
+    });
+
+    this._updateStates(fsid, [], (stateByHost, states, updateAll) => {
+      if (!_.isUndefined(states) && !_.isUndefined(states.hosts)) {
+        _.forEach(hosts, (host, hostname) => {
+          let stateHost = states.hosts[hostname];
+          if (!_.isUndefined(stateHost)) {
+            if (!_.isUndefined(stateHost.state)) {
+              host.state = stateHost.state;
+            }
+          }
+        });
+      }
+      if (updateAll) {
+        _.forEach(hosts, (host) => {
+          if (["LOADING", "STARTING", "STOPPING"].indexOf(host.state) !== -1) {
+            host.state = "UNKNOWN";
+          }
+        });
+      }
     });
   }
 
-  start (fsid, deployed) {
-    deployed.state = "STARTING";
+  update (fsid, results) {
+    results.forEach((row) => {
+      row.state = "LOADING";
+      delete row.hostsEnabled;
+      delete row.hostsDisabled;
+    });
+    this._updateStates(fsid, results, (stateByHost, states, updateAll) => {
+      if (!_.isUndefined(states) && !_.isUndefined(states.targets)) {
+        results.forEach((row) => {
+          let targetState = states.targets[row.targetId];
+          if (!_.isUndefined(targetState)) {
+            if (targetState.hostsStarting.length > 0) {
+              row.state = "STARTING";
+            } else if (targetState.hostsStopping.length > 0) {
+              row.state = "STOPPING";
+            } else if (targetState.hostsEnabled.length > 0) {
+              if (targetState.hostsDisabled.length > 0) {
+                row.state = "RUNNING_WARN";
+                row.hostsEnabled = targetState.hostsEnabled;
+                row.hostsDisabled = targetState.hostsDisabled;
+              } else {
+                row.state = "RUNNING";
+              }
+            } else {
+              row.state = "STOPPED";
+            }
+          }
+        });
+      }
+      if (updateAll) {
+        results.forEach((row) => {
+          if (["LOADING", "STARTING", "STOPPING"].indexOf(row.state) !== -1) {
+            row.state = "UNKNOWN";
+          }
+        });
+      }
+    });
+  }
+
+  start (host, hostname, fsid) {
+    host.active = undefined;
+    host.state = "STARTING";
     this.cephIscsiService
       .iscsideploy({
-        fsid: fsid
+        fsid: fsid,
+        minions: [hostname]
       })
       .$promise
       .then((res) => {
         this.taskQueueSubscriber.subscribe(res.taskqueue_id, () => {
-          this._updateStates(fsid, (state) => {
-            deployed.state = state;
-            if (state === "RUNNING") {
-              this.Notification.success({
-                msg: "iSCSI targets started successfully"
-              });
-            } else if (state === "STOPPED") {
-              this.Notification.error({
-                msg: "Failed to start iSCSI targets"
-              });
+          this._updateStates(fsid, [], (state, states, updateAll) => {
+            if (!_.isUndefined(states) && !_.isUndefined(states.hosts) && !_.isUndefined(states.hosts[hostname])) {
+              host.state = states.hosts[hostname].state;
+              if (host.state === "RUNNING") {
+                this.Notification.success({
+                  title: hostname + " started successfully"
+                });
+              } else if (host.state === "STOPPED") {
+                this.Notification.error({
+                  title: "Error starting " + hostname
+                });
+              }
+            }
+            if (updateAll) {
+              if (["LOADING", "STARTING", "STOPPING"].indexOf(host.state) !== -1) {
+                host.state = "UNKNOWN";
+              }
             }
           });
         });
       })
       .catch(() => {
-        deployed.state = undefined;
+        host.active = undefined;
+        host.state = undefined;
       });
   }
 
-  stop (fsid, deployed) {
-    deployed.state = "STOPPING";
+  stop (host, hostname, fsid) {
+    host.active = undefined;
+    host.state = "STOPPING";
     this.cephIscsiService
       .iscsiundeploy({
-        fsid: fsid
+        fsid: fsid,
+        minions: [hostname]
       })
       .$promise
       .then((res) => {
         this.taskQueueSubscriber.subscribe(res.taskqueue_id, () => {
-          this._updateStates(fsid, (state) => {
-            deployed.state = state;
-            if (state === "STOPPED") {
-              this.Notification.success({
-                msg: "iSCSI targets stopped successfully"
-              });
-            } else if (state === "RUNNING") {
-              this.Notification.error({
-                msg: "Failed to stop iSCSI targets"
-              });
+          this._updateStates(fsid, [], (state, states, updateAll) => {
+            if (!_.isUndefined(states) && !_.isUndefined(states.hosts) && !_.isUndefined(states.hosts[hostname])) {
+              host.state = states.hosts[hostname].state;
+              if (host.state === "STOPPED") {
+                this.Notification.success({
+                  title: hostname + " stopped successfully"
+                });
+              } else if (host.state === "RUNNING") {
+                this.Notification.error({
+                  title: "Error stopping " + hostname
+                });
+              }
+            }
+            if (updateAll) {
+              if (["LOADING", "STARTING", "STOPPING"].indexOf(host.state) !== -1) {
+                host.state = "UNKNOWN";
+              }
             }
           });
         });
       })
       .catch(() => {
-        deployed.state = undefined;
+        host.active = undefined;
+        host.state = undefined;
       });
   }
 

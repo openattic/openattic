@@ -81,12 +81,13 @@ describe("Should add an user", function () {
 
   it("should verify that current name has no error message", function () {
     user.all(by.css("a")).click();
-    expect(element(by.css(".tc_noUniqueName")).isDisplayed()).toBe(false);
+    expect(noUniqueName.isDisplayed()).toBe(false);
   });
 
   it('should verify that if the "already in use" error message is still working', function () {
     element(by.model("$ctrl.user.username")).clear().sendKeys("openattic");
-    expect(element(by.css(".tc_noUniqueName")).isDisplayed()).toBe(true);
+    helpers.waitForElementVisible(noUniqueName);
+    expect(noUniqueName.isDisplayed()).toBe(true);
     helpers.leaveForm(true);
   });
 
@@ -112,6 +113,7 @@ describe("Should add an user", function () {
     addBtn.click();
     browser.sleep(400);
     element(by.model("$ctrl.user.username")).sendKeys(testUser.username);
+    helpers.waitForElementVisible(noUniqueName);
     expect(noUniqueName.isDisplayed()).toBe(true);
   });
 

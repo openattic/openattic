@@ -39,9 +39,8 @@ import "../components/navigation/navigation.module";
 import "../components/notification/notification.module";
 import "../components/settings/settings.module";
 import "../components/shared/shared.module";
-import "../scripts/services/sizeParserService";
 import "../components/userinfo/userinfo.module";
-import "../components/taskQueue/module";
+import "../components/task-queue/task-queue.module";
 import "../components/users/users.module";
 import "../components/feedback/feedback.module";
 import RegistryService from "./shared/registry.service";
@@ -57,7 +56,6 @@ angular.module("openattic.core", [
   "openattic.notification",
   "openattic.settings",
   "openattic.shared",
-  "openattic.sizeparser",
   "openattic.userinfo",
   "openattic.taskQueue",
   "openattic.users"

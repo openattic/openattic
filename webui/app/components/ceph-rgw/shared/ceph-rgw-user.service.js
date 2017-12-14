@@ -49,7 +49,7 @@ export default class CephRgwUserService {
           // The returned object contains other attributes depending on the ceph version:
           // 10.2.6: max_size_kb
           // 12.0.3: max_size
-          if (_.isObject(result.user_quota)) {
+          if (_.isObjectLike(result.user_quota)) {
             if ((result.user_quota.max_size_kb === -1) || (result.user_quota.max_size <= -1)) {
               result.user_quota.max_size = "";
               result.user_quota.max_size_unlimited = true;
@@ -64,7 +64,7 @@ export default class CephRgwUserService {
               result.user_quota.max_objects_unlimited = false;
             }
           }
-          if (_.isObject(result.bucket_quota)) {
+          if (_.isObjectLike(result.bucket_quota)) {
             if ((result.bucket_quota.max_size_kb === -1) || (result.bucket_quota.max_size <= -1)) {
               result.bucket_quota.max_size = "";
               result.bucket_quota.max_size_unlimited = true;

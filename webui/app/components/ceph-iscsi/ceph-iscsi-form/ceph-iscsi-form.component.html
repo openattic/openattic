@@ -157,39 +157,50 @@
                        required
                        readonly>
               </span>
-              <span ng-repeat="currentImage in $ctrl.model.images track by $index">
-                <div class="input-group">
-                  <div class="input-group-addon">lun: {{ currentImage.settings.lun }}</div>
-                  <input type="text"
-                         class="form-control"
-                         value="{{ currentImage.pool }}: {{ currentImage.name }}"
-                         readonly>
-                  <span class="input-group-btn">
-                    <button class="btn btn-default tc_imageSettingsButton"
-                            type="button"
-                            uib-tooltip="Settings"
-                            ng-click="$ctrl.openImageSettingsModal(currentImage)">
-                      <i class="fa fa-cogs"></i>
-                    </button>
-                    <button class="btn btn-default"
-                            type="button"
-                            uib-tooltip="Delete"
-                            ng-click="$ctrl.removeImage($index)">
-                      <i class="fa fa-trash-o"></i>
-                    </button>
-                  </span>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                    <span ng-repeat="setting in $ctrl.allIscsiImageSettings">
-                      <span ng-if="currentImage.settings.hasOwnProperty(setting.property)"
-                            class="no-wrap margin-right-md">
-                        <label>&#10551; {{ setting.property }}</label>: {{ currentImage.settings[setting.property] }}
-                      </span>
+              <span ng-repeat="currentImage in $ctrl.model.images track by $index"
+                    id="images">
+                <div ng-class="{'has-error': $ctrl.iscsiForm['image'+$index].$invalid}">
+                  <div class="input-group">
+                    <div class="input-group-addon">lun: {{ currentImage.settings.lun }}</div>
+                    <input type="text"
+                           class="form-control"
+                           name="image{{ $index }}"
+                           id="image{{ $index }}"
+                           ng-model="currentImage"
+                           readonly
+                           ceph-iscsi-rbd-features-validator>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default has-error-btn tc_imageSettingsButton"
+                              type="button"
+                              uib-tooltip="Settings"
+                              ng-click="$ctrl.openImageSettingsModal(currentImage)"
+                              ng-disabled="$ctrl.iscsiForm['image'+$index].$invalid">
+                        <i class="fa fa-cogs"></i>
+                      </button>
+                      <button class="btn btn-default has-error-btn"
+                              type="button"
+                              uib-tooltip="Delete"
+                              ng-click="$ctrl.removeImage($index)">
+                        <i class="fa fa-trash-o"></i>
+                      </button>
                     </span>
                   </div>
+                  <span class="help-block tc_addImageFeatureError"
+                        ng-show="$ctrl.iscsiForm['image'+$index].$error.featuresValidator">
+                      The RBD you've chosen contains one or more feature(s) that are not supported by iSCSI. Please choose another RBD.
+                  </span>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <span ng-repeat="setting in $ctrl.allIscsiImageSettings">
+                        <span ng-if="currentImage.settings.hasOwnProperty(setting.property)"
+                              class="no-wrap margin-right-md">
+                          <label>&#10551; {{ setting.property }}</label>: {{ currentImage.settings[setting.property] }}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <span class="help-block"></span>
                 </div>
-                <span class="help-block"></span>
               </span>
               <span uib-dropdown
                     on-toggle="toggled(open)"
@@ -203,11 +214,9 @@
                 <ul class="dropdown-menu scrollable-menu pull-right"
                     uib-dropdown-menu
                     aria-labelledby="simple-dropdown">
-                  <li ng-repeat="currentImage in $ctrl.availableImages()"
-                      ng-class="{disabled: currentImage.hasUnsupportedFeature}">
+                  <li ng-repeat="currentImage in $ctrl.availableImages()">
                     <a ng-click="$ctrl.addImageAction(currentImage)"
                        class="tc_addImageItem">{{ currentImage.pool }}: {{ currentImage.name }}
-                      <span ng-if="currentImage.hasUnsupportedFeature">(unsupported)</span>
                     </a>
                   </li>
                 </ul>

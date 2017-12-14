@@ -51,7 +51,7 @@ class UsersDeleteModalComponent {
       });
   }
 
-  $cancel () {
+  cancel () {
     this.modalInstance.dismiss("cancel");
 
     this.Notification.warning({

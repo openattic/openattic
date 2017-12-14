@@ -60,7 +60,7 @@ class CephNfsFormClient {
         return currentAccessTypeItem;
       }
     });
-    return _.isObject(accessTypeItem) ? accessTypeItem.help : "";
+    return _.isObjectLike(accessTypeItem) ? accessTypeItem.help : "";
   }
 
   getNoSquashDescr (clientBlock) {

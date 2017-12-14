@@ -158,6 +158,35 @@
     changeInput: (e, val) => e.clear().sendKeys(val).sendKeys(protractor.Key.TAB),
 
     /**
+     * Selects option from a drop down option list.
+     * Select through option position or part of the option name.
+     *
+     * @param {object} select element
+     * @param {string|number} query
+     */
+    selectOption: (select, query) => {
+      select.click();
+      let option = {};
+      if (typeof query === "string") {
+        option = select.element(by.cssContainingText("option", query));
+      } else {
+        option = select.all(by.tagName("option")).get(query);
+      }
+      option.isPresent().then(present => {
+        if (present) {
+          option.click();
+        }
+        select.click();
+      });
+    },
+
+    getOptionText: select => {
+      return select.getAttribute("value").then(value => {
+        return select.element(by.css("option[value='" + value + "']")).getText();
+      });
+    },
+
+    /**
      * Check if the given element has the given class.
      * @param {object} element The element to check.
      * @param {string} cls The name of the class to check for.
@@ -187,7 +216,7 @@
 
     waitForElement (elem) {
       var until = protractor.ExpectedConditions;
-      browser.wait(until.presenceOf(elem), 5000, "Element taking too long to appear in the DOM");
+      browser.wait(until.presenceOf(elem), 360000, "Element taking too long to appear in the DOM");
     },
 
     waitForElementRemoval (elem) {
@@ -195,7 +224,7 @@
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
       var until = protractor.ExpectedConditions;
-      browser.wait(until.stalenessOf(elem), 5000, "Element taking too long to disappear in the DOM");
+      browser.wait(until.stalenessOf(elem), 360000, "Element taking too long to disappear in the DOM");
     },
 
     waitForElementVisible (elem) {
@@ -203,7 +232,7 @@
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
       var until = protractor.ExpectedConditions;
-      browser.wait(until.visibilityOf(elem), 5000, "Element taking too long to show in the DOM");
+      browser.wait(until.visibilityOf(elem), 360000, "Element taking too long to show in the DOM");
     },
 
     waitForElementInvisible (elem) {
@@ -211,7 +240,7 @@
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
       var until = protractor.ExpectedConditions;
-      browser.wait(until.invisibilityOf(elem), 5000, "Element taking too long to disappear in the DOM");
+      browser.wait(until.invisibilityOf(elem), 360000, "Element taking too long to disappear in the DOM");
     }
 
   };

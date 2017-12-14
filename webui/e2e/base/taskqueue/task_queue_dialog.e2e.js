@@ -57,14 +57,14 @@ describe("task queue dialog test", () => {
     });
 
     // 4. Remove any tasks.
-    it('should empty the tasks in tab "' +  tabName + '"', () => {
+    it('should empty the tasks in tab "' + tabName + '"', () => {
       expect(elements.listing.isDisplayed()).toBe(true);
       qProperties.deleteTasks(tabName);
     });
 
     // 5. Check the "no tasks available" message.
     it('should have an empty task queue in tab "' + tabName + '"', () => {
-      browser.sleep(helpers.configs.sleep);
+      helpers.waitForElementInvisible(elements.listing);
       expect(elements.listing.isDisplayed()).toBe(false);
       const noElements = element(by.className("tc_no_elements_" + tabName));
       expect(noElements.isDisplayed()).toBe(true);

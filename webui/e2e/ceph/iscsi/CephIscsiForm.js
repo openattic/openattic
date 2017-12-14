@@ -11,6 +11,7 @@ var CephIscsiForm = function () {
   this.portalsRequired = element(by.css(".tc_portalsRequired"));
 
   this.imagesRequired = element(by.css(".tc_imagesRequired"));
+  this.imageFeatureError = element(by.css(".tc_addImageFeatureError"));
 
   this.authenticationCheckbox = element(by.model("$ctrl.model.authentication.hasAuthentication"));
   this.userInput = element(by.model("$ctrl.model.authentication.user"));
@@ -55,6 +56,11 @@ var CephIscsiForm = function () {
   this.addImage = function (index) {
     element(by.css(".tc_addImageButton")).click();
     element.all(by.css(".tc_addImageItem")).get(index).click();
+  };
+
+  this.addImageByName = function (imageName) {
+    element(by.css(".tc_addImageButton")).click();
+    element(by.cssContainingText(".tc_addImageItem", imageName)).click();
   };
 
   this.openImageSettingsModal = function (index) {

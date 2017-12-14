@@ -18,6 +18,8 @@ from django.db import DataError
 from django.db import transaction
 from django.test import TestCase
 
+from rest_framework.test import APIClient
+
 from sysutils.database_utils import make_default_admin
 from userprefs.models import UserProfile
 
@@ -87,3 +89,76 @@ class UserProfileTest(TestCase):
             self.assertEqual([unicode(p) for p in prof],
                              ['a', 'c'])
 
+
+class UserProfileRestTest(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.user = User.objects.create_user('testuser', password='secret')
+        cls.user.password = 'secret'
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def setUp(self):
+        self.client = APIClient()
+        self.client.login(username=self.user.username, password=self.user.password)
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_create_profile(self):
+        settings = {'setting1': 'value1', 'setting2': 'value2'}
+        response = self.client.post('/api/userprofiles', data=settings)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['preferences'], settings)
+
+    def test_get_all_profiles(self):
+        UserProfile.objects.create(user=self.user)
+        response = self.client.get('/api/userprofiles')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+
+    def test_get_profile_settings(self):
+        profile = UserProfile.objects.create(user=self.user)
+        profile['setting1'] = 'value1'
+        profile['setting2'] = 'value2'
+        profile.save()
+
+        response = self.client.get('/api/userprofiles/{}'.format(profile.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['preferences']), 2)
+
+    def test_get_profile_settings_other_user(self):
+        user2 = User.objects.create_user('testuser2', password='secret')
+        profile = UserProfile.objects.create(user=user2)
+        profile['setting1'] = 'value1'
+        profile['setting2'] = 'value2'
+        profile.save()
+
+        response = self.client.get('/api/userprofiles/{}'.format(profile.id))
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete_profile_setting(self):
+        profile = UserProfile.objects.create(user=self.user)
+        profile['setting1'] = 'value1'
+        profile['setting2'] = 'value2'
+        profile.save()
+
+        response = self.client.delete('/api/userprofiles/{}'.format(profile.id),
+                                      data={'settings': ['setting1']}, format='json')
+        profile = UserProfile.objects.get(user=self.user)
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(len(profile), 1)
+
+    def test_delete_profile_setting_other_user(self):
+        user2 = User.objects.create_user('testuser2', password='secret')
+        profile = UserProfile.objects.create(user=user2)
+        profile['setting1'] = 'value1'
+        profile['setting2'] = 'value2'
+        profile.save()
+
+        response = self.client.delete('/api/userprofiles/{}'.format(profile.id),
+                                      data={'settings': ['setting1']}, format='json')
+        self.assertEqual(response.status_code, 401)

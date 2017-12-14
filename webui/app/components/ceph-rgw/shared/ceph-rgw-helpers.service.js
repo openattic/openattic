@@ -84,7 +84,7 @@ export default class CephRgwHelpersService {
    */
   enumKeyUserCandidates (user, keyType) {
     let result = [];
-    if (!_.isObject(user)) {
+    if (!_.isObjectLike(user)) {
       return result;
     }
     // Get possible users.

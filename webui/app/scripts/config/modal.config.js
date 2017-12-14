@@ -30,7 +30,6 @@
  */
 "use strict";
 
-angular.module("openattic")
-  .config(["$uibModalProvider", function ($uibModalProvider) {
-    $uibModalProvider.options.backdrop = "static";
-  }]);
+export default ($uibModalProvider) => {
+  $uibModalProvider.options.backdrop = "static";
+};
