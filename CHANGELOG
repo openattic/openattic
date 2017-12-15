@@ -33,6 +33,7 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: RestClient class does not handle IPv6 addresses properly (OP-2998)
 * WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
 * Backend: RBD features should be enabled/disabled using the correct order (OP-3019)
 

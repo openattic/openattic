@@ -13,6 +13,7 @@
  *  GNU General Public License for more details.
 """
 
+import utilities
 import inspect
 import itertools
 import logging
@@ -284,7 +285,7 @@ class RestClient(object):
         self.client_name = client_name if client_name else ''
         self.host = host
         self.port = port
-        self.base_url = 'http{}://{}:{}'.format('s' if ssl else '', host, port)
+        self.base_url = utilities.build_url(scheme='https' if ssl else 'http', host=host, port=port)
         logger.debug("REST service base URL: %s", self.base_url)
         self.headers = {'Accept': 'application/json'}
         self.auth = auth
