@@ -23,8 +23,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 
-from oa_auth import oa_authenticate, oa_authorize, Unauthorized, RequestAuthentication
 from processors import profile
+from rest.auth import oa_authenticate, oa_authorize, Unauthorized, RequestAuthentication
 from rest.restapi import UserSerializer
 
 

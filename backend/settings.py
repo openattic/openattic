@@ -58,8 +58,8 @@ LVM_CHOWN_GROUP = "users"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oa_auth.ExtendedBasicAuthentication',
-        'oa_auth.CsrfExemptSessionAuthentication',  # Disables CSRF for paths in DISABLE_CSRF_FOR_API_PATH
+        'rest.auth.ExtendedBasicAuthentication',
+        'rest.auth.CsrfExemptSessionAuthentication',  # Disables CSRF for paths in DISABLE_CSRF_FOR_API_PATH
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
