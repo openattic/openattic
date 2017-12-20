@@ -30,6 +30,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
 
 Removed
 ~~~~~~~
