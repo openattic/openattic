@@ -47,6 +47,7 @@ Fixed
 * WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
 * WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
 * Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
+* WebUI/QA: Fix check current user name (OP-3005)
 
 Removed
 ~~~~~~~
