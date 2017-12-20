@@ -56,7 +56,7 @@ describe("General", function () {
           menuCount++;
         }
       });
-      it("should click " + item + " and check the url", function () {
+      it("should click " + name + " and check the url", function () {
         if (item.isDisplayed() && !subMenusItems.some(function (subMenusItem) {
           return subMenusItem.name === name;
         })) {
