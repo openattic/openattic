@@ -4,6 +4,8 @@ var CephIscsiForm = function () {
 
   this.panelTitle = element(by.css(".tc_panelTitle"));
 
+  this.imageSettingsModalDialog = element(by.tagName("ceph-iscsi-form-image-settings-modal"));
+
   this.targetIdInput = element(by.model("$ctrl.model.targetId"));
   this.targetIdRequired = element(by.css(".tc_targetIdRequired"));
   this.targetIdInvalid = element(by.css(".tc_targetIdInvalid"));

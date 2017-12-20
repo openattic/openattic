@@ -54,6 +54,9 @@ describe("ceph iscsi", function () {
     expect(form.lunIdRequired.isDisplayed()).toBe(false);
 
     form.confirmImageSettingsModal();
+
+    // Wait until modal dialog has been closed
+    helpers.waitForElementInvisible(form.imageSettingsModalDialog);
   });
 
   it("should validate user", function () {

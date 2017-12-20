@@ -5,18 +5,18 @@ var helpers = require("../../common.js");
 describe("General", function () {
 
   var oaLogo = element(by.css(".tc_logo_component a"));
-  var menuItems = [ //Put here the final menu order
-    "dashboard", //has to be there
-    "ceph_osds",
-    "ceph_rbds",
-    "ceph_pools",
-    "ceph_nodes",
-    "ceph_iscsi",
-    "ceph_nfs",
-    "ceph_rgw",
-    "ceph_crushmap",
-    "system"
-  ];
+  var menuItems = { //Put here the final menu order
+    "dashboard": {"tagName": "dashboard"}, //has to be there
+    "ceph_osds": {"tagName": "ceph-osd-list"},
+    "ceph_rbds": {"tagName": "ceph-rbd-list"},
+    "ceph_pools": {"tagName": "ceph-pools-list"},
+    "ceph_nodes": {"tagName": "ceph-nodes-list"},
+    "ceph_iscsi": {"tagName": "ceph-iscsi-list"},
+    "ceph_nfs": {"tagName": "ceph-nfs-list"},
+    "ceph_rgw": {},
+    "ceph_crushmap": {"tagName": "ceph-crushmap"},
+    "system": {}
+  };
   var subMenusItems = [{
     name: "ceph_rgw",
     item: element(by.css(".tc_menuitem_ceph_rgw > a")),
@@ -43,12 +43,12 @@ describe("General", function () {
     ]
   }];
 
-  var menuCheck = function (menu) {
+  var menuCheck = function (items) {
     var menuCount = 0;
     var pageMenuItems = element.all(by.css(".tc_menuitem > a"));
     var url;
 
-    menu.forEach(function (name) {
+    Object.keys(items).forEach(function (name) {
       var item = element(by.css(".tc_menuitem_" + name + " > a"));
       it("should have " + name + " into the right order", function () {
         if (item.isDisplayed()) {
@@ -56,13 +56,12 @@ describe("General", function () {
           menuCount++;
         }
       });
-      it("should click " + item + " and check the url", function () {
-        if (item.isDisplayed() && !subMenusItems.some(function (subMenusItem) {
-          return subMenusItem.name === name;
-        })) {
+      it("should click " + name + " and check the url", function () {
+        if (item.isDisplayed() && items[name].hasOwnProperty("tagName")) {
           url = name.replace("_", "/");
           item.click();
-          browser.sleep(400);
+          var viewElement = element(by.tagName(items[name].tagName));
+          helpers.waitForElement(viewElement);
           helpers.checkLocation(url);
         }
       });
