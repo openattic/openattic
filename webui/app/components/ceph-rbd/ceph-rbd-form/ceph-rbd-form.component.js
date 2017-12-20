@@ -122,6 +122,7 @@ class CephRbdForm {
     this.fsid = $stateParams.fsid;
     this.fromState = $stateParams.fromState;
     this.editing = false;
+    this.cloning = false;
     this.preparing = false;
 
     this.waitingClusterMsg = "Retrieving cluster list...";
@@ -130,7 +131,10 @@ class CephRbdForm {
   }
 
   $onInit () {
-    if (this.$stateParams.name) {
+    if (this.$state.current.name === "cephRbds-clone") {
+      this.preparing = true;
+      this.cloning = true;
+    } else if (this.$stateParams.name) {
       this.preparing = true;
       this.editing = true;
     }
@@ -183,6 +187,15 @@ class CephRbdForm {
 
   handleRbd (res) {
     _.extend(this.rbd, res);
+
+    if (this.cloning) {
+      this.rbd.parent = {
+        pool_name: this.$stateParams.pool,
+        image_name: this.$stateParams.name,
+        snap_name: this.$stateParams.snap
+      };
+      delete this.rbd.name;
+    }
 
     this.data.id = this.rbd.id;
     this.data.name = this.rbd.name;
@@ -476,7 +489,7 @@ class CephRbdForm {
         this.getEcOverwritesPools()
       ];
 
-      if (this.editing) {
+      if (this.editing || this.cloning) {
         qs.push(this.getRbd());
       }
 
@@ -484,7 +497,7 @@ class CephRbdForm {
         .then((res) => {
           this.handleReplicatedPools(res[0]);
           this.handleEcOverwritesPools(res[1]);
-          if (this.editing) {
+          if (this.editing || this.cloning) {
             this.handleRbd(res[2]);
           }
         })

@@ -1,0 +1,51 @@
+<div class="openattic-modal-header">
+  <span>
+    {{ $ctrl.editing ? "Rename" : "Create" | translate }} RBD Snapshot
+  </span>
+</div>
+
+<form name="$ctrl.form"
+      role="form"
+      novalidate>
+  <div class="openattic-modal-content">
+
+    <!-- Name -->
+    <div class="form-group"
+         ng-class="{'has-error': ($ctrl.form.$submitted || $ctrl.form.name.$dirty)
+        && $ctrl.form.name.$invalid}">
+      <label translate
+             class="control-label col-sm-3"
+             for="name">Name</label>
+      <div class="col-sm-9">
+        <input id="name"
+               type="text"
+               class="form-control tc_rbd_name"
+               placeholder="Name..."
+               ng-model="$ctrl.name"
+               name="name"
+               required
+               autofocus>
+        <span translate
+              class="help-block tc_nameRequired"
+              ng-show="($ctrl.form.$submitted || $ctrl.form.name.$dirty)
+            && $ctrl.form.name.$error.required">This field is required!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="$ctrl.form"
+                        on-submit="$ctrl.create()">
+        {{ $ctrl.editing ? "Rename" : "Create" | translate }}
+      </oa-submit-button>
+
+      <button translate
+              id="cancelButton"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</form>

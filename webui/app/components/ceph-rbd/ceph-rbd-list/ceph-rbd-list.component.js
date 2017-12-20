@@ -73,6 +73,12 @@ class CephRbdList {
           state: "cephRbds.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
+        },
+        snapshot: {
+          show: () => _.isObjectLike(this.selection.item),
+          state: "cephRbds.detail.snapshot",
+          class: "tc_snapshotTab",
+          name: "Snapshots"
         }
       }
     };

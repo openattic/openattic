@@ -116,6 +116,11 @@
                 sortheaderclass
                 disabled
                 ng-show="columns['Stripe count']">Stripe count</th>
+            <th translate
+                sortfield="parent"
+                sortdir="asc"
+                sortheaderclass
+                ng-show="columns['Parent']">Parent</th>
           </tr>
         </thead>
         <tbody>
@@ -179,6 +184,12 @@
                 ng-bind="row.stripe_unit | bytes"></td>
             <td ng-show="columns['Stripe count']"
                 ng-bind="row.stripe_count"></td>
+            <td ng-show="columns['Parent']">
+              <span ng-if="row.parent">
+                {{ row.parent.pool_name }}/{{ row.parent.image_name }}@{{ row.parent.snap_name }}
+              </span>
+              <span ng-if="!row.parent">-</span>
+            </td>
           </tr>
         </tbody>
       </table>

@@ -1,0 +1,60 @@
+<div class="openattic-modal-header">
+
+    <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.deleteProtected"
+          translate>
+      Unable to delete snapshot
+    </span>
+
+    <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.protectWithChilden"
+          translate>
+      Unable to unprotect snapshot
+    </span>
+
+    <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.unprotectWithoutLayering"
+          translate>
+      Unable to protect snapshot
+    </span>
+
+    <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.cloneUnprotected"
+          translate>
+      Unable to clone snapshot
+    </span>
+
+</div>
+
+<div class="openattic-modal-content">
+
+  <i class="fa fa-exclamation-triangle fa-fw icon-danger"
+     aria-hidden="true"></i>
+
+  <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.deleteProtected"
+        translate>
+    Protected snapshots cannot be deleted.
+  </span>
+
+  <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.protectWithChilden"
+        translate>
+    Snapshot unprotection is only available for snapshots without children images.
+  </span>
+
+  <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.unprotectWithoutLayering"
+        translate>
+    Snapshot protection is only available for RBD images with "Layering" enabled.
+  </span>
+
+  <span ng-if="$ctrl.validationError === $ctrl.cephRbdSnapshotValidationErrors.cloneUnprotected"
+        translate>
+    RBD snapshot must be protected.
+  </span>
+</div>
+
+<div class="openattic-modal-footer">
+  <div class="button-group text-right">
+    <button id="cancelButton"
+            class="btn btn-default btn-sm"
+            ng-click="$ctrl.cancel()"
+            translate>
+      Close
+    </button>
+  </div>
+</div>
