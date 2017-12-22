@@ -42,6 +42,7 @@ Fixed
 * Backend: Increase timeout in MonApi::osd_pool_create (OP-3017)
 * WebUI: Fix error thrown when switching from RBD Add page (OP-2986)
 * WebUI: Pool names are now displayed in the Pool Deletion dialog (OP-3024)
+* WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
 
 Removed
 ~~~~~~~
