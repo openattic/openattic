@@ -1,10 +1,12 @@
 <div class="form-group">
-  <label class="col-sm-3 control-label">Clients</label>
+  <label translate
+         class="col-sm-3 control-label">Clients</label>
   <div class="col-sm-9">
 
     <span ng-if="$ctrl.clientBlocks.length === 0"
           class="form-control no-border">
-      <span class="text-muted">Any client can access</span>
+      <span translate
+            class="text-muted">Any client can access</span>
     </span>
 
     <div ng-repeat="clientBlock in $ctrl.clientBlocks">
@@ -21,7 +23,8 @@
           <!-- Clients -->
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.form.$submitted || $ctrl.form['clients'+$index].$dirty) && $ctrl.form['clients'+$index].$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="clients{{ $index }}">Clients</label>
             <div class="col-sm-9">
               <input type="text"
@@ -34,12 +37,14 @@
                      required>
               <span class="help-block"
                     ng-show="$ctrl.form.$submitted || $ctrl.form['clients'+$index].$dirty">
-                <span class="tc_clientsRequired"
+                <span translate
+                      class="tc_clientsRequired"
                       ng-show="$ctrl.form['clients'+$index].$error.required">Required field</span>
                 <span class="tc_clientsInvalid"
                       ng-show="$ctrl.form['clients'+$index].$error.stringArray">
-                  Must contain one or more comma-separated values
-                  <br> For example: 192.168.0.10, 192.168.1.0/8
+                  <translate>Must contain one or more comma-separated values</translate>
+                  <br>
+                  <translate>For example:</translate> 192.168.0.10, 192.168.1.0/8
                 </span>
               </span>
             </div>
@@ -47,7 +52,8 @@
 
           <!-- Access Type-->
           <div class="form-group">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="accessType{{ $index }}">Access Type</label>
             <div class="col-sm-9">
               <select class="form-control"
@@ -66,7 +72,8 @@
 
           <!-- Squash -->
           <div class="form-group">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="squash{{ $index }}">Squash</label>
             <div class="col-sm-9">
               <select class="form-control"
@@ -87,7 +94,8 @@
       <button class="btn btn-default btn-label pull-right tc_addClients"
               type="button"
               ng-click="$ctrl.addClientBlock()">
-        <i class="fa fa-fw fa-plus"></i>Add clients
+        <i class="fa fa-fw fa-plus"></i>
+        <translate>Add clients</translate>
       </button>
     </span>
     <hr>

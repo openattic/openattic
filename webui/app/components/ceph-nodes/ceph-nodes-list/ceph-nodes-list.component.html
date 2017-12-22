@@ -1,11 +1,11 @@
 <oa-module-loader module="ceph_deployment">
 
-  <oa-loading-panel message="Nodes are loading..."
+  <oa-loading-panel message="{{ 'Nodes are loading...' | translate }}"
                     ng-show="!$ctrl.error && !$ctrl.data.$resolved">
   </oa-loading-panel>
-  <oa-error-panel title="Error {{$ctrl.error.status}}"
+  <oa-error-panel title="{{ 'Error' | translate }} {{$ctrl.error.status}}"
                   ng-if="$ctrl.error.statusText === 'NOT FOUND'">
-    The resource could not be found.
+    <translate>The resource could not be found.</translate>
   </oa-error-panel>
 
   <oadatatable ng-show="!$ctrl.error && $ctrl.data.results"
@@ -22,19 +22,23 @@
                 class="btn btn-sm btn-primary dropdown-toggle tc_scrub_toggle"
                 data-toggle="dropdown"
                 ng-class="{disabled: !($ctrl.hasSelection || $ctrl.multiSelection)}">
-          Perform Task
+          <translate>Perform Task</translate>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
           <li ng-click="$ctrl.scrubAction(false)"
               class="tc_scrub_li">
             <a>
-              <i class="fa fa-fw fa-stethoscope"></i>Scrub</a>
+              <i class="fa fa-fw fa-stethoscope"></i>
+              <translate>Scrub</translate>
+            </a>
           </li>
           <li ng-click="$ctrl.scrubAction(true)"
               class="tc_deep_scrub_li">
             <a>
-              <i class="fa fa-fw fa-stethoscope"></i>Deep Scrub</a>
+              <i class="fa fa-fw fa-stethoscope"></i>
+              <translate>Deep Scrub</translate>
+            </a>
           </li>
         </ul>
       </div>
@@ -47,21 +51,26 @@
             <input type="checkbox"
                    ng-model="selection.checkAll">
           </th>
-          <th ng-show="columns['Hostname']"
+          <th translate
+              ng-show="columns['Hostname']"
               sortfield="hostname"
               sortdir="asc"
               sortheaderclass
               sortdefault>Hostname</th>
-          <th ng-show="columns['Addresses']"
+          <th translate
+              ng-show="columns['Addresses']"
               sortfield="addresses"
               sortdir="asc"
               sortheaderclass>Addresses</th>
-          <th ng-show="columns['Cluster']"
+          <th translate
+              ng-show="columns['Cluster']"
               sortfield="cluster"
               sortdir="asc"
               sortheaderclass>Cluster</th>
-          <th ng-show="columns['Roles']">Roles</th>
-          <th ng-show="columns['Key status']"
+          <th translate
+              ng-show="columns['Roles']">Roles</th>
+          <th translate
+              ng-show="columns['Key status']"
               sortfield="key_status"
               sortdir="asc"
               sortheaderclass>Key status</th>

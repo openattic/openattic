@@ -1,5 +1,9 @@
 <div class="openattic-modal-header">
-  <span>Ceph OSD {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
+  <span>
+    <translate translate-params-deep="$ctrl.resolve.deep ? 'Deep ' : ''">
+      Ceph OSD {{ deep }}Scrub
+    </translate>
+  </span>
 </div>
 
 <form name="$ctrl.form"
@@ -7,8 +11,10 @@
       novalidate>
   <div class="openattic-modal-content">
     <p>
-      You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to the Ceph OSD
-      <strong>{{$ctrl.resolve.osd.name}}</strong>.
+      <translate translate-params-deep="$ctrl.resolve.deep ? 'deep ' : ''"
+                 translate-params-name="$ctrl.resolve.osd.name">
+        You are about to apply a {{ deep }}scrub to the Ceph OSD <strong>{{ name }}</strong>.
+      </translate>
     </p>
   </div>
 
@@ -16,10 +22,11 @@
     <div class="button-group text-right">
       <oa-submit-button form="$ctrl.form"
                         on-submit="$ctrl.scrub()">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
 
-      <button id="cancelButton"
+      <button translate
+              id="cancelButton"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.cancel()">
         Cancel

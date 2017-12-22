@@ -1,11 +1,11 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
   <oa-module-loader module="ceph">
 
-    <oa-loading-panel message="Ceph OSDs are loading..."
+    <oa-loading-panel message="{{ 'Ceph OSDs are loading...' | translate }}"
                       ng-show="!$ctrl.error && !$ctrl.osd.$resolved">
     </oa-loading-panel>
     <oa-error-panel ng-if="$ctrl.error">
-      Ceph OSD resources could not be loaded.
+      <translate>Ceph OSD resources could not be loaded.</translate>
     </oa-error-panel>
 
     <oadatatable ng-show="!$ctrl.error && $ctrl.osd.results"
@@ -22,19 +22,23 @@
                   class="btn btn-sm btn-primary dropdown-toggle tc_scrub_toggle"
                   data-toggle="dropdown"
                   ng-class="{disabled: !$ctrl.hasSelection}">
-            Perform Task
+            <translate>Perform Task</translate>
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li ng-click="$ctrl.scrubAction(false)"
                 class="tc_scrub_li">
               <a>
-                <i class="fa fa-fw fa-stethoscope"></i>Scrub</a>
+                <i class="fa fa-fw fa-stethoscope"></i>
+                <translate>Scrub</translate>
+              </a>
             </li>
             <li ng-click="$ctrl.scrubAction(true)"
                 class="tc_deep_scrub_li">
               <a>
-                <i class="fa fa-fw fa-stethoscope"></i>Deep Scrub</a>
+                <i class="fa fa-fw fa-stethoscope"></i>
+                <translate>Deep Scrub</translate>
+              </a>
             </li>
           </ul>
         </div>
@@ -45,7 +49,8 @@
                 type="button"
                 ng-click="$ctrl.configureClusterAction()">
           <i class="fa fa-fw fa-cog"
-             aria-hidden="true"></i>Configure Cluster-wide OSD Flags
+             aria-hidden="true"></i>
+          <translate>Configure Cluster-wide OSD Flags</translate>
         </button>
       </additional-actions>
       {{$ctrl.data.results}}
@@ -57,21 +62,26 @@
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 -->
-            <th ng-show="columns['Name']"
+            <th translate
+                ng-show="columns['Name']"
                 sortfield="name"
                 sortdir="asc"
                 sortheaderclass
                 sortdefault>Name</th>
-            <th ng-show="columns['Hostname']"
+            <th translate
+                ng-show="columns['Hostname']"
                 sortfield="hostname"
                 sortheaderclass>Hostname</th>
-            <th ng-show="columns['Status']"
+            <th translate
+                ng-show="columns['Status']"
                 sortfield="status"
                 sortheaderclass>Status</th>
-            <th ng-show="columns['Storage Backend']"
+            <th translate
+                ng-show="columns['Storage Backend']"
                 sortfield="osd_objectstore"
                 sortheaderclass>Storage Backend</th>
-            <th ng-show="columns['Crush Weight']"
+            <th translate
+                ng-show="columns['Crush Weight']"
                 sortfield="crush_weight"
                 sortheaderclass>Crush Weight</th>
           </tr>

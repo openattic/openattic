@@ -1,6 +1,14 @@
 <div class="openattic-modal-header">
-  <span ng-hide="$ctrl.editing">Add subuser: {{$ctrl.subuser.subuser}}</span>
-  <span ng-show="$ctrl.editing">Edit subuser: {{$ctrl.subuser.subuser}}</span>
+  <span ng-hide="$ctrl.editing">
+    <translate translate-params-subuser="$ctrl.subuser.subuser">
+      Add subuser: {{ subuser }}
+    </translate>
+  </span>
+  <span ng-show="$ctrl.editing">
+    <translate translate-params-subuser="$ctrl.subuser.subuser">
+      Edit subuser: {{ subuser }}
+    </translate>
+  </span>
 </div>
 <form name="$ctrl.subuserForm"
       role="form"
@@ -9,7 +17,8 @@
   <div class="openattic-modal-content">
     <!-- Username -->
     <div class="form-group">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="user_id">Username</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -30,7 +39,8 @@
          ng-class="{'has-error': ($ctrl.subuserForm.$submitted ||
                                   $ctrl.subuserForm.subuser.$dirty) &&
                                   $ctrl.subuserForm.subuser.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="subuser">Subuser</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -39,7 +49,7 @@
           </span>
           <input class="form-control"
                  type="text"
-                 placeholder="Subuser..."
+                 placeholder="{{ 'Subuser...' | translate }}"
                  ng-model="$ctrl.subuser.subuser"
                  ng-change="$ctrl.validateSubuser()"
                  ng-readonly="$ctrl.editing"
@@ -47,12 +57,14 @@
                  name="subuser"
                  id="subuser">
         </div>
-        <span class="help-block tc_subuserRequired"
+        <span translate
+              class="help-block tc_subuserRequired"
               ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.subuser.$dirty) &&
                         $ctrl.subuserForm.subuser.$error.required">
           This field is required!
         </span>
-        <span class="help-block tc_subuserNotUnique"
+        <span translate
+              class="help-block tc_subuserNotUnique"
               ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.subuser.$dirty) &&
                         $ctrl.subuserForm.subuser.$error.uniquesubuser">
           The chosen subuser ID is already in use.
@@ -64,7 +76,8 @@
          ng-class="{'has-error': ($ctrl.subuserForm.$submitted ||
                                   $ctrl.subuserForm.permissions.$dirty) &&
                                   $ctrl.subuserForm.permissions.$invalid}">
-      <label class="col-sm-3 control-label"
+      <label translate
+             class="col-sm-3 control-label"
              for="permissions">Permission</label>
       <div class="col-sm-9">
         <div class="input-group">
@@ -73,14 +86,20 @@
                   name="permissions"
                   id="permissions"
                   required>
-            <option value="">-- Select a permission --</option>
-            <option value="read">read</option>
-            <option value="write">write</option>
-            <option value="read-write">read, write</option>
-            <option value="full-control">full</option>
+            <option translate
+                    value="">-- Select a permission --</option>
+            <option translate
+                    value="read">read</option>
+            <option translate
+                    value="write">write</option>
+            <option translate
+                    value="read-write">read, write</option>
+            <option translate
+                    value="full-control">full</option>
           </select>
         </div>
-        <span class="help-block tc_permissionsRequired"
+        <span translate
+              class="help-block tc_permissionsRequired"
               ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.permissions.$dirty) &&
                         $ctrl.subuserForm.permissions.$error.required">
           This field is required!
@@ -88,7 +107,7 @@
       </div>
     </div>
     <fieldset ng-show="!$ctrl.editing">
-      <legend>Swift key</legend>
+      <legend translate>Swift key</legend>
       <!-- Generate secret -->
       <div class="form-group"
            ng-show="!$ctrl.editing">
@@ -98,7 +117,8 @@
                    ng-model="$ctrl.subuser.generate_secret"
                    name="generate_secret"
                    id="generate_secret">
-            <label for="generate_secret">
+            <label translate
+                   for="generate_secret">
               Generate secret
             </label>
           </div>
@@ -110,7 +130,8 @@
                                     $ctrl.subuserForm.secret_key.$dirty) &&
                                     $ctrl.subuserForm.secret_key.$invalid}"
            ng-show="!$ctrl.editing && !$ctrl.subuser.generate_secret">
-        <label class="col-sm-3 control-label"
+        <label translate
+               class="col-sm-3 control-label"
                for="secret_key">Secret key</label>
         <div class="col-sm-9">
           <div class="input-group">
@@ -119,7 +140,7 @@
             </span>
             <input class="form-control"
                    type="password"
-                   placeholder="Secret key..."
+                   placeholder="{{ 'Secret key...' | translate }}"
                    ng-model="$ctrl.subuser.secret_key"
                    ng-required="!$ctrl.editing && !$ctrl.subuser.generate_secret"
                    name="secret_key"
@@ -139,7 +160,8 @@
               </button>
             </span>
           </div>
-          <span class="help-block tc_secret_keyRequired"
+          <span translate
+                class="help-block tc_secret_keyRequired"
                 ng-show="($ctrl.subuserForm.$submitted || $ctrl.subuserForm.secret_key.$dirty) &&
                           $ctrl.subuserForm.secret_key.$error.required">
             This field is required!
@@ -152,9 +174,10 @@
     <div class="button-group text-right">
       <oa-submit-button form="$ctrl.subuserForm"
                         on-submit="$ctrl.submitAction($ctrl.subuserForm)">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
-      <button type="button"
+      <button translate
+              type="button"
               class="btn btn-sm btn-default tc_cancelSubuserButton"
               ng-click="$ctrl.cancelAction()">
         Cancel

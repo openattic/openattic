@@ -1,5 +1,9 @@
 <div class="openattic-modal-header">
-  <span>Ceph Nodes {{$ctrl.resolve.deep ? 'Deep ' : ''}}Scrub</span>
+  <span>
+    <translate translate-params-deep="$ctrl.resolve.deep ? 'Deep ' : ''">
+      Ceph Nodes {{ deep }}Scrub
+    </translate>
+  </span>
 </div>
 
 <form name="$ctrl.form"
@@ -9,8 +13,10 @@
     <!-- single cephMNode -->
     <div ng-if="$ctrl.resolve.cephNodes.length === 1">
       <p>
-        You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to the Ceph node
-        <strong>{{$ctrl.resolve.cephNodes[0].hostname}}</strong>.
+        <translate translate-params-deep="$ctrl.resolve.deep ? 'deep ' : ''"
+                   translate-params-hostname="$ctrl.resolve.cephNodes[0].hostname">
+          You are about to apply a {{ deep }}scrub to the Ceph node <strong>{{ hostname }}</strong>.
+        </translate>
       </p>
     </div>
     <!-- end single cephMNode -->
@@ -18,9 +24,15 @@
     <!-- multiple cephMNodes -->
     <div ng-if="$ctrl.resolve.cephNodes.length > 1">
       <p>
-        You are about to apply a {{$ctrl.resolve.deep ? 'deep ' : ''}}scrub to multiple Ceph nodes.
+        <translate translate-params-deep="$ctrl.resolve.deep ? 'deep ' : ''">
+          You are about to apply a {{ deep }}scrub to multiple Ceph nodes.
+        </translate>
       </p>
-      <span>The following Ceph nodes will be {{$ctrl.resolve.deep ? 'deep ' : ''}}scrubbed:</span>
+      <span>
+        <translate translate-params-deep="$ctrl.resolve.deep ? 'deep ' : ''">
+          The following Ceph nodes will be {{ deep }}scrubbed:
+        </translate>
+      </span>
       <ul>
         <li ng-repeat="cephNode in $ctrl.resolve.cephNodes">
           {{cephNode.hostname}}
@@ -34,10 +46,11 @@
     <div class="button-group text-right">
       <oa-submit-button form="$ctrl.form"
                         on-submit="$ctrl.scrub()">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
 
-      <button id="cancelButton"
+      <button translate
+              id="cancelButton"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.cancel()">
         Cancel
