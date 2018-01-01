@@ -1,5 +1,5 @@
 <div class="openattic-modal-header">
-  <span>Background-Tasks</span>
+  <span translate>Background-Tasks</span>
 </div>
 <div class="openattic-modal-content task-queue-modal-content">
   <uib-tabset active="$ctrl.modalTabData.active">
@@ -8,9 +8,11 @@
              heading="{{tab.name}}
                       {{tab.count >= 0 ? ' (' + tab.count + ')' : ''}}"
              index="$index">
-      <p class="tc_loading_{{tabKey}}"
+      <p translate
+         class="tc_loading_{{tabKey}}"
          ng-hide="tab.loaded">Loading...</p>
-      <h3 class="tc_no_elements_{{tabKey}}"
+      <h3 translate
+          class="tc_no_elements_{{tabKey}}"
           ng-show="tab.loaded && tab.data.length === 0">
         There are no {{tabKey}} Tasks.
       </h3>
@@ -23,7 +25,8 @@
           <div class="dataTables_header clearfix">
             <div class="oadatatableactions">
               <div class="btn-group">
-                <button type="button"
+                <button translate
+                        type="button"
                         class="btn btn-sm btn-primary tc_task_delete_{{tabKey}}"
                         ng-disabled="tab.selection.items.length === 0"
                         ng-click="$ctrl.taskDeleteAction()">
@@ -111,11 +114,15 @@
         <div class="dataTables_footer tc_datatableFooter">
           <!-- number of items -->
           <div class="dataTables_info">
-            Showing
-            <strong>{{tab.page.lastItem === 0 ? tab.page.firstItem : tab.page.firstItem + 1}}</strong> to
-            <strong>{{tab.page.lastItem}}</strong>
-            of
-            <strong>{{tab.page.itemLength}}</strong> items
+            <translate translate-params-from="tab.page.lastItem === 0 ? tab.page.firstItem : tab.page.firstItem + 1"
+                       translate-params-to="tab.page.lastItem"
+                       translate-params-amount="tab.page.itemLength">
+              Showing
+              <strong>{{ current }}</strong> to
+              <strong>{{ to }}</strong>
+              of
+              <strong>{{ amount }}</strong> items
+            </translate>
           </div>
           <!-- end number of items -->
 
@@ -146,7 +153,8 @@
 </div>
 <div class="openattic-modal-footer">
   <div class="button-group text-right">
-    <button class="btn btn-default btn-sm modal-close-btn"
+    <button translate
+            class="btn btn-default btn-sm modal-close-btn"
             ng-click="$ctrl.closeTaskQueue()">Close</button>
   </div>
 </div>

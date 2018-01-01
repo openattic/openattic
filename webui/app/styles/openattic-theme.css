@@ -399,6 +399,13 @@ ul.task-queue-pagination {
   color: #ececec;
   background-color: #505050;
 }
+.navbar-openattic .navbar-utility>li>.open>a,
+.navbar-openattic .navbar-utility>li>.open>a:hover,
+.navbar-openattic .navbar-utility>li>.open>a:focus {
+  color: #ececec;
+  border-color: transparent;
+  background-color: transparent;
+}
 @media (min-width: 768px) {
   .navbar-openattic .navbar-primary>li>a {
     border-bottom: 4px solid transparent;
@@ -785,6 +792,39 @@ h6{
 /* Login */
 .login {
   height: 100%;
+}
+.login .utility-bar {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  top: 10px;
+  right: 10px;
+}
+.login .utility-bar>a {
+  color: #ececec;
+  line-height: 1;
+  padding: 10px 20px;
+  position: relative;
+  display: block;
+  text-decoration: none;
+}
+.login .utility-bar>a:focus,
+.login .utility-bar>a:hover {
+  color: #ffffff;
+}
+.login .utility-bar>a:hover {
+  background-color: #505050;
+}
+.login .open>a,
+.login .open>a:hover,
+.login .open>a:focus {
+  color: #ececec;
+  border-color: transparent;
+  background-color: transparent;
+}
+.login .utility-bar .dropdown-menu {
+  left: auto;
+  right: 0;
 }
 .login .icon-bar {
   position: absolute;

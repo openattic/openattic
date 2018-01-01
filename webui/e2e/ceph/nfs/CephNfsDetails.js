@@ -3,7 +3,7 @@ class CephNfsDetails {
   constructor () {
     this.panelTitle = element(by.css(".tc_panelTitle"));
     this.fsal = element(by.binding("$ctrl.getFsalDesc($ctrl.selection.item.fsal)"));
-    this.path = element.all(by.binding("$ctrl.selection.item.path")).get(1);
+    this.path = element.all(by.binding("$ctrl.selection.item.path")).get(0);
     this.tag = element(by.binding("$ctrl.selection.item.tag"));
     this.nfsProtocol = element.all(by.repeater("protocol in $ctrl.selection.item.protocols"));
     this.pseudo = element(by.binding("$ctrl.selection.item.pseudo"));

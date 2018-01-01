@@ -13,7 +13,9 @@
             class="navbar-toggle collapsed"
             data-toggle="collapse"
             data-target="#bs-example-navbar-collapse-1">
-      <span class="sr-only">Toggle navigation</span>
+      <span translate
+            class="sr-only">Toggle navigation
+      </span>
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
@@ -26,68 +28,89 @@
     <ul class="nav navbar-nav navbar-primary">
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_dashboard">
-        <a data-ui-sref="dashboard"
-           title="Dashboard">Dashboard</a>
+        <a translate
+           data-ui-sref="dashboard">Dashboard
+        </a>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_osds">
-        <a data-ui-sref="cephOsds">OSDs</a>
+        <a translate
+           data-ui-sref="cephOsds">OSDs
+        </a>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_rbds">
-        <a data-ui-sref="cephRbds">RBDs</a>
+        <a translate
+           data-ui-sref="cephRbds">RBDs
+        </a>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_pools">
-        <a data-ui-sref="cephPools">Pools</a>
+        <a translate
+           data-ui-sref="cephPools">Pools
+        </a>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_nodes">
-        <a data-ui-sref="cephNodes">Nodes</a>
+        <a translate
+           data-ui-sref="cephNodes">Nodes
+        </a>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_iscsi">
-        <a data-ui-sref="cephIscsi">iSCSI</a>
+        <a translate
+           data-ui-sref="cephIscsi">iSCSI
+        </a>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_nfs">
-        <a data-ui-sref="cephNfs">NFS</a>
+        <a translate
+           data-ui-sref="cephNfs">NFS
+        </a>
       </li>
       <li class="dropdown tc_menuitem tc_menuitem_ceph_rgw">
         <a href=""
            class="dropdown-toggle"
-           data-toggle="dropdown">Object Gateway
-          <span class="caret"></span>
+           data-toggle="dropdown"><translate>Object Gateway</translate> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
           <li data-ui-sref-active="active"
               class="tc_submenuitem tc_submenuitem_ceph_rgw_users">
-            <a data-ui-sref="ceph-rgw-users">Users</a>
+            <a translate
+               data-ui-sref="ceph-rgw-users">Users
+            </a>
           </li>
           <li data-ui-sref-active="active"
               class="tc_submenuitem tc_submenuitem_ceph_rgw_buckets">
-            <a data-ui-sref="ceph-rgw-buckets">Buckets</a>
+            <a translate
+               data-ui-sref="ceph-rgw-buckets">Buckets
+            </a>
           </li>
         </ul>
       </li>
       <li data-ui-sref-active="active"
           class="tc_menuitem tc_menuitem_ceph_crushmap">
-        <a data-ui-sref="crushmap">CRUSH Map</a>
+        <a translate
+           data-ui-sref="crushmap">CRUSH Map
+        </a>
       </li>
       <li class="dropdown tc_menuitem tc_menuitem_system">
         <a href=""
            class="dropdown-toggle"
-           data-toggle="dropdown">System
-          <span class="caret"></span>
+           data-toggle="dropdown"><translate>System</translate> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
           <li data-ui-sref-active="active"
               class="tc_submenuitem tc_submenuitem_system_users">
-            <a data-ui-sref="users">Users</a>
+            <a translate
+               data-ui-sref="users">Users
+            </a>
           </li>
           <li data-ui-sref-active="active"
               class="tc_submenuitem tc_submenuitem_system_settings">
-            <a data-ui-sref="settings">Settings</a>
+            <a translate
+               data-ui-sref="settings">Settings
+            </a>
           </li>
         </ul>
       </li>
@@ -96,13 +119,16 @@
 
     <ul class="nav navbar-nav navbar-utility">
       <li>
+        <userinfo class="oa-navbar"></userinfo>
+      </li>
+      <li>
+        <language class="oa-navbar"></language>
+      </li>
+      <li>
         <oa-notifications class="oa-navbar dropdown dropdown-notifications"></oa-notifications>
       </li>
       <li>
         <oa-task-queue class="oa-navbar"></oa-task-queue>
-      </li>
-      <li>
-        <userinfo class="oa-navbar"></userinfo>
       </li>
       <li class="tc_api-recorder">
         <api-recorder class="oa-navbar"></api-recorder>

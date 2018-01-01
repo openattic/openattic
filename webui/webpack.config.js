@@ -7,6 +7,7 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 var fs = require("fs");
+var AngularGetTextPlugin = require("angular-gettext-plugin");
 
 /**
  * Config
@@ -163,6 +164,23 @@ module.exports = (function makeWebpackConfig () {
         postcss: {
           plugins: [autoprefixer]
         }
+      }
+    }),
+
+    /**
+     * Internationalization
+     * Reference: https://github.com/augusto-altman/angular-gettext-plugin
+     *
+     */
+    new AngularGetTextPlugin({
+      compileTranslations: {
+        input: 'locale/*.po',
+        outputFolder: 'locale',
+        format: 'json'
+      },
+      extractStrings: {
+        input: 'app/**/*.html',
+        destination: 'locale/template.pot'
       }
     })
   ];
