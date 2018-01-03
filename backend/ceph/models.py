@@ -971,7 +971,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                             'journaling',
                                             'fast-diff',
                                             'data-pool']
-                        return features_ordered.index(feature) if feature in features_ordered else -1
+                        if feature not in features_ordered:
+                            raise ValidationError('Unexpected RBD feature: {}.'.format(feature))
+                        return features_ordered.index(feature)
                     if not insert:
                         features_to_disable = set(original.features).difference(set(value))
                         for feature in sorted(features_to_disable, key=feature_index, reverse=True):
