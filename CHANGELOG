@@ -32,6 +32,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
+* Backend: RBD features should be enabled/disabled using the correct order (OP-3019)
 
 Removed
 ~~~~~~~
