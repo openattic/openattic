@@ -962,10 +962,24 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
                 elif key == 'features':
+                    def feature_index(feature):
+                        features_ordered = ['deep-flatten',
+                                            'layering',
+                                            'stripingv2',
+                                            'exclusive-lock',
+                                            'object-map',
+                                            'journaling',
+                                            'fast-diff',
+                                            'data-pool']
+                        if feature not in features_ordered:
+                            raise ValidationError('Unexpected RBD feature: {}.'.format(feature))
+                        return features_ordered.index(feature)
                     if not insert:
-                        for feature in set(original.features).difference(set(value)):
+                        features_to_disable = set(original.features).difference(set(value))
+                        for feature in sorted(features_to_disable, key=feature_index, reverse=True):
                             api.image_set_feature(self.pool.name, self.name, feature, False)
-                        for feature in set(value).difference(set(original.features)):
+                        features_to_enable = set(value).difference(set(original.features))
+                        for feature in sorted(features_to_enable, key=feature_index, reverse=False):
                             api.image_set_feature(self.pool.name, self.name, feature, True)
                     else:
                         logger.warning('Tried to set features, but they should already match. {} '
