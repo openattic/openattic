@@ -326,9 +326,9 @@ class CephPool(NodbModel, RadosMixin):
                 'quota_max_objects': pool_data['quota_max_objects'],
                 # Cache tiering related
                 'cache_mode': pool_data['cache_mode'],
-                'tier_of_id': pool_data['tier_of'] if pool_data['tier_of'] > 0 else None,
-                'write_tier_id': pool_data['write_tier'] if pool_data['write_tier'] > 0 else None,
-                'read_tier_id': pool_data['read_tier'] if pool_data['read_tier'] > 0 else None,
+                'tier_of_id': None,
+                'write_tier_id': None,
+                'read_tier_id': None,
                 # Attributes for cache tiering
                 'target_max_bytes': pool_data['target_max_bytes'],
                 'hit_set_period': pool_data['hit_set_period'],
