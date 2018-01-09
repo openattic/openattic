@@ -8,7 +8,7 @@ msgstr ""
 msgid "# salt-run sharedsecret.show"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:169
+#: app/components/settings/settings-form/settings-form.component.html:170
 msgid "(DeepSea is not able to provide Object Gateway credentials)"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 msgid "-- Select the access type --"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:77
+#: app/components/settings/settings-form/settings-form.component.html:78
 msgid "-- Select the external auth system --"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 msgid "API-Recorder"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:223
+#: app/components/settings/settings-form/settings-form.component.html:225
 msgid "Access Key"
 msgstr ""
 
@@ -368,11 +368,11 @@ msgstr ""
 msgid "Addresses:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:279
+#: app/components/settings/settings-form/settings-form.component.html:281
 msgid "Admin Resource Path"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:263
+#: app/components/settings/settings-form/settings-form.component.html:265
 msgid "Admin User"
 msgstr ""
 
@@ -595,7 +595,7 @@ msgstr ""
 msgid "Ceph Cluster settings are loading..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:469
+#: app/components/settings/settings-form/settings-form.component.html:472
 msgid "Ceph Clusters"
 msgstr ""
 
@@ -637,11 +637,11 @@ msgstr ""
 msgid "Ceph clusters are loading..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:558
+#: app/components/settings/settings-form/settings-form.component.html:561
 msgid "Ceph connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:564
+#: app/components/settings/settings-form/settings-form.component.html:567
 msgid "Ceph connection failed"
 msgstr ""
 
@@ -666,10 +666,10 @@ msgstr ""
 msgid "Changing these parameters from their default values is usually not necessary."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:129
-#: app/components/settings/settings-form/settings-form.component.html:315
-#: app/components/settings/settings-form/settings-form.component.html:443
-#: app/components/settings/settings-form/settings-form.component.html:552
+#: app/components/settings/settings-form/settings-form.component.html:130
+#: app/components/settings/settings-form/settings-form.component.html:317
+#: app/components/settings/settings-form/settings-form.component.html:446
+#: app/components/settings/settings-form/settings-form.component.html:555
 msgid "Checking connection"
 msgstr ""
 
@@ -750,7 +750,7 @@ msgstr ""
 msgid "Compression required ratio..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:483
+#: app/components/settings/settings-form/settings-form.component.html:486
 msgid "Config file"
 msgstr ""
 
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:67
+#: app/components/settings/settings-form/settings-form.component.html:68
 msgid "External Auth System"
 msgstr ""
 
@@ -1170,15 +1170,15 @@ msgstr ""
 msgid "Get involved"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:341
+#: app/components/settings/settings-form/settings-form.component.html:343
 msgid "Grafana"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:449
+#: app/components/settings/settings-form/settings-form.component.html:452
 msgid "Grafana connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:455
+#: app/components/settings/settings-form/settings-form.component.html:458
 msgid "Grafana connection failed"
 msgstr ""
 
@@ -1223,9 +1223,9 @@ msgstr ""
 msgid "Hostname"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:184
+#: app/components/settings/settings-form/settings-form.component.html:185
 #: app/components/settings/settings-form/settings-form.component.html:30
-#: app/components/settings/settings-form/settings-form.component.html:348
+#: app/components/settings/settings-form/settings-form.component.html:350
 msgid "Hostname / IP Address"
 msgstr ""
 
@@ -1303,11 +1303,11 @@ msgstr ""
 msgid "Key status:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:499
+#: app/components/settings/settings-form/settings-form.component.html:502
 msgid "Keyring file"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:525
+#: app/components/settings/settings-form/settings-form.component.html:528
 msgid "Keyring user"
 msgstr ""
 
@@ -1380,7 +1380,7 @@ msgstr ""
 msgid "Manage service"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:168
+#: app/components/settings/settings-form/settings-form.component.html:169
 msgid "Managed by DeepSea"
 msgstr ""
 
@@ -1607,7 +1607,7 @@ msgstr ""
 msgid "New directory will be created"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:473
+#: app/components/settings/settings-form/settings-form.component.html:476
 msgid "No Ceph clusters configured"
 msgstr ""
 
@@ -1702,15 +1702,15 @@ msgid ""
 msgstr ""
 
 #: app/components/navigation/navigation/navigation.component.html:74
-#: app/components/settings/settings-form/settings-form.component.html:155
+#: app/components/settings/settings-form/settings-form.component.html:156
 msgid "Object Gateway"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:321
+#: app/components/settings/settings-form/settings-form.component.html:323
 msgid "Object Gateway API connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:327
+#: app/components/settings/settings-form/settings-form.component.html:329
 msgid "Object Gateway API connection failed"
 msgstr ""
 
@@ -1757,7 +1757,7 @@ msgid "Owner:"
 msgstr ""
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:289
-#: app/components/settings/settings-form/settings-form.component.html:400
+#: app/components/settings/settings-form/settings-form.component.html:403
 #: app/components/users/users-form/users-form.component.html:66
 msgid "Password"
 msgstr ""
@@ -1882,7 +1882,7 @@ msgstr ""
 msgid "Portals:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:596
+#: app/components/settings/settings-form/settings-form.component.html:599
 msgid "Powered by openATTIC"
 msgstr ""
 
@@ -2003,8 +2003,8 @@ msgstr ""
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:72
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:99
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:628
-#: app/components/settings/settings-form/settings-form.component.html:514
-#: app/components/settings/settings-form/settings-form.component.html:540
+#: app/components/settings/settings-form/settings-form.component.html:517
+#: app/components/settings/settings-form/settings-form.component.html:543
 msgid "Required field"
 msgstr ""
 
@@ -2058,15 +2058,15 @@ msgstr ""
 msgid "S3:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:135
+#: app/components/settings/settings-form/settings-form.component.html:136
 msgid "Salt API connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:141
+#: app/components/settings/settings-form/settings-form.component.html:142
 msgid "Salt API connection failed"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:584
+#: app/components/settings/settings-form/settings-form.component.html:587
 msgid "Save"
 msgstr ""
 
@@ -2075,7 +2075,7 @@ msgstr ""
 msgid "Scrub"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:239
+#: app/components/settings/settings-form/settings-form.component.html:241
 msgid "Secret Key"
 msgstr ""
 
@@ -2116,7 +2116,7 @@ msgstr ""
 msgid "Settings are loading..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:104
+#: app/components/settings/settings-form/settings-form.component.html:105
 msgid "Shared Secret"
 msgstr ""
 
@@ -2325,9 +2325,9 @@ msgstr ""
 msgid "TCP"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:207
-#: app/components/settings/settings-form/settings-form.component.html:370
-#: app/components/settings/settings-form/settings-form.component.html:52
+#: app/components/settings/settings-form/settings-form.component.html:209
+#: app/components/settings/settings-form/settings-form.component.html:373
+#: app/components/settings/settings-form/settings-form.component.html:53
 msgid "TCP port"
 msgstr ""
 
@@ -2497,6 +2497,9 @@ msgstr ""
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:611
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:686
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:741
+#: app/components/settings/settings-form/settings-form.component.html:197
+#: app/components/settings/settings-form/settings-form.component.html:361
+#: app/components/settings/settings-form/settings-form.component.html:41
 msgid "The value is not valid."
 msgstr ""
 
@@ -2742,8 +2745,8 @@ msgstr ""
 msgid "Unsaved Changes"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:303
-#: app/components/settings/settings-form/settings-form.component.html:431
+#: app/components/settings/settings-form/settings-form.component.html:305
+#: app/components/settings/settings-form/settings-form.component.html:434
 msgid "Use SSL"
 msgstr ""
 
@@ -2783,8 +2786,8 @@ msgstr ""
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:20
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:76
-#: app/components/settings/settings-form/settings-form.component.html:385
-#: app/components/settings/settings-form/settings-form.component.html:86
+#: app/components/settings/settings-form/settings-form.component.html:388
+#: app/components/settings/settings-form/settings-form.component.html:87
 #: app/components/users/users-form/users-form.component.html:26
 #: app/components/users/users-list/users-list.component.html:53
 msgid "Username"
@@ -3055,10 +3058,10 @@ msgstr ""
 msgid "retries"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:149
-#: app/components/settings/settings-form/settings-form.component.html:335
-#: app/components/settings/settings-form/settings-form.component.html:463
-#: app/components/settings/settings-form/settings-form.component.html:572
+#: app/components/settings/settings-form/settings-form.component.html:150
+#: app/components/settings/settings-form/settings-form.component.html:337
+#: app/components/settings/settings-form/settings-form.component.html:466
+#: app/components/settings/settings-form/settings-form.component.html:575
 msgid "retry"
 msgstr ""
 

@@ -38,7 +38,8 @@
                    ng-model="$ctrl.model.deepsea.host"
                    ng-change="$ctrl.checkDeepSeaConnection()"
                    hostname-validator>
-            <span class="help-block tc_saltApiHostInvalid"
+            <span translate
+                  class="help-block tc_saltApiHostInvalid"
                   ng-show="($ctrl.settingsForm.$submitted ||
                             $ctrl.settingsForm['saltApiHost'].$dirty) &&
                             $ctrl.settingsForm['saltApiHost'].$error.hostnameValidator">
@@ -193,7 +194,8 @@
                    ng-change="$ctrl.checkRgwConnection()"
                    ng-disabled="$ctrl.model.rgw.managed_by_deepsea"
                    hostname-validator>
-            <span class="help-block tc_rgwApiHostInvalid"
+            <span translate
+                  class="help-block tc_rgwApiHostInvalid"
                   ng-show="($ctrl.settingsForm.$submitted ||
                             $ctrl.settingsForm['rgwApiHost'].$dirty) &&
                             $ctrl.settingsForm['rgwApiHost'].$error.hostnameValidator">
@@ -356,7 +358,8 @@
                    ng-model="$ctrl.model.grafana.host"
                    ng-change="$ctrl.checkGrafanaConnection()"
                    hostname-validator>
-            <span class="help-block tc_grafanaApiHostInvalid"
+            <span translate
+                  class="help-block tc_grafanaApiHostInvalid"
                   ng-show="($ctrl.settingsForm.$submitted ||
                             $ctrl.settingsForm['grafanaApiHost'].$dirty) &&
                             $ctrl.settingsForm['grafanaApiHost'].$error.hostnameValidator">
