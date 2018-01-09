@@ -363,6 +363,10 @@ class CephRbdForm {
     })
       .$promise
       .then((res) => {
+        if (_.isUndefined(this.rbdForm)) {
+          return;
+        }
+
         this.poolFailure = false;
         this.rbdForm.$setValidity("poolLoading", true);
 
