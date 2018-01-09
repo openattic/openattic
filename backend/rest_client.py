@@ -19,7 +19,8 @@ import itertools
 import logging
 import re
 import requests
-from requests import ConnectionError
+from requests.exceptions import ConnectionError, InvalidURL
+
 try:
     from requests.packages.urllib3.exceptions import SSLError
 except ImportError:
@@ -393,6 +394,10 @@ class RestClient(object):
                           "your configuration and that the API endpoint is accessible"
                           .format(self.client_name))
             raise RequestException(ex_msg, conn_errno=errno, conn_strerror=strerror)
+        except InvalidURL as ex:
+            logger.exception("%s REST API failed %s: %s", self.client_name,
+                             method.upper(), str(ex))
+            raise RequestException(str(ex))
 
     @staticmethod
     def api(path, **api_kwargs):
