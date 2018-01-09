@@ -11,6 +11,7 @@
  *  GNU General Public License for more details.
 """
 import json
+import urlparse
 
 from django.test import TestCase
 from mock import mock
@@ -21,7 +22,6 @@ from ifconfig.models import get_host_name
 from rest_client import BadResponseFormatException, RequestException
 from django.conf import settings
 from sysutils.database_utils import make_default_admin
-from nodb.models import NodbQuerySet
 
 
 class DeepSeaTestCase(TestCase):
@@ -29,6 +29,11 @@ class DeepSeaTestCase(TestCase):
         api = DeepSea.instance()
         api2 = DeepSea.instance()
         self.assertEqual(api, api2)
+
+    def test_deepsea_ipv6_host(self):
+        api = DeepSea('fe80::5054:ff:fed3:9929', 8080, 'auto', 'hello', 'world')
+        p = urlparse.urlparse(api.base_url)
+        self.assertEquals(p.netloc, '[fe80::5054:ff:fed3:9929]:8080')
 
     def test_deepsea_service_online(self):
         with mock.patch("requests.Session") as mock_requests_session:
