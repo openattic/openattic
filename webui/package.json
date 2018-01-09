@@ -25,7 +25,8 @@
     "jquery-ui": "git+https://github.com/jquery/jquery-ui.git#1.11.4",
     "lodash": "4.17.4",
     "ng-tags-input": "3.0.0",
-    "ngstorage": "0.3.10"
+    "ngstorage": "0.3.10",
+    "validator": "9.2.0"
   },
   "devDependencies": {
     "angular-gettext-plugin": "1.0.1",
