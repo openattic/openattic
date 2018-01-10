@@ -38,6 +38,7 @@ Fixed
 * Backend: RestClient class does not handle IPv6 addresses properly (OP-2998)
 * WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
 * Backend: RBD features should be enabled/disabled using the correct order (OP-3019)
+* Backend: Set the RBD info 'block_name_prefix' (OP-3027)
 * WebUI: Fix error thrown when switching from RBD Add page (OP-2986)
 
 Removed
