@@ -850,7 +850,8 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         return [CephRbd(**CephRbd.make_model_args(rbd)) for rbd in rbds]
 
     # TODO: `rbd info` also delivers 'flags' and 'create_timestamp'
-    @bulk_attribute_setter(['num_objs', 'obj_size', 'size', 'data_pool_id', 'features', 'old_format'])
+    @bulk_attribute_setter(['num_objs', 'obj_size', 'size', 'data_pool_id', 'features',
+                            'old_format', 'block_name_prefix'])
     def set_image_info(self, objects, field_names):
         """
         `rbd info` and `rbd.Image.stat` are really similar: The first one calls the second one.
