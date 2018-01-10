@@ -69,7 +69,7 @@ describe("should test the ceph rbd panel", function () {
 
   rbdProperties.detailAttributes.forEach(function (attribute) {
     it('should check the content attribute "' + attribute + '" in the details tab when selecting a rbd', function () {
-      element.all(by.binding("row.name")).get(0).click();
+      element.all(by.css("tbody tr")).get(0).click();
       expect(element(by.cssContainingText("dt", attribute + ":")).isDisplayed()).toBe(true);
     });
   });

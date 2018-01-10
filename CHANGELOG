@@ -26,7 +26,8 @@ Added
 * WebUI: Add support for multiple languages (OP-995)
 * Documentation: Added note about how to give the openattic user permissions to
   create a database (necessary to run the Python Unit tests) (OP-2997)
-  
+* WebUI: Add Ceph RBD Edit page (OP-1033,OP-2764)
+
 Changed
 ~~~~~~~
 * Backend: DeepSea min version for iSCSI should be 0.8.2 (OP-3001)

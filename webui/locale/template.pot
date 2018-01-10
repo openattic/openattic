@@ -8,7 +8,7 @@ msgstr ""
 msgid "# salt-run sharedsecret.show"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:159
+#: app/components/settings/settings-form/settings-form.component.html:169
 msgid "(DeepSea is not able to provide Object Gateway credentials)"
 msgstr ""
 
@@ -20,7 +20,7 @@ msgstr ""
 msgid "(code {{ reason }})"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:124
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:136
 msgid "(deleting...)"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 msgid "-- Select the access type --"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:67
+#: app/components/settings/settings-form/settings-form.component.html:77
 msgid "-- Select the external auth system --"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 msgid "API-Recorder"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:203
+#: app/components/settings/settings-form/settings-form.component.html:223
 msgid "Access Key"
 msgstr ""
 
@@ -289,7 +289,7 @@ msgstr ""
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:25
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:44
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:24
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:36
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:42
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:23
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:42
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:23
@@ -368,11 +368,11 @@ msgstr ""
 msgid "Addresses:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:259
+#: app/components/settings/settings-form/settings-form.component.html:279
 msgid "Admin Resource Path"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:243
+#: app/components/settings/settings-form/settings-form.component.html:263
 msgid "Admin User"
 msgstr ""
 
@@ -460,7 +460,7 @@ msgstr ""
 msgid "At least one active <a ui-sref=\"ceph-rgw-users\">Object Gateway user</a> exists"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:327
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:328
 msgid "At least one feature has to be selected"
 msgstr ""
 
@@ -475,7 +475,7 @@ msgstr ""
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:614
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:364
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:652
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:422
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:423
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:120
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:759
 #: app/components/shared/oa-error-panel/oa-error-panel.component.html:17
@@ -595,7 +595,7 @@ msgstr ""
 msgid "Ceph Cluster settings are loading..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:439
+#: app/components/settings/settings-form/settings-form.component.html:469
 msgid "Ceph Clusters"
 msgstr ""
 
@@ -637,11 +637,11 @@ msgstr ""
 msgid "Ceph clusters are loading..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:528
+#: app/components/settings/settings-form/settings-form.component.html:558
 msgid "Ceph connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:534
+#: app/components/settings/settings-form/settings-form.component.html:564
 msgid "Ceph connection failed"
 msgstr ""
 
@@ -666,10 +666,10 @@ msgstr ""
 msgid "Changing these parameters from their default values is usually not necessary."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:119
-#: app/components/settings/settings-form/settings-form.component.html:295
-#: app/components/settings/settings-form/settings-form.component.html:413
-#: app/components/settings/settings-form/settings-form.component.html:522
+#: app/components/settings/settings-form/settings-form.component.html:129
+#: app/components/settings/settings-form/settings-form.component.html:315
+#: app/components/settings/settings-form/settings-form.component.html:443
+#: app/components/settings/settings-form/settings-form.component.html:552
 msgid "Checking connection"
 msgstr ""
 
@@ -750,7 +750,7 @@ msgstr ""
 msgid "Compression required ratio..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:453
+#: app/components/settings/settings-form/settings-form.component.html:483
 msgid "Config file"
 msgstr ""
 
@@ -802,17 +802,9 @@ msgstr ""
 msgid "Couldn't load any cluster, please contact your administrator for details."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:148
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:206
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:149
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:207
 msgid "Couldn't load any pool, please contact your administrator for details."
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:420
-msgid "Create"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:14
-msgid "Create RBD: {{ name }}"
 msgstr ""
 
 #: app/components/users/users-form/users-form.component.html:11
@@ -852,7 +844,7 @@ msgstr ""
 msgid "Data chunks (k)"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:162
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:163
 msgid "Data-Pool"
 msgstr ""
 
@@ -860,7 +852,7 @@ msgstr ""
 msgid "Data-Pool:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:89
 msgid "Data-pool"
 msgstr ""
 
@@ -881,8 +873,8 @@ msgstr ""
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:62
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:39
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:58
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:31
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:44
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:37
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:55
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:57
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:37
@@ -1085,7 +1077,7 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:57
+#: app/components/settings/settings-form/settings-form.component.html:67
 msgid "External Auth System"
 msgstr ""
 
@@ -1093,7 +1085,7 @@ msgstr ""
 msgid "Failed to load the form data."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:289
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:290
 msgid "Features"
 msgstr ""
 
@@ -1178,15 +1170,15 @@ msgstr ""
 msgid "Get involved"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:321
+#: app/components/settings/settings-form/settings-form.component.html:341
 msgid "Grafana"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:419
+#: app/components/settings/settings-form/settings-form.component.html:449
 msgid "Grafana connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:425
+#: app/components/settings/settings-form/settings-form.component.html:455
 msgid "Grafana connection failed"
 msgstr ""
 
@@ -1231,9 +1223,9 @@ msgstr ""
 msgid "Hostname"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:171
-#: app/components/settings/settings-form/settings-form.component.html:27
-#: app/components/settings/settings-form/settings-form.component.html:325
+#: app/components/settings/settings-form/settings-form.component.html:184
+#: app/components/settings/settings-form/settings-form.component.html:30
+#: app/components/settings/settings-form/settings-form.component.html:348
 msgid "Hostname / IP Address"
 msgstr ""
 
@@ -1311,11 +1303,11 @@ msgstr ""
 msgid "Key status:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:469
+#: app/components/settings/settings-form/settings-form.component.html:499
 msgid "Keyring file"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:495
+#: app/components/settings/settings-form/settings-form.component.html:525
 msgid "Keyring user"
 msgstr ""
 
@@ -1388,7 +1380,7 @@ msgstr ""
 msgid "Manage service"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:158
+#: app/components/settings/settings-form/settings-form.component.html:168
 msgid "Managed by DeepSea"
 msgstr ""
 
@@ -1590,8 +1582,8 @@ msgstr ""
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:65
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:28
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:70
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:23
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:56
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:67
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:36
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:69
 msgid "Name"
@@ -1615,7 +1607,7 @@ msgstr ""
 msgid "New directory will be created"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:443
+#: app/components/settings/settings-form/settings-form.component.html:473
 msgid "No Ceph clusters configured"
 msgstr ""
 
@@ -1667,7 +1659,7 @@ msgid "Not a valid number!"
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:52
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:154
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:166
 msgid "Not available"
 msgstr ""
 
@@ -1679,7 +1671,7 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:90
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:101
 msgid "Number of objects"
 msgstr ""
 
@@ -1710,15 +1702,15 @@ msgid ""
 msgstr ""
 
 #: app/components/navigation/navigation/navigation.component.html:74
-#: app/components/settings/settings-form/settings-form.component.html:145
+#: app/components/settings/settings-form/settings-form.component.html:155
 msgid "Object Gateway"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:301
+#: app/components/settings/settings-form/settings-form.component.html:321
 msgid "Object Gateway API connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:307
+#: app/components/settings/settings-form/settings-form.component.html:327
 msgid "Object Gateway API connection failed"
 msgstr ""
 
@@ -1742,8 +1734,8 @@ msgstr ""
 msgid "Object Size"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:257
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:84
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:258
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:95
 msgid "Object size"
 msgstr ""
 
@@ -1765,7 +1757,7 @@ msgid "Owner:"
 msgstr ""
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:289
-#: app/components/settings/settings-form/settings-form.component.html:370
+#: app/components/settings/settings-form/settings-form.component.html:400
 #: app/components/users/users-form/users-form.component.html:66
 msgid "Password"
 msgstr ""
@@ -1873,7 +1865,7 @@ msgstr ""
 msgid "Pool:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:62
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:73
 msgid "Poolname"
 msgstr ""
 
@@ -1890,7 +1882,7 @@ msgstr ""
 msgid "Portals:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:566
+#: app/components/settings/settings-form/settings-form.component.html:596
 msgid "Powered by openATTIC"
 msgstr ""
 
@@ -1932,6 +1924,10 @@ msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html:2
 msgid "RBD images with the following features will not be supported by iSCSI:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:15
+msgid "RBD: {{ name }}"
 msgstr ""
 
 #: app/components/navigation/navigation/navigation.component.html:43
@@ -2007,8 +2003,8 @@ msgstr ""
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:72
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:99
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:628
-#: app/components/settings/settings-form/settings-form.component.html:484
-#: app/components/settings/settings-form/settings-form.component.html:510
+#: app/components/settings/settings-form/settings-form.component.html:514
+#: app/components/settings/settings-form/settings-form.component.html:540
 msgid "Required field"
 msgstr ""
 
@@ -2062,15 +2058,15 @@ msgstr ""
 msgid "S3:"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:125
+#: app/components/settings/settings-form/settings-form.component.html:135
 msgid "Salt API connection established successfully"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:131
+#: app/components/settings/settings-form/settings-form.component.html:141
 msgid "Salt API connection failed"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:554
+#: app/components/settings/settings-form/settings-form.component.html:584
 msgid "Save"
 msgstr ""
 
@@ -2079,7 +2075,7 @@ msgstr ""
 msgid "Scrub"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:219
+#: app/components/settings/settings-form/settings-form.component.html:239
 msgid "Secret Key"
 msgstr ""
 
@@ -2120,7 +2116,7 @@ msgstr ""
 msgid "Settings are loading..."
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:94
+#: app/components/settings/settings-form/settings-form.component.html:104
 msgid "Shared Secret"
 msgstr ""
 
@@ -2155,8 +2151,8 @@ msgstr ""
 msgid "Sign Out"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:217
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:67
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:218
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
 msgid "Size"
 msgstr ""
 
@@ -2228,11 +2224,11 @@ msgstr ""
 msgid "Stripe Unit"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:102
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:113
 msgid "Stripe count"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:96
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:107
 msgid "Stripe unit"
 msgstr ""
 
@@ -2240,16 +2236,16 @@ msgstr ""
 msgid "Stripe width:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:334
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:335
 msgid "Striping"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:409
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:410
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:2
 msgid "Striping Preview"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:372
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:373
 msgid "Striping count"
 msgstr ""
 
@@ -2261,7 +2257,7 @@ msgstr ""
 msgid "Striping features:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:339
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:340
 msgid "Striping unit"
 msgstr ""
 
@@ -2329,9 +2325,9 @@ msgstr ""
 msgid "TCP"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:187
-#: app/components/settings/settings-form/settings-form.component.html:340
-#: app/components/settings/settings-form/settings-form.component.html:42
+#: app/components/settings/settings-form/settings-form.component.html:207
+#: app/components/settings/settings-form/settings-form.component.html:370
+#: app/components/settings/settings-form/settings-form.component.html:52
 msgid "TCP port"
 msgstr ""
 
@@ -2484,7 +2480,7 @@ msgid ""
 "                    A value from {{ minSize }} to {{ maxSize }} is valid."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:392
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:393
 msgid "The striping count has to be a value higher than 1."
 msgstr ""
 
@@ -2523,13 +2519,13 @@ msgstr ""
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:485
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:518
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:87
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:142
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:200
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:231
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:272
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:357
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:143
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:201
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:232
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:273
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:358
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:37
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:387
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:388
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:71
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:106
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:51
@@ -2558,11 +2554,11 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:362
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:363
 msgid "This field was decreased with your object size change."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:278
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:279
 msgid "This field was increased with your stripe unit change."
 msgstr ""
 
@@ -2746,21 +2742,21 @@ msgstr ""
 msgid "Unsaved Changes"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:283
-#: app/components/settings/settings-form/settings-form.component.html:401
+#: app/components/settings/settings-form/settings-form.component.html:303
+#: app/components/settings/settings-form/settings-form.component.html:431
 msgid "Use SSL"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:93
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:94
 msgid "Use a dedicated data pool"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:306
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:307
 msgid "Use default features"
 msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:80
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:72
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:83
 msgid "Used"
 msgstr ""
 
@@ -2787,8 +2783,8 @@ msgstr ""
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:20
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:76
-#: app/components/settings/settings-form/settings-form.component.html:355
-#: app/components/settings/settings-form/settings-form.component.html:76
+#: app/components/settings/settings-form/settings-form.component.html:385
+#: app/components/settings/settings-form/settings-form.component.html:86
 #: app/components/users/users-form/users-form.component.html:26
 #: app/components/users/users-list/users-list.component.html:53
 msgid "Username"
@@ -2940,11 +2936,11 @@ msgstr ""
 msgid "You can use up to four application per pool."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:237
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:238
 msgid "You have to increase the size in order to have at least 1 object in your RBD."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:244
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:245
 msgid "You have to increase the size in order to use striping."
 msgstr ""
 
@@ -3059,10 +3055,10 @@ msgstr ""
 msgid "retries"
 msgstr ""
 
-#: app/components/settings/settings-form/settings-form.component.html:139
-#: app/components/settings/settings-form/settings-form.component.html:315
-#: app/components/settings/settings-form/settings-form.component.html:433
-#: app/components/settings/settings-form/settings-form.component.html:542
+#: app/components/settings/settings-form/settings-form.component.html:149
+#: app/components/settings/settings-form/settings-form.component.html:335
+#: app/components/settings/settings-form/settings-form.component.html:463
+#: app/components/settings/settings-form/settings-form.component.html:572
 msgid "retry"
 msgstr ""
 
@@ -3131,16 +3127,16 @@ msgstr ""
 msgid "{{ mode }} Ceph pool: {{ name }}"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:131
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:189
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:132
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:190
 msgid "{{ numBytes }} of {{ maxAvail }} used"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:195
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:196
 msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.dataPool)\">use max</a>"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:137
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:138
 msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.pool)\">use max</a>"
 msgstr ""
 
@@ -3148,7 +3144,7 @@ msgstr ""
 msgid "{{ queue }} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:104
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:105
 msgid "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}Pool"
 msgstr ""
 
