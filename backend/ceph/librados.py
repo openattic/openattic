@@ -638,7 +638,7 @@ class MonApi(object):
                                                      erasure_code_profile=erasure_code_profile,
                                                      ruleset=ruleset,
                                                      expected_num_objects=expected_num_objects),
-            output_format='string')
+            output_format='string', timeout=45)
         self.osd_pool_delete(pool, pool, "--yes-i-really-really-mean-it")
 
     @undoable

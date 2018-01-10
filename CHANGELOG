@@ -39,6 +39,7 @@ Fixed
 * WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
 * Backend: RBD features should be enabled/disabled using the correct order (OP-3019)
 * Backend: Set the RBD info 'block_name_prefix' (OP-3027)
+* Backend: Increase timeout in MonApi::osd_pool_create (OP-3017)
 * WebUI: Fix error thrown when switching from RBD Add page (OP-2986)
 
 Removed
