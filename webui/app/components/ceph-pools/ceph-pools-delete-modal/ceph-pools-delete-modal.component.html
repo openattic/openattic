@@ -25,7 +25,7 @@
           class="text-danger">The following Ceph pools will be deleted:</span>
     <ul class="text-danger">
       <li ng-repeat="cephPool in $ctrl.cephPools">
-        {{$ctrl.cephPool.name}} ({{$ctrl.cephPool.num_bytes | bytes}})
+        {{cephPool.name}} ({{cephPool.num_bytes | bytes}})
       </li>
     </ul>
   </div>
