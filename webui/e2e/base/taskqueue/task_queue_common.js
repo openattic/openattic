@@ -263,7 +263,9 @@
    */
   self.validateTabName = function (tabName, tabText) {
     self.open();
-    expect(self.dialog.tabs[tabName].elements.tab.getText()).toBe(tabText);
+    let elem = self.dialog.tabs[tabName].elements.tab;
+    helpers.waitForElement(elem.element(by.linkText(tabText)));
+    expect(elem.getText()).toBe(tabText);
     self.close();
   };
 
