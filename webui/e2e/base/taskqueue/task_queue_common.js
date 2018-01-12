@@ -268,18 +268,8 @@
   };
 
   /**
-   * Validates the text shown by the task queue directive in the header of oa.
-   * Expecting the dialog to be closed.
-   * @param {string} text - Which text will be expected.
-   */
-  self.validateTaskText = function (text) {
-    expect(self.taskQueue.getText()).toBe(text);
-  };
-
-  /**
-   * Waits for all pending tasks to finish, use it with care because it's recursive.
-   * Expecting the dialog to be closed.
-   * @param {int} [depth] - Given by the recursive call.
+   * Waits for all pending tasks to finish.
+   * Expects the dialog to be closed.
    */
   self.waitForPendingTasks = () => {
     self.open(); // Opens the dialog
@@ -317,8 +307,8 @@
   self.deleteTasks = (tabName, taskName) => {
     self.changeTab(tabName);
     if (taskName) { // If a singel deletion takes place.
-      helpers.waitForElementVisible(element(by.cssContainingText("tr", taskName)));
-      var task = element.all(by.cssContainingText("tr", taskName)).first();
+      helpers.waitForElementVisible(element.all(by.cssContainingText("tr", taskName)).first());
+      const task = element.all(by.cssContainingText("tr", taskName)).first();
       expect(task.isDisplayed()).toBe(true);
       task.click();
     } else { // Delete all tasks in the tabName.
