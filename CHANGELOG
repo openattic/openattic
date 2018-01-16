@@ -22,7 +22,11 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI: Validate hostname in settings page (OP-2993)
 * WebUI: Add support for multiple languages (OP-995)
+* Documentation: Added note about how to give the openattic user permissions to
+  create a database (necessary to run the Python Unit tests) (OP-2997)
+* WebUI: Add Ceph RBD Edit page (OP-1033,OP-2764)
 
 Changed
 ~~~~~~~
@@ -31,7 +35,15 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: RestClient class does not handle IPv6 addresses properly (OP-2998)
 * WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
+* Backend: RBD features should be enabled/disabled using the correct order (OP-3019)
+* Backend: Set the RBD info 'block_name_prefix' (OP-3027)
+* Backend: Increase timeout in MonApi::osd_pool_create (OP-3017)
+* WebUI: Fix error thrown when switching from RBD Add page (OP-2986)
+* WebUI: Pool names are now displayed in the Pool Deletion dialog (OP-3024)
+* WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
+* WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
 
 Removed
 ~~~~~~~
@@ -99,6 +111,7 @@ Fixed
 * Backend: Made Gatling tests more idempotent (OP-2913)
 * Backend/WebUI: Fixed the limitation of the RBD dropdown list to 50
   elements in the iSCSI add form (OP-2907)
+* Backend: Handle invalid request URL's gracefully in RestClient (OP-2983)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 * WebUI: Display error message when no cluster exists (OP-2948)

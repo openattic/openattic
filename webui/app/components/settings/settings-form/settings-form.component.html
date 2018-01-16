@@ -23,7 +23,10 @@
         <legend translate>DeepSea / Salt REST API</legend>
 
         <!-- Salt API Host -->
-        <div class="form-group">
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted ||
+                                      $ctrl.settingsForm['saltApiHost'].$dirty) &&
+                                      $ctrl.settingsForm['saltApiHost'].$invalid}">
           <label translate
                  class="col-sm-3 control-label"
                  for="saltApiHost">Hostname / IP Address</label>
@@ -33,7 +36,15 @@
                    name="saltApiHost"
                    id="saltApiHost"
                    ng-model="$ctrl.model.deepsea.host"
-                   ng-change="$ctrl.checkDeepSeaConnection()">
+                   ng-change="$ctrl.checkDeepSeaConnection()"
+                   hostname-validator>
+            <span translate
+                  class="help-block tc_saltApiHostInvalid"
+                  ng-show="($ctrl.settingsForm.$submitted ||
+                            $ctrl.settingsForm['saltApiHost'].$dirty) &&
+                            $ctrl.settingsForm['saltApiHost'].$error.hostnameValidator">
+              The value is not valid.
+            </span>
           </div>
         </div>
 
@@ -167,7 +178,10 @@
         </div>
 
         <!-- Object Gateway Host -->
-        <div class="form-group">
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted ||
+                                      $ctrl.settingsForm['rgwApiHost'].$dirty) &&
+                                      $ctrl.settingsForm['rgwApiHost'].$invalid}">
           <label translate
                  class="col-sm-3 control-label"
                  for="rgwApiHost">Hostname / IP Address</label>
@@ -178,7 +192,15 @@
                    id="rgwApiHost"
                    ng-model="$ctrl.model.rgw.host"
                    ng-change="$ctrl.checkRgwConnection()"
-                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
+                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea"
+                   hostname-validator>
+            <span translate
+                  class="help-block tc_rgwApiHostInvalid"
+                  ng-show="($ctrl.settingsForm.$submitted ||
+                            $ctrl.settingsForm['rgwApiHost'].$dirty) &&
+                            $ctrl.settingsForm['rgwApiHost'].$error.hostnameValidator">
+              The value is not valid.
+            </span>
           </div>
         </div>
 
@@ -321,7 +343,10 @@
         <legend translate>Grafana</legend>
 
         <!-- Grafana Host -->
-        <div class="form-group">
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted ||
+                                      $ctrl.settingsForm['grafanaApiHost'].$dirty) &&
+                                      $ctrl.settingsForm['grafanaApiHost'].$invalid}">
           <label translate
                  class="col-sm-3 control-label"
                  for="grafanaApiHost">Hostname / IP Address</label>
@@ -331,7 +356,15 @@
                    name="grafanaApiHost"
                    id="grafanaApiHost"
                    ng-model="$ctrl.model.grafana.host"
-                   ng-change="$ctrl.checkGrafanaConnection()">
+                   ng-change="$ctrl.checkGrafanaConnection()"
+                   hostname-validator>
+            <span translate
+                  class="help-block tc_grafanaApiHostInvalid"
+                  ng-show="($ctrl.settingsForm.$submitted ||
+                            $ctrl.settingsForm['grafanaApiHost'].$dirty) &&
+                            $ctrl.settingsForm['grafanaApiHost'].$error.hostnameValidator">
+              The value is not valid.
+            </span>
           </div>
         </div>
 

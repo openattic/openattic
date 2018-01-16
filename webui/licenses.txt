@@ -24,6 +24,7 @@ jquery-ui                         1.11.4              MIT                       
 lodash                            4.17.4              MIT                         https://github.com/lodash/lodash/tree/4.17.4
 ng-tags-input                     3.0.0               MIT                         https://github.com/mbenford/ngTagsInput/tree/v3.0.0
 ngstorage                         0.3.10              MIT                         https://github.com/gsklee/ngStorage/tree/0.3.10
+validator                         9.2.0               MIT                         https://github.com/chriso/validator.js/tree/9.2.0
 
 npm dev packages
 ------------

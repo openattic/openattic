@@ -1,3 +1,33 @@
+/**
+ *
+ * @source: http://bitbucket.org/openattic/openattic
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in this page.
+ *
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *
+ * The JavaScript code in this page is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software
+ * Foundation; version 2.
+ *
+ * This package is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * As additional permission under GNU GPL version 2 section 3, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 1, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in this page.
+ *
+ */
 "use strict";
 
 var helpers = require("../../common.js");
@@ -36,22 +66,18 @@ describe("should test the ceph pools panel", function () {
   it("should have a details tab when selecting a pool", function () {
     //choose first element in ceph pools list
     element.all(by.css("tbody > tr > td > input")).get(0).click();
+
     helpers.checkLocation("ceph/pools/details#more");
     expect(cephPoolProperties.detailsTab.isDisplayed()).toBe(true);
-    element.all(by.css("tbody > tr > td > input")).get(0).click();
   });
 
   cephPoolProperties.detailAttributes.forEach(function (attr) {
     it('should check the content attribute "' + attr.name + '" in the details tab when selecting a pool', function () {
-      element.all(by.css("tbody > tr > td > input")).get(0).click();
       expect(element.all(by.cssContainingText("dt", attr.name + ":")).first().isDisplayed()).toBe(attr.displayed);
-      element.all(by.css("tbody > tr > td > input")).get(0).click();
     });
   });
 
   it("should have a statistic tab when selecting a pool", function () {
-    //choose first element in ceph pools list
-    element.all(by.css("tbody > tr > td > input")).get(0).click();
     cephPoolProperties.statisticsTab.click();
     helpers.checkLocation("ceph/pools/statistics#more");
     expect(cephPoolProperties.statisticsTab.isDisplayed()).toBe(true);
