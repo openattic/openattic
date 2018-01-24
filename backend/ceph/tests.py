@@ -27,7 +27,9 @@ from django.core.exceptions import ValidationError
 import exception
 import utilities
 from ceph.restapi import CephPoolSerializer
+from django.contrib.auth.models import User
 from django.test import TestCase
+from rest_framework.test import APIClient
 
 import ceph.models
 import ceph.librados
@@ -970,3 +972,61 @@ class StatusTestCase(TestCase):
         ClusterConf_mock.from_fsid.side_effect = LookupError()
         with self.assertRaises(UnavailableModule):
             ceph.status.check_ceph_api('fsid')
+
+
+class CephClusterRestTestCase(TestCase):
+
+    cluster = ceph.models.CephCluster(name='test', fsid='cluster-fsid', health='HEALTH_OK',
+                                      config_file_path='/etc/ceph/test.conf',
+                                      keyring_file_path='/etc/ceph/ceph.client.admin.keyring',
+                                      keyring_user='client.admin', osd_flags=['sortbitwise',
+                                                                              'recovery_deletes',
+                                                                              'purged_snapdirs'])
+
+    @classmethod
+    def setUpClass(cls):
+        cls.user = User.objects.create_user('testuser', password='secret')
+        cls.user.password = 'secret'
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def setUp(self):
+        self.client = APIClient()
+        self.client.login(username=self.user.username, password=self.user.password)
+
+    def tearDown(self):
+        self.client.logout()
+
+    @mock.patch('ceph.models.CephCluster.get_all_objects')
+    def test_get_cluster(self, cephcluster_all_objects_mock):
+        cephcluster_all_objects_mock.return_value = [self.cluster]
+        response = self.client.get('/api/ceph')
+        response_data = response.data
+        response_cluster = ceph.models.CephCluster(**response_data['results'][0])
+
+        self.assertEqual(response_data['count'], 1)
+        self.assertEqual(response_cluster, self.cluster)
+
+    @mock.patch('ceph.models.CephCluster.get_all_objects')
+    def test_get_cluster_detail(self, cephcluster_all_objects_mock):
+        cephcluster_all_objects_mock.return_value = [self.cluster]
+        response = self.client.get('/api/ceph/cluster-fsid')
+        response_data = response.data
+        response_cluster = ceph.models.CephCluster(**response_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_cluster, self.cluster)
+
+    @mock.patch('ceph.models.CephCluster.status', new_callable=mock.PropertyMock)
+    @mock.patch('ceph.models.CephCluster.get_all_objects')
+    def test_get_cluster_status(self, cephcluster_all_objects_mock, cephcluster_status_mock):
+        cephcluster_all_objects_mock.return_value = [self.cluster]
+        cephcluster_status_mock.return_value = {'stat1': 'val1', 'stat2': 'val2'}
+        response = self.client.get('/api/ceph/cluster-fsid/status')
+        response_data = response.data
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('stat1', response_data)
+        self.assertIn('stat2', response_data)
