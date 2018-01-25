@@ -1,9 +1,9 @@
-<oa-loading-panel message="Loading bucket data..."
+<oa-loading-panel message="{{ 'Loading bucket data...' | translate }}"
                   ng-show="!$ctrl.error && !$ctrl.formDataIsReady">
 </oa-loading-panel>
 <oa-error-panel on-back="$ctrl.goToListView()"
                 ng-if="$ctrl.editing && $ctrl.error">
-  The bucket data could not be loaded.
+  <translate>The bucket data could not be loaded.</translate>
 </oa-error-panel>
 
 <div class="col-sm-12 col-lg-6">
@@ -16,21 +16,30 @@
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 ng-hide="$ctrl.editing"
-            class="panel-title tc_bucketAddTitle">Add bucket: {{$ctrl.bucket.bucket}}</h3>
+            class="panel-title tc_bucketAddTitle">
+          <translate translate-params-bucket="$ctrl.bucket.bucket">
+            Add bucket: {{ bucket }}
+          </translate>
+        </h3>
         <h3 ng-show="$ctrl.editing"
-            class="panel-title tc_bucketEditTitle">Edit bucket: {{$ctrl.bucket.bucket}}</h3>
+            class="panel-title tc_bucketEditTitle">
+          <translate translate-params-bucket="$ctrl.bucket.bucket">
+            Edit bucket: {{ bucket }}
+          </translate>
+        </h3>
       </div>
       <div class="panel-body">
         <!-- Name -->
         <div class="form-group"
              ng-class="{'has-error': (bucketForm.$submitted || bucketForm.bucket.$dirty) &&
                          bucketForm.bucket.$invalid}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="bucket">Name</label>
           <div class="col-sm-9">
             <input class="form-control"
                    type="text"
-                   placeholder="Name..."
+                   placeholder="{{ 'Name...' | translate }}"
                    ng-model="$ctrl.bucket.bucket"
                    ng-readonly="$ctrl.editing"
                    ng-required="!$ctrl.editing"
@@ -39,17 +48,20 @@
                    autofocus
                    ceph-rgw-bucket-name-validate
                    ceph-rgw-bucket-name-unique>
-            <span class="help-block tc_bucketRequired"
+            <span translate
+                  class="help-block tc_bucketRequired"
                   ng-show="(bucketForm.$submitted || bucketForm.bucket.$dirty) &&
                                   bucketForm.bucket.$error.required">
               This field is required!
             </span>
-            <span class="help-block tc_bucketNotUnique"
+            <span translate
+                  class="help-block tc_bucketNotUnique"
                   ng-show="(bucketForm.$submitted || bucketForm.bucket.$dirty) &&
                                   bucketForm.bucket.$error.cephRgwBucketNameUnique">
               The chosen name is already in use.
             </span>
-            <span class="help-block tc_bucketInvalid"
+            <span translate
+                  class="help-block tc_bucketInvalid"
                   ng-show="(bucketForm.$submitted || bucketForm.bucket.$dirty) &&
                                 bucketForm.bucket.$error.cephRgwBucketNameValidate">
               The value is not valid.
@@ -59,10 +71,12 @@
         <!-- Id -->
         <div class="form-group"
              ng-show="$ctrl.editing">
-          <label class="col-sm-3 control-label"
-                 for="id">Id</label>
+          <label translate
+                 class="col-sm-3 control-label"
+                 for="bucketid">Id</label>
           <div class="col-sm-9">
             <input class="form-control"
+                   id="bucketid"
                    type="text"
                    ng-model="$ctrl.bucket.id"
                    readonly>
@@ -71,7 +85,8 @@
         <!-- Owner -->
         <div class="form-group"
              ng-class="{'has-error': (bucketForm.$submitted || bucketForm.owner.$dirty) && bucketForm.owner.$invalid}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="owner">Owner</label>
           <div class="col-sm-9">
             <div class="input-group">
@@ -84,10 +99,12 @@
                       name="owner"
                       id="owner"
                       required>
-                <option value="">-- Select a user --</option>
+                <option translate
+                        value="">-- Select a user --</option>
               </select>
             </div>
-            <span class="help-block tc_ownerRequired"
+            <span translate
+                  class="help-block tc_ownerRequired"
                   ng-show="(bucketForm.$submitted || bucketForm.owner.$dirty) && bucketForm.owner.$error.required">
               This field is required!
             </span>
@@ -98,9 +115,10 @@
         <div class="button-group text-right">
           <oa-submit-button form="bucketForm"
                             on-submit="$ctrl.submitAction(bucketForm)">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
-          <button type="button"
+          <button translate
+                  type="button"
                   class="btn btn-sm btn-default tc_backButton"
                   ng-click="$ctrl.goToListView()">
             Back

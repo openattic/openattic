@@ -33,6 +33,7 @@
 import OaModuleLoaderService from "./oa-module-loader/oa-module-loader.service";
 import OaTabSetService from "./oa-tab-set/oa-tab-set.service";
 import equalValidator from "./validators/equalValidator";
+import hostnameValidator from "./validators/hostname.validator";
 import ngRequired from "./required/ng-required.directive";
 import oaCephClusterLoader from "./oa-ceph-cluster-loader/oa-ceph-cluster-loader.component";
 import oaDeleteConfirmationModal from "./oa-delete-confirmation-modal/oa-delete-confirmation-modal.component";
@@ -59,6 +60,7 @@ angular
   .component("oaSubmitButton", oaSubmitButton)
   .component("oaTabSet", oaTabSet)
   .directive("equalValidator", equalValidator)
+  .directive("hostnameValidator", hostnameValidator)
   .directive("ngRequired", ngRequired)
   .directive("oaPasswordButton", oaPasswordButton)
   .directive("required", required)

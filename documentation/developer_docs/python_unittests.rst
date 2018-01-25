@@ -15,6 +15,16 @@ Please navigate to the backend root folder and execute::
 
   $ ./manage.py test -t . -v 2
 
+.. note ::
+
+    Running the tests might not work due to permission issues for the `openattic` user to
+    create an empty database.  The following commands will fix that::
+
+        oaconfig dbshell
+        ALTER USER openattic CREATEDB;
+
+    You can exit the `dbshell` by typing "\\q" or pressing "Ctrl+D".
+
 To generate a coverage analysis, you will have to install coverage::
 
   $ pip install coverage

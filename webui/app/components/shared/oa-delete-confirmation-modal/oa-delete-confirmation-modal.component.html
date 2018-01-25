@@ -6,17 +6,15 @@
       novalidate>
   <div class="openattic-modal-content">
     <span ng-transclude></span>
-    <p>
-      To confirm, please enter
-      <kbd>yes</kbd> and click
-      <kbd>Delete</kbd>, or cancel and return to the page.
+    <p translate>
+      To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
     </p>
     <div class="form-group"
          ng-class="{'has-error': ($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$invalid}">
       <input type="text"
              class="form-control"
              name="enteredName"
-             placeholder="yes"
+             placeholder="{{ 'yes' | translate }}"
              autocomplete="off"
              ng-model="$ctrl.input.enteredName"
              ng-pattern="$ctrl.input.pattern"
@@ -24,11 +22,13 @@
              autofocus>
 
       <!-- Error -->
-      <span class="help-block"
+      <span translate
+            class="help-block"
             ng-show="($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$error.required">
         This field is required.
       </span>
-      <span class="help-block"
+      <span translate
+            class="help-block"
             ng-show="($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$error.pattern">
         The input value does not match 'yes'.
       </span>
@@ -39,9 +39,10 @@
     <div class="button-group text-right">
       <oa-submit-button form="$ctrl.deleteForm"
                         on-submit="$ctrl.confirm()">
-        Delete
+        <translate>Delete</translate>
       </oa-submit-button>
-      <button id="bot1-Msg1"
+      <button translate
+              id="bot1-Msg1"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.onCancel()">Cancel</button>
     </div>

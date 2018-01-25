@@ -11,6 +11,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import utilities
 import logging
 from awsauth import S3Auth
 from oa_settings import Settings, SettingsListener
@@ -98,7 +99,7 @@ class RGWClient(RestClient, SettingsListener):
         ssl = ssl if ssl else RGWClient._ssl
 
         self.userid = userid
-        self.service_url = '{}:{}'.format(host, port)
+        self.service_url = utilities.build_url(host=host, port=port)
         self.admin_path = admin_path
 
         s3auth = S3Auth(access_key, secret_key, service_url=self.service_url)

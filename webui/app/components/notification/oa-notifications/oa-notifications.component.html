@@ -3,18 +3,21 @@
    role="button"
    aria-haspopup="true"
    aria-expanded="false"
-   title="Recent Notifications">
-  <i class="fa fa-bell"></i> Notifications
+   title="{{ 'Recent Notifications' | translate }}">
+  <i class="fa fa-bell"></i>
+  <span translate>Notifications</span>
 </a>
 
 <div class="dropdown-container">
   <div class="dropdown-toolbar">
     <div class="dropdown-toolbar-actions"
          ng-show="$ctrl.notifications.length > 0">
-      <a href=""
+      <a translate
+         href=""
          ng-click="$ctrl.removeAll()">Remove all</a>
     </div>
-    <h3 class="dropdown-toolbar-title">Recent Notifications</h3>
+    <h3 translate
+        class="dropdown-toolbar-title">Recent Notifications</h3>
   </div>
 
   <ul class="dropdown-menu">
@@ -40,7 +43,8 @@
     </li>
   </ul>
 
-  <div class="dropdown-footer text-center"
+  <div translate
+       class="dropdown-footer text-center"
        ng-show="$ctrl.notifications.length == 0">
     No Notifications
   </div>

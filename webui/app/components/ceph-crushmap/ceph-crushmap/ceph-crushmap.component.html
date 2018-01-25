@@ -1,12 +1,14 @@
 <oa-ceph-cluster-loader on-cluster-load="$ctrl.onClusterLoad(cluster)">
   <oa-module-loader module="ceph">
 
-    <oa-loading-panel message="Ceph CRUSH map is loading..."
+    <oa-loading-panel message="{{ 'Ceph CRUSH map is loading...' | translate }}"
                       ng-show="!$ctrl.error && !$ctrl.cluster.$resolved">
     </oa-loading-panel>
     <oa-error-panel ng-if="$ctrl.error && $ctrl.error.statusText === 'NOT FOUND'">
-      Ceph cluster with fsid
-      <strong>'{{$ctrl.registry.selectedCluster.fsid}}'</strong> couldn't be found.
+      <translate translate-params-fsid="$ctrl.registry.selectedCluster.fsid">
+        Ceph cluster with fsid
+        <strong>'{{fsid}}'</strong> couldn't be found.
+      </translate>
     </oa-error-panel>
 
     <div class="row"
@@ -14,12 +16,15 @@
       <div class="col-lg-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title pull-left">Physical setup</h3>
+            <h3 translate
+                class="panel-title pull-left">Physical setup</h3>
 
             <div class="panel-toolbar"
                  role="menu">
               <a ng-click="$ctrl.getCrushmap()">
-                <i class="fa fa-refresh"></i> Refresh</a>
+                <i class="fa fa-refresh"></i>
+                <translate>Refresh</translate>
+              </a>
             </div>
 
             <div class="clearfix"></div>
@@ -41,7 +46,8 @@
       <div class="col-lg-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title pull-left">Replication rules</h3>
+            <h3 translate
+                class="panel-title pull-left">Replication rules</h3>
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">
@@ -51,7 +57,8 @@
                   novalidate>
               <fieldset>
                 <div class="form-group">
-                  <label class="col-md-2 control-label"
+                  <label translate
+                         class="col-md-2 control-label"
                          for="ruleset">Content</label>
                   <div class="col-md-10">
                     <select id="ruleset"
@@ -59,42 +66,46 @@
                             ng-model="$ctrl.activeRuleset"
                             ng-change="$ctrl.rerenderNodes()"
                             ng-options="ruleset as ruleset.rule_name for ruleset in $ctrl.cluster.crushmap.rules track by ruleset.rule_id">
-                      <option value="">Select a ruleset...</option>
+                      <option translate
+                              value="">Select a ruleset...</option>
                     </select>
                   </div>
                 </div>
               </fieldset>
               <fieldset ng-show="$ctrl.activeRuleset">
                 <div class="form-group">
-                  <label class="col-md-2 control-label">Replicas</label>
+                  <label translate
+                         class="col-md-2 control-label">Replicas</label>
                   <div class="col-md-10">
                     <div class="row">
                       <div class="col-md-6">
                         <p>
-                          <label class="control-label"
-                                 for="min_size">Minimum</label>
+                          <label translate
+                                 class="control-label">Minimum</label>
                         </p>
                         {{$ctrl.activeRuleset.min_size}}
                       </div>
                       <div class="col-md-6">
                         <p>
-                          <label class="control-label"
-                                 for="max_size">Maximum</label>
+                          <label translate
+                                 class="control-label">Maximum</label>
                         </p>
                         {{$ctrl.activeRuleset.max_size}}
                       </div>
                     </div>
-                    <p class="text-danger"
+                    <p translate
+                       class="text-danger"
                        style="padding-top: 7px"
                        ng-show="$ctrl.activeRuleset.min_size === 1">
-                      One replica means
-                      <em>no copies</em>. If you lose a storage node, your data is lost.
+                      One replica means <em>no copies</em>. If you lose a storage node, your data is lost.
                     </p>
-                    <p ng-show="$ctrl.activeRuleset.min_size > 1"
+                    <p translate
+                       translate-params-min-size="$ctrl.activeRuleset.min_size | humanizeInt"
+                       translate-params-min-size-less="($ctrl.activeRuleset.min_size - 1) | humanizeInt"
+                       ng-show="$ctrl.activeRuleset.min_size > 1"
                        style="padding-top: 7px"
                        ng-class="{ 'text-warning': $ctrl.activeRuleset.min_size == 2, 'text-muted': $ctrl.activeRuleset.min_size > 2 }">
-                      {{ $ctrl.activeRuleset.min_size | humanizeInt }} replicas means "the original file + {{ ($ctrl.activeRuleset.min_size - 1)
-                      | humanizeInt }}
+                      {{ minSize }} replicas means "the original file + {{ minSizeLess }}
                       <ng-pluralize count="$ctrl.activeRuleset.min_size - 1"
                                     when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
                     </p>
@@ -103,7 +114,8 @@
               </fieldset>
               <fieldset ng-show="$ctrl.activeRuleset">
                 <div class="form-group">
-                  <label class="col-md-2 control-label">Placement</label>
+                  <label translate
+                         class="col-md-2 control-label">Placement</label>
                   <div class="col-md-10"
                        style="padding-top: 7px">
                     <ceph-crushmap-stepset ng-repeat="stepset in $ctrl.stepsets"
