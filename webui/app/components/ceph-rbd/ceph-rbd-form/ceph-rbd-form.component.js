@@ -33,7 +33,7 @@
 import _ from "lodash";
 
 class CephRbdForm {
-  constructor ($state, $stateParams, cephRbdService, cephPoolsService,
+  constructor ($state, $stateParams, $q, cephRbdService, cephPoolsService,
       SizeParserService, $filter, Notification, cephClusterService,
       cephRbdFeatures, $uibModal) {
     this.$filter = $filter;
@@ -44,6 +44,8 @@ class CephRbdForm {
     this.cephPoolsService = cephPoolsService;
     this.cephRbdService = cephRbdService;
     this.cephClusterService = cephClusterService;
+    this.$stateParams = $stateParams;
+    this.$q = $q;
 
     this.submitted = false;
     this.rbd = {
@@ -64,31 +66,38 @@ class CephRbdForm {
       features: {
         "deep-flatten": {
           checked: false,
-          disabled: false
+          disabled: false,
+          canUpdate: false
         },
         "layering": {
           checked: false,
-          disabled: false
+          disabled: false,
+          canUpdate: false
         },
         "stripingv2": {
           checked: false,
-          disabled: false
+          disabled: false,
+          canUpdate: false
         },
         "exclusive-lock": {
           checked: false,
-          disabled: false
+          disabled: false,
+          canUpdate: true
         },
         "object-map": {
           checked: false,
-          disabled: true
+          disabled: true,
+          canUpdate: true
         },
         "journaling": {
           checked: false,
-          disabled: true
+          disabled: true,
+          canUpdate: true
         },
         "fast-diff": {
           checked: false,
-          disabled: true
+          disabled: true,
+          canUpdate: true
         }
       },
       defaultFeatures: true,
@@ -111,6 +120,8 @@ class CephRbdForm {
 
     this.fsid = $stateParams.fsid;
     this.fromState = $stateParams.fromState;
+    this.editing = false;
+    this.preparing = false;
 
     this.waitingClusterMsg = "Retrieving cluster list...";
 
@@ -118,6 +129,11 @@ class CephRbdForm {
   }
 
   $onInit () {
+    if (this.$stateParams.name) {
+      this.preparing = true;
+      this.editing = true;
+    }
+
     this.cephClusterService.get()
       .$promise
       .then((res) => {
@@ -154,6 +170,42 @@ class CephRbdForm {
           this.rbdForm.$setValidity("clusterLoading", false);
         }
       });
+  }
+
+  getRbd () {
+    return this.cephRbdService.getDetail({
+      fsid: this.fsid,
+      pool: this.$stateParams.pool,
+      name: this.$stateParams.name
+    }).$promise;
+  }
+
+  handleRbd (res) {
+    _.extend(this.rbd, res);
+
+    this.data.id = this.rbd.id;
+    this.data.name = this.rbd.name;
+    // this.data.cluster = this.rbd.cluster;
+    this.data.pool = _.find(this.pools.replicated, (pool) => {
+      return pool.id === this.rbd.pool;
+    });
+    this.data.useDataPool = _.isNumber(this.rbd.data_pool);
+    this.data.dataPool = _.find(this.pools.erasure, (pool) => {
+      return pool.id === this.rbd.data_pool;
+    });
+    this.data.striping.count = this.rbd.stripe_count;
+    this.data.striping.unit = this.rbd.stripe_unit;
+    // striping: { unitDisplayed: "4 MiB" },
+    this.data.defaultFeatures = false;
+    this.rbd.features.forEach(element => {
+      this.data.features[element].checked = true;
+      this.watchDataFeatures(element);
+    });
+    this.data.obj_num = this.rbd.num_objs;
+    this.data.size = this.$filter("bytes")(this.rbd.size);
+    this.data.obj_size = this.$filter("bytes")(this.rbd.obj_size);
+    this.data.expert = true;
+    this.preparing = false;
   }
 
   deepBoxCheck (key, checked) {
@@ -350,62 +402,54 @@ class CephRbdForm {
     });
   }
 
-  getCephPools () {
-    this.getReplicatedPools();
-    this.getEcOverwritesPools();
-  }
-
   getReplicatedPools () {
     this.waitingPoolMsg = "Retrieving pool list...";
-    this.cephPoolsService.get({
+    return this.cephPoolsService.get({
       fsid: this.fsid,
       type: "replicated"
     })
-      .$promise
-      .then((res) => {
-        this.poolFailure = false;
-        this.rbdForm.$setValidity("poolLoading", true);
+      .$promise;
+  }
 
-        res.results.forEach((pool) => this.addPoolAttributes(pool));
+  handleReplicatedPools (res) {
+    if (_.isUndefined(this.rbdForm)) {
+      return;
+    }
 
-        if (res.count === 1 && !this.data.pool) {
-          this.data.pool = res.results[0];
-        }
-        this.pools.replicated = res.results;
-        if (res.count === 0) {
-          this.waitingPoolMsg = "No suitable pool aviable.";
-          this.Notification.warning({
-            title: this.waitingPoolMsg,
-            msg: "You can't create any RBDs in the selected cluster."
-          });
-        } else {
-          this.waitingPoolMsg = "-- Select a pool --";
-        }
-      })
-      .catch((poolError) => {
-        if (!this.poolFailure) {
-          this.poolFailure = true;
-          this.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
-          this.poolFailureError = poolError;
-          this.rbdForm.$setValidity("poolLoading", false);
-          this.waitingPoolMsg = "Error: List couldn't be loaded!";
-        }
+    this.poolFailure = false;
+    this.rbdForm.$setValidity("poolLoading", true);
+
+    res.results.forEach((pool) => this.addPoolAttributes(pool));
+
+    if (res.count === 1 && !this.data.pool) {
+      this.data.pool = res.results[0];
+    }
+    this.pools.replicated = res.results;
+    if (res.count === 0) {
+      this.waitingPoolMsg = "No suitable pool aviable.";
+      this.Notification.warning({
+        title: this.waitingPoolMsg,
+        msg: "You can't create any RBDs in the selected cluster."
       });
+    } else {
+      this.waitingPoolMsg = "-- Select a pool --";
+    }
   }
 
   getEcOverwritesPools () {
-    this.cephPoolsService.get({
+    return this.cephPoolsService.get({
       fsid: this.fsid,
       flags: "ec_overwrites"
     })
-      .$promise
-      .then((res) => {
-        res.results.forEach((pool) => {
-          this.addPoolAttributes(pool);
-        });
+      .$promise;
+  }
 
-        this.pools.erasure = res.results;
-      });
+  handleEcOverwritesPools (res) {
+    res.results.forEach((pool) => {
+      this.addPoolAttributes(pool);
+    });
+
+    this.pools.erasure = res.results;
   }
 
   addPoolAttributes (pool) {
@@ -425,7 +469,33 @@ class CephRbdForm {
   watchDataCluster () {
     if (this.data.cluster) {
       this.fsid = this.data.cluster.fsid;
-      this.getCephPools();
+
+      let qs = [
+        this.getReplicatedPools(),
+        this.getEcOverwritesPools()
+      ];
+
+      if (this.editing) {
+        qs.push(this.getRbd());
+      }
+
+      this.$q.all(qs)
+        .then((res) => {
+          this.handleReplicatedPools(res[0]);
+          this.handleEcOverwritesPools(res[1]);
+          if (this.editing) {
+            this.handleRbd(res[2]);
+          }
+        })
+        .catch((poolError) => {
+          if (!this.poolFailure) {
+            this.poolFailure = true;
+            this.poolFailureTitle = poolError.status + ": " + poolError.statusText.toLowerCase();
+            this.poolFailureError = poolError;
+            this.rbdForm.$setValidity("poolLoading", false);
+            this.waitingPoolMsg = "Error: List couldn't be loaded!";
+          }
+        });
     }
   }
 
@@ -472,22 +542,43 @@ class CephRbdForm {
       this.rbd.fsid = this.fsid;
       this.rbd.size = this.SizeParserService.parseInt(this.data.size, "b"); // Limit around 868 EiB
       this.submitted = true;
-      this.cephRbdService.save(this.rbd)
-        .$promise
-        .then((res) => {
-          this.rbd = res;
-          this.goToListView();
-        }, (error) => {
-          this.rbdForm.$submitted = false;
-          if (error.status === 400 && error.data.size) {
-            let size = error.data.size[0].match(/[0-9]+/)[0];
-            this.Notification.error({
-              title: "RBD creation error " + error.status,
-              msg: "Chosen RBD size is too big. Choose a size lower than " + this.$filter("bytes")(size) + "."
-            }, error);
-          }
-        });
+
+      if (this.editing) {
+        this.cephRbdService.update({
+          fsid: this.fsid,
+          pool: this.data.pool.name,
+          name: this.rbd.name
+        }, this.rbd)
+          .$promise
+          .then((res) => {
+            this.rbd = res;
+            this.goToListView();
+          }, (error) => {
+            console.log(error);
+            this.rbdForm.$submitted = false;
+          });
+      } else {
+        this.cephRbdService.save(this.rbd)
+          .$promise
+          .then((res) => {
+            this.rbd = res;
+            this.goToListView();
+          }, (error) => {
+            this.rbdForm.$submitted = false;
+            if (error.status === 400 && error.data.size) {
+              let size = error.data.size[0].match(/[0-9]+/)[0];
+              this.Notification.error({
+                title: "RBD creation error " + error.status,
+                msg: "Chosen RBD size is too big. Choose a size lower than " + this.$filter("bytes")(size) + "."
+              }, error);
+            }
+          });
+      }
     }
+  }
+
+  loadingFinished () {
+    return _.isArray(this.clusters) && !this.preparing;
   }
 
   cancelAction () {

@@ -1,43 +1,57 @@
 <div class="panel panel-default tc_detailsTab">
-    <div class="panel-heading">
-        <h3 class="panel-title">Details of {{$ctrl.selection.item.name}}</h3>
-    </div>
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt>Name:</dt>
-            <dd ng-bind="$ctrl.selection.item.name"></dd>
-            <dt>Block name prefix:</dt>
-            <dd ng-bind="$ctrl.selection.item.block_name_prefix"></dd>
-            <dt>{{$ctrl.selection.item.data_pool ? 'Meta-' : ''}}Pool:</dt>
-            <dd ng-bind="$ctrl.selection.item.pool.name"></dd>
-            <div ng-if="$ctrl.selection.item.data_pool">
-              <dt>Data-Pool:</dt>
-              <dd ng-bind="$ctrl.selection.item.data_pool.name"></dd>
-            </div>
-            <dt>Size:</dt>
-            <dd ng-bind="$ctrl.selection.item.size | bytes"></dd>
-            <dt>Object size:</dt>
-            <dd ng-bind="$ctrl.selection.item.obj_size | bytes"></dd>
-            <dt>Number of objects:</dt>
-            <dd ng-bind="$ctrl.selection.item.num_objs"></dd>
-            <div ng-if="$ctrl.selection.item.features.length > 0">
-              <dt>Features:</dt>
-              <dd ng-repeat="feature in $ctrl.selection.item.features">{{$ctrl.features[feature].desc}}</dd>
-              <div ng-if="$ctrl.selection.item.features.indexOf('stripingv2') !== -1">
-                <dt>Striping unit:</dt>
-                <dd ng-bind="$ctrl.selection.item.stripe_unit | bytes"></dd>
-                <dt>Striping count:</dt>
-                <dd ng-bind="$ctrl.selection.item.stripe_count"></dd>
-              </div>
-            </div>
-            <dt>Used:</dt>
-            <dd ng-if="$ctrl.selection.item.used_size !== null">
-              {{$ctrl.selection.item.usedPercent | number:2}}%
-              <span class="text-muted">(Used: {{$ctrl.selection.item.used_size | bytes}} &mdash; Free: {{$ctrl.selection.item.free | bytes}})</span>
-            </dd>
-            <dd ng-if="$ctrl.selection.item.used_size === null">
-              <span class="text-muted">Not available</span>
-            </dd>
-        </dl>
-    </div>
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <translate translate-params-name="$ctrl.selection.item.name">
+        Details of {{ name }}
+      </translate>
+    </h3>
+  </div>
+  <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt translate>Name:</dt>
+      <dd ng-bind="$ctrl.selection.item.name"></dd>
+      <dt translate>Block name prefix:</dt>
+      <dd ng-bind="$ctrl.selection.item.block_name_prefix"></dd>
+      <dt>
+        <translate translate-params-meta="$ctrl.selection.item.data_pool ? 'Meta-' : ''">
+          {{ meta }}Pool:
+        </translate>
+      </dt>
+      <dd ng-bind="$ctrl.selection.item.pool.name"></dd>
+      <div ng-if="$ctrl.selection.item.data_pool">
+        <dt translate>Data-Pool:</dt>
+        <dd ng-bind="$ctrl.selection.item.data_pool.name"></dd>
+      </div>
+      <dt translate>Size:</dt>
+      <dd ng-bind="$ctrl.selection.item.size | bytes"></dd>
+      <dt translate>Object size:</dt>
+      <dd ng-bind="$ctrl.selection.item.obj_size | bytes"></dd>
+      <dt translate>Number of objects:</dt>
+      <dd ng-bind="$ctrl.selection.item.num_objs"></dd>
+      <div ng-if="$ctrl.selection.item.features.length > 0">
+        <dt translate>Features:</dt>
+        <dd ng-repeat="feature in $ctrl.selection.item.features">{{$ctrl.features[feature].desc}}</dd>
+        <div ng-if="$ctrl.selection.item.features.indexOf('stripingv2') !== -1">
+          <dt translate>Striping unit:</dt>
+          <dd ng-bind="$ctrl.selection.item.stripe_unit | bytes"></dd>
+          <dt translate>Striping count:</dt>
+          <dd ng-bind="$ctrl.selection.item.stripe_count"></dd>
+        </div>
+      </div>
+      <dt translate>Used:</dt>
+      <dd ng-if="$ctrl.selection.item.used_size !== null">
+        {{$ctrl.selection.item.usedPercent | number:2}}%
+        <span class="text-muted">
+          <translate translate-params-used-size="$ctrl.selection.item.used_size | bytes"
+                     translate-params-free="$ctrl.selection.item.free | bytes">
+            (Used: {{ usedSize }} - Free: {{ free }})
+          </translate>
+        </span>
+      </dd>
+      <dd ng-if="$ctrl.selection.item.used_size === null">
+        <span translate
+              class="text-muted">Not available</span>
+      </dd>
+    </dl>
+  </div>
 </div>

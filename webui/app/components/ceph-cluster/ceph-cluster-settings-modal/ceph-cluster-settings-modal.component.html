@@ -1,4 +1,4 @@
-<oa-loading-panel message="Ceph Cluster settings are loading..."
+<oa-loading-panel message="{{ 'Ceph Cluster settings are loading...' | translate }}"
                   ng-show="!$ctrl.error && !$ctrl.model.$resolved"></oa-loading-panel>
 
 <form ng-show="!$ctrl.error && $ctrl.model.$resolved"
@@ -7,7 +7,7 @@
       class="form-horizontal"
       novalidate>
   <div class="openattic-modal-header">
-    <span>Cluster:
+    <span><translate>Cluster:</translate>
       <small> {{ $ctrl.model.name }} ({{ $ctrl.model.fsid }})</small>
     </span>
   </div>
@@ -15,7 +15,7 @@
   <div class="openattic-modal-content">
     <fieldset>
       <legend>
-        <small>Cluster-wide OSD Flags</small>
+        <small translate>Cluster-wide OSD Flags</small>
       </legend>
       <div class="checkbox checkbox-primary"
            ng-repeat="(key, flag) in $ctrl.data.osd_flags">
@@ -38,9 +38,10 @@
     <div class="button-group text-right">
       <oa-submit-button form="clusterForm"
                         on-submit="$ctrl.submitAction()">
-        Submit
+        <translate>Submit</translate>
       </oa-submit-button>
-      <button id="cancelButton"
+      <button translate
+              id="cancelButton"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.cancel()">Cancel</button>
     </div>

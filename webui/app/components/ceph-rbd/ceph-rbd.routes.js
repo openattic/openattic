@@ -69,6 +69,22 @@ export default ($stateProvider) => {
         label: "Add"
       }
     })
+    .state("cephRbds-edit", {
+      url: "/rbds/edit/:fsid/:pool/:name",
+      views: {
+        "main": {
+          component : "cephRbdForm"
+        }
+      },
+      params: {
+        fsid: null,
+        fromState: "cephRbds"
+      },
+      ncyBreadcrumb: {
+        label: "Edit {{rbd.name}}",
+        parent: "cephRbds"
+      }
+    })
     .state("cephRbds.detail.statistics", {
       url          : "/statistics",
       views        : {

@@ -4,17 +4,20 @@
   <!-- single bucket -->
   <div ng-if="$ctrl.buckets.length === 1">
     <p>
-      You are about to delete the bucket <strong>{{$ctrl.buckets[0].bucket}}</strong>.
+      <translate translate-params-bucket="$ctrl.buckets[0].bucket">
+        You are about to delete the bucket <strong>{{ bucket }}</strong>.
+      </translate>
     </p>
   </div>
   <!-- end single bucket -->
 
   <!-- multiple buckets -->
   <div ng-if="$ctrl.buckets.length > 1">
-    <p>
+    <p translate>
       You are about to delete multiple buckets.
     </p>
-    <span class="text-danger">The following buckets will be deleted:</span>
+    <span translate
+          class="text-danger">The following buckets will be deleted:</span>
       <ul class="text-danger">
         <li ng-repeat="bucket in $ctrl.buckets | orderBy:'+bucket'">
           {{bucket.bucket}}

@@ -1,3 +1,33 @@
+/**
+ *
+ * @source: http://bitbucket.org/openattic/openattic
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in this page.
+ *
+ * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *
+ * The JavaScript code in this page is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software
+ * Foundation; version 2.
+ *
+ * This package is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * As additional permission under GNU GPL version 2 section 3, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 1, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in this page.
+ *
+ */
 "use strict";
 
 (function () {
@@ -155,7 +185,10 @@
      * @param {object} e is the input field element.
      * @param {string} val is the value the field will be changed to.
      */
-    changeInput: (e, val) => e.clear().sendKeys(val).sendKeys(protractor.Key.TAB),
+    changeInput (e, val) {
+      this.waitForElementVisible(e);
+      e.clear().sendKeys(val).sendKeys(protractor.Key.TAB);
+    },
 
     /**
      * Selects option from a drop down option list.
@@ -241,6 +274,27 @@
       }
       var until = protractor.ExpectedConditions;
       browser.wait(until.invisibilityOf(elem), 360000, "Element taking too long to disappear in the DOM");
+    },
+
+    /**
+     * This method is a shortcut for selecting an item in the datatable and then
+     * picking the edit action.
+     * It will result in opening the edit page for that element.
+     *
+     * @param {any} itemName string or regex that represents the name of the item you want to edit
+     */
+    selectAndEdit (itemName) {
+      this.get_list_element(itemName).click();
+      element(by.className("tc_edit_btn")).click();
+    },
+
+    /**
+     * Shortcut for verifying if a given property is displayed in the details tab
+     *
+     * @param {string} value name of the property that should be displayed
+     */
+    checkDetailIsDisplayed (value) {
+      expect(element(by.cssContainingText("dd", value)).isDisplayed()).toBe(true);
     }
 
   };

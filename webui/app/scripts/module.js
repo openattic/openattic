@@ -30,22 +30,22 @@
  */
 "use strict";
 
-import "bootstrap/dist/js/bootstrap";
+import "@uirouter/angularjs";
 import angular from "angular";
-import "angular-md5";
-import "angular-toasty/dist/angular-toasty";
-import "angular-breadcrumb";
+import globalConfig from "globalConfig";
 import "angular-animate";
+import "angular-bootstrap-toggle/dist/angular-bootstrap-toggle";
+import "angular-breadcrumb";
+import "angular-md5";
 import "angular-resource";
 import "angular-sanitize";
+import "angular-toasty/dist/angular-toasty";
+import "angular-ui-bootstrap";
+import "angular-ui-sortable";
+import "angular-ui-tree";
+import "bootstrap/dist/js/bootstrap";
 import "ngstorage";
 import "ng-tags-input";
-import "angular-ui-bootstrap";
-import "@uirouter/angularjs";
-import "angular-ui-sortable";
-import "angular-bootstrap-toggle/dist/angular-bootstrap-toggle";
-import "angular-ui-tree";
-import globalConfig from "globalConfig";
 
 require("./module_openattic-ceph");
 require("./module_openattic-core");
@@ -128,7 +128,6 @@ app.config(($httpProvider) => {
 });
 
 app.run(($rootScope, usersService, $state, $transitions, authUserService, $q) => {
-
   $transitions.onStart({}, (trans) => {
     const deferred = $q.defer();
 

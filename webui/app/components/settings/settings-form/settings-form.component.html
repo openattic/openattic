@@ -1,10 +1,10 @@
 <div class="col-sm-12 col-lg-6">
 
-  <oa-loading-panel message="Settings are loading..."
+  <oa-loading-panel message="{{ 'Settings are loading...' | translate }}"
                     ng-show="!$ctrl.error && !$ctrl.model.$resolved">
   </oa-loading-panel>
   <oa-error-panel ng-if="$ctrl.error">
-    Setting could not be loaded.
+    <translate>Setting could not be loaded.</translate>
   </oa-error-panel>
 
   <form ng-show="!$ctrl.error && $ctrl.model.$resolved"
@@ -15,15 +15,20 @@
         oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">Settings</h3>
+        <h3 translate
+            class="panel-title">Settings</h3>
       </div>
       <div class="panel-body">
 
-        <legend>DeepSea / Salt REST API</legend>
+        <legend translate>DeepSea / Salt REST API</legend>
 
         <!-- Salt API Host -->
-        <div class="form-group">
-          <label class="col-sm-3 control-label"
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted ||
+                                      $ctrl.settingsForm['saltApiHost'].$dirty) &&
+                                      $ctrl.settingsForm['saltApiHost'].$invalid}">
+          <label translate
+                 class="col-sm-3 control-label"
                  for="saltApiHost">Hostname / IP Address</label>
           <div class="col-sm-9">
             <input type="text"
@@ -31,13 +36,22 @@
                    name="saltApiHost"
                    id="saltApiHost"
                    ng-model="$ctrl.model.deepsea.host"
-                   ng-change="$ctrl.checkDeepSeaConnection()">
+                   ng-change="$ctrl.checkDeepSeaConnection()"
+                   hostname-validator>
+            <span translate
+                  class="help-block tc_saltApiHostInvalid"
+                  ng-show="($ctrl.settingsForm.$submitted ||
+                            $ctrl.settingsForm['saltApiHost'].$dirty) &&
+                            $ctrl.settingsForm['saltApiHost'].$error.hostnameValidator">
+              The value is not valid.
+            </span>
           </div>
         </div>
 
         <!-- Salt API Port -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="saltApiPort">TCP port</label>
           <div class="col-sm-9">
             <input type="number"
@@ -51,7 +65,8 @@
 
         <!-- Salt API Eauth -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="saltApiEauth">External Auth System</label>
           <div class="col-sm-9">
             <select class="form-control"
@@ -60,7 +75,8 @@
                     name="saltApiEauth"
                     id="saltApiEauth"
                     ng-change="$ctrl.checkDeepSeaConnection()">
-              <option value="">-- Select the external auth system --</option>
+              <option translate
+                      value="">-- Select the external auth system --</option>
             </select>
           </div>
         </div>
@@ -68,7 +84,8 @@
         <!-- Salt API Username -->
         <div class="form-group"
              ng-if="$ctrl.model.deepsea.eauth === 'auto' || $ctrl.model.deepsea.eauth === 'sharedsecret'">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="saltApiUsername">Username</label>
           <div class="col-sm-9">
             <input type="text"
@@ -85,7 +102,7 @@
              ng-if="$ctrl.model.deepsea.eauth === 'sharedsecret'">
           <label class="col-sm-3 control-label"
                  for="saltApiSharedSecret">
-            Shared Secret
+            <translate>Shared Secret</translate>
             <oa-helper helper-template="'components/settings/settings-form/settings-form-helper-features.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
@@ -109,17 +126,20 @@
         <div class="pull-right">
           <span ng-if="$ctrl.deepseaConnectionStatus.loading">
             <i class="fa fa-fw fa-spinner fa-spin"
-               aria-hidden="true"></i>Checking connection
+               aria-hidden="true"></i>
+            <translate>Checking connection</translate>
           </span>
           <span class="text-success tc_deepseaConnectionSuccess"
                 ng-show="$ctrl.deepseaConnectionStatus.success === true">
             <i class="fa fa-fw fa-check"
-               aria-hidden="true"></i>Salt API connection established successfully
+               aria-hidden="true"></i>
+            <translate>Salt API connection established successfully</translate>
           </span>
           <span class="text-danger tc_deepseaConnectionFail"
                 ng-show="$ctrl.deepseaConnectionStatus.success === false">
             <i class="fa fa-fw fa-times"
-               aria-hidden="true"></i>Salt API connection failed
+               aria-hidden="true"></i>
+            <translate>Salt API connection failed</translate>
           </span>
         </div>
         <br>
@@ -127,12 +147,13 @@
           <span class="text-muted"
                 ng-if="$ctrl.deepseaConnectionStatus.message">
             {{ $ctrl.deepseaConnectionStatus.message }} -
-            <a ng-click="$ctrl.checkDeepSeaConnection()">retry</a>
+            <a translate
+               ng-click="$ctrl.checkDeepSeaConnection()">retry</a>
           </span>
           <span ng-if="!$ctrl.deepseaConnectionStatus.message">&nbsp;</span>
         </div>
 
-        <legend>Object Gateway</legend>
+        <legend translate>Object Gateway</legend>
 
         <!-- Object Gateway Managed by DeepSea -->
         <div class="form-group">
@@ -145,8 +166,9 @@
                      ng-change="$ctrl.rgwManagedByDeepSeaChangeHandler()"
                      ng-disabled="!$ctrl.managedByDeepSeaEnabled">
               <label for="rgwManagedByDeepSea">
-                Managed by DeepSea
-                <span ng-if="!$ctrl.managedByDeepSeaEnabled"
+                <translate>Managed by DeepSea</translate>
+                <span translate
+                      ng-if="!$ctrl.managedByDeepSeaEnabled"
                       class="text-muted">
                   (DeepSea is not able to provide Object Gateway credentials)
                 </span>
@@ -156,8 +178,12 @@
         </div>
 
         <!-- Object Gateway Host -->
-        <div class="form-group">
-          <label class="col-sm-3 control-label"
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted ||
+                                      $ctrl.settingsForm['rgwApiHost'].$dirty) &&
+                                      $ctrl.settingsForm['rgwApiHost'].$invalid}">
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwApiHost">Hostname / IP Address</label>
           <div class="col-sm-9">
             <input type="text"
@@ -166,13 +192,22 @@
                    id="rgwApiHost"
                    ng-model="$ctrl.model.rgw.host"
                    ng-change="$ctrl.checkRgwConnection()"
-                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
+                   ng-disabled="$ctrl.model.rgw.managed_by_deepsea"
+                   hostname-validator>
+            <span translate
+                  class="help-block tc_rgwApiHostInvalid"
+                  ng-show="($ctrl.settingsForm.$submitted ||
+                            $ctrl.settingsForm['rgwApiHost'].$dirty) &&
+                            $ctrl.settingsForm['rgwApiHost'].$error.hostnameValidator">
+              The value is not valid.
+            </span>
           </div>
         </div>
 
         <!-- Object Gateway Port -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwApiPort">TCP port</label>
           <div class="col-sm-9">
             <input type="number"
@@ -187,7 +222,8 @@
 
         <!-- Object Gateway Access Key -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwApiAccessKey">Access Key</label>
           <div class="col-sm-9">
             <input type="text"
@@ -202,7 +238,8 @@
 
         <!-- Object Gateway Secret Key -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwApiSecretKey">Secret Key</label>
           <div class="col-sm-9">
             <div class="input-group">
@@ -225,7 +262,8 @@
 
         <!-- Object Gateway Admin User -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwApiAdminUser">Admin User</label>
           <div class="col-sm-9">
             <input type="text"
@@ -240,7 +278,8 @@
 
         <!-- Object Gateway Admin Resource Path -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwApiAdminResourcePath">Admin Resource Path</label>
           <div class="col-sm-9">
             <input type="text"
@@ -263,7 +302,8 @@
                      id="rgwUseSSL"
                      ng-change="$ctrl.checkRgwConnection()"
                      ng-disabled="$ctrl.model.rgw.managed_by_deepsea">
-              <label for="rgwUseSSL">
+              <label translate
+                     for="rgwUseSSL">
                 Use SSL
               </label>
             </div>
@@ -273,17 +313,20 @@
         <div class="pull-right">
           <span ng-if="$ctrl.rgwConnectionStatus.loading">
             <i class="fa fa-fw fa-spinner fa-spin"
-               aria-hidden="true"></i>Checking connection
+               aria-hidden="true"></i>
+            <translate>Checking connection</translate>
           </span>
           <span class="text-success tc_rgwConnectionSuccess"
                 ng-show="$ctrl.rgwConnectionStatus.success === true">
             <i class="fa fa-fw fa-check"
-               aria-hidden="true"></i>Object Gateway API connection established successfully
+               aria-hidden="true"></i>
+            <translate>Object Gateway API connection established successfully</translate>
           </span>
           <span class="text-danger tc_rgwConnectionFail"
                 ng-show="$ctrl.rgwConnectionStatus.success === false">
             <i class="fa fa-fw fa-times"
-               aria-hidden="true"></i>Object Gateway API connection failed
+               aria-hidden="true"></i>
+            <translate>Object Gateway API connection failed</translate>
           </span>
         </div>
         <br>
@@ -291,16 +334,21 @@
           <span class="text-muted"
                 ng-if="$ctrl.rgwConnectionStatus.message">
             {{ $ctrl.rgwConnectionStatus.message }} -
-            <a ng-click="$ctrl.checkRgwConnection()">retry</a>
+            <a translate
+               ng-click="$ctrl.checkRgwConnection()">retry</a>
           </span>
           <span ng-if="!$ctrl.rgwConnectionStatus.message">&nbsp;</span>
         </div>
 
-        <legend>Grafana</legend>
+        <legend translate>Grafana</legend>
 
         <!-- Grafana Host -->
-        <div class="form-group">
-          <label class="col-sm-3 control-label"
+        <div class="form-group"
+             ng-class="{'has-error': ($ctrl.settingsForm.$submitted ||
+                                      $ctrl.settingsForm['grafanaApiHost'].$dirty) &&
+                                      $ctrl.settingsForm['grafanaApiHost'].$invalid}">
+          <label translate
+                 class="col-sm-3 control-label"
                  for="grafanaApiHost">Hostname / IP Address</label>
           <div class="col-sm-9">
             <input type="text"
@@ -308,13 +356,22 @@
                    name="grafanaApiHost"
                    id="grafanaApiHost"
                    ng-model="$ctrl.model.grafana.host"
-                   ng-change="$ctrl.checkGrafanaConnection()">
+                   ng-change="$ctrl.checkGrafanaConnection()"
+                   hostname-validator>
+            <span translate
+                  class="help-block tc_grafanaApiHostInvalid"
+                  ng-show="($ctrl.settingsForm.$submitted ||
+                            $ctrl.settingsForm['grafanaApiHost'].$dirty) &&
+                            $ctrl.settingsForm['grafanaApiHost'].$error.hostnameValidator">
+              The value is not valid.
+            </span>
           </div>
         </div>
 
         <!-- Grafana Port -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="grafanaApiPort">TCP port</label>
           <div class="col-sm-9">
             <input type="number"
@@ -328,7 +385,8 @@
 
         <!-- Grafana Username -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="grafanaApiUsername">Username</label>
           <div class="col-sm-9">
             <input type="text"
@@ -342,7 +400,8 @@
 
         <!-- Grafana Password -->
         <div class="form-group">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="grafanaApiPassword">Password</label>
           <div class="col-sm-9">
             <div class="input-group">
@@ -372,7 +431,8 @@
                      name="active"
                      id="grafanaUseSSL"
                      ng-change="$ctrl.checkGrafanaConnection()">
-              <label for="grafanaUseSSL">
+              <label translate
+                     for="grafanaUseSSL">
                 Use SSL
               </label>
             </div>
@@ -382,17 +442,20 @@
         <div class="pull-right">
           <span ng-if="$ctrl.grafanaConnectionStatus.loading">
             <i class="fa fa-fw fa-spinner fa-spin"
-               aria-hidden="true"></i>Checking connection
+               aria-hidden="true"></i>
+            <translate>Checking connection</translate>
           </span>
           <span class="text-success tc_grafanaConnectionSuccess"
                 ng-show="$ctrl.grafanaConnectionStatus.success === true">
             <i class="fa fa-fw fa-check"
-               aria-hidden="true"></i>Grafana connection established successfully
+               aria-hidden="true"></i>
+            <translate>Grafana connection established successfully</translate>
           </span>
           <span class="text-danger tc_grafanaConnectionFail"
                 ng-show="$ctrl.grafanaConnectionStatus.success === false">
             <i class="fa fa-fw fa-times"
-               aria-hidden="true"></i>Grafana connection failed
+               aria-hidden="true"></i>
+            <translate>Grafana connection failed</translate>
           </span>
         </div>
         <br>
@@ -400,16 +463,18 @@
           <span class="text-muted"
                 ng-if="$ctrl.grafanaConnectionStatus.message">
             {{ $ctrl.grafanaConnectionStatus.message }} -
-            <a ng-click="$ctrl.checkGrafanaConnection()">retry</a>
+            <a translate
+               ng-click="$ctrl.checkGrafanaConnection()">retry</a>
           </span>
           <span ng-if="!$ctrl.grafanaConnectionStatus.message">&nbsp;</span>
         </div>
 
-        <legend>Ceph Clusters</legend>
+        <legend translate>Ceph Clusters</legend>
 
         <div ng-if="$ctrl.model.ceph.length === 0">
           <div class="col-md-offset-3 col-sm-9">
-            <span class="text-muted">No Ceph clusters configured</span>
+            <span translate
+                  class="text-muted">No Ceph clusters configured</span>
           </div>
         </div>
 
@@ -418,7 +483,8 @@
 
           <!--  Ceph Cluster Config File -->
           <div class="form-group">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="cephClusterConfigFilePath">Config file</label>
             <div class="col-sm-9">
               <input type="text"
@@ -433,7 +499,8 @@
           <!--  Ceph Cluster Keyring File -->
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringFilePath'].$dirty) && $ctrl.settingsForm['cephClusterKeyringFilePath'].$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="cephClusterKeyringFilePath">Keyring file</label>
             <div class="col-sm-9">
               <input type="text"
@@ -447,7 +514,8 @@
                      ng-change="$ctrl.checkCephConnection(cephCluster)"
                      typeahead-on-select="$ctrl.checkCephConnection(cephCluster)"
                      required>
-              <span class="help-block tc_cephClusterKeyringFilePathRequired"
+              <span translate
+                    class="help-block tc_cephClusterKeyringFilePathRequired"
                     ng-show="($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringFilePath'].$dirty) && $ctrl.settingsForm['cephClusterKeyringFilePath'].$error.required">
                 Required field
               </span>
@@ -457,7 +525,8 @@
           <!--  Ceph Cluster Keyring User -->
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringUser'].$dirty) && $ctrl.settingsForm['cephClusterKeyringUser'].$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="cephClusterKeyringUser">Keyring user</label>
             <div class="col-sm-9">
               <input type="text"
@@ -467,12 +536,12 @@
                      ng-model="cephCluster.keyring_user"
                      autocomplete="off"
                      uib-typeahead="user for user in $ctrl.getKeyringUserTypeahead(cephCluster.fsid, cephCluster.keyring_file_path)"
-            
                      typeahead-focus-first="false"
                      ng-change="$ctrl.checkCephConnection(cephCluster)"
                      typeahead-on-select="$ctrl.checkCephConnection(cephCluster)"
                      required>
-              <span class="help-block tc_cephClusterKeyringUserRequired"
+              <span translate
+                    class="help-block tc_cephClusterKeyringUserRequired"
                     ng-show="($ctrl.settingsForm.$submitted || $ctrl.settingsForm['cephClusterKeyringUser'].$dirty) && $ctrl.settingsForm['cephClusterKeyringUser'].$error.required">
                 Required field
               </span>
@@ -482,17 +551,20 @@
           <div class="pull-right">
             <span ng-if="$ctrl.cephConnectionStatus.loading">
               <i class="fa fa-fw fa-spinner fa-spin"
-                 aria-hidden="true"></i>Checking connection
+                 aria-hidden="true"></i>
+              <translate>Checking connection</translate>
             </span>
             <span class="text-success tc_cephConnectionSuccess"
                   ng-show="$ctrl.cephConnectionStatus.success === true">
               <i class="fa fa-fw fa-check"
-                 aria-hidden="true"></i>Ceph connection established successfully
+                 aria-hidden="true"></i>
+              <translate>Ceph connection established successfully</translate>
             </span>
             <span class="text-danger tc_cephConnectionFail"
                   ng-show="$ctrl.cephConnectionStatus.success === false">
               <i class="fa fa-fw fa-times"
-                 aria-hidden="true"></i>Ceph connection failed
+                 aria-hidden="true"></i>
+              <translate>Ceph connection failed</translate>
             </span>
           </div>
           <br>
@@ -500,20 +572,19 @@
             <span class="text-muted"
                   ng-if="$ctrl.cephConnectionStatus.message">
               {{ $ctrl.cephConnectionStatus.message }} -
-              <a ng-click="$ctrl.checkCephConnection(cephCluster)">retry</a>
+              <a translate
+                 ng-click="$ctrl.checkCephConnection(cephCluster)">retry</a>
             </span>
             <span ng-if="!$ctrl.cephConnectionStatus.message">&nbsp;</span>
           </div>
-
         </div>
-
       </div>
 
       <div class="panel-footer">
         <div class="button-group text-right">
           <oa-submit-button form="$ctrl.settingsForm"
                             on-submit="$ctrl.saveAction()">
-            Save
+            <translate>Save</translate>
           </oa-submit-button>
         </div>
       </div>
@@ -525,7 +596,7 @@
   <div class="col-sm-12">
     <div class="page-footer"
          ng-if="$ctrl.openatticVersion">
-      <hr> Powered by openATTIC v{{ $ctrl.openatticVersion }}
+      <hr> <translate>Powered by openATTIC</translate> v{{ $ctrl.openatticVersion }}
     </div>
   </div>
 </div>

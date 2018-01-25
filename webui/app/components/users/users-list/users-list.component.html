@@ -10,22 +10,26 @@
        type="button"
        ng-click="$ctrl.addAction()"
        ng-hide="$ctrl.hasSelection">
-      <i class="fa fa-fw fa-plus"></i>Add
+      <i class="fa fa-fw fa-plus"></i>
+      <translate>Add</translate>
     </a>
     <a class="btn btn-sm btn-primary tc_editUser"
        type="button"
        ng-click="$ctrl.editAction()"
        ng-show="$ctrl.hasSelection">
-      <i class="fa fa-fw fa-pencil"></i>Edit
+      <i class="fa fa-fw fa-pencil"></i>
+      <translate>Edit</translate>
     </a>
     <li>
       <a ng-click="$ctrl.addAction()">
-        <i class="fa fa-fw fa-plus"></i>Add
+        <i class="fa fa-fw fa-plus"></i>
+        <translate>Add</translate>
       </a>
     </li>
     <li ng-class="{disabled: !$ctrl.hasSelection}">
       <a>
-        <i class="fa fa-fw fa-pencil"></i>Edit
+        <i class="fa fa-fw fa-pencil"></i>
+        <translate>Edit</translate>
       </a>
     </li>
     <li class="divider"></li>
@@ -33,7 +37,8 @@
         ng-class="{disabled: !$ctrl.hasSelection}"
         max-selected="1">
       <a ng-click="$ctrl.deleteAction()">
-        <i class="fa fa-fw fa-trash-o"></i>Delete
+        <i class="fa fa-fw fa-trash-o"></i>
+        <translate>Delete</translate>
       </a>
     </li>
   </actions>
@@ -45,30 +50,38 @@
           <input type="checkbox"
                  ng-model="selection.checkAll">
         </th>
-        <th sortfield="username"
+        <th translate
+            sortfield="username"
             sortheaderclass
             sortdir="asc"
             sortdefault
             ng-show="columns['Username']">Username</th>
-        <th sortfield="first_name"
+        <th translate
+            sortfield="first_name"
             sortheaderclass
             ng-show="columns['Firstname']">Firstname</th>
-        <th sortfield="last_name"
+        <th translate
+            sortfield="last_name"
             sortheaderclass
             ng-show="columns['Lastname']">Lastname</th>
-        <th sortfield="email"
+        <th translate
+            sortfield="email"
             sortheaderclass
-            ng-show="columns['E-Mail-Address']">E-Mail-Address</th>
-        <th sortfield="is_active"
+            ng-show="columns['E-Mail-Address']">E-Mail address</th>
+        <th translate
+            sortfield="is_active"
             sortheaderclass
             ng-show="columns['Active']">Active</th>
-        <th sortfield="is_staff"
+        <th translate
+            sortfield="is_staff"
             sortheaderclass
             ng-show="columns['Is administrator']">Is administrator</th>
-        <th sortfield="is_superuser"
+        <th translate
+            sortfield="is_superuser"
             sortheaderclass
             ng-show="columns['Has all privileges']">Has all privileges</th>
-        <th sortfield="last_login"
+        <th translate
+            sortfield="last_login"
             sortheaderclass
             ng-show="columns['Last Login']">Last Login</th>
       </tr>
