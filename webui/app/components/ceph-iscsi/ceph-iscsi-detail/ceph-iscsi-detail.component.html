@@ -1,6 +1,8 @@
 <div class="panel panel-default tc_detailsTab">
   <div class="panel-heading">
-    <h3 class="panel-title tc_panelTitle">Details of {{ $ctrl.selection.item.targetId }}</h3>
+    <h3 class="panel-title tc_panelTitle">
+      <translate translate-params-target-id="$ctrl.selection.item.targetId">Details of {{ targetId }}</translate>
+    </h3>
   </div>
   <div class="panel-body">
     <div uib-alert
@@ -9,16 +11,20 @@
                 $ctrl.selection.item.hostsDisabled &&
                 $ctrl.selection.item.hostsEnabled">
       <i class="fa fa-2x fa-warning small-padding"></i>
-      This iSCSI target is <span class="italic">Enabled</span> on
+      This iSCSI target is
+      <span class="italic">Enabled</span> on
       <span ng-repeat="host in $ctrl.selection.item.hostsEnabled">
-        <strong>{{ host }}</strong><span ng-if="!$last">, </span>
-      </span> but <span class="italic">Disabled</span> on
+        <strong> {{ host }}</strong>
+        <span ng-if="!$last">, </span>
+      </span> but
+      <span class="italic">Disabled</span> on
       <span ng-repeat="host in $ctrl.selection.item.hostsDisabled">
-        <strong>{{ host }}</strong><span ng-if="!$last">, </span>.
+        <strong> {{ host }}</strong>
+        <span ng-if="!$last">, </span>.
       </span>
     </div>
     <dl class="dl-horizontal">
-      <dt>Target IQN:</dt>
+      <dt translate>Target IQN:</dt>
       <dd>
         {{ $ctrl.selection.item.targetId }}
         <span ng-if="$ctrl.selection.item.targetSettings">
@@ -33,10 +39,11 @@
       </dd>
     </dl>
     <dl class="dl-horizontal">
-      <dt>Portals:</dt>
+      <dt translate>Portals:</dt>
       <dd ng-repeat="portal in $ctrl.selection.item.portals">
         {{ portal.hostname }}: {{ portal.interface }}
-        <span ng-if="$ctrl.selection.item.state === 'STOPPED' ||
+        <span translate
+              ng-if="$ctrl.selection.item.state === 'STOPPED' ||
                      ($ctrl.selection.item.state === 'RUNNING_WARN' &&
                      $ctrl.selection.item.hostsDisabled &&
                      $ctrl.containsHost($ctrl.selection.item.hostsDisabled, portal.hostname))"
@@ -46,7 +53,7 @@
       </dd>
     </dl>
     <dl class="dl-horizontal">
-      <dt>Images:</dt>
+      <dt translate>Images:</dt>
       <dd ng-repeat="image in $ctrl.selection.item.images">
         {{ image.pool }}: {{ image.name }}
         <span class="text-muted">(lun: {{ (image.settings.lun || 0) }})</span>
@@ -62,21 +69,22 @@
       </dd>
     </dl>
     <dl class="dl-horizontal">
-      <dt>Authentication:</dt>
-      <dd ng-if="!$ctrl.selection.item.authentication.hasAuthentication"
+      <dt translate>Authentication:</dt>
+      <dd translate
+          ng-if="!$ctrl.selection.item.authentication.hasAuthentication"
           class="tc_noAuthentication">No authentication</dd>
       <dd ng-if="$ctrl.selection.item.authentication.hasAuthentication">{{ $ctrl.selection.item.authentication.user }}</dd>
     </dl>
     <dl class="dl-horizontal"
         ng-if="$ctrl.selection.item.authentication.hasAuthentication && $ctrl.selection.item.authentication.initiators.length > 0">
-      <dt>Initiators:</dt>
+      <dt translate>Initiators:</dt>
       <dd ng-repeat="initiator in $ctrl.selection.item.authentication.initiators">
         {{ initiator }}
       </dd>
     </dl>
     <dl class="dl-horizontal"
         ng-if="$ctrl.selection.item.authentication.hasMutualAuthentication">
-      <dt>Mutual auth:</dt>
+      <dt translate>Mutual auth:</dt>
       <dd>{{ $ctrl.selection.item.authentication.mutualUser }}
         <span class="text-muted">
           ({{ $ctrl.selection.item.authentication.enabledMutualAuthentication ? 'Enabled' : 'Disabled' }})
@@ -85,7 +93,7 @@
     </dl>
     <dl class="dl-horizontal"
         ng-if="$ctrl.selection.item.authentication.hasDiscoveryAuthentication">
-      <dt>Discovery auth:</dt>
+      <dt translate>Discovery auth:</dt>
       <dd>{{ $ctrl.selection.item.authentication.discoveryUser }}
         <span class="text-muted">
           ({{ $ctrl.selection.item.authentication.enabledDiscoveryAuthentication ? 'Enabled' : 'Disabled' }})
@@ -94,7 +102,7 @@
     </dl>
     <dl class="dl-horizontal"
         ng-if="$ctrl.selection.item.authentication.hasDiscoveryMutualAuthentication">
-      <dt>Discovery mutual auth:</dt>
+      <dt translate>Discovery mutual auth:</dt>
       <dd>{{ $ctrl.selection.item.authentication.discoveryMutualUser }}
         <span class="text-muted">
           ({{ $ctrl.selection.item.authentication.enabledDiscoveryMutualAuthentication ? 'Enabled' : 'Disabled' }})

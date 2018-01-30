@@ -16,7 +16,6 @@ backend/installed_apps.d/60_taskqueue /usr/share/openattic/installed_apps.d
 backend/__init__.py    /usr/share/openattic
 backend/settings.py    /etc/openattic
 backend/manage.py      /usr/share/openattic
-backend/oa_auth.py     /usr/share/openattic
 backend/pamauth.py     /usr/share/openattic
 backend/processors.py  /usr/share/openattic
 backend/urls.py        /usr/share/openattic

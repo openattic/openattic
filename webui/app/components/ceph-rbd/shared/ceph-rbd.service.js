@@ -39,6 +39,10 @@ export default class CephRbdService {
       pool: "@pool",
       name: "@name"
     }, {
+      update: {
+        method: "PUT",
+        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
+      },
       query: {
         method: "GET",
         isArray: true,

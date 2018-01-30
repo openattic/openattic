@@ -1,16 +1,15 @@
 <div class="openattic-modal-header">
-  <span>Striping Preview</span>
+  <span translate>Striping Preview</span>
 </div>
 
 <div class="openattic-modal-content">
-
   <table class="table table-no-background">
     <thead>
       <tr>
-        <th>RBD Size</th>
-        <th>Object Size</th>
-        <th>Stripe Unit</th>
-        <th>Stripe Count</th>
+        <th translate>RBD Size</th>
+        <th translate>Object Size</th>
+        <th translate>Stripe Unit</th>
+        <th translate>Stripe Count</th>
       </tr>
     </thead>
     <tbody>
@@ -58,12 +57,12 @@
                                 stripe-count="$ctrl.resolve.stripeCount"
                                 object-set-index="$ctrl.numObjectSets - 1">
   </ceph-rbd-striping-object-set>
-
 </div>
 
 <div class="openattic-modal-footer">
   <div class="button-group text-right">
-    <button id="close"
+    <button translate
+            id="close"
             class="btn btn-default btn-sm"
             ng-click="$ctrl.close()">Close</button>
   </div>

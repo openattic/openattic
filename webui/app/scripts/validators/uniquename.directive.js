@@ -66,7 +66,7 @@ export default (cephErasureCodeProfilesService, cephPoolsService,
               query.fsid = scope.$ctrl.data.cluster.fsid;
               obj = {
                 model: cephRbdService,
-                current: null, // Has no renaming feature.
+                current: scope.$ctrl.rbd.id,
                 attribute: "id"
               };
               break;

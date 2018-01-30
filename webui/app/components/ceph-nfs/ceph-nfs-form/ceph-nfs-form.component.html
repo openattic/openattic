@@ -1,11 +1,11 @@
 <div class="col-sm-12 col-lg-6">
-  <oa-loading-panel message="NFS export is loading..."
+  <oa-loading-panel message="{{ 'NFS export is loading...' | translate }}"
                     ng-show="!$ctrl.formDataIsReady && !$ctrl.error">
   </oa-loading-panel>
-  <oa-error-panel title="Couldn't load NFS export"
+  <oa-error-panel title="{{ 'Could not load NFS export' | translate }}"
                   on-back="$ctrl.cancelAction()"
                   ng-if="$ctrl.isEditMode() && $ctrl.error">
-    NFS export could not be loaded.
+    <translate>NFS export could not be loaded.</translate>
   </oa-error-panel>
 
   <form ng-show="$ctrl.formDataIsReady && !$ctrl.error"
@@ -16,7 +16,11 @@
         oa-check-form>
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">NFS export {{ $ctrl.getId() }}</h3>
+        <h3 class="panel-title">
+          <translate translate-params-id="$ctrl.getId()">
+            NFS export {{ id }}
+          </translate>
+        </h3>
       </div>
 
       <div class="panel-body">
@@ -24,7 +28,8 @@
         <!-- Host -->
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.host.$dirty) && $ctrl.nfsForm.host.$invalid}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="host">Host</label>
           <div class="col-sm-9">
             <select class="form-control"
@@ -33,11 +38,13 @@
                     name="host"
                     id="host"
                     required>
-              <option value="">-- Select the host --</option>
+              <option translate
+                      value="">-- Select the host --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.host.$dirty">
-              <span class="tc_hostRequired"
+              <span translate
+                    class="tc_hostRequired"
                     ng-show="$ctrl.nfsForm.host.$error.required">Required field</span>
             </span>
           </div>
@@ -46,7 +53,8 @@
         <!-- FSAL -->
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.fsal.$dirty) && $ctrl.nfsForm.fsal.$invalid}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="fsal">Storage Backend</label>
           <div class="col-sm-9">
             <select class="form-control"
@@ -56,11 +64,13 @@
                     id="fsal"
                     ng-change="$ctrl.fsalChangeHandler()"
                     required>
-              <option value="">-- Select the storage backend --</option>
+              <option translate
+                      value="">-- Select the storage backend --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.fsal.$dirty">
-              <span class="tc_fsalRequired"
+              <span translate
+                    class="tc_fsalRequired"
                     ng-show="$ctrl.nfsForm.fsal.$error.required">Required field</span>
             </span>
           </div>
@@ -70,7 +80,8 @@
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.rgwUserId.$dirty) && $ctrl.nfsForm.rgwUserId.$invalid}"
              ng-if="$ctrl.model.fsal === 'RGW'">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="rgwUserId">Object Gateway User</label>
           <div class="col-sm-9">
             <select class="form-control"
@@ -80,11 +91,13 @@
                     id="rgwUserId"
                     ng-change="$ctrl.rgwUserIdChangeHandler()"
                     required>
-              <option value="">-- Select the object gateway user --</option>
+              <option translate
+                      value="">-- Select the object gateway user --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.rgwUserId.$dirty">
-              <span class="tc_rgwUserIdRequired"
+              <span translate
+                    class="tc_rgwUserIdRequired"
                     ng-show="$ctrl.nfsForm.rgwUserId.$error.required">Required field</span>
             </span>
           </div>
@@ -94,7 +107,8 @@
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.path.$dirty) && $ctrl.nfsForm.path.$invalid}"
              ng-if="$ctrl.model.fsal === 'CEPH'">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="path">Ceph Path</label>
           <div class="col-sm-9">
             <input type="text"
@@ -110,12 +124,14 @@
                    required>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.path.$dirty">
-              <span class="tc_pathRequired"
+              <span translate
+                    class="tc_pathRequired"
                     ng-show="$ctrl.nfsForm.path.$error.required">Required field</span>
             </span>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.path.$valid && $ctrl.isNewDirectory">
-              <span class="tc_newDirectoryInfo">New directory will be created</span>
+              <span translate
+                    class="tc_newDirectoryInfo">New directory will be created</span>
             </span>
           </div>
         </div>
@@ -124,7 +140,8 @@
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.bucket.$dirty) && $ctrl.nfsForm.bucket.$invalid}"
              ng-if="$ctrl.model.fsal === 'RGW'">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="bucket">Bucket</label>
           <div class="col-sm-9">
             <input type="text"
@@ -140,12 +157,14 @@
                    required>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.bucket.$dirty">
-              <span class="tc_bucketRequired"
+              <span translate
+                    class="tc_bucketRequired"
                     ng-show="$ctrl.nfsForm.bucket.$error.required">Required field</span>
             </span>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.bucket.$valid && $ctrl.isNewBucket">
-              <span class="tc_newBucketInfo">New bucket will be created</span>
+              <span translate
+                    class="tc_newBucketInfo">New bucket will be created</span>
             </span>
           </div>
         </div>
@@ -155,7 +174,8 @@
              ng-class="{'has-error':
                           ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.protocolNfsv3.$dirty || $ctrl.nfsForm.protocolNfsv4.$dirty)
                           && ($ctrl.nfsForm.protocolNfsv3.$invalid || $ctrl.nfsForm.protocolNfsv4.$invalid)}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="protocols">NFS Protocol</label>
           <div class="col-sm-9">
             <input type="hidden"
@@ -168,7 +188,8 @@
                      name="protocolNfsv3"
                      id="protocolNfsv3"
                      ng-required="!$ctrl.model.protocolNfsv3 && !$ctrl.model.protocolNfsv4">
-              <label for="protocolNfsv3">NFSv3</label>
+              <label translate
+                     for="protocolNfsv3">NFSv3</label>
             </div>
             <div class="checkbox checkbox-primary">
               <input type="checkbox"
@@ -176,11 +197,13 @@
                      name="protocolNfsv4"
                      id="protocolNfsv4"
                      ng-required="!$ctrl.model.protocolNfsv3 && !$ctrl.model.protocolNfsv4">
-              <label for="protocolNfsv4">NFSv4</label>
+              <label translate
+                     for="protocolNfsv4">NFSv4</label>
             </div>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.protocolNfsv3.$dirty || $ctrl.nfsForm.protocolNfsv4.$dirty">
-              <span class="tc_nfsProtocolRequired"
+              <span translate
+                    class="tc_nfsProtocolRequired"
                     ng-show="$ctrl.nfsForm.protocolNfsv3.$error.required || $ctrl.nfsForm.protocolNfsv4.$error.required">
                 Required field</span>
             </span>
@@ -192,7 +215,7 @@
              ng-if="$ctrl.model.protocolNfsv3">
           <label class="col-sm-3 control-label"
                  for="tag">
-            NFS Tag
+            <translate>NFS Tag</translate>
             <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
@@ -210,7 +233,7 @@
              ng-if="$ctrl.model.protocolNfsv4">
           <label class="col-sm-3 control-label"
                  for="pseudo">
-            Pseudo
+            <translate>Pseudo</translate>
             <oa-helper helper-template="'components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html'"></oa-helper>
           </label>
           <div class="col-sm-9">
@@ -222,7 +245,8 @@
                    required>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.pseudo.$dirty">
-              <span class="tc_pseudoRequired"
+              <span translate
+                    class="tc_pseudoRequired"
                     ng-show="$ctrl.nfsForm.pseudo.$error.required">Required field</span>
             </span>
           </div>
@@ -231,7 +255,8 @@
         <!-- Access Type -->
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.accessType.$dirty) && $ctrl.nfsForm.accessType.$invalid}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="accessType">Access Type</label>
           <div class="col-sm-9">
             <select class="form-control"
@@ -240,13 +265,15 @@
                     name="accessType"
                     id="accessType"
                     required>
-              <option value="">-- Select the access type --</option>
+              <option translate
+                      value="">-- Select the access type --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.accessType.$valid">{{ $ctrl.getAccessTypeHelp($ctrl.model.accessType) }}</span>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.accessType.$dirty">
-              <span class="tc_accessTypeRequired"
+              <span translate
+                    class="tc_accessTypeRequired"
                     ng-show="$ctrl.nfsForm.accessType.$error.required">Required field</span>
             </span>
           </div>
@@ -255,7 +282,8 @@
         <!-- Squash -->
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.squash.$dirty) && $ctrl.nfsForm.squash.$invalid}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="squash">Squash</label>
           <div class="col-sm-9">
             <select class="form-control"
@@ -264,11 +292,13 @@
                     name="squash"
                     id="squash"
                     required>
-              <option value="">-- Select what kind of user id squashing is performed --</option>
+              <option translate
+                      value="">-- Select what kind of user id squashing is performed --</option>
             </select>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.squash.$dirty">
-              <span class="tc_squashRequired"
+              <span translate
+                    class="tc_squashRequired"
                     ng-show="$ctrl.nfsForm.squash.$error.required">Required field</span>
             </span>
           </div>
@@ -279,7 +309,8 @@
              ng-class="{'has-error':
                           ($ctrl.nfsForm.$submitted || $ctrl.nfsForm.transportUDP.$dirty || $ctrl.nfsForm.transportTCP.$dirty)
                           && ($ctrl.nfsForm.transportUDP.$invalid || $ctrl.nfsForm.transportTCP.$invalid)}">
-          <label class="col-sm-3 control-label"
+          <label translate
+                 class="col-sm-3 control-label"
                  for="transports">Transport Protocol</label>
           <div class="col-sm-9">
             <input type="hidden"
@@ -292,7 +323,8 @@
                      name="transportUDP"
                      id="transportUDP"
                      ng-required="!$ctrl.model.transportUDP && !$ctrl.model.transportTCP">
-              <label for="transportUDP">UDP</label>
+              <label translate
+                     for="transportUDP">UDP</label>
             </div>
             <div class="checkbox checkbox-primary">
               <input type="checkbox"
@@ -300,11 +332,13 @@
                      name="transportTCP"
                      id="transportTCP"
                      ng-required="!$ctrl.model.transportUDP && !$ctrl.model.transportTCP">
-              <label for="transportTCP">TCP</label>
+              <label translate
+                     for="transportTCP">TCP</label>
             </div>
             <span class="help-block"
                   ng-show="$ctrl.nfsForm.$submitted || $ctrl.nfsForm.transportUDP.$dirty || $ctrl.nfsForm.transportTCP.$dirty">
-              <span class="tc_transportProtocolRequired"
+              <span translate
+                    class="tc_transportProtocolRequired"
                     ng-show="$ctrl.nfsForm.transportUDP.$error.required || $ctrl.nfsForm.transportTCP.$error.required">
                 Required field</span>
             </span>
@@ -325,9 +359,10 @@
         <div class="button-group text-right">
           <oa-submit-button form="$ctrl.nfsForm"
                             on-submit="$ctrl.submitAction()">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
-          <button type="button"
+          <button translate
+                  type="button"
                   class="btn btn-sm btn-default tc_backButton"
                   ng-click="$ctrl.cancelAction()">
             Back

@@ -1,14 +1,15 @@
 <div class="openattic-modal-header">
-  <span>Delete user</span>
+  <span translate>Delete user</span>
 </div>
 <div class="openattic-modal-content">
   <p>
-    You are about to delete the user
-    <strong>{{$ctrl.user.username}}</strong>.
+    <translate translate-params-username="$ctrl.user.username">
+      You are about to delete the user <strong>{{ username }}</strong>.
+    </translate>
+
   </p>
-  <p>
-    To confirm, please click
-    <kbd>Delete user</kbd>, or cancel and return to the page.
+  <p translate>
+    To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the page.
   </p>
 </div>
 
@@ -21,11 +22,12 @@
               class="btn btn-primary btn-sm"
               ng-click="$ctrl.delete()"
               ng-disabled="$ctrl.deleteForm.$invalid || $ctrl.deleteForm.$submitted">
-        Delete user
+        <translate>Delete user</translate>
         <i class="fa fa-spinner fa-spin fa-fw"
            ng-if="$ctrl.deleteForm.$submitted"></i>
       </button>
-      <button id="bot1-Msg1"
+      <button translate
+              id="bot1-Msg1"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.cancel()">Cancel</button>
     </div>

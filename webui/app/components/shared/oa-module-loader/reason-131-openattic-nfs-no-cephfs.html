@@ -1,19 +1,24 @@
-<p>This module cannot be loaded due to a problem while trying to connect to CephFS</p>
+<p translate>This module cannot be loaded due to a problem while trying to connect to CephFS</p>
 
 <hr>
 
-<p>Please verify that:</p>
+<p translate>Please verify that:</p>
 <ul>
-  <li><strong>python-cephfs</strong> package is correctly installed in the openATTIC host</li>
-  <li><strong>/etc/ceph/*.keyring</strong> exists and has <strong>mds</strong> capabilities</li>
+  <li translate><strong>python-cephfs</strong> package is correctly installed in the openATTIC host</li>
+  <li translate><strong>/etc/ceph/*.keyring</strong> exists and has <strong>mds</strong> capabilities</li>
   <li>
-    <strong>/etc/ceph/*.keyring</strong> can be read by the <strong>openattic</strong> user
+    <translate>
+      <strong>/etc/ceph/*.keyring</strong> can be read by the <strong>openattic</strong> user
+    </translate>
     <ul>
       <li>
-        You can change the user group
-        by running the following commands:<br>
-        <kbd># chgrp openattic /etc/ceph/*.keyring</kbd><br>
-        <kbd># chmod g+r /etc/ceph/*.keyring</kbd>
+        <translate>
+          You can change the user group
+          by running the following commands:
+          <br>
+          <kbd># chgrp openattic /etc/ceph/*.keyring</kbd><br>
+          <kbd># chmod g+r /etc/ceph/*.keyring</kbd>
+        </translate>
       </li>
     </ul>
   </li>

@@ -1,4 +1,4 @@
-<oa-loading-panel message="Module is loading..."
+<oa-loading-panel message="{{ 'Module is loading...' | translate }}"
                   ng-show="!$ctrl.moduleAvailable.$resolved && $ctrl.displayLoadingPanelValue">
 </oa-loading-panel>
 
@@ -17,7 +17,10 @@
           <span ng-bind-html="$ctrl.moduleAvailable.message"></span>
         </span>
         <span ng-if="$ctrl.moduleAvailable.reason"
-              class="pull-right">(code {{ $ctrl.moduleAvailable.reason }})
+              class="pull-right">
+          <translate translate-params-reason="$ctrl.moduleAvailable.reason">
+            (code {{ reason }})
+          </translate>
         </span>
       </div>
     </div>

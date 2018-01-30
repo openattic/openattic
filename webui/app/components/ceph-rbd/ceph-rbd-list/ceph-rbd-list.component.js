@@ -213,6 +213,14 @@ class CephRbdList {
     });
   }
 
+  editAction () {
+    this.$state.go("cephRbds-edit", {
+      fsid: this.registry.selectedCluster.fsid,
+      pool: this.selection.item.pool.name,
+      name: this.selection.item.name
+    });
+  }
+
   deleteAction () {
     if (!this.hasSelection && !this.multiSelection) {
       return;
