@@ -45,6 +45,7 @@ Fixed
 * WebUI: Pool names are now displayed in the Pool Deletion dialog (OP-3024)
 * WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
 * WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
+* Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
 
 Removed
 ~~~~~~~
