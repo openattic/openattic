@@ -28,6 +28,7 @@ Added
 * Documentation: Added note about how to give the openattic user permissions to
   create a database (necessary to run the Python Unit tests) (OP-2997)
 * WebUI: Add Ceph RBD Edit page (OP-1033,OP-2764)
+* WebUI: Add chinese and german translations (OP-3104)
 
 Changed
 ~~~~~~~
