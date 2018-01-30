@@ -14,6 +14,11 @@
 
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 
+# Compat macro for new _fillupdir macro introduced in Nov 2017
+%if ! %{defined _fillupdir}
+  %define _fillupdir /var/adm/fillup-templates
+%endif
+
 Name: openattic
 Version: 3.6.2
 Release: 0
@@ -139,7 +144,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_unitdir}
-mkdir -p %{buildroot}/var/adm/fillup-templates
+mkdir -p %{buildroot}%{_fillupdir}
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
@@ -157,7 +162,7 @@ sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/
 # Install HTML redirect
 install -m 644 webui/redirect.html %{buildroot}/srv/www/htdocs/index.html
 
-install -m 644 rpm/sysconfig/%{name}.SUSE %{buildroot}/var/adm/fillup-templates/sysconfig.%{name}
+install -m 644 rpm/sysconfig/%{name}.SUSE %{buildroot}%{_fillupdir}/sysconfig.%{name}
 
 # Install db file
 install -m 640 etc/openattic/database.ini %{buildroot}%{_sysconfdir}/%{name}/
@@ -259,7 +264,7 @@ systemctl try-restart apache2
 
 %{_sysconfdir}/cron.daily/%{name}
 
-/var/adm/fillup-templates/sysconfig.%{name}
+%{_fillupdir}/sysconfig.%{name}
 
 /srv/www/htdocs/index.html
 %{_datadir}/%{name}
