@@ -987,6 +987,8 @@ msgstr ""
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:34
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:32
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:50
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:30
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:47
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:30
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:49
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:30
