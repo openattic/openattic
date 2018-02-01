@@ -30,6 +30,7 @@
  */
 "use strict";
 
+var configs = require("../../configs.js");
 var helpers = require("../../common.js");
 
 describe("General", function () {
@@ -160,7 +161,9 @@ describe("General", function () {
   });
 
   it("should show the name of the current user", function () {
-    expect(element(by.css(".tc_usernameinfo")).getText()).toEqual("openattic");
+    let usernameinfo = element(by.css(".tc_usernameinfo"));
+    helpers.waitForElementVisible(usernameinfo);
+    expect(usernameinfo.getText()).toEqual(configs.username);
   });
 
   /* Menuitems */

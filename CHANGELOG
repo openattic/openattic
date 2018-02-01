@@ -22,11 +22,13 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend/QA: Increased unit test coverage of ceph app (OP-2809)
 * WebUI: Validate hostname in settings page (OP-2993)
 * WebUI: Add support for multiple languages (OP-995)
 * Documentation: Added note about how to give the openattic user permissions to
   create a database (necessary to run the Python Unit tests) (OP-2997)
 * WebUI: Add Ceph RBD Edit page (OP-1033,OP-2764)
+* WebUI: Add Chinese and German translations (OP-3104)
 
 Changed
 ~~~~~~~
@@ -44,6 +46,8 @@ Fixed
 * WebUI: Pool names are now displayed in the Pool Deletion dialog (OP-3024)
 * WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
 * WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
+* Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
+* WebUI/QA: Fix check current user name (OP-3005)
 
 Removed
 ~~~~~~~
