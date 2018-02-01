@@ -87,8 +87,8 @@ class OaTaskQueueComponent {
       });
       ov.queue = tasks.Running.length + tasks["Not Started"].length;
       ov.avr = ov.queue !== 0 ? ov.percent / ov.queue : 0;
-      ov.icons = ["fa-hourglass-o", "fa-hourglass-start", "fa-hourglass-half", "fa-hourglass-end"];
-      ov.icon = ov.queue !== 0 ? ov.icons[Math.floor(ov.avr / 30) + 1] : ov.icons[0];
+      ov.icons = ["fa-hourglass-start", "fa-hourglass-half", "fa-hourglass-end"];
+      ov.icon = ov.queue !== 0 ? ov.icons[Math.floor(ov.avr / 34)] : "fa-hourglass-o";
       ov.tooltip = ov.queue === 0 ? "No tasks running" : parseInt(ov.avr, 10) + "% done in average";
       if (ov.firstUpdate) {
         ov.firstUpdate = false;

@@ -32,6 +32,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI/QA: Replaced some task queue e2e tests with unit tests (OP-3023)
 * Backend: DeepSea min version for iSCSI should be 0.8.2 (OP-3001)
 * Backend: Move oa_auth.py into REST directory (OP-1437)
 
