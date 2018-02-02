@@ -13,7 +13,7 @@
          ng-hide="tab.loaded">Loading...</p>
       <h3 translate
           class="tc_no_elements_{{tabKey}}"
-          ng-show="tab.loaded && tab.data.length === 0">
+          ng-show="tab.loaded && (!tab.count || !tab.data.length)">
         There are no {{tabKey}} Tasks.
       </h3>
       <form class="tc_listing_{{tabKey}}"

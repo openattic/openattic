@@ -43,11 +43,11 @@ class CephPoolsDeleteModal {
   deletePool () {
     return this.$q((resolve, reject) => {
       let requests = [];
-      this.cephPools.forEach((cephPool) => {
+      this.cephPools.forEach((pool) => {
         let deferred = this.$q.defer();
         this.cephPoolsService.delete({
-          fsid: cephPool.cluster,
-          id: cephPool.id
+          fsid: pool.cluster,
+          id: pool.id
         }, deferred.resolve, deferred.reject);
         requests.push(deferred.promise);
       });
