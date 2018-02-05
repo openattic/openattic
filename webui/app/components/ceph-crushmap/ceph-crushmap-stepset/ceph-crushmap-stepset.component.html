@@ -1,11 +1,17 @@
-<p ng-hide="editing">
-  Place {{ $ctrl.stepset|humanizeRuleNum:rule }} replica
-  <span ng-show="$ctrl.getRealNum($ctrl.stepset).max && $ctrl.getRealNum($ctrl.stepset).max > 1">s on different {{ $ctrl.stepset.acrosstype.name }}s</span>
-  <span ng-show="$ctrl.stepset.groupbytype">in the same {{ $ctrl.stepset.groupbytype.name }}</span>
-  in the {{ $ctrl.stepset.take.name }} {{ $ctrl.stepset.take.type_name === 'root' ? 'tree' : $ctrl.stepset.take.type_name }}.
+<p translate
+   translate-params-stepset="$ctrl.stepset|humanizeRuleNum:rule"
+   translate-params-acrosstype-name="$ctrl.stepset.acrosstype.name"
+   translate-params-groupbytype-name="$ctrl.stepset.groupbytype.name"
+   translate-params-take-name="$ctrl.stepset.take.name"
+   translate-params-type-name="$ctrl.stepset.take.type_name === 'root' ? 'tree' : $ctrl.stepset.take.type_name"
+   ng-hide="editing">
+  Place {{ stepset }} replica
+  <span ng-show="$ctrl.getRealNum($ctrl.stepset).max && $ctrl.getRealNum($ctrl.stepset).max > 1">s on different {{ acrosstypeName }}s</span>
+  <span ng-show="$ctrl.stepset.groupbytype">in the same {{ groupbytypeName }}</span>
+  in the {{ takeName }} {{ typeName }}.
 </p>
 <span ng-show="editing">
-  Place
+  <translate>Place</translate>
   <button class="btn btn-default"
           ng-class="{ active: $ctrl.editreplicas }"
           ng-click="$ctrl.editreplicas = !$ctrl.editreplicas">
@@ -20,7 +26,8 @@
              ng-model="$ctrl.replicas_source"
              ng-change="onUpdate()"
              value="fix">
-      <label for="repsz0">all replicas</label>
+      <label translate
+             for="repsz0">all replicas</label>
     </div>
     <div class="radio form-inline">
       <input type="radio"
@@ -28,8 +35,10 @@
              id="repszPos"
              ng-model="$ctrl.replicas_source"
              value="pos">
-      <label for="repszPos">exactly</label>
-      <input type="number"
+      <label translate
+             for="repszPos">exactly</label>
+      <input translate
+             type="number"
              class="form-control input-small"
              id="repszNumPos"
              ng-disabled="$ctrl.replicas_source != 'pos'"
@@ -42,8 +51,10 @@
              id="repszNeg"
              ng-model="$ctrl.replicas_source"
              value="neg">
-      <label for="repszNeg">all but</label>
-      <input type="number"
+      <label translate
+             for="repszNeg">all but</label>
+      <input translate
+             type="number"
              class="form-control input-small"
              id="repszNumNeg"
              ng-disabled="replicas_source != 'neg'"
@@ -51,7 +62,7 @@
              ng-model="$ctrl.replicas_neg"> replicas
     </div>
   </div>
-  replicas on different
+  <span translate>replicas on different</span>
   <span class="dropdown">
     <button class="btn btn-default dropdown-toggle"
             data-toggle="dropdown">
@@ -67,7 +78,7 @@
       </li>
     </ul>
   </span>
-  in the
+  <translate>in the</translate>
   <button class="btn btn-default"
           ng-class="{ active: $ctrl.edittakenode }"
           ng-click="$ctrl.edittakenode = !$ctrl.edittakenode">

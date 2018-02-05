@@ -17,6 +17,43 @@ To describe their impact on the project, changes are grouped as follows:
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
 
+[3.6.2] - unreleased
+--------------------
+
+Added
+~~~~~
+* Backend/QA: Increased unit test coverage of ceph app (OP-2809)
+* WebUI: Validate hostname in settings page (OP-2993)
+* WebUI: Add support for multiple languages (OP-995)
+* Documentation: Added note about how to give the openattic user permissions to
+  create a database (necessary to run the Python Unit tests) (OP-2997)
+* WebUI: Add Ceph RBD Edit page (OP-1033,OP-2764)
+* WebUI: Add Chinese and German translations (OP-3104)
+
+Changed
+~~~~~~~
+* WebUI/QA: Replaced some task queue e2e tests with unit tests (OP-3023)
+* Backend: DeepSea min version for iSCSI should be 0.8.2 (OP-3001)
+* Backend: Move oa_auth.py into REST directory (OP-1437)
+
+Fixed
+~~~~~
+* WebUI: Fix the pool deletion pool listing (OP-2980)
+* Backend: RestClient class does not handle IPv6 addresses properly (OP-2998)
+* WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
+* Backend: RBD features should be enabled/disabled using the correct order (OP-3019)
+* Backend: Set the RBD info 'block_name_prefix' (OP-3027)
+* Backend: Increase timeout in MonApi::osd_pool_create (OP-3017)
+* WebUI: Fix error thrown when switching from RBD Add page (OP-2986)
+* WebUI: Pool names are now displayed in the Pool Deletion dialog (OP-3024)
+* WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
+* WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
+* Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
+* WebUI/QA: Fix check current user name (OP-3005)
+
+Removed
+~~~~~~~
+
 [3.6.1] - 2017-12-13
 --------------------
 
@@ -80,6 +117,7 @@ Fixed
 * Backend: Made Gatling tests more idempotent (OP-2913)
 * Backend/WebUI: Fixed the limitation of the RBD dropdown list to 50
   elements in the iSCSI add form (OP-2907)
+* Backend: Handle invalid request URL's gracefully in RestClient (OP-2983)
 * WebUI: Fix current user validation on page load (OP-2887)
 * WebUI: Fix random javascript error on RBD form (OP-2824)
 * WebUI: Display error message when no cluster exists (OP-2948)

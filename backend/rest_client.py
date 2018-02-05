@@ -13,12 +13,14 @@
  *  GNU General Public License for more details.
 """
 
+import utilities
 import inspect
 import itertools
 import logging
 import re
 import requests
-from requests import ConnectionError
+from requests.exceptions import ConnectionError, InvalidURL
+
 try:
     from requests.packages.urllib3.exceptions import SSLError
 except ImportError:
@@ -284,7 +286,7 @@ class RestClient(object):
         self.client_name = client_name if client_name else ''
         self.host = host
         self.port = port
-        self.base_url = 'http{}://{}:{}'.format('s' if ssl else '', host, port)
+        self.base_url = utilities.build_url(scheme='https' if ssl else 'http', host=host, port=port)
         logger.debug("REST service base URL: %s", self.base_url)
         self.headers = {'Accept': 'application/json'}
         self.auth = auth
@@ -392,6 +394,10 @@ class RestClient(object):
                           "your configuration and that the API endpoint is accessible"
                           .format(self.client_name))
             raise RequestException(ex_msg, conn_errno=errno, conn_strerror=strerror)
+        except InvalidURL as ex:
+            logger.exception("%s REST API failed %s: %s", self.client_name,
+                             method.upper(), str(ex))
+            raise RequestException(str(ex))
 
     @staticmethod
     def api(path, **api_kwargs):

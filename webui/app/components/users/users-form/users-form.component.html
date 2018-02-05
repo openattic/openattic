@@ -7,15 +7,24 @@
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 ng-hide="$ctrl.editing"
-            class="panel-title tc_userAddTitle">Create User: {{$ctrl.user.username}}</h3>
+            class="panel-title tc_userAddTitle">
+          <translate translate-params-username="$ctrl.user.username">
+            Create User: {{ username }}
+          </translate>
+        </h3>
         <h3 ng-show="$ctrl.editing"
-            class="panel-title tc_userEditTitle">Edit User: {{$ctrl.user.username}}</h3>
+            class="panel-title tc_userEditTitle">
+          <translate translate-params-username="$ctrl.user.username">
+            Edit User: {{ username }}
+          </translate>
+        </h3>
       </div>
       <div class="panel-body">
         <fieldset>
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) && $ctrl.userForm.username.$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userUsername">Username</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -24,7 +33,7 @@
                 </span>
                 <input class="form-control"
                        type="text"
-                       placeholder="Username..."
+                       placeholder="{{ 'Username...' | translate }}"
                        ng-model="$ctrl.user.username"
                        name="username"
                        id="userUsername"
@@ -32,7 +41,8 @@
                        validname
                        uniquename="user">
               </div>
-              <span class="help-block tc_usernameRequired"
+              <span translate
+                    class="help-block tc_usernameRequired"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) &&
                                         $ctrl.userForm.username.$error.required">
                 The username is required.
@@ -42,7 +52,8 @@
                                         $ctrl.userForm.username.$error.validname">
                 {{$ctrl.errortext}}
               </span>
-              <span class="help-block tc_noUniqueName"
+              <span translate
+                    class="help-block tc_noUniqueName"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.username.$dirty) &&
                                         $ctrl.userForm.username.$error.uniquename">
                 The chosen user name is already in use.
@@ -52,7 +63,8 @@
 
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.password.$dirty) && $ctrl.userForm.password.$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userPassword">Password</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -61,7 +73,7 @@
                 </span>
                 <input class="form-control"
                        type="password"
-                       placeholder="Password..."
+                       placeholder="{{ 'Password...' | translate }}"
                        ng-model="$ctrl.user.password"
                        name="password"
                        id="userPassword"
@@ -82,11 +94,13 @@
                   </button>
                 </span>
               </div>
-              <span class="help-block tc_passwdMinlength"
+              <span translate
+                    class="help-block tc_passwdMinlength"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.password.$dirty) && $ctrl.userForm.password.$error.minlength">
                 The password must be of minimum length 6 characters.
               </span>
-              <span class="help-block tc_passwdRequired"
+              <span translate
+                    class="help-block tc_passwdRequired"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.password.$dirty) && $ctrl.userForm.password.$error.required">
                 A password is required.
               </span>
@@ -95,7 +109,8 @@
 
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) && $ctrl.userForm.confirmPassword.$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userConfirmPassword">Confirm password</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -104,7 +119,7 @@
                 </span>
                 <input class="form-control"
                        type="password"
-                       placeholder="Password..."
+                       placeholder="{{ 'Password...' | translate }}"
                        id="userConfirmPassword"
                        name="confirmPassword"
                        ng-model="$ctrl.user.confirmPassword"
@@ -118,17 +133,20 @@
                   </button>
                 </span>
               </div>
-              <span class="help-block tc_confirmPasswdRequired"
+              <span translate
+                    class="help-block tc_confirmPasswdRequired"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) &&
                                     $ctrl.userForm.confirmPassword.$error.required">
                 The password confirmation is required.
               </span>
-              <span class="help-block tc_confirmPasswdMinlength"
+              <span translate
+                    class="help-block tc_confirmPasswdMinlength"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) &&
                                     $ctrl.userForm.confirmPassword.$error.minlength">
                 The password must be of minimum length 6 characters.
               </span>
-              <span class="help-block tc_passwdEqual"
+              <span translate
+                    class="help-block tc_passwdEqual"
                     ng-show="($ctrl.userForm.$submitted || $ctrl.userForm.confirmPassword.$dirty) &&
                                     $ctrl.userForm.confirmPassword.$error.equalValidator && !$ctrl.userForm.confirmPassword.$error.minlength">
                 The passwords are not equal.
@@ -137,7 +155,8 @@
           </div>
 
           <div class="form-group">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userFirstname">Firstname</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -146,7 +165,7 @@
                 </span>
                 <input class="form-control"
                        type="text"
-                       placeholder="Firstname..."
+                       placeholder="{{ 'Firstname...' | translate }}"
                        ng-model="$ctrl.user.first_name"
                        name="firstname"
                        id="userFirstname">
@@ -154,7 +173,8 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userLastname">Lastname</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -163,7 +183,7 @@
                 </span>
                 <input class="form-control"
                        type="text"
-                       placeholder="Lastname..."
+                       placeholder="{{ 'Lastname...' | translate }}"
                        ng-model="$ctrl.user.last_name"
                        name="last"
                        id="userLastname">
@@ -172,7 +192,8 @@
           </div>
           <div class="form-group"
                ng-class="{'has-error': ($ctrl.userForm.$submitted || $ctrl.userForm.email.$dirty) && $ctrl.userForm.email.$invalid}">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userEmail">Email Address</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -181,12 +202,13 @@
                 </span>
                 <input class="form-control"
                        type="email"
-                       placeholder="Email Address..."
+                       placeholder="{{ 'E-Mail address...' | translate }}"
                        ng-model="$ctrl.user.email"
                        name="email"
                        id="userEmail">
               </div>
-              <span class="help-block tc_emailNotValid"
+              <span translate
+                    class="help-block tc_emailNotValid"
                     ng-show="($ctrl.userForm.$submitted ||$ctrl.userForm.email.$dirty) && $ctrl.userForm.email.$error.email">
                 It's not a valid email address.
               </span>
@@ -194,7 +216,8 @@
           </div>
           <div class="form-group"
                ng-if="$ctrl.isCurrentUser">
-            <label class="col-sm-3 control-label"
+            <label translate
+                   class="col-sm-3 control-label"
                    for="userAuthToken">API authentication token</label>
             <div class="col-sm-9">
               <div class="input-group">
@@ -234,7 +257,8 @@
                        ng-model="$ctrl.user.is_active"
                        name="active"
                        id="userActive">
-                <label for="userActive">
+                <label translate
+                       for="userActive">
                   Is active
                 </label>
               </div>
@@ -248,7 +272,8 @@
                        ng-model="$ctrl.user.is_staff"
                        name="staff"
                        id="userStaff">
-                <label for="userStaff">
+                <label translate
+                       for="userStaff">
                   Is administrator
                 </label>
               </div>
@@ -262,7 +287,8 @@
                        ng-model="$ctrl.user.is_superuser"
                        name="superuser"
                        id="userSuperuser">
-                <label for="userSuperuser">
+                <label translate
+                       for="userSuperuser">
                   Has all privileges
                 </label>
               </div>
@@ -274,9 +300,10 @@
         <div class="button-group text-right">
           <oa-submit-button form="$ctrl.userForm"
                             on-submit="$ctrl.submitAction($ctrl.userForm)">
-            Submit
+            <translate>Submit</translate>
           </oa-submit-button>
-          <button type="button"
+          <button translate
+                  type="button"
                   class="btn btn-sm btn-default tc_backButton"
                   ng-click="$ctrl.cancelAction()">
             Back

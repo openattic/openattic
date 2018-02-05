@@ -3,28 +3,28 @@
     <tr>
       <th></th>
       <th class="rbd-striping-object tc_object">
-        <small>Object</small>
+        <small translate>Object</small>
         <br>{{ $ctrl.objectSetIndex * $ctrl.stripeCount }}
       </th>
       <th ng-if="$ctrl.stripeCount >= 2"
           class="rbd-striping-column-separator"></th>
       <th ng-if="$ctrl.stripeCount >= 2"
           class="rbd-striping-object tc_object">
-        <small>Object</small>
+        <small translate>Object</small>
         <br>{{ $ctrl.objectSetIndex * $ctrl.stripeCount + 1 }}
       </th>
       <th ng-if="$ctrl.stripeCount >= 3"
           class="rbd-striping-column-separator"></th>
       <th ng-if="$ctrl.stripeCount >= 3"
           class="rbd-striping-object tc_object">
-        <small>Object</small>
+        <small translate>Object</small>
         <br>{{ $ctrl.objectSetIndex * $ctrl.stripeCount + 2 }}
       </th>
       <th ng-if="$ctrl.stripeCount >= 4"
           class="rbd-striping-column-separator"></th>
       <th ng-if="$ctrl.stripeCount >= 4"
           class="rbd-striping-object tc_object">
-        <small>Object</small>
+        <small translate>Object</small>
         <br>{{ $ctrl.objectSetIndex * $ctrl.stripeCount + 3 }}
       </th>
       <th ng-if="$ctrl.stripeCount > 5"
@@ -35,7 +35,7 @@
           class="rbd-striping-column-separator"></th>
       <th ng-if="$ctrl.stripeCount >= 5"
           class="rbd-striping-object tc_object">
-        <small>Object</small>
+        <small translate>Object</small>
         <br>{{ $ctrl.objectSetIndex * $ctrl.stripeCount + ($ctrl.stripeCount - 1) }}
       </th>
       <th class="rbd-striping-stripe"></th>
@@ -45,7 +45,7 @@
     <tr ng-init="stripeNumber =  $ctrl.numStripesObjectSet * $ctrl.objectSetIndex">
       <td class="text-muted italic tc_objectSet"
           rowspan="{{ $ctrl.numStripesCurrentObjectSet <= 4 ? $ctrl.numStripesCurrentObjectSet : 5 }}">
-        <small>Object
+        <small translate>Object
           <br>set</small>
         <br>
         <strong>{{ $ctrl.objectSetIndex }}</strong>
@@ -93,7 +93,7 @@
       </td>
       <td class="text-muted italic">
         <span class="badge tc_stripe">
-          <small>Stripe</small> {{ stripeNumber }}</span>
+          <small translate>Stripe</small> {{ stripeNumber }}</span>
       </td>
     </tr>
     <tr ng-if="$ctrl.numStripesCurrentObjectSet >= 2"
@@ -140,7 +140,7 @@
       </td>
       <td class="text-muted italic">
         <span class="badge tc_stripe">
-          <small>Stripe</small> {{ stripeNumber }}</span>
+          <small translate>Stripe</small> {{ stripeNumber }}</span>
       </td>
     </tr>
     <tr ng-if="$ctrl.numStripesCurrentObjectSet > 4">
@@ -168,7 +168,6 @@
     <tr ng-if="$ctrl.numStripesCurrentObjectSet >= 4"
         ng-init="stripeNumber = $ctrl.numStripesObjectSet * $ctrl.objectSetIndex + $ctrl.numStripesCurrentObjectSet - 2">
       <td ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 2))"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -177,7 +176,6 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 2"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 2) + 1)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -186,7 +184,6 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 3"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 2) + 2)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -195,7 +192,6 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 4"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 2) + 3)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -206,20 +202,18 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 5"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 2) + $ctrl.stripeCount - 1)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
       </td>
       <td class="text-muted italic">
         <span class="badge tc_stripe">
-          <small>Stripe</small> {{ stripeNumber }}</span>
+          <small translate>Stripe</small> {{ stripeNumber }}</span>
       </td>
     </tr>
     <tr ng-if="$ctrl.numStripesCurrentObjectSet >= 3"
         ng-init="stripeNumber = $ctrl.numStripesObjectSet * $ctrl.objectSetIndex + $ctrl.numStripesCurrentObjectSet - 1">
       <td ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 1))"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -228,7 +222,6 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 2"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 1) + 1)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -237,7 +230,6 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 3"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 1) + 2)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -246,7 +238,6 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 4"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 1) + 3)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
@@ -257,14 +248,13 @@
           class="rbd-striping-column-separator"></td>
       <td ng-if="$ctrl.stripeCount >= 5"
           ng-init="stripeUnitNumber = $ctrl.numStripUnitsObjectSet * $ctrl.objectSetIndex + ($ctrl.stripeCount * ($ctrl.numStripesCurrentObjectSet - 1) + $ctrl.stripeCount - 1)"
-    
           ng-class="$ctrl.getStripUnitStyle(stripeUnitNumber, stripeNumber)"
           class="tc_stripUnit"
           ng-bind-html="$ctrl.getStripUnitText(stripeUnitNumber)">
       </td>
       <td class="text-muted italic">
         <span class="badge tc_stripe">
-          <small>Stripe</small> {{ stripeNumber }}</span>
+          <small translate>Stripe</small> {{ stripeNumber }}</span>
       </td>
     </tr>
   </tbody>

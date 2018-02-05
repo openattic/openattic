@@ -7,6 +7,7 @@ angular                           1.5.11              MIT                       
 angular-animate                   1.5.11              MIT                         https://github.com/angular/angular.js/tree/v1.5.11
 angular-bootstrap-toggle          0.1.2               MIT                         https://github.com/ziscloud/angular-bootstrap-toggle/tree/v0.1.2
 angular-breadcrumb                0.4.1               MIT                         https://github.com/ncuillery/angular-breadcrumb/tree/v0.4.1
+angular-gettext                   2.3.10              MIT                         https://github.com/rubenv/angular-gettext/tree/v2.3.10
 angular-md5                       0.1.10              MIT                         https://github.com/gdi2290/angular-md5/tree/v0.1.10
 angular-resource                  1.5.11              MIT                         https://github.com/angular/angular.js/tree/v1.5.11
 angular-sanitize                  1.5.11              MIT                         https://github.com/angular/angular.js/tree/v1.5.11
@@ -23,9 +24,11 @@ jquery-ui                         1.11.4              MIT                       
 lodash                            4.17.4              MIT                         https://github.com/lodash/lodash/tree/4.17.4
 ng-tags-input                     3.0.0               MIT                         https://github.com/mbenford/ngTagsInput/tree/v3.0.0
 ngstorage                         0.3.10              MIT                         https://github.com/gsklee/ngStorage/tree/0.3.10
+validator                         9.2.0               MIT                         https://github.com/chriso/validator.js/tree/9.2.0
 
 npm dev packages
 ------------
+angular-gettext-plugin                      1.0.1               MIT                         https://github.com/augusto-altman/angular-gettext-plugin/tree/1.0.1
 angular-mocks                               1.5.11              MIT                         https://github.com/angular/angular.js/tree/v1.5.11
 autoprefixer                                7.1.4               MIT                         https://github.com/postcss/autoprefixer/tree/7.1.4
 babel-core                                  6.26.0              MIT                         https://github.com/babel/babel/tree/v6.26.0/packages/babel-core

@@ -2,11 +2,13 @@
       role="form"
       class="form-horizontal"
       novalidate>
-  <div class="openattic-modal-header">
-    <span>Advanced Settings</span>
+  <div translate
+       class="openattic-modal-header">
+    Advanced Settings
   </div>
   <div class="openattic-modal-content">
-    <div uib-alert
+    <div translate
+         uib-alert
          class="alert-warning">Changing these parameters from their default values is usually not necessary.</div>
     <span ng-repeat="setting in $ctrl.cephIscsiTargetAdvangedSettings">
       <div class="form-group"
@@ -28,9 +30,10 @@
     <div class="button-group text-right">
       <oa-submit-button form="$ctrl.settingsForm"
                         on-submit="$ctrl.confirm()">
-        Confirm
+        <translate>Confirm</translate>
       </oa-submit-button>
-      <button id="cancelButton"
+      <button translate
+              id="cancelButton"
               class="btn btn-link btn-sm"
               ng-click="$ctrl.cancel()">Cancel</button>
     </div>
