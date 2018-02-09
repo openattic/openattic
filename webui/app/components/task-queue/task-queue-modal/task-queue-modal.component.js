@@ -205,23 +205,23 @@ class TaskQueueModalComponent {
         this.pageChange();
       });
     });
+  }
 
+  $onInit () {
     /**
-   * Triggers instant table update when the modal dialog is fully opened..
-   */
+     * Triggers instant table update when the modal dialog is fully opened..
+     */
     this.modalInstance.opened.then(() => {
       this.loadAllTabs();
     });
 
     /**
-   * Cancels any refresh call, when the dialog is closed.
-   */
+     * Cancels any refresh call, when the dialog is closed.
+     */
     this.modalInstance.closed.then(() => {
       clearInterval(this.timeout);
     });
-  }
 
-  $onInit () {
     this.taskQueueFetcher.setOnUpdateChange((update, prev) => {
       this.onUpdateChange(update, prev);
     });

@@ -23,11 +23,11 @@
     </p>
     <span translate
           class="text-danger">The following Ceph pools will be deleted:</span>
-    <ul class="text-danger">
-      <li ng-repeat="cephPool in $ctrl.cephPools">
-        {{cephPool.name}} ({{cephPool.num_bytes | bytes}})
-      </li>
-    </ul>
+      <ul class="text-danger">
+        <li ng-repeat="pool in $ctrl.cephPools">
+          {{pool.name}} ({{pool.num_bytes | bytes}})
+        </li>
+      </ul>
   </div>
   <!-- end multiple cephPools -->
 </oa-delete-confirmation-modal>
