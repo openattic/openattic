@@ -102,6 +102,18 @@ describe("task queue dialog test", () => {
     });
   });
 
+  /**
+   * This is a test for test cases that use the waitForPendingTasks function.
+   */
+  it("Tests the waiting for task function", () => {
+    qProperties.close();
+    qProperties.createTask(3);
+    qProperties.waitForPendingTasks();
+    qProperties.validateTabName("pending", "Pending (0)");
+    qProperties.open();
+    qProperties.deleteTasks("finished");
+  });
+
   afterAll(() => {
     qProperties.close(); // This will open the task queue dialogue.
     console.log("task_queue_dialog -> task_queue_dialog.e2e.js");

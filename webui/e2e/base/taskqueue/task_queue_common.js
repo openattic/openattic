@@ -48,8 +48,8 @@
  * - deleteTasks(String tab [, String name]) - Deletes all or the given task name in the given tab.
  */
 (function () {
-  var self = {};
-  var helpers = require("../../common.js");
+  const self = {};
+  const helpers = require("../../common.js");
 
   // The element to click to open the modal dialogue.
   self.taskQueue = element(by.className("tc_task-queue"));
@@ -143,21 +143,20 @@
    * Adds elements to each tab.elements and adds an element to each column of the tab.
    * For internal use only.
    */
-  Object.keys(self.dialog.tabs).forEach(function (tabName) {
-    var tabElements = self.dialog.tabElements;
-    var tab = self.dialog.tabs[tabName];
+  Object.keys(self.dialog.tabs).forEach(tabName => {
+    const tabElements = self.dialog.tabElements;
+    const tab = self.dialog.tabs[tabName];
     /**
      * Uses dialog.tabElements to combine it with the tab names to create the tab elements.
      */
-    Object.keys(tabElements).forEach(function (elementName) {
-      var className = tabElements[elementName] + tabName;
-      tab.elements[elementName] = element(by.className(className));
+    Object.keys(tabElements).forEach(elementName => {
+      tab.elements[elementName] = element(by.className(tabElements[elementName] + tabName));
     });
 
     /**
      * Uses the attribute name of each column and tab name to create an column element.
      */
-    Object.keys(tab.columns).forEach(function (columnName) {
+    Object.keys(tab.columns).forEach(columnName => {
       tab.columns[columnName].element = element(by.className("tc-col-" + tabName + "-" + columnName));
     });
   });
@@ -183,10 +182,10 @@
    * Expects default buttons to be displayed or not.
    * @param {Boolean} displayed - What to expect.
    */
-  self.expectDefaultModalElements = function (displayed) {
-    var elements = self.dialog.modalElements;
-    Object.keys(elements).forEach(function (elementName) {
-      var modalElement = elements[elementName];
+  self.expectDefaultModalElements = displayed => {
+    const elements = self.dialog.modalElements;
+    Object.keys(elements).forEach(elementName => {
+      const modalElement = elements[elementName];
       expect(modalElement.isPresent()).toBe(displayed);
       if (displayed) {
         expect(modalElement.isDisplayed()).toBe(displayed);
@@ -198,7 +197,7 @@
    * Changes to the given tab and expect default elements to be there.
    * @param {String} tabName
    */
-  self.changeTab = function (tabName) {
+  self.changeTab = tabName => {
     // browser.sleep(helpers.configs.sleep / 2);
     let elem = self.dialog.tabs[tabName].elements.tab;
     helpers.waitForElementVisible(elem);
@@ -219,7 +218,7 @@
   /**
    * Closes the task queue dialog.
    */
-  self.close = function () {
+  self.close = () => {
     browser.sleep(helpers.configs.sleep / 2);
     element(by.className("modal-close-btn")).click();
     self.expectDefaultModalElements(false);
@@ -229,12 +228,11 @@
    * Will delete all tasks.
    * Expecting the dialog to be closed.
    */
-  self.deleteAllTasks = function () {
+  self.deleteAllTasks = () => {
     self.open();
     Object.keys(self.dialog.tabs).forEach(function (tabName) { // => [pending, failed, finished]
-      var elements = self.dialog.tabs[tabName].elements;
       self.changeTab(tabName);
-      elements.listing.isDisplayed().then(function (displayed) {
+      self.dialog.tabs[tabName].elements.listing.isDisplayed().then(function (displayed) {
         if (displayed) { // If at least one task is there the listing is shown.
           self.deleteTasks(tabName);
         }
@@ -246,9 +244,9 @@
   /**
    * Validates which tab is opened by the task queue.
    * Expecting the dialog to be closed.
-   * @param {string} tab - Which tab to be expect.
+   * @param {string} tabName - Which tab to be expect.
    */
-  self.validateDisplayedTab = function (tabName) {
+  self.validateDisplayedTab = tabName => {
     self.open();
     helpers.waitForElementVisible(self.dialog.tabs[tabName].elements.deleteBtn);
     expect(self.dialog.tabs[tabName].elements.deleteBtn.isDisplayed()).toBe(true);
@@ -258,10 +256,10 @@
   /**
    * Validates the text shown by the given tab when you open the task queue.
    * Expecting the dialog to be closed.
-   * @param {string} tab - Which tab text to get.
+   * @param {string} tabName - Which tab text to get.
    * @param {string} tabText - Which text will be expected in the label.
    */
-  self.validateTabName = function (tabName, tabText) {
+  self.validateTabName = (tabName, tabText) => {
     self.open();
     let elem = self.dialog.tabs[tabName].elements.tab;
     helpers.waitForElement(elem.element(by.linkText(tabText)));
@@ -270,20 +268,10 @@
   };
 
   /**
-   * Validates the text shown by the task queue directive in the header of oa.
-   * Expecting the dialog to be closed.
-   * @param {string} text - Which text will be expected.
+   * Waits for all pending tasks to finish.
+   * Expects the dialog to be closed.
    */
-  self.validateTaskText = function (text) {
-    expect(self.taskQueue.getText()).toBe(text);
-  };
-
-  /**
-   * Waits for all pending tasks to finish, use it with care because it's recursive.
-   * Expecting the dialog to be closed.
-   * @param {int} [depth] - Given by the recursive call.
-   */
-  self.waitForPendingTasks = function () {
+  self.waitForPendingTasks = () => {
     self.open(); // Opens the dialog
     self.changeTab("pending");
     helpers.waitForElementVisible(self.dialog.tabs.pending.elements.noElements); //Make sure the element is visible
@@ -296,13 +284,13 @@
    * @param {int} times - One round takes around 1 1/2 seconds.
    * @param {int} [quantity] - How many task should be created..
    */
-  self.createTask = function (times, quantity) {
+  self.createTask = (times, quantity) => {
     quantity = quantity || 1;
-    for (var x = 0; x < quantity; x++) {
+    for (let x = 0; x < quantity; x++) {
       browser.executeScript(function (innerTimes, configs) {
-        var xhr = new XMLHttpRequest();
-        var parts = configs.urls.base.split("/");
-        var url = parts[0] + "//" + configs.username + ":" + configs.password + "@" +
+        const xhr = new XMLHttpRequest();
+        const parts = configs.urls.base.split("/");
+        const url = parts[0] + "//" + configs.username + ":" + configs.password + "@" +
           parts[2] + configs.urls.api + "taskqueue/test_task";
         xhr.open("post", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -316,23 +304,22 @@
    * @param {String} tabName - Name of the tasks where the deletion takes place and which is displayed.
    * @param {String} [taskName] - Name of the task to delete.
    */
-  self.deleteTasks = function (tabName, taskName) {
+  self.deleteTasks = (tabName, taskName) => {
     self.changeTab(tabName);
-    var deleteBtn = self.dialog.tabs[tabName].elements.deleteBtn;
     if (taskName) { // If a singel deletion takes place.
-      helpers.waitForElementVisible(element(by.cssContainingText("tr", taskName)));
-      var task = element.all(by.cssContainingText("tr", taskName)).first();
+      helpers.waitForElementVisible(element.all(by.cssContainingText("tr", taskName)).first());
+      const task = element.all(by.cssContainingText("tr", taskName)).first();
       expect(task.isDisplayed()).toBe(true);
       task.click();
     } else { // Delete all tasks in the tabName.
       helpers.waitForElementVisible(self.dialog.tabs[tabName].elements.selectAll);
       self.dialog.tabs[tabName].elements.selectAll.click();
     }
-    var itemLength = 1;
+    let itemLength = 1;
     self.dialog.tabs.pending.elements.tab.getText().then(function (s) {
       itemLength = parseInt(s.match(/[0-9]+/)[0], 10);
     });
-    deleteBtn.click();
+    self.dialog.tabs[tabName].elements.deleteBtn.click();
     self.handleDeleteForm(tabName, itemLength);
   };
 
@@ -342,20 +329,19 @@
    * @param {String} tabName - Name of the current tab.
    * @param {String} itemLength - Count of how many items being deleted.
    */
-  self.handleDeleteForm = function (tabName, itemLength) {
-    var dialog = self.deletionDialog;
-    var elements = dialog.element;
-    var warning = elements.warning;
-    var singleDelete = elements.singleDelete;
-    var multiDelete = elements.multiDelete;
-    var confirmBtn = elements.confirmBtn;
-    var showWarning = tabName === "pending";
+  self.handleDeleteForm = (tabName, itemLength) => {
+    const dialog = self.deletionDialog;
+    const elements = dialog.element;
+    const warning = elements.warning;
+    const singleDelete = elements.singleDelete;
+    const confirmBtn = elements.confirmBtn;
+    const showWarning = tabName === "pending";
     // Should only show the warning if you want to delete a pending task.
     expect(warning.isDisplayed()).toBe(showWarning);
     if (showWarning) {
       expect(warning.getText()).toBe(dialog.text.warning);
     }
-    multiDelete.isDisplayed().then(function (displayed) {
+    elements.multiDelete.isDisplayed().then(function (displayed) {
       // If you delete multiple tasks you the single deletion can't be shown and vice versa.
       expect(singleDelete.isDisplayed()).toBe(!displayed);
     });

@@ -3111,7 +3111,7 @@ msgid ""
 msgstr ""
 
 #: app/components/task-queue/oa-task-queue/oa-task-queue.component.html:12
-msgid "{{ failed }} Failed-Task{{$ctrl.taskOverview.failed !== 1 ? 's' : ''}}"
+msgid "{{ failed }} Failed-Task{{failed !== 1 ? 's' : ''}}"
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:16
@@ -3146,7 +3146,7 @@ msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.pool)\"
 msgstr ""
 
 #: app/components/task-queue/oa-task-queue/oa-task-queue.component.html:7
-msgid "{{ queue }} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}"
+msgid "{{ queue }} Background-Task{{queue !== 1 ? 's' : ''}}"
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:105
