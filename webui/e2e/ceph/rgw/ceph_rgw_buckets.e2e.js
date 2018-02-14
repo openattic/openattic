@@ -142,7 +142,7 @@ describe("ceph rgw buckets", () => {
   it("should delete the test bucket", () => {
     let bucket = helpers.get_list_element(testBucket.name);
     bucket.click();
-    helpers.delete_selection(undefined, "$ctrl");
+    helpers.delete_selection(undefined, "$ctrl", testBucket.name);
     expect(bucket.isPresent()).toBe(false);
   });
 
@@ -158,7 +158,7 @@ describe("ceph rgw buckets", () => {
     helpers.setLocation("ceph/rgw/users");
     let user = helpers.get_list_element(testUser.user_id);
     user.click();
-    helpers.delete_selection(undefined, "$ctrl");
+    helpers.delete_selection(undefined, "$ctrl", testUser.user_id);
     expect(user.isPresent()).toBe(false);
   });
 
