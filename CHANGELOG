@@ -16,7 +16,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[2.0.21] - unreleased
+[2.0.21] - 2018-02-21
 ---------------------
 
 Added
@@ -31,7 +31,7 @@ Changed
 * Backend/WebUI: The monitoring of RBDs without 'fast-diff' feature has been
   disabled due to performance reasons (OP-2141, OP-2223)
 * Packaging: back-ported a number of improvements to `make_dist.py`, to keep
-  it in sync with the master branch and to simplify the packaging process.
+  it in sync with the master branch and to simplify the packaging process. (OP-2056)
 
 Fixed
 ~~~~~
