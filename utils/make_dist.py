@@ -16,19 +16,19 @@
     make_dist.py create (release|snapshot) [--revision=<revision>]
         [--source=<source>] [--destination=<destination>]
         [--adapt-debian-changelog] [--push-changes] [--tag]
-        [--suffix=<suffix>] [-v|-q|-s]
-    make_dist.py cache push
-    make_dist.py (help|-h|--help)
+        [--sign] [--suffix=<suffix>] [-v|-q|-s]
+   make_dist.py cache push
+   make_dist.py (help|-h|--help)
 
-Create a tarball out of a specific revision to be used as source for package
-managers to create debs, rpms, etc.
+   Create a tarball out of a specific revision to be used as source for package
+   managers to create debs, rpms, etc.
 
-This script always prints errors to STDERR. This behaviour can't be turned
-of by any switch provided.
+   This script always prints errors to STDERR. This behaviour can't be turned off
+   by any switch provided.
 
-Options:
+   Options:
 
-    --revision=<revision>
+   --revision=<revision>
 
         A valid git revision. An existing git tag for 'release'.
 
@@ -47,7 +47,7 @@ Options:
         changes. In that case these uncommited changes are committed in a
         temporary directory to be able include them in the tar archive.
 
-    --source=<source>  [default: https://bitbucket.org/openattic/openattic]
+   --source=<source>  [default: https://bitbucket.org/openattic/openattic]
 
         The source to be used. Either an URL to a git repository or local
         path to a git repository.
@@ -58,12 +58,12 @@ Options:
         The local repository is never altered, only a temporary copy of it will
         be adapted.
 
-    --destination=<destination>  [default: ~/src]
+   --destination=<destination>  [default: ~/src]
 
         The destination for the tar archive to be created in. If the given
         directory or subdirectories don't exist, they will be created.
 
-    --adapt-debian-changelog
+   --adapt-debian-changelog
 
         If enabled, the `debian/changelog` is updated using `debchange`.
 
@@ -75,7 +75,7 @@ Options:
         script is run on Debian or Ubuntu, the switch will automatically be
         enabled for your convenience. A proper warning is displayed.
 
-    --push-changes
+   --push-changes
 
         Pushes the changes that have been made in the temporary repository
         which is used to create the tarball. This switch is meant to be used on
@@ -94,7 +94,7 @@ Options:
         changes won't be pushed and the execution of the script will be
         aborted.
 
-    --tag
+   --tag
 
         Creates a git tag on top of other changes, like for example the
         adaption of the `debian/changelog`. The tag used will be the VERSION of
@@ -107,24 +107,34 @@ Options:
         on a release. This enables the automation of a release, thus it's not
         allowed to create tags which would create additional heads.
 
-    --suffix=<suffix>
+   --sign
+
+        Cryptographically sign the resulting tarball using GPG. Creates a
+        detached signature file `<tarball>.sig` in the same directory where
+        the tarball has been created.
+        
+        Note that using this option requires a working GPG configuration.
+        GPG will ask for the the secret key's passphrase, if you're not using
+        something like `gpg-agent` for managing the secret key.
+
+   --suffix=<suffix>
 
         If provided, the suffix will be appended to the resulting tarball
         filename as well as the directory name that the tarball contains. It
         will be appended to the basename "openattic" but before any version
         information to maintain compatibility with `debuild`.
 
-    -v
+   -v
 
         Enables the verbose mode. Prints the output of every command called to
         stdout.
 
-    -q
+   -q
 
         Enables the quiet mode. No output except for the success message and
         path to the created tar archive.
 
-    -s
+   -s
 
         Enables the script mode which prints the absolute path of the tarball
         at the end of the tarball creation to stdout.
@@ -138,6 +148,7 @@ import tempfile
 import unittest
 import ConfigParser
 import platform
+import logging
 from shutil import rmtree, copytree
 from os.path import isfile, isdir
 from os import makedirs
@@ -147,10 +158,20 @@ from docopt import docopt
 from urlparse import urlparse
 from distutils.spawn import find_executable
 
-VERBOSITY_SCRIPT = -1
-VERBOSITY_QUIET = 0
-VERBOSITY_NORMAL = 1
-VERBOSITY_VERBOSE = 2
+log = logging.getLogger(__name__)
+
+
+def setup_logging():
+    out_hdlr = logging.StreamHandler(sys.stderr)
+    out_hdlr.setFormatter(logging.Formatter('%(name)s %(asctime)s %(levelname)s %(message)s'))
+    out_hdlr.setLevel(logging.INFO)
+    log.addHandler(out_hdlr)
+    log.setLevel(logging.INFO)
+
+
+def log_command(args, cwd=''):
+    msg = "{} '{}'".format('' if cwd is None else cwd, "' '".join(args))
+    log.info(msg)
 
 
 class ProcessResult(object):
@@ -174,110 +195,191 @@ class ProcessResult(object):
         return self.returncode == 0
 
 
-class Process(object):
-    """Convenient wrapper for `subprocess.Popen()`."""
+def process_run(args, cwd=None, env=None):
+    log_command(args, cwd)
 
-    def __init__(self, verbosity=VERBOSITY_NORMAL, exit_on_error=True, use_bold_font=True):
-        self.verbosity = verbosity
-        self.exit_on_error = exit_on_error
-        self.use_bold = use_bold_font
+    pipe = subprocess.Popen(args,
+                            stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stdin=subprocess.PIPE,
+                            cwd=cwd,
+                            env=env,
+                            bufsize=1,
+                            close_fds=True)
 
-    def run(self, args, cwd=None, exit_on_error=None, env=None):
-        self.log_command(args, cwd, self.use_bold)
-        exit_on_error = self.exit_on_error is True and exit_on_error is not False
+    tmp_result = {'stdout': [], 'stderr': []}
 
-        pipe = subprocess.Popen(args,
-                                stderr=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stdin=subprocess.PIPE,
-                                cwd=cwd,
-                                env=env,
-                                bufsize=1,
-                                close_fds=True)
+    for line in iter(pipe.stdout.readline, b''):
+        tmp_result['stdout'].append(line.strip())
+        log.debug(line)
 
-        tmp_result = {'stdout': [], 'stderr': []}
+    if pipe.stderr:
+        for line in iter(pipe.stderr.readline, b''):
+            tmp_result['stderr'].append(line.strip())
+            sys.stderr.write(line)
+            sys.stderr.flush()
 
-        for line in iter(pipe.stdout.readline, b''):
-            tmp_result['stdout'].append(line.strip())
-            if self.verbosity > VERBOSITY_NORMAL:
-                sys.stdout.write(line)
-                sys.stdout.flush()
+    result = ProcessResult(os.linesep.join(tmp_result['stdout']),
+                           os.linesep.join(tmp_result['stderr']),
+                           returncode=pipe.wait())
 
-        if pipe.stderr:
-            for line in iter(pipe.stderr.readline, b''):
-                tmp_result['stderr'].append(line.strip())
-                sys.stderr.write(line)
-                sys.stderr.flush()
+    if not result.success():
+        # Print stdout on failure too. Some tools like Grunt print errors to stdout!
+        if result.stdout and log.level >= logging.DEBUG:
+            # Only print stdout if already printed, otherwise we
+            # want to ignore the output for being able to silence the script. Sadly some tools
+            # are inconsistent with their error printing, so we need to do that here.
+            log.debug('process finished: {}'.format(result.stdout))
 
-        result = ProcessResult(os.linesep.join(tmp_result['stdout']),
-                               os.linesep.join(tmp_result['stderr']),
-                               returncode=pipe.wait())
+        raise Exception('Error occurred, exiting')
 
-        if not result.success():
-            # Print stdout on failure too. Some tools like Grunt print errors to stdout!
-            if result.stdout and self.verbosity <= VERBOSITY_NORMAL and exit_on_error:
-                # Only print stdout if already printed and exit_on_error is True, otherwise we
-                # want to ignore the output for being able to silence the script. Sadly some tools
-                # are inconsistent with their error printing, so we need to do that here.
-                print result.stdout
+    return result
 
-            if exit_on_error:
-                # Print message on exit for the sake of debugging.
-                sys.stderr.write('Error occurred, exiting\n')
-                sys.exit(result.returncode)
 
-        return result
+def is_url(string):
+    assert type(string) is str
+    return urlparse(string).netloc != ''
 
-    def system(self, args, cwd, exit_on_error=None):
-        """Make a system call.
 
-        The args aren't escaped automatically. Either don't pass user input to this function or
-        escape it properly by using shlex.quote(s).
+def _command_exists(command):
+    try:
+        process_run(['which', command])
+        return True
+    except Exception:
+        return False
 
-        :param args: A list of arguments
-        :type args: list[str]
-        :param cwd: Current working directory
-        :type cwd: str
-        :return:
-        """
-        exit_on_error = self.exit_on_error is True and exit_on_error is not False
-        self.log_command(args, cwd, self.use_bold)
-        os.chdir(cwd)
-        exit_code = os.system(' '.join(args))
-        if exit_code > 0 and exit_on_error:
-            sys.stderr.write('Error occurred, exiting\n')
-            sys.exit(exit_code)
-        return exit_code
 
-    def log_command(self, args, cwd='', use_bold=True):
-        """Log a command call.
+def _rmtree(path, **kwargs):
+    force = '' if 'ignore_errors' not in kwargs.keys() else 'f'
+    log_command(['rm', '-r{}'.format(force), path])
+    rmtree(path, **kwargs)
 
-        :param args: List of arguments
-        :type args: list[str]
-        :param cwd: Current working directory
-        :type cwd: str
-        :param use_bold:
-        :type use_bold: bool
-        """
-        if self.verbosity < VERBOSITY_NORMAL:
-            return
 
-        # Enquote args with more than one word.
-        display_args = args[:]
-        for i, arg in enumerate(display_args):
-            if len(arg.split(' ')) > 1:
-                display_args[i] = '"%s"' % arg
+def _copytree(*args, **kwargs):
+    log_command(['cp', '-r'] + list(args))
+    copytree(*args, **kwargs)
 
-        command = ' '.join(display_args)
-        command = '\033[1m' + command + '\033[0m' if use_bold else command
 
-        sys.stdout.write('(cwd)# {}\n'.format(command) if not cwd else
-                         '{}# {}\n'.format(cwd, command))
-        sys.stdout.flush()
+def _check_dependencies(commands):
+    """
+    Fails if any command does not exist.
+
+    :type commands: list[str]
+    """
+    non_exist = [c for c in commands if not _command_exists(c)]
+    if non_exist:
+        raise Exception('Command {} not found!'.format(non_exist))
+
+
+def _get_all_tags(source_dir):
+    """Retrieve all tags of the specified git source directory.
+
+    This function returns the latest tags independent from the currently
+    activated revision of the given `source_dir`.
+
+    :param source_dir: A path to a git source directory
+    :type source_dir: str
+    :rtype: list[str]
+    """
+    process_run(['git', 'fetch'], cwd=source_dir)
+    return process_run(['git', 'tag', '-l'], cwd=source_dir).stdout.splitlines()
+
+
+def _get_md5_of_file(file_name):
+    return md5(open(file_name, 'r').read()).hexdigest()
+
+
+def _sort_version_number_desc(iterable):
+    def extract_version_numbers(entry):
+        match = re.search(r'v?([\d]+)\.([\d]+)\.([\d]+).*', entry)
+        return map(int, match.groups()) if match else None
+
+    return sorted(iterable, key=extract_version_numbers, reverse=True)
+
+
+def _strip_repo_tag(tag):
+    """Strip the given tag to a version-only format.
+
+    It omits the 'v' prefix and '-1' suffix. The latter is only used by packaging systems and
+    unnecessary in this context.
+
+    :type tag: str
+    :return: `None` or the stripped git tag
+    """
+    hits = re.findall(r'v?([^\-]+)(-\d)?', tag)
+    return hits[0][0] if hits else None  # Return first hit of first group or None.
+
+
+def _get_current_revision_hash(repo_dir):
+    """Retrieve the hash of the current revision.
+
+    Returns the long hash of the currently active revision of the given
+    repository directory.
+
+    :type repo_dir: str
+    """
+    result = process_run(['git', 'rev-parse', 'HEAD'], cwd=repo_dir)
+    return result.stdout.strip()
+
+
+def _commit_changes(commit_msg, repo_dir):
+    """
+    :type commit_msg: str
+    :type repo_dir: str
+    :rtype: ProcessResult
+    """
+    process_run(['git', 'add', '--all'], cwd=repo_dir)
+    return process_run(['git', 'commit', '-s', '-a', '-m', commit_msg], cwd=repo_dir)
+
+
+def _push_changes(repo_dir):
+    process_run(['git', 'push'], cwd=repo_dir)
+    process_run(['git', 'push', '--tags'], cwd=repo_dir)
+
+
+def _git_reset_hard(revision, cwd=None):
+    for cmd in [['git', 'fetch'],
+                ['git', 'checkout', revision],
+                ['git', 'reset', '--hard', revision],
+                ['git', 'clean', '-dfx']]:
+        process_run(cmd, cwd=cwd)
+
+
+def _is_debian_or_derivative():
+    return platform.linux_distribution()[0].lower() in ('ubuntu', 'debian')
+
+
+def adapt_debian_changelog(release_channel, version, pkgdate, revision, tarball_source_dir):
+    # Provide necessary information.
+    env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
+    if release_channel == 'stable':
+        newversion = version
+        msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
+        distribution = 'unstable'
+    else:
+        newversion = version + '~' + pkgdate
+        msg = 'Automatic build based on the state in Git as of %s (%s)' % (pkgdate, revision)
+        distribution = 'nightly'
+
+    # Adapt the `debian/changelog` file via `debchange`.
+    process_run(
+        [
+            'debchange',
+            '--distribution',
+            distribution,
+            '--force-distribution',
+            '--force-bad-version',  # Allows the version to be lower than the current one.
+            '--newversion',
+            newversion,
+            msg,
+        ],
+        cwd=tarball_source_dir,
+        env=env)
 
 
 class DistBuilder(object):
     OA_CACHE_REPO_URL = 'https://bitbucket.org/openattic/oa_cache'
+    NPM_PREFIX_EQUALS_NODE = 'prefix = ~/.node'
 
     def __init__(self, args=None):
         self._home_dir = os.environ['HOME']
@@ -289,8 +391,7 @@ class DistBuilder(object):
             destination = os.path.expanduser(self._args['--destination'])
             self._destination_dir = os.path.abspath(destination)
         self._source = self._args['--source']
-        self._source_is_path = not DistBuilder.is_url(self._source)
-        if self._source_is_path:
+        if not is_url(self._source):
             self._source = os.path.expanduser(self._source)
             self._source = os.path.abspath(self._source)
         self._tmp_dir = os.path.join(tempfile.gettempdir(), 'oa_tmp_build_dir')
@@ -299,100 +400,21 @@ class DistBuilder(object):
         self._package_json_path = os.path.join(self._tmp_oa_clone_dir, 'webui', 'package.json')
         self._bower_json_path = os.path.join(self._tmp_oa_clone_dir, 'webui', 'bower.json')
 
-        self._verbosity = VERBOSITY_NORMAL
         if self._args['-q']:
-            self._verbosity = VERBOSITY_QUIET
+            log.setLevel(logging.WARNING)
         elif self._args['-v']:
-            self._verbosity = VERBOSITY_VERBOSE
+            log.setLevel(logging.DEBUG)
         elif self._args['-s']:
-            self._verbosity = VERBOSITY_SCRIPT
+            log.setLevel(logging.ERROR)
 
         self._npmrc_file_path = os.path.join(self._home_dir, '.npmrc')
-        self._npm_prefix_row = 'prefix = ~/.node'
         self._fe_cache_dir = os.path.join(self._home_dir, '.cache', 'openattic-build', 'oa_cache')
-        self._process = Process(self._verbosity)
         self._datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
 
-    def _log(self, message):
-        if self._verbosity > 0:
-            print message
-
-    @staticmethod
-    def is_url(string):
-        assert type(string) is str
-        return urlparse(string).netloc != ''
-
-    @staticmethod
-    def _warn(message):
-        sys.stderr.write('\033[103;30m{}\033[0m{}'.format(message, os.linesep))
-
-    def _command_exists(self, command):
-        return self._process.run(['which', command], exit_on_error=False).success()
-
-    def _rmtree(self, path, **kwargs):
-        force = '' if 'ignore_errors' not in kwargs.keys() else 'f'
-        self._process.log_command(['rm', '-r{}'.format(force), path])
-        rmtree(path, **kwargs)
-
-    def _copytree(self, *args, **kwargs):
-        self._process.log_command(['cp', '-r'] + list(args))
-        copytree(*args, **kwargs)
-
-    def _check_dependencies(self, commands):
-        """Check the existence of the given commands.
-
-        Fails if any command does not exist.
-
-        :param commands: A list of commands
-        :type commands: list[str]
-        """
-        for command in commands:
-            if not self._command_exists(command):
-                self._fail('Command %s not found!' % command)
-
-    def _get_latest_tag_of_rev(self):
-        """Return the latest global tag of the currently activated revision."""
-        result = self._process.run(['git' 'describe' '--tags', '--abbrev=0'],
-                             cwd=self._tmp_oa_clone_dir)
-        return result.stdout
-
-    def __get_all_tags(self, source_dir):
-        """Retrieve all tags of the specified git source directory.
-
-        This function returns the latest tags independent from the currently activated revision
-        of the given `source_dir`.
-
-        :param source_dir: A path to a git source directory
-        :type source_dir: str
-        :return: A list of tags
-        """
-        self._process.run(['git', 'fetch'], cwd=source_dir)
-        return self._process.run(['git', 'tag', '-l'], cwd=source_dir).stdout.splitlines()
-
-    def _git_reset_hard(self, revision, cwd=None):
-        for cmd in [['git', 'fetch'],
-                    ['git', 'checkout', revision],
-                    ['git', 'reset', '--hard', revision],
-                    ['git', 'clean', '-dfx']]:
-            self._process.run(cmd, cwd=cwd)
-
-    @staticmethod
-    def _get_md5_of_file(file_name):
-        return md5(open(file_name, 'r').read()).hexdigest()
-
-    @staticmethod
-    def _sort_version_number_desc(iterable):
-        def extract_version_numbers(entry):
-            match = re.search(r'v?([\d]+)\.([\d]+)\.([\d]+).*', entry)
-            return map(int, match.groups()) if match else None
-
-        return sorted(iterable, key=extract_version_numbers, reverse=True)
-
     def _get_latest_existing_tag(self, strip_tag=False):
-        tags = self.__get_all_tags(self._tmp_oa_clone_dir)
-        tags = filter(None, tags)  # Remove every item that evaluates to False.
-        latest_tag = self._sort_version_number_desc(tags)[0]
-        latest_tag = self._strip_git_tag(latest_tag) if strip_tag else latest_tag
+        tags = _get_all_tags(self._tmp_oa_clone_dir)
+        latest_tag = _sort_version_number_desc(tags)[0]
+        latest_tag = _strip_repo_tag(latest_tag) if strip_tag else latest_tag
 
         return latest_tag
 
@@ -412,7 +434,7 @@ class DistBuilder(object):
             # Update to the given revision before determining the upcoming version. Don't do this if
             # the source is a path, because that one is for creating tarballs to be tested before
             # releasing them.
-            self._process.run(['git', 'checkout', revision], cwd=self._tmp_oa_clone_dir)
+            process_run(['git', 'checkout', revision], cwd=self._tmp_oa_clone_dir)
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -453,7 +475,7 @@ class DistBuilder(object):
             npmrc.truncate()
             result = []
             for row in content:
-                if self._npm_prefix_row not in row:
+                if self.NPM_PREFIX_EQUALS_NODE not in row:
                     result.append(row)
             npmrc.write(os.linesep.join(result))
 
@@ -466,34 +488,25 @@ class DistBuilder(object):
 
         # Extend .npmrc appropriately or create it.
         def write_npmrc(fd):
-            fd.write(self._npm_prefix_row + os.linesep)
+            fd.write(self.NPM_PREFIX_EQUALS_NODE + os.linesep)
 
         if not isfile(self._npmrc_file_path):
             with open(self._npmrc_file_path, 'w') as npmrc:
                 write_npmrc(npmrc)
-                self._log('File .npmrc has been created.')
+                log.info('File .npmrc has been created.')
         else:
             with open(self._npmrc_file_path, 'r+') as npmrc:
-                if self._npm_prefix_row not in npmrc.read():
+                if self.NPM_PREFIX_EQUALS_NODE not in npmrc.read():
                     write_npmrc(npmrc)
-                    self._log('File .npmrc has been extended.')
+                    log.info('File .npmrc has been extended.')
 
         # Extend PATH variable.
         os.environ['PATH'] = os.environ['PATH'] + ':' + os.path.join(self._home_dir, '.node/bin')
-        self._process.run(['bash', '-c', 'hash -r'])
+        process_run(['bash', '-c', 'hash -r'])
 
         # Check for the existence of grunt.
-        if not self._command_exists('grunt'):
-            self._process.run(['npm', 'install', '-g', 'grunt-cli'])
-
-    @staticmethod
-    def _fail(message):
-        """Write a message to stderr and exit.
-
-        :type message: str
-        """
-        sys.stderr.write('\033[101;10m{}\033[0m{}'.format(message, os.linesep))
-        sys.exit(2)
+        if not _command_exists('grunt'):
+            process_run(['npm', 'install', '-g', 'grunt-cli'])
 
     def _retrieve_source(self, source, destination_dir, skip_if_exists=False):
         """Clone or copy the sources to the specified directory.
@@ -512,33 +525,13 @@ class DistBuilder(object):
 
         if isdir(destination_dir) and skip_if_exists:
             msg = 'Skipping retrieval of {} because it already exists in {}'
-            self._log(msg.format(source, destination_dir))
+            log.info(msg.format(source, destination_dir))
             return
 
-        if self._source_is_path:
-            self._copytree(source, destination_dir, symlinks=True)
+        if is_url(source):
+            process_run(['git', 'clone', source, destination_dir])
         else:
-            self._process.run(['git', 'clone', source, destination_dir])
-
-    @staticmethod
-    def _strip_git_tag(tag):
-        """Strip the given tag to a version-only format.
-
-        It omits the 'v' prefix and '-1' suffix. The latter is only used by packaging systems and
-        unecessary in this context.
-
-        :param tag:
-        :type tag: str
-        :return: `None` or the stripped git tag
-        """
-        hits = re.findall(r'v?([^\-]+)(-\d)?', tag)
-        return hits[0][0] if hits else None  # Return first hit of first group or None.
-
-    def _is_existing_tag(self, tag):
-        result = self._process.run(['git', 'tag', '-l'], cwd=self._tmp_oa_clone_dir)
-        matches = re.findall(r'([^\s]+)\s+[^\s]+', result.stdout)
-
-        return tag in matches if matches else False
+            _copytree(source, destination_dir, symlinks=True)
 
     def _get_build_basename(self, channel, version, suffix=''):
         """Return the base name for the given revision.
@@ -576,18 +569,18 @@ class DistBuilder(object):
 
         # Clean up previous versions.
         if isdir(tmp_abs_build_dir):
-            self._rmtree(tmp_abs_build_dir)
+            _rmtree(tmp_abs_build_dir)
         if isfile(abs_tarball_dest_file):
-            self._process.log_command(['rm', abs_tarball_dest_file])
+            log_command(['rm', abs_tarball_dest_file])
             os.remove(abs_tarball_dest_file)
 
         # /destination/path/
         # Otherwise, this command will do something different
         tmp_abs_build_dir = tmp_abs_build_dir if tmp_abs_build_dir.endswith('/') \
             else tmp_abs_build_dir + '/'
-        self._process.run(['git', 'checkout-index', '-a', '-f', '--prefix=' + tmp_abs_build_dir],
-                          cwd=self._tmp_oa_clone_dir)
-        self._process.run(['git', 'pull'], cwd=self._fe_cache_dir)
+        process_run(['git', 'checkout-index', '-a', '-f', '--prefix=' + tmp_abs_build_dir],
+                    cwd=self._tmp_oa_clone_dir)
+        process_run(['git', 'pull'], cwd=self._fe_cache_dir)
 
         cache = [{
             'name': 'npm',
@@ -606,33 +599,33 @@ class DistBuilder(object):
             if not isfile(cache_entry['checksum_file']):
                 msg = "Couldn't find file %s for cache checksum. Skipping the frontend build " + \
                       "process!"
-                self._warn(msg % cache_entry['checksum_file'])
+                log.warning(msg % cache_entry['checksum_file'])
                 cache_used = False
                 break
 
-            md5_sum = self._get_md5_of_file(cache_entry['checksum_file'])
+            md5_sum = _get_md5_of_file(cache_entry['checksum_file'])
             cache_dir = os.path.join(self._fe_cache_dir, cache_entry['name'], md5_sum)
             if not isdir(cache_dir):
                 log_msg = 'No cache found for {}'
-                self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
-                self._process.run(cache_entry['command'], cwd=webui_dir)
-                self._copytree(cache_entry['source_dir'], cache_dir)  # Update cache dir.
+                log.info(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
+                process_run(cache_entry['command'], cwd=webui_dir)
+                _copytree(cache_entry['source_dir'], cache_dir)  # Update cache dir.
             else:
                 log_msg = 'Cache found for {}. Copying files...'
-                self._log(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
-                self._copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
+                log.info(log_msg.format(os.path.basename(cache_entry['checksum_file'])))
+                _copytree(cache_dir, cache_entry['source_dir'])  # Use cache dir.
 
         if cache_used:  # Build the frontend files.
-            self._process.run(['grunt', 'build'], cwd=webui_dir)
+            process_run(['grunt', 'build'], cwd=webui_dir)
 
             # Remove no longer required dirs.
-            self._rmtree(bower_components_dir)
-            self._rmtree(node_modules_dir)
+            _rmtree(bower_components_dir)
+            _rmtree(node_modules_dir)
 
         # Update version.txt.
         data = {
             'BUILDDATE': self._datestring,
-            'REV': self._get_current_revision_hash(self._tmp_oa_clone_dir),
+            'REV': _get_current_revision_hash(self._tmp_oa_clone_dir),
             'STATE': self._get_release_channel(),
         }
         with file(os.path.join(tmp_abs_build_dir, 'version.txt'), 'a') as f:
@@ -641,69 +634,37 @@ class DistBuilder(object):
 
         # Compress the directory into the tarball file.
         options = 'cjf'
-        options += 'v' if self._verbosity > 1 else ''
+        options += 'v' if log.level <= logging.DEBUG else ''
 
         # Make sure the directory exists where the tarball should be placed into.
         abs_tarball_dest_path = os.path.split(abs_tarball_dest_file)[0]
         if not os.path.isdir(abs_tarball_dest_path):
-            self._process.log_command(['mkdir', '-p', abs_tarball_dest_path])
+            log_command(['mkdir', '-p', abs_tarball_dest_path])
             makedirs(abs_tarball_dest_path)
 
-        self._process.run(['tar', options, abs_tarball_dest_file, build_basename],
-                          cwd=self._tmp_dir)
+        process_run(['tar', options, abs_tarball_dest_file, build_basename],
+                    cwd=self._tmp_dir)
 
-        self._rmtree(tmp_abs_build_dir)  # Remove no longer required temporary folder.
+        _rmtree(tmp_abs_build_dir)  # Remove no longer required temporary folder.
 
         return abs_tarball_dest_file
 
-    def _get_current_revision_hash(self, repo_dir):
-        """Retrieve the hash of the current revision.
-
-        Returns the long hash of the currently active revision of the given repository directory.
-
-        :param repo_dir: The directory of the repository
-        :type repo_dir: str
-        :return: The long hash of the current changeset
-        """
-        result = self._process.run(['git', 'rev-parse', 'HEAD'], cwd=repo_dir)
-        return result.stdout.strip()
-
-    def _commit_changes(self, commit_msg, repo_dir, user='Build Scripts', exit_on_error=False):
-        """
-        :type commit_msg: str
-        :type repo_dir: str
-        :type user: str
-        :type exit_on_error: bool
-        :rtype: ProcessResult
-        """
-        self._process.run(['git', 'add', '--all'])
-        return self._process.run(['git', 'commit', '-s', '-a', '-m', commit_msg],
-                                 cwd=repo_dir,
-                                 exit_on_error=exit_on_error)
-
-    def _push_changes(self, repo_dir):
-        self._process.system(['git', 'push'], cwd=repo_dir)
-        return self._process.system(['git', 'push', '--tags'], cwd=repo_dir)
-
     def _get_release_channel(self):
         return 'release' if self._args['release'] else 'snapshot'
-
-    @staticmethod
-    def _is_debian_or_derivative():
-        return platform.linux_distribution()[0].lower() in ('ubuntu', 'debian')
 
     def build(self):
         """
         :return: The absolute file path of the newly created tarball.
         """
-        self._check_dependencies(['npm'])
+        _check_dependencies(['npm'])
         self._set_npmrc_prefix()
 
-        self._retrieve_source(DistBuilder.OA_CACHE_REPO_URL, self._fe_cache_dir, skip_if_exists=True)
-        self._process.run(['git', 'pull'], cwd=self._fe_cache_dir)
+        self._retrieve_source(DistBuilder.OA_CACHE_REPO_URL,
+                              self._fe_cache_dir, skip_if_exists=True)
+        process_run(['git', 'pull'], cwd=self._fe_cache_dir)
 
-        if self._source_is_path and isdir(self._tmp_oa_clone_dir):
-            self._rmtree(self._tmp_oa_clone_dir)
+        if not is_url(self._source) and isdir(self._tmp_oa_clone_dir):
+            _rmtree(self._tmp_oa_clone_dir)
         self._retrieve_source(self._source, self._tmp_oa_clone_dir, skip_if_exists=True)
 
         channel = self._get_release_channel()
@@ -716,20 +677,24 @@ class DistBuilder(object):
 
         tmp_files_commited = False
         repo_updated = False
-        if self._source_is_path:
-            tmp_files_commited = self._commit_changes('Testbuild', self._tmp_oa_clone_dir).success()
+        if not is_url(self._source):
+            try:
+                _commit_changes('Testbuild', self._tmp_oa_clone_dir)
+                tmp_files_commited = True
+            except Exception:
+                log.exception('failed to commit. Ignoring')
 
             if self._args['--revision']:
                 if tmp_files_commited:
-                    self._warn('Ignoring the --revision switch because you have uncommitted files '
-                               'in your local repository which are about to be used to create the '
-                               'tarball. If I updated to the given revision, these changes '
-                               'wouldn\'t be included in the tar archive anymore.')
+                    log.warning('Ignoring the --revision switch because you have uncommitted files '
+                                'in your local repository which are about to be used to create the '
+                                'tarball. If I updated to the given revision, these changes '
+                                'wouldn\'t be included in the tar archive anymore.')
                 else:
-                    self._git_reset_hard(revision, self._tmp_oa_clone_dir)
+                    _git_reset_hard(revision, self._tmp_oa_clone_dir)
                     repo_updated = True
         else:
-            self._git_reset_hard(revision, self._tmp_oa_clone_dir)
+            _git_reset_hard(revision, self._tmp_oa_clone_dir)
             repo_updated = True
 
         version = self._get_version_of_revision(revision, update_allowed=repo_updated)
@@ -741,92 +706,68 @@ class DistBuilder(object):
             if debchange_installed:
                 enable_debchange = True
             else:
-                self._fail('`debchange` wasn\'t found, but `--adapt-debian-changelog` has been '
-                           'specified. You may either install the executable (usually in the'
-                           '`devscripts` package) or deactivate the `--adapt-debian-changelog` '
-                           'switch.')
-        elif self._is_debian_or_derivative():
+                raise Exception('`debchange` wasn\'t found, but `--adapt-debian-changelog` has '
+                                'been specified. You may either install the executable (usually in '
+                                'the `devscripts` package) or deactivate the '
+                                '`--adapt-debian-changelog` switch.')
+        elif _is_debian_or_derivative():
             if debchange_installed:
-                self._warn('The --adapt-debian-changelog switch has automatically been enabled '
-                           'for you because you are using Debian or a derivative of it.')
+                log.warning('The --adapt-debian-changelog switch has automatically been enabled '
+                            'for you because you are using Debian or a derivative of it.')
                 enable_debchange = True
             else:
-                self._warn('`debchange` executable wasn\'t found. The `debian/changelog` cannot '
-                           'be adapted without it. You\'ll be able to build the tar archive but '
-                           'you may not be able to create a Debian package with it because of '
-                           'mismatching version information.')
+                log.warning('`debchange` executable wasn\'t found. The `debian/changelog` cannot '
+                            'be adapted without it. You\'ll be able to build the tar archive but '
+                            'you may not be able to create a Debian package with it because of '
+                            'mismatching version information.')
 
         if enable_debchange:
             debian_channel = 'stable' if channel == 'release' else 'nightly'
-            self.adapt_debian_changelog(debian_channel,
-                                        version + ('-1' if channel == 'release' else ''),
-                                        self._datestring,
-                                        self._get_current_revision_hash(self._tmp_oa_clone_dir),
-                                        self._tmp_oa_clone_dir)
-            self._commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
+            adapt_debian_changelog(debian_channel,
+                                   version + ('-1' if channel == 'release' else ''),
+                                   self._datestring,
+                                   _get_current_revision_hash(self._tmp_oa_clone_dir),
+                                   self._tmp_oa_clone_dir)
+            _commit_changes('Update `debian/changelog` for release', self._tmp_oa_clone_dir)
 
         if self._args['--tag']:
-            self._process.run(['git', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
+            process_run(['git', 'tag', 'v{}-1'.format(version)], cwd=self._tmp_oa_clone_dir)
 
         if self._args['--push-changes']:
             # Push the changes after the tarball has successfully been created.
             if not tmp_files_commited:
-                self._push_changes(self._tmp_oa_clone_dir)
+                _push_changes(self._tmp_oa_clone_dir)
             else:
-                self._warn('Ignoring the --push-changes switch because temporary files of the given'
-                           ' source have been comitted.')
+                log.warning('Ignoring the --push-changes switch because temporary files of the '
+                            'given source have been committed.')
 
         abs_tarball_file_path = self._create_source_tarball(build_basename)
 
-        self._rmtree(self._tmp_oa_clone_dir)
+        if self._args['--sign']:
+            process_run(['gpg', '--detach-sign', abs_tarball_file_path])
+
+        _rmtree(self._tmp_oa_clone_dir)
         self._remove_npmrc_prefix()
 
         return abs_tarball_file_path
 
     def run(self):
         if self._args['help']:
-            print __doc__
+            print(__doc__)
             sys.exit(0)
         elif self._args['cache'] and self._args['push']:
-            self._commit_changes('Update cache', self._fe_cache_dir)
-            self._push_changes(self._fe_cache_dir)
+            _commit_changes('Update cache', self._fe_cache_dir)
+            _push_changes(self._fe_cache_dir)
         elif self._args['create']:
             abs_tarball_file_path = self.build()
-            if self._verbosity == -1:
-                print abs_tarball_file_path
+            if log.level >= logging.ERROR:
+                print(abs_tarball_file_path)
             else:
-                print 'Tarball has been created: %s' % abs_tarball_file_path
+                print('Tarball has been created: %s' % abs_tarball_file_path)
 
     @staticmethod
     def get_basename(source):
         return os.path.basename(os.path.normpath(source))
-
-    def adapt_debian_changelog(self, release_channel, version, pkgdate, hg_id, tarball_source_dir):
-        # Provide necessary information.
-        env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon'}
-        if release_channel == 'stable':
-            newversion = version
-            msg = 'New upstream release {}, see CHANGELOG for details'.format(version)
-            distribution = 'unstable'
-        else:
-            newversion = version + '~' + pkgdate
-            msg = 'Automatic build based on the state in Git as of %s (%s)' % (pkgdate, hg_id)
-            distribution = 'nightly'
-
-        # Adapt the `debian/changelog` file via `debchange`.
-        self._process.run(
-            [
-                'debchange',
-                '--distribution',
-                distribution,
-                '--force-distribution',
-                '--force-bad-version',  # Allows the version to be lower than the current one.
-                '--newversion',
-                newversion,
-                msg,
-            ],
-            cwd=tarball_source_dir,
-            env=env)
 
 
 class DistBuilderTestCase(unittest.TestCase):
@@ -883,9 +824,10 @@ class DistBuilderTestCase(unittest.TestCase):
             'v0.7.3'
         ]
         self.assertNotEqual(version_numbers, expected)
-        self.assertEqual(DistBuilder._sort_version_number_desc(version_numbers), expected)
+        self.assertEqual(_sort_version_number_desc(version_numbers), expected)
 
 
 if __name__ == '__main__':
+    setup_logging()
     dist_builder = DistBuilder()
     dist_builder.run()

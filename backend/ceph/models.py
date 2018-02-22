@@ -238,6 +238,16 @@ def fsid_context(fsid):
         NodbManager.set_nodb_context(previous_context)
 
 
+def get_ceph_version(version_file='/usr/bin/ceph', version_variable='CEPH_GIT_NICE_VER'):
+    try:
+        version_line = [line for line in open(version_file) if line.startswith(version_variable)]
+        version = version_line[0].split('=', 1)[1].strip().replace('"', '').split('.')
+    except Exception:
+        version = [10, 0, 0]
+
+    return version
+
+
 class CephPool(NodbModel, RadosMixin):
 
     id = models.IntegerField(primary_key=True, editable=False)
@@ -261,6 +271,7 @@ class CephPool(NodbModel, RadosMixin):
     num_objects = models.IntegerField(editable=False, blank=True)
     max_avail = models.IntegerField(editable=False, blank=True)
     kb_used = models.IntegerField(editable=False, blank=True)
+    percent_used = models.FloatField(editable=False, blank=True, default=None)
     stripe_width = models.IntegerField(editable=False, blank=True)
     cache_mode = models.CharField(max_length=100, choices=[(c, c) for c in
                                                            'none|writeback|forward|readonly|'
@@ -336,7 +347,7 @@ class CephPool(NodbModel, RadosMixin):
 
         return result
 
-    @bulk_attribute_setter(['max_avail', 'kb_used'])
+    @bulk_attribute_setter(['max_avail', 'kb_used', 'percent_used'])
     def ceph_df(self, pools, field_names):
         fsid = self.cluster.fsid
         df_data = self.mon_api(fsid).df()
@@ -351,9 +362,11 @@ class CephPool(NodbModel, RadosMixin):
             if pool.id in df_per_pool:
                 pool.max_avail = df_per_pool[pool.id]['max_avail']
                 pool.kb_used = df_per_pool[pool.id]['kb_used']
+                pool.percent_used = self._calc_percent_used(pool, df_data['stats'], df_per_pool[pool.id])
             else:
                 pool.max_avail = None
                 pool.kb_used = None
+                pool.percent_used = None
 
     @bulk_attribute_setter(['num_bytes', 'num_objects'],
                            catch_exceptions=librados.rados.ObjectNotFound)
@@ -361,6 +374,31 @@ class CephPool(NodbModel, RadosMixin):
         stats = call_librados(self.cluster.fsid, lambda client: client.get_stats(self.name))
         self.num_bytes = stats['num_bytes'] if 'num_bytes' in stats else None
         self.num_objects = stats['num_objects'] if 'num_objects' in stats else None
+
+    @staticmethod
+    def _calc_percent_used(pool, df_data_global, df_data_pool):
+        if df_data_pool['bytes_used'] == 0:
+            return 0
+
+        # Calculate the current object copies rate
+        if pool.type == 'replicated':
+            curr_object_copies_rate = df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * pool.size)
+        else:
+            curr_object_copies_rate = df_data_pool['raw_bytes_used'] / (df_data_pool['bytes_used'] * (
+                (pool.erasure_code_profile.m + pool.erasure_code_profile.k) / pool.erasure_code_profile.k))
+
+        # Get the current Ceph version because there are different formulas for the calculation of the %used in the
+        # Jewel and Luminous releases
+        version = get_ceph_version()
+
+        # Calculate the %used value
+        if int(version[0]) >= 12:
+            # Luminous release
+            return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / (df_data_pool['bytes_used'] +
+                                                                                 df_data_pool['max_avail'])
+        else:
+            # Jewel release
+            return df_data_pool['bytes_used'] * 100 * curr_object_copies_rate / df_data_global['total_bytes']
 
     def __unicode__(self):
         return self.name
@@ -809,30 +847,34 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
     @bulk_attribute_setter(['used_size'])
     def set_disk_usage(self, objects, field_names):
-        fsid = self.pool.cluster.fsid
-        pool_name = self.pool.name
+        self.used_size = None
 
-        if len(TaskQueue.filter_by_definition_and_status(
+        if self.features is None or 'fast-diff' in self.features:
+            fsid = self.pool.cluster.fsid
+            pool_name = self.pool.name
+
+            if len(TaskQueue.filter_by_definition_and_status(
+                    ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
+                    [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) == 0:
+                ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
+
+            tasks = TaskQueue.filter_by_definition_and_status(
                 ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
-                [TaskQueue.STATUS_NOT_STARTED, TaskQueue.STATUS_RUNNING])) == 0:
-            ceph.tasks.get_rbd_performance_data.delay(fsid, pool_name, self.name)
+                [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
+            tasks = list(tasks)
+            disk_usage = dict()
 
-        tasks = TaskQueue.filter_by_definition_and_status(
-            ceph.tasks.get_rbd_performance_data(fsid, pool_name, self.name),
-            [TaskQueue.STATUS_FINISHED, TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED])
-        tasks = list(tasks)
-        disk_usage = dict()
+            if len(tasks) > 0:
+                latest_task = tasks.pop()
 
-        if len(tasks) > 0:
-            latest_task = tasks.pop()
+                for task in tasks:
+                    task.delete()
 
-            for task in tasks:
-                task.delete()
+                if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
+                    disk_usage, _exec_time = latest_task.json_result
 
-            if latest_task.status not in [TaskQueue.STATUS_EXCEPTION, TaskQueue.STATUS_ABORTED]:
-                disk_usage, _exec_time = latest_task.json_result
-
-        self.used_size = disk_usage['used_size'] if 'used_size' in disk_usage else 0
+            if 'used_size' in disk_usage:
+                self.used_size = disk_usage['used_size']
 
     def save(self, *args, **kwargs):
         """
@@ -861,6 +903,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
+
+            if insert:
+                self.features = original.features
 
             for key, value in diff.items():
                 if key == 'size':

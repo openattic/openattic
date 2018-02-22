@@ -40,6 +40,7 @@ BuildRequires: postgresql
 BuildRequires: postgresql-server
 BuildRequires: pnp4nagios
 BuildRequires: pnp4nagios-icinga
+BuildRequires: python
 BuildRequires: rsync
 #Requires:	%{name}-module-cron
 #Requires:	%{name}-module-http
@@ -418,6 +419,7 @@ install -d 755 %{buildroot}%{_libdir}/nagios/plugins
 #install -m 755 backend/nagios/plugins/check_cephpool %{buildroot}%{_libdir}/nagios/plugins
 #install -m 755 backend/nagios/plugins/check_cephrbd %{buildroot}%{_libdir}/nagios/plugins
 
+%py_compile %{buildroot}%{_datadir}/%{name}
 
 # Install Web UI
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
@@ -676,7 +678,7 @@ systemctl start lvm2-lvmetad
 %{nagios_plugindir}/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
-%attr(0644, -, -) %{_datadir}/%{name}/nagios/restapi.py
+%attr(0644, -, -) %{_datadir}/%{name}/nagios/restapi.py*
 
 %post module-icinga
 chkconfig icinga on
