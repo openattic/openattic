@@ -15,9 +15,7 @@
 import os
 import glob
 import sys
-from make_dist import Process, VERBOSITY_VERBOSE
-
-process = Process(verbosity=VERBOSITY_VERBOSE)
+from make_dist import process_run
 
 home_dir = os.path.expanduser('~')
 build_deb_packages_py_path = os.path.join(os.path.dirname(sys.argv[0]), 'build_deb_packages.py')
@@ -30,6 +28,6 @@ for i, tarball in enumerate(tarballs):
     msg = 'Creating package {} of {}'.format(i+1, len(tarballs))
     print msg
     print '=' * len(msg) + '\n'
-    process.run(['/usr/bin/python', build_deb_packages_py_path, tarball])
+    process_run(['/usr/bin/python', build_deb_packages_py_path, tarball])
     print
 

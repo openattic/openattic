@@ -16,17 +16,49 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[2.0.21] - 2018-02-21
+---------------------
+
+Added
+~~~~~
+* Packaging: make_dist.py: Added `--sign` option to sign tarballs with GPG
+  (OP-2124)
+* Backend: Corrected `openattic-systemd.service` file. (OP-2570)
+
+Changed
+~~~~~~~
+* Backend: Corrected num_bytes unit in check_cephpool Nagios plugin (OP-1532)
+* Backend/WebUI: The monitoring of RBDs without 'fast-diff' feature has been
+  disabled due to performance reasons (OP-2141, OP-2223)
+* Packaging: back-ported a number of improvements to `make_dist.py`, to keep
+  it in sync with the master branch and to simplify the packaging process. (OP-2056)
+
+Fixed
+~~~~~
+* WebUI: Redirect to dashboard when an authenticated user navigates to login page.
+  Thanks to Raúl Vega for the contribution. (OP-2029)
+* ``oaconfig install`` does no longer fail if a Ceph cluster is inaccessible 
+  while updating the Nagios configs (OP-2291)
+* Backend: Fix an issue in a multinode setup caused by an newer DRF
+  version in Ubuntu 16.04.(OP-2138)
+* Backend: Add formulas to calculate the usage of a Ceph pool correctly (for 
+  Ceph Luminous and Jewel) (OP-2128)
+* Backend: Fixed error in `get_rbd_performance_data` task by catching an 
+  exception (OP-2057)
+* Packaging: Enable byte-compiling the Python files during RPM packaging
+  (OP-2167)
+* Packaging: Fix internal commit functionality of `make_dist.py` (OP-2227)
+
 [2.0.20] - 2017-04-26
 ---------------------
 
 Added
 ~~~~~
 * Development: Added Ceph support to the Vagrant configuration (OP-2048)
-* Development: Support for 'variable' id attribute on 'required' directive
-  (OP-1993)
-* Development: Added delete confirmation modal component (OP-2013)
 * WebUI: Improved javascript error handling by notifying the user via toasty
   error messages (OP-1926)
+* WebUI: Support for 'variable' id attribute on 'required' directive (OP-1993)
+* WebUI: Added delete confirmation modal component (OP-2013)
 * Documentation: Split installation instructions for Debian and Ubuntu, to make
   use of Ubuntu's `add-apt-repository`
 * Documentation: Instructions to backport commits into a stable release branch
@@ -56,6 +88,8 @@ Fixed
 * WebUI: Fix incomplete delete confirmation message (OP-2061)
 * Documentation: Updated developer documentation for git (OP-2054)
 * Packaging: make_dist.py: Fixed building of non-local git branches (OP-2106)
+* Packaging: Fix error that prevented to use local sources
+  to create tar archives using make_dist.py (OP-2140)
 * Development: Fixed Django unit tests (OP-1983)
 
 [2.0.19] - 2017-03-24

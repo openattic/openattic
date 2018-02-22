@@ -14,6 +14,8 @@
 """
 
 import os
+from subprocess import CalledProcessError
+
 import mock
 import tempfile
 import json
@@ -23,6 +25,7 @@ from django.test import TestCase
 
 import ceph.models
 import ceph.librados
+import ceph.tasks
 import nodb.models
 
 from ceph.librados import Keyring, undoable, undo_transaction
@@ -421,3 +424,24 @@ class CephPoolSerializerTest(TestCase):
                     self.assertIn(key, s.errors)
                 else:
                     self.assertTrue(s.is_valid(), 'pool={} errors={}'.format(pool, s.errors))
+
+
+class PerformanceTaskTest(TestCase):
+
+    @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
+    def test_simple(self, RbdApi_mock):
+        retval = {u'name': u'myrbd', u'provisioned_size': 1073741824, u'used_size': 0}
+        RbdApi_mock.return_value.image_disk_usage.return_value = retval
+        res = ceph.tasks.get_rbd_performance_data.call_now("3d693c97-d0e7-41d2-87e4-979fa4ebd10a",
+                                                           "mypool", "myrbd")
+        data, time = res
+        self.assertEqual(data, retval)
+
+    @mock.patch('ceph.tasks.librados.RbdApi', **{'return_value._undo_stack': None})
+    def test_exception(self, RbdApi_mock):
+        RbdApi_mock.return_value.image_disk_usage.side_effect \
+            = CalledProcessError(2, 'rbd')
+        res = ceph.tasks.get_rbd_performance_data.call_now("3d693c97-d0e7-41d2-87e4-979fa4ebd10a",
+                                                           "mypool", "myrbd")
+        data, time = res
+        self.assertEqual(data, {'provisioned_size': 0, 'used_size': 0})

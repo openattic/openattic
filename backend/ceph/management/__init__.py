@@ -17,6 +17,10 @@
 import re
 import os
 import os.path
+import logging
+
+from django.conf import settings
+
 import sysutils.models
 
 from ConfigParser import ConfigParser
@@ -27,6 +31,8 @@ from django.contrib.auth.models import User
 from ifconfig.models import IPAddress
 from ceph import models as ceph_models
 from volumes.models import StorageObject
+
+logger = logging.getLogger(__name__)
 
 
 def update(**kwargs):
@@ -196,16 +202,22 @@ def update(**kwargs):
     if "nagios" in settings.INSTALLED_APPS:
         from systemd import get_dbus_object
 
-        print "Updating Nagios configs: adding detected Ceph clusters"
+        print('Updating Nagios configs: adding detected Ceph clusters ...'),
 
         ceph = get_dbus_object("/ceph")
         nagios = get_dbus_object("/nagios")
 
-        ceph.remove_nagios_configs(["all"])
-        ceph.write_cluster_nagios_configs()
-        ceph.write_pool_nagios_configs()
-        ceph.write_rbd_nagios_configs()
-        nagios.restart_service()
+        try:
+            ceph.remove_nagios_configs(["all"])
+            ceph.write_cluster_nagios_configs()
+            ceph.write_pool_nagios_configs()
+            ceph.write_rbd_nagios_configs()
+            nagios.restart_service()
+            print('succeeded.')
+        except Exception:
+            print('failed. Please check the status of your cluster(s).')
+            logger.warning('Can\'t create, update or delete Nagios configuration files because of inaccessible Ceph '
+                           'cluster(s). Please check the status of your cluster(s).')
     else:
         print "Nagios does not appear to be installed, skipping adding Ceph clusters"
 

@@ -378,6 +378,8 @@ rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 
+%py_byte_compile %{__python2} %{buildroot}%{_datadir}/%{name}
+
 # Install Web UI
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
@@ -635,6 +637,7 @@ systemctl start lvm2-lvmetad
 %{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
+%attr(0644, -, -) %{_datadir}/%{name}/nagios/restapi.py*
 
 %post module-nagios
 systemctl daemon-reload
