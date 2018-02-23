@@ -2671,8 +2671,8 @@ msgid "The following users will be deleted:"
 msgstr "以下的用户都将被删除:"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:30
-msgid "The input value does not match 'yes'."
-msgstr "输入的值必须是 'yes'."
+msgid "The input value does not match '{{ $ctrl.input.pattern }}'."
+msgstr "输入的值必须是 '{{ $ctrl.input.pattern }}'."
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:7
 msgid "The list of buckets could not be loaded."
@@ -2974,11 +2974,9 @@ msgid ""
 msgstr "点击<kbd>生成</kbd>确定执行，点击取消则返回之前的页面。"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:9
-msgid ""
-"To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or "
-"cancel and return to the page."
+msgid "To confirm, please enter <kbd>{{ $ctrl.input.pattern }}</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page."
 msgstr ""
-"确认删除，请输入 <kbd>yes</kbd> 并点击<kbd>删除</kbd>，或点击取消返回之前的页"
+"确认删除，请输入 <kbd>{{ $ctrl.input.pattern }}</kbd> 并点击<kbd>删除</kbd>，或点击取消返回之前的页"
 "面。"
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:17
