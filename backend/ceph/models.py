@@ -500,7 +500,9 @@ class CephPool(NodbModel, RadosMixin):
                     for app in set(value) - set(original.application_metadata):
                         api.osd_pool_application_enable(self.name, app)
                 elif key == 'crush_ruleset':
-                    logger.info('Setting crush_ruleset` is not yet supported.')
+                    if value is not None:
+                        rule_name = CrushmapVersion.objects.get().crush_rule_name_by_id(value)
+                        api.osd_pool_set(self.name, 'crush_rule', rule_name)
                 elif self.type == 'replicated' and key not in \
                         ['name', 'erasure_code_profile_id'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
@@ -1086,3 +1088,6 @@ class CrushmapVersion(NodbModel):
                 crushtree["buckets"].append(cbucket)
 
         return crushtree
+
+    def crush_rule_name_by_id(self, id):
+        return [r for r in self.crushmap['rules'] if r['rule_id'] == id][0]['rule_name']
