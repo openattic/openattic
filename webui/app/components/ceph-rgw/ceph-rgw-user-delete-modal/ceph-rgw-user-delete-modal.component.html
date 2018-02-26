@@ -1,4 +1,5 @@
-<oa-delete-confirmation-modal on-confirm="$ctrl.deleteUser()"
+<oa-delete-confirmation-modal pattern="$ctrl.users[0].user_id"
+                              on-confirm="$ctrl.deleteUser()"
                               on-cancel="$ctrl.cancel()"
                               title="{{ ($ctrl.users.length > 1) ? 'Delete users' : 'Delete user' }}">
   <!-- single user -->

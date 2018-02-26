@@ -169,7 +169,7 @@ describe("ceph rgw users", () => {
 
   it('should delete the user "herpderp"', () => {
     element(by.cssContainingText("tr", testUser1.user_id)).click();
-    helpers.delete_selection(0, "$ctrl");
+    helpers.delete_selection(0, "$ctrl", "e2e_herpderp");
     expect(element(by.cssContainingText("tr", testUser1.user_id)).isPresent()).toBe(false);
   });
 
@@ -481,7 +481,7 @@ describe("ceph rgw users", () => {
 
   it('should delete the user "tuxdoe"', () => {
     element(by.cssContainingText("tr", testUser2.user_id)).click();
-    helpers.delete_selection(0, "$ctrl");
+    helpers.delete_selection(0, "$ctrl", "e2e_tuxdoe");
     expect(element(by.cssContainingText("tr", testUser2.user_id)).isPresent()).toBe(false);
   });
 

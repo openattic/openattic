@@ -115,12 +115,13 @@
      * Will delete the selected items, using the default test classes for this.
      * @param {number} dropdown Which dropdown to get. Defaults to 0.
      * @param {string} controllerName The name of the controller.
+     * @param {stzring} elementName The name of the element that should be deleted
      * @param {boolean} dialogIsShown If set to TRUE or FALSE, then it is checked
      *                                whether the dialog is displayed or not. If
      *                                set to TRUE, the deletion is confirmed by
      *                                entering 'yes'. Defaults to TRUE.
      */
-    delete_selection: function (dropdown, controllerName, dialogIsShown) {
+    delete_selection: function (dropdown, controllerName, elementName, dialogIsShown) {
       dropdown = dropdown || 0;
       dialogIsShown = (dialogIsShown === undefined) ? true : dialogIsShown;
       element.all(by.css(".tc_menudropdown")).get(dropdown).click();
@@ -134,7 +135,7 @@
       expect(enteredNameElement.isPresent()).toBe(dialogIsShown);
       // If the dialog is expected to be shown, then confirm the deletion.
       if (dialogIsShown) {
-        enteredNameElement.sendKeys("yes");
+        enteredNameElement.sendKeys(elementName);
         element(by.css(".tc_submitButton")).click();
       }
     },
