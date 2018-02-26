@@ -39,6 +39,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI/QA: Set chrome for e2e testing to US (OP-3142)
 * WebUI: Fix the pool deletion pool listing (OP-2980)
 * Backend: RestClient class does not handle IPv6 addresses properly (OP-2998)
 * WebUI/QA: Fix random error in 'general' e2e tests (OP-3013)
