@@ -102,7 +102,7 @@ exports.config = {
     defaultTimeoutInterval: 360000
   },
   framework: "jasmine2",
-  allScriptsTimeout: config.allScriptsTimeout || 60000,
+  allScriptsTimeout: config.allScriptsTimeout || 360000,
   suites: suites,
 
   // Setup the report before any tests start

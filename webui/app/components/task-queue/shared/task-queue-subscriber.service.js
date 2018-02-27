@@ -31,8 +31,9 @@
 "use strict";
 
 export default class TaskQueueSubscriber {
-  constructor ($q, taskQueueService) {
+  constructor ($q, $http, taskQueueService) {
     this.$q = $q;
+    this.$http = $http;
     this.taskQueueService = taskQueueService;
 
     this.pendingStatus = ["Not Started", "Running"];
@@ -59,7 +60,7 @@ export default class TaskQueueSubscriber {
   subscribe (taskId, callback) {
     let isWaiting = false;
     let stop = setInterval(() => {
-      if (!isWaiting) {
+      if (!isWaiting && this.$http.pendingRequests.length === 0) {
         isWaiting = true;
 
         this.taskQueueService.get({id: taskId})

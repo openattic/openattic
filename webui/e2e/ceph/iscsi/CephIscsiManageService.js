@@ -28,6 +28,8 @@
  * for the JavaScript code in this page.
  *
  */
+const helpers = require("../../common.js");
+
 class CephIscsiManageService {
 
   constructor () {
@@ -44,21 +46,24 @@ class CephIscsiManageService {
     this.manageServiceButton.click();
     browser.findElements(by.css(".tc_startService")).then(() => {
       this.startServiceButton.click();
-      this.waitForState(/.*Starting*/, 0);
-      this.waitForState(/.*Starting*/, 1);
+      this.waitForState("Running", 0);
       this.closeButton.click();
     }).catch(() => {
-      this.closeButton.click()
+      this.closeButton.click();
     });
   }
 
+  /**
+   * Waits until state @n reaches @state
+   *
+   * @param {any} state name of the desired state
+   * @param {any} n position of the state in the list
+   * @memberof CephIscsiManageService
+   */
   waitForState (state, n) {
-    this.state.get(n).getText().then((text) => {
-      if (text.match(state)) {
-        browser.sleep(1000);
-        this.waitForState(state, n);
-      }
-    });
+    let nState = this.state.get(n);
+    let nSpan = nState.element(by.cssContainingText("span span", state));
+    helpers.waitForElementVisible(nSpan);
   }
 }
 
