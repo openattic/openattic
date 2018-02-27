@@ -46,7 +46,7 @@ describe("ceph nfs", () => {
   it("should stop the NFS service", () => {
     manageService.manageServiceButton.click();
     manageService.stopServiceButton.get(0).click();
-    manageService.waitForState(/.*Stopping*/, 0);
+    manageService.waitForState("Stopped", 0);
     expect(manageService.state.get(0).getText()).toMatch(/.*Stopped.*/);
     manageService.closeButton.click();
   });
@@ -54,7 +54,7 @@ describe("ceph nfs", () => {
   it("should start the NFS service", () => {
     manageService.manageServiceButton.click();
     manageService.startServiceButton.get(0).click();
-    manageService.waitForState(/.*Starting*/, 0);
+    manageService.waitForState("Running", 0);
     expect(manageService.state.get(0).getText()).toMatch(/.*Running.*/);
     manageService.closeButton.click();
   });
