@@ -7,14 +7,14 @@
   <div class="openattic-modal-content">
     <span ng-transclude></span>
     <p translate>
-      To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
+      To confirm, please enter <kbd>{{ $ctrl.input.pattern }}</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page.
     </p>
     <div class="form-group"
          ng-class="{'has-error': ($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$invalid}">
       <input type="text"
              class="form-control"
              name="enteredName"
-             placeholder="{{ 'yes' | translate }}"
+             placeholder="{{ $ctrl.input.pattern }}"
              autocomplete="off"
              ng-model="$ctrl.input.enteredName"
              ng-pattern="$ctrl.input.pattern"
@@ -30,7 +30,7 @@
       <span translate
             class="help-block"
             ng-show="($ctrl.deleteForm.$submitted || $ctrl.deleteForm.enteredName.$dirty) && $ctrl.deleteForm.enteredName.$error.pattern">
-        The input value does not match 'yes'.
+        The input value does not match '{{ $ctrl.input.pattern }}'.
       </span>
       <!-- end Error -->
     </div>

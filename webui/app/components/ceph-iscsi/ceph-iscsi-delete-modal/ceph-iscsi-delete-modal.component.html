@@ -1,4 +1,5 @@
-<oa-delete-confirmation-modal title="{{ ($ctrl.resolve.iscsiTargetSelection.length > 1) ? 'Delete iSCSI target IQNs' : 'Delete iSCSI target IQN' }}"
+<oa-delete-confirmation-modal pattern="$ctrl.resolve.iscsiTargetSelection[0].targetId"
+                              title="{{ ($ctrl.resolve.iscsiTargetSelection.length > 1) ? 'Delete iSCSI target IQNs' : 'Delete iSCSI target IQN' }}"
                               on-confirm="$ctrl.delete()"
                               on-cancel="$ctrl.cancel()">
 

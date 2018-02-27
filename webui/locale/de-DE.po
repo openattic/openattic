@@ -2730,8 +2730,8 @@ msgid "The following users will be deleted:"
 msgstr "Der folgende Benutzer wird gelöscht:"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:30
-msgid "The input value does not match 'yes'."
-msgstr "Der Eingabewert entspricht nicht dem Wort 'Ja'."
+msgid "The input value does not match '{{ $ctrl.input.pattern }}'."
+msgstr "Der Eingabewert entspricht nicht dem Wort '{{ $ctrl.input.pattern }}'."
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:7
 msgid "The list of buckets could not be loaded."
@@ -3071,11 +3071,8 @@ msgstr ""
 "Aktion ab und kehren zur Seite zurück."
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:9
-msgid ""
-"To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or "
-"cancel and return to the page."
-msgstr ""
-"Zum Bestätigen geben Sie bitte <kbd>Ja</kbd> in das Eingabefeld ein und "
+msgid "To confirm, please enter <kbd>{{ $ctrl.input.pattern }}</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page."
+msgstr "Zum Bestätigen geben Sie bitte <kbd>{{ $ctrl.input.pattern }}</kbd> in das Eingabefeld ein und "
 "klicken Sie <kbd>Löschen</kbd> oder brechen Sie die Aktion ab und kehren zur "
 "Seite zurück."
 

@@ -1,4 +1,5 @@
-<oa-delete-confirmation-modal on-confirm="$ctrl.deleteBucket()"
+<oa-delete-confirmation-modal pattern="$ctrl.buckets[0].bucket"
+                              on-confirm="$ctrl.deleteBucket()"
                               on-cancel="$ctrl.cancel()"
                               title="{{ ($ctrl.buckets.length > 1) ? 'Delete buckets' : 'Delete bucket' }}">
   <!-- single bucket -->

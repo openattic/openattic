@@ -91,7 +91,7 @@ describe("ceph nfs", () => {
     helpers.setLocation("ceph/rgw/buckets");
     let bucket = helpers.get_list_element("e2e-rgw-add");
     bucket.click();
-    helpers.delete_selection(undefined, "$ctrl", false);
+    helpers.delete_selection(undefined, "$ctrl", "e2e-rgw-add", false);
     expect(bucket.isDisplayed()).toBe(true);
   });
 
@@ -99,7 +99,7 @@ describe("ceph nfs", () => {
     helpers.setLocation("ceph/nfs");
     let nfsexport = helpers.get_list_element("e2e-rgw-add");
     nfsexport.click();
-    helpers.delete_selection(undefined, "$ctrl");
+    helpers.delete_selection(undefined, "$ctrl", "e2e-rgw-add");
     expect(nfsexport.isPresent()).toBe(false);
   });
 
@@ -107,7 +107,7 @@ describe("ceph nfs", () => {
     helpers.setLocation("ceph/rgw/buckets");
     let bucket = helpers.get_list_element("e2e-rgw-add");
     bucket.click();
-    helpers.delete_selection(undefined, "$ctrl");
+    helpers.delete_selection(undefined, "$ctrl", "e2e-rgw-add");
     expect(bucket.isPresent()).toBe(false);
   });
 
