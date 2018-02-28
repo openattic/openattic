@@ -22,6 +22,7 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* Backend: Add modifying the ``crush_rule`` of a pool from the API (OP-3123)
 * Backend/QA: Increased unit test coverage of ceph app (OP-2809)
 * WebUI: Validate hostname in settings page (OP-2993)
 * WebUI: Add support for multiple languages (OP-995)
@@ -50,6 +51,8 @@ Fixed
 * WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
 * Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
 * WebUI/QA: Fix check current user name (OP-3005)
+* WebUI/QA: Fix Ceph NFS "Should remove export" e2e test (OP-2714, OP-3015,
+  OP-3016)
 
 Removed
 ~~~~~~~

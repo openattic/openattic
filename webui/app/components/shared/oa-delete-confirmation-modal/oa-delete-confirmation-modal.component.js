@@ -34,7 +34,7 @@ class OaDeleteConfirmationModal {
   constructor () {
     this.input = {
       enteredName: "",
-      pattern: "yes"
+      pattern: this.pattern
     };
   }
 
@@ -52,6 +52,7 @@ class OaDeleteConfirmationModal {
 export default {
   template: require("./oa-delete-confirmation-modal.component.html"),
   bindings: {
+    pattern: "<",
     title: "@",
     onConfirm: "&",
     onCancel: "&"

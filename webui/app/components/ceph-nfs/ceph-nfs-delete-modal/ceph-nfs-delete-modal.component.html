@@ -1,4 +1,5 @@
-<oa-delete-confirmation-modal title="{{ ($ctrl.resolve.selectionItems.length > 1) ? 'Delete NFS exports' : 'Delete NFS export' }}"
+<oa-delete-confirmation-modal pattern="$ctrl.resolve.selectionItems[0].path"
+                              title="{{ ($ctrl.resolve.selectionItems.length > 1) ? 'Delete NFS exports' : 'Delete NFS export' }}"
                               on-confirm="$ctrl.deleteNfs()"
                               on-cancel="$ctrl.cancel()">
   <div ng-if="$ctrl.resolve.selectionItems.length === 1">

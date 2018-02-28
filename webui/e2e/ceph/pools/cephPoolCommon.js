@@ -401,7 +401,7 @@ var CephPoolCommons = function () {
     self.cephPools.click();
     var pool = helpers.search_for_element(name);
     pool.click();
-    helpers.delete_selection(undefined, "$ctrl");
+    helpers.delete_selection(undefined, "$ctrl", name);
     expect(pool.isPresent()).toBe(false);
   };
 

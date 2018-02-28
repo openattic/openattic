@@ -491,35 +491,35 @@ msgstr ""
 msgid "Basic information:"
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:23
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:24
 msgid ""
 "Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by these users and that this operation\n"
 "      <strong>cannot be undone</strong>."
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:11
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:12
 msgid ""
 "Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by this user and that this operation\n"
 "      <strong>cannot be undone</strong>."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:10
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:12
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
 "      in that RBD and that this operation <strong>cannot be undone</strong>."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:24
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
 "      in the RBDs and that this operation <strong>cannot be undone</strong>."
 msgstr ""
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:10
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:11
 msgid "Be aware that you will <strong>lose all data</strong> in that Ceph pool and that this operation <strong>cannot be undone</strong>."
 msgstr ""
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:21
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:22
 msgid "Be aware that you will <strong>lose all data</strong> in the Ceph pools and that this operation <strong>cannot be undone</strong>."
 msgstr ""
 
@@ -2409,19 +2409,19 @@ msgstr ""
 msgid "The following Ceph nodes will be {{ deep }}scrubbed:"
 msgstr ""
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:24
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:25
 msgid "The following Ceph pools will be deleted:"
 msgstr ""
 
-#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:16
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:17
 msgid "The following NFS exports will be deleted:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:26
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:28
 msgid "The following RBDs will be deleted:"
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:19
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:20
 msgid "The following buckets will be deleted:"
 msgstr ""
 
@@ -2429,16 +2429,16 @@ msgstr ""
 msgid "The following characters are valid: _ a-z A-Z 0-9"
 msgstr ""
 
-#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:16
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:17
 msgid "The following iSCSI target IQNs will be deleted:"
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:27
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:28
 msgid "The following users will be deleted:"
 msgstr ""
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:30
-msgid "The input value does not match 'yes'."
+msgid "The input value does not match '{{ $ctrl.input.pattern }}'."
 msgstr ""
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:7
@@ -2690,7 +2690,7 @@ msgid "To confirm, please click <kbd>Generate</kbd>, or cancel and return to the
 msgstr ""
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:9
-msgid "To confirm, please enter <kbd>yes</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page."
+msgid "To confirm, please enter <kbd>{{ $ctrl.input.pattern }}</kbd> and click <kbd>Delete</kbd>, or cancel and return to the page."
 msgstr ""
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:17
@@ -2855,43 +2855,43 @@ msgid ""
 "          <strong>{{ status}}</strong> and was last modified on {{ lastModified}}."
 msgstr ""
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:18
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:19
 msgid "You are about to delete multiple Ceph pools."
 msgstr ""
 
-#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:13
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:14
 msgid "You are about to delete multiple NFS exports."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:19
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:21
 msgid "You are about to delete multiple RBDs."
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:16
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:17
 msgid "You are about to delete multiple buckets."
 msgstr ""
 
-#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:13
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:14
 msgid "You are about to delete multiple iSCSI target IQNs."
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:20
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:21
 msgid "You are about to delete multiple users."
 msgstr ""
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:6
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:7
 msgid "You are about to delete the Ceph pool <strong>{{ name }}</strong>."
 msgstr ""
 
-#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:6
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:7
 msgid "You are about to delete the NFS export <strong>{{ host }}:{{ path }}</strong>"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:6
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:8
 msgid "You are about to delete the RBD <strong>{{ name }}</strong>."
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:7
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:8
 msgid "You are about to delete the bucket <strong>{{ bucket }}</strong>."
 msgstr ""
 
@@ -2899,11 +2899,11 @@ msgstr ""
 msgid "You are about to delete the erasure code profile <strong>{{ profileName }}</strong>."
 msgstr ""
 
-#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:7
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:8
 msgid "You are about to delete the iSCSI target IQN <strong>{{ targetId }}</strong>."
 msgstr ""
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:7
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:8
 msgid "You are about to delete the user <strong>{{ userId }}</strong>."
 msgstr ""
 
@@ -3098,10 +3098,6 @@ msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-cache/ceph-pools-cache.component.html:17
 msgid "write_tier:"
-msgstr ""
-
-#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:17
-msgid "yes"
 msgstr ""
 
 #: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:91
