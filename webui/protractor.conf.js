@@ -43,7 +43,6 @@ var allSuites = {
   users                : "./e2e/base/users/**/*.e2e.js",
   auth                 : "./e2e/base/auth/*.e2e.js",
   task_queue_dialog    : "./e2e/base/taskqueue/task_queue_dialog.e2e.js",
-  task_queue_deletion  : "./e2e/base/taskqueue/task_queue_deletion.e2e.js",
   // ceph suites - They only run if a ceph pool is configured.
   ceph_clusters        : "./e2e/ceph/ceph_clusters.e2e.js",
   ceph_pools           : "./e2e/ceph/pools/ceph_pools.e2e.js",

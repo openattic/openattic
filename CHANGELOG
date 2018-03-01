@@ -48,6 +48,7 @@ Fixed
 * Backend: Increase timeout in MonApi::osd_pool_create (OP-3017)
 * WebUI: Fix error thrown when switching from RBD Add page (OP-2986)
 * WebUI: Pool names are now displayed in the Pool Deletion dialog (OP-3024)
+* WebUI/QA: Test task queue deletion solely by unit tests (OP-3034)
 * WebUI/QA: Fix random e2e error regarding number of pending tasks (OP-3018)
 * WebUI/QA: Fix Ceph Pools e2e test (OP-2967)
 * Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
