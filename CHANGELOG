@@ -58,6 +58,8 @@ Fixed
   OP-3016)
 * WebUI/QA: Wait until modal dialog is invisible to fix a timing
   issue (OP-2994)
+* WebUI/QA: Set chrome for e2e testing to US (OP-3142)
+* WebUI/QA: Test task queue deletion solely by unit tests (OP-3034)
 * Packaging: Use `_fillupdir` RPM macro in SUSE spec file (OP-3100)
 
 [3.6.1] - 2017-12-13
