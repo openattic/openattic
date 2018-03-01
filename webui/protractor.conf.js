@@ -96,7 +96,15 @@ exports.config = {
   plugins: [
     failFast.init()
   ],
-
+  capabilities: {
+    browserName: "chrome",
+    chromeOptions: {
+      args: [ 'lang=us-US' ],
+      prefs: {
+        intl: { accept_languages: "us-US" },
+      }
+    }
+  },
   seleniumAddress: "http://localhost:4444/wd/hub",
   jasmineNodeOpts: {
     defaultTimeoutInterval: 360000
