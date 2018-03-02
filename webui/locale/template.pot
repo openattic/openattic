@@ -1884,6 +1884,7 @@ msgstr ""
 msgid "Portals:"
 msgstr ""
 
+#: app/components/auth/auth/auth.component.html:90
 #: app/components/settings/settings-form/settings-form.component.html:599
 msgid "Powered by openATTIC"
 msgstr ""
@@ -2830,7 +2831,7 @@ msgid "View Swift key: {{ user }}"
 msgstr ""
 
 #: app/components/auth/auth/auth.component.html:9
-msgid "Welcome to openATTIC!"
+msgid "Welcome to SUSE Enterprise Storage"
 msgstr ""
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:13
