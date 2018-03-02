@@ -16,14 +16,15 @@
       role="form"
       novalidate>
   <div class="openattic-modal-content">
-    <div ng-hide="$ctrl.waiting || $ctrl.pendingDeletionFailure.length > 0">
+    <div ng-hide="$ctrl.waiting || $ctrl.pendingDeletionFailure.length > 0"
+         class="tc-confirm-dialog">
       <p ng-show="$ctrl.tasks.length === 1 && !$ctrl.waiting"
          class="tc_delete_one">
         <translate translate-params-description="$ctrl.tasks[0].description"
                    translate-params-status="$ctrl.tasks[0].status | lowercase"
                    translate-params-last-modified="$ctrl.tasks[0].last_modified | date:'medium'">
           You are about to delete <strong>{{ description }}</strong> task which is
-          <strong>{{ status}}</strong> and was last modified on {{ lastModified}}.
+          <strong>{{ status }}</strong> and was last modified on {{ lastModified }}.
         </translate>
       </p>
       <p ng-show="$ctrl.tasks.length > 1"
@@ -60,7 +61,8 @@
       </div>
     </div>
 
-    <div ng-show="waiting">
+    <div ng-show="$ctrl.waiting"
+      class="tc-waiting">
       <p>
         <translate translate-params-finished-tasks="$ctrl.finishedTasks"
                    translate-params-amount="$ctrl.tasks.length">
@@ -68,7 +70,7 @@
         </translate>
       </p>
       <p class="text-warning"
-         ng-show="pendingDeletionFailure.length > 0">
+         ng-show="$ctrl.pendingDeletionFailure.length > 0">
         <translate translate-params-amount="$ctrl.pendingDeletionFailure.length">
           Couldn't delete {{ amount }} task{{$ctrl.pendingDeletionFailure.length === 1 ? '' : 's'}}.
         </translate>
@@ -77,8 +79,7 @@
 
     <div ng-show="!$ctrl.waiting && $ctrl.pendingDeletionFailure.length > 0">
       <uib-accordion class="tc-moved-tasks">
-        <div ng-hide="$ctrl.waiting"
-             uib-accordion-group
+        <div uib-accordion-group
              class="panel-warning modal-scroll"
              is-open="true">
           <uib-accordion-heading>
@@ -91,7 +92,8 @@
               <translate translate-params-description="moved[0].description"
                          translate-params-status="moved[0].status">
                 {{ description }} changed from {{ status }} to
-                <span ng-class="{'text-danger': moved[1].status === 'Exception', 'text-success': moved[1].status === 'Finished'}"
+                <span ng-class="{'text-danger': moved[1].status === 'Exception',
+                                 'text-success': moved[1].status === 'Finished'}"
                       ng-bind="moved[1].status"></span>
               </translate>
             </li>

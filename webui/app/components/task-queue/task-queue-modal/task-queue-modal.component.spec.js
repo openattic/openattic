@@ -58,39 +58,80 @@ describe("task-queue-modal", () => {
     ctrl = $componentController("taskQueueModalComponent", {$scope: scope}, {});
   });
 
-  describe("test tab texts", () => {
-    beforeEach(() => {
-      Object.keys(ctrl.tabs).forEach((key, index) => {
-        ctrl.tabs[key].count = index + 1;
+  describe("template", () => {
+    describe("tab texts", () => {
+      beforeEach(() => {
+        Object.keys(ctrl.tabs).forEach((key, index) => {
+          ctrl.tabs[key].count = index + 1;
+        });
+        updateTemplate();
       });
-      updateTemplate();
-    });
 
-    it("should display 0 pending tasks", () => {
-      ctrl.tabs.pending.count = 0;
-      updateTemplate();
-      const tabText = $(currentTemplate.find("a")[0]).text();
-      expect(tabText).toMatch("Pending");
-      expect(tabText).toMatch("(0)");
-    });
+      it("should display 0 pending tasks", () => {
+        ctrl.tabs.pending.count = 0;
+        updateTemplate();
+        const tabText = $(currentTemplate.find("a")[0]).text();
+        expect(tabText).toMatch("Pending");
+        expect(tabText).toMatch("(0)");
+      });
 
-    it("should display 1 pending task", () => {
-      const tabText = $(currentTemplate.find("a")[0]).text();
-      expect(tabText).toMatch("Pending");
-      expect(tabText).toMatch("(1)");
-    });
+      it("should display 1 pending task", () => {
+        const tabText = $(currentTemplate.find("a")[0]).text();
+        expect(tabText).toMatch("Pending");
+        expect(tabText).toMatch("(1)");
+      });
 
-    it("should display 2 failed tasks", () => {
-      const tabText = $(currentTemplate.find("a")[1]).text();
-      expect(tabText).toMatch("Failed");
-      expect(tabText).toMatch("(2)");
-    });
+      it("should display 2 failed tasks", () => {
+        const tabText = $(currentTemplate.find("a")[1]).text();
+        expect(tabText).toMatch("Failed");
+        expect(tabText).toMatch("(2)");
+      });
 
-    it("should display 3 finished tasks", () => {
-      const tabText = $(currentTemplate.find("a")[2]).text();
-      expect(tabText).toMatch("Finished");
-      expect(tabText).toMatch("(3)");
+      it("should display 3 finished tasks", () => {
+        const tabText = $(currentTemplate.find("a")[2]).text();
+        expect(tabText).toMatch("Finished");
+        expect(tabText).toMatch("(3)");
+      });
     });
   });
 
+  describe("component controller", () => {
+    const setTabCount = (pending, failed, finished) => {
+      ctrl.tabs.pending.count = pending;
+      ctrl.tabs.failed.count = failed;
+      ctrl.tabs.finished.count = finished;
+      ctrl.selectUrgentTab();
+    };
+
+    const expectTabToBe = (name) => {
+      const tabs = ["Pending", "Failed", "Finished"];
+      expect(ctrl.modalTabData.active).toBe(tabs.indexOf(name));
+      expect(ctrl.getActiveTab().name).toBe(name);
+    };
+
+    it("should select pending", () => {
+      setTabCount(0, 0, 0);
+      expectTabToBe("Pending");
+      setTabCount(20, 0, 0);
+      expectTabToBe("Pending");
+      setTabCount(20, 0, 238);
+      expectTabToBe("Pending");
+    });
+
+    it("should select failed", () => {
+      setTabCount(0, 1, 0);
+      expectTabToBe("Failed");
+      setTabCount(10, 1, 0);
+      expectTabToBe("Failed");
+      setTabCount(0, 1, 20);
+      expectTabToBe("Failed");
+      setTabCount(30, 15, 45);
+      expectTabToBe("Failed");
+    });
+
+    it("should select finished", () => {
+      setTabCount(0, 0, 1);
+      expectTabToBe("Finished");
+    });
+  });
 });
