@@ -573,7 +573,7 @@ msgstr ""
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:120
 #: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:18
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:44
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:113
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:115
 #: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:29
 #: app/components/users/users-delete-modal/users-delete-modal.component.html:29
 msgid "Cancel"
@@ -690,8 +690,8 @@ msgstr ""
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:59
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:60
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:64
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:119
-#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:156
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:121
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:140
 msgid "Close"
 msgstr ""
 
@@ -789,11 +789,11 @@ msgstr ""
 msgid "Could not load iSCSI target"
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:85
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:86
 msgid "Couldn't delete the following {{ amount }} Tasks"
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:72
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:74
 msgid "Couldn't delete {{ amount }} task{{$ctrl.pendingDeletionFailure.length === 1 ? '' : 's'}}."
 msgstr ""
 
@@ -880,7 +880,7 @@ msgstr ""
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:64
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:42
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:107
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:109
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:28
 #: app/components/users/users-list/users-list.component.html:41
 msgid "Delete"
@@ -1248,7 +1248,7 @@ msgstr ""
 msgid "Id"
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:35
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:36
 msgid "If you delete running tasks, it will abort the execution and won't roll back what has been done so far!"
 msgstr ""
 
@@ -1884,6 +1884,7 @@ msgstr ""
 msgid "Portals:"
 msgstr ""
 
+#: app/components/auth/auth/auth.component.html:90
 #: app/components/settings/settings-form/settings-form.component.html:599
 msgid "Powered by openATTIC"
 msgstr ""
@@ -1892,7 +1893,7 @@ msgstr ""
 msgid "Prevents single node bottleneck for large or busy RBDs"
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:65
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:67
 msgid "Processing deletion requests: {{ finishedTasks }} of {{ amount }}"
 msgstr ""
 
@@ -2346,7 +2347,7 @@ msgstr ""
 msgid "Target IQN: {{ targetId }}"
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:47
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:48
 msgid "Tasks to delete ({{ amount }})"
 msgstr ""
 
@@ -2830,7 +2831,7 @@ msgid "View Swift key: {{ user }}"
 msgstr ""
 
 #: app/components/auth/auth/auth.component.html:9
-msgid "Welcome to openATTIC!"
+msgid "Welcome to SUSE Enterprise Storage"
 msgstr ""
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:13
@@ -2849,10 +2850,10 @@ msgstr ""
 msgid "You are about to apply a {{ deep }}scrub to the Ceph node <strong>{{ hostname }}</strong>."
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:22
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:23
 msgid ""
 "You are about to delete <strong>{{ description }}</strong> task which is\n"
-"          <strong>{{ status}}</strong> and was last modified on {{ lastModified}}."
+"          <strong>{{ status }}</strong> and was last modified on {{ lastModified }}."
 msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:19
@@ -2911,7 +2912,7 @@ msgstr ""
 msgid "You are about to delete the user <strong>{{ username }}</strong>."
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:31
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:32
 msgid "You are about to delete {{ amount }} tasks."
 msgstr ""
 
@@ -3100,10 +3101,11 @@ msgstr ""
 msgid "write_tier:"
 msgstr ""
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:91
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:92
 msgid ""
 "{{ description }} changed from {{ status }} to\n"
-"                <span ng-class=\"{'text-danger': moved[1].status === 'Exception', 'text-success': moved[1].status === 'Finished'}\" ng-bind=\"moved[1].status\"></span>"
+"                <span ng-class=\"{'text-danger': moved[1].status === 'Exception',\n"
+"                                 'text-success': moved[1].status === 'Finished'}\" ng-bind=\"moved[1].status\"></span>"
 msgstr ""
 
 #: app/components/task-queue/oa-task-queue/oa-task-queue.component.html:12

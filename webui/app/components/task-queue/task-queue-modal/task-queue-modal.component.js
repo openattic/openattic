@@ -83,6 +83,7 @@ class TaskQueueModalComponent {
       },
       tableColumns: []
     };
+
     this.tabs = {
       pending: _.extend({}, _.cloneDeep(defaultTab), {
         name: "Pending",
@@ -195,6 +196,8 @@ class TaskQueueModalComponent {
       }
     });
 
+    this.modalTabData = {};
+
     /**
    * Adds a watch for each tab to watch it's page number, in order to change the
    * page if it does.
@@ -244,7 +247,7 @@ class TaskQueueModalComponent {
    * @returns {object} - Data of active tab.
    */
   getActiveTab () {
-    return this.tabs[Object.keys(this.tabs)[this.modalTabData ? this.modalTabData.active : 0]];
+    return this.tabs[Object.keys(this.tabs)[this.modalTabData.active ? this.modalTabData.active : 0]];
   }
 
   /**

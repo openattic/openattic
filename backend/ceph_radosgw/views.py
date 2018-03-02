@@ -107,9 +107,10 @@ def bucket_get(request):
     # Append the 'endpoint' attribute.
     instance = RGWClient.admin_instance()
     scheme = 'https' if instance._ssl else 'http'
+    service_url = instance.service_url.strip('/')
     content['endpoint'] = {
-        's3': '{}://{}.{}'.format(scheme, content['bucket'], instance.service_url),
-        'swift': '{}://{}/v1/{}/{}'.format(scheme, instance.service_url,
+        's3': '{}://{}.{}'.format(scheme, content['bucket'], service_url),
+        'swift': '{}://{}/v1/{}/{}'.format(scheme, service_url,
                                            content['owner'], content['bucket'])
     }
 
