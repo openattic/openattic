@@ -29,6 +29,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: fixed typo in RBD creation form (OP-3148)
 
 Removed
 ~~~~~~~
