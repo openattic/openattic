@@ -426,7 +426,7 @@ class CephRbdForm {
     }
     this.pools.replicated = res.results;
     if (res.count === 0) {
-      this.waitingPoolMsg = "No suitable pool aviable.";
+      this.waitingPoolMsg = "No suitable pool available.";
       this.Notification.warning({
         title: this.waitingPoolMsg,
         msg: "You can't create any RBDs in the selected cluster."

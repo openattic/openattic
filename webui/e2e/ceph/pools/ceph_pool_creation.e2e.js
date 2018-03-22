@@ -44,11 +44,11 @@ describe("ceph pool creation", () => {
 
   it("should create replicated pool", () => {
     cephPoolProperties.addButton.click();
-    cephPoolProperties.createPool("e2e_replicated_with_128_pgs", "replicated", 128, false, "cephfs", "replicated_rule");
+    cephPoolProperties.createPool("e2e_replicated_with_8_pgs", "replicated", 8, false, "cephfs", "replicated_rule");
   });
 
   it("should delete replicated pool", () => {
-    cephPoolProperties.deletePool("e2e_replicated_with_128_pgs");
+    cephPoolProperties.deletePool("e2e_replicated_with_8_pgs");
   });
 
   it("should create erasure code pool with overwrite enabled", () => {
