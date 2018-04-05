@@ -1068,6 +1068,7 @@ class RbdApi(object):
     """
 
     RBD_DELETION_TIMEOUT = 3600
+    RBD_ROLLBACK_TIMEOUT = 3600
 
     @staticmethod
     def get_feature_mapping():
@@ -1270,6 +1271,14 @@ class RbdApi(object):
                 image.remove_snap(snap_name)
 
         return self._call_librados(_remove_snapshot)
+
+    def rollback_to_snapshot(self, pool_name, image_name, snap_name):
+        def _rollback_to_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                image.rollback_to_snap(snap_name)
+
+        return self._call_librados(_rollback_to_snapshot, timeout=self.RBD_ROLLBACK_TIMEOUT)
 
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.

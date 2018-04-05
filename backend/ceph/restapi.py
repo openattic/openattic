@@ -12,6 +12,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import logging
+
 from django.utils.functional import cached_property
 from rest_framework import serializers, status
 from rest_framework.generics import get_object_or_404
@@ -19,6 +21,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework_bulk import BulkDestroyAPIView, BulkDestroyModelMixin
 
+import ceph.tasks
 from ceph.models import CephCluster, CrushmapVersion, CephPool, CephErasureCodeProfile, CephOsd, \
     CephPg, CephRbd, CephRbdSnap, CephFs
 from nodb.restapi import NodbSerializer, NodbViewSet
@@ -26,6 +29,9 @@ from taskqueue.restapi import TaskQueueLocationMixin
 
 from rest.utilities import get_request_data, drf_version, get_paginated_response, \
     get_request_query_params
+
+
+logger = logging.getLogger(__name__)
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -362,8 +368,14 @@ class CephRbdSnapViewSet(TaskQueueLocationMixin, NodbViewSet):
     def get_queryset(self):
         return CephRbdSnap.objects.all()
 
-    def delete(self, request, *args, **kwargs):
-        return self.bulk_destroy(request, *args, **kwargs)
+    @detail_route(['post'])
+    def rollback(self, request, *args, **kwargs):
+        snap = self.get_object()
+        logger.info("processing rollback to snap=%s", snap.id)
+        task = ceph.tasks.rollback_to_snapshot.delay(
+            snap.image.pool.cluster.fsid, snap.image.pool.name,
+            snap.image.name, snap.name)
+        return Response({'task_id': task.id}, status=status.HTTP_200_OK)
 
 
 class CephFsSerializer(NodbSerializer):

@@ -31,6 +31,16 @@ def delete_rbd(fsid, pool_name, image_name):
         rbd_api.remove(pool_name, image_name)
 
 
+@task(description='Rollback RBD to Snapshot {1}/{2}@{3}',
+      metadata=lambda fsid, pool_name, image_name, snap_name: {
+          'fsid': fsid, 'pool': pool_name, 'image': image_name, 'snap': snap_name})
+def rollback_to_snapshot(fsid, pool_name, image_name, snap_name):
+    from ceph.models import fsid_context
+    with fsid_context(fsid) as ctx:
+        rbd_api = librados.RbdApi(fsid)
+        rbd_api.rollback_to_snapshot(pool_name, image_name, snap_name)
+
+
 @task(description='Setting number of PGs to {2}')
 def set_pgs(fsid, pool_id, pgs):
     from ceph.models import CephPool, fsid_context
