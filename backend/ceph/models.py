@@ -1006,6 +1006,43 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
             self.pool.cluster.fsid, self.pool.name, self.name)
 
 
+class CephRbdSnap(NodbModel, RadosMixin):
+    id = models.CharField(max_length=100, primary_key=True, editable=False,
+                          help_text='pool-name/image-name@snap-name')
+    name = models.CharField(max_length=100)
+    snap_id = models.IntegerField(null=True, blank=True)
+    image = models.ForeignKey(CephRbd, related_name='image')
+    is_protected = models.BooleanField(help_text='snapshot protected flag')
+    size = models.IntegerField(help_text='snapshot size in bytes', null=True, blank=True)
+    timestamp = models.DateTimeField(null=True, blank=True)
+    children = JsonField(base_type=list, null=True, blank=True, default=[])
+
+    @staticmethod
+    def make_key(pool_name, image_name, snap_name):
+        return "{}/{}@{}".format(pool_name, image_name, snap_name)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        assert context is not None
+        api = RadosMixin.rbd_api(context.fsid)
+
+        images = CephRbd.objects.all()
+        agg_snaps = []
+        for image in CephRbd.objects.all():
+            snaps = api.image_snapshots(image.pool.name, image.name)
+            for snap in snaps:
+                snap['id'] = CephRbdSnap.make_key(image.pool.name, image.name, snap['name'])
+                snap['image_id'] = image.id
+            agg_snaps.extend(snaps)
+
+        return [CephRbdSnap(**CephRbdSnap.make_model_args(snap)) for snap in agg_snaps]
+
+    def save(self, *args, **kwargs):
+        super(CephRbdSnap, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        pass
+
 class CephFs(NodbModel, RadosMixin):
     name = models.CharField(max_length=100, primary_key=True)
     metadata_pool = models.ForeignKey(CephPool, related_name='metadata_of_ceph_fs')

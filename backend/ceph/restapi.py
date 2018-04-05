@@ -20,7 +20,7 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework_bulk import BulkDestroyAPIView, BulkDestroyModelMixin
 
 from ceph.models import CephCluster, CrushmapVersion, CephPool, CephErasureCodeProfile, CephOsd, \
-    CephPg, CephRbd, CephFs
+    CephPg, CephRbd, CephRbdSnap, CephFs
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 
@@ -339,6 +339,31 @@ class CephRbdViewSet(TaskQueueLocationMixin, BulkDestroyModelMixin, NodbViewSet)
     def basic_data(self, request, *args, **kwargs):
         return Response([{'id': rbd.id, 'name': rbd.name, 'pool': rbd.pool.name}
                          for rbd in CephRbd.objects.all()])
+
+
+class CephRbdSnapSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephRbdSnap
+
+
+class CephRbdSnapViewSet(TaskQueueLocationMixin, NodbViewSet):
+    """Represents a Ceph RADOS block device Snapshot ."""
+
+    filter_fields = ("id", "image__id")
+    serializer_class = CephRbdSnapSerializer
+    lookup_value_regex = r'[^/@]+/[^/]+'
+    search_fields = ('name',)
+
+    def __init__(self, **kwargs):
+        super(CephRbdSnapViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self, 'ceph'))
+
+    def get_queryset(self):
+        return CephRbdSnap.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        return self.bulk_destroy(request, *args, **kwargs)
 
 
 class CephFsSerializer(NodbSerializer):

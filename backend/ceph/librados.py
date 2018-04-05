@@ -1193,6 +1193,28 @@ class RbdApi(object):
 
         return self._call_librados(_get_image_status)
 
+    def image_snapshots(self, pool_name, name):
+        def _get_image_snapshots(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                snaps = []
+                for snap in image.list_snaps():
+                    snap['snap_id'] = snap['id']
+                    snap['timestamp'] = "{}".format(image.get_snap_timestamp(snap['id']).isoformat())
+                    snap['is_protected'] = image.is_protected_snap(snap['name'])
+                    snap['children'] = []
+                    image.set_snap(snap['name'])
+                    for child_pool_name, child_image_name in image.list_children():
+                        snap['children'].append({
+                            'pool_name': child_pool_name,
+                            'image_name': child_image_name
+                        })
+                    del snap['id']
+                    snaps.append(snap)
+                return snaps
+
+        return self._call_librados(_get_image_snapshots)
+
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.
 
