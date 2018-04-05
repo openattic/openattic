@@ -1193,6 +1193,25 @@ class RbdApi(object):
 
         return self._call_librados(_get_image_status)
 
+    def image_parent(self, pool_name, name):
+        def _get_image_parent(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                try:
+                    parent_info = image.parent_info()
+                    parent = {
+                        'pool_name': parent_info[0],
+                        'image_name': parent_info[1],
+                        'snap_name': parent_info[2]
+                    }
+                    return parent
+                except rbd.ImageNotFound:
+                    # no parent image
+                    pass
+                return None
+
+        return self._call_librados(_get_image_parent)
+
     def image_snapshots(self, pool_name, name):
         def _get_image_snapshots(client):
             ioctx = client.get_pool(pool_name)

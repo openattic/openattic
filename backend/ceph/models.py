@@ -819,6 +819,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     used_size = models.IntegerField(editable=False)
     stripe_unit = models.IntegerField(blank=True, null=True)
     stripe_count = models.IntegerField(blank=True, null=True)
+    parent = JsonField(base_type=dict, null=True, blank=True, default=None)
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
@@ -853,7 +854,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
     # TODO: `rbd info` also delivers 'flags' and 'create_timestamp'
     @bulk_attribute_setter(['num_objs', 'obj_size', 'size', 'data_pool_id', 'features',
-                            'old_format', 'block_name_prefix'])
+                            'old_format', 'block_name_prefix', 'parent'])
     def set_image_info(self, objects, field_names):
         """
         `rbd info` and `rbd.Image.stat` are really similar: The first one calls the second one.
@@ -880,6 +881,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
         # https://github.com/ceph/ceph/blob/luminous/src/tools/rbd/action/Info.cc#L169
         image_info['old_format'] = image_info['format'] == 1
+
+        # parent
+        image_info['parent'] = api.image_parent(self.pool.name, self.name)
 
         for field_name in field_names:
             setattr(self, field_name, image_info[field_name])
