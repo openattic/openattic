@@ -1067,7 +1067,9 @@ class CephRbdSnap(NodbModel, RadosMixin):
         super(CephRbdSnap, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        pass
+        api = self.rbd_api()
+        api.remove_snapshot(self.image.pool.name, self.image.name, self.name)
+
 
 class CephFs(NodbModel, RadosMixin):
     name = models.CharField(max_length=100, primary_key=True)

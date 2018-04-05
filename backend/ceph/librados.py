@@ -1263,6 +1263,14 @@ class RbdApi(object):
 
         return self._call_librados(_edit_snapshot)
 
+    def remove_snapshot(self, pool_name, image_name, snap_name):
+        def _remove_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                image.remove_snap(snap_name)
+
+        return self._call_librados(_remove_snapshot)
+
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.
 
