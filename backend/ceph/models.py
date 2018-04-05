@@ -15,6 +15,7 @@
 
 from __future__ import division
 
+import datetime
 import itertools
 import logging
 import math
@@ -1013,10 +1014,11 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 class CephRbdSnap(NodbModel, RadosMixin):
     id = models.CharField(max_length=100, primary_key=True, editable=False,
                           help_text='pool-name/image-name@snap-name')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=False, blank=False)
     snap_id = models.IntegerField(null=True, blank=True)
     image = models.ForeignKey(CephRbd, related_name='image')
-    is_protected = models.BooleanField(help_text='snapshot protected flag')
+    is_protected = models.BooleanField(help_text='snapshot protected flag',
+                                       null=False, blank=False)
     size = models.IntegerField(help_text='snapshot size in bytes', null=True, blank=True)
     timestamp = models.DateTimeField(null=True, blank=True)
     children = JsonField(base_type=list, null=True, blank=True, default=[])
@@ -1042,6 +1044,26 @@ class CephRbdSnap(NodbModel, RadosMixin):
         return [CephRbdSnap(**CephRbdSnap.make_model_args(snap)) for snap in agg_snaps]
 
     def save(self, *args, **kwargs):
+        api = self.rbd_api()
+        if not self.id:  # new snapshot
+            snap = api.create_snapshot(self.image.pool.name, self.image.name,
+                                       self.name, self.is_protected)
+            self.id = CephRbdSnap.make_key(self.image.pool.name, self.image.name,
+                                           self.name)
+            for attr, val in snap.items():
+                if attr == "timestamp":
+                    val = datetime.datetime.strptime(val, "%Y-%m-%dT%H:%M:%S")
+                setattr(self, attr, val)
+        else:
+            diff, orig = self.get_modified_fields()
+            if diff:
+                api.edit_snapshot(self.image.pool.name, self.image.name,
+                                  orig.name, diff)
+                if 'name' in diff:
+                    self.id = CephRbdSnap.make_key(self.image.pool.name,
+                                                   self.image.name,
+                                                   self.name)
+
         super(CephRbdSnap, self).save(*args, **kwargs)
 
     def delete(self, using=None):

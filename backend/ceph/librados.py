@@ -1212,27 +1212,56 @@ class RbdApi(object):
 
         return self._call_librados(_get_image_parent)
 
+    @staticmethod
+    def _get_image_snapshots(image):
+        snaps = []
+        for snap in image.list_snaps():
+            snap['snap_id'] = snap['id']
+            snap['timestamp'] = "{}".format(image.get_snap_timestamp(snap['id']).isoformat())
+            snap['is_protected'] = image.is_protected_snap(snap['name'])
+            snap['children'] = []
+            image.set_snap(snap['name'])
+            for child_pool_name, child_image_name in image.list_children():
+                snap['children'].append({
+                    'pool_name': child_pool_name,
+                    'image_name': child_image_name
+                })
+            del snap['id']
+            snaps.append(snap)
+        return snaps
+
     def image_snapshots(self, pool_name, name):
         def _get_image_snapshots(client):
             ioctx = client.get_pool(pool_name)
             with rbd.Image(ioctx, name=name) as image:
-                snaps = []
-                for snap in image.list_snaps():
-                    snap['snap_id'] = snap['id']
-                    snap['timestamp'] = "{}".format(image.get_snap_timestamp(snap['id']).isoformat())
-                    snap['is_protected'] = image.is_protected_snap(snap['name'])
-                    snap['children'] = []
-                    image.set_snap(snap['name'])
-                    for child_pool_name, child_image_name in image.list_children():
-                        snap['children'].append({
-                            'pool_name': child_pool_name,
-                            'image_name': child_image_name
-                        })
-                    del snap['id']
-                    snaps.append(snap)
-                return snaps
+                return RbdApi._get_image_snapshots(image)
 
         return self._call_librados(_get_image_snapshots)
+
+    def create_snapshot(self, pool_name, image_name, snap_name, protected):
+        def _create_image_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                image.create_snap(snap_name)
+                if protected:
+                    image.protect_snap(snap_name)
+                return [snap for snap in RbdApi._get_image_snapshots(image)][0]
+
+        return self._call_librados(_create_image_snapshot)
+
+    def edit_snapshot(self, pool_name, image_name, snap_name, changes):
+        def _edit_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                if 'is_protected' in changes:
+                    if changes['is_protected']:
+                        image.protect_snap(snap_name)
+                    else:
+                        image.unprotect_snap(snap_name)
+                if 'name' in changes:
+                    image.rename_snap(snap_name, changes['name'])
+
+        return self._call_librados(_edit_snapshot)
 
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.
