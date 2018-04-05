@@ -1158,6 +1158,33 @@ class RbdApi(object):
         yield self._call_librados(_create)
         self.remove(pool_name, image_name)
 
+    @logged
+    @undoable
+    def clone(self, parent, pool_name, image_name, features=None,
+              order=None, stripe_unit=None, stripe_count=None, data_pool_name=None):
+        def _clone(client):
+            p_ioctx = client.get_pool(parent['pool_name'])
+            ioctx = client.get_pool(pool_name)
+            rbd_inst = rbd.RBD()
+            default_features = 61  # FIXME: hardcoded int
+            feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
+                               default_features)
+            try:
+                rbd_inst.clone(p_ioctx, parent['image_name'], parent['snap_name'],
+                               ioctx, image_name, features=feature_bitmask,
+                               order=order, stripe_unit=stripe_unit,
+                               stripe_count=stripe_count, data_pool=data_pool_name)
+            except TypeError:
+                logger.exception('This seems to be Jewel?!')
+                s_count = stripe_count if stripe_count else 0
+                s_unit = stripe_unit if stripe_unit else 0
+                rbd_inst.clone(p_ioctx, parent['image_name'], parent['snap_name'],
+                               ioctx, image_name, features=feature_bitmask, order=order,
+                               stripe_unit=s_unit, stripe_count=s_count)
+
+        yield self._call_librados(_clone)
+        self.remove(pool_name, image_name)
+
     def remove(self, pool_name, image_name):
         def _remove(client):
             ioctx = client.get_pool(pool_name)

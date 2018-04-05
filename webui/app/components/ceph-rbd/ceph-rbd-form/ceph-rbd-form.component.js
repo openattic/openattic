@@ -52,7 +52,8 @@ class CephRbdForm {
       name: "",
       size: 0,
       pool: -1,
-      obj_size: 4194304
+      obj_size: 4194304,
+      parent: null
     };
 
     this.data = {

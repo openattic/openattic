@@ -953,10 +953,26 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
-                api.create(self.pool.name, self.name, self.size, features=self.features,
-                           old_format=self.old_format, order=order,
-                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
-                           data_pool_name=data_pool_name)
+
+                if self.parent:
+                    if 'pool_name' not in self.parent:
+                        raise ValidationError('No pool_name in parent specification')
+                    if 'image_name' not in self.parent:
+                        raise ValidationError('No image_name in parent specification')
+                    if 'snap_name' not in self.parent:
+                        raise ValidationError('No snap_name in parent specification')
+
+                    api.clone(self.parent, self.pool.name, self.name,
+                              features=self.features, order=order,
+                              stripe_unit=self.stripe_unit,
+                              stripe_count=self.stripe_count,
+                              data_pool_name=data_pool_name)
+                else:
+                    api.create(self.pool.name, self.name, self.size, features=self.features,
+                               old_format=self.old_format, order=order,
+                               stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
+                               data_pool_name=data_pool_name)
+
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
@@ -964,9 +980,11 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             if insert:
                 self.features = original.features
+                self.size = original.size
+                self.old_format = original.old_format
 
             for key, value in diff.items():
-                if key == 'size':
+                if not self.parent and key == 'size':
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
                 elif key == 'features':
