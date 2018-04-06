@@ -68,6 +68,10 @@ export default class CephRbdService {
       getDetail: {
         method: "GET",
         url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
+      },
+      copy: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/copy"
       }
     });
 

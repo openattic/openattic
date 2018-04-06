@@ -101,6 +101,22 @@ export default ($stateProvider) => {
         parent: "cephRbds"
       }
     })
+    .state("cephRbds-copy", {
+      url: "/rbds/copy/:fsid/:pool/:name",
+      views: {
+        "main": {
+          component : "cephRbdForm"
+        }
+      },
+      params: {
+        fsid: null,
+        fromState: "cephRbds"
+      },
+      ncyBreadcrumb: {
+        label: "Copy {{rbd.name}}",
+        parent: "cephRbds"
+      }
+    })
     .state("cephRbds.detail.statistics", {
       url          : "/statistics",
       views        : {

@@ -56,6 +56,9 @@ class CephRbdForm {
       parent: null
     };
 
+    // dict to hold copy from info
+    this.copy = null;
+
     this.data = {
       cluster: null,
       pool: null,
@@ -123,6 +126,7 @@ class CephRbdForm {
     this.fromState = $stateParams.fromState;
     this.editing = false;
     this.cloning = false;
+    this.copying = false;
     this.preparing = false;
 
     this.waitingClusterMsg = "Retrieving cluster list...";
@@ -134,6 +138,9 @@ class CephRbdForm {
     if (this.$state.current.name === "cephRbds-clone") {
       this.preparing = true;
       this.cloning = true;
+    } else if (this.$state.current.name === "cephRbds-copy") {
+      this.preparing = true;
+      this.copying = true;
     } else if (this.$stateParams.name) {
       this.preparing = true;
       this.editing = true;
@@ -193,6 +200,14 @@ class CephRbdForm {
         pool_name: this.$stateParams.pool,
         image_name: this.$stateParams.name,
         snap_name: this.$stateParams.snap
+      };
+      delete this.rbd.name;
+    }
+
+    if (this.copying) {
+      this.copy = {
+        pool_name: this.$stateParams.pool,
+        image_name: this.$stateParams.name
       };
       delete this.rbd.name;
     }
@@ -489,7 +504,7 @@ class CephRbdForm {
         this.getEcOverwritesPools()
       ];
 
-      if (this.editing || this.cloning) {
+      if (this.editing || this.cloning || this.copying) {
         qs.push(this.getRbd());
       }
 
@@ -497,7 +512,7 @@ class CephRbdForm {
         .then((res) => {
           this.handleReplicatedPools(res[0]);
           this.handleEcOverwritesPools(res[1]);
-          if (this.editing || this.cloning) {
+          if (this.editing || this.cloning || this.copying) {
             this.handleRbd(res[2]);
           }
         })
@@ -566,6 +581,20 @@ class CephRbdForm {
           .$promise
           .then((res) => {
             this.rbd = res;
+            this.goToListView();
+          }, (error) => {
+            console.log(error);
+            this.rbdForm.$submitted = false;
+          });
+      } else if (this.copying) {
+        this.cephRbdService.copy({
+          fsid: this.fsid,
+          pool: this.copy.pool_name,
+          name: this.copy.image_name
+        }, this.rbd)
+          .$promise
+          .then((res) => {
+            console.log("Executing copy: " + res.task_id);
             this.goToListView();
           }, (error) => {
             console.log(error);
