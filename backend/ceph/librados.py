@@ -1069,6 +1069,7 @@ class RbdApi(object):
 
     RBD_DELETION_TIMEOUT = 3600
     RBD_ROLLBACK_TIMEOUT = 3600
+    RBD_COPY_TIMEOUT = 3600
 
     @staticmethod
     def get_feature_mapping():
@@ -1192,6 +1193,31 @@ class RbdApi(object):
             rbd_inst.remove(ioctx, image_name)
 
         self._call_librados(_remove, timeout=self.RBD_DELETION_TIMEOUT)
+
+    @logged
+    @undoable
+    def copy(self, src_pool_name, src_image_name, dest_pool_name,
+             dest_image_name, features=None, order=None, stripe_unit=None,
+             stripe_count=None, data_pool_name=None):
+        def _copy(client):
+            s_ioctx = client.get_pool(src_pool_name)
+            d_ioctx = client.get_pool(dest_pool_name)
+            default_features = 61  # FIXME: hardcoded int
+            feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
+                               default_features)
+            with rbd.Image(s_ioctx, name=src_image_name) as image:
+                try:
+                    image.copy(d_ioctx, dest_image_name, feature_bitmask, order,
+                               stripe_unit, stripe_count, data_pool_name)
+                except TypeError:
+                    logger.exception('This seems to be Jewel?!')
+                    s_count = stripe_count if stripe_count else 0
+                    s_unit = stripe_unit if stripe_unit else 0
+                    image.copy(d_ioctx, dest_image_name, feature_bitmask, order,
+                               s_unit, s_count)
+
+        yield self._call_librados(_copy, timeout=self.RBD_COPY_TIMEOUT)
+        self.remove(dest_pool_name, dest_image_name)
 
     def list(self, pool_name):
         """

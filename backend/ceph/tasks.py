@@ -41,6 +41,19 @@ def rollback_to_snapshot(fsid, pool_name, image_name, snap_name):
         rbd_api.rollback_to_snapshot(pool_name, image_name, snap_name)
 
 
+@task(description='Copy RBD from: {1}/{2} to: {3}/{4}',
+      metadata=lambda fsid, s_pool, s_image, d_pool, d_image, *args:
+      {'fsid': fsid, 'src_pool': s_pool, 'src_image': s_image,
+       'dest_pool': d_pool, 'dest_image': d_image})
+def copy_rbd(fsid, s_pool, s_image, d_pool, d_image, features=None, order=None,
+             stripe_unit=None, stripe_count=None, data_pool_name=None):
+    from ceph.models import fsid_context
+    with fsid_context(fsid) as ctx:
+        rbd_api = librados.RbdApi(fsid)
+        rbd_api.copy(s_pool, s_image, d_pool, d_image, features, order,
+                     stripe_unit, stripe_count, data_pool_name)
+
+
 @task(description='Setting number of PGs to {2}')
 def set_pgs(fsid, pool_id, pgs):
     from ceph.models import CephPool, fsid_context

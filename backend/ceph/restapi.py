@@ -13,6 +13,7 @@
  *  GNU General Public License for more details.
 """
 import logging
+import math
 
 from django.utils.functional import cached_property
 from rest_framework import serializers, status
@@ -345,6 +346,31 @@ class CephRbdViewSet(TaskQueueLocationMixin, BulkDestroyModelMixin, NodbViewSet)
     def basic_data(self, request, *args, **kwargs):
         return Response([{'id': rbd.id, 'name': rbd.name, 'pool': rbd.pool.name}
                          for rbd in CephRbd.objects.all()])
+
+    @detail_route(['post'])
+    def copy(self, request, *args, **kwargs):
+        image = self.get_object()
+        data = get_request_data(request)
+        pool = CephPool.objects.get(id=data['pool'])
+
+        logger.info("rbd copy from: %s to: %s/%s", image.id,
+                    pool.name, data['name'])
+        order = None
+        obj_size = data.get('obj_size', None)
+        if obj_size is not None and obj_size > 0:
+            order = int(round(math.log(float(obj_size), 2)))
+
+        data_pool = data.get('data_pool', None)
+        if data_pool:
+            data_pool_name = CephPool.objects.get(id=data_pool).name
+        else:
+            data_pool_name = None
+        task = ceph.tasks.copy_rbd.delay(
+            image.pool.cluster.fsid, image.pool.name, image.name,
+            pool.name, data['name'],
+            data.get('features', []), order, data.get('stripe_count', None),
+            data.get('stripe_unit', None), data_pool_name)
+        return Response({'task_id': task.id}, status=status.HTTP_200_OK)
 
 
 class CephRbdSnapSerializer(NodbSerializer):
