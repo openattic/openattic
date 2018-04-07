@@ -227,8 +227,10 @@ class CephRbdForm {
     // striping: { unitDisplayed: "4 MiB" },
     this.data.defaultFeatures = false;
     this.rbd.features.forEach(element => {
-      this.data.features[element].checked = true;
-      this.watchDataFeatures(element);
+      if (element !== "data-pool") {
+        this.data.features[element].checked = true;
+        this.watchDataFeatures(element);
+      }
     });
     this.data.obj_num = this.rbd.num_objs;
     this.data.size = this.$filter("bytes")(this.rbd.size);
