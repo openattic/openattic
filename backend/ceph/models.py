@@ -942,6 +942,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         if not hasattr(self, 'features') or not isinstance(self.features, list):
             self.features = []
 
+        if not hasattr(self, 'parent') or not isinstance(self.parent, dict):
+            self.parent = None
+
         api = self.rbd_api()
 
         with undo_transaction(api, re_raise_exception=True,
