@@ -30,6 +30,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI: fixed typo in RBD creation form (OP-3148)
+* WebUI: Ignore unused operations on the CRUSH Map Editor (OP-3154)
 
 Removed
 ~~~~~~~
