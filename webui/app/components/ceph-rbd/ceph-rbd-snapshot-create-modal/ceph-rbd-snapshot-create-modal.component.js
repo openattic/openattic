@@ -49,51 +49,55 @@ class CephRbdSnapshotCreateModal {
     }
   }
 
+  edit () {
+    const request = {
+      fsid: this.resolve.fsid,
+      pool: this.resolve.poolName,
+      imagename: this.resolve.imageName,
+      snap: this.resolve.snapName,
+      image: `${this.resolve.poolName}/${this.resolve.imageName}`,
+      name: this.name,
+      is_protected: this.isProtected
+    };
+    return this.$q((resolve, reject) => {
+      this.cephRbdSnapshotService.update(request)
+        .$promise
+        .then(() => {
+          resolve();
+          this.modalInstance.close("snapsedited");
+        }, () => {
+          this.form.$submitted = false;
+          reject();
+        });
+    });
+  }
+
   create () {
-    // Edit
+    const request = {
+      fsid: this.resolve.fsid,
+      image: `${this.resolve.poolName}/${this.resolve.imageName}`,
+      name: this.name,
+      is_protected: this.isProtected
+    };
+    return this.$q((resolve, reject) => {
+      this.cephRbdSnapshotService.create(request)
+        .$promise
+        .then(() => {
+          resolve();
+          this.modalInstance.close("snapscreated");
+        }, () => {
+          this.form.$submitted = false;
+          reject();
+        });
+    });
+  }
+
+  submit () {
     if (this.editing) {
-      const request = {
-        fsid: this.resolve.fsid,
-        pool: this.resolve.poolName,
-        imagename: this.resolve.imageName,
-        snap: this.resolve.snapName,
-        image: `${this.resolve.poolName}/${this.resolve.imageName}`,
-        name: this.name,
-        is_protected: this.isProtected
-      };
-      return this.$q((resolve, reject) => {
-        this.cephRbdSnapshotService.update(request)
-          .$promise
-          .then(() => {
-            resolve();
-            this.modalInstance.close("snapsedited");
-          }, () => {
-            this.form.$submitted = false;
-            reject();
-          });
-      });
-
-      // Create
+      this.edit();
     } else {
-      const request = {
-        fsid: this.resolve.fsid,
-        image: `${this.resolve.poolName}/${this.resolve.imageName}`,
-        name: this.name,
-        is_protected: this.isProtected
-      };
-      return this.$q((resolve, reject) => {
-        this.cephRbdSnapshotService.create(request)
-          .$promise
-          .then(() => {
-            resolve();
-            this.modalInstance.close("snapscreated");
-          }, () => {
-            this.form.$submitted = false;
-            reject();
-          });
-      });
+      this.create();
     }
-
   }
 
   cancel () {

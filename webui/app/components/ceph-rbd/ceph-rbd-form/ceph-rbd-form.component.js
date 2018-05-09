@@ -135,16 +135,11 @@ class CephRbdForm {
   }
 
   $onInit () {
-    if (this.$state.current.name === "cephRbds-clone") {
-      this.preparing = true;
-      this.cloning = true;
-    } else if (this.$state.current.name === "cephRbds-copy") {
-      this.preparing = true;
-      this.copying = true;
-    } else if (this.$stateParams.name) {
-      this.preparing = true;
-      this.editing = true;
-    }
+    const name = this.$state.current.name;
+    this.cloning = name === "cephRbds-clone";
+    this.copying = name === "cephRbds-copy";
+    this.editing = name === "cephRbds-edit";
+    this.preparing = this.cloning || this.copying || this.editing;
 
     this.cephClusterService.get()
       .$promise

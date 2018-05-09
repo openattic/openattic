@@ -719,7 +719,7 @@ msgstr ""
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:23
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:59
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:60
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:53
+#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:14
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:64
 #: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:121
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:140
@@ -1962,10 +1962,6 @@ msgstr ""
 msgid "Protect"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:30
-msgid "Protected snapshots cannot be deleted."
-msgstr ""
-
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:236
 msgid "Pseudo"
 msgstr ""
@@ -1996,10 +1992,6 @@ msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html:2
 msgid "RBD images with the following features will not be supported by iSCSI:"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:45
-msgid "RBD snapshot must be protected."
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:15
@@ -2244,14 +2236,6 @@ msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:25
 msgid "Size:"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:40
-msgid "Snapshot protection is only available for RBD images with \"Layering\" enabled."
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:35
-msgid "Snapshot unprotection is only available for snapshots without children images."
 msgstr ""
 
 #: app/components/ceph-nfs/ceph-nfs-form-client/ceph-nfs-form-client.component.html:75
@@ -2826,22 +2810,6 @@ msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:132
 msgid "UNPROTECTED"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:18
-msgid "Unable to clone snapshot"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:3
-msgid "Unable to delete snapshot"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:13
-msgid "Unable to protect snapshot"
-msgstr ""
-
-#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:8
-msgid "Unable to unprotect snapshot"
 msgstr ""
 
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:47

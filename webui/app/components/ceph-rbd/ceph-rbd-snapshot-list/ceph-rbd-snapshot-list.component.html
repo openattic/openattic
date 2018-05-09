@@ -40,7 +40,7 @@
       </a>
     </li>
     <li class="tc_protectUnprotectItem"
-        ng-click="$ctrl.protectUnprotectAction()"
+        ng-click="$ctrl.toggleProtectionAction()"
         ng-class="{disabled: !$ctrl.hasSelection || $ctrl.multiSelection}">
       <a>
         <span ng-if="$ctrl.snapSelection.item.is_protected">

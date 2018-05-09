@@ -38,6 +38,23 @@ class CephRbdSnapshotErrorModal {
 
   $onInit () {
     this.validationError = this.resolve.validationError;
+
+    if (this.validationError === this.cephRbdSnapshotValidationErrors.deleteProtected) {
+      this.errorHeading = "Unable to delete snapshot";
+      this.errorMsg = "Protected snapshots cannot be deleted.";
+
+    } else if (this.validationError === this.cephRbdSnapshotValidationErrors.protectWithChilden) {
+      this.errorHeading = "Unable to unprotect snapshot";
+      this.errorMsg = "Snapshot unprotection is only available for snapshots without children images.";
+
+    } else if (this.validationError === this.cephRbdSnapshotValidationErrors.unprotectWithoutLayering) {
+      this.errorHeading = "Unable to protect snapshot";
+      this.errorMsg = "Snapshot protection is only available for RBD images with \"Layering\" enabled.";
+
+    } else if (this.validationError === this.cephRbdSnapshotValidationErrors.cloneUnprotected) {
+      this.errorHeading = "Unable to clone snapshot";
+      this.errorMsg = "RBD snapshot must be protected.";
+    }
   }
 
   cancel () {

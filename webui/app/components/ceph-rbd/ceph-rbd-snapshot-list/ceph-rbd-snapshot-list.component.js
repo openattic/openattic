@@ -104,7 +104,7 @@ class CephRbdSnapshotList {
 
   }
 
-  protectUnprotectAction () {
+  toggleProtectionAction () {
     if (this.imageFeatures.indexOf("layering") === -1) {
       this.showValidationError(this.cephRbdSnapshotValidationErrors.unprotectWithoutLayering);
       return;
@@ -154,18 +154,10 @@ class CephRbdSnapshotList {
       windowTemplate: require("../../../templates/messagebox.html"),
       component: "cephRbdSnapshotDeleteModal",
       resolve: {
-        fsid: () => {
-          return this.fsid;
-        },
-        poolName: () => {
-          return this.poolName;
-        },
-        imageName: () => {
-          return this.imageName;
-        },
-        snapSelection:  () => {
-          return this.snapSelection.items;
-        }
+        fsid: () => this.fsid,
+        poolName: () => this.poolName,
+        imageName: () => this.imageName,
+        snapSelection: () => this.snapSelection.items
       }
     });
 
@@ -187,10 +179,10 @@ class CephRbdSnapshotList {
   }
 
   _updateState (snapshots, pendingTasks) {
-    let notStartedTasks = pendingTasks[0].results || [];
-    let runningTasks = pendingTasks[1].results || [];
-    let results = notStartedTasks.concat(runningTasks);
-    let taskIds = [];
+    const notStartedTasks = pendingTasks[0].results || [];
+    const runningTasks = pendingTasks[1].results || [];
+    const results = notStartedTasks.concat(runningTasks);
+    const taskIds = [];
     results.forEach((task) => {
       if (task.description.startsWith("Rollback RBD ") && taskIds.indexOf(task.id) === -1) {
         taskIds.push(task.id);
