@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ * Copyright (c) 2018 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -32,46 +32,35 @@
 
 import globalConfig from "globalConfig";
 
-export default class CephRbdService {
+export default class CephRbdSnapshotService {
   constructor ($resource) {
-    const resource = $resource(globalConfig.API.URL + "ceph/:fsid/rbds", {
+    const resource = $resource(globalConfig.API.URL + "ceph/:fsid/rbdsnaps", {
       fsid: "@fsid",
       pool: "@pool",
-      name: "@name"
+      image: "@image",
+      imagename: "@imagename",
+      name: "@name",
+      snap: "@snap"
     }, {
+      list: {
+        method: "GET",
+        url: globalConfig.API.URL + "ceph/:fsid/rbdsnaps?image__id=:pool/:imagename"
+      },
+      create: {
+        method: "POST",
+        url: globalConfig.API.URL + "ceph/:fsid/rbdsnaps"
+      },
       update: {
         method: "PUT",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
-      },
-      query: {
-        method: "GET",
-        isArray: true,
-        transformResponse: (data) => {
-          const res = JSON.parse(data);
-          return res && res.results || [];
-        }
+        url: globalConfig.API.URL + "ceph/:fsid/rbdsnaps/:pool/:imagename@:snap"
       },
       delete: {
         method: "DELETE",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
+        url: globalConfig.API.URL + "ceph/:fsid/rbdsnaps/:pool/:imagename@:snap"
       },
-      performancedata: {
-        method: "GET",
-        isArray: true,
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/performancedata_rbd"
-      },
-      basicData: {
-        method: "GET",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/basic_data",
-        isArray: true
-      },
-      getDetail: {
-        method: "GET",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name"
-      },
-      copy: {
+      rollback: {
         method: "POST",
-        url: globalConfig.API.URL + "ceph/:fsid/rbds/:pool/:name/copy"
+        url: globalConfig.API.URL + "ceph/:fsid/rbdsnaps/:pool/:imagename@:snap/rollback"
       }
     });
 

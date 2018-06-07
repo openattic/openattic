@@ -11,11 +11,51 @@
     <div class="panel panel-default">
       <div class="panel-heading tc_formHeadline">
         <h3 class="panel-title">
-          {{ $ctrl.editing ? "Edit" : "Create" | translate }} 
+          {{ $ctrl.editing ? "Edit" : ($ctrl.cloning ? "Clone" : ($ctrl.copying ? "Copy" : "Create")) | translate }}
           <translate translate-params-name="$ctrl.rbd.name">RBD: {{ name }}</translate>
         </h3>
       </div>
       <div class="panel-body">
+
+        <!-- Parent -->
+        <div class="form-group"
+             ng-if="$ctrl.rbd.parent">
+          <label translate
+                 class="control-label col-sm-3"
+                 for="parent">
+            <span>{{ $ctrl.cloning ? 'Clone' : 'Copy' }} from</span>
+          </label>
+          <div class="col-sm-9">
+            <input id="name"
+                   type="text"
+                   class="form-control"
+                   value="{{ $ctrl.rbd.parent.pool_name }}/{{ $ctrl.rbd.parent.image_name }}@{{ $ctrl.rbd.parent.snap_name }}"
+                   disabled
+                   name="parent">
+          <hr>
+          </div>
+        </div>
+
+        <!-- Copy From -->
+        <div class="form-group"
+             ng-if="$ctrl.copy">
+          <label translate
+                 class="control-label col-sm-3"
+                 for="copy_from">
+            Copy From
+          </label>
+          <div class="col-sm-9">
+            <input id="copy_from"
+                   type="text"
+                   class="form-control tc_rbd_name"
+                   placeholder="Name..."
+                   value="{{ $ctrl.copy.pool_name }}/{{ $ctrl.copy.image_name }}"
+                   disabled
+                   name="copy_from">
+          <hr>
+          </div>
+        </div>
+
         <div class="form-group"
              ng-class="{'has-error': ($ctrl.rbdForm.$submitted || $ctrl.rbdForm.name.$dirty)
             && $ctrl.rbdForm.name.$invalid}">
@@ -223,7 +263,7 @@
                    class="form-control tc_rbd_size"
                    type="text"
                    name="size"
-                   ng-disabled="$ctrl.data.pool == null"
+                   ng-disabled="$ctrl.data.pool == null || $ctrl.cloning || $ctrl.copying"
                    ng-change="$ctrl.watchDataSize()"
                    ng-model-options="{ updateOn: 'blur' }"
                    ng-model="$ctrl.data.size"
@@ -418,7 +458,7 @@
         <div class="button-group text-right">
           <oa-submit-button form="$ctrl.rbdForm"
                             on-submit="$ctrl.submitAction($ctrl.rbdForm)">
-            {{ $ctrl.editing ? "Update" : "Create" | translate }}
+            {{ $ctrl.editing ? "Update" : ($ctrl.cloning ? "Clone" : ($ctrl.copying ? "Copy" : "Create")) | translate }}
           </oa-submit-button>
           <button translate
                   type="button"

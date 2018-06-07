@@ -1,0 +1,142 @@
+<span ng-show="!$ctrl.snapshots.$resolved">
+  <i class="fa fa-spinner fa-spin fa-fw"
+     aria-hidden="true"></i> <translate>Loading...</translate>
+</span>
+
+<oa-error-panel ng-if="$ctrl.error">
+  <translate>Ceph RBD Snapshot resources could not be loaded.</translate>
+</oa-error-panel>
+
+<oadatatable ng-show="!$ctrl.error && $ctrl.snapshots.results"
+             data="$ctrl.snapshots"
+             class="oadatatable tc_cephRbdSnapshotTable"
+             filter-config="$ctrl.filterConfig"
+             selection="$ctrl.snapSelection"
+             on-selection-change="$ctrl.onSelectionChange(selection)"
+             on-filter-config-change="$ctrl.onFilterConfigChange()">
+  <actions>
+    <a class="btn btn-sm btn-primary tc_add_btn"
+       type="button"
+       ng-click="$ctrl.createAction()"
+       ng-hide="$ctrl.hasSelection || $ctrl.multiSelection">
+      <i class="fa fa-fw fa-plus"></i><translate>Create</translate>
+    </a>
+    <a class="btn btn-sm btn-primary tc_delete_btn"
+       type="button"
+       ng-click="$ctrl.deleteAction()"
+       ng-show="$ctrl.hasSelection || $ctrl.multiSelection">
+      <i class="fa fa-fw fa-trash-o"></i><translate>Delete</translate>
+    </a>
+    <li>
+      <a ng-click="$ctrl.createAction()">
+        <i class="fa fa-fw fa-plus"></i><translate>Create</translate>
+      </a>
+    </li>
+    <li class="tc_renameItem"
+        ng-click="$ctrl.renameAction()"
+        ng-class="{disabled: !$ctrl.hasSelection || $ctrl.multiSelection}">
+      <a>
+        <i class="fa fa-fw fa-edit"></i><translate>Rename</translate>
+      </a>
+    </li>
+    <li class="tc_protectUnprotectItem"
+        ng-click="$ctrl.toggleProtectionAction()"
+        ng-class="{disabled: !$ctrl.hasSelection || $ctrl.multiSelection}">
+      <a>
+        <span ng-if="$ctrl.snapSelection.item.is_protected">
+          <i class="fa fa-fw fa-unlock"></i><translate>Unprotect</translate>
+        </span>
+        <span ng-if="!$ctrl.snapSelection.item.is_protected">
+          <i class="fa fa-fw fa-lock"></i><translate>Protect</translate>
+        </span>
+      </a>
+    </li>
+    <li ng-class="{disabled: !$ctrl.hasSelection}">
+      <a ng-click="$ctrl.cloneAction()">
+        <i class="fa fa-fw fa-clone"></i><translate>Clone</translate>
+      </a>
+    </li>
+    <li class="tc_rollbackItem"
+        ng-click="$ctrl.rollbackAction()"
+        ng-class="{disabled: !$ctrl.hasSelection || $ctrl.multiSelection}">
+      <a>
+        <i class="fa fa-fw fa-undo"></i><translate>Rollback</translate>
+      </a>
+    </li>
+    <li class="tc_deleteItem"
+        ng-click="$ctrl.deleteAction()"
+        ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
+      <a>
+        <i class="fa fa-fw fa-trash-o"></i><translate>Delete</translate>
+      </a>
+    </li>
+  </actions>
+  <table class="table table-striped table-bordered table-hover dataTable datatable">
+    <thead>
+      <tr>
+        <th class="oadatatablecheckbox"
+            ng-if="selection.available">
+          <input type="checkbox"
+                 ng-model="selection.checkAll">
+        </th>
+        <th ng-show="columns['Name']"
+            sortfield="name"
+            sortdir="asc"
+            sortheaderclass
+            sortdefault
+            translate>Name</th>
+        <th sortfield="size"
+            sortdir="asc"
+            sortheaderclass
+            ng-show="columns['Size']"
+            translate>Size</th>
+        <th sortfield="is_protected"
+            sortdir="asc"
+            sortheaderclass
+            ng-show="columns['State']"
+            translate>State</th>
+        <th sortfield="date"
+            sortdir="asc"
+            sortheaderclass
+            ng-show="columns['Created']"
+            translate>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in data.results"
+          ng-class="{ info: isRowSelected(row) }"
+          class="clickable"
+          ng-click="toggleSelection(row, $event)">
+        <td ng-if="selection.available">
+          <input type="checkbox"
+                 checklist-model="selection.items"
+                 checklist-value="row">
+        </td>
+        <td ng-show="columns['Name']">
+          <span ng-if="row.executing">
+            <i class="fa fa-spinner fa-spin fa-fw"></i>
+          </span>
+          {{ row.name }}
+          <span class="italic"
+                ng-if="row.executing === 'ROLLING_BACK'"
+                translate> (rolling back...)</span>
+        </td>
+        <td ng-show="columns['Size']">
+          {{ row.size | bytes }}
+        </td>}
+        <td ng-show="columns['State']"
+            class="text-center">
+          <span ng-if="row.is_protected"
+                class="label label-success"
+                translate>PROTECTED</span>
+          <span ng-if="!row.is_protected"
+                class="label label-info"
+                translate>UNPROTECTED</span>
+        </td>
+        <td ng-show="columns['Created']">
+          {{ row.timestamp | localeDate }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</oadatatable>
