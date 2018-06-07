@@ -54,6 +54,7 @@ describe("should test ceph osd scrubing", function () {
 
   it("should apply scrubbing when you press submit", function () {
     page.submitBtn.click();
+    helpers.waitForElementRemoval(page.scrubModal);
     expect(page.scrubModal.isPresent()).toBe(false);
   });
 
@@ -66,6 +67,7 @@ describe("should test ceph osd scrubing", function () {
 
   it("should apply deep scrubbing when you press submit", function () {
     page.submitBtn.click();
+    helpers.waitForElementRemoval(page.scrubModal);
     expect(page.scrubModal.isPresent()).toBe(false);
   });
 
