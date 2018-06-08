@@ -34,13 +34,22 @@ import "../ceph-cluster/ceph-cluster.module";
 import cephRbdStripingModal from "./ceph-rbd-striping-modal/ceph-rbd-striping-modal.component";
 import cephRbdStripingObjectSet from "./ceph-rbd-striping-modal/ceph-rbd-striping-object-set.component";
 import cephRbdDeleteModal from "./ceph-rbd-delete-modal/ceph-rbd-delete-modal.component";
+import cephRbdSnapshotDeleteModal from "./ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component";
 import cephRbdDetail from "./ceph-rbd-detail/ceph-rbd-detail.component";
+import cephRbdSnapshot from "./ceph-rbd-snapshot/ceph-rbd-snapshot.component";
+import cephRbdSnapshotList from "./ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component";
 import cephRbdForm from "./ceph-rbd-form/ceph-rbd-form.component";
 import cephRbdList from "./ceph-rbd-list/ceph-rbd-list.component";
 import cephRbdStatistics from "./ceph-rbd-statistics/ceph-rbd-statistics.component";
 import cephRbdRoutes from "./ceph-rbd.routes";
 import CephRbdService from "./shared/ceph-rbd.service";
+import CephRbdSnapshotService from "./shared/ceph-rbd-snapshot.service";
 import cephRbdFeatures from "./shared/ceph-rbd-features.constant";
+import cephRbdSnapshotValidationErrors from "./shared/ceph-rbd-snapshot-validation-errors.constant";
+import cephRbdSnapshotCreateModal from "./ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component";
+import cephRbdSnapshotErrorModal from "./ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component";
+import cephRbdSnapshotRollbackModal
+  from "./ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component";
 
 angular.module("openattic.cephRbd", [
   "openattic.cephCluster"
@@ -49,9 +58,17 @@ angular.module("openattic.cephRbd", [
   .component("cephRbdStripingObjectSet", cephRbdStripingObjectSet)
   .component("cephRbdDeleteModal", cephRbdDeleteModal)
   .component("cephRbdDetail", cephRbdDetail)
+  .component("cephRbdSnapshot", cephRbdSnapshot)
+  .component("cephRbdSnapshotList", cephRbdSnapshotList)
   .component("cephRbdForm", cephRbdForm)
   .component("cephRbdList", cephRbdList)
   .component("cephRbdStatistics", cephRbdStatistics)
+  .component("cephRbdSnapshotCreateModal", cephRbdSnapshotCreateModal)
+  .component("cephRbdSnapshotErrorModal", cephRbdSnapshotErrorModal)
+  .component("cephRbdSnapshotDeleteModal", cephRbdSnapshotDeleteModal)
+  .component("cephRbdSnapshotRollbackModal", cephRbdSnapshotRollbackModal)
   .service("cephRbdService", CephRbdService)
+  .service("cephRbdSnapshotService", CephRbdSnapshotService)
   .constant("cephRbdFeatures", cephRbdFeatures)
+  .constant("cephRbdSnapshotValidationErrors", cephRbdSnapshotValidationErrors)
   .config(cephRbdRoutes);

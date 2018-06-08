@@ -22,6 +22,9 @@ To describe their impact on the project, changes are grouped as follows:
 
 Added
 ~~~~~
+* WebUI/backend: added RBD snapshot management (create, clone, rollback,
+  protect/unprotect, delete) (OP-2569)
+* WebUI/backend: added support for copying RBD images (OP-3150)
 
 Changed
 ~~~~~~~
@@ -29,8 +32,10 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: added support for enabling EC overwrite on existing pools (OP-3158)
 * WebUI: fixed typo in RBD creation form (OP-3148)
 * WebUI: Ignore unused operations on the CRUSH Map Editor (OP-3154)
+* WebUI/QA: Fixed timing issue with scrub e2e tests (OP-3152)
 
 Removed
 ~~~~~~~

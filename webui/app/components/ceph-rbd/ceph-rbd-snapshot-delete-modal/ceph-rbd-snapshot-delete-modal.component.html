@@ -1,0 +1,28 @@
+<oa-delete-confirmation-modal title="{{ ($ctrl.resolve.snapSelection.length > 1) ? 'Delete RBD Snapshots' : 'Delete RBD Snapshot' }}"
+                              pattern="$ctrl.resolve.snapSelection[0].name"
+                              on-confirm="$ctrl.delete()" on-cancel="$ctrl.cancel()">
+  <!-- single rbd -->
+  <div ng-if="$ctrl.resolve.snapSelection.length === 1">
+    <p>
+      <translate translate-params-name="$ctrl.resolve.snapSelection[0].name">
+        You are about to delete the RBD Snapshot <strong>{{ name }}</strong>.
+      </translate>
+    </p>
+  </div>
+  <!-- end single rbd -->
+
+  <!-- multiple rbds -->
+  <div ng-if="$ctrl.resolve.snapSelection.length > 1">
+    <p translate>
+      You are about to delete multiple RBD Snapshots.
+    </p>
+    <span translate
+          class="text-danger">The following RBD Snapshots will be deleted:</span>
+      <ul class="text-danger">
+        <li ng-repeat="rad in $ctrl.resolve.snapSelection">
+          {{rad.name}} ({{rad.size | bytes}})
+        </li>
+      </ul>
+  </div>
+  <!-- end multiple rbds -->
+</oa-delete-confirmation-modal>

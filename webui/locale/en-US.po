@@ -199,7 +199,7 @@ msgid "<i class=\"fa fa-fw fa-stethoscope\"></i>Deep Scrub"
 msgstr ""
 
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:32
-msgid "<i class=\"fa fa-fw fa-stethoscope\"></i>Srub"
+msgid "<i class=\"fa fa-fw fa-stethoscope\"></i>Scrub"
 msgstr ""
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:87

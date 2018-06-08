@@ -47,6 +47,11 @@
             <i class="fa fa-fw fa-pencil"></i><translate>Edit</translate>
           </a>
         </li>
+        <li ng-class="{disabled: !$ctrl.hasSelection}">
+          <a ng-click="$ctrl.copyAction()">
+            <i class="fa fa-fw fa-copy"></i><translate>Copy</translate>
+          </a>
+        </li>
         <li class="tc_deleteItem"
             ng-click="$ctrl.deleteAction()"
             ng-class="{disabled: !$ctrl.hasSelection && !$ctrl.multiSelection}">
@@ -116,6 +121,11 @@
                 sortheaderclass
                 disabled
                 ng-show="columns['Stripe count']">Stripe count</th>
+            <th translate
+                sortfield="parent"
+                sortdir="asc"
+                sortheaderclass
+                ng-show="columns['Parent']">Parent</th>
           </tr>
         </thead>
         <tbody>
@@ -129,13 +139,19 @@
                      checklist-value="row">
             </td>
             <td ng-show="columns['Name']">
-              <i ng-if="row.state === 'DELETING'"
+              <i ng-if="row.state && (row.state.id === 'DELETING' || row.state.id === 'COPYING')"
                  class="fa fa-spinner fa-spin fa-fw"></i>
               <a ui-sref="cephRbds-edit({fsid:row.pool.cluster,pool:row.pool.name,name:row.name})"
                  ng-bind="row.name"></a>
               <span translate
-                    ng-if="row.state === 'DELETING'"
+                    ng-if="row.state && row.state.id === 'DELETING'"
                     class="italic"> (deleting...)</span>
+              <span translate
+                    ng-if="row.state && row.state.id === 'COPYING' && row.state.dest"
+                    class="italic"> (copying to: {{row.state.dest}})</span>
+              <span translate
+                    ng-if="row.state && row.state.id === 'COPYING' && row.state.src"
+                    class="italic"> (copying from: {{row.state.src}})</span>
             </td>
             <td ng-show="columns['Poolname']"
                 ng-bind="row.pool.name"></td>
@@ -179,6 +195,12 @@
                 ng-bind="row.stripe_unit | bytes"></td>
             <td ng-show="columns['Stripe count']"
                 ng-bind="row.stripe_count"></td>
+            <td ng-show="columns['Parent']">
+              <span ng-if="row.parent">
+                {{ row.parent.pool_name }}/{{ row.parent.image_name }}@{{ row.parent.snap_name }}
+              </span>
+              <span ng-if="!row.parent">-</span>
+            </td>
           </tr>
         </tbody>
       </table>

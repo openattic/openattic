@@ -12,6 +12,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 """
+import logging
+import math
+
 from django.utils.functional import cached_property
 from rest_framework import serializers, status
 from rest_framework.generics import get_object_or_404
@@ -19,13 +22,17 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework_bulk import BulkDestroyAPIView, BulkDestroyModelMixin
 
+import ceph.tasks
 from ceph.models import CephCluster, CrushmapVersion, CephPool, CephErasureCodeProfile, CephOsd, \
-    CephPg, CephRbd, CephFs
+    CephPg, CephRbd, CephRbdSnap, CephFs
 from nodb.restapi import NodbSerializer, NodbViewSet
 from taskqueue.restapi import TaskQueueLocationMixin
 
 from rest.utilities import get_request_data, drf_version, get_paginated_response, \
     get_request_query_params
+
+
+logger = logging.getLogger(__name__)
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -339,6 +346,62 @@ class CephRbdViewSet(TaskQueueLocationMixin, BulkDestroyModelMixin, NodbViewSet)
     def basic_data(self, request, *args, **kwargs):
         return Response([{'id': rbd.id, 'name': rbd.name, 'pool': rbd.pool.name}
                          for rbd in CephRbd.objects.all()])
+
+    @detail_route(['post'])
+    def copy(self, request, *args, **kwargs):
+        image = self.get_object()
+        data = get_request_data(request)
+        pool = CephPool.objects.get(id=data['pool'])
+
+        logger.info("rbd copy from: %s to: %s/%s", image.id,
+                    pool.name, data['name'])
+        order = None
+        obj_size = data.get('obj_size', None)
+        if obj_size is not None and obj_size > 0:
+            order = int(round(math.log(float(obj_size), 2)))
+
+        data_pool = data.get('data_pool', None)
+        if data_pool:
+            data_pool_name = CephPool.objects.get(id=data_pool).name
+        else:
+            data_pool_name = None
+        task = ceph.tasks.copy_rbd.delay(
+            image.pool.cluster.fsid, image.pool.name, image.name,
+            pool.name, data['name'],
+            data.get('features', []), order, data.get('stripe_count', None),
+            data.get('stripe_unit', None), data_pool_name)
+        return Response({'task_id': task.id}, status=status.HTTP_200_OK)
+
+
+class CephRbdSnapSerializer(NodbSerializer):
+
+    class Meta(object):
+        model = CephRbdSnap
+
+
+class CephRbdSnapViewSet(TaskQueueLocationMixin, NodbViewSet):
+    """Represents a Ceph RADOS block device Snapshot ."""
+
+    filter_fields = ("id", "image__id")
+    serializer_class = CephRbdSnapSerializer
+    lookup_value_regex = r'[^/@]+/[^/]+'
+    search_fields = ('name',)
+
+    def __init__(self, **kwargs):
+        super(CephRbdSnapViewSet, self).__init__(**kwargs)
+        self.set_nodb_context(FsidContext(self, 'ceph'))
+
+    def get_queryset(self):
+        return CephRbdSnap.objects.all()
+
+    @detail_route(['post'])
+    def rollback(self, request, *args, **kwargs):
+        snap = self.get_object()
+        logger.info("processing rollback to snap=%s", snap.id)
+        task = ceph.tasks.rollback_to_snapshot.delay(
+            snap.image.pool.cluster.fsid, snap.image.pool.name,
+            snap.image.name, snap.name)
+        return Response({'task_id': task.id}, status=status.HTTP_200_OK)
 
 
 class CephFsSerializer(NodbSerializer):

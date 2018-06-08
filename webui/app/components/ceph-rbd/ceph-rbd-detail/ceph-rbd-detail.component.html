@@ -52,6 +52,13 @@
         <span translate
               class="text-muted">Not available</span>
       </dd>
+      <dt translate>Parent:</dt>
+      <dd>
+        <span ng-if="$ctrl.selection.item.parent">
+          {{ $ctrl.selection.item.parent.pool_name }}/{{ $ctrl.selection.item.parent.image_name }}@{{ $ctrl.selection.item.parent.snap_name }}
+        </span>
+        <span ng-if="!$ctrl.selection.item.parent">-</span>
+      </dd>
     </dl>
   </div>
 </div>
