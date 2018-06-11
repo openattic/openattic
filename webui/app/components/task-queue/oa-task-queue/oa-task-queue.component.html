@@ -4,8 +4,8 @@
    tooltip-placement="bottom">
   <i class="fa {{$ctrl.taskOverview.icon}}"></i>
   <span ng-if="!$ctrl.taskOverview.failed">
-    <translate translate-params-queue="$ctrl.taskOverview.queue ? $ctrl.taskOverview.queue : ''">
-      {{ queue }} Background-Task{{queue !== 1 ? 's' : ''}}
+    <translate translate-params-queue="$ctrl.taskOverview.queue">
+      {{ queue ? queue : '' }} Background-Task{{queue !== 1 ? 's' : ''}}
     </translate>
   </span>
   <span ng-if="$ctrl.taskOverview.failed > 0">
