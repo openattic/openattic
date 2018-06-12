@@ -1,0 +1,21 @@
+<div class="openattic-modal-header">
+  <span ng-bind="$ctrl.errorHeading | translate"></span>
+</div>
+
+<div class="openattic-modal-content">
+
+  <i class="fa fa-exclamation-triangle fa-fw icon-danger"
+     aria-hidden="true"></i>
+  <span ng-bind="$ctrl.errorMsg | translate"></span>
+</div>
+
+<div class="openattic-modal-footer">
+  <div class="button-group text-right">
+    <button id="cancelButton"
+            class="btn btn-default btn-sm"
+            ng-click="$ctrl.cancel()"
+            translate>
+      Close
+    </button>
+  </div>
+</div>

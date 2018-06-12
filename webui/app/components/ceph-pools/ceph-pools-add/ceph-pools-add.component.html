@@ -347,7 +347,7 @@
                   <div class="checkbox checkbox-primary">
                     <input id="ec-overwrites"
                            type="checkbox"
-                           ng-disabled="$ctrl.editing"
+                           ng-disabled="$ctrl.editing && $ctrl.pool.flags.indexOf('ec_overwrites') !== -1"
                            ng-model="$ctrl.data.flags.ec_overwrites"
                            ng-name="ec-overwrites">
                     <label translate

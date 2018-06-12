@@ -85,6 +85,38 @@ export default ($stateProvider) => {
         parent: "cephRbds"
       }
     })
+    .state("cephRbds-clone", {
+      url: "/rbds/clone/:fsid/:pool/:name/:snap",
+      views: {
+        "main": {
+          component : "cephRbdForm"
+        }
+      },
+      params: {
+        fsid: null,
+        fromState: "cephRbds"
+      },
+      ncyBreadcrumb: {
+        label: "Clone {{rbd.name}}",
+        parent: "cephRbds"
+      }
+    })
+    .state("cephRbds-copy", {
+      url: "/rbds/copy/:fsid/:pool/:name",
+      views: {
+        "main": {
+          component : "cephRbdForm"
+        }
+      },
+      params: {
+        fsid: null,
+        fromState: "cephRbds"
+      },
+      ncyBreadcrumb: {
+        label: "Copy {{rbd.name}}",
+        parent: "cephRbds"
+      }
+    })
     .state("cephRbds.detail.statistics", {
       url          : "/statistics",
       views        : {
@@ -105,6 +137,17 @@ export default ($stateProvider) => {
       },
       ncyBreadcrumb: {
         label: "{{$ctrl.selection.item.name}} details"
+      }
+    })
+    .state("cephRbds.detail.snapshot", {
+      url: "/snapshot",
+      views: {
+        "tab-content": {
+          component: "cephRbdSnapshot"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "{{$ctrl.selection.item.name}} snapshots"
       }
     });
 };

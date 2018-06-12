@@ -20,7 +20,15 @@ msgstr ""
 msgid "(code {{ reason }})"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:136
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:152
+msgid "(copying from: {{row.state.src}})"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:149
+msgid "(copying to: {{row.state.dest}})"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:146
 msgid "(deleting...)"
 msgstr ""
 
@@ -31,6 +39,10 @@ msgstr ""
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:56
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:64
 msgid "(inherited from global config)"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:120
+msgid "(rolling back...)"
 msgstr ""
 
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:63
@@ -196,6 +208,10 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-122-deepsea-nfs-no-hosts.html:9
 msgid "<li>At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>ganesha</strong> exists</li>"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:23
+msgid "<span>{{ $ctrl.cloning ? 'Clone' : 'Copy' }} from</span>"
 msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:10
@@ -460,7 +476,7 @@ msgstr ""
 msgid "At least one active <a ui-sref=\"ceph-rgw-users\">Object Gateway user</a> exists"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:328
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:368
 msgid "At least one feature has to be selected"
 msgstr ""
 
@@ -475,7 +491,7 @@ msgstr ""
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:614
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:364
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:652
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:423
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:463
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:120
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:759
 #: app/components/shared/oa-error-panel/oa-error-panel.component.html:17
@@ -567,6 +583,8 @@ msgstr ""
 #: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:35
 #: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:52
 #: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:28
+#: app/components/ceph-rbd/ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component.html:43
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:25
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:81
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:155
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:179
@@ -617,6 +635,14 @@ msgstr ""
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:110
 msgid "Ceph Path"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:2
+msgid "Ceph RBD Snapshot Rollback"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:7
+msgid "Ceph RBD Snapshot resources could not be loaded."
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:8
@@ -686,9 +712,14 @@ msgstr ""
 msgid "Clients:"
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:56
+msgid "Clone"
+msgstr ""
+
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:23
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:59
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:60
+#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:14
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:64
 #: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:121
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:140
@@ -697,7 +728,7 @@ msgstr ""
 
 #: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:65
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:66
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:55
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:95
 msgid "Cluster"
 msgstr ""
 
@@ -774,7 +805,12 @@ msgstr ""
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:17
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:52
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:54
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:52
 msgid "Copy"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:42
+msgid "Copy From"
 msgstr ""
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:5
@@ -798,17 +834,26 @@ msgid "Couldn't delete {{ amount }} task{{$ctrl.pendingDeletionFailure.length ==
 msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:92
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:77
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:117
 msgid "Couldn't load any cluster, please contact your administrator for details."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:149
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:207
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:189
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:247
 msgid "Couldn't load any pool, please contact your administrator for details."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:32
+msgid "Create"
 msgstr ""
 
 #: app/components/users/users-form/users-form.component.html:11
 msgid "Create User: {{ username }}"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:98
+msgid "Created"
 msgstr ""
 
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:83
@@ -844,7 +889,7 @@ msgstr ""
 msgid "Data chunks (k)"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:163
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:203
 msgid "Data-Pool"
 msgstr ""
 
@@ -852,7 +897,7 @@ msgstr ""
 msgid "Data-Pool:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:89
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:94
 msgid "Data-pool"
 msgstr ""
 
@@ -874,7 +919,9 @@ msgstr ""
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:39
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:58
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:37
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:55
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:60
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:28
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:70
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:57
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:37
@@ -1087,7 +1134,7 @@ msgstr ""
 msgid "Failed to load the form data."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:290
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:330
 msgid "Features"
 msgstr ""
 
@@ -1356,6 +1403,7 @@ msgstr ""
 
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:21
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:3
 #: app/components/shared/oa-loading-panel/oa-loading-panel.component.html:6
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:11
 msgid "Loading..."
@@ -1584,8 +1632,10 @@ msgstr ""
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:65
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:28
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:70
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:22
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:67
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:62
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:72
+#: app/components/ceph-rbd/ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component.html:16
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:82
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:36
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:69
 msgid "Name"
@@ -1661,7 +1711,7 @@ msgid "Not a valid number!"
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:52
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:166
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:182
 msgid "Not available"
 msgstr ""
 
@@ -1673,7 +1723,7 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:101
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:106
 msgid "Number of objects"
 msgstr ""
 
@@ -1736,8 +1786,8 @@ msgstr ""
 msgid "Object Size"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:258
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:95
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:298
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:100
 msgid "Object size"
 msgstr ""
 
@@ -1756,6 +1806,18 @@ msgstr ""
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-detail/ceph-rgw-bucket-detail.component.html:15
 msgid "Owner:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:129
+msgid "PROTECTED"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:124
+msgid "Parent"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:55
+msgid "Parent:"
 msgstr ""
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:289
@@ -1867,7 +1929,7 @@ msgstr ""
 msgid "Pool:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:73
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
 msgid "Poolname"
 msgstr ""
 
@@ -1895,6 +1957,10 @@ msgstr ""
 
 #: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:67
 msgid "Processing deletion requests: {{ finishedTasks }} of {{ amount }}"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:50
+msgid "Protect"
 msgstr ""
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:236
@@ -1952,6 +2018,10 @@ msgstr ""
 
 #: app/components/notification/oa-notifications/oa-notifications.component.html:15
 msgid "Remove all"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:39
+msgid "Rename"
 msgstr ""
 
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:5
@@ -2025,6 +2095,11 @@ msgstr ""
 
 #: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:28
 msgid "Roles:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:63
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:19
+msgid "Rollback"
 msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:10
@@ -2154,8 +2229,9 @@ msgstr ""
 msgid "Sign Out"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:218
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:258
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:83
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:88
 msgid "Size"
 msgstr ""
 
@@ -2182,6 +2258,7 @@ msgstr ""
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:13
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:93
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:14
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:93
 msgid "State"
 msgstr ""
 
@@ -2227,11 +2304,11 @@ msgstr ""
 msgid "Stripe Unit"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:113
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:118
 msgid "Stripe count"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:107
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:112
 msgid "Stripe unit"
 msgstr ""
 
@@ -2239,16 +2316,16 @@ msgstr ""
 msgid "Stripe width:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:335
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:375
 msgid "Striping"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:410
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:450
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:2
 msgid "Striping Preview"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:373
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:413
 msgid "Striping count"
 msgstr ""
 
@@ -2260,7 +2337,7 @@ msgstr ""
 msgid "Striping features:"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:340
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:380
 msgid "Striping unit"
 msgstr ""
 
@@ -2378,7 +2455,7 @@ msgstr ""
 msgid "The chosen Ceph pool name is already in use."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:44
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:84
 msgid "The chosen RBD name is already in use."
 msgstr ""
 
@@ -2416,6 +2493,10 @@ msgstr ""
 
 #: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:17
 msgid "The following NFS exports will be deleted:"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component.html:19
+msgid "The following RBD Snapshots will be deleted:"
 msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:28
@@ -2483,7 +2564,7 @@ msgid ""
 "                    A value from {{ minSize }} to {{ maxSize }} is valid."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:393
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:433
 msgid "The striping count has to be a value higher than 1."
 msgstr ""
 
@@ -2525,14 +2606,15 @@ msgstr ""
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:485
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:518
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:87
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:143
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:201
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:232
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:273
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:358
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:37
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:388
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:71
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:111
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:183
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:241
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:272
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:313
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:398
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:428
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:77
+#: app/components/ceph-rbd/ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component.html:28
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:106
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:51
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:37
@@ -2560,11 +2642,11 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:363
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:403
 msgid "This field was decreased with your object size change."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:279
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:319
 msgid "This field was increased with your stripe unit change."
 msgstr ""
 
@@ -2727,6 +2809,10 @@ msgstr ""
 msgid "UDP"
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:132
+msgid "UNPROTECTED"
+msgstr ""
+
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:47
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:52
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:70
@@ -2744,6 +2830,10 @@ msgstr ""
 msgid "Unlimited size"
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:47
+msgid "Unprotect"
+msgstr ""
+
 #: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:2
 msgid "Unsaved Changes"
 msgstr ""
@@ -2753,16 +2843,16 @@ msgstr ""
 msgid "Use SSL"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:94
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:134
 msgid "Use a dedicated data pool"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:307
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:347
 msgid "Use default features"
 msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:80
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:83
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:88
 msgid "Used"
 msgstr ""
 
@@ -2864,6 +2954,10 @@ msgstr ""
 msgid "You are about to delete multiple NFS exports."
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component.html:16
+msgid "You are about to delete multiple RBD Snapshots."
+msgstr ""
+
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:21
 msgid "You are about to delete multiple RBDs."
 msgstr ""
@@ -2890,6 +2984,10 @@ msgstr ""
 
 #: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:8
 msgid "You are about to delete the RBD <strong>{{ name }}</strong>."
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component.html:7
+msgid "You are about to delete the RBD Snapshot <strong>{{ name }}</strong>."
 msgstr ""
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:8
@@ -2920,6 +3018,10 @@ msgstr ""
 msgid "You are about to generate a new API authentication token."
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:10
+msgid "You are about to rollback"
+msgstr ""
+
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:15
 msgid ""
 "You can change the user group\n"
@@ -2942,11 +3044,11 @@ msgstr ""
 msgid "You can use up to four application per pool."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:238
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:278
 msgid "You have to increase the size in order to have at least 1 object in your RBD."
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:245
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:285
 msgid "You have to increase the size in order to use striping."
 msgstr ""
 
@@ -3130,16 +3232,16 @@ msgstr ""
 msgid "{{ mode }} Ceph pool: {{ name }}"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:132
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:190
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:172
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:230
 msgid "{{ numBytes }} of {{ maxAvail }} used"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:196
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:236
 msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.dataPool)\">use max</a>"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:138
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:178
 msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.pool)\">use max</a>"
 msgstr ""
 
@@ -3147,10 +3249,10 @@ msgstr ""
 msgid "{{ queue }} Background-Task{{queue !== 1 ? 's' : ''}}"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:105
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:145
 msgid "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}Pool"
 msgstr ""
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:41
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:81
 msgid "{{errortext}}"
 msgstr ""

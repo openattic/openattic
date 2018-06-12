@@ -73,6 +73,12 @@ class CephRbdList {
           state: "cephRbds.detail.statistics",
           class: "tc_statisticsTab",
           name: "Statistics"
+        },
+        snapshot: {
+          show: () => _.isObjectLike(this.selection.item),
+          state: "cephRbds.detail.snapshot",
+          class: "tc_snapshotTab",
+          name: "Snapshots"
         }
       }
     };
@@ -179,9 +185,9 @@ class CephRbdList {
     }
   }
 
-  _updateState (rbds, deletingTasks) {
-    let notStartedTasks = deletingTasks[0].results || [];
-    let runningTasks = deletingTasks[1].results || [];
+  _updateState (rbds, rbdTasks) {
+    let notStartedTasks = rbdTasks[0].results || [];
+    let runningTasks = rbdTasks[1].results || [];
     let results = notStartedTasks.concat(runningTasks);
     let taskIds = [];
     results.forEach((task) => {
@@ -191,7 +197,26 @@ class CephRbdList {
           if (rbdImage.name === task.image &&
               rbdImage.pool.name === task.pool &&
               this.registry.selectedCluster.fsid === task.fsid) {
-            rbdImage.state = "DELETING";
+            rbdImage.state = {
+              id: "DELETING"
+            };
+          }
+        });
+      } else if (task.description.startsWith("Copy RBD from") && taskIds.indexOf(task.id) === -1) {
+        taskIds.push(task.id);
+        rbds.results.forEach((rbdImage) => {
+          if (rbdImage.name === task.src_image && rbdImage.pool.name === task.src_pool &&
+              this.registry.selectedCluster.fsid === task.fsid) {
+            rbdImage.state = {
+              id: "COPYING",
+              dest: task.dest_pool + "/" + task.dest_image
+            };
+          } else if (rbdImage.name === task.dest_image && rbdImage.pool.name === task.dest_pool &&
+                     this.registry.selectedCluster.fsid === task.fsid) {
+            rbdImage.state = {
+              id: "COPYING",
+              src: task.src_pool + "/" + task.src_image
+            };
           }
         });
       }
@@ -215,6 +240,14 @@ class CephRbdList {
 
   editAction () {
     this.$state.go("cephRbds-edit", {
+      fsid: this.registry.selectedCluster.fsid,
+      pool: this.selection.item.pool.name,
+      name: this.selection.item.name
+    });
+  }
+
+  copyAction () {
+    this.$state.go("cephRbds-copy", {
       fsid: this.registry.selectedCluster.fsid,
       pool: this.selection.item.pool.name,
       name: this.selection.item.name

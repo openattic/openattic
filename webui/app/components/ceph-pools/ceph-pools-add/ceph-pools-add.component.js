@@ -421,6 +421,12 @@ class CephPoolsAdd {
           apps[_app] = {};
         });
         pool.application_metadata = apps;
+        _.forIn(this.data.flags, (isSet, flag) => {
+          if (_.isUndefined(pool.flags) && isSet) {
+            pool.flags = [];
+          }
+          return isSet && pool.flags.push(flag);
+        });
         if (this.editing) {
           this.submitEdit(pool);
         } else {
@@ -456,12 +462,6 @@ class CephPoolsAdd {
     } else if (pool.type === "erasure") {
       pool.erasure_code_profile = this.pool.erasure.profile.name;
     }
-    _.forIn(this.data.flags, (isSet, flag) => {
-      if (_.isUndefined(pool.flags) && isSet) {
-        pool.flags = [];
-      }
-      return isSet && pool.flags.push(flag);
-    });
     // Compression
     if (this.pool.compression_mode !== "none") {
       pool.compression_algorithm = this.pool.compression_algorithm;
