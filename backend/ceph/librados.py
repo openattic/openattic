@@ -1068,6 +1068,8 @@ class RbdApi(object):
     """
 
     RBD_DELETION_TIMEOUT = 3600
+    RBD_ROLLBACK_TIMEOUT = 3600
+    RBD_COPY_TIMEOUT = 3600
 
     @staticmethod
     def get_feature_mapping():
@@ -1157,6 +1159,33 @@ class RbdApi(object):
         yield self._call_librados(_create)
         self.remove(pool_name, image_name)
 
+    @logged
+    @undoable
+    def clone(self, parent, pool_name, image_name, features=None,
+              order=None, stripe_unit=None, stripe_count=None, data_pool_name=None):
+        def _clone(client):
+            p_ioctx = client.get_pool(parent['pool_name'])
+            ioctx = client.get_pool(pool_name)
+            rbd_inst = rbd.RBD()
+            default_features = 61  # FIXME: hardcoded int
+            feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
+                               default_features)
+            try:
+                rbd_inst.clone(p_ioctx, parent['image_name'], parent['snap_name'],
+                               ioctx, image_name, features=feature_bitmask,
+                               order=order, stripe_unit=stripe_unit,
+                               stripe_count=stripe_count, data_pool=data_pool_name)
+            except TypeError:
+                logger.exception('This seems to be Jewel?!')
+                s_count = stripe_count if stripe_count else 0
+                s_unit = stripe_unit if stripe_unit else 0
+                rbd_inst.clone(p_ioctx, parent['image_name'], parent['snap_name'],
+                               ioctx, image_name, features=feature_bitmask, order=order,
+                               stripe_unit=s_unit, stripe_count=s_count)
+
+        yield self._call_librados(_clone)
+        self.remove(pool_name, image_name)
+
     def remove(self, pool_name, image_name):
         def _remove(client):
             ioctx = client.get_pool(pool_name)
@@ -1164,6 +1193,31 @@ class RbdApi(object):
             rbd_inst.remove(ioctx, image_name)
 
         self._call_librados(_remove, timeout=self.RBD_DELETION_TIMEOUT)
+
+    @logged
+    @undoable
+    def copy(self, src_pool_name, src_image_name, dest_pool_name,
+             dest_image_name, features=None, order=None, stripe_unit=None,
+             stripe_count=None, data_pool_name=None):
+        def _copy(client):
+            s_ioctx = client.get_pool(src_pool_name)
+            d_ioctx = client.get_pool(dest_pool_name)
+            default_features = 61  # FIXME: hardcoded int
+            feature_bitmask = (RbdApi._list_to_bitmask(features) if features is not None else
+                               default_features)
+            with rbd.Image(s_ioctx, name=src_image_name) as image:
+                try:
+                    image.copy(d_ioctx, dest_image_name, feature_bitmask, order,
+                               stripe_unit, stripe_count, data_pool_name)
+                except TypeError:
+                    logger.exception('This seems to be Jewel?!')
+                    s_count = stripe_count if stripe_count else 0
+                    s_unit = stripe_unit if stripe_unit else 0
+                    image.copy(d_ioctx, dest_image_name, feature_bitmask, order,
+                               s_unit, s_count)
+
+        yield self._call_librados(_copy, timeout=self.RBD_COPY_TIMEOUT)
+        self.remove(dest_pool_name, dest_image_name)
 
     def list(self, pool_name):
         """
@@ -1192,6 +1246,92 @@ class RbdApi(object):
                 return image.stat()
 
         return self._call_librados(_get_image_status)
+
+    def image_parent(self, pool_name, name):
+        def _get_image_parent(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                try:
+                    parent_info = image.parent_info()
+                    parent = {
+                        'pool_name': parent_info[0],
+                        'image_name': parent_info[1],
+                        'snap_name': parent_info[2]
+                    }
+                    return parent
+                except rbd.ImageNotFound:
+                    # no parent image
+                    pass
+                return None
+
+        return self._call_librados(_get_image_parent)
+
+    @staticmethod
+    def _get_image_snapshots(image):
+        snaps = []
+        for snap in image.list_snaps():
+            snap['snap_id'] = snap['id']
+            snap['timestamp'] = "{}".format(image.get_snap_timestamp(snap['id']).isoformat())
+            snap['is_protected'] = image.is_protected_snap(snap['name'])
+            snap['children'] = []
+            image.set_snap(snap['name'])
+            for child_pool_name, child_image_name in image.list_children():
+                snap['children'].append({
+                    'pool_name': child_pool_name,
+                    'image_name': child_image_name
+                })
+            del snap['id']
+            snaps.append(snap)
+        return snaps
+
+    def image_snapshots(self, pool_name, name):
+        def _get_image_snapshots(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=name) as image:
+                return RbdApi._get_image_snapshots(image)
+
+        return self._call_librados(_get_image_snapshots)
+
+    def create_snapshot(self, pool_name, image_name, snap_name, protected):
+        def _create_image_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                image.create_snap(snap_name)
+                if protected:
+                    image.protect_snap(snap_name)
+                return [snap for snap in RbdApi._get_image_snapshots(image)][0]
+
+        return self._call_librados(_create_image_snapshot)
+
+    def edit_snapshot(self, pool_name, image_name, snap_name, changes):
+        def _edit_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                if 'is_protected' in changes:
+                    if changes['is_protected']:
+                        image.protect_snap(snap_name)
+                    else:
+                        image.unprotect_snap(snap_name)
+                if 'name' in changes:
+                    image.rename_snap(snap_name, changes['name'])
+
+        return self._call_librados(_edit_snapshot)
+
+    def remove_snapshot(self, pool_name, image_name, snap_name):
+        def _remove_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                image.remove_snap(snap_name)
+
+        return self._call_librados(_remove_snapshot)
+
+    def rollback_to_snapshot(self, pool_name, image_name, snap_name):
+        def _rollback_to_snapshot(client):
+            ioctx = client.get_pool(pool_name)
+            with rbd.Image(ioctx, name=image_name) as image:
+                image.rollback_to_snap(snap_name)
+
+        return self._call_librados(_rollback_to_snapshot, timeout=self.RBD_ROLLBACK_TIMEOUT)
 
     def _call_rbd_tool(self, cmd, pool_name, name):
         """ Calls a RBD command and returns the result as dict.

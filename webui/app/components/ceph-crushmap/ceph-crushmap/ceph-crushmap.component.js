@@ -213,6 +213,8 @@ class CephCrushmapComponent {
             substeps = steps.slice();
             substeps.shift();
           }
+        } else {
+          steps.shift();
         }
         if (node.items.length > 0) {
           renderNodes(substeps, node.items, isBelowRootNode);

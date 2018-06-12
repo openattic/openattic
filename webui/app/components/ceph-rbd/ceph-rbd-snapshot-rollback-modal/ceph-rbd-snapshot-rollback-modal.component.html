@@ -1,0 +1,29 @@
+<div class="openattic-modal-header">
+  <translate>Ceph RBD Snapshot Rollback</translate>
+</div>
+
+<form name="$ctrl.form"
+      role="form"
+      novalidate>
+  <div class="openattic-modal-content">
+    <p>
+      <translate>You are about to rollback</translate>
+      <strong>{{ $ctrl.resolve.poolName }}/{{ $ctrl.resolve.imageName }}@{{ $ctrl.resolve.snapName }}</strong>.
+    </p>
+  </div>
+
+  <div class="openattic-modal-footer">
+    <div class="button-group text-right">
+      <oa-submit-button form="$ctrl.form"
+                        on-submit="$ctrl.rollback()">
+        <translate>Rollback</translate>
+      </oa-submit-button>
+
+      <button id="cancelButton"
+              class="btn btn-link btn-sm"
+              ng-click="$ctrl.cancel()">
+        <translate>Cancel</translate>
+      </button>
+    </div>
+  </div>
+</form>

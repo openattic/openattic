@@ -15,6 +15,7 @@
 
 from __future__ import division
 
+import datetime
 import itertools
 import logging
 import math
@@ -819,6 +820,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
     used_size = models.IntegerField(editable=False)
     stripe_unit = models.IntegerField(blank=True, null=True)
     stripe_count = models.IntegerField(blank=True, null=True)
+    parent = JsonField(base_type=dict, null=True, blank=True, default=None)
 
     def __init__(self, *args, **kwargs):
         super(CephRbd, self).__init__(*args, **kwargs)
@@ -853,7 +855,7 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
     # TODO: `rbd info` also delivers 'flags' and 'create_timestamp'
     @bulk_attribute_setter(['num_objs', 'obj_size', 'size', 'data_pool_id', 'features',
-                            'old_format', 'block_name_prefix'])
+                            'old_format', 'block_name_prefix', 'parent'])
     def set_image_info(self, objects, field_names):
         """
         `rbd info` and `rbd.Image.stat` are really similar: The first one calls the second one.
@@ -880,6 +882,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
         # https://github.com/ceph/ceph/blob/luminous/src/tools/rbd/action/Info.cc#L169
         image_info['old_format'] = image_info['format'] == 1
+
+        # parent
+        image_info['parent'] = api.image_parent(self.pool.name, self.name)
 
         for field_name in field_names:
             setattr(self, field_name, image_info[field_name])
@@ -937,6 +942,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
         if not hasattr(self, 'features') or not isinstance(self.features, list):
             self.features = []
 
+        if not hasattr(self, 'parent') or not isinstance(self.parent, dict):
+            self.parent = None
+
         api = self.rbd_api()
 
         with undo_transaction(api, re_raise_exception=True,
@@ -948,10 +956,26 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
                 if self.obj_size is not None and self.obj_size > 0:
                     order = int(round(math.log(float(self.obj_size), 2)))
-                api.create(self.pool.name, self.name, self.size, features=self.features,
-                           old_format=self.old_format, order=order,
-                           stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
-                           data_pool_name=data_pool_name)
+
+                if self.parent:
+                    if 'pool_name' not in self.parent:
+                        raise ValidationError('No pool_name in parent specification')
+                    if 'image_name' not in self.parent:
+                        raise ValidationError('No image_name in parent specification')
+                    if 'snap_name' not in self.parent:
+                        raise ValidationError('No snap_name in parent specification')
+
+                    api.clone(self.parent, self.pool.name, self.name,
+                              features=self.features, order=order,
+                              stripe_unit=self.stripe_unit,
+                              stripe_count=self.stripe_count,
+                              data_pool_name=data_pool_name)
+                else:
+                    api.create(self.pool.name, self.name, self.size, features=self.features,
+                               old_format=self.old_format, order=order,
+                               stripe_unit=self.stripe_unit, stripe_count=self.stripe_count,
+                               data_pool_name=data_pool_name)
+
                 self.id = CephRbd.make_key(self.pool, self.name)
 
             diff, original = self.get_modified_fields()
@@ -959,9 +983,11 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
             if insert:
                 self.features = original.features
+                self.size = original.size
+                self.old_format = original.old_format
 
             for key, value in diff.items():
-                if key == 'size':
+                if not self.parent and key == 'size':
                     assert not insert
                     api.image_resize(self.pool.name, self.name, value)
                 elif key == 'features':
@@ -1004,6 +1030,66 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
 
         self._task_queue = ceph.tasks.delete_rbd.delay(
             self.pool.cluster.fsid, self.pool.name, self.name)
+
+
+class CephRbdSnap(NodbModel, RadosMixin):
+    id = models.CharField(max_length=100, primary_key=True, editable=False,
+                          help_text='pool-name/image-name@snap-name')
+    name = models.CharField(max_length=100, null=False, blank=False)
+    snap_id = models.IntegerField(null=True, blank=True)
+    image = models.ForeignKey(CephRbd, related_name='image')
+    is_protected = models.BooleanField(help_text='snapshot protected flag',
+                                       null=False, blank=False)
+    size = models.IntegerField(help_text='snapshot size in bytes', null=True, blank=True)
+    timestamp = models.DateTimeField(null=True, blank=True)
+    children = JsonField(base_type=list, null=True, blank=True, default=[])
+
+    @staticmethod
+    def make_key(pool_name, image_name, snap_name):
+        return "{}/{}@{}".format(pool_name, image_name, snap_name)
+
+    @staticmethod
+    def get_all_objects(context, query):
+        assert context is not None
+        api = RadosMixin.rbd_api(context.fsid)
+
+        images = CephRbd.objects.all()
+        agg_snaps = []
+        for image in CephRbd.objects.all():
+            snaps = api.image_snapshots(image.pool.name, image.name)
+            for snap in snaps:
+                snap['id'] = CephRbdSnap.make_key(image.pool.name, image.name, snap['name'])
+                snap['image_id'] = image.id
+            agg_snaps.extend(snaps)
+
+        return [CephRbdSnap(**CephRbdSnap.make_model_args(snap)) for snap in agg_snaps]
+
+    def save(self, *args, **kwargs):
+        api = self.rbd_api()
+        if not self.id:  # new snapshot
+            snap = api.create_snapshot(self.image.pool.name, self.image.name,
+                                       self.name, self.is_protected)
+            self.id = CephRbdSnap.make_key(self.image.pool.name, self.image.name,
+                                           self.name)
+            for attr, val in snap.items():
+                if attr == "timestamp":
+                    val = datetime.datetime.strptime(val, "%Y-%m-%dT%H:%M:%S")
+                setattr(self, attr, val)
+        else:
+            diff, orig = self.get_modified_fields()
+            if diff:
+                api.edit_snapshot(self.image.pool.name, self.image.name,
+                                  orig.name, diff)
+                if 'name' in diff:
+                    self.id = CephRbdSnap.make_key(self.image.pool.name,
+                                                   self.image.name,
+                                                   self.name)
+
+        super(CephRbdSnap, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        api = self.rbd_api()
+        api.remove_snapshot(self.image.pool.name, self.image.name, self.name)
 
 
 class CephFs(NodbModel, RadosMixin):
