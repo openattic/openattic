@@ -29,6 +29,8 @@ Added
 Changed
 ~~~~~~~
 * WebUI/QA: Reduced PG creation during e2e pool creation tests (OP-3011)
+* WebUI: The selected language will be saved now, even if the page is
+  reloaded (OP-3160)
 
 Fixed
 ~~~~~
