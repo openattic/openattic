@@ -34,56 +34,59 @@ import _ from "lodash";
 
 class cephClusterSettingsModal {
 
-  constructor (cephClusterService) {
+  constructor (cephClusterService, gettextCatalog) {
     this.cephClusterService = cephClusterService;
 
     this.model = undefined;
     this.data = {
       osd_flags: {
         "noin": {
-          name: "No In",
+          name: gettextCatalog.getString("No In"),
           value: false,
-          description: "OSDs that were previously marked out will not be marked back in when they start"
+          description: gettextCatalog.getString("OSDs that were previously marked out will not be marked back in" +
+            " when they start")
         },
         "noout": {
-          name: "No Out",
+          name: gettextCatalog.getString("No Out"),
           value: false,
-          description: "OSDs will not automatically be marked out after the configured interval"
+          description: gettextCatalog.getString("OSDs will not automatically be marked out after the configured" +
+            " interval")
         },
         "noup": {
-          name: "No Up",
+          name: gettextCatalog.getString("No Up"),
           value: false,
-          description: "OSDs are not allowed to start"
+          description: gettextCatalog.getString("OSDs are not allowed to start")
         },
         "nodown": {
-          name: "No Down",
+          name: gettextCatalog.getString("No Down"),
           value: false,
-          description: "OSD failure reports are being ignored, such that the monitors will not mark OSDs down"
+          description: gettextCatalog.getString("OSD failure reports are being ignored, such that the monitors will" +
+            " not mark OSDs down")
         },
         "pause": {
-          name: "Pause",
+          name: gettextCatalog.getString("Pause"),
           value: false,
-          description: "Pauses reads and writes"
+          description: gettextCatalog.getString("Pauses reads and writes")
         },
         "noscrub": {
-          name: "No Scrub",
+          name: gettextCatalog.getString("No Scrub"),
           value: false,
-          description: "Scrubbing is disabled"
+          description: gettextCatalog.getString("Scrubbing is disabled")
         },
         "nodeep-scrub": {
-          name: "No Deep Scrub",
+          name: gettextCatalog.getString("No Deep Scrub"),
           value: false,
-          description: "Deep Scrubbing is disabled"
+          description: gettextCatalog.getString("Deep Scrubbing is disabled")
         },
         "nobackfill": {
-          name: "No Backfill",
+          name: gettextCatalog.getString("No Backfill"),
           value: false,
-          description: "Backfilling of PGs is suspended"
+          description: gettextCatalog.getString("Backfilling of PGs is suspended")
         },
         "norecover": {
-          name: "No Recover",
+          name: gettextCatalog.getString("No Recover"),
           value: false,
-          description: "Recovery of PGs is suspended"
+          description: gettextCatalog.getString("Recovery of PGs is suspended")
         }
       }
     };

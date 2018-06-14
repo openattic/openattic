@@ -20,13 +20,12 @@
         <!-- Parent -->
         <div class="form-group"
              ng-if="$ctrl.rbd.parent">
-          <label translate
-                 class="control-label col-sm-3"
+          <label class="control-label col-sm-3"
                  for="parent">
-            <span>{{ $ctrl.cloning ? 'Clone' : 'Copy' }} from</span>
+            <span translate>{{ $ctrl.cloning ? 'Clone' : 'Copy' }} from</span>
           </label>
           <div class="col-sm-9">
-            <input id="name"
+            <input id="parent"
                    type="text"
                    class="form-control"
                    value="{{ $ctrl.rbd.parent.pool_name }}/{{ $ctrl.rbd.parent.image_name }}@{{ $ctrl.rbd.parent.snap_name }}"
@@ -48,7 +47,7 @@
             <input id="copy_from"
                    type="text"
                    class="form-control tc_rbd_name"
-                   placeholder="Name..."
+                   placeholder="{{ 'Name...' | translate }}"
                    value="{{ $ctrl.copy.pool_name }}/{{ $ctrl.copy.image_name }}"
                    disabled
                    name="copy_from">
@@ -66,7 +65,7 @@
             <input id="name"
                    type="text"
                    class="form-control tc_rbd_name"
-                   placeholder="Name..."
+                   placeholder="{{ 'Name...' | translate }}"
                    ng-model="$ctrl.rbd.name"
                    ng-disabled="$ctrl.editing"
                    name="name"
@@ -267,7 +266,7 @@
                    ng-change="$ctrl.watchDataSize()"
                    ng-model-options="{ updateOn: 'blur' }"
                    ng-model="$ctrl.data.size"
-                   placeholder="e.g., 10GB"
+                   placeholder="{{ 'e.g., 10GB' | translate }}"
                    required>
             <span translate
                   class="help-block tc_sizeRequired"
@@ -308,7 +307,7 @@
                    ng-model-options="{ updateOn: 'blur' }"
                    ng-keyup="$ctrl.sizeChange($event, $ctrl.updateObjSize)"
                    ng-model="$ctrl.data.obj_size"
-                   placeholder="4 KiB up to 32 MiB"
+                   placeholder="{{ '4 KiB up to 32 MiB' | translate }}"
                    required>
             <span translate
                   class="help-block tc_objSizeRequired"
@@ -393,7 +392,7 @@
                      ng-model-options="{ updateOn: 'blur' }"
                      ng-keyup="$ctrl.sizeChange($event, $ctrl.updateStripingUnit)"
                      ng-model="$ctrl.data.striping.unitDisplayed"
-                     placeholder="4 KiB up to 32 MiB"
+                     placeholder="{{ '4 KiB up to 32 MiB' | translate }}"
                      required>
               <span translate
                     class="help-block tc-stripingUnit-required"
