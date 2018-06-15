@@ -1,7 +1,7 @@
 #
 # spec file for package openattic
 #
-# Copyright (c) 2016-2017 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2016-2018 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -20,7 +20,7 @@
 %endif
 
 Name: openattic
-Version: 3.6.3
+Version: 3.7.0
 Release: 0
 Summary: Open Source Management and Monitoring System for Ceph
 Group: System Environment/Libraries
