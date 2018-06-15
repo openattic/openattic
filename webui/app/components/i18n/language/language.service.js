@@ -42,16 +42,26 @@ export default class LanguageService {
    * Constructor injects all required modules
    * and defines defaults
    *
+   * @param $localStorage
    * @param gettextCatalog
+   * @param supportedLanguages
    */
-  constructor (gettextCatalog, supportedLanguages) {
+  constructor ($localStorage, gettextCatalog, supportedLanguages) {
+    this._storage = $localStorage.$default({
+      lang: null
+    });
     this._lib = gettextCatalog;
     this._localePath = "locale/";
     this._fileExtension = ".json";
     this._supportedLanguages = supportedLanguages;
 
-    // Determine the language
-    let lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+    // Determine the language if not stored in local storage
+    let lang;
+    if (this._storage.lang === null) {
+      lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+    } else {
+      lang = this._storage.lang;
+    }
 
     // If requested country code cannot be found
     if (!_.has(this._supportedLanguages, lang)) {
@@ -79,6 +89,7 @@ export default class LanguageService {
    */
   setLanguage (lang) {
     this._language = lang;
+    this._storage.lang = lang;
     this._lib.setCurrentLanguage(this._language);
     this._lib.loadRemote(this._localePath + this._language + this._fileExtension);
   }
