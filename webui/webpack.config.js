@@ -179,7 +179,7 @@ module.exports = (function makeWebpackConfig () {
         format: 'json'
       },
       extractStrings: {
-        input: 'app/**/*.html',
+        input: 'app/**/*.*',
         destination: 'locale/template.pot'
       }
     })

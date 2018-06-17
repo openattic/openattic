@@ -1,7 +1,7 @@
 {
   "name": "openattic-web",
   "description": "openATTIC graphical user interface",
-  "version": "3.6.3",
+  "version": "3.7.0",
   "license": "GPL-2.0",
   "repository": "bitbucket:openattic/openattic",
   "dependencies": {
@@ -10,7 +10,7 @@
     "angular-animate": "1.5.11",
     "angular-bootstrap-toggle": "0.1.2",
     "angular-breadcrumb": "0.4.1",
-    "angular-gettext": "2.3.10",
+    "angular-gettext": "2.3.11",
     "angular-md5": "0.1.10",
     "angular-resource": "1.5.11",
     "angular-sanitize": "1.5.11",
