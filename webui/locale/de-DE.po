@@ -1525,7 +1525,7 @@ msgid "Keys"
 msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:92
-msgid "Last Change"
+msgid "Last change"
 msgstr "Letzte Änderung"
 
 #: app/components/users/users-list/users-list.component.html:83
