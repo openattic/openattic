@@ -16,6 +16,10 @@ OAGROUP="openattic"
 
 WEBSERVER_SERVICE="httpd"
 
+# Set the timeout in seconds for REST client requests. Set to 0 to disable
+# this feature.
+#REST_REQUESTS_TIMEOUT="45"
+
 # Host of the Salt-API which shall be used by openATTIC. Can be an IP address or a hostname.
 #SALT_API_HOST="salt"
 
