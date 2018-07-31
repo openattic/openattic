@@ -24,6 +24,7 @@ Added
 * WebUI/backend: added RBD snapshot management (create, clone, rollback,
   protect/unprotect, delete) (OP-2569)
 * WebUI/backend: added support for copying RBD images (OP-3150)
+* WebUI: Add spanish translation to openATTIC (OP-3165)
 
 Changed
 ~~~~~~~
