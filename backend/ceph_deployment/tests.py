@@ -36,7 +36,7 @@ class DeepSeaTestCase(TestCase):
         self.assertEquals(p.netloc, '[fe80::5054:ff:fed3:9929]:8080')
 
     def test_deepsea_service_online(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_post = mock.MagicMock()
             resp_post.ok = True
             resp_post.status_code = 200
@@ -58,7 +58,7 @@ class DeepSeaTestCase(TestCase):
             self.assertTrue(api._is_logged_in())
 
     def test_deepsea_service_offline_response_format_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_post = mock.MagicMock()
             resp_post.ok = True
             resp_post.status_code = 200
@@ -81,7 +81,7 @@ class DeepSeaTestCase(TestCase):
             self.assertTrue(api._is_logged_in())
 
     def test_deepsea_service_offline_request_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_post = mock.MagicMock()
             resp_post.ok = True
             resp_post.status_code = 200
@@ -103,7 +103,7 @@ class DeepSeaTestCase(TestCase):
             self.assertTrue(api._is_logged_in())
 
     def test_deepsea_service_offline_connection_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_post = mock.MagicMock()
             resp_post.ok = True
             resp_post.status_code = 200
@@ -121,7 +121,7 @@ class DeepSeaTestCase(TestCase):
             self.assertTrue(api._is_logged_in())
 
     def test_deepsea_login_success(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp = mock.MagicMock()
             resp.ok = True
             resp.status_code = 200
@@ -140,7 +140,7 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(api.token, 'validtoken')
 
     def test_deepsea_login_fail_401(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp = mock.MagicMock()
             resp.ok = False
             resp.status_code = 401
@@ -158,7 +158,7 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(api.token, None)
 
     def test_deepsea_login_connection_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             mock_requests_session().post.side_effect = ConnectionError()
 
             api = DeepSea('localhost', 8000, 'auto', 'hello', 'world')
@@ -173,7 +173,7 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(api.token, None)
 
     def test_deepsea_login_response_format_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp = mock.MagicMock()
             resp.ok = True
             resp.status_code = 200
@@ -197,7 +197,7 @@ class DeepSeaTestCase(TestCase):
             }})
 
     def test_deepsea_keys_success(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             mock_requests_session().post.return_value = self._login_resp
 
             resp = mock.MagicMock()
@@ -227,7 +227,7 @@ class DeepSeaTestCase(TestCase):
             })
 
     def test_deepsea_keys_unauthorized(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             mock_requests_session().post.side_effect = [
                 self._login_resp, self._login_resp
             ]
@@ -262,7 +262,7 @@ class DeepSeaTestCase(TestCase):
             })
 
     def test_deepsea_keys_login_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             login_resp_err = mock.MagicMock()
             login_resp_err.ok = False
             login_resp_err.status_code = 503
@@ -286,7 +286,7 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(context.exception.status_code, 503)
 
     def test_deepsea_keys_response_format_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             mock_requests_session().post.return_value = self._login_resp
 
             resp = mock.MagicMock()
@@ -313,7 +313,7 @@ class DeepSeaTestCase(TestCase):
                              "'minions_denied': [], 'minions': ['minion1', 'minion2']}")
 
     def test_deepsea_keys_response_format_error_2(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             mock_requests_session().post.return_value = self._login_resp
 
             resp = mock.MagicMock()
@@ -339,7 +339,7 @@ class DeepSeaTestCase(TestCase):
             self.assertEqual(str(context.exception), "minion3 is not an array")
 
     def test_deepsea_pillar_items_success(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
 
             resp = mock.MagicMock()
             resp.ok = True
@@ -383,7 +383,7 @@ class DeepSeaTestCase(TestCase):
             })
 
     def test_deepsea_get_minions(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_pillar = mock.MagicMock()
             resp_pillar.ok = True
             resp_pillar.status_code = 200
@@ -445,7 +445,7 @@ class DeepSeaTestCase(TestCase):
 
     def test_deepsea_get_minions_no_role(self):
         """Regression for OP-2507: DeepSea: "roles" is missing from response"""
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_pillar = mock.MagicMock()
             resp_pillar.ok = True
             resp_pillar.status_code = 200
@@ -522,7 +522,7 @@ class DeepSeaTestCase(TestCase):
 
     def test_deepsea_get_minions_no_public_network(self):
         """Regression test for OP-2595: DeepSea's pillar data doesn't contain "public_network" """
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             resp_pillar = mock.MagicMock()
             resp_pillar.ok = True
             resp_pillar.status_code = 200
@@ -577,7 +577,7 @@ class DeepSeaTestCase(TestCase):
             )
 
     def test_deepsea_invalid_url_error(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             mock_requests_session().post.side_effect = InvalidURL("test")
 
             api = DeepSea('', 8000, 'auto', 'hello', 'world')
