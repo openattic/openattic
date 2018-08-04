@@ -40,6 +40,7 @@ Fixed
 * WebUI: "Last Change" column not displayed in Pools table (OP-3162)
 * WebUI/QA: Fixed timing issue with scrub e2e tests (OP-3152)
 * Backend: RGW proxy can't handle self-signed SSL certificates (OP-3161)
+* Backend: REST API didn't respond in time (OP-3164)
 
 Removed
 ~~~~~~~

@@ -17,6 +17,7 @@ import os
 from django.utils.unittest import TestCase
 from mock import mock
 from os.path import dirname, abspath, exists
+from rest_client import RestClient
 
 import module_status
 import utilities
@@ -127,3 +128,38 @@ class ModuleStatusTest(TestCase):
         }
         with self.assertRaises(module_status.UnavailableModule):
             module_status.check_deepsea_version(settings.DEEPSEA_MIN_VERSION_ISCSI)
+
+
+class RestClientTest(TestCase):
+
+    def test_timeout_auto_set(self):
+        with mock.patch('requests.Session.request') as mock_request:
+            rest_client = RestClient('localhost', 8000)
+            rest_client.session.request('GET', '/test')
+            mock_request.assert_called_with('GET', '/test', timeout=45)
+
+    def test_timeout_auto_set_arg(self):
+        with mock.patch('requests.Session.request') as mock_request:
+            rest_client = RestClient('localhost', 8000)
+            rest_client.session.request(
+                'GET', '/test', None, None, None, None,
+                None, None, None)
+            mock_request.assert_called_with(
+                'GET', '/test', None, None, None, None,
+                None, None, None, timeout=45)
+
+    def test_timeout_no_auto_set_kwarg(self):
+        with mock.patch('requests.Session.request') as mock_request:
+            rest_client = RestClient('localhost', 8000)
+            rest_client.session.request('GET', '/test', timeout=20)
+            mock_request.assert_called_with('GET', '/test', timeout=20)
+
+    def test_timeout_no_auto_set_arg(self):
+        with mock.patch('requests.Session.request') as mock_request:
+            rest_client = RestClient('localhost', 8000)
+            rest_client.session.request(
+                'GET', '/test', None, None, None, None,
+                None, None, 40)
+            mock_request.assert_called_with(
+                'GET', '/test', None, None, None, None,
+                None, None, 40)

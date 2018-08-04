@@ -12,6 +12,8 @@
  *  GNU General Public License for more details.
 """
 
+# REST client settings
+REST_REQUESTS_TIMEOUT = (45, int)
 
 # Salt API settings
 SALT_API_HOST = ('salt', str)
