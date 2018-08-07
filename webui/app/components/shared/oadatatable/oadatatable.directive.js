@@ -229,20 +229,24 @@ app.directive("oadatatable", function () {
         $scope.store.sortorder = $scope.filterConfig.sortorder;
       };
 
-      $scope.$watchCollection("filterConfig", function () {
+      $scope.$watchCollection("filterConfig", function (newVal, oldVal) {
         // Reset the selection, e.g. otherwise the statistic/detail tab page of the
         // previous selected row is still shown during the datatable is reloaded.
         $scope.selection.items = [];
         // Reset the data, thus the loading panel will be displayed automatically.
         $scope.data = [];
+        // Update Pages manually
+        $scope.updatePages(newVal.entries, oldVal.entries);
         // Reload the data.
         $scope.onFilterConfigChange();
       });
 
-      $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
+      $scope.updatePages = function (newVal, oldVal) {
         $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
         $scope.store.entries = newVal;
-      });
+      };
+
+      $scope.$watch("filterConfig.entries", $scope.updatePages);
 
       $scope.searchModelOptions = {
         updateOn: "default blur",
