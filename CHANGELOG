@@ -38,6 +38,8 @@ Fixed
 * WebUI: fixed typo in RBD creation form (OP-3148)
 * WebUI: Ignore unused operations on the CRUSH Map Editor (OP-3154)
 * WebUI: "Last Change" column not displayed in Pools table (OP-3162)
+* WebUI: 404 not found when increasing number of rows displayed in a
+  table (OP-3163)
 * WebUI/QA: Fixed timing issue with scrub e2e tests (OP-3152)
 * Backend: RGW proxy can't handle self-signed SSL certificates (OP-3161)
 * Backend: REST API didn't respond in time (OP-3164)
