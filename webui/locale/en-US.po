@@ -3006,6 +3006,10 @@ msgstr ""
 msgid "Welcome to openATTIC!"
 msgstr ""
 
+#: app/components/auth/auth/auth.component.html:9
+msgid "Welcome to SUSE Enterprise Storage"
+msgstr ""
+
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:13
 msgid "You are about to add a new erasure code profile."
 msgstr ""

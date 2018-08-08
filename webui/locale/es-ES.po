@@ -2762,6 +2762,10 @@ msgstr "Ver Swift key: {{ user }}"
 msgid "Welcome to openATTIC!"
 msgstr "Bienvenido a openATTIC!"
 
+#: app/components/auth/auth/auth.component.html:9
+msgid "Welcome to SUSE Enterprise Storage"
+msgstr "Bienvenido a SUSE Enterprise Storage"
+
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:13
 msgid "You are about to add a new erasure code profile."
 msgstr "Está a punto de agregar un nuevo erasure code profile."
