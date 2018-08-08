@@ -16,7 +16,22 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.7.0] - unreleased
+[3.7.1] - unreleased
+--------------------
+
+Added
+~~~~~
+
+Changed
+~~~~~~~
+
+Fixed
+~~~~~
+
+Removed
+~~~~~~~
+
+[3.7.0] - 2018-08-08
 --------------------
 
 Added
@@ -43,9 +58,6 @@ Fixed
 * WebUI/QA: Fixed timing issue with scrub e2e tests (OP-3152)
 * Backend: RGW proxy can't handle self-signed SSL certificates (OP-3161)
 * Backend: REST API didn't respond in time (OP-3164)
-
-Removed
-~~~~~~~
 
 [3.6.2] - 2018-03-01
 --------------------
