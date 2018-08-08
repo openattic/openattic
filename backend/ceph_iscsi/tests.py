@@ -23,7 +23,7 @@ import ceph_iscsi.tasks
 
 class DeepSeaTestCase(TestCase):
     def test_deepsea_iscsi_interfaces(self):
-        with mock.patch("requests.Session") as mock_requests_session:
+        with mock.patch("rest_client.TimeoutRequestsSession") as mock_requests_session:
             login_resp = mock.MagicMock()
             login_resp.ok = True
             login_resp.status_code = 200

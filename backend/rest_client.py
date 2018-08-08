@@ -19,7 +19,8 @@ import itertools
 import logging
 import re
 import requests
-from requests.exceptions import ConnectionError, InvalidURL
+from oa_settings import Settings
+from requests.exceptions import ConnectionError, InvalidURL, Timeout
 
 try:
     from requests.packages.urllib3.exceptions import SSLError
@@ -28,6 +29,18 @@ except ImportError:
 
 
 logger = logging.getLogger(__name__)
+
+
+class TimeoutRequestsSession(requests.Session):
+    """
+    Set timeout argument for all requests if this is not already done.
+    """
+    def request(self, *args, **kwargs):
+        if ((args[8] if len(args) > 8 else None) is None) \
+                and kwargs.get('timeout') is None:
+            if Settings.REST_REQUESTS_TIMEOUT > 0:
+                kwargs['timeout'] = Settings.REST_REQUESTS_TIMEOUT
+        return super(TimeoutRequestsSession, self).request(*args, **kwargs)
 
 
 class RequestException(Exception):
@@ -281,7 +294,7 @@ class _Request(object):
 
 
 class RestClient(object):
-    def __init__(self, host, port, client_name=None, ssl=False, auth=None):
+    def __init__(self, host, port, client_name=None, ssl=False, auth=None, ssl_verify=True):
         super(RestClient, self).__init__()
         self.client_name = client_name if client_name else ''
         self.host = host
@@ -290,7 +303,8 @@ class RestClient(object):
         logger.debug("REST service base URL: %s", self.base_url)
         self.headers = {'Accept': 'application/json'}
         self.auth = auth
-        self.session = requests.Session()
+        self.session = TimeoutRequestsSession()
+        self.session.verify = ssl_verify
 
     def _login(self, request=None):
         pass
@@ -398,6 +412,12 @@ class RestClient(object):
             logger.exception("%s REST API failed %s: %s", self.client_name,
                              method.upper(), str(ex))
             raise RequestException(str(ex))
+        except Timeout as ex:
+            msg = "{} REST API {} timed out after {} seconds (url={}).".format(
+                self.client_name, ex.request.method, Settings.REST_REQUESTS_TIMEOUT,
+                ex.request.url)
+            logger.exception(msg)
+            raise RequestException(msg)
 
     @staticmethod
     def api(path, **api_kwargs):

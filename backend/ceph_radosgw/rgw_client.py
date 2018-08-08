@@ -97,13 +97,14 @@ class RGWClient(RestClient, SettingsListener):
         port = port if port else RGWClient._port
         admin_path = admin_path if admin_path else RGWClient._ADMIN_PATH
         ssl = ssl if ssl else RGWClient._ssl
+        ssl_verify = Settings.RGW_API_SSL_VERIFY
 
         self.userid = userid
         self.service_url = utilities.build_url(host=host, port=port)
         self.admin_path = admin_path
 
         s3auth = S3Auth(access_key, secret_key, service_url=self.service_url)
-        super(RGWClient, self).__init__(host, port, 'RGW', ssl, s3auth)
+        super(RGWClient, self).__init__(host, port, 'RGW', ssl, s3auth, ssl_verify=ssl_verify)
 
     def _reset_login(self):
         if self.userid != RGWClient._SYSTEM_USERID:

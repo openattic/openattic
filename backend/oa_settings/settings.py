@@ -12,6 +12,8 @@
  *  GNU General Public License for more details.
 """
 
+# REST client settings
+REST_REQUESTS_TIMEOUT = (45, int)
 
 # Salt API settings
 SALT_API_HOST = ('salt', str)
@@ -29,6 +31,7 @@ RGW_API_SECRET_KEY = ('', str)
 RGW_API_ADMIN_RESOURCE = ('admin', str)
 RGW_API_USER_ID = ('', str)
 RGW_API_SCHEME = ('http', str)
+RGW_API_SSL_VERIFY = (True, bool)
 
 # Grafana
 GRAFANA_API_HOST = ('localhost', str)

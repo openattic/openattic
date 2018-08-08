@@ -1373,12 +1373,12 @@ msgstr ""
 msgid "Keys"
 msgstr ""
 
-#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:92
-msgid "Last Change"
-msgstr ""
-
 #: app/components/users/users-list/users-list.component.html:83
 msgid "Last Login"
+msgstr ""
+
+#: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:92
+msgid "Last change"
 msgstr ""
 
 #: app/components/ceph-pools/ceph-pools-detail/ceph-pools-detail.component.html:52

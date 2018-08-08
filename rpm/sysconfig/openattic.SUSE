@@ -30,6 +30,10 @@ OADIR="/usr/share/openattic"
 # Name of web service
 WEBSERVER_SERVICE="apache2"
 
+# Set the timeout in seconds for REST client requests. Set to 0 to disable
+# this feature.
+REST_REQUESTS_TIMEOUT="45"
+
 # Host of the Salt-API which shall be used by openATTIC. Can be an IP address or a hostname.
 SALT_API_HOST="salt"
 
@@ -70,6 +74,9 @@ RGW_API_USER_ID=""
 
 # The HTTP Scheme to be used. Either 'http' or 'https'.
 RGW_API_SCHEME="http"
+
+# Enable/Disable SSL certificate verification.
+RGW_API_SSL_VERIFY="True"
 
 # Host of the Grafana instance which shall be used by openATTIC.
 GRAFANA_API_HOST="localhost"
