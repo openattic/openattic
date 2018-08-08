@@ -62,7 +62,7 @@ describe("Should test oadatatable and its options", function () {
     "Placement groups",
     "Replica size",
     "Erasure code profile",
-    "Last Change",
+    "Last change",
     "Type",
     "Crush ruleset",
     "Compression mode",

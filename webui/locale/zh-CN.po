@@ -16,7 +16,7 @@ msgstr ""
 msgid "# salt-run sharedsecret.show"
 msgstr "# salt-run sharedsecret.show"
 
-#: app/components/settings/settings-form/settings-form.component.html:159
+#: app/components/settings/settings-form/settings-form.component.html:170
 msgid "(DeepSea is not able to provide Object Gateway credentials)"
 msgstr "(DeepSea未能提供对象网关的授权管理)"
 
@@ -28,7 +28,15 @@ msgstr "(已用: {{ usedSize }} - 可用: {{ free }})"
 msgid "(code {{ reason }})"
 msgstr "(号码 {{ reason }})"
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:124
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:152
+msgid "(copying from: {{row.state.src}})"
+msgstr "从：{{row.state.src}}中复制"
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:149
+msgid "(copying to: {{row.state.dest}})"
+msgstr "复制到：{{row.state.src}}"
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:146
 msgid "(deleting...)"
 msgstr "(删除...)"
 
@@ -40,6 +48,10 @@ msgstr "(未启用)"
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:64
 msgid "(inherited from global config)"
 msgstr "(承接全局设置)"
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:120
+msgid "(rolling back...)"
+msgstr "(回滚...)"
 
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:63
 msgid "*"
@@ -95,7 +107,7 @@ msgstr "— 选择一种纠删码配置 —"
 msgid "-- Select the access type --"
 msgstr "— 选择访问类型 —"
 
-#: app/components/settings/settings-form/settings-form.component.html:67
+#: app/components/settings/settings-form/settings-form.component.html:78
 msgid "-- Select the external auth system --"
 msgstr "— 选择外部认证系统 —"
 
@@ -131,6 +143,11 @@ msgstr "2"
 msgid "25"
 msgstr "25"
 
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:310
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:395
+msgid "4 KiB up to 32 MiB"
+msgstr "4 KiB 最高达 32 MiB"
+
 #: app/components/shared/oadatatable/oadatatable.directive.html:61
 msgid "50"
 msgstr "50"
@@ -146,24 +163,19 @@ msgstr ""
 "      <strong>TCP端口</strong> 设置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-109-deepsea-incomplete-configuration.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>DeepSea / Salt REST API</strong> settings "
-"are defined correctly</a>"
+msgid "<a ui-sref=\"settings\"><strong>DeepSea / Salt REST API</strong> settings are defined correctly</a>"
 msgstr ""
 "<a ui-sref=\"settings\"><strong>DeepSea / Salt REST API</strong>设置确定正确</"
 "a>"
 
 #: app/components/shared/oa-module-loader/reason-183-grafana-unknown-host.html:7
 #: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>Grafana Host</strong> setting</a> is defined "
-"correctly"
+msgid "<a ui-sref=\"settings\"><strong>Grafana Host</strong> setting</a> is defined correctly"
 msgstr "<a ui-sref=\"settings\"><strong>Grafana主机</strong>设置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:7
 msgid ""
-"<a ui-sref=\"settings\"><strong>Object Gateway Access Key</strong>, "
-"<strong>Secret Key</strong> and <strong>Admin User</strong>\n"
+"<a ui-sref=\"settings\"><strong>Object Gateway Access Key</strong>, <strong>Secret Key</strong> and <strong>Admin User</strong>\n"
 "    settings</a> are defined correctly"
 msgstr ""
 "<a ui-sref=\"settings\"><strong>对象网关访问钥</strong>, <strong>密钥</strong>"
@@ -172,11 +184,9 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:12
 msgid ""
-"<a ui-sref=\"settings\"><strong>Object Gateway Admin Resource Path</strong> "
-"setting</a> matches\n"
+"<a ui-sref=\"settings\"><strong>Object Gateway Admin Resource Path</strong> setting</a> matches\n"
 "    the RGW configuration option rgw_admin_entry in ceph.conf file.<br>\n"
-"    Run <kbd>salt -I 'roles:rgw' cmd.run 'cat /etc/ceph/ceph.conf | grep "
-"rgw'</kbd> to check the configuration options in RGW nodes.<br>\n"
+"    Run <kbd>salt -I 'roles:rgw' cmd.run 'cat /etc/ceph/ceph.conf | grep rgw'</kbd> to check the configuration options in RGW nodes.<br>\n"
 "    The default value of rgw_admin_entry is \"admin\"."
 msgstr ""
 "<a ui-sref=\"settings\"><strong>对象网关管理资源路径</strong>设置</a> 核对\n"
@@ -187,10 +197,8 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:7
 msgid ""
-"<a ui-sref=\"settings\"><strong>Object Gateway Admin User</strong> setting</"
-"a> is a \"system\" user.<br>\n"
-"    Run <kbd>radosgw-admin user info --uid=<userid> | grep system</userid></"
-"kbd> to check whether the user &lt;USERID&gt; has system capabilities."
+"<a ui-sref=\"settings\"><strong>Object Gateway Admin User</strong> setting</a> is a \"system\" user.<br>\n"
+"    Run <kbd>radosgw-admin user info --uid=<userid> | grep system</userid></kbd> to check whether the user &lt;USERID&gt; has system capabilities."
 msgstr ""
 "<a ui-sref=\"settings\"><strong>对象网关管理用户</strong>设置</a>是一位\"系统\"用"
 "户.<br>\n"
@@ -199,27 +207,21 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:7
 #: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>Object Gateway Host</strong> and "
-"<strong>Port</strong> settings</a> are defined correctly"
+msgid "<a ui-sref=\"settings\"><strong>Object Gateway Host</strong> and <strong>Port</strong> settings</a> are defined correctly"
 msgstr ""
 "<a ui-sref=\"settings\"><strong>对象网关主机</strong>和<strong>端口</strong> 设"
 "置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:7
 #: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>Object Gateway Host</strong> setting</a> is "
-"defined correctly"
+msgid "<a ui-sref=\"settings\"><strong>Object Gateway Host</strong> setting</a> is defined correctly"
 msgstr "<a ui-sref=\"settings\"><strong>对象网关主机</strong>设置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-171-openattic-rgw-no-deepsea-conn.html:7
 #: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:7
 msgid ""
-"<a ui-sref=\"settings\"><strong>Object Gateway Host</strong>, <strong>Port</"
-"strong>,\n"
-"    <strong>Access Key</strong>, <strong>Secret Key</strong>, <strong>Admin "
-"User</strong> and <strong>Use SSL</strong>\n"
+"<a ui-sref=\"settings\"><strong>Object Gateway Host</strong>, <strong>Port</strong>,\n"
+"    <strong>Access Key</strong>, <strong>Secret Key</strong>, <strong>Admin User</strong> and <strong>Use SSL</strong>\n"
 "    settings</a> are defined correctly"
 msgstr ""
 "<a ui-sref=\"settings\"><strong>对象网关主机</strong>, <strong>端口</strong>,\n"
@@ -228,59 +230,43 @@ msgstr ""
 "    设置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-101-deepsea-conn-unknown-problem.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>Salt API Host</strong> and <strong>TCP Port</"
-"strong> settings</a> are defined correctly"
+msgid "<a ui-sref=\"settings\"><strong>Salt API Host</strong> and <strong>TCP Port</strong> settings</a> are defined correctly"
 msgstr ""
 "<a ui-sref=\"settings\"><strong>Salt API 主机</strong>和<strong>TCP端口</"
 "strong> 设置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:7
 #: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>Salt API Host</strong> setting</a> is "
-"defined correctly"
+msgid "<a ui-sref=\"settings\"><strong>Salt API Host</strong> setting</a> is defined correctly"
 msgstr "<a ui-sref=\"settings\"><strong>Salt API 主机</strong>设置</a> 确定正确"
 
 #: app/components/shared/oa-module-loader/reason-106-deepsea-failed-authentication.html:7
-msgid ""
-"<a ui-sref=\"settings\"><strong>Salt API Username</strong>, <strong>Shared "
-"Secret</strong> and <strong>External Auth System</strong> settings</a> are "
-"defined correctly."
+msgid "<a ui-sref=\"settings\"><strong>Salt API Username</strong>, <strong>Shared Secret</strong> and <strong>External Auth System</strong> settings</a> are defined correctly."
 msgstr ""
 "<a ui-sref=\"settings\"><strong>Salt API用户名</strong>, <strong>共享密钥</"
 "strong>和<strong>外部认证系统</strong>设置</a> 确定正确."
 
 #: app/components/shared/oa-module-loader/reason-122-deepsea-nfs-no-hosts.html:9
-msgid ""
-"<li>At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to "
-"the role <strong>ganesha</strong> exists</li>"
+msgid "<li>At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>ganesha</strong> exists</li>"
 msgstr ""
 "<li>至少选择一项<a ui-sref=\"cephNodes\">Salt Minion节点</a> 分配给"
 "<strong>ganesha</strong>的角色存在</li>"
 
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:10
-msgid ""
-"<strong>/etc/ceph/*.keyring</strong> can be read by the <strong>openattic</"
-"strong> user"
+msgid "<strong>/etc/ceph/*.keyring</strong> can be read by the <strong>openattic</strong> user"
 msgstr ""
 "<strong>/etc/ceph/*.keyring</strong>可以被<strong>openattic</strong>用户读取"
 
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:8
-msgid ""
-"<strong>/etc/ceph/*.keyring</strong> exists and has <strong>mds</strong> "
-"capabilities"
+msgid "<strong>/etc/ceph/*.keyring</strong> exists and has <strong>mds</strong> capabilities"
 msgstr "<strong>/etc/ceph/*.keyring</strong>存在并带有<strong>mds</strong>功能"
 
 #: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:8
-msgid ""
-"<strong>Grafana Host</strong> and <strong>Port</strong> are defined correctly"
+msgid "<strong>Grafana Host</strong> and <strong>Port</strong> are defined correctly"
 msgstr "<strong>Grafana主机</strong>和<strong>端口</strong>确定正确"
 
 #: app/components/shared/oa-module-loader/reason-181-grafana-failed-authentication.html:8
-msgid ""
-"<strong>Grafana Username</strong> and <strong>Password</strong> are defined "
-"correctly"
+msgid "<strong>Grafana Username</strong> and <strong>Password</strong> are defined correctly"
 msgstr "<strong>Grafana用户名</strong>和<strong>密码</strong>确定正确"
 
 #: app/components/shared/oa-module-loader/reason-180-grafana-incomplete-credentials.html:8
@@ -290,9 +276,7 @@ msgid "<strong>Grafana</strong> settings are defined correctly"
 msgstr "<strong>Grafana</strong>设置确定正确"
 
 #: app/components/feedback/feedback.component.html:38
-msgid ""
-"<strong>Remember</strong>, for bugs and issues, you need to open a Jira "
-"ticket."
+msgid "<strong>Remember</strong>, for bugs and issues, you need to open a Jira ticket."
 msgstr "<strong>注意</strong>,如有错误及问题,请您新增Jira单子."
 
 #: app/components/feedback/feedback.component.html:17
@@ -300,16 +284,12 @@ msgid "<strong>Your feedback</strong><br>makes openATTIC better"
 msgstr "<strong>您的反馈</strong><br>会令openATTIC更强大"
 
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:7
-msgid ""
-"<strong>python-cephfs</strong> package is correctly installed in the "
-"openATTIC host"
+msgid "<strong>python-cephfs</strong> package is correctly installed in the openATTIC host"
 msgstr "<strong>python-cephfs</strong>的安装包正确的安装在openATTIC主机上"
 
 #: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:3
-msgid ""
-"<strong>{{ clusterName }}</strong> with fsid <strong>{{ fsid }}</strong>"
-msgstr ""
-"<strong>{{ clusterName }}</strong> 带有fsid <strong>{{ fsid }}</strong>"
+msgid "<strong>{{ clusterName }}</strong> with fsid <strong>{{ fsid }}</strong>"
+msgstr "<strong>{{ clusterName }}</strong> 带有fsid <strong>{{ fsid }}</strong>"
 
 #: app/components/users/users-form/users-form.component.html:102
 msgid "A password is required."
@@ -328,7 +308,7 @@ msgstr "API授权码"
 msgid "API-Recorder"
 msgstr "API记录器"
 
-#: app/components/settings/settings-form/settings-form.component.html:203
+#: app/components/settings/settings-form/settings-form.component.html:225
 msgid "Access Key"
 msgstr "访问钥"
 
@@ -364,7 +344,7 @@ msgstr "有效"
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:25
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:44
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:24
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:36
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:42
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:23
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:42
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:23
@@ -443,11 +423,11 @@ msgstr "网络地址"
 msgid "Addresses:"
 msgstr "网络地址:"
 
-#: app/components/settings/settings-form/settings-form.component.html:259
+#: app/components/settings/settings-form/settings-form.component.html:281
 msgid "Admin Resource Path"
 msgstr "管理员资源路径"
 
-#: app/components/settings/settings-form/settings-form.component.html:243
+#: app/components/settings/settings-form/settings-form.component.html:265
 msgid "Admin User"
 msgstr "管理员账户"
 
@@ -472,17 +452,14 @@ msgid "Algorithm:"
 msgstr "算法:"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:2
-msgid ""
-"Alternative access for <strong>NFS v3</strong> mounts (it must not have a "
-"leading /)."
+msgid "Alternative access for <strong>NFS v3</strong> mounts (it must not have a leading /)."
 msgstr "<strong>NFS v3</strong> 的可替换挂载方式(/不能放在首位)."
 
 #: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:11
 #: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:12
 #: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:13
 msgid ""
-"Alternatively check that <strong>DeepSea</strong> is returning the correct "
-"<strong>RGW</strong> information\n"
+"Alternatively check that <strong>DeepSea</strong> is returning the correct <strong>RGW</strong> information\n"
 "      by running the following command on the Salt master:\n"
 "      <kbd># salt-run ui_rgw.credentials</kbd>"
 msgstr ""
@@ -496,17 +473,13 @@ msgstr "查看<strong>DeepSea</strong> 正常运作"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:353
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:66
-msgid ""
-"An IQN has the following notation 'iqn.$year-$month.$reversedAddress:"
-"$definedName'"
+msgid "An IQN has the following notation 'iqn.$year-$month.$reversedAddress:$definedName'"
 msgstr "应由下列格式构成 'iqn.$year-$month.$reversedAddress:$definedName'"
 
 #: app/components/feedback/feedback.component.html:19
 msgid ""
-"And this is why we wanted to let you know that you can get in contact with "
-"us on many social media platforms. Your comments,\n"
-"      your ideas, and everything you think will help make your work at "
-"openATTIC better."
+"And this is why we wanted to let you know that you can get in contact with us on many social media platforms. Your comments,\n"
+"      your ideas, and everything you think will help make your work at openATTIC better."
 msgstr ""
 "我希望在这里告知你可以在许多不同的社交媒体平台上与我们联系并发表你的评论,\n"
 "            你的想法和你贡献的一切都将有助于openATTIC变得更好。"
@@ -530,17 +503,14 @@ msgid "Are you sure you want to leave this page?"
 msgstr "你是否决定离开当前页面?"
 
 #: app/components/shared/oa-module-loader/reason-142-deepsea-iscsi-no-interfaces.html:10
-msgid ""
-"At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the "
-"role <strong>igw</strong> exists"
+msgid "At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>igw</strong> exists"
 msgstr ""
 "至少存在一个<a ui-sref=\"cephNodes\">Salt Minion节点</a> 选为<strong>igw</"
 "strong>角色"
 
 #: app/components/shared/oa-module-loader/reason-123-deepsea-nfs-no-fsals.html:10
 msgid ""
-"At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the "
-"role <strong>mds</strong> or\n"
+"At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>mds</strong> or\n"
 "    <strong>rgw</strong> exists"
 msgstr ""
 "至少存在一个<a ui-sref=\"cephNodes\">Salt Minion节点</a> 选为<strong>mds</"
@@ -548,20 +518,16 @@ msgstr ""
 "<strong>rgw</strong>角色"
 
 #: app/components/shared/oa-module-loader/reason-132-openattic-nfs-no-rgw.html:7
-msgid ""
-"At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the "
-"role <strong>rgw</strong> exists"
+msgid "At least one <a ui-sref=\"cephNodes\">Salt Minion node</a> assigned to the role <strong>rgw</strong> exists"
 msgstr ""
 "至少存在一个<a ui-sref=\"cephNodes\">Salt Minion节点</a> 选为<strong>rgw</"
 "strong>角色"
 
 #: app/components/shared/oa-module-loader/reason-132-openattic-nfs-no-rgw.html:8
-msgid ""
-"At least one active <a ui-sref=\"ceph-rgw-users\">Object Gateway user</a> "
-"exists"
+msgid "At least one active <a ui-sref=\"ceph-rgw-users\">Object Gateway user</a> exists"
 msgstr "至少存在一个可用的<a ui-sref=\"ceph-rgw-users\">对象网关用户</a>"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:327
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:367
 msgid "At least one feature has to be selected"
 msgstr "至少选择一项特性"
 
@@ -576,13 +542,17 @@ msgstr "授权:"
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:614
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:364
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:652
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:422
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:462
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:120
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:759
 #: app/components/shared/oa-error-panel/oa-error-panel.component.html:17
 #: app/components/users/users-form/users-form.component.html:305
 msgid "Back"
 msgstr "返回"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:84
+msgid "Backfilling of PGs is suspended"
+msgstr "PG的回填已经暂停"
 
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:2
 msgid "Background-Tasks"
@@ -592,25 +562,23 @@ msgstr "后台任务"
 msgid "Basic information:"
 msgstr "基本信息:"
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:23
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:24
 msgid ""
-"Be aware that you will <strong>lose all Object Gateway buckets</strong> "
-"owned by these users and that this operation\n"
+"Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by these users and that this operation\n"
 "      <strong>cannot be undone</strong>."
 msgstr ""
 "请注意，您将把这些用户所有的<strong>对象网关的桶(buckets)丢失</strong>\n"
 "      且此操作<strong>不可撤销</strong>。"
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:11
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:12
 msgid ""
-"Be aware that you will <strong>lose all Object Gateway buckets</strong> "
-"owned by this user and that this operation\n"
+"Be aware that you will <strong>lose all Object Gateway buckets</strong> owned by this user and that this operation\n"
 "      <strong>cannot be undone</strong>."
 msgstr ""
 "请注意，您将把这用户所有的<strong>对象网关的桶(buckets)丢失</strong>\n"
 "      且此操作<strong>不可撤销</strong>。"
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:10
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:12
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
 "      in that RBD and that this operation <strong>cannot be undone</strong>."
@@ -618,7 +586,7 @@ msgstr ""
 "请注意，您将把这RBD<strong>所有数据丢失</strong>\n"
 "      且此操作<strong>不可撤销</strong>。"
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:24
 msgid ""
 "Be aware that you will <strong>lose all data</strong>\n"
 "      in the RBDs and that this operation <strong>cannot be undone</strong>."
@@ -626,18 +594,14 @@ msgstr ""
 "请注意，您将把这些RBDs<strong>所有数据丢失</strong>\n"
 "      且此操作<strong>不可撤销</strong>。"
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:10
-msgid ""
-"Be aware that you will <strong>lose all data</strong> in that Ceph pool and "
-"that this operation <strong>cannot be undone</strong>."
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:11
+msgid "Be aware that you will <strong>lose all data</strong> in that Ceph pool and that this operation <strong>cannot be undone</strong>."
 msgstr ""
 "请注意，您将此Ceph存储池内<strong>所有数据丢失</strong>而且此操作<strong>不可"
 "撤销</strong>。"
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:21
-msgid ""
-"Be aware that you will <strong>lose all data</strong> in the Ceph pools and "
-"that this operation <strong>cannot be undone</strong>."
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:22
+msgid "Be aware that you will <strong>lose all data</strong> in the Ceph pools and that this operation <strong>cannot be undone</strong>."
 msgstr ""
 "请注意，您将此Ceph存储池内<strong>所有数据丢失</strong>而且此操作<strong>不可"
 "撤销</strong>。"
@@ -660,14 +624,11 @@ msgid "Buckets"
 msgstr "桶(Buckets)"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html:5
-msgid ""
-"By using different Pseudo options, the same Path may be exported multiple "
-"times."
+msgid "By using different Pseudo options, the same Path may be exported multiple times."
 msgstr "通过选择不同的 Pseudo 选项, 同一路径可被多次导出。"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:4
-msgid ""
-"By using different Tag options, the same Path may be exported multiple times."
+msgid "By using different Tag options, the same Path may be exported multiple times."
 msgstr "通过选择不同的标签，同一路径可被多次导出。"
 
 #: app/components/navigation/navigation/navigation.component.html:93
@@ -689,13 +650,15 @@ msgstr "计算帮助"
 #: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:35
 #: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:52
 #: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:28
+#: app/components/ceph-rbd/ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component.html:43
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:25
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:81
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-s3key-modal.component.html:155
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:179
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-swiftkey-modal.component.html:120
 #: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:18
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:44
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:113
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:115
 #: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:29
 #: app/components/users/users-delete-modal/users-delete-modal.component.html:29
 msgid "Cancel"
@@ -717,7 +680,7 @@ msgstr "Ceph CRUSH地图加载中…"
 msgid "Ceph Cluster settings are loading..."
 msgstr "Ceph 群集设置加载中…"
 
-#: app/components/settings/settings-form/settings-form.component.html:439
+#: app/components/settings/settings-form/settings-form.component.html:472
 msgid "Ceph Clusters"
 msgstr "Ceph 群集"
 
@@ -741,6 +704,14 @@ msgstr "Ceph OSDs加载中…"
 msgid "Ceph Path"
 msgstr "Ceph路径"
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:2
+msgid "Ceph RBD Snapshot Rollback"
+msgstr "回滚Ceph RBD快照"
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:7
+msgid "Ceph RBD Snapshot resources could not be loaded."
+msgstr "无法加载Ceph RBD快照资源"
+
 #: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:8
 msgid "Ceph RBD resources could not be loaded."
 msgstr "Ceph RBD 资源没有办法被加载."
@@ -761,11 +732,11 @@ msgstr ""
 msgid "Ceph clusters are loading..."
 msgstr "Ceph 群集加载中…"
 
-#: app/components/settings/settings-form/settings-form.component.html:528
+#: app/components/settings/settings-form/settings-form.component.html:561
 msgid "Ceph connection established successfully"
 msgstr "Ceph连接成功建立"
 
-#: app/components/settings/settings-form/settings-form.component.html:534
+#: app/components/settings/settings-form/settings-form.component.html:567
 msgid "Ceph connection failed"
 msgstr "Ceph连接失败"
 
@@ -774,9 +745,7 @@ msgid "Ceph is correctly configured in file"
 msgstr "Ceph配置文件正确"
 
 #: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:14
-msgid ""
-"Ceph is correctly configured in file <strong>/etc/ceph/{{ clusterName }}."
-"conf</strong>"
+msgid "Ceph is correctly configured in file <strong>/etc/ceph/{{ clusterName }}.conf</strong>"
 msgstr "Ceph配置文件<strong>/etc/ceph/{{ clusterName }}.conf</strong>正确"
 
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:8
@@ -789,14 +758,13 @@ msgstr "Ceph池加载中…"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form-image-settings-modal/ceph-iscsi-form-image-settings-modal.component.html:114
 #: app/components/ceph-iscsi/ceph-iscsi-form-target-settings-modal/ceph-iscsi-form-target-settings-modal.component.html:10
-msgid ""
-"Changing these parameters from their default values is usually not necessary."
+msgid "Changing these parameters from their default values is usually not necessary."
 msgstr "正常不需要改变这些默认参数."
 
-#: app/components/settings/settings-form/settings-form.component.html:119
-#: app/components/settings/settings-form/settings-form.component.html:295
-#: app/components/settings/settings-form/settings-form.component.html:413
-#: app/components/settings/settings-form/settings-form.component.html:522
+#: app/components/settings/settings-form/settings-form.component.html:130
+#: app/components/settings/settings-form/settings-form.component.html:317
+#: app/components/settings/settings-form/settings-form.component.html:446
+#: app/components/settings/settings-form/settings-form.component.html:555
 msgid "Checking connection"
 msgstr "检查连接中"
 
@@ -806,28 +774,30 @@ msgid "Clients"
 msgstr "客户端"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-tag.html:3
-msgid ""
-"Clients may not mount subdirectories (i.e. if Tag = foo, the client may not "
-"mount foo/baz)."
-msgstr ""
-"客户端可能无法挂载子目录(例如:若Tag = foo, 则客户端可能无法挂载 foo/baz)."
+msgid "Clients may not mount subdirectories (i.e. if Tag = foo, the client may not mount foo/baz)."
+msgstr "客户端可能无法挂载子目录(例如:若Tag = foo, 则客户端可能无法挂载 foo/baz)."
 
 #: app/components/ceph-nfs/ceph-nfs-detail/ceph-nfs-detail.component.html:47
 msgid "Clients:"
 msgstr "客户端:"
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:56
+msgid "Clone"
+msgstr "克隆"
+
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:23
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:59
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:60
+#: app/components/ceph-rbd/ceph-rbd-snapshot-error-modal/ceph-rbd-snapshot-error-modal.component.html:14
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:64
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:119
-#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:156
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:121
+#: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:140
 msgid "Close"
 msgstr "关闭"
 
 #: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:65
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:66
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:55
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:94
 msgid "Cluster"
 msgstr "集群"
 
@@ -880,7 +850,7 @@ msgstr "所需压缩比"
 msgid "Compression required ratio..."
 msgstr "所需压缩比..."
 
-#: app/components/settings/settings-form/settings-form.component.html:453
+#: app/components/settings/settings-form/settings-form.component.html:486
 msgid "Config file"
 msgstr "配置文件"
 
@@ -904,8 +874,13 @@ msgstr "内容"
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:17
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:52
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:54
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:52
 msgid "Copy"
-msgstr "拷贝"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:41
+msgid "Copy From"
+msgstr "复制自"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:5
 msgid "Could not load NFS export"
@@ -919,38 +894,36 @@ msgstr "无法加载NFS共享"
 msgid "Could not load iSCSI target"
 msgstr "无法加载iSCSI目标"
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:85
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:86
 msgid "Couldn't delete the following {{ amount }} Tasks"
 msgstr "无法删除下列 {{ amount }} 个任务"
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:72
-msgid ""
-"Couldn't delete {{ amount }} task{{$ctrl.pendingDeletionFailure.length === "
-"1 ? '' : 's'}}."
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:74
+msgid "Couldn't delete {{ amount }} task{{$ctrl.pendingDeletionFailure.length === 1 ? '' : 's'}}."
 msgstr "无法删除 {{ amount }} 个任务."
 
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:92
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:77
-msgid ""
-"Couldn't load any cluster, please contact your administrator for details."
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:116
+msgid "Couldn't load any cluster, please contact your administrator for details."
 msgstr "找不到任何集群，请联系管理员。"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:148
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:206
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:188
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:246
 msgid "Couldn't load any pool, please contact your administrator for details."
 msgstr "找不到任何存储池，请联系管理员。"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:420
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:32
 msgid "Create"
 msgstr "创建"
-
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:14
-msgid "Create RBD: {{ name }}"
-msgstr "创建RBD: {{ name }}"
 
 #: app/components/users/users-form/users-form.component.html:11
 msgid "Create User: {{ username }}"
 msgstr "创建用户: {{ username }}"
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:98
+msgid "Created"
+msgstr "被创建"
 
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:83
 msgid "Crush Weight"
@@ -966,21 +939,15 @@ msgid "Crush ruleset:"
 msgstr "CRUSH规则组:"
 
 #: app/components/shared/oa-module-loader/reason-183-grafana-unknown-host.html:10
-msgid ""
-"DNS is configured correctly and the host name defined in <strong>Grafana "
-"Host</strong> is resolvable"
+msgid "DNS is configured correctly and the host name defined in <strong>Grafana Host</strong> is resolvable"
 msgstr "DNS配置正确<strong>Grafana主机</ strong>中定义的主机名可以被解析"
 
 #: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:10
-msgid ""
-"DNS is configured correctly and the host name defined in <strong>Object "
-"Gateway Host</strong> is resolvable"
+msgid "DNS is configured correctly and the host name defined in <strong>Object Gateway Host</strong> is resolvable"
 msgstr "DNS配置正确<strong>对象网关主机</ strong>中定义的主机名可以被解析"
 
 #: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:10
-msgid ""
-"DNS is configured correctly and the host name defined in <strong>Salt API "
-"Host</strong> is resolvable"
+msgid "DNS is configured correctly and the host name defined in <strong>Salt API Host</strong> is resolvable"
 msgstr "DNS配置正确<strong>Salt API主机</ strong>中定义的主机名可以被解析"
 
 #: app/components/navigation/navigation/navigation.component.html:31
@@ -991,7 +958,7 @@ msgstr "仪表盘"
 msgid "Data chunks (k)"
 msgstr "数据块 (k)"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:162
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:202
 msgid "Data-Pool"
 msgstr "数据池"
 
@@ -999,7 +966,7 @@ msgstr "数据池"
 msgid "Data-Pool:"
 msgstr "数据池:"
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:94
 msgid "Data-pool"
 msgstr "数据池"
 
@@ -1007,6 +974,10 @@ msgstr "数据池"
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:40
 msgid "Deep Scrub"
 msgstr "深层整理(Deep Scrub)"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:79
+msgid "Deep Scrubbing is disabled"
+msgstr "深层擦洗整理(Deep Scrub)已经被禁用"
 
 #: app/components/settings/settings-form/settings-form.component.html:23
 msgid "DeepSea / Salt REST API"
@@ -1020,14 +991,16 @@ msgstr "DeepSea / Salt REST API"
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:62
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:39
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:58
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:31
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:44
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:37
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:60
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:28
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:70
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:57
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:64
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:42
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:107
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:109
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:28
 #: app/components/users/users-list/users-list.component.html:41
 msgid "Delete"
@@ -1226,7 +1199,7 @@ msgstr "错误"
 msgid "Export"
 msgstr "导出"
 
-#: app/components/settings/settings-form/settings-form.component.html:57
+#: app/components/settings/settings-form/settings-form.component.html:68
 msgid "External Auth System"
 msgstr "外部认证系统"
 
@@ -1234,7 +1207,7 @@ msgstr "外部认证系统"
 msgid "Failed to load the form data."
 msgstr "无法加载表单数据."
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:289
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:329
 msgid "Features"
 msgstr "特性"
 
@@ -1248,8 +1221,7 @@ msgstr "反馈"
 
 #: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:18
 msgid ""
-"File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</"
-"strong>\n"
+"File <strong>/etc/ceph/*.conf</strong> and <strong>/etc/ceph/*.keyring</strong>\n"
 "    can be read by the <strong>openattic</strong> user<br>"
 msgstr ""
 "此文件 <strong>/etc/ceph/*.conf</strong>和<strong>/etc/ceph/*.keyring</"
@@ -1257,9 +1229,7 @@ msgstr ""
 "    皆能被<strong>openattic</strong>用户读取<br>"
 
 #: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:19
-msgid ""
-"File <strong>/etc/ceph/{{ clusterName }}.conf</strong> has the correct "
-"permissions"
+msgid "File <strong>/etc/ceph/{{ clusterName }}.conf</strong> has the correct permissions"
 msgstr "此文件<strong>/etc/ceph/{{ clusterName }}.conf</strong>具备正确权限"
 
 #: app/components/users/users-form/users-form.component.html:158
@@ -1325,15 +1295,15 @@ msgstr "生成密钥"
 msgid "Get involved"
 msgstr "参与"
 
-#: app/components/settings/settings-form/settings-form.component.html:321
+#: app/components/settings/settings-form/settings-form.component.html:343
 msgid "Grafana"
 msgstr "Grafana"
 
-#: app/components/settings/settings-form/settings-form.component.html:419
+#: app/components/settings/settings-form/settings-form.component.html:452
 msgid "Grafana connection established successfully"
 msgstr "Grafana连接成功建立"
 
-#: app/components/settings/settings-form/settings-form.component.html:425
+#: app/components/settings/settings-form/settings-form.component.html:458
 msgid "Grafana connection failed"
 msgstr "Grafana连接失败"
 
@@ -1342,26 +1312,19 @@ msgstr "Grafana连接失败"
 #: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:1
 #: app/components/shared/oa-module-loader/reason-186-grafana-connection-error.html:1
 #: app/components/shared/oa-module-loader/reason-187-grafana-http-error.html:1
-msgid ""
-"Graphics cannot be loaded due to a problem while trying to connect to "
-"<strong>Grafana</strong>"
+msgid "Graphics cannot be loaded due to a problem while trying to connect to <strong>Grafana</strong>"
 msgstr "由于一些问题图形无法试连接到<strong>Grafana</strong>"
 
 #: app/components/shared/oa-module-loader/reason-184-grafana-connection-timeout.html:1
-msgid ""
-"Graphics cannot be loaded due to a timeout while trying to connect to Grafana"
+msgid "Graphics cannot be loaded due to a timeout while trying to connect to Grafana"
 msgstr "图形连接Grafana超时无法到加载"
 
 #: app/components/shared/oa-module-loader/reason-181-grafana-failed-authentication.html:1
-msgid ""
-"Graphics cannot be loaded due to an authentication problem while connecting "
-"to <strong>Grafana</strong>"
+msgid "Graphics cannot be loaded due to an authentication problem while connecting to <strong>Grafana</strong>"
 msgstr "连接时由于身份验证问题无法加载图形<strong>Grafana</strong>"
 
 #: app/components/shared/oa-module-loader/reason-180-grafana-incomplete-credentials.html:1
-msgid ""
-"Graphics cannot be loaded due to incomplete <strong>Grafana</strong> "
-"configuration"
+msgid "Graphics cannot be loaded due to incomplete <strong>Grafana</strong> configuration"
 msgstr "由于<strong>Grafana</strong>配置不完整无法加载图形"
 
 #: app/components/users/users-form/users-form.component.html:290
@@ -1385,9 +1348,9 @@ msgstr "宿主机:"
 msgid "Hostname"
 msgstr "宿主机名"
 
-#: app/components/settings/settings-form/settings-form.component.html:171
-#: app/components/settings/settings-form/settings-form.component.html:27
-#: app/components/settings/settings-form/settings-form.component.html:325
+#: app/components/settings/settings-form/settings-form.component.html:185
+#: app/components/settings/settings-form/settings-form.component.html:30
+#: app/components/settings/settings-form/settings-form.component.html:350
 msgid "Hostname / IP Address"
 msgstr "宿主机名/IP地址"
 
@@ -1408,12 +1371,9 @@ msgstr "ID:"
 msgid "Id"
 msgstr "Id"
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:35
-msgid ""
-"If you delete running tasks, it will abort the execution and won't roll back "
-"what has been done so far!"
-msgstr ""
-"如果您删除正在运行的任务，该任务将会立即终止，且无法回滚至任务运行之前的状态!"
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:36
+msgid "If you delete running tasks, it will abort the execution and won't roll back what has been done so far!"
+msgstr "如果您删除正在运行的任务，该任务将会立即终止，且无法回滚至任务运行之前的状态!"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:157
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:94
@@ -1426,8 +1386,7 @@ msgstr "镜像:"
 
 #: app/components/feedback/feedback.component.html:24
 msgid ""
-"In order to stay up-to-date you can visit our blog for the latest release "
-"notes and other information about openATTIC and\n"
+"In order to stay up-to-date you can visit our blog for the latest release notes and other information about openATTIC and\n"
 "      interesting topics in general."
 msgstr ""
 "您可以访问我们的博客以获取有关openATTIC最新的发行说明、产品有关内容\n"
@@ -1471,11 +1430,11 @@ msgstr "密钥状态"
 msgid "Key status:"
 msgstr "密钥状态:"
 
-#: app/components/settings/settings-form/settings-form.component.html:469
+#: app/components/settings/settings-form/settings-form.component.html:502
 msgid "Keyring file"
 msgstr "密钥环文件"
 
-#: app/components/settings/settings-form/settings-form.component.html:495
+#: app/components/settings/settings-form/settings-form.component.html:528
 msgid "Keyring user"
 msgstr "密钥环用户"
 
@@ -1484,7 +1443,7 @@ msgid "Keys"
 msgstr "钥匙"
 
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:92
-msgid "Last Change"
+msgid "Last change"
 msgstr "最新更新"
 
 #: app/components/users/users-list/users-list.component.html:83
@@ -1522,6 +1481,7 @@ msgstr "加载用户数据..."
 
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:21
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:22
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:3
 #: app/components/shared/oa-loading-panel/oa-loading-panel.component.html:6
 #: app/components/task-queue/task-queue-modal/task-queue-modal.component.html:11
 msgid "Loading..."
@@ -1548,7 +1508,7 @@ msgstr "管理iSCSI服务"
 msgid "Manage service"
 msgstr "管理服务"
 
-#: app/components/settings/settings-form/settings-form.component.html:158
+#: app/components/settings/settings-form/settings-form.component.html:169
 msgid "Managed by DeepSea"
 msgstr "使用DeepSea管理"
 
@@ -1735,8 +1695,7 @@ msgid "NFS shares are loading..."
 msgstr "加载NFS共享中..."
 
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:9
-msgid ""
-"NFS shares could not be loaded. Make sure that the ceph module is installed."
+msgid "NFS shares could not be loaded. Make sure that the ceph module is installed."
 msgstr "无法加载NFS共享. 请确保ceph模块安装正常. "
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:191
@@ -1751,14 +1710,18 @@ msgstr "NFSv4"
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:65
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:28
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:70
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:23
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:56
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:61
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:72
+#: app/components/ceph-rbd/ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component.html:16
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:82
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:36
 #: app/components/ceph-rgw/ceph-rgw-bucket-list/ceph-rgw-bucket-list.component.html:69
 msgid "Name"
 msgstr "名称"
 
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:38
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:50
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:68
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:42
 msgid "Name..."
 msgstr "名称…"
@@ -1776,24 +1739,54 @@ msgstr "新的桶(bucket)将被创建"
 msgid "New directory will be created"
 msgstr "新的目录将被创建"
 
-#: app/components/settings/settings-form/settings-form.component.html:443
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:82
+msgid "No Backfill"
+msgstr "没有回填"
+
+#: app/components/settings/settings-form/settings-form.component.html:476
 msgid "No Ceph clusters configured"
 msgstr "未配置Ceph集群"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:77
+msgid "No Deep Scrub"
+msgstr "没有深层擦洗整理(Deep Scrubing)"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:61
+msgid "No Down"
+msgstr "没有下线"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:44
+msgid "No In"
+msgstr "没有在线上"
 
 #: app/components/notification/oa-notifications/oa-notifications.component.html:46
 msgid "No Notifications"
 msgstr "没有通知"
 
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:50
+msgid "No Out"
+msgstr "没有離開"
+
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:16
 msgid "No RBD images"
 msgstr "没有RBD"
 
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:87
+msgid "No Recover"
+msgstr "没有恢复"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:72
+msgid "No Scrub"
+msgstr "没有擦洗整理"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:56
+msgid "No Up"
+msgstr "没有起动"
+
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:613
 msgid ""
 "No application added\n"
-"                  <input type=\"text\" class=\"no-border\" ng-model=\"$ctrl."
-"apps.used[0]\" name=\"apps\" id=\"apps\" ng-if=\"$ctrl.apps.used.length === "
-"0\" required readonly>"
+"                  <input type=\"text\" class=\"no-border\" ng-model=\"$ctrl.apps.used[0]\" name=\"apps\" id=\"apps\" ng-if=\"$ctrl.apps.used.length === 0\" required readonly>"
 msgstr ""
 "未添加应用\n"
 "                  <input type=\"text\" class=\"no-border\" ng-model=\"$ctrl."
@@ -1805,20 +1798,15 @@ msgid "No authentication"
 msgstr "没有认证"
 
 #: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:11
-msgid ""
-"No firewall is enabled on the Grafana host that blocks access to Grafana"
+msgid "No firewall is enabled on the Grafana host that blocks access to Grafana"
 msgstr "没有防火场被加载到Grafana主机并引致无法访问Grafana"
 
 #: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:11
-msgid ""
-"No firewall is enabled on the Object Gateway host that blocks access to the "
-"RGW S3 API"
+msgid "No firewall is enabled on the Object Gateway host that blocks access to the RGW S3 API"
 msgstr "没有防火场被加载到对象网关主机并引致无法访问RGW S3 API"
 
 #: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:16
-msgid ""
-"No firewall is enabled on the Salt Master host that blocks access to the "
-"Salt REST API"
+msgid "No firewall is enabled on the Salt Master host that blocks access to the Salt REST API"
 msgstr "没有防火场被加载到Salt Master主机并引致无法访问Salt REST API"
 
 #: app/components/shared/oadatatable/oadatatable.directive.html:87
@@ -1839,17 +1827,12 @@ msgid "Not a valid number!"
 msgstr "这不是有效的数字!"
 
 #: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:52
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:154
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:182
 msgid "Not available"
 msgstr "不可用"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-fast-diff.html:2
-msgid ""
-"Note that if the \"fast-diff\" feature is not enabled on images, openATTIC "
-"won't display the \"used\" size, as this operation will require querying the "
-"OSDs for every potential object within the image, which is a time-consuming "
-"and I/O-intensive operation. However, images with this feature enabled can't "
-"be mapped by the Ceph kernel client \"kRBD\"."
+msgid "Note that if the \"fast-diff\" feature is not enabled on images, openATTIC won't display the \"used\" size, as this operation will require querying the OSDs for every potential object within the image, which is a time-consuming and I/O-intensive operation. However, images with this feature enabled can't be mapped by the Ceph kernel client \"kRBD\"."
 msgstr ""
 "注意，如果镜像上未启用\"fast-diff\"功能，则openATTIC将不显示\"已用\"大小，因为此"
 "操作将需要为镜像中的每个潜在对象查询OSD，这是一个耗时的工作I/O密集型操作。 但"
@@ -1859,7 +1842,7 @@ msgstr ""
 msgid "Notifications"
 msgstr "通知"
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:90
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:106
 msgid "Number of objects"
 msgstr "对象数量"
 
@@ -1867,9 +1850,25 @@ msgstr "对象数量"
 msgid "Number of objects:"
 msgstr "对象数量:"
 
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:63
+msgid "OSD failure reports are being ignored, such that the monitors will not mark OSDs down"
+msgstr "OSD故障报告被忽略，因此监视器不会将OSD标记为关闭"
+
 #: app/components/navigation/navigation/navigation.component.html:37
 msgid "OSDs"
 msgstr "OSDs"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:58
+msgid "OSDs are not allowed to start"
+msgstr "OSD不允许启动"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:46
+msgid "OSDs that were previously marked out will not be marked back in when they start"
+msgstr "以前标示離開的OSD在启动时不会被标记回"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:52
+msgid "OSDs will not automatically be marked out after the configured interval"
+msgstr "配置的间隔后OSD不会自动離開出来"
 
 #: app/components/ceph-nodes/ceph-nodes-detail/ceph-nodes-detail.component.html:34
 msgid "OSDs:"
@@ -1892,15 +1891,15 @@ msgstr ""
 "          <br>set"
 
 #: app/components/navigation/navigation/navigation.component.html:74
-#: app/components/settings/settings-form/settings-form.component.html:145
+#: app/components/settings/settings-form/settings-form.component.html:156
 msgid "Object Gateway"
 msgstr "对象网关"
 
-#: app/components/settings/settings-form/settings-form.component.html:301
+#: app/components/settings/settings-form/settings-form.component.html:323
 msgid "Object Gateway API connection established successfully"
 msgstr "对象网关API连接成功建立"
 
-#: app/components/settings/settings-form/settings-form.component.html:307
+#: app/components/settings/settings-form/settings-form.component.html:329
 msgid "Object Gateway API connection failed"
 msgstr "对象网关API连接失败"
 
@@ -1924,8 +1923,8 @@ msgstr "加载对象网关用户中…"
 msgid "Object Size"
 msgstr "对象大小"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:257
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:84
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:297
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:100
 msgid "Object size"
 msgstr "对象大小"
 
@@ -1934,9 +1933,7 @@ msgid "Object size:"
 msgstr "对象大小:"
 
 #: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:96
-msgid ""
-"One replica means <em>no copies</em>. If you lose a storage node, your data "
-"is lost."
+msgid "One replica means <em>no copies</em>. If you lose a storage node, your data is lost."
 msgstr "单副本表示<em>没有副本</em>.若存储节点损坏,数据将丢失."
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:88
@@ -1948,8 +1945,20 @@ msgstr "所有者"
 msgid "Owner:"
 msgstr "所有者:"
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:129
+msgid "PROTECTED"
+msgstr "受保护"
+
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:124
+msgid "Parent"
+msgstr "父节点
+
+#: app/components/ceph-rbd/ceph-rbd-detail/ceph-rbd-detail.component.html:55
+msgid "Parent:"
+msgstr "父节点:"
+
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:289
-#: app/components/settings/settings-form/settings-form.component.html:370
+#: app/components/settings/settings-form/settings-form.component.html:403
 #: app/components/users/users-form/users-form.component.html:66
 msgid "Password"
 msgstr "密码"
@@ -1958,6 +1967,14 @@ msgstr "密码"
 #: app/components/users/users-form/users-form.component.html:76
 msgid "Password..."
 msgstr "密码..."
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:67
+msgid "Pause"
+msgstr "暂停"
+
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:69
+msgid "Pauses reads and writes"
+msgstr ""
 
 #: app/components/ceph-nodes/ceph-nodes-list/ceph-nodes-list.component.html:25
 #: app/components/ceph-osd/ceph-osd-list/ceph-osd-list.component.html:25
@@ -1980,11 +1997,8 @@ msgstr "位置"
 #: app/components/ceph-crushmap/ceph-crushmap-stepset/ceph-crushmap-stepset.component.html:1
 msgid ""
 "Place {{ stepset }} replica\n"
-"  <span ng-show=\"$ctrl.getRealNum($ctrl.stepset).max && $ctrl."
-"getRealNum($ctrl.stepset).max > 1\">s on different {{ acrosstypeName }}s</"
-"span>\n"
-"  <span ng-show=\"$ctrl.stepset.groupbytype\">in the same "
-"{{ groupbytypeName }}</span>\n"
+"  <span ng-show=\"$ctrl.getRealNum($ctrl.stepset).max && $ctrl.getRealNum($ctrl.stepset).max > 1\">s on different {{ acrosstypeName }}s</span>\n"
+"  <span ng-show=\"$ctrl.stepset.groupbytype\">in the same {{ groupbytypeName }}</span>\n"
 "  in the {{ takeName }} {{ typeName }}."
 msgstr ""
 "位置{{ stepset }} 副本\n"
@@ -2012,21 +2026,15 @@ msgid "Please check the network connections and that Grafana is reachable"
 msgstr "请查看网络连接Grafana服务是否可达"
 
 #: app/components/shared/oa-module-loader/reason-164-rgw-connection-timeout.html:3
-msgid ""
-"Please check the network connections and that the RGW S3 API host is "
-"reachable"
+msgid "Please check the network connections and that the RGW S3 API host is reachable"
 msgstr "请查看网络连接RGW S3 API主机是否可达"
 
 #: app/components/shared/oa-module-loader/reason-104-deepsea-connection-timeout.html:3
-msgid ""
-"Please check the network connections and that the Salt REST API host is "
-"reachable"
+msgid "Please check the network connections and that the Salt REST API host is reachable"
 msgstr "请查看网络连接Salt REST API主机是否可达"
 
 #: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:10
-msgid ""
-"Please note that this will invalidate the existing token and make sure to "
-"update any applications still using the old token."
+msgid "Please note that this will invalidate the existing token and make sure to update any applications still using the old token."
 msgstr "请注意，这将使现有令牌无效，并确保使用旧令牌更新任何应用程序. "
 
 #: app/components/shared/oa-module-loader/reason-101-deepsea-conn-unknown-problem.html:5
@@ -2072,7 +2080,7 @@ msgstr "存储池类型"
 msgid "Pool:"
 msgstr "存储池:"
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:62
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:78
 msgid "Poolname"
 msgstr "存储池名称"
 
@@ -2089,7 +2097,7 @@ msgstr "入口"
 msgid "Portals:"
 msgstr "入口:"
 
-#: app/components/settings/settings-form/settings-form.component.html:566
+#: app/components/settings/settings-form/settings-form.component.html:599
 msgid "Powered by openATTIC"
 msgstr "由openATTIC支持"
 
@@ -2097,9 +2105,13 @@ msgstr "由openATTIC支持"
 msgid "Prevents single node bottleneck for large or busy RBDs"
 msgstr "防止单节点瓶颈大型或繁忙的RBDs"
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:65
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:67
 msgid "Processing deletion requests: {{ finishedTasks }} of {{ amount }}"
 msgstr "正在进行删除：{{ finishedTasks }} 中 {{ amount }}"
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:50
+msgid "Protect"
+msgstr "保护"
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:236
 msgid "Pseudo"
@@ -2122,9 +2134,7 @@ msgid "RBD Size"
 msgstr "RBD大小"
 
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-striping.html:2
-msgid ""
-"RBD images are striped over many objects, which are then stored by the Ceph "
-"distributed object store (RADOS)."
+msgid "RBD images are striped over many objects, which are then stored by the Ceph distributed object store (RADOS)."
 msgstr "RBD镜像划分为许多对象，然后由Ceph分布式对象存储（RADOS）存储."
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form-helper-features.html:2
@@ -2134,6 +2144,10 @@ msgstr "iSCSI不支持具有以下特征的RBD镜像:"
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form-helper-features.html:2
 msgid "RBD images with the following features will not be supported by iSCSI:"
 msgstr "iSCSI不支持具有以下特征的RBD镜像:"
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:15
+msgid "RBD: {{ name }}"
+msgstr "RBD: {{ name }}"
 
 #: app/components/navigation/navigation/navigation.component.html:43
 msgid "RBDs"
@@ -2148,6 +2162,11 @@ msgstr "读和写请求分布在许多节点上"
 msgid "Recent Notifications"
 msgstr "最近的通知"
 
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:89
+msgid "Recovery of PGs is suspended"
+msgstr "暂停PG的恢复"
+
+
 #: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:26
 msgid "Refresh"
 msgstr "刷新"
@@ -2155,6 +2174,10 @@ msgstr "刷新"
 #: app/components/notification/oa-notifications/oa-notifications.component.html:15
 msgid "Remove all"
 msgstr "删除所有"
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:39
+msgid "Rename"
+msgstr "改名"
 
 #: app/components/api-recorder/api-recorder-modal/api-recorder-modal.component.html:5
 msgid "Replay the actions you recorded by running this Python script:"
@@ -2208,8 +2231,8 @@ msgstr "报告错误"
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:72
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form.component.html:99
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:628
-#: app/components/settings/settings-form/settings-form.component.html:484
-#: app/components/settings/settings-form/settings-form.component.html:510
+#: app/components/settings/settings-form/settings-form.component.html:517
+#: app/components/settings/settings-form/settings-form.component.html:543
 msgid "Required field"
 msgstr "必填项"
 
@@ -2229,10 +2252,14 @@ msgstr "角色"
 msgid "Roles:"
 msgstr "角色:"
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:63
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:19
+msgid "Rollback"
+msgstr "回滚"
+
 #: app/components/shared/oa-module-loader/reason-185-grafana-no-route-to-host.html:10
 msgid ""
-"Routing settings are configured correctly and the host defined in "
-"<strong>Grafana Host</strong> is reachable\n"
+"Routing settings are configured correctly and the host defined in <strong>Grafana Host</strong> is reachable\n"
 "    (e.g. via <kbd>ping</kbd>)"
 msgstr ""
 "路由设置配置正确, 并且在<strong>Grafana主机</strong>是可达的\n"
@@ -2240,8 +2267,7 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:10
 msgid ""
-"Routing settings are configured correctly and the host defined in "
-"<strong>Object Gateway Host</strong> is reachable\n"
+"Routing settings are configured correctly and the host defined in <strong>Object Gateway Host</strong> is reachable\n"
 "    (e.g. via <kbd>ping</kbd>)"
 msgstr ""
 "路由设置配置正确, 并且在<strong>对象网关主机</strong>是可达的\n"
@@ -2249,8 +2275,7 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:10
 msgid ""
-"Routing settings are configured correctly and the host defined in "
-"<strong>Salt API Host</strong> is reachable\n"
+"Routing settings are configured correctly and the host defined in <strong>Salt API Host</strong> is reachable\n"
 "    (e.g. via <kbd>ping</kbd>)"
 msgstr ""
 "路由设置配置正确, 并且在<strong>Salt API主机</strong>是可达的\n"
@@ -2272,15 +2297,15 @@ msgstr "S3钥"
 msgid "S3:"
 msgstr "S3:"
 
-#: app/components/settings/settings-form/settings-form.component.html:125
+#: app/components/settings/settings-form/settings-form.component.html:136
 msgid "Salt API connection established successfully"
 msgstr "Salt API连接成功建立"
 
-#: app/components/settings/settings-form/settings-form.component.html:131
+#: app/components/settings/settings-form/settings-form.component.html:142
 msgid "Salt API connection failed"
 msgstr "Salt API连接失败"
 
-#: app/components/settings/settings-form/settings-form.component.html:554
+#: app/components/settings/settings-form/settings-form.component.html:587
 msgid "Save"
 msgstr "保存"
 
@@ -2289,7 +2314,11 @@ msgstr "保存"
 msgid "Scrub"
 msgstr "整理(Scrub)"
 
-#: app/components/settings/settings-form/settings-form.component.html:219
+#: app/components/ceph-cluster/ceph-cluster-settings-modal/ceph-cluster-settings-modal.component.js:74
+msgid "Scrubbing is disabled"
+msgstr "擦洗整理被禁用"
+
+#: app/components/settings/settings-form/settings-form.component.html:241
 msgid "Secret Key"
 msgstr "密钥"
 
@@ -2330,7 +2359,7 @@ msgstr "配置"
 msgid "Settings are loading..."
 msgstr "加载配置中..."
 
-#: app/components/settings/settings-form/settings-form.component.html:94
+#: app/components/settings/settings-form/settings-form.component.html:105
 msgid "Shared Secret"
 msgstr "共享密钥"
 
@@ -2364,9 +2393,7 @@ msgstr ""
 "            一共<strong>{{ amount }}</strong>项"
 
 #: app/components/shared/oadatatable/oadatatable.directive.html:98
-msgid ""
-"Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong> of "
-"<strong>{{totalEntries}}</strong> items"
+msgid "Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong> of <strong>{{totalEntries}}</strong> items"
 msgstr ""
 "显示<strong>{{ firstEntry }}</strong>项到第<strong>{{ lastEntry }}</strong>一"
 "共<strong>{{ amount }}</strong>项"
@@ -2375,8 +2402,9 @@ msgstr ""
 msgid "Sign Out"
 msgstr "登出"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:217
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:67
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:257
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:83
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:88
 msgid "Size"
 msgstr "容量"
 
@@ -2403,6 +2431,7 @@ msgstr "启动"
 #: app/components/ceph-iscsi/ceph-iscsi-manage-service-modal/ceph-iscsi-manage-service-modal.component.html:13
 #: app/components/ceph-nfs/ceph-nfs-list/ceph-nfs-list.component.html:93
 #: app/components/ceph-nfs/ceph-nfs-manage-service-modal/ceph-nfs-manage-service-modal.component.html:14
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:93
 msgid "State"
 msgstr "状态"
 
@@ -2448,11 +2477,11 @@ msgstr "条带数"
 msgid "Stripe Unit"
 msgstr "条带单位"
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:102
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:118
 msgid "Stripe count"
 msgstr "条带数"
 
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:96
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:112
 msgid "Stripe unit"
 msgstr "条带单位"
 
@@ -2460,16 +2489,16 @@ msgstr "条带单位"
 msgid "Stripe width:"
 msgstr "条带宽:"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:334
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:374
 msgid "Striping"
 msgstr "条带化"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:409
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:449
 #: app/components/ceph-rbd/ceph-rbd-striping-modal/ceph-rbd-striping-modal.component.html:2
 msgid "Striping Preview"
 msgstr "条带预览"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:372
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:412
 msgid "Striping count"
 msgstr "条带数"
 
@@ -2481,7 +2510,7 @@ msgstr "条带数:"
 msgid "Striping features:"
 msgstr "条带特性:"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:339
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:379
 msgid "Striping unit"
 msgstr "条带单位"
 
@@ -2549,9 +2578,9 @@ msgstr "系统配置"
 msgid "TCP"
 msgstr "TCP"
 
-#: app/components/settings/settings-form/settings-form.component.html:187
-#: app/components/settings/settings-form/settings-form.component.html:340
-#: app/components/settings/settings-form/settings-form.component.html:42
+#: app/components/settings/settings-form/settings-form.component.html:209
+#: app/components/settings/settings-form/settings-form.component.html:373
+#: app/components/settings/settings-form/settings-form.component.html:53
 msgid "TCP port"
 msgstr "TCP端口"
 
@@ -2568,38 +2597,31 @@ msgstr "目标限定名:"
 msgid "Target IQN: {{ targetId }}"
 msgstr "目标限定名: {{ targetId }}"
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:47
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:48
 msgid "Tasks to delete ({{ amount }})"
 msgstr "个任务将被删除 ({{ amount }})"
 
 #: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:12
 msgid ""
 "The\n"
-"    <strong>salt-api</strong> daemon is installed and running on the salt "
-"master node\n"
+"    <strong>salt-api</strong> daemon is installed and running on the salt master node\n"
 "    <kbd># systemctl status salt-api</kbd>"
 msgstr ""
 "在Salt master节点上安装并运行<strong>salt-api</strong>守护进程\n"
 "    <kbd># systemctl status salt-api</kbd>"
 
 #: app/components/shared/oa-module-loader/reason-190-deepsea-old_version.html:1
-msgid ""
-"The <strong>DeepSea</strong> version that you are using is too old and "
-"should be updated"
+msgid "The <strong>DeepSea</strong> version that you are using is too old and should be updated"
 msgstr "您正在使用的<strong>DeepSea</strong>版本太旧请更新"
 
 #: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:10
-msgid ""
-"The <strong>ceph-radosgw.target</strong> daemon is installed and running on "
-"the Object Gateway node <kbd># systemctl status ceph-radosgw.target</kbd>"
+msgid "The <strong>ceph-radosgw.target</strong> daemon is installed and running on the Object Gateway node <kbd># systemctl status ceph-radosgw.target</kbd>"
 msgstr ""
 "<strong>ceph-radosgw.target</strong>守护程序已安装并在对象网关节点上运行"
 "<kbd># systemctl status ceph-radosgw.target</kbd>"
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:203
-msgid ""
-"The RBD you've chosen contains one or more feature(s) that are not supported "
-"by iSCSI. Please choose another RBD."
+msgid "The RBD you've chosen contains one or more feature(s) that are not supported by iSCSI. Please choose another RBD."
 msgstr "您选择的RBD包含一个或多个iSCSI不支持的功能,请选择另一个RBD."
 
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:6
@@ -2610,7 +2632,7 @@ msgstr "存储桶(Bucket)数据无法加载."
 msgid "The chosen Ceph pool name is already in use."
 msgstr "此Ceph存储池名称已被使用."
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:44
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:83
 msgid "The chosen RBD name is already in use."
 msgstr "此RBD名称已被使用."
 
@@ -2642,19 +2664,23 @@ msgstr "所选用户名已被使用."
 msgid "The following Ceph nodes will be {{ deep }}scrubbed:"
 msgstr "下面的Ceph节点将被{{ deep }}整理(scrub)掉:"
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:24
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:25
 msgid "The following Ceph pools will be deleted:"
 msgstr "下列Ceph存储池即将被删除:"
 
-#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:16
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:17
 msgid "The following NFS exports will be deleted:"
 msgstr "以下的NFS导出项将被删除:"
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:26
+#: app/components/ceph-rbd/ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component.html:19
+msgid "The following RBD Snapshots will be deleted:"
+msgstr "以下RBD快照将被删除："
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:28
 msgid "The following RBDs will be deleted:"
 msgstr "下列RBD即将被删除:"
 
-#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:19
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:20
 msgid "The following buckets will be deleted:"
 msgstr "以下的存储桶(bucket)都将被删除:"
 
@@ -2662,11 +2688,11 @@ msgstr "以下的存储桶(bucket)都将被删除:"
 msgid "The following characters are valid: _ a-z A-Z 0-9"
 msgstr "您可使用下列字符: _a-z A-Z 0-9"
 
-#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:16
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:17
 msgid "The following iSCSI target IQNs will be deleted:"
 msgstr "以下的iSCSI目标限定名(IQNs)将被删除:"
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:27
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:28
 msgid "The following users will be deleted:"
 msgstr "以下的用户都将被删除:"
 
@@ -2701,8 +2727,7 @@ msgstr "pg池的大小只能在编辑模式下增加."
 
 #: app/components/ceph-nfs/ceph-nfs-form/ceph-nfs-form-helper-pseudo.html:2
 msgid ""
-"The position that this <strong>NFS v4</strong> export occupies in the "
-"<strong>Pseudo FS</strong>\n"
+"The position that this <strong>NFS v4</strong> export occupies in the <strong>Pseudo FS</strong>\n"
 "    (it must be unique)."
 msgstr ""
 "<strong>NFS v4</strong> 的导出文件在 <strong>伪文件系统</strong> 中所占用位"
@@ -2721,7 +2746,7 @@ msgstr ""
 "指定的大小超出范围.\n"
 "                     从{{minSize}}到{{maxSize}}的值是有效的."
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:392
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:432
 msgid "The striping count has to be a value higher than 1."
 msgstr "条带数必须是高于1."
 
@@ -2738,6 +2763,9 @@ msgstr "请输入用户名."
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:611
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:686
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:741
+#: app/components/settings/settings-form/settings-form.component.html:197
+#: app/components/settings/settings-form/settings-form.component.html:361
+#: app/components/settings/settings-form/settings-form.component.html:41
 msgid "The value is not valid."
 msgstr "输入值无效."
 
@@ -2760,14 +2788,15 @@ msgstr "无{{tabKey}}任务."
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:485
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:518
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:87
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:142
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:200
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:231
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:272
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:357
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:37
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:387
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:71
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:110
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:182
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:240
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:271
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:312
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:397
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:427
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:76
+#: app/components/ceph-rbd/ceph-rbd-snapshot-create-modal/ceph-rbd-snapshot-create-modal.component.html:28
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:106
 #: app/components/ceph-rgw/ceph-rgw-bucket-form/ceph-rgw-bucket-form.component.html:51
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-capability-modal.component.html:37
@@ -2795,11 +2824,11 @@ msgstr "请填写此栏！"
 msgid "This field is required."
 msgstr "请填写此栏."
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:362
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:402
 msgid "This field was decreased with your object size change."
 msgstr "此字段随着对象大小的变化减少."
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:278
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:318
 msgid "This field was increased with your stripe unit change."
 msgstr "此字段随着对象大小的变化增加."
 
@@ -2809,8 +2838,7 @@ msgstr "由于Ceph集群没有配置所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-122-deepsea-nfs-no-hosts.html:1
 msgid ""
-"This module cannot be loaded because there are no Salt Minion nodes assigned "
-"to the\n"
+"This module cannot be loaded because there are no Salt Minion nodes assigned to the\n"
 "  <strong>ganesha</strong> role"
 msgstr ""
 "由于Salt Minion节点被指定为<strong>ganesha</strong>的角色\n"
@@ -2818,8 +2846,7 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-142-deepsea-iscsi-no-interfaces.html:1
 msgid ""
-"This module cannot be loaded because there are no Salt Minion nodes assigned "
-"to the\n"
+"This module cannot be loaded because there are no Salt Minion nodes assigned to the\n"
 "  <strong>igw</strong> role"
 msgstr ""
 "由于Salt Minion节点被指定为<strong>igw</strong>的角色\n"
@@ -2827,8 +2854,7 @@ msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-123-deepsea-nfs-no-fsals.html:1
 msgid ""
-"This module cannot be loaded because there are no Salt Minion nodes assigned "
-"to the\n"
+"This module cannot be loaded because there are no Salt Minion nodes assigned to the\n"
 "  <strong>mds</strong> role neither to the <strong>rgw</strong> role"
 msgstr ""
 "由于没有任何Salt Minion节点被指定为<strong>mds</strong>和<strong>rgw</strong>"
@@ -2839,70 +2865,50 @@ msgstr ""
 #: app/components/shared/oa-module-loader/reason-160-rgw-conn-unknown-problem.html:1
 #: app/components/shared/oa-module-loader/reason-161-rgw-connection-refused.html:1
 #: app/components/shared/oa-module-loader/reason-163-rgw-unknown-host.html:1
-msgid ""
-"This module cannot be loaded due to a problem while trying to connect to "
-"<strong>RGW S3 API</strong>"
+msgid "This module cannot be loaded due to a problem while trying to connect to <strong>RGW S3 API</strong>"
 msgstr "由于尝试连接<strong>RGW S3 API</strong>失败所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:1
-msgid ""
-"This module cannot be loaded due to a problem while trying to connect to "
-"CephFS"
+msgid "This module cannot be loaded due to a problem while trying to connect to CephFS"
 msgstr "由于尝试连接CephFS失败所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-101-deepsea-conn-unknown-problem.html:1
 #: app/components/shared/oa-module-loader/reason-102-deepsea-connection-refused.html:1
 #: app/components/shared/oa-module-loader/reason-103-deepsea-unknown-host.html:1
 #: app/components/shared/oa-module-loader/reason-105-deepsea-no-route-to-host.html:1
-msgid ""
-"This module cannot be loaded due to a problem while trying to connect to "
-"DeepSea via the Salt REST API"
+msgid "This module cannot be loaded due to a problem while trying to connect to DeepSea via the Salt REST API"
 msgstr "由于尝试经由Salt REST API连接DeepSea失败所以无法加载这模块"
-
 #: app/components/shared/oa-module-loader/reason-165-rgw-no-route-to-host.html:1
-msgid ""
-"This module cannot be loaded due to a problem while trying to connect to RGW "
-"S3 API"
+msgid "This module cannot be loaded due to a problem while trying to connect to RGW S3 API"
 msgstr "由于尝试连接RGW S3 API失败所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-151-openattic-ceph-no-connection.html:2
-msgid ""
-"This module cannot be loaded due to a problem while trying to connect to the "
-"Ceph cluster"
+msgid "This module cannot be loaded due to a problem while trying to connect to the Ceph cluster"
 msgstr "由于尝试连接Ceph集群失败所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-152-openattic-ceph-no-cluster-found.html:3
 msgid ""
-"This module cannot be loaded due to a problem while trying to connect to the "
-"Ceph cluster\n"
+"This module cannot be loaded due to a problem while trying to connect to the Ceph cluster\n"
 "    with fsid <strong>{{ fsid }}</strong>"
 msgstr ""
 "由于尝试利用fsid<strong>{{ fsid }}</strong>连接Ceph集群失败\n"
 "所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-164-rgw-connection-timeout.html:1
-msgid ""
-"This module cannot be loaded due to a timeout while trying to connect to "
-"<strong>RGW S3 API</strong>"
+msgid "This module cannot be loaded due to a timeout while trying to connect to <strong>RGW S3 API</strong>"
 msgstr "由于尝试连接<strong>RGW S3 API</strong>超时所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-104-deepsea-connection-timeout.html:1
-msgid ""
-"This module cannot be loaded due to a timeout while trying to connect to "
-"DeepSea via the Salt REST API"
+msgid "This module cannot be loaded due to a timeout while trying to connect to DeepSea via the Salt REST API"
 msgstr "由于尝试连接经由Salt REST API连接DeepSea超时所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-166-rgw-failed-authentication.html:1
 #: app/components/shared/oa-module-loader/reason-169-rgw-not-system-user.html:1
-msgid ""
-"This module cannot be loaded due to an authentication problem while "
-"connecting to the RGW S3 API"
+msgid "This module cannot be loaded due to an authentication problem while connecting to the RGW S3 API"
 msgstr "由于尝试连接RGW S3 API身份验证问题所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-106-deepsea-failed-authentication.html:1
-msgid ""
-"This module cannot be loaded due to an authentication problem while "
-"connecting to the Salt REST API"
+msgid "This module cannot be loaded due to an authentication problem while connecting to the Salt REST API"
 msgstr "由于尝试连接Salt REST API身份验证问题所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-100-unknown.html:1
@@ -2920,17 +2926,13 @@ msgid "This module cannot be loaded due to an unexpected error in RGW"
 msgstr "由于RGW的意外错误所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-121-deepsea-nfs-runner-error.html:1
-msgid ""
-"This module cannot be loaded due to an unexpected error while executing "
-"<strong>DeepSea ui_ganesha runner</strong>"
+msgid "This module cannot be loaded due to an unexpected error while executing <strong>DeepSea ui_ganesha runner</strong>"
 msgstr ""
 "由于运行<strong>DeepSea ui_ganesha runner</strong>时发生意外错误所以无法加载"
 "这模块"
 
 #: app/components/shared/oa-module-loader/reason-141-deepsea-iscsi-runner-error.html:1
-msgid ""
-"This module cannot be loaded due to an unexpected error while executing "
-"<strong>DeepSea ui_iscsi runner</strong>"
+msgid "This module cannot be loaded due to an unexpected error while executing <strong>DeepSea ui_iscsi runner</strong>"
 msgstr ""
 "由于运行<strong>DeepSea ui_iscsi runner</strong>时发生意外错误所以无法加载这"
 "模块"
@@ -2944,11 +2946,8 @@ msgid "This module cannot be loaded due to an unexpected response from RGW"
 msgstr "由于RGW的意外响应所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-109-deepsea-incomplete-configuration.html:1
-msgid ""
-"This module cannot be loaded due to incomplete <strong>DeepSea / Salt REST "
-"API</strong> configuration"
-msgstr ""
-"由于<strong> DeepSea / Salt REST API </strong>配置不完整所以无法加载这模块"
+msgid "This module cannot be loaded due to incomplete <strong>DeepSea / Salt REST API</strong> configuration"
+msgstr "由于<strong> DeepSea / Salt REST API </strong>配置不完整所以无法加载这模块"
 
 #: app/components/shared/oa-module-loader/reason-171-openattic-rgw-no-deepsea-conn.html:1
 #: app/components/shared/oa-module-loader/reason-172-openattic-rgw-no-deepsea-cred.html:1
@@ -2956,21 +2955,15 @@ msgid "This module cannot be loaded due to missing configuration problem"
 msgstr "由于配置不完整所以无法加载这模块"
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:12
-msgid ""
-"To confirm, please click <kbd>Delete erasure code profile</kbd>, or cancel "
-"and return to the page."
+msgid "To confirm, please click <kbd>Delete erasure code profile</kbd>, or cancel and return to the page."
 msgstr "点击<kbd>删除纠删码配置</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/users/users-delete-modal/users-delete-modal.component.html:11
-msgid ""
-"To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the "
-"page."
+msgid "To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the page."
 msgstr "点击<kbd>删除</kbd>确认删除，点击取消则返回之前的页面。"
 
 #: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:14
-msgid ""
-"To confirm, please click <kbd>Generate</kbd>, or cancel and return to the "
-"page."
+msgid "To confirm, please click <kbd>Generate</kbd>, or cancel and return to the page."
 msgstr "点击<kbd>生成</kbd>确定执行，点击取消则返回之前的页面。"
 
 #: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:9
@@ -2980,9 +2973,7 @@ msgstr ""
 "面。"
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:17
-msgid ""
-"To confirm, please enter the information below and click <kbd>Add erasure "
-"code profile</kbd>, or cancel and return to the page."
+msgid "To confirm, please enter the information below and click <kbd>Add erasure code profile</kbd>, or cancel and return to the page."
 msgstr ""
 "确认创建，请填写下方信息并点击 <kbd>添加新的纠删码配置</kbd>，否则取消并返回"
 "原页面。"
@@ -3016,6 +3007,10 @@ msgstr "类型:"
 msgid "UDP"
 msgstr "UDP"
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:132
+msgid "UNPROTECTED"
+msgstr "不受保护"
+
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:47
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:52
 #: app/components/ceph-rgw/ceph-rgw-user-detail/ceph-rgw-user-detail.component.html:70
@@ -3033,25 +3028,29 @@ msgstr "对象数目不限"
 msgid "Unlimited size"
 msgstr "数目不限"
 
+#: app/components/ceph-rbd/ceph-rbd-snapshot-list/ceph-rbd-snapshot-list.component.html:47
+msgid "Unprotect"
+msgstr "解除保护"
+
 #: app/components/navigation/oa-check-form-modal/oa-check-form-modal.component.html:2
 msgid "Unsaved Changes"
 msgstr "未保存的更改"
 
-#: app/components/settings/settings-form/settings-form.component.html:283
-#: app/components/settings/settings-form/settings-form.component.html:401
+#: app/components/settings/settings-form/settings-form.component.html:305
+#: app/components/settings/settings-form/settings-form.component.html:434
 msgid "Use SSL"
 msgstr "是否启用SSL安全连接"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:93
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:133
 msgid "Use a dedicated data pool"
 msgstr "使用一个专用的数据池"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:306
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:346
 msgid "Use default features"
 msgstr "用户默认特性"
 
 #: app/components/ceph-pools/ceph-pools-list/ceph-pools-list.component.html:80
-#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:72
+#: app/components/ceph-rbd/ceph-rbd-list/ceph-rbd-list.component.html:88
 msgid "Used"
 msgstr "已用"
 
@@ -3078,8 +3077,8 @@ msgstr "用户配额"
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form-subuser-modal.component.html:20
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:37
 #: app/components/ceph-rgw/ceph-rgw-user-list/ceph-rgw-user-list.component.html:76
-#: app/components/settings/settings-form/settings-form.component.html:355
-#: app/components/settings/settings-form/settings-form.component.html:76
+#: app/components/settings/settings-form/settings-form.component.html:388
+#: app/components/settings/settings-form/settings-form.component.html:87
 #: app/components/users/users-form/users-form.component.html:26
 #: app/components/users/users-list/users-list.component.html:53
 msgid "Username"
@@ -3123,6 +3122,10 @@ msgstr "显示Swift钥: {{ user }}"
 msgid "Welcome to openATTIC!"
 msgstr "欢迎使用openATTIC!"
 
+#: app/components/auth/auth/auth.component.html:9
+msgid "Welcome to SUSE Enterprise Storage"
+msgstr "欢迎使用SUSE Enterprise Storage"
+
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:13
 msgid "You are about to add a new erasure code profile."
 msgstr "您正在创建新的纠删码配置."
@@ -3132,81 +3135,79 @@ msgid "You are about to apply a {{ deep }}scrub to multiple Ceph nodes."
 msgstr "您即将向多个Ceph节点进行{{ deep }}整理(scrub)."
 
 #: app/components/ceph-osd/ceph-osd-scrub-modal/ceph-osd-scrub-modal.component.html:14
-msgid ""
-"You are about to apply a {{ deep }}scrub to the Ceph OSD <strong>{{ name }}</"
-"strong>."
+msgid "You are about to apply a {{ deep }}scrub to the Ceph OSD <strong>{{ name }}</strong>."
 msgstr "您即将向Ceph OSD<strong>{{ name }}</strong>进行{{ deep }}整理(scrub)."
 
 #: app/components/ceph-nodes/ceph-nodes-scrub-modal/ceph-nodes-scrub-modal.component.html:16
-msgid ""
-"You are about to apply a {{ deep }}scrub to the Ceph node "
-"<strong>{{ hostname }}</strong>."
-msgstr ""
-"您即将向Ceph节点<strong>{{ hostname }}</strong>进行{{ deep }}整理(scrub)."
+msgid "You are about to apply a {{ deep }}scrub to the Ceph node <strong>{{ hostname }}</strong>."
+msgstr "您即将向Ceph节点<strong>{{ hostname }}</strong>进行{{ deep }}整理(scrub)."
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:22
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:23
 msgid ""
 "You are about to delete <strong>{{ description }}</strong> task which is\n"
-"          <strong>{{ status}}</strong> and was last modified on "
-"{{ lastModified}}."
+"          <strong>{{ status }}</strong> and was last modified on {{ lastModified }}."
 msgstr ""
 "您即将删除<strong>{{ description }}</strong>任务\n"
 "           <strong>{{ status }}</strong>，并于{{ lastModified }}进行了上次修"
 "改。"
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:18
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:19
 msgid "You are about to delete multiple Ceph pools."
 msgstr "您正在删除多个Ceph存储池."
 
-#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:13
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:14
 msgid "You are about to delete multiple NFS exports."
 msgstr "您正在删除多个NFS导出项."
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:19
+#: app/components/ceph-rbd/ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component.html:16
+msgid "You are about to delete multiple RBD Snapshots."
+msgstr "您即将删除多个RBD快照。"
+
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:21
 msgid "You are about to delete multiple RBDs."
 msgstr "您正在删除多个RBD."
 
-#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:16
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:17
 msgid "You are about to delete multiple buckets."
 msgstr "您正在删除多个桶(bucket)."
 
-#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:13
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:14
 msgid "You are about to delete multiple iSCSI target IQNs."
 msgstr "您正在删除多个iSCSI目标限定名(IQNs)."
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:20
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:21
 msgid "You are about to delete multiple users."
 msgstr "您正在删除多个用户."
 
-#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:6
+#: app/components/ceph-pools/ceph-pools-delete-modal/ceph-pools-delete-modal.component.html:7
 msgid "You are about to delete the Ceph pool <strong>{{ name }}</strong>."
 msgstr "您正在删除Ceph数据池<strong>{{ name }}</strong>."
 
-#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:6
-msgid ""
-"You are about to delete the NFS export <strong>{{ host }}:{{ path }}</strong>"
+#: app/components/ceph-nfs/ceph-nfs-delete-modal/ceph-nfs-delete-modal.component.html:7
+msgid "You are about to delete the NFS export <strong>{{ host }}:{{ path }}</strong>"
 msgstr "您正在删除NFS导出项<strong>{{ host }}:{{ path }}</strong>"
 
-#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:6
+#: app/components/ceph-rbd/ceph-rbd-delete-modal/ceph-rbd-delete-modal.component.html:8
 msgid "You are about to delete the RBD <strong>{{ name }}</strong>."
 msgstr "您正在删除RBD <strong>{{ name }}</strong>."
 
-#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:7
+#: app/components/ceph-rbd/ceph-rbd-snapshot-delete-modal/ceph-rbd-snapshot-delete-modal.component.html:7
+msgid "You are about to delete the RBD Snapshot <strong>{{ name }}</strong>."
+msgstr "您即将删除RBD快照<strong> {{name}} </strong>。"
+
+#: app/components/ceph-rgw/ceph-rgw-bucket-delete-modal/ceph-rgw-bucket-delete-modal.component.html:8
 msgid "You are about to delete the bucket <strong>{{ bucket }}</strong>."
 msgstr "您正在删除存储桶(bucket)<strong>{{ bucket }}</strong>."
 
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-delete/ceph-erasure-code-profiles-delete.component.html:7
-msgid ""
-"You are about to delete the erasure code profile <strong>{{ profileName }}</"
-"strong>."
+msgid "You are about to delete the erasure code profile <strong>{{ profileName }}</strong>."
 msgstr "您正在删除纠删码配置 <strong>{{ profileName }}</strong>."
 
-#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:7
-msgid ""
-"You are about to delete the iSCSI target IQN <strong>{{ targetId }}</strong>."
+#: app/components/ceph-iscsi/ceph-iscsi-delete-modal/ceph-iscsi-delete-modal.component.html:8
+msgid "You are about to delete the iSCSI target IQN <strong>{{ targetId }}</strong>."
 msgstr "您正在删除iSCSI目标限定名(IQN)<strong>{{ targetId }}</strong>."
 
-#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:7
+#: app/components/ceph-rgw/ceph-rgw-user-delete-modal/ceph-rgw-user-delete-modal.component.html:8
 msgid "You are about to delete the user <strong>{{ userId }}</strong>."
 msgstr "您正在删除用户<strong>{{ userId }}</strong>."
 
@@ -3214,13 +3215,17 @@ msgstr "您正在删除用户<strong>{{ userId }}</strong>."
 msgid "You are about to delete the user <strong>{{ username }}</strong>."
 msgstr "您正在删除用户<strong>{{ username }}</strong>."
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:31
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:32
 msgid "You are about to delete {{ amount }} tasks."
 msgstr "您正在删除 {{ amount }}个任务."
 
 #: app/components/users/users-auth-token-modal/users-auth-token-modal.component.html:5
 msgid "You are about to generate a new API authentication token."
 msgstr "您正在生成一个新的API授权码."
+
+#: app/components/ceph-rbd/ceph-rbd-snapshot-rollback-modal/ceph-rbd-snapshot-rollback-modal.component.html:10
+msgid "You are about to rollback"
+msgstr msgstr "你即将执行回滚"
 
 #: app/components/shared/oa-module-loader/reason-131-openattic-nfs-no-cephfs.html:15
 msgid ""
@@ -3254,12 +3259,11 @@ msgstr ""
 msgid "You can use up to four application per pool."
 msgstr "每个存储池可以使用最多4个应用。"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:237
-msgid ""
-"You have to increase the size in order to have at least 1 object in your RBD."
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:277
+msgid "You have to increase the size in order to have at least 1 object in your RBD."
 msgstr "您必须增加尺寸才能在RBD中放一个对象."
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:244
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:284
 msgid "You have to increase the size in order to use striping."
 msgstr "您必须增加大小才能使用条带."
 
@@ -3268,9 +3272,7 @@ msgid "You have unsaved changes that will be lost if you decide to continue."
 msgstr "当前页面有未保存的更改，如果您选择离开，所有未保存的更改将会丢失."
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:17
-msgid ""
-"You must <a ng-click=\"$ctrl.addRBD()\">create an RBD image</a> before "
-"adding an iSCSI target."
+msgid "You must <a ng-click=\"$ctrl.addRBD()\">create an RBD image</a> before adding an iSCSI target."
 msgstr ""
 "在添加iSCSI目标之前，您必须先<a ng-click=\"$ctrl.addRBD()\">创建一个RBD镜像</"
 "a>."
@@ -3286,6 +3288,10 @@ msgstr "所有副本"
 #: app/components/ceph-rgw/ceph-rgw-user-form/ceph-rgw-user-form.component.html:141
 msgid "e.g., 1000"
 msgstr "e.g., 1000"
+
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:269
+msgid "e.g., 10GB"
+msgstr "例如，10GB"
 
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:445
 msgid "e.g., 128K"
@@ -3334,9 +3340,7 @@ msgid "iSCSI target \"{{ targetId }}\" could not be loaded."
 msgstr "iSCSI目标 \"{{ targetId }}\" 无法加载."
 
 #: app/components/ceph-iscsi/ceph-iscsi-list/ceph-iscsi-list.component.html:9
-msgid ""
-"iSCSI target IQNs could not be loaded. Make sure that the ceph module is "
-"installed."
+msgid "iSCSI target IQNs could not be loaded. Make sure that the ceph module is installed."
 msgstr "iSCSI目标限定名(IQNs)无法加载,请确保ceph模块已经安装好."
 
 #: app/components/ceph-iscsi/ceph-iscsi-form/ceph-iscsi-form.component.html:3
@@ -3380,10 +3384,10 @@ msgstr "复制不同"
 msgid "retries"
 msgstr "重试"
 
-#: app/components/settings/settings-form/settings-form.component.html:139
-#: app/components/settings/settings-form/settings-form.component.html:315
-#: app/components/settings/settings-form/settings-form.component.html:433
-#: app/components/settings/settings-form/settings-form.component.html:542
+#: app/components/settings/settings-form/settings-form.component.html:150
+#: app/components/settings/settings-form/settings-form.component.html:337
+#: app/components/settings/settings-form/settings-form.component.html:466
+#: app/components/settings/settings-form/settings-form.component.html:575
 msgid "retry"
 msgstr "重试"
 
@@ -3420,16 +3424,15 @@ msgstr "写"
 msgid "write_tier:"
 msgstr "write_tier:"
 
-#: app/components/shared/oa-delete-confirmation-modal/oa-delete-confirmation-modal.component.html:17
-msgid "yes"
-msgstr "是"
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:25
+msgid "{{ $ctrl.cloning ? 'Clone' : 'Copy' }} from"
+msgstr "由{{ $ctrl.cloning ? '克隆' : '复制' }}"
 
-#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:91
+#: app/components/task-queue/task-queue-delete-modal/task-queue-delete-modal.component.html:92
 msgid ""
 "{{ description }} changed from {{ status }} to\n"
-"                <span ng-class=\"{'text-danger': moved[1].status === "
-"'Exception', 'text-success': moved[1].status === 'Finished'}\" ng-bind="
-"\"moved[1].status\"></span>"
+"                <span ng-class=\"{'text-danger': moved[1].status === 'Exception',\n"
+"                                 'text-success': moved[1].status === 'Finished'}\" ng-bind=\"moved[1].status\"></span>"
 msgstr ""
 "{{ description }} changed from {{ status }} to\n"
 "                <span ng-class=\"{'text-danger': moved[1].status === "
@@ -3447,8 +3450,7 @@ msgstr "{{ meta }}数据池:"
 #: app/components/ceph-crushmap/ceph-crushmap/ceph-crushmap.component.html:102
 msgid ""
 "{{ minSize }} replicas means \"the original file + {{ minSizeLess }}\n"
-"                      <ng-pluralize count=\"$ctrl.activeRuleset.min_size - "
-"1\" when=\"{1: 'copy', 'other': 'copies'}\"></ng-pluralize>\"."
+"                      <ng-pluralize count=\"$ctrl.activeRuleset.min_size - 1\" when=\"{1: 'copy', 'other': 'copies'}\"></ng-pluralize>\"."
 msgstr ""
 "{{ minSize }} replicas means \"the original file + {{ minSizeLess }}\n"
 "                      <ng-pluralize count=\"$ctrl.activeRuleset.min_size - 1\" "
@@ -3462,36 +3464,31 @@ msgstr "{{ mode }}"
 msgid "{{ mode }} Ceph pool: {{ name }}"
 msgstr "{{ mode }} Ceph数据池: {{ name }}"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:131
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:189
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:171
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:229
 msgid "{{ numBytes }} of {{ maxAvail }} used"
 msgstr "{{ numBytes }} 中 {{ maxAvail }} 被用"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:195
-msgid ""
-"{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data."
-"dataPool)\">use max</a>"
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:235
+msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.dataPool)\">use max</a>"
 msgstr ""
 "{{ oaFreeText }} 可用 - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.dataPool)\">"
 "最大可用</a>"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:137
-msgid ""
-"{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data."
-"pool)\">use max</a>"
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:177
+msgid "{{ oaFreeText }} free - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.pool)\">use max</a>"
 msgstr ""
 "{{ oaFreeText }} 可用 - <a ng-click=\"$ctrl.useMaxSize($ctrl.data.pool)\">最大"
 "可用</a>"
 
 #: app/components/task-queue/oa-task-queue/oa-task-queue.component.html:7
-msgid ""
-"{{ queue }} Background-Task{{$ctrl.taskOverview.queue !== 1 ? 's' : ''}}"
-msgstr "{{ queue }} 后台任务"
+msgid "{{ queue ? queue : '' }} Background-Task{{queue !== 1 ? 's' : ''}}"
+msgstr "{{ queue ? queue : '' }}"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:104
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:144
 msgid "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}Pool"
 msgstr "{{$ctrl.data.useDataPool ? \"Meta-\" : \"\"}}数据池"
 
-#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:41
+#: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:80
 msgid "{{errortext}}"
 msgstr "{{errortext}}"

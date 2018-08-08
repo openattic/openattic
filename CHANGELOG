@@ -16,7 +16,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.7.0] - unreleased
+[3.7.0] - 2018-08-08
 --------------------
 
 Added
@@ -24,6 +24,7 @@ Added
 * WebUI/backend: added RBD snapshot management (create, clone, rollback,
   protect/unprotect, delete) (OP-2569)
 * WebUI/backend: added support for copying RBD images (OP-3150)
+* WebUI: Add spanish translation to openATTIC (OP-3165)
 
 Changed
 ~~~~~~~
@@ -36,7 +37,12 @@ Fixed
 * WebUI: added support for enabling EC overwrite on existing pools (OP-3158)
 * WebUI: fixed typo in RBD creation form (OP-3148)
 * WebUI: Ignore unused operations on the CRUSH Map Editor (OP-3154)
+* WebUI: "Last Change" column not displayed in Pools table (OP-3162)
+* WebUI: 404 not found when increasing number of rows displayed in a
+  table (OP-3163)
 * WebUI/QA: Fixed timing issue with scrub e2e tests (OP-3152)
+* Backend: RGW proxy can't handle self-signed SSL certificates (OP-3161)
+* Backend: REST API didn't respond in time (OP-3164)
 
 Removed
 ~~~~~~~

@@ -33,5 +33,6 @@
 export default {
   "en-US": "English",
   "de-DE": "Deutsch",
+  "es-ES": "Español",
   "zh-CN": "简体中文"
 };
