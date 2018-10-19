@@ -249,7 +249,7 @@ systemctl try-restart apache2
 %config(noreplace) %{_sysconfdir}/%{name}/database.ini
 
 %defattr(-,root,root,-)
-%doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
+%attr(0644,-,-) %doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
 %doc %{_mandir}/man1/oaconfig.1.gz
 
 %dir %{_sysconfdir}/%{name}/
