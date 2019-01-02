@@ -140,6 +140,18 @@ describe("Should add an user", function () {
     helpers.setLocation("users");
   });
 
+  it("should click the generate API auth token button", function () {
+    helpers.get_list_element(testUser.username).click();
+    element(by.className("tc_editUser")).click();
+    const authToken = element(by.model("$ctrl.user.auth_token.token"));
+    expect(authToken.getAttribute("value")).toEqual("Not set yet!");
+    element(by.css(".tc_generate_btn")).click();
+    expect(element(by.name("$ctrl.generateForm")).isDisplayed()).toBe(true);
+    element(by.css(".tc_generateButton")).click();
+    expect(authToken.getAttribute("value")).not.toEqual("");
+    helpers.leaveForm();
+  });
+
   it("should display an error message if one tries to add an user with already taken username", function () {
     addBtn.click();
     browser.sleep(400);

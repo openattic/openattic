@@ -54,7 +54,7 @@ class UsersAuthTokenModalComponent {
 
 export default{
   controller: UsersAuthTokenModalComponent,
-  template: require("./users-auth-token-modal.component"),
+  template: require("./users-auth-token-modal.component.html"),
   bindings: {
     modalInstance: "<",
     resolve: "<"
