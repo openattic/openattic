@@ -46,6 +46,7 @@ import oaSubmitButton from "./oa-submit-button/oa-submit-button.component";
 import oaTabSet from "./oa-tab-set/oa-tab-set.component";
 import required from "./required/required.directive";
 import validIqn from "./validators/iqn.validator";
+import contains from "./filters/contains.filter";
 import serviceState from "./filters/service-state.filter";
 import OaApiFilter from "./oa-api-filter/oa-api-filter.service";
 
@@ -65,6 +66,7 @@ angular
   .directive("oaPasswordButton", oaPasswordButton)
   .directive("required", required)
   .directive("validIqn", validIqn)
+  .filter("contains", contains)
   .filter("serviceState", serviceState)
   .service("oaApiFilter", OaApiFilter)
   .service("oaModuleLoaderService", OaModuleLoaderService)

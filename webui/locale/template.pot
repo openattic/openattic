@@ -1232,6 +1232,10 @@ msgstr ""
 msgid "Grafana"
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-statistics/ceph-rbd-statistics.component.html:9
+msgid "Grafana - No data points"
+msgstr ""
+
 #: app/components/settings/settings-form/settings-form.component.html:452
 msgid "Grafana connection established successfully"
 msgstr ""
@@ -1722,6 +1726,10 @@ msgstr ""
 
 #: app/components/ceph-iscsi/ceph-iscsi-detail/ceph-iscsi-detail.component.html:73
 msgid "No authentication"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-statistics/ceph-rbd-statistics.component.html:13
+msgid "No data points available. The 'fast-diff' image feature is required to compute these statistics."
 msgstr ""
 
 #: app/components/shared/oa-module-loader/reason-182-grafana-connection-refused.html:11
