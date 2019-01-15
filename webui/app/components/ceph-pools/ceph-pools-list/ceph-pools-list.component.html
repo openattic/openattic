@@ -131,7 +131,7 @@
               <div class="progress oaprogress"
                    data-toggle="tooltip"
                    data-placement="right"
-                   title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.oaFree | bytes}}">
+                   title="Used: {{row.num_bytes | bytes}} &mdash; Free: {{row.max_avail | bytes}}">
                 <div class="progress-bar"
                      role="progressbar"
                      aria-valuenow="{{row.percent_used | number: 2}}"
