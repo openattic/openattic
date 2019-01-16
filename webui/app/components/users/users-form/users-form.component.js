@@ -35,6 +35,7 @@ class UsersFormComponent {
   constructor ($state, $stateParams, usersService, $uibModal, $q, Notification) {
     this.Notification = Notification;
     this.$state = $state;
+    this.$uibModal = $uibModal;
 
     let promises = [];
 

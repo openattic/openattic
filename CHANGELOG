@@ -29,6 +29,7 @@ Fixed
 ~~~~~
 * Backend: Fixed conversion of boolean string configuration values (OP-3176)
 * WebUI: Fix displaying pool information (OP-3177)
+* WebUI: Generation of API token for user doesn't work (OP-3180)
 
 Removed
 ~~~~~~~
