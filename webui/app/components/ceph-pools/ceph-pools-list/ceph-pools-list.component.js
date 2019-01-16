@@ -92,7 +92,6 @@ class CephPoolsList {
   modifyResult (res) {
     res.results.forEach(pool => {
       pool.oaUnused = 100 - pool.percent_used;
-      pool.oaFree = pool.max_avail - pool.num_bytes;
       pool.application_metadata = Object.keys(pool.application_metadata).sort();
       pool.showApps = pool.application_metadata.join(", ");
     });

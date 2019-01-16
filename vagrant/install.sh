@@ -147,7 +147,7 @@ EOF
 fi
 if [ "$IS_SUSE" ]
 then
-    if ! zypper repos filesystems_openATTIC >/dev/null; then
+    if ! zypper repos filesystems_openATTIC_3.x >/dev/null; then
         zypper ar http://download.opensuse.org/repositories/filesystems:/openATTIC:/3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo
         zypper --gpg-auto-import-keys --non-interactive ref
     fi
@@ -208,18 +208,21 @@ then
         zypper --non-interactive install $DEPS
     fi
 
-    ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
+    if [ ! -L "/etc/sysconfig/openattic" ]; then
+        ln -s /home/vagrant/openattic/rpm/sysconfig/openattic.SUSE /etc/sysconfig/openattic
+    fi
 
     # System packages not available in pip + npm
-    zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 nodejs npm python-devel zlib-devel libjpeg-devel
-    # python-dbus python-gobject-2
+    zypper --non-interactive install -y python-virtualenv python-pip python-gobject2 python-psycopg2 nodejs npm python-devel zlib-devel libjpeg-devel dbus-1-python python-gobject2
     systemctl restart postgresql.service
     sed -i -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql.service
     systemctl enable postgresql.service
 fi
 
-ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
+if [ ! -L "/etc/openattic" ]; then
+    ln -s /home/vagrant/openattic/etc/openattic /etc/openattic
+fi
 
 # Create/modify the local settings files.
 pushd /home/vagrant/openattic
@@ -309,13 +312,13 @@ virtualenv env
 . env/bin/activate
 if [ "$IS_XENIAL" ]
 then
-pip install -r openattic/requirements/ubuntu-16.04.txt
+    pip install -r openattic/requirements/ubuntu-16.04.txt
 else
-pip install -r openattic/requirements/default.txt
+    pip install -r openattic/requirements/default.txt
 fi
 
 # dbus
-cp  /usr/lib*/python2.7/*-packages/_dbus* env/lib/python2.7/site-packages/
+cp /usr/lib*/python2.7/*-packages/_dbus* env/lib/python2.7/site-packages/
 cp -r /usr/lib*/python2.7/*-packages/dbus env/lib/python2.7/site-packages/
 
 # ceph
