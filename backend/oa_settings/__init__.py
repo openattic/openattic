@@ -20,6 +20,7 @@ import atexit
 import configobj
 
 import pyinotify
+from distutils.util import strtobool
 from oa_settings import settings
 from systemd import get_dbus_object
 
@@ -149,6 +150,8 @@ def _set_setting(key, val):
         return
     setting_type = setting_init_dict[key][1]
     try:
+        if setting_type is bool:
+            val = strtobool(str(val))
         tval = setting_type(val)
         setattr(Settings, key, tval)
     except ValueError:

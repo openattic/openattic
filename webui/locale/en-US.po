@@ -1199,6 +1199,10 @@ msgstr ""
 msgid "For example: iqn.2016-06.org.openattic:storage:disk.sn-a8675309"
 msgstr ""
 
+#: app/components/ceph-rbd/ceph-rbd-statistics/ceph-rbd-statistics.component.html:13
+msgid "No data points available. The 'fast-diff' image feature is required to compute these statistics."
+msgstr ""
+
 #: app/components/ceph-erasure-code-profiles/ceph-erasure-code-profile-add/ceph-erasure-code-profiles-add.component.html:5
 #: app/components/ceph-pools/ceph-pools-add/ceph-pools-add.component.html:2
 #: app/components/ceph-rbd/ceph-rbd-form/ceph-rbd-form.component.html:2
@@ -1238,6 +1242,10 @@ msgstr ""
 
 #: app/components/settings/settings-form/settings-form.component.html:343
 msgid "Grafana"
+msgstr ""
+
+#: app/components/ceph-rbd/ceph-rbd-statistics/ceph-rbd-statistics.component.html:9
+msgid "Grafana - No data points"
 msgstr ""
 
 #: app/components/settings/settings-form/settings-form.component.html:452
