@@ -20,7 +20,7 @@
 %endif
 
 Name: openattic
-Version: 3.7.0
+Version: 3.7.1
 Release: 0
 Summary: Open Source Management and Monitoring System for Ceph
 Group: System Environment/Libraries
@@ -253,7 +253,7 @@ systemctl try-restart apache2
 %config(noreplace) %{_sysconfdir}/%{name}/database.ini
 
 %defattr(-,root,root,-)
-%doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
+%attr(0644,-,-) %doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
 %doc %{_mandir}/man1/oaconfig.1.gz
 
 %dir %{_sysconfdir}/%{name}/

@@ -5,7 +5,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
- * Copyright (c) 2016 SUSE LLC
+ * Copyright (c) 2019 SUSE LLC
  *
  *
  * The JavaScript code in this page is free software: you can
@@ -30,34 +30,10 @@
  */
 "use strict";
 
-class UsersAuthTokenModalComponent {
-  constructor (usersService) {
-    this.usersService = usersService;
-  }
+import _ from "lodash";
 
-  $onInit () {
-    this.user = this.resolve.user;
-  }
-
-  generateAuthToken () {
-    this.usersService.generateAuthToken({id: this.user.id})
-      .$promise
-      .then((res) => {
-        this.modalInstance.close(res.auth_token.token);
-      });
-  }
-
-  cancel () {
-    this.modalInstance.dismiss("cancel");
-  }
-}
-
-export default{
-  controller: UsersAuthTokenModalComponent,
-  template: require("./users-auth-token-modal.component.html"),
-  bindings: {
-    modalInstance: "<",
-    resolve: "<"
-  }
+export default () => {
+  return (array, needle) => {
+    return _.indexOf(array, needle) >= 0;
+  };
 };
-

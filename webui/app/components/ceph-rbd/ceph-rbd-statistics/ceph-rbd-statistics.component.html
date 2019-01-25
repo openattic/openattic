@@ -1,4 +1,15 @@
-<div>
+<div ng-if="$ctrl.selection.item.features | contains: 'fast-diff'">
   <grafana data="$ctrl.selection.item.name"
            mode="'rbd'"></grafana>
+</div>
+
+<div ng-if="!($ctrl.selection.item.features | contains: 'fast-diff')"
+     class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"
+        translate>Grafana - No data points</h3>
+  </div>
+  <div class="panel-body">
+    <p translate>No data points available. The 'fast-diff' image feature is required to compute these statistics.</p>
+  </div>
 </div>

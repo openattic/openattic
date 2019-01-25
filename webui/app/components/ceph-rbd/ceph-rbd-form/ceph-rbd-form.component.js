@@ -390,7 +390,7 @@ class CephRbdForm {
   }
 
   useMaxSize (pool) {
-    this.data.size = this.$filter("bytes")(pool.max_avail - pool.num_bytes);
+    this.data.size = this.$filter("bytes")(pool.max_avail);
     this.watchDataSize();
   }
 
@@ -479,8 +479,7 @@ class CephRbdForm {
   }
 
   addPoolAttributes (pool) {
-    pool.oaFree = pool.max_avail - pool.num_bytes;
-    pool.oaFreeText = this.$filter("bytes")(pool.oaFree);
+    pool.oaFreeText = this.$filter("bytes")(pool.max_avail);
   }
 
   getDataPools () {

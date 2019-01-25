@@ -169,8 +169,8 @@
               </uib-progressbar>
               <span class="pull-left tc_poolSize">
                 <translate translate-params-num-bytes="$ctrl.data.pool.num_bytes | bytes"
-                           translate-params-max-avail="$ctrl.data.pool.max_avail | bytes">
-                  {{ numBytes }} of {{ maxAvail }} used
+                           translate-params-total="$ctrl.data.pool.max_avail + $ctrl.data.pool.num_bytes | bytes">
+                  {{ numBytes }} of {{ total }} used
                 </translate>
               </span>
               <span class="pull-right tc_poolAvailableSize">
