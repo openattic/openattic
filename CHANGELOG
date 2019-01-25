@@ -24,12 +24,18 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI: Update chinese translations (OP-3179)
+* WebUI: Disable statistic graph for RBD if fast-diff isn't enabled (OP-3181)
 
 Fixed
 ~~~~~
 * Backend: Fixed conversion of boolean string configuration values (OP-3176)
 * WebUI: Fix displaying pool information (OP-3177)
 * WebUI: Generation of API token for user doesn't work (OP-3180)
+* Deployment: Adapt Vagrant config to setup a new box from scratch (OP-3185)
+* Packaging: Remove executable bit from CHANGELOG file (OP-3183)
+* Packaging: Correct some file permissions in openattic.spec file (OP-3184)
+* Packaging: Revert `make_dist.py` to previous working version (OP-3186)
 
 Removed
 ~~~~~~~
