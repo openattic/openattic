@@ -27,6 +27,7 @@ Changed
 
 Fixed
 ~~~~~
+* WebUI: Task time calculations in different time zones (OP-3178)
 
 Removed
 ~~~~~~~
