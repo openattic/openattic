@@ -28,6 +28,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI: Task time calculations in different time zones (OP-3178)
+* WebUI/QA: Input fields are cleared manual (OP-3187)
 
 Removed
 ~~~~~~~
