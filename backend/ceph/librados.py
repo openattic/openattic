@@ -669,7 +669,8 @@ class MonApi(object):
         :return: empty string.
         """
         yield self._call_mon_command(
-            'osd pool set', self._args_to_argdict(pool=pool, var=var, val=val, force=force),
+            'osd pool set', self._args_to_argdict(pool=pool, var=var, val=str(val),
+                                                  force=force),
             output_format='string')
         self.osd_pool_set(pool, var, undo_previous_value)
 
