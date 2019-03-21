@@ -502,26 +502,37 @@ class TaskQueueModalComponent {
    * @param {Date} first - The older Date.
    * @param {Date} last - The newer Date.
    * @param {boolean} precise - Should the calculation be precise?
-   * @return {Object[]} - Diff Date and time String.
+   * @return {Object} - Diff Date and time String.
    */
-  timeBetween (first, last, precise) {
-    let approx = new Date(last.getTime() - first.getTime());
-    let days = approx.getDate() - 1;
-    let h = approx.getHours() - 1;
-    let m = approx.getMinutes();
-    let approxFormat = (days > 0) ? days + "d " : "";
-    approxFormat += (h > 0) ? h + "h " : "";
-    if (!precise) {
-      approxFormat += (approxFormat !== "" || m > 0) ? m + "m" : "< 1m";
-    } else {
-      approxFormat += (m > 0) ? m + "m " : "";
-      let s = approx.getSeconds();
-      approxFormat += (s > 0) ? s + "s" : "";
-    }
+  timeBetween (first, last, precise = undefined) {
+    const approx = new Date(last.getTime() - first.getTime());
     return {
       approx: approx,
-      approxFormat: approxFormat
+      approxFormat: this.getDuration(approx, precise)
     };
+  }
+
+  getDuration (date, precise) {
+    const h = date.getUTCHours();
+    const m = date.getUTCMinutes();
+    const s = date.getUTCSeconds();
+
+    const minutes = 60 * 1000;
+    const hours = 60 * minutes;
+    const days = 24 * hours;
+    const d = Math.floor(date.getTime() / days);
+
+    const format = (n, prefix) => (n ? n + prefix : n);
+    const concatFormat = (arr) => arr.filter((x) => x).join(" ");
+    let duration = concatFormat([format(d, "d"), format(h, "h"), format(m, "m")]);
+    if (!precise) {
+      if (duration === "") {
+        duration = "< 1m";
+      }
+    } else {
+      duration = concatFormat([duration, format(s, "s")]);
+    }
+    return duration;
   }
 
   /**
@@ -531,8 +542,7 @@ class TaskQueueModalComponent {
    * @param {[]} arr
    */
   calcRuntime (task, index, arr) {
-    task.created = new Date(task.created);
-    task.last_modified = new Date(task.last_modified);
+    this.convertTaskTimesIntoDates(task);
     arr[index] = _.merge({}, task, this.timeBetween(task.created, task.last_modified, true));
   }
 
@@ -543,13 +553,33 @@ class TaskQueueModalComponent {
    * @param {[]} arr
    */
   calcApprox (task, index, arr) {
+    this.convertTaskTimesIntoDates(task);
+    if (task.estimated === null) {
+      task.estimated = this.calcEstimatedTime(task);
+    }
     if (task.estimated !== null) {
-      task.last_modified = new Date(task.last_modified);
-      task.estimated = new Date(task.estimated);
       arr[index] = _.merge({}, task, this.timeBetween(task.last_modified, task.estimated));
     } else {
       task.approxFormat = "NA";
     }
+  }
+
+  calcEstimatedTime (task) {
+    if (!task.percentage || task.percentage === 100) {
+      return null;
+    }
+    return new Date(task.created.getTime() +
+      ((task.last_modified.getTime() - task.created.getTime()) * (100 / task.percentage))
+    );
+  }
+
+  convertTaskTimesIntoDates (task) {
+    ["created", "last_modified", "estimated"].forEach((attr) => {
+      const value = task[attr];
+      if (value) {
+        task[attr] = new Date(value);
+      }
+    });
   }
 
   /**
