@@ -134,4 +134,106 @@ describe("task-queue-modal", () => {
       expectTabToBe("Finished");
     });
   });
+
+  describe("timeBetween", () => {
+    let testArray;
+
+    const oldT = {
+      "status": "Running",
+      "estimated": null,
+      "result": null,
+      "id": 56,
+      "created": "2019-02-14T14:27:51.171715",
+      "last_modified": "2019-02-14T14:27:54.510558",
+      "percent": 0,
+      "description": "wait"
+    };
+
+    const newT = {
+      "status": "Finished",
+      "estimated": null,
+      "result": true,
+      "id": 56,
+      "created": "2019-02-14T14:27:51.171715",
+      "last_modified": "2019-02-14T14:29:49.265645",
+      "percent": 100,
+      "description": "wait"
+    };
+
+    const mockTask = (created, modified, id = 1, percentage = 0) => ({
+      status: "Running",
+      estimated: null,
+      result: null,
+      id: id,
+      created: created,
+      last_modified: modified,
+      percentage: percentage,
+      description: "mock-task"
+    });
+
+    beforeEach(() => {
+      testArray = [
+        oldT,
+        newT,
+        mockTask("2020-02-20T20:20:20.265645", "2020-02-24T23:26:25.265645", 1, 50),
+        mockTask("2020-02-21T21:21:21.265644-0800", "2020-02-24T23:26:25.265645-0800", 2, 25),
+        mockTask("2020-02-22T22:22:22.265645+0300", "2020-02-24T23:26:25.265645+0300", 3, 0),
+        mockTask("2020-02-20T20:20:20.265645", "2020-02-20T20:20:21.265645", 4, 2)
+      ];
+    });
+
+    it("test calc run time", () => {
+      testArray.forEach(ctrl.calcRuntime, ctrl);
+      [
+        "3s",
+        "1m 58s",
+        "4d 3h 6m 5s",
+        "3d 2h 5m 4s",
+        "2d 1h 4m 3s",
+        "1s"
+      ].forEach((expected, index) => {
+        expect(testArray[index].approxFormat).toBe(expected);
+      });
+    });
+
+    it("test calc approx", () => {
+      testArray.forEach(ctrl.calcApprox, ctrl);
+      [
+        ["NA", null],
+        ["NA", null],
+        ["4d 3h 6m", "2020-02-29T01:32:30.265Z"],
+        ["9d 6h 15m", "2020-03-05T13:41:37.265Z"],
+        ["NA", null],
+        ["< 1m", "2020-02-20T19:21:10.265Z"]
+      ].forEach((expected, index) => {
+        const approxFormat = expected[0];
+        const estimated = expected[1];
+        const task = testArray[index];
+        expect(task.approxFormat).toBe(approxFormat);
+        expect(task.estimated && task.estimated.toISOString()).toBe(estimated);
+      });
+    });
+
+    it("test calc run time in different timezone", () => {
+      /**
+       * It's not possible to really test different timezones as Date will always rely on system time.
+       * But it's possible to do assumptions like if getHours would return the same as getUTCHours,
+       * the result should not differ. If it does, something is calculated on a specific time zone bases.
+       */
+      // eslint-disable-next-line no-extend-native
+      Date.prototype.getHours = Date.prototype.getUTCHours;
+
+      testArray.forEach(ctrl.calcRuntime, ctrl);
+      [
+        "3s",
+        "1m 58s",
+        "4d 3h 6m 5s",
+        "3d 2h 5m 4s",
+        "2d 1h 4m 3s",
+        "1s"
+      ].forEach((expected, index) => {
+        expect(testArray[index].approxFormat).toBe(expected);
+      });
+    });
+  });
 });

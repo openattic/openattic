@@ -188,7 +188,7 @@
      */
     changeInput (e, val) {
       this.waitForElementVisible(e);
-      e.clear().sendKeys(val).sendKeys(protractor.Key.TAB);
+      e.clear().sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"), val, protractor.Key.TAB);
     },
 
     /**
