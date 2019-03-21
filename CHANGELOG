@@ -19,26 +19,14 @@ To describe their impact on the project, changes are grouped as follows:
 [3.7.2] - 2019-03-21
 --------------------
 
-Added
-~~~~~
-
-Changed
-~~~~~~~
-
 Fixed
 ~~~~~
 * WebUI: Task time calculations in different time zones (OP-3178)
 * WebUI/QA: Input fields are cleared manual (OP-3187)
 * Backend: Gatling test "error parsing integer value ..." (OP-3188)
 
-Removed
-~~~~~~~
-
 [3.7.1] - 2019-01-25
 --------------------
-
-Added
-~~~~~
 
 Changed
 ~~~~~~~
@@ -54,9 +42,6 @@ Fixed
 * Packaging: Remove executable bit from CHANGELOG file (OP-3183)
 * Packaging: Correct some file permissions in openattic.spec file (OP-3184)
 * Packaging: Revert `make_dist.py` to previous working version (OP-3186)
-
-Removed
-~~~~~~~
 
 [3.7.0] - 2018-08-08
 --------------------
