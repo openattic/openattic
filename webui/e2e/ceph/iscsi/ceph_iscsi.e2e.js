@@ -62,25 +62,26 @@ describe("ceph iscsi", function () {
   });
 
   it("should add a target", function () {
-    form.targetIdInput.clear().sendKeys("iqn.2016-06.org.openattic.test:storage:disk.tc-add");
+    helpers.changeInput(form.targetIdInput, "iqn.2016-06.org.openattic.test:storage:disk.tc-add");
+    browser.sleep(helpers.configs.sleep);
     expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-add");
     form.addPortal(0);
     form.addImage(0);
     form.authenticationCheckbox.click();
-    form.userInput.sendKeys("TargetUser");
-    form.passwordInput.sendKeys("TargetPassword");
+    helpers.changeInput(form.userInput, "TargetUser");
+    helpers.changeInput(form.passwordInput, "TargetPassword");
     form.addInitiator();
-    form.initiatorsInput.get(0).sendKeys("iqn.2016-06.org.openattic:storage:disk.sn-a8675310");
+    helpers.changeInput(form.initiatorsInput.get(0), "iqn.2016-06.org.openattic:storage:disk.sn-a8675310");
     browser.sleep(helpers.configs.sleep);
     form.mutualAuthenticationCheckbox.click();
-    form.mutualUserInput.sendKeys("TargetMutualUser");
-    form.mutualPasswordInput.sendKeys("TargetMutualPassword");
+    helpers.changeInput(form.mutualUserInput, "TargetMutualUser");
+    helpers.changeInput(form.mutualPasswordInput, "TargetMutualPassword");
     form.discoveryAuthenticationCheckbox.click();
-    form.discoveryUserInput.sendKeys("TargetDiscoveryUser");
-    form.discoveryPasswordInput.sendKeys("TargetDiscoveryPassword");
+    helpers.changeInput(form.discoveryUserInput, "TargetDiscoveryUser");
+    helpers.changeInput(form.discoveryPasswordInput, "TargetDiscoveryPassword");
     form.discoveryMutualAuthenticationCheckbox.click();
-    form.discoveryMutualUserInput.sendKeys("TargetDiscoveryMutualUser");
-    form.discoveryMutualPasswordInput.sendKeys("TargetDiscoveryMutualPassword");
+    helpers.changeInput(form.discoveryMutualUserInput, "TargetDiscoveryMutualUser");
+    helpers.changeInput(form.discoveryMutualPasswordInput, "TargetDiscoveryMutualPassword");
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
   });
@@ -104,7 +105,7 @@ describe("ceph iscsi", function () {
   });
 
   it("should edit target", function () {
-    form.targetIdInput.clear().sendKeys("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
+    helpers.changeInput(form.targetIdInput, "iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
@@ -129,7 +130,7 @@ describe("ceph iscsi", function () {
   });
 
   it("should clone target", function () {
-    form.targetIdInput.clear().sendKeys("iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
+    helpers.changeInput(form.targetIdInput, "iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
     expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
     expect(form.submitButton.isEnabled()).toBe(true);
     form.submitButton.click();
