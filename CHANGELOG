@@ -16,6 +16,22 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
+[3.7.3] - unreleased
+--------------------
+
+Added
+~~~~~
+
+Changed
+~~~~~~~
+
+Fixed
+~~~~~
+* WebUI/QA: Add browser sleep to iSCSI suite (OP-3190)
+
+Removed
+~~~~~~~
+
 [3.7.2] - 2019-03-21
 --------------------
 
