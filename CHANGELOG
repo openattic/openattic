@@ -28,6 +28,7 @@ Changed
 Fixed
 ~~~~~
 * WebUI/QA: Add browser sleep to iSCSI suite (OP-3190)
+* WebUI/QA: Refactored iSCSI suite (OP-3191)
 
 Removed
 ~~~~~~~
