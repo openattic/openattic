@@ -43,6 +43,28 @@ describe("ceph iscsi", function () {
   const details = new CephIscsiDetails();
   const manageService = new CephIscsiManageService();
 
+  const baseIqn = "iqn.2016-06.org.openattic:storage:disk.";
+  const initiatorIqn = baseIqn + "sn-a8675310";
+  const addIqn = baseIqn + "tc-add";
+  const editIqn = baseIqn + "tc-edit";
+  const cloneIqn = baseIqn + "tc-clone";
+
+  const expectDetails = () => {
+    expect(details.portalsDD.getText()).toMatch(/.*: \d+\.\d+\.\d+\.\d+/);
+    expect(details.imagesDD.getText()).toMatch(/.*: .* \(lun: 0\)/);
+    expect(details.noAuthenticationDD.get(0).isPresent()).toBe(false);
+    expect(details.userDD.get(0).getText()).toBe("TargetUser");
+    expect(details.initiatorDD.get(0).getText()).toBe(initiatorIqn);
+    expect(details.mutualUserDD.get(0).getText()).toBe("TargetMutualUser (Enabled)");
+    expect(details.discoveryUserDD.get(0).getText()).toBe("TargetDiscoveryUser (Enabled)");
+    expect(details.discoveryMutualUserDD.get(0).getText()).toBe("TargetDiscoveryMutualUser (Enabled)");
+  };
+
+  const clickSubmit = () => {
+    expect(form.submitButton.isEnabled()).toBe(true);
+    form.submitButton.click();
+  };
+
   beforeAll(function () {
     helpers.login();
     helpers.setLocation("ceph/iscsi");
@@ -57,22 +79,20 @@ describe("ceph iscsi", function () {
   });
 
   it("should check the ceph iSCSI add target url", function () {
-    table.addTarget();
-    helpers.checkLocation("ceph/.*/iscsi/add");
   });
 
   it("should add a target", function () {
-    helpers.changeInput(form.targetIdInput, "iqn.2016-06.org.openattic.test:storage:disk.tc-add");
-    browser.sleep(helpers.configs.sleep);
-    expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-add");
+    table.addTarget();
+    helpers.checkLocation("ceph/.*/iscsi/add");
+
+    helpers.changeInput(form.targetIdInput, addIqn);
     form.addPortal(0);
     form.addImage(0);
     form.authenticationCheckbox.click();
     helpers.changeInput(form.userInput, "TargetUser");
     helpers.changeInput(form.passwordInput, "TargetPassword");
     form.addInitiator();
-    helpers.changeInput(form.initiatorsInput.get(0), "iqn.2016-06.org.openattic:storage:disk.sn-a8675310");
-    browser.sleep(helpers.configs.sleep);
+    helpers.changeInput(form.initiatorsInput.get(0), initiatorIqn);
     form.mutualAuthenticationCheckbox.click();
     helpers.changeInput(form.mutualUserInput, "TargetMutualUser");
     helpers.changeInput(form.mutualPasswordInput, "TargetMutualPassword");
@@ -82,76 +102,37 @@ describe("ceph iscsi", function () {
     form.discoveryMutualAuthenticationCheckbox.click();
     helpers.changeInput(form.discoveryMutualUserInput, "TargetDiscoveryMutualUser");
     helpers.changeInput(form.discoveryMutualPasswordInput, "TargetDiscoveryMutualPassword");
-    expect(form.submitButton.isEnabled()).toBe(true);
-    form.submitButton.click();
+    clickSubmit();
+
+    table.clickRowByTargetId(addIqn);
+    expectDetails();
   });
 
-  it("should display added target details", function () {
-    table.clickRowByTargetId("iqn.2016-06.org.openattic.test:storage:disk.tc-add");
-    expect(details.panelTitle.getText()).toBe("Details of iqn.2016-06.org.openattic.test:storage:disk.tc-add");
-    expect(details.portalsDD.getText()).toMatch(/.*: \d+\.\d+\.\d+\.\d+/);
-    expect(details.imagesDD.getText()).toMatch(/.*: .* \(lun: 0\)/);
-    expect(details.noAuthenticationDD.get(0).isPresent()).toBe(false);
-    expect(details.userDD.get(0).getText()).toBe("TargetUser");
-    expect(details.initiatorDD.get(0).getText()).toBe("iqn.2016-06.org.openattic:storage:disk.sn-a8675310");
-    expect(details.mutualUserDD.get(0).getText()).toBe("TargetMutualUser (Enabled)");
-    expect(details.discoveryUserDD.get(0).getText()).toBe("TargetDiscoveryUser (Enabled)");
-    expect(details.discoveryMutualUserDD.get(0).getText()).toBe("TargetDiscoveryMutualUser (Enabled)");
+  it("should edit target", () => {
+    table.editTarget(addIqn);
+    helpers.checkLocation("ceph/.*/iscsi/edit/" + addIqn);
+
+    helpers.changeInput(form.targetIdInput, editIqn);
+    clickSubmit();
+
+    table.clickRowByTargetId(editIqn);
+    expectDetails();
   });
 
-  it("should check the ceph iSCSI edit target url", function () {
-    table.editTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-add");
-    helpers.checkLocation("ceph/.*/iscsi/edit/iqn.2016-06.org.openattic.test:storage:disk.tc-add");
+  it("should clone target", () => {
+    table.cloneTarget(editIqn);
+    helpers.checkLocation("ceph/.*/iscsi/clone/" + editIqn);
+
+    helpers.changeInput(form.targetIdInput, cloneIqn);
+    clickSubmit();
+
+    table.clickRowByTargetId(cloneIqn);
+    expectDetails();
   });
 
-  it("should edit target", function () {
-    helpers.changeInput(form.targetIdInput, "iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    expect(form.submitButton.isEnabled()).toBe(true);
-    form.submitButton.click();
-  });
-
-  it("should display edited target details", function () {
-    table.clickRowByTargetId("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    expect(details.panelTitle.getText()).toBe("Details of iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    expect(details.portalsDD.getText()).toMatch(/.*: \d+\.\d+\.\d+\.\d+/);
-    expect(details.imagesDD.getText()).toMatch(/.*: .* \(lun: 0\)/);
-    expect(details.noAuthenticationDD.get(0).isPresent()).toBe(false);
-    expect(details.userDD.get(0).getText()).toBe("TargetUser");
-    expect(details.initiatorDD.get(0).getText()).toBe("iqn.2016-06.org.openattic:storage:disk.sn-a8675310");
-    expect(details.mutualUserDD.get(0).getText()).toBe("TargetMutualUser (Enabled)");
-    expect(details.discoveryUserDD.get(0).getText()).toBe("TargetDiscoveryUser (Enabled)");
-    expect(details.discoveryMutualUserDD.get(0).getText()).toBe("TargetDiscoveryMutualUser (Enabled)");
-  });
-
-  it("should check the ceph iSCSI clone target url", function () {
-    table.cloneTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    helpers.checkLocation("ceph/.*/iscsi/clone/iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-  });
-
-  it("should clone target", function () {
-    helpers.changeInput(form.targetIdInput, "iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
-    expect(form.panelTitle.getText()).toBe("Target IQN: iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
-    expect(form.submitButton.isEnabled()).toBe(true);
-    form.submitButton.click();
-  });
-
-  it("should display cloned target details", function () {
-    table.clickRowByTargetId("iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
-    expect(details.panelTitle.getText()).toBe("Details of iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
-    expect(details.portalsDD.getText()).toMatch(/.*: \d+\.\d+\.\d+\.\d+/);
-    expect(details.imagesDD.getText()).toMatch(/.*: .* \(lun: 0\)/);
-    expect(details.noAuthenticationDD.get(0).isPresent()).toBe(false);
-    expect(details.userDD.get(0).getText()).toBe("TargetUser");
-    expect(details.initiatorDD.get(0).getText()).toBe("iqn.2016-06.org.openattic:storage:disk.sn-a8675310");
-    expect(details.mutualUserDD.get(0).getText()).toBe("TargetMutualUser (Enabled)");
-    expect(details.discoveryUserDD.get(0).getText()).toBe("TargetDiscoveryUser (Enabled)");
-    expect(details.discoveryMutualUserDD.get(0).getText()).toBe("TargetDiscoveryMutualUser (Enabled)");
-  });
-
-  it("should remove target", function () {
-    table.removeTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-edit");
-    table.removeTarget("iqn.2016-06.org.openattic.test:storage:disk.tc-clone");
+  it("should remove all targets", () => {
+    table.removeTarget(editIqn);
+    table.removeTarget(cloneIqn);
   });
 
   afterAll(function () {
