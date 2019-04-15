@@ -170,6 +170,8 @@ LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 # Use cookies that expire as soon as the user closes their browser.
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_PATH = '/openattic'
+SESSION_COOKIE_AGE = 1209600
 
 # DeepSea settings.
 DEEPSEA_MIN_VERSION_ISCSI = "0.8.2"
@@ -337,9 +339,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.auth.context_processors.auth",
