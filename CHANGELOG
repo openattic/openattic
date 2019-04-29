@@ -24,6 +24,7 @@ Added
 
 Changed
 ~~~~~~~
+Improve session handling security and block clickjacking attacks (OP-3193)
 
 Fixed
 ~~~~~
