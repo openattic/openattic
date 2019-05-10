@@ -60,6 +60,11 @@ export default [
     help: "If set to 1, use the back-end device name for the model alias"
   },
   {
+    property: "backstore_emulate_pr",
+    help: "If set to 0, support for SCSI Reservations, including Persistent GroupReservations, " +
+          "is disabled."
+  },
+  {
     property: "backstore_emulate_rest_reord",
     help: "If set to 0, the Queue Algorithm Modifier is Restricted Reordering"
   },
