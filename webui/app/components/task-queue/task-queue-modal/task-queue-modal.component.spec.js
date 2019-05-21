@@ -143,8 +143,8 @@ describe("task-queue-modal", () => {
       "estimated": null,
       "result": null,
       "id": 56,
-      "created": "2019-02-14T14:27:51.171715",
-      "last_modified": "2019-02-14T14:27:54.510558",
+      "created": "2019-02-14T14:27:51.171715Z",
+      "last_modified": "2019-02-14T14:27:54.510558Z",
       "percent": 0,
       "description": "wait"
     };
@@ -154,8 +154,8 @@ describe("task-queue-modal", () => {
       "estimated": null,
       "result": true,
       "id": 56,
-      "created": "2019-02-14T14:27:51.171715",
-      "last_modified": "2019-02-14T14:29:49.265645",
+      "created": "2019-02-14T14:27:51.171715Z",
+      "last_modified": "2019-02-14T14:29:49.265645Z",
       "percent": 100,
       "description": "wait"
     };
@@ -175,10 +175,10 @@ describe("task-queue-modal", () => {
       testArray = [
         oldT,
         newT,
-        mockTask("2020-02-20T20:20:20.265645", "2020-02-24T23:26:25.265645", 1, 50),
+        mockTask("2020-02-20T20:20:20.265645Z", "2020-02-24T23:26:25.265645Z", 1, 50),
         mockTask("2020-02-21T21:21:21.265644-0800", "2020-02-24T23:26:25.265645-0800", 2, 25),
         mockTask("2020-02-22T22:22:22.265645+0300", "2020-02-24T23:26:25.265645+0300", 3, 0),
-        mockTask("2020-02-20T20:20:20.265645", "2020-02-20T20:20:21.265645", 4, 2)
+        mockTask("2020-02-20T20:20:20.265645Z", "2020-02-20T20:20:21.265645Z", 4, 2)
       ];
     });
 
@@ -201,10 +201,10 @@ describe("task-queue-modal", () => {
       [
         ["NA", null],
         ["NA", null],
-        ["4d 3h 6m", "2020-02-29T01:32:30.265Z"],
+        ["4d 3h 6m", "2020-02-29T02:32:30.265Z"],
         ["9d 6h 15m", "2020-03-05T13:41:37.265Z"],
         ["NA", null],
-        ["< 1m", "2020-02-20T19:21:10.265Z"]
+        ["< 1m", "2020-02-20T20:21:10.265Z"]
       ].forEach((expected, index) => {
         const approxFormat = expected[0];
         const estimated = expected[1];
