@@ -1272,7 +1272,7 @@ class RbdApi(object):
         snaps = []
         for snap in image.list_snaps():
             snap['snap_id'] = snap['id']
-            snap['timestamp'] = "{}".format(image.get_snap_timestamp(snap['id']).isoformat())
+            snap['timestamp'] = "{}Z".format(image.get_snap_timestamp(snap['id']).isoformat())
             snap['is_protected'] = image.is_protected_snap(snap['name'])
             snap['children'] = []
             image.set_snap(snap['name'])

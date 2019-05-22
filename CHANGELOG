@@ -24,11 +24,15 @@ Added
 
 Changed
 ~~~~~~~
+Improve session handling security and block clickjacking attacks (OP-3193)
 
 Fixed
 ~~~~~
+* WebUI/QA: ISO 8601 timestamps in task queue unit tests (OP-3194)
 * WebUI/QA: Add browser sleep to iSCSI suite (OP-3190)
 * WebUI/QA: Refactored iSCSI suite (OP-3191)
+* Backend: Return UTC timestamp for RBD snapshots (OP-3192)
+* Backend: iSCSI: add support for "backstore_emulate_pr" lrbd setting (OP-3195)
 
 Removed
 ~~~~~~~

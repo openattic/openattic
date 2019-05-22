@@ -73,6 +73,7 @@ class ImageSettings(Settings):
         'backstore_emulate_fua_read': Settings.NUMERIC,
         'backstore_emulate_fua_write': Settings.NUMERIC,
         'backstore_emulate_model_alias': Settings.NUMERIC,
+        'backstore_emulate_pr': Settings.NUMERIC,
         'backstore_emulate_rest_reord': Settings.NUMERIC,
         'backstore_emulate_tas': Settings.NUMERIC,
         'backstore_emulate_tpu': Settings.NUMERIC,

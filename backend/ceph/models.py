@@ -1073,7 +1073,7 @@ class CephRbdSnap(NodbModel, RadosMixin):
                                            self.name)
             for attr, val in snap.items():
                 if attr == "timestamp":
-                    val = datetime.datetime.strptime(val, "%Y-%m-%dT%H:%M:%S")
+                    val = datetime.datetime.strptime(val, "%Y-%m-%dT%H:%M:%SZ")
                 setattr(self, attr, val)
         else:
             diff, orig = self.get_modified_fields()
