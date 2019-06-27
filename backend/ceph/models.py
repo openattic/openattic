@@ -977,6 +977,9 @@ class CephRbd(NodbModel, RadosMixin):  # aka RADOS block device
                                data_pool_name=data_pool_name)
 
                 self.id = CephRbd.make_key(self.pool, self.name)
+            else:
+                if self.data_pool:
+                    self.features.append("data-pool")
 
             diff, original = self.get_modified_fields()
             self.set_read_only_fields(original)
