@@ -33,6 +33,7 @@ Fixed
 * WebUI/QA: Refactored iSCSI suite (OP-3191)
 * Backend: Return UTC timestamp for RBD snapshots (OP-3192)
 * Backend: iSCSI: add support for "backstore_emulate_pr" lrbd setting (OP-3195)
+* Backend: RBD image update fails when RBD image uses a dedicated data pool (OP-3197)
 
 Removed
 ~~~~~~~
