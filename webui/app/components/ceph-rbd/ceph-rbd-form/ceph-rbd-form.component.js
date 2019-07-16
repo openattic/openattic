@@ -214,7 +214,7 @@ class CephRbdForm {
       return pool.id === this.rbd.pool;
     });
     this.data.useDataPool = _.isNumber(this.rbd.data_pool);
-    this.data.dataPool = _.find(this.pools.erasure, (pool) => {
+    this.data.dataPool = _.find(this.pools.erasure.concat(this.pools.replicated), (pool) => {
       return pool.id === this.rbd.data_pool;
     });
     this.data.striping.count = this.rbd.stripe_count;
