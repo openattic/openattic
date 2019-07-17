@@ -16,7 +16,7 @@ To describe their impact on the project, changes are grouped as follows:
 * **Fixed** for any bug fixes.
 * **Security** to invite users to upgrade in case of vulnerabilities.
 
-[3.7.3] - unreleased
+[3.7.4] - unreleased
 --------------------
 
 Added
@@ -24,20 +24,31 @@ Added
 
 Changed
 ~~~~~~~
-Improve session handling security and block clickjacking attacks (OP-3193)
+
+Fixed
+~~~~~
+
+Removed
+~~~~~~~
+
+[3.7.3] - 2019-07-17
+--------------------
+
+Changed
+~~~~~~~
+* Improve session handling security and block clickjacking attacks (OP-3193)
 
 Fixed
 ~~~~~
 * WebUI/QA: ISO 8601 timestamps in task queue unit tests (OP-3194)
 * WebUI/QA: Add browser sleep to iSCSI suite (OP-3190)
 * WebUI/QA: Refactored iSCSI suite (OP-3191)
-* WebUI: Data pool dropdown is not set when editing RBD image with dedicated replicated data pool (OP-3198)
+* WebUI: Data pool dropdown is not set when editing RBD image with dedicated
+  replicated data pool (OP-3198)
 * Backend: Return UTC timestamp for RBD snapshots (OP-3192)
 * Backend: iSCSI: add support for "backstore_emulate_pr" lrbd setting (OP-3195)
-* Backend: RBD image update fails when RBD image uses a dedicated data pool (OP-3197)
-
-Removed
-~~~~~~~
+* Backend: RBD image update fails when RBD image uses a dedicated data
+  pool (OP-3197)
 
 [3.7.2] - 2019-03-21
 --------------------

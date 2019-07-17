@@ -20,7 +20,7 @@
 %endif
 
 Name: openattic
-Version: 3.7.3
+Version: 3.7.4
 Release: 0
 Summary: Open Source Management and Monitoring System for Ceph
 Group: System Environment/Libraries
