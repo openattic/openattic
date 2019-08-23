@@ -1,6 +1,15 @@
 openATTIC -- Open Source Management and Monitoring System for Ceph
 ==================================================================
 
+.. note::
+
+  **The openATTIC project has entered maintenance mode. New feature development
+  has been discontinued in favor of enhancing the upstream Ceph Dashboard.**
+
+  See `this blog post
+  <https://www.openattic.org/posts/the-openattic-project-enters-maintenance-mode/>`_
+  for details.
+
 openATTIC is an Open Source Management and Monitoring System for the `Ceph
 distributed storage system <http://ceph.com>`_.
 
