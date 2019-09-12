@@ -24,6 +24,7 @@ Added
 
 Changed
 ~~~~~~~
+* WebUI/QA: Refactored task queue common (OP-3201)
 
 Fixed
 ~~~~~
