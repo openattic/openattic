@@ -28,6 +28,7 @@ Changed
 
 Fixed
 ~~~~~
+* Backend: Create pools with rule (OP-3200)
 
 Removed
 ~~~~~~~

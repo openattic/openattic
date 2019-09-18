@@ -601,7 +601,7 @@ class MonApi(object):
 
     @undoable
     def osd_pool_create(self, pool, pg_num, pgp_num, pool_type, erasure_code_profile=None,
-                        ruleset=None, expected_num_objects=None):
+                        rule=None, expected_num_objects=None):
         """
         COMMAND("osd pool create " \
             "name=pool,type=CephPoolname " \
@@ -609,7 +609,7 @@ class MonApi(object):
             "name=pgp_num,type=CephInt,range=0,req=false " \
             "name=pool_type,type=CephChoices,strings=replicated|erasure,req=false " \
             "name=erasure_code_profile,type=CephString,req=false,goodchars=[A-Za-z0-9-_.] " \
-            "name=ruleset,type=CephString,req=false " \
+            "name=rule,type=CephString,req=false " \
             "name=expected_num_objects,type=CephInt,req=false", \
             "create pool", "osd", "rw", "cli,rest")
 
@@ -636,7 +636,7 @@ class MonApi(object):
                                                      pgp_num=pgp_num,
                                                      pool_type=pool_type,
                                                      erasure_code_profile=erasure_code_profile,
-                                                     ruleset=ruleset,
+                                                     rule=rule,
                                                      expected_num_objects=expected_num_objects),
             output_format='string', timeout=45)
         self.osd_pool_delete(pool, pool, "--yes-i-really-really-mean-it")
