@@ -430,15 +430,19 @@ class CephPool(NodbModel, RadosMixin):
                               exception_type=(ExternalCommandError, NotSupportedError),
                               re_raise_exception=True) as api:
             if insert:
+                rule_id = self.crush_ruleset
+                rule_name = CrushmapVersion.objects.get().crush_rule_name_by_id(rule_id) if (
+                    rule_id is not None) else None
+                profile = self.erasure_code_profile.name if(
+                    self.erasure_code_profile and self.type == 'erasure') else None
                 api.osd_pool_create(self.name,
                                     self.pg_num,
                                     self.pg_num,
                                     # second pg_num is in fact pgp_num, but we don't want to allow
                                     # different values here.
                                     self.type,
-                                    self.erasure_code_profile.name if
-                                    (self.erasure_code_profile and self.type == 'erasure') else
-                                    None)
+                                    profile,
+                                    rule_name)
 
             diff, original = (self.get_modified_fields(name=self.name) if insert else
                               self.get_modified_fields())
@@ -501,9 +505,7 @@ class CephPool(NodbModel, RadosMixin):
                     for app in set(value) - set(original.application_metadata):
                         api.osd_pool_application_enable(self.name, app)
                 elif key == 'crush_ruleset':
-                    if value is not None:
-                        rule_name = CrushmapVersion.objects.get().crush_rule_name_by_id(value)
-                        api.osd_pool_set(self.name, 'crush_rule', rule_name)
+                    pass  # To not log a warning
                 elif self.type == 'replicated' and key not in \
                         ['name', 'erasure_code_profile_id'] and value is not None:
                     api.osd_pool_set(self.name, key, value, undo_previous_value=getattr(original,
