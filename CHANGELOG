@@ -30,6 +30,7 @@ Fixed
 ~~~~~
 * Backend: Create pools with rule (OP-3200)
 * Backend/QA: Fixes pool creation unit tests (OP-3204)
+* Backend: Fixed PAM auth on SUSE Linux (OP-3203)
 
 Removed
 ~~~~~~~

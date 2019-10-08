@@ -43,7 +43,7 @@ class PamBackend( ModelBackend ):
         self.service = service
         self.userPassword = ""
 
-    def pam_conversation( self, auth, query_list, userData ):
+    def pam_conversation( self, auth, query_list, userData=None ):
         """ This method will be called by PAM (authenticate()) to
             retrieve authentication tokens. We can only answer with
             the password and hope it works (we don't know anything else).
