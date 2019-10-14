@@ -184,12 +184,27 @@
    */
   self.expectDefaultModalElements = displayed => {
     const elements = self.dialog.modalElements;
-    Object.keys(elements).forEach(elementName => {
-      const modalElement = elements[elementName];
-      expect(modalElement.isPresent()).toBe(displayed);
-      if (displayed) {
+    const elementKeys = Object.keys(elements);
+    if (!displayed) { // Only one check required
+      expect(elements[elementKeys[0]].isPresent()).toBe(displayed);
+    } else {
+      elementKeys.forEach(elementName => {
+        const modalElement = elements[elementName];
         expect(modalElement.isDisplayed()).toBe(displayed);
-      }
+      });
+    }
+  };
+
+  self.expectAllTabElements = (tabName) => {
+    self.expectDefaultModalElements(true);
+    const tab = self.dialog.tabs[tabName];
+    const elements = tab.elements;
+    Object.keys(elements).forEach(elementName => {
+      expect(elements[elementName].isPresent()).toBe(true);
+    });
+    const columns = tab.columns;
+    Object.keys(columns).forEach(columnAttributeName => {
+      expect(columns[columnAttributeName].element.isPresent()).toBe(true);
     });
   };
 
@@ -198,13 +213,20 @@
    * @param {String} tabName
    */
   self.changeTab = tabName => {
-    // browser.sleep(helpers.configs.sleep / 2);
-    let elem = self.dialog.tabs[tabName].elements.tab;
-    helpers.waitForElementVisible(elem);
-    elem.click();
-    self.expectDefaultModalElements(true);
+    const tab = self.dialog.tabs[tabName].elements.tab;
+    helpers.waitForElementVisible(tab);
+    tab.click();
     helpers.waitForElementInvisible(self.dialog.tabs[tabName].elements.loadingParagraph);
-    // browser.sleep(helpers.configs.sleep / 2);
+  };
+
+  self.expectTabColumnsToBeDisplayed = tabName => {
+    const tab = self.dialog.tabs[tabName];
+    Object.keys(tab.columns).forEach(columnAttributeName => {
+      const column = tab.columns[columnAttributeName];
+      const element = column.element;
+      expect(element.isDisplayed()).toBe(true);
+      expect(element.getText()).toBe(column.name);
+    });
   };
 
   /**
@@ -212,15 +234,13 @@
    */
   self.open = function () {
     self.taskQueue.click();
-    self.expectDefaultModalElements(true);
   };
 
   /**
    * Closes the task queue dialog.
    */
   self.close = () => {
-    browser.sleep(helpers.configs.sleep / 2);
-    element(by.className("modal-close-btn")).click();
+    self.dialog.modalElements.closeBtn.click();
     self.expectDefaultModalElements(false);
   };
 
@@ -232,24 +252,9 @@
     self.open();
     Object.keys(self.dialog.tabs).forEach(function (tabName) { // => [pending, failed, finished]
       self.changeTab(tabName);
-      self.dialog.tabs[tabName].elements.listing.isDisplayed().then(function (displayed) {
-        if (displayed) { // If at least one task is there the listing is shown.
-          self.deleteTasks(tabName);
-        }
-      });
+      // If at least one task is there the listing is shown.
+      helpers.ifDisplayed(self.dialog.tabs[tabName].elements.listing, () => self.deleteTasks(tabName));
     });
-    self.close();
-  };
-
-  /**
-   * Validates which tab is opened by the task queue.
-   * Expecting the dialog to be closed.
-   * @param {string} tabName - Which tab to be expect.
-   */
-  self.validateDisplayedTab = tabName => {
-    self.open();
-    helpers.waitForElementVisible(self.dialog.tabs[tabName].elements.deleteBtn);
-    expect(self.dialog.tabs[tabName].elements.deleteBtn.isDisplayed()).toBe(true);
     self.close();
   };
 
@@ -274,8 +279,17 @@
   self.waitForPendingTasks = () => {
     self.open(); // Opens the dialog
     self.changeTab("pending");
-    helpers.waitForElementVisible(self.dialog.tabs.pending.elements.noElements); //Make sure the element is visible
-    self.close(); // Closes the dialog when there are zero pending tasks.
+    self.waitForEmptyQueue();
+  };
+
+  self.waitForEmptyQueue = () => {
+    browser.sleep(helpers.configs.sleep / 4);
+    helpers.ifDisplayed(
+      self.dialog.tabs.pending.elements.noElements,
+      () => self.close(), // Closes the dialog when there are zero pending tasks.
+      () => self.waitForEmptyQueue() // Calls itself if there are pending tasks.
+    );
+    helpers.clickDisplayed(self.dialog.tabs.pending.elements.refreshBtn);
   };
 
   /**
