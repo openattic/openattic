@@ -162,7 +162,7 @@ class CephPoolTestCase(TestCase):
                                     erasure_code_profile_id=None)
         pool.save()
         monApi_mock.return_value.osd_pool_create.assert_called_with('test', 0, 0, 'replicated',
-                                                                    None)
+                                                                    None, None)
         cephpool_objects_mock.get.assert_called_with(name='test')
         self.assertFalse(pool._state.adding)
 
@@ -202,7 +202,7 @@ class CephPoolTestCase(TestCase):
                                     erasure_code_profile_id=None)
         pool.save()
         calls = [
-            mock.call.osd_pool_create('test1', 0, 0, 'replicated', None),
+            mock.call.osd_pool_create('test1', 0, 0, 'replicated', None, None),
             mock.call.osd_tier_add('test', 'test1'),
             mock.call.osd_tier_cache_mode('test1', 'writeback', undo_previous_mode=None)
         ]

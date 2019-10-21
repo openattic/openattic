@@ -31,10 +31,10 @@
 "use strict";
 
 (function () {
-  var configs = require("./configs.js");
-  var UnsavedChangesDialog = require("./base/UnsavedChangesDialog.js");
+  const configs = require("./configs.js");
+  const UnsavedChangesDialog = require("./base/UnsavedChangesDialog.js");
 
-  var helper = {
+  const helper = {
     configs: configs,
 
     getConfiguredPools: () => {
@@ -89,7 +89,7 @@
     },
 
     checkForUnsavedChanges: function (dialogIsShown) {
-      var dialog = new UnsavedChangesDialog();
+      const dialog = new UnsavedChangesDialog();
       if (dialogIsShown !== undefined) {
         expect(dialog.leaveBtn.isPresent()).toBe(dialogIsShown);
       }
@@ -107,7 +107,7 @@
      * @param itemName The value to identify the data table row.
      */
     get_list_element_cells: function (itemName) {
-      var row = helper.get_list_element(itemName);
+      const row = helper.get_list_element(itemName);
       return row.all(by.tagName("td"));
     },
 
@@ -115,7 +115,7 @@
      * Will delete the selected items, using the default test classes for this.
      * @param {number} dropdown Which dropdown to get. Defaults to 0.
      * @param {string} controllerName The name of the controller.
-     * @param {stzring} elementName The name of the element that should be deleted
+     * @param {string} elementName The name of the element that should be deleted
      * @param {boolean} dialogIsShown If set to TRUE or FALSE, then it is checked
      *                                whether the dialog is displayed or not. If
      *                                set to TRUE, the deletion is confirmed by
@@ -249,7 +249,7 @@
     },
 
     waitForElement (elem) {
-      var until = protractor.ExpectedConditions;
+      const until = protractor.ExpectedConditions;
       browser.wait(until.presenceOf(elem), 360000, "Element taking too long to appear in the DOM");
     },
 
@@ -257,7 +257,7 @@
       if (elem === "submit") {
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
-      var until = protractor.ExpectedConditions;
+      const until = protractor.ExpectedConditions;
       browser.wait(until.stalenessOf(elem), 360000, "Element taking too long to disappear in the DOM");
     },
 
@@ -265,7 +265,7 @@
       if (elem === "submit") {
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
-      var until = protractor.ExpectedConditions;
+      const until = protractor.ExpectedConditions;
       browser.wait(until.visibilityOf(elem), 360000, "Element taking too long to show in the DOM");
     },
 
@@ -273,7 +273,7 @@
       if (elem === "submit") {
         elem = element(by.css(".tc_submitButton .fa.fa-spinner"));
       }
-      var until = protractor.ExpectedConditions;
+      const until = protractor.ExpectedConditions;
       browser.wait(until.invisibilityOf(elem), 360000, "Element taking too long to disappear in the DOM");
     },
 
@@ -296,8 +296,42 @@
      */
     checkDetailIsDisplayed (value) {
       expect(element(by.cssContainingText("dd", value)).isDisplayed()).toBe(true);
-    }
+    },
 
+    /**
+     * Used for clicking the refresh button as soon as it's there in task queue common.
+     * It's useful to just click an element if it's there without any failure if it vanishes after the check.
+     *
+     * @param {ElementFinder} element that should be clicked if displayed
+     */
+    clickDisplayed (element) {
+      element.isPresent().then((present) => {
+        if (present) {
+          element.isDisplayed().then((displayed) => {
+            if (displayed) {
+              browser.actions().mouseMove(element).click().perform();
+            }
+          });
+        }
+      });
+    },
+
+    /**
+     * Used to do something if the element is displayed or do something else if it's not
+     *
+     * @param {ElementFinder} element that should be present
+     * @param {function} [shown] is executed if element is displayed
+     * @param {function} [hidden] is executed if element is not displayed
+     */
+    ifDisplayed (element, shown, hidden) {
+      element.isDisplayed().then((displayed) => {
+        if (displayed) {
+          shown && shown();
+        } else {
+          hidden && hidden();
+        }
+      });
+    }
   };
   module.exports = helper;
 }());
