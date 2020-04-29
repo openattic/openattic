@@ -21,7 +21,7 @@
     "bootstrap": "3.3.6",
     "bootstrap-notifications": "1.0.3",
     "font-awesome": "4.7.0",
-    "jquery": "2.2.3",
+    "jquery": "3.5.0",
     "jquery-ui": "git+https://github.com/jquery/jquery-ui.git#1.11.4",
     "lodash": "4.17.4",
     "ng-tags-input": "3.0.0",
