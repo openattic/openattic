@@ -1,5 +1,5 @@
 decorator==4.0.9
-Django==1.6.11
+Django==1.11.29
 django-cors-headers==1.1.0
 django-filter==0.7
 djangorestframework==2.4.3
