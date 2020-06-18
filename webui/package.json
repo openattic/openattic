@@ -6,7 +6,7 @@
   "repository": "bitbucket:openattic/openattic",
   "dependencies": {
     "@uirouter/angularjs": "1.0.3",
-    "angular": "1.5.11",
+    "angular": "1.8.0",
     "angular-animate": "1.5.11",
     "angular-bootstrap-toggle": "0.1.2",
     "angular-breadcrumb": "0.4.1",
